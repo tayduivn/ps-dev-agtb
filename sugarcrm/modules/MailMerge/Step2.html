@@ -122,7 +122,6 @@ var mTerm = '';
 
 function submit_form()
 {
-	document.MailMerge.action='index.php';
 	document.MailMerge.submit();
 }
 
@@ -361,7 +360,6 @@ function validateForm()
 	
 	if(selObjs.options.length > 0)
 	{
-		document.MailMerge.action='index.php';
 		document.MailMerge.submit();
 		return true;
 	}
