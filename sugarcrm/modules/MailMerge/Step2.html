@@ -228,7 +228,8 @@ function getObjects()
 	getOrderBy();
 	
 	//rrs
-	var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm+'&max='+max+'&order_by='+orderBy,{success: ajaxSuccess, failure: ajaxSuccess}, null);
+    var qs = 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm+'&max='+max+'&order_by='+orderBy+'&offset='+mOffset;
+	var cObj = YAHOO.util.Connect.asyncRequest('GET', qs,{success: ajaxSuccess, failure: ajaxSuccess}, null);
 
 
 }
