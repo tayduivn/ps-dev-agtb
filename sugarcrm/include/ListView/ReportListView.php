@@ -633,7 +633,7 @@ class ReportListView  extends ListView {
 
 		if ( $this->show_paging == true){
 			$html_text = "";
-			$html_text .= "<tr class='pagination'>\n";
+			$html_text .= "<tr class='pagination'  role='presentation'>\n";
 			$html_text .= "<td COLSPAN=\"20\" align=\"right\">\n";
 			$html_text .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td align=\"left\">$export_link</td>\n";
 			$html_text .= "</tr></table>\n";

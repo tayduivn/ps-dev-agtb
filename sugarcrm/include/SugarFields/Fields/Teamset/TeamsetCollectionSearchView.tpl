@@ -53,15 +53,15 @@
             {if empty($displayParams.clearOnly) }<button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}" {literal},"field_name":"team_name_advanced","field_to_name_array":{"id":"team_id","name":"team_name_advanced"}}{/literal}, "MULTISELECT", true);' name="teamSelect">{sugar_getimage alt=$app_strings.LBL_ID_FF_SELECT name="id-ff-select" ext=".png" other_attributes='' alt="$alt_selectButton"}</button>{/if}<button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();" name="teamAdd">{sugar_getimage alt=$app_strings.LBL_ID_FF_ADD name="id-ff-add" ext=".png" other_attributes='' alt="$alt_addButton"}</button>
 			</span>
         </td>
-        <td id="lineLabel_{$vardef.name}_primary">
+        <th scope='col' id="lineLabel_{$vardef.name}_primary">
             &nbsp;&nbsp;{sugar_translate label='LBL_COLLECTION_PRIMARY'}
-        </td>
+        </th>
         <td>
         	<a class="utilsLink" href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' {if empty($values.secondaries)}style="display:none"{/if}></a>
         </td>
     </tr>
     <tr id="lineFields_{$displayParams.formName}_{$vardef.name}_0" class="lineFields_{$displayParams.formName}_{$vardef.name}">
-        <td valign='top'>
+        <td scope="row" valign='top'>
             <span id='{$displayParams.formName}_{$vardef.name}_input_div_0' name="teamset_div">          
             <input type="text" name="{$vardef.name}_collection_0" id="{$displayParams.formName}_{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$displayParams.formName}_{$vardef.name}_collection_0" value="">

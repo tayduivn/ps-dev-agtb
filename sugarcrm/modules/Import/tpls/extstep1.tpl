@@ -76,15 +76,15 @@
 {foreach from=$rows key=key item=item name=rows}
 {if $smarty.foreach.rows.first}
 <tr>
-    <td style="text-align: left;" scope="row">
+    <td style="text-align: left;" scope="col">
         <b>{$MOD.LBL_EXTERNAL_FIELD}</b>&nbsp;
         {sugar_help text=$MOD.LBL_EXTERNAL_FIELD_TOOLTIP}
     </td>
-    <td style="text-align: left;" scope="row">
+    <td style="text-align: left;" scope="col">
         <b>{$MOD.LBL_DATABASE_FIELD}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DATABASE_FIELD_HELP}
     </td>
-    <td style="text-align: left;" scope="row" id="default_column_header" width="10%">
+    <td style="text-align: left;" scope="col" id="default_column_header" width="10%">
         <span id="hide_default_link" class="expand">&nbsp;<b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
         {sugar_help text=$MOD.LBL_EXTERNAL_DEFAULT_TOOPLTIP}</span>
         <span id="default_column_header_span">&nbsp;</span>

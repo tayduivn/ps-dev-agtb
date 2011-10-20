@@ -35,6 +35,7 @@
 	$count = 0;
 	$this->assign('count', $count);
 {/php}
+{assign var='scope_row' value=true}
 {foreach from=$column_row.cells key=module item=cell}
 	{if (($column_row.group_column_is_invisible != "") && ($count|in_array:$column_row.group_pos)) }
 {php}	
@@ -42,9 +43,10 @@
 	$this->assign('count', $count);
 {/php}
 	{ else }
-	<td width="{$width}%" valign=TOP class="{$row_class}" bgcolor="{$bg_color}" scope="row">
+	<td width="{$width}%" valign=TOP class="{$row_class}" bgcolor="{$bg_color}" {if $scope_row} scope='row' {/if}>
 	
 	{$cell}
 	{/if}
+    {assign var='scope_row' value=false}
 {/foreach}
 </tr>

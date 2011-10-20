@@ -58,10 +58,10 @@
             </button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add(); if(collection['{$displayParams.formName}_{$vardef.name}'].more_status)collection['{$displayParams.formName}_{$vardef.name}'].js_more();" title="{sugar_translate label="LBL_ID_FF_ADD"}">
             {sugar_getimage name="id-ff-add.png" alt="$alt_addButton"}</button>
 			</span>
-        </td>        
-        <td align='center' id="lineLabel_{$vardef.name}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap: normal;'>
-            {sugar_translate label='LBL_COLLECTION_PRIMARY'}
         </td>
+        <th scope='col' align='center' id="lineLabel_{$vardef.name}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap: normal;'>
+            {sugar_translate label='LBL_COLLECTION_PRIMARY'}
+        </th>
 <!-- BEGIN Add and collapse -->
         <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;'>
             &nbsp;
@@ -81,7 +81,7 @@
     </tr>
 <!-- END Labels Line -->
     <tr id="lineFields_{$displayParams.formName}_{$vardef.name}_0">
-        <td valign='top'>
+        <td scop='row' valign='top'>
             <span id='{$displayParams.formName}_{$vardef.name}_input_div_0' name='teamset_div'>          
             <input type="text" name="{$vardef.name}_collection_0" id="{$displayParams.formName}_{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$displayParams.formName}_{$vardef.name}_collection_0"" value="">

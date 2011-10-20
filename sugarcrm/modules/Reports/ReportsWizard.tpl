@@ -93,7 +93,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 								onMouseOut="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumns.gif'}'"
                                 alt="{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}</h3><br/>
 								{$MOD.LBL_ROWS_AND_COLUMNS_REPORT_DESC}
 							</td>
 						</tr>
@@ -106,7 +106,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 								onMouseOut="document.summationImg.src='{sugar_getimagepath file='Summation.gif'}'"
                                      alt="{$MOD.LBL_SUMMATION_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_SUMMATION_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_SUMMATION_REPORT}</h3>
 								{$MOD.LBL_SUMMATION_REPORT_DESC}
 							</td>
 						</tr>
@@ -121,7 +121,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 								onMouseOut="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetails.gif'}'"
                                 alt="{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}</h3>
 								{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS_DESC}
 							</td>
 						</tr>
@@ -135,7 +135,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 								onMouseOut="document.matrixImg.src='{sugar_getimagepath file='MatrixReport.gif'}'"
                                 alt="{$MOD.LBL_MATRIX_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_MATRIX_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_MATRIX_REPORT}</h3>
 								{$MOD.LBL_MATRIX_REPORT_DESC}
 							</td>
 						</tr>

@@ -227,9 +227,9 @@ SUGAR.FiltersWidget = function() {
 			} // if
 			var title = "";
 			if (id == SUGAR.language.get('Reports','LBL_FILTER') + ".1") {
-				title =  "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "</span>"+ "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif' alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span>";
+				title =  "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif' alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 			} else {
-				title =  "<span class='spantitle'>" + id + "</span>";
+				title =  "<h3 class='spantitle'>" + id + "</h3>";
 			} // else
 			
 			var designerModule = new YAHOO.widget.Module(id, { visible: false });

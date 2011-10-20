@@ -44,22 +44,22 @@
 {include file='include/ListView/ListViewPagination.tpl'}
 <tr height='20'>
 		{if $prerow}
-			<th scope='col' width='1%' class="selectCol">
+			<td width='1%' class="selectCol td_alt">
 				<div>
 				<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 				{$selectLink}
 				</div>
-			</th>
+			</td>
 		{/if}
 		{* //BEGIN SUGARCRM flav=pro ONLY *}
 		{if $favorites}
-		<th scope='col'>
+		<td class='td_alt' >
 				&nbsp;
-		</th>
+		</td>
 		{/if}
 		{* //END SUGARCRM flav=pro ONLY *}
 		{if !empty($quickViewLinks)}
-		<th scope='col' width='1%' style="padding: 0px;">&nbsp;</th>
+		<td class='td_alt' width='1%' style="padding: 0px;">&nbsp;</td>
 		{/if}
 		{counter start=0 name="colCounter" print=false assign="colCounter"}
 		{foreach from=$displayColumns key=colHeader item=params}
@@ -102,12 +102,13 @@
 			</th>
 			{counter name="colCounter"}
 		{/foreach}
-		<th scope='col' nowrap="nowrap" width='1%'>&nbsp;</th>
+		<td class='td_alt' nowrap="nowrap" width='1%'>&nbsp;</td>
 	</tr>
 		
 	{counter start=$pageData.offsets.current print=false assign="offset" name="offset"}	
 	{foreach name=rowIteration from=$data key=id item=rowData}
 	    {counter name="offset" print=false}
+        {assign var='scope_row' value=true}
 
 		{if $smarty.foreach.rowIteration.iteration is odd}
 			{assign var='_rowColor' value=$rowColor[0]}
@@ -150,7 +151,7 @@ data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$p
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=col item=params}
 			    {strip}
-				<td scope='row' align='{$params.align|default:'left'}' valign="top" class="{if ($params.type == 'teamset')}nowrap{/if}{if preg_match('/PHONE/', $col)} phone{/if}">
+				<td {if $scope_row} scope='row' {/if} align='{$params.align|default:'left'}' valign="top" class="{if ($params.type == 'teamset')}nowrap{/if}{if preg_match('/PHONE/', $col)} phone{/if}">
 					{if $col == 'NAME' || $params.bold}<b>{/if}
 				    {if $params.link && !$params.customCode}
 {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}{/capture}
@@ -172,6 +173,7 @@ data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$p
                     {if $col == 'NAME' || $params.bold}</b>{/if}
 				</td>
 				{/strip}
+                {assign var='scope_row' value=false}
 				{counter name="colCounter"}
 			{/foreach}
 			<td align='right'>{$pageData.additionalDetails.$id}</td>

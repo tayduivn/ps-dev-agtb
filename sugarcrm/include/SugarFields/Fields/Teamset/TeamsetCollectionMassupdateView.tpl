@@ -52,17 +52,17 @@
             </button><button title="{$app_strings.LBL_ID_FF_ADD}" type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add(); if(collection['{$displayParams.formName}_{$vardef.name}'].more_status)collection['{$displayParams.formName}_{$vardef.name}'].js_more();"  name="teamAdd">
             {sugar_getimage name="id-ff-add.png" alt="$alt_addButton"}</button>
 			</span>			
-		</td>        
-        <td id="lineLabel_{$vardef.name}_primary" {if empty($values.role_field)}style="display:none"{/if}>
+		</td>
+        <th scope='col' id="lineLabel_{$vardef.name}_primary" {if empty($values.role_field)}style="display:none"{/if}>
             {sugar_translate label='LBL_COLLECTION_PRIMARY'}
-        </td>
+        </th>
 		<td>
         <a class="utilsLink" href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' {if empty($values.secondaries)}style="display:none"{/if}></a>
         </td>
-        <td >&nbsp;</td>
+        <td>&nbsp;</td>
     </tr>
     <tr id="lineFields_{$displayParams.formName}_{$vardef.name}_0" class="lineFields_{$displayParams.formName}_{$vardef.name}">
-        <td valign="top">
+        <td scope='row' valign="top">
             <span id='{$displayParams.formName}_{$vardef.name}_input_div_0' name='teamset_div'>   
             <input type="text" name="{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" id="{$displayParams.formName}_{$vardef.name}_collection_0" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$displayParams.formName}_{$vardef.name}_collection_0" value="">
