@@ -227,7 +227,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
-		'use_sprites' => (false && function_exists('imagecreatetruecolor')),
+		'use_sprites' => function_exists('imagecreatetruecolor'),
 	);
 }
 
@@ -428,7 +428,7 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		),
-	'use_sprites' => (false && function_exists('imagecreatetruecolor')),
+	'use_sprites' => function_exists('imagecreatetruecolor'),
 
 	//END SUGARCRM flav=pro ONLY
 	'use_real_names' => true,
