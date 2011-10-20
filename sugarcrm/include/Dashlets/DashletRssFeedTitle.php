@@ -92,9 +92,9 @@ class DashletRssFeedTitle {
 	
 	private function _identifyXmlEncoding() {
 		$matches = array ();
-		preg_match('/encoding\=*".*?"/', $this->contents, $matches);
+		preg_match('/encoding\=*\".*?\"/', $this->contents, $matches);
 		if (isset($matches[0])) {
-			$this->xmlEncoding = str_replace('encoding="', '"', $matches[0]);
+			$this->xmlEncoding = trim(str_replace('encoding="', '"', $matches[0]), '"');
 		}
 	}
 	
