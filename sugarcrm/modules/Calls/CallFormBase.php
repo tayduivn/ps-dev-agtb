@@ -251,7 +251,9 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    $_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
   	}
 
-    if(isset($_POST['isSaveFromDetailView']) && $_POST['isSaveFromDetailView'] == 'true'){
+    if( (isset($_POST['isSaveFromDetailView']) && $_POST['isSaveFromDetailView'] == 'true') ||
+        (isset($_POST['is_ajax_call']) && !empty($_POST['is_ajax_call']))
+    ){
         $focus->save(true);
         $return_id = $focus->id;
     }else{
