@@ -122,7 +122,6 @@ var mTerm = '';
 
 function submit_form()
 {
-	document.MailMerge.action='index.php';
 	document.MailMerge.submit();
 }
 
@@ -229,7 +228,7 @@ function getObjects()
 	getOrderBy();
 	
 	//rrs
-	var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm,{success: ajaxSuccess, failure: ajaxSuccess}, null);
+	var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm+'&max='+max+'&order_by='+orderBy,{success: ajaxSuccess, failure: ajaxSuccess}, null);
 
 
 }
@@ -361,7 +360,6 @@ function validateForm()
 	
 	if(selObjs.options.length > 0)
 	{
-		document.MailMerge.action='index.php';
 		document.MailMerge.submit();
 		return true;
 	}
