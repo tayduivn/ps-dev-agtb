@@ -3309,6 +3309,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	    if(is_int($encode) && func_num_args() == 3) {
 	        // old API: $result, $rowNum, $encode
+	        $GLOBALS['log']->deprecated("Using row number in fetchByAssoc is not portable and no longer supported. Please fix your code.");
 	        $encode = func_get_arg(2);
 	    }
 	    $row = $this->fetchRow($result);
