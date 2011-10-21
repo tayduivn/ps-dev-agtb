@@ -145,7 +145,7 @@ function ajaxSuccess(data)
 		dispCount = result.result_count;
 		nextItems_disabled = true;
 	}
-	if(result.result_count < (mOffset + max))
+	if(result.result_count <= (mOffset + max))
 	{
 		nextItems_disabled = true;
 	}
