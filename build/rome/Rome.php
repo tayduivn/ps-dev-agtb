@@ -509,9 +509,8 @@ protected function writeFiles($path, $skipBuilds=array()){
      foreach($this->output as $f=>$o){
      			if(!empty($this->onlyBuild) && empty($this->onlyBuild[$f]))continue;
 
-                if(!empty($this->config['blackList'][$f][$blackListPath])
+                if(!empty($this->config['blackList'][$f][$blackListPath]))
                 {
-                    echo $blackListPath . "\n";
                     continue;
                 }
 
