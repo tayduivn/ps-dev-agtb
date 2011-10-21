@@ -44,11 +44,11 @@ class MailMergeController extends SugarController{
         $relModule = !empty($_REQUEST['rel_module']) ? $_REQUEST['rel_module'] : null;
         $max = !empty($_REQUEST['max']) ? $_REQUEST['max'] : 10;
         $order_by = !empty($_REQUEST['order_by']) ? $_REQUEST['order_by'] : $lmodule.".name";
+        $offset = !empty($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
         $response = array();
         
         if(!empty($module)){
             $where = '';
-            $offset = 0;
             $deleted = '0';
 
             $using_cp = false;
