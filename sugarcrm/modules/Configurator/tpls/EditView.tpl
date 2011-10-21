@@ -253,7 +253,7 @@
  </table>
 
 
-{* //BEGIN SUGARCRM flav!=sales ONLY*}
+{* //BEGIN SUGARCRM flav!=sales && flav!=com ONLY*}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_MAILMERGE}</h4></th>
@@ -268,9 +268,8 @@
 	<td width="75%" align="left"  valign='middle'><input type='hidden' name='system_mailmerge_on' value='0'><input name="system_mailmerge_on" value="1" class="checkbox" type="checkbox" {$system_mailmerge_on_checked}></td>
 	</tr>
 </table>
+{* //END SUGARCRM flav!=sales && flav!=com ONLY*}
 
-
-{* //END SUGARCRM flav!=sales ONLY*}
 <!--//BEGIN SUGARCRM flav!=dce ONLY -->
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
 
