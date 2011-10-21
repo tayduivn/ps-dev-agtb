@@ -890,6 +890,8 @@ class OracleManager extends DBManager
         }
 
         $qval = parent::massageValue($val, $fieldDef);
+        if(empty($val)) return $qval; // do not massage empty values
+
         switch($type) {
             case 'date':
                 $val = explode(" ", $val); // make sure that we do not pass the time portion
