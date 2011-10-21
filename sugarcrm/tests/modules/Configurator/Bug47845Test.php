@@ -66,7 +66,7 @@ public function testImportMapLinkedInPHPFileExists()
     //BEGIN SUGARCRM flav!=com ONLY
     $this->assertTrue(file_exists('modules/Import/maps/ImportMapLinkedin.php'), 'Assert that ImportMapLinkedin.php file exists for non-com flavor');
     //END SUGARCRM flav!=com ONLY
-git
+
     //BEGIN SUGARCRM flav=com ONLY
     $this->assertFalse(file_exists('modules/Import/maps/ImportMapLinkedin.php'), 'Assert that ImportMapLinkedin.php file does not exist for com flavor');
     //END SUGARCRM flav=com ONLY
