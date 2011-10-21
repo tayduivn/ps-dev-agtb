@@ -372,6 +372,8 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 
 	    		if(!isset($acceptStatusUsers[$user_id])) {
 	    			$focus->users->add($user_id);
+                    if($user_id == $current_user->id && $focus->update_vcal)
+                        vCal::cache_sugar_vcal($current_user);
 	    		} else {
 	    			// update query to preserve accept_status
 	    			$qU  = 'UPDATE meetings_users SET deleted = 0, accept_status = \''.$acceptStatusUsers[$user_id].'\' ';
