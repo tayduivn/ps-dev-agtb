@@ -504,12 +504,18 @@ protected function writeFiles($path, $skipBuilds=array()){
 	 //global  $SugarVersion;
 	 //global  $flavor;
      $path = $this->cleanPath($path);
-
+     $blackListPath = strpos($path, '/') == 0 ? substr($path, 1) : $path;
 
      foreach($this->output as $f=>$o){
      			if(!empty($this->onlyBuild) && empty($this->onlyBuild[$f]))continue;
 
-                if(!empty($this->config['blackList'][$f][$path]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])|| (!empty($this->onlyOutput) && empty($this->onlyOutput[$f])))continue;
+                if(!empty($this->config['blackList'][$f][$blackListPath])
+                {
+                    echo $blackListPath . "\n";
+                    continue;
+                }
+
+                if(!empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])|| (!empty($this->onlyOutput) && empty($this->onlyOutput[$f])))continue;
                 $this->makeDirs(dirname($path), $f);
                 //replace some sugar variables
            	    $this->config['sugarVariables']['@_SUGAR_FLAV'] = strtoupper($f);
@@ -560,14 +566,15 @@ public function build($path, $skipBuilds=array()){
 		$next = $path . '/' . $e;
 		if(is_dir($next)){
                          $sugar_path =  $this->cleanPath($next);
+                         $blackListPath = strpos($sugar_path, '/') == 0 ? substr($sugar_path, 1) : $sugar_path;
 
                          $nextSkip = $skipBuilds;
                          foreach($this->active as $f=>$a){
-                                if(empty($nextSkip[$f]) && !empty($this->config['blackList'][$f][$sugar_path])){
+                                if(empty($nextSkip[$f]) && !empty($this->config['blackList'][$f][$blackListPath])){
                     
                                    //Also place the tests directory in the skip list
                                    if((strpos(trim($sugar_path), 'modules') == 0)) {
-                                       $this->config['backList'][$f]['tests/' . $sugar_path] = true;
+                                       $this->config['blackList'][$f]['tests/' . $sugar_path] = true;
                                    }	
                                    $nextSkip[$f] = true;
                                 }
