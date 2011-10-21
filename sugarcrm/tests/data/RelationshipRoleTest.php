@@ -107,9 +107,12 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
         ));
         $this->assertContains("jt1.parent_type = 'Opportunities'", $join);
         $this->assertContains("jt1.parent_id=jt2.id", $join);
-        $result = $db->query("SELECT * from tasks jt1 $join WHERE jt1.id='{$task->id}'");
+        $result = $db->query("SELECT count(jt1.id) as count FROM tasks jt1 $join WHERE jt1.id='{$task->id}'");
         $this->assertTrue($result != false, "One2M getJoin returned invalid SQL");
-        $this->assertEquals(1, $db->getRowCount($result));
+        //sqlsrv_num_rows seems buggy
+        //$this->assertEquals(1, $db->getRowCount($result));
+        $row = $db->fetchByAssoc($result);
+        $this->assertEquals(1, $row['count']);
 
         //Now check that it also works from the other side
         $opp->load_relationship("tasks");
@@ -125,8 +128,12 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
         ));
         $this->assertContains("jt2.parent_type = 'Opportunities'", $join);
         $this->assertContains("jt1.id=jt2.parent_id", $join);
-        $result = $db->query("SELECT * from opportunities jt1 $join WHERE jt1.id='{$opp->id}'");
+        $result = $db->query("SELECT count(jt1.id) as count FROM opportunities jt1 $join WHERE jt1.id='{$opp->id}'");
         $this->assertTrue($result != false, "One2M getJoin returned invalid SQL");
-        $this->assertEquals(1, $db->getRowCount($result));
+
+        //sqlsrv_num_rows seems buggy
+        //$this->assertEquals(1, $db->getRowCount($result));
+        $row = $db->fetchByAssoc($result);
+        $this->assertEquals(1, $row['count']);
     }
 }
