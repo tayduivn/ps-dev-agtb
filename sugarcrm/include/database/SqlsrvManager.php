@@ -517,6 +517,9 @@ EOSQL;
      */
      public function getRowCount($result)
     {
+        if(!empty($result)) {
+            return sqlsrv_num_rows($result);
+		}
 		return 0;
 	}
 
