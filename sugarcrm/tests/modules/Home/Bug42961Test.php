@@ -41,6 +41,7 @@ class Bug42961Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testBuildCache()
     {
+        require('include/modules.php');
         $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
         $unifiedSearchAdvanced->buildCache();
         $this->assertFileExists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php', 'Here should be cache file with data');
