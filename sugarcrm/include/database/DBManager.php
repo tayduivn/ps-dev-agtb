@@ -1649,6 +1649,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * Returns the number of rows returned by the result
 	 * @abstract
 	 * @param  resource $result query result resource
+	 * See also select_rows capability, will return 0 unless the DB supports it
 	 * @return int
 	 */
 	public function getRowCount($result)
@@ -1659,6 +1660,7 @@ protected function checkQuery($sql, $object_name = false)
     /**
      * Returns the number of rows affected by the last query
      * @abstract
+	 * See also affected_rows capability, will return 0 unless the DB supports it
      * @param resource $result query result resource
      * @return int
      */
@@ -3295,6 +3297,29 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
+	 * Fetches the next row in the query result into an associative array
+	 *
+	 * @param  resource $result
+	 * @param  bool $encode Need to HTML-encode the result?
+	 * @return array    returns false if there are no more rows available to fetch
+	 */
+	public function fetchByAssoc($result, $encode = true)
+	{
+	    if (empty($result))	return false;
+
+	    if(is_int($encode) && func_num_args() == 3) {
+	        // old API: $result, $rowNum, $encode
+	        $encode = func_get_arg(2);
+	    }
+	    $row = $this->fetchRow($result);
+	    if (!empty($row) && $encode && $this->encode) {
+	    	return array_map('to_html', $row);
+	    } else {
+	       return $row;
+	    }
+	}
+
+	/**
 	 * Get DB driver name used for install/upgrade scripts
 	 * @return string
 	 */
@@ -3587,11 +3612,9 @@ protected function checkQuery($sql, $object_name = false)
 	 * Fetches the next row in the query result into an associative array
 	 *
 	 * @param  resource $result
-	 * @param  int      $rowNum optional, specify a certain row to return
-	 * @param  bool     $encode optional, true if we want html encode the resulting array
 	 * @return array    returns false if there are no more rows available to fetch
 	 */
-	abstract public function fetchByAssoc($result, $rowNum = -1, $encode = true);
+	abstract public function fetchRow($result);
 
 	/**
 	 * Connects to the database backend

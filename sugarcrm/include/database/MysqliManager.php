@@ -225,23 +225,13 @@ class MysqliManager extends MysqlManager
 	}
 
 	/**
-	 * @see DBManager::fetchByAssoc()
+	 * @see DBManager::fetchRow()
 	 */
-	public function fetchByAssoc($result, $rowNum = -1, $encode = true)
+	public function fetchRow($result)
 	{
-		if (!$result)
-			return false;
-
-		if ($result && $rowNum > -1) {
-			if ($this->getRowCount($result) > $rowNum)
-				mysqli_data_seek($result, $rowNum);
-		}
+		if (empty($result))	return false;
 
 		$row = mysqli_fetch_assoc($result);
-
-		if ($encode && $this->encode && is_array($row))
-			return array_map('to_html', $row);
-
 		if($row == null) $row = false; //Make sure MySQLi driver results are consistent with other database drivers
 		return $row;
 	}

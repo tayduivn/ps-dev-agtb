@@ -119,9 +119,9 @@ class Team extends SugarBean
 	function list_view_parse_additional_sections(&$list_form, $xTemplateSection) {
 		global $current_user;
 
-		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) 
+		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView"))
 		{
-			if ($current_user->isAdminForModule('Users')) 
+			if ($current_user->isAdminForModule('Users'))
 			{
 			    $list_form->parse($xTemplateSection.".row.admin_team");
 			    $list_form->parse($xTemplateSection.".row.admin_edit");
@@ -298,10 +298,10 @@ class Team extends SugarBean
 		$result = $this->db->query($query,true,"Error finding team memberships: ");
 
 		$rows_found =  $this->db->getRowCount($result);
-
 		$GLOBALS['log']->debug("About to duplicate team memberships. from team $original_team_id.  Rows found $rows_found");
+
 		$membership = new TeamMembership();
-		for($index = 0, $row = $this->db->fetchByAssoc($result, $index); $row && ($index < $rows_found) ;$index++, $row = $this->db->fetchByAssoc($result, $index))
+		while(($row = $this->db->fetchByAssoc($result)) != false)
 		{
 			$membership->retrieve($row['id']);
 			$membership->id=create_guid();
@@ -557,15 +557,8 @@ class Team extends SugarBean
 	{
 		// At this point, we have the manager's ID.  Let's gather the list of their employee's IDs.
 		$query = "select id from users where reports_to_id='$user_id'";
-		$result = $this->db->query($query,true,"Error finding the direct reports for a manager: ");
-		$rows_found =  $this->db->getRowCount($result);
-
-		if($rows_found > 0)
-		{
-			return true;
-		}
-
-		return false;
+		$result = $this->db->getOne($query,true,"Error finding the direct reports for a manager: ");
+		return !empty($result);
 	}
 
     function scan_direct_reports_team_for_access($user_id)
@@ -573,15 +566,8 @@ class Team extends SugarBean
         // At this point, we have the manager's ID.  Let's gather the list of their employee's IDs.
         $query = "SELECT users.id FROM users INNER JOIN team_memberships ON users.id = team_memberships.user_id".
                                      " WHERE users.reports_to_id = '$user_id' AND team_memberships.team_id = '$this->id' AND team_memberships.deleted = 0";
-        $result = $this->db->query($query,true,"Error finding the direct reports for a manager: ");
-        $rows_found =  $this->db->getRowCount($result);
-
-        if($rows_found > 0)
-        {
-            return true;
-        }
-
-        return false;
+        $result = $this->db->getOne($query,true,"Error finding the direct reports for a manager: ");
+        return !empty($result);
     }
 
 	/**

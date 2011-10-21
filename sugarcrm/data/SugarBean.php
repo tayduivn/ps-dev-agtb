@@ -2280,15 +2280,13 @@ function save_relationship_changes($is_update, $exclude=array())
         $query .= " WHERE $this->table_name.id = '$id' ";
         if ($deleted) $query .= " AND $this->table_name.deleted=0";
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
-        //requireSingleResult has beeen deprecated.
-        //$result = $this->db->requireSingleResult($query, true, "Retrieving record by id $this->table_name:$id found ");
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
         if(empty($result))
         {
             return null;
         }
 
-        $row = $this->db->fetchByAssoc($result, -1, $encode);
+        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
@@ -3702,19 +3700,8 @@ function save_relationship_changes($is_update, $exclude=array())
             $index = $row_offset;
             while ($max_per_page == -99 || ($index < $row_offset + $max_per_page))
             {
-
-                if(!empty($sugar_config['disable_count_query']))
-                {
-                    $row = $db->fetchByAssoc($result);
-                }
-                else
-                {
-                    $row = $db->fetchByAssoc($result, $index);
-                }
-                if (empty($row))
-                {
-                    break;
-                }
+                $row = $db->fetchByAssoc($result);
+                if (empty($row)) break;
 
                 //instantiate a new class each time. This is because php5 passes
                 //by reference by default so if we continually update $this, we will
@@ -3793,12 +3780,9 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $result = $this->db->query($count_query, true, "Error running count query for $this->object_name List: ");
         $row_num = 0;
-        $row = $this->db->fetchByAssoc($result, $row_num);
-        while($row)
+        while($row = $this->db->fetchByAssoc($result, false))
         {
             $num_rows_in_query += current($row);
-            $row_num++;
-            $row = $this->db->fetchByAssoc($result, $row_num);
         }
 
         return $num_rows_in_query;
@@ -3905,14 +3889,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
                 // get the current row
                 $index = $row_offset;
-                if(!empty($sugar_config['disable_count_query']))
-                {
-                    $row = $db->fetchByAssoc($result);
-                }
-                else
-                {
-                    $row = $db->fetchByAssoc($result, $index);
-                }
+                $row = $db->fetchByAssoc($result);
 
                 $post_retrieve = array();
                 $isFirstTime = true;
@@ -4040,7 +4017,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     // go to the next row
                     $index++;
-                    $row = $db->fetchByAssoc($result, $index);
+                    $row = $db->fetchByAssoc($result);
                 }
             }
             //now handle retrieving many-to-many relationships
@@ -4165,8 +4142,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
         if($rows_found != 0 || !$this->db->supports('select_rows'))
         {
-            $index = 0;
-            $row = $this->db->fetchByAssoc($result, $index);
+            $row = $this->db->fetchByAssoc($result);
             $this->retrieve($row['id']);
         }
 
@@ -4200,11 +4176,7 @@ function save_relationship_changes($is_update, $exclude=array())
         $isFirstTime = true;
         $bean = new $class();
 
-        //if($this->db->getRowCount($result) > 0){
-
-
         // We have some data.
-        //while ($row = $this->db->fetchByAssoc($result)) {
         while (($row = $bean->db->fetchByAssoc($result)) != null)
         {
             if(!$isFirstTime)
@@ -4863,7 +4835,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $this->duplicates_found = true;
         }
-        $row = $this->db->fetchByAssoc($result, -1, $encode);
+        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;

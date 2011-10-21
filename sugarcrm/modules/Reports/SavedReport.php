@@ -143,7 +143,7 @@ class SavedReport extends SugarBean
 		$this->save();
 		return $result;
 	}
-	
+
 	function mark_deleted($id){
 	    require_once('modules/Reports/schedule/ReportSchedule.php');
 	    $report_schedule = new ReportSchedule();
@@ -206,7 +206,7 @@ class SavedReport extends SugarBean
 		$result = $this->db->query($query,true," Error: ");
 		$obj_arr = array();
 
-		while ($row = $this->db->fetchByAssoc($result,-1,FALSE) )
+		while ($row = $this->db->fetchByAssoc($result,FALSE) )
 		{
 			$focus = new SavedReport();
 

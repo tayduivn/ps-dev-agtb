@@ -982,42 +982,24 @@ class MssqlManager extends DBManager
     }
 
 	/**
-     * @see DBManager::fetchByAssoc()
-     */
-    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
-    {
-        if (!$result)
-            return false;
+	 * @see DBManager::fetchRow()
+	 */
+	public function fetchRow($result)
+	{
+		if (empty($result))	return false;
 
-		if ($result && $rowNum < 0) {
-            $row = mssql_fetch_assoc($result);
-            //MSSQL returns a space " " when a varchar column is empty ("") and not null.
-            //We need to iterate through the returned row array and strip empty spaces
-            if(!empty($row)){
-                foreach($row as $key => $column) {
-                    //notice we only strip if one space is returned.  we do not want to strip
-                    //strings with intentional spaces (" foo ")
-                    if (!empty($column) && $column ==" ") {
-                        $row[$key] = '';
-                    }
-                }
+        $row = mssql_fetch_assoc($result);
+        //MSSQL returns a space " " when a varchar column is empty ("") and not null.
+        //We need to iterate through the returned row array and strip empty spaces
+        if(!empty($row)){
+            foreach($row as $key => $column) {
+               //notice we only strip if one space is returned.  we do not want to strip
+               //strings with intentional spaces (" foo ")
+               if (!empty($column) && $column ==" ") {
+                   $row[$key] = '';
+               }
             }
-
-            if($encode && $this->encode && is_array($row))
-                return array_map('to_html', $row);
-
-            return $row;
-		}
-
-		if ($this->getRowCount($result) > $rowNum) {
-			if ( $rowNum == -1 )
-                $rowNum = 0;
-			@mssql_data_seek($result, $rowNum);
         }
-
-        $row = @mssql_fetch_assoc($result);
-        if($encode && $this->encode && is_array($row))
-            return array_map('to_html', $row);
         return $row;
 	}
 

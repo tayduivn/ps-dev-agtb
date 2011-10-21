@@ -463,8 +463,7 @@ class KBDocument extends SugarBean {
 		$result=$db->query($query);
 
 		if (!empty($result)) {
-			//$row=$db->fetchByAssoc($result);
-			 while($row = $db->fetchByAssoc($result, -1, false)){
+			 while($row = $db->fetchByAssoc($result, false)){
                $docrevs[]=$row;
               }
 		}
@@ -554,11 +553,8 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 	    if (empty($kbdoc_id)) return null;
 		$query="select kbtag_id from kbdocuments_kbtags where kbdocument_id = '$kbdoc_id' and deleted=0";
 		$result=$focus->db->query($query);
-		if (!empty($result)) {
-			//$kbtags=$focus->db->fetchByAssoc($result);
-		}
 		$tags='';
-       while($row = $focus->db->fetchByAssoc($result, -1, false)){
+       while($row = $focus->db->fetchByAssoc($result, false)){
          $kbdoctags[]=$row;
         }
       for($i=0;$i<count($kbdoctags);$i++){
