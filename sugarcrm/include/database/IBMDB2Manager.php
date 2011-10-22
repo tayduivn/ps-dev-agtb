@@ -429,24 +429,13 @@ class IBMDB2Manager  extends DBManager
 	}
 
 	/**~
-	 * @see DBManager::fetchByAssoc()
+	 * @see DBManager::fetchRow()
 	 */
-	public function fetchByAssoc($result, $rowNum = -1, $encode = true)
+	public function fetchRow($result)
 	{
-		if (!$result)
-			return false;
+		if (empty($result))	return false;
 
-		if (isset($result) && $result && $rowNum < 0) {
-			$row = $this->db2FetchRow($result);
-		} else {
-			if ($this->getRowCount($result) > $rowNum)
-				return array(); // cannot do seek
-			$row = $this->db2FetchRow($result);
-		}
-		if ($row != false && $encode && $this->encode && sizeof($row)>0)
-			return array_map('to_html', $row);
-
-		return $row;
+		return $this->db2FetchRow($result);
 	}
 
 	/**+

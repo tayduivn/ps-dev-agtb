@@ -1769,7 +1769,7 @@ return str_replace(' > ','_',
     {
         if (isset($display_column['group_function'])) {
             $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_" . strtoupper($display_column['group_function']) . "_" . strtoupper($display_column['name']));
-        } 
+        }
 
         if (!isset($field_name) || !isset($display_column['fields'][$field_name])) {
             $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_" . strtoupper($display_column['name']));
@@ -1783,7 +1783,7 @@ return str_replace(' > ','_',
         $chart_cells = array();
 
         if ($this->do_export) {
-            $db_row = $this->db->fetchByAssoc($this->$result_field_name, -1, false);
+            $db_row = $this->db->fetchByAssoc($this->$result_field_name, false);
         }
         else {
             $db_row = $this->db->fetchByAssoc($this->$result_field_name);

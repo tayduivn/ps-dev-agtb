@@ -52,7 +52,7 @@ class DataSet extends SugarBean {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
-	
+
 	var $team_id;
 
 	var $name;
@@ -60,7 +60,7 @@ class DataSet extends SugarBean {
 	var $query_id;
 	var $list_order_y = 0;
 	var $output_default;
-	
+
 	//UI settings
 	var $table_width = 100;
 	var $font_size = 0;
@@ -73,16 +73,16 @@ class DataSet extends SugarBean {
 	var $use_prev_header;
 	var $header_back_color;
 	var $body_back_color;
-	
+
 	//Layout variable
 	var $custom_layout;
-	
-	
-	
+
+
+
 	//formatting variables - might move this
 	var $symbol;
-	
-	
+
+
 	//sub query information
 	var $interlock = false;
 	var $sub_id = null;
@@ -92,11 +92,11 @@ class DataSet extends SugarBean {
 	//for the name of the parent if an interlocked data set
 	var $parent_name;
 	var $parent_id;
-	
+
 	//for the name of the child if an interlocked data set
 	var $child_name;
 	var $child_id;
-	
+
 	//for related fields
 	var $query_name;
 	var $report_name;
@@ -123,7 +123,7 @@ class DataSet extends SugarBean {
 		,"start_axis" => "y"
 		);
 
-	
+
 	function DataSet() {
 		parent::SugarBean();
 
@@ -131,7 +131,7 @@ class DataSet extends SugarBean {
 
 	}
 
-	
+
 
 	function get_summary_text()
 	{
@@ -171,10 +171,10 @@ class DataSet extends SugarBean {
 		$this->get_child_dataset();
 		$this->assigned_name = get_assigned_team_name($this->team_id);
 	}
-	
 
-	function get_custom_query(){	
-		
+
+	function get_custom_query(){
+
 		$query = "SELECT cq.name from $this->rel_custom_queries cq, $this->table_name p1 where cq.id = p1.query_id and p1.id = '$this->id' and p1.deleted=0 and cq.deleted=0";
 		$result = $this->db->query($query,true," Error filling in additional custom query detail fields: ");
 
@@ -190,7 +190,7 @@ class DataSet extends SugarBean {
 			$this->query_name = '';
 		}
 	}
-	
+
 	function get_parent_dataset(){
 		$query = "SELECT $this->table_name.id, $this->table_name.name from $this->table_name where $this->table_name.id = '$this->parent_id' AND $this->table_name.deleted=0 ";
 		$result = $this->db->query($query,true," Error filling in additional parent detail fields: ");
@@ -209,7 +209,7 @@ class DataSet extends SugarBean {
 			$this->parent_id = '';
 		}
 	}
-	
+
 	function get_child_dataset(){
 		$query = "SELECT $this->table_name.name, $this->table_name.id from $this->table_name where $this->table_name.parent_id = '$this->id' AND $this->table_name.deleted=0 ";
 		$result = $this->db->query($query,true," Error filling in additional child detail fields: ");
@@ -228,8 +228,8 @@ class DataSet extends SugarBean {
 			$this->child_id = '';
 		}
 	}
-	
-	
+
+
 	function get_report_name(){
 		$query = "SELECT $this->report_table.id, $this->report_table.name from $this->table_name
 					LEFT JOIN $this->report_table ON $this->report_table.id = '$this->report_id'
@@ -257,19 +257,19 @@ class DataSet extends SugarBean {
 		global $app_list_strings;
 
 		global $current_user;
-		
+
 		if(empty($this->exportable)) $this->exportable="0";
 
 		$temp_array = parent::get_list_view_data();
 		$temp_array['NAME'] = (($this->name == "") ? "<em>blank</em>" : $this->name);
 		$temp_array['OUTPUT_DEFAULT'] = $app_list_strings['dataset_output_default_dom'][isset($this->output_default) && !empty($this->output_default) ? $this->output_default : 'table'];
-		
+
 		$temp_array['LIST_ORDER_Y'] = $this->list_order_y;
 		$temp_array['EXPORTABLE'] = $this->exportable;
 		$temp_array['HEADER'] = $this->header;
 		$temp_array['QUERY_NAME'] = $this->query_name;
 		$temp_array['REPORT_NAME'] = $this->report_name;
-		
+
 		return $temp_array;
 	}
 	/**
@@ -297,11 +297,11 @@ class DataSet extends SugarBean {
 
 	function process_interlock($list_array){
 		global $mod_strings;
-	
-		$sub_data_set = new DataSet();	
+
+		$sub_data_set = new DataSet();
 		$sub_data_set->retrieve($this->sub_id);
 		$sub_data_set->sub_query = true;
-			
+
 			//OUTPUT THE SUB-DATASET
 			$data_set = new CustomQuery();
 			$data_set->retrieve($sub_data_set->query_id);
@@ -310,14 +310,14 @@ class DataSet extends SugarBean {
 			$SubView->initNewXTemplate( 'modules/CustomQueries/QueryView.html',$mod_strings);
 			$SubView->setDisplayHeaderAndFooter(false);
 			$SubView->setup($data_set, $sub_data_set, "main", "CUSTOMQUERY", true);
-		
+
 		return $SubView->processDataSet();
-	
+
 	//end function process_interlock
-	}	
+	}
 
 	function check_interlock(){
-	
+
 		$query = "	SELECT id from $this->table_name
 					WHERE deleted=0
 					AND parent_id = '$this->id'
@@ -336,7 +336,7 @@ class DataSet extends SugarBean {
 		}
 
 //end function check_interlock
-}	
+}
 
 /////////////////Custom Layout Functions//////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -353,25 +353,25 @@ class DataSet extends SugarBean {
 			foreach($query_object->column_array as $key => $value){
 				if(empty($value)) $column_name[$key] = "&nbsp;";
 				$layout_object = new DataSet_Layout();
-				$layout_object->construct($this->id, "Column", $key, "Normal", $value);	
+				$layout_object->construct($this->id, "Column", $key, "Normal", $value);
 			}
 		//if empty column_array
-		}	
-	
-	//end function enable_custom_layout	
-	}	
+		}
+
+	//end function enable_custom_layout
+	}
 
 	function disable_custom_layout(){
-	
+
 		$layout_object = new DataSet_Layout();
 		$layout_object->clear_all_layout($this->id);
-	
+
 
 	//end function disable_custom_layout
-	}	
+	}
 
 	function get_layout_id_from_parent_value($parent_value){
-	
+
 		$query = "	SELECT id from $this->rel_dataset_layout
 						WHERE parent_value='$parent_value'
 						AND deleted=0
@@ -381,18 +381,18 @@ class DataSet extends SugarBean {
 
 		// Get the id and the name.
 		$row = $this->db->fetchByAssoc($result);
-	
+
 		if(!empty($row['id']) && $row['id']!=""){
 			return $row['id'];
 		} else {
-			return false;	
-		}		
-		
+			return false;
+		}
+
 	//end function get_layout_id_from_parent_value
 	}
 
 	function get_layout_array($hide_columns=false){
-	
+
 		$layout_object = new DataSet_Layout();
 		return	$layout_object->get_layout_array($this->id, $hide_columns);
 
@@ -403,7 +403,7 @@ class DataSet extends SugarBean {
 
 		$formatted_amount =   $this->symbol."". number_format($amount);
 		return $formatted_amount;
-	
+
 	//end function format_accounting
 	}
 
@@ -427,7 +427,7 @@ class DataSet extends SugarBean {
 		global $current_language, $current_user, $mod_strings, $app_list_strings;
 		$app_strings = return_application_language($current_language);
 		//$symbol = $app_strings['LBL_CURRENCY_SYMBOL'];
-		
+
 		$currency = new Currency();
 		if($current_user->getPreference('currency') ){
 			$currency->retrieve($current_user->getPreference('currency'));
@@ -435,12 +435,12 @@ class DataSet extends SugarBean {
 		}else{
 			$currency->retrieve('-99');
 			$symbol = $currency->symbol;
-		}	
+		}
 
 	$this->symbol = $symbol;
-	
+
 	//end function setup_money_symbol
-	}	
+	}
 
 
 	function export_csv(){
@@ -452,7 +452,7 @@ class DataSet extends SugarBean {
 		$result_message = $query_object->get_custom_results(true);
 		if($result_message['result']=="Valid"){
 		//run the export
-			$query = html_entity_decode($query_object->custom_query, ENT_QUOTES);	
+			$query = html_entity_decode($query_object->custom_query, ENT_QUOTES);
 			$result = $this->db->query($query,true,"Error exporting custom query output to dataset: "."<BR>$query");
 
 			$fields_array = $this->db->getFieldsArray($result, true);
@@ -460,23 +460,23 @@ class DataSet extends SugarBean {
 			//get a temp header array if the attributes are available
 			$layout_array = $this->get_layout_array();
 			//reorganize the fields_array if necessary;
-	
+
 			foreach ($fields_array as $key => $default_name){
 				if(!empty($layout_array[$default_name]['display_name'])){
 					$fields_array[$key] = $layout_array[$default_name]['display_name'];
-				}		
+				}
 			//end foreach loop
 			}
 
 			$header = implode("\",\"",array_values($fields_array));
 			$header = "\"" .$header;
 			$header .= "\"\r\n";
-			$content = $header;	
+			$content = $header;
 
 			$column_list = implode(",",array_values($fields_array));
 
-			while($val = $this->db->fetchByAssoc($result,-1,false)){
-				
+			while($val = $this->db->fetchByAssoc($result,false)){
+
 				$new_arr = array();
 
 				foreach (array_values($val) as $value){
@@ -490,17 +490,17 @@ class DataSet extends SugarBean {
 				$content .= $line;
 			//end while statement
 			}
-		
+
 			return $content;
-	
-	
+
+
 		//end if the query is a valid query
 		} else {
 			return "Invalid Query.";
-		}	
-	
+		}
+
 	//end function scheduled_export
-	}	
+	}
 
 //end class datasets
 }

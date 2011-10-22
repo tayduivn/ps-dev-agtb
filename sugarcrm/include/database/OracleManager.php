@@ -363,25 +363,14 @@ class OracleManager extends DBManager
         return $row;
     }
 
-    /**
-     * @see DBManager::fetchByAssoc()
-     */
-    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
-    {
-        if (!$result)
-            return false;
+	/**
+	 * @see DBManager::fetchRow()
+	 */
+	public function fetchRow($result)
+	{
+		if (empty($result))	return false;
 
-        if (isset($result) && $result && $rowNum < 0) {
-            $row = $this->ociFetchRow($result);
-        } else {
-            if ($this->getRowCount($result) > $rowNum)
-                return array(); // cannot do seek in oracle
-            $row = $this->ociFetchRow($result);
-        }
-        if ($row != false && $encode && $this->encode && sizeof($row)>0)
-            return array_map('to_html', $row);
-
-        return $row;
+        return $this->ociFetchRow($result);
     }
 
     /**
@@ -901,6 +890,8 @@ class OracleManager extends DBManager
         }
 
         $qval = parent::massageValue($val, $fieldDef);
+        if(empty($val)) return $qval; // do not massage empty values
+
         switch($type) {
             case 'date':
                 $val = explode(" ", $val); // make sure that we do not pass the time portion

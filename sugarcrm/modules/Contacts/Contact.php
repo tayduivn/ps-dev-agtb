@@ -21,27 +21,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Contact.php 54503 2010-02-12 14:44:05Z jmertic $
- * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
-require_once('include/SugarObjects/templates/person/Person.php');
-
-
-//BEGIN SUGARCRM flav=dce ONLY
-
-//END SUGARCRM flav=dce ONLY
-
-
-
-
-
-
-
-
-
 
 require_once('include/SugarObjects/templates/person/Person.php');
 // Contact is used to store customer information.
@@ -180,24 +163,18 @@ class Contact extends Person {
 
 
 //BEGIN SUGARCRM flav=pro ONLY
-	/** Returns a list of the associated products
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved..
-	 * Contributor(s): ______________________________________..
-	*/
+	/**
+	 * Returns a list of the associated products
+	 */
 	function get_products()
 	{
-		
-
-		$product = new Product();
 		// First, get the list of IDs.
-        $query = get_products_query();
+        $query = $this->get_products_query();
 		return $this->build_related_list($query, new Product());
 	}
 
 	function get_products_query()
 	{
-		
 		$product = new Product();
 
 		if($GLOBALS['db']->tableExists($product->table_name . "_cstm")){
@@ -257,7 +234,7 @@ class Contact extends Person {
 		//if this is from "contact address popup" action, then process popup list query
 		if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'ContactAddressPopup'){
 			return $this->address_popup_create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
-			
+
 		}else{
 			//any other action goes to parent function in sugarbean
 			if(strpos($order_by,'sync_contact') !== false){
@@ -266,7 +243,7 @@ class Contact extends Person {
 				$order_by = '';
 			}
 			return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
-		}		
+		}
 
 
 	}
@@ -320,7 +297,7 @@ class Contact extends Person {
   				$from_query .= $custom_join['join'];
 		}
 		$ret_array['from'] = $from_query;
-		$ret_array['from_min'] = 'from contacts'; 
+		$ret_array['from_min'] = 'from contacts';
 
 		$where_auto = '1=1';
 		if($show_deleted == 0){
@@ -337,26 +314,26 @@ class Contact extends Person {
 			$where_query = "where ".$where_auto;
 		}
 
-			
+
 		$ret_array['where'] = $where_query;
-		$orderby_query = ''; 
+		$orderby_query = '';
 		if(!empty($order_by)){
 		    $orderby_query =  " ORDER BY ". $this->process_order_by($order_by, null);
 		}
 		$ret_array['order_by'] = $orderby_query ;
-		
+
 		if($return_array)
     	{
     		return $ret_array;
-    	}		
-		
+    	}
+
 	    return $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
 
 	}
 
 
-	
-	
+
+
 	        function create_export_query(&$order_by, &$where, $relate_link_join='')
         {
         	$custom_join = $this->custom_fields->getJOIN(true, true,$where);
@@ -386,11 +363,11 @@ class Contact extends Person {
 	                                ON ( contacts.id=accounts_contacts.contact_id and (accounts_contacts.deleted is null or accounts_contacts.deleted = 0))
 	                                LEFT JOIN accounts
 	                                ON accounts_contacts.account_id=accounts.id ";
-						
+
 						//join email address table too.
 						$query .=  ' LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Contacts\' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 ';
 						$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
-						
+
 						if($custom_join){
   							$query .= $custom_join['join'];
 						}
@@ -409,13 +386,13 @@ class Contact extends Person {
                 return $query;
         }
 
-	function fill_in_additional_list_fields() {	
+	function fill_in_additional_list_fields() {
 		parent::fill_in_additional_list_fields();
 		$this->_create_proper_name_field();
 		// cn: bug 8586 - l10n names for Contacts in Email TO: field
 		$this->email_and_name1 = "{$this->full_name} &lt;".$this->email1."&gt;";
 		$this->email_and_name2 = "{$this->full_name} &lt;".$this->email2."&gt;";
-		
+
 		if($this->force_load_details == true) {
 			$this->fill_in_additional_detail_fields();
 		}
@@ -478,11 +455,11 @@ class Contact extends Person {
 //BEGIN SUGARCRM flav!=sales ONLY
         // Set campaign name if there is a campaign id
 		if( !empty($this->campaign_id)){
-			
+
 			$camp = new Campaign();
 		    $where = "campaigns.id='{$this->campaign_id}'";
 		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
-		    $this->campaign_name = $campaign_list[0]->name;	
+		    $this->campaign_name = $campaign_list[0]->name;
 		}
 //END SUGARCRM flav!=sales ONLY
 	}
@@ -573,7 +550,7 @@ class Contact extends Person {
 	function set_notification_body($xtpl, $contact)
 	{
 	    global $locale;
-	    
+
 		$xtpl->assign("CONTACT_NAME", trim($locale->getLocaleFormattedName($contact->first_name, $contact->last_name)));
 		$xtpl->assign("CONTACT_DESCRIPTION", $contact->description);
 
@@ -590,20 +567,11 @@ class Contact extends Person {
 
 		$where_clause = "(email1='$email' OR email2='$email') AND deleted=0";
 
-                $query = "SELECT * FROM $this->table_name WHERE $where_clause";
-                $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
-		        //requireSingleResult has beeen deprecated.
-                //$result = $this->db->requireSingleResult($query, true, "Retrieving record $where_clause:");
-				$result = $this->db->limitQuery($query,0,1,true, "Retrieving record $where_clause:");
+        $query = "SELECT id FROM $this->table_name WHERE $where_clause";
+        $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
+		$result = $this->db->getOne($query, true, "Retrieving record $where_clause:");
 
-                if( empty($result))
-                {
-                        return null;
-                }
-
-                $row = $this->db->fetchByAssoc($result, -1, true);
-		return $row['id'];
-
+		return empty($result)?null:$result;
 	}
 
 	function save_relationship_changes($is_update) {
@@ -619,17 +587,19 @@ class Contact extends Person {
 		parent::save_relationship_changes($is_update);
 	}
 
-	function bean_implements($interface){
+	function bean_implements($interface)
+	{
 		switch($interface){
 			case 'ACL':return true;
 		}
 		return false;
 	}
-	function get_unlinked_email_query($type=array()) {
-		
+
+	function get_unlinked_email_query($type=array())
+	{
 		return get_unlinked_email_query($type, $this);
 	}
-	
+
     /**
      * used by import to add a list of users
      *
@@ -639,36 +609,33 @@ class Contact extends Person {
      *
      * @param string $list_of_user
      */
-    
-    function process_sync_to_outlook(
-        $list_of_users
-        ) 
+    function process_sync_to_outlook($list_of_users)
     {
         static $focus_user;
-        
+
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_user instanceof User) ) {
-            
+
             $focus_user = new User();
         }
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         static $focus_team;
-        
+
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_team instanceof Team) ) {
-            
+
             $focus_team = new Team();
         }
         //END SUGARCRM flav=pro ONLY
-        
+
 		if ( empty($list_of_users) ) {
             return;
 		}
         if ( !isset($this->users) ) {
             $this->load_relationship('user_sync');
         }
-                
+
 		if ( strtolower($list_of_users) == 'all' ) {
             // add all non-deleted users
 			$sql = "SELECT id FROM users WHERE deleted=0 AND is_group=0 AND portal_only=0";
@@ -676,7 +643,7 @@ class Contact extends Person {
 			while ( $hash = $this->db->fetchByAssoc($result) ) {
                 $this->user_sync->add($hash['id']);
 			}
-		} 
+		}
         else {
             $theList = explode(",",$list_of_users);
             foreach ($theList as $eachItem) {
@@ -690,9 +657,9 @@ class Contact extends Person {
                 if ( $focus_team->retrieve($eachItem)
                         || $focus_team->retrieve_team_id($eachItem)) {
                     // it is a team, add all team members
-                    $sql = "SELECT DISTINCT(user_id) 
-                                FROM team_memberships 
-                                WHERE team_id='{$focus_team->id}' 
+                    $sql = "SELECT DISTINCT(user_id)
+                                FROM team_memberships
+                                WHERE team_id='{$focus_team->id}'
                                     AND deleted=0";
                     $result = $this->db->query($sql);
                     while ( $hash = $this->db->fetchByAssoc($result) ) {
@@ -703,9 +670,4 @@ class Contact extends Person {
 			}
 		}
 	}
-
 }
-
-
-
-?>
