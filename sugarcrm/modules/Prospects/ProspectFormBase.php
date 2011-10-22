@@ -27,135 +27,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-class ProspectFormBase  {
+require_once('include/SugarObjects/forms/PersonFormBase.php');
 
-function checkForDuplicates($prefix){
-	global $local_log;
-	require_once('include/formbase.php');
-	
-	$focus = new Prospect();
-	if(!checkRequired($prefix, array_keys($focus->required_fields))){
-		return null;
-	}
-	$query = '';
-	$baseQuery = 'select id,first_name, last_name, title, email1, email2  from prospects where deleted!=1 and (';
-	if(!empty($_POST[$prefix.'first_name']) && !empty($_POST[$prefix.'last_name'])){
-		$query = $baseQuery ."  (first_name like '". $_POST[$prefix.'first_name'] . "%' and last_name = '". $_POST[$prefix.'last_name'] ."')";
-	}else{
-			$query = $baseQuery ."  last_name = '". $_POST[$prefix.'last_name'] ."'";
-	}
-	if(!empty($_POST[$prefix.'email1'])){
-		if(empty($query)){
-		$query = $baseQuery. "  email1='". $_POST[$prefix.'email1'] . "' or email2 = '". $_POST[$prefix.'email1'] ."'";
-		}else {
-			$query .= "or email1='". $_POST[$prefix.'email1'] . "' or email2 = '". $_POST[$prefix.'email1'] ."'";
-		}
-	}
-	if(!empty($_POST[$prefix.'email2'])){
-		if(empty($query))	{
-			$query = $baseQuery. "  email1='". $_POST[$prefix.'email2'] . "' or email2 = '". $_POST[$prefix.'email2'] ."'";
-		}else{
-			$query .= "or email1='". $_POST[$prefix.'email2'] . "' or email2 = '". $_POST[$prefix.'email2'] ."'";
-		}
+class ProspectFormBase  extends PersonFormBase {
 
-	}
+var $moduleName = 'Prospects';
+var $objectName = 'Prospect';
 
-	if(!empty($query)){
-		$rows = array();
-		
-		$db = DBManagerFactory::getInstance();
-		$result = $db->query($query.');');
-		if($db->getRowCount($result) == 0){
-			return null;
-		}
-		for($i = 0; $i < $db->getRowCount($result); $i++){
-			$rows[$i] = $db->fetchByAssoc($result, $i);
-		}
-		return $rows;
-	}
-	return null;
-}
-
-
-function buildTableForm($rows, $mod=''){
-	global $action;
-	if(!empty($mod)){
-	global $current_language;
-	$mod_strings = return_module_language($current_language, $mod);
-	}else global $mod_strings;
-	global $app_strings;
-	$cols = sizeof($rows[0]) * 2 + 1;
-	if ($action != 'ShowDuplicates') 
-	{
-		$form = '<table width="100%"><tr><td>'.$mod_strings['MSG_DUPLICATE']. '</td></tr><tr><td height="20"></td></tr></table>';
-		$form .= "<form action='index.php' method='post' name='dupProspects'><input type='hidden' name='selectedProspect' value=''>";
-	}
-	else 
-	{
-		$form = '<table width="100%"><tr><td>'.$mod_strings['MSG_SHOW_DUPLICATES']. '</td></tr><tr><td height="20"></td></tr></table>';
-	}
-	$form .= get_form_header($mod_strings['LBL_DUPLICATE'],"", '');
-	$form .= "<table width='100%' cellpadding='0' cellspacing='0'>	<tr >	";
-	if ($action != 'ShowDuplicates') 
-	{
-		$form .= "<td > &nbsp;</td>";
-	}
-
-	require_once('include/formbase.php');
-	$form .= getPostToForm();
-
-	if(isset($rows[0])){
-		foreach ($rows[0] as $key=>$value){
-			if($key != 'id'){
-					$form .= "<td scope='col' >". $mod_strings[$mod_strings['db_'.$key]]. "</td>";
-			}
-		}
-		$form .= "</tr>";
-	}
-	$rowColor = 'oddListRowS1';
-	foreach($rows as $row){
-
-		$form .= "<tr class='$rowColor'>";
-		if ($action != 'ShowDuplicates') 
-			$form .= "<td width='1%' nowrap='nowrap' ><a href='#' onClick=\"document.dupProspects.selectedProspect.value='${row['id']}';document.dupProspects.submit() \">[${app_strings['LBL_SELECT_BUTTON_LABEL']}]</a>&nbsp;&nbsp;</td>\n";
-		
-		$wasSet = false;
-
-		foreach ($row as $key=>$value) {
-            if($key != 'id') {
-                if(!$wasSet) {
-                    $form .= "<td scope='row' ><a target='_blank' href='index.php?module=Prospects&action=DetailView&record=${row['id']}'>$value</a></td>\n";
-                    $wasSet = true;
-                }
-                else {
-                    $form .= "<td><a target='_blank' href='index.php?module=Prospects&action=DetailView&record=${row['id']}'>$value</a></td>\n";
-                }
-            }
-		}
-
-		if($rowColor == 'evenListRowS1'){
-			$rowColor = 'oddListRowS1';
-		}else{
-			 $rowColor = 'evenListRowS1';
-		}
-		$form .= "</tr>";
-	}
-	$form .= "<tr ><td colspan='$cols' class='blackline'></td></tr>";
-	if ($action == 'ShowDuplicates') 
-	{
-		$form .= "</table><br><input title='${app_strings['LBL_SAVE_BUTTON_TITLE']}' accessKey='${app_strings['LBL_SAVE_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='Save';\" type='submit' name='button' value='  ${app_strings['LBL_SAVE_BUTTON_LABEL']}  '> <input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='ListView'; this.form.module.value='Prospects';\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '></form>";
-	}
-	else 
-	{
-		$form .= "</table><br><input type='submit' class='button' name='ContinueProspect' value='${mod_strings['LNK_NEW_PROSPECT']}'></form>";
-	}
-	return $form;
-
-
-
-
-
-}
 function getWideFormBody($prefix, $mod='',$formname='',  $prospect = ''){
 	if(!ACLController::checkAccess('Prospects', 'edit', true)){
 		return '';
@@ -411,9 +289,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	
 	if (!isset($_POST[$prefix.'email_opt_out'])) $focus->email_opt_out = 0;
 	if (!isset($_POST[$prefix.'do_not_call'])) $focus->do_not_call = 0;
-	
+
+    //BEGIN SUGARCRM flav=int ONLY
+    /*
 	if (empty($_POST['record']) && empty($_POST['dup_checked'])) {
-		/*
+
 		// we don't check dupes on Prospects - this is the dirtiest data in the system
 		//$duplicateProspects = $this->checkForDuplicates($prefix);
 		if(isset($duplicateProspects)){
@@ -456,8 +336,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 			//now redirect the post to modules/Prospects/ShowDuplicates.php
 			header("Location: index.php?$get");
 			return null;
-		}*/
+		}
 	}
+    */
+    //END SUGARCRM flav=int ONLY
+
 	global $current_user;
 
 	$focus->save($GLOBALS['check_notify']);
