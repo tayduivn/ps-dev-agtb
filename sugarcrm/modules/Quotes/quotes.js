@@ -443,7 +443,6 @@ function QuotesEditManager(Y){
         var inputEl = this.createElement('input', {
             'type':'text',
             'size': 15,
-            'tabIndex': 6,
             'name': 'subtotal[' + id + ']',
             'id': 'subtotal_' + id
             });
@@ -482,7 +481,6 @@ function QuotesEditManager(Y){
         var inputEl = this.createElement('input', {
             'type':'text',
             'size': 15,
-            'tabIndex': 6,
             'name': 'deal_tot[' + id + ']',
             'id': 'deal_tot_' + id
             });
@@ -518,7 +516,6 @@ function QuotesEditManager(Y){
         var inputEl = this.createElement('input', {
             'type':'text',
             'size': 15,
-            'tabIndex': 6,
             'name': 'new_sub[' + id + ']',
             'id': 'new_sub_' + id
             });
@@ -555,8 +552,7 @@ function QuotesEditManager(Y){
             'type':'text',
             'name': 'tax[' + id + ']',
             'id': 'tax_' + id,
-            'size': 15,
-            'tabIndex': 6
+            'size': 15
         });
         inputEl.readOnly = true;
         inputEl.style.textAlign = 'right';
@@ -592,8 +588,7 @@ function QuotesEditManager(Y){
             'type':'text',
             'name': 'shipping[' + id + ']',
             'id': 'shipping_' + id,
-            'size': 15,
-            'tabIndex': 6
+            'size': 15
         });
         inputEl.onchange = function(){
             if(quotesManager.isAmount(toDecimal(unformatNumber(this.value, num_grp_sep, dec_sep), quotesManager.precision))){
@@ -647,8 +642,7 @@ function QuotesEditManager(Y){
             'type':'text',
             'name': 'total[' + id + ']',
             'id': 'total_' + id,
-            'size': 15,
-            'tabIndex': 6
+            'size': 15
         });
         inputEl.readOnly = true;
         inputEl.style.textAlign = 'right';
@@ -972,7 +966,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 4,
-            'tabIndex': 6,
             'name': "quantity[" + this.count + "]",
             'id': "quantity_" + this.count,
             'value': the_quantity
@@ -998,7 +991,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 30,
-            'tabIndex': 6,
             'name': "product_name[" + this.count + "]",
             'id': itemName,
             'value': product_name
@@ -1042,7 +1034,6 @@ function QuotesEditManager(Y){
             'type': 'button',
             'title': this.selectButtonTitle,
             'accessKey': this.selectButtonKey,
-            'tabIndex': 6,
             'name': "btn_product_name[" + this.count + "]",
             'id': itemName,
             'value': this.selectButtonValue
@@ -1062,7 +1053,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 10,
-            'tabIndex': 6,
             'name': "mft_part_num[" + this.count + "]",
             'id': itemName,
             'value': mft_part_num
@@ -1091,8 +1081,7 @@ function QuotesEditManager(Y){
         var itemName = 'tax_class_select_name_' + this.count;
         var selectEl = this.createElement('select', {
             'name': "tax_class_select_name[" + this.count + "]",
-            'id': itemName,
-            'tabIndex': 6
+            'id': itemName
         });
         selectEl.count = this.count;
         selectEl.onchange = function(){
@@ -1124,7 +1113,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 8,
-            'tabIndex': 6,
             'name': 'tax_class_name[' + this.count + ']',
             'id': itemName,
             'value': tax_class_name
@@ -1139,7 +1127,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 8,
-            'tabIndex': 6,
             'name': "cost_price[" + this.count + "]",
             'id': itemName,
             'value': cost_price
@@ -1160,7 +1147,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 8,
-            'tabIndex': 6,
             'name': "list_price[" + this.count + "]",
             'id': itemName,
             'value': list_price
@@ -1181,7 +1167,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 8,
-            'tabIndex': 6,
             'name': "discount_price[" + this.count + "]",
             'id': itemName,
             'value': unit_price
@@ -1210,7 +1195,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 4,
-            'tabIndex': 6,
             'name': "discount_amount[" + this.count + "]",
             'id': itemName,
             'value': discount_amount
@@ -1246,7 +1230,6 @@ function QuotesEditManager(Y){
             'type':'checkbox',
             'name': "checkbox_select[" + this.count + "]",
             'id': itemName,
-            'tabIndex': 6,
             'value': '1'
         },['checkbox']);			
         textEl.count = this.count;
@@ -1284,7 +1267,6 @@ function QuotesEditManager(Y){
         var textEl = this.createElement('input', {
             'type':'text',
             'size': 8,
-            'tabIndex': 2,
             'name': 'deal_calc[' + this.count + ']',
             'id': itemName,
             'value': deal_calc
@@ -1296,7 +1278,6 @@ function QuotesEditManager(Y){
         var cell10 = row.insertCell(row.cells.length);
         var buttonEl = this.createElement('input', {
             'type':'button',
-            'tabIndex': 6,
             'name': this.deleteButtonName,
             'id': 'delete_row' + this.count,
             'value': this.deleteButtonValue

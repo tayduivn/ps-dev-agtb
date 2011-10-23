@@ -308,7 +308,7 @@ class ViewConvertLead extends SugarView
             $contactForm = new ContactFormBase();
             $duplicateContacts = $contactForm->checkForDuplicates('Contacts');
             if(isset($duplicateContacts)){
-                echo $contactForm->buildTableForm($duplicateContacts,  'Contacts');
+                echo $contactForm->buildTableForm($duplicateContacts);
                 return;
             }
             $this->new_contact = true;

@@ -67,9 +67,9 @@ function checkForDuplicates($prefix){
 		$result = $db->query($query.');');
         while($row = $db->fetchByAssoc($result)) {
             $rows[] = $row;
-        }
+		}
 		if(count($rows) > 0) return $rows;
-	}
+		}
 	return null;
 }
 
