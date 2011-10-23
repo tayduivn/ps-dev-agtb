@@ -65,13 +65,10 @@ function checkForDuplicates($prefix){
 		
 		$db = DBManagerFactory::getInstance();
 		$result = $db->query($query.');');
-		if($db->getRowCount($result) == 0){
-			return null;
-		}
-		for($i = 0; $i < $db->getRowCount($result); $i++){
-			$rows[$i] = $db->fetchByAssoc($result, $i);
-		}
-		return $rows;
+        while($row = $db->fetchByAssoc($result)) {
+            $rows[] = $row;
+        }
+		if(count($rows) > 0) return $rows;
 	}
 	return null;
 }

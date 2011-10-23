@@ -1780,20 +1780,6 @@ EOQ;
             mssql_free_result($dbResult);
     }
 
-    /**
-     * Returns the number of rows returned by the result
-     *
-     * @param  resource $result
-     * @return int
-     */
-     public function getRowCount($result)
-    {
-        if(!empty($result)) {
-            return mssql_num_rows($result);
-		}
-		return 0;
-	}
-
 	/**
 	 * (non-PHPdoc)
 	 * @see DBManager::lastDbError()

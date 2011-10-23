@@ -209,19 +209,6 @@ class MysqlManager extends DBManager
 			mysql_free_result($dbResult);
 	}
 
-	/**
-	 * Returns the number of rows returned by the result
-	 *
-	 * @param  resource $result
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		if(!empty($result)) {
-			return mysql_num_rows($result);
-		}
-		return 0;
-	}
 
 	/**
 	 * @see DBManager::limitQuery()

@@ -187,11 +187,12 @@ class Quota extends SugarBean {
 	}
 
 /**
- * function getRowCount. Helper function to get a row count of the given query 
+ * function getQuotaRowCount. Helper function to get a row count of the given query
  * (Can be modified and/or removed if there are other utils in the code for this)
  * @param $query
+ * NOTE: Renamed to distinguish it from the deprecated and now removed getRowCount DBManager function
  */	
-	function getRowCount($query)
+	function getQuotaRowCount($query)
 	{
 		$result = $this->db->query($this->create_list_count_query($query));	
 		$row = $this->db->fetchByAssoc($result);

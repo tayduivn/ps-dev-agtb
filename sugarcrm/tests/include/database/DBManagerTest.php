@@ -1373,20 +1373,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_removeRecords($beanIds);
     }
 
-    public function testGetRowCount()
-    {
-        if(!$this->_db->supports("select_rows")) {
-            $this->markTestSkipped('Skipping, backend doesn\'t support select_rows');
-        }
-        $beanIds = $this->_createRecords(1);
-
-        $result = $this->_db->query("SELECT id From contacts where id = '{$beanIds[0]}'");
-
-        $this->assertEquals($this->_db->getRowCount($result),1);
-
-        $this->_removeRecords($beanIds);
-    }
-
     public function testGetAffectedRowCount()
     {
         if(!$this->_db->supports("affected_rows")) {

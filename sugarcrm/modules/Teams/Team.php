@@ -297,8 +297,7 @@ class Team extends SugarBean
 		$query = "select id, user_id, explicit_assign, implicit_assign, deleted from team_memberships where team_id='$original_team_id'";
 		$result = $this->db->query($query,true,"Error finding team memberships: ");
 
-		$rows_found =  $this->db->getRowCount($result);
-		$GLOBALS['log']->debug("About to duplicate team memberships. from team $original_team_id.  Rows found $rows_found");
+       $GLOBALS['log']->debug("About to duplicate team memberships. from team $original_team_id.");
 
 		$membership = new TeamMembership();
 		while(($row = $this->db->fetchByAssoc($result)) != false)

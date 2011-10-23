@@ -184,20 +184,6 @@ class MysqliManager extends MysqlManager
 	}
 
 	/**
-	 * Returns the number of rows returned by the result
-	 *
-	 * @param  resource $result
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		if(!empty($result)) {
-			return mysqli_num_rows($result);
-		}
-		return 0;
-	}
-
-	/**
 	 * @see DBManager::getFieldsArray()
 	 */
 	public function getFieldsArray($result, $make_lower_case = false)

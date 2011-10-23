@@ -714,17 +714,12 @@ class Report
             $this->$result_name = $this->db->query($this->$query_name, true, "Error executing query ");
         }
         if (!empty($row_count_name) && empty($this->$row_count_name)) {
-            if (!$this->db->supports('select_rows')) {
                 $this->$row_count_name = $this->report_offset;
                 $this->$row_end_name = $this->report_max;
 
                 if ($limit && $this->total_count < $this->$row_end_name + $this->$row_count_name) {
                     $this->$row_end_name = $this->total_count - $this->$row_count_name;
                 }
-            } else {
-                $this->$row_count_name = $this->db->getRowCount($this->$result_name);
-                $this->$row_end_name = $this->$row_count_name;
-            }
             if ($this->$row_count_name > 0) {
                 $this->$row_start_name = 1;
             }
@@ -1754,10 +1749,6 @@ return str_replace(' > ','_',
         return $labelToDataTypeArray;
     } // fn
 
-    function get_summary_group_count()
-    {
-        return $this->db->getRowCount($this->summary_result);
-    }
 
 
     /**

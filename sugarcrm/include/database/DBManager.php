@@ -1341,7 +1341,6 @@ protected function checkQuery($sql, $object_name = false)
 		$next_offset = $start + $count;
 
 		$result = $this->limitQuery($select_query, $start, $count);
-		$row_count = $this->getRowCount($result);
 		// get basic insert
 		$sql = "INSERT INTO ".$table;
 		$custom_sql = "INSERT INTO ".$table."_cstm";
@@ -1462,7 +1461,7 @@ protected function checkQuery($sql, $object_name = false)
 				$custom_sql .= ", ";
 			}
 		}
-		return array('data' => $sql, 'cstm_sql' => $custom_sql, 'result_count' => $row_count, 'total_count' => $rows_found, 'next_offset' => $next_offset);
+		return array('data' => $sql, 'cstm_sql' => $custom_sql, /*'result_count' => $row_count, */ 'total_count' => $rows_found, 'next_offset' => $next_offset);
 	}
 
 	/**
@@ -1643,18 +1642,6 @@ protected function checkQuery($sql, $object_name = false)
 
 		$this->freeResult($queryresult);
 		return $row;
-	}
-
-	/**
-	 * Returns the number of rows returned by the result
-	 * @abstract
-	 * @param  resource $result query result resource
-	 * See also select_rows capability, will return 0 unless the DB supports it
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		return 0;
 	}
 
     /**

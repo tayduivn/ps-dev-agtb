@@ -3682,19 +3682,10 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $list = Array();
 
-        if(empty($rows_found))
-        {
-            $rows_found =  $db->getRowCount($result);
-        }
-
-        $GLOBALS['log']->debug("Found $rows_found ".$this->object_name."s");
-
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
         $class = get_class($this);
-        if($rows_found != 0 || !$db->supports('select_rows'))
-        {
             //FIXME: Bug? we should remove the magic number -99
             //use -99 to return all
             $index = $row_offset;
@@ -3739,7 +3730,6 @@ function save_relationship_changes($is_update, $exclude=array())
 
                 $index++;
             }
-        }
         if(!empty($sugar_config['disable_count_query']) && !empty($limit))
         {
 
@@ -3751,6 +3741,8 @@ function save_relationship_changes($is_update, $exclude=array())
                 $next_offset--;
                 $previous_offset++;
             }
+        } else {
+            $rows_found = $index - $row_offset;
         }
         $response = Array();
         $response['list'] = $list;
@@ -3877,14 +3869,6 @@ function save_relationship_changes($is_update, $exclude=array())
             {
                 $result = $db->query($query,true,"Error retrieving $this->object_name list: ");
             }
-            if(empty($rows_found))
-            {
-                $rows_found =  $db->getRowCount($result);
-            }
-
-            $GLOBALS['log']->debug("Found $rows_found ".$parent_bean->object_name."s");
-            if($rows_found != 0 || !$db->supports('select_rows'))
-            {
                 //use -99 to return all
 
                 // get the current row
@@ -4019,7 +4003,6 @@ function save_relationship_changes($is_update, $exclude=array())
                     $index++;
                     $row = $db->fetchByAssoc($result);
                 }
-            }
             //now handle retrieving many-to-many relationships
             if(!empty($list))
             {
@@ -4133,18 +4116,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $result = $this->db->limitQuery($query, $offset, 1, true,"Error retrieving $this->object_name list: ");
 
-        $rows_found = $this->db->getRowCount($result);
-
-        $GLOBALS['log']->debug("Found $rows_found ".$this->object_name."s");
-
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
-        if($rows_found != 0 || !$this->db->supports('select_rows'))
-        {
-            $row = $this->db->fetchByAssoc($result);
-            $this->retrieve($row['id']);
-        }
+        $row = $this->db->fetchByAssoc($result);
+        $this->retrieve($row['id']);
 
         $response = Array();
         $response['bean'] = $this;
@@ -4831,15 +4807,14 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             return null;
         }
-        if($this->db->getRowCount($result) > 1)
-        {
-            $this->duplicates_found = true;
-        }
         $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
         }
+        // Removed getRowCount-if-clause earlier and insert duplicates_found here as it seems that we have found something
+        // if we didn't return null in the previous clause.
+        $this->duplicates_found = true;
         $row = $this->convertRow($row);
         $this->fetched_row = $row;
         $this->fromArray($row);
