@@ -210,8 +210,8 @@ EOQ;
 if(!is_admin($GLOBALS['current_user'])){
 //END SUGARCRM flav=sales ONLY
 $html .= <<<EOQ
+		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='search term'></div>
 		<div id="glblSearchBtn">$iconSearch</div>
-		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'></div>
 EOQ;
 //BEGIN SUGARCRM flav=sales ONLY
 }

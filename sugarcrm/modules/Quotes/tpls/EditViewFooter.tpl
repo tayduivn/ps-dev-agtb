@@ -37,18 +37,18 @@
     <table border='0' width="100%" cellspacing='2' cellpadding='0'>
     <tr>
 		<td width='10%' scope="row">{$MOD.LBL_CURRENCY}</td>
-				<td width='10%' ><select tabindex='5' name='currency_id' id='currency_id' onchange='quotesManager.ConvertItems(this.options[selectedIndex].value);'>{$CURRENCY}</select></td>
+				<td width='10%' ><select  name='currency_id' id='currency_id' onchange='quotesManager.ConvertItems(this.options[selectedIndex].value);'>{$CURRENCY}</select></td>
 		<td width='10%' scope="row">{$MOD.LBL_TAXRATE}</td>
 		<td width='13%' >
-		<select tabindex='5' name='taxrate_id' onchange="this.form.taxrate_value.value=get_taxrate(this.form.taxrate_id.options[selectedIndex].value);quotesManager.calculate(document)">{$TAXRATE_OPTIONS}</select>
+		<select name='taxrate_id' onchange="this.form.taxrate_value.value=get_taxrate(this.form.taxrate_id.options[selectedIndex].value);quotesManager.calculate(document)">{$TAXRATE_OPTIONS}</select>
 		<input type="hidden" name="taxrate_value" value="{$TAXRATE_VALUE}">
 		</td>
         <td width='13%' scope="row">{$MOD.LBL_SHIPPING_PROVIDER}</td>
-        <td width='13%' ><select tabindex='5' name='shipper_id'>{$SHIPPER_OPTIONS}</select></td>
+        <td width='13%' ><select name='shipper_id'>{$SHIPPER_OPTIONS}</select></td>
 		<td width='13%' scope="row">{$MOD.LBL_CALC_GRAND}</td>
-		<td width='13%' ><input tabindex='5' type='checkbox' class='checkbox' name='calc_grand_total' id='calc_grand_total' onClick='toggleDisplay("grand_tally");' {$CALC_GRAND_TOTAL_CHECKED}></td>
+		<td width='13%' ><input  type='checkbox' class='checkbox' name='calc_grand_total' id='calc_grand_total' onClick='toggleDisplay("grand_tally");' {$CALC_GRAND_TOTAL_CHECKED}></td>
 	    <td width='13%' scope="row">{$MOD.LBL_SHOW_LINE_NUMS}</td>
-	    <td width='40%' ><input tabindex='5' type='checkbox' class='checkbox' name='show_line_nums' id='show_line_nums' {$SHOW_LINE_NUMS_CHECKED}></td>
+	    <td width='40%' ><input type='checkbox' class='checkbox' name='show_line_nums' id='show_line_nums' {$SHOW_LINE_NUMS_CHECKED}></td>
 	</tr>
 	</table>
 
@@ -56,10 +56,10 @@
 	<table name='table_name' id='table_id' >
 	<tr><td scope="row">{$MOD.LBL_BUNDLE_NAME}</td>
 	<td >
-	&nbsp; <input type='text' tabindex='5' size='20' name='name_name' id='name_id' value=''>
+	&nbsp; <input type='text' size='20' name='name_name' id='name_id' value=''>
 	</td><td scope="row">{$MOD.LBL_BUNDLE_STAGE}</td>
 	<td >&nbsp;
-	<select name='select_name' tabindex='5' id='select_id' onchange='quotesManager.calculate(document);'>
+	<select name='select_name' id='select_id' onchange='quotesManager.calculate(document);'>
 	{$QUOTE_STAGE_OPTIONS}
 	</select>
 	</td></tr></table>
@@ -114,7 +114,7 @@
 <tr><td>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr><th align="left" scope="row" colspan="2" scope="row"><h4>{$MOD.LBL_DESCRIPTION_INFORMATION}</h4></th></tr>
-		<tr><td width="15%" valign="top" scope="row">{$MOD.LBL_DESCRIPTION}</td><td width="85%" ><textarea name='description' tabindex='7' cols="60" rows="8">{$fields.description.value}</textarea></td></tr>
+		<tr><td width="15%" valign="top" scope="row">{$MOD.LBL_DESCRIPTION}</td><td width="85%" ><textarea name='description' cols="60" rows="8">{$fields.description.value}</textarea></td></tr>
     </table>
 </td></tr>
 </table>
