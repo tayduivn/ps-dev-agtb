@@ -1364,7 +1364,7 @@ EOQ;
     /**
      * @see DBManager::massageFieldDef()
      */
-    public function massageFieldDef($fieldDef, $tablename)
+    public function massageFieldDef(&$fieldDef, $tablename)
     {
         parent::massageFieldDef($fieldDef,$tablename);
 
