@@ -937,6 +937,46 @@ class OracleManager extends DBManager
 	}
 
 	/**
+	 * Generate modify statement for one column
+	 * @param string $tablename
+	 * @param array $fieldDef Vardef definition for field
+	 * @param string $action
+	 * @param bool $ignoreRequired
+	 */
+	protected function changeOneColumnSQL($tablename, $fieldDef, $action, $ignoreRequired = false)
+	{
+	    switch($action) {
+	    	case 'DROP':
+	    		return $fieldDef['name'];
+	    		break;
+	    	case 'ADD':
+	    	    $colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
+	    	    return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+	    	case 'MODIFY':
+	    		$colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
+	    		$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
+	    		if($colArray['colType'] == 'blob' || $colArray['colType'] == 'clob') {
+	    			// Bug 42467: prevent Oracle from modifying *LOB fields
+	    			$nowCol = $this->describeField($colArray['name'], $tablename);
+	    			if($colArray['colType'] != $nowCol['type']) {
+                        // we can't change type from lob, sorry
+                        return '';
+	    			}
+	    			$colArray['colType'] = ''; // we don't change type, so omit it
+                    if(!empty($nowCol['default']) && empty($colArray['default'])) {
+                        // removing default is allowed by changing to "DEFAULT NULL"
+                        $colArray['default'] = "DEFAULT NULL";
+                        $colArray['required'] = '';
+                    }
+	    		}
+	    		if ( !$ignoreRequired && ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
+	    			$colArray['required'] = '';
+	    		return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+	    }
+        return '';
+	}
+
+	/**
      * @see DBManager::changeColumnSQL()
      *
      * Oracle's ALTER TABLE syntax is a bit different from the other rdbmss
@@ -955,47 +995,18 @@ class OracleManager extends DBManager
              */
         	$addColumns = array();
 			foreach($fieldDefs as $def) {
-                switch($action) {
-                case 'DROP':
-                    $addColumns[] = $def['name'];
-                    break;
-                case 'ADD':
-                case 'MODIFY':
-					$colArray = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
-					$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
-    				$type = $this->getColumnType($colArray['colType']);
-    				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
-    				    // Bug 42467: prevent Oracle from modifying *LOB fields
-    				    continue 2;
-    				}
-					if ( !$ignoreRequired
-							&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
-					  	$colArray['required'] = '';
-					$addColumns[] = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
-                	break;
-                }
+			    $col = $this->changeOneColumnSQL($tablename, $def, $action, $ignoreRequired);
+			    if(!empty($col)) {
+			        $addColumns[] = $col;
+			    }
 			}
-        	$columns = "(" . implode(",", $addColumns) . ")";
+			if(!empty($addColumns)) {
+        	    $columns = "(" . implode(",", $addColumns) . ")";
+			} else {
+			    $columns = '';
+			}
         } else {
-            switch($action) {
-            case 'DROP':
-                $columns = $fieldDefs['name'];
-                break;
-            case 'ADD':
-            case 'MODIFY':
-				$colArray = $this->oneColumnSQLRep($fieldDefs, $ignoreRequired, $tablename, true);
-				$type = $this->getColumnType($colArray['colType']);
-				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
-				    // Bug 42467: prevent Oracle from modifying *LOB fields
-				    return "";
-				}
-				$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
-				if ( !$ignoreRequired
-						&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
-					$colArray['required'] = '';
-				$columns = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
-				break;
-            }
+            $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
         }
         if ( $action == 'DROP' )
             $action = 'DROP COLUMN';
