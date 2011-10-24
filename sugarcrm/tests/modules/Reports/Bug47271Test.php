@@ -27,8 +27,10 @@
  ********************************************************************************/
 
 
+//BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Reports/views/view.buildreportmoduletree.php');
 require_once('modules/Reports//SavedReport.php');
+//END SUGARCRM flav=pro ONLY
 
 class Bug47271Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
@@ -42,7 +44,7 @@ class Bug47271Test extends Sugar_PHPUnit_Framework_OutputTestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
-	
+
     public function testUserListView()
     {
         global $app_list_strings;
@@ -52,17 +54,21 @@ class Bug47271Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $org_name = $app_list_strings['moduleList']['Contacts'];
         $app_list_strings['moduleList']['Contacts'] = $new_name;
 
-        // module tree
-        $view = new ReportsViewBuildreportmoduletree();
+        // request settings
         $_REQUEST['action'] = 'BuildReportModuleTree';
         $_REQUEST['module'] = 'Reports';
         $_REQUEST['page'] = 'Report';
         $_REQUEST['report_module'] = 'Accounts';
+
+//BEGIN SUGARCRM flav=pro ONLY
+        // module tree
+        $view = new ReportsViewBuildreportmoduletree();
         $view->display();
 
         // ensure the module tree includes the new module name
         $pattern = '"text":"' . $new_name . '"'; //  the json string should include: "text":"PeopleXYZ"
         $this->expectOutputRegex('/.*'.$pattern.'.*/');
+//END SUGARCRM flav=pro ONLY
 
         // cleanup
         unset($_REQUEST['report_module']);
@@ -73,5 +79,4 @@ class Bug47271Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $app_list_strings['moduleList']['Contacts'] = $org_name;
     }
 }
-
 ?>
