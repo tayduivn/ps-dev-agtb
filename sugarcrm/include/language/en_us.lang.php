@@ -3241,6 +3241,10 @@ $app_strings = array (
     'LBL_ALT_INFO' => 'Information',
 	'MSG_DUPLICATE' => 'The {0} record you are about to create might be a duplicate of an {0} record that already exists. {1} records containing similar names are listed below.<br>Click Create {1} to continue creating this new {0}, or select an existing {0} listed below.',
     'MSG_SHOW_DUPLICATES' => 'The {0} record you are about to create might be a duplicate of a {0} record that already exists. {1} records containing similar names are listed below.  Click Save to continue creating this new {0}, or click Cancel to return to the module without creating the {0}.',
+    'LBL_EMAIL_TITLE' => 'email address',
+    'LBL_EMAIL_OPT_TITLE' => 'opted out email address',
+    'LBL_EMAIL_INV_TITLE' => 'invalid email address',
+    'LBL_EMAIL_PRIM_TITLE' => 'primary email address',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
