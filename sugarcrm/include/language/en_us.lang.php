@@ -3245,6 +3245,11 @@ $app_strings = array (
     'LBL_EMAIL_OPT_TITLE' => 'opted out email address',
     'LBL_EMAIL_INV_TITLE' => 'invalid email address',
     'LBL_EMAIL_PRIM_TITLE' => 'primary email address',
+    'LBL_SELECT_ALL_TITLE' => 'Select all',
+    'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
+    'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
+    'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
+
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

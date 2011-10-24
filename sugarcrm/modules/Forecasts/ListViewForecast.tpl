@@ -115,7 +115,7 @@
 	<tr height='20'>
 		{if $prerow}
 			<th scope='col'>
-				<input type='checkbox' class='checkbox' id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
+				<input type='checkbox' title="{sugar_translate label='LBL_SELECT_ALL_TITLE'}" class='checkbox' id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 			</th>
 		{/if}
 		{foreach from=$displayColumns key=colHeader item=params}

@@ -64,7 +64,7 @@
     <tr id="lineFields_{$displayParams.formName}_{$vardef.name}_0" class="lineFields_{$displayParams.formName}_{$vardef.name}">
         <td scope='row' valign="top">
             <span id='{$displayParams.formName}_{$vardef.name}_input_div_0' name='teamset_div'>   
-            <input type="text" name="{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" id="{$displayParams.formName}_{$vardef.name}_collection_0" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
+            <input type="text" name="{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" id="{$displayParams.formName}_{$vardef.name}_collection_0" size="{$displayParams.size}" value=""  title="{sugar_translate label='LBL_TEAM_SELECTED_TITLE'}"  autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$displayParams.formName}_{$vardef.name}_collection_0" value="">
             </span>
         </td>
@@ -79,7 +79,7 @@
         </td>
         <td valign="top" align="center">
             <span id='{$displayParams.formName}_{$vardef.name}_radio_div_0'>
-            <input id="primary_{$vardef.name}_collection_0" name="primary_{$vardef.name}_collection" type="radio" class="radio" value="0" style="visibility:visible{if empty($values.role_field)};display:none;{/if}" onclick="collection['{$displayParams.formName}_{$vardef.name}'].changePrimary(true);" />
+            <input id="primary_{$vardef.name}_collection_0" name="primary_{$vardef.name}_collection" type="radio" class="radio" value="0" style="visibility:visible{if empty($values.role_field)};display:none;{/if}" onclick="collection['{$displayParams.formName}_{$vardef.name}'].changePrimary(true);" title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" />
             </span>
         </td>
         <td>&nbsp;</td>
