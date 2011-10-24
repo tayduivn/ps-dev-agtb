@@ -528,6 +528,7 @@ class User extends Person {
 		parent::save($check_notify);
 
 		//BEGIN SUGARCRM flav=pro ONLY
+		$oldCheck = isset($GLOBALS['sugar_config']['disable_team_access_check'])?$GLOBALS['sugar_config']['disable_team_access_check']:null;
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
         if(!$this->portal_only) {
 		   // If this is not an update, then make sure the new user logic is executed.
@@ -562,6 +563,13 @@ class User extends Person {
 		//END SUGARCRM flav=sales ONLY
 
         $this->savePreferencesToDB();
+		//BEGIN SUGARCRM flav=pro ONLY
+        if(is_null($oldCheck)) {
+            unset($GLOBALS['sugar_config']['disable_team_access_check']);
+        } else {
+            $GLOBALS['sugar_config']['disable_team_access_check'] = $oldCheck;
+        }
+		//END SUGARCRM flav=pro ONLY
         return $this->id;
 	}
 

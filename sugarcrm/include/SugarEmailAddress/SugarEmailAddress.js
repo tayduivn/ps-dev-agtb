@@ -229,7 +229,7 @@
 		    newContent.setAttribute("type", "text");
 		    newContent.setAttribute("name", this.id + "emailAddress" + this.numberEmailAddresses);
 		    newContent.setAttribute("id", this.id + "emailAddress" + this.numberEmailAddresses);
-		    newContent.setAttribute("tabindex", this.tabIndex);
+		    newContent.setAttribute("tabindex", "0");
 		    newContent.setAttribute("size", "30");
 		
 		    if(address != '') {

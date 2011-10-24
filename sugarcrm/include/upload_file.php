@@ -25,6 +25,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/externalAPI/ExternalAPIFactory.php');
 
+/**
+ * @api
+ * Manage uploaded files
+ */
 class UploadFile
 {
 	var $field_name;
@@ -36,6 +40,10 @@ class UploadFile
 	var $file_ext;
 	protected static $url = "upload/";
 
+	/**
+	 * Upload errors
+	 * @var array
+	 */
 	protected static $filesError = array(
 			UPLOAD_ERR_OK => 'UPLOAD_ERR_OK - There is no error, the file uploaded with success.',
 			UPLOAD_ERR_INI_SIZE => 'UPLOAD_ERR_INI_SIZE - The uploaded file exceeds the upload_max_filesize directive in php.ini.',
@@ -48,6 +56,10 @@ class UploadFile
 			UPLOAD_ERR_EXTENSION => 'UPLOAD_ERR_EXTENSION - A PHP extension stopped the file upload.',
 			);
 
+	/**
+	 * Create upload file handler
+	 * @param string $field_name Form field name
+	 */
 	function UploadFile ($field_name = '')
 	{
 		// $field_name is the name of your passed file selector field in your form
@@ -55,6 +67,11 @@ class UploadFile
 		$this->field_name = $field_name;
 	}
 
+	/**
+	 * Setup for SOAP upload
+	 * @param string $filename Name for the file
+	 * @param string $file
+	 */
 	function set_for_soap($filename, $file) {
 		$this->stored_file_name = $filename;
 		$this->use_soap = true;
@@ -167,6 +184,10 @@ class UploadFile
 		}
 	}
 
+	/**
+	 * Get upload error from system
+	 * @return string upload error
+	 */
 	public function get_upload_error()
 	{
 	    if(isset($this->field_name) && isset($_FILES[$this->field_name]['error'])) {
@@ -213,6 +234,11 @@ class UploadFile
 		return true;
 	}
 
+	/**
+	 * Guess MIME type for file
+	 * @param string $filename
+	 * @return string MIME type
+	 */
 	function getMimeSoap($filename){
 
 		if( function_exists( 'ext2mime' ) )
@@ -227,6 +253,11 @@ class UploadFile
 
 	}
 
+	/**
+	 * Get MIME type for uploaded file
+	 * @param array $_FILES_element $_FILES element required
+	 * @return string MIME type
+	 */
 	function getMime($_FILES_element)
 	{
 		$filename = $_FILES_element['name'];
@@ -324,6 +355,14 @@ class UploadFile
 		return true;
 	}
 
+	/**
+	 * Upload document to external service
+	 * @param SugarBean $bean Related bean
+	 * @param string $bean_id
+	 * @param string $doc_type
+	 * @param string $file_name
+	 * @param string $mime_type
+	 */
 	function upload_doc($bean, $bean_id, $doc_type, $file_name, $mime_type)
 	{
 		if(!empty($doc_type)&&$doc_type!='Sugar') {
@@ -399,6 +438,10 @@ class UploadFile
 	    }
     }
 
+    /**
+     * Get upload file location prefix
+     * @return string prefix
+     */
     public function get_upload_dir()
     {
         return "upload://";
@@ -430,6 +473,10 @@ class UploadFile
     }
 }
 
+/**
+ * @internal
+ * Upload file stream handler
+ */
 class UploadStream
 {
     const STREAM_NAME = "upload";

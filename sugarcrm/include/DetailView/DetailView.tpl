@@ -83,7 +83,7 @@ class="yui-navset detailview_tabs"
 		{{/if}}
 		{{* //END SUGARCRM flav=pro ONLY*}}
 			{counter name="fieldsUsed"}
-			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="row">
+			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="col">
 				{{if !empty($colData.field.name)}}
 				    {if !$fields.{{$colData.field.name}}.hidden}
                 {{/if}}
@@ -151,14 +151,14 @@ class="yui-navset detailview_tabs"
 		{{if !empty($colData.field.name)}}
 			{else}
 
-			<td scope="row">&nbsp;</td><td>&nbsp;</td>
+			<td>&nbsp;</td><td>&nbsp;</td>
 			{/if}
 		{{/if}}
 		{{* //END SUGARCRM flav=pro ONLY*}}
 	    {{if !empty($colData.field.hideIf)}}
 			{else}
 
-			<td scope="row">&nbsp;</td><td>&nbsp;</td>
+			<td>&nbsp;</td><td>&nbsp;</td>
 			{/if}
 	    {{/if}}
 		{{/foreach}}

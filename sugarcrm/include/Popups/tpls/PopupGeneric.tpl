@@ -39,7 +39,7 @@
 {$LIST_HEADER}
 {if $should_process}
 	<table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
-		<tr class='pagination'>
+		<tr class='pagination'  role='presentation'>
 			<td colspan='{$colCount+1}' align='right'>
 				<table border='0' cellpadding='0' cellspacing='0' width='100%'>
 					<tr>
@@ -99,13 +99,13 @@
 	
 		<tr height='20'>
 			{if $prerow}
-				<th scope='col' nowrap="nowrap" width='1%' class="selectCol">
+				<td nowrap="nowrap" width='1%' class="selectCol td_alt">
 				<div>
 					<input type='checkbox' class='checkbox' id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 					{$selectLink}
 				</div>
-				</th>
-				<th scope='col' nowrap="nowrap" width='1%'>&nbsp;</th>
+				</td>
+				<td class='td_alt' nowrap="nowrap" width='1%'>&nbsp;</td>
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=colHeader item=params}
@@ -137,7 +137,7 @@
 				{counter name="colCounter"}
 			{/foreach}
 			{if !empty($quickViewLinks)}
-			<th scope='col' nowrap="nowrap" width='1%'>&nbsp;</th>
+			<td class='td_alt' nowrap="nowrap" width='1%'>&nbsp;</td>
 			{/if}
 		</tr>
 			
@@ -207,7 +207,7 @@
 				{/foreach}
 		 	
 		{/foreach}
-		<tr class='pagination'>
+		<tr class='pagination' role='presentation'>
 			<td colspan='{$colCount+1}' align='right'>
 				<table border='0' cellpadding='0' cellspacing='0' width='100%'>
 					<tr>

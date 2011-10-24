@@ -441,7 +441,7 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 			}
             // test if value is a number or boolean
             else if ( SE.isNumeric(value) ) {
-				return toConst(value);
+				return toConst(SE.unFormatNumber(value));
 		    }
 			// assume string
 			else {

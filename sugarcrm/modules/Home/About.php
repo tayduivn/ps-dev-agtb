@@ -38,31 +38,31 @@ list-style-type: square;
 <div class="about" style="padding: 10px 15px 20px 15px;">
 <p>
 <!-- //BEGIN SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
-<IMG src="include/images/sugar_md.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
 <!-- //BEGIN SUGARCRM flav=sales ONLY
-<IMG src="include/images/sugar_md_sales.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_sales.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=sales ONLY
 <!-- //BEGIN SUGARCRM flav=dev ONLY
-<IMG src="include/images/sugar_md_dev.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_dev.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=dev ONLY
 <!-- //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-<IMG src="include/images/sugar_md_express.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_express.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 <!-- //BEGIN SUGARCRM flav=com && lic!=sub ONLY
-<IMG src="include/images/sugar_md_open.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_open.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!--//END SUGARCRM flav=com && lic!=sub ONLY
 <!-- //BEGIN SUGARCRM flav=dce ONLY
-<IMG src="include/images/sugar_md_dce.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_dce.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=dce ONLY
 <!-- //BEGIN SUGARCRM flav=ent && flav!=dev && flav!=ult ONLY
-<IMG src="include/images/sugar_md_ent.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_ent.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=ent && flav!=dev && flav!=ult ONLY -->
 <!-- //BEGIN SUGARCRM flav=corp ONLY
-<IMG src="include/images/sugar_md_corp.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_corp.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=corp ONLY
 <!-- //BEGIN SUGARCRM flav=ult ONLY
-<IMG src="include/images/sugar_md_ult.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<h1><IMG src="include/images/sugar_md_ult.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=ult ONLY
 <br>
 <b><?php echo $mod_strings['LBL_VERSION']." ".$sugar_version." (".$mod_strings['LBL_BUILD']." ".$sugar_build.")";
@@ -193,10 +193,10 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <h3><?php echo $mod_strings['LBL_GET_SUGARCRM_RSS']; ?></h3>
 
 <ul class="noBullet">
-	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarcrm.com/crm/index2.php?no_html=1&stype=rss20&task=returnRSS&option=com_rss_feed_manager&channel=Corporate" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top"></a>&nbsp;<a href="http://www.sugarcrm.com/crm/index2.php?no_html=1&stype=rss20&task=returnRSS&option=com_rss_feed_manager&channel=Corporate" target="_blank"><?php echo $mod_strings['LBL_SUGARCRM_NEWS']; ?></a></li>
-	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarcrm.com/forums/external.php?type=rss" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top"></a>&nbsp;<a href="http://www.sugarcrm.com/forums/external.php?type=rss" target="_blank"><?php echo $mod_strings['LBL_SUGARCRM_FORUMS']; ?></a></li>
-	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarforge.org/export/rss_sfnews.php" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top"></a>&nbsp;<a href="http://www.sugarforge.org/export/rss_sfnews.php" target="_blank"><?php echo $mod_strings['LBL_SUGARFORGE_NEWS']; ?></a></li>
-	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarcrm.com/crm/index2.php?no_html=1&stype=rss20&task=returnRSS&option=com_rss_feed_manager&channel=all" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top"></a>&nbsp;<a href="http://www.sugarcrm.com/crm/index2.php?no_html=1&stype=rss20&task=returnRSS&option=com_rss_feed_manager&channel=all" target="_blank"><?php echo $mod_strings['LBL_ALL_NEWS']; ?></a></li>
+	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarcrm.com/crm/index2.php?no_html=1&stype=rss20&task=returnRSS&option=com_rss_feed_manager&channel=Corporate" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top">&nbsp;<?php echo $mod_strings['LBL_SUGARCRM_NEWS']; ?></a></li>
+	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarcrm.com/forums/external.php?type=rss" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top">&nbsp;<?php echo $mod_strings['LBL_SUGARCRM_FORUMS']; ?></a></li>
+	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarforge.org/export/rss_sfnews.php" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top">&nbsp;<?php echo $mod_strings['LBL_SUGARFORGE_NEWS']; ?></a></li>
+	<li class="noBullet" style="margin-bottom: 6px;"><a href="http://www.sugarcrm.com/crm/index2.php?no_html=1&stype=rss20&task=returnRSS&option=com_rss_feed_manager&channel=all" target="_blank"><!--not_in_theme!--><img src="include/images/rss_xml.gif" border="0" alt="XML" align="top">&nbsp;<?php echo $mod_strings['LBL_ALL_NEWS']; ?></a></li>
 </ul>
 <br>
 <h3><?php echo $mod_strings['LBL_JOIN_SUGAR_COMMUNITY']; ?></h3>

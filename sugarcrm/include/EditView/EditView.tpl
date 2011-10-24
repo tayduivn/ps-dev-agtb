@@ -106,7 +106,7 @@ class="yui-navset"
 	{{* //END SUGARCRM flav=pro ONLY*}}
 
 		{{if empty($def.templateMeta.labelsOnTop) && empty($colData.field.hideLabel)}}
-		<td valign="top" id='{{$colData.field.name}}_label' width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="row">
+		<td valign="top" id='{{$colData.field.name}}_label' width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="col">
 			{{if isset($colData.field.customLabel)}}
 			   {{$colData.field.customLabel}}
 			{{elseif isset($colData.field.label)}}

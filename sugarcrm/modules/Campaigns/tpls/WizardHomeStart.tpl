@@ -51,7 +51,7 @@
 
 	<div id='step1' >
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
-			<tr><th colspan='2' align="left" ><h4>{$MOD.LBL_CHOOSE_CAMPAIGN_TYPE}</h4></th></tr>
+			<tr><th scope='col' colspan='2' align="left" ><h4>{$MOD.LBL_CHOOSE_CAMPAIGN_TYPE}</h4></th></tr>
 			<tr><td colspan='2' ><p>{$MOD.LBL_HOME_START_MESSAGE}</p></td></tr>
 
 			<tr><td width='2%'>&nbsp;</td>

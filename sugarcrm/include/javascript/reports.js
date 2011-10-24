@@ -1992,7 +1992,6 @@ SUGAR.reports = function() {
 			var row = table.insertRow(table.rows.length);
 			row.setAttribute('id', 'display_cols_row_' + totalDisplayColRows);
 			var cell = row.insertCell(0);
-			cell.setAttribute('scope', 'row');
 			var record = e.getRecord(e.getSelectedRows()[0]);
 			cell.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;<input type='hidden' id='display_cols_row_"+ totalDisplayColRows+"_module' value='"+
 				record.getData('module_name') +"'>" +
@@ -2009,14 +2008,11 @@ SUGAR.reports = function() {
 			colLabel = record.getData('field_label');
 			cell.setAttribute("onmouseover", "this.style.cursor = 'move'");
 			cell = row.insertCell(2);
-			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='text' size='50' id= 'display_cols_label_'"+totalDisplayColRows+" value='"+colLabel+"' onclick='this.focus();'>";
 			cell = row.insertCell(3);
-			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='radio' name='order_by_radio' id='order_by_radio_"+totalDisplayColRows +"' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+")'></input>";
 			cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
 			cell = row.insertCell(4);
-			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			SUGAR.reports.addToFullTableList('display_cols_row_' + totalDisplayColRows,fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));		
 			
@@ -2056,7 +2052,7 @@ SUGAR.reports = function() {
 				"</td><td class='dataLabel'>&nbsp;</td></tr>" +
 				"<tr id='group_by_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_GROUP_BY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_SELECT_GROUP_BY') + "</span>" + "<span id='group_by_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_SELECT_GROUP_BY') + "<span id='group_by_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 
 			var groupByModule = new YAHOO.widget.Module("group_by_div", { visible: false });
 			groupByModule.setHeader(title);
@@ -2083,7 +2079,7 @@ SUGAR.reports = function() {
 			panelHtml +=	
 				"<tr id='display_summary_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES') + "</span>" + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES')  + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 
 			var displaySummariesModule = new YAHOO.widget.Module("display_summaries_div", { visible: false });
 			displaySummariesModule.setHeader(title);
@@ -2105,12 +2101,12 @@ SUGAR.reports = function() {
 		showDisplayColumnsPanel: function(){
 			document.getElementById('display_cols_div').innerHTML='';
 			module = current_module;
-			var panelHtml="<table id='displayColsTable' width='100%'><tr><td width='4%' scope='row'>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width='30%' scope='row'><b>"+SUGAR.language.get('Reports','LBL_COLUMN_NAME')+
-				"</td><td width='30%' scope='row'><b>"+SUGAR.language.get('Reports','LBL_LABEL')+"</td>" +
-				"<td width='30%' scope='row'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</td><td></td></tr>" +
+			var panelHtml="<table id='displayColsTable' width='100%'><tr><th width='4%'>&nbsp;&nbsp;&nbsp;&nbsp;</th><th width='30%' scope='col'><b>"+SUGAR.language.get('Reports','LBL_COLUMN_NAME')+
+				"</th><th width='30%' scope='col'><b>"+SUGAR.language.get('Reports','LBL_LABEL')+"</th>" +
+				"<th width='30%' scope='col'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</th><th></th></tr>" +
 				"<tr id='display_cols_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=3><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_COLS_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_CHOOSE_DISPLAY_COLS') + "</span>" + "<span id='display_cols_help'><img id=\"toolipImageId\" src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_CHOOSE_DISPLAY_COLS')  + "<span id='display_cols_help'><img id=\"toolipImageId\" src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 
 			var displayColsModule = new YAHOO.widget.Module("display_cols_div", { visible: false });
 			displayColsModule.setHeader(title);
@@ -3825,7 +3821,7 @@ SUGAR.reports = function() {
 				fieldGridJSON.push(obj);
 			}
 			var myColumnDefs = [ 
-	            {key:"field_label", minWidth: 150, sortable:true, resizeable:false, label:SUGAR.language.get('Reports','LBL_FIELD_NAME')}
+	            {key:"field_label", minWidth: 150, sortable:true, resizeable:false, label:SUGAR.language.get('Reports','LBL_FIELD_NAME'),abbr:'" scope="col'} //injecting 'scope' into YUI parameter for 508 compliance
 	        ];
 	        var myDataSource = new YAHOO.util.LocalDataSource(fieldGridData);
 	        myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
@@ -3833,7 +3829,7 @@ SUGAR.reports = function() {
 	            fields: ["field_label", "module_name","parents", "field_name", "link_name", "parent_module", "parents_link"]
 	        };
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel + "</span>" +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel  +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 			
 			var toolTip = new YAHOO.widget.Tooltip("tt6", {context:"fields_panel_help",  
 						   	   text:SUGAR.language.get('Reports','LBL_FIELDS_PANEL_HELP_DESC'),
@@ -3965,7 +3961,7 @@ SUGAR.reports = function() {
             
             var moduleTree = SUGAR.reports.module_tree;
             if (!moduleTree) {
-				var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "</span>" + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span>";
+				var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 				var moduleTree = new YAHOO.widget.Module("module_tree_panel", { visible: false });
 				var moduletreePanelHTML = "<div id=\"module_tree\" style=\"height:230px; width:200px; overflow:auto;\"></div>";
 				moduleTree.setHeader(title);

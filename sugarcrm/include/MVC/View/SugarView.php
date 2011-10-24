@@ -877,7 +877,7 @@ EOHTML;
                 $imageURL = SugarThemeRegistry::current()->getImageURL($key.'.gif');
 				$bottomLinksStr .= "<a href=\"{$href}\"";
 				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
-				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'>";
+				$bottomLinksStr .= "><img src='{$imageURL}' alt=''>"; //keeping alt blank on purpose for 508 (text will be read instead)
 				$bottomLinksStr .= " ".$text."</a>";
 			}
 		}
@@ -1197,7 +1197,7 @@ EOHTML;
     {
         global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
 
-        $theTitle = "<div class='moduleTitle'>\n<h2>";
+        $theTitle = "<div class='moduleTitle'>\n";
 
         $module = preg_replace("/ /","",$this->module);
 
@@ -1209,14 +1209,19 @@ EOHTML;
 			$params = array_reverse($params);
 		}
 
+        $paramString = '';
         foreach($params as $parm){
             $index++;
-            $theTitle .= $parm;
+            $paramString .= $parm;
             if($index < $count){
-                $theTitle .= $this->getBreadCrumbSymbol();
+                $paramString .= $this->getBreadCrumbSymbol();
             }
         }
-        $theTitle .= "</h2>\n";
+
+        if(!empty($paramString)){
+               $theTitle .= "<h2> $paramString </h2>\n";
+           }
+
         if ($show_help) {
             $theTitle .= "<span class='utils'>";
 

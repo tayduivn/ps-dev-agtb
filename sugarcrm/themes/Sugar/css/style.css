@@ -1472,10 +1472,10 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     border: 1px solid #dddddd;
 }
 #scheduler .schedulerDiv table tr.schedulerTimeRow td 
-{
+{66
 	border-left: 0;
 }
-#scheduler .schedulerDiv table tr.schedulerTimeRow td[scope=col]
+#scheduler .schedulerDiv table tr.schedulerTimeRow th[scope=col]
 {
     border-left:1px solid #DDDDDD;
     padding-left:4px;
@@ -3345,7 +3345,7 @@ table.detail
     background:#FAFAFA none repeat scroll 0 0;
     color:#666666;
 }
-.list tr th, .list tr td[scope=col], .edit .list tr th, .edit .list tr td[scope=col]
+.td_alt, .list tr th, .list tr td[scope=col], .edit .list tr th, .edit .list tr td[scope=col]
 {
     border-left: none;
     border-right: none;

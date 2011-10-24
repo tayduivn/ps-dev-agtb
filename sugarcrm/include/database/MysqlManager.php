@@ -209,19 +209,6 @@ class MysqlManager extends DBManager
 			mysql_free_result($dbResult);
 	}
 
-	/**
-	 * Returns the number of rows returned by the result
-	 *
-	 * @param  resource $result
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		if(!empty($result)) {
-			return mysql_num_rows($result);
-		}
-		return 0;
-	}
 
 	/**
 	 * @see DBManager::limitQuery()
@@ -232,7 +219,7 @@ class MysqlManager extends DBManager
 			$start = 0;
 		$GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
-		$sql = "$sql LIMIT $start,$count";
+	    $sql = "$sql LIMIT $start,$count";
 		$this->lastsql = $sql;
 
 		if(!empty($GLOBALS['sugar_config']['check_query'])){
@@ -339,24 +326,13 @@ class MysqlManager extends DBManager
 	}
 
 	/**
-	 * @see DBManager::fetchByAssoc()
+	 * @see DBManager::fetchRow()
 	 */
-	public function fetchByAssoc($result, $rowNum = -1, $encode = true)
+	public function fetchRow($result)
 	{
-		if (!$result)
-			return false;
+		if (empty($result))	return false;
 
-		if ($result && $rowNum > -1) {
-			if ($this->getRowCount($result) > $rowNum)
-				mysql_data_seek($result, $rowNum);
-		}
-
-		$row = mysql_fetch_assoc($result);
-
-		if ($encode && $this->encode && is_array($row))
-			return array_map('to_html', $row);
-
-		return $row;
+		return mysql_fetch_assoc($result);
 	}
 
 	/**

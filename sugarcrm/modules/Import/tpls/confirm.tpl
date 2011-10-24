@@ -74,13 +74,13 @@
             <div style="overflow: auto; width: 1056px;">
                 <table border=0 class="edit view noBorder" style="display: none;" id="importOptions">
                     <tr>
-                        <td scope="row">
+                        <td scope="col">
                             <slot>{$MOD.LBL_CHARSET}</slot>
                         </td>
                         <td>
                             <slot><select tabindex='4' name='importlocale_charset'>{$CHARSETOPTIONS}</select></slot>
                         </td>
-                        <td scope="row">
+                        <td scope="col">
                             <slot>{$MOD.LBL_CUSTOM_DELIMITER}</slot>
                         </td>
                         <td>
@@ -92,7 +92,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row">
+                        <td scope="col">
                             <slot>{$MOD.LBL_CUSTOM_ENCLOSURE}</slot>
                         </td>
                         <td>
@@ -104,7 +104,7 @@
                             {sugar_help text=$MOD.LBL_ENCLOSURE_HELP}
                             </slot>
                         </td>
-                        <td scope="row">
+                        <td scope="col">
                         {$MOD.LBL_HAS_HEADER}
                         </td>
                         <td>
@@ -112,46 +112,46 @@
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row"><slot>{$MOD.LBL_DATE_FORMAT}</slot></td>
+                        <td scope="col"><slot>{$MOD.LBL_DATE_FORMAT}</slot></td>
                         <td ><slot><select tabindex='4' name='importlocale_dateformat'>{$DATEOPTIONS}</select></slot></td>
-                        <td scope="row"><slot>{$MOD.LBL_TIME_FORMAT}</slot></td>
+                        <td scope="col"><slot>{$MOD.LBL_TIME_FORMAT}</slot></td>
                         <td ><slot><select tabindex='4' name='importlocale_timeformat'>{$TIMEOPTIONS}</select></slot></td>
                     </tr>
                     <tr>
-                        <td scope="row"><slot>{$MOD.LBL_TIMEZONE}</slot></td>
+                        <td scope="col"><slot>{$MOD.LBL_TIMEZONE}</slot></td>
                         <td ><slot><select tabindex='4' name='importlocale_timezone'>{html_options options=$TIMEZONEOPTIONS selected=$TIMEZONE_CURRENT}</select></slot></td>
-                        <td scope="row"><slot>{$MOD.LBL_CURRENCY}</slot></td>
+                        <td scope="col"><slot>{$MOD.LBL_CURRENCY}</slot></td>
                         <td ><slot>
                             <select tabindex='4' id='currency_select' name='importlocale_currency' onchange='setSymbolValue(this.selectedIndex);setSigDigits();'>{$CURRENCY}</select>
                             <input type="hidden" id="symbol" value="">
                         </slot></td>
                     </tr>
                     <tr>
-                        <td scope="row"><slot>{$MOD.LBL_CURRENCY_SIG_DIGITS}:</slot></td>
+                        <td scope="col"><slot>{$MOD.LBL_CURRENCY_SIG_DIGITS}:</slot></td>
                         <td ><slot><select id='sigDigits' onchange='setSigDigits(this.value);' name='importlocale_default_currency_significant_digits'>{$sigDigits}</select>
                         </slot></td>
-                        <td scope="row"><slot><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}</i>:</slot></td>
+                        <td scope="col"><slot><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}</i>:</slot></td>
                         <td ><slot><input type="text" disabled id="sigDigitsExample" name="sigDigitsExample"></slot></td>
                     </tr>
                     <tr>
-                        <td scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}</slot></td>
+                        <td scope="col"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}</slot></td>
                         <td ><slot>
                             <input tabindex='4' name='importlocale_num_grp_sep' id='default_number_grouping_seperator'
                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                         </slot></td>
-                        <td scope="row"><slot>{$MOD.LBL_DECIMAL_SEP}</slot></td>
+                        <td scope="col"><slot>{$MOD.LBL_DECIMAL_SEP}</slot></td>
                         <td ><slot>
                             <input tabindex='4' name='importlocale_dec_sep' id='default_decimal_seperator'
                                    type='text' maxlength='1' size='1' value='{$DEC_SEP}' onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                         </slot></td>
                     </tr>
                     <tr>
-                        <td scope="row" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}: </td>
+                        <td scope="col" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}: </td>
                         <td  valign="top">
                             <input onkeyup="setPreview();" onkeydown="setPreview();" id="default_locale_name_format" type="text" tabindex='4' name="importlocale_default_locale_name_format" value="{$default_locale_name_format}">
                             <br />{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}
                         </td>
-                        <td scope="row" valign="top"><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}:</i> </td>
+                        <td scope="col" valign="top"><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}:</i> </td>
                         <td  valign="top"><input tabindex='4' id="nameTarget" name="no_value" id=":q" value="" style="border: none;" disabled size="50"></td>
                     </tr>
                 </table>
@@ -163,16 +163,16 @@
             <td colspan="2"><div class="hr" style="margin-top: 0px;"></div></td>
         </tr>
         <tr>
-            <td colspan="2"><h3>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h3></td>
+            <td colspan="2" scope="col"><h3>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h3></td>
         </tr>
         <tr>
-            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="" id='none' checked='checked'/>&nbsp;{$MOD.LBL_NONE}</td>
+            <td colspan="2"><input class="radio" type="radio" name="external_source" value="" id='none' checked='checked'/>&nbsp;{$MOD.LBL_NONE}</td>
         </tr>
         <tr>
-            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/>&nbsp;{$MOD.LBL_SALESFORCE}</td>
+            <td colspan="2"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/>&nbsp;{$MOD.LBL_SALESFORCE}</td>
         </tr>
         <tr>
-            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}&nbsp;{sugar_help text=$MOD.LBL_MICROSOFT_OUTLOOK_HELP}</td>
+            <td colspan="2"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}&nbsp;{sugar_help text=$MOD.LBL_MICROSOFT_OUTLOOK_HELP}</td>
         </tr>
         <tr>
             <td colspan="2">&nbsp;</td>

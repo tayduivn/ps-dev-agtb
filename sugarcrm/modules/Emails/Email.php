@@ -1249,7 +1249,7 @@ class Email extends SugarBean {
 	function retrieveEmailText() {
 		$q = "SELECT from_addr, reply_to_addr, to_addrs, cc_addrs, bcc_addrs, description, description_html, raw_source FROM emails_text WHERE email_id = '{$this->id}'";
 		$r = $this->db->query($q);
-		$a = $this->db->fetchByAssoc($r, -1, false);
+		$a = $this->db->fetchByAssoc($r, false);
 
 		$this->description = $a['description'];
 		$this->description_html = $a['description_html'];

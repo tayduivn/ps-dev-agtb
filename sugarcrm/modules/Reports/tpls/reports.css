@@ -65,6 +65,7 @@ div.bodywrapper{padding: 4px 4px 4px 4px}
 	font-family: tahoma,arial,verdana,sans-serif;
 	font-size: 11px;
 	font-weight:bold;
+    color:#666666;
 } 
 
 .yui-dt-scrollable .yui-dt-bd {
@@ -87,3 +88,6 @@ div.bodywrapper{padding: 4px 4px 4px 4px}
 .ygtvlabel {
 white-space: nowrap;
 };
+.bold {
+    font-weight:bold;eee
+}

@@ -412,7 +412,7 @@ SugarWidgetSchedulerAttendees.prototype.display = function() {
 		}
 
 		var form_hours = hours+time_separator+"00";
-		html += '<td scope="col" colspan="'+this.segments+'">'+form_hours+am_pm+'</td>';
+		html += '<th scope="col" colspan="'+this.segments+'">'+form_hours+am_pm+'</th>';
 	}
 
 	html += '<td>&nbsp;</td>';

@@ -90,9 +90,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='RowsAndColumns.gif'}" name="rowsColsImg" onclick="SUGAR.reports.selectReportType('tabular');"
 								onMouseOver="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumnsOver.gif'}'"
-								onMouseOut="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumns.gif'}'"></td>
+								onMouseOut="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumns.gif'}'"
+                                alt="{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}</h3><br/>
 								{$MOD.LBL_ROWS_AND_COLUMNS_REPORT_DESC}
 							</td>
 						</tr>
@@ -102,9 +103,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='Summation.gif'}" name="summationImg" onclick="SUGAR.reports.selectReportType('summation');"
 								onMouseOver="document.summationImg.src='{sugar_getimagepath file='SummationOver.gif'}'"
-								onMouseOut="document.summationImg.src='{sugar_getimagepath file='Summation.gif'}'"></td>
+								onMouseOut="document.summationImg.src='{sugar_getimagepath file='Summation.gif'}'"
+                                     alt="{$MOD.LBL_SUMMATION_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_SUMMATION_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_SUMMATION_REPORT}</h3>
 								{$MOD.LBL_SUMMATION_REPORT_DESC}
 							</td>
 						</tr>
@@ -116,9 +118,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='SummationWithDetails.gif'}" name="summationWithDetailsImg" onclick="SUGAR.reports.selectReportType('summation_with_details');"
 								onMouseOver="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetailsOver.gif'}'"
-								onMouseOut="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetails.gif'}'"></td>
+								onMouseOut="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetails.gif'}'"
+                                alt="{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}</h3>
 								{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS_DESC}
 							</td>
 						</tr>
@@ -129,9 +132,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='MatrixReport.gif'}" name="matrixImg" onclick="SUGAR.reports.selectReportType('summation', true);"
 								onMouseOver="document.matrixImg.src='{sugar_getimagepath file='MatrixReportOver.gif'}'"
-								onMouseOut="document.matrixImg.src='{sugar_getimagepath file='MatrixReport.gif'}'"></td>
+								onMouseOut="document.matrixImg.src='{sugar_getimagepath file='MatrixReport.gif'}'"
+                                alt="{$MOD.LBL_MATRIX_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_MATRIX_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_MATRIX_REPORT}</h3>
 								{$MOD.LBL_MATRIX_REPORT_DESC}
 							</td>
 						</tr>
@@ -164,14 +168,15 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 								     <table class='wizardButton' onclick='SUGAR.reports.moduleButtonClick("{$button.key}", this);' onmousedown="" onmouseout="" width="60%" border='1' id='{$button.name}'>
 								         <tr>
 											<td align="left" width='50%'><a class='studiolink' href="javascript:void(0)" >
+                                                {capture assign="buttonName"}{$button.name}{/capture}
 												{if $button.alt}
 													{$button.alt}
 												{else}
-													{sugar_getimage name=$button.img attr='border="0"'}
+													{sugar_getimage name=$button.img attr='border="0" '  alt="$buttonName"}
 												{/if}
 												</a>
 											</td>
-											 <td align="left" width='50%' valign="middle"><a class='studiolink' href="javascript:void(0)" onclick="">{$button.name}</a></td>
+											 <td align="left" width='50%' valign="middle"><a class='studiolink' href="javascript:void(0)" onclick="">{$buttonName}</a></td>
 
 										 </tr>
 									 </table>

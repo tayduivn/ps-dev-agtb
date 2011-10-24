@@ -62,15 +62,13 @@ class EmployeesSearchForm extends SearchForm {
         $where_clauses = parent::generateSearchWhere($add_custom_fields, $module);
         
         if ( $onlyActive ) {
-            $where_clauses[] = "employee_status = 'Active'";
+            $where_clauses[] = "users.employee_status = 'Active'";
         }
         
         // Add in code to remove portal/group/hidden users
-        $where_clauses[] = "portal_only = 0";
-        $where_clauses[] = "is_group = 0";
-        $where_clauses[] = "show_on_employees = 1";
-        $where_clauses[] = "status <> 'Reserved'";
-
+        $where_clauses[] = "users.portal_only = 0";
+        $where_clauses[] = "users.is_group = 0";
+        $where_clauses[] = "users.show_on_employees = 1";
         return $where_clauses;
     }
 }

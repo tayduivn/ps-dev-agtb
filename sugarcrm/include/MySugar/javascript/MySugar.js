@@ -276,6 +276,8 @@ SUGAR.mySugar = function() {
 				//custom chart code
                 SUGAR.mySugar.sugarCharts.loadSugarCharts(pageNum);
                 
+                SUGAR.util.evalScript(htmlRepsonse);
+                
                 //refresh page when user resizes window
 
 
