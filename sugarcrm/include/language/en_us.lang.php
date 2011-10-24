@@ -3980,6 +3980,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'Box' => 'Box.net',
     'Facebook'=>'Facebook',
     'Twitter'=>'Twitter',
+    'Alfresco'=>'Alfresco',
   );
   $app_list_strings['eapm_list_import']= array(
   	'Google' => 'Google Contacts',
