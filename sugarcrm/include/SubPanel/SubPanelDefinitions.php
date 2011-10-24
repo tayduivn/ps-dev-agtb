@@ -139,10 +139,7 @@ class aSubPanel
 	{
 		if (isset ( $this->_instance_properties [ 'get_distinct_data' ] ))
 		{
-
-			if (! empty ( $this->_instance_properties [ 'get_distinct_data' ] ))
-			return true ; else
-			return false ;
+			return !empty($this->_instance_properties['get_distinct_data']) ? true : false;
 		}
 		return false ;
 	}
@@ -363,9 +360,7 @@ class aSubPanel
 	//get value of a property defined at the panel instance level.
 	function get_inst_prop_value ( $name )
 	{
-		if (isset ( $this->_instance_properties [ $name ] ))
-		return $this->_instance_properties [ $name ] ; else
-		return null ;
+		return isset($this->_instance_properties[$name]) ? $this->_instance_properties [ $name ] : null;
 	}
 	//get value of a property defined at the panel definition level.
 	function get_def_prop_value ( $name )

@@ -53,49 +53,76 @@ class ITR27836Test extends Sugar_PHPUnit_Framework_TestCase
   		$moduleInstaller->rebuild_layoutdefs();
 	}
 
-    public function testSubPanelDefaultHiddenWhenSetTrue()
-    {
-        $subpanel = array(
-			'order' => 20,
-			'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'type' => 'collection',
-            'default_hidden' => true,
-			'subpanel_name' => 'history',   //this values is not associated with a physical file.
-			'top_buttons' => array(),
-        );
-        $subpanel_def = new aSubPanel("testpanel", $subpanel, $this->bean);
-        $this->assertTrue($subpanel_def->isDefaultHidden());
-    }
 
-    public function testSubPanelDefaultHiddenWhenSetFalse()
+    public function subpanelProvider()
     {
-        $subpanel = array(
-			'order' => 20,
-			'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'type' => 'collection',
-            'default_hidden' => false,
-			'subpanel_name' => 'history',   //this values is not associated with a physical file.
-			'top_buttons' => array(),
-        );
-        $subpanel_def = new aSubPanel("testpanel", $subpanel, $this->bean);
-        $this->assertFalse($subpanel_def->isDefaultHidden());
-    }
+        return array(
+            //Hidden set to true
 
-    public function testSubPanelDefaultHiddenWhenNotSet()
+            array(
+                'data' => array(
+                    'testpanel' => array(
+                        'order' => 20,
+                        'sort_order' => 'desc',
+                        'sort_by' => 'date_entered',
+                        'type' => 'collection',
+                        'top_buttons' => array(),
+                    ),
+                    'default_hidden' => true,
+                    'subpanel_name' => 'history',
+                    'module' => $this->bean->module_dir
+                ),
+            ),
+
+            //Hidden set to false
+            array
+            (
+                'data' => array(
+                    'testpanel' => array(
+                        'order' => 20,
+                        'sort_order' => 'desc',
+                        'sort_by' => 'date_entered',
+                        'type' => 'collection',
+                        'top_buttons' => array(),
+                    ),
+                    'default_hidden' => false,
+                    'subpanel_name' => 'history',
+                    'module' => $this->bean->module_dir
+                ),
+            ),
+
+            //Hidden not set
+            array(
+                'data' => array(
+                    'testpanel' => array(
+                        'order' => 20,
+                        'sort_order' => 'desc',
+                        'sort_by' => 'date_entered',
+                        'type' => 'collection',
+                        'top_buttons' => array(),
+                    ),
+                    'subpanel_name' => 'history',
+                    'module' => $this->bean->module_dir
+                ),
+            ),
+        );
+    }
+    
+    /**
+     * testSubpanelDisplay
+     *
+     * @dataProvider subpanelProvider
+     */
+    public function testSubPanelDisplay($subpanel)
     {
-        $subpanel = array(
-			'order' => 20,
-			'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'type' => 'collection',
-			'subpanel_name' => 'history',   //this values is not associated with a physical file.
-			'top_buttons' => array(),
-        );
         $subpanel_def = new aSubPanel("testpanel", $subpanel, $this->bean);
-        $this->assertFalse($subpanel_def->isDefaultHidden());
-    }
 
+        if(isset($subpanel['default_hidden']) && $subpanel['default_hidden'] === true)
+        {
+            $this->assertTrue($subpanel_def->isDefaultHidden());
+        } else {
+            $this->assertFalse($subpanel_def->isDefaultHidden());
+        }
+    }
 
 }
