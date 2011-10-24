@@ -21,11 +21,30 @@
  ********************************************************************************/
 require_once('include/externalAPI/Base/CMISBase.php');
  class ExtAPIAlfresco extends CMISBase {
+     /**
+      * @var string The type of authentication method this external API supports
+      */
     public $authMethod = 'password';
+     /**
+      * @var string The connector name associated with this external API
+      */
     public $connector = "ext_eapm_alfresco";
+     /**
+      * @var string The url of the 
+      */
+    protected $objectBrowserUrl = 'http://cmis.alfresco.com/service/cmis-browser-app/c/default/object?id=';
 
      function __construct() {
         parent::__construct();
+    }
+
+    public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
+    {
+        $result = parent::uploadDoc($bean, $fileToUpload, $docName, $mimeType);
+        if($result['success'] == true){
+            $bean->doc_url = $this->objectBrowserUrl.$bean->doc_id;
+        }
+        return $result;
     }
 
  }
