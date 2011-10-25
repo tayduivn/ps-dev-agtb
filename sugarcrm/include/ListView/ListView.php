@@ -325,7 +325,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             } else {
                 $this->xTemplate->assign('TAG_NAME','span');
             }
-            $this->xTemplate->assign('CHECKALL', "<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked);' />");
+            $this->xTemplate->assign('CHECKALL', "<input type='checkbox'  title='".$GLOBALS['app_strings']['LBL_SELECT_ALL_TITLE']."' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked);' />");
         }
 
         if($oddRow)
@@ -1376,7 +1376,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             }
             $this->xTemplate->assign('PREROW', $prerow);
 
-            $this->xTemplate->assign('CHECKALL', "<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked)'>");
+            $this->xTemplate->assign('CHECKALL', "<input type='checkbox' class='checkbox'  title='".$GLOBALS['app_strings']['LBL_SELECT_ALL_TITLE']."'  name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked)'>");
             }
             if(!isset($this->data_array)) {
                 $tag = $aItem->listviewACLHelper();

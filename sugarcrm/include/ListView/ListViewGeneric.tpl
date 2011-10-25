@@ -46,7 +46,7 @@
 		{if $prerow}
 			<td width='1%' class="selectCol td_alt">
 				<div>
-				<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
+				<input title="{sugar_translate label='LBL_SELECT_ALL_TITLE'}" type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 				{$selectLink}
 				</div>
 			</td>
@@ -121,7 +121,7 @@
 			 {if !$is_admin && is_admin_for_user && $rowData.IS_ADMIN==1}
 					<input type='checkbox' disabled="disabled" class='checkbox' value='{$rowData.ID}'>
 			 {else}
-                    <input onclick='sListView.check_item(this, document.MassUpdate)' type='checkbox' class='checkbox' name='mass[]' value='{$rowData.ID}'>		 
+                    <input title="{sugar_translate label='LBL_SELECT_THIS_ROW_TITLE'}" onclick='sListView.check_item(this, document.MassUpdate)' type='checkbox' class='checkbox' name='mass[]' value='{$rowData.ID}'>
 			 {/if}
 			</td>
 			{/if}
