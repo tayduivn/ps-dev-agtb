@@ -134,31 +134,16 @@ class OracleManager extends DBManager
     }
 
     /**
-     * Checks for oci_errors in the given resource
-     *
-     * @param  resource $obj
-     * @return bool
-     */
-    protected function checkOCIerror($obj)
-    {
-        $err = oci_error($obj);
-        if ($err != false){
-            $result = false;
-            $GLOBALS['log']->fatal("OCI error: ".var_export($err, true));
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * @see DBManager::checkError()
      */
-    public function checkError($msg = '', $dieOnError = false)
+    public function checkError($msg = '', $dieOnError = false, $stmt = null)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
 
-        $err = oci_error($this->database);
+        if(empty($stmt)) return false;
+
+        $err = oci_error($stmt);
         if ($err){
             $error = $err['code']."-".$err['message'];
             $this->registerError($msg, $error, $dieOnError);
@@ -190,7 +175,7 @@ class OracleManager extends DBManager
         $result = false;
 
         $stmt = $suppress?@oci_parse($db, $sql):oci_parse($db, $sql);
-		if(!$this->checkOCIerror($db)) {
+		if(!$this->checkError("$msg Parse Failed: $sql", $dieOnError)) {
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
@@ -350,7 +335,7 @@ class OracleManager extends DBManager
         $row = oci_fetch_array($result, OCI_ASSOC|OCI_RETURN_NULLS|OCI_RETURN_LOBS);
         if ( !$row )
             return false;
-        if ($this->checkOCIerror($result) == false) {
+        if (!$this->checkError("Fetch error", false, $result)) {
             $temp = $row;
             $row = array();
             foreach ($temp as $key => $val)
@@ -518,7 +503,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $query);
-        if($this->checkOCIerror($this->database)) {
+        if($this->checkError("Insert failed: $query", false)) {
             return false;
         }
 
@@ -529,7 +514,7 @@ class OracleManager extends DBManager
         }
         $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkOCIerror($stmt)) {
+        if(!$this->checkError("Execute failed", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
                 $val = $data[$key];
                 if (empty($val)) $val=" ";
@@ -590,7 +575,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $sql);
-        if($this->checkOCIerror($this->database)) {
+        if($this->checkError("Update failed: $sql", false)) {
             return false;
         }
 
@@ -601,7 +586,7 @@ class OracleManager extends DBManager
         }
         $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkOCIerror($stmt)) {
+        if(!$this->checkError("Execute failed", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
                 $val = $bean->getFieldValue($key);
                 if (empty($val)) $val=" ";
@@ -892,16 +877,18 @@ class OracleManager extends DBManager
         $qval = parent::massageValue($val, $fieldDef);
         if(empty($val)) return $qval; // do not massage empty values
 
+        if($type == "datetimecombo") {
+            $type = "datetime";
+        }
+
         switch($type) {
             case 'date':
                 $val = explode(" ", $val); // make sure that we do not pass the time portion
                 $qval = parent::massageValue($val[0], $fieldDef);            // get the date portion
-                return "TO_DATE($qval, 'YYYY-MM-DD')";
+                // break missing intentionally
             case 'datetime':
-            case 'datetimecombo':
-                return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
             case 'time':
-                return "TO_DATE($qval, 'HH24:MI:SS')";
+                return $this->convert($qval, $type);
 		}
 
         return $qval;
@@ -955,20 +942,20 @@ class OracleManager extends DBManager
 	    	case 'MODIFY':
 	    		$colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
 	    		$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
+	    		$nowCol = $this->describeField($colArray['name'], $tablename);
 	    		if($colArray['colType'] == 'blob' || $colArray['colType'] == 'clob') {
 	    			// Bug 42467: prevent Oracle from modifying *LOB fields
-	    			$nowCol = $this->describeField($colArray['name'], $tablename);
 	    			if($colArray['colType'] != $nowCol['type']) {
                         // we can't change type from lob, sorry
                         return '';
 	    			}
 	    			$colArray['colType'] = ''; // we don't change type, so omit it
-                    if(!empty($nowCol['default']) && empty($colArray['default'])) {
-                        // removing default is allowed by changing to "DEFAULT NULL"
-                        $colArray['default'] = "DEFAULT NULL";
-                        $colArray['required'] = '';
-                    }
 	    		}
+	            if(isset($nowCol['default']) && !isset($fieldDef['default'])) {
+                    // removing default is allowed by changing to "DEFAULT NULL"
+                    $colArray['default'] = "DEFAULT NULL";
+                    //$colArray['required'] = '';
+                }
 	    		if ( !$ignoreRequired && ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
 	    			$colArray['required'] = '';
 	    		return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
@@ -1150,7 +1137,7 @@ class OracleManager extends DBManager
     /**
      * @see DBManager::updateSQL()
      */
-    public function updateSQL(SugarBean $bean, array $where = array())
+    public function ___updateSQL(SugarBean $bean, array $where = array())
     {
 		// get field definitions
         $primaryField = $bean->getPrimaryFieldDefinition();
@@ -1435,6 +1422,12 @@ EOQ;
         }
         if($ctype == "time") {
             return $this->convert($this->quoted("00:00:00"), "time");
+        }
+        if($ctype == "clob") {
+            return "EMPTY_CLOB()";
+        }
+        if($ctype == "blob") {
+            return "EMPTY_BLOB()";
         }
         return parent::emptyValue($type);
     }

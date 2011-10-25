@@ -1939,39 +1939,41 @@ protected function checkQuery($sql, $object_name = false)
 		foreach ($bean->getFieldDefinitions() as $field => $fieldDef) {
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
 			// Do not write out the id field on the update statement.
-		// We are not allowed to change ids.
-		if ($fieldDef['name'] == $primaryField['name']) continue;
+    		// We are not allowed to change ids.
+    		if ($fieldDef['name'] == $primaryField['name']) continue;
 
-		// If the field is an auto_increment field, then we shouldn't be setting it.  This was added
-		// specially for Bugs and Cases which have a number associated with them.
-		if (!empty($bean->field_name_map[$field]['auto_increment'])) continue;
+    		// If the field is an auto_increment field, then we shouldn't be setting it.  This was added
+    		// specially for Bugs and Cases which have a number associated with them.
+    		if (!empty($bean->field_name_map[$field]['auto_increment'])) continue;
 
-		//custom fields handle their save seperatley
-		if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
+    		//custom fields handle their save seperatley
+    		if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
 
-		if(isset($bean->$field)) {
-			$val = from_html($bean->$field);
-		} else {
-			continue;
-		}
+    		if(isset($bean->$field)) {
+    			$val = from_html($bean->$field);
+    		} else {
+    			continue;
+    		}
 
-		if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
-			$val = $bean->getFieldValue($field);
-		}
+    		if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
+    			$val = $bean->getFieldValue($field);
+    		}
 
-		if(strlen($val) == 0) {
-			if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
-				$val = $fieldDef['default'];
-			} else {
-				$val = null;
-			}
-		}
+    		if(strlen($val) == 0) {
+    			if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+    				$val = $fieldDef['default'];
+    			} else {
+    				$val = null;
+    			}
+    		}
 
-		if(!is_null($val) || !empty($fieldDef['required'])) {
-			$columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
-		} else {
-			$columns[] = "{$fieldDef['name']}=NULL";
-		}
+    		if(!is_null($val) || !empty($fieldDef['required'])) {
+    			$columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
+    		} elseif($this->isNullable($fieldDef)) {
+    			$columns[] = "{$fieldDef['name']}=NULL";
+    		} else {
+    		    $columns[] = $this->emptyValue($fieldDef['type']);
+    		}
 		}
 
 		if ( sizeof($columns) == 0 )

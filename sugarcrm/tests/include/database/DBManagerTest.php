@@ -1893,7 +1893,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $names_i = array();
         foreach($result as $k => $v) {
             if($k == "id") continue;
-            $names_i[] = "$k=$v";
+            $names_i[] = preg_quote("$k=$v");
         }
         if(empty($names_i)) {
             $this->assertEquals("", $sql, "Bad sql: $sql");
