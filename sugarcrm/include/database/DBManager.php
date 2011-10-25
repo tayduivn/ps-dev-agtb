@@ -2656,7 +2656,7 @@ protected function checkQuery($sql, $object_name = false)
 			}
 			return $result;
 		} else {
-			// first strip any invalid characters - all but alphanumerics and -
+			// first strip any invalid characters - all but word chars and -
 			$name = preg_replace( '/[^\w-]+/i', '', $name ) ;
 			$len = strlen( $name ) ;
 			$maxLen = empty($this->maxNameLengths[$type]) ? $this->maxNameLengths[$type]['column'] : $this->maxNameLengths[$type];
