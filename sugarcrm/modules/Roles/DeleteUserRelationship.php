@@ -43,4 +43,3 @@ $GLOBALS['log']->debug("about to post header URL of: $header_URL");
 
 header($header_URL);
 ?>
-

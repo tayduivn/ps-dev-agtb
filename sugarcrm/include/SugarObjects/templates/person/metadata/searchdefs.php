@@ -50,6 +50,7 @@ $module_name = '<module_name>';
 								'address_city',
 								'created_by_name',
 								'do_not_call',
+								'email',
 								//BEGIN SUGARCRM flav=pro ONLY
 								array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
 								//END SUGARCRM flav=pro ONLY

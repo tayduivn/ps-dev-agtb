@@ -48,4 +48,3 @@ if (ACLController :: checkAccess('Contracts', 'detail', true)) {
 }
 
 ?>
-

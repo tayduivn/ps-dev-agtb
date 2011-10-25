@@ -24,7 +24,6 @@
 
 class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
-
     public function setUp()
     {
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -119,7 +118,6 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     	 $_REQUEST = array();
     	 $_REQUEST['q'] = 'Bug43653Test';
-
 		 require_once('include/MVC/View/views/view.spot.php');
 		 $spotView = new ViewSpot();
 		 $spotView->display();

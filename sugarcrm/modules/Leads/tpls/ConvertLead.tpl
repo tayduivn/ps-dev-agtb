@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {*
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
