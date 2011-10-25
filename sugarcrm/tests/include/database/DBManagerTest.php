@@ -1906,4 +1906,24 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $names = join('\s*,\s*',$names_i);
         $this->assertRegExp("/UPDATE $name\s+SET\s+$names\s+WHERE\s+$name.id\s*=\s*'test_ID' AND deleted=0/is", $sql, "Bad sql: $sql");
     }
+
+    /**
+     * Test the canInstall
+     * @return void
+     */
+    public function testCanInstall() {
+        if(!method_exists($this->_db, 'version'))
+            $this->markTestSkipped(
+              "Current DBManager implementation doesn't implement canInstall"); //Note we use version as an indirect way to determine if canInstall is overriden
+
+        // First assuming that we are only running unit tests against a supported database :)
+        $this->assertTrue($this->_db->canInstall(), "Apparently we are not running this unit test against a supported database!!!");
+
+        $DBstub = $this->getMock(get_class($this->_db), array('version'));
+        $DBstub->expects($this->any())
+               ->method('version')
+               ->will($this->returnValue('0.0.0')); // Expect that any supported version is higher than 0.0.0
+
+        $this->assertTrue(is_array($DBstub->canInstall()), "Apparently we do support version 0.0.0 in " . get_class($this->_db));
+    }
 }
