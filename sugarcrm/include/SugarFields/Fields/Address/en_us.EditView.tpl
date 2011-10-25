@@ -38,7 +38,7 @@
 <table border="0" cellspacing="1" cellpadding="0" class="edit" width="100%">
 <tr>
 <td valign="top" id="{{$street}}_label" width='25%' scope='row' >
-{sugar_translate label='LBL_{{$key}}_STREET' module='{{$module}}'}:
+<label for="{{$street}}">{sugar_translate label='LBL_{{$key}}_STREET' module='{{$module}}'}:</label>
 {if $fields.{{$street}}.required || {{if $street|lower|in_array:$displayParams.required}}true{{else}}false{{/if}}}
 <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span>
 {/if}
@@ -55,7 +55,7 @@
 <tr>
 
 <td id="{{$city}}_label" width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope='row' >
-{sugar_translate label='LBL_CITY' module='{{$module}}'}:
+<label for="{{$city}}">{sugar_translate label='LBL_CITY' module='{{$module}}'}:
 {if $fields.{{$city}}.required || {{if $city|lower|in_array:$displayParams.required}}true{{else}}false{{/if}}}
 <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span>
 {/if}
@@ -67,7 +67,7 @@
 
 <tr>
 <td id="{{$state}}_label" width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope='row' >
-{sugar_translate label='LBL_STATE' module='{{$module}}'}:
+<label for="{{$state}}">{sugar_translate label='LBL_STATE' module='{{$module}}'}:</label>
 {if $fields.{{$state}}.required || {{if $state|lower|in_array:$displayParams.required}}true{{else}}false{{/if}}}
 <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span>
 {/if}
@@ -81,7 +81,7 @@
 
 <td id="{{$postalcode}}_label" width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope='row' >
 
-{sugar_translate label='LBL_POSTAL_CODE' module='{{$module}}'}:
+<label for="{{$postalcode}}">{sugar_translate label='LBL_POSTAL_CODE' module='{{$module}}'}:</label>
 {if $fields.{{$postalcode}}.required || {{if $postalcode|lower|in_array:$displayParams.required}}true{{else}}false{{/if}}}
 <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span>
 {/if}
@@ -95,7 +95,7 @@
 
 <td id="{{$country}}_label" width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope='row' >
 
-{sugar_translate label='LBL_COUNTRY' module='{{$module}}'}:
+<label for="{{$country}}">{sugar_translate label='LBL_COUNTRY' module='{{$module}}'}:</label>
 {if $fields.{{$country}}.required || {{if $country|lower|in_array:$displayParams.required}}true{{else}}false{{/if}}}
 <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span>
 {/if}
