@@ -70,7 +70,7 @@ class ITR27836Test extends Sugar_PHPUnit_Framework_TestCase
                     ),
                     'default_hidden' => true,
                     'subpanel_name' => 'history',
-                    'module' => 'Contacts'
+                    'module' => $this->bean->module_dir
                 ),
             ),
 
@@ -87,7 +87,7 @@ class ITR27836Test extends Sugar_PHPUnit_Framework_TestCase
                     ),
                     'default_hidden' => false,
                     'subpanel_name' => 'history',
-                    'module' => 'Contacts'
+                    'module' => $this->bean->module_dir
                 ),
             ),
 
@@ -102,7 +102,7 @@ class ITR27836Test extends Sugar_PHPUnit_Framework_TestCase
                         'top_buttons' => array(),
                     ),
                     'subpanel_name' => 'history',
-                    'module' => 'Contacts'
+                    'module' => $this->bean->module_dir
                 ),
             ),
         );
