@@ -105,7 +105,7 @@ class Bug47537Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['quote_num_advanced_range_choice'] = 'between';
         $this->array['start_range_quote_num_advanced'] = '1';
         $this->array['end_range_quote_num_advanced'] = '3';
-        $expected = array(strtolower($this->module).".quote_num >= '1' AND ".strtolower($this->module).".quote_num <= '3'");
+        $expected = array(strtolower($this->module).".quote_num >= 1 AND ".strtolower($this->module).".quote_num <= 3");
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
