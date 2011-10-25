@@ -874,24 +874,12 @@ class OracleManager extends DBManager
             return "EMPTY_BLOB()";
         }
 
-        $qval = parent::massageValue($val, $fieldDef);
-        if(empty($val)) return $qval; // do not massage empty values
-
-        if($type == "datetimecombo") {
-            $type = "datetime";
+        if($type == "date" && !empty($val)) {
+            $val = explode(" ", $val); // make sure that we do not pass the time portion
+            return parent::massageValue($val[0], $fieldDef);            // get the date portion
         }
 
-        switch($type) {
-            case 'date':
-                $val = explode(" ", $val); // make sure that we do not pass the time portion
-                $qval = parent::massageValue($val[0], $fieldDef);            // get the date portion
-                // break missing intentionally
-            case 'datetime':
-            case 'time':
-                return $this->convert($qval, $type);
-		}
-
-        return $qval;
+        return parent::massageValue($val, $fieldDef);
     }
 
 	/**
@@ -1343,8 +1331,8 @@ EOQ;
      */
     public function renameIndexDefs($old_definition, $new_definition, $table_name)
     {
-        $old_definition = $this->getValidDBName($old_definition, true, 'index');
-        $new_definition = $this->getValidDBName($new_definition, true, 'index');
+        $old_definition['name'] = $this->getValidDBName($old_definition['name'], true, 'index');
+        $new_definition['name'] = $this->getValidDBName($new_definition['name'], true, 'index');
         return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";
     }
 
