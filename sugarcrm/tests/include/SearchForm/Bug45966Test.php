@@ -46,6 +46,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->setPreference('timezone', 'EDT');
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
 
         $this->seed = new $beanList[$this->module];
         $this->form = new SearchForm($this->seed, $this->module, $this->action);
@@ -61,7 +62,6 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
             'start_range_date_entered_advanced' => '',
             'end_range_date_entered_advanced' => '',
         );
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     public function tearDown()
