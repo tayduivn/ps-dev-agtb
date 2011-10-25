@@ -337,17 +337,17 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<div class="edit view">
 		<table id="report_details_table" border="0"  width="100%" cellspacing="0" cellpadding="0" >
 			<tr>
-				<td width="20%" scope='row'>{$MOD.LBL_REPORT_NAME}: <span class='required'>*</span></td>
-				<td><input type='text' size='45' name='save_report_as' value='{$save_report_as}'></td>
+				<td width="20%" scope='row'><label for='save_report_as'>{$MOD.LBL_REPORT_NAME}:</label> <span class='required'>*</span></td>
+				<td><input type='text' size='45' name='save_report_as' id='save_report_as' value='{$save_report_as}'></td>
 			</tr>
 			{if $IS_ADMIN}
 			<tr>
-				<td scope='row'>{$MOD.LBL_SHOW_QUERY}:</td>
-				<td><input type="checkbox" class="checkbox" name="show_query"  {if ($show_query)}CHECKED{/if}></td>
+				<td scope='row'><label for='show_query'>{$MOD.LBL_SHOW_QUERY}:</label></td>
+				<td><input type="checkbox" class="checkbox" name="show_query" id='show_query'  {if ($show_query)}CHECKED{/if}></td>
 			</tr>			
 			{/if}
 			<tr>
-				<td scope='row'>{$MOD.LBL_OWNER}: <span class='required'>*</span></td>
+				<td scope='row'><label for='assigned_user_name'>{$MOD.LBL_OWNER}:</label> <span class='required'>*</span></td>
 				<td>{$USER_HTML}</td>
 			</tr>	
 			{* //BEGIN SUGARCRM flav=pro ONLY *}
@@ -362,7 +362,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 				<td><div id='outerjoin_div'></div></td>
 			</tr>
 			<tr id='matrixLayoutRow' style="display:none">
-				<td scope='row'>{$MOD.LBL_MATRIX_LAYOUT}</td>
+				<td scope='row'><label for='layout_options'>{$MOD.LBL_MATRIX_LAYOUT}</label></td>
 				<td><select name='layout_options' id='layout_options'>
 					<option value='1x2'>{$MOD.LBL_1X2}</option>
 					<option value='2x1'>{$MOD.LBL_2X1}</option>

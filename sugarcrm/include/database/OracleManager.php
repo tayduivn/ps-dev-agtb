@@ -134,31 +134,16 @@ class OracleManager extends DBManager
     }
 
     /**
-     * Checks for oci_errors in the given resource
-     *
-     * @param  resource $obj
-     * @return bool
-     */
-    protected function checkOCIerror($obj)
-    {
-        $err = oci_error($obj);
-        if ($err != false){
-            $result = false;
-            $GLOBALS['log']->fatal("OCI error: ".var_export($err, true));
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * @see DBManager::checkError()
      */
-    public function checkError($msg = '', $dieOnError = false)
+    public function checkError($msg = '', $dieOnError = false, $stmt = null)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
 
-        $err = oci_error($this->database);
+        if(empty($stmt)) return false;
+
+        $err = oci_error($stmt);
         if ($err){
             $error = $err['code']."-".$err['message'];
             $this->registerError($msg, $error, $dieOnError);
@@ -190,7 +175,7 @@ class OracleManager extends DBManager
         $result = false;
 
         $stmt = $suppress?@oci_parse($db, $sql):oci_parse($db, $sql);
-		if(!$this->checkOCIerror($db)) {
+		if(!$this->checkError("$msg Parse Failed: $sql", $dieOnError)) {
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
@@ -208,7 +193,7 @@ class OracleManager extends DBManager
 		if($keepResult)
 		    $this->lastResult = $result;
 
-		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError)) {
+		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
 		    return false;
 		}
         return $result;
@@ -350,7 +335,7 @@ class OracleManager extends DBManager
         $row = oci_fetch_array($result, OCI_ASSOC|OCI_RETURN_NULLS|OCI_RETURN_LOBS);
         if ( !$row )
             return false;
-        if ($this->checkOCIerror($result) == false) {
+        if (!$this->checkError("Fetch error", false, $result)) {
             $temp = $row;
             $row = array();
             foreach ($temp as $key => $val)
@@ -518,7 +503,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $query);
-        if($this->checkOCIerror($this->database)) {
+        if($this->checkError("Insert parse failed: $query", false)) {
             return false;
         }
 
@@ -529,7 +514,7 @@ class OracleManager extends DBManager
         }
         $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkOCIerror($stmt)) {
+        if(!$this->checkError("Insert execute failed: $query", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
                 $val = $data[$key];
                 if (empty($val)) $val=" ";
@@ -590,7 +575,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $sql);
-        if($this->checkOCIerror($this->database)) {
+        if($this->checkError("Update parse failed: $sql", false)) {
             return false;
         }
 
@@ -601,7 +586,7 @@ class OracleManager extends DBManager
         }
         $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkOCIerror($stmt)) {
+        if(!$this->checkError("Update execute failed: $sql", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
                 $val = $bean->getFieldValue($key);
                 if (empty($val)) $val=" ";
@@ -825,7 +810,7 @@ class OracleManager extends DBManager
 
     protected function isNullable($vardef)
     {
-        if(!empty($vardef['type']) && $vardef['type'] == 'clob') {
+        if(!empty($vardef['type']) && $this->isTextType($vardef['type'])) {
             return false;
         }
 		return parent::isNullable($vardef);
@@ -892,16 +877,18 @@ class OracleManager extends DBManager
         $qval = parent::massageValue($val, $fieldDef);
         if(empty($val)) return $qval; // do not massage empty values
 
+        if($type == "datetimecombo") {
+            $type = "datetime";
+        }
+
         switch($type) {
             case 'date':
                 $val = explode(" ", $val); // make sure that we do not pass the time portion
                 $qval = parent::massageValue($val[0], $fieldDef);            // get the date portion
-                return "TO_DATE($qval, 'YYYY-MM-DD')";
+                // break missing intentionally
             case 'datetime':
-            case 'datetimecombo':
-                return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
             case 'time':
-                return "TO_DATE($qval, 'HH24:MI:SS')";
+                return $this->convert($qval, $type);
 		}
 
         return $qval;
@@ -937,6 +924,46 @@ class OracleManager extends DBManager
 	}
 
 	/**
+	 * Generate modify statement for one column
+	 * @param string $tablename
+	 * @param array $fieldDef Vardef definition for field
+	 * @param string $action
+	 * @param bool $ignoreRequired
+	 */
+	protected function changeOneColumnSQL($tablename, $fieldDef, $action, $ignoreRequired = false)
+	{
+	    switch($action) {
+	    	case 'DROP':
+	    		return $fieldDef['name'];
+	    		break;
+	    	case 'ADD':
+	    	    $colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
+	    	    return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+	    	case 'MODIFY':
+	    		$colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
+	    		$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
+	    		$nowCol = $this->describeField($colArray['name'], $tablename);
+	    		if($colArray['colType'] == 'blob' || $colArray['colType'] == 'clob') {
+	    			// Bug 42467: prevent Oracle from modifying *LOB fields
+	    			if($colArray['colType'] != $nowCol['type']) {
+                        // we can't change type from lob, sorry
+                        return '';
+	    			}
+	    			$colArray['colType'] = ''; // we don't change type, so omit it
+	    		}
+	            if(isset($nowCol['default']) && !isset($fieldDef['default'])) {
+                    // removing default is allowed by changing to "DEFAULT NULL"
+                    $colArray['default'] = "DEFAULT NULL";
+                    //$colArray['required'] = '';
+                }
+	    		if ( !$ignoreRequired && ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
+	    			$colArray['required'] = '';
+	    		return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+	    }
+        return '';
+	}
+
+	/**
      * @see DBManager::changeColumnSQL()
      *
      * Oracle's ALTER TABLE syntax is a bit different from the other rdbmss
@@ -955,47 +982,18 @@ class OracleManager extends DBManager
              */
         	$addColumns = array();
 			foreach($fieldDefs as $def) {
-                switch($action) {
-                case 'DROP':
-                    $addColumns[] = $def['name'];
-                    break;
-                case 'ADD':
-                case 'MODIFY':
-					$colArray = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
-					$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
-    				$type = $this->getColumnType($colArray['colType']);
-    				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
-    				    // Bug 42467: prevent Oracle from modifying *LOB fields
-    				    continue 2;
-    				}
-					if ( !$ignoreRequired
-							&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
-					  	$colArray['required'] = '';
-					$addColumns[] = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
-                	break;
-                }
+			    $col = $this->changeOneColumnSQL($tablename, $def, $action, $ignoreRequired);
+			    if(!empty($col)) {
+			        $addColumns[] = $col;
+			    }
 			}
-        	$columns = "(" . implode(",", $addColumns) . ")";
+			if(!empty($addColumns)) {
+        	    $columns = "(" . implode(",", $addColumns) . ")";
+			} else {
+			    $columns = '';
+			}
         } else {
-            switch($action) {
-            case 'DROP':
-                $columns = $fieldDefs['name'];
-                break;
-            case 'ADD':
-            case 'MODIFY':
-				$colArray = $this->oneColumnSQLRep($fieldDefs, $ignoreRequired, $tablename, true);
-				$type = $this->getColumnType($colArray['colType']);
-				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
-				    // Bug 42467: prevent Oracle from modifying *LOB fields
-				    return "";
-				}
-				$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
-				if ( !$ignoreRequired
-						&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
-					$colArray['required'] = '';
-				$columns = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
-				break;
-            }
+            $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
         }
         if ( $action == 'DROP' )
             $action = 'DROP COLUMN';
@@ -1139,7 +1137,7 @@ class OracleManager extends DBManager
     /**
      * @see DBManager::updateSQL()
      */
-    public function updateSQL(SugarBean $bean, array $where = array())
+    public function ___updateSQL(SugarBean $bean, array $where = array())
     {
 		// get field definitions
         $primaryField = $bean->getPrimaryFieldDefinition();
@@ -1353,7 +1351,7 @@ EOQ;
     /**
      * @see DBManager::massageFieldDef()
      */
-    public function massageFieldDef($fieldDef, $tablename)
+    public function massageFieldDef(&$fieldDef, $tablename)
     {
         parent::massageFieldDef($fieldDef,$tablename);
 
@@ -1424,6 +1422,12 @@ EOQ;
         }
         if($ctype == "time") {
             return $this->convert($this->quoted("00:00:00"), "time");
+        }
+        if($ctype == "clob") {
+            return "EMPTY_CLOB()";
+        }
+        if($ctype == "blob") {
+            return "EMPTY_BLOB()";
         }
         return parent::emptyValue($type);
     }

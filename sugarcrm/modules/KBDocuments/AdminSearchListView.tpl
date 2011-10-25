@@ -40,7 +40,7 @@
 	<tr height='20'>
 		{if $prerow}
 			<td scope='col'  nowrap width='1%'>
-				<input type='checkbox' class='checkbox' id='massall' name='massall' value='' onclick='checkUncheckAll();' />
+				<input type='checkbox' title="{sugar_translate label='LBL_SELECT_ALL_TITLE'}" class='checkbox' id='massall' name='massall' value='' onclick='checkUncheckAll();' />
 			</td>
 		{/if}
 		{counter start=0 name="colCounter" print=false assign="colCounter"}

@@ -482,6 +482,22 @@ class IBMDB2Manager  extends DBManager
 		else return false;
 	}
 
+    /**
+     * Check DB version
+     * @see DBManager::canInstall()
+     */
+    public function canInstall()
+    {
+        $db_version = $this->version();
+        if(!$db_version) {
+            return array('ERR_DB_VERSION_FAILURE');
+        }
+        if(version_compare($db_version, '9.7.4') < 0) {
+            return array('ERR_DB_IBM_DB2_VERSION', $db_version);
+        }
+        return true;
+    }
+
 	/**+
 	 * @see DBManager::tableExists()
 	 */

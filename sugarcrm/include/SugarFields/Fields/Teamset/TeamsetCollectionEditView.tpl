@@ -1,5 +1,4 @@
-
-	        	{*
+{*
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -91,7 +90,7 @@
     <tr id="lineFields_{$displayParams.formName}_{$idname}_0">
         <td scope="row" valign='top'>
             <span id='{$displayParams.formName}_{$idname}_input_div_0' name='teamset_div'>          
-            <input type="text" name="{$idname}_collection_0" id="{$displayParams.formName}_{$idname}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
+            <input type="text" name="{$idname}_collection_0" id="{$displayParams.formName}_{$idname}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title="{sugar_translate label='LBL_TEAM_SELECTED_TITLE'}" autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$idname}_collection_0" id="id_{$displayParams.formName}_{$idname}_collection_0" value="">
             </span>
         </td>
@@ -103,7 +102,7 @@
         <td valign='top' align='center'>
             <span id='{$displayParams.formName}_{$idname}_radio_div_0'>
             &nbsp;
-            <input id="primary_{$idname}_collection_0" name="primary_{$idname}_collection" type="radio" class="radio" {if $displayParams.primaryChecked}checked="checked"{/if} value="0" onclick="collection['{$displayParams.formName}_{$idname}'].changePrimary(true);"/>
+            <input id="primary_{$idname}_collection_0" name="primary_{$idname}_collection" type="radio" class="radio" {if $displayParams.primaryChecked}checked="checked" title="{sugar_translate label='LBL_TEAM_PRIM_TITLE'}" {else} title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" {/if} value="0" onclick="collection['{$displayParams.formName}_{$idname}'].changePrimary(true);"/>
             </span>
         </td>
         <td>

@@ -101,7 +101,7 @@
 			{if $prerow}
 				<td nowrap="nowrap" width='1%' class="selectCol td_alt">
 				<div>
-					<input type='checkbox' class='checkbox' id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
+					<input type='checkbox' class='checkbox' title="{sugar_translate label='LBL_SELECT_ALL_TITLE'}" id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 					{$selectLink}
 				</div>
 				</td>
@@ -112,7 +112,7 @@
 				<th scope='col' width='{$params.width}%' nowrap="nowrap">
 					<div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
 	                {if $params.sortable|default:true}
-		                <a href='#' onclick='location.href="{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}"; return sListView.save_checks(0, "{$moduleString}");' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
+                                <a href="{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}" onclick='sListView.save_checks(0, "{$moduleString}");' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
                                 {capture assign="arrowAlt"}{sugar_translate label='LBL_ALT_SORT_DESC'}{/capture}

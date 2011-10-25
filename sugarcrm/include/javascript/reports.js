@@ -2008,9 +2008,9 @@ SUGAR.reports = function() {
 			colLabel = record.getData('field_label');
 			cell.setAttribute("onmouseover", "this.style.cursor = 'move'");
 			cell = row.insertCell(2);
-			cell.innerHTML = "<input type='text' size='50' id= 'display_cols_label_'"+totalDisplayColRows+" value='"+colLabel+"' onclick='this.focus();'>";
+			cell.innerHTML = "<input type='text' size='50' id= 'display_cols_label_'"+totalDisplayColRows+" value='"+colLabel+"' title='"+colLabel+" "+SUGAR.language.get("Reports", 'LBL_LABEL');"' onclick='this.focus();'>";
 			cell = row.insertCell(3);
-			cell.innerHTML = "<input type='radio' name='order_by_radio' id='order_by_radio_"+totalDisplayColRows +"' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+")'></input>";
+			cell.innerHTML = "<input type='radio' title='"+SUGAR.language.get("Reports", 'LBL_ORDER_BY');+"' name='order_by_radio' id='order_by_radio_"+totalDisplayColRows +"' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+")'></input>";
 			cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
 			cell = row.insertCell(4);
 			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
@@ -2214,6 +2214,7 @@ SUGAR.reports = function() {
 			var options = new Array();
 			var select_info = new Object();
 			select_info['name'] = 'qualify';
+            select_info['title'] = 'select filter qualifier';
 			select_info['onchange'] = "SUGAR.reports.filterTypeChanged("+current_filter_id+");";
 			select_html_info['select'] = select_info;
 		
@@ -2280,6 +2281,7 @@ SUGAR.reports = function() {
 			var options_arr = new Array();
 			var select_info = new Object();
 			select_info['name'] = 'input';
+            select_info['title'] = 'select filter input';
 			select_html_info['select'] = select_info;
 		
 			for(i=0;i < options.length;i++) {
@@ -2321,6 +2323,7 @@ SUGAR.reports = function() {
 			var select_info = new Object();
 			select_info['size'] = '5';
 			select_info['multiple'] = true;
+            select_info['title'] = 'filter multi-select input';
 			select_html_info['select'] = select_info;
 		
 			var selected_map = new Object();
@@ -2405,6 +2408,7 @@ SUGAR.reports = function() {
 			name_input.setAttribute("id", field_name_name);
 			name_input.setAttribute("class", "sqsEnabled");
 			name_input.setAttribute("autocomplete", "off");
+            name_input.setAttribute("title", field_name_name);
 			
 			if ( typeof (filter.input_name1) == 'undefined') {
 				filter.input_name1= '';
@@ -2511,6 +2515,7 @@ SUGAR.reports = function() {
 		 	new_input.type="hidden";
 			new_input.value=filter.qualifier_name;
 			new_input.name="text_input";
+            new_input.setAttribute('title','filter text input');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 		},		
@@ -2522,6 +2527,7 @@ SUGAR.reports = function() {
 			new_input.type="hidden";
 			new_input.value=filter.qualifier_name;
 			new_input.name="text_input";
+            new_input.setAttribute('title','filter text input');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 		
@@ -2544,6 +2550,7 @@ SUGAR.reports = function() {
 			}
 		
 			new_input.value=filter.input_name0;
+            new_input.setAttribute('title','filter start');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 			filter_row.input_field0 = new_input;
@@ -2556,7 +2563,8 @@ SUGAR.reports = function() {
 			var cell = document.createElement('td');
 			var new_input = document.createElement("input");
 			new_input.type="text";
-			if (typeof(filter.input_name1) == 'undefined') {
+			new_input.setAttribute('title','filter end');
+            if (typeof(filter.input_name1) == 'undefined') {
 				filter.input_name1 = '';
 			}
 		
@@ -2577,6 +2585,7 @@ SUGAR.reports = function() {
 			new_input.size="30";
 			new_input.maxsize="255";
 			new_input.visible="true";
+            new_input.setAttribute('title','filter text input');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];
@@ -2588,6 +2597,8 @@ SUGAR.reports = function() {
 			cell.setAttribute('valign','middle'); 
 			var new_input = document.createElement("input");
 			new_input.type="text";
+            new_input.setAttribute('title','filter date');
+
 		
 			if ( typeof (filter.input_name0) != 'undefined' && filter.input_name0.length > 0) {
 				filter.input_name0 = SUGAR.reports.to_display_date(filter.input_name0);
@@ -2688,6 +2699,7 @@ SUGAR.reports = function() {
 			var cell = document.createElement("td");
 			cell.setAttribute('valign','middle'); 
 			var new_input = document.createElement("input");
+            new_input.setAttribute('title','filter date');
 			new_input.type="text";
 			if (typeof(filter.input_name0) == 'undefined') {
 				filter.input_name0 = '';
@@ -2806,6 +2818,7 @@ SUGAR.reports = function() {
 			var div1 = document.createElement('div');
 			var new_input = document.createElement("input");
 			new_input.type="text";
+            new_input.setAttribute('title','filter date start');
 			if (typeof(filter.input_name0) == 'undefined') {
 				filter.input_name0 = '';
 			}
@@ -2844,6 +2857,7 @@ SUGAR.reports = function() {
 		
 			var div3 = document.createElement('div');
 			var new_input = document.createElement("input");
+            new_input.setAttribute('title','filter date end');
 			new_input.type="text";
 			if (typeof(filter.input_name2) == 'undefined') {
 				filter.input_name2 = '';
@@ -3012,7 +3026,7 @@ SUGAR.reports = function() {
 			new_input.name="runtime_filter_"+ rowId;
 			new_input.id="runtime_filter_" + rowId;
 			cell.appendChild(new_input);
-			cell.innerHTML += " <b>" + SUGAR.language.get('Reports', 'LBL_RUN_TIME_LABEL') + "</b>";
+			cell.innerHTML += " <b><label for='runtime_filter_" + rowId+"' />"+ SUGAR.language.get('Reports', 'LBL_RUN_TIME_LABEL') + "</input></b>";
 			cell.innerHTML += '<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib(\'' + SUGAR.language.get('Reports','LBL_RUNTIME_HELP') + '\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\' );">&nbsp;<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=helpInline.gif"  alt="'+SUGAR.language.get("Reports", 'LBL_ALT_INFORMATION')+'"></span>';
 			
 			row.appendChild(cell);

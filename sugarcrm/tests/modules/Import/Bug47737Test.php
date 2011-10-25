@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,32 +26,66 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//this file is temporarily moved during a unit test to test the behaviour of createdefs.php handling.
 
-$createdef['contacts@testsugar.info']['Contacts'] = array(
-        'fields' => array(
-            'last_name' => '{from_name}',
-            'department' => '{email_id}',
-            'date_entered' => '{date}',
-            'description' => '{description} {email_id} {message_id} {subject} {from}',
-            'lead_source' => 'Email',
-        ),
-);
+ 
+require_once('modules/Import/Importer.php');
 
-$createdef['cases@testsugar.info']['Cases'] = array(
-        'fields' => array(
-	        'name' => '{from_name}',
-            'status' => '{email_id}',
-	        'date_entered' => '{date}',
-	        'description' => '{description} {email_id} {message_id} {subject} {from}',
-        ),
-);
+class Bug47737Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+    }
 
-$createdef['opp@testsugar.info']['Opportunities'] = array(
-        'fields' => array(
-            'name' => '{from_name}',
-            'sales_stage' => '{email_id}',
-            'date_entered' => '{date}',
-            'description' => '{description} {email_id} {message_id} {subject} {from}',
-        ),
-);
+    public function tearDown()
+    {
+        restore_error_handler();
+    }
+
+    public function providerIdData()
+    {
+        return array(
+            //Valid ids
+            array('12345','12345'),
+            array('12345-6789-1258','12345-6789-1258'),
+            array('aaaBBB12AA122cccD','aaaBBB12AA122cccD'),
+            array('aaa-BBB-12AA122-cccD','aaa-BBB-12AA122-cccD'),
+            array('aaa_BBB_12AA122_cccD','aaa_BBB_12AA122_cccD'),
+            //Invalid
+            array('1242','12*'),
+            array('abdcd36','abdcd$'),
+            array('1234-asdf3535353523','1234-asdf####23'),
+            );
+    }
+
+    /**
+     * @ticket 47737
+     * @dataProvider providerIdData
+     */
+    public function testConvertID($expected, $dirty)
+    {
+        $c = new Contact();
+        $importer = new ImporterStub('UNIT TEST',$c);
+        $actual = $importer->convertID($dirty);
+
+        $this->assertEquals($expected, $actual, "Error converting id during import process $actual , expected: $expected, before conversion: $dirty");
+    }
+
+}
+
+
+class ImporterStub extends Importer
+{
+
+    public function convertID($id)
+    {
+        return $this->_convertId($id);
+    }
+
+    //Override this function here since we don't set the importSource member variable because we don't call constructor
+    protected function getFieldSanitizer()
+    {
+        return new ImportFieldSanitize();
+    }
+}

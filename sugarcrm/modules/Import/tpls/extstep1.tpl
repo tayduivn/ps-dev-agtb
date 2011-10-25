@@ -92,14 +92,14 @@
 </tr>
 {/if}
 <tr>
-    <td id="row_{$smarty.foreach.rows.index}_header">{$item.cell1}
+    <td id="row_{$smarty.foreach.rows.index}_header"><label for"colnum_{$smarty.foreach.rows.index}">{$item.cell1}</label>
         {if $item.help_text != ''}
             {sugar_help text=$item.help_text}
         {/if}
     </td>
 
     <td valign="top" align="left" id="row_{$smarty.foreach.rows.index}_col_0">
-        <select class='fixedwidth' name="colnum_{$smarty.foreach.rows.index}">
+        <select class='fixedwidth' name="colnum_{$smarty.foreach.rows.index}" id="colnum_{$smarty.foreach.rows.index}" >
             <option value="-1">{$MOD.LBL_DONT_MAP}</option>
             {$item.field_choices}
         </select>
