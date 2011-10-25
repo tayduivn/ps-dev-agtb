@@ -193,7 +193,7 @@ class OracleManager extends DBManager
 		if($keepResult)
 		    $this->lastResult = $result;
 
-		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError)) {
+		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
 		    return false;
 		}
         return $result;
