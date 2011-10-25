@@ -1331,8 +1331,8 @@ EOQ;
      */
     public function renameIndexDefs($old_definition, $new_definition, $table_name)
     {
-        $old_definition = $this->getValidDBName($old_definition, true, 'index');
-        $new_definition = $this->getValidDBName($new_definition, true, 'index');
+        $old_definition['name'] = $this->getValidDBName($old_definition['name'], true, 'index');
+        $new_definition['name'] = $this->getValidDBName($new_definition['name'], true, 'index');
         return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";
     }
 

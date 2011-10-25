@@ -944,7 +944,7 @@ protected function checkQuery($sql, $object_name = false)
 					if($execute) {
 						$this->query($rename, true, "Cannot rename index");
 					}
-					$sql .= join("\n", $rename). "\n";
+					$sql .= is_array($rename)?join("\n", $rename). "\n":$rename."\n";
 
 				} else {
 					// ok we need this field lets create it
