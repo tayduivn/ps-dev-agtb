@@ -70,9 +70,7 @@ class RelatedFieldExpression extends GenericExpression
                             return BooleanExpression::$FALSE;
                     }
                 }
-                else {
-					return $bean->$relfield;
-				}
+                return $bean->$relfield;
             }
         }
         
