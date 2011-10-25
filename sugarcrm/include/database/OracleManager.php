@@ -461,26 +461,26 @@ class OracleManager extends DBManager
             if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
             //custom fields handle there save seperatley
 
-            if(isset($data[$field])) {
-                // clean the incoming value..
-                $val = from_html($data[$field]);
-            } else {
-                continue;
-            }
+			if(isset($data[$field])) {
+				// clean the incoming value..
+				$val = from_html($data[$field]);
+				if ($fieldDef['name'] == 'deleted') {
+					$values['deleted'] = (int)$val;
+				} else {
+					// need to do some thing about types of values
+					$values[$field] = $this->massageValue($val, $fieldDef);
+				}
+			} else {
+				// handle auto increment values here - we may have to do something like nextval for oracle
+				if (!empty($fieldDef['auto_increment'])) {
+					$auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
+					if(!empty($auto)) {
+						$values[$field] = $auto;
+					}
+				}
+			}
             $type = $this->getFieldType($fieldDef);
 
-            //handle auto increment values
-            if (!empty($fieldDef['auto_increment'])) {
-                $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
-                if(!empty($auto)) {
-                    $values[$field] = $auto;
-                }
-            } elseif ($fieldDef['name'] == 'deleted') {
-                $values['deleted'] = (int)$val;
-            } else {
-                // need to do some thing about types of values
-                $values[$field] = $this->massageValue($val, $fieldDef);
-            }
             $lob_type = false;
             if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
             else if ($type == 'blob' || $type == 'longblob') $lob_type = OCI_B_BLOB;
@@ -1121,45 +1121,6 @@ class OracleManager extends DBManager
             $this->query('DROP SEQUENCE ' .$sequence_name);
         }
     }
-
-    /**
-     * @see DBManager::updateSQL()
-     */
-    public function ___updateSQL(SugarBean $bean, array $where = array())
-    {
-		// get field definitions
-        $primaryField = $bean->getPrimaryFieldDefinition();
-        $columns = array();
-
-		// get column names and values
-		foreach ($bean->getFieldDefinitions() as $fieldDef) {
-            $name = $fieldDef['name'];
-            if ($name == $primaryField['name'])
-                continue;
-            if (isset($bean->$name)
-                    && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
-                $val = $bean->getFieldValue($name);
-			   	// clean the incoming value..
-			   	$val = from_html($val);
-
-                if (strlen($val) <= 0)
-                    $val = null;
-
-		        // need to do some thing about types of values
-		        $val = $this->massageValue($val, $fieldDef);
-		        $columns[] = "$name=$val";
-            }
-		}
-
-		if (sizeof ($columns) == 0)
-            return ""; // no columns set
-
-		$where = $this->updateWhereArray($bean, $where);
-        $where = $this->getWhereClause($bean, $where);
-
-        // get the entire sql
-		return "UPDATE ".$bean->getTableName()." SET ".implode(",", $columns)." $where ";
-	}
 
     /**
      * @see DBManager::get_indices()
