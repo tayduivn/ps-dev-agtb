@@ -2116,8 +2116,10 @@ protected function checkQuery($sql, $object_name = false)
 				return "NULL";
 			}
 		}
-
-		return $this->quoted($val);
+        if($type == "datetimecombo") {
+            $type = "datetime";
+        }
+		return $this->convert($this->quoted($val), $type);
 	}
 
 	/**

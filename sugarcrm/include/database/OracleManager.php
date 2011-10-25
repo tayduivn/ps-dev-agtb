@@ -874,24 +874,12 @@ class OracleManager extends DBManager
             return "EMPTY_BLOB()";
         }
 
-        $qval = parent::massageValue($val, $fieldDef);
-        if(empty($val)) return $qval; // do not massage empty values
-
-        if($type == "datetimecombo") {
-            $type = "datetime";
+        if($type == "date" && !empty($val)) {
+            $val = explode(" ", $val); // make sure that we do not pass the time portion
+            return parent::massageValue($val[0], $fieldDef);            // get the date portion
         }
 
-        switch($type) {
-            case 'date':
-                $val = explode(" ", $val); // make sure that we do not pass the time portion
-                $qval = parent::massageValue($val[0], $fieldDef);            // get the date portion
-                // break missing intentionally
-            case 'datetime':
-            case 'time':
-                return $this->convert($qval, $type);
-		}
-
-        return $qval;
+        return parent::massageValue($val, $fieldDef);
     }
 
 	/**
