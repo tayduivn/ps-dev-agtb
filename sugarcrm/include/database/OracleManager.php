@@ -503,7 +503,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $query);
-        if($this->checkError("Insert failed: $query", false)) {
+        if($this->checkError("Insert parse failed: $query", false)) {
             return false;
         }
 
@@ -514,7 +514,7 @@ class OracleManager extends DBManager
         }
         $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkError("Execute failed", false, $stmt)) {
+        if(!$this->checkError("Insert execute failed: $query", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
                 $val = $data[$key];
                 if (empty($val)) $val=" ";
@@ -575,7 +575,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $sql);
-        if($this->checkError("Update failed: $sql", false)) {
+        if($this->checkError("Update parse failed: $sql", false)) {
             return false;
         }
 
@@ -586,7 +586,7 @@ class OracleManager extends DBManager
         }
         $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkError("Execute failed", false, $stmt)) {
+        if(!$this->checkError("Update execute failed: $sql", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
                 $val = $bean->getFieldValue($key);
                 if (empty($val)) $val=" ";
@@ -810,7 +810,7 @@ class OracleManager extends DBManager
 
     protected function isNullable($vardef)
     {
-        if(!empty($vardef['type']) && $vardef['type'] == 'clob') {
+        if(!empty($vardef['type']) && $this->isTextType($vardef['type'])) {
             return false;
         }
 		return parent::isNullable($vardef);

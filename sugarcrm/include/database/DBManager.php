@@ -1972,7 +1972,7 @@ protected function checkQuery($sql, $object_name = false)
     		} elseif($this->isNullable($fieldDef)) {
     			$columns[] = "{$fieldDef['name']}=NULL";
     		} else {
-    		    $columns[] = $this->emptyValue($fieldDef['type']);
+    		    $columns[] = "{$fieldDef['name']}=".$this->emptyValue($fieldDef['type']);
     		}
 		}
 
