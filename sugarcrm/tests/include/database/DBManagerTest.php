@@ -1551,10 +1551,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function vardefProvider()
     {
-//        $emptydate = "0000-00-00";
-//        if($this->_db instanceof MssqlManager || $this->_db instanceof OracleManager) {
-//            $emptydate = "1970-01-01";
-//        }
         $GLOBALS['log']->info('DBManagerTest.vardefProvider: _db = ' . print_r($this->_db));
         $this->setUp(); // Just in case the DB driver is not created yet.
         $emptydate = $this->_db->emptyValue("date");
@@ -1661,8 +1657,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'test_dt' => '1998-10-04', 'test_tm' => '03:04:05'
                   ),
                   array("id" => "'test123'", 'intval' => 42, 'floatval' => 42.24,
-                  		'money' => 56.78, 'test_dtm' => '\'2002-01-02 12:34:56\'', 'test_dtm2' => '\'2011-10-08 01:02:03\'',
-                        'test_dt' => '\'1998-10-04\'', 'test_tm' => '\'03:04:05\''
+                  		'money' => 56.78, 'test_dtm' => $this->_db->convert('\'2002-01-02 12:34:56\'', "datetime"), 'test_dtm2' => $this->_db->convert('\'2011-10-08 01:02:03\'', 'datetime'),
+                        'test_dt' => $this->_db->convert('\'1998-10-04\'', 'date'), 'test_tm' => $this->_db->convert('\'03:04:05\'', 'time')
                   ),
             ),
             array("testreqnull", array (
