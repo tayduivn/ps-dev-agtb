@@ -413,9 +413,8 @@ class DependencyManager {
             return false; //Not a good link field
         }
 
-        $relName = $def['relationship'];
-        $rel = new Relationship();
-        if ($rel->retrieve_by_name($relName) === false) {
+        $rel = SugarRelationshipFactory::getInstance()->getRelationship($def['relationship']);
+        if ($rel === false) {
             return false; //Unable to find a relationship definition
         }
 

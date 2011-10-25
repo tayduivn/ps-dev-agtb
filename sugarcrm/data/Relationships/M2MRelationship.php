@@ -55,7 +55,7 @@ class M2MRelationship extends SugarRelationship
      */
     public function getLinkedDefForModuleByRelationship($module)
     {
-        $results = VardefManager::getLinkFieldForRelationship( $module, BeanFactory::getBeanName($module), $this->name);
+        $results = VardefManager::getLinkFieldForRelationship( $module, BeanFactory::getObjectName($module), $this->name);
         //Only a single link was found
         if( isset($results['name']) )
         {

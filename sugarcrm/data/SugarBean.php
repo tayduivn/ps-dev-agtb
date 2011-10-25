@@ -5156,12 +5156,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     function getRelatedFields($module, $id, $fields, $return_array = false){
         if(empty($GLOBALS['beanList'][$module]))return '';
-        $object = $GLOBALS['beanList'][$module];
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if ($object == 'aCase') {
-            $object = 'Case';
-        }
-        //END SUGARCRM flav!=sales ONLY
+        $object = BeanFactory::getObjectName($module);
 
         VardefManager::loadVardef($module, $object);
         if(empty($GLOBALS['dictionary'][$object]['table']))return '';

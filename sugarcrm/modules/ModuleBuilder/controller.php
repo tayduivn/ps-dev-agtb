@@ -840,13 +840,7 @@ class ModuleBuilderController extends SugarController
         $module_name = $_REQUEST [ 'view_module' ] ;
         global $beanList;
         if (isset($beanList[$module_name]) && $beanList[$module_name]!="") {
-            $objectName = $beanList[$module_name];
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if($objectName == 'aCase') // Bug 17614 - renamed aCase as Case in vardefs for backwards compatibililty with 451 modules
-            {
-                $objectName = 'Case';
-            }
-            //END SUGARCRM flav!=sales ONLY
+            $objectName = BeanFactory::getObjectName($module_name);
 
             //Load the vardefs for the module to pass to TemplateRange
             VardefManager::loadVardef($module_name, $objectName, true);

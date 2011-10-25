@@ -77,7 +77,7 @@ class WorkFlowGlue {
         {
             global $beanList, $dictionary;
             $moduleName = $_REQUEST['base_module'];
-            $objectName = $beanList[$moduleName];
+            $objectName = BeanFactory::getObjectName($moduleName);
             VardefManager::loadVardef($moduleName, $objectName);
             if (!empty($dictionary[$objectName]) && !empty($dictionary[$objectName]['fields'][$shell_object->field]))
             {

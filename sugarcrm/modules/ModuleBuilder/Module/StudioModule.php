@@ -46,9 +46,7 @@ class StudioModule
         $moduleNames = array_change_key_case ( $GLOBALS [ 'app_list_strings' ] [ 'moduleList' ] ) ;
         $this->name = isset ( $moduleNames [ strtolower ( $module ) ] ) ? $moduleNames [ strtolower ( $module ) ] : strtolower ( $module ) ;
         $this->module = $module ;
-        $class = $GLOBALS [ 'beanList' ] [ $this->module ] ;
-        require_once $GLOBALS [ 'beanFiles' ] [ $class ] ;
-        $this->seed = new $class ( ) ;
+        $this->seed = BeanFactory::getBean($this->module);
         $this->fields = $this->seed->field_defs ;
         //$GLOBALS['log']->debug ( get_class($this)."->__construct($module): ".print_r($this->fields,true) ) ;
     }
