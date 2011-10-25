@@ -365,9 +365,7 @@ class UnifiedSearchAdvanced {
 			if (!isset($beanFiles[$beanName]))
 				continue;
 
-			//BEGIN SUGARCRM flav!=sales ONLY
-			if($beanName == 'aCase') $beanName = 'Case';
-            //END SUGARCRM flav!=sales ONLY
+			$beanName = BeanFactory::getObjectName($moduleName);
 			
 			$manager = new VardefManager ( );
 			$manager->loadVardef( $moduleName , $beanName ) ;
