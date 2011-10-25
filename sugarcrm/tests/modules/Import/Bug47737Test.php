@@ -34,11 +34,8 @@ class Bug47737Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        // if beanList got unset, set it back
-        if (!isset($GLOBALS['beanList'])) {
-            require('include/modules.php');
-            $GLOBALS['beanList'] = $beanList;
-        }
+        global $beanList, $beanFiles;
+        require('include/modules.php');
     }
 
     public function tearDown()
@@ -84,5 +81,11 @@ class ImporterStub extends Importer
     public function convertID($id)
     {
         return $this->_convertId($id);
+    }
+
+    //Override this function here since we don't set the importSource member variable because we don't call constructor
+    protected function getFieldSanitizer()
+    {
+        return new ImportFieldSanitize();
     }
 }
