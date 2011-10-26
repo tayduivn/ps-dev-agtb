@@ -48,10 +48,13 @@ class One2MRelationship extends M2MRelationship
             {
                 $GLOBALS['log']->fatal("No Links found for relationship {$this->name}");
             }
-            if (!isset($links[0])) //Only one link for a self referencing relationship, this is BAAAD
+            if (!is_array($links)) //Only one link for a self referencing relationship, this is BAAAD
+            {
                 $this->lhsLinkDef = $this->rhsLinkDef = $links;
+            }
             else
             {
+                
                 if ((!empty($links[0]['side']) && $links[0]['side'] == "right")
                         || (!empty($links[0]['link_type']) && $links[0]['link_type'] == "one"))
                 {
@@ -83,6 +86,38 @@ class One2MRelationship extends M2MRelationship
         }
         $this->lhsLink = $this->lhsLinkDef['name'];
         $this->rhsLink = $this->rhsLinkDef['name'];
+    }
+
+    public function getQuery($link, $params = array())
+    {
+        //Self referenceing one to many relationships use one link for subpanels and normal views.
+        //This mean we have to reverse it for normal views
+        if (($link->getSide() == REL_LHS && !$this->selfReferencing)
+            || $link->getSide() == REL_RHS && $this->selfReferencing
+        ) {
+            $knownKey = $this->def['join_key_lhs'];
+            $targetKey = $this->def['join_key_rhs'];
+        }
+        else
+        {
+            $knownKey = $this->def['join_key_rhs'];
+            $targetKey = $this->def['join_key_lhs'];
+        }
+        $rel_table = $this->getRelationshipTable();
+
+        $where = "$rel_table.$knownKey = '{$link->getFocus()->id}'" . $this->getRoleWhere();
+
+        if (empty($params['return_as_array'])) {
+            return "SELECT $targetKey id FROM $rel_table WHERE $where AND deleted=0";
+        }
+        else
+        {
+            return array(
+                'select' => "SELECT $targetKey id",
+                'from' => "FROM $rel_table",
+                'where' => "WHERE $where AND $rel_table.deleted=0",
+            );
+        }
     }
 
     /**
