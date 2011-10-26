@@ -1472,7 +1472,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     border: 1px solid #dddddd;
 }
 #scheduler .schedulerDiv table tr.schedulerTimeRow td 
-{66
+{
 	border-left: 0;
 }
 #scheduler .schedulerDiv table tr.schedulerTimeRow th[scope=col]
