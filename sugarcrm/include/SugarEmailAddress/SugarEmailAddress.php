@@ -177,7 +177,7 @@ class SugarEmailAddress extends SugarBean {
                                 }
                             }
                         }
-                        $now = TimeDate::getInstance()->nowDb();
+                        $now = $this->db->now();
                         $upd_eabr = "INSERT INTO email_addr_bean_rel (id, email_address_id,bean_id, bean_module,primary_address,reply_to_address,date_created,date_modified,deleted) VALUES('{$guid}', '{$emailId}', '{$id}', '{$module}', {$primary}, {$address['reply_to_address']}, '$now', '$now', 0)";
                     }
 
