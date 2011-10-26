@@ -424,11 +424,10 @@ class OracleManager extends DBManager
     public function update(SugarBean $bean, array $where = array())
     {
         $sql = $this->updateSQL($bean,$where);
-
-        $ret = $this->AltlobExecute($bean, $sql);
-        oci_commit($this->getDatabase()); //moved here from sugarbean
         $this->tableName = $bean->getTableName();
-        $msg = "Error inserting into table: ".$this->tableName;
+
+        $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
+        $msg = "Error updating table: ".$this->tableName;
         $this->checkError($msg.' Query Failed: ' . $sql, true);
     }
 
@@ -438,10 +437,9 @@ class OracleManager extends DBManager
     public function insert(SugarBean $bean)
     {
         $sql = $this->insertSQL($bean);
-        $ret = $this->AltlobExecute($bean, $sql);
-
-        oci_commit($this->getDatabase()); //moved here from sugarbean.
         $this->tableName = $bean->getTableName();
+        $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
+
         $msg = "Error inserting into table: ".$this->tableName;
         $this->checkError($msg.' Query Failed: ' . $sql, true);
     }
@@ -451,95 +449,26 @@ class OracleManager extends DBManager
      * (non-PHPdoc)
      * @see DBManager::insertParams()
      */
-    public function insertParams($table, $field_defs, $data)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
     {
-        $values = array();
-        $lob_fields = $lobs = array();
-        $lob_field_type = array();
-		foreach ($field_defs as $field => $fieldDef)
-		{
-            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
-            //custom fields handle there save seperatley
-
-			if(isset($data[$field])) {
-				// clean the incoming value..
-				$val = from_html($data[$field]);
-				if ($fieldDef['name'] == 'deleted') {
-					$values['deleted'] = (int)$val;
-				} else {
-					// need to do some thing about types of values
-					$values[$field] = $this->massageValue($val, $fieldDef);
-				}
-			} else {
-				// handle auto increment values here - we may have to do something like nextval for oracle
-				if (!empty($fieldDef['auto_increment'])) {
-					$auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
-					if(!empty($auto)) {
-						$values[$field] = $auto;
-					}
-				}
-			}
-            $type = $this->getFieldType($fieldDef);
-
-            $lob_type = false;
-            if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
-            else if ($type == 'blob' || $type == 'longblob') $lob_type = OCI_B_BLOB;
-
-            // this is not a lob, continue;
-            if ($lob_type === false) continue;
-
-            $lob_fields[$fieldDef['name']]=":".$fieldDef['name'];
-            $lob_field_type[$fieldDef['name']]=$lob_type;
-		}
-
-		if ( empty($values)) return true;
-
-        // get the entire sql
-		$query = "INSERT INTO $table (".implode(",", array_keys($values)).")
-                    VALUES (".implode(",", $values).")";
-
-        if (count($lob_fields) > 0 ) {
-            $query .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
-        }
-
-        $stmt = oci_parse($this->database, $query);
-        if($this->checkError("Insert parse failed: $query", false)) {
-            return false;
-        }
-
-        foreach ($lob_fields as $key=>$descriptor) {
-            $newlob = oci_new_descriptor($this->database, OCI_D_LOB);
-            oci_bind_by_name($stmt, $descriptor, $newlob, -1, $lob_field_type[$key]);
-            $lobs[$key] = $newlob;
-        }
-        $result = false;
-        oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkError("Insert execute failed: $query", false, $stmt)) {
-            foreach ($lobs as $key=>$lob){
-                $val = $data[$key];
-                if (empty($val)) $val=" ";
-                $lob->save($val);
-            }
-            oci_commit($this->database);
-            $result = true;
-        }
-
-        // free all the lobs.
-        foreach ($lobs as $lob){
-            $lob->free();
-        }
-        oci_free_statement($stmt);
-        return $result;
+        $sql = parent::insertParams($table, $field_defs, $data, $field_map, false);
+        if(!$execute) return $sql;
+        return $this->AltlobExecute($table, $field_defs, $data, $sql);
     }
 
     /**
      * Executes a query, with special handling for Oracle CLOB and BLOB field type
      *
-     * @param  object   $bean SugarBean instance
+     * Oracle seems to need special treatment for BLOB/CLOB insertion, so this method
+     * inserts BLOB data properly.
+     *
+     * @param string   $table Table name
+     * @param array $field_defs Field metadata definitions
+     * @param  array   $data  Data being inserted
      * @param  string   $sql  SQL statement
-     * @return resource
+     * @return bool Success?
      */
-    protected function AltlobExecute(SugarBean $bean, $sql)
+    protected function AltlobExecute($table, $field_defs, $data, $sql)
     {
     	$GLOBALS['log']->debug("Oracle Execute: $sql");
         $this->checkConnection();
@@ -550,14 +479,14 @@ class OracleManager extends DBManager
         $lob_fields=array();
         $lob_field_type=array();
         $lobs=array();
-        foreach ($bean->field_defs as $fieldDef) {
+        foreach ($field_defs as $fieldDef) {
             $type = $this->getFieldType($fieldDef);
             if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
                 continue;
             }
 
             //not include the field if a value is not set...
-            if (!isset($bean->$fieldDef['name'])) continue;
+            if (!isset($data[$fieldDef['name']])) continue;
 
             $lob_type = false;
             if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
@@ -588,8 +517,11 @@ class OracleManager extends DBManager
         oci_execute($stmt,OCI_DEFAULT);
         if(!$this->checkError("Update execute failed: $sql", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
-                $val = $bean->getFieldValue($key);
-                if (empty($val)) $val=" ";
+                if(empty($data[$key])) {
+                    $val = '';
+                } else {
+                    $val = $data[$key];
+                }
                 $lob->save($val);
             }
             oci_commit($this->database);
