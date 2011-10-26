@@ -153,11 +153,23 @@ SUGAR.ajaxUI = {
             if (ui.lastURL == url)
                 return;
             var inAjaxUI = /action=ajaxui/.exec(window.location);
-            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
-                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload())
             {
-                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
-                return;
+                //If there is an unload function, we need to check it ourselves
+                if (!confirm(window.onbeforeunload()))
+                {
+                    if (!inAjaxUI)
+                    {
+                        //User doesn't want to navigate
+                        window.location.hash = "";
+                    }
+                    else
+                    {
+                        YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                    }
+                    return;
+                }
+                window.onbeforeunload = null;
             }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
