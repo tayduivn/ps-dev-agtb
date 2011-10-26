@@ -1108,7 +1108,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testValidTimeSameFormat()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $GLOBALS['current_user']->setPreference('timezone', 'America/New_York');
 
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $this->_ifs->timezone = 'America/New_York';
@@ -1123,12 +1123,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $focus),
             $date);
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
+        $GLOBALS['current_user']->setPreference('timezone', '');
     }
 
     public function testValidTimeDifferentFormat()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $GLOBALS['current_user']->setPreference('timezone', 'America/New_York');
 
         $this->_ifs->timeformat = 'h:ia';
         if ( $this->_ifs->timeformat == $GLOBALS['timedate']->get_time_format() )
@@ -1149,12 +1149,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $focus),
             $comparedate);
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
+        $GLOBALS['current_user']->setPreference('timezone', '');
     }
 
     public function testValidTimeDifferentTimezones()
     {
-        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
+        $GLOBALS['current_user']->setPreference('timezone', 'America/New_York');
 
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $this->_ifs->timezone = 'America/Denver';
@@ -1172,7 +1172,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $focus),
             $comparedate);
 
-        unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
+        $GLOBALS['current_user']->setPreference('timezone', '');
     }
 
     public function testInvalidTime()
