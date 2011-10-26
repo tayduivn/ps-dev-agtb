@@ -44,14 +44,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_dir, $errors, $path='') {
 	global $mod_strings;
 	// create restore file directory
-	mkdir_recursive($rest_dir);
+	sugar_mkdir($rest_dir, 0775, true);
 
     if(file_exists($rest_dir) && is_dir($rest_dir)){
 		logThis('backing up files to be overwritten...', $path);
 		$newFiles = findAllFiles(clean_path($unzip_dir . '/' . $zip_from_dir), array());
 
 		// keep this around for canceling
-		$_SESSION['uw_restore_dir'] = clean_path($rest_dir);
+		$_SESSION['uw_restore_dir'] = UploadFile::relativeName($rest_dir);
 
 		foreach ($newFiles as $file) {
 			if (strpos($file, 'md5'))
@@ -62,10 +62,7 @@ function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_d
 
 			// make sure the directory exists
 			$cleanDir = $rest_dir . '/' . dirname($cleanFile);
-			if (!is_dir($cleanDir)) {
-				mkdir_recursive($cleanDir);
-			}
-
+			sugar_mkdir($cleanDir, 0775, true);
 			$oldFile = clean_path(getcwd() . '/' . $cleanFile);
 
 			// only copy restore files for replacements - ignore new files from patch
