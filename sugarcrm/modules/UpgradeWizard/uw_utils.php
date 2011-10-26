@@ -1831,7 +1831,7 @@ function prepSystemForUpgrade() {
 	if(empty($base_tmp_upgrade_dir)){
 		$base_tmp_upgrade_dir   = $p_base_tmp_upgrade_dir;
 	}
-	mkdir_recursive($base_tmp_upgrade_dir);
+	sugar_mkdir($base_tmp_upgrade_dir, 0775, true);
 	if(!isset($subdirs) || empty($subdirs)){
 		$subdirs = array('full', 'langpack', 'module', 'patch', 'theme');
 	}
@@ -1854,7 +1854,7 @@ function prepSystemForUpgrade() {
     // make sure dirs exist
 	if($subdirs != null){
 		foreach($subdirs as $subdir) {
-		    mkdir_recursive("$base_upgrade_dir/$subdir");
+		    sugar_mkdir("$base_upgrade_dir/$subdir", 0775, true);
 		}
 	}
 	// array of special scripts that are executed during (un)installation-- key is type of script, value is filename
