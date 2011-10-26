@@ -32,9 +32,16 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
     private $_sugarField;
     private $_smarty;
     private $_params;
+    private $_customSugarFieldTeamsetContents;
 
 	public function setUp()
 	{
+        if(file_exists('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php'))
+        {
+           $this->_customSugarFieldTeamsetContents = file_get_contents('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
+           unlink('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
+        }
+
 	    require_once('include/SugarFields/SugarFieldHandler.php');
 		$sfh = new SugarFieldHandler();
 		$this->_sugarField = $sfh->getSugarField('Teamset', true);
@@ -63,7 +70,10 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+    	if(!empty($this->_customSugarFieldTeamsetContents))
+        {
+            file_put_contents('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php', $this->_customSugarFieldTeamsetContents);
+        }
     }
 
     protected function checkSearchValues($html)

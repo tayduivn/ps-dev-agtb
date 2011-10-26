@@ -36,6 +36,10 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
         $current_user->is_admin = 1;
         $current_user->setPreference('dec_sep', '.', 0, 'global');
         $current_user->setPreference('num_grp_sep', ',', 0, 'global');
+
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
         
 	    $GLOBALS['module'] = "Products";
 		SugarTestProductTypesUtilities::createType(false, '1');

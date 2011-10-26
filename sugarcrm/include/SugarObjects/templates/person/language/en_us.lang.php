@@ -73,6 +73,7 @@ $mod_strings = array(
 'LBL_ASSISTANT_PHONE'=>'Assistant Phone',
 'LBL_WORK_PHONE'=>'Work Phone',
 'LNK_IMPORT_VCARD' => 'Create From vCard',
+'LBL_ANY_EMAIL' => 'Any Email',
 //BEGIN SUGARCRM flav!=com ONLY
 'LBL_PICTURE_FILE' => 'Picture',
 //END SUGARCRM flav!=com ONLY

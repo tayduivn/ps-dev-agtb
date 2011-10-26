@@ -43,4 +43,3 @@ else
 //        Array("index.php?module=Threads&action=index", $mod_strings['LNK_THREAD_LIST'],"ThreadList"),
   );
 ?>
-

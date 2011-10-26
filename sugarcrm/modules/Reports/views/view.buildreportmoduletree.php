@@ -35,7 +35,7 @@ class ReportsViewBuildreportmoduletree extends SugarView
      */
     public function display()
     {
-        global $beanFiles, $beanList;
+        global $beanFiles, $beanList, $app_list_strings;
         if(empty($beanFiles)) {
             include('include/modules.php');
         }
@@ -78,7 +78,29 @@ class ReportsViewBuildreportmoduletree extends SugarView
             if (!isset($ACLAllowedModules[$link_module])) {
                 continue;
             }
-            if(! empty($linked_field['vname']))
+			
+			$custom_label = 'LBL_' . strtoupper ( $relationship->relationship_name . '_FROM_' . $relationship->lhs_module  ) . '_TITLE';
+			$custom_subpanel_label  = 'LBL_' . strtoupper ( $link_module) . '_SUBPANEL_TITLE';
+			//bug 47834
+			$lang = $GLOBALS['current_language'];
+			$file_path= "custom/modules/".$_REQUEST['report_module']."/Ext/Language/".$lang.".lang.ext.php";
+			if(file_exists($file_path))
+			{
+				require 'custom/modules/'.$_REQUEST['report_module'].'/Ext/Language/'.$lang.'.lang.ext.php';
+			}//end 47834
+			// Bug 37308 - Check if the label was changed in studio
+		    //bug 47834 -  added check to see if the new label name is set in custom $lang.lang.ext.php file
+            if (translate($custom_label, $_REQUEST['report_module']) != $custom_label && isset($mod_strings[$custom_label])) 
+			{
+				$linked_field['label'] = translate($custom_label, $_REQUEST['report_module']);
+            }
+			// Bug 37308 - Check if the label was changed in studio
+			//bug 47834 -  added check to see if the new label name is set in custom $lang.lang.ext.php file
+            elseif (translate($custom_subpanel_label, $_REQUEST['report_module']) != $custom_subpanel_label && $link_module != $_REQUEST['report_module'] && isset($mod_strings[$custom_subpanel_label])) 
+			{
+				$linked_field['label'] = translate($custom_subpanel_label, $_REQUEST['report_module']);
+            }			
+            elseif (! empty($linked_field['vname']))
             {
                 $linked_field['label'] = translate($linked_field['vname'], $_REQUEST['report_module']);
             } else {
@@ -87,6 +109,10 @@ class ReportsViewBuildreportmoduletree extends SugarView
             $linked_field['label'] = preg_replace('/:$/','',$linked_field['label']);
             $linked_field['label'] = addslashes($linked_field['label']);
             
+	if (isset($app_list_strings['moduleList'][$linked_field['label']])) {
+		$linked_field['label'] = $app_list_strings['moduleList'][$linked_field['label']];
+	}
+			
             $module_array[] = $this->_populateNodeItem($bean_name,$link_module,$linked_field);
         }	
         

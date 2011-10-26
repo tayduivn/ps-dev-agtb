@@ -83,6 +83,23 @@ class BeanFactory {
     }
 
     /**
+     * Returns the object name / dictionary key for a given module. This should normally
+     * be the same as the bean name, but may not for special case modules (ex. Case vs aCase)
+     * @static 
+     * @param String $module
+     * @return bool
+     */
+    public static function getObjectName($module)
+    {
+        global $objectList;
+        if (empty($objectList[$module]))
+            return self::getBeanName($module);
+
+        return $objectList[$module];
+    }
+
+
+    /**
      * @static
      * This function registers a bean with the bean factory so that it can be access from accross the code without doing
      * multiple retrieves. Beans should be registered as soon as they have an id.

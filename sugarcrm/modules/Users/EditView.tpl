@@ -961,6 +961,7 @@ if(window.addEventListener){
 {/literal}
 {/if}
 {$getNameJs}
+setPreview()
 {$getNumberJs}
 {$confirmReassignJs}
 {$currencySymbolJs}

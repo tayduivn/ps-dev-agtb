@@ -120,7 +120,6 @@
 							{capture assign="imageName"}arrow.{$arrowExt}{/capture}
 							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
 						{/if}
-						</a>
 					{else}
 						{sugar_translate label=$params.label module=$pageData.bean.moduleDir}
 					{/if}

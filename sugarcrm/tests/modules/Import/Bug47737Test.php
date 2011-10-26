@@ -26,65 +26,63 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/EditView/SubpanelQuickCreate.php';
 
-class Bug39610Test extends Sugar_PHPUnit_Framework_TestCase
+ 
+require_once('modules/Import/Importer.php');
+
+class Bug47737Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        global $app_strings, $app_list_strings;
-        $app_strings = return_application_language($GLOBALS['current_language']);
-        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // if beanList got unset, set it back
+        if (!isset($GLOBALS['beanList'])) {
+            require('include/modules.php');
+            $GLOBALS['beanList'] = $beanList;
+        }
     }
-    
+
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        restore_error_handler();
     }
-    
-    public function testUseCustomViewAndCustomClassName()
+
+    public function providerIdData()
     {
-        $target_module = 'Contacts';
-        sugar_mkdir('custom/modules/'. $target_module . '/views/',null,true);
-        if( $fh = @fopen('custom/modules/'. $target_module . '/views/view.edit.php', 'w') )
-        {
-$string = <<<EOQ
-<?php
-class CustomContactsViewEdit
-{
-     var \$useForSubpanel = false;
+        return array(
+            //Valid ids
+            array('12345','12345'),
+            array('12345-6789-1258','12345-6789-1258'),
+            array('aaaBBB12AA122cccD','aaaBBB12AA122cccD'),
+            array('aaa-BBB-12AA122-cccD','aaa-BBB-12AA122-cccD'),
+            array('aaa_BBB_12AA122_cccD','aaa_BBB_12AA122_cccD'),
+            //Invalid
+            array('1242','12*'),
+            array('abdcd36','abdcd$'),
+            array('1234-asdf3535353523','1234-asdf####23'),
+            );
+    }
 
-     public function CustomContactsViewEdit() 
-     {
-          \$GLOBALS['CustomContactsSubpanelQuickCreated'] = true;
-     }
-};
-?>
-EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
-        }
+    /**
+     * @ticket 47737
+     * @dataProvider providerIdData
+     */
+    public function testConvertID($expected, $dirty)
+    {
+        $c = new Contact();
+        $importer = new ImporterStub('UNIT TEST',$c);
+        $actual = $importer->convertID($dirty);
 
-        
-        $subpanelMock = new SubpanelQuickCreateMockBug39610Test($target_module, 'SubpanelQuickCreate');
-        $this->assertTrue(!empty($GLOBALS['CustomContactsSubpanelQuickCreated']), "Assert that CustomContactsEditView constructor was called");
-        @unlink('custom/modules/'. $target_module . '/views/view.subpanelquickcreate.php');
+        $this->assertEquals($expected, $actual, "Error converting id during import process $actual , expected: $expected, before conversion: $dirty");
     }
 
 }
 
 
-class SubpanelQuickCreateMockBug39610Test extends SubpanelQuickCreate
+class ImporterStub extends Importer
 {
-	public function SubpanelQuickCreateMockBug39610Test($module, $view='QuickCreate', $proccessOverride = false)
-	{
-		parent::SubpanelQuickCreate($module, $view, $proccessOverride);	
-	}
-	
-	public function process()
-	{
-		//no-op
-	}
+
+    public function convertID($id)
+    {
+        return $this->_convertId($id);
+    }
 }

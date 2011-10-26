@@ -168,13 +168,7 @@ class DynamicField {
 
         global $beanList;
         if (! empty ( $beanList [$module] )) {
-            $object = $beanList [$module];
-
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if ($object == 'aCase') {
-                $object = 'Case';
-            }
-            //END SUGARCRM flav!=sales ONLY
+            $object = BeanFactory::getObjectName($module);
 
             if(empty($GLOBALS['dictionary'][$object]['fields'])){
                 //if the vardef isn't loaded let's try loading it.
@@ -440,11 +434,11 @@ class DynamicField {
         }
         $object_name = $beanList[$this->module];
 
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if ($object_name == 'aCase') {
-            $object_name = 'Case';
+        //Some modules like cases have a bean name that doesn't match the object name
+        if (empty($GLOBALS['dictionary'][$object_name])) {
+            $newName = BeanFactory::getObjectName($this->module);
+            $object_name = $newName != false ? $newName : $object_name;
         }
-        //END SUGARCRM flav!=sales ONLY
 
         $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id='" . $this->module . $widget->name . "'");
         $sql = $widget->get_db_delete_alter_table( $this->bean->table_name . "_cstm" ) ;

@@ -130,6 +130,7 @@ class Link2 {
      */
     public function load()
     {
+        _ppl("Loading $this->name");
         $data = $this->relationship->load($this);
         $this->rows = $data['rows'];
         $this->beans = null;
@@ -263,6 +264,14 @@ class Link2 {
             else {
                 return REL_RHS;
             }
+        }
+        //Next try using the id_name and relationship join keys
+        else if (!empty($this->def['id_name']))
+        {
+            if ($this->def['id_name'] == $this->relationship->def['join_key_lhs'])
+                return REL_RHS;
+            else if ($this->def['id_name'] == $this->relationship->def['join_key_rhs'])
+                return REL_LHS;
         }
 
         $GLOBALS['log']->error("Unable to get proper side for link {$this->name}");
