@@ -717,7 +717,7 @@ function upgradeUWFilesCopy($allFiles, $from_dir)
    {
        if(is_array($file))
        {
-           upgradeUWFilesCopy($file);
+           upgradeUWFilesCopy($file, $from_dir);
        } else {
            $destFile = str_replace($from_dir."/", "", $file);
            if(!is_dir(dirname($destFile))) {
