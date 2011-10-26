@@ -1009,8 +1009,32 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-        if($this->load_relationship($field_name))
-            return array_values($this->$field_name->getBeans());
+        //BEGIN SUGARCRM flav!=sales ONLY
+        //if bean_name is Case then use aCase
+        if($bean_name=="Case")
+            $bean_name = "aCase";
+        //END SUGARCRM flav!=sales ONLY
+
+        //add a references to bean_name if it doe not exist already.
+        if (!(class_exists($bean_name)))
+        {
+            if (isset($GLOBALS['beanList']) && isset($GLOBALS['beanFiles']))
+            {
+                global $beanFiles;
+            }
+            $bean_file=$beanFiles[$bean_name];
+            include_once($bean_file);
+        }
+
+        if($this->load_relationship($field_name)) {
+            if ($this->$field_name instanceof Link) {
+                // some classes are still based on Link, e.g. TeamSetLink
+                return array_values($this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where));
+            } else {
+                // Link2 style
+                return array_values($this->$field_name->getBeans());
+            }
+        }
         else
             return array();
     }
