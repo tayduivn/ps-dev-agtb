@@ -699,7 +699,7 @@ function upgradeUWFiles($file) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);
     }
 
-    upgradeUWFilesCopy($allFiles);
+    upgradeUWFilesCopy($allFiles, $from_dir);
 }
 
 /**
@@ -708,9 +708,10 @@ function upgradeUWFiles($file) {
  * This function recursively copies files from the upgradeUWFiles Array
  * @see upgradeUWFiles
  *
- * @param $allFiles Array of files to copy over after zip file has been uploaded
+ * @param array $allFiles Array of files to copy over after zip file has been uploaded
+ * @param string $from_dir Source directory
  */
-function upgradeUWFilesCopy($allFiles)
+function upgradeUWFilesCopy($allFiles, $from_dir)
 {
    foreach($allFiles as $file)
    {
