@@ -45,7 +45,7 @@ $mod_strings = array(
 	//BEGIN SUGARCRM flav=ent ONLY
     'ERR_DB_LOGIN_FAILURE_IBM_DB2'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
     'ERR_DB_IBM_DB2_CONNECT'			=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
-    'ERR_DB_IBM_DB2_VERSION'			=> 'Your version of DB2 is not supported by Sugar.  You will need to install a version that is compatible with the Sugar application.  Please consult the Compatibility Matrix in the Release Notes for supported DB2 Versions.',
+    'ERR_DB_IBM_DB2_VERSION'			=> 'Your version of DB2 (%s) is not supported by Sugar.  You will need to install a version that is compatible with the Sugar application.  Please consult the Compatibility Matrix in the Release Notes for supported DB2 Versions.',
 
 	'LBL_SYSOPTS_DB_DIRECTIONS'			=> 'You must have an Oracle client installed and configured if you select Oracle.',
 	'ERR_DB_LOGIN_FAILURE_OCI8'			=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',

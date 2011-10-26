@@ -556,8 +556,6 @@ class MysqlManager extends DBManager
 					}
 					return "DATE_FORMAT($string,$format)";
 				}
-			case 'datetime':
-				return $string;
 			case 'ifnull':
 				if(empty($additional_parameters) && !strstr($all_strings, ",")) {
 					$all_strings .= ",''";

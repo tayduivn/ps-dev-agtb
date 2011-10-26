@@ -1171,11 +1171,10 @@ class Email extends SugarBean {
         }
         $text->email_id = $this->id;
 		if(!$this->new_with_id) {
-            $q = $this->db->updateSQL($text);
+            $this->db->update($text);
 		} else {
-		    $q = $this->db->insertSQL($text);
+		    $this->db->insert($text);
 		}
-		$this->db->query($q);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

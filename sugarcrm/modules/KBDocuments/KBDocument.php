@@ -452,7 +452,7 @@ class KBDocument extends SugarBean {
 	//get all attachments
 	function get_kbdoc_attachments($kbdoc_id,$screen){
 		if (empty($kbdoc_id)) return null;
-		global $app_strings;
+		global $app_strings,$mod_strings;
 		$db = DBManagerFactory::getInstance();
 		$docrevs = array();
 		//$kbdoc_rev_id = $kbdoc->kbdocument_revision_id;
@@ -545,7 +545,7 @@ function get_tags($kbdoc_id){
 }
 
 function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
-        global $app_strings;
+        global $app_strings,$mod_strings;
 		$focus = new KBDocument();
 		$kbtags_heirarchy=array();
 	    $kbtags = array();

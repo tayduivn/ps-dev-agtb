@@ -225,7 +225,7 @@ class DynamicField {
             // the scenes
             if ( $module == 'Users' ) {
                 $GLOBALS['dictionary']['Employee'] = $GLOBALS['dictionary']['User'];
-                $manager->saveCache('Employee',$object);
+                $manager->saveCache('Employees','Employee');
                 return;
             }
 

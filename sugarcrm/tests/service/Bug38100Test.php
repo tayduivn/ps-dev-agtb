@@ -67,7 +67,7 @@ class Bug38100Test extends SOAPTestCase
     	$this->_login();
 		$result = $this->_soapClient->call('get_report_entries',array('session'=>$this->_sessionId,'ids' => array($savedReportId),'select_fields' => array()));
 
-		$this->assertTrue(!empty($result['field_list']));
-		$this->assertTrue(!empty($result['entry_list']));
+		$this->assertTrue(!empty($result['field_list']), "Bad result: ".var_export($result, true));
+		$this->assertTrue(!empty($result['entry_list']), "Bad result: ".var_export($result, true));
     } // fn
 }
