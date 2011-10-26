@@ -51,7 +51,7 @@ class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
            $admin->saveSetting('system', 'session_timeout', $session_timeout);
         }
         $admin->retrieveSettings('license');
-        $this->enforce =  $admin->settings['license_enforce_portal_user_limit'];
+        $this->enforce =  !empty($admin->settings['license_enforce_portal_user_limit']);
 
         $admin->saveSetting('license', 'enforce_portal_user_limit', '1');
 
