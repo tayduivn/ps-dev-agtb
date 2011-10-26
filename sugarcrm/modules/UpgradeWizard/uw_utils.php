@@ -2502,6 +2502,104 @@ function deletePackageOnCancel(){
     }
 }
 
+function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
+{
+	global $sugar_config;
+	$alterTableSchema = '';
+	$sqlErrors = array();
+	if(!isset($_SESSION['sqlSkippedQueries'])){
+		$_SESSION['sqlSkippedQueries'] = array();
+	}
+	$db = DBManagerFactory::getInstance();
+	$disable_keys = $db->supports("disable_keys");
+	if(strpos($resumeFromQuery,",") != false){
+		$resumeFromQuery = explode(",",$resumeFromQuery);
+	}
+	if(file_exists($sqlScript)) {
+		$fp = fopen($sqlScript, 'r');
+		$contents = stream_get_contents($fp);
+		$anyScriptChanges =$contents;
+		$resumeAfterFound = false;
+		if(rewind($fp)) {
+			$completeLine = '';
+			$count = 0;
+			while($line = fgets($fp)) {
+				if(strpos($line, '--') === false) {
+					$completeLine .= " ".trim($line);
+					if(strpos($line, ';') !== false) {
+						$query = '';
+						$query = str_replace(';','',$completeLine);
+						//if resume from query is not null then find out from where
+						//it should start executing the query.
+
+						if($query != null && $resumeFromQuery != null){
+							if(!$resumeAfterFound){
+								if(strpos($query,",") != false){
+									$queArray = explode(",",$query);
+									for($i=0;$i<sizeof($resumeFromQuery);$i++){
+										if(strcasecmp(trim($resumeFromQuery[$i]),trim($queArray[$i]))==0){
+											$resumeAfterFound = true;
+										} else {
+											$resumeAfterFound = false;
+											break;
+										}
+									}//for
+
+								}
+								elseif(strcasecmp(trim($resumeFromQuery),trim($query))==0){
+									$resumeAfterFound = true;
+								}
+							}
+							if($resumeAfterFound){
+								$count++;
+							}
+							// if $count=1 means it is just found so skip the query. Run the next one
+							if($query != null && $resumeAfterFound && $count >1){
+    							$tableName = getAlterTable($query);
+								if($disable_keys && !empty($tableName))
+								{
+									$db->disableKeys($tableName);
+								}
+								$db->query($query);
+								if($db->checkError()){
+									//put in the array to use later on
+									$_SESSION['sqlSkippedQueries'][] = $query;
+								}
+								if($disable_keys && !empty($tableName))
+								{
+									$db->enableKeys($tableName);
+								}
+								$progQuery[$forStepQuery]=$query;
+								post_install_progress($progQuery,$action='set');
+							}//if
+						}
+						elseif($query != null){
+							$tableName = getAlterTable($query);
+							if($disable_keys && !empty($tableName))
+							{
+								$db->disableKeys($tableName);
+							}
+							$db->query($query);
+							if($disable_keys && !empty($tableName))
+							{
+								$db->enableKeys($tableName);
+							}
+							$progQuery[$forStepQuery]=$query;
+							post_install_progress($progQuery,$action='set');
+							if($db->checkError()){
+								//put in the array to use later on
+								$_SESSION['sqlSkippedQueries'][] = $query;
+							}
+						}
+						$completeLine = '';
+					}
+				}
+			}//while
+		}
+	}
+}
+
+
 function getAlterTable($query){
 	$query = strtolower($query);
 	if (preg_match('/^\s*alter\s+table\s+/', $query)) {

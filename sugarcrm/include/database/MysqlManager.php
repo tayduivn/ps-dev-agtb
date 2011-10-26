@@ -135,6 +135,7 @@ class MysqlManager extends DBManager
 		"fulltext" => true,
 	    "collation" => true,
 	    "create_db" => true,
+	    "disable_keys" => true,
 	);
 
 	/**
@@ -1385,5 +1386,25 @@ class MysqlManager extends DBManager
 				"setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
 			)
 		);
+	}
+
+	/**
+	 * Disable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function disableKeys($tableName)
+	{
+	    return $this->query('ALTER TABLE '.$tableName.' DISABLE KEYS');
+	}
+
+	/**
+	 * Re-enable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function enableKeys($tableName)
+	{
+	    return $this->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
 	}
 }
