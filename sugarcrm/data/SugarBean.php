@@ -4155,6 +4155,7 @@ function save_relationship_changes($is_update, $exclude=array())
         // We have some data.
         while (($row = $bean->db->fetchByAssoc($result)) != null)
         {
+            $row = $this->convertRow($row);
             if(!$isFirstTime)
             {
                 $bean = new $class();
