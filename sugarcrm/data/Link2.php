@@ -130,7 +130,6 @@ class Link2 {
      */
     public function load()
     {
-        _ppl("Loading $this->name");
         $data = $this->relationship->load($this);
         $this->rows = $data['rows'];
         $this->beans = null;
