@@ -54,6 +54,8 @@ class UserPreference extends SugarBean
 
     protected $_userFocus;
 
+    protected $_savePreferencesToDBCats = array();
+
     // Do not actually declare, use the functions statically
     public function __construct(
         User $user = null
@@ -158,11 +160,10 @@ class UserPreference extends SugarBean
         }
 
         // preferences changed or a new preference, save it to DB
-        if($isCurrentUser && !isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name])
-            || (isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name]) && $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] != $value)) {
+        if(!isset($user->user_preferences[$category][$name])
+            || (isset($user->user_preferences[$category][$name]) && $user->user_preferences[$category][$name] != $value)) {
                 $GLOBALS['savePreferencesToDB'] = true;
-                if(!isset($GLOBALS['savePreferencesToDBCats'])) $GLOBALS['savePreferencesToDBCats'] = array();
-                $GLOBALS['savePreferencesToDBCats'][$category] = true;
+                $this->_savePreferencesToDBCats[$category] = true;
         }
 
         if($isCurrentUser) $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
@@ -368,13 +369,13 @@ class UserPreference extends SugarBean
         //END SUGARCRM flav=sales ONLY
 
         if($category) {
-            unset($_SESSION[$user->user_name."_PREFERENCES"][$category]);
+            unset($user->user_preferences[$category]);
         }
         else {
         	if(!empty($_COOKIE['sugar_user_theme']) && !headers_sent()){
                 setcookie('sugar_user_theme', '', time() - 3600); // expire the sugar_user_theme cookie
             }        	
-            unset($_SESSION[$user->user_name."_PREFERENCES"]);
+            unset($user->user_preferences);
             if($user->id == $GLOBALS['current_user']->id) {
                 session_destroy();
             }
