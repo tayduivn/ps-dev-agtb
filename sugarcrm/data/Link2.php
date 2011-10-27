@@ -267,9 +267,9 @@ class Link2 {
         //Next try using the id_name and relationship join keys
         else if (!empty($this->def['id_name']))
         {
-            if ($this->def['id_name'] == $this->relationship->def['join_key_lhs'])
+            if (isset($this->relationship->def['join_key_lhs']) && $this->def['id_name'] == $this->relationship->def['join_key_lhs'])
                 return REL_RHS;
-            else if ($this->def['id_name'] == $this->relationship->def['join_key_rhs'])
+            else if (isset($this->relationship->def['join_key_rhs']) && $this->def['id_name'] == $this->relationship->def['join_key_rhs'])
                 return REL_LHS;
         }
 
