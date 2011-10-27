@@ -427,10 +427,10 @@ class User extends Person {
 	public static function getLicensedUsersWhere()
 	{
 		//BEGIN SUGARCRM dep=od ONLY
-		return "deleted=0 AND status='Active' AND is_group=0 AND portal_only=0 AND user_name !='' AND user_name IS NOT NULL AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
+		return "deleted=0 AND status='Active' AND is_group=0 AND portal_only=0 AND user_name IS NOT NULL AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
 		//END SUGARCRM dep=od ONLY
 		//BEGIN SUGARCRM dep=os ONLY
-		return "deleted=0 AND status='Active' AND user_name !='' AND user_name IS NOT NULL AND is_group=0 AND portal_only=0";
+		return "deleted=0 AND status='Active' AND user_name IS NOT NULL AND is_group=0 AND portal_only=0  AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
 		//END SUGARCRM dep=os ONLY
 	    return "1<>1";
 	}
