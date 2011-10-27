@@ -498,7 +498,9 @@ class User extends Person {
 		  //END SUGARCRM lic=sub ONLY
 
 		// wp: do not save user_preferences in this table, see user_preferences module
-		$this->user_preferences = '';
+        // jwhitcraft: save the user preferences to reload them after we do the parent::save();
+		$user_preferences = $this->user_preferences;
+        $this->user_preferences = '';
 
 		// if this is an admin user, do not allow is_group or portal_only flag to be set.
 		if ($this->is_admin) {
@@ -526,6 +528,9 @@ class User extends Person {
 
 
 		parent::save($check_notify);
+
+        // jwhitcraft :: reset the user preferences for the save to db since we are not storing it in the session any more.
+        $this->user_preferences = $user_preferences;
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		$oldCheck = isset($GLOBALS['sugar_config']['disable_team_access_check'])?$GLOBALS['sugar_config']['disable_team_access_check']:null;
