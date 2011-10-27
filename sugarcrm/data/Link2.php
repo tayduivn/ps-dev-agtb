@@ -130,7 +130,6 @@ class Link2 {
      */
     public function load()
     {
-        _ppl("Loading $this->name");
         $data = $this->relationship->load($this);
         $this->rows = $data['rows'];
         $this->beans = null;
@@ -342,7 +341,9 @@ class Link2 {
             $rel_module = $this->getRelatedModuleName();
             foreach ($this->rows as $id => $vals)
             {
-                $this->beans[$id] = BeanFactory::getBean($rel_module, $id);
+                $tmpBean = BeanFactory::getBean($rel_module, $id);
+                if($tmpBean !== FALSE)
+                    $this->beans[$id] = $tmpBean;
             }
         }
 
