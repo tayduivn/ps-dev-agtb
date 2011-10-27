@@ -45,8 +45,9 @@ class SearchFormTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGenerateSearchWhere()
     {
         require_once('modules/Reports/SavedReport.php');
-        $searchFormMock = new SearchFormTestMock();
-        $searchFormMock->bean = new SavedReport();
+        $bean = new SavedReport();
+        require_once('include/SearchForm/SearchForm.php');
+        $searchFormMock = new SearchForm('Reports', $bean);
         $searchFormMock->searchFields = array('name'=>array('query_type' => 'default', 'value'=>'QA_Created'));
         $whereClauses = $searchFormMock->generateSearchWhere();
         $this->assertRegExp('/QA_Created\%/', $whereClauses[0], 'Assert that we have added the like (%) character to query');
@@ -56,22 +57,6 @@ class SearchFormTest extends Sugar_PHPUnit_Framework_TestCase
         $whereClauses = $searchFormMock->generateSearchWhere();
         $this->assertNotRegExp('/\%/', $whereClauses[0], 'Assert that we have have not added the like (%) character to query');
         */
-    }
-
-}
-
-require_once 'include/SearchForm/SearchForm.php';
-/**
- * SearchFormTestMock
- *
- * This is a mock object to avoid having to setup extraneous member variables not needed by the unit test
- */
-class SearchFormTestMock extends SearchForm
-{
-
-    public function __construct()
-    {
-
     }
 
 }
