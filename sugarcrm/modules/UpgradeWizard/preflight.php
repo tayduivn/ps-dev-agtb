@@ -277,13 +277,13 @@ $diffs ='';
 	$_SESSION['upgrade_from_flavor']  = $manifest['name'];
 	// aw: BUG 10161: check flavor conversion sql files
 	$sqlFile = ''; // cn: bug
+    $type = $db->getScriptName();
 	if($current_version == $targetVersion) {
 
 		if(preg_match('/(.*?)([^0])$/', $current_version, $matches))
 		{
 			$current_version = $matches[1].'0';
 		}
-        $type = $db->getScriptName();
 		switch($manifest['name']){
 			case 'SugarCE to SugarPro':
 				$sqlFile = $current_version.'_ce_to_pro_'.$type;
