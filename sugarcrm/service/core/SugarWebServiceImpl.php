@@ -144,6 +144,7 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 * @exception 'SoapFault' -- The SOAP error, if any
 */
 function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted ){
+
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
 	global  $beanList, $beanFiles;
 	$error = new SoapError();
@@ -188,8 +189,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
-        /* @var $seed SugarBean */
-	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted, false, $select_fields);
+	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted);
     } // else
 	$list = $response['list'];
 
