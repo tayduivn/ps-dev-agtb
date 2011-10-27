@@ -35,7 +35,7 @@ All Rights Reserved.
  ********************************************************************************/
 
 require_once("data/BeanFactory.php");
-class LinkTest extends Sugar_PHPUnit_Framework_TestCase
+class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
 
