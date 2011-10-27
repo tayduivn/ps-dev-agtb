@@ -657,6 +657,35 @@ eoq;
 
 		return $ret;
 	}
+
+    /**
+     * Creates dropdown items that have localized example names, instead of cryptic strings like 's f l'
+     *
+     * @param array un-prettied dropdown list
+     * @return array array of dropdown options
+     */
+    public function getPrettyLocaleNameOptions($options) {
+        global $app_strings;
+
+        $examples = array('s' => $app_strings['LBL_LOCALE_NAME_EXAMPLE_SALUTATION'],
+                        'f' => $app_strings['LBL_LOCALE_NAME_EXAMPLE_FIRST'],
+                        'l' => $app_strings['LBL_LOCALE_NAME_EXAMPLE_LAST'],
+                        't' =>  $app_strings['LBL_LOCALE_NAME_EXAMPLE_TITLE']);
+        $newOpts = array();
+        foreach ($options as $key => $val) {
+            $newVal = '';
+            $pieces = str_split($val);
+            foreach ($pieces as $piece) {
+                if (isset($examples[$piece])) {
+                    $newVal .= $examples[$piece];
+                } else {
+                    $newVal .= $piece;
+                }
+            }
+            $newOpts[$key] = $newVal;
+        }
+        return $newOpts;
+    }
 	////	END NAME DISPLAY FORMATTING CODE
 	///////////////////////////////////////////////////////////////////////////
 

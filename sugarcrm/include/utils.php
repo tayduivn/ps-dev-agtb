@@ -65,6 +65,7 @@ function make_sugar_config(&$sugar_config)
 	global $list_max_entries_per_page;
 	global $lock_default_user_name;
 	global $log_memory_usage;
+    global $nameFormats;
 	global $requireAccounts;
 	global $RSS_CACHE_TIME;
 	global $session_dir;
@@ -111,6 +112,7 @@ function make_sugar_config(&$sugar_config)
 	'default_currency_symbol' => empty($default_currency_symbol) ? '$' : $default_currency_symbol,
 	'default_currency_iso4217' => empty($default_currency_iso4217) ? '$' : $default_currency_iso4217,
 	'default_date_format' => empty($defaultDateFormat) ? 'm/d/Y' : $defaultDateFormat,
+    'default_locale_name_format' => empty($defaultNameFormat) ? 's f l' : $defaultNameFormat,
 	'default_export_charset' => 'UTF-8',
 	'default_language' => empty($default_language) ? 'en_us' : $default_language,
 	'default_module' => empty($default_module) ? 'Home' : $default_module,
@@ -144,6 +146,10 @@ function make_sugar_config(&$sugar_config)
 	'list_max_entries_per_subpanel' => empty($list_max_entries_per_subpanel) ? 10 : $list_max_entries_per_subpanel,
 	'lock_default_user_name' => empty($lock_default_user_name) ? false : $lock_default_user_name,
 	'log_memory_usage' => empty($log_memory_usage) ? false : $log_memory_usage,
+    'name_formats' => empty($nameFormats) ? array(
+        's f l' => 's f l', 'f l' => 'f l', 's l' => 's l', 'l, s f' => 'l, s f',
+        'l, f' => 'l, f', 's l, f' => 's l, f', 'l s f' => 'l s f', 'l f s' => 'l f s'
+    ) : $nameFormats,
     'portal_view' => 'single_user',
 	'resource_management' => array (
 	    'special_query_limit' => 50000,
@@ -255,6 +261,10 @@ function get_sugar_config_defaults() {
 	'Y-m-d' => '2010-12-23', 'm-d-Y' => '12-23-2010', 'd-m-Y' => '23-12-2010',
 	'Y/m/d' => '2010/12/23', 'm/d/Y' => '12/23/2010', 'd/m/Y' => '23/12/2010',
 	'Y.m.d' => '2010.12.23', 'd.m.Y' => '23.12.2010', 'm.d.Y' => '12.23.2010',),
+    'name_formats' => array (
+        's f l' => 's f l', 'f l' => 'f l', 's l' => 's l', 'l, s f' => 'l, s f',
+        'l, f' => 'l, f', 's l, f' => 's l, f', 'l s f' => 'l s f', 'l f s' => 'l f s'
+    ),
 	'dbconfigoption' => array (
 	'persistent' => true,
 	'autofree' => false,
@@ -270,6 +280,7 @@ function get_sugar_config_defaults() {
 	'default_number_grouping_seperator' => return_session_value_or_default('default_number_grouping_seperator', ','),
 	'default_decimal_seperator' => return_session_value_or_default('default_decimal_seperator', '.'),
 	'default_date_format' => 'm/d/Y',
+    'default_locale_name_format' => 's f l',
 	'default_export_charset' => 'UTF-8',
 	'default_language' => return_session_value_or_default('default_language',
 	'en_us'),
