@@ -54,8 +54,11 @@ class BeanFactory {
             if (empty(self::$loadedBeans[$module][$id]))
             {
                 $bean = new $beanClass();
-                $bean->retrieve($id);
-                self::registerBean($module, $bean, $id);
+                $result = $bean->retrieve($id);
+                if($result == null)
+                    return FALSE;
+                else
+                    self::registerBean($module, $bean, $id);
             } else
             {
                 self::$hits++;

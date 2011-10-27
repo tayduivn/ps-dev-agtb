@@ -341,7 +341,9 @@ class Link2 {
             $rel_module = $this->getRelatedModuleName();
             foreach ($this->rows as $id => $vals)
             {
-                $this->beans[$id] = BeanFactory::getBean($rel_module, $id);
+                $tmpBean = BeanFactory::getBean($rel_module, $id);
+                if($tmpBean !== FALSE)
+                    $this->beans[$id] = $tmpBean;
             }
         }
 
