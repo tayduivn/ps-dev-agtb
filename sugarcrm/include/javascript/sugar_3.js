@@ -115,6 +115,7 @@ var altMsgIndex = 15;
 var compareToIndex = 7;
 var arrIndex = 12;
 var operatorIndex = 13;
+var callbackIndex = 16;
 var allowblank = 8;
 var validate = new Array();
 var maxHours = 24;
@@ -241,6 +242,15 @@ function addToValidate(formname, name, type, required, msg) {
 		addForm(formname);
 	}
 	validate[formname][validate[formname].length] = new Array(name, type,required, msg);
+}
+
+// Bug #47961 Callback validator definition
+function addToValidateCallback(formname, name, type, required, msg, callback)
+{
+    addToValidate(formname, name, type, required, msg);
+    var iIndex = validate[formname].length -1;
+    validate[formname][iIndex][jstypeIndex] = 'callback';
+    validate[formname][iIndex][callbackIndex] = callback;
 }
 
 function addToValidateRange(formname, name, type,required,  msg,min,max) {
@@ -970,6 +980,18 @@ function validate_form(formname, startsWith){
 						if(typeof validate[formname][i][jstypeIndex]  != 'undefined'/* && !isError*/){
 
 							switch(validate[formname][i][jstypeIndex]){
+                                // Bug #47961 May be validation through callback is best way.
+                                case 'callback' :
+                                    if (typeof validate[formname][i][callbackIndex] == 'function')
+                                    {
+                                        var result = validate[formname][i][callbackIndex](formname, validate[formname][i][nameIndex]);
+                                        if (result == false)
+                                        {
+                                            isError = true;
+                                            add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
+                                        }
+                                    }
+                                    break;
 							case 'range':
 								if(!inRange(trim(form[validate[formname][i][nameIndex]].value), validate[formname][i][minIndex], validate[formname][i][maxIndex])){
 									isError = true;
