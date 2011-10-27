@@ -1015,17 +1015,6 @@ class SugarBean
             $bean_name = "aCase";
         //END SUGARCRM flav!=sales ONLY
 
-        //add a references to bean_name if it doe not exist already.
-        if (!(class_exists($bean_name)))
-        {
-            if (isset($GLOBALS['beanList']) && isset($GLOBALS['beanFiles']))
-            {
-                global $beanFiles;
-            }
-            $bean_file=$beanFiles[$bean_name];
-            include_once($bean_file);
-        }
-
         if($this->load_relationship($field_name)) {
             if ($this->$field_name instanceof Link) {
                 // some classes are still based on Link, e.g. TeamSetLink
