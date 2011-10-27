@@ -72,8 +72,8 @@
         {assign var="field" value=$col.name}
         <div class='le_field' id='{$idCount}'>
             {if ! $fromModuleBuilder && ($col.name != '(filler)')}
-                {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties(\'{$idCount}\', \'{$col.label}\');{/capture}
-                {sugar_getimage name="edit_inline" ext=".gif" other_attributes='$otherAttributes'}
+                {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties('{$idCount}', '{$col.label}');"{/capture}
+                {sugar_getimage name="edit_inline" ext=".gif" other_attributes=$otherAttributes}
             {/if}
             {if isset($col.type) && ($col.type == 'address')}
                 {$icon_address}
@@ -139,8 +139,8 @@
           {* //END SUGARCRM flav=een ONLY *}
         </div>
         {if $panelid ne 'default'}
-        {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editPanelProperties(\'{$idCount}\')"{/capture}
-        {sugar_getimage name="edit_inline" ext=".gif" other_attributes='$otherAttributes'}
+            {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editPanelProperties('{$idCount}');"{/capture}
+            {sugar_getimage name="edit_inline" ext=".gif" other_attributes=$otherAttributes}
         {/if}
         {counter name='idCount' assign='idCount' print=false}
 
@@ -152,8 +152,8 @@
                 {assign var="field" value=$col.name}
                 <div class='le_field' id='{$idCount}'>
                     {if ! $fromModuleBuilder && ($col.name != '(filler)')}
-                        {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties(\'{$idCount}\', \'{$col.label}\');"{/capture}
-                        {sugar_getimage name="edit_inline" ext=".gif" other_attributes='$otherAttributes'}
+                        {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties('{$idCount}', '{$col.label}');"{/capture}
+                        {sugar_getimage name="edit_inline" ext=".gif" other_attributes=$otherAttributes}
                     {/if}
 
                     {if isset($col.type) && ($col.type == 'address')}
