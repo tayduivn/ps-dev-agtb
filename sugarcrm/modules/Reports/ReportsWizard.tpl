@@ -170,7 +170,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 											<td align="left" width='50%'>
                                                 {capture assign="name"}{$button.img}{/capture}
                                                 {capture assign="alt"}{$button.name}{/capture}
-                                                <div><a class='studiolink' href="javascript:void(0)">{sugar_getimage name="$name" alt="$alt"}</a></div>
+                                                <div><a class='studiolink' href="javascript:void(0)">{sugar_getimage name="$name" attr='border="0"' alt="$alt"}</a></div>
 											</td>
 											<td align="left" width='50%' valign="middle"><a class='studiolink' href="javascript:void(0)" onclick="">{$button.name}</a></td>
 										 </tr>
