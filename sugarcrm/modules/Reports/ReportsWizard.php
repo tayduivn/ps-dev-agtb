@@ -81,27 +81,14 @@ foreach ($tabs as $tabModuleKey=>$tabModuleKeyValue)
 foreach ($ACLAllowedModules as $module=>$singular) {
 	//if (!isset($ACLAllowedModulesAdded[$module])) {
 	    if($module == 'Currencies') continue;
-		$icon_name = _getIcon($module."_32");
-		if (empty ($icon_name)){
-			$icon_name = _getIcon($module);
-		}
-
-		if (empty ($icon_path)){
-			array_push($buttons, array(
-            	'name'=>isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module,
-                'img'=> SugarThemeRegistry::current()->getImageURL("icon_A1_newmod.gif"),
-                'alt'=> $mod_strings['LBL_NO_IMAGE'],
-                'key'=>$module
-            ));
-		} else {
-			array_push($buttons, array(
-            	'name'=>isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module,
-                'img'=> $icon_path,
-                'key'=>$module
-            ));
-		}
-		array_push($buttons, array('name'=>$app_list_strings['moduleList'][$module], 'img'=> $icon_name, 'key'=>$module));
-
+        $icon_name = _getIcon($module."_32");
+        if (empty($icon_name)){
+            $icon_name = _getIcon($module);
+        }
+        if (empty($icon_name)){
+            $icon_name = "icon_A1_newmod.gif";
+        }
+        $buttons[] = array('name'=>$app_list_strings['moduleList'][$module], 'img'=> $icon_name, 'key'=>$module);
 	//}
 }
 

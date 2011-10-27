@@ -167,17 +167,12 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 								<td width="16%" style="padding: 5px;"  valign="top" id='buttons_td'>
 								     <table class='wizardButton' onclick='SUGAR.reports.moduleButtonClick("{$button.key}", this);' onmousedown="" onmouseout="" width="60%" border='1' id='{$button.name}'>
 								         <tr>
-											<td align="left" width='50%'><a class='studiolink' href="javascript:void(0)" >
-                                                {capture assign="buttonName"}{$button.name}{/capture}
-												{if $button.alt}
-													{$button.alt}
-												{else}
-													{sugar_getimage name=$button.img attr='border="0" '  alt="$buttonName"}
-												{/if}
-												</a>
+											<td align="left" width='50%'>
+                                                {capture assign="name"}{$button.img}{/capture}
+                                                {capture assign="alt"}{$button.name}{/capture}
+                                                <div><a class='studiolink' href="javascript:void(0)">{sugar_getimage name="$name" alt="$alt"}</a></div>
 											</td>
-											 <td align="left" width='50%' valign="middle"><a class='studiolink' href="javascript:void(0)" onclick="">{$buttonName}</a></td>
-
+											<td align="left" width='50%' valign="middle"><a class='studiolink' href="javascript:void(0)" onclick="">{$button.name}</a></td>
 										 </tr>
 									 </table>
 								</td>
