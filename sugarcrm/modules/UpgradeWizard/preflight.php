@@ -277,8 +277,8 @@ $diffs ='';
 	$_SESSION['upgrade_from_flavor']  = $manifest['name'];
 	// aw: BUG 10161: check flavor conversion sql files
 	$sqlFile = ''; // cn: bug
-    $type = $db->getScriptName();
 	if($current_version == $targetVersion) {
+	    $type = $db->getScriptName();
 
 		if(preg_match('/(.*?)([^0])$/', $current_version, $matches))
 		{
@@ -304,6 +304,8 @@ $diffs ='';
 				break;
 		}
 	} else {
+	    $type = $db->dbType;
+        if($type == 'oci8') $type = 'oracle';
 		$sqlFile = $current_version.'_to_'.$targetVersion.'_'.$type;
 	}
 
