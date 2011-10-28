@@ -160,6 +160,21 @@ class MysqliManager extends MysqlManager
 	}
 
 	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return mysqli_num_rows($result);
+	}
+
+
+    /**
 	 * Disconnects from the database
 	 *
 	 * Also handles any cleanup needed

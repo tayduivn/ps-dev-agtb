@@ -187,6 +187,20 @@ class MysqlManager extends DBManager
 	}
 
 	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return mysql_num_rows($result);
+	}
+
+	/**
 	 * Disconnects from the database
 	 *
 	 * Also handles any cleanup needed

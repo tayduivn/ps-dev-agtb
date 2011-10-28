@@ -1667,7 +1667,21 @@ protected function checkQuery($sql, $object_name = false)
 		return 0;
 	}
 
-    /**
+	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return 0;
+	}
+
+	/**
      * Get table description
      * @param string $tablename
      * @param bool $reload true means load from DB, false allows using cache
