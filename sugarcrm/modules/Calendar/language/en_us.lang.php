@@ -73,7 +73,8 @@ $mod_strings = array (
 	'LBL_DATE' => 'Start Date & Time',  
 	'LBL_CREATE_MEETING' => 'Schedule Meeting',
 	'LBL_CREATE_CALL' => 'Log Call',  
-
+	'LBL_HOURS_ABBREV' => 'h',
+	'LBL_MINS_ABBREV' => 'm',
 
 	'LBL_YES' => 'Yes',
 	'LBL_NO' => 'No',

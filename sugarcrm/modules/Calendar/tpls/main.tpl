@@ -74,7 +74,9 @@
 		CAL.lbl_duration = "{$MOD.LBL_INFO_DURATION}";
 		CAL.lbl_name = "{$MOD.LBL_INFO_NAME}";
 		CAL.lbl_title = "{$MOD.LBL_INFO_TITLE}";
-		CAL.lbl_related = "{$MOD.LBL_INFO_RELATED_TO}";					
+		CAL.lbl_related = "{$MOD.LBL_INFO_RELATED_TO}";	
+		CAL.lbl_hours_abbrev = "{$MOD.LBL_HOURS_ABBREV}";
+		CAL.lbl_mins_abbrev = "{$MOD.LBL_MINS_ABBREV}";			
 	
 		CAL.img_edit_inline = "{$img_edit_inline}";
 		CAL.img_view_inline = "{$img_view_inline}";

@@ -89,9 +89,9 @@
 				e.parentNode.removeChild(e);
 			}
 				
-			var duration_text = item.duration_hours + "h";
+			var duration_text = item.duration_hours + CAL.lbl_hours_abbrev;
 			if(item.duration_minutes > 0)
-				duration_text += item.duration_minutes + "m";
+				duration_text += item.duration_minutes + CAL.lbl_mins_abbrev;
 			var start_text = CAL.get_header_text(item.type,item.time_start,item.status,item.record);
 						
 			var time_cell = item.timestamp - item.timestamp % (CAL.t_step * 60);			
