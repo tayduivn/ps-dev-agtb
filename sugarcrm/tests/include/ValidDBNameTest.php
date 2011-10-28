@@ -33,14 +33,6 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
             getValidDBName('idx_test_123_id')
         );
     }
-    
-    public function testLongNameEffected()
-    {
-        $this->assertNotEquals(
-            getValidDBName('eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee_opportunities'),
-            getValidDBName('eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee1_opportunities')
-        );
-    }
 
     public function testmaxLengthParam()
     {
