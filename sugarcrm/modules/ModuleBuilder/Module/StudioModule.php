@@ -230,7 +230,7 @@ class StudioModule
         $nodes = $this->getSearch () ;
         if ( !empty ( $nodes ) )
         {
-        	$layouts [ translate('LBL_SEARCH') ] = array ( 'name' => translate('LBL_SEARCH') , 'type' => 'Folder' , 'children' => $nodes , 'action' => "module=ModuleBuilder&action=wizard&view=search&view_module={$this->module}" , 'imageTitle' => 'SearchForm' , 'help' => 'searchBtn' , 'size' => '48') ;
+        	$layouts [ translate('LBL_SEARCH') ] = array ( 'name' => translate('LBL_SEARCH') , 'type' => 'Folder' , 'children' => $nodes , 'action' => "module=ModuleBuilder&action=wizard&view=search&view_module={$this->module}" , 'imageTitle' => 'BasicSearch' , 'help' => 'searchBtn' , 'size' => '48') ;
         }
 
     	return $layouts ;
