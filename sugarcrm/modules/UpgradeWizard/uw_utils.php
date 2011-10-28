@@ -32,6 +32,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
 
 /**
+ * Helper function for upgrade - get path from upload:// name
+ * @param string $path
+ * return string
+ */
+function getUploadRelativeName($path)
+{
+    if(class_exists('UploadFile')) {
+        return UploadFile::relativeName($path);
+    }
+    if(substr($path, 0, 9) == "upload://") {
+    	$path = substr($path, 9);
+    }
+    return $path;
+}
+
+/**
  * Backs-up files that are targeted for patch/upgrade to a restore directory
  * @param string rest_dir Full path to the directory containing the original, replaced files.
  * @param string install_file Full path to the uploaded patch/upgrade zip file
@@ -51,7 +67,7 @@ function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_d
 		$newFiles = findAllFiles(clean_path($unzip_dir . '/' . $zip_from_dir), array());
 
 		// keep this around for canceling
-		$_SESSION['uw_restore_dir'] = UploadFile::relativeName($rest_dir);
+		$_SESSION['uw_restore_dir'] = getUploadRelativeName($rest_dir);
 
 		foreach ($newFiles as $file) {
 			if (strpos($file, 'md5'))
@@ -4610,6 +4626,9 @@ function upgradeSugarCache($file)
 	}
 	if(file_exists("$from_dir/include/utils/external_cache.php")) {
 		$allFiles[] = "$from_dir/include/utils/external_cache.php";
+	}
+	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
 	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
 		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";

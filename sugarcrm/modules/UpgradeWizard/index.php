@@ -357,7 +357,7 @@ foreach($installeds as $installed) {
 
 		// cn: bug 9174 - cleared out upgrade dirs, or corrupt entries in upgrade_history give us bad file paths
 		if(is_file($target_manifest)) {
-			require_once( UploadFile::relativeName($target_manifest) );
+			require_once( getUploadRelativeName($target_manifest) );
 			$name = empty($manifest['name']) ? $filename : $manifest['name'];
 			$description = empty($manifest['description']) ? $mod_strings['LBL_UW_NONE'] : $manifest['description'];
 
