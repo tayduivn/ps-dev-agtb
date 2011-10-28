@@ -3130,6 +3130,10 @@ function upgradeDashletsForSalesAndMarketing() {
  */
 function upgradeUserPreferences() {
 
+    // check the current system wide default_locale_name_format and add it to the list if it's not there
+    global $sugar_config;
+    upgradeLocaleNameFormat($sugar_config['default_locale_name_format']);
+
 //BEGIN SUGARCRM flav=pro ONLY
 	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
    	   require($cachedfile);
@@ -3160,15 +3164,21 @@ function upgradeUserPreferences() {
     $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
 
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt'));
-
+//END SUGARCRM flav=pro ONLY
    	$db = &DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users where deleted = '0'");
    	while($row = $db->fetchByAssoc($result))
     {
+        // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
+          upgradeLocaleNameFormat($current_user->getPreference('default_locale_name_format'));
+
+        //BEGIN SUGARCRM flav=pro ONLY
           $changed = false;
 	      $current_user = new User();
 	      $current_user->retrieve($row['id']);
 
+
+          
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3251,8 +3261,11 @@ function upgradeUserPreferences() {
           {
 		    $current_user->savePreferencesToDB();
           }
-	} //while
 
+        //END SUGARCRM flav=pro ONLY
+	} //while
+//BEGIN SUGARCRM flav=pro ONLY
+    
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable
@@ -3304,6 +3317,26 @@ function upgradeUserPreferences() {
 	} //if
 	//END SUGARCRM flav=pro ONLY
 }
+
+/**
+ * Checks if a locale name format is part of the default list, if not adds it to the config
+ * @param $name_format string a local name format string such as 's f l'
+ * @return bool true on successful write to config file, false on failure;
+ */
+function upgradeLocaleNameFormat($name_format) {
+    global $sugar_config, $sugar_version, $mod_strings;
+    if (!in_array($name_format, $sugar_config['name_formats'])) {
+        $new_config = sugarArrayMerge($sugar_config['name_formats'], array($name_format=>$name_format));
+        $sugar_config['name_formats'] = $new_config;
+        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+            logThis('*** ERROR: could not write config.php! - upgrade will fail!');
+            $errors[] = $mod_strings['ERR_UW_CONFIG_WRITE'];
+            return false;
+        }
+    }
+    return true;
+}
+
 
 // BEGIN SUGARCRM flav=pro ONLY
 function migrate_sugar_favorite_reports(){
