@@ -55,7 +55,8 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
     function testSystemAccountMailSettingsChangedUserAccessToUsername()
     {
         //User not alloweed to access system email username/password
-        $GLOBALS['db']->query("INSERT INTO config (category,name,value) VALUES ('notify','allow_default_outbound','2') ");
+        $GLOBALS['db']->query("DELETE FROM config where name='allow_default_outbound' AND category='notify'");
+        $GLOBALS['db']->query("INSERT INTO config (category,name,value) VALUES ('notify','allow_default_outbound','2')");
 
         $newSystemPort = 864;
         $newSystemServer = "system.imap.com";
