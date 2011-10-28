@@ -283,7 +283,7 @@ class KBDocument extends SugarBean {
             $this->add_team_security_where_clause($ret_array['from']);
         }
         //END SUGARCRM flav=pro ONLY
-        if(!empty($where)) {
+        if(!empty($where) && trim($where) != '') {
             $ret_array['where'] = ' WHERE '. $where;
         } else {
             $ret_array['where'] = '';
