@@ -1075,7 +1075,7 @@ class MysqlManager extends DBManager
 			    return $err;
 			}
 		}
-
+        return false;
     }
 
 	/**
