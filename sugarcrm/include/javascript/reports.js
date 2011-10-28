@@ -2000,22 +2000,22 @@ SUGAR.reports = function() {
 				"<input type='hidden' id='display_cols_row_" + totalDisplayColRows+"_field' value='"+
 				record.getData('field_name') + "'>";			
 							
-			var cell = row.insertCell(1);
-			cell.setAttribute('scope', 'row');
-			var colLabel = record.getData('parents') + " > " +
-				record.getData('field_label');
-			cell.innerHTML = colLabel;
-			colLabel = record.getData('field_label');
-			cell.setAttribute("onmouseover", "this.style.cursor = 'move'");
-			cell = row.insertCell(2);
-			cell.innerHTML = "<input type='text' size='50' id= 'display_cols_label_'"+totalDisplayColRows+" value='"+colLabel+"' title='"+colLabel+" "+SUGAR.language.get("Reports", 'LBL_LABEL');"' onclick='this.focus();'>";
-			cell = row.insertCell(3);
-			cell.innerHTML = "<input type='radio' title='"+SUGAR.language.get("Reports", 'LBL_ORDER_BY');+"' name='order_by_radio' id='order_by_radio_"+totalDisplayColRows +"' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+")'></input>";
-			cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
-			cell = row.insertCell(4);
-			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
-			SUGAR.reports.addToFullTableList('display_cols_row_' + totalDisplayColRows,fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));		
-			
+            var cell = row.insertCell(1);
+            cell.setAttribute('scope', 'row');
+            var colLabel = record.getData('parents') + " > " +
+                record.getData('field_label');
+            cell.innerHTML = colLabel;
+            colLabel = record.getData('field_label');
+            cell.setAttribute("onmouseover", "this.style.cursor = 'move'");
+            cell = row.insertCell(2);
+            cell.innerHTML = "<input type='text' size='50' id= 'display_cols_label_'"+totalDisplayColRows+"' value='"+colLabel+"' title='"+ colLabel + SUGAR.language.get('Reports', 'LBL_LABEL') + "' onclick='this.focus();'>";
+            cell = row.insertCell(3);
+            cell.innerHTML = "<input type='radio' title='" + SUGAR.language.get('Reports', 'LBL_ORDER_BY') + "' name='order_by_radio' id='order_by_radio_"+ totalDisplayColRows + "' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+ ")'></input>";
+            cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
+            cell = row.insertCell(4);
+            cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
+            SUGAR.reports.addToFullTableList('display_cols_row_' + totalDisplayColRows,fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));
+
 			var dd11 = YAHOO.util.Dom.get('display_cols_row_' + totalDisplayColRows);
 			dd11.dd = new SUGAR.reports.reportDDProxy('display_cols_row_' + totalDisplayColRows, 'group');
 			
