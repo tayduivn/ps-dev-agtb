@@ -223,6 +223,7 @@ abstract class DBManager
 	 * create_user		Can create users for Sugar
 	 * create_db		Can create databases
 	 * collation		Supports setting collations
+	 * disable_keys     Supports temporarily disabling keys (for upgrades, etc.)
 	 *
 	 * @abstract
 	 * Special cases:
@@ -3389,6 +3390,24 @@ protected function checkQuery($sql, $object_name = false)
 	 * Code run on new database after installing
 	 */
 	public function postInstall()
+	{
+	}
+
+	/**
+	 * Disable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function disableKeys($tableName)
+	{
+	}
+
+	/**
+	 * Re-enable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function enableKeys($tableName)
 	{
 	}
 

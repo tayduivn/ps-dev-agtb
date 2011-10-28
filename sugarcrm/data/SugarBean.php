@@ -589,8 +589,14 @@ class SugarBean
     function getPrimaryFieldDefinition()
     {
         $def = $this->getFieldDefinition("id");
-        if (!$def)
+        if(empty($def)) {
             $def = $this->getFieldDefinition(0);
+        }
+        if (empty($def)) {
+            $defs = $this->field_defs;
+            reset($defs);
+            $def = current($defs);
+        }
         return $def;
     }
     //BEGIN SUGARCRM flav=pro ONLY
@@ -4155,6 +4161,7 @@ function save_relationship_changes($is_update, $exclude=array())
         // We have some data.
         while (($row = $bean->db->fetchByAssoc($result)) != null)
         {
+            $row = $this->convertRow($row);
             if(!$isFirstTime)
             {
                 $bean = new $class();

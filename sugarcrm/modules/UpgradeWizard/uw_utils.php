@@ -44,14 +44,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_dir, $errors, $path='') {
 	global $mod_strings;
 	// create restore file directory
-	mkdir_recursive($rest_dir);
+	sugar_mkdir($rest_dir, 0775, true);
 
     if(file_exists($rest_dir) && is_dir($rest_dir)){
 		logThis('backing up files to be overwritten...', $path);
 		$newFiles = findAllFiles(clean_path($unzip_dir . '/' . $zip_from_dir), array());
 
 		// keep this around for canceling
-		$_SESSION['uw_restore_dir'] = clean_path($rest_dir);
+		$_SESSION['uw_restore_dir'] = UploadFile::relativeName($rest_dir);
 
 		foreach ($newFiles as $file) {
 			if (strpos($file, 'md5'))
@@ -62,10 +62,7 @@ function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_d
 
 			// make sure the directory exists
 			$cleanDir = $rest_dir . '/' . dirname($cleanFile);
-			if (!is_dir($cleanDir)) {
-				mkdir_recursive($cleanDir);
-			}
-
+			sugar_mkdir($cleanDir, 0775, true);
 			$oldFile = clean_path(getcwd() . '/' . $cleanFile);
 
 			// only copy restore files for replacements - ignore new files from patch
@@ -699,7 +696,7 @@ function upgradeUWFiles($file) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);
     }
 
-    upgradeUWFilesCopy($allFiles);
+    upgradeUWFilesCopy($allFiles, $from_dir);
 }
 
 /**
@@ -708,15 +705,16 @@ function upgradeUWFiles($file) {
  * This function recursively copies files from the upgradeUWFiles Array
  * @see upgradeUWFiles
  *
- * @param $allFiles Array of files to copy over after zip file has been uploaded
+ * @param array $allFiles Array of files to copy over after zip file has been uploaded
+ * @param string $from_dir Source directory
  */
-function upgradeUWFilesCopy($allFiles)
+function upgradeUWFilesCopy($allFiles, $from_dir)
 {
    foreach($allFiles as $file)
    {
        if(is_array($file))
        {
-           upgradeUWFilesCopy($file);
+           upgradeUWFilesCopy($file, $from_dir);
        } else {
            $destFile = str_replace($from_dir."/", "", $file);
            if(!is_dir(dirname($destFile))) {
@@ -1830,7 +1828,7 @@ function prepSystemForUpgrade() {
 	if(empty($base_tmp_upgrade_dir)){
 		$base_tmp_upgrade_dir   = $p_base_tmp_upgrade_dir;
 	}
-	mkdir_recursive($base_tmp_upgrade_dir);
+	sugar_mkdir($base_tmp_upgrade_dir, 0775, true);
 	if(!isset($subdirs) || empty($subdirs)){
 		$subdirs = array('full', 'langpack', 'module', 'patch', 'theme');
 	}
@@ -1853,7 +1851,7 @@ function prepSystemForUpgrade() {
     // make sure dirs exist
 	if($subdirs != null){
 		foreach($subdirs as $subdir) {
-		    mkdir_recursive("$base_upgrade_dir/$subdir");
+		    sugar_mkdir("$base_upgrade_dir/$subdir", 0775, true);
 		}
 	}
 	// array of special scripts that are executed during (un)installation-- key is type of script, value is filename
@@ -2503,6 +2501,104 @@ function deletePackageOnCancel(){
 		$out = "<b><span class='error'>{$error}</span></b><br />";
     }
 }
+
+function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
+{
+	global $sugar_config;
+	$alterTableSchema = '';
+	$sqlErrors = array();
+	if(!isset($_SESSION['sqlSkippedQueries'])){
+		$_SESSION['sqlSkippedQueries'] = array();
+	}
+	$db = DBManagerFactory::getInstance();
+	$disable_keys = $db->supports("disable_keys");
+	if(strpos($resumeFromQuery,",") != false){
+		$resumeFromQuery = explode(",",$resumeFromQuery);
+	}
+	if(file_exists($sqlScript)) {
+		$fp = fopen($sqlScript, 'r');
+		$contents = stream_get_contents($fp);
+		$anyScriptChanges =$contents;
+		$resumeAfterFound = false;
+		if(rewind($fp)) {
+			$completeLine = '';
+			$count = 0;
+			while($line = fgets($fp)) {
+				if(strpos($line, '--') === false) {
+					$completeLine .= " ".trim($line);
+					if(strpos($line, ';') !== false) {
+						$query = '';
+						$query = str_replace(';','',$completeLine);
+						//if resume from query is not null then find out from where
+						//it should start executing the query.
+
+						if($query != null && $resumeFromQuery != null){
+							if(!$resumeAfterFound){
+								if(strpos($query,",") != false){
+									$queArray = explode(",",$query);
+									for($i=0;$i<sizeof($resumeFromQuery);$i++){
+										if(strcasecmp(trim($resumeFromQuery[$i]),trim($queArray[$i]))==0){
+											$resumeAfterFound = true;
+										} else {
+											$resumeAfterFound = false;
+											break;
+										}
+									}//for
+
+								}
+								elseif(strcasecmp(trim($resumeFromQuery),trim($query))==0){
+									$resumeAfterFound = true;
+								}
+							}
+							if($resumeAfterFound){
+								$count++;
+							}
+							// if $count=1 means it is just found so skip the query. Run the next one
+							if($query != null && $resumeAfterFound && $count >1){
+    							$tableName = getAlterTable($query);
+								if($disable_keys && !empty($tableName))
+								{
+									$db->disableKeys($tableName);
+								}
+								$db->query($query);
+								if($db->checkError()){
+									//put in the array to use later on
+									$_SESSION['sqlSkippedQueries'][] = $query;
+								}
+								if($disable_keys && !empty($tableName))
+								{
+									$db->enableKeys($tableName);
+								}
+								$progQuery[$forStepQuery]=$query;
+								post_install_progress($progQuery,$action='set');
+							}//if
+						}
+						elseif($query != null){
+							$tableName = getAlterTable($query);
+							if($disable_keys && !empty($tableName))
+							{
+								$db->disableKeys($tableName);
+							}
+							$db->query($query);
+							if($disable_keys && !empty($tableName))
+							{
+								$db->enableKeys($tableName);
+							}
+							$progQuery[$forStepQuery]=$query;
+							post_install_progress($progQuery,$action='set');
+							if($db->checkError()){
+								//put in the array to use later on
+								$_SESSION['sqlSkippedQueries'][] = $query;
+							}
+						}
+						$completeLine = '';
+					}
+				}
+			}//while
+		}
+	}
+}
+
 
 function getAlterTable($query){
 	$query = strtolower($query);

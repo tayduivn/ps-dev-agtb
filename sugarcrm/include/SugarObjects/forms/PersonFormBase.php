@@ -178,7 +178,7 @@ function checkForDuplicates($prefix='')
     require_once('include/MVC/SugarModule.php');
     $focus = SugarModule::get($this->moduleName)->loadBean();
 
-	$query = $this->getDuplicateQuery();
+	$query = $this->getDuplicateQuery($prefix);
 
     if(empty($query))
     {
@@ -222,7 +222,7 @@ function checkForDuplicates($prefix='')
 			   $query2 = "SELECT id, first_name, last_name, title FROM {$focus->table_name} WHERE deleted=0 AND id = '" . $row['id'] . "'";
 			   $result2 = $db->query($query2);
 			   $r = $db->fetchByAssoc($result2);
-			   if(isset($r['id'])) {
+			   if(isset($r['id']) && !array_key_exists('id', $r)) {
 			   	  $rows[]=$r;
 			   }
 			} //if

@@ -228,7 +228,7 @@ mySugarLoader.insert();
 		</td>
 
 		<td rowspan="3">
-				{sugar_getimage name="blank.gif" attr='border="0"'}
+				{sugar_getimage name="blank.gif"  width='40' height='1' border='0'}
 		</td>
  		{* //BEGIN SUGARCRM flav=pro ONLY*}
 		{/if}
@@ -237,7 +237,7 @@ mySugarLoader.insert();
 
 		</td>
 		<td rowspan="3">
-				{sugar_getimage name="blank.gif" attr='border="0"'}
+				{sugar_getimage name="blank.gif"  width='40' height='1' border='0'}
 		</td>
 		{/if}
 		{* //END SUGARCRM flav=pro ONLY*}
