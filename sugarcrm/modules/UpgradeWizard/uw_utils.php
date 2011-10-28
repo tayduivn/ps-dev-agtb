@@ -39,10 +39,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function getUploadRelativeName($path)
 {
     if(class_exists('UploadFile')) {
-        return UploadFile::relativeName($path);
+        return UploadFile::realpath($path);
     }
     if(substr($path, 0, 9) == "upload://") {
-    	$path = substr($path, 9);
+    	$path = rtrim($GLOBALS['sugar_config']['upload_dir'], "/\\")."/".substr($path, 9);
     }
     return $path;
 }
