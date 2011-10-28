@@ -33,7 +33,6 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  */
 
 require_once('include/utils.php');
-require_once('include/database/PearDatabase.php');
 require_once('include/database/DBManager.php');
 require_once('include/database/DBManagerFactory.php');
 require_once("include/entryPoint.php");
