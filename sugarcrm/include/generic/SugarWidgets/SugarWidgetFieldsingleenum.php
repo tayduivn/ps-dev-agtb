@@ -52,4 +52,3 @@ class SugarWidgetFieldSingleEnum extends SugarWidgetFieldEnum {
     }
 }
 ?>
-

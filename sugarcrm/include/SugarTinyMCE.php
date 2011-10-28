@@ -38,7 +38,8 @@ class SugarTinyMCE {
 	);
 	
 	var $pluginsConfig = array(
-	    'email_compose_light' => 'insertdatetime,paste,directionality,safari'         
+	    'email_compose_light' => 'insertdatetime,paste,directionality,safari',
+        'email_compose' => 'advhr,insertdatetime,table,preview,paste,searchreplace,directionality,fullpage',
 	);
 	
 	var $defaultConfig = array(

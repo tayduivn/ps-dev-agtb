@@ -119,10 +119,11 @@ var mWhere = "{MAILMERGE_WHERE}";
 var orderBy = '';
 var relModule = '';
 var mTerm = '';
+YAHOO.namespace("mailmerge");
+YAHOO.mailmerge.cObj = null;
 
 function submit_form()
 {
-	document.MailMerge.action='index.php';
 	document.MailMerge.submit();
 }
 
@@ -146,7 +147,7 @@ function ajaxSuccess(data)
 		dispCount = result.result_count;
 		nextItems_disabled = true;
 	}
-	if(result.result_count < (mOffset + max))
+	if(result.result_count <= (mOffset + max))
 	{
 		nextItems_disabled = true;
 	}
@@ -205,6 +206,9 @@ function ajaxSuccess(data)
 }
 function increaseOffset()
 {
+    if(isCallInProgress())
+        return;
+
     if(!nextItems_disabled) {
         mOffset += 20;
         getObjects();
@@ -213,10 +217,21 @@ function increaseOffset()
 
 function decreaseOffset()
 {
+    if(isCallInProgress())
+        return;
+
     if(!prevItems_disabled) {
 	    mOffset -= 20;
         getObjects();
     }
+}
+
+function isCallInProgress()
+{
+    if(YAHOO.mailmerge.cObj)
+        return YAHOO.util.Connect.isCallInProgress(YAHOO.mailmerge.cObj);
+    else
+        return false;
 }
 
 function getObjects()
@@ -229,9 +244,8 @@ function getObjects()
 	getOrderBy();
 	
 	//rrs
-	var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm+'&max='+max+'&order_by='+orderBy,{success: ajaxSuccess, failure: ajaxSuccess}, null);
-
-
+    var qs = 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm+'&max='+max+'&order_by='+orderBy+'&offset='+mOffset;
+	YAHOO.mailmerge.cObj = YAHOO.util.Connect.asyncRequest('GET', qs,{success: ajaxSuccess, failure: ajaxSuccess}, null);
 }
 
 function moveRight()
@@ -361,7 +375,6 @@ function validateForm()
 	
 	if(selObjs.options.length > 0)
 	{
-		document.MailMerge.action='index.php';
 		document.MailMerge.submit();
 		return true;
 	}

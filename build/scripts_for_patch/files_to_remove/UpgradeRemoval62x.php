@@ -58,6 +58,12 @@ if($version < '622')
 	$files[] = 'modules/Activities/OpenListView.php';
 }
 
+if($version < '624')
+{
+        $files[] = 'modules/Emails/EditView.html';
+        $files[] = 'json.php';
+}
+
 return $files;	
 }
 	

@@ -282,4 +282,3 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
     }
 }
 ?>
-

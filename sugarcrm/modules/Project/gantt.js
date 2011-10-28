@@ -531,16 +531,19 @@ SUGAR.gantt = function() {
 	        }
 
 	        var row = tbl.insertRow(rowIndex);
-	        var row_id = 'gantt_row_'+SUGAR.grid.getMappedRow(task_num);
-	        row.setAttribute('id', 'gantt_row_'+SUGAR.grid.getMappedRow(task_num));
-        	row.setAttribute('height', '25');
+            var mappedRowId = SUGAR.grid.getMappedRow(task_num);
+	        var mappedRow = document.getElementById('project_task_row_' + task_num);
+            var row_id = 'gantt_row_'+mappedRowId;
+            row.setAttribute('id', 'gantt_row_'+ row_id);
+        	row.setAttribute('height', mappedRow ? mappedRow.offsetHeight : 28);
+
 	        //row.setAttribute('onMouseOver', 'SUGAR.gantt.focusRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
 	        //row.setAttribute('onMouseOut', 'SUGAR.gantt.fadeRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
 	        //row.setAttribute('onClick', 'SUGAR.gantt.selectRow(\''+SUGAR.grid.getMappedRow(task_num)+'\')');
 
 	        // insert Left Cell
 	        var cellLeft = row.insertCell(0);
-	        cellLeft.innerHTML = '<div style="height:23px;vertical-align:middle;">'+task_num+'</div>';
+	        cellLeft.innerHTML = '<div class="tasknum">'+task_num+'</div>';
 	        cellLeft.setAttribute('id', 'task_'+SUGAR.grid.getMappedRow(task_num)+'_id');
 
 	        // insert Middle Cell

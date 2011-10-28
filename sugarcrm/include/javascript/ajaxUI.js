@@ -53,10 +53,19 @@ SUGAR.ajaxUI = {
             {
                 action_sugar_grp1 = r.action;
             }
-            
+
             var c = document.getElementById("content");
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
+
+            if (r.record)
+            {
+                DCMenu.record = r.record;
+            }
+            if(r.menu && r.menu.module)
+            {
+                DCMenu.module = r.menu.module;
+            }
             // set response time from ajax response
             if(typeof(r.responseTime) != 'undefined'){
                 var rt = document.getElementById('responseTime');
@@ -144,11 +153,23 @@ SUGAR.ajaxUI = {
             if (ui.lastURL == url)
                 return;
             var inAjaxUI = /action=ajaxui/.exec(window.location);
-            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
-                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload())
             {
-                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
-                return;
+                //If there is an unload function, we need to check it ourselves
+                if (!confirm(window.onbeforeunload()))
+                {
+                    if (!inAjaxUI)
+                    {
+                        //User doesn't want to navigate
+                        window.location.hash = "";
+                    }
+                    else
+                    {
+                        YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                    }
+                    return;
+                }
+                window.onbeforeunload = null;
             }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);

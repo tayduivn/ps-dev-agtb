@@ -26,65 +26,57 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/EditView/SubpanelQuickCreate.php';
 
-class Bug39610Test extends Sugar_PHPUnit_Framework_TestCase
+//BEGIN SUGARCRM flav=pro ONLY
+require_once('modules/Reports/views/view.buildreportmoduletree.php');
+require_once('modules/Reports//SavedReport.php');
+//END SUGARCRM flav=pro ONLY
+
+class Bug47271Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     public function setUp()
     {
-        global $app_strings, $app_list_strings;
-        $app_strings = return_application_language($GLOBALS['current_language']);
-        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
-    
+
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
     }
-    
-    public function testUseCustomViewAndCustomClassName()
+
+    public function testUserListView()
     {
-        $target_module = 'Contacts';
-        sugar_mkdir('custom/modules/'. $target_module . '/views/',null,true);
-        if( $fh = @fopen('custom/modules/'. $target_module . '/views/view.edit.php', 'w') )
-        {
-$string = <<<EOQ
-<?php
-class CustomContactsViewEdit
-{
-     var \$useForSubpanel = false;
+        global $app_list_strings;
+        $new_name = 'PeopleXYZ';
 
-     public function CustomContactsViewEdit() 
-     {
-          \$GLOBALS['CustomContactsSubpanelQuickCreated'] = true;
-     }
-};
-?>
-EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
-        }
+        // simulate module renaming
+        $org_name = $app_list_strings['moduleList']['Contacts'];
+        $app_list_strings['moduleList']['Contacts'] = $new_name;
 
-        
-        $subpanelMock = new SubpanelQuickCreateMockBug39610Test($target_module, 'SubpanelQuickCreate');
-        $this->assertTrue(!empty($GLOBALS['CustomContactsSubpanelQuickCreated']), "Assert that CustomContactsEditView constructor was called");
-        @unlink('custom/modules/'. $target_module . '/views/view.subpanelquickcreate.php');
+        // request settings
+        $_REQUEST['action'] = 'BuildReportModuleTree';
+        $_REQUEST['module'] = 'Reports';
+        $_REQUEST['page'] = 'Report';
+        $_REQUEST['report_module'] = 'Accounts';
+
+//BEGIN SUGARCRM flav=pro ONLY
+        // module tree
+        $view = new ReportsViewBuildreportmoduletree();
+        $view->display();
+
+        // ensure the module tree includes the new module name
+        $pattern = '"text":"' . $new_name . '"'; //  the json string should include: "text":"PeopleXYZ"
+        $this->expectOutputRegex('/.*'.$pattern.'.*/');
+//END SUGARCRM flav=pro ONLY
+
+        // cleanup
+        unset($_REQUEST['report_module']);
+        unset($_REQUEST['page']);
+        unset($_REQUEST['module']);
+        unset($GLOBALS['module']);
+        unset($_REQUEST['action']);
+        $app_list_strings['moduleList']['Contacts'] = $org_name;
     }
-
 }
-
-
-class SubpanelQuickCreateMockBug39610Test extends SubpanelQuickCreate
-{
-	public function SubpanelQuickCreateMockBug39610Test($module, $view='QuickCreate', $proccessOverride = false)
-	{
-		parent::SubpanelQuickCreate($module, $view, $proccessOverride);	
-	}
-	
-	public function process()
-	{
-		//no-op
-	}
-}
+?>
