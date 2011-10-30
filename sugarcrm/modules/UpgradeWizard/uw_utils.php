@@ -4699,6 +4699,16 @@ function unlinkUpgradeFiles($version)
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
+    /*
+    if(empty($_SESSION['unzip_dir']))
+    {
+        global $sugar_config;
+        $base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
+        $base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
+        $_SESSION['unzip_dir'] = mk_temp_dir( $base_tmp_upgrade_dir );
+    }
+    */
+
     if(isset($_SESSION['unzip_dir']) && file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
     {
        $files_to_remove = glob($_SESSION['unzip_dir'].'/scripts/files_to_remove/*.php');
@@ -4784,12 +4794,12 @@ if (!function_exists("getValidDBName"))
         if ($ensureUnique)
         {
             $md5str = md5($name);
-            $tail = substr ( $name, -8) ;
+            $tail = substr ( $name, -11) ;
             $temp = substr($md5str , strlen($md5str)-4 );
-            $result = substr ( $name, 0, 7) . $temp . $tail ;
+            $result = substr ( $name, 0, 10) . $temp . $tail ;
         }else if ($len > ($maxLen - 5))
         {
-            $result = substr ( $name, 0, 8) . substr ( $name, 8 - $maxLen + 5);
+            $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
         }
         return strtolower ( $result ) ;
     }

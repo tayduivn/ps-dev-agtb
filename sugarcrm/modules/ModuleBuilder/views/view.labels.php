@@ -72,14 +72,7 @@ class ViewLabels extends ViewModulefields
 		$smarty->assign('available_languages',get_languages());
 
 
-        global $beanList;
-        $objectName = $beanList[$editModule];
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if($objectName == 'aCase') {
-            $objectName = 'Case';
-        }
-        //END SUGARCRM flav!=sales ONLY
-
+        $objectName = BeanFactory::getObjectName($editModule);
         VardefManager::loadVardef($editModule, $objectName);
         global $dictionary;
         $vnames = array();

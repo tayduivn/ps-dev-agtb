@@ -1010,8 +1010,21 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-        if($this->load_relationship($field_name))
-            return array_values($this->$field_name->getBeans());
+        //BEGIN SUGARCRM flav!=sales ONLY
+        //if bean_name is Case then use aCase
+        if($bean_name=="Case")
+            $bean_name = "aCase";
+        //END SUGARCRM flav!=sales ONLY
+
+        if($this->load_relationship($field_name)) {
+            if ($this->$field_name instanceof Link) {
+                // some classes are still based on Link, e.g. TeamSetLink
+                return array_values($this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where));
+            } else {
+                // Link2 style
+                return array_values($this->$field_name->getBeans());
+            }
+        }
         else
             return array();
     }
@@ -4858,12 +4871,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     function getRelatedFields($module, $id, $fields, $return_array = false){
         if(empty($GLOBALS['beanList'][$module]))return '';
-        $object = $GLOBALS['beanList'][$module];
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if ($object == 'aCase') {
-            $object = 'Case';
-        }
-        //END SUGARCRM flav!=sales ONLY
+        $object = BeanFactory::getObjectName($module);
 
         VardefManager::loadVardef($module, $object);
         if(empty($GLOBALS['dictionary'][$object]['table']))return '';

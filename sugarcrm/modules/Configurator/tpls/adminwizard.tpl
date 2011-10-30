@@ -205,14 +205,9 @@ function disableReturnSubmission(e) {
                 </tr>
                 <!--//END SUGARCRM flav!=dce ONLY -->
                 <tr>
-                    <td nowrap="nowrap" scope="row" valign="top">{sugar_translate module='Administration' label='LBL_LOCALE_DEFAULT_NAME_FORMAT'}: </td>
                     <td>
-                        <input onkeyup="setPreview();" size='15' onkeydown="setPreview();" id="default_locale_name_format" type="text" name="default_locale_name_format" value="{$config.default_locale_name_format}">
-                        <br>
-                        {sugar_translate module='Administration' label='LBL_LOCALE_NAME_FORMAT_DESC'}
+                        <input id="default_locale_name_format" type="hidden" name="default_locale_name_format" value="{$config.default_locale_name_format}">
                     </td>
-                    <td nowrap="nowrap" scope="row" valign="top">{sugar_translate module='Administration' label='LBL_LOCALE_EXAMPLE_NAME_FORMAT'}: </td>
-                    <td valign="top"><input name="no_value" id="nameTarget" style="border: none;" value="" disabled></td>
                 </tr>
             </table>
             </div>

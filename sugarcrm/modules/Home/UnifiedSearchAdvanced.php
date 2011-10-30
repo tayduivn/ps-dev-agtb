@@ -352,10 +352,7 @@ class UnifiedSearchAdvanced {
 			if (!isset($beanFiles[$beanName]))
 				continue;
 
-			//BEGIN SUGARCRM flav!=sales ONLY
-			if($beanName == 'aCase') $beanName = 'Case';
-            //END SUGARCRM flav!=sales ONLY
-
+			$beanName = BeanFactory::getObjectName($moduleName);
 			$manager = new VardefManager ( );
 			$manager->loadVardef( $moduleName , $beanName ) ;
 
@@ -378,7 +375,13 @@ class UnifiedSearchAdvanced {
 			if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php"))
 			{
 				require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
-			}
+			}				
+
+            //If there are $searchFields are empty, just continue, there are no search fields defined for the module
+            if(empty($searchFields))
+            {
+                continue;
+            }
 
 			$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $moduleName);
 
@@ -408,6 +411,17 @@ class UnifiedSearchAdvanced {
 						$fields [ $field ] = $searchFields [ $moduleName ] [ $field ] ;
 					}
 				}
+
+                foreach ($searchFields[$moduleName] as $field => $def)
+                {
+                    if (
+                        isset($def['force_unifiedsearch'])
+                        and $def['force_unifiedsearch']
+                    )
+                    {
+                        $fields[$field] = $def;
+                    }
+                }
 
 				if(count($fields) > 0) {
 					$supported_modules [$moduleName] ['fields'] = $fields;
