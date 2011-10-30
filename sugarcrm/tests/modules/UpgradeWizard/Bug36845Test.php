@@ -31,6 +31,7 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->markTestIncomplete('Revisit this test.  Seems to be corrupting unified search');
         require('include/modules.php');
         global $beanFiles, $beanList;
 
