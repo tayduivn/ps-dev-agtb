@@ -31,6 +31,16 @@ require_once('modules/Cases/Case.php');
 
 class Bug47949Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    }
+
+    public function tearDown()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
 
     /*
      * @group bug47949
