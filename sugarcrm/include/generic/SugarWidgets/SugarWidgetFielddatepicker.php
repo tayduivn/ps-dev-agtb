@@ -45,3 +45,5 @@ EOHTML;
         return $str;
     }
 }
+
+?>

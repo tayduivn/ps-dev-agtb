@@ -32,6 +32,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
 
 /**
+ * Helper function for upgrade - get path from upload:// name
+ * @param string $path
+ * return string
+ */
+function getUploadRelativeName($path)
+{
+    if(class_exists('UploadFile')) {
+        return UploadFile::realpath($path);
+    }
+    if(substr($path, 0, 9) == "upload://") {
+    	$path = rtrim($GLOBALS['sugar_config']['upload_dir'], "/\\")."/".substr($path, 9);
+    }
+    return $path;
+}
+
+/**
  * Backs-up files that are targeted for patch/upgrade to a restore directory
  * @param string rest_dir Full path to the directory containing the original, replaced files.
  * @param string install_file Full path to the uploaded patch/upgrade zip file
@@ -51,7 +67,7 @@ function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_d
 		$newFiles = findAllFiles(clean_path($unzip_dir . '/' . $zip_from_dir), array());
 
 		// keep this around for canceling
-		$_SESSION['uw_restore_dir'] = UploadFile::relativeName($rest_dir);
+		$_SESSION['uw_restore_dir'] = getUploadRelativeName($rest_dir);
 
 		foreach ($newFiles as $file) {
 			if (strpos($file, 'md5'))
@@ -4647,6 +4663,9 @@ function upgradeSugarCache($file)
 	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
 		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
+	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
+	}
 
 	foreach($allFiles as $k => $file) {
 		$destFile = str_replace($from_dir."/", "", $file);
@@ -4712,6 +4731,16 @@ function unlinkUpgradeFiles($version)
 
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
+
+    /*
+    if(empty($_SESSION['unzip_dir']))
+    {
+        global $sugar_config;
+        $base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
+        $base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
+        $_SESSION['unzip_dir'] = mk_temp_dir( $base_tmp_upgrade_dir );
+    }
+    */
 
     if(isset($_SESSION['unzip_dir']) && file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
     {
@@ -4798,12 +4827,12 @@ if (!function_exists("getValidDBName"))
         if ($ensureUnique)
         {
             $md5str = md5($name);
-            $tail = substr ( $name, -8) ;
+            $tail = substr ( $name, -11) ;
             $temp = substr($md5str , strlen($md5str)-4 );
-            $result = substr ( $name, 0, 7) . $temp . $tail ;
+            $result = substr ( $name, 0, 10) . $temp . $tail ;
         }else if ($len > ($maxLen - 5))
         {
-            $result = substr ( $name, 0, 8) . substr ( $name, 8 - $maxLen + 5);
+            $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
         }
         return strtolower ( $result ) ;
     }

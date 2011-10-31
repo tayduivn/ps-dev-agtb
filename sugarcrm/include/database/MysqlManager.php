@@ -153,6 +153,13 @@ class MysqlManager extends DBManager
 		if(is_array($sql)) {
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
 		}
+
+        if(strpos($sql, "ORDER BY CASE WHEN (accounts.account_type='' OR accounts.account_type IS NULL) THEN 0"))
+        {
+            $GLOBALS['log']->fatal($sql);
+            $GLOBALS['log']->fatal(var_export(debug_backtrace(), true));
+        }
+
 		parent::countQuery($sql);
 		$GLOBALS['log']->info('Query:' . $sql);
 		$this->checkConnection();
@@ -184,6 +191,20 @@ class MysqlManager extends DBManager
 	public function getAffectedRowCount($result)
 	{
 		return mysql_affected_rows($this->getDatabase());
+	}
+
+	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return mysql_num_rows($result);
 	}
 
 	/**
@@ -1061,7 +1082,7 @@ class MysqlManager extends DBManager
 			    return $err;
 			}
 		}
-
+        return false;
     }
 
 	/**

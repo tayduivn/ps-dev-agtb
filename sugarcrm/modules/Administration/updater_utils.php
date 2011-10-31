@@ -572,41 +572,78 @@ function checkDownloadKey($data){
 
 
 
+/**
+ * Whitelist of modules and actions that don't need redirect
+ * 
+ * Use following standard for whitelist:
+ * array(
+ *		'module_name_1' => array('action_name_1', 'action_name_2', ...),	// Allow only "action_name_1" and "action_name_2" for "module_name_1"
+ *		'module_name_2' => 'all',	|										// Allow ALL actions in module "module_name_2"
+ *		...
+ *		)
+ * @param User $user
+ * @return array
+ */
+function getModuleWhiteListForLicenseCheck(User $user) {
+	$admin_white_list = array(
+		'Administration'		=> array('LicenseSettings', 'Save'),
+		'Configurator'			=> 'all',
+		'Home'					=> array('About'),
+		'Notifications'			=> array('quicklist'),
+		'Users'					=> array('SetTimezone', 'SaveTimezone', 'Logout')
+	);
 
+	$not_admin_white_list	= array(
+		'Users'					=> array('Logout', 'Login')
+	);
 
+	$white_list				= is_admin($user)?$admin_white_list:$not_admin_white_list;
 
+	return $white_list;
+}
 
-
-
-function setSystemState($state){
-	global $current_user;
-	switch ($state){
-		case 'LICENSE_KEY':
-
-			if(isset($current_user) && !empty($current_user->id)){
-
-				if(!is_admin($current_user) && !($_REQUEST['module'] == 'Users' && ( $_REQUEST['action'] == 'Logout' || $_REQUEST['action'] == 'Login'))){
-
-					header('Location: index.php?module=Users&action=Logout');
-
-				}else if(
-				is_admin($current_user) &&
-				!($_REQUEST['action'] == 'SetTimezone'
-				|| $_REQUEST['action'] == 'SaveTimezone' || ( $_REQUEST['module'] == 'Administration'  && ( $_REQUEST['action'] == 'LicenseSettings' || $_REQUEST['action'] == 'Save')
-				||  ($_REQUEST['module'] == 'Home' && $_REQUEST['action'] == 'About')
-				||  ($_REQUEST['module'] == 'Users' && $_REQUEST['action'] == 'Logout')
-				||  ($_REQUEST['module'] == 'Configurator')
-				))){
-
-					header('Location: index.php?action=LicenseSettings&module=Administration');
-
-					sugar_cleanup(true);
+/**
+ * Check if $module and $action don't get into whitelist and do we need redirect
+ * 
+ * @param string	$state	Now works only for 'LICENSE_KEY' state (TODO: do we need any other state?)
+ * @param string	$module	Module to check
+ * @param string	$action	(optional) Action to check. Can be omitted because some modules include all actions
+ * @return boolean 
+ */
+function isNeedRedirectDependingOnUserAndSystemState($state, $module = null, $action = null, $whiteList = array()) {
+	if($module !== null) {
+		if($state == 'LICENSE_KEY') {
+			foreach($whiteList as $wlModule => $wlActions) {
+				if($module == $wlModule && ($wlActions === 'all' || in_array($action, $wlActions))) {
+					return false;
 				}
 			}
-
+		}
 	}
 
+	return true;
 }
+
+/**
+ * Redirect current user if current module and action isn't in whitelist
+ * @global User		$current_user	User object that stores current application user
+ * @param string	$state			Now works only for 'LICENSE_KEY' state  (TODO: do we need any other state?)
+ */
+function setSystemState($state){
+	global $current_user;
+
+	$admin_redirect_url		= 'index.php?action=LicenseSettings&module=Administration';
+	$not_admin_redirect_url	= 'index.php?module=Users&action=Logout';
+	
+	if(isset($current_user) && !empty($current_user->id)){
+		if(isNeedRedirectDependingOnUserAndSystemState($state, $_REQUEST['module'], $_REQUEST['action'], getModuleWhiteListForLicenseCheck($current_user))) {
+			$redirect_url			= is_admin($current_user)?$admin_redirect_url:$not_admin_redirect_url;
+			header('Location: '.$redirect_url);
+			sugar_cleanup(true);
+		}
+	}
+}
+
 function checkSystemState(){
 	if(ocLicense())return;
 	if($_SESSION['LICENSE_EXPIRES_IN'] === 'REQUIRED'){

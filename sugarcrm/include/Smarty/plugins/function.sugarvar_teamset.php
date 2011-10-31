@@ -86,8 +86,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 function smarty_function_sugarvar_teamset($params, &$smarty) {
-    require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-    $sugarField = new SugarFieldTeamset('Teamset');
+    require_once('include/SugarFields/SugarFieldHandler.php');
+    $sfh = new SugarFieldHandler();
+    $sugarField = $sfh->getSugarField('Teamset');
     return $sugarField->render($params, $smarty);
 }
 ?>

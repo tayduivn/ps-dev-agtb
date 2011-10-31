@@ -218,9 +218,11 @@ include_once('include/workflow/expression_utils.php');
 			if(
 			$field_type =="char" ||
 			$field_type =="varchar" ||
+            $field_type =="encrypt" ||
 			$field_type =="name" ||
 			$field_type =="phone" ||
-			$field_type =="email"
+			$field_type =="email" || 
+			$field_type =="url"
 			){
 				$output_array['real_type'] = $field_type;
 

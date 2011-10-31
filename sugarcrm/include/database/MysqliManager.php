@@ -105,6 +105,13 @@ class MysqliManager extends MysqlManager
 		if(is_array($sql)) {
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
 		}
+
+        if(strpos($sql, "ORDER BY CASE WHEN (accounts.account_type='' OR accounts.account_type IS NULL) THEN 0"))
+        {
+            $GLOBALS['log']->fatal($sql);
+            $GLOBALS['log']->fatal(var_export(debug_backtrace(), true));
+        }
+
 		static $queryMD5 = array();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->addDistinctClause($sql);
@@ -160,6 +167,21 @@ class MysqliManager extends MysqlManager
 	}
 
 	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return mysqli_num_rows($result);
+	}
+
+
+    /**
 	 * Disconnects from the database
 	 *
 	 * Also handles any cleanup needed

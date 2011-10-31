@@ -76,7 +76,7 @@ class SugarTestContactUtilities
     public static function removeCreatedContactsEmailAddresses(){
     	$contact_ids = self::getCreatedContactIds();
         $GLOBALS['db']->query('DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module =\'Contacts\' AND bean_id IN (\'' . implode("', '", $contact_ids) . '\'))');
-        $GLOBALS['db']->query('DELETE FROM email_beans WHERE bean_module=\'Contacts\' AND bean_id IN (\'' . implode("', '", $contact_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM emails_beans WHERE bean_module=\'Contacts\' AND bean_id IN (\'' . implode("', '", $contact_ids) . '\')');
         $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Contacts\' AND bean_id IN (\'' . implode("', '", $contact_ids) . '\')');
     }
 

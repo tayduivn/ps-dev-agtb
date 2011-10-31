@@ -130,7 +130,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	    );
 
 		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], "opportunities.amount > '10000'");
+		$this->assertEquals("opportunities.amount > 10000", $where_clauses[0]);
 
 		$this->searchForm->searchFields['range_amount'] = array (
 	            'query_type' => 'default',
@@ -140,7 +140,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	    );
 
 		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], "opportunities.amount < '10000'");
+		$this->assertEquals("opportunities.amount < 10000", $where_clauses[0]);
 
 		$this->searchForm->searchFields['range_amount'] = array (
 	            'query_type' => 'default',
@@ -150,7 +150,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	    );
 
 		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], "opportunities.amount >= '10000'");
+		$this->assertEquals("opportunities.amount >= 10000", $where_clauses[0]);
 
 		$this->searchForm->searchFields['range_amount'] = array (
 	            'query_type' => 'default',
@@ -160,7 +160,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	    );
 
 		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], "opportunities.amount <= '10000'");
+		$this->assertEquals("opportunities.amount <= 10000", $where_clauses[0]);
 
 		$this->searchForm->searchFields['range_amount'] = array (
 	            'query_type' => 'default',
@@ -170,7 +170,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	    );
 
 		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], "(opportunities.amount IS NULL OR opportunities.amount != '10000')");
+		$this->assertEquals("(opportunities.amount IS NULL OR opportunities.amount != 10000)", $where_clauses[0]);
 
 		$this->searchForm->searchFields['range_amount'] = array (
 	            'query_type' => 'default',
@@ -181,7 +181,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	    );    
 
 		$where_clauses = $this->searchForm->generateSearchWhere();		
-		$this->assertEquals($where_clauses[0], "(opportunities.amount >= '9999.99' AND opportunities.amount <= '10000.01')");
+		$this->assertEquals("(opportunities.amount >= 9999.99 AND opportunities.amount <= 10000.01)", $where_clauses[0]);
 		
     }
     
