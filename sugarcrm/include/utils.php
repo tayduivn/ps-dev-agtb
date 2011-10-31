@@ -387,11 +387,8 @@ function get_sugar_config_defaults() {
 	  'day_timestep' => 15,
 	  'week_timestep' => 30,
 	  'month_timestep' => 60,
-	  'default_day_start' => '08:00',
-	  'default_day_end' => '19:00',
 	  'items_draggable' => true,
 	  'mouseover_expand' => true,
-	  'item_text' => 'name',
 	),
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (

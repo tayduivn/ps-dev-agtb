@@ -86,6 +86,21 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         }
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+
+        if(isset($_REQUEST['module']))
+        {
+            unset($_REQUEST['module']);
+        }
+
+        if(isset($_REQUEST['query_string']))
+        {
+            unset($_REQUEST['query_string']);
+        }
+
+        if(isset($_REQUEST['enabled_modules']))
+        {
+            unset($_REQUEST['enabled_modules']);
+        }
 	}
 
 	public function testSearchByFirstName()
@@ -111,8 +126,6 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 		$usa = new UnifiedSearchAdvanced();
 		$usa->search();
 		$this->expectOutputRegex("/{$this->_contact->first_name}/");
-        unset($_REQUEST['module']);
-        unset($_REQUEST['query_string']);
     }
 
     public function testUserPreferencesSearch()
@@ -139,9 +152,6 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
         $this->assertEquals('Accounts', $modules[0], 'Assert that the Accounts module has been added');
         $this->assertEquals('Contacts', $modules[1], 'Assert that the Contacts module has been added');
-        unset($_REQUEST['module']);
-        unset($_REQUEST['query_string']);
-        unset($_REQUEST['enabled_modules']);
     }
 }
 

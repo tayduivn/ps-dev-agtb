@@ -1501,6 +1501,7 @@ return str_replace(' > ','_',
             $query .= " GROUP BY " . join(",", $this->group_by_arr);
         }
 
+        /*
         if ($query_name == 'summary_query') {
             if (!empty($this->summary_order_by_arr)) {
                 $query .= " ORDER BY " . implode(',', $this->summary_order_by_arr);
@@ -1510,6 +1511,7 @@ return str_replace(' > ','_',
                 $query .= " ORDER BY " . implode(',', $this->order_by_arr);
             }
         }
+        */
 
     if ( $query_name == 'summary_query')
     {
@@ -2120,7 +2122,7 @@ return str_replace(' > ','_',
 
         $row['cells'] = $cells;
 
-        if (!empty($db_row['count'])) {
+        if (isset($db_row['count'])) {
             $row['count'] = $db_row['count'];
         }
 
