@@ -92,12 +92,12 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
             unset($_REQUEST['module']);
         }
 
-        if($_REQUEST['query_string'])
+        if(isset($_REQUEST['query_string']))
         {
             unset($_REQUEST['query_string']);
         }
 
-        if($_REQUEST['enabled_modules'])
+        if(isset($_REQUEST['enabled_modules']))
         {
             unset($_REQUEST['enabled_modules']);
         }
