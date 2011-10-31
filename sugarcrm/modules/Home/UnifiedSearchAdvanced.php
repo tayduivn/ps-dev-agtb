@@ -378,7 +378,7 @@ class UnifiedSearchAdvanced {
 			}				
 
             //If there are $searchFields are empty, just continue, there are no search fields defined for the module
-            if(empty($searchFields))
+            if(empty($searchFields[$moduleName]))
             {
                 continue;
             }

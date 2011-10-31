@@ -31,10 +31,11 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->markTestIncomplete('Revisit this test.  Seems to be corrupting unified search');
-        require('include/modules.php');
-        global $beanFiles, $beanList;
+        //$this->markTestIncomplete('Revisit this test.  Seems to be corrupting unified search');
 
+        global $beanFiles, $beanList;
+        require('include/modules.php');
+        
         if(file_exists('cache/modules/unified_search_modules.php'))
 
         {
@@ -58,7 +59,7 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
         $the_string = <<<EOQ
 <?php
 \$module_name = "{$this->module}";
-\$searchFields[\$module_name] =
+\$searchFields["{$this->module}"] =
     array (
         'name' => array( 'query_type'=>'default'),
         'account_type'=> array('query_type'=>'default', 'options' => 'account_type_dom', 'template_var' => 'ACCOUNT_TYPE_OPTIONS'),
@@ -138,6 +139,10 @@ EOQ;
 
     public function tearDown()
     {
+        //Unset the clabc_Bug36845Test references
+        unset($GLOBALS['beanList']['clabc_Bug36845Test']);
+        unset($GLOBALS['beanFiles']['clabc_Bug36845Test']);
+
         if(file_exists(sugar_cached('modules/unified_search_modules.php')))
         {
             unlink(sugar_cached('modules/unified_search_modules.php'));
@@ -200,7 +205,7 @@ EOQ;
 
         $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
         include(sugar_cached('modules/unified_search_modules.php'));
-        $this->assertTrue(!isset($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
+        $this->assertTrue(empty($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
 
     }
 
@@ -218,5 +223,6 @@ EOQ;
         $usa->saveGlobalSearchSettings();
         $this->assertTrue(file_exists('custom/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');
     }
+    
 
 }
