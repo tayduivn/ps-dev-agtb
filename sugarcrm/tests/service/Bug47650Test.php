@@ -27,7 +27,7 @@ require_once('include/TimeDate.php');
  * This class is meant to test everything SOAP
  *
  */
-class SOAPAPI2Test extends SOAPTestCase
+class Bug47650Test extends SOAPTestCase
 {
     public $_contactId = '';
 
