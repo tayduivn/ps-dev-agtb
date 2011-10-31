@@ -50,7 +50,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
     private function _loadUser()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->setPreference('gridline', 'on');
+        $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['gridline'] = 'on';
     }
 
     private function _removeUser()

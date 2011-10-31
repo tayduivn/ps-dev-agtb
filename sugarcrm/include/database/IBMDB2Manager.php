@@ -1362,9 +1362,21 @@ EOQ;
 	public function getDbInfo()
 	{
 		$this->getDatabase();
+		$server = @db2_server_info($this->database);
+		if(is_object($server)) {
+		    $server = get_object_vars($server);
+		} else {
+		    $server = null;
+		}
+		$client = @db2_client_info($this->database);
+		if(is_object($client)) {
+		    $client = get_object_vars($client);
+		} else {
+		    $client = null;
+		}
 		return array(
-			"IBM DB2 Client Info" => @db2_client_info($this->database),
-			"IBM DB2 Server Info" => @db2_server_info($this->database),
+			"IBM DB2 Client Info" => $client,
+			"IBM DB2 Server Info" => $server,
 		);
 	}
 

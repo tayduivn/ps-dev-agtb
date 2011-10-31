@@ -54,8 +54,6 @@ class UserPreference extends SugarBean
 
     protected $_userFocus;
 
-    protected $_savePreferencesToDBCats = array();
-
     // Do not actually declare, use the functions statically
     public function __construct(
         User $user = null
@@ -83,11 +81,11 @@ class UserPreference extends SugarBean
         $user = $this->_userFocus;
 
         // if the unique key in session doesn't match the app or prefereces are empty
-        if(!isset($user->user_preferences[$category]) || (!empty($_SESSION['unique_key']) && $_SESSION['unique_key'] != $sugar_config['unique_key'])) {
+        if(!isset($_SESSION[$user->user_name.'_PREFERENCES'][$category]) || (!empty($_SESSION['unique_key']) && $_SESSION['unique_key'] != $sugar_config['unique_key'])) {
             $this->loadPreferences($category);
         }
-        if(isset($user->user_preferences[$category][$name])) {
-            return $user->user_preferences[$category][$name];
+        if(isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name])) {
+            return $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name];
         }
 
         // check to see if a default preference ( i.e. $sugar_config setting ) exists for this value )
@@ -150,24 +148,20 @@ class UserPreference extends SugarBean
         if ( empty($user->user_name) )
             return;
 
-        $isCurrentUser = $this->isCurrentUser();
-
-        if(!isset($user->user_preferences[$category])) {
-            if(!$user->loadPreferences($category)) {
-                if($isCurrentUser) $_SESSION[$user->user_name.'_PREFERENCES'][$category] = array();
-                $user->user_preferences[$category] = array();
-            }
+        if(!isset($_SESSION[$user->user_name.'_PREFERENCES'][$category])) {
+            if(!$user->loadPreferences($category))
+                $_SESSION[$user->user_name.'_PREFERENCES'][$category] = array();
         }
 
         // preferences changed or a new preference, save it to DB
-        if(!isset($user->user_preferences[$category][$name])
-            || (isset($user->user_preferences[$category][$name]) && $user->user_preferences[$category][$name] != $value)) {
+        if(!isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name])
+            || (isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name]) && $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] != $value)) {
                 $GLOBALS['savePreferencesToDB'] = true;
-                $this->_savePreferencesToDBCats[$category] = true;
+                if(!isset($GLOBALS['savePreferencesToDBCats'])) $GLOBALS['savePreferencesToDBCats'] = array();
+                $GLOBALS['savePreferencesToDBCats'][$category] = true;
         }
 
-        if($isCurrentUser) $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
-        $user->user_preferences[$category][$name] = $value;
+        $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
     }
 
     /**
@@ -186,7 +180,7 @@ class UserPreference extends SugarBean
 
         if($user->object_name != 'User')
             return;
-        if(!empty($user->id) && (!isset($user->user_preferences[$category]) || (!empty($_SESSION['unique_key']) && $_SESSION['unique_key'] != $sugar_config['unique_key']))) {
+        if(!empty($user->id) && (!isset($_SESSION[$user->user_name . '_PREFERENCES'][$category]) || (!empty($_SESSION['unique_key']) && $_SESSION['unique_key'] != $sugar_config['unique_key']))) {
             // cn: moving this to only log when valid - throwing errors on install
             return $this->reloadPreferences($category);
         }
@@ -205,18 +199,17 @@ class UserPreference extends SugarBean
         if($user->object_name != 'User' || empty($user->id) || empty($user->user_name)) {
             return false;
         }
-        $isCurrentUser = $this->isCurrentUser();
         $GLOBALS['log']->debug('Loading Preferences DB ' . $user->user_name);
-        if($isCurrentUser && !isset($_SESSION[$user->user_name . '_PREFERENCES'])) $_SESSION[$user->user_name . '_PREFERENCES'] = array();
+        if(!isset($_SESSION[$user->user_name . '_PREFERENCES'])) $_SESSION[$user->user_name . '_PREFERENCES'] = array();
         if(!isset($user->user_preferences) || !is_array($user->user_preferences)) $user->user_preferences = array();
         $result = $GLOBALS['db']->query("SELECT contents FROM user_preferences WHERE assigned_user_id='$user->id' AND category = '" . $category . "' AND deleted = 0", false, 'Failed to load user preferences');
         $row = $GLOBALS['db']->fetchByAssoc($result);
         if ($row) {
-            if($isCurrentUser) $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
+            $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
             $user->user_preferences[$category] = unserialize(base64_decode($row['contents']));
             return true;
         } else {
-            if($isCurrentUser) $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
+            $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
             $user->user_preferences[$category] = array();
         }
         return false;
@@ -230,6 +223,8 @@ class UserPreference extends SugarBean
     public function getUserDateTimePreferences()
     {
         global $sugar_config, $db, $timezones, $timedate, $current_user;
+
+		require_once('include/timezone/timezones.php');
 
         $user = $this->_userFocus;
 
@@ -307,18 +302,18 @@ class UserPreference extends SugarBean
         if(!empty($_SESSION['unique_key']) && $_SESSION['unique_key'] != $sugar_config['unique_key']) return;
 
         $GLOBALS['log']->debug('Saving Preferences to DB ' . $user->user_name);
-        if(isset($user->user_preferences) && is_array($user->user_preferences)) {
+        if(isset($_SESSION[$user->user_name. '_PREFERENCES']) && is_array($_SESSION[$user->user_name. '_PREFERENCES'])) {
              $GLOBALS['log']->debug("Saving Preferences to DB: {$user->user_name}");
             // only save the categories that have been modified or all?
             if(!$all && isset($GLOBALS['savePreferencesToDBCats']) && is_array($GLOBALS['savePreferencesToDBCats'])) {
                 $catsToSave = array();
                 foreach($GLOBALS['savePreferencesToDBCats'] as $category => $value) {
-                    if ( isset($user->user_preferences[$category]) )
-                        $catsToSave[$category] = $user->user_preferences[$category];
+                    if ( isset($_SESSION[$user->user_name. '_PREFERENCES'][$category]) )
+                        $catsToSave[$category] = $_SESSION[$user->user_name. '_PREFERENCES'][$category];
                 }
             }
             else {
-                $catsToSave = $user->user_preferences;
+                $catsToSave = $_SESSION[$user->user_name. '_PREFERENCES'];
             }
 
             foreach ($catsToSave as $category => $contents) {
@@ -369,13 +364,13 @@ class UserPreference extends SugarBean
         //END SUGARCRM flav=sales ONLY
 
         if($category) {
-            unset($user->user_preferences[$category]);
+            unset($_SESSION[$user->user_name."_PREFERENCES"][$category]);
         }
         else {
         	if(!empty($_COOKIE['sugar_user_theme']) && !headers_sent()){
                 setcookie('sugar_user_theme', '', time() - 3600); // expire the sugar_user_theme cookie
-            }        	
-            unset($user->user_preferences);
+            }
+            unset($_SESSION[$user->user_name."_PREFERENCES"]);
             if($user->id == $GLOBALS['current_user']->id) {
                 session_destroy();
             }
@@ -485,15 +480,4 @@ class UserPreference extends SugarBean
         unset($newstr);
     }
 
-    /**
-     * Utility method to see if the current user is the $_userFocus Object
-     *
-     * @return bool
-     */
-    protected function isCurrentUser()
-    {
-        global $current_user;
-        
-        return ($this->_userFocus instanceof SugarBean && $current_user instanceof SugarBean && $this->_userFocus->id == $current_user->id);
-    }
 }

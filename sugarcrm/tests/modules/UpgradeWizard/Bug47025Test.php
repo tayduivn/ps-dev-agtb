@@ -59,7 +59,7 @@ public function tearDown()
 public function testUpgradeUserPreferencesCeToPro()
 {
     upgradeUserPreferences();
-    unset($this->user->user_preferences['global']);
+    unset($_SESSION[$this->user->user_name.'_PREFERENCES']['global']);
     $user = new User();
     $user->retrieve($this->user->id);
     $theme = $user->getPreference('user_theme');
@@ -75,9 +75,8 @@ public function testUpgradeUserPreferencesCeToProWithTabValue()
     $user->setPreference('max_tabs', '0', 0, 'global');
     $user->savePreferencesToDB();
     upgradeUserPreferences();
-    unset($user->user_preferences['global']);
+    unset($_SESSION[$this->user->user_name.'_PREFERENCES']['global']);
     $user->retrieve($this->user->id);
-    $user->getPreference('jon_test');
     $theme = $user->getPreference('user_theme');
     $tabs = (int)$user->getPreference('max_tabs');
     $this->assertEquals('Sugar', $theme, 'Assert that theme is upgraded to Sugar on CE->PRO upgrade');
@@ -88,7 +87,7 @@ public function testUpgradeUserPreferencesNonFlavor()
 {
     unset($_SESSION['upgrade_from_flavor']);
     upgradeUserPreferences();
-    unset($this->user->user_preferences['global']);
+    unset($_SESSION[$this->user->user_name.'_PREFERENCES']['global']);
     $user = new User();
     $user->retrieve($this->user->id);
     $theme = $user->getPreference('user_theme');
