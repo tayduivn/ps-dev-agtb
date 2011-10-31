@@ -51,6 +51,7 @@ class Bug47949Test extends Sugar_PHPUnit_Framework_TestCase
         $case = new aCase();
         $case->name = 'testBug47949';
         $case->team_id = $team_id;
+        $case->team_set_id = 1;
         $case->save();
 
         $beans = $case->get_linked_beans('teams', 'Team');
