@@ -3281,12 +3281,13 @@ function upgradeUserPreferences() {
     $result = $db->query("SELECT id FROM users where deleted = '0'");
    	while($row = $db->fetchByAssoc($result))
     {
+        $current_user = new User();
+        
         // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
-          upgradeLocaleNameFormat($current_user->getPreference('default_locale_name_format'));
+        upgradeLocaleNameFormat($current_user->getPreference('default_locale_name_format'));
 
         //BEGIN SUGARCRM flav=pro ONLY
           $changed = false;
-	      $current_user = new User();
 	      $current_user->retrieve($row['id']);
 
 
