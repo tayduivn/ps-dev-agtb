@@ -36,7 +36,7 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
         global $beanFiles, $beanList;
         require('include/modules.php');
         
-        if(file_exists('cache/modules/unified_search_modules.php'))
+        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
 
         {
             $this->has_custom_unified_search_modules = true;

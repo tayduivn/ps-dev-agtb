@@ -1539,8 +1539,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function test_Bug34892_MssqlNotClearingErrorResults()
     {
-        if($this->_db->getScriptName() == 'mssql')
-        {
             // execute a bad query
             $this->_db->query("select dsdsdsdsdsdsdsdsdsd", false, "test_Bug34892_MssqlNotClearingErrorResults", true);
             // assert it found an error
@@ -1549,9 +1547,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_db->query("select * from config");
             // and make no error messages are asserted
             $this->assertEmpty($this->_db->lastError(), "lastError should have cleared the previous error and return false of the last legal query");
-        } else {
-            $this->markTestSkipped('Test for mssql databases only');
-        }
     }
 
     public function vardefProvider()

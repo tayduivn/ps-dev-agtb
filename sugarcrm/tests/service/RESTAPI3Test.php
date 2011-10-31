@@ -53,10 +53,10 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         self::$helperObject = new APIv3Helper();
 
 
-        if(file_exists('cache/modules/unified_search_modules.php'))
+        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
         {
-            $this->unified_search_modules_content = file_get_contents('cache/modules/unified_search_modules.php');
-            unlink('cache/modules/unified_search_modules.php');
+            $this->unified_search_modules_content = file_get_contents(sugar_cached('modules/unified_search_modules.php'));
+            unlink(sugar_cached('modules/unified_search_modules.php'));
         }
 
         require_once('modules/Home/UnifiedSearchAdvanced.php');
@@ -81,7 +81,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
         if(!empty($this->unified_search_modules_content))
         {
-            file_put_contents('cache/modules/unified_search_modules.php', $this->unified_search_modules_content);
+            file_put_contents(sugar_cached('modules/unified_search_modules.php'), $this->unified_search_modules_content);
         }
 
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
