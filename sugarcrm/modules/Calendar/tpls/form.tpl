@@ -1,4 +1,4 @@
-<?php
+{*
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -25,51 +25,46 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/MVC/View/SugarView.php');
+*}
+<form id="CalendarEditView" name="CalendarEditView" method="POST">	
+		
+<input type="hidden" name="current_module" id="current_module" value="Meetings">
+<input type="hidden" name="record" id="record" value="">
+<input type="hidden" name="user_invitees" id="user_invitees">
+<input type="hidden" name="contact_invitees" id="contact_invitees">
+<input type="hidden" name="lead_invitees" id="lead_invitees">
+<input type="hidden" name="send_invites" id="send_invites">
 
-class CalendarViewAjaxRemove extends SugarView {
+<div style="padding: 4px 0; font-size: 12px;">
+	{literal}
+	<input type="radio" id="radio_meeting" value="Meetings" onclick="CAL.change_activity_type(this.value);" checked="true"  name="appttype" tabindex="100"/>
+	{/literal}
+	<label for="radio_meeting">{$MOD.LBL_CREATE_MEETING}</label>
+	{literal}
+	<input type="radio" id="radio_call" value="Calls" onclick="CAL.change_activity_type(this.value);" name="appttype" tabindex="100"/>
+	{/literal}
+	<label for="radio_call">{$MOD.LBL_CREATE_CALL}</label>											
+</div>
 
-	function CalendarViewAjaxRemove(){
- 		parent::SugarView();
-	}
-	
-	function process(){
-		$this->display();
-	}
-	
-	function display(){
-		require_once("modules/Calls/Call.php");
-		require_once("modules/Meetings/Meeting.php");
-		require_once("modules/Calendar/CalendarUtils.php");
+<div id="form_content">
+	<input type="hidden" name="date_start" id="date_start" value="{$user_default_date_start}">
+	<input type="hidden" name="duration_hours" id="duration_hours">
+	<input type="hidden" name="duration_minutes" id="duration_minutes">	
+</div>
 
-		global $beanFiles,$beanList;
-		$module = $_REQUEST['current_module'];
-		require_once($beanFiles[$beanList[$module]]);
-		$bean = new $beanList[$module]();
-		//$type = strtolower($beanList[$module]);
-		//$table_name = $bean->table_name;
-		//$jn = $type."_id_c";
+</form>
 
-		$bean->retrieve($_REQUEST['record']);
-
-		if(!$bean->ACLAccess('delete')){
-			die;	
-		}
-
-		$bean->mark_deleted($_REQUEST['record']);
-
-		/*if($_REQUEST['delete_recurring']){
-			remove_recurrence($bean,$table_name,$jn,$_REQUEST['record']);
-		}*/
-
-		$json_arr = array(
-			'success' => 'yes',
-		);
-
-		ob_clean();
-		echo json_encode($json_arr);
-	}	
-
+<script type="text/javascript">
+enableQS(false);
+{literal}
+function cal_isValidDuration(){ 
+	form = document.getElementById('CalendarEditView'); 
+	if(form.duration_hours.value + form.duration_minutes.value <= 0){
+		alert('{/literal}{$MOD.NOTICE_DURATION_TIME}{literal}'); 
+		return false; 
+	} 
+	return true;
 }
-
-?>
+{/literal}
+</script>
+<script type="text/javascript" src="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"></script>

@@ -29,11 +29,10 @@ require_once('include/MVC/View/views/view.ajax.php');
 require_once('include/EditView/EditView2.php');
 
 
-class CalendarViewAjaxLoadForm extends SugarView {
+class CalendarViewQuickEdit extends SugarView {
 
 	var $ev;
-	var $editable;
-	
+	protected $editable;	
 	
 	public function preDisplay(){
 		global $beanFiles,$beanList;
@@ -104,7 +103,7 @@ class CalendarViewAjaxLoadForm extends SugarView {
 				'success' => 'yes',
 				'module_name' => $this->bean->module_dir,
 				'record' => $this->bean->id,
-				'editview' => $this->editable,
+				'edit' => $this->editable,
 				'html'=> $this->ev->display(false, true),
 				'gr' => $GRjavascript,
 		);

@@ -27,9 +27,9 @@
  ********************************************************************************/
 require_once('include/MVC/View/SugarView.php');
 
-class CalendarViewAjaxReschedule extends SugarView {
+class CalendarViewGetGR extends SugarView {
 
-	function CalendarViewAjaxReschedule(){
+	function CalendarViewGetGR(){
  		parent::SugarView();
 	}
 	
@@ -38,30 +38,14 @@ class CalendarViewAjaxReschedule extends SugarView {
 	}
 	
 	function display(){
-		require_once("modules/Calls/Call.php");
-		require_once("modules/Meetings/Meeting.php");
-
-		global $beanFiles,$beanList;
-		$module = $_REQUEST['current_module'];
-		require_once($beanFiles[$beanList[$module]]);
-		$bean = new $beanList[$module]();	
-	
-		$bean->retrieve($_REQUEST['record']);
-
-		if(!$bean->ACLAccess('Save')){
-			die;	
-		}
-		
-		$field = "date_start";
-		if($module == "Tasks")
-			$field = "date_due";	
-			
-		$_POST[$field] = $_REQUEST['datetime'];
-			
-		require_once('include/formbase.php');		
-		$bean = populateFromPost("",$bean);
-		
-		$bean->save();
+		error_reporting(0);
+		require_once('include/json_config.php');
+		global $json;
+        	$json = getJSONobj();
+        	$json_config = new json_config();
+        	$GRjavascript = $json_config->getFocusData($_REQUEST['type'], $_REQUEST['record']);
+        	ob_clean();
+        	echo $GRjavascript;
 	}	
 
 }
