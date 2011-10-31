@@ -153,6 +153,13 @@ class MysqlManager extends DBManager
 		if(is_array($sql)) {
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
 		}
+
+        if(strpos($sql, "ORDER BY CASE WHEN (accounts.account_type='' OR accounts.account_type IS NULL) THEN 0"))
+        {
+            $GLOBALS['log']->fatal($sql);
+            $GLOBALS['log']->fatal(var_export(debug_backtrace(), true));
+        }
+
 		parent::countQuery($sql);
 		$GLOBALS['log']->info('Query:' . $sql);
 		$this->checkConnection();
