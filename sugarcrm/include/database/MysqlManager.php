@@ -154,10 +154,10 @@ class MysqlManager extends DBManager
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
 		}
 
-        if(strpos($sql, "ORDER BY CASE WHEN (accounts.account_type='' OR accounts.account_type IS NULL) THEN 0"))
+        if(strpos($sql, "ORDER BY CASE WHEN (accounts.account_type='' OR accounts.account_type IS NULL) THEN 0") && strpos($sql, "WHEN accounts.industry='Telecommunications' THEN 27"))
         {
-            $GLOBALS['log']->fatal($sql);
-            $GLOBALS['log']->fatal(var_export(debug_backtrace(), true));
+            display_stack_trace();
+            die();
         }
 
 		parent::countQuery($sql);
