@@ -104,12 +104,6 @@ class MysqliManager extends MysqlManager
 	{
 		if(is_array($sql)) {
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
-		}
-
-        if(strpos($sql, "ORDER BY CASE WHEN (accounts.account_type='' OR accounts.account_type IS NULL) THEN 0") && strpos($sql, "WHEN accounts.industry='Telecommunications' THEN 27"))
-        {
-            display_stack_trace();
-            die();
         }
 
 		static $queryMD5 = array();
