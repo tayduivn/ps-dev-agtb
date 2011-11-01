@@ -58,6 +58,7 @@ SUGAR.ajaxUI = {
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
 
+            //BEGIN SUGARCRM flav=pro ONLY
             if (r.record)
             {
                 DCMenu.record = r.record;
@@ -66,6 +67,8 @@ SUGAR.ajaxUI = {
             {
                 DCMenu.module = r.menu.module;
             }
+            //END SUGARCRM flav=pro ONLY
+
             // set response time from ajax response
             if(typeof(r.responseTime) != 'undefined'){
                 var rt = document.getElementById('responseTime');
