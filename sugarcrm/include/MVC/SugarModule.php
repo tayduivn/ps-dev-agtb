@@ -160,12 +160,7 @@ class SugarModule
         // the vardefs file if the cached language file doesn't exist.
         if(!file_exists(sugar_cached('modules/'. $this->_moduleName . '/language/'.$language.'.lang.php'))
                 && !empty($GLOBALS['beanList'][$this->_moduleName])){
-            $object = $GLOBALS['beanList'][$this->_moduleName];
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if ($object == 'aCase') {
-                $object = 'Case';
-            }
-            //END SUGARCRM flav!=sales ONLY
+            $object = BeanFactory::getObjectName($this->_moduleName);
             VardefManager::refreshVardefs($this->_moduleName,$object);
         }
 

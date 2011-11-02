@@ -32,6 +32,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
 
 /**
+ * Helper function for upgrade - get path from upload:// name
+ * @param string $path
+ * return string
+ */
+function getUploadRelativeName($path)
+{
+    if(class_exists('UploadFile')) {
+        return UploadFile::realpath($path);
+    }
+    if(substr($path, 0, 9) == "upload://") {
+    	$path = rtrim($GLOBALS['sugar_config']['upload_dir'], "/\\")."/".substr($path, 9);
+    }
+    return $path;
+}
+
+/**
  * Backs-up files that are targeted for patch/upgrade to a restore directory
  * @param string rest_dir Full path to the directory containing the original, replaced files.
  * @param string install_file Full path to the uploaded patch/upgrade zip file
@@ -44,14 +60,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_dir, $errors, $path='') {
 	global $mod_strings;
 	// create restore file directory
-	mkdir_recursive($rest_dir);
+	sugar_mkdir($rest_dir, 0775, true);
 
     if(file_exists($rest_dir) && is_dir($rest_dir)){
 		logThis('backing up files to be overwritten...', $path);
 		$newFiles = findAllFiles(clean_path($unzip_dir . '/' . $zip_from_dir), array());
 
 		// keep this around for canceling
-		$_SESSION['uw_restore_dir'] = clean_path($rest_dir);
+		$_SESSION['uw_restore_dir'] = getUploadRelativeName($rest_dir);
 
 		foreach ($newFiles as $file) {
 			if (strpos($file, 'md5'))
@@ -62,10 +78,7 @@ function commitMakeBackupFiles($rest_dir, $install_file, $unzip_dir, $zip_from_d
 
 			// make sure the directory exists
 			$cleanDir = $rest_dir . '/' . dirname($cleanFile);
-			if (!is_dir($cleanDir)) {
-				mkdir_recursive($cleanDir);
-			}
-
+			sugar_mkdir($cleanDir, 0775, true);
 			$oldFile = clean_path(getcwd() . '/' . $cleanFile);
 
 			// only copy restore files for replacements - ignore new files from patch
@@ -639,8 +652,10 @@ function deleteChance(){
 
 
 /**
- * copies upgrade wizard files from new patch if that dir exists
- * @param	string file Path to uploaded zip file
+ * upgradeUWFiles
+ * This function copies upgrade wizard files from new patch if that dir exists
+ *
+ * @param $file String path to uploaded zip file
  */
 function upgradeUWFiles($file) {
 	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached("upgrades/temp"));
@@ -656,25 +671,26 @@ function upgradeUWFiles($file) {
 
 	$allFiles = array();
 	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
+
 	// upgradeWizard
 	if(file_exists("$from_dir/modules/UpgradeWizard")) {
-		$allFiles = findAllFiles("$from_dir/modules/UpgradeWizard", $allFiles);
+		$allFiles[] = findAllFiles("$from_dir/modules/UpgradeWizard", $allFiles);
 	}
 	// moduleInstaller
 	if(file_exists("$from_dir/ModuleInstall")) {
-		$allFiles = findAllFiles("$from_dir/ModuleInstall", $allFiles);
+		$allFiles[] = findAllFiles("$from_dir/ModuleInstall", $allFiles);
 	}
 	if(file_exists("$from_dir/include/javascript/yui")) {
-		$allFiles = findAllFiles("$from_dir/include/javascript/yui", $allFiles);
+		$allFiles[] = findAllFiles("$from_dir/include/javascript/yui", $allFiles);
 	}
 	if(file_exists("$from_dir/HandleAjaxCall.php")) {
 		$allFiles[] = "$from_dir/HandleAjaxCall.php";
 	}
 	if(file_exists("$from_dir/include/SugarTheme")) {
-		$allFiles = findAllFiles("$from_dir/include/SugarTheme", $allFiles);
+		$allFiles[] = findAllFiles("$from_dir/include/SugarTheme", $allFiles);
 	}
 	if(file_exists("$from_dir/include/SugarCache")) {
-		$allFiles = findAllFiles("$from_dir/include/SugarCache", $allFiles);
+		$allFiles[] = findAllFiles("$from_dir/include/SugarCache", $allFiles);
 	}
 	if(file_exists("$from_dir/include/utils/external_cache.php")) {
 		$allFiles[] = "$from_dir/include/utils/external_cache.php";
@@ -691,25 +707,44 @@ function upgradeUWFiles($file) {
 	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
 		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
+    // users
+    if(file_exists("$from_dir/modules/Users")) {
+        $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);
+    }
 
+    upgradeUWFilesCopy($allFiles, $from_dir);
+}
 
-	/*
-	 * /home/chris/workspace/maint450/cache/upload/upgrades/temp/DlNnqP/
-	 * SugarEnt-Patch-4.5.0c/modules/Leads/ConvertLead.html
-	 */
+/**
+ * upgradeUWFilesCopy
+ *
+ * This function recursively copies files from the upgradeUWFiles Array
+ * @see upgradeUWFiles
+ *
+ * @param array $allFiles Array of files to copy over after zip file has been uploaded
+ * @param string $from_dir Source directory
+ */
+function upgradeUWFilesCopy($allFiles, $from_dir)
+{
+   foreach($allFiles as $file)
+   {
+       if(is_array($file))
+       {
+           upgradeUWFilesCopy($file, $from_dir);
+       } else {
+           $destFile = str_replace($from_dir."/", "", $file);
+           if(!is_dir(dirname($destFile))) {
+              mkdir_recursive(dirname($destFile)); // make sure the directory exists
+           }
 
-	foreach($allFiles as $k => $file) {
-       $destFile = str_replace($from_dir."/", "", $file);
-       if(!is_dir(dirname($destFile))) {
-			mkdir_recursive(dirname($destFile)); // make sure the directory exists
-		}
-		if ( stristr($file,'uw_main.tpl') )
-            logThis('Skipping "'.$file.'" - file copy will during commit step.');
-        else {
-            logThis('updating UpgradeWizard code: '.$destFile);
-            copy_recursive($file, $destFile);
-        }
-	}
+           if(stristr($file,'uw_main.tpl'))
+              logThis('Skipping "'.$file.'" - file copy will during commit step.');
+           else {
+              logThis('updating UpgradeWizard code: '.$destFile);
+              copy_recursive($file, $destFile);
+           }
+       }
+   }
 }
 
 
@@ -1809,7 +1844,7 @@ function prepSystemForUpgrade() {
 	if(empty($base_tmp_upgrade_dir)){
 		$base_tmp_upgrade_dir   = $p_base_tmp_upgrade_dir;
 	}
-	mkdir_recursive($base_tmp_upgrade_dir);
+	sugar_mkdir($base_tmp_upgrade_dir, 0775, true);
 	if(!isset($subdirs) || empty($subdirs)){
 		$subdirs = array('full', 'langpack', 'module', 'patch', 'theme');
 	}
@@ -1832,7 +1867,7 @@ function prepSystemForUpgrade() {
     // make sure dirs exist
 	if($subdirs != null){
 		foreach($subdirs as $subdir) {
-		    mkdir_recursive("$base_upgrade_dir/$subdir");
+		    sugar_mkdir("$base_upgrade_dir/$subdir", 0775, true);
 		}
 	}
 	// array of special scripts that are executed during (un)installation-- key is type of script, value is filename
@@ -1904,7 +1939,7 @@ function getInstallType($type_string) {
 function getImageForType($type) {
     global $image_path;
     global $mod_strings;
-    
+
     $icon = "";
     switch($type) {
         case "full":
@@ -2482,6 +2517,104 @@ function deletePackageOnCancel(){
 		$out = "<b><span class='error'>{$error}</span></b><br />";
     }
 }
+
+function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
+{
+	global $sugar_config;
+	$alterTableSchema = '';
+	$sqlErrors = array();
+	if(!isset($_SESSION['sqlSkippedQueries'])){
+		$_SESSION['sqlSkippedQueries'] = array();
+	}
+	$db = DBManagerFactory::getInstance();
+	$disable_keys = $db->supports("disable_keys");
+	if(strpos($resumeFromQuery,",") != false){
+		$resumeFromQuery = explode(",",$resumeFromQuery);
+	}
+	if(file_exists($sqlScript)) {
+		$fp = fopen($sqlScript, 'r');
+		$contents = stream_get_contents($fp);
+		$anyScriptChanges =$contents;
+		$resumeAfterFound = false;
+		if(rewind($fp)) {
+			$completeLine = '';
+			$count = 0;
+			while($line = fgets($fp)) {
+				if(strpos($line, '--') === false) {
+					$completeLine .= " ".trim($line);
+					if(strpos($line, ';') !== false) {
+						$query = '';
+						$query = str_replace(';','',$completeLine);
+						//if resume from query is not null then find out from where
+						//it should start executing the query.
+
+						if($query != null && $resumeFromQuery != null){
+							if(!$resumeAfterFound){
+								if(strpos($query,",") != false){
+									$queArray = explode(",",$query);
+									for($i=0;$i<sizeof($resumeFromQuery);$i++){
+										if(strcasecmp(trim($resumeFromQuery[$i]),trim($queArray[$i]))==0){
+											$resumeAfterFound = true;
+										} else {
+											$resumeAfterFound = false;
+											break;
+										}
+									}//for
+
+								}
+								elseif(strcasecmp(trim($resumeFromQuery),trim($query))==0){
+									$resumeAfterFound = true;
+								}
+							}
+							if($resumeAfterFound){
+								$count++;
+							}
+							// if $count=1 means it is just found so skip the query. Run the next one
+							if($query != null && $resumeAfterFound && $count >1){
+    							$tableName = getAlterTable($query);
+								if($disable_keys && !empty($tableName))
+								{
+									$db->disableKeys($tableName);
+								}
+								$db->query($query);
+								if($db->checkError()){
+									//put in the array to use later on
+									$_SESSION['sqlSkippedQueries'][] = $query;
+								}
+								if($disable_keys && !empty($tableName))
+								{
+									$db->enableKeys($tableName);
+								}
+								$progQuery[$forStepQuery]=$query;
+								post_install_progress($progQuery,$action='set');
+							}//if
+						}
+						elseif($query != null){
+							$tableName = getAlterTable($query);
+							if($disable_keys && !empty($tableName))
+							{
+								$db->disableKeys($tableName);
+							}
+							$db->query($query);
+							if($disable_keys && !empty($tableName))
+							{
+								$db->enableKeys($tableName);
+							}
+							$progQuery[$forStepQuery]=$query;
+							post_install_progress($progQuery,$action='set');
+							if($db->checkError()){
+								//put in the array to use later on
+								$_SESSION['sqlSkippedQueries'][] = $query;
+							}
+						}
+						$completeLine = '';
+					}
+				}
+			}//while
+		}
+	}
+}
+
 
 function getAlterTable($query){
 	$query = strtolower($query);
@@ -3109,6 +3242,10 @@ function upgradeDashletsForSalesAndMarketing() {
  */
 function upgradeUserPreferences() {
 
+    // check the current system wide default_locale_name_format and add it to the list if it's not there
+    global $sugar_config;
+    upgradeLocaleNameFormat($sugar_config['default_locale_name_format']);
+
 //BEGIN SUGARCRM flav=pro ONLY
 	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
    	   require($cachedfile);
@@ -3139,15 +3276,22 @@ function upgradeUserPreferences() {
     $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
 
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt'));
-
+//END SUGARCRM flav=pro ONLY
    	$db = &DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users where deleted = '0'");
    	while($row = $db->fetchByAssoc($result))
     {
+        $current_user = new User();
+        
+        // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
+        upgradeLocaleNameFormat($current_user->getPreference('default_locale_name_format'));
+
+        //BEGIN SUGARCRM flav=pro ONLY
           $changed = false;
-	      $current_user = new User();
 	      $current_user->retrieve($row['id']);
 
+
+          
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3230,8 +3374,11 @@ function upgradeUserPreferences() {
           {
 		    $current_user->savePreferencesToDB();
           }
-	} //while
 
+        //END SUGARCRM flav=pro ONLY
+	} //while
+//BEGIN SUGARCRM flav=pro ONLY
+    
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable
@@ -3283,6 +3430,26 @@ function upgradeUserPreferences() {
 	} //if
 	//END SUGARCRM flav=pro ONLY
 }
+
+/**
+ * Checks if a locale name format is part of the default list, if not adds it to the config
+ * @param $name_format string a local name format string such as 's f l'
+ * @return bool true on successful write to config file, false on failure;
+ */
+function upgradeLocaleNameFormat($name_format) {
+    global $sugar_config, $sugar_version, $mod_strings;
+    if (!in_array($name_format, $sugar_config['name_formats'])) {
+        $new_config = sugarArrayMerge($sugar_config['name_formats'], array($name_format=>$name_format));
+        $sugar_config['name_formats'] = $new_config;
+        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+            logThis('*** ERROR: could not write config.php! - upgrade will fail!');
+            $errors[] = $mod_strings['ERR_UW_CONFIG_WRITE'];
+            return false;
+        }
+    }
+    return true;
+}
+
 
 // BEGIN SUGARCRM flav=pro ONLY
 function migrate_sugar_favorite_reports(){
@@ -4497,6 +4664,9 @@ function upgradeSugarCache($file)
 	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
 		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
+	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
+	}
 
 	foreach($allFiles as $k => $file) {
 		$destFile = str_replace($from_dir."/", "", $file);
@@ -4658,12 +4828,12 @@ if (!function_exists("getValidDBName"))
         if ($ensureUnique)
         {
             $md5str = md5($name);
-            $tail = substr ( $name, -8) ;
+            $tail = substr ( $name, -11) ;
             $temp = substr($md5str , strlen($md5str)-4 );
-            $result = substr ( $name, 0, 7) . $temp . $tail ;
+            $result = substr ( $name, 0, 10) . $temp . $tail ;
         }else if ($len > ($maxLen - 5))
         {
-            $result = substr ( $name, 0, 8) . substr ( $name, 8 - $maxLen + 5);
+            $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
         }
         return strtolower ( $result ) ;
     }
@@ -4715,6 +4885,7 @@ function rebuildSprites($fromUpgrade=true)
 {
     require_once('modules/Administration/SugarSpriteBuilder.php');
     $sb = new SugarSpriteBuilder();
+    $sb->cssMinify = true;
     $sb->fromSilentUpgrade = $fromUpgrade;
     $sb->silentRun = $fromUpgrade;
 

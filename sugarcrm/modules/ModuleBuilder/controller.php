@@ -402,12 +402,18 @@ class ModuleBuilderController extends SugarController
                 include_once ('modules/Administration/QuickRepairAndRebuild.php') ;
         		global $mod_strings;
                 $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
+                require_once('ModuleInstall/ModuleInstaller.php');
+                $mi = new ModuleInstaller();
+                $mi->silent = true;
+                $mi->rebuild_extensions();
                 $repair = new RepairAndClear();
+
 		        $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
                 if ( $module == 'Users' ) {
                     $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
                     
                 }
+
                 //BEGIN SUGARCRM flav=pro ONLY
                 //Make sure to clear the vardef for related modules as well
                 $relatedMods = array();
@@ -417,7 +423,7 @@ class ModuleBuilderController extends SugarController
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
                 foreach($relatedMods as $mName => $oName)
                 {
-                    $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($oName), true, false);
+                    $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($oName), true, false);
                     VardefManager::clearVardef($mName, $oName);
                 }
                 //END SUGARCRM flav=pro ONLY
@@ -472,8 +478,13 @@ class ModuleBuilderController extends SugarController
         $GLOBALS [ 'mod_strings' ]['LBL_ALL_MODULES'] = 'all_modules';
         $_REQUEST['execute_sql'] = true;
 
+        require_once('ModuleInstall/ModuleInstaller.php');
+		$mi = new ModuleInstaller();
+        $mi->silent = true;
+		$mi->rebuild_extensions();
+
         $repair = new RepairAndClear();
-        $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
+        $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($class_name), true, false);
         //#28707 ,clear all the js files in cache
         $repair->module_list = array();
         $repair->clearJsFiles();
@@ -486,7 +497,7 @@ class ModuleBuilderController extends SugarController
             $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->formula));
         foreach($relatedMods as $mName => $oName)
         {
-            $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($oName), true, false);
+            $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($oName), true, false);
             VardefManager::clearVardef($mName, $oName);
         }
         //END SUGARCRM flav=pro ONLY
@@ -645,6 +656,18 @@ class ModuleBuilderController extends SugarController
         }
         $module->removeFieldFromLayouts( $field->name );
         $this->view = 'modulefields' ;
+
+        if (isset($GLOBALS['current_language']) && isset($_REQUEST['label']) &&
+                isset($_REQUEST['labelValue']) && isset($_REQUEST['view_module'])) {
+            $this->DeleteLabel($GLOBALS['current_language'], $_REQUEST['label'], $_REQUEST['labelValue'], $_REQUEST['view_module']);
+        }
+    }
+
+    function DeleteLabel($language, $label, $labelvalue, $modulename, $basepath = null, $forRelationshipLabel = false)
+    {
+        // remove the label
+        require_once 'modules/ModuleBuilder/parsers/parser.label.php';
+        ParserLabel::removeLabel($language, $label, $labelvalue, $modulename, $basepath, $forRelationshipLabel);
     }
 
     function action_CloneField ()
@@ -836,13 +859,7 @@ class ModuleBuilderController extends SugarController
         $module_name = $_REQUEST [ 'view_module' ] ;
         global $beanList;
         if (isset($beanList[$module_name]) && $beanList[$module_name]!="") {
-            $objectName = $beanList[$module_name];
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if($objectName == 'aCase') // Bug 17614 - renamed aCase as Case in vardefs for backwards compatibililty with 451 modules
-            {
-                $objectName = 'Case';
-            }
-            //END SUGARCRM flav!=sales ONLY
+            $objectName = BeanFactory::getObjectName($module_name);
 
             //Load the vardefs for the module to pass to TemplateRange
             VardefManager::loadVardef($module_name, $objectName, true);

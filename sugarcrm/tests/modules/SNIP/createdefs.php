@@ -42,7 +42,7 @@ $createdef['contacts@testsugar.info']['Contacts'] = array(
 $createdef['cases@testsugar.info']['Cases'] = array(
         'fields' => array(
 	        'name' => '{from_name}',
-            'resolution' => '{email_id}',
+            'status' => '{email_id}',
 	        'date_entered' => '{date}',
 	        'description' => '{description} {email_id} {message_id} {subject} {from}',
         ),

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
@@ -76,7 +75,7 @@ class MySugar{
 		    $guid = create_guid();
 			$options = array();
 		    if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'web') {
-                $dashlet_module = 'Home';
+				$dashlet_module = 'Home';
 				require_once('include/Dashlets/DashletRssFeedTitle.php');
 				$options['url'] = $_REQUEST['type_module'];
 				$webDashlet = new DashletRssFeedTitle($options['url']);

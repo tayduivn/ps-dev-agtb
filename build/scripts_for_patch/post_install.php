@@ -44,7 +44,7 @@ function do_repair_workflow_conditions() {
 	require_once('modules/WorkFlow/WorkFlow.php');
 	require_once('modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php');
 	require_once('include/workflow/glue.php');
-    $db =& PearDatabase::getInstance();
+    $db = DBManagerFactory::getInstance();
     // grab all workflows that are time based and have not been deleted
     $query = "SELECT workflow_triggershells.id trigger_id FROM workflow LEFT JOIN workflow_triggershells ON workflow_triggershells.parent_id = workflow.id WHERE workflow.deleted = 0 AND workflow.type = 'Time' AND workflow_triggershells.type = 'compare_any_time'";
     $data = $db->query($query);

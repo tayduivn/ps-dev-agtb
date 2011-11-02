@@ -196,12 +196,12 @@ mySugarLoader.insert();
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
 			{capture assign=attr}id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0"  alt="{$mod.LBL_ADD_DASHLETS}"{/capture}
+			{capture assign=img_attr}align="absmiddle" border="0"  alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$mod.LBL_ADD_DASHLETS attr=$attr 
 					img_name="info-add.png" img_attr=$img_attr img_placement="left"}
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			{capture assign=attr}id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0" alt="{$app.LBL_CHANGE_LAYOUT}"{/capture}
+			{capture assign=img_attr}align="absmiddle" border="0" alt=""{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$app.LBL_CHANGE_LAYOUT attr=$attr 
 					img_name="info-layout.png" img_attr=$img_attr img_placement="left"}
 			<!--//END SUGARCRM flav=pro ONLY -->
@@ -228,7 +228,7 @@ mySugarLoader.insert();
 		</td>
 
 		<td rowspan="3">
-				{sugar_getimage name="blank.gif" attr='border="0"'}
+				{sugar_getimage name="blank.gif"  width='40' height='1' border='0'}
 		</td>
  		{* //BEGIN SUGARCRM flav=pro ONLY*}
 		{/if}
@@ -237,7 +237,7 @@ mySugarLoader.insert();
 
 		</td>
 		<td rowspan="3">
-				{sugar_getimage name="blank.gif" attr='border="0"'}
+				{sugar_getimage name="blank.gif"  width='40' height='1' border='0'}
 		</td>
 		{/if}
 		{* //END SUGARCRM flav=pro ONLY*}

@@ -52,34 +52,34 @@
             </button><button title="{$app_strings.LBL_ID_FF_ADD}" type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add(); if(collection['{$displayParams.formName}_{$vardef.name}'].more_status)collection['{$displayParams.formName}_{$vardef.name}'].js_more();"  name="teamAdd">
             {sugar_getimage name="id-ff-add.png" alt="$alt_addButton"}</button>
 			</span>			
-		</td>        
-        <td id="lineLabel_{$vardef.name}_primary" {if empty($values.role_field)}style="display:none"{/if}>
+		</td>
+        <th scope='col' id="lineLabel_{$vardef.name}_primary" {if empty($values.role_field)}style="display:none"{/if}>
             {sugar_translate label='LBL_COLLECTION_PRIMARY'}
-        </td>
+        </th>
 		<td>
         <a class="utilsLink" href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' {if empty($values.secondaries)}style="display:none"{/if}></a>
         </td>
-        <td >&nbsp;</td>
+        <td>&nbsp;</td>
     </tr>
     <tr id="lineFields_{$displayParams.formName}_{$vardef.name}_0" class="lineFields_{$displayParams.formName}_{$vardef.name}">
-        <td valign="top">
+        <td scope='row' valign="top">
             <span id='{$displayParams.formName}_{$vardef.name}_input_div_0' name='teamset_div'>   
-            <input type="text" name="{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" id="{$displayParams.formName}_{$vardef.name}_collection_0" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
+            <input type="text" name="{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" id="{$displayParams.formName}_{$vardef.name}_collection_0" size="{$displayParams.size}" value=""  title="{sugar_translate label='LBL_TEAM_SELECTED_TITLE'}"  autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$displayParams.formName}_{$vardef.name}_collection_0" value="">
             </span>
         </td>
 <!-- BEGIN Remove and Radio -->
         <td valign="top" nowrap>
             &nbsp;
-			{capture name=tmp assign=attr}id="remove_{$vardef.name}_collection_0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove(0);"{/capture}
-            {sugar_getimage name="id-ff-remove.png" attr=$attr alt="$alt_removeButton"}
+			{capture name=tmp assign=attr}id="remove_{$vardef.name}_collection_0" name="remove_{$vardef.name}_collection_0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove(0);"{/capture}
+            {sugar_getimage name="id-ff-remove" ext=".png" attr="$attr" alt="$alt_removeButton"}
             {if !empty($displayParams.allowNewValue) }
             <input type="hidden" name="allow_new_value_{$vardef.name}_collection_0" id="allow_new_value_{$vardef.name}_collection_0" value="true">
             {/if}
         </td>
         <td valign="top" align="center">
             <span id='{$displayParams.formName}_{$vardef.name}_radio_div_0'>
-            <input id="primary_{$vardef.name}_collection_0" name="primary_{$vardef.name}_collection" type="radio" class="radio" value="0" style="visibility:visible{if empty($values.role_field)};display:none;{/if}" onclick="collection['{$displayParams.formName}_{$vardef.name}'].changePrimary(true);" />
+            <input id="primary_{$vardef.name}_collection_0" name="primary_{$vardef.name}_collection" type="radio" class="radio" value="0" style="visibility:visible{if empty($values.role_field)};display:none;{/if}" onclick="collection['{$displayParams.formName}_{$vardef.name}'].changePrimary(true);" title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" />
             </span>
         </td>
         <td>&nbsp;</td>

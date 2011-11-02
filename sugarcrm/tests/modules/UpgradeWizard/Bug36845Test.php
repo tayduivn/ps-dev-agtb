@@ -31,14 +31,13 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        //$this->markTestIncomplete('Revisit this test.  Seems to be corrupting unified search');
 
+        global $beanFiles, $beanList;
+        require('include/modules.php');
+        
         if(file_exists(sugar_cached('modules/unified_search_modules.php')))
 
-        //$this->useOutputBuffering = false;
-        require('include/modules.php');
-        global $beanFiles, $beanList;
-
-        if(file_exists('cache/modules/unified_search_modules.php'))
         {
             $this->has_custom_unified_search_modules = true;
             copy(sugar_cached('modules/unified_search_modules.php'), sugar_cached('modules/unified_search_modules.php.bak'));
@@ -60,7 +59,7 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
         $the_string = <<<EOQ
 <?php
 \$module_name = "{$this->module}";
-\$searchFields[\$module_name] =
+\$searchFields["{$this->module}"] =
     array (
         'name' => array( 'query_type'=>'default'),
         'account_type'=> array('query_type'=>'default', 'options' => 'account_type_dom', 'template_var' => 'ACCOUNT_TYPE_OPTIONS'),
@@ -132,6 +131,7 @@ EOQ;
 
         require('include/modules.php');
         global $beanFiles, $beanList;
+
         $beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
         $beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';
 
@@ -139,6 +139,10 @@ EOQ;
 
     public function tearDown()
     {
+        //Unset the clabc_Bug36845Test references
+        unset($GLOBALS['beanList']['clabc_Bug36845Test']);
+        unset($GLOBALS['beanFiles']['clabc_Bug36845Test']);
+
         if(file_exists(sugar_cached('modules/unified_search_modules.php')))
         {
             unlink(sugar_cached('modules/unified_search_modules.php'));
@@ -192,15 +196,6 @@ EOQ;
     {
     	unlink("{$this->module_dir}/metadata/SearchFields.php");
         $this->assertTrue(!file_exists("{$this->module_dir}/metadata/SearchFields.php"), 'Assert that we have a SearchFields.php file');
-
-        if(!file_exists("custom/{$this->module_dir}/metadata"))
-        {
-            mkdir_recursive("custom/{$this->module_dir}/metadata");
-        }
-        copy("{$this->module_dir}/metadata/SearchFields.php", "custom/{$this->module_dir}/metadata/SearchFields.php");
-        unlink("{$this->module_dir}/metadata/SearchFields.php");
-        $this->assertTrue(!file_exists("{$this->module_dir}/metadata/SearchFields.php"), 'Assert that we do not have a SearchFields.php file in modules directory');
-
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
         require_once('modules/UpgradeWizard/uw_utils.php');
         add_unified_search_to_custom_modules_vardefs();
@@ -210,12 +205,8 @@ EOQ;
 
         $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
         include(sugar_cached('modules/unified_search_modules.php'));
-        $this->assertTrue(!isset($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
+        $this->assertTrue(empty($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
 
-        $this->assertTrue(file_exists("cache/modules/unified_search_modules.php"), 'Assert that we have a unified_search_modules.php file');
-        include('cache/modules/unified_search_modules.php');
-        //echo var_export($unified_search_modules['clabc_Bug36845Test'], true);
-        $this->assertTrue(isset($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was added to unified_search_modules.php');
     }
 
 
@@ -232,5 +223,6 @@ EOQ;
         $usa->saveGlobalSearchSettings();
         $this->assertTrue(file_exists('custom/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');
     }
+    
 
 }

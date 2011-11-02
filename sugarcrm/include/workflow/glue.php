@@ -77,7 +77,7 @@ class WorkFlowGlue {
         {
             global $beanList, $dictionary;
             $moduleName = $_REQUEST['base_module'];
-            $objectName = $beanList[$moduleName];
+            $objectName = BeanFactory::getObjectName($moduleName);
             VardefManager::loadVardef($moduleName, $objectName);
             if (!empty($dictionary[$objectName]) && !empty($dictionary[$objectName]['fields'][$shell_object->field]))
             {
@@ -362,6 +362,14 @@ class WorkFlowGlue {
 
 			//Area to add for other types
 
+            // Type Encrypt
+            if ($type_object->exp_type == 'encrypt')
+            {
+                $eval_string .= build_source_array($parent_type, $type_object->lhs_field);
+                $eval_string .= " ".$this->operator_array[$type_object->operator]." ";
+                $eval_string .= " '".$this->write_escape($type_object->encrpyt_before_save($right_value))."'";
+                $express_evaluated = true;
+            }
 
 			if($express_evaluated ==false){
 

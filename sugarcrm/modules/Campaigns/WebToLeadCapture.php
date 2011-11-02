@@ -205,4 +205,7 @@ if (!empty($_POST['redirect'])) {
     	die();
     }
 }
+
 echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
+
+?>

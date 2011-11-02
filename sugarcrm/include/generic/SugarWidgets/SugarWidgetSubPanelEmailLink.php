@@ -110,4 +110,3 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 
 	}
 } // end class def
-

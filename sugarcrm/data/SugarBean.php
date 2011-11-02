@@ -46,7 +46,7 @@ require_once("data/Relationships/RelationshipFactory.php");
  * Naming convention has the bean name be the same as the module and folder name.
  * All bean names should be singular (e.g. Contact).  The primary table name for
  * a bean should be plural (e.g. contacts).
- *
+ * @api
  */
 class SugarBean
 {
@@ -589,8 +589,14 @@ class SugarBean
     function getPrimaryFieldDefinition()
     {
         $def = $this->getFieldDefinition("id");
-        if (!$def)
+        if(empty($def)) {
             $def = $this->getFieldDefinition(0);
+        }
+        if (empty($def)) {
+            $defs = $this->field_defs;
+            reset($defs);
+            $def = current($defs);
+        }
         return $def;
     }
     //BEGIN SUGARCRM flav=pro ONLY
@@ -1004,8 +1010,21 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-        if($this->load_relationship($field_name))
-            return array_values($this->$field_name->getBeans());
+        //BEGIN SUGARCRM flav!=sales ONLY
+        //if bean_name is Case then use aCase
+        if($bean_name=="Case")
+            $bean_name = "aCase";
+        //END SUGARCRM flav!=sales ONLY
+
+        if($this->load_relationship($field_name)) {
+            if ($this->$field_name instanceof Link) {
+                // some classes are still based on Link, e.g. TeamSetLink
+                return array_values($this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where));
+            } else {
+                // Link2 style
+                return array_values($this->$field_name->getBeans());
+            }
+        }
         else
             return array();
     }
@@ -1449,8 +1468,14 @@ class SugarBean
         //BEGIN SUGARCRM flav=pro ONLY
         if (empty($GLOBALS['resavingRelatedBeans'])){
             $this->updateRelatedCalcFields();
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        if (empty($GLOBALS['resavingRelatedBeans'])){
             SugarRelationship::resaveRelatedBeans();
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1496,15 +1521,24 @@ class SugarBean
         }
     }
 
+    /**
+     * Run any dependency that fields may have
+     *
+     * @return void
+     */
     function updateDependentField()
     {
-        require_once("include/Expressions/DependencyManager.php");
-        $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
-        foreach($deps as $dep)
-        {
-            if ($dep->getFireOnLoad())
+        // this is ignored when coming via a webservice as it's only needed for display and not just raw data
+        // it's a huge performance gain when pulling multiple records vai webservices by not running this
+        if(!isset($GLOBALS['service_object'])) {
+            require_once("include/Expressions/DependencyManager.php");
+            $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
+            foreach($deps as $dep)
             {
-                $dep->fire($this);
+                if ($dep->getFireOnLoad())
+                {
+                    $dep->fire($this);
+                }
             }
         }
     }
@@ -2274,15 +2308,13 @@ function save_relationship_changes($is_update, $exclude=array())
         $query .= " WHERE $this->table_name.id = '$id' ";
         if ($deleted) $query .= " AND $this->table_name.deleted=0";
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
-        //requireSingleResult has beeen deprecated.
-        //$result = $this->db->requireSingleResult($query, true, "Retrieving record by id $this->table_name:$id found ");
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
         if(empty($result))
         {
             return null;
         }
 
-        $row = $this->db->fetchByAssoc($result, -1, $encode);
+        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
@@ -2473,7 +2505,7 @@ function save_relationship_changes($is_update, $exclude=array())
     * Internal function, do not override.
     *
     */
-    function get_list($order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $singleSelect=false)
+    function get_list($order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $singleSelect=false, $select_fields = array())
     {
         $GLOBALS['log']->debug("get_list:  order_by = '$order_by' and where = '$where' and limit = '$limit'");
         if(isset($_SESSION['show_deleted']))
@@ -2498,7 +2530,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
             }
         }
-        $query = $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted,'',false,null,$singleSelect);
+        $query = $this->create_new_list_query($order_by, $where,$select_fields,array(), $show_deleted,'',false,null,$singleSelect);
         return $this->process_list_query($query, $row_offset, $limit, $max, $where);
     }
 
@@ -2745,17 +2777,17 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     //END SUGARCRM flav=pro ONLY
                 }
-                
+
 		        //BEGIN SUGARCRM flav=pro ONLY
 		        //Retrieve team_set.team_count column as well
 		        if(!empty($list_fields['team_name']) && empty($list_fields['team_count'])){
 		            $list_fields['team_count'] = true;
-		
+
 		            //Add the team_id entry so that we can retrieve the team_id to display primary team
 		            $list_fields['team_id'] = true;
 		        }
-		        //END SUGARCRM flav=pro ONLY                
-                
+		        //END SUGARCRM flav=pro ONLY
+
                 if(!$subpanel_def->isCollection() && isset($list_fields[$order_by]) && isset($submodule->field_defs[$order_by])&& (!isset($submodule->field_defs[$order_by]['source']) || $submodule->field_defs[$order_by]['source'] == 'db'))
                 {
                     $order_by = $submodule->table_name .'.'. $order_by;
@@ -2768,7 +2800,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 $params['joined_tables'] = $query_array['join_tables'];
                 $params['include_custom_fields'] = !$subpanel_def->isCollection();
                 $params['collection_list'] = $subpanel_def->get_inst_prop_value('collection_list');
-                
+
                 $subquery = $submodule->create_new_list_query('',$subwhere ,$list_fields,$params, 0,'', true,$parentbean);
 
                 $subquery['select'] = $subquery['select']." , '$panel_name' panel_name ";
@@ -3469,14 +3501,14 @@ function save_relationship_changes($is_update, $exclude=array())
             //END SUGARCRM flav=pro ONLY
 
         }
-		
+
 	if ($ifListForExport) {
 		if(isset($this->field_defs['email1'])) {
 			$ret_array['select'].= " ,email_addresses.email_address email1";
 			$ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$this->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$this->module_dir}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ";
 		}
 	}
-		
+
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($favorites)){
             $ret_array['select'] .= " , sfav.id is_favorite ";
@@ -3678,37 +3710,17 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $list = Array();
 
-        if(empty($rows_found))
-        {
-            $rows_found =  $db->getRowCount($result);
-        }
-
-        $GLOBALS['log']->debug("Found $rows_found ".$this->object_name."s");
-
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
         $class = get_class($this);
-        if($rows_found != 0 || !$db->supports('select_rows'))
-        {
             //FIXME: Bug? we should remove the magic number -99
             //use -99 to return all
             $index = $row_offset;
             while ($max_per_page == -99 || ($index < $row_offset + $max_per_page))
             {
-
-                if(!empty($sugar_config['disable_count_query']))
-                {
-                    $row = $db->fetchByAssoc($result);
-                }
-                else
-                {
-                    $row = $db->fetchByAssoc($result, $index);
-                }
-                if (empty($row))
-                {
-                    break;
-                }
+                $row = $db->fetchByAssoc($result);
+                if (empty($row)) break;
 
                 //instantiate a new class each time. This is because php5 passes
                 //by reference by default so if we continually update $this, we will
@@ -3746,7 +3758,6 @@ function save_relationship_changes($is_update, $exclude=array())
 
                 $index++;
             }
-        }
         if(!empty($sugar_config['disable_count_query']) && !empty($limit))
         {
 
@@ -3758,6 +3769,8 @@ function save_relationship_changes($is_update, $exclude=array())
                 $next_offset--;
                 $previous_offset++;
             }
+        } else {
+            $rows_found = $index - $row_offset;
         }
         $response = Array();
         $response['list'] = $list;
@@ -3787,12 +3800,9 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $result = $this->db->query($count_query, true, "Error running count query for $this->object_name List: ");
         $row_num = 0;
-        $row = $this->db->fetchByAssoc($result, $row_num);
-        while($row)
+        while($row = $this->db->fetchByAssoc($result, false))
         {
             $num_rows_in_query += current($row);
-            $row_num++;
-            $row = $this->db->fetchByAssoc($result, $row_num);
         }
 
         return $num_rows_in_query;
@@ -3887,26 +3897,11 @@ function save_relationship_changes($is_update, $exclude=array())
             {
                 $result = $db->query($query,true,"Error retrieving $this->object_name list: ");
             }
-            if(empty($rows_found))
-            {
-                $rows_found =  $db->getRowCount($result);
-            }
-
-            $GLOBALS['log']->debug("Found $rows_found ".$parent_bean->object_name."s");
-            if($rows_found != 0 || !$db->supports('select_rows'))
-            {
                 //use -99 to return all
 
                 // get the current row
                 $index = $row_offset;
-                if(!empty($sugar_config['disable_count_query']))
-                {
-                    $row = $db->fetchByAssoc($result);
-                }
-                else
-                {
-                    $row = $db->fetchByAssoc($result, $index);
-                }
+                $row = $db->fetchByAssoc($result);
 
                 $post_retrieve = array();
                 $isFirstTime = true;
@@ -4034,9 +4029,8 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     // go to the next row
                     $index++;
-                    $row = $db->fetchByAssoc($result, $index);
+                    $row = $db->fetchByAssoc($result);
                 }
-            }
             //now handle retrieving many-to-many relationships
             if(!empty($list))
             {
@@ -4150,19 +4144,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $result = $this->db->limitQuery($query, $offset, 1, true,"Error retrieving $this->object_name list: ");
 
-        $rows_found = $this->db->getRowCount($result);
-
-        $GLOBALS['log']->debug("Found $rows_found ".$this->object_name."s");
-
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
-        if($rows_found != 0 || !$this->db->supports('select_rows'))
-        {
-            $index = 0;
-            $row = $this->db->fetchByAssoc($result, $index);
-            $this->retrieve($row['id']);
-        }
+        $row = $this->db->fetchByAssoc($result);
+        $this->retrieve($row['id']);
 
         $response = Array();
         $response['bean'] = $this;
@@ -4194,13 +4180,10 @@ function save_relationship_changes($is_update, $exclude=array())
         $isFirstTime = true;
         $bean = new $class();
 
-        //if($this->db->getRowCount($result) > 0){
-
-
         // We have some data.
-        //while ($row = $this->db->fetchByAssoc($result)) {
         while (($row = $bean->db->fetchByAssoc($result)) != null)
         {
+            $row = $this->convertRow($row);
             if(!$isFirstTime)
             {
                 $bean = new $class();
@@ -4464,7 +4447,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 //END SUGARCRM flav=pro ONLY
             }
             $this->db->query($query, true,"Error marking record deleted: ");
-            
+
             SugarRelationship::resaveRelatedBeans();
 
             // Take the item off the recently viewed lists
@@ -4853,15 +4836,14 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             return null;
         }
-        if($this->db->getRowCount($result) > 1)
-        {
-            $this->duplicates_found = true;
-        }
-        $row = $this->db->fetchByAssoc($result, -1, $encode);
+        $row = $this->db->fetchByAssoc($result, $encode);
         if(empty($row))
         {
             return null;
         }
+        // Removed getRowCount-if-clause earlier and insert duplicates_found here as it seems that we have found something
+        // if we didn't return null in the previous clause.
+        $this->duplicates_found = true;
         $row = $this->convertRow($row);
         $this->fetched_row = $row;
         $this->fromArray($row);
@@ -4898,12 +4880,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     function getRelatedFields($module, $id, $fields, $return_array = false){
         if(empty($GLOBALS['beanList'][$module]))return '';
-        $object = $GLOBALS['beanList'][$module];
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if ($object == 'aCase') {
-            $object = 'Case';
-        }
-        //END SUGARCRM flav!=sales ONLY
+        $object = BeanFactory::getObjectName($module);
 
         VardefManager::loadVardef($module, $object);
         if(empty($GLOBALS['dictionary'][$object]['table']))return '';

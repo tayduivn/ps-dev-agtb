@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,10 +29,13 @@
  ********************************************************************************/
 
 
+require_once('data/SugarBean.php');
+require_once('include/modules.php');
 require_once('modules/Reports/Report.php');
 
+
 /**
- * Bug #40433
+ * Bug #46805
  * SQL error when Edit 'Opportunities By Lead Source' chart using MSSQL
  *
  * @author mgusev
@@ -43,6 +48,21 @@ class Bug46805Test extends Sugar_PHPUnit_Framework_TestCase
      * @ticket 40433
      * @return void
      */
+	public function setUp()
+	{
+		require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
+	
+	public function tearDown()
+	{
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+	    unset($GLOBALS['current_user']);
+	   	unset($GLOBALS['beanList']);
+	    unset($GLOBALS['beanFiles']);
+	}
     function testOrderFields()
     {
         $db = new stdClass();

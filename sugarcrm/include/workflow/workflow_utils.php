@@ -199,7 +199,27 @@ function translate_label_from_module($target_module, $target_element){
 
 function translate_option_name_from_bean(& $target_bean, $target_element, $target_value){
 	global $app_list_strings;
-	$dom_name = $target_bean->field_defs[$target_element]['options'];
+    $dom_name = array();
+    # Bug #37487 We should use 'function' from var_def if it is specified.
+    if (
+        isset($target_bean->field_defs[$target_element]['function'])
+        && $target_bean->field_defs[$target_element]['function'] != ''
+    )
+    {
+        $return = $target_bean->field_defs[$target_element]['function']();
+        if (isset($return[$target_value]))
+        {
+            return $return[$target_value];
+        }
+        else
+        {
+            return $target_value;
+        }
+    }
+    else
+    {
+        $dom_name = $target_bean->field_defs[$target_element]['options'];
+    }
 	if($app_list_strings[$dom_name][$target_value]!=""){
 		return $app_list_strings[$dom_name][$target_value];
 	} else {

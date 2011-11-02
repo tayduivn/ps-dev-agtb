@@ -38,7 +38,6 @@ class Bug39161Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $seed = new Call();
 		$def = $seed->field_defs['contact_name'];
-
         $lv = new ListLayoutMetaDataParserMock2(MB_LISTVIEW, 'Calls');
         $this->assertTrue($lv->isValidField($def['name'], $def));
 		$this->assertFalse(GridLayoutMetaDataParser::validField($def, 'editview'));

@@ -142,16 +142,16 @@ class Meeting extends SugarBean {
 		global $current_user;
 
 		global $disable_date_format;
-		
-	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+
+	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
         {
-        	if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+        	if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
 	        {
 	    	    $td = $timedate->fromDb($this->date_start);
 	    	    if($td)
 	    	    {
 		        	$this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-	    	    }	
+	    	    }
 	        }
 		}
 
@@ -436,7 +436,7 @@ class Meeting extends SugarBean {
             }
 
             $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank">'.SugarThemeRegistry::current()->getImage("join_meeting_inline", 'border="0" ', 18, 19, ".png", translate('LBL_JOIN_EXT_MEETING',$this->module_dir)).'</a>';
-            
+
           $this->displayed_url = $meetingLink;
         }
         //END SUGARCRM flav!=com ONLY
@@ -504,7 +504,7 @@ class Meeting extends SugarBean {
 			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" target="_blank">' . $join_icon . '</a>';
 		}
 		//END SUGARCRM flav!=com ONLY
-		
+
 		return $meeting_fields;
 	}
 

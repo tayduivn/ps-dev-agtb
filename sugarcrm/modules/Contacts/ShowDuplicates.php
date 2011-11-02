@@ -82,7 +82,7 @@ while (($row=$db->fetchByAssoc($result)) != null) {
 	$i++;
 }
 
-$xtpl->assign('FORMBODY', $contactForm->buildTableForm($duplicateContacts,  'Contacts'));
+$xtpl->assign('FORMBODY', $contactForm->buildTableForm($duplicateContacts));
 
 $input = '';
 foreach ($contact->column_fields as $field)

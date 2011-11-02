@@ -135,6 +135,7 @@ class MysqlManager extends DBManager
 		"fulltext" => true,
 	    "collation" => true,
 	    "create_db" => true,
+	    "disable_keys" => true,
 	);
 
 	/**
@@ -152,6 +153,7 @@ class MysqlManager extends DBManager
 		if(is_array($sql)) {
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
 		}
+
 		parent::countQuery($sql);
 		$GLOBALS['log']->info('Query:' . $sql);
 		$this->checkConnection();
@@ -186,6 +188,20 @@ class MysqlManager extends DBManager
 	}
 
 	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return mysql_num_rows($result);
+	}
+
+	/**
 	 * Disconnects from the database
 	 *
 	 * Also handles any cleanup needed
@@ -209,19 +225,6 @@ class MysqlManager extends DBManager
 			mysql_free_result($dbResult);
 	}
 
-	/**
-	 * Returns the number of rows returned by the result
-	 *
-	 * @param  resource $result
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		if(!empty($result)) {
-			return mysql_num_rows($result);
-		}
-		return 0;
-	}
 
 	/**
 	 * @see DBManager::limitQuery()
@@ -232,7 +235,7 @@ class MysqlManager extends DBManager
 			$start = 0;
 		$GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
-		$sql = "$sql LIMIT $start,$count";
+	    $sql = "$sql LIMIT $start,$count";
 		$this->lastsql = $sql;
 
 		if(!empty($GLOBALS['sugar_config']['check_query'])){
@@ -339,24 +342,13 @@ class MysqlManager extends DBManager
 	}
 
 	/**
-	 * @see DBManager::fetchByAssoc()
+	 * @see DBManager::fetchRow()
 	 */
-	public function fetchByAssoc($result, $rowNum = -1, $encode = true)
+	public function fetchRow($result)
 	{
-		if (!$result)
-			return false;
+		if (empty($result))	return false;
 
-		if ($result && $rowNum > -1) {
-			if ($this->getRowCount($result) > $rowNum)
-				mysql_data_seek($result, $rowNum);
-		}
-
-		$row = mysql_fetch_assoc($result);
-
-		if ($encode && $this->encode && is_array($row))
-			return array_map('to_html', $row);
-
-		return $row;
+		return mysql_fetch_assoc($result);
 	}
 
 	/**
@@ -580,8 +572,6 @@ class MysqlManager extends DBManager
 					}
 					return "DATE_FORMAT($string,$format)";
 				}
-			case 'datetime':
-				return $string;
 			case 'ifnull':
 				if(empty($additional_parameters) && !strstr($all_strings, ",")) {
 					$all_strings .= ",''";
@@ -1086,7 +1076,7 @@ class MysqlManager extends DBManager
 			    return $err;
 			}
 		}
-
+        return false;
     }
 
 	/**
@@ -1411,5 +1401,25 @@ class MysqlManager extends DBManager
 				"setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
 			)
 		);
+	}
+
+	/**
+	 * Disable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function disableKeys($tableName)
+	{
+	    return $this->query('ALTER TABLE '.$tableName.' DISABLE KEYS');
+	}
+
+	/**
+	 * Re-enable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function enableKeys($tableName)
+	{
+	    return $this->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
 	}
 }

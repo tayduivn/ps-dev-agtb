@@ -74,14 +74,19 @@ class EmployeesViewList extends ViewList
 			$params = array_reverse($params);
 		}
 
-        foreach($params as $parm){
-            $index++;
-            $theTitle .= $parm;
-            if($index < $count){
-                $theTitle .= $this->getBreadCrumbSymbol();
-            }
-        }
-        $theTitle .= "</h2>\n";
+           $paramString = '';
+           foreach($params as $parm){
+               $index++;
+               $paramString .= $parm;
+               if($index < $count){
+                   $paramString .= $this->getBreadCrumbSymbol();
+               }
+           }
+
+           if(!empty($paramString)){
+               $theTitle .= "<h2> $paramString </h2>\n";
+           }
+
 
         if ($show_help) {
             $theTitle .= "<span class='utils'>";
@@ -120,7 +125,7 @@ EOHTML;
 			if(!empty($this->where)){
 			    $this->where .= " AND ";
 			}
-                        $this->where .= "(users.status != 'Reserved' or users.status is null) ";
+            $this->where .= "(users.status <> 'Reserved' or users.status is null) ";
 			//BEGIN SUGARCRM flav=sales ONLY
 			$tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
 			$this->lv->export = false;

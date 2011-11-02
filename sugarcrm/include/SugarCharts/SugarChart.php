@@ -614,12 +614,13 @@ class SugarChart {
                         {
                             $data .= $this->nullGroup($superSetValue, $url);
                         }
-                    } else {
+
+                    }
+                    else
+                    {
                         $data .= $this->nullGroup($superSetValue, $url);
                     }
                 }
-
-
 			}
 
 			$data .= $this->tab('</subgroups>',3);
@@ -629,20 +630,17 @@ class SugarChart {
 	}
 
 
+    //BEGIN SUGARCRM flav=int ONLY
+    //Collin Says - Todo:  Whoever wrote this function, can you please comment on it?
+    //END SUGARCRM flav=int ONLY
     /**
      * nullGroup
+     * This function sets a null group by clause
      *
-     * This is a private helper function to pass 'NULL' value to the processDataGroup method.
-     * It is used by function xmlDataGenericChart
-     *
-     * @param $superSetValue mixed Array of chart values
-     * @param $url String the url activated when a drill down
-     *
-     * @return string The XML string portion used by the char in rendering links
-     *
+     * @param $sugarSetValue Mixed value
+     * @param $url String value of URL for the link
      */
-    private function nullGroup($superSetValue, $url)
-    {
+    private function nullGroup($superSetValue, $url) {
         return $this->processDataGroup(4, $superSetValue, 'NULL', '', $url);
     }
     
@@ -924,8 +922,7 @@ class SugarChart {
 	}
 	
 	function getMySugarChartResources() {
-		
-		$mySugarRources = "";
+		$mySugarResources = "";
 		return $mySugarResources;
 	}
 	

@@ -27,6 +27,20 @@ require_once('include/connectors/ConnectorsTestCase.php');
 
 class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 {
+    function setUp()
+    {
+        global $current_user;
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+        $user = new User();
+        $current_user = $user->retrieve('1');
+    }
+
+    function tearDown()
+    {
+
+    }
+
     function test_enable_all() {
     	require_once('modules/Connectors/controller.php');
     	require_once('include/MVC/Controller/SugarController.php');
@@ -41,7 +55,15 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
     	$controller->action_SaveModifyDisplay();
 
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->assertTrue(count($modules_sources) == 3);
+
+        foreach($modules_sources as $module=>$entries)
+        {
+            if($module == 'Accounts' || $module == 'Contacts')
+            {
+                $this->assertTrue(in_array('ext_soap_hoovers', $entries));
+                $this->assertTrue(in_array('ext_rest_linkedin', $entries));
+            }
+        }
     }
 
     function test_disable_all() {

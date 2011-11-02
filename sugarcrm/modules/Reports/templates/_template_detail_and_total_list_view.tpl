@@ -79,6 +79,7 @@ while (( $row = $reporter->get_next_row() ) != 0 ) {
 	$count = 0;
 	$this->assign('count', $count);
 {/php}
+{assign var='scope_row' value=true}
 {foreach from=$column_row.cells key=module item=cell}
 	{if (($column_row.group_column_is_invisible != "") && ($count|in_array:$column_row.group_pos)) }
 {php}	
@@ -93,10 +94,11 @@ while (( $row = $reporter->get_next_row() ) != 0 ) {
 {/php}
 	{/if}
 	
-	<td width="{$width}%" valign=TOP class="{$row_class}" bgcolor="{$bg_color}" scope="row">
+	<td width="{$width}%" valign=TOP class="{$row_class}" bgcolor="{$bg_color}"  {if $scope_row} scope='row' {/if}>
 	
 	{$cell}
 	{/if}
+	{assign var='scope_row' value=false}
 {/foreach}
 </tr>
 {php}
@@ -169,6 +171,7 @@ if ($reporter->has_summary_columns()) {
 			$this->assign('count', $count);
 		{/php}
 		{foreach from=$column_row.cells key=module item=cell}
+            {assign var='scope_row' value=true}
 			{if (($column_row.group_column_is_invisible != "") && ($count|in_array:$column_row.group_pos)) }
 		{php}	
 			$count = $count + 1;
@@ -181,10 +184,11 @@ if ($reporter->has_summary_columns()) {
 			$this->assign('cell', $cell);
 		{/php}
 			{/if}			
-			<td width="{$width}%" valign=TOP class="{$row_class}" bgcolor="{$bg_color}" scope="row">
+			<td width="{$width}%" valign=TOP class="{$row_class}" bgcolor="{$bg_color}" {if $scope_row} scope='row' {/if}>
 			
 			{$cell}
 			{/if}
+			{assign var='scope_row' value=false}
 		{/foreach}
 		</tr>
 		

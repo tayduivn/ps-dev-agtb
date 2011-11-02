@@ -41,7 +41,7 @@ class Bug38100Test extends SOAPTestCase
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
 
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
+        $this->useOutputBuffering = false;
 		parent::setUp();
     }
 
@@ -56,18 +56,21 @@ class Bug38100Test extends SOAPTestCase
     	require_once('service/core/SoapHelperWebService.php');
     	require_once('modules/Reports/Report.php');
     	require_once('modules/Reports/SavedReport.php');
-    	$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports WHERE deleted=0");
-    	if(!$savedReportId) {
-    	    $this->markTestSkipped("No live reports!");
-    	}
-    	$savedReport = new SavedReport();
-    	$savedReport->retrieve($savedReportId);
-    	$helperObject = new SoapHelperWebServices();
-    	$helperResult = $helperObject->get_report_value($savedReport, array());
-    	$this->_login();
-		$result = $this->_soapClient->call('get_report_entries',array('session'=>$this->_sessionId,'ids' => array($savedReportId),'select_fields' => array()));
+    	//$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports WHERE deleted=0");
 
-		$this->assertTrue(!empty($result['field_list']));
-		$this->assertTrue(!empty($result['entry_list']));
+        $results = $GLOBALS['db']->query("SELECT id FROM saved_reports WHERE deleted=0");
+        while(($row = $GLOBALS['db']->fetchByAssoc($results)) != null)
+        {
+            $savedReportId = $row['id'];
+            $savedReport = new SavedReport();
+            $savedReport->retrieve($savedReportId);
+            $helperObject = new SoapHelperWebServices();
+            $helperResult = $helperObject->get_report_value($savedReport, array());
+            $this->_login();
+            $result = $this->_soapClient->call('get_report_entries',array('session'=>$this->_sessionId,'ids' => array($savedReportId),'select_fields' => array()));
+
+            $this->assertTrue(!empty($result['field_list']), "Bad result: ".var_export($result, true));
+            $this->assertTrue(!empty($result['entry_list']), "Bad result: ".var_export($result, true));
+        }
     } // fn
 }

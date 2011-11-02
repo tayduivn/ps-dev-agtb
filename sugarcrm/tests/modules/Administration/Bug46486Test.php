@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
@@ -31,11 +31,19 @@ class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
 
     function setUp()
     {
+
+        $admin = new Administration();
+        $admin->retrieveSettings('license');
+
+        if(!isset($admin->settings['license_num_portal_users']))
+        {
+           $admin->settings['license_num_portal_users'] = 0;
+           $admin->saveSetting('license', 'num_portal_users', '0');
+        }
+
         $this->sm = new SessionManager();
         $this->defaultPortalUsersCount = $this->sm->getNumPortalUsers();
 
-
-        $admin = new Administration();
         $admin->retrieveSettings('system');
         if(!isset($admin->settings['system_session_timeout']))
         {
@@ -43,7 +51,7 @@ class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
            $admin->saveSetting('system', 'session_timeout', $session_timeout);
         }
         $admin->retrieveSettings('license');
-        $this->enforce =  $admin->settings['license_enforce_portal_user_limit'];
+        $this->enforce =  !empty($admin->settings['license_enforce_portal_user_limit']);
 
         $admin->saveSetting('license', 'enforce_portal_user_limit', '1');
 

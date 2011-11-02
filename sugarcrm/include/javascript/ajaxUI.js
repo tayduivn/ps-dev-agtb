@@ -53,10 +53,22 @@ SUGAR.ajaxUI = {
             {
                 action_sugar_grp1 = r.action;
             }
-            
+
             var c = document.getElementById("content");
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (r.record)
+            {
+                DCMenu.record = r.record;
+            }
+            if(r.menu && r.menu.module)
+            {
+                DCMenu.module = r.menu.module;
+            }
+            //END SUGARCRM flav=pro ONLY
+
             // set response time from ajax response
             if(typeof(r.responseTime) != 'undefined'){
                 var rt = document.getElementById('responseTime');
@@ -144,11 +156,23 @@ SUGAR.ajaxUI = {
             if (ui.lastURL == url)
                 return;
             var inAjaxUI = /action=ajaxui/.exec(window.location);
-            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
-                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload())
             {
-                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
-                return;
+                //If there is an unload function, we need to check it ourselves
+                if (!confirm(window.onbeforeunload()))
+                {
+                    if (!inAjaxUI)
+                    {
+                        //User doesn't want to navigate
+                        window.location.hash = "";
+                    }
+                    else
+                    {
+                        YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                    }
+                    return;
+                }
+                window.onbeforeunload = null;
             }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
@@ -238,7 +262,7 @@ SUGAR.ajaxUI = {
         }
         YAHOO.util.Event.removeListener(window, 'resize');
         //Hide any connector dialogs
-        if(typeof(dialog) != 'undefined'){
+        if(typeof(dialog) != 'undefined' && typeof(dialog.destroy) == 'function'){
             dialog.destroy();
             delete dialog;
         }
@@ -287,7 +311,7 @@ SUGAR.ajaxUI = {
                 modal:true,
                 visible:false
             });
-            SUGAR.ajaxUI.loadingPanel.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=img_loading.gif" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
+            SUGAR.ajaxUI.loadingPanel.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.loading_image + '" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
             SUGAR.ajaxUI.loadingPanel.render(document.body);
         }
 

@@ -155,7 +155,7 @@ else {
 			$name = isset($_REQUEST['tempName'])?$_REQUEST['tempName']:'';
 		} else if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 			$download_location = $local_location;
-			$name = isset($_REQUEST['tempName']) ? $_REQUEST['tempName'] : '';
+			$name = isset($_REQUEST['tempName'])?$_REQUEST['tempName']:'';
 		}
 
 		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT']))

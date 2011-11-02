@@ -65,6 +65,7 @@ function make_sugar_config(&$sugar_config)
 	global $list_max_entries_per_page;
 	global $lock_default_user_name;
 	global $log_memory_usage;
+    global $nameFormats;
 	global $requireAccounts;
 	global $RSS_CACHE_TIME;
 	global $session_dir;
@@ -111,6 +112,7 @@ function make_sugar_config(&$sugar_config)
 	'default_currency_symbol' => empty($default_currency_symbol) ? '$' : $default_currency_symbol,
 	'default_currency_iso4217' => empty($default_currency_iso4217) ? '$' : $default_currency_iso4217,
 	'default_date_format' => empty($defaultDateFormat) ? 'm/d/Y' : $defaultDateFormat,
+    'default_locale_name_format' => empty($defaultNameFormat) ? 's f l' : $defaultNameFormat,
 	'default_export_charset' => 'UTF-8',
 	'default_language' => empty($default_language) ? 'en_us' : $default_language,
 	'default_module' => empty($default_module) ? 'Home' : $default_module,
@@ -144,6 +146,10 @@ function make_sugar_config(&$sugar_config)
 	'list_max_entries_per_subpanel' => empty($list_max_entries_per_subpanel) ? 10 : $list_max_entries_per_subpanel,
 	'lock_default_user_name' => empty($lock_default_user_name) ? false : $lock_default_user_name,
 	'log_memory_usage' => empty($log_memory_usage) ? false : $log_memory_usage,
+    'name_formats' => empty($nameFormats) ? array(
+        's f l' => 's f l', 'f l' => 'f l', 's l' => 's l', 'l, s f' => 'l, s f',
+        'l, f' => 'l, f', 's l, f' => 's l, f', 'l s f' => 'l s f', 'l f s' => 'l f s'
+    ) : $nameFormats,
     'portal_view' => 'single_user',
 	'resource_management' => array (
 	    'special_query_limit' => 50000,
@@ -167,7 +173,7 @@ function make_sugar_config(&$sugar_config)
 	'php', 'php3', 'php4', 'php5', 'pl', 'cgi', 'py',
 	'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ) : $upload_badext,
 	'upload_dir' => $upload_dir,  // this must be set!!
-	'upload_maxsize' => empty($upload_maxsize) ? 3000000 : $upload_maxsize,
+	'upload_maxsize' => empty($upload_maxsize) ? 30000000 : $upload_maxsize,
 	'import_max_execution_time' => empty($import_max_execution_time) ? 3600 : $import_max_execution_time,
 	'lock_homepage' => false,
 	'lock_subpanels' => false,
@@ -227,7 +233,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
-		'use_sprites' => (false && function_exists('imagecreatetruecolor')),
+		'use_sprites' => function_exists('imagecreatetruecolor'),
 	);
 }
 
@@ -255,6 +261,10 @@ function get_sugar_config_defaults() {
 	'Y-m-d' => '2010-12-23', 'm-d-Y' => '12-23-2010', 'd-m-Y' => '23-12-2010',
 	'Y/m/d' => '2010/12/23', 'm/d/Y' => '12/23/2010', 'd/m/Y' => '23/12/2010',
 	'Y.m.d' => '2010.12.23', 'd.m.Y' => '23.12.2010', 'm.d.Y' => '12.23.2010',),
+    'name_formats' => array (
+        's f l' => 's f l', 'f l' => 'f l', 's l' => 's l', 'l, s f' => 'l, s f',
+        'l, f' => 'l, f', 's l, f' => 's l, f', 'l s f' => 'l s f', 'l f s' => 'l f s'
+    ),
 	'dbconfigoption' => array (
 	'persistent' => true,
 	'autofree' => false,
@@ -270,6 +280,7 @@ function get_sugar_config_defaults() {
 	'default_number_grouping_seperator' => return_session_value_or_default('default_number_grouping_seperator', ','),
 	'default_decimal_seperator' => return_session_value_or_default('default_decimal_seperator', '.'),
 	'default_date_format' => 'm/d/Y',
+    'default_locale_name_format' => 's f l',
 	'default_export_charset' => 'UTF-8',
 	'default_language' => return_session_value_or_default('default_language',
 	'en_us'),
@@ -344,7 +355,7 @@ function get_sugar_config_defaults() {
 	'upload_badext' => array (
 	'php', 'php3', 'php4', 'php5', 'pl', 'cgi', 'py',
 	'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ),
-	'upload_maxsize' => 3000000,
+	'upload_maxsize' => 30000000,
 	'import_max_execution_time' => 3600,
 //	'use_php_code_json' => returnPhpJsonStatus(),
 	'verify_client_ip' => true,
@@ -368,19 +379,16 @@ function get_sugar_config_defaults() {
   	'common_ml_dir' => '',
 	'vcal_time' => '2',
 	'calendar' => array(
-	  'default_view' => 'week', 
+	  'default_view' => 'week',
 	  'show_calls_by_default' => true,
 	  'show_tasks_by_default' => true,
 	  'editview_width' => 960,
-	  'editview_height' => 480,	
+	  'editview_height' => 480,
 	  'day_timestep' => 15,
 	  'week_timestep' => 30,
-	  'month_timestep' => 60,	
-	  'default_day_start' => '08:00',
-	  'default_day_end' => '19:00',
-	  'items_draggable' => true, 
-	  'mouseover_expand' => true, 
-	  'item_text' => 'name',	
+	  'month_timestep' => 60,
+	  'items_draggable' => true,
+	  'mouseover_expand' => true,
 	),
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -428,7 +436,7 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		),
-	'use_sprites' => (false && function_exists('imagecreatetruecolor')),
+	'use_sprites' => function_exists('imagecreatetruecolor'),
 
 	//END SUGARCRM flav=pro ONLY
 	'use_real_names' => true,
@@ -741,7 +749,7 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
 	if($from_cache)
 		$user_array = get_register_value('user_array', $add_blank. $status . $assigned_user);
 
-	if(!isset($user_array)) {
+	if(empty($user_array)) {
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
 		// Including deleted users for now.
@@ -1144,12 +1152,7 @@ function return_module_language($language, $module, $refresh=false)
 	// the vardefs file if the cached language file doesn't exist.
     if(!file_exists(sugar_cached('modules/'). $module . '/language/'.$language.'.lang.php')
 			&& !empty($GLOBALS['beanList'][$module])){
-		$object = $GLOBALS['beanList'][$module];
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if ($object == 'aCase') {
-            $object = 'Case';
-		}
-		//END SUGARCRM flav!=sales ONLY
+		$object = BeanFactory::getObjectName($module);
 		VardefManager::refreshVardefs($module,$object);
 	}
 
@@ -1686,6 +1689,9 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
 	//for setting null selection values to human readable --None--
 	$pattern = "/'0?'></";
 	$replacement = "''>".$app_strings['LBL_NONE']."<";
+    if($massupdate){
+        $replacement .= "/OPTION>\n<OPTION value='__SugarMassUpdateClearField__'><"; // Giving the user the option to unset a drop down list. I.e. none means that it won't get updated
+    }
 
 	if (empty($key_list)) $key_list = array();
 	//create the type dropdown domain and set the selected value if $opp value already exists
@@ -2075,7 +2081,7 @@ function xss_check_pattern($pattern, $str) {
  * 		"ALPHANUM"
  * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
  */
-function clean_string($str, $filter = "STANDARD", $dieOnBadData = true) 
+function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
 {
 	global  $sugar_config;
 
@@ -3718,6 +3724,22 @@ function getPhpInfo($level=-1) {
  */
 function string_format($format, $args){
 	$result = $format;
+    
+    /** Bug47277 fix.
+     * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
+     * IN () fails and IN ('') works. 
+     */
+    if (count($args) == 1)
+    {
+        reset($args);
+        $singleArgument = current($args);
+        if (empty($singleArgument))
+        {
+            return str_replace("{0}", "''", $result);
+        }
+    }
+    /* End of fix */
+    
 	for($i = 0; $i < count($args); $i++){
 		$result = str_replace('{'.$i.'}', $args[$i], $result);
 	}
@@ -4160,7 +4182,7 @@ function _getIcon($iconFileName)
     if ( empty($iconFound) )
 		$iconName = "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif";
         $iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
-    
+
 	//Next try removing the icon prefix
     if ( empty($iconFound) )
 		$iconName = "{$iconFileName}.gif";
@@ -4864,7 +4886,7 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
 
 /**
  * get_language_header
- * 
+ *
  * This is a utility function for 508 Compliance.  It returns the lang=[Current Language] text string used
  * inside the <html> tag.  If no current language is specified, it defaults to lang='en'.
  *

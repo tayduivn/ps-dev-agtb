@@ -1372,7 +1372,9 @@ if (isset($reporter->saved_report->is_chart_dashlet) && $reporter->saved_report-
 function juliansort($a,$b)
 {
  global $app_list_strings;
- if ($app_list_strings['moduleList'][$a] > $app_list_strings['moduleList'][$b])
+    $a = isset($app_list_strings['moduleList'][$a]) ? $app_list_strings['moduleList'][$a] : $a;
+    $b = isset($app_list_strings['moduleList'][$b]) ? $app_list_strings['moduleList'][$b] : $b;
+ if ($a > $b)
  {
   return 1;
  }

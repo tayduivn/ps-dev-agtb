@@ -481,7 +481,7 @@ function get_number_seperators($reset_sep = false)
 		$dec_sep = $sugar_config['default_decimal_seperator'];
 		if (!empty($current_user->id))
 		{
-			$user_dec_sep = $current_user->getPreference('decimal_seperator');
+			$user_dec_sep = $current_user->getPreference('dec_sep');
 			$dec_sep = (empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep);
 		}
 	}
@@ -491,7 +491,7 @@ function get_number_seperators($reset_sep = false)
 		$num_grp_sep = $sugar_config['default_number_grouping_seperator'];
 		if (!empty($current_user->id))
 		{
- 			$user_num_grp_sep = $current_user->getPreference('number_grouping_seperator');
+ 			$user_num_grp_sep = $current_user->getPreference('num_grp_sep');
 			$num_grp_sep = (empty($user_num_grp_sep) ? $sugar_config['default_number_grouping_seperator'] : $user_num_grp_sep);
 		}
 	}

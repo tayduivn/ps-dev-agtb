@@ -48,8 +48,8 @@
     <td ><slot>
         <table  cellpadding="0" cellspacing="0">
             <tr>
-                <td nowrap><input name='schedule_date_start' id='date_start_date' onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" tabindex='1' size='11' maxlength='10' type="text" disabled=""> 
-                            <img src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=jscalendar.gif" alt=$CALENDAR_DATEFORMAT  id="jscal_trigger" align="absmiddle" >&nbsp;
+                <td nowrap><input name='schedule_date_start' id='date_start_date' onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}');combo_date_start.update();" tabindex='1' size='11' maxlength='10' type="text" disabled="">
+                            <img src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=jscalendar.gif" alt="{$CALENDAR_DATEFORMAT}"  id="jscal_trigger" align="absmiddle" >&nbsp;
                             <input type="hidden" id="date_start" name="date_start" value="{$DATE_START}">
                             <span id="schedule_time_section"></span>
                 </td>

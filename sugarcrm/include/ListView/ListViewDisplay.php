@@ -400,8 +400,8 @@ EOHTML;
 	protected function buildMassUpdateLink()
 	{
 		global $app_strings;
-
-		return "<a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"document.getElementById('massupdate_form').style.display = '';\">{$app_strings['LBL_MASS_UPDATE']}</a>";
+        $onClick = "document.getElementById('massupdate_form').style.display = ''; var yLoc = YAHOO.util.Dom.getY('massupdate_form'); scroll(0,yLoc);";
+		return "<a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"$onClick\">{$app_strings['LBL_MASS_UPDATE']}</a>";
 	}
 
 	/**

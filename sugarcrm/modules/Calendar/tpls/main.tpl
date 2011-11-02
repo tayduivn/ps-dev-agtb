@@ -1,3 +1,31 @@
+{*
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+*}
 <link type="text/css" href="modules/Calendar/Cal.css" rel="stylesheet" />
 <script type="text/javascript" src="modules/Calendar/Cal.js"></script>
 <script type="text/javascript">
@@ -14,18 +42,22 @@
 	
 	SUGAR.util.doWhen(check_cal_loaded, function(){literal}{{/literal}
 	
-		CAL.pview = "{$pview}";
+		CAL.view = "{$view}";
+		CAL.style = "{$style}";
 		CAL.t_step = {$t_step};
 		CAL.current_user_id = "{$current_user_id}";	
 		CAL.current_user_name = "{$current_user_name}";
 		CAL.time_format = "{$time_format}";
 		CAL.items_draggable = "{$items_draggable}";
 		CAL.item_text = "{$item_text}";
-		CAL.mouseover_expand = "{$mouseover_expand}";
-		CAL.celcount = {$celcount};	
+		CAL.mouseover_expand = "{$mouseover_expand}";		
+		
 		CAL.cells_per_day = {$cells_per_day};	
 		CAL.current_params = {literal}{}{/literal};
-		CAL.dashlet = "{$dashlet}";		
+		CAL.dashlet = "{$dashlet}";	
+		
+		CAL.grid_start_ts = {$grid_start_ts};
+		CAL.scroll_slot = {$scroll_slot};
 
 		CAL.lbl_create_new = "{$MOD.LBL_CREATE_NEW_RECORD}";
 		CAL.lbl_edit = "{$MOD.LBL_EDIT_RECORD}";
@@ -36,32 +68,29 @@
 		CAL.lbl_error_loading = "{$MOD.LBL_ERROR_LOADING}";
 		CAL.lbl_another_browser = "{$MOD.LBL_ANOTHER_BROWSER}";
 		CAL.lbl_remove_participants = "{$MOD.LBL_REMOVE_PARTICIPANTS}";	
-		CAL.lbl_desc = "{$MOD.LBL_I_DESC}";
-		CAL.lbl_start_t = "{$MOD.LBL_I_START_DT}";
-		CAL.lbl_due_t = "{$MOD.LBL_I_DUE_DT}";
-		CAL.lbl_duration = "{$MOD.LBL_I_DURATION}";
-		CAL.lbl_name = "{$MOD.LBL_I_NAME}";
-		CAL.lbl_title = "{$MOD.LBL_I_TITLE}";
-		CAL.lbl_related = "{$MOD.LBL_I_RELATED_TO}";					
+		CAL.lbl_desc = "{$MOD.LBL_INFO_DESC}";
+		CAL.lbl_start = "{$MOD.LBL_INFO_START_DT}";
+		CAL.lbl_due = "{$MOD.LBL_INFO_DUE_DT}";
+		CAL.lbl_duration = "{$MOD.LBL_INFO_DURATION}";
+		CAL.lbl_name = "{$MOD.LBL_INFO_NAME}";
+		CAL.lbl_title = "{$MOD.LBL_INFO_TITLE}";
+		CAL.lbl_related = "{$MOD.LBL_INFO_RELATED_TO}";	
+		CAL.lbl_hours_abbrev = "{$MOD.LBL_HOURS_ABBREV}";
+		CAL.lbl_mins_abbrev = "{$MOD.LBL_MINS_ABBREV}";			
 	
 		CAL.img_edit_inline = "{$img_edit_inline}";
 		CAL.img_view_inline = "{$img_view_inline}";
 		CAL.img_close = "{$img_close}";		
-		CAL.scroll_slot = {$scroll_slot};
 		
-		CAL.fit_grid();
 		
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
 		if(scrollable){
 			scrollable.scrollTop = 15 * CAL.scroll_slot;
 		}
-		{/literal}
-					
-		
-				
-		
-		{if $pview == "shared"}
+		{/literal}			
+
+		{if $view == "shared"}
 			{counter name="un" start=0 print=false assign="un"}
 			{foreach name="shared" from=$shared_ids key=k item=member_id}				
 				CAL.shared_users['{$member_id}'] = '{$un}';
@@ -84,15 +113,8 @@
 		CAL.act_types['Meetings'] = 'meeting';
 		CAL.act_types['Calls'] = 'call';
 		CAL.act_types['Tasks'] = 'task';
-	
-		var d_param = "{$d_param}";
-		
+
 		{literal}
-		var nodes = CAL.query("#cal-grid div.left_cell:nth-child("+d_param+"), #cal-grid div.slot:nth-child("+d_param+")");
-		CAL.each(nodes,function(i,v){
-			if(!YAHOO.util.Dom.hasClass(nodes[i],"odd_border"))
-				YAHOO.util.Dom.addClass(nodes[i],"odd_border");
-		});		
 
 		if(CAL.items_draggable){			
 			var target_slots = [];			
@@ -103,9 +125,7 @@
 					target_slots[i] = new YAHOO.util.DDTarget(slots[i].id,"cal"); 
 				}
 			);			
-		}
-		
-			
+		}	
 		
 		var nodes = CAL.query("#cal-grid div.slot");
 		CAL.each(nodes, function(i,v){
@@ -126,7 +146,7 @@
 			});
 		});				
 		
-		CAL.init_record_dialog(
+		CAL.init_edit_dialog(
 				{
 					width: "{/literal}{$editview_width}{literal}",
 					height: "{/literal}{$editview_height}{literal}"
@@ -137,13 +157,13 @@
 			CAL.fit_grid();
 		});		
 				
-		YAHOO.util.Event.on("btn_save","click",function(){																		
+		YAHOO.util.Event.on("btn-save","click",function(){																		
 			if(!(check_form('CalendarEditView') && cal_isValidDuration()))
 				return false;								
 			CAL.dialog_save();	
 		});
 		
-		YAHOO.util.Event.on("btn_send_invites","click",function(){																		
+		YAHOO.util.Event.on("btn-send-invites","click",function(){																		
 			if(!(check_form('CalendarEditView') && cal_isValidDuration()))
 				return false;				
 			CAL.get("send_invites").value = "1";							
@@ -151,76 +171,76 @@
 		});		
 		
 
-		YAHOO.util.Event.on("btn_apply","click",function(){
+		YAHOO.util.Event.on("btn-apply","click",function(){
 			if(!(check_form('CalendarEditView') && cal_isValidDuration()))
 				return false;
 			CAL.dialog_apply();
 		});	
 				
-		YAHOO.util.Event.on("btn_delete","click",function(){
+		YAHOO.util.Event.on("btn-delete","click",function(){
 			if(CAL.get("record").value != "")
 				if(confirm(CAL.lbl_confirm_remove))
 					CAL.dialog_remove();				
 						
 		});	
 	
-		YAHOO.util.Event.on("btn_cancel","click",function(){			
-			CAL.recordDialog.cancel();						
+		YAHOO.util.Event.on("btn-cancel","click",function(){			
+			CAL.editDialog.cancel();						
 		}); 
 
-		CAL.select_tab("record_tabs-1");
+		CAL.select_tab("cal-tab-1");
 
-		YAHOO.util.Event.on(CAL.get("btn_cancel_settings"), 'click', function(){
+		YAHOO.util.Event.on(CAL.get("btn-cancel-settings"), 'click', function(){
 			CAL.settingsDialog.cancel();	
 		});
 		
-		YAHOO.util.Event.on(CAL.get("btn_save_settings"), 'click', function(){			
+		YAHOO.util.Event.on(CAL.get("btn-save-settings"), 'click', function(){			
 			CAL.get("form_settings").submit();
 		});
 		
 		{/literal}
 				
-
-		var ActRecords = [
+		var calendar_items = [
 			{$a_str}		
 		];
 			
 		{literal}
-		CAL.each(
-			ActRecords,
-			function(i,v){				
-				CAL.add_item_to_grid(ActRecords[i]);				
-			}			
-		);
+		CAL.each(calendar_items, function(i,v){				
+			CAL.add_item_to_grid(calendar_items[i]);				
+		});
 		{/literal}
+		
+		{if $view != "year"}
+		CAL.fit_grid();	
+		{/if}
 		
 		cal_loaded = null;		
 	});
 </script>
 			
-<div id="record_dialog" style="display: none;">
+<div id="cal-edit" style="display: none;">
 	
-	<div class="dialog_titlebar hd" id="dialog_titlebar"><span id="title-record_dialog"></span></div>
-	<div class="dialog_content bd" id="dialog_content">
-		<div id="record_tabs" class="yui-navset yui-navset-top yui-content" style="height: auto; padding: 0 2px;">
+	<div class="hd"><span id="title-cal-edit"></span></div>
+	<div class="bd" id="edit-dialog-content">
+		<div id="cal-tabs" class="yui-navset yui-navset-top yui-content" style="height: auto; padding: 0 2px;">
 			<ul class="yui-nav">
-				<li id="tab_general"><a tabname="record_tabs-1"><em>{$MOD.LBL_GENERAL_TAB}</em></a></li>
-				<li id="tab_invitees"><a tabname="record_tabs-2"><em>{$MOD.LBL_PARTICIPANTS_TAB}</em></a></li>
+				<li id="tab_general"><a tabname="cal-tab-1"><em>{$MOD.LBL_GENERAL_TAB}</em></a></li>
+				<li id="tab_invitees"><a tabname="cal-tab-2"><em>{$MOD.LBL_PARTICIPANTS_TAB}</em></a></li>
 			</ul>
-			<div id="record_tabs-1" class="yui-content">
-				{include file=$details}
+			<div id="cal-tab-1" class="yui-content">
+				{include file=$form}
 			</div>				
-			<div id="record_tabs-2" class="yui-content">
+			<div id="cal-tab-2" class="yui-content">
 				<div class="h3Row" id="scheduler"></div>
 			</div>
 		</div>
 	</div>	
-	<div id="cal_record_buttons" class="ft">
-		<button id="btn_save" class="button" type="button">{$MOD.LBL_SAVE_BUTTON}</button>&nbsp;
-		<button id="btn_delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>&nbsp;
-		<button id="btn_apply" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>&nbsp;
-		<button id="btn_send_invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>&nbsp;
-		<button id="btn_cancel" class="button" type="button" style="float: right;">{$MOD.LBL_CANCEL_BUTTON}</button>&nbsp;
+	<div id="cal-edit-buttons" class="ft">
+		<button id="btn-save" class="button" type="button">{$MOD.LBL_SAVE_BUTTON}</button>&nbsp;
+		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>&nbsp;
+		<button id="btn-apply" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>&nbsp;
+		<button id="btn-send-invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>&nbsp;
+		<button id="btn-cancel" class="button" type="button" style="float: right;">{$MOD.LBL_CANCEL_BUTTON}</button>&nbsp;
 	</div>
 </div>
 
@@ -255,22 +275,10 @@ YAHOO.util.Event.onDOMReady(function(){
 {/literal}	
 </script>
 	
-{if !$sugar_body_only}
 <script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
 <script type="text/javascript" src="include/javascript/jsclass_async.js"></script>	
 <script type="text/javascript" src="include/javascript/overlibmws.js"></script>
-{/if}
 	
-{if $hide_whole_day}
-<script type="text/javascript">
-	{literal}
-	var wd = document.getElementById("whole_day_button");
-	if(typeof wd != "undefined"){
-		wd.style.display = "none";
-	}
-	{/literal}
-</script>
-{/if}	
 <style type="text/css">
 {literal}
 	.schedulerDiv h3{
@@ -278,7 +286,7 @@ YAHOO.util.Event.onDOMReady(function(){
 	}
 {/literal}
 </style>	
-{if $pview == 'day'}
+{if $view == 'day'}
 <style type="text/css">
 {literal}
 	.day_col, .left_time_col{

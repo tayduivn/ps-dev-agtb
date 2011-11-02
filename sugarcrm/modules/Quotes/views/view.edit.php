@@ -329,3 +329,4 @@ class QuotesViewEdit extends ViewEdit
  		echo '<script>sqs_must_match = false;</script>';
  	}
 }
+

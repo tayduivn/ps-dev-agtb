@@ -140,6 +140,16 @@ class UnifiedSearchAdvanced {
 	}
 
 
+    /**
+     * search
+     *
+     * Search function run when user goes to Show All and runs a search again.  This outputs the search results
+     * calling upon the various listview display functions for each module searched on.
+     * 
+     * Todo: Sync this up with SugarSpot.php search method.
+     *
+     *
+     */
 	function search() {
 
         $unified_search_modules = $this->getUnifiedSearchModules();
@@ -249,6 +259,16 @@ class UnifiedSearchAdvanced {
                         $innerJoins[$field] = $def;
                         $def['innerjoin'] = str_replace('INNER', 'LEFT', $def['innerjoin']);
                     }
+
+                    if(isset($seed->field_defs[$field]['type']))
+                    {
+                        $type = $seed->field_defs[$field]['type'];
+                        if($type == 'int' && !is_numeric($this->query_string))
+                        {
+                            continue;
+                        }
+                    }
+
                     $unifiedSearchFields[ $moduleName ] [ $field ] = $def ;
                     $unifiedSearchFields[ $moduleName ] [ $field ][ 'value' ] = $this->query_string ;
                 }
@@ -352,10 +372,7 @@ class UnifiedSearchAdvanced {
 			if (!isset($beanFiles[$beanName]))
 				continue;
 
-			//BEGIN SUGARCRM flav!=sales ONLY
-			if($beanName == 'aCase') $beanName = 'Case';
-            //END SUGARCRM flav!=sales ONLY
-
+			$beanName = BeanFactory::getObjectName($moduleName);
 			$manager = new VardefManager ( );
 			$manager->loadVardef( $moduleName , $beanName ) ;
 
@@ -381,7 +398,7 @@ class UnifiedSearchAdvanced {
 			}				
 
             //If there are $searchFields are empty, just continue, there are no search fields defined for the module
-            if(empty($searchFields))
+            if(empty($searchFields[$moduleName]))
             {
                 continue;
             }

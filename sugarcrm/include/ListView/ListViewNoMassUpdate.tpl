@@ -32,9 +32,8 @@
 *}
 
 {if $overlib}
-	<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
-	<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws_iframe.js'}"></script>
-	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
+<script type='text/javascript' src='cache/include/javascript/sugar_grp_overlib.js'></script>
+<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 {/if}
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list View'>
@@ -49,7 +48,7 @@
 			<th scope='col' width='{$params.width}%' >
 				<span sugar="sugar{$colCounter}"><div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
                 {if $params.sortable|default:true}
-	                <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1' title=$arrowAlt>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}</a>&nbsp;&nbsp;
+	                <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1' title=$arrowAlt>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.$arrowExt{/capture}
@@ -65,6 +64,7 @@
                         {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT'}{/capture}
 						{sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 					{/if}
+                    </a>
 				{else}
 					{sugar_translate label=$params.label module=$pageData.bean.moduleDir}
 				{/if}

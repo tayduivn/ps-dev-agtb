@@ -115,7 +115,7 @@
 	<tr height='20'>
 		{if $prerow}
 			<th scope='col'>
-				<input type='checkbox' class='checkbox' id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
+				<input type='checkbox' title="{sugar_translate label='LBL_SELECT_ALL_TITLE'}" class='checkbox' id='massall' name='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 			</th>
 		{/if}
 		{foreach from=$displayColumns key=colHeader item=params}
@@ -132,14 +132,14 @@
 						{if $params.orderBy|default:$default_order|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
                                 {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-                                {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+                                {sugar_getimage name=$imageName width="$arrowWidth" height="$arrowHeight" alt="$arrowAlt" other_attributes='align="absmiddle" border="0" '}
 							{else}
                                 {capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-                                {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+                                {sugar_getimage name=$imageName width="$arrowWidth" height="$arrowHeight" alt="$arrowAlt" other_attributes='align="absmiddle" border="0" '}
 							{/if}
 						{else}
 							{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+							{sugar_getimage name=$imageName width="$arrowWidth" height="$arrowHeight" alt="$arrowAlt" other_attributes='align="absmiddle" border="0" '}
 						{/if}
 						</a>
 					{else}

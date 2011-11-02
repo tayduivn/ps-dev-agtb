@@ -38,5 +38,4 @@ $action_view_map['authorize']= 'authorize';
         template_calendar($args);
 	$mod_strings = return_module_language($current_language,$temp_module);
 	$currentModule = $_REQUEST['module'];
-?>
 */

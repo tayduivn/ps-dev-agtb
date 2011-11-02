@@ -90,9 +90,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='RowsAndColumns.gif'}" name="rowsColsImg" onclick="SUGAR.reports.selectReportType('tabular');"
 								onMouseOver="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumnsOver.gif'}'"
-								onMouseOut="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumns.gif'}'"></td>
+								onMouseOut="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumns.gif'}'"
+                                alt="{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_ROWS_AND_COLUMNS_REPORT}</h3><br/>
 								{$MOD.LBL_ROWS_AND_COLUMNS_REPORT_DESC}
 							</td>
 						</tr>
@@ -102,9 +103,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='Summation.gif'}" name="summationImg" onclick="SUGAR.reports.selectReportType('summation');"
 								onMouseOver="document.summationImg.src='{sugar_getimagepath file='SummationOver.gif'}'"
-								onMouseOut="document.summationImg.src='{sugar_getimagepath file='Summation.gif'}'"></td>
+								onMouseOut="document.summationImg.src='{sugar_getimagepath file='Summation.gif'}'"
+                                     alt="{$MOD.LBL_SUMMATION_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_SUMMATION_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_SUMMATION_REPORT}</h3>
 								{$MOD.LBL_SUMMATION_REPORT_DESC}
 							</td>
 						</tr>
@@ -116,9 +118,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='SummationWithDetails.gif'}" name="summationWithDetailsImg" onclick="SUGAR.reports.selectReportType('summation_with_details');"
 								onMouseOver="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetailsOver.gif'}'"
-								onMouseOut="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetails.gif'}'"></td>
+								onMouseOut="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetails.gif'}'"
+                                alt="{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS}</h3>
 								{$MOD.LBL_SUMMATION_REPORT_WITH_DETAILS_DESC}
 							</td>
 						</tr>
@@ -129,9 +132,10 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						<tr valign='top'>
 							<td><img src="{sugar_getimagepath file='MatrixReport.gif'}" name="matrixImg" onclick="SUGAR.reports.selectReportType('summation', true);"
 								onMouseOver="document.matrixImg.src='{sugar_getimagepath file='MatrixReportOver.gif'}'"
-								onMouseOut="document.matrixImg.src='{sugar_getimagepath file='MatrixReport.gif'}'"></td>
+								onMouseOut="document.matrixImg.src='{sugar_getimagepath file='MatrixReport.gif'}'"
+                                alt="{$MOD.LBL_MATRIX_REPORT}"></td>
 							<td>&nbsp;&nbsp;</td>
-							<td class="buttonText"><b>{$MOD.LBL_MATRIX_REPORT}</b><br/>
+							<td class="buttonText"><h3 class='bold'>{$MOD.LBL_MATRIX_REPORT}</h3>
 								{$MOD.LBL_MATRIX_REPORT_DESC}
 							</td>
 						</tr>
@@ -163,16 +167,12 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 								<td width="16%" style="padding: 5px;"  valign="top" id='buttons_td'>
 								     <table class='wizardButton' onclick='SUGAR.reports.moduleButtonClick("{$button.key}", this);' onmousedown="" onmouseout="" width="60%" border='1' id='{$button.name}'>
 								         <tr>
-											<td align="left" width='50%'><a class='studiolink' href="javascript:void(0)" >
-												{if $button.alt}
-													{$button.alt}
-												{else}
-													{sugar_getimage name=$button.img attr='border="0"'}
-												{/if}
-												</a>
+											<td align="left" width='50%'>
+                                                {capture assign="name"}{$button.img}{/capture}
+                                                {capture assign="alt"}{$button.name}{/capture}
+                                                <div><a class='studiolink' href="javascript:void(0)">{sugar_getimage name="$name" attr='border="0"' alt="$alt"}</a></div>
 											</td>
-											 <td align="left" width='50%' valign="middle"><a class='studiolink' href="javascript:void(0)" onclick="">{$button.name}</a></td>
-
+											<td align="left" width='50%' valign="middle"><a class='studiolink' href="javascript:void(0)" onclick="">{$button.name}</a></td>
 										 </tr>
 									 </table>
 								</td>
@@ -332,17 +332,17 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<div class="edit view">
 		<table id="report_details_table" border="0"  width="100%" cellspacing="0" cellpadding="0" >
 			<tr>
-				<td width="20%" scope='row'>{$MOD.LBL_REPORT_NAME}: <span class='required'>*</span></td>
-				<td><input type='text' size='45' name='save_report_as' value='{$save_report_as}'></td>
+				<td width="20%" scope='row'><label for='save_report_as'>{$MOD.LBL_REPORT_NAME}:</label> <span class='required'>*</span></td>
+				<td><input type='text' size='45' name='save_report_as' id='save_report_as' value='{$save_report_as}'></td>
 			</tr>
 			{if $IS_ADMIN}
 			<tr>
-				<td scope='row'>{$MOD.LBL_SHOW_QUERY}:</td>
-				<td><input type="checkbox" class="checkbox" name="show_query"  {if ($show_query)}CHECKED{/if}></td>
+				<td scope='row'><label for='show_query'>{$MOD.LBL_SHOW_QUERY}:</label></td>
+				<td><input type="checkbox" class="checkbox" name="show_query" id='show_query'  {if ($show_query)}CHECKED{/if}></td>
 			</tr>			
 			{/if}
 			<tr>
-				<td scope='row'>{$MOD.LBL_OWNER}: <span class='required'>*</span></td>
+				<td scope='row'><label for='assigned_user_name'>{$MOD.LBL_OWNER}:</label> <span class='required'>*</span></td>
 				<td>{$USER_HTML}</td>
 			</tr>	
 			{* //BEGIN SUGARCRM flav=pro ONLY *}
@@ -357,7 +357,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 				<td><div id='outerjoin_div'></div></td>
 			</tr>
 			<tr id='matrixLayoutRow' style="display:none">
-				<td scope='row'>{$MOD.LBL_MATRIX_LAYOUT}</td>
+				<td scope='row'><label for='layout_options'>{$MOD.LBL_MATRIX_LAYOUT}</label></td>
 				<td><select name='layout_options' id='layout_options'>
 					<option value='1x2'>{$MOD.LBL_1X2}</option>
 					<option value='2x1'>{$MOD.LBL_2X1}</option>

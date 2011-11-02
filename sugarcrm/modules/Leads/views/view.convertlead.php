@@ -156,13 +156,17 @@ class ViewConvertLead extends SugarView
 					{
 						$tmp_field = str_replace("billing_", "primary_", $field);
 						$focus->field_defs[$field]["type"] = "text";
-						$focus->$field = $this->focus->$tmp_field;
+                        if (isset($this->focus->$tmp_field)) {
+						    $focus->$field = $this->focus->$tmp_field;
+                        }
 					 }
 
 					else if (strpos($field, "shipping_address") !== false && $focus->field_defs[$field]["type"] == "varchar") /* Bug 42219 fix */
 					{
 						$tmp_field = str_replace("shipping_", "primary_", $field);
-						$focus->$field = $this->focus->$tmp_field;
+						if (isset($this->focus->$tmp_field)) {
+                            $focus->$field = $this->focus->$tmp_field;
+                        }
 						$focus->field_defs[$field]["type"] = "text";
 					}    					
                     else if (isset($this->focus->$field))
@@ -323,6 +327,7 @@ class ViewConvertLead extends SugarView
             require_once('modules/Contacts/ContactFormBase.php');
             $contactForm = new ContactFormBase();
             $duplicateContacts = $contactForm->checkForDuplicates('Contacts');
+
             if (isset($duplicateContacts))
             {
                 echo $contactForm->buildTableForm($duplicateContacts,  'Contacts');
@@ -396,40 +401,48 @@ class ViewConvertLead extends SugarView
         //Handle non-contacts relationships
         foreach ($beans as $bean)
         {
-        	if (!empty($lead))
-			{
-	    		//BEGIN SUGARCRM flav=pro ONLY
-	        	if(empty($bean->team_name))
-	        	{
-	        	   $bean->team_id = $lead->team_id;
-	        	   $bean->team_set_id = $lead->team_set_id;
-	        	}
-				//END SUGARCRM flav=pro ONLY
-	        	if (empty($bean->assigned_user_id))
-				{
-					$bean->assigned_user_id = $lead->assigned_user_id;
-				}
-				$leadsRel = $this->findRelationship($bean, $lead);
-				if (!empty($leadsRel))
-				{
-
-					$bean->load_relationship ($leadsRel) ;
-                    if (!$bean->$leadsRel->isParentRelationship()) {
-                        $bean->$leadsRel->add($lead);
+            if (!empty($lead))
+            {
+                //BEGIN SUGARCRM flav=pro ONLY
+                if(empty($bean->team_name))
+               {
+                   $bean->team_id = $lead->team_id;
+                   $bean->team_set_id = $lead->team_set_id;
+                }
+                //END SUGARCRM flav=pro ONLY
+                if (empty($bean->assigned_user_id))
+                {
+                    $bean->assigned_user_id = $lead->assigned_user_id;
+                }
+                $leadsRel = $this->findRelationship($bean, $lead);
+                if (!empty($leadsRel))
+                {
+                    $bean->load_relationship($leadsRel);
+                    $relObject = $bean->$leadsRel->getRelationshipObject();
+                    if ($relObject->relationship_type == "one-to-many" && $bean->$leadsRel->_get_bean_position())
+                    {
+                        $id_field = $relObject->rhs_key;
+                        $lead->$id_field = $bean->id;
                     }
-				}
-			}
-			//Special case code for opportunities->Accounts
-			if ($bean->object_name == "Opportunity" && empty($bean->account_id))
-			{
-				if( isset($beans['Accounts'])) {
-					$bean->account_id = $beans['Accounts']->id;
-					$bean->account_name = $beans['Accounts']->name;
-				}
-				else if (!empty($selects['Accounts'])){
-					 $bean->account_id = $selects['Accounts'];
-				}
-			}
+                    else 
+                    {
+                        $bean->$leadsRel->add($lead->id);
+                    }
+                }
+            }
+            //Special case code for opportunities->Accounts
+            if ($bean->object_name == "Opportunity" && empty($bean->account_id))
+            {
+                if (isset($beans['Accounts']))
+                {
+                    $bean->account_id = $beans['Accounts']->id;
+                    $bean->account_name = $beans['Accounts']->name;
+                }
+                else if (!empty($selects['Accounts']))
+                {
+                    $bean->account_id = $selects['Accounts'];
+                }
+            }
 
             //create meetings-users relationship
             if ($bean->object_name == "Meeting")

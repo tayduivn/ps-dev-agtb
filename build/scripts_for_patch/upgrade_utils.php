@@ -35,8 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) {
  * $Id: upgrade_utils.php 52098 2009-11-02 18:38:07Z ajay $
  */
 
-require_once('include/database/PearDatabase.php');
-require_once('include/database/DBManager.php');
+require_once('include/database/DBManagerFactory.php');
 ///////////////////////////////////////////////////////////////////////////////
 ////	UPGRADE UTILS
 /**
@@ -78,7 +77,7 @@ function _logThis($entry) {
  function dropColumnConstraintForMSSQL($tableName, $columnName) {
 	global $sugar_config;
 	if($sugar_config['dbconfig']['db_type'] == 'mssql') {
-    	$db = & PearDatabase::getInstance();
+    	$db = DBManagerFactory::getInstance();
     	$query = "declare @name nvarchar(32), @sql nvarchar(1000)";
 
 		$query = $query . " select @name = sys.objects.name from sys.objects where type_desc like '%CONSTRAINT' and (OBJECT_NAME(parent_object_id) like '%{$tableName}%') and sys.objects.object_id in (select default_object_id from sys.columns where name like '{$columnName}')";
@@ -182,15 +181,15 @@ function _run_sql_file($filename) {
     $lastsemi   = strrpos($contents, ';') ;
     $contents   = substr($contents, 0, $lastsemi);
     $queries    = split(';', $contents);
-    $db         = & PearDatabase::getInstance();
+    $db         = DBManagerFactory::getInstance();
 
 	foreach($queries as $query){
 		if(!empty($query)){
 			_logThis("Sending query: ".$query, $path);
 			if($db->dbType == 'oci8') {
-				//BEGIN SUGARCRM flav=ent ONLY 
+				//BEGIN SUGARCRM flav=ent ONLY
 				$query_result = $db->query($query, true, "An error has occured while performing db query.  See log file for details.<br>");
-				//END SUGARCRM flav=ent ONLY 
+				//END SUGARCRM flav=ent ONLY
 			} else {
 				$query_result = $db->query($query.';', true, "An error has occured while performing db query.  See log file for details.<br>");
 			}
@@ -200,7 +199,7 @@ function _run_sql_file($filename) {
 	return(true);
 }
 
-// BEGIN SUGARCRM flav=ent ONLY 
+// BEGIN SUGARCRM flav=ent ONLY
 function run_sql_file_for_oracle($filename) {
 	if(!is_file($filename)) {
 		_logThis("*** ERROR: Could not find file: {$filename}");
@@ -214,7 +213,7 @@ function run_sql_file_for_oracle($filename) {
 	$lastsemi   = strrpos($contents, ';') ;
 	$contents   = substr($contents, 0, $lastsemi);
 	$queries    = split(';', $contents);
-	$db         = & PearDatabase::getInstance();
+	$db         = DBManagerFactory::getInstance();
 
 	foreach($queries as $query) {
 		if(!empty($query)) {
@@ -225,14 +224,14 @@ function run_sql_file_for_oracle($filename) {
 
 	return(true);
 }
-// END SUGARCRM flav=ent ONLY 
+// END SUGARCRM flav=ent ONLY
 ////	END SCHEMA CHANGE METHODS
 ///////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	FIX THINGS IN UPGRADE FUNCTIONS
-// BEGIN SUGARCRM flav=pro ONLY 
+// BEGIN SUGARCRM flav=pro ONLY
 /**
  * creates global & private teams and adds users to them (meant for flavor
  * conversion upgrades
@@ -316,7 +315,7 @@ function doTeams() {
 }
 
 
-// END SUGARCRM flav=pro ONLY 
+// END SUGARCRM flav=pro ONLY
 ////	END FIX THINGS IN UPGRADE FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////
 ?>

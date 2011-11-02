@@ -325,7 +325,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             } else {
                 $this->xTemplate->assign('TAG_NAME','span');
             }
-            $this->xTemplate->assign('CHECKALL', "<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked);' />");
+            $this->xTemplate->assign('CHECKALL', "<input type='checkbox'  title='".$GLOBALS['app_strings']['LBL_SELECT_ALL_TITLE']."' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked);' />");
         }
 
         if($oddRow)
@@ -1224,7 +1224,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 }
 
                 $html_text = '';
-                $html_text .= "<tr class='pagination'>\n";
+                $html_text .= "<tr class='pagination' role='presentation'>\n";
                 $html_text .= "<td COLSPAN=\"$col_count\" align=\"right\">\n";
                 //$html_text .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td align=\"left\"  >$export_link$merge_link$selected_objects_span</td>\n";
                 //$html_text .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td align=\"left\"  >";
@@ -1376,7 +1376,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             }
             $this->xTemplate->assign('PREROW', $prerow);
 
-            $this->xTemplate->assign('CHECKALL', "<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked)'>");
+            $this->xTemplate->assign('CHECKALL', "<input type='checkbox' class='checkbox'  title='".$GLOBALS['app_strings']['LBL_SELECT_ALL_TITLE']."'  name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked)'>");
             }
             if(!isset($this->data_array)) {
                 $tag = $aItem->listviewACLHelper();
@@ -1523,7 +1523,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 if($orderBy == $column_name || (isset($widget_args['sort_by']) && str_replace('.','_',$widget_args['sort_by']) == $orderBy))
                 {
                     $imgArrow = "_down";
-                    if($this->sort_order == 'desc') {
+                    if($this->sort_order == 'asc') {
                         $imgArrow = "_up";
                     }
                 }

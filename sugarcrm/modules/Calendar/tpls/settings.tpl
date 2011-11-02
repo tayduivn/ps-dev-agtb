@@ -1,8 +1,36 @@
+{*
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+*}
 <div id="settings_dialog" style="width: 340px; display: none;">
 	<div class="hd">{$MOD.LBL_SETTINGS_TITLE}</div>
 	<div class="bd">
 	<form name="settings" id="form_settings" method="POST" action="index.php?module=Calendar&action=SaveSettings">
-		<input type="hidden" name="view" value="{$pview}">
+		<input type="hidden" name="view" value="{$view}">
 		<input type="hidden" name="day" value="{$day}">
 		<input type="hidden" name="month" value="{$month}">
 		<input type="hidden" name="year" value="{$year}">
@@ -14,11 +42,11 @@
 					</td>
 					<td>
 						<div id="d_start_time_section">
-							<select size="1" id="d_start_hours" name="d_start_hours" tabindex="102">
+							<select size="1" id="day_start_hours" name="day_start_hours" tabindex="102">
 								{$TIME_START_HOUR_OPTIONS1}
 							</select>&nbsp;:
 							
-							<select size="1" id="d_start_minutes" name="d_start_minutes"  tabindex="102">
+							<select size="1" id="day_start_minutes" name="day_start_minutes"  tabindex="102">
 								{$TIME_START_MINUTES_OPTIONS1}
 							</select>
 								&nbsp;
@@ -32,11 +60,11 @@
 					</td>
 					<td>
 						<div id="d_end_time_section">
-							<select size="1" id="d_end_hours" name="d_end_hours" tabindex="102">
+							<select size="1" id="day_end_hours" name="day_end_hours" tabindex="102">
 								{$TIME_START_HOUR_OPTIONS2}
 							</select>&nbsp;:
 							
-							<select size="1" id="d_end_minutes" name="d_end_minutes"  tabindex="102">
+							<select size="1" id="day_end_minutes" name="day_end_minutes"  tabindex="102">
 								{$TIME_START_MINUTES_OPTIONS2}
 							</select>
 								&nbsp;
@@ -71,8 +99,8 @@
 	
 	
 	<div style="text-align: right;">
-		<button id="btn_save_settings" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>&nbsp;
-		<button id="btn_cancel_settings" class="button" type="button">{$MOD.LBL_CANCEL_BUTTON}</button>&nbsp;
+		<button id="btn-save-settings" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>&nbsp;
+		<button id="btn-cancel-settings" class="button" type="button">{$MOD.LBL_CANCEL_BUTTON}</button>&nbsp;
 	</div>
 	</div>
 </div>

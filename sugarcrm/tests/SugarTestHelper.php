@@ -92,6 +92,9 @@ $focus->retrieveSettings();
 $focus->saveSetting('system','adminwizard',1);
 
 // include the other test tools
+require_once 'SugarTestObjectUtilities.php';
+require_once 'SugarTestProjectUtilities.php';
+require_once 'SugarTestProjectTaskUtilities.php';
 require_once 'SugarTestUserUtilities.php';
 require_once 'SugarTestLangPackCreator.php';
 require_once 'SugarTestThemeUtilities.php';
@@ -115,7 +118,6 @@ require_once 'SugarTestQuoteUtilities.php';
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
-require_once 'SugarTestProductBundleNoteUtilities.php';
 //END SUGARCRM flav=pro ONLY
 
 $GLOBALS['db']->commit();
@@ -132,6 +134,7 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         if(isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
+        SugarCache::instance()->flush();
     }
 
     protected function assertPostConditions() {
@@ -176,6 +179,14 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
     protected $_notRegex;
     protected $_outputCheck;
 
+    protected function assertPreConditions()
+    {
+        if(isset($GLOBALS['log'])) {
+            $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
+        }
+        SugarCache::instance()->flush();
+    }
+
     protected function assertPostConditions() {
         if(!empty($_REQUEST)) {
             foreach(array_keys($_REQUEST) as $k) {
@@ -193,6 +204,9 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
             foreach(array_keys($_GET) as $k) {
 		        unset($_GET[$k]);
 		    }
+        }
+        if(isset($GLOBALS['log'])) {
+            $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
         }
     }
 

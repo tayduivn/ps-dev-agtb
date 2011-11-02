@@ -45,3 +45,4 @@ EOHTML;
         return $str;
     }
 }
+

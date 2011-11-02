@@ -56,7 +56,6 @@
 <input type="hidden" name="from_admin_wizard" value="{$FROM_ADMIN}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <p>
-<<<<<<< HEAD
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
             <td>
@@ -89,12 +88,12 @@
                             <tr id="ext_source_csv">
                                 <td colspan="3" scope="row">
                                     <span><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
-                                  &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
+                                  &nbsp;<label for="source">{$MOD.LBL_CSV}</label>&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
                                 </td>
                             </tr>
                             <tr id="ext_source_tr">
                                 <td colspan="3" scope="row"><span><input class="radio" type="radio" name="source" value="external" id="ext_source" />
-                  &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
+                  &nbsp;<label for="source">{$MOD.LBL_EXTERNAL_SOURCE}</label>&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
                                 </td>
                             </tr>
                             <tr scope="row" id="external_sources_tr" style="display:none;" >
@@ -121,7 +120,6 @@
                         </td>
                     </tr>
                 </table>
-=======
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
 <tr>
     <td>

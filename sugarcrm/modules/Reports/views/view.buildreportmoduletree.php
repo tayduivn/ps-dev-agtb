@@ -81,14 +81,22 @@ class ReportsViewBuildreportmoduletree extends SugarView
 			
 			$custom_label = 'LBL_' . strtoupper ( $relationship->relationship_name . '_FROM_' . $relationship->lhs_module  ) . '_TITLE';
 			$custom_subpanel_label  = 'LBL_' . strtoupper ( $link_module) . '_SUBPANEL_TITLE';
-
+			//bug 47834
+			$lang = $GLOBALS['current_language'];
+			$file_path= "custom/modules/".$_REQUEST['report_module']."/Ext/Language/".$lang.".lang.ext.php";
+			if(file_exists($file_path))
+			{
+				require 'custom/modules/'.$_REQUEST['report_module'].'/Ext/Language/'.$lang.'.lang.ext.php';
+			}//end 47834
 			// Bug 37308 - Check if the label was changed in studio
-            if (translate($custom_label, $_REQUEST['report_module']) != $custom_label) 
+		    //bug 47834 -  added check to see if the new label name is set in custom $lang.lang.ext.php file
+            if (translate($custom_label, $_REQUEST['report_module']) != $custom_label && isset($mod_strings[$custom_label])) 
 			{
 				$linked_field['label'] = translate($custom_label, $_REQUEST['report_module']);
             }
 			// Bug 37308 - Check if the label was changed in studio
-            elseif (translate($custom_subpanel_label, $_REQUEST['report_module']) != $custom_subpanel_label && $link_module != $_REQUEST['report_module']) 
+			//bug 47834 -  added check to see if the new label name is set in custom $lang.lang.ext.php file
+            elseif (translate($custom_subpanel_label, $_REQUEST['report_module']) != $custom_subpanel_label && $link_module != $_REQUEST['report_module'] && isset($mod_strings[$custom_subpanel_label])) 
 			{
 				$linked_field['label'] = translate($custom_subpanel_label, $_REQUEST['report_module']);
             }			
