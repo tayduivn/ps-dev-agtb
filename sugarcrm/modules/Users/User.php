@@ -969,14 +969,8 @@ EOQ;
 			$verified = FALSE;
 		}
 
-		if (($current_user->is_admin == "on")) {
-            if($this->db->dbType == 'mssql'){
-                $query = "SELECT user_name from users where is_admin = 1 AND deleted=0";
-            }else{
-                $query = "SELECT user_name from users where is_admin = 'on' AND deleted=0";
-            }
-			$result = $this->db->query($query, true, "Error selecting possible duplicate users: ");
-			$remaining_admins = $this->db->getRowCount($result);
+		if (is_admin($current_user)) {
+		    $remaining_admins = $this->db->getOne("SELECT COUNT(*) as c from users where (is_admin = 1 OR is_admin = 'on') AND deleted=0");
 
 			if (($remaining_admins <= 1) && ($this->is_admin != "on") && ($this->id == $current_user->id)) {
 				$GLOBALS['log']->debug("Number of remaining administrator accounts: {$remaining_admins}");
@@ -1546,13 +1540,13 @@ EOQ;
      * @return string
      */
     protected function _fixupModuleForACL($module) {
-        if($module=='ContractTypes') { 
+        if($module=='ContractTypes') {
             $module = 'Contracts';
         }
         if(preg_match('/Product[a-zA-Z]*/',$module)) {
             $module = 'Products';
         }
-        
+
         return $module;
     }
     /**
@@ -1575,9 +1569,9 @@ EOQ;
         // These modules don't take kindly to the studio trying to play about with them.
         static $ignoredModuleList = array('iFrames','Feeds','Home','Dashboard','Calendar','Activities','Reports');
 
-        
+
         $actions = ACLAction::getUserActions($this->id);
-        
+
         foreach ($beanList as $module=>$val) {
             // Remap the module name
             $module = $this->_fixupModuleForACL($module);
@@ -1591,7 +1585,7 @@ EOQ;
             }
 
             $key = 'module';
-            
+
             if (($this->isAdmin() && isset($actions[$module][$key]))
             //BEGIN SUGARCRM flav=pro ONLY
                 || (isset($actions[$module][$key]['admin']['aclaccess']) &&
@@ -1604,7 +1598,7 @@ EOQ;
             }
         }
 
-        return $myModules;        
+        return $myModules;
     }
     /**
      * Is this user a system wide admin
@@ -1656,9 +1650,9 @@ EOQ;
         if ($this->isAdmin()) {
             return true;
         }
-        
+
         $devModules = $this->getDeveloperModules();
-        
+
         $module = $this->_fixupModuleForACL($module);
 
         if (in_array($module,$devModules) ) {
@@ -1688,9 +1682,9 @@ EOQ;
         if ($this->isAdmin()) {
             return true;
         }
-        
+
         $adminModules = $this->getAdminModules();
-        
+
         $module = $this->_fixupModuleForACL($module);
 
         if (in_array($module,$adminModules) ) {
