@@ -457,4 +457,23 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // cleanup
         unlink($sample_file);
     }
+
+    /**
+     * @ticket 48289
+     */
+    public function testTabDelimiter() {
+        // create the test file
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/TestCharset.csv';
+        copy('tests/modules/Import/TestCharset.csv', $sample_file);
+
+        // use '\t' to simulate the bug
+        $importFile = new ImportFile($sample_file, '\t', '"', false, false);
+        $this->assertTrue($importFile->fileExists());
+        $c = $importFile->getNextRow();
+        $this->assertTrue(is_array($c), 'incorrect return type.');
+        $this->assertEquals(1, count($c), 'incorrect array count.');
+
+        // cleanup
+        unlink($sample_file);
+    }
 }
