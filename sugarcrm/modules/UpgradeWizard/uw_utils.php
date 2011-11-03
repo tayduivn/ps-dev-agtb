@@ -2518,6 +2518,19 @@ function deletePackageOnCancel(){
     }
 }
 
+function handleExecuteSqlKeys($db, $tableName, $disable)
+{
+    if(empty($tableName)) return true;
+    if(is_callable(array($db, "supports"))) {
+        // new API
+        return $disable?$db->disableKeys($tableName):$db->enableKeys($tableName);
+    } else {
+        // old api
+        $op = $disable?"DISABLE":"ENABLE";
+        return $db->query("ALTER TABLE $tableName $op KEYS");
+    }
+}
+
 function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 {
 	global $sugar_config;
@@ -2572,18 +2585,18 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 							// if $count=1 means it is just found so skip the query. Run the next one
 							if($query != null && $resumeAfterFound && $count >1){
     							$tableName = getAlterTable($query);
-								if($disable_keys && !empty($tableName))
+								if($disable_keys)
 								{
-									$db->disableKeys($tableName);
+									handleExecuteSqlKeys($db, $tableName, true);
 								}
 								$db->query($query);
 								if($db->checkError()){
 									//put in the array to use later on
 									$_SESSION['sqlSkippedQueries'][] = $query;
 								}
-								if($disable_keys && !empty($tableName))
+								if($disable_keys)
 								{
-									$db->enableKeys($tableName);
+									handleExecuteSqlKeys($db, $tableName, false);
 								}
 								$progQuery[$forStepQuery]=$query;
 								post_install_progress($progQuery,$action='set');
@@ -2591,14 +2604,14 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 						}
 						elseif($query != null){
 							$tableName = getAlterTable($query);
-							if($disable_keys && !empty($tableName))
+							if($disable_keys)
 							{
-								$db->disableKeys($tableName);
+								handleExecuteSqlKeys($db, $tableName, true);
 							}
 							$db->query($query);
-							if($disable_keys && !empty($tableName))
+							if($disable_keys)
 							{
-								$db->enableKeys($tableName);
+								handleExecuteSqlKeys($db, $tableName, false);
 							}
 							$progQuery[$forStepQuery]=$query;
 							post_install_progress($progQuery,$action='set');
