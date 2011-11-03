@@ -2527,7 +2527,7 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 		$_SESSION['sqlSkippedQueries'] = array();
 	}
 	$db = DBManagerFactory::getInstance();
-	$disable_keys = $db->supports("disable_keys");
+	$disable_keys = ($db->dbType == "mysql"); // have to use old way for now for upgrades
 	if(strpos($resumeFromQuery,",") != false){
 		$resumeFromQuery = explode(",",$resumeFromQuery);
 	}
@@ -3282,7 +3282,7 @@ function upgradeUserPreferences() {
    	while($row = $db->fetchByAssoc($result))
     {
         $current_user = new User();
-        
+
         // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
         upgradeLocaleNameFormat($current_user->getPreference('default_locale_name_format'));
 
@@ -3291,7 +3291,7 @@ function upgradeUserPreferences() {
 	      $current_user->retrieve($row['id']);
 
 
-          
+
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3378,7 +3378,7 @@ function upgradeUserPreferences() {
         //END SUGARCRM flav=pro ONLY
 	} //while
 //BEGIN SUGARCRM flav=pro ONLY
-    
+
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable
@@ -4078,7 +4078,7 @@ function upgradeModulesForTeam() {
 	function check_FTS(){
 		//check to see if FTS is installed
 		global $sugar_config;
-		if($GLOBALS['db']->supports('fulltext') && $GLOBALS['db']->full_text_indexing_installed()) {
+		if(is_callable(array($GLOBALS['db'], "supports")) && $GLOBALS['db']->supports('fulltext') && $GLOBALS['db']->full_text_indexing_installed()) {
             return true;
 		}
 		return false;
