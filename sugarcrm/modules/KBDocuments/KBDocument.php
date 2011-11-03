@@ -284,7 +284,8 @@ class KBDocument extends SugarBean {
         }
         //END SUGARCRM flav=pro ONLY
         if(!empty($where) && trim($where) != '') {
-            $ret_array['where'] = ' WHERE '. $where;
+            // Strip leading AND or OR for bug 48173
+            $ret_array['where'] = ' WHERE '. preg_replace('(^\s*(AND)|(OR)\s+)', '', $where);
         } else {
             $ret_array['where'] = '';
         }
