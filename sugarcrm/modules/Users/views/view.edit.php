@@ -64,9 +64,17 @@ class UsersViewEdit extends ViewEdit {
     function display() {
         global $current_user, $app_list_strings;
 
+
+        //lets set the return values
+        if(isset($_REQUEST['return_module'])){
+            $this->ss->assign('RETURN_MODULE',$_REQUEST['return_module']);
+        }
+
+        //reset the id if this is a duplicate bean
         if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
             $this->bean->id = "";
             $this->bean->user_name = "";
+            $this->ss->assign('ID','');//RETURN_ID
         }
 
         ///////////////////////////////////////////////////////////////////////////////
