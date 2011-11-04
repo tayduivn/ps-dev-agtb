@@ -526,6 +526,10 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'len' => '255',
                     ),
                 false),
+                );
+        // Oracle doesn't allow to shrink columns
+        if($this->_db->dbType == "oci8" ) return $returnArray;
+        $returnArray[] =
             array(
                 array(
                     'name' => 'foo',
@@ -537,8 +541,9 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'varchar',
                     'len' => '123',
                     ),
-                ($this->_db->dbType=="oci8")?true:false), // Oracle doesn't allow to shrink columns
-			array(
+                false);
+        $returnArray[] =
+            array(
                 array(
                     'name' => 'foo',
                     'type' => 'varchar',
@@ -549,8 +554,7 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'varchar',
                     'len' => '123',
                     ),
-                ($this->_db->dbType=="oci8")?true:false)	// Oracle doesn't allow to shrink columns
-           );
+                false);
 
         return $returnArray;
     }
