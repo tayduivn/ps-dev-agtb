@@ -73,7 +73,7 @@ class OracleManager extends DBManager
 
     protected $type_map = array(
             'int'      => 'number',
-            'double'   => 'number(30,10)',
+            'double'   => 'number(38,10)',
             'float'    => 'number(30,6)',
             'uint'     => 'number(15)',
             'ulong'    => 'number(38)',
@@ -914,7 +914,7 @@ class OracleManager extends DBManager
 	    		$colData = $this->splitType($colArray['colType']);
 	    		// Oracle does not allow to shrink column sizes or decrease precision
 	    		// unless the column is empty
-	    		if(!empty($colArray['colType']) && $nowCol['type'] == $colData['type']
+	    		if(!empty($colArray['colType']) && !empty($nowCol['type']) && $nowCol['type'] == $colData['type']
 	    		        && !empty($colData['len'])              // if we don't define length, OK
 	    		        && $nowCol['len'] != $colData['len']    // if it's the same length as it was, OK
 	    		        && $nowCol['len'] != $colData['type_len'] // if it's the same length counting precision, OK

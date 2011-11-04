@@ -1241,6 +1241,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAlterColumn($i, $target, $temp)
     {
+        if($this->_db->dbType == "oci8" && ($i == 4 || $i == 6)) {
+            $this->markTestSkipped("Cannot reliably shrink columns in Oracle");
+        }
+
         $foo_col = array ('name' => 'foo', 'type' => 'varchar', 'len' => '255'); // Common column between tables
 
         $tablebase = 'testac_'. mt_rand() . '_';
