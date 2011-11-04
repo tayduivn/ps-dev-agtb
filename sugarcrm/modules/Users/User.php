@@ -970,7 +970,7 @@ EOQ;
 		}
 
 		if (is_admin($current_user)) {
-		    $remaining_admins = $this->db->getOne("SELECT COUNT(*) as c from users where (is_admin = 1 OR is_admin = 'on') AND deleted=0");
+		    $remaining_admins = $this->db->getOne("SELECT COUNT(*) as c from users where is_admin = 1 AND deleted=0");
 
 			if (($remaining_admins <= 1) && ($this->is_admin != "on") && ($this->id == $current_user->id)) {
 				$GLOBALS['log']->debug("Number of remaining administrator accounts: {$remaining_admins}");
