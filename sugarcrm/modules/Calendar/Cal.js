@@ -931,8 +931,8 @@
 							e.setAttribute("disabled","disabled");
 						if(e = CAL.get("radio_meeting"))
 							e.setAttribute("disabled","disabled");													
+						
 
-						CAL.get("btn-apply").setAttribute("disabled","disabled");
 						
 						var callback = {
 								success: function(o){
@@ -947,6 +947,7 @@
 										CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
 										if(e = CAL.get("send_invites"))
 											e.removeAttribute("checked");
+
 										ajaxStatus.hideStatus();											
 									}else{
 										alert(CAL.lbl_error_saving);
