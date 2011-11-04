@@ -537,7 +537,7 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'varchar',
                     'len' => '123',
                     ),
-                $this->_db->dbType=="oci8"?true:false), // Oracle doesn't allow to shrink columns
+                ($this->_db->dbType=="oci8")?true:false), // Oracle doesn't allow to shrink columns
 			array(
                 array(
                     'name' => 'foo',
@@ -549,7 +549,7 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'varchar',
                     'len' => '123',
                     ),
-                $this->_db->dbType=="oci8"?true:false)	// Oracle doesn't allow to shrink columns
+                ($this->_db->dbType=="oci8")?true:false)	// Oracle doesn't allow to shrink columns
            );
 
         return $returnArray;
