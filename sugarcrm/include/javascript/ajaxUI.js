@@ -58,6 +58,7 @@ SUGAR.ajaxUI = {
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
 
+            //BEGIN SUGARCRM flav=pro ONLY
             if (r.record)
             {
                 DCMenu.record = r.record;
@@ -66,6 +67,8 @@ SUGAR.ajaxUI = {
             {
                 DCMenu.module = r.menu.module;
             }
+            //END SUGARCRM flav=pro ONLY
+
             // set response time from ajax response
             if(typeof(r.responseTime) != 'undefined'){
                 var rt = document.getElementById('responseTime');
@@ -308,7 +311,7 @@ SUGAR.ajaxUI = {
                 modal:true,
                 visible:false
             });
-            SUGAR.ajaxUI.loadingPanel.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=img_loading.gif" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
+            SUGAR.ajaxUI.loadingPanel.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.loading_image + '" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
             SUGAR.ajaxUI.loadingPanel.render(document.body);
         }
 

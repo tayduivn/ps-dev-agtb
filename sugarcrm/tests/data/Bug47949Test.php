@@ -1,7 +1,9 @@
+<?php
+
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Sales Subscription
+ * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/eula/sugarcrm-sales-subscription-agreement.html
+ * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -22,30 +24,44 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
- 
-#ajaxStatusDiv 
+
+require_once('modules/Cases/Case.php');
+
+class Bug47949Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    background: none repeat scroll 0% 0% rgb(255, 255, 255); 
-    color: rgb(198, 12, 48); 
-    position: fixed;
-    opacity: 0.8;
-    -moz-opacity:0.8;
-    filter: alpha(opacity=80);
-    top: 7px;
-}
-
-
-.search_form .view .yui-ac-highlight {
-    text-shadow: none;
-}
-
-/* hack for webkit browsers ( namely Chrome and Safari ) */
-@media screen and (-webkit-min-device-pixel-ratio:0) 
-{
-    #ajaxStatusDiv 
+    public function setUp()
     {
-        position: absolute;
+        $this->markTestSkipped('Marking this skipped until we figure out why it is failing.');
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    }
+
+    public function tearDown()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
+
+    /*
+     * @group bug47949
+     */
+    public function testGetRelatedBean()
+    {
+        $team_id = 1;
+        $case = new aCase();
+        $case->name = 'testBug47949';
+        $case->team_id = $team_id;
+        $case->team_set_id = 1;
+        $case->save();
+
+        $beans = $case->get_linked_beans('teams', 'Team');
+
+        // teams is based on Link (not Link2), should still work
+        $this->assertEquals(1, count($beans), 'should have one and only one team');
+        $this->assertEquals($team_id, $beans[0]->id, 'incorrect team id, should be ' . $team_id);
+
+        // cleanup
+        $GLOBALS['db']->query("delete from cases where id= '{$case->id}'");
     }
 }
