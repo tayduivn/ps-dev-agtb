@@ -99,7 +99,7 @@ class OracleManager extends DBManager
             'currency' => 'number(26,6)',
             'decimal'  => 'number(20,2)',
             'decimal2' => 'number(30,6)',
-            'url'      => 'varchar2(255)',
+            'url'      => 'varchar2',
             'encrypt'  => 'varchar2(255)',
             'file'     => 'varchar2(255)',
 	    	'decimal_tpl' => 'number(%d, %d)',
@@ -843,6 +843,45 @@ class OracleManager extends DBManager
 					AND COLUMN_NAME = '".strtoupper($fieldName)."'") == 'Y';
 	}
 
+    /**
+     * Compares two vardefs
+     *
+     * @param  array  $fielddef1 This is from the database
+     * @param  array  $fielddef2 This is from the vardef
+     * @param bool $ignoreName Ignore name-only differences?
+     * @return bool   true if they match, false if they don't
+     */
+	public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
+	{
+        if(!empty($fielddef2['len']) && !empty($fielddef1['len']) && $fielddef1['len'] > $fielddef2['len']) {
+            // if DB has bigger length than vardef, it's OK
+            $fielddef2['len'] = $fielddef1['len'];
+        }
+        return parent::compareVarDefs($fielddef1, $fielddef2, $ignoreName);
+	}
+
+	/**
+	 * Split column type into components
+	 * type proper, length and scale
+	 * @param string $type
+	 * @return array
+	 */
+	protected function splitType($type)
+	{
+	    $res = array('type' => $type);
+	    if(preg_match('|(\w+)\((\d+),?(\d+)?\)|', $type, $match)) {
+	        $res['type'] = $match[1];
+	        $res['len'] = $match[2];
+	        $res['type_len'] = $res['len'];
+	        // have length
+	        if(!empty($match[3])) {
+	            $res['scale'] = $match[3];
+	            $res['type_len'] = $res['len'].",".$res['scale'];
+	        }
+	    }
+	    return $res;
+	}
+
 	/**
 	 * Generate modify statement for one column
 	 * @param string $tablename
@@ -862,7 +901,7 @@ class OracleManager extends DBManager
 	    	case 'MODIFY':
 	    		$colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
 	    		$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
-	    		$nowCol = $this->describeField($colArray['name'], $tablename);
+	    		$nowCol = $this->describeField($fieldDef['name'], $tablename);
 	    		if($colArray['colType'] == 'blob' || $colArray['colType'] == 'clob') {
 	    			// Bug 42467: prevent Oracle from modifying *LOB fields
 	    			if($colArray['colType'] != $nowCol['type']) {
@@ -871,6 +910,46 @@ class OracleManager extends DBManager
 	    			}
 	    			$colArray['colType'] = ''; // we don't change type, so omit it
 	    		}
+
+	    		$colData = $this->splitType($colArray['colType']);
+	    		// Oracle does not allow to shrink column sizes or decrease precision
+	    		// unless the column is empty
+	    		if(!empty($colArray['colType']) && $nowCol['type'] == $colData['type']
+	    		        && !empty($colData['len'])              // if we don't define length, OK
+	    		        && $nowCol['len'] != $colData['len']    // if it's the same length as it was, OK
+	    		        && $nowCol['len'] != $colData['type_len'] // if it's the same length counting precision, OK
+                ) {
+	    		    // Precision/length handling
+	    		    if(empty($nowCol['len'])) {
+	    		        // if we had no length, strip it
+	    		        $colArray['colType'] = $colData['type'];
+	    		    } else {
+    	    		    // We can increase length but not decrease it
+                        $len2 = explode(",", $nowCol['len']);
+                        $length = $len2[0];
+                        if(!empty($len2[1])) { // case of 20,2
+                            $scale = $len2[1];
+                        } else {
+                            $scale = 0;
+                            $colData['scale'] = 0;
+                        }
+                        if($colData['len'] < $length) {
+                            // we're attempting to decrease length, not allowed
+                            $colData['len'] = $length;
+                        }
+                        if($colData['scale'] < $scale) {
+                            // don't allow to reduce scale
+                            $colData['scale'] = $scale;
+                        }
+                        if($colData['scale'] != 0) {
+                            $colArray['colType']="{$colData['type']}({$colData['len']},{$colData['scale']})";
+                        } else {
+                            $colArray['colType']="{$colData['type']}({$colData['len']})";
+                        }
+	    		    }
+	    		}
+
+
 	            if(isset($nowCol['default']) && !isset($fieldDef['default'])) {
                     // removing default is allowed by changing to "DEFAULT NULL"
                     $colArray['default'] = "DEFAULT NULL";
@@ -1113,7 +1192,7 @@ EOQ;
             $columns[$name]['type']=strtolower($row['data_type']);
             if ( $columns[$name]['type'] == 'number' ) {
                 $columns[$name]['len']=
-                    ( !empty($row['data_precision']) ? $row['data_precision'] : '3');
+                    ( !empty($row['data_precision']) ? $row['data_precision'] : '38');
                 if ( !empty($row['data_scale']) )
                     $columns[$name]['len'].=','.$row['data_scale'];
             }
