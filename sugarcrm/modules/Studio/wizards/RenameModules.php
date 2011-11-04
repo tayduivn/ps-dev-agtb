@@ -150,6 +150,8 @@ class RenameModules
             array('name' => 'LBL_OPPORTUNITY_ID', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_OPPORTUNITY_NAME', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_CONVERTED_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'),
+            array('name' => 'LNK_SELECT_ACCOUNTS', 'type' => 'singular', 'source' => 'Accounts'),
+            array('name' => 'LNK_NEW_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_CONVERTED_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
             array('name' => 'LBL_CONVERTED_OPP', 'type' => 'singular', 'source' => 'Opportunities'),
 
