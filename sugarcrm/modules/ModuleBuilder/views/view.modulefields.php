@@ -58,26 +58,18 @@ class ViewModulefields extends SugarView
         $module_strings = return_module_language($current_language, $module_name);
 
         $fieldsData = array();
+        $customFieldsData = array();
 
         if(!isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
             //$this->loadPackageHelp($module_name);
             $studioClass = new stdClass;
             $studioClass->name = $module_name;
 
-            global $beanList;
-            $objectName = $beanList[$module_name];
-
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if($objectName == 'aCase') // Bug 17614 - renamed aCase as Case in vardefs for backwards compatibililty with 451 modules
-                $objectName = 'Case';
-            //END SUGARCRM flav!=sales ONLY
+            $objectName = BeanFactory::getObjectName($module_name);
 
             VardefManager::loadVardef($module_name, $objectName, true);
             global $dictionary;
             $f = array($mod_strings['LBL_HCUSTOM']=>array(), $mod_strings['LBL_HDEFAULT']=>array());
-
-            // TODO: replace this section to select fields to list with the algorithm in AbstractMetaDataImplmentation::validField()
-            $def = $this->cullFields($dictionary[$objectName]['fields']);
 
             foreach($dictionary[$objectName]['fields'] as $def) {
                 if ($this->isValidStudioField($def))
@@ -93,6 +85,7 @@ class ViewModulefields extends SugarView
                     }
 
                     $fieldsData[] = $def;
+                    $customFieldsData[$def['name']] = $def['custom'];
                 }
             }
             $studioClass->mbvardefs->vardefs['fields'] = $f;
@@ -105,6 +98,7 @@ class ViewModulefields extends SugarView
             $sortPreferences = $current_user->getPreference('fieldsTableColumn', 'ModuleBuilder');
             $smarty->assign('sortPreferences', $sortPreferences);
             $smarty->assign('fieldsData', getJSONobj()->encode($fieldsData));
+            $smarty->assign('customFieldsData', getJSONobj()->encode($customFieldsData));
             $smarty->assign('studio', true);
             $ajax = new AjaxCompose();
             $ajax->addCrumb($mod_strings['LBL_STUDIO'], 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
@@ -136,7 +130,8 @@ class ViewModulefields extends SugarView
                 $this->mbModule->setModStrings('en_us',$mod_strings);
             }
 
-            foreach($this->mbModule->mbvardefs->vardefs['fields'] as $k=>$v){
+            foreach($this->mbModule->mbvardefs->vardefs['fields'] as $k=>$v)
+            {
                 if($k != $module_name)
                 {
                     $titleLBL[$k]=translate("LBL_".strtoupper($k),'ModuleBuilder');
@@ -150,6 +145,7 @@ class ViewModulefields extends SugarView
                 	   unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
                     } else {
                        $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($this->mbModule->mblanguage->strings[$current_language][$def['vname']]) ? $this->mbModule->mblanguage->strings[$current_language][$def['vname']] : $field;
+                       $customFieldsData[$field] = ($k == $this->mbModule->name) ? true : false;
                        $loadedFields[$field] = true;
                        $fieldsData[] = $this->mbModule->mbvardefs->vardefs['fields'][$k][$field];
                     }
@@ -159,6 +155,7 @@ class ViewModulefields extends SugarView
             $this->mbModule->mbvardefs->vardefs['fields'][$module_name] = $this->cullFields($this->mbModule->mbvardefs->vardefs['fields'][$module_name]);
 
             $smarty->assign('fieldsData', getJSONobj()->encode($fieldsData));
+            $smarty->assign('customFieldsData', getJSONobj()->encode($customFieldsData));
             global $current_user;
             $sortPreferences = $current_user->getPreference('fieldsTableColumn', 'ModuleBuilder');
             $smarty->assign('sortPreferences', $sortPreferences);

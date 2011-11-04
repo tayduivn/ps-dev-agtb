@@ -43,7 +43,7 @@ function additionaldetailsforecastopportunities($fields) {
 }
  
 function additionaldetailsforecastdirectreports($fields) {
-//    _pp($fields);
+
     global $current_language;
     $mod_strings = return_module_language($current_language, 'Forecasts');
     $overlib_string = '';

@@ -141,7 +141,7 @@ $ListView->show_delete_button=false;
 $ListView->show_select_menu=false;
 $ListView->setQuery($where, "", "", "QUOTA");
 
-$row_count = $focus->getRowCount($focus->create_new_list_query("",$where));
+$row_count = $focus->getQuotaRowCount($focus->create_new_list_query("",$where));
 
 if (!empty($_REQUEST['timeperiod_id'])) {
 

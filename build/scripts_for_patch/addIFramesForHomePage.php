@@ -36,8 +36,8 @@ function add_new_iframe_dashlets(){
 	$hasSugarNews = false;
 	$newDashlets = array();
 	$newIds = array();
-	require_once('cache/dashlets/dashlets.php');	
-	//BEGIN SUGARCRM flav=com ONLY 
+	require_once('cache/dashlets/dashlets.php');
+	//BEGIN SUGARCRM flav=com ONLY
     $discoverSugarProDashlet = array('className' => 'iFrameDashlet',
          'module' => 'iFrames',
          'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
@@ -45,7 +45,7 @@ function add_new_iframe_dashlets(){
         'url' => 'http://apps.sugarcrm.com/dashlet/5.2.0/go-pro.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@',
         'height' => 315,
      ));
-    //END SUGARCRM flav=com ONLY 
+    //END SUGARCRM flav=com ONLY
     $sugarNewsDashlet = array('className' => 'iFrameDashlet',
 					 'module' => 'iFrames',
 					 'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
@@ -53,39 +53,39 @@ function add_new_iframe_dashlets(){
                     'url' => 'http://apps.sugarcrm.com/dashlet/5.2.0/sugarcrm-news-dashlet.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@',
                     'height' => 315,
      ));
-     
-	$db = &PearDatabase::getInstance();
+
+	$db = DBManagerFactory::getInstance();
 	$query = "SELECT id, contents, assigned_user_id FROM user_preferences WHERE deleted = 0 AND category = 'Home'";
 	$result = $db->query($query, true, "Unable to update new default dashlets! ");
 	while ($row = $db->fetchByAssoc($result)) {
 		$content = unserialize(base64_decode($row['contents']));
 		$assigned_user_id = $row['assigned_user_id'];
 		$record_id = $row['id'];
-		
+
 		$current_user = new User();
         $current_user->retrieve($row['assigned_user_id']);
-        
+
 		if(!empty($content['dashlets']) && !empty($content['pages'])){
 			$originalDashlets = $content['dashlets'];
 			$originalPages = $content['pages'];
 			//Determine if the original perference has already had the two dashlets or not
 			foreach($originalDashlets as $ds){
-				//BEGIN SUGARCRM flav=com ONLY 
+				//BEGIN SUGARCRM flav=com ONLY
 				if(!empty($ds['options']['title']) && $ds['options']['title'] == translate('LBL_DASHLET_DISCOVER_SUGAR_PRO','iFrames')){
 					$hasDiscoverSugarPro = true;
 				}
-				//END SUGARCRM flav=com ONLY 
+				//END SUGARCRM flav=com ONLY
 				if(!empty($ds['options']['title']) && $ds['options']['title'] == translate('LBL_DASHLET_SUGAR_NEWS','iFrames')){
 					$hasSugarNews = true;
 				}
 			}
-			
-			//If the user_perference has no 'Sugar News' dashlet and no 'Discover sugar Pro' dashlet, we should add them 
+
+			//If the user_perference has no 'Sugar News' dashlet and no 'Discover sugar Pro' dashlet, we should add them
 			if(!$hasSugarNews && !$hasDiscoverSugarPro){
-				//BEGIN SUGARCRM flav=com ONLY 
+				//BEGIN SUGARCRM flav=com ONLY
     			$discoverSugarProDashletId = create_guid();
 				$newDashlets["$discoverSugarProDashletId"]  = $discoverSugarProDashlet;
-				//END SUGARCRM flav=com ONLY 
+				//END SUGARCRM flav=com ONLY
 				$sugarNewsId = create_guid();
 				$newDashlets["$sugarNewsId"]  = $sugarNewsDashlet;
 				$originalDashlets = array_merge_recursive($newDashlets, $originalDashlets );
@@ -94,17 +94,17 @@ function add_new_iframe_dashlets(){
 						case '1':
 							if(!empty($originalPages[0]['columns'][0]['dashlets'])){
 								array_unshift($originalPages[0]['columns'][0]['dashlets'] , $sugarNewsId);
-								//BEGIN SUGARCRM flav=com ONLY 
+								//BEGIN SUGARCRM flav=com ONLY
 								array_unshift( $originalPages[0]['columns'][0]['dashlets'] , $discoverSugarProDashletId);
-								//END SUGARCRM flav=com ONLY 
+								//END SUGARCRM flav=com ONLY
 							}
 							break;
 						case '2':
 						case '3':
 							if(!empty($originalPages[0]['columns'][0]['dashlets'])){
-								//BEGIN SUGARCRM flav=com ONLY 
+								//BEGIN SUGARCRM flav=com ONLY
 								array_unshift( $originalPages[0]['columns'][0]['dashlets'] , $discoverSugarProDashletId);
-								//END SUGARCRM flav=com ONLY 
+								//END SUGARCRM flav=com ONLY
 							}
 							if(!empty($originalPages[0]['columns'][1]['dashlets'])){
 								array_unshift($originalPages[0]['columns'][1]['dashlets'] , $sugarNewsId);
@@ -113,7 +113,7 @@ function add_new_iframe_dashlets(){
 				}
 			}
 			$current_user->setPreference('dashlets', $originalDashlets, 0, 'Home');
-			$current_user->setPreference('pages', $originalPages, 0, 'Home');	
+			$current_user->setPreference('pages', $originalPages, 0, 'Home');
 		}
 	}
 }

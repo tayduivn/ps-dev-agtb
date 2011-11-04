@@ -221,6 +221,9 @@ abstract class DBManager
 	 * auto_increment_sequence Autoincrement support implemented as sequence
 	 * limit_subquery   Supports LIMIT clauses in subqueries
 	 * create_user		Can create users for Sugar
+	 * create_db		Can create databases
+	 * collation		Supports setting collations
+	 * disable_keys     Supports temporarily disabling keys (for upgrades, etc.)
 	 *
 	 * @abstract
 	 * Special cases:
@@ -228,6 +231,12 @@ abstract class DBManager
 	 * TODO: verify if we need these cases
 	 */
 	protected $capabilities = array();
+
+	/**
+	 * Database options
+	 * @var array
+	 */
+	protected $options = array();
 
     /**
      * Create DB Driver
@@ -538,46 +547,56 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Insert data into table by parameter definition
-	 * @param string $table
+	 * @param string $table Table name
 	 * @param array $field_defs Definitions in vardef-like format
 	 * @param array $data Key/value to insert
+	 * @param array $field_map Fields map from SugarBean
+	 * @param bool $execute Execute or return query?
      * @return bool query result
      */
-	public function insertParams($table, $field_defs, $data)
+	public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
 	{
 		$values = array();
 		foreach ($field_defs as $field => $fieldDef)
 		{
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
 			//custom fields handle there save seperatley
+			if(!empty($field_map) && !empty($field_map[$field]['custom_type'])) continue;
 
 			if(isset($data[$field])) {
 				// clean the incoming value..
 				$val = from_html($data[$field]);
-				if ($fieldDef['name'] == 'deleted') {
-					$values['deleted'] = (int)$val;
-				} else {
-					// need to do some thing about types of values
-					$values[$field] = $this->massageValue($val, $fieldDef);
-				}
 			} else {
-				// handle auto increment values here - we may have to do something like nextval for oracle
-				if (!empty($fieldDef['auto_increment'])) {
-					$auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
-					if(!empty($auto)) {
-						$values[$field] = $auto;
-					}
+				if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+					$val = $fieldDef['default'];
+				} else {
+					$val = null;
 				}
 			}
 
+			//handle auto increment values here - we may have to do something like nextval for oracle
+			if (!empty($fieldDef['auto_increment'])) {
+				$auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
+				if(!empty($auto)) {
+					$values[$field] = $auto;
+				}
+			} elseif ($fieldDef['name'] == 'deleted') {
+				$values['deleted'] = (int)$val;
+			} else {
+				// need to do some thing about types of values
+				if(!is_null($val) || !empty($fieldDef['required'])) {
+					$values[$field] = $this->massageValue($val, $fieldDef);
+				}
+			}
 		}
+
 		if (empty($values))
-			return true; // no columns set
+			return $execute?true:''; // no columns set
 
 		// get the entire sql
 		$query = "INSERT INTO $table (".implode(",", array_keys($values)).")
 					VALUES (".implode(",", $values).")";
-		return $this->query($query);
+		return $execute?$this->query($query):$query;
 	}
 
     /**
@@ -936,7 +955,7 @@ protected function checkQuery($sql, $object_name = false)
 					if($execute) {
 						$this->query($rename, true, "Cannot rename index");
 					}
-					$sql .= join("\n", $rename). "\n";
+					$sql .= is_array($rename)?join("\n", $rename). "\n":$rename."\n";
 
 				} else {
 					// ok we need this field lets create it
@@ -1333,7 +1352,6 @@ protected function checkQuery($sql, $object_name = false)
 		$next_offset = $start + $count;
 
 		$result = $this->limitQuery($select_query, $start, $count);
-		$row_count = $this->getRowCount($result);
 		// get basic insert
 		$sql = "INSERT INTO ".$table;
 		$custom_sql = "INSERT INTO ".$table."_cstm";
@@ -1454,7 +1472,7 @@ protected function checkQuery($sql, $object_name = false)
 				$custom_sql .= ", ";
 			}
 		}
-		return array('data' => $sql, 'cstm_sql' => $custom_sql, 'result_count' => $row_count, 'total_count' => $rows_found, 'next_offset' => $next_offset);
+		return array('data' => $sql, 'cstm_sql' => $custom_sql, /*'result_count' => $row_count, */ 'total_count' => $rows_found, 'next_offset' => $next_offset);
 	}
 
 	/**
@@ -1637,20 +1655,10 @@ protected function checkQuery($sql, $object_name = false)
 		return $row;
 	}
 
-	/**
-	 * Returns the number of rows returned by the result
-	 * @abstract
-	 * @param  resource $result query result resource
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		return 0;
-	}
-
     /**
      * Returns the number of rows affected by the last query
      * @abstract
+	 * See also affected_rows capability, will return 0 unless the DB supports it
      * @param resource $result query result resource
      * @return int
      */
@@ -1659,7 +1667,21 @@ protected function checkQuery($sql, $object_name = false)
 		return 0;
 	}
 
-    /**
+	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return 0;
+	}
+
+	/**
      * Get table description
      * @param string $tablename
      * @param bool $reload true means load from DB, false allows using cache
@@ -1883,47 +1905,9 @@ protected function checkQuery($sql, $object_name = false)
 	public function insertSQL(SugarBean $bean)
 	{
 		// get column names and values
-		$values = array();
-		foreach ($bean->getFieldDefinitions() as $field => $fieldDef)
-		{
-			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
-			//custom fields handle there save separately
-			if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type'])) continue;
-
-			if(isset($bean->$field)) {
-				// clean the incoming value..
-				$val = from_html($bean->$field);
-			} else {
-				if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
-					$val = $fieldDef['default'];
-				} else {
-					$val = null;
-				}
-			}
-
-			//handle auto increment values here - we may have to do something like nextval for oracle
-			if (!empty($fieldDef['auto_increment'])) {
-				$auto = $this->getAutoIncrementSQL($bean->getTableName(), $fieldDef['name']);
-				if(!empty($auto)) {
-					$values[$field] = $auto;
-				}
-			} elseif ($fieldDef['name'] == 'deleted') {
-				$values['deleted'] = (int)$val;
-			} else {
-				// need to do some thing about types of values
-				if(!is_null($val) || !empty($fieldDef['required'])) {
-					$values[$field] = $this->massageValue($val, $fieldDef);
-				}
-			}
-		}
-
-		if ( sizeof($values) == 0 )
-			return ""; // no columns set
-
-		// get the entire sql
-		return "INSERT INTO ".$bean->getTableName()."
-					(".implode(",", array_keys($values)).")
-					VALUES (".implode(",", $values).")";
+		$sql = $this->insertParams($bean->getTableName(), $bean->getFieldDefinitions(), get_object_vars($bean),
+		        isset($bean->field_name_map)?$bean->field_name_map:null, false);
+		return $sql;
 	}
 
 	/**
@@ -1942,39 +1926,41 @@ protected function checkQuery($sql, $object_name = false)
 		foreach ($bean->getFieldDefinitions() as $field => $fieldDef) {
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
 			// Do not write out the id field on the update statement.
-		// We are not allowed to change ids.
-		if ($fieldDef['name'] == $primaryField['name']) continue;
+    		// We are not allowed to change ids.
+    		if ($fieldDef['name'] == $primaryField['name']) continue;
 
-		// If the field is an auto_increment field, then we shouldn't be setting it.  This was added
-		// specially for Bugs and Cases which have a number associated with them.
-		if (!empty($bean->field_name_map[$field]['auto_increment'])) continue;
+    		// If the field is an auto_increment field, then we shouldn't be setting it.  This was added
+    		// specially for Bugs and Cases which have a number associated with them.
+    		if (!empty($bean->field_name_map[$field]['auto_increment'])) continue;
 
-		//custom fields handle their save seperatley
-		if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
+    		//custom fields handle their save seperatley
+    		if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
 
-		if(isset($bean->$field)) {
-			$val = from_html($bean->$field);
-		} else {
-			continue;
-		}
+    		if(isset($bean->$field)) {
+    			$val = from_html($bean->$field);
+    		} else {
+    			continue;
+    		}
 
-		if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
-			$val = $bean->getFieldValue($field);
-		}
+    		if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
+    			$val = $bean->getFieldValue($field);
+    		}
 
-		if(strlen($val) == 0) {
-			if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
-				$val = $fieldDef['default'];
-			} else {
-				$val = null;
-			}
-		}
+    		if(strlen($val) == 0) {
+    			if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+    				$val = $fieldDef['default'];
+    			} else {
+    				$val = null;
+    			}
+    		}
 
-		if(!is_null($val) || !empty($fieldDef['required'])) {
-			$columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
-		} else {
-			$columns[] = "{$fieldDef['name']}=NULL";
-		}
+    		if(!is_null($val) || !empty($fieldDef['required'])) {
+    			$columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
+    		} elseif($this->isNullable($fieldDef)) {
+    			$columns[] = "{$fieldDef['name']}=NULL";
+    		} else {
+    		    $columns[] = "{$fieldDef['name']}=".$this->emptyValue($fieldDef['type']);
+    		}
 		}
 
 		if ( sizeof($columns) == 0 )
@@ -2117,8 +2103,10 @@ protected function checkQuery($sql, $object_name = false)
 				return "NULL";
 			}
 		}
-
-		return $this->quoted($val);
+        if($type == "datetimecombo") {
+            $type = "datetime";
+        }
+		return $this->convert($this->quoted($val), $type);
 	}
 
 	/**
@@ -2655,7 +2643,7 @@ protected function checkQuery($sql, $object_name = false)
 			}
 			return $result;
 		} else {
-			// first strip any invalid characters - all but alphanumerics and -
+			// first strip any invalid characters - all but word chars and -
 			$name = preg_replace( '/[^\w-]+/i', '', $name ) ;
 			$len = strlen( $name ) ;
 			$maxLen = empty($this->maxNameLengths[$type]) ? $this->maxNameLengths[$type]['column'] : $this->maxNameLengths[$type];
@@ -3287,6 +3275,30 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
+	 * Fetches the next row in the query result into an associative array
+	 *
+	 * @param  resource $result
+	 * @param  bool $encode Need to HTML-encode the result?
+	 * @return array    returns false if there are no more rows available to fetch
+	 */
+	public function fetchByAssoc($result, $encode = true)
+	{
+	    if (empty($result))	return false;
+
+	    if(is_int($encode) && func_num_args() == 3) {
+	        // old API: $result, $rowNum, $encode
+	        $GLOBALS['log']->deprecated("Using row number in fetchByAssoc is not portable and no longer supported. Please fix your code.");
+	        $encode = func_get_arg(2);
+	    }
+	    $row = $this->fetchRow($result);
+	    if (!empty($row) && $encode && $this->encode) {
+	    	return array_map('to_html', $row);
+	    } else {
+	       return $row;
+	    }
+	}
+
+	/**
 	 * Get DB driver name used for install/upgrade scripts
 	 * @return string
 	 */
@@ -3294,6 +3306,40 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		// Usually the same name as dbType
 		return $this->dbType;
+	}
+
+	/**
+	 * Set database options
+	 * Options are usually db-dependant and derive from $config['dbconfigoption']
+	 * @param array $options
+	 * @return DBManager
+	 */
+	public function setOptions($options)
+	{
+	    $this->options = $options;
+	    return $this;
+	}
+
+	/**
+	 * Get DB options
+	 * @return array
+	 */
+	public function getOptions()
+	{
+	    return $this->options;
+	}
+
+	/**
+	 * Get DB option by name
+	 * @param string $option Option name
+	 * @return mixed Option value or null if doesn't exist
+	 */
+	public function getOption($option)
+	{
+	    if(isset($this->options[$option])) {
+	        return $this->options[$option];
+	    }
+	    return null;
 	}
 
 	/**
@@ -3358,6 +3404,24 @@ protected function checkQuery($sql, $object_name = false)
 	 * Code run on new database after installing
 	 */
 	public function postInstall()
+	{
+	}
+
+	/**
+	 * Disable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function disableKeys($tableName)
+	{
+	}
+
+	/**
+	 * Re-enable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function enableKeys($tableName)
 	{
 	}
 
@@ -3545,11 +3609,9 @@ protected function checkQuery($sql, $object_name = false)
 	 * Fetches the next row in the query result into an associative array
 	 *
 	 * @param  resource $result
-	 * @param  int      $rowNum optional, specify a certain row to return
-	 * @param  bool     $encode optional, true if we want html encode the resulting array
 	 * @return array    returns false if there are no more rows available to fetch
 	 */
-	abstract public function fetchByAssoc($result, $rowNum = -1, $encode = true);
+	abstract public function fetchRow($result);
 
 	/**
 	 * Connects to the database backend

@@ -201,7 +201,7 @@ SUGAR.FiltersWidget = function() {
 		    var selectHTML = "<select onchange=\"SUGAR.FiltersWidget.changeSelectElemetValue('" + id + "_combo" + "');\" id=\"" + id + "_combo" + "\"><option value='AND' " + selectedANDString + ">" + SUGAR.language.get('Reports','LBL_FILTER_AND') + "</option><option value='OR' " + selectedORString + ">" + SUGAR.language.get('Reports','LBL_FILTER_OR') + "</option></select>";
 		    
 		    var panelStartRow = "<div class='sugar-subpanel-header-row'><table cellspacing=\"0\"><tr>";
-		    panelStartRow = panelStartRow + "<td nowrap>&nbsp;&nbsp;" + SUGAR.language.get('Reports','LBL_FILTER_CONDITIONS') + "&nbsp;&nbsp;</td>";
+		    panelStartRow = panelStartRow + "<td nowrap>&nbsp;&nbsp;<label for='"+id + "_combo'>" + SUGAR.language.get('Reports','LBL_FILTER_CONDITIONS') + "</label>&nbsp;&nbsp;</td>";
 		    panelStartRow = panelStartRow + "<td>" + selectHTML + "</td>";
 		    panelStartRow = panelStartRow + "<td style=\"width: 100%\"></td>";
 		    panelStartRow = panelStartRow + "<td>&nbsp;" + "</td>";
@@ -227,9 +227,9 @@ SUGAR.FiltersWidget = function() {
 			} // if
 			var title = "";
 			if (id == SUGAR.language.get('Reports','LBL_FILTER') + ".1") {
-				title =  "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "</span>"+ "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
+				title =  "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif' alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 			} else {
-				title =  "<span class='spantitle'>" + id + "</span>";
+				title =  "<h3 class='spantitle'>" + id + "</h3>";
 			} // else
 			
 			var designerModule = new YAHOO.widget.Module(id, { visible: false });

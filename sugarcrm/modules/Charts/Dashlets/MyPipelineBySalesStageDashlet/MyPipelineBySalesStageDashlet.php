@@ -137,8 +137,8 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
 
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
-		
-        return $this->getTitle('') . 
+
+        return $this->getTitle('') .
             '<div align="center">' .$sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
     }
 
@@ -175,11 +175,11 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
         }
 
         $result = $db->query($query);
-        $row = $db->fetchByAssoc($result, -1, false);
+        $row = $db->fetchByAssoc($result, false);
 
         while($row != null){
         	$temp_data[] = $row;
-        	$row = $db->fetchByAssoc($result, -1, false);
+        	$row = $db->fetchByAssoc($result, false);
         }
 
 		// reorder and set the array based on the order of selected_datax
@@ -236,15 +236,15 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
         $query = "SELECT opportunities.sales_stage,
                         users.user_name,
                         opportunities.assigned_user_id,
-                        count( * ) AS opp_count,
+                        count(*) AS opp_count,
                         sum(amount_usdollar/1000) AS total
                     FROM users,opportunities  ";
         //BEGIN SUGARCRM flav=pro ONLY
         $this->getSeedBean()->add_team_security_where_clause($query);
         //END SUGARCRM flav=pro ONLY
         $query .= " WHERE opportunities.assigned_user_id IN ('{$GLOBALS['current_user']->id}') " .
-                        " AND opportunities.date_closed >= ". db_convert("'".$this->mypbss_date_start."'",'datetime').
-                        " AND opportunities.date_closed <= ".db_convert("'".$this->mypbss_date_end."'",'datetime') .
+                        " AND opportunities.date_closed >= ". db_convert("'".$this->mypbss_date_start."'",'date').
+                        " AND opportunities.date_closed <= ".db_convert("'".$this->mypbss_date_end."'",'date') .
                         " AND opportunities.assigned_user_id = users.id  AND opportunities.deleted=0 ";
         if ( count($this->mypbss_sales_stages) > 0 )
             $query .= " AND opportunities.sales_stage IN ('" . implode("','",$this->mypbss_sales_stages) . "') ";

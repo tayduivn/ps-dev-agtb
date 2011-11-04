@@ -53,10 +53,22 @@ SUGAR.ajaxUI = {
             {
                 action_sugar_grp1 = r.action;
             }
-            
+
             var c = document.getElementById("content");
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (r.record)
+            {
+                DCMenu.record = r.record;
+            }
+            if(r.menu && r.menu.module)
+            {
+                DCMenu.module = r.menu.module;
+            }
+            //END SUGARCRM flav=pro ONLY
+
             // set response time from ajax response
             if(typeof(r.responseTime) != 'undefined'){
                 var rt = document.getElementById('responseTime');
@@ -65,7 +77,12 @@ SUGAR.ajaxUI = {
                 }
             }
         } catch (e){
-            if (!SUGAR.ajaxUI.errorPanel) {
+            SUGAR.ajaxUI.showErrorMessage(o.responseText);
+        }
+    },
+    showErrorMessage : function(errorMessage)
+    {
+        if (!SUGAR.ajaxUI.errorPanel) {
                 SUGAR.ajaxUI.errorPanel = new YAHOO.widget.Panel("ajaxUIErrorPanel", {
                     modal: false,
                     visible: true,
@@ -85,16 +102,14 @@ SUGAR.ajaxUI = {
 					var f = document.getElementById("ajaxErrorFrame");
 					return f != null && f.contentWindow != null && f.contentWindow.document != null;
 				}, function(){
-					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
+					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = errorMessage;
 					window.setTimeout('throw "AjaxUI error parsing response"', 300);
 			});
             panel.show();
             panel.center();
 
             throw "AjaxUI error parsing response";
-        }
     },
-
     canAjaxLoadModule : function(module)
     {
         // Return false if ajax ui is completely disabled
@@ -141,11 +156,23 @@ SUGAR.ajaxUI = {
             if (ui.lastURL == url)
                 return;
             var inAjaxUI = /action=ajaxui/.exec(window.location);
-            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
-                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload())
             {
-                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
-                return;
+                //If there is an unload function, we need to check it ourselves
+                if (!confirm(window.onbeforeunload()))
+                {
+                    if (!inAjaxUI)
+                    {
+                        //User doesn't want to navigate
+                        window.location.hash = "";
+                    }
+                    else
+                    {
+                        YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                    }
+                    return;
+                }
+                window.onbeforeunload = null;
             }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
@@ -177,7 +204,11 @@ SUGAR.ajaxUI = {
             else {
                 SUGAR.ajaxUI.showLoadingPanel();
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
-                    success: SUGAR.ajaxUI.callback
+                    success: SUGAR.ajaxUI.callback,
+                    failure: function(){
+                        SUGAR.ajaxUI.hideLoadingPanel();
+                        SUGAR.ajaxUI.showErrorMessage(SUGAR.language.get('app_strings','ERR_AJAX_LOAD_FAILURE'));
+                    }
                 });
             }
         }
@@ -231,7 +262,7 @@ SUGAR.ajaxUI = {
         }
         YAHOO.util.Event.removeListener(window, 'resize');
         //Hide any connector dialogs
-        if(typeof(dialog) != 'undefined'){
+        if(typeof(dialog) != 'undefined' && typeof(dialog.destroy) == 'function'){
             dialog.destroy();
             delete dialog;
         }
@@ -280,7 +311,7 @@ SUGAR.ajaxUI = {
                 modal:true,
                 visible:false
             });
-            SUGAR.ajaxUI.loadingPanel.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=img_loading.gif" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
+            SUGAR.ajaxUI.loadingPanel.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.loading_image + '" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
             SUGAR.ajaxUI.loadingPanel.render(document.body);
         }
 

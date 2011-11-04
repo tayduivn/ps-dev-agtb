@@ -115,7 +115,7 @@ switch($run) {
 					break;
 				}
 
-				mkdir_recursive( "$base_upgrade_dir/$upgrade_zip_type" );
+				sugar_mkdir("$base_upgrade_dir/$upgrade_zip_type", 0775, true);
 				$target_path = "$base_upgrade_dir/$upgrade_zip_type/$base_filename";
 				$target_manifest = remove_file_extension( $target_path ) . "-manifest.php";
 
@@ -308,10 +308,7 @@ $form3 =<<<eoq2
    		alert('Not a zip file');
    		document.getElementById("upgrade_zip").value='';
    		document.getElementById("upload_button").disabled='disabled';
-   } else{
-       document.getElementById("upload_button").disabled='';
-   }
-   else{
+   } else {
 	//AJAX call for checking the file size and comparing with php.ini settings.
 	var callback = {
 		 success:function(r) {

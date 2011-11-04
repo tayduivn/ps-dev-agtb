@@ -51,7 +51,8 @@ public function tearDown()
 
 public function testTrackerSessionDatabaseStore()
 {
-	$trackerManager = TrackerManager::getInstance();
+	$trackerManager = TrackerManager::getInstance(); 
+	$trackerManager->unPause();
 	if($monitor = $trackerManager->getMonitor('tracker_sessions'))
 	{
 		$monitor->setValue('session_id', 'Bug44965Test'); 

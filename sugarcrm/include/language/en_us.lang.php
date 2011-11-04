@@ -410,7 +410,7 @@ $app_list_strings = array (
   'meeting_type_dom' =>
    array (
       'Other' => 'Other',
-      'SugarCRM' => 'SugarCRM',
+      'Sugar' => 'SugarCRM',
    ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
@@ -2334,6 +2334,7 @@ $app_strings = array (
     //END SUGARCRM flav=ent ONLY
 
     'ERR_AJAX_LOAD'     => 'An error has occured:',
+    'ERR_AJAX_LOAD_FAILURE'     => 'There was an error processing your request, please try again at a later time.',
     'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
@@ -2649,6 +2650,7 @@ $app_strings = array (
     'LBL_SAVE_NEW_BUTTON_KEY' => 'V',
     'LBL_SAVE_NEW_BUTTON_LABEL' => 'Save & Create New',
     'LBL_SAVE_NEW_BUTTON_TITLE' => 'Save & Create New [Alt+V]',
+    'LBL_SAVE_OBJECT' => 'Save {0}',
     'LBL_SEARCH_BUTTON_KEY' => 'Q',
     'LBL_SEARCH_BUTTON_LABEL' => 'Search',
     'LBL_SEARCH_BUTTON_TITLE' => 'Search [Alt+Q]',
@@ -3222,6 +3224,32 @@ $app_strings = array (
     'LBL_EXPORT_TEAM_SET_ID' => 'Team Set ID',
 
     'LBL_QUICKEDIT_NODEFS_NAVIGATION'=> 'Navigating... ',
+
+    'LBL_PENDING_NOTIFICATIONS' => 'Notifications',
+    'LBL_ALT_ADD_TEAM_ROW' => 'Add new team row',
+    'LBL_ALT_REMOVE_TEAM_ROW' => 'Remove team',
+    'LBL_ALT_SPOT_SEARCH' => 'Spot Search',
+    'LBL_ALT_SORT_DESC' => 'Sorted Descending',
+    'LBL_ALT_SORT_ASC' => 'Sorted Ascending',
+    'LBL_ALT_SORT' => 'Sort',
+    'LBL_ALT_SHOW_OPTIONS' => 'Show Options',
+    'LBL_ALT_HIDE_OPTIONS' => 'Hide Options',
+    'LBL_ALT_MOVE_COLUMN_LEFT' => 'Move selected entry to the list on the left',
+    'LBL_ALT_MOVE_COLUMN_RIGHT' => 'Move selected entry to the list on the right',
+    'LBL_ALT_MOVE_COLUMN_UP' =>'Move selected entry up in the displayed list order',
+    'LBL_ALT_MOVE_COLUMN_DOWN' => 'Move selected entry down in the displayed list order',
+    'LBL_ALT_INFO' => 'Information',
+	'MSG_DUPLICATE' => 'The {0} record you are about to create might be a duplicate of an {0} record that already exists. {1} records containing similar names are listed below.<br>Click Create {1} to continue creating this new {0}, or select an existing {0} listed below.',
+    'MSG_SHOW_DUPLICATES' => 'The {0} record you are about to create might be a duplicate of a {0} record that already exists. {1} records containing similar names are listed below.  Click Save to continue creating this new {0}, or click Cancel to return to the module without creating the {0}.',
+    'LBL_EMAIL_TITLE' => 'email address',
+    'LBL_EMAIL_OPT_TITLE' => 'opted out email address',
+    'LBL_EMAIL_INV_TITLE' => 'invalid email address',
+    'LBL_EMAIL_PRIM_TITLE' => 'primary email address',
+    'LBL_SELECT_ALL_TITLE' => 'Select all',
+    'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
+    'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
+    'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
+
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

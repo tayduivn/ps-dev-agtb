@@ -163,6 +163,9 @@
     <tr>
             <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
             <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
+<!-- //BEGIN SUGARCRM flav!=sales ONLY -->
+            <td><a href="./index.php?module=Administration&action=ConfigureAjaxUI" id="configure_ajax">{$MOD.LBL_CONFIG_AJAX}</a>&nbsp;{sugar_help text=$MOD.LBL_CONFIG_AJAX_DESC}</td>
+<!-- //END SUGARCRM flav!=sales ONLY -->
     </tr>
 </table>
 
@@ -250,7 +253,7 @@
  </table>
 
 
-{* //BEGIN SUGARCRM flav!=sales ONLY*}
+{* //BEGIN SUGARCRM flav!=sales && flav!=com ONLY*}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_MAILMERGE}</h4></th>
@@ -265,9 +268,8 @@
 	<td width="75%" align="left"  valign='middle'><input type='hidden' name='system_mailmerge_on' value='0'><input name="system_mailmerge_on" value="1" class="checkbox" type="checkbox" {$system_mailmerge_on_checked}></td>
 	</tr>
 </table>
+{* //END SUGARCRM flav!=sales && flav!=com ONLY*}
 
-
-{* //END SUGARCRM flav!=sales ONLY*}
 <!--//BEGIN SUGARCRM flav!=dce ONLY -->
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
 

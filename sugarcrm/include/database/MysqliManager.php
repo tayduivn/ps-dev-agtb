@@ -104,7 +104,8 @@ class MysqliManager extends MysqlManager
 	{
 		if(is_array($sql)) {
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
-		}
+        }
+
 		static $queryMD5 = array();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->addDistinctClause($sql);
@@ -160,6 +161,21 @@ class MysqliManager extends MysqlManager
 	}
 
 	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return mysqli_num_rows($result);
+	}
+
+
+    /**
 	 * Disconnects from the database
 	 *
 	 * Also handles any cleanup needed
@@ -181,20 +197,6 @@ class MysqliManager extends MysqlManager
 	{
 		if(!empty($dbResult))
 			mysqli_free_result($dbResult);
-	}
-
-	/**
-	 * Returns the number of rows returned by the result
-	 *
-	 * @param  resource $result
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		if(!empty($result)) {
-			return mysqli_num_rows($result);
-		}
-		return 0;
 	}
 
 	/**
@@ -225,23 +227,13 @@ class MysqliManager extends MysqlManager
 	}
 
 	/**
-	 * @see DBManager::fetchByAssoc()
+	 * @see DBManager::fetchRow()
 	 */
-	public function fetchByAssoc($result, $rowNum = -1, $encode = true)
+	public function fetchRow($result)
 	{
-		if (!$result)
-			return false;
-
-		if ($result && $rowNum > -1) {
-			if ($this->getRowCount($result) > $rowNum)
-				mysqli_data_seek($result, $rowNum);
-		}
+		if (empty($result))	return false;
 
 		$row = mysqli_fetch_assoc($result);
-
-		if ($encode && $this->encode && is_array($row))
-			return array_map('to_html', $row);
-
 		if($row == null) $row = false; //Make sure MySQLi driver results are consistent with other database drivers
 		return $row;
 	}
@@ -289,6 +281,7 @@ class MysqliManager extends MysqlManager
 				}
 			}
 		}
+
 		if(!empty($configOptions['db_name']) && !@mysqli_select_db($this->database,$configOptions['db_name'])) {
 			$GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysqli_connect_error());
 			if($dieOnError) {
@@ -300,11 +293,16 @@ class MysqliManager extends MysqlManager
 			} else {
 				return false;
 			}
-	}
+	    }
 
 		// cn: using direct calls to prevent this from spamming the Logs
-		mysqli_query($this->database,"SET CHARACTER SET utf8"); // no quotes around "[charset]"
-		mysqli_query($this->database,"SET NAMES 'utf8'");
+	    mysqli_query($this->database,"SET CHARACTER SET utf8");
+	    $names = "SET NAMES 'utf8'";
+	    $collation = $this->getOption('collation');
+	    if(!empty($collation)) {
+	        $names .= " COLLATE '$collation'";
+		}
+	    mysqli_query($this->database,$names);
 
 		if($this->checkError('Could Not Connect', $dieOnError))
 			$GLOBALS['log']->info("connected to db");

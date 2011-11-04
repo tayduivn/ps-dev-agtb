@@ -152,6 +152,8 @@ class VardefManager{
      */
     static function saveCache($module,$object, $additonal_objects= array()){
         
+        if (empty($GLOBALS['dictionary'][$object]))
+            $object = BeanFactory::getObjectName($module);
         $file = create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
         write_array_to_file('GLOBALS["dictionary"]["'. $object . '"]',$GLOBALS['dictionary'][$object], $file);
         if ( sugar_is_file($file) && is_readable($file)) {
@@ -193,13 +195,14 @@ class VardefManager{
     static function _clearCache($module_dir = '', $object_name = ''){
         if(!empty($module_dir) && !empty($object_name)){
             
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if($object_name == 'aCase') {
-                $object_name = 'Case';
+            //Some modules like cases have a bean name that doesn't match the object name
+            if (empty($GLOBALS['dictionary'][$object_name])) {
+                $newName = BeanFactory::getObjectName($module_dir);
+                $object_name = $newName != false ? $newName : $object_name;
             }
-            //END SUGARCRM flav!=sales ONLY
-            
+
             $file = sugar_cached('modules/').$module_dir.'/' . $object_name . 'vardefs.php';
+
             if(file_exists($file)){
                 unlink($file);
                 $key = "VardefManager.$module_dir.$object_name";
@@ -241,10 +244,20 @@ class VardefManager{
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){
             $temp = BeanFactory::newBean($module);
-            if ($temp && $temp->module_dir != $temp->module_name && !empty($beanList[$temp->module_dir]))
+            if ($temp)
             {
-                self::refreshVardefs($temp->module_dir, $beanList[$temp->module_dir], $additional_search_paths, $cacheCustom);
+                $object_name = BeanFactory::getObjectName($temp->module_dir);
+                if ($temp && $temp->module_dir != $temp->module_name && !empty($object_name))
+                {
+                    self::refreshVardefs($temp->module_dir, $object_name, $additional_search_paths, $cacheCustom);
+                }
             }
+        }
+
+        //Some modules like cases have a bean name that doesn't match the object name
+        if (empty($dictionary[$object])) {
+            $newName = BeanFactory::getObjectName($module);
+            $object = $newName != false ? $newName : $object;
         }
 
         //load custom fields into the vardef cache
@@ -260,7 +273,7 @@ class VardefManager{
 
         //great! now that we have loaded all of our vardefs.
         //let's go save them to the cache file.
-        if(!empty($GLOBALS['dictionary'][$object])) {
+        if(!empty($dictionary[$object])) {
             VardefManager::saveCache($module, $object);
         }
     }
@@ -274,11 +287,11 @@ class VardefManager{
     protected static function getLinkFieldsForModule($module, $object)
     {
         global $dictionary;
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if($object == 'aCase') {
-            $object = 'Case';
+        //Some modules like cases have a bean name that doesn't match the object name
+        if (empty($dictionary[$object])) {
+            $newName = BeanFactory::getObjectName($module);
+            $object = $newName != false ? $newName : $object;
         }
-        //END SUGARCRM flav!=sales ONLY
         if (empty($dictionary[$object])) {
             self::loadVardef($module, $object, false, array('ignore_rel_calc_fields' => true));
         }
@@ -379,14 +392,14 @@ class VardefManager{
 
             if (empty($beanList[$relMod]))
                 continue;
-            $relbean = $beanList[$relMod];
 
-            $relLinkFields = self::getLinkFieldsForModule($relMod, $relbean);
+            $relObject = BeanFactory::getObjectName($relMod);
+            $relLinkFields = self::getLinkFieldsForModule($relMod, $relObject);
             if (!empty($relLinkFields))
             {
                 foreach($relLinkFields as $rfName => $rfDef)
                 {
-                    if ($rfDef['relationship'] == $relName && self::modHasCalcFieldsWithLink($relMod, $relbean, $rfName))
+                    if ($rfDef['relationship'] == $relName && self::modHasCalcFieldsWithLink($relMod, $relObject, $rfName))
                     {
                         $linksWithCFs[$name] = true;
                     }
@@ -409,10 +422,15 @@ class VardefManager{
     public static function modHasCalcFieldsWithLink($module, $object, $linkName)
     {
         global $dictionary;
+        //Some modules like cases have a bean name that doesn't match the object name
+        $newName = BeanFactory::getObjectName($module);
+        $object = empty($newName) ? $object : $newName;
+        
         if (empty($dictionary[$object]))
             self::loadVardef($module, $object);
-        if (empty($dictionary[$object]))
+        if (empty($dictionary[$object])){
             return false;
+        }
 
         $vardef = $dictionary[$object];
         $hasFieldsWithLink = false;
@@ -499,8 +517,10 @@ class VardefManager{
         $key = "VardefManager.$module.$object";
         
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($params['ignore_rel_calc_fields']) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
+        if (empty($params['ignore_rel_calc_fields']) && !empty($GLOBALS['dictionary'][$object]) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
+        {
             $refresh = true;
+        }
         //END SUGARCRM flav=pro ONLY
         if(!$refresh)
         {

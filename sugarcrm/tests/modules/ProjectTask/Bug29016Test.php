@@ -45,8 +45,9 @@ class Bug29016Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-       $GLOBALS['current_user'] = $this->user = SugarTestUserUtilities::createAnonymousUser();
-       
+       $this->user = SugarTestUserUtilities::createAnonymousUser();
+       $this->user->full_name = $this->user->first_name . " ". $this->user->last_name;
+       $GLOBALS['current_user'] = $this->user; 
         $this->task = new ProjectTask();
         $this->task->resource_id = $this->user->id;
         $this->rid = create_guid();

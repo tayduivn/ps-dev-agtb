@@ -66,7 +66,7 @@ function gridInit() {
 			var colModel = 
 				[
 					{
-						label: "<img src='index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=attachment.gif' class='image' border='0' width='10' align='absmiddle'>", 
+						label: "<h2><img src='index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=attachment.gif' class='image' border='0' width='10' align='absmiddle'></h2>",
 						width: 10, 
 						sortable: false, 
 						fixed: true,
@@ -202,8 +202,8 @@ function gridInit() {
 			//Override Paging request construction
 			grid.set("generateRequest", function(oState, oSelf) {
 	            oState = oState || {pagination:null, sortedBy:null};
-	            var sort = (oState.sortedBy) ? oState.sortedBy.key : oSelf.getColumnSet().keys[1].getKey();
-	            var dir = (oState.sortedBy && oState.sortedBy.dir === YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
+	            var sort = (oState.sortedBy) ? oState.sortedBy.key : oSelf.getColumnSet().keys[5].getKey();
+	            var dir = (oState.sortedBy && oState.sortedBy.dir === YAHOO.widget.DataTable.CLASS_ASC) ? "asc" : "desc";
 	            var startIndex = (oState.pagination) ? oState.pagination.recordOffset : 0;
 	            var results = (oState.pagination) ? oState.pagination.rowsPerPage : null;
 	            // Build the request 

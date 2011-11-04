@@ -420,25 +420,17 @@ class User extends Person {
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
-	/**
-	 * Get WHERE clause that fetches all users counted for licensing purposes
-	 * @return string
-	 */
 	public static function getLicensedUsersWhere()
 	{
 		//BEGIN SUGARCRM dep=od ONLY
-		return "deleted=0 AND status='Active' AND is_group=0 AND portal_only=0 AND user_name !='' AND user_name IS NOT NULL AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
+		return "deleted=0 AND status='Active' AND is_group=0 AND portal_only=0 AND user_name IS NOT NULL AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
 		//END SUGARCRM dep=od ONLY
 		//BEGIN SUGARCRM dep=os ONLY
-		return "deleted=0 AND status='Active' AND user_name !='' AND user_name IS NOT NULL AND is_group=0 AND portal_only=0";
+		return "deleted=0 AND status='Active' AND user_name IS NOT NULL AND is_group=0 AND portal_only=0  AND ".$GLOBALS['db']->convert('user_name', 'length').">0";
 		//END SUGARCRM dep=os ONLY
 	    return "1<>1";
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 * @see Person::save()
-	 */
 	function save($check_notify = false) {
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
 
@@ -447,8 +439,14 @@ class User extends Person {
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
 		//END SUGARCRM flav=pro ONLY
 
+		//BEGIN SUGARCRM dep=od ONLY
+		$query = "SELECT count(id) as total from users WHERE status='Active' AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
+		//END SUGARCRM dep=od ONLY
+		//BEGIN SUGARCRM dep=os ONLY
+		$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
+		//END SUGARCRM dep=os ONLY
+
 		  //BEGIN SUGARCRM lic=sub ONLY
-		$query = "SELECT count(id) as total from users WHERE ".self::getLicensedUsersWhere();
 
 		global $sugar_flavor;
         $admin = new Administration();
@@ -972,9 +970,9 @@ EOQ;
 		}
 
 		if (is_admin($current_user)) {
-			$remaining_admins = $this->db->getOne("SELECT COUNT(*) as c from users where is_admin = 1 AND deleted=0");
+		    $remaining_admins = $this->db->getOne("SELECT COUNT(*) as c from users where is_admin = 1 AND deleted=0");
 
-			if (($remaining_admins <= 1) && $this->id == $current_user->id && !is_admin($this)) {
+			if (($remaining_admins <= 1) && ($this->is_admin != "on") && ($this->id == $current_user->id)) {
 				$GLOBALS['log']->debug("Number of remaining administrator accounts: {$remaining_admins}");
 				$this->error_string .= $mod_strings['ERR_LAST_ADMIN_1'].$this->user_name.$mod_strings['ERR_LAST_ADMIN_2'];
 				$verified = FALSE;
@@ -1778,7 +1776,15 @@ EOQ;
 		                $alias = substr($ljVal,$spacePos,$onPos-$spacePos);
 
 		                //add null check to end of the Join statement
-		                $ljVal ='  LEFT JOIN '.$ljVal.' and '.$alias.'.id is null ';
+                        // Bug #46390 to use id_c field instead of id field for custom tables
+                        if(substr($alias, -5) != '_cstm')
+                        {
+                            $ljVal ='  LEFT JOIN '.$ljVal.' and '.$alias.'.id is null ';
+                        }
+                        else
+                        {
+                            $ljVal ='  LEFT JOIN '.$ljVal.' and '.$alias.'.id_c is null ';
+                        }
 
 		                //add statement into new string
 		                $new_left_str .= $ljVal;
@@ -1817,7 +1823,5 @@ EOQ;
 
         return $fdow;
     }
-
-
 
 }

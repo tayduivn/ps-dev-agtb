@@ -32,22 +32,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id$
 
 function updateVersionsTable(){
-	$db = &PearDatabase::getInstance();
+	$db = DBManagerFactory::getInstance();
 	global $current_user;
 	global $unzip_dir;
 	require( "$unzip_dir/manifest.php" );
-	
+
 	$date_modified = gmdate("Y-m-d H:i:s");
-	
+
 	$query = "SELECT * FROM versions WHERE name='Project Management Module' OR name='" . $manifest['name'] . "'";
-	
+
 	// check to see if row exists
 	$result = $db->query($query, true, "Unable to retreive data from versions table");
 	$row = $db->fetchByAssoc($result);
-	
+
 	if ($row == null){
 		$id = create_guid();
-		
+
 		$query = "INSERT INTO versions(id, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) " .
 				 "VALUES ('" . $id . "'," .
 				 		 "'" . $date_modified . "'," .
@@ -57,7 +57,7 @@ function updateVersionsTable(){
 						 "'" . $manifest['name'] . "'," .
 						 "'" . $manifest['version'] . "'," .
 						 "'" . $manifest['db_version'] . "')";
-		
+
 		$db->query($query, true, "Unable to insert into versions table");
 	}
 	else{
@@ -66,10 +66,10 @@ function updateVersionsTable(){
 									 "file_version = '" . $manifest['version'] . "', " .
 									 "db_version = '" . $manifest['db_version'] . "' " .
 				 "WHERE name = '" . $manifest['name'] . "'";
-		
-		$db->query($query, true, "Unable to update versions table");							
+
+		$db->query($query, true, "Unable to update versions table");
 	}
-	
+
 	return true;
 }
 

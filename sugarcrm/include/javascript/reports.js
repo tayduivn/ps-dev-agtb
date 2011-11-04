@@ -130,6 +130,8 @@ SUGAR.reports = function() {
 	var displaySummaryOrderBySelectedRow = -1;
 
 
+	var initInProgress = 0; //workaround for saveFilters
+
 	return {
         overrideRecord: true,
 		checkEnterKey: function() {
@@ -162,7 +164,9 @@ SUGAR.reports = function() {
 				}
 				if (report_def_str.filters_def.Filter_1){
 					SUGAR.reports.loadFilters(report_def_str.filters_def.Filter_1);
+					initInProgress = 1;
 					SUGAR.reports.saveFilters();
+					initInProgress = 0;
 				}
 				else
 				    SUGAR.FiltersWidget.addGroupToPanel('filter_designer_div', SUGAR.language.get('Reports','LBL_FILTER'));
@@ -773,10 +777,12 @@ SUGAR.reports = function() {
 						filter_def.input_name0 = new Array();
 						filter_def.input_name1 = new Array();
 						filter_def.input_name2 = '';
-					
+
+						var got_selected = 0;
 						for(l = 0; l < input_arr.length; l++) {
 							if(input_arr[l].type == 'hidden' && /^id_/.test(input_arr[l].id) && trim(input_arr[l].value) != '') {
 								filter_def.input_name0.push(input_arr[l].value);
+								got_selected = 1;
 							} else if(input_arr[l].type == 'text' && /id_collection_/.test(input_arr[l].id) && trim(input_arr[l].value) != '') {
 								filter_def.input_name1.push(input_arr[l].value);
 							} else if(input_arr[l].type == 'radio' && input_arr[l].checked) {
@@ -785,7 +791,11 @@ SUGAR.reports = function() {
 								filter_def.input_name2 = input_arr[l].value;
 							}
 						}
-					}  
+						if (!initInProgress && !got_selected) {
+							got_error = 1;
+							error_msgs += "\"" + column_vname + "\" " + lbl_missing_input_value + "\n";
+						}
+					}
 					//END SUGARCRM flav!=sales ONLY
 					else if ( typeof(input_arr[0]) !=  'undefined' && input_arr[0].id.search(/runtime_filter/) == -1) {
 						filter_def.input_name0=input_arr[0].value;
@@ -1584,13 +1594,14 @@ SUGAR.reports = function() {
 		},		
 
 		showWizardStep: function(isPrev, stepName) {
-			if (!SUGAR.reports.saveCurrentStep() && !stepName)			
+            var isValid = SUGAR.reports.saveCurrentStep();
+			if (!isValid && !stepName)
 				return false;
-			if (report_type == 'tabular')
+			if (isValid && report_type == 'tabular')
 				SUGAR.reports.showWizardStepTabular(isPrev, stepName);
-			else if (report_type == 'summation')
+			else if (isValid && report_type == 'summation')
 				SUGAR.reports.showWizardStepSummation(isPrev, stepName);			
-			else if (report_type == 'summation_with_details')
+			else if (isValid && report_type == 'summation_with_details')
 				SUGAR.reports.showWizardStepSummationWithDetails(isPrev, stepName);			
 		},
 		prepareReportForProcessing: function() {
@@ -1912,7 +1923,7 @@ SUGAR.reports = function() {
 			
 			cell = row.insertCell(2);
 			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteGroupBy(\"group_by_row_" +totalGroupByRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteGroupBy(\"group_by_row_" +totalGroupByRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			SUGAR.reports.addToFullTableList('group_by_row_' + totalGroupByRows,fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));	
 			var dd11 = YAHOO.util.Dom.get(id);
 	        dd11.dd = new SUGAR.reports.reportDDProxy(id, 'groupBy');
@@ -1973,7 +1984,7 @@ SUGAR.reports = function() {
 				cell.setAttribute('scope', 'row');
 			}
 			if (typeof(linkedGroupById) == 'undefined')
-				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			SUGAR.reports.addToFullTableList(id, fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));		
 			if (typeof(linkedGroupById) == 'undefined') {
 				var dd11 = YAHOO.util.Dom.get(id);
@@ -1992,7 +2003,6 @@ SUGAR.reports = function() {
 			var row = table.insertRow(table.rows.length);
 			row.setAttribute('id', 'display_cols_row_' + totalDisplayColRows);
 			var cell = row.insertCell(0);
-			cell.setAttribute('scope', 'row');
 			var record = e.getRecord(e.getSelectedRows()[0]);
 			cell.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;<input type='hidden' id='display_cols_row_"+ totalDisplayColRows+"_module' value='"+
 				record.getData('module_name') +"'>" +
@@ -2001,25 +2011,22 @@ SUGAR.reports = function() {
 				"<input type='hidden' id='display_cols_row_" + totalDisplayColRows+"_field' value='"+
 				record.getData('field_name') + "'>";			
 							
-			var cell = row.insertCell(1);
-			cell.setAttribute('scope', 'row');
-			var colLabel = record.getData('parents') + " > " +
-				record.getData('field_label');
-			cell.innerHTML = colLabel;
-			colLabel = record.getData('field_label');
-			cell.setAttribute("onmouseover", "this.style.cursor = 'move'");
-			cell = row.insertCell(2);
-			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "<input type='text' size='50' id= 'display_cols_label_'"+totalDisplayColRows+" value='"+colLabel+"' onclick='this.focus();'>";
-			cell = row.insertCell(3);
-			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "<input type='radio' name='order_by_radio' id='order_by_radio_"+totalDisplayColRows +"' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+")'></input>";
-			cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
-			cell = row.insertCell(4);
-			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
-			SUGAR.reports.addToFullTableList('display_cols_row_' + totalDisplayColRows,fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));		
-			
+            var cell = row.insertCell(1);
+            cell.setAttribute('scope', 'row');
+            var colLabel = record.getData('parents') + " > " +
+                record.getData('field_label');
+            cell.innerHTML = colLabel;
+            colLabel = record.getData('field_label');
+            cell.setAttribute("onmouseover", "this.style.cursor = 'move'");
+            cell = row.insertCell(2);
+            cell.innerHTML = "<input type='text' size='50' id= 'display_cols_label_'"+totalDisplayColRows+"' value='"+colLabel+"' title='"+ colLabel + SUGAR.language.get('Reports', 'LBL_LABEL') + "' onclick='this.focus();'>";
+            cell = row.insertCell(3);
+            cell.innerHTML = "<input type='radio' title='" + SUGAR.language.get('Reports', 'LBL_ORDER_BY') + "' name='order_by_radio' id='order_by_radio_"+ totalDisplayColRows + "' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+ ")'></input>";
+            cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
+            cell = row.insertCell(4);
+            cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
+            SUGAR.reports.addToFullTableList('display_cols_row_' + totalDisplayColRows,fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));
+
 			var dd11 = YAHOO.util.Dom.get('display_cols_row_' + totalDisplayColRows);
 			dd11.dd = new SUGAR.reports.reportDDProxy('display_cols_row_' + totalDisplayColRows, 'group');
 			
@@ -2056,7 +2063,7 @@ SUGAR.reports = function() {
 				"</td><td class='dataLabel'>&nbsp;</td></tr>" +
 				"<tr id='group_by_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_GROUP_BY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_SELECT_GROUP_BY') + "</span>" + "<span id='group_by_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_SELECT_GROUP_BY') + "<span id='group_by_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 
 			var groupByModule = new YAHOO.widget.Module("group_by_div", { visible: false });
 			groupByModule.setHeader(title);
@@ -2083,7 +2090,7 @@ SUGAR.reports = function() {
 			panelHtml +=	
 				"<tr id='display_summary_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES') + "</span>" + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES')  + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 
 			var displaySummariesModule = new YAHOO.widget.Module("display_summaries_div", { visible: false });
 			displaySummariesModule.setHeader(title);
@@ -2105,12 +2112,12 @@ SUGAR.reports = function() {
 		showDisplayColumnsPanel: function(){
 			document.getElementById('display_cols_div').innerHTML='';
 			module = current_module;
-			var panelHtml="<table id='displayColsTable' width='100%'><tr><td width='4%' scope='row'>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width='30%' scope='row'><b>"+SUGAR.language.get('Reports','LBL_COLUMN_NAME')+
-				"</td><td width='30%' scope='row'><b>"+SUGAR.language.get('Reports','LBL_LABEL')+"</td>" +
-				"<td width='30%' scope='row'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</td><td></td></tr>" +
+			var panelHtml="<table id='displayColsTable' width='100%'><tr><th width='4%'>&nbsp;&nbsp;&nbsp;&nbsp;</th><th width='30%' scope='col'><b>"+SUGAR.language.get('Reports','LBL_COLUMN_NAME')+
+				"</th><th width='30%' scope='col'><b>"+SUGAR.language.get('Reports','LBL_LABEL')+"</th>" +
+				"<th width='30%' scope='col'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</th><th></th></tr>" +
 				"<tr id='display_cols_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=3><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_COLS_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_CHOOSE_DISPLAY_COLS') + "</span>" + "<span id='display_cols_help'><img id=\"toolipImageId\" src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_CHOOSE_DISPLAY_COLS')  + "<span id='display_cols_help'><img id=\"toolipImageId\" src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 
 			var displayColsModule = new YAHOO.widget.Module("display_cols_div", { visible: false });
 			displayColsModule.setHeader(title);
@@ -2218,6 +2225,7 @@ SUGAR.reports = function() {
 			var options = new Array();
 			var select_info = new Object();
 			select_info['name'] = 'qualify';
+            select_info['title'] = 'select filter qualifier';
 			select_info['onchange'] = "SUGAR.reports.filterTypeChanged("+current_filter_id+");";
 			select_html_info['select'] = select_info;
 		
@@ -2284,6 +2292,7 @@ SUGAR.reports = function() {
 			var options_arr = new Array();
 			var select_info = new Object();
 			select_info['name'] = 'input';
+            select_info['title'] = 'select filter input';
 			select_html_info['select'] = select_info;
 		
 			for(i=0;i < options.length;i++) {
@@ -2325,6 +2334,7 @@ SUGAR.reports = function() {
 			var select_info = new Object();
 			select_info['size'] = '5';
 			select_info['multiple'] = true;
+            select_info['title'] = 'filter multi-select input';
 			select_html_info['select'] = select_info;
 		
 			var selected_map = new Object();
@@ -2409,6 +2419,7 @@ SUGAR.reports = function() {
 			name_input.setAttribute("id", field_name_name);
 			name_input.setAttribute("class", "sqsEnabled");
 			name_input.setAttribute("autocomplete", "off");
+            name_input.setAttribute("title", field_name_name);
 			
 			if ( typeof (filter.input_name1) == 'undefined') {
 				filter.input_name1= '';
@@ -2515,6 +2526,7 @@ SUGAR.reports = function() {
 		 	new_input.type="hidden";
 			new_input.value=filter.qualifier_name;
 			new_input.name="text_input";
+            new_input.setAttribute('title','filter text input');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 		},		
@@ -2526,6 +2538,7 @@ SUGAR.reports = function() {
 			new_input.type="hidden";
 			new_input.value=filter.qualifier_name;
 			new_input.name="text_input";
+            new_input.setAttribute('title','filter text input');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 		
@@ -2548,6 +2561,7 @@ SUGAR.reports = function() {
 			}
 		
 			new_input.value=filter.input_name0;
+            new_input.setAttribute('title','filter start');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 			filter_row.input_field0 = new_input;
@@ -2560,7 +2574,8 @@ SUGAR.reports = function() {
 			var cell = document.createElement('td');
 			var new_input = document.createElement("input");
 			new_input.type="text";
-			if (typeof(filter.input_name1) == 'undefined') {
+			new_input.setAttribute('title','filter end');
+            if (typeof(filter.input_name1) == 'undefined') {
 				filter.input_name1 = '';
 			}
 		
@@ -2581,6 +2596,7 @@ SUGAR.reports = function() {
 			new_input.size="30";
 			new_input.maxsize="255";
 			new_input.visible="true";
+            new_input.setAttribute('title','filter text input');
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];
@@ -2592,6 +2608,8 @@ SUGAR.reports = function() {
 			cell.setAttribute('valign','middle'); 
 			var new_input = document.createElement("input");
 			new_input.type="text";
+            new_input.setAttribute('title','filter date');
+
 		
 			if ( typeof (filter.input_name0) != 'undefined' && filter.input_name0.length > 0) {
 				filter.input_name0 = SUGAR.reports.to_display_date(filter.input_name0);
@@ -2692,6 +2710,7 @@ SUGAR.reports = function() {
 			var cell = document.createElement("td");
 			cell.setAttribute('valign','middle'); 
 			var new_input = document.createElement("input");
+            new_input.setAttribute('title','filter date');
 			new_input.type="text";
 			if (typeof(filter.input_name0) == 'undefined') {
 				filter.input_name0 = '';
@@ -2810,6 +2829,7 @@ SUGAR.reports = function() {
 			var div1 = document.createElement('div');
 			var new_input = document.createElement("input");
 			new_input.type="text";
+            new_input.setAttribute('title','filter date start');
 			if (typeof(filter.input_name0) == 'undefined') {
 				filter.input_name0 = '';
 			}
@@ -2848,6 +2868,7 @@ SUGAR.reports = function() {
 		
 			var div3 = document.createElement('div');
 			var new_input = document.createElement("input");
+            new_input.setAttribute('title','filter date end');
 			new_input.type="text";
 			if (typeof(filter.input_name2) == 'undefined') {
 				filter.input_name2 = '';
@@ -3016,8 +3037,8 @@ SUGAR.reports = function() {
 			new_input.name="runtime_filter_"+ rowId;
 			new_input.id="runtime_filter_" + rowId;
 			cell.appendChild(new_input);
-			cell.innerHTML += " <b>" + SUGAR.language.get('Reports', 'LBL_RUN_TIME_LABEL') + "</b>";
-			cell.innerHTML += '<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib(\'' + SUGAR.language.get('Reports','LBL_RUNTIME_HELP') + '\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\' );">&nbsp;<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=helpInline.gif"></span>';
+			cell.innerHTML += " <b><label for='runtime_filter_" + rowId+"' />"+ SUGAR.language.get('Reports', 'LBL_RUN_TIME_LABEL') + "</input></b>";
+			cell.innerHTML += '<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib(\'' + SUGAR.language.get('Reports','LBL_RUNTIME_HELP') + '\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\' );">&nbsp;<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=helpInline.gif"  alt="'+SUGAR.language.get("Reports", 'LBL_ALT_INFORMATION')+'"></span>';
 			
 			row.appendChild(cell);
 			if (filter.runtime && filter.runtime == 1) {
@@ -3081,6 +3102,11 @@ SUGAR.reports = function() {
 			   var count = 0;
 			   value_text = '';
 			   for(i in filter.input_name0) {
+                   // Bug 46256. Function is a bad type for value_text generation
+                   if (typeof filter.input_name0[i] == 'function')
+                   {
+                       continue;
+                   }
 				   value_text += '&id_' + field_id_name + '_collection_' + count + '=' + filter.input_name0[i];
 				   value_text += '&' + field_id_name + '_collection_' + count + '=' + escape(filter.input_name1[i]);
 				   count++;
@@ -3329,7 +3355,7 @@ SUGAR.reports = function() {
 
 			var delete_cell = document.createElement('td');
 			filterRow.appendChild(delete_cell);
-			delete_cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteFilter("+current_filter_id+",\""+ current_filters_table +"_filter_row_" + totalFilterRows + "\", \""+current_filters_table+"\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+			delete_cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteFilter("+current_filter_id+",\""+ current_filters_table +"_filter_row_" + totalFilterRows + "\", \""+current_filters_table+"\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			
 		},
 		addFieldToDisplayColumnsOnLoad: function(displayCol, orderBy) {
@@ -3400,7 +3426,7 @@ SUGAR.reports = function() {
 
 			cell = row.insertCell(4);
 			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 
 			SUGAR.reports.addToFullTableList('display_cols_row_' + totalDisplayColRows,
 				parentsUIStrSoFar, link);		
@@ -3468,7 +3494,7 @@ SUGAR.reports = function() {
 			
 			cell = row.insertCell(2);
 			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteGroupBy(\"group_by_row_" +totalGroupByRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteGroupBy(\"group_by_row_" +totalGroupByRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			var dd11 = YAHOO.util.Dom.get(id);
             dd11.dd = new SUGAR.reports.reportDDProxy(id, 'groupBy');
 			SUGAR.reports.addFieldToDisplaySummariesOnLoad(groupByColumn, 'group_by_row_' + totalGroupByRows, summaryOrderBy);
@@ -3569,7 +3595,7 @@ SUGAR.reports = function() {
 				cell.setAttribute('scope', 'row');
 			}
 			if (linkedGroupById == null)
-				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' '"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			SUGAR.reports.addToFullTableList(id,
 				parentsUIStrSoFar, link);		
 
@@ -3630,7 +3656,7 @@ SUGAR.reports = function() {
 
 			var delete_cell = document.createElement('td');
 			filterRow.appendChild(delete_cell);
-			delete_cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteFilter("+current_filter_id+",\""+ current_filters_table +"_filter_row_" + totalFilterRows + "\", \""+current_filters_table+"\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+			delete_cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteFilter("+current_filter_id+",\""+ current_filters_table +"_filter_row_" + totalFilterRows + "\", \""+current_filters_table+"\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 		},
 								
 		addFieldToFilter: function(item, e) {
@@ -3689,7 +3715,7 @@ SUGAR.reports = function() {
 
 			var delete_cell = document.createElement('td');
 			filterRow.appendChild(delete_cell);
-			delete_cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteFilter("+current_filter_id+",\""+ current_filters_table +"_filter_row_" + totalFilterRows + "\", \""+current_filters_table+"\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
+			delete_cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteFilter("+current_filter_id+",\""+ current_filters_table +"_filter_row_" + totalFilterRows + "\", \""+current_filters_table+"\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 		},
 		
 		loadXML: function() {
@@ -3825,7 +3851,7 @@ SUGAR.reports = function() {
 				fieldGridJSON.push(obj);
 			}
 			var myColumnDefs = [ 
-	            {key:"field_label", minWidth: 150, sortable:true, resizeable:false, label:SUGAR.language.get('Reports','LBL_FIELD_NAME')}
+	            {key:"field_label", minWidth: 150, sortable:true, resizeable:false, label:SUGAR.language.get('Reports','LBL_FIELD_NAME'),abbr:'" scope="col'} //injecting 'scope' into YUI parameter for 508 compliance
 	        ];
 	        var myDataSource = new YAHOO.util.LocalDataSource(fieldGridData);
 	        myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
@@ -3833,7 +3859,7 @@ SUGAR.reports = function() {
 	            fields: ["field_label", "module_name","parents", "field_name", "link_name", "parent_module", "parents_link"]
 	        };
 
-			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel + "</span>" +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel  +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 			
 			var toolTip = new YAHOO.widget.Tooltip("tt6", {context:"fields_panel_help",  
 						   	   text:SUGAR.language.get('Reports','LBL_FIELDS_PANEL_HELP_DESC'),
@@ -3965,7 +3991,7 @@ SUGAR.reports = function() {
             
             var moduleTree = SUGAR.reports.module_tree;
             if (!moduleTree) {
-				var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "</span>" + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
+				var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 				var moduleTree = new YAHOO.widget.Module("module_tree_panel", { visible: false });
 				var moduletreePanelHTML = "<div id=\"module_tree\" style=\"height:230px; width:200px; overflow:auto;\"></div>";
 				moduleTree.setHeader(title);

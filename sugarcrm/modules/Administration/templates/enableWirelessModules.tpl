@@ -29,7 +29,7 @@
 *}
 <script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
-
+{overlib_includes}
 <form name="enableWirelessModules" method="POST">
 	<input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="updateWirelessEnabledModules">
@@ -45,10 +45,22 @@
 	</table>
 	
 	<div class='add_table' style='margin-bottom:5px'>
-		<table id="enableWirelessModules" class="enableWirelessModules edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
+		<table id="enableWirelessModules" class="enableWirelessModules edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="25%">
 			<tr>
 			    <td colspan="2">
 			        <table>
+                    {if $url}
+                    <tr>
+                        <td scope="row" nowrap="nowrap">
+                            {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}:
+                            {sugar_help text=$MOD.LBL_WIRELESS_URL_HELP}
+                        </td>
+                        </td>
+                        <td>
+                            <a href="{$url}" target="_blank">{$url}</a>
+                        </td>
+                    </tr>
+                    {/if}
                     <tr>
                         <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_LIST_ENTRIES'}: </td>
                         <td>
@@ -60,6 +72,9 @@
                         <td>
                             <input type='text' size='4' id="max_subs" name='wl_list_max_entries_per_subpanel' value='{$config.wl_list_max_entries_per_subpanel}'>
                         </td>
+                    </tr>
+                     <tr>
+                        <td colspan="2" white-space="wrap" style="font-style: italic;"><span>{sugar_translate label='LBL_WIRELESS_MODULES_ENABLE_DESC'}</span></td>
                     </tr>
                 </td>
             </tr>

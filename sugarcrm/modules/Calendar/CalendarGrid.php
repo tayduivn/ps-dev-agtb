@@ -28,24 +28,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-
 global $timedate;
 
 class CalendarGrid {
-	var $args;
-	var $real_today_unix;
-	var $weekday_names;
-	var $startday;
+
+	protected $cal; // Calendar object
+	protected $today_ts; // timestamp of today
+	protected $weekday_names; // string array of names of week days
+	protected $startday; // first day of week
+	protected $scrollable; // srolling in calendar
+	protected $time_step = 30; // time step
+	protected $time_format; // user time format
+	protected $date_time_format; // user date time format
 	
-	function __construct(&$args){
+	/**
+	 * constructor
+	 * @param Calendar $cal
+	 */
+	function __construct(&$cal){
 		global $current_user;
-		$this->args = &$args;		
-		$this->real_today_unix = CalendarUtils::to_timestamp($GLOBALS['timedate']->get_gmt_db_date());
-		
-		$weekday_names = array();
-		
+		$this->cal = &$cal;		
+		$this->today_ts = $GLOBALS['timedate']->getNow()->get_day_begin()->format('U');
+
 		$this->startday = $current_user->get_first_day_of_week();
 		
+		$weekday_names = array();
 		for($i = 0; $i < 7; $i++){
 			$j = $i + $this->startday;
 			if($j >= 7)
@@ -53,223 +60,219 @@ class CalendarGrid {
 			$weekday_names[$i] = $GLOBALS['app_list_strings']['dom_cal_day_short'][$j+1];
 		}		
 			
-		$this->weekday_names = $weekday_names;		
+		$this->weekday_names = $weekday_names;	
+		
+		$this->scrollable = false;		
+		if(in_array($this->cal->view,array('day','week'))){
+			$this->scrollable = true;
+		}
+		
+		$this->time_step = $this->cal->time_step;
+		$this->time_format = $GLOBALS['timedate']->get_time_format();
+		$this->date_time_format = $GLOBALS['timedate']->get_date_time_format();	
+	
 	}
 	
 	
-	// displays calendar grid
-	function display(){
-		$action = "display_".strtolower($this->args['cal']->view);		
+	/** Get html of calendar grid
+	 * @return string
+	 */
+	public function display(){
+		$action = "display_".strtolower($this->cal->view);		
 		return $this->$action();
-	}		
+	}
 	
-	function display_week(){
-		
-		$today_unix = $this->args['cal']->today_unix;
-		$t_step = $this->args['cal']->time_step;		
-		
-		$Tw = date("w",$today_unix - date('Z',$today_unix));
-		$Ti = date("i",$today_unix - date('Z',$today_unix));
-		$Ts = date("s",$today_unix - date('Z',$today_unix));		
-		$Th = date("H",$today_unix - date('Z',$today_unix));
-		
-		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);		
-
-		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
-		$week_start = date("m/d/Y H:i:s",$week_start_unix);
-		$week_end_unix = $week_start_unix + 60*60*24*7;
-		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;
-		$week_end = date("m/d/Y H:i:s",$week_end_unix);
-		
-		$str = "";
-		
-		
-		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
-				
-		$str .= "<div style='overflow-y: hidden;'>";
-						
+	/** Get html of time column
+	 * @param integer $start timestamp	 
+	 * @return string
+	 */
+	protected function get_time_column($start){			
+		$str = "";			
+		$head_content = "&nbsp;";	
+		if($this->cal->view == 'month'){
+			if($this->startday == 0)
+				$wf = 1;
+			else
+				$wf = 0;				
+			$head_content = "<a href='".ajaxLink("index.php?module=Calendar&action=index&view=week&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$GLOBALS['timedate']->fromTimestamp($start + $wf*3600*24)->format('W')."</a>";
+		}			
 		$str .= "<div class='left_time_col'>";
-			$str .= "<div class='day_head'>&nbsp;</div>";		
-		$str .= "</div>";
-		$str .= "<div class='week_block'>";
-		for($d = 0; $d < 7; $d++){
-			$curr_time = $week_start_unix + $d*86400;
-			$str .= "<div class='day_col'>";
-			if($this->real_today_unix == $curr_time)
-					$headstyle = " today";
-				else
-					$headstyle = "";
-				$str .= "<div class='day_head".$headstyle."'><a href='".ajaxLink("index.php?module=Calendar&action=index&view=day&hour=0&day=".CalendarUtils::timestamp_to_string($curr_time,'j')."&month=".CalendarUtils::timestamp_to_string($curr_time,'n')."&year=".CalendarUtils::timestamp_to_string($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".CalendarUtils::timestamp_to_string($curr_time,'d')."</a></div>";
-			$str .= "</div>";			
-		}
-		$str .= "</div>";
-		
-		$str .= "</div>";	
-		
-		
-		$str .= "<div id='cal-scrollable' style='overflow-y: scroll; clear: both; height: 479px;'>";	
-			
-			$str .= "<div class='left_time_col'>";	
-				for($i = 0; $i < 24; $i++){
-					for($j = 0; $j < 60; $j += $t_step){
-						if($j == 0) 
-							$innerText = CalendarUtils::timestamp_to_string($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
-						else
-							$innerText = "&nbsp;"; 
-						$str .= "<div class='left_cell'>".$innerText."</div>";
-					}
-				}	
-			$str .= "</div>";
-			$str .= "<div class='week_block'>";
-			for($d = 0; $d < 7; $d++){
-				$curr_time = $week_start_unix + $d*86400;
-				$str .= "<div class='day_col'>";
-					for($i = 0; $i < 24; $i++){
-						for($j = 0; $j < 60; $j += $t_step){
+			if(!$this->scrollable)			
+				$str .= "<div class='day_head'>".$head_content."</div>";
+			for($i = 0; $i < 24; $i++){
+				for($j = 0; $j < 60; $j += $this->time_step){	
 							
-							$timestr = CalendarUtils::timestamp_to_string($curr_time,$GLOBALS['timedate']->get_time_format());
-							$str .= "<div id='t_".$curr_time."' class='slot' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_string($curr_time)."'></div>";
-							$curr_time += $t_step*60;
-						}
-					}
-				$str .= "</div>";
+					if($j == 0){ 
+						$innerText = $GLOBALS['timedate']->fromTimestamp($start + $i * 3600)->format($this->time_format);						
+					}else{
+						$innerText = "&nbsp;";
+					}						
+					if($j == 60 - $this->time_step && $this->time_step < 60){
+						$class = " odd_border";
+					}else{
+						$class = "";
+					}										
+					if($this->scrollable || !$this->check_owt($i,$j,$this->cal->d_start_minutes,$this->cal->d_end_minutes))											
+						$str .= "<div class='left_cell".$class."'>".$innerText."</div>";
+				}
 			}	
-			$str .= "</div>";
-		
-		$str .= "</div>";
-				
-		$str .= "</div>";
-		
-		
+		$str .= "</div>";		
 		return $str;
 	}
 	
-	
-	function display_day(){
-	
-		$today_unix = $this->args['cal']->today_unix;
-		$t_step = $this->args['cal']->time_step;	
-	
-		$Tw = date("w",$today_unix - date('Z',$today_unix));
-		$Ti = date("i",$today_unix - date('Z',$today_unix));
-		$Ts = date("s",$today_unix - date('Z',$today_unix));
-		$Th = date("H",$today_unix - date('Z',$today_unix));
-
-		$day_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th;
-		$day_start = date("m/d/Y H:i:s",$day_start_unix);
-
+	/** 
+	 * Get html of day slots column
+	 * @param integer $start timestamp
+	 * @param integer $day number of day in week
+	 * @param string $prefix prefix for id of timeslot used in shared view	 
+	 * @return string
+	 */
+	protected function get_day_column($start,$day = 0,$prefix = ""){	
+		$curr_time = $start;
 		$str = "";
-		$str .= "<div id='cal-grid' style=' min-width: 300px; visibility: hidden;'>";		
-		
-		$str .= "<div id='cal-scrollable' style='overflow-y: scroll; height: 479px;'>";
-			
-			$str .= "<div class='left_time_col'>";
-				$str .= "<div class='day_head' style='display:none;'>&nbsp;</div>";		
-				for($i = 0; $i < 24; $i++){
-					for($j = 0; $j < 60; $j += $t_step){
-						if($j == 0) 
-							$innerText = CalendarUtils::timestamp_to_string($day_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
-						else
-							$innerText = "&nbsp;"; 						
-						$str .= "<div class='left_cell'>".$innerText."</div>";
-					}
-				}	
-			$str .= "</div>";
-				$d = 0;
-				$curr_time = $day_start_unix + $d*86400;	
-				$str .= "<div class='week_block'>";
-					$str .= "<div class='day_col' style='width: 100%;'>";
-						$str .= "<div class='day_head' style='display:none;'>&nbsp;</div>";		
-						for($i = 0; $i < 24; $i++){
-							for($j = 0; $j < 60; $j += $t_step){										
-								$timestr = CalendarUtils::timestamp_to_string($curr_time,$GLOBALS['timedate']->get_time_format());
-								$str .= "<div id='t_".$curr_time."' class='slot' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_string($curr_time)."'></div>";
-								$curr_time += $t_step*60;
-							}
-						}
-					$str .= "</div>";
-				$str .= "</div>";
-		$str .= "</div>";
-		
-		$str .= "</div>";
-		
+		$str .= "<div class='day_col'>";
+		$str .= $this->get_day_head($start,$day);
+		for($i = 0; $i < 24; $i++){			
+			for($j = 0; $j < 60; $j += $this->time_step){
+				$timestr = $GLOBALS['timedate']->fromTimestamp($curr_time)->format($this->time_format);	
+				if($j == 60 - $this->time_step && $this->time_step < 60){
+					$class = " odd_border";
+				}else{
+					$class = "";	
+				}				
+				if($this->scrollable || !$this->check_owt($i,$j,$this->cal->d_start_minutes,$this->cal->d_end_minutes))
+					$str .= "<div id='t_".$curr_time.$prefix."' class='slot".$class."' time='".$timestr."' datetime='".$GLOBALS['timedate']->fromTimestamp($curr_time)->format($this->date_time_format)."'></div>";
+				$curr_time += $this->time_step*60;
+			}
+		}
+		$str .= "</div>";		
 		return $str;	
 	}
 	
+	/** 
+	 * Get html of day head
+	 * @param integer $start timestamp
+	 * @param integer $day number of day in week 
+	 * @param bulean $force force display header 
+	 * @return string
+	 */	
+	protected function get_day_head($start,$day = 0,$force = false){
+		$str = "";
+		if(!$this->scrollable || $force){
+			$headstyle = ""; 
+			if($this->today_ts == $start)
+				$headstyle = " today";
+			$str .= "<div class='day_head".$headstyle."'><a href='".ajaxLink("index.php?module=Calendar&action=index&view=day&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$this->weekday_names[$day]." ".$GLOBALS['timedate']->fromTimestamp($start)->format('d')."</a></div>";
+		}
+		return $str;
+	}	
 	
-	function display_month(){
+	/**
+	 * Get true if out of working day
+	 * @param integer $i hours
+	 * @param integer $j minutes
+	 * @param integer $r_start start of working day in minutes
+	 * @param integer $r_end end of working day in minutes
+	 * @return boolean
+	 */
+	protected function check_owt($i,$j,$r_start,$r_end){
+		if($i*60+$j < $r_start || $i*60+$j >= $r_end)
+			return true;
+	}
 	
-		$today_unix = $this->args['cal']->today_unix;
-		$t_step = $this->args['cal']->time_step;	
-	
-		$Tw = date("w",$today_unix - date('Z',$today_unix));
-		$Ti = date("i",$today_unix - date('Z',$today_unix));
-		$Ts = date("s",$today_unix - date('Z',$today_unix));
-		$Th = date("H",$today_unix - date('Z',$today_unix));		
-		$Td = date("d",$today_unix - date('Z',$today_unix));
-		$Tt = date("t",$today_unix - date('Z',$today_unix));
-
-		$month_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Td - 1);
-		$month_end_unix = $month_start_unix + 60*60*24*($Tt);
-
-		$Tw = date("w",$month_start_unix - date('Z',$month_start_unix));
-		$week_start_unix = $month_start_unix - 60*60*24*($Tw);		
-		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
+	/** 
+	 * Get html of week calendar grid
+	 * @return string	
+	 */	
+	protected function display_week(){
 		
-		$day_num = date("j",$week_start_unix - date('Z',$week_start_unix));
-		if($day_num <= 7 && $day_num > 1)
-			$week_start_unix = $week_start_unix - 7*60*60*24;
-		
-		$week_end_unix = $week_start_unix + 60*60*24*7;
-		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;	
-		
-
-
-		if($this->startday == 0)
-			$wf = 1;
-		else
-			$wf = 0;
+		$current_date = $this->cal->date_time;
+		$week_start = CalendarUtils::get_first_day_of_week($current_date);
+		$week_start_ts = $week_start->format('U') + $week_start->getOffset(); // convert to timestamp, ignore tz
 	
 		$str = "";
 		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
-			$curr_time_g = $week_start_unix;
-			$w = 0;
-			while($curr_time_g < $month_end_unix){		
+				
+			$str .= "<div style='overflow-y: hidden;'>";						
 				$str .= "<div class='left_time_col'>";
-					$str .= "<div class='day_head'><a href='".ajaxLink("index.php?module=Calendar&action=index&view=week&hour=0&day=".CalendarUtils::timestamp_to_string($curr_time_g,'j')."&month=".CalendarUtils::timestamp_to_string($curr_time_g,'n')."&year=".CalendarUtils::timestamp_to_string($curr_time_g,'Y'))."'>".CalendarUtils::timestamp_to_string($curr_time_g + $wf*3600*24,'W')."</a></div>";
-					for($i = 0; $i < 24; $i++){
-						for($j = 0; $j < 60; $j += $t_step){
-							if($j == 0) 
-								$innerText = CalendarUtils::timestamp_to_string($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
-							else
-								$innerText = "&nbsp;"; 
-							if(!CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes))											
-								$str .= "<div class='left_cell'>".$innerText."</div>";
-						}
-					}	
+					$str .= "<div class='day_head'>&nbsp;</div>";		
 				$str .= "</div>";
+				$str .= "<div class='week_block'>";
+				for($d = 0; $d < 7; $d++){
+					$curr_time = $week_start_ts + $d*86400;
+					$str .= "<div class='day_col'>";
+					$str .= $this->get_day_head($curr_time,$d,true);					
+					$str .= "</div>";			
+				}
+				$str .= "</div>";		
+			$str .= "</div>";		
+		
+			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; clear: both; height: 479px;'>";			
+				$str .= $this->get_time_column($week_start_ts);			
+				$str .= "<div class='week_block'>";
+				for($d = 0; $d < 7; $d++){
+					$curr_time = $week_start_ts + $d*86400;				
+					$str .= $this->get_day_column($curr_time);
+				}	
+				$str .= "</div>";		
+			$str .= "</div>";
+				
+		$str .= "</div>";
+		
+		return $str;
+	}		
+	
+	/** 
+	 * Get html of day calendar grid
+	 * @return string	
+	 */
+	protected function display_day(){	
+
+		$current_date = $this->cal->date_time;
+		$day_start_ts = $current_date->format('U') + $current_date->getOffset(); // convert to timestamp, ignore tz
+
+		$str = "";
+		$str .= "<div id='cal-grid' style=' min-width: 300px; visibility: hidden;'>";
+			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; height: 479px;'>";			
+				$str .= $this->get_time_column($day_start_ts);
+				$d = 0;
+				$curr_time = $day_start_ts + $d*86400;
+				$str .= "<div class='week_block'>";				
+				$str .= $this->get_day_column($curr_time);
+				$str .= "</div>";
+			$str .= "</div>";		
+		$str .= "</div>";
+		
+		return $str;	
+	}	
+	
+	/** 
+	 * Get html of month calendar grid
+	 * @return string	
+	 */
+	protected function display_month(){
+			
+		$current_date = $this->cal->date_time;
+		$month_start = $current_date->get_day_by_index_this_month(0);	
+		$month_end = $month_start->get("+".$month_start->format('t')." days");			
+		$week_start = CalendarUtils::get_first_day_of_week($month_start);
+		$week_start_ts = $week_start->format('U') + $week_start->getOffset(); // convert to timestamp, ignore tz
+		$month_end_ts = $month_end->format('U') + $month_end->getOffset();					
+
+		$str = "";
+		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
+			$curr_time_global = $week_start_ts;
+			$w = 0;
+			while($curr_time_global < $month_end_ts){
+				$str .= $this->get_time_column($curr_time_global);				
 				$str .= "<div class='week_block'>";	
 				for($d = 0; $d < 7; $d++){
-					$curr_time = $week_start_unix + $d*86400 + $w*60*60*24*7;
-					$str .= "<div class='day_col'>";
-						if($this->real_today_unix == $curr_time)
-							$headstyle = " today";
-						else
-							$headstyle = "";
-						$str .= "<div class='day_head".$headstyle."'><a href='".ajaxLink("index.php?module=Calendar&action=index&view=day&hour=0&day=".CalendarUtils::timestamp_to_string($curr_time,'j')."&month=".CalendarUtils::timestamp_to_string($curr_time,'n')."&year=".CalendarUtils::timestamp_to_string($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".CalendarUtils::timestamp_to_string($curr_time,'d')."</a></div>";
-						for($i = 0; $i < 24; $i++){
-							for($j = 0; $j < 60; $j += $t_step){																	
-								$timestr = CalendarUtils::timestamp_to_string($curr_time,$GLOBALS['timedate']->get_time_format());
-								if(!CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes))
-									$str .= "<div id='t_".$curr_time."' class='slot' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_string($curr_time)."'></div>";
-								$curr_time += $t_step*60;
-							}
-						}
-					$str .= "</div>";			
+					$curr_time = $week_start_ts + $d*86400 + $w*60*60*24*7;
+					$str .= $this->get_day_column($curr_time,$d);		
 				}
 				$str .= "</div>";
 				$str .= "<div style='clear: left;'></div>";
-				$curr_time_g += 60*60*24*7;
+				$curr_time_global += 60*60*24*7;
 				$w++;
 			}
 		$str .= "</div>";
@@ -277,84 +280,50 @@ class CalendarGrid {
 		return $str;
 	}
 	
-	function display_shared(){
+	/** 
+	 * Get html of week shared grid
+	 * @return string	
+	 */
+	protected function display_shared(){
 	
-		$today_unix = $this->args['cal']->today_unix;
-		$t_step = $this->args['cal']->time_step;	
-	
-		$Tw = date("w",$today_unix - date('Z',$today_unix));
-		$Ti = date("i",$today_unix - date('Z',$today_unix));
-		$Ts = date("s",$today_unix - date('Z',$today_unix));
-		$Th = date("H",$today_unix - date('Z',$today_unix));
-
-		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);
-		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
-		$week_start = date("m/d/Y H:i:s",$week_start_unix);
-		$week_end_unix = $week_start_unix + 60*60*24*7;
-		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;
-		$week_end = date("m/d/Y H:i:s",$week_end_unix);
-
+		$current_date = $this->cal->date_time;
+		$week_start = CalendarUtils::get_first_day_of_week($current_date);
+		$week_start_ts = $week_start->format('U') + $week_start->getOffset(); // convert to timestamp, ignore tz
 
 		$str = "";
 		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
-		$un = 0;
+		$user_number = 0;
 		
 		$shared_user = new User();
-		foreach($this->args['cal']->shared_ids as $member_id){
+		foreach($this->cal->shared_ids as $member_id){
 
-			$un_str = "_".$un;
+			$user_number_str = "_".$user_number;
 		
 			$shared_user->retrieve($member_id);
 			$str .= "<div style='clear: both;'></div>";			
 			$str .= "<div class='monthCalBody'><h5 class='calSharedUser'>".$shared_user->full_name."</h5></div>";	
 			$str .= "<div user_id='".$member_id."' user_name='".$shared_user->user_name."'>";			
-			$str .= "<div class='left_time_col'>";
-				$str .= "<div class='day_head'>&nbsp;</div>";		
-				for($i = 0; $i < 24; $i++){
-					for($j = 0; $j < 60; $j += $t_step){
-						if($j == 0) 
-							$innerText = CalendarUtils::timestamp_to_string($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
-						else
-							$innerText = "&nbsp;"; 
-						if(!CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes))
-							$str .= "<div class='left_cell'>".$innerText."</div>";
-					}
-				}	
-			$str .= "</div>";
+			
+			$str .= $this->get_time_column($week_start_ts);
 				$str .= "<div class='week_block'>";
 				for($d = 0; $d < 7; $d++){
-					$curr_time = $week_start_unix + $d*86400;
-					$str .= "<div class='day_col'>";
-						if($this->real_today_unix == $curr_time)
-							$headstyle = " today";
-						else
-							$headstyle = "";
-						$str .= "<div class='day_head".$headstyle."'><a href='".ajaxLink("index.php?module=Calendar&action=index&view=day&hour=0&day=".CalendarUtils::timestamp_to_string($curr_time,'j')."&month=".CalendarUtils::timestamp_to_string($curr_time,'n')."&year=".CalendarUtils::timestamp_to_string($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".CalendarUtils::timestamp_to_string($curr_time,'d')."</a></div>";
-						for($i = 0; $i < 24; $i++){
-							for($j = 0; $j < 60; $j += $t_step){
-								$timestr = CalendarUtils::timestamp_to_string($curr_time,$GLOBALS['timedate']->get_time_format());
-								if(!CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes))
-									$str .= "<div id='t_".$curr_time.$un_str."' class='slot' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_string($curr_time)."'></div>";
-								$curr_time += $t_step*60;
-							}
-						}
-					$str .= "</div>";
+					$curr_time = $week_start_ts + $d*86400;
+					$str .= $this->get_day_column($curr_time,$d,$user_number_str);
 				}
 				$str .= "</div>";		
 			$str .= "</div>";
-			$un++;
+			$user_number++;
 		}
 		$str .= "</div>";
 		
 		return $str;
-	}
+	}	
 	
-	
-	function display_year(){	
-
-		$today_unix = $this->args['cal']->today_unix;
-		$t_step = $this->args['cal']->time_step;	
-
+	/** 
+	 * Get html of year calendar
+	 * @return string	
+	 */
+	protected function display_year(){	
 
 		$weekEnd1 = 0 - $this->startday; 
 		$weekEnd2 = -1 - $this->startday; 
@@ -363,86 +332,41 @@ class CalendarGrid {
 		if($weekEnd2 < 0)
 			$weekEnd2 += 7;	
 
-		$Tw = date("w",$today_unix - date('Z',$today_unix));
-		$Ti = date("i",$today_unix - date('Z',$today_unix));
-		$Ts = date("s",$today_unix - date('Z',$today_unix));
-		$Th = date("H",$today_unix - date('Z',$today_unix));
-		$Td = date("d",$today_unix - date('Z',$today_unix));
-		$Tm = date("m",$today_unix - date('Z',$today_unix));
-		$Ty = date("Y",$today_unix - date('Z',$today_unix));
-		$Tt = date("t",$today_unix - date('Z',$today_unix));
-		$Tt = date("z",$today_unix - date('Z',$today_unix));
-		$TL = date("L",$today_unix - date('Z',$today_unix));
-
-		$diy = 365;
-		if($TL == 1)
-			$diy++;	
-
-		$Tz = 0;
-		$month_start_unix = 0;
-		$year_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tz);
-		$year_end_unix = $month_start_unix + 60*60*24*($diy);		
-
-		$Tw = date("w",$year_start_unix - date('Z',$year_start_unix));
-
-		$week_start_unix = $year_start_unix - 60*60*24*($Tw);
-		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;		
-		$week_end_unix = $week_start_unix + 60*60*24*7;
-		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;	
-		
+		$year_start = SugarDateTime::createFromFormat("Y-m-d",$this->cal->date_time->year.'-01-01');
 
 		$str = "";
 		$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';
-		$curr_time_g = $year_start_unix;
 
 		for($m = 0; $m < 12; $m++){
 	
-			$gmt_g =  CalendarUtils::timestamp_to_string($this->args['cal']->today_unix,'Y'). "-" . str_pad($m + 1,2,"0",STR_PAD_LEFT) . "-" . "01";
-			$g_parsed = date_parse($gmt_g);
-			$g_unix = gmmktime($g_parsed['hour'],$g_parsed['minute'],$g_parsed['second'],$g_parsed['month'],$g_parsed['day'],$g_parsed['year']);
-			$Tw = date("w",$g_unix - date('Z',$g_unix));
-			$Ti = date("i",$g_unix - date('Z',$g_unix));
-			$Ts = date("s",$g_unix - date('Z',$g_unix));
-			$Th = date("H",$g_unix - date('Z',$g_unix));
-			$Td = date("d",$g_unix - date('Z',$g_unix));
-			$Tm = date("m",$g_unix - date('Z',$g_unix));
-			$Ty = date("Y",$g_unix - date('Z',$g_unix));
-			$Tt = date("t",$g_unix - date('Z',$g_unix));
-			$Tz = date("z",$g_unix - date('Z',$g_unix));
-			$TL = date("L",$g_unix - date('Z',$g_unix));
-
-			$month_start_unix = $g_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Td - 1);
-			$month_end_unix = $month_start_unix + 60*60*24*($Tt);
-			$Tw = date("w",$month_start_unix - date('Z',$month_start_unix));	
-			$week_start_unix = $month_start_unix - 60*60*24*($Tw);
-			$week_start_unix = $week_start_unix + $this->startday * 60*60*24;			
-			$day_num = date("j",$week_start_unix - date('Z',$week_start_unix));
-			if($day_num <= 7 && $day_num > 1)
-				$week_start_unix = $week_start_unix - 7*60*60*24;
-						
+			$month_start = $year_start->get("+".$m." months");			
+			$month_start_ts = $month_start->format('U') + $month_start->getOffset();
+			$month_end = $month_start->get("+".$month_start->format('t')." days");			
+			$week_start = CalendarUtils::get_first_day_of_week($month_start);
+			$week_start_ts = $week_start->format('U') + $week_start->getOffset(); // convert to timestamp, ignore tz
+			$month_end_ts = $month_end->format('U') + $month_end->getOffset();	
 						
 			if($m % 3 == 0)
 				$str .= "<tr>";		
 					$str .= '<td class="yearCalBodyMonth" align="center" valign="top" scope="row">';
-						$str .= '<a class="yearCalBodyMonthLink" href="'.ajaxLink('index.php?module=Calendar&action=index&view=month&&hour=0&day=1&month='.($m+1).'&year='.CalendarUtils::timestamp_to_string($month_start_unix,'Y')).'">'.$GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1].'</a>';
+						$str .= '<a class="yearCalBodyMonthLink" href="'.ajaxLink('index.php?module=Calendar&action=index&view=month&&hour=0&day=1&month='.($m+1).'&year='.$GLOBALS['timedate']->fromTimestamp($month_start_ts)->format('Y')).'">'.$GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1].'</a>';
 						$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';	
 							$str .= '<tr class="monthCalBodyTH">';
 								for($d = 0; $d < 7; $d++)
 									$str .= '<th width="14%">'.$this->weekday_names[$d].'</th>';			
 							$str .= '</tr>';				
-							$curr_time_g = $week_start_unix;
+							$curr_time_global = $week_start_ts;
 							$w = 0;
-							while($curr_time_g < $month_end_unix){
+							while($curr_time_global < $month_end_ts){
 								$str .= '<tr class="monthViewDayHeight yearViewDayHeight">';
 									for($d = 0; $d < 7; $d++){
-										$curr_time = $week_start_unix + $d*86400 + $w*60*60*24*7;
+										$curr_time = $week_start_ts + $d*86400 + $w*60*60*24*7;
 
-										if($curr_time < $month_start_unix || $curr_time >= $month_end_unix)
+										if($curr_time < $month_start_ts || $curr_time >= $month_end_ts)
 											$monC = "";
 										else
-											$monC = '<a href="'.ajaxLink('index.php?module=Calendar&action=index&view=day&hour=0&day='.CalendarUtils::timestamp_to_string($curr_time,'j').'&month='.CalendarUtils::timestamp_to_string($curr_time,'n').'&year='.CalendarUtils::timestamp_to_string($curr_time,'Y')) .'">'.CalendarUtils::timestamp_to_string($curr_time,'j').'</a>';
+											$monC = '<a href="'.ajaxLink('index.php?module=Calendar&action=index&view=day&hour=0&day='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('j').'&month='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('n').'&year='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('Y')) .'">'.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('j').'</a>';
 								
-									
 										if($d == $weekEnd1 || $d == $weekEnd2)	
 											$str .= "<td class='weekEnd monthCalBodyWeekEnd'>"; 
 										else
@@ -452,21 +376,18 @@ class CalendarGrid {
 											$str .= "</td>";
 									}
 								$str .= "</tr>";
-								$curr_time_g += 60*60*24*7;
+								$curr_time_global += 60*60*24*7;
 								$w++;
 							}				
-						$str .= '</table>';	
-						
-					$str .= '</td>';	
-	
+						$str .= '</table>';
+					$str .= '</td>';
 			if(($m - 2) % 3 == 0)
 				$str .= "</tr>";	
 		}
 		$str .= "</table>";
 		
-		return $str;			
-	}			
-	
+		return $str;		
+	}
 }
 
 ?>

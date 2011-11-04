@@ -32,7 +32,7 @@
 
 function processProjectDates(){
 	$sqlErrors=array();
-	$db = &PearDatabase::getInstance();
+	$db = DBManagerFactory::getInstance();
 
 	$query = "SELECT min(project_task.date_start) AS start_date, max(project_task.date_finish) AS end_date, project.id AS project_id " .
 			 "FROM project_task " .
@@ -93,7 +93,7 @@ function workdayDifference($start_date, $end_date){
 }
 
 function updateProjectTaskData(){
-	$db = &PearDatabase::getInstance();
+	$db = DBManagerFactory::getInstance();
 	$sqlErrors = array();
 	global $timedate;
 
@@ -170,10 +170,10 @@ function updateProjectTaskData(){
 	return true;
 }
 
-// BEGIN SUGARCRM flav=pro ONLY 
+// BEGIN SUGARCRM flav=pro ONLY
 function updateProjectResources(){
 	global $current_user;
-	$db = &PearDatabase::getInstance();
+	$db = DBManagerFactory::getInstance();
     $sqlErrors = array();
 	$modified_user_id = $current_user->id;
 	$created_by = $current_user->id;
@@ -227,10 +227,10 @@ function updateProjectResources(){
 	}
 	return true;
 }
-// END SUGARCRM flav=pro ONLY 
+// END SUGARCRM flav=pro ONLY
 
 function updateProjectTaskPredecessors(){
-	$db = &PearDatabase::getInstance();
+	$db = DBManagerFactory::getInstance();
 	$sqlErrors = array();
 	$query = "SELECT P2.project_task_id, P1.id " .
 			 "FROM project_task P1, project_task P2 " .
@@ -268,7 +268,7 @@ function updateProjectTaskPredecessors(){
 }
 
 function fixOrderNumbers(){
-	$db = &PearDatabase::getInstance();
+	$db = DBManagerFactory::getInstance();
 	$sqlErrors = array();
 	$query = "SELECT project_id " .
 			 "FROM project_task " .
@@ -356,14 +356,14 @@ function installProjectRelationships(){
 	$mi->install_relationship("$unzip_dir/relationships/projects_accountsMetaData.php");
 	$mi->install_relationship("$unzip_dir/relationships/projects_contactsMetaData.php");
 	$mi->install_relationship("$unzip_dir/relationships/projects_opportunitiesMetaData.php");
-	//BEGIN SUGARCRM flav=pro ONLY 
+	//BEGIN SUGARCRM flav=pro ONLY
 	$mi->install_relationship("$unzip_dir/relationships/projects_quotesMetaData.php");
-	//END SUGARCRM flav=pro ONLY 
+	//END SUGARCRM flav=pro ONLY
 	ob_end_clean();
 }
 
 function migrateProjectRelationships(){
-	$db = &PearDatabase::getInstance();
+	$db = DBManagerFactory::getInstance();
 	$sqlErrors = array();
 	$project_relationships = array( 'account' => 'Accounts',
 									'contact' => 'Contacts',
@@ -371,9 +371,9 @@ function migrateProjectRelationships(){
 									'bug' => 'Bugs',
 									'case' => 'Cases',
 									'product' => 'Products',
-									//BEGIN SUGARCRM flav=pro ONLY 
+									//BEGIN SUGARCRM flav=pro ONLY
 									'quote' => 'Quotes',
-									//END SUGARCRM flav=pro ONLY 
+									//END SUGARCRM flav=pro ONLY
 									);
 
 	foreach($project_relationships as $pr_id => $pr){
@@ -422,11 +422,11 @@ updateProjectTaskData();
 _logThis("Determining Project Start and End Dates", $path);
 processProjectDates();
 
-// BEGIN SUGARCRM flav=pro ONLY 
+// BEGIN SUGARCRM flav=pro ONLY
 // UPDATE PROJECT RESOURCES
 _logThis("Updating Project Resources", $path);
 updateProjectResources();
-// END SUGARCRM flav=pro ONLY 
+// END SUGARCRM flav=pro ONLY
 
 // UPDATE PROJECT TASK PREDECESSORS
 _logThis("Updating Project Task Predecessors", $path);

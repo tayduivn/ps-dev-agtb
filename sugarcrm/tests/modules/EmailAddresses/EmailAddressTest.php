@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/EmailAddresses/EmailAddress.php');
 
 /**
@@ -40,13 +40,13 @@ class EmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 	public function tearDown()
 	{
 		unset($this->emailaddress);
-		$query = "delete from email_addresses where email_address = '".$this->testEmailAddressString."';";
+		$query = "delete from email_addresses where email_address = '".$this->testEmailAddressString."'";
         $GLOBALS['db']->query($query);
 	}
 
 	public function testEmailAddress()
 	{
-		$id = '';
+		$id = create_guid();
 		$module = '';
 		$new_addrs=array();
 		$primary='';

@@ -27,7 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
- 
+
+
 require_once('include/utils/activity_utils.php');
 
 class CalendarActivity {
@@ -35,7 +36,7 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
-	function CalendarActivity($args){
+	function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot
 		// and does not have a sugarbean associated to it
 		global $timedate;
@@ -81,39 +82,36 @@ class CalendarActivity {
 		$timedate->tzGMT($this->end_time);
 	}
 
+	/**
+	 * Get where clause for fetching entried from DB
+	 * @param string $table_name t
+	 * @param string $rel_table table for accept status, not used in Tasks
+	 * @param SugarDateTime $start_ts_obj start date
+	 * @param SugarDateTime $end_ts_obj end date
+	 * @param string $field_name date field in table
+	 * @param string $view view; not used for now, left for compatibility
+	 * @return string
+	 */
 	function get_occurs_within_where_clause($table_name, $rel_table, $start_ts_obj, $end_ts_obj, $field_name='date_start', $view){
 		global $timedate;
         	// ensure we're working with user TZ
 		$start_ts_obj = $timedate->tzUser($start_ts_obj);
 		$end_ts_obj = $timedate->tzUser($end_ts_obj);
-		switch ($view) {
-			case 'month':
-		        	//C.L. For the start date, go back 6 days since 99 hours is the max duration (6 days)
-		       		$start = $start_ts_obj->get("-6 days")->get_day_begin();
-				$end = $end_ts_obj->get("first day of next month")->get_day_begin();
-				break;
-		   	case 'freebusy':    //bug: 44586, for freebusy, don't modify the start/end dates
-				$start = $start_ts_obj;
-				$end = $end_ts_obj;
-				break;
-			default:
-				// Date for the past 5 days as that is the maximum duration of a single activity
-				$start = $start_ts_obj->get("-5 days")->get_day_begin();
-				$end =  $start_ts_obj->get("+5 days")->get_day_end();
-				break;
-		}
+
+		$start = clone $start_ts_obj;
+		$end = clone $end_ts_obj;
 
 		$field_date = $table_name.'.'.$field_name;
 		$start_day = $GLOBALS['db']->convert("'{$start->asDb()}'",'datetime');
 		$end_day = $GLOBALS['db']->convert("'{$end->asDb()}'",'datetime');
 
 		$where = "($field_date >= $start_day AND $field_date < $end_day";
-		if($rel_table != '') {
-		    $where .= " AND $rel_table.accept_status != 'decline'";
+		if($rel_table != ''){
+			$where .= " AND $rel_table.accept_status != 'decline'";
 		}
 
-			$where .= ")";
-			return $where;
+		$where .= ")";
+		return $where;
 	}
 
 	function get_freebusy_activities($user_focus, $start_date_time, $end_date_time){
@@ -133,7 +131,17 @@ class CalendarActivity {
 		return $act_list;
 	}
 
- 	function get_activities($user_id, $params, $view_start_time, $view_end_time, $view){
+	/**
+	 * Get array of activities
+	 * @param string $user_id
+	 * @param boolean $show_tasks
+	 * @param SugarDateTime $view_start_time start date
+	 * @param SugarDateTime $view_end_time end date
+	 * @param string $view view; not used for now, left for compatibility
+	 * @param boolean $show_calls
+	 * @return array
+	 */
+ 	function get_activities($user_id, $show_tasks, $view_start_time, $view_end_time, $view, $show_calls = true){
 		global $current_user;
 		$act_list = array();
 		$seen_ids = array();
@@ -162,8 +170,8 @@ class CalendarActivity {
 				}
 			}
 		}
-		
-		if($params['show_calls']){
+
+		if($show_calls){
 			if(ACLController::checkAccess('Calls', 'list',$current_user->id  == $user_id)) {
 				$call = new Call();
 
@@ -189,7 +197,7 @@ class CalendarActivity {
 		}
 
 
-		if($params['show_tasks']){
+		if($show_tasks){
 			if(ACLController::checkAccess('Tasks', 'list',$current_user->id == $user_id)) {
 				$task = new Task();
 

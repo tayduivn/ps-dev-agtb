@@ -207,9 +207,6 @@ $admin_option_defs['Administration']['moduleBuilder']= array('ModuleBuilder','LB
 $admin_option_defs['Administration']['configure_tabs']= array('ConfigureTabs','LBL_CONFIGURE_TABS_AND_SUBPANELS','LBL_CONFIGURE_TABS_AND_SUBPANELS_DESC','./index.php?module=Administration&action=ConfigureTabs');
 //END SUGARCRM flav!=sales ONLY
 $admin_option_defs['Administration']['module_loader'] = array('ModuleLoader','LBL_MODULE_LOADER_TITLE','LBL_MODULE_LOADER','./index.php?module=Administration&action=UpgradeWizard&view=module');
-//BEGIN SUGARCRM flav!=sales ONLY
-$admin_option_defs['Administration']['configure_ajax']= array( 'ConfigureTabs','LBL_CONFIG_AJAX','LBL_CONFIG_AJAX_DESC','./index.php?module=Administration&action=ConfigureAjaxUI');
-//END SUGARCRM flav!=sales ONLY
 
 
 //BEGIN SUGARCRM flav!=sales ONLY

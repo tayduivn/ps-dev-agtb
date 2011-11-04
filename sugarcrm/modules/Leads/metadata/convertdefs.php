@@ -263,6 +263,7 @@ $viewdefs['Calls']['ConvertLead'] = array(
 $viewdefs['Meetings']['ConvertLead'] = array(
     'copyData' => false,
     'required' => false,
+    'relationship' => 'meetings_users',
     'templateMeta' => array(
         'form'=>array(
             'hidden'=>array(

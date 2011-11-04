@@ -586,7 +586,7 @@ class RenameModules
         {
             if( isset($dashletData['module']) && $dashletData['module'] == $moduleName && file_exists($dashletData['meta']) )
             {
-                require_once( $dashletData['meta'] );
+                require( $dashletData['meta'] );
                 $dashletTitle = $dashletMeta[$dashletName]['title'];
                 $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
                 $modStringKey = array_search($dashletTitle,$currentModuleStrings);

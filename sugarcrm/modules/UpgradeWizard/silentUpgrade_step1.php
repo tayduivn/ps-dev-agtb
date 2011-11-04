@@ -43,8 +43,8 @@ function prepSystemForUpgradeSilent() {
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-		if(!is_dir("upload://upgrades/{$subdir}")) {
-	    	mkdir_recursive("upload://upgrades/{$subdir}");
+		if(!is_dir($sugar_config['upload_dir']."/upgrades/{$subdir}")) {
+	    	mkdir_recursive($sugar_config['upload_dir']."/upgrades/{$subdir}");
 		}
 	}
 }
@@ -285,7 +285,7 @@ function addDefaultModuleRoles($defaultRoles = array()) {
 	}
 }
 
-function verifyArguments($argv,$usage_dce,$usage_regular){
+function verifyArguments($argv,$usage_regular){
     $upgradeType = '';
     $cwd = getcwd(); // default to current, assumed to be in a valid SugarCRM root dir.
     if(isset($argv[3])) {
@@ -299,29 +299,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
         }
     }
 
-    //check if this is an instance
-    if(is_file("{$cwd}/ini_setup.php")){
-        // this is an instance
-        $upgradeType = constant('DCE_INSTANCE');
-        //now that this is dce instance we want to make sure that there are
-        // 7 arguments
-        if(count($argv) < 7) {
-            echo "*******************************************************************************\n";
-            echo "*** ERROR: Missing required parameters.  Received ".count($argv)." argument(s), require 7.\n";
-            echo $usage_dce;
-            echo "FAILURE\n";
-            exit(1);
-        }
-        // this is an instance
-        if(!is_dir($argv[1])) { // valid directory . template path?
-            echo "*******************************************************************************\n";
-            echo "*** ERROR: First argument must be a full path to the template. Got [ {$argv[1]} ].\n";
-            echo $usage_dce;
-            echo "FAILURE\n";
-            exit(1);
-        }
-    }
-    else if(is_file("{$cwd}/include/entryPoint.php")) {
+    if(is_file("{$cwd}/include/entryPoint.php")) {
         //this should be a regular sugar install
         $upgradeType = constant('SUGARCRM_INSTALL');
         //check if this is a valid zip file
@@ -339,8 +317,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "FAILURE\n";
             exit(1);
         }
-    }
-    else {
+    } else {
         //this should be a regular sugar install
         echo "*******************************************************************************\n";
         echo "*** ERROR: Tried to execute in a non-SugarCRM root directory.\n";
@@ -411,7 +388,7 @@ define('DCE_INSTANCE', 'DCE_Instance');
 global $cwd;
 $cwd = getcwd(); // default to current, assumed to be in a valid SugarCRM root dir.
 
-$upgradeType = verifyArguments($argv,$usage_dce,$usage_regular);
+$upgradeType = verifyArguments($argv,$usage_regular);
 
 ///////////////////////////////////////////////////////////////////////////////
 //////  Verify that all the arguments are appropriately placed////////////////
@@ -464,14 +441,10 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 	$zip_from_dir	= substr($patchName, 0, strlen($patchName) - 4); // patch folder name (minus ".zip")
 	$path			= $argv[2]; // custom log file, if blank will use ./upgradeWizard.log
 
-	if($sugar_version < '5.1.0'){
-		$db				= &DBManager :: getInstance();
-	}
-	else{
-		$db				= &DBManagerFactory::getInstance();
-	}
+    $db				= &DBManagerFactory::getInstance();
 	$UWstrings		= return_module_language('en_us', 'UpgradeWizard');
 	$adminStrings	= return_module_language('en_us', 'Administration');
+    $app_list_strings = return_app_list_strings_language('en_us');
 	$mod_strings	= array_merge($adminStrings, $UWstrings);
 	$subdirs		= array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
 	global $unzip_dir;
@@ -520,7 +493,7 @@ prepSystemForUpgradeSilent();
 repairTableDictionaryExtFile();
 
 $unzip_dir = sugar_cached("upgrades/temp");
-$install_file = "upload://upgrades/patch/".basename($argv[1]);
+$install_file = $sugar_config['upload_dir']."/upgrades/patch/".basename($argv[1]);
 
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
@@ -586,7 +559,7 @@ if(is_file("$unzip_dir/manifest.php")) {
 		fwrite(STDERR,"\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
 	    exit(1);
 	} else {
-		copy("$unzip_dir/manifest.php", "upload://upgrades/patch/{$zip_from_dir}-manifest.php");
+		copy("$unzip_dir/manifest.php", $sugar_config['upload_dir']."/upgrades/patch/{$zip_from_dir}-manifest.php");
 
 		$error = validate_manifest($manifest);
 		if(!empty($error)) {
@@ -1009,9 +982,6 @@ if($ce_to_pro_ent){
 fix_report_relationships($path);
 //END SUGARCRM flav=pro ONLY
 
-require_once('modules/Administration/upgrade_custom_relationships.php');
-upgrade_custom_relationships();
-
 if($ce_to_pro_ent)
 {
         //check to see if there are any new files that need to be added to systems tab
@@ -1178,5 +1148,27 @@ function repairTableDictionaryExtFile()
 		} //if
 	}
 }
+
+
+/**
+ * sugar_cached
+ *
+ * Inline this method here since it is not yet defined in utils.php
+ *
+ * @param $file The path to retrieve cache lookup information for
+ * @return string The cached path according to $GLOBALS['sugar_config']['cache_dir'] or just appended with cache if not defined
+ */
+function sugar_cached($file)
+{
+    static $cdir = null;
+    if(empty($cdir) && !empty($GLOBALS['sugar_config']['cache_dir'])) {
+        $cdir = rtrim($GLOBALS['sugar_config']['cache_dir'], '/\\');
+    }
+    if(empty($cdir)) {
+        $cdir = "cache";
+    }
+    return "$cdir/$file";
+}
+
 
 ?>

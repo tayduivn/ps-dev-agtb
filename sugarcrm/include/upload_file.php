@@ -25,6 +25,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/externalAPI/ExternalAPIFactory.php');
 
+/**
+ * @api
+ * Manage uploaded files
+ */
 class UploadFile
 {
 	var $field_name;
@@ -36,6 +40,10 @@ class UploadFile
 	var $file_ext;
 	protected static $url = "upload/";
 
+	/**
+	 * Upload errors
+	 * @var array
+	 */
 	protected static $filesError = array(
 			UPLOAD_ERR_OK => 'UPLOAD_ERR_OK - There is no error, the file uploaded with success.',
 			UPLOAD_ERR_INI_SIZE => 'UPLOAD_ERR_INI_SIZE - The uploaded file exceeds the upload_max_filesize directive in php.ini.',
@@ -48,6 +56,10 @@ class UploadFile
 			UPLOAD_ERR_EXTENSION => 'UPLOAD_ERR_EXTENSION - A PHP extension stopped the file upload.',
 			);
 
+	/**
+	 * Create upload file handler
+	 * @param string $field_name Form field name
+	 */
 	function UploadFile ($field_name = '')
 	{
 		// $field_name is the name of your passed file selector field in your form
@@ -55,6 +67,11 @@ class UploadFile
 		$this->field_name = $field_name;
 	}
 
+	/**
+	 * Setup for SOAP upload
+	 * @param string $filename Name for the file
+	 * @param string $file
+	 */
 	function set_for_soap($filename, $file) {
 		$this->stored_file_name = $filename;
 		$this->use_soap = true;
@@ -167,6 +184,10 @@ class UploadFile
 		}
 	}
 
+	/**
+	 * Get upload error from system
+	 * @return string upload error
+	 */
 	public function get_upload_error()
 	{
 	    if(isset($this->field_name) && isset($_FILES[$this->field_name]['error'])) {
@@ -213,6 +234,11 @@ class UploadFile
 		return true;
 	}
 
+	/**
+	 * Guess MIME type for file
+	 * @param string $filename
+	 * @return string MIME type
+	 */
 	function getMimeSoap($filename){
 
 		if( function_exists( 'ext2mime' ) )
@@ -227,6 +253,11 @@ class UploadFile
 
 	}
 
+	/**
+	 * Get MIME type for uploaded file
+	 * @param array $_FILES_element $_FILES element required
+	 * @return string MIME type
+	 */
 	function getMime($_FILES_element)
 	{
 		$filename = $_FILES_element['name'];
@@ -311,19 +342,25 @@ class UploadFile
         if($this->use_soap) {
         	if(!file_put_contents($destination, $this->file)){
         	    $GLOBALS['log']->fatal("ERROR: can't save file to $destination");
-//FIXME:        		die("ERROR: can't save file to $destination");
                 return false;
         	}
 		} else {
 			if(!UploadStream::move_uploaded_file($_FILES[$this->field_name]['tmp_name'], $destination)) {
 			    $GLOBALS['log']->fatal("ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
-// FIXME:				die("ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
                 return false;
 			}
 		}
 		return true;
 	}
 
+	/**
+	 * Upload document to external service
+	 * @param SugarBean $bean Related bean
+	 * @param string $bean_id
+	 * @param string $doc_type
+	 * @param string $file_name
+	 * @param string $mime_type
+	 */
 	function upload_doc($bean, $bean_id, $doc_type, $file_name, $mime_type)
 	{
 		if(!empty($doc_type)&&$doc_type!='Sugar') {
@@ -399,6 +436,10 @@ class UploadFile
 	    }
     }
 
+    /**
+     * Get upload file location prefix
+     * @return string prefix
+     */
     public function get_upload_dir()
     {
         return "upload://";
@@ -430,11 +471,19 @@ class UploadFile
     }
 }
 
+/**
+ * @internal
+ * Upload file stream handler
+ */
 class UploadStream
 {
     const STREAM_NAME = "upload";
     protected static $upload_dir;
 
+    /**
+     * Get upload directory
+     * @return string
+     */
     public static function getDir()
     {
         if(empty(self::$upload_dir)) {
@@ -449,16 +498,28 @@ class UploadStream
         return self::$upload_dir;
     }
 
+    /**
+     * Check if upload dir is writable
+     * @return bool
+     */
     public static function writable()
     {
         return is_writable(self::getDir());
     }
 
+    /**
+     * Register the stream
+     */
     public function register()
     {
         stream_register_wrapper(self::STREAM_NAME, __CLASS__);
     }
 
+    /**
+     * Get real FS path of the upload stream file
+     * @param string $path Upload stream path (with upload://)
+     * @return string FS path
+     */
     public static function path($path)
     {
     	$path = substr($path, strlen(self::STREAM_NAME)+3); // cut off upload://
@@ -470,6 +531,12 @@ class UploadStream
         return self::getDir()."/".$path;
     }
 
+    /**
+     * Ensure upload subdir exists
+     * @param string $path Upload stream path (with upload://)
+     * @param bool $writable
+     * @return boolean
+     */
     public static function ensureDir($path, $writable = true)
     {
         $path = self::path($path);

@@ -43,17 +43,8 @@
 {if $studio}{sugar_translate label='LBL_CUSTOM_FIELDS' module='ModuleBuilder'}</h3>{/if}
 
 <script type="text/javascript">
-{literal}
-var myConfigs = {};
-{/literal}
 
-{if !empty($sortPreferences)}
-pref = {$sortPreferences};
-{literal}
-sortDirection = (pref.direction == 'ASC') ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC;
-var myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
-{/literal}
-{/if}
+var customFieldsData = {$customFieldsData};
 
 {literal}
 //create sortName function to apply custom sorting for the name column which contains HTML
@@ -67,7 +58,7 @@ var sortName = function(a, b, desc)
 
 var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
 {
-  var label = /_c$/.test(oData) ? '* ' + oData : oData;
+  var label = customFieldsData[oData] ? '* ' + oData : oData;
   elCell.innerHTML = "<a class='mbLBLL' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + label + "</a>";
 };
 
@@ -77,7 +68,7 @@ var labelFormatter = function(elCell, oRecord, oColumn, oData)
 };
 
 var myColumnDefs = [
-    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150, sortOptions:{sortFunction:sortName}},
+    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150, sortOptions:{sortFunction:sortName, defaultDir:YAHOO.widget.DataTable.CLASS_ASC}},
     {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
     {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125}
 ];
@@ -90,7 +81,8 @@ myDataSource.responseSchema = {fields: ["label","name","type"]};
 YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
 YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
 
-var fieldsTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource, myConfigs);
+var fieldsTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource);
+
 fieldsTable.doBeforeSortColumn = function(column, sortDirection)
 {
     var url = 'index.php?module=ModuleBuilder&action=savetablesort&column=' + column.getKey() + '&direction=' + sortDirection;
@@ -115,8 +107,13 @@ fieldsTable.subscribe("rowClickEvent", function(args) {
 });
 
 fieldsTable.render("#field_table");
-
 {/literal}
+
+{if !empty($sortPreferences)}
+pref = {$sortPreferences};
+sortDirection = (pref.direction == 'ASC') ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC;
+fieldsTable.sortColumn(fieldsTable.getColumn(pref.key), sortDirection);
+{/if}
 
 ModuleBuilder.module = '{$module->name}';
 ModuleBuilder.MBpackage = '{$package->name}';

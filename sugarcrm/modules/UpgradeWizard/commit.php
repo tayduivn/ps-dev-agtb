@@ -62,7 +62,7 @@ $curr_lang = 'en_us';
 if(isset($GLOBALS['current_language']) && ($GLOBALS['current_language'] != null)){
 	$curr_lang = $GLOBALS['current_language'];
 }
-return_module_language($curr_lang, 'UpgradeWizard');
+return_module_language($curr_lang, 'UpgradeWizard', true);
 
 
 $standardErrorLevel = error_reporting();
@@ -662,7 +662,7 @@ if(!class_exists('SugarThemeRegistry')){
 
 $themeObject = SugarThemeRegistry::current();
 
-$styleJSFilePath = sugar_cahced($themeObject->getJSPath() . DIRECTORY_SEPARATOR .  'style-min.js');
+$styleJSFilePath = sugar_cached($themeObject->getJSPath() . DIRECTORY_SEPARATOR .  'style-min.js');
 if( file_exists($styleJSFilePath) )
 {
     logThis("Rebuilding style js file: $styleJSFilePath");

@@ -133,6 +133,9 @@ class MysqlManager extends DBManager
 		"inline_keys" => true,
 		"create_user" => true,
 		"fulltext" => true,
+	    "collation" => true,
+	    "create_db" => true,
+	    "disable_keys" => true,
 	);
 
 	/**
@@ -150,6 +153,7 @@ class MysqlManager extends DBManager
 		if(is_array($sql)) {
 			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
 		}
+
 		parent::countQuery($sql);
 		$GLOBALS['log']->info('Query:' . $sql);
 		$this->checkConnection();
@@ -184,6 +188,20 @@ class MysqlManager extends DBManager
 	}
 
 	/**
+	 * Returns the number of rows returned by the result
+	 *
+	 * This function can't be reliably implemented on most DB, do not use it.
+	 * @abstract
+	 * @deprecated
+	 * @param  resource $result
+	 * @return int
+	 */
+	public function getRowCount($result)
+	{
+	    return mysql_num_rows($result);
+	}
+
+	/**
 	 * Disconnects from the database
 	 *
 	 * Also handles any cleanup needed
@@ -207,19 +225,6 @@ class MysqlManager extends DBManager
 			mysql_free_result($dbResult);
 	}
 
-	/**
-	 * Returns the number of rows returned by the result
-	 *
-	 * @param  resource $result
-	 * @return int
-	 */
-	public function getRowCount($result)
-	{
-		if(!empty($result)) {
-			return mysql_num_rows($result);
-		}
-		return 0;
-	}
 
 	/**
 	 * @see DBManager::limitQuery()
@@ -230,7 +235,7 @@ class MysqlManager extends DBManager
 			$start = 0;
 		$GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
-		$sql = "$sql LIMIT $start,$count";
+	    $sql = "$sql LIMIT $start,$count";
 		$this->lastsql = $sql;
 
 		if(!empty($GLOBALS['sugar_config']['check_query'])){
@@ -337,24 +342,13 @@ class MysqlManager extends DBManager
 	}
 
 	/**
-	 * @see DBManager::fetchByAssoc()
+	 * @see DBManager::fetchRow()
 	 */
-	public function fetchByAssoc($result, $rowNum = -1, $encode = true)
+	public function fetchRow($result)
 	{
-		if (!$result)
-			return false;
+		if (empty($result))	return false;
 
-		if ($result && $rowNum > -1) {
-			if ($this->getRowCount($result) > $rowNum)
-				mysql_data_seek($result, $rowNum);
-		}
-
-		$row = mysql_fetch_assoc($result);
-
-		if ($encode && $this->encode && is_array($row))
-			return array_map('to_html', $row);
-
-		return $row;
+		return mysql_fetch_assoc($result);
 	}
 
 	/**
@@ -444,7 +438,7 @@ class MysqlManager extends DBManager
 		if(is_null($configOptions))
 			$configOptions = $sugar_config['dbconfig'];
 
-		if ($sugar_config['dbconfigoption']['persistent'] == true) {
+		if ($this->getOption('persistent')) {
 			$this->database = @mysql_pconnect(
 				$configOptions['db_host_name'],
 				$configOptions['db_user_name'],
@@ -471,7 +465,7 @@ class MysqlManager extends DBManager
 				}
 			}
 			// Do not pass connection information because we have not connected yet
-			if($this->database  && $sugar_config['dbconfigoption']['persistent'] == true){
+			if($this->database  && $this->getOption('persistent')){
 				$_SESSION['administrator_error'] = "<b>Severe Performance Degradation: Persistent Database Connections "
 					. "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false "
 					. "in your config.php file</b>";
@@ -487,11 +481,13 @@ class MysqlManager extends DBManager
 		}
 
 		// cn: using direct calls to prevent this from spamming the Logs
-		$charset = "SET CHARACTER SET utf8";
-		if(isset($sugar_config['dbconfigoption']['collation']) && !empty($sugar_config['dbconfigoption']['collation']))
-			$charset .= " COLLATE {$sugar_config['dbconfigoption']['collation']}";
-		mysql_query($charset, $this->database); // no quotes around "[charset]"
-		mysql_query("SET NAMES 'utf8'", $this->database);
+	    mysql_query("SET CHARACTER SET utf8", $this->database);
+	    $names = "SET NAMES 'utf8'";
+	    $collation = $this->getOption('collation');
+	    if(!empty($collation)) {
+	        $names .= " COLLATE '$collation'";
+		}
+	    mysql_query($names, $this->database);
 
 		if(!$this->checkError('Could Not Connect:', $dieOnError))
 			$GLOBALS['log']->info("connected to db");
@@ -576,8 +572,6 @@ class MysqlManager extends DBManager
 					}
 					return "DATE_FORMAT($string,$format)";
 				}
-			case 'datetime':
-				return $string;
 			case 'ifnull':
 				if(empty($additional_parameters) && !strstr($all_strings, ",")) {
 					$all_strings .= ",''";
@@ -633,6 +627,8 @@ class MysqlManager extends DBManager
 	 */
 	protected function isEngineEnabled($engine)
 	{
+		if(!is_string($engine)) return false;
+
 		$engine = strtoupper($engine);
 
 		$r = $this->query("SHOW ENGINES");
@@ -681,7 +677,11 @@ class MysqlManager extends DBManager
 			$keys = ",$keys";
 
 		// cn: bug 9873 - module tables do not get created in utf8 with assoc collation
-		$sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8 COLLATE utf8_general_ci";
+		$collation = $this->getOption('collation');
+		if(empty($collation)) {
+		    $collation = 'utf8_general_ci';
+		}
+		$sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8 COLLATE $collation";
 
 		if (!empty($engine))
 			$sql.= " ENGINE=$engine";
@@ -1078,7 +1078,7 @@ class MysqlManager extends DBManager
 			    return $err;
 			}
 		}
-
+        return false;
     }
 
 	/**
@@ -1403,5 +1403,25 @@ class MysqlManager extends DBManager
 				"setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
 			)
 		);
+	}
+
+	/**
+	 * Disable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function disableKeys($tableName)
+	{
+	    return $this->query('ALTER TABLE '.$tableName.' DISABLE KEYS');
+	}
+
+	/**
+	 * Re-enable keys on the table
+	 * @abstract
+	 * @param string $tableName
+	 */
+	public function enableKeys($tableName)
+	{
+	    return $this->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
 	}
 }

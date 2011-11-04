@@ -129,8 +129,8 @@ EOQ;
 
 
 //hide this in typical mode
-if(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && strtolower($_SESSION['install_type'])=='custom'){
-$out .=<<<EOQ
+if(!empty($_SESSION['install_type'])  && strtolower($_SESSION['install_type'])=='custom'){
+    $out .=<<<EOQ
 
    <tr><td colspan="3" align="left"> {$mod_strings['LBL_SITECFG_URL_MSG']}
    </td></tr>
@@ -142,6 +142,24 @@ $out .=<<<EOQ
        <td><b>{$mod_strings['LBL_SYSTEM_NAME']}</b></td>
        <td align="left"><input type="text" name="setup_system_name" value="{$_SESSION['setup_system_name']}" size="40" /><br>&nbsp;</td></tr>
 EOQ;
+    $db = getDbConnection();
+    if($db->supports("collation")) {
+        $collationOptions = $db->getCollationList();
+    }
+    if(!empty($collationOptions)) {
+        if(isset($_SESSION['setup_db_options']['collation'])) {
+            $default = $_SESSION['setup_db_options']['collation'];
+        } else {
+            $default = $db->getDefaultCollation();
+        }
+        $options = get_select_options_with_id(array_combine($collationOptions, $collationOptions), $default);
+        $out .=<<<EOQ
+       <tr><td colspan="3" align="left"> <br>{$mod_strings['LBL_SITECFG_COLLATION_MSG']}</td></tr>
+        <tr><td><span class="required">*</span></td>
+           <td><b>{$mod_strings['LBL_COLLATION']}</b></td>
+           <td align="left"><select name="setup_db_collation" id="setup_db_collation">$options</select><br>&nbsp;</td></tr>
+EOQ;
+   }
 }
 
 $out .=<<<EOQ

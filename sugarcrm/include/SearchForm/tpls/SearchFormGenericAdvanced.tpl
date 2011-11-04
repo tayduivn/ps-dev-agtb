@@ -28,9 +28,9 @@
 	
 	<td scope="row" nowrap="nowrap" width='{{$templateMeta.widths.label}}%' >
 	{{if isset($colData.field.label)}}	
-		{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
+		<label for='{{$colData.field.name}}'>{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}</label>
     {{elseif isset($fields[$colData.field.name])}}
-		{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
+		<label for='{{$fields[$colData.field.name].name}}'>{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}</label>
 	{{/if}}
 	</td>
 	<td  nowrap="nowrap" width='{{$templateMeta.widths.field}}%'>
@@ -54,7 +54,8 @@
 <tr>
 	<td colspan='2'>
 		<a class='tabFormAdvLink' onhover href='javascript:toggleInlineSearch()'>
-		{sugar_getimage alt=$app_strings.LBL_ADVANCED_SEARCH name="advanced_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}&nbsp;{$APP.LNK_SAVED_VIEWS}
+            {capture assign="alt_show_hide"}{sugar_translate label='LBL_ALT_SHOW_OPTIONS'}{/capture}
+		{sugar_getimage alt=$alt_show_hide name="advanced_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}&nbsp;{$APP.LNK_SAVED_VIEWS}
 		</a><br>
 		<input type='hidden' id='showSSDIV' name='showSSDIV' value='{$SHOWSSDIV}'><p>
 	</td>

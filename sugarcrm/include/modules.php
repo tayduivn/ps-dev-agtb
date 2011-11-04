@@ -569,6 +569,21 @@ $modules_exempt_from_availability_check['SugarFollowing'] = 'SugarFollowing';
 $modInvisList[] = 'SugarFollowing';
 //END SUGARCRM flav=following ONLY
 
+
+//Object list is only here to correct for modules that break
+//the bean class name == dictionary entry/object name convention
+//No future module should need an entry here.
+$objectList = array();
+$objectList['Cases'] =  'Case';
+$objectList['Groups'] =  'User';
+$objectList['Schedulers'] =  'schedulers';
+//BEGIN SUGARCRM flav=pro ONLY
+$objectList['TrackerSessions'] =  'tracker_sessions';
+$objectList['TrackerPerfs'] =  'tracker_perf';
+$objectList['TrackerQueries'] =  'tracker_queries';
+$objectList['TeamNotices'] =  'TeamNotices';
+//END SUGARCRM flav=pro ONLY
+
 if (file_exists('include/modules_override.php'))
 {
     include('include/modules_override.php');

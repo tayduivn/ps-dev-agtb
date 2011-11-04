@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/Import/ImportFieldSanitize.php');
 require_once('modules/Import/sources/ImportFile.php');
 require_once('tests/SugarTestLangPackCreator.php');
@@ -32,11 +32,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs = new ImportFieldSanitize();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['timedate'] = TimeDate::getInstance();
         $beanList = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['timedate'] = TimeDate::getInstance();
     }
 
     public function tearDown()
@@ -45,6 +46,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
         $GLOBALS['timedate'] = TimeDate::getInstance();
     }
 
@@ -256,7 +258,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $date = date($this->_ifs->dateformat);
         $focus = new stdClass;
-        
+
         $this->assertEquals(
             $this->_ifs->date(
                 $date,
@@ -275,7 +277,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['timedate']->get_date_format(),
             strtotime($date));
         $focus = new stdClass;
-        
+
         $this->assertEquals(
             $this->_ifs->date(
                 $date,
@@ -288,7 +290,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs->dateformat = 'm/d/Y';
         $focus = new stdClass;
-        
+
         $this->assertFalse(
             $this->_ifs->date(
                 '11/22/08',
@@ -300,7 +302,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs->dateformat = 'm/d/Y';
         $focus = new stdClass;
-        
+
         $this->assertFalse(
             $this->_ifs->date(
                 '22/11/08',
@@ -510,20 +512,20 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 '^Mr.^,^Mrs.^',$vardefs),
             encodeMultienumValue(array('Mr.', 'Mrs.')));
     }
-    
+
     /**
-     * @ticket 37842 
+     * @ticket 37842
      */
     public function testValidMultiEnumWhenSpacesExistInTheValue()
     {
         $vardefs = array('options' => 'salutation_dom');
-        
+
         $this->assertEquals(
             $this->_ifs->multienum(
                 'Mr., Mrs.',$vardefs),
             encodeMultienumValue(array('Mr.', 'Mrs.')));
     }
-    
+
     public function testInvalidMultiEnum()
     {
         $vardefs = array('options' => 'salutation_dom');
@@ -812,7 +814,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue(empty($focus->account_id),'Category ID should not be set');
         $this->assertFalse($relaterow,'Record should not be added to the related table');
-        
+
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
 
@@ -854,7 +856,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue(empty($focus->account_id),'Category ID should not be set');
         $this->assertFalse($relaterow,'Record should not be added to the related table');
-        
+
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
 
@@ -1115,7 +1117,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $vardef = array('name' => 'some_date');
         $date = date($this->_ifs->timeformat);
         $focus = new stdClass;
-        
+
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
@@ -1141,7 +1143,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['timedate']->get_time_format(),
             strtotime($date));
         $focus = new stdClass;
-        
+
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
@@ -1164,7 +1166,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['timedate']->get_time_format(),
             strtotime('+2 hours',strtotime($date)));
         $focus = new stdClass;
-        
+
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
@@ -1180,7 +1182,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
         $focus = new stdClass;
-        
+
         $this->assertFalse(
             $this->_ifs->time(
                 '11:21',
@@ -1193,7 +1195,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
         $focus = new stdClass;
-        
+
         $this->assertFalse(
             $this->_ifs->time(
                 '11:60',
@@ -1218,7 +1220,7 @@ class Import_Bug26897_Mock extends Account
 class Import_Bug27562_Mock extends Contact
 {
     var $contact_id;
-    
+
     function ACLAccess($view,$is_owner='not_set')
     {
         return true;

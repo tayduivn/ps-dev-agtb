@@ -218,13 +218,10 @@ function export($type, $records = null, $members = false, $sample=false) {
 
     if($populate){
         //this is a sample request with no data, so create fake datarows
-
-            $content .= returnFakeDataRow($focus,$fields_array,$sampleRecordNum);
-
-
+         $content .= returnFakeDataRow($focus,$fields_array,$sampleRecordNum);
     }else{
         //process retrieved record
-    	while($val = $db->fetchByAssoc($result, -1, false)) {
+    	while($val = $db->fetchByAssoc($result, false)) {
 
             //order the values in the record array
             $val = get_field_order_mapping($focus->module_dir,$val);
@@ -238,73 +235,98 @@ function export($type, $records = null, $members = false, $sample=false) {
                 ACLField::listFilter($val, $focus->module_dir,$current_user->id, $focus->isOwner($current_user->id), true, 1, true );
             }
 
-            //END SUGARCRM flav=pro ONLY
-            if($members){
-                if($pre_id == $val['id'])
-                    continue;
-                if($val['ea_deleted']==1 || $val['ear_deleted']==1){
-                    $val['primary_email_address'] = '';
-                }
-                unset($val['ea_deleted']);
-                unset($val['ear_deleted']);
-                unset($val['primary_address']);
-            }
-            $pre_id = $val['id'];
+		//END SUGARCRM flav=pro ONLY
+		if($members){
+			if($pre_id == $val['id'])
+				continue;
+			if($val['ea_deleted']==1 || $val['ear_deleted']==1){
+				$val['primary_email_address'] = '';
+			}
+			unset($val['ea_deleted']);
+			unset($val['ear_deleted']);
+			unset($val['primary_address']);
+		}
+		$pre_id = $val['id'];
 
-            foreach ($val as $key => $value) {
-                //if our value is a datetime field, then apply the users locale
-                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && ($focus->field_name_map[$fields_array[$key]]['type'] == 'datetime' || $focus->field_name_map[$fields_array[$key]]['type'] == 'datetimecombo')){
-                    $value = $timedate->to_display_date_time($value);
-                    $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
-                }
-                //kbrill Bug #16296
-                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'date'){
-                    $value = $timedate->to_display_date($value, false);
-                }
-                // Bug 32463 - Properly have multienum field translated into something useful for the client
-                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && ( $focus->field_name_map[$fields_array[$key]]['type'] == 'multienum' ||  $focus->field_name_map[$fields_array[$key]]['type'] == 'enum')){
-                    $value = str_replace("^","",$value);
-                    if ( isset($focus->field_name_map[$fields_array[$key]]['options'])
-                            && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) ) {
-                        $valueArray = explode(",",$value);
-                        foreach ( $valueArray as $multikey => $multivalue ) {
-                            if ( isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) ) {
-                                $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+		foreach ($val as $key => $value)
+		{
+            //getting content values depending on their types
+            $fieldNameMapKey = $fields_array[$key];
+
+            if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
+            {
+                $fieldType = $focus->field_name_map[$fieldNameMapKey]['type'];
+                switch ($fieldType)
+                {
+                    //if our value is a currency field, then apply the users locale
+                    case 'currency':
+                        require_once('modules/Currencies/Currency.php');
+                        $value = currency_format_number($value);
+                        break;
+
+                    //if our value is a datetime field, then apply the users locale
+                    case 'datetime':
+                    case 'datetimecombo':
+                        $value = $timedate->to_display_date_time($value);
+                        $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
+                        break;
+
+                    //kbrill Bug #16296
+                    case 'date':
+                        $value = $timedate->to_display_date($value, false);
+                        break;
+
+                    // Bug 32463 - Properly have multienum field translated into something useful for the client
+                    case 'multienum':
+                        $value = str_replace("^","",$value);
+                        if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) )
+                        {
+                            $valueArray = explode(",",$value);
+                            foreach ($valueArray as $multikey => $multivalue )
+                            {
+                                if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) )
+                                {
+                                    $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                                }
                             }
+                            $value = implode(",",$valueArray);
                         }
-                        $value = implode(",",$valueArray);
-                    }
+                        break;
                 }
-                //BEGIN SUGARCRM flav=pro ONLY
-                if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
-                    require_once('modules/Teams/TeamSetManager.php');
-                    $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
-                }
-
-               //replace user_name with full name if use_real_name preference setting is enabled
-               //and this is a user name field
-               $useRealNames = $current_user->getPreference('use_real_names');
-               if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
-                  && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
-                  && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
-                  && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
-               ){
-                   global $locale;
-                   $userFocus = new User();
-                   $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
-                   if ( !empty($userFocus->id) ) {
-                       $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
-                   }
-               }
-
-                //END SUGARCRM flav=pro ONLY
-                array_push($new_arr, preg_replace("/\"/","\"\"", $value));
             }
-            $line = implode("\"".getDelimiter()."\"", $new_arr);
-            $line = "\"" .$line;
-            $line .= "\"\r\n";
-            $content .= $line;
+
+             //BEGIN SUGARCRM flav=pro ONLY
+            if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
+                require_once('modules/Teams/TeamSetManager.php');
+                $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
+            }
+
+           //replace user_name with full name if use_real_name preference setting is enabled
+           //and this is a user name field
+           $useRealNames = $current_user->getPreference('use_real_names');
+           if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
+              && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
+              && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
+              && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
+           ){
+               global $locale;
+               $userFocus = new User();
+               $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
+               if ( !empty($userFocus->id) ) {
+                   $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
+               }
+           }
+
+        //END SUGARCRM flav=pro ONLY
+        array_push($new_arr, preg_replace("/\"/","\"\"", $value));
         }
+        $line = implode("\"".getDelimiter()."\"", $new_arr);
+        $line = "\"" .$line;
+        $line .= "\"\r\n";
+        $content .= $line;
+    }
+
+
     }
 	return $content;
 
@@ -496,7 +518,6 @@ function generateSearchWhere($module, $query) {//this function is similar with f
                          }
 
                      }
-
                     break;
                  case "relate":
                      if($field['name'] == 'team_name'){
@@ -760,7 +781,7 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
         $lname = strtolower($name);
         if(!empty($field_order_array[$lname])) {
 	        foreach($field_order_array[$lname] as $fk=> $fv){
-	
+
 	            //if the value exists as a key in the passed in array, add to temp array and remove from reorder array.
 	            //Do not force into the temp array as we don't want to violate acl's
 	            if(array_key_exists($fk,$newReorder)){

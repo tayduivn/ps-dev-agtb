@@ -64,9 +64,9 @@ class SugarFavorites extends Basic
 	{
 	global $app_strings;
 		if ($on)
-			return '<div class="star" title="'.$app_strings['LBL_REMOVE_FROM_FAVORITES'].'"><div class="on" onclick="DCMenu.removeFromFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
+			return '<div class="star"><div class="on"   title="'.$app_strings['LBL_REMOVE_FROM_FAVORITES'].'" onclick="DCMenu.removeFromFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
 		else
-			return '<div class="star" title="'.$app_strings['LBL_ADD_TO_FAVORITES'].'"><div class="off" onclick="DCMenu.addToFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
+			return '<div class="star"><div class="off"  title="'.$app_strings['LBL_ADD_TO_FAVORITES'].'" onclick="DCMenu.addToFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
 	}
 	
 	public static function generateGUID(

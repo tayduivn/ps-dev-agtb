@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <form name="ConfigureAjaxUI" method="POST"  method="POST" action="index.php">
 	<input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="UpdateAjaxUI">
@@ -37,6 +37,7 @@
 	<input type="hidden" name="return_action" value="{$RETURN_ACTION}">
 
 	{$title}<br/>
+        <p>{sugar_translate label="LBL_CONFIG_AJAX_DESC"}</p><br/>
 	<p>{sugar_translate label="LBL_CONFIG_AJAX_HELP"}</p><br/>
 	<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary"
 		   onclick="SUGAR.saveConfigureTabs();" type="submit" name="saveButton"

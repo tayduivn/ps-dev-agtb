@@ -73,7 +73,7 @@ class OracleManager extends DBManager
 
     protected $type_map = array(
             'int'      => 'number',
-            'double'   => 'number(30,10)',
+            'double'   => 'number(38,10)',
             'float'    => 'number(30,6)',
             'uint'     => 'number(15)',
             'ulong'    => 'number(38)',
@@ -99,7 +99,7 @@ class OracleManager extends DBManager
             'currency' => 'number(26,6)',
             'decimal'  => 'number(20,2)',
             'decimal2' => 'number(30,6)',
-            'url'      => 'varchar2(255)',
+            'url'      => 'varchar2',
             'encrypt'  => 'varchar2(255)',
             'file'     => 'varchar2(255)',
 	    	'decimal_tpl' => 'number(%d, %d)',
@@ -109,6 +109,12 @@ class OracleManager extends DBManager
      * @var array
      */
     protected static $sequences = null;
+
+    /**
+     * DB configuration options
+     * @var array
+     */
+    protected $configOptions;
 
     public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
     {
@@ -128,31 +134,16 @@ class OracleManager extends DBManager
     }
 
     /**
-     * Checks for oci_errors in the given resource
-     *
-     * @param  resource $obj
-     * @return bool
-     */
-    protected function checkOCIerror($obj)
-    {
-        $err = oci_error($obj);
-        if ($err != false){
-            $result = false;
-            $GLOBALS['log']->fatal("OCI error: ".var_export($err, true));
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * @see DBManager::checkError()
      */
-    public function checkError($msg = '', $dieOnError = false)
+    public function checkError($msg = '', $dieOnError = false, $stmt = null)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
 
-        $err = oci_error($this->database);
+        if(empty($stmt)) return false;
+
+        $err = oci_error($stmt);
         if ($err){
             $error = $err['code']."-".$err['message'];
             $this->registerError($msg, $error, $dieOnError);
@@ -184,7 +175,7 @@ class OracleManager extends DBManager
         $result = false;
 
         $stmt = $suppress?@oci_parse($db, $sql):oci_parse($db, $sql);
-		if(!$this->checkOCIerror($db)) {
+		if(!$this->checkError("$msg Parse Failed: $sql", $dieOnError)) {
 			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
@@ -202,7 +193,7 @@ class OracleManager extends DBManager
 		if($keepResult)
 		    $this->lastResult = $result;
 
-		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError)) {
+		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
 		    return false;
 		}
         return $result;
@@ -344,7 +335,7 @@ class OracleManager extends DBManager
         $row = oci_fetch_array($result, OCI_ASSOC|OCI_RETURN_NULLS|OCI_RETURN_LOBS);
         if ( !$row )
             return false;
-        if ($this->checkOCIerror($result) == false) {
+        if (!$this->checkError("Fetch error", false, $result)) {
             $temp = $row;
             $row = array();
             foreach ($temp as $key => $val)
@@ -357,25 +348,14 @@ class OracleManager extends DBManager
         return $row;
     }
 
-    /**
-     * @see DBManager::fetchByAssoc()
-     */
-    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
-    {
-        if (!$result)
-            return false;
+	/**
+	 * @see DBManager::fetchRow()
+	 */
+	public function fetchRow($result)
+	{
+		if (empty($result))	return false;
 
-        if (isset($result) && $result && $rowNum < 0) {
-            $row = $this->ociFetchRow($result);
-        } else {
-            if ($this->getRowCount($result) > $rowNum)
-                return array(); // cannot do seek in oracle
-            $row = $this->ociFetchRow($result);
-        }
-        if ($row != false && $encode && $this->encode && sizeof($row)>0)
-            return array_map('to_html', $row);
-
-        return $row;
+        return $this->ociFetchRow($result);
     }
 
     /**
@@ -444,11 +424,10 @@ class OracleManager extends DBManager
     public function update(SugarBean $bean, array $where = array())
     {
         $sql = $this->updateSQL($bean,$where);
-
-        $ret = $this->AltlobExecute($bean, $sql);
-        oci_commit($this->getDatabase()); //moved here from sugarbean
         $this->tableName = $bean->getTableName();
-        $msg = "Error inserting into table: ".$this->tableName;
+
+        $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
+        $msg = "Error updating table: ".$this->tableName;
         $this->checkError($msg.' Query Failed: ' . $sql, true);
     }
 
@@ -458,10 +437,9 @@ class OracleManager extends DBManager
     public function insert(SugarBean $bean)
     {
         $sql = $this->insertSQL($bean);
-        $ret = $this->AltlobExecute($bean, $sql);
-
-        oci_commit($this->getDatabase()); //moved here from sugarbean.
         $this->tableName = $bean->getTableName();
+        $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
+
         $msg = "Error inserting into table: ".$this->tableName;
         $this->checkError($msg.' Query Failed: ' . $sql, true);
     }
@@ -471,95 +449,26 @@ class OracleManager extends DBManager
      * (non-PHPdoc)
      * @see DBManager::insertParams()
      */
-    public function insertParams($table, $field_defs, $data)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
     {
-        $values = array();
-        $lob_fields = $lobs = array();
-        $lob_field_type = array();
-		foreach ($field_defs as $field => $fieldDef)
-		{
-            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
-            //custom fields handle there save seperatley
-
-            if(isset($data[$field])) {
-                // clean the incoming value..
-                $val = from_html($data[$field]);
-            } else {
-                continue;
-            }
-            $type = $this->getFieldType($fieldDef);
-
-            //handle auto increment values
-            if (!empty($fieldDef['auto_increment'])) {
-                $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
-                if(!empty($auto)) {
-                    $values[$field] = $auto;
-                }
-            } elseif ($fieldDef['name'] == 'deleted') {
-                $values['deleted'] = (int)$val;
-            } else {
-                // need to do some thing about types of values
-                $values[$field] = $this->massageValue($val, $fieldDef);
-            }
-            $lob_type = false;
-            if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
-            else if ($type == 'blob' || $type == 'longblob') $lob_type = OCI_B_BLOB;
-
-            // this is not a lob, continue;
-            if ($lob_type === false) continue;
-
-            $lob_fields[$fieldDef['name']]=":".$fieldDef['name'];
-            $lob_field_type[$fieldDef['name']]=$lob_type;
-		}
-
-		if ( empty($values)) return true;
-
-        // get the entire sql
-		$query = "INSERT INTO $table (".implode(",", array_keys($values)).")
-                    VALUES (".implode(",", $values).")";
-
-        if (count($lob_fields) > 0 ) {
-            $query .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
-        }
-
-        $stmt = oci_parse($this->database, $query);
-        if($this->checkOCIerror($this->database)) {
-            return false;
-        }
-
-        foreach ($lob_fields as $key=>$descriptor) {
-            $newlob = oci_new_descriptor($this->database, OCI_D_LOB);
-            oci_bind_by_name($stmt, $descriptor, $newlob, -1, $lob_field_type[$key]);
-            $lobs[$key] = $newlob;
-        }
-        $result = false;
-        oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkOCIerror($stmt)) {
-            foreach ($lobs as $key=>$lob){
-                $val = $data[$key];
-                if (empty($val)) $val=" ";
-                $lob->save($val);
-            }
-            oci_commit($this->database);
-            $result = true;
-        }
-
-        // free all the lobs.
-        foreach ($lobs as $lob){
-            $lob->free();
-        }
-        oci_free_statement($stmt);
-        return $result;
+        $sql = parent::insertParams($table, $field_defs, $data, $field_map, false);
+        if(!$execute) return $sql;
+        return $this->AltlobExecute($table, $field_defs, $data, $sql);
     }
 
     /**
      * Executes a query, with special handling for Oracle CLOB and BLOB field type
      *
-     * @param  object   $bean SugarBean instance
+     * Oracle seems to need special treatment for BLOB/CLOB insertion, so this method
+     * inserts BLOB data properly.
+     *
+     * @param string   $table Table name
+     * @param array $field_defs Field metadata definitions
+     * @param  array   $data  Data being inserted
      * @param  string   $sql  SQL statement
-     * @return resource
+     * @return bool Success?
      */
-    protected function AltlobExecute(SugarBean $bean, $sql)
+    protected function AltlobExecute($table, $field_defs, $data, $sql)
     {
     	$GLOBALS['log']->debug("Oracle Execute: $sql");
         $this->checkConnection();
@@ -570,14 +479,14 @@ class OracleManager extends DBManager
         $lob_fields=array();
         $lob_field_type=array();
         $lobs=array();
-        foreach ($bean->field_defs as $fieldDef) {
+        foreach ($field_defs as $fieldDef) {
             $type = $this->getFieldType($fieldDef);
             if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
                 continue;
             }
 
             //not include the field if a value is not set...
-            if (!isset($bean->$fieldDef['name'])) continue;
+            if (!isset($data[$fieldDef['name']])) continue;
 
             $lob_type = false;
             if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
@@ -595,7 +504,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $sql);
-        if($this->checkOCIerror($this->database)) {
+        if($this->checkError("Update parse failed: $sql", false)) {
             return false;
         }
 
@@ -606,10 +515,13 @@ class OracleManager extends DBManager
         }
         $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkOCIerror($stmt)) {
+        if(!$this->checkError("Update execute failed: $sql", false, $stmt)) {
             foreach ($lobs as $key=>$lob){
-                $val = $bean->getFieldValue($key);
-                if (empty($val)) $val=" ";
+                if(empty($data[$key])) {
+                    $val = '';
+                } else {
+                    $val = $data[$key];
+                }
                 $lob->save($val);
             }
             oci_commit($this->database);
@@ -646,7 +558,8 @@ class OracleManager extends DBManager
         if(!$configOptions)
 			$configOptions = $sugar_config['dbconfig'];
 
-		if($sugar_config['dbconfigoption']['persistent'] == true)
+		$this->configOptions = $configOptions;
+		if($this->getOption('persistent'))
 		{
             $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
             $err = oci_error();
@@ -673,7 +586,7 @@ class OracleManager extends DBManager
                 	    return false;
                 	}
                 }
-                if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
+                if($this->database && $this->getOption('persistent')){
                     $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your config.php file</B>";
                 }
         }
@@ -829,7 +742,7 @@ class OracleManager extends DBManager
 
     protected function isNullable($vardef)
     {
-        if(!empty($vardef['type']) && $vardef['type'] == 'clob') {
+        if(!empty($vardef['type']) && $this->isTextType($vardef['type'])) {
             return false;
         }
 		return parent::isNullable($vardef);
@@ -893,19 +806,12 @@ class OracleManager extends DBManager
             return "EMPTY_BLOB()";
         }
 
-        $qval = parent::massageValue($val, $fieldDef);
-        switch($ctype) {
-            case 'date':
-                $val = explode(" ", $qval); // make sure that we do not pass the time portion
-                $qval = $val[0];            // get the date portion
-                return "TO_DATE($qval, 'YYYY-MM-DD')";
-            case 'datetime':
-                return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
-            case 'time':
-                return "TO_DATE($qval, 'HH24:MI:SS')";
-		}
+        if($type == "date" && !empty($val)) {
+            $val = explode(" ", $val); // make sure that we do not pass the time portion
+            return parent::massageValue($val[0], $fieldDef);            // get the date portion
+        }
 
-        return $qval;
+        return parent::massageValue($val, $fieldDef);
     }
 
 	/**
@@ -932,9 +838,128 @@ class OracleManager extends DBManager
 	 */
 	protected function _isNullableDb($tableName, $fieldName)
 	{
-		return $this->db->getOne("SELECT nullable FROM user_tab_columns
+		return $this->getOne("SELECT nullable FROM user_tab_columns
 				WHERE TABLE_NAME = '".strtoupper($tableName)."'
 					AND COLUMN_NAME = '".strtoupper($fieldName)."'") == 'Y';
+	}
+
+    /**
+     * Compares two vardefs
+     *
+     * @param  array  $fielddef1 This is from the database
+     * @param  array  $fielddef2 This is from the vardef
+     * @param bool $ignoreName Ignore name-only differences?
+     * @return bool   true if they match, false if they don't
+     */
+	public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
+	{
+        if(!empty($fielddef2['len']) && !empty($fielddef1['len']) && $fielddef1['len'] > $fielddef2['len']) {
+            // if DB has bigger length than vardef, it's OK
+            $fielddef2['len'] = $fielddef1['len'];
+        }
+        return parent::compareVarDefs($fielddef1, $fielddef2, $ignoreName);
+	}
+
+	/**
+	 * Split column type into components
+	 * type proper, length and scale
+	 * @param string $type
+	 * @return array
+	 */
+	protected function splitType($type)
+	{
+	    $res = array('type' => $type);
+	    if(preg_match('|(\w+)\((\d+),?(\d+)?\)|', $type, $match)) {
+	        $res['type'] = $match[1];
+	        $res['len'] = $match[2];
+	        $res['type_len'] = $res['len'];
+	        // have length
+	        if(!empty($match[3])) {
+	            $res['scale'] = $match[3];
+	            $res['type_len'] = $res['len'].",".$res['scale'];
+	        }
+	    }
+	    return $res;
+	}
+
+	/**
+	 * Generate modify statement for one column
+	 * @param string $tablename
+	 * @param array $fieldDef Vardef definition for field
+	 * @param string $action
+	 * @param bool $ignoreRequired
+	 */
+	protected function changeOneColumnSQL($tablename, $fieldDef, $action, $ignoreRequired = false)
+	{
+	    switch($action) {
+	    	case 'DROP':
+	    		return $fieldDef['name'];
+	    		break;
+	    	case 'ADD':
+	    	    $colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
+	    	    return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+	    	case 'MODIFY':
+	    		$colArray = $this->oneColumnSQLRep($fieldDef, $ignoreRequired, $tablename, true);
+	    		$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
+	    		$nowCol = $this->describeField($fieldDef['name'], $tablename);
+	    		if($colArray['colType'] == 'blob' || $colArray['colType'] == 'clob') {
+	    			// Bug 42467: prevent Oracle from modifying *LOB fields
+	    			if($colArray['colType'] != $nowCol['type']) {
+                        // we can't change type from lob, sorry
+                        return '';
+	    			}
+	    			$colArray['colType'] = ''; // we don't change type, so omit it
+	    		}
+
+	    		$colData = $this->splitType($colArray['colType']);
+	    		// Oracle does not allow to shrink column sizes or decrease precision
+	    		// unless the column is empty
+	    		if(!empty($colArray['colType']) && !empty($nowCol['type']) && $nowCol['type'] == $colData['type']
+	    		        && !empty($colData['len'])              // if we don't define length, OK
+	    		        && $nowCol['len'] != $colData['len']    // if it's the same length as it was, OK
+	    		        && $nowCol['len'] != $colData['type_len'] // if it's the same length counting precision, OK
+                ) {
+	    		    // Precision/length handling
+	    		    if(empty($nowCol['len'])) {
+	    		        // if we had no length, strip it
+	    		        $colArray['colType'] = $colData['type'];
+	    		    } else {
+    	    		    // We can increase length but not decrease it
+                        $len2 = explode(",", $nowCol['len']);
+                        $length = $len2[0];
+                        if(!empty($len2[1])) { // case of 20,2
+                            $scale = $len2[1];
+                        } else {
+                            $scale = 0;
+                            $colData['scale'] = 0;
+                        }
+                        if($colData['len'] < $length) {
+                            // we're attempting to decrease length, not allowed
+                            $colData['len'] = $length;
+                        }
+                        if($colData['scale'] < $scale) {
+                            // don't allow to reduce scale
+                            $colData['scale'] = $scale;
+                        }
+                        if($colData['scale'] != 0) {
+                            $colArray['colType']="{$colData['type']}({$colData['len']},{$colData['scale']})";
+                        } else {
+                            $colArray['colType']="{$colData['type']}({$colData['len']})";
+                        }
+	    		    }
+	    		}
+
+
+	            if(isset($nowCol['default']) && !isset($fieldDef['default'])) {
+                    // removing default is allowed by changing to "DEFAULT NULL"
+                    $colArray['default'] = "DEFAULT NULL";
+                    //$colArray['required'] = '';
+                }
+	    		if ( !$ignoreRequired && ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
+	    			$colArray['required'] = '';
+	    		return "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+	    }
+        return '';
 	}
 
 	/**
@@ -956,47 +981,18 @@ class OracleManager extends DBManager
              */
         	$addColumns = array();
 			foreach($fieldDefs as $def) {
-                switch($action) {
-                case 'DROP':
-                    $addColumns[] = $def['name'];
-                    break;
-                case 'ADD':
-                case 'MODIFY':
-					$colArray = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
-					$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
-    				$type = $this->getColumnType($colArray['colType']);
-    				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
-    				    // Bug 42467: prevent Oracle from modifying *LOB fields
-    				    continue 2;
-    				}
-					if ( !$ignoreRequired
-							&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
-					  	$colArray['required'] = '';
-					$addColumns[] = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
-                	break;
-                }
+			    $col = $this->changeOneColumnSQL($tablename, $def, $action, $ignoreRequired);
+			    if(!empty($col)) {
+			        $addColumns[] = $col;
+			    }
 			}
-        	$columns = "(" . implode(",", $addColumns) . ")";
+			if(!empty($addColumns)) {
+        	    $columns = "(" . implode(",", $addColumns) . ")";
+			} else {
+			    $columns = '';
+			}
         } else {
-            switch($action) {
-            case 'DROP':
-                $columns = $fieldDefs['name'];
-                break;
-            case 'ADD':
-            case 'MODIFY':
-				$colArray = $this->oneColumnSQLRep($fieldDefs, $ignoreRequired, $tablename, true);
-				$type = $this->getColumnType($colArray['colType']);
-				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
-				    // Bug 42467: prevent Oracle from modifying *LOB fields
-				    return "";
-				}
-				$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
-				if ( !$ignoreRequired
-						&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
-					$colArray['required'] = '';
-				$columns = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
-				break;
-            }
+            $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
         }
         if ( $action == 'DROP' )
             $action = 'DROP COLUMN';
@@ -1049,7 +1045,7 @@ class OracleManager extends DBManager
                 FROM USER_INDEXES
                 WHERE INDEX_NAME = '$name'
                     OR INDEX_NAME = '".strtoupper($name)."'");
-		$row = $this->db->fetchByAssoc($result);
+		$row = $this->fetchByAssoc($result);
 		return ($row['cnt'] > 1) ? $name . (intval($row['cnt']) + 1) : $name;
     }
 
@@ -1116,7 +1112,7 @@ class OracleManager extends DBManager
     {
     	$sequence_name = $this->_getSequenceName($table, $field_name, true);
     	$result = $this->query("SELECT {$sequence_name}.NEXTVAL currval FROM DUAL");
-    	$row = $this->db->fetchByAssoc($result);
+    	$row = $this->fetchByAssoc($result);
     	$current = $row['currval'];
     	$change = $start_value - $current - 1;
     	$this->query("ALTER SEQUENCE {$sequence_name} INCREMENT BY $change");
@@ -1136,45 +1132,6 @@ class OracleManager extends DBManager
             $this->query('DROP SEQUENCE ' .$sequence_name);
         }
     }
-
-    /**
-     * @see DBManager::updateSQL()
-     */
-    public function updateSQL(SugarBean $bean, array $where = array())
-    {
-		// get field definitions
-        $primaryField = $bean->getPrimaryFieldDefinition();
-        $columns = array();
-
-		// get column names and values
-		foreach ($bean->getFieldDefinitions() as $fieldDef) {
-            $name = $fieldDef['name'];
-            if ($name == $primaryField['name'])
-                continue;
-            if (isset($bean->$name)
-                    && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
-                $val = $bean->getFieldValue($name);
-			   	// clean the incoming value..
-			   	$val = from_html($val);
-
-                if (strlen($val) <= 0)
-                    $val = null;
-
-		        // need to do some thing about types of values
-		        $val = $this->massageValue($val, $fieldDef);
-		        $columns[] = "$name=$val";
-            }
-		}
-
-		if (sizeof ($columns) == 0)
-            return ""; // no columns set
-
-		$where = $this->updateWhereArray($bean, $where);
-        $where = $this->getWhereClause($bean, $where);
-
-        // get the entire sql
-		return "UPDATE ".$bean->getTableName()." SET ".implode(",", $columns)." $where ";
-	}
 
     /**
      * @see DBManager::get_indices()
@@ -1229,13 +1186,13 @@ EOQ;
             "SELECT * FROM user_tab_columns WHERE TABLE_NAME = '".strtoupper($tablename)."'");
 
         $columns = array();
-        while (($row=$this->db->fetchByAssoc($result)) !=null) {
+        while (($row=$this->fetchByAssoc($result)) !=null) {
             $name = strtolower($row['column_name']);
             $columns[$name]['name']=$name;
             $columns[$name]['type']=strtolower($row['data_type']);
             if ( $columns[$name]['type'] == 'number' ) {
                 $columns[$name]['len']=
-                    ( !empty($row['data_precision']) ? $row['data_precision'] : '3');
+                    ( !empty($row['data_precision']) ? $row['data_precision'] : '38');
                 if ( !empty($row['data_scale']) )
                     $columns[$name]['len'].=','.$row['data_scale'];
             }
@@ -1270,12 +1227,10 @@ EOQ;
      */
     protected function _findSequence($name)
     {
-        global $sugar_config;
-        $db_user_name = isset($sugar_config['dbconfig']['db_user_name'])?$sugar_config['dbconfig']['db_user_name']:'';
-        $db_user_name = strtoupper($db_user_name);
+        $db_user_name = strtoupper(isset($this->configOptions['db_user_name'])?$this->configOptions['db_user_name']:'');
 
         $uname = strtoupper($name);
-        $row = $this->db->fetchOne(
+        $row = $this->fetchOne(
                 "SELECT SEQUENCE_NAME FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER='$db_user_name' AND SEQUENCE_NAME = '$uname'");
         return !empty($row);
     }
@@ -1348,15 +1303,15 @@ EOQ;
      */
     public function renameIndexDefs($old_definition, $new_definition, $table_name)
     {
-        $old_definition = $this->getValidDBName($old_definition, true, 'index');
-        $new_definition = $this->getValidDBName($new_definition, true, 'index');
+        $old_definition['name'] = $this->getValidDBName($old_definition['name'], true, 'index');
+        $new_definition['name'] = $this->getValidDBName($new_definition['name'], true, 'index');
         return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";
     }
 
     /**
      * @see DBManager::massageFieldDef()
      */
-    public function massageFieldDef($fieldDef, $tablename)
+    public function massageFieldDef(&$fieldDef, $tablename)
     {
         parent::massageFieldDef($fieldDef,$tablename);
 
@@ -1427,6 +1382,12 @@ EOQ;
         }
         if($ctype == "time") {
             return $this->convert($this->quoted("00:00:00"), "time");
+        }
+        if($ctype == "clob") {
+            return "EMPTY_CLOB()";
+        }
+        if($ctype == "blob") {
+            return "EMPTY_BLOB()";
         }
         return parent::emptyValue($type);
     }
@@ -1507,11 +1468,11 @@ EOQ;
         }
         $valid = false;
         // try query, but don't generate result set and do not commit
-        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         if(!empty($res)) {
             // check that we got good metadata
-            $name = oci_field_name($res, 1);
-            if(empty($name)) {
+            $name = oci_field_name($stmt, 1);
+            if(!empty($name)) {
                 $valid = true;
             }
         }
@@ -1587,7 +1548,7 @@ EOQ;
             return 'Wrong statement type';
         }
         // try query, but don't generate result set and do not commit
-        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         // just in case, rollback all changes
         $error = $this->lastError();
         oci_rollback($this->database);
@@ -1719,7 +1680,7 @@ EOQ;
         if(empty($version)) {
             return array('ERR_DB_VERSION_FAILURE');
         }
-        if(!preg_match("/Oracle9i|Oracle Database 10g|11/i", $version)) {
+        if(!preg_match("/^(9|10|11)\\./i", $version)) {
             return array('ERR_DB_OCI8_VERSION', $version);
         }
         return true;

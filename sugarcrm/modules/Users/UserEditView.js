@@ -332,7 +332,7 @@ function add_checks(f) {
 }
 
 
-<!-- Autoruns -->
+// Autoruns
 function onUserEditView() {
     YAHOO.util.Event.onContentReady('user_theme_picker',function() {
         document.getElementById('user_theme_picker').onchange = function() {

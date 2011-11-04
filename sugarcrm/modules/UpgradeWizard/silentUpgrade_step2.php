@@ -249,15 +249,10 @@ $errors = array();
 	$patchName		= basename($argv[1]);
 	$zip_from_dir	= substr($patchName, 0, strlen($patchName) - 4); // patch folder name (minus ".zip")
 	$path			= $argv[2]; // custom log file, if blank will use ./upgradeWizard.log
-
-	if($sugar_version < '5.1.0'){
-		$db				= &DBManager :: getInstance();
-	} else{
-		$db				= &DBManagerFactory::getInstance();
-	}
-
+    $db				= &DBManagerFactory::getInstance();
 	$UWstrings		= return_module_language('en_us', 'UpgradeWizard');
 	$adminStrings	= return_module_language('en_us', 'Administration');
+    $app_list_strings = return_app_list_strings_language('en_us');
 	$mod_strings	= array_merge($adminStrings, $UWstrings);
 	$subdirs		= array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
 	global $unzip_dir;
@@ -295,8 +290,8 @@ $errors = array();
 /////retrieve admin user
 
 $unzip_dir = sugar_cached("upgrades/temp");
-$install_file = "upload://upgrades/patch/".basename($argv[1]);
-UploadStream::ensureDir("upload://upgrades/patch/");
+$install_file = $sugar_config['upload_dir']."/upgrades/patch/".basename($argv[1]);
+sugar_mkdir($sugar_config['upload_dir']."/upgrades/patch", 0775, true);
 
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
@@ -333,6 +328,9 @@ $trackerManager->unsetMonitors();
 
 include('modules/ACLActions/actiondefs.php');
 include('include/modules.php');
+
+require_once('modules/Administration/upgrade_custom_relationships.php');
+upgrade_custom_relationships();
 
 // clear out the theme cache
 if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
@@ -540,7 +538,7 @@ if(function_exists('unlinkUpgradeFiles'))
 	unlinkUpgradeFiles($origVersion);
 }
 
-if(function_exists('rebuildSprites'))
+if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
 }
@@ -550,7 +548,7 @@ if(function_exists('rebuildSprites'))
 if(empty($errors)) {
 	set_upgrade_progress('end','in_progress','unlinkingfiles','in_progress');
 	logThis('Taking out the trash, unlinking temp files.', $path);
-	unlinkTempFiles(true);
+	unlinkUWTempFiles();
 	removeSilentUpgradeVarsCache();
 	logThis('Taking out the trash, done.', $path);
 }

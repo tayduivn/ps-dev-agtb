@@ -283,8 +283,9 @@ class KBDocument extends SugarBean {
             $this->add_team_security_where_clause($ret_array['from']);
         }
         //END SUGARCRM flav=pro ONLY
-        if(!empty($where)) {
-            $ret_array['where'] = ' WHERE '. $where;
+        if(!empty($where) && trim($where) != '') {
+            // Strip leading AND or OR for bug 48173
+            $ret_array['where'] = ' WHERE '. preg_replace('(^\s*(AND)|(OR)\s+)', '', $where);
         } else {
             $ret_array['where'] = '';
         }
@@ -452,7 +453,7 @@ class KBDocument extends SugarBean {
 	//get all attachments
 	function get_kbdoc_attachments($kbdoc_id,$screen){
 		if (empty($kbdoc_id)) return null;
-		global $app_strings;
+		global $app_strings,$mod_strings;
 		$db = DBManagerFactory::getInstance();
 		$docrevs = array();
 		//$kbdoc_rev_id = $kbdoc->kbdocument_revision_id;
@@ -463,8 +464,7 @@ class KBDocument extends SugarBean {
 		$result=$db->query($query);
 
 		if (!empty($result)) {
-			//$row=$db->fetchByAssoc($result);
-			 while($row = $db->fetchByAssoc($result, -1, false)){
+			 while($row = $db->fetchByAssoc($result, false)){
                $docrevs[]=$row;
               }
 		}
@@ -546,7 +546,7 @@ function get_tags($kbdoc_id){
 }
 
 function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
-        global $app_strings;
+        global $app_strings,$mod_strings;
 		$focus = new KBDocument();
 		$kbtags_heirarchy=array();
 	    $kbtags = array();
@@ -554,11 +554,8 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 	    if (empty($kbdoc_id)) return null;
 		$query="select kbtag_id from kbdocuments_kbtags where kbdocument_id = '$kbdoc_id' and deleted=0";
 		$result=$focus->db->query($query);
-		if (!empty($result)) {
-			//$kbtags=$focus->db->fetchByAssoc($result);
-		}
 		$tags='';
-       while($row = $focus->db->fetchByAssoc($result, -1, false)){
+       while($row = $focus->db->fetchByAssoc($result, false)){
          $kbdoctags[]=$row;
         }
       for($i=0;$i<count($kbdoctags);$i++){

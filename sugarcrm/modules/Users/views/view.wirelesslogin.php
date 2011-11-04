@@ -112,4 +112,3 @@ class ViewWirelesslogin extends SugarWirelessView{
 	}
 }
 ?>
-

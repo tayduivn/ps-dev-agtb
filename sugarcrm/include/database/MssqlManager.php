@@ -92,6 +92,7 @@ class MssqlManager extends DBManager
         'limit_subquery' => true,
         "fix:expandDatabase" => true, // Support expandDatabase fix
         "create_user" => true,
+        "create_db" => true,
     );
 
     /**
@@ -169,7 +170,7 @@ class MssqlManager extends DBManager
         }
 
         //create persistent connection
-        if ($sugar_config['dbconfigoption']['persistent'] == true) {
+        if ($this->getOption('persistent')) {
             $this->database =@mssql_pconnect(
                 $connect_param ,
                 $configOptions['db_user_name'],
@@ -192,7 +193,7 @@ class MssqlManager extends DBManager
                     return false;
                 }
             }
-            if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
+            if($this->database && $this->getOption('persistent')){
                 $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
                     . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your "
                     . "config.php file</B>";
@@ -981,42 +982,24 @@ class MssqlManager extends DBManager
     }
 
 	/**
-     * @see DBManager::fetchByAssoc()
-     */
-    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
-    {
-        if (!$result)
-            return false;
+	 * @see DBManager::fetchRow()
+	 */
+	public function fetchRow($result)
+	{
+		if (empty($result))	return false;
 
-		if ($result && $rowNum < 0) {
-            $row = mssql_fetch_assoc($result);
-            //MSSQL returns a space " " when a varchar column is empty ("") and not null.
-            //We need to iterate through the returned row array and strip empty spaces
-            if(!empty($row)){
-                foreach($row as $key => $column) {
-                    //notice we only strip if one space is returned.  we do not want to strip
-                    //strings with intentional spaces (" foo ")
-                    if (!empty($column) && $column ==" ") {
-                        $row[$key] = '';
-                    }
-                }
+        $row = mssql_fetch_assoc($result);
+        //MSSQL returns a space " " when a varchar column is empty ("") and not null.
+        //We need to iterate through the returned row array and strip empty spaces
+        if(!empty($row)){
+            foreach($row as $key => $column) {
+               //notice we only strip if one space is returned.  we do not want to strip
+               //strings with intentional spaces (" foo ")
+               if (!empty($column) && $column ==" ") {
+                   $row[$key] = '';
+               }
             }
-
-            if($encode && $this->encode && is_array($row))
-                return array_map('to_html', $row);
-
-            return $row;
-		}
-
-		if ($this->getRowCount($result) > $rowNum) {
-			if ( $rowNum == -1 )
-                $rowNum = 0;
-			@mssql_data_seek($result, $rowNum);
         }
-
-        $row = @mssql_fetch_assoc($result);
-        if($encode && $this->encode && is_array($row))
-            return array_map('to_html', $row);
         return $row;
 	}
 
@@ -1796,20 +1779,6 @@ EOQ;
         if(!empty($dbResult))
             mssql_free_result($dbResult);
     }
-
-    /**
-     * Returns the number of rows returned by the result
-     *
-     * @param  resource $result
-     * @return int
-     */
-     public function getRowCount($result)
-    {
-        if(!empty($result)) {
-            return mssql_num_rows($result);
-		}
-		return 0;
-	}
 
 	/**
 	 * (non-PHPdoc)

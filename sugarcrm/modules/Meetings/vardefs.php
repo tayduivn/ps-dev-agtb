@@ -137,6 +137,10 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Duration (hours)',
     'importable' => 'required',
     'required' => true,
+    'validation' => array (
+        'type' => 'callback',
+        'callback' => 'isValidDuration'
+    )
   ),
   'duration_minutes' =>
   array (

@@ -436,6 +436,7 @@ enableInsideViewConnector();
         print( $render_table_close );
         print( $render_table_open );
 
+        global $current_user;
         $current_user = new User();
         $current_user->retrieve(1);
         include("install/populateSeedData.php");
@@ -614,8 +615,11 @@ FP;
 post_install_modules();
 
 //Call rebuildSprites
-require_once('modules/UpgradeWizard/uw_utils.php');
-rebuildSprites(true);
+if(function_exists('imagecreatetruecolor'))
+{
+    require_once('modules/UpgradeWizard/uw_utils.php');
+    rebuildSprites(true);
+}
 
 if( count( $bottle ) > 0 ){
     foreach( $bottle as $bottle_message ){

@@ -135,23 +135,14 @@ class ViewModulefield extends SugarView
         }
 
         if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio' || empty ( $_REQUEST [ 'view_package' ] ) ) {
-            $module = new stdClass;
             $moduleName = $_REQUEST['view_module'];
+            $objectName = BeanFactory::getObjectName($moduleName);
+            $module = BeanFactory::getBean($moduleName);
 
-            $objectName = $beanList[$moduleName];
-            $className = $objectName;
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if($objectName == 'aCase') // Bug 17614 - renamed aCase as Case in vardefs for backwards compatibililty with 451 modules
-                $objectName = 'Case';
-            //END SUGARCRM flav!=sales ONLY
-			
-			$module = new $className();
-            
             VardefManager::loadVardef($moduleName, $objectName,true);
             global $dictionary;
             $module->mbvardefs->vardefs =  $dictionary[$objectName];
 			
-//          $GLOBALS['log']->debug('vardefs from dictionary = '.print_r($module->mbvardefs->vardefs,true));
             $module->name = $moduleName;
             if(!$ac){
                 $ac = new AjaxCompose();
@@ -316,6 +307,8 @@ class ViewModulefield extends SugarView
 		//END SUGARCRM flav=pro ONLY
 		// end
 
+        //BEGIN SUGARCRM flav=int ONLY
+        /*
         //Determine whether or not to show the Global Search option
         require_once('modules/Home/UnifiedSearchAdvanced.php');
         $usa = new UnifiedSearchAdvanced();
@@ -326,8 +319,10 @@ class ViewModulefield extends SugarView
         {
             $globalSearchEnabled = $unified_search_modules_display[$moduleName]['visible'];
         }
-        
+
         $fv->ss->assign('globalSearchEnabled', $tf->supports_unified_search && $globalSearchEnabled);
+        */
+        //END SUGARCRM flav=int ONLY
 
         $layout = $fv->getLayout($vardef);
 

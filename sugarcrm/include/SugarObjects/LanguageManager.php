@@ -277,7 +277,7 @@ class LanguageManager{
     public static function removeJSLanguageFiles()
     {
         $jsFiles = array();
-        getFiles($jsFiles, $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage');
+        getFiles($jsFiles, sugar_cached('jsLanguage'));
         foreach($jsFiles as $file) {
             unlink($file);
         }

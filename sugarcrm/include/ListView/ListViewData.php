@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: ListViewData.php 57227 2010-06-30 23:02:27Z kjing $
 require_once('include/EditView/SugarVCR.php');
 class ListViewData {
+
 	var $additionalDetails = true;
     var $listviewName = null;
 	var $additionalDetailsAllow = null;
@@ -536,7 +537,7 @@ class ListViewData {
 
         $extra = "<span id='adspan_" . $id . "' onmouseout=\"return SUGAR.util.clearAdditionalDetailsCall()\" "
                 . "onmouseover=\"lvg_dtails('$id')\" "
-				. "onmouseout=\"return nd(1000);\" style='position: relative;'><!--not_in_theme!--><img vertical-align='middle' class='info' border='0' alt='$jscalendarImage' src='$jscalendarImage'></span>";
+				. "onmouseout=\"return nd(1000);\" style='position: relative;'><!--not_in_theme!--><img vertical-align='middle' class='info' border='0' alt='".$app_strings['LBL_ADDITIONAL_DETAILS']."' src='$jscalendarImage'></span>";
 
         return array('fieldToAddTo' => $this->additionalDetailsFieldToAdd, 'string' => $extra);
 	}
@@ -555,13 +556,33 @@ class ListViewData {
         global $mod_strings;
 
         $results = $adFunction($fields);
+
         $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
 
-        if(trim($results['string']) == '') $results['string'] = $app_strings['LBL_NONE'];
+        if(trim($results['string']) == '')
+        {
+            $results['string'] = $app_strings['LBL_NONE'];
+        }
+
         $extra = "<span onmouseover=\"return overlib('" .
             str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string'])
             . "', CAPTION, '<div style=\'float:left\'>{$app_strings['LBL_ADDITIONAL_DETAILS']}</div><div style=\'float: right\'>";
-        if($editAccess) $extra .= (!empty($results['editLink']) ? "<a title=\'{$app_strings['LBL_EDIT_BUTTON']}\' href={$results['editLink']}>".SugarThemeRegistry::current()->getImage('edit_inline', 'border=0', null, null, ".gif", $app_strings['LBL_EDITINLINE'])."</a>" : '');
+
+        if($editAccess && !empty($results['editLink']))
+        {
+            $extra .=  "<a title=\'{$app_strings['LBL_EDIT_BUTTON']}\' href={$results['editLink']}><img style=\'margin-left: 2px;\' border=\'0\' src=\'".SugarThemeRegistry::current()->getImageURL('edit_inline.gif')."\'></a>";
+        }
+        
+        $extra .= (!empty($results['viewLink']) ? "<a title=\'{$app_strings['LBL_VIEW_BUTTON']}\' href={$results['viewLink']}><img style=\'margin-left: 2px;\' border=\'0\' src=".SugarThemeRegistry::current()->getImageURL('view_inline.gif')."></a>" : '')
+            . "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
+            . (empty($results['width']) ? '300' : $results['width'])
+            . ", CLOSETEXT, '<img alt=\'{$app_strings['LBL_CLOSEINLINE']}\' style=\'margin-left:2px; margin-right: 2px; border=0;\' src=".SugarThemeRegistry::current()->getImageURL('close.gif')."></div>', "
+            . "CLOSETITLE, '{$app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}', CLOSECLICK, FGCLASS, 'olFgClass', "
+            . "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
+            . "onmouseout=\"return nd(1000);\"><img alt=\'{$app_strings['LBL_INFOINLINE']}\' style=\'padding: 0px 5px 0px 2px\' border=\'0\' src='".SugarThemeRegistry::current()->getImageURL('info_inline.png')."' ></span>";
+
+        //BEGIN SUGARCRM flav=int ONLY
+        /*
         $extra .= (!empty($results['viewLink']) ? "<a title=\'{$app_strings['LBL_VIEW_BUTTON']}\' href={$results['viewLink']}>".SugarThemeRegistry::current()->getImage('view_inline', 'style=\'margin-left: 2px;\' border=0 ', null, null, ".gif", $app_strings['LBL_VIEWINLINE'])."</a>" : '')
             . "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
             . (empty($results['width']) ? '300' : $results['width'])
@@ -569,24 +590,46 @@ class ListViewData {
             . "CLOSETITLE, '{$app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}', CLOSECLICK, FGCLASS, 'olFgClass', "
             . "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
             . "onmouseout=\"return nd(1000);\">".SugarThemeRegistry::current()->getImage('info_inline', "style='padding: 0px 5px 0px 2px' border='0'", null, null, '.png', $app_strings['LBL_INFOINLINE'])."</span>";
+        */
+        //END SUGARCRM flav=int ONLY
 
-            $results = $adFunction($fields);
-            $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
+        $results = $adFunction($fields);
 
-            if(trim($results['string']) == '') $results['string'] = $app_strings['LBL_NONE'];
-            $extra = "<span onmouseover=\"return overlib('" .
-                str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string'])
-                . "', CAPTION, '<div style=\'float:left\'>{$app_strings['LBL_ADDITIONAL_DETAILS']}</div><div style=\'float: right\'>";
-            if($editAccess) $extra .= (!empty($results['editLink']) ? "<a title=\'{$app_strings['LBL_EDIT_BUTTON']}\' href={$results['editLink']}>".SugarThemeRegistry::current()->getImage('edit_inline', 'border=0', null, null, ".gif", $app_strings['LBL_EDITINLINE'])."</a>" : '');
-            $extra .= (!empty($results['viewLink']) ? "<a title=\'{$app_strings['LBL_VIEW_BUTTON']}\' href={$results['viewLink']}>".SugarThemeRegistry::current()->getImage('view_inline', 'style=\'margin-left: 2px;\' border=0 ', null, null, ".gif", $app_strings['LBL_VIEWINLINE'])."</a>" : '')
-                . "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
-                . (empty($results['width']) ? '300' : $results['width'])
-                . ", CLOSETEXT, " . SugarThemeRegistry::current()->getImage('close', 'border=0 style=\'margin-left:2px; margin-right: 2px;\'', null, null, ".gif", $app_strings['LBL_CLOSEINLINE'])."'</div>', "
-                . "CLOSETITLE, '{$app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}', CLOSECLICK, FGCLASS, 'olFgClass', "
-                . "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
-                . "onmouseout=\"return nd(1000);\">".SugarThemeRegistry::current()->getImage('info_inline', "style='padding: 0px 5px 0px 2px' border='0'", null, null, '.png', $app_strings['LBL_INFOINLINE'])."</span>";
+        $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
 
-            return array('fieldToAddTo' => $results['fieldToAddTo'], 'string' => $extra);
+        if(trim($results['string']) == '')
+        {
+            $results['string'] = $app_strings['LBL_NONE'];
+        }
+
+        $extra = "<span onmouseover=\"return overlib('" .
+            str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string'])
+            . "', CAPTION, '<div style=\'float:left\'>{$app_strings['LBL_ADDITIONAL_DETAILS']}</div><div style=\'float: right\'>";
+        
+        if($editAccess && !empty($results['editLink']))
+        {
+            $extra .=  "<a title=\'{$app_strings['LBL_EDIT_BUTTON']}\' href={$results['editLink']}><img style=\'margin-left: 2px;\' border=\'0\' src=\'".SugarThemeRegistry::current()->getImageURL('edit_inline.gif')."\'></a>";
+        }
+        
+        $extra .= (!empty($results['viewLink']) ? "<a title=\'{$app_strings['LBL_VIEW_BUTTON']}\' href={$results['viewLink']}><img style=\'margin-left: 2px;\' border=\'0\' src=".SugarThemeRegistry::current()->getImageURL('view_inline.gif')."></a>" : '')
+            . "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
+            . (empty($results['width']) ? '300' : $results['width'])
+            . ", CLOSETEXT, '<img alt=\'{$app_strings['LBL_CLOSEINLINE']}\' style=\'margin-left:2px; margin-right: 2px; border=0;\' src=".SugarThemeRegistry::current()->getImageURL('close.gif')."></div>', "
+            . "CLOSETITLE, '{$app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}', CLOSECLICK, FGCLASS, 'olFgClass', "
+            . "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
+            . "onmouseout=\"return nd(1000);\"><img alt='{$app_strings['LBL_INFOINLINE']}' style='padding: 0px 5px 0px 2px' border='0' src='".SugarThemeRegistry::current()->getImageURL('info_inline.png')."' ></span>";
+
+        //BEGIN SUGARCRM flav=int ONLY
+        /*
+        $extra .= "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
+               . (empty($results['width']) ? '300' : $results['width'])
+               . ", CLOSETEXT, " . SugarThemeRegistry::current()->getImage('close', "style='margin-left:2px; margin-right: 2px; border=0 ;'", null, null, '.gif', $app_strings['LBL_CLOSEINLINE'])."'</div>', "
+               . "CLOSETITLE, '{$app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}', CLOSECLICK, FGCLASS, 'olFgClass', "
+               . "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
+               . "onmouseout=\"return nd(1000);\">".SugarThemeRegistry::current()->getImage('info_inline', "style='padding: 0px 5px 0px 2px' border='0'", null, null, '.png', $app_strings['LBL_INFOINLINE'])."</span>";
+         */
+        //END SUGARCRM flav=int ONLY
+        return array('fieldToAddTo' => $results['fieldToAddTo'], 'string' => $extra);
     }
 
 }

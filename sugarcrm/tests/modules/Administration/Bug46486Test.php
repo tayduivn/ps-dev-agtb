@@ -21,25 +21,41 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
     private $sm;
     private $defaultPortalUsersCount;
+    private $enforce;
 
     function setUp()
     {
+
+        $admin = new Administration();
+        $admin->retrieveSettings('license');
+
+        if(!isset($admin->settings['license_num_portal_users']))
+        {
+           $admin->settings['license_num_portal_users'] = 0;
+           $admin->saveSetting('license', 'num_portal_users', '0');
+        }
+
         $this->sm = new SessionManager();
         $this->defaultPortalUsersCount = $this->sm->getNumPortalUsers();
 
-        $admin = new Administration();
         $admin->retrieveSettings('system');
         if(!isset($admin->settings['system_session_timeout']))
         {
            $session_timeout = abs(ini_get('session.gc_maxlifetime'));
            $admin->saveSetting('system', 'session_timeout', $session_timeout);
         }
+        $admin->retrieveSettings('license');
+        $this->enforce =  !empty($admin->settings['license_enforce_portal_user_limit']);
+
+        $admin->saveSetting('license', 'enforce_portal_user_limit', '1');
+
+        $admin->retrieveSettings(false, true);
         sugar_cache_clear('admin_settings_cache');
     }
 
@@ -47,6 +63,7 @@ class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $admin = new Administration();
         $admin->saveSetting('license', 'num_portal_users', $this->defaultPortalUsersCount);
+        $admin->saveSetting('license', 'enforce_portal_user_limit', $this->enforce);
 
         //Remove any 'fake' sessions created.
         $query = "DELETE FROM {$this->sm->table_name}";

@@ -92,7 +92,7 @@ else if(isset($_REQUEST['entire']) && $_REQUEST['entire'] == 'true') {
 	$result = $db->query($query,true,"Error mail merging {$_SESSION['MAILMERGE_MODULE']}: "."<BR>$query");
 
 	$new_arr = array();
-	while($val = $db->fetchByAssoc($result,-1,false))
+	while($val = $db->fetchByAssoc($result,false))
 	{
 		array_push($new_arr, $val['id']);
 	}
@@ -215,14 +215,14 @@ if ($user_merge != 'on' || !isset($admin->settings['system_mailmerge_on']) || !$
 $xtpl->parse("main");
 $xtpl->out("main");
 
-function get_user_module_list($user){
+/*function get_user_module_list($user){
 	global $app_list_strings, $current_language;
 	$app_list_strings = return_app_list_strings_language($current_language);
 	$modules = query_module_access_list($user);
 	global $modInvisList;
 
 	return $modules;
-}
+}*/
 
 function getDocumentRevisions()
 {
@@ -235,7 +235,7 @@ function getDocumentRevisions()
 LEFT JOIN documents on documents.id = document_revisions.document_id
 WHERE ((active_date <= $currentDate AND exp_date > $currentDate)
 	OR (active_date is NULL) or (active_date = ".$empty_date.")
-	OR (active_date <= $currentDate AND ((exp_date = $empty_date OR (exp_date is NULL))))
+	OR (active_date <= $currentDate AND ((exp_date = $empty_date OR (exp_date is NULL)))))
 AND is_template = 1 AND template_type = 'mailmerge' AND documents.deleted = 0 ORDER BY document_name";
 
 			$result = $document->db->query($query,true,"Error retrieving $document->object_name list: ");

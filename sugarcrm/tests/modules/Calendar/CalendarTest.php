@@ -27,6 +27,7 @@
  ********************************************************************************/
 
 
+
 require_once "modules/Calendar/Calendar.php";
 require_once "modules/Calendar/CalendarUtils.php";
 require_once('modules/Meetings/Meeting.php');
@@ -100,8 +101,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($count1 + 1, $count2, "Count of records should be one more after meeting added");
 	}
 	
-	public function testCalendarLoadActivities(){
-        $this->markTestSkipped("Skipping Test");
+	public function testCalendarLoadActivities(){        
 		$cal = new Calendar('month');
 		$cal->add_activities($GLOBALS['current_user']);
 		$format = $GLOBALS['current_user']->getUserDateTimePreferences();
@@ -114,7 +114,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$cal->acts_arr[$GLOBALS['current_user']->id][] = new CalendarActivity($meeting);	
 		$cal->load_activities();
 			
-		$this->assertEquals($cal->ActRecords[0]['time_start'],$this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['time']),"Time should remain the same after load_activities");		
+		$this->assertEquals($cal->items[0]['time_start'],$this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['time']),"Time should remain the same after load_activities");		
 	}
 
 	public function testHandleOffset(){

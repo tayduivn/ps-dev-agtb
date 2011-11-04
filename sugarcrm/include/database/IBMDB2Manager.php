@@ -429,24 +429,13 @@ class IBMDB2Manager  extends DBManager
 	}
 
 	/**~
-	 * @see DBManager::fetchByAssoc()
+	 * @see DBManager::fetchRow()
 	 */
-	public function fetchByAssoc($result, $rowNum = -1, $encode = true)
+	public function fetchRow($result)
 	{
-		if (!$result)
-			return false;
+		if (empty($result))	return false;
 
-		if (isset($result) && $result && $rowNum < 0) {
-			$row = $this->db2FetchRow($result);
-		} else {
-			if ($this->getRowCount($result) > $rowNum)
-				return array(); // cannot do seek
-			$row = $this->db2FetchRow($result);
-		}
-		if ($row != false && $encode && $this->encode && sizeof($row)>0)
-			return array_map('to_html', $row);
-
-		return $row;
+		return $this->db2FetchRow($result);
 	}
 
 	/**+
@@ -493,6 +482,22 @@ class IBMDB2Manager  extends DBManager
 		else return false;
 	}
 
+    /**
+     * Check DB version
+     * @see DBManager::canInstall()
+     */
+    public function canInstall()
+    {
+        $db_version = $this->version();
+        if(!$db_version) {
+            return array('ERR_DB_VERSION_FAILURE');
+        }
+        if(version_compare($db_version, '9.7.4') < 0) {
+            return array('ERR_DB_IBM_DB2_VERSION', $db_version);
+        }
+        return true;
+    }
+
 	/**+
 	 * @see DBManager::tableExists()
 	 */
@@ -535,8 +540,8 @@ class IBMDB2Manager  extends DBManager
 			$configOptions = $sugar_config['dbconfig'];
 
 
-		if(isset($sugar_config['dbconfigoption']) && isset( $sugar_config['dbconfigoption']['persistent']))
-			$persistConnection = $sugar_config['dbconfigoption']['persistent'];
+		if($this->getOption('persistent'))
+			$persistConnection = true;
 		else
 			$persistConnection = false;
 
@@ -594,6 +599,12 @@ class IBMDB2Manager  extends DBManager
 		$this->log->info("Connect:".$this->database);
 		return true;
 	}
+
+    protected $date_formats = array(
+        '%Y-%m-%d' => 'YYYY-MM-DD',
+        '%Y-%m' => 'YYYY-MM',
+        '%Y' => 'YYYY',
+    );
 
 
 	/**~
@@ -1351,9 +1362,21 @@ EOQ;
 	public function getDbInfo()
 	{
 		$this->getDatabase();
+		$server = @db2_server_info($this->database);
+		if(is_object($server)) {
+		    $server = get_object_vars($server);
+		} else {
+		    $server = null;
+		}
+		$client = @db2_client_info($this->database);
+		if(is_object($client)) {
+		    $client = get_object_vars($client);
+		} else {
+		    $client = null;
+		}
 		return array(
-			"IBM DB2 Client Info" => @db2_client_info($this->database),
-			"IBM DB2 Server Info" => @db2_server_info($this->database),
+			"IBM DB2 Client Info" => $client,
+			"IBM DB2 Server Info" => $server,
 		);
 	}
 

@@ -124,6 +124,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 	
 
+    $smarty->assign('duplicateButtons', $duplicateButtons);
 	$smarty->assign('mod_strings', $mod_strings);
 	$smarty->assign('app_strings', $app_strings);
 	$smarty->assign('current_language', $current_language);
@@ -1371,7 +1372,9 @@ if (isset($reporter->saved_report->is_chart_dashlet) && $reporter->saved_report-
 function juliansort($a,$b)
 {
  global $app_list_strings;
- if ($app_list_strings['moduleList'][$a] > $app_list_strings['moduleList'][$b])
+    $a = isset($app_list_strings['moduleList'][$a]) ? $app_list_strings['moduleList'][$a] : $a;
+    $b = isset($app_list_strings['moduleList'][$b]) ? $app_list_strings['moduleList'][$b] : $b;
+ if ($a > $b)
  {
   return 1;
  }

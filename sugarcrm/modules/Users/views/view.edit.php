@@ -64,9 +64,17 @@ class UsersViewEdit extends ViewEdit {
     function display() {
         global $current_user, $app_list_strings;
 
+
+        //lets set the return values
+        if(isset($_REQUEST['return_module'])){
+            $this->ss->assign('RETURN_MODULE',$_REQUEST['return_module']);
+        }
+
+        //reset the id if this is a duplicate bean
         if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
             $this->bean->id = "";
             $this->bean->user_name = "";
+            $this->ss->assign('ID','');//RETURN_ID
         }
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -139,6 +147,8 @@ class UsersViewEdit extends ViewEdit {
             }
         }
 
+        $processSpecial = false;
+        $processFormName = '';
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->fieldHelper->usertype == 'GROUP'
              //BEGIN SUGARCRM flav=ent ONLY
@@ -146,10 +156,16 @@ class UsersViewEdit extends ViewEdit {
              //END SUGARCRM flav=ent ONLY
             ) {
             $this->ev->formName = 'EditViewGroup';
-
+            
+            $processSpecial = true;
+            $processFormName = 'EditViewGroup';            
         }
         //END SUGARCRM flav!=sales ONLY
-        return parent::display();
+
+        $this->ev->process($processSpecial,$processFormName);
+
+		echo $this->ev->display($this->showTitle);
+        
     }
 
 }

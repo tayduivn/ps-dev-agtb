@@ -33,20 +33,12 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
             getValidDBName('idx_test_123_id')
         );
     }
-    
-    public function testLongNameEffected()
-    {
-        $this->assertNotEquals(
-            getValidDBName('eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee_opportunities'),
-            getValidDBName('eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee1_opportunities')
-        );
-    }
 
     public function testmaxLengthParam()
     {
         $this->assertEquals(
-            'idx_test_123_456_789_foo_bar_id',
-            getValidDBName('idx_test_123_456_789_foo_bar_id', false, 40)
+            'idx_test_123_456_foo_bar_id',
+            getValidDBName('idx_test_123_456_foo_bar_id', false)
         );
     }
 
@@ -110,4 +102,14 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(isValidDBName('sugar crm', 'mssql'));
         $this->assertFalse(isValidDBName('#sugarCRM_ver6', 'mssql'));
     }
+    
+    public function testLongNameAffected()
+    {
+        $this->assertNotEquals(
+            getValidDBName('eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee_opportunities', true),
+            getValidDBName('eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee1_opportunities', true)
+        );
+    }
 }
+
+?>

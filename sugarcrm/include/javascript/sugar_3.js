@@ -115,6 +115,7 @@ var altMsgIndex = 15;
 var compareToIndex = 7;
 var arrIndex = 12;
 var operatorIndex = 13;
+var callbackIndex = 16;
 var allowblank = 8;
 var validate = new Array();
 var maxHours = 24;
@@ -241,6 +242,15 @@ function addToValidate(formname, name, type, required, msg) {
 		addForm(formname);
 	}
 	validate[formname][validate[formname].length] = new Array(name, type,required, msg);
+}
+
+// Bug #47961 Callback validator definition
+function addToValidateCallback(formname, name, type, required, msg, callback)
+{
+    addToValidate(formname, name, type, required, msg);
+    var iIndex = validate[formname].length -1;
+    validate[formname][iIndex][jstypeIndex] = 'callback';
+    validate[formname][iIndex][callbackIndex] = callback;
 }
 
 function addToValidateRange(formname, name, type,required,  msg,min,max) {
@@ -638,6 +648,7 @@ function check_form(formname) {
 }
 
 function add_error_style(formname, input, txt, flash) {
+    var raiseFlag = false;
 	if (typeof flash == "undefined")
 		flash = true;
 	try {
@@ -655,9 +666,17 @@ function add_error_style(formname, input, txt, flash) {
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
 
-	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
+    YUI().use('node', function (Y) {
+        Y.one(inputHandle).get('parentNode').get('children').each(function(node, index, nodeList){
+            if(node.hasClass('validation-message') && node.get('text').search(matchTxt)){
+                raiseFlag = true;
+            }
+        });
+    });
+
+    if(!raiseFlag) {
         errorTextNode = document.createElement('div');
-        errorTextNode.className = 'required';
+        errorTextNode.className = 'required validation-message';
         errorTextNode.innerHTML = txt;
         if ( inputHandle.parentNode.className.indexOf('x-form-field-wrap') != -1 ) {
             inputHandle.parentNode.parentNode.appendChild(errorTextNode);
@@ -700,6 +719,7 @@ function add_error_style(formname, input, txt, flash) {
       // Catch errors here so we don't allow an incomplete record through the javascript validation
   }
 }
+
 
 /**
  * removes all error messages for the current form
@@ -970,6 +990,18 @@ function validate_form(formname, startsWith){
 						if(typeof validate[formname][i][jstypeIndex]  != 'undefined'/* && !isError*/){
 
 							switch(validate[formname][i][jstypeIndex]){
+                                // Bug #47961 May be validation through callback is best way.
+                                case 'callback' :
+                                    if (typeof validate[formname][i][callbackIndex] == 'function')
+                                    {
+                                        var result = validate[formname][i][callbackIndex](formname, validate[formname][i][nameIndex]);
+                                        if (result == false)
+                                        {
+                                            isError = true;
+                                            add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
+                                        }
+                                    }
+                                    break;
 							case 'range':
 								if(!inRange(trim(form[validate[formname][i][nameIndex]].value), validate[formname][i][minIndex], validate[formname][i][maxIndex])){
 									isError = true;
@@ -1421,28 +1453,6 @@ function http_fetch_async(url,callback,request_id,post_data) {
 		}
 	}
 	global_xmlhttp.send(post_data);
-}
-
-function call_json_method(module,action,vars,variable_name,callback) {
-	global_xmlhttp.open("GET", "index.php?entryPoint=json&module="+module+"&action="+action+"&"+vars,true);
-	global_xmlhttp.onreadystatechange=
-	function() {
-		if(global_xmlhttp.readyState==4) {
-			if(global_xmlhttp.status == 200) {
-				// cn: bug 12274 - pass through JSON.parse() to remove security envelope
-				json_objects[variable_name] = JSON.parse(global_xmlhttp.responseText);
-
-				// cn: bug 12274 - safe from CSRF, render response as expected
-				var respText = YAHOO.lang.JSON.stringify(global_xmlhttp.responseText);
-				var args = {responseText:respText, responseXML:global_xmlhttp.responseXML};
-				callback.call(document, args);
-			}
-			else {
-				alert("There was a problem retrieving the XML data:\n" + global_xmlhttp.statusText);
-			}
-		}
-	}
-	global_xmlhttp.send(null);
 }
 
 function insert_at_cursor(field, value) {
@@ -1937,7 +1947,7 @@ sugarListView.prototype.send_form_for_emails = function(select, currentModule, a
 	else {
 	    maxCount = SUGAR.config.email_sugarclient_listviewmaxselect;
 	}
-    
+
     if (document.MassUpdate.select_entire_list.value == 1) {
 		if (totalCount > maxCount) {
 			alert(totalCountError);
@@ -2824,7 +2834,7 @@ SUGAR.util = function () {
 					var script = document.createElement('script');
                   	script.type= 'text/javascript';
                   	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:]*)['"].*/igm;
+						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:-]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
 						script.src = srcResult;
                   	}else{

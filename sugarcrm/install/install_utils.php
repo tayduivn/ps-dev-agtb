@@ -539,6 +539,9 @@ function getDbConnection()
     }
 
     $db = getInstallDbInstance();
+    if(!empty($_SESSION['setup_db_options'])) {
+        $db->setOptions($_SESSION['setup_db_options']);
+    }
     $db->connect($dbconfig, true);
     return $db;
 }
@@ -714,6 +717,9 @@ function handleSugarConfig() {
     $sugar_config['dbconfig']['db_type']            = $_SESSION['setup_db_type'];
     $sugar_config['dbconfig']['db_port']            = $setup_db_port_num;
     $sugar_config['dbconfig']['db_manager']         = $_SESSION['setup_db_manager'];
+    if(!empty($_SESSION['setup_db_options'])) {
+        $sugar_config['dbconfigoption']                 = array_merge($sugar_config['dbconfigoption'], $_SESSION['setup_db_options']);
+    }
 
     $sugar_config['cache_dir']                      = $cache_dir;
     $sugar_config['default_charset']                = $mod_strings['DEFAULT_CHARSET'];
@@ -976,25 +982,25 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
-
+    global $current_user;
 	require_once('install/UserDemoData.php');
 
     //Create default admin user
-    $user = new User();
-    $user->id = 1;
-    $user->new_with_id = true;
-    $user->last_name = 'Administrator';
+    $current_user = new User();
+    $current_user->id = 1;
+    $current_user->new_with_id = true;
+    $current_user->last_name = 'Administrator';
     //$user->user_name = 'admin';
-    $user->user_name = $setup_site_admin_user_name;
-    $user->title = "Administrator";
-    $user->status = 'Active';
-    $user->is_admin = true;
-	$user->employee_status = 'Active';
+    $current_user->user_name = $setup_site_admin_user_name;
+    $current_user->title = "Administrator";
+    $current_user->status = 'Active';
+    $current_user->is_admin = true;
+	$current_user->employee_status = 'Active';
     //$user->user_password = $user->encrypt_password($setup_site_admin_password);
-    $user->user_hash = strtolower(md5($setup_site_admin_password));
-    $user->email = '';
-    $user->picture = UserDemoData::_copy_user_image($user->id);
-    $user->save();
+    $current_user->user_hash = strtolower(md5($setup_site_admin_password));
+    $current_user->email = '';
+    $current_user->picture = UserDemoData::_copy_user_image($current_user->id);
+    $current_user->save();
 
     // echo 'Creating RSS Feeds';
     //$feed = new Feed();
@@ -1005,7 +1011,7 @@ function create_default_users(){
     // $query = "update users set id='1' where user_name='$user->user_name'";
     // $result = $db->query($query, true, "Error updating admin user ID: ");
 
-    $GLOBALS['log']->info("Created ".$user->table_name." table. for user $user->id");
+    $GLOBALS['log']->info("Created ".$current_user->table_name." table. for user $current_user->id");
 
     if( $create_default_user ){
         $default_user = new User();
@@ -1442,6 +1448,7 @@ function pullSilentInstallVarsIntoSession() {
         'setup_db_database_name'        => isset($sugar_config['dbconfig']['db_name']) ? $sugar_config['dbconfig']['db_name'] : '',
         'setup_db_type'                 => isset($sugar_config['dbconfig']['db_type']) ? $sugar_config['dbconfig']['db_type'] : '',
         'setup_db_port_num'             => isset($sugar_config['dbconfig']['db_port']) ? $sugar_config['dbconfig']['db_port'] : '',
+        'setup_db_options'			    => !empty($sugar_config['dbconfigoptions']) ? $sugar_config['dbconfigoptions'] : array(),
     );
     // third array of values derived from above values
     $derived = array (
@@ -1467,7 +1474,7 @@ function pullSilentInstallVarsIntoSession() {
                      'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
                      'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
                      'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
-                     'export_delimiter', 'cache_dir');
+                     'export_delimiter', 'cache_dir', 'setup_db_options');
     copyFromArray($sugar_config_si, $needles, $derived);
     $all_config_vars = array_merge( $config_subset, $sugar_config_si, $derived );
 
@@ -1898,7 +1905,7 @@ function getLicenseContents($filename)
 {
 	$license_file = '';
     if(file_exists($filename) && filesize($filename) >0){
-	    $license_file = file_get_contents($filename);
+	    $license_file = trim(file_get_contents($filename));
     }
     return $license_file;
 }
