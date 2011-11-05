@@ -526,10 +526,6 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'len' => '255',
                     ),
                 false),
-                );
-        // Oracle doesn't allow to shrink columns
-        if($this->_db->dbType == "oci8" ) return $returnArray;
-        $returnArray[] =
             array(
                 array(
                     'name' => 'foo',
@@ -541,9 +537,8 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'varchar',
                     'len' => '123',
                     ),
-                false);
-        $returnArray[] =
-            array(
+                false),
+			array(
                 array(
                     'name' => 'foo',
                     'type' => 'varchar',
@@ -554,7 +549,8 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'type' => 'varchar',
                     'len' => '123',
                     ),
-                false);
+                false)
+           );
 
         return $returnArray;
     }
@@ -565,6 +561,9 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareVarDefs($fieldDef1,$fieldDef2,$expectedResult)
     {
+        if($this->_db->dbType=="oci8" && $fieldDef1['len'] > $fieldDef2['len']) {
+            $this->markTestSkipped("Oracle does not allow shrinking columns");
+        }
         if ( $expectedResult ) {
             $this->assertTrue($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
         }
