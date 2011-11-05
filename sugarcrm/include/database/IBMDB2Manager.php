@@ -227,7 +227,8 @@ class IBMDB2Manager  extends DBManager
 		if(!$obj) return true;
 
 		$err = db2_stmt_error($obj);
-		if ($err != false){
+		if ($err != false
+            && $err != '01003'){ // NULL result in aggregate bug 47612
 			$this->log->fatal("DB2 Statement error: ".var_export($err, true));
 			return true;
 		}
