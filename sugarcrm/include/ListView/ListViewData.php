@@ -365,7 +365,7 @@ class ListViewData {
 				$id_list .= '\''.$row[$id_field].'\'';
 				//handles date formating and such
 				$idIndex[$row[$id_field]][] = count($rows);
-				$rows[] = $this->convertRow($row);
+				$rows[] = $seed->convertRow($row);
 			}
 			$count++;
 		}
