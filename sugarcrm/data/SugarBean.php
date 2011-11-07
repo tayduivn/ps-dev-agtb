@@ -3800,7 +3800,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $result = $this->db->query($count_query, true, "Error running count query for $this->object_name List: ");
         $row_num = 0;
-        while($row = $this->db->fetchByAssoc($result, false))
+        while($row = $this->db->fetchByAssoc($result, true))
         {
             $num_rows_in_query += current($row);
         }
