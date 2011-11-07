@@ -466,6 +466,6 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($c), 'incorrect array count.');
 
         // cleanup
-        unlink($sample_file);
+        $this->unlink[] = $sample_file;
     }
 }
