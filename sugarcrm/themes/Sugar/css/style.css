@@ -6287,6 +6287,7 @@ border-radius: 0px;
 
 ul#selectLink.clickMenu {
 	height: 19px;
+	min-width: 20px;
 }
 
 ul#selectLink.clickMenu #massall{
