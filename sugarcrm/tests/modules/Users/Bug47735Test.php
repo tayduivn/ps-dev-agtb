@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
+//This test is based off of Bug45709Text.php
 require_once "include/SearchForm/SearchForm2.php";
 
 class Bug47735Test extends Sugar_PHPUnit_Framework_TestCase
@@ -37,8 +37,9 @@ class Bug47735Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+		$GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
 		$GLOBALS['current_user'] = $this->user = SugarTestUserUtilities::createAnonymousUser();
-
     }
 
     public function tearDown()
