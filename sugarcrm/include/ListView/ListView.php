@@ -339,7 +339,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             $BG_COLOR =  $even_bg;
         }
         $oddRow = !$oddRow;
-
+		$button_contents = array();
         $this->xTemplate->assign("ROW_COLOR", $ROW_COLOR);
         $this->xTemplate->assign("BG_COLOR", $BG_COLOR);
         $layout_manager = $this->getLayoutManager();
@@ -361,6 +361,9 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         //get data source name
         $linked_field=$thepanel->get_data_source_name();
         $linked_field_set=$thepanel->get_data_source_name(true);
+        static $count;
+        if(!isset($count))$count = 0;
+                
         foreach($thepanel->get_list_fields() as $field_name=>$list_field)
         {
             //add linked field attribute to the array.
@@ -426,18 +429,61 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                     } else if(isset($list_field['widget_class']) && $list_field['widget_class'] == 'SubPanelEmailLink' ) {
                         $widget_contents = $layout_manager->widgetDisplay($list_field);
                     }
-                } else {
-                    // This handles the edit and remove buttons
-                $widget_contents = $layout_manager->widgetDisplay($list_field);
-                }
-                static $count;
-                if(!isset($count))$count = 0; else $count++;
+                    
+                 $count++;
                 $this->xTemplate->assign('CELL_COUNT', $count);
+                $this->xTemplate->assign('CLASS', "");
                 if ( empty($widget_contents) ) $widget_contents = '&nbsp;';
                 $this->xTemplate->assign('CELL', $widget_contents);
                 $this->xTemplate->parse($xtemplateSection.".row.cell");
+                } else {
+                    // This handles the edit and remove buttons and icon widget
+
+                	if($list_field['widget_class'] == "SubPanelIcon") {
+		                $count++;
+		                $widget_contents = $layout_manager->widgetDisplay($list_field);
+		                $this->xTemplate->assign('CELL_COUNT', $count);
+		                $this->xTemplate->assign('CLASS', "");
+		                if ( empty($widget_contents) ) $widget_contents = '&nbsp;';
+		                $this->xTemplate->assign('CELL', $widget_contents);
+		                $this->xTemplate->parse($xtemplateSection.".row.cell");
+                	} elseif (preg_match("/button/i", $list_field['name'])) {
+                		$button_contents[] = $layout_manager->widgetDisplay($list_field);
+                	} else {
+               			$count++;
+               			$this->xTemplate->assign('CLASS', "");
+               			$widget_contents = $layout_manager->widgetDisplay($list_field);
+		                $this->xTemplate->assign('CELL_COUNT', $count);
+		                if ( empty($widget_contents) ) $widget_contents = '&nbsp;';
+		                $this->xTemplate->assign('CELL', $widget_contents);
+		                $this->xTemplate->parse($xtemplateSection.".row.cell");
+                	}
+                }
+
             }
         }
+		$button_count = 1;
+		$widget_contents = "";
+		foreach ($button_contents as $actions => $action) {
+			
+			$widget_contents .= "<li>".$action."</li>";
+			if(sizeof($button_contents) == $button_count) {
+				$count++;
+                $this->xTemplate->assign('CELL_COUNT', $count);
+                $this->xTemplate->assign('CLASS', "inlineButtons");
+                $pre = '<ul class="clickMenu subpanel records">'. "\n";;
+        		$pre .= '<li>'. "\n";;
+        		$pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";;
+        		$pre .= '<ul class="subnav">' . "\n";
+        		$post = ' </ul>' . "\n";
+		        $post .= '</li>' . "\n";
+		        $post .= '</ul>' . "\n";
+                if ( empty($widget_contents) ) $widget_contents = '&nbsp;';
+                $this->xTemplate->assign('CELL', $pre.$widget_contents.$post);
+                $this->xTemplate->parse($xtemplateSection.".row.cell");
+			}
+			$button_count++;
+		}
 
         $aItem->setupCustomFields($aItem->module_dir);
         $aItem->custom_fields->populateAllXTPL($this->xTemplate, 'detail', $html_varName, $fields);
@@ -1512,7 +1558,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
         {
             $orderBy=  'amount';
         }
-
+		$buttons = false;
         foreach($subpanel_def->get_list_fields() as $column_name=>$widget_args)
         {
             $usage = empty($widget_args['usage']) ? '' : $widget_args['usage'];
@@ -1527,21 +1573,33 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                         $imgArrow = "_up";
                     }
                 }
-                $widget_args['name']=$column_name;
-                $widget_args['sort'] = $imgArrow;
-                $widget_args['start_link_wrapper'] = $this->start_link_wrapper;
-                $widget_args['end_link_wrapper'] = $this->end_link_wrapper;
-                $widget_args['subpanel_module'] = $this->subpanel_module;
-
-                $widget_contents = $layout_manager->widgetDisplay($widget_args);
-                $cell_width = empty($widget_args['width']) ? '' : $widget_args['width'];
-                $this->xTemplate->assign('HEADER_CELL', $widget_contents);
-                static $count;
-            if(!isset($count))$count = 0; else $count++;
-                $this->xTemplate->assign('CELL_COUNT', $count);
-                $this->xTemplate->assign('CELL_WIDTH', $cell_width);
-                $this->xTemplate->parse('dyn_list_view.header_cell');
+                
+                if (!preg_match("/_button/i", $column_name)) {
+	                $widget_args['name']=$column_name;
+	                $widget_args['sort'] = $imgArrow;
+	                $widget_args['start_link_wrapper'] = $this->start_link_wrapper;
+	                $widget_args['end_link_wrapper'] = $this->end_link_wrapper;
+	                $widget_args['subpanel_module'] = $this->subpanel_module;
+					
+	                $widget_contents = $layout_manager->widgetDisplay($widget_args);
+	                $cell_width = empty($widget_args['width']) ? '' : $widget_args['width'];
+	                $this->xTemplate->assign('HEADER_CELL', $widget_contents);
+	                static $count;
+	            if(!isset($count))$count = 0; else $count++;
+	                $this->xTemplate->assign('CELL_COUNT', $count);
+	                $this->xTemplate->assign('CELL_WIDTH', $cell_width);
+	                $this->xTemplate->parse('dyn_list_view.header_cell');
+                } else {
+                	$buttons = true;		
+                }
             }
+        }
+        
+        if($buttons) {
+        			$this->xTemplate->assign('HEADER_CELL', "&nbsp;");
+        			$this->xTemplate->assign('CELL_COUNT', $count);
+	                $this->xTemplate->assign('CELL_WIDTH', $cell_width);
+	                $this->xTemplate->parse('dyn_list_view.header_cell');
         }
 
     }

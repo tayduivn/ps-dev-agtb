@@ -1215,7 +1215,7 @@ EOHTML;
             $index++;
             $paramString .= $parm;
             if($index < $count){
-                $paramString .= $this->getBreadCrumbSymbol();
+               // $paramString .= $this->getBreadCrumbSymbol();
             }
         }
 
@@ -1223,21 +1223,9 @@ EOHTML;
                $theTitle .= "<h2> $paramString </h2>\n";
            }
 
-        if ($show_help) {
-            $theTitle .= "<span class='utils'>";
 
-            $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
-            $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
-            $theTitle .= <<<EOHTML
-&nbsp;
-<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'>
-<a href="{$url}" class="utilsLink">
-{$GLOBALS['app_strings']['LNK_CREATE']}
-</a>
-EOHTML;
-        }
 
-        $theTitle .= "</span></div>\n";
+        $theTitle .= "</div>\n";
         return $theTitle;
     }
 
@@ -1290,13 +1278,13 @@ EOHTML;
     protected function _getModuleTitleParams($browserTitle = false)
     {
         $params = array($this->_getModuleTitleListParam($browserTitle));
-
+		//$params = array();
         if (isset($this->action)){
             switch ($this->action) {
             case 'EditView':
                 if(!empty($this->bean->id)) {
-                    $params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$this->bean->get_summary_text()."</a>";
-                    $params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
+                    $params[] = $this->bean->get_summary_text();
+                    //$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
                 }
                 else
                     $params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
@@ -1342,13 +1330,12 @@ EOHTML;
     	if($this->action == "ListView" || $this->action == "index") {
     	    if (!empty($iconPath) && !$browserTitle) {
     	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
-					return "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$firstParam."' title='".$firstParam."' align='absmiddle'></a>"
-					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
-    	    	} else {
     	    		return $app_strings['LBL_SEARCH'].$this->getBreadCrumbSymbol()
-    	    			 . "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$firstParam."' title='".$firstParam."' align='absmiddle'></a>";
+    	    			 . "$firstParam";
+
+    	    	} else {
+					return "$firstParam"
+					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
     	    	}
 			} else {
 				return $firstParam;
@@ -1356,8 +1343,7 @@ EOHTML;
     	}
     	else {
 		    if (!empty($iconPath) && !$browserTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'>"
-				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
+				//return "<a href='index.php?module={$this->module}&action=index'>$this->module</a>";
 			} else {
 				return "{$firstParam}";
 			}
@@ -1404,10 +1390,12 @@ EOHTML;
     public function getBreadCrumbSymbol()
     {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='pointer'>&raquo;</span>";
+        	//return "<span class='pointer'>&raquo;</span>";
+        	return "<span class='pointer'>&nbsp;</span>";
         }
         else {
-        	return "<span class='pointer'>&laquo;</span>";
+        	//return "<span class='pointer'>&laquo;</span>";
+        	return "<span class='pointer'>&nbsp;</span>";
         }
     }
 

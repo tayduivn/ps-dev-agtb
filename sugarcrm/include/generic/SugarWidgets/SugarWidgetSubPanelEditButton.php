@@ -65,7 +65,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 		if($layout_def['EditView'] && $this->isQuickCreateValid($layout_def['module'],$layout_def['subpanel_id'])){
 			return '<a href="#" class="listViewTdToolsS1" onclick="' . $onclick . '">' .
-                    self::$edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
+                    self::$edit_icon_html . $app_strings['LNK_EDIT'] .'</a>';
 		}else
 //END SUGARCRM flav=pro ONLY
         if($layout_def['EditView']) {

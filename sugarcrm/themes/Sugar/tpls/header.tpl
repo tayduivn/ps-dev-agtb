@@ -64,7 +64,7 @@ if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 }
 </script>
 {/literal}
-
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/jquery.js'}"></script>
 
 <div id="main">
     <div id="content">

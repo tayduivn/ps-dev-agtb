@@ -30,9 +30,42 @@
 {{if $preForm}}
 	{{$preForm}}
 {{/if}}
-<table cellpadding="1" cellspacing="0" border="0" width="100%" class="actionsContainer">
+<script>
+{literal}
+$(document).ready(function(){
+
+	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("ul.clickMenu li").click(function() { //When trigger is clicked...
+		
+		//Following events are applied to the subnav itself (moving subnav up and down)
+		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+		$(this).parent().hover(function() {
+		}, function(){	
+			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+		});
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+
+});
+ 
+
+{/literal}	
+
+
+        
+</script>
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>
 <td class="buttons" align="left" NOWRAP>
+<div class="actionsContainer">
 <form action="index.php" method="post" name="DetailView" id="form">
 <input type="hidden" name="module" value="{$module}">
 <input type="hidden" name="record" value="{$fields.id.value}">
@@ -48,47 +81,53 @@
 {{$field}}
 {{/foreach}}
 {{/if}}
+        <ul class="clickMenu" id="detailViewActions">
+            <li>
+                <a id=''  href="javascript: void(0);">Actions</a>
+
+                <ul class="subnav">
+
 
 {{if !isset($form.buttons)}}
-{{sugar_button module="$module" id="EDIT" view="$view"}}
-{{sugar_button module="$module" id="DUPLICATE" view="EditView"}}
-{{sugar_button module="$module" id="DELETE" view="$view"}}
+{{sugar_actions_link module="$module" id="EDIT" view="$view"}}
+{{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
+{{sugar_actions_link module="$module" id="DELETE" view="$view"}}
 {{else}}
 	{{counter assign="num_buttons" start=0 print=false}}
 	{{foreach from=$form.buttons key=val item=button}}
 	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
 	     {{counter print=false}}
-	     {{sugar_button module="$module" id="$button" view="EditView"}}
+	     {{sugar_actions_link module="$module" id="$button" view="EditView"}}
 	  {{/if}}
 	{{/foreach}}
-	{{if isset($closeFormBeforeCustomButtons)}}
-	</form>
-	</td>
-	{{/if}}
+
 	{{if count($form.buttons) > $num_buttons}}
 			{{foreach from=$form.buttons key=val item=button}}
 			  {{if is_array($button) && $button.customCode}}
-              {{if isset($closeFormBeforeCustomButtons)}}
-              <td class="buttons" align="left" NOWRAP>
-              {{/if}}
-			  {{sugar_button module="$module" id="$button" view="EditView"}}
-              {{if isset($closeFormBeforeCustomButtons)}}
-              </td>
-              {{/if}}
+
+			  {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+
 			  {{/if}}
 			{{/foreach}}
 	{{/if}}
 {{/if}}
-{{if !isset($closeFormBeforeCustomButtons)}}
-</form>
-</td>
-{{/if}}
+
 {{if empty($form.hideAudit) || !$form.hideAudit}}
-<td class="buttons" align="left" NOWRAP>
-{{sugar_button module="$module" id="Audit" view="EditView"}}
-</td>
+{{sugar_actions_link module="$module" id="Audit" view="EditView"}}
 {{/if}}
-<td align="right" width="100%">{$ADMIN_EDIT}
+
+
+                </ul>
+            </li>
+
+        </ul>
+</form>
+</div>
+
+</td>
+
+
+<td align="right" width="50%">{$ADMIN_EDIT}
 	{{if $panelCount == 0}}
 	    {{* Render tag for VCR control if SHOW_VCR_CONTROL is true *}}
 		{{if $SHOW_VCR_CONTROL}}

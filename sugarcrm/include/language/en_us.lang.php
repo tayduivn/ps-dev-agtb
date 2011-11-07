@@ -2307,6 +2307,7 @@ $app_strings = array (
     'LBL_LINK_RECORDS'=> 'Records',
     'LBL_LINK_SELECT'=> 'Select',
     'LBL_LINK_ACTIONS'=> 'Actions',
+    'LBL_LINK_MORE'=> 'More',
     'LBL_CLOSE_ACTIVITY_HEADER' => "Confirm",
     'LBL_CLOSE_ACTIVITY_CONFIRM' => "Do you want to close this #module#?",
     'LBL_CLOSE_ACTIVITY_REMEMBER' => "Do not display this message in the future: &nbsp;",
