@@ -890,7 +890,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
                 $constraint = $val;
                 //  check to see if array is being passed in.
                 if(is_array($val)){
-                    if(!empty($search_str)){
+                    if($search_str != ' '){
                       $search_str .= " and "; //and is needed only if $search_str already has something bug 47789
                     }
                     //if array is being passed in, then retrieve operator to use

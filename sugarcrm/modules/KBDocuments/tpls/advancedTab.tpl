@@ -188,7 +188,7 @@
 			</td></tr></table>
 	        	<div style='padding: 2'>
 		        	<input type='submit' class='button' name='fts_search_ADV' id='fts_search_ADV' value='{$MOD.LBL_SEARCH}'">
-	 				<input type='submit' class='button' name='clearForm' id='clearForm' value='{$MOD.LBL_CLEAR}' onClick="document.getElementById('mode_a').value='clear';">
+	 				<input type='submit' class='button' name='clearFormAdv' id='clearFormAdv' value='{$MOD.LBL_CLEAR}' onClick="document.getElementById('mode_a').value='clear';">
  				</div>
 				</form>
 			

@@ -294,7 +294,7 @@ class IBMDB2Manager  extends DBManager
 	 */
 	protected function checkQuery($sql)
 	{
-		$result   = $this->query('EXPLAIN ' . $sql);
+		$result   = $this->query('EXPLAIN PLAN FOR' . $sql);
 		$badQuery = array();
 		while ($row = $this->fetchByAssoc($result)) {
 			if (empty($row['table']))
@@ -1383,8 +1383,11 @@ EOQ;
 
 	public function validateQuery($query)
 	{
-		$res = $this->getOne("EXPLAIN $query");
-		return !empty($res);
+        $this->checkConnection();
+
+		$valid = (@db2_prepare($this->getDatabase(), $query, array('deferred_prepare' => DB2_DEFERRED_PREPARE_OFF)) != false); // Force boolean result
+        $this->log->debug('IBMDB2Manager.validateQuery  -> ' . $query . ' result: ' . $valid);
+        return $valid;
 	}
 
 	protected function makeTempTableCopy($table)

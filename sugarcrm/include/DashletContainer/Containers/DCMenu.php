@@ -129,9 +129,7 @@ EOQ;
 		$html .= getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
 		$html .= <<<EOQ
 		<script>
-
-		YUI().use('node-base', 'event-key', function(Y){
-
+		YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('node-base', 'event-key', function(Y){
 			function init(){
 				DCMenu.module = '$module';
 				DCMenu.record = '$record';
