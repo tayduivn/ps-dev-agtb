@@ -129,7 +129,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 					    	foreach($entry as $source_id) {
 					    		$source = SourceFactory::getSource($source_id);
 					    		if($source->isEnabledInWizard()) {
-					    			return '<input title="{$APP.LBL_MERGE_CONNECTORS}" accessKey="{$APP.LBL_MERGE_CONNECTORS_BUTTON_KEY}" type="button" class="button" onClick="document.location=\'index.php?module=Connectors&action=Step1&record={$fields.id.value}&merge_module={$module}\'" name="merge_connector" value="{$APP.LBL_MERGE_CONNECTORS}">';
+					    			return '<li><a title="{$APP.LBL_MERGE_CONNECTORS}" accessKey="{$APP.LBL_MERGE_CONNECTORS_BUTTON_KEY}" onClick="document.location=\'index.php?module=Connectors&action=Step1&record={$fields.id.value}&merge_module={$module}\'" name="merge_connector">{$APP.LBL_MERGE_CONNECTORS}</a></li>';
 					    		}
 					    	}
 					    }
