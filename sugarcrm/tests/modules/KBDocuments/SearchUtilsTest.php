@@ -67,4 +67,87 @@ class SearchUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals($qsArray['form'],'testme');
     }
+
+
+    /**
+     * createFtsSearchListQueryProvider
+     *
+     * This is the data provider for the testCreateFtsSearchListQuery function
+     */
+    public function createFtsSearchListQueryProvider()
+    {
+        return array
+        (
+            //Simulate a search with text = '*', kbdocument_name = 'Draft' and 'status_id' = 'Draft'
+            array(
+                'spec_SearchVars' => array
+                (
+                    'active_date' => '',
+                    'active_date2' => '',
+                    'exp_date' => '',
+                    'exp_date2' => '',
+                    'searchText_include' => '*',
+                    'canned_search' => 'all',
+                ),
+                'searchVars' => array
+                (
+                    'kbdocument_name' => 'Draft',
+                    'status_id' => array
+                     (
+                         'operator' => '=',
+                         'filter' => 'Draft',
+                     ),
+                ),
+                true
+            ),
+
+            //Simulate a search with text = '*' and 'status_id' = 'Draft'
+            array(
+                'spec_SearchVars' => array
+                (
+                    'active_date' => '',
+                    'active_date2' => '',
+                    'exp_date' => '',
+                    'exp_date2' => '',
+                    'searchText_include' => '*',
+                    'canned_search' => 'all',
+                ),
+                'searchVars' => array
+                (
+                    'status_id' => array
+                     (
+                         'operator' => '=',
+                         'filter' => 'Draft',
+                     ),
+                ),
+                false
+            ),
+        );
+    }
+
+
+    /**
+     * testCreateFtsSearchListQuery
+     *
+     * These are some additional tests on the create_fts_search_list_query function.  We use the createFtsSearchListQueryProvider
+     * method to supply simulated arguments for the $spec_SearchVars and $searchVars input.
+     *
+     * @dataProvider createFtsSearchListQueryProvider
+     * @see modules/KBDocuments/SearchUtils.php
+     * 
+     * @param $spec_SearchVars Array of special arguments for KBDocuments module
+     * @param $searchVars Array of arguments sent from search form to KBDocuments module
+     * @param $hasAnd boolean value indicating whether or not to search for the 'and' string in resulting where query
+     */
+    public function testCreateFtsSearchListQuery($spec_SearchVars, $searchVars, $hasAnd)
+    {
+        $result = create_fts_search_list_query($GLOBALS['db'], $spec_SearchVars, $searchVars);
+        if($hasAnd)
+        {
+            $this->assertRegExp('/ and /', $result['where'], 'Assert and clause found');
+        } else {
+            $this->assertNotRegExp('/ and /', $result['where'], 'Assert no and clause found');
+        }
+    }
+
 }
