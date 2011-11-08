@@ -4109,7 +4109,7 @@ function set_return(popup_reply_data)
 			{
 				var displayValue=name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 				if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account/)) {
-					var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'');
+                    var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'').replace(/<\/?[^>]+(>|$)/g, "");
 					label_str += data_label + ' \n';
 					label_data_str += data_label  + ' ' + displayValue + '\n';
 					if(window.document.forms[form_name].elements[the_key]) {
