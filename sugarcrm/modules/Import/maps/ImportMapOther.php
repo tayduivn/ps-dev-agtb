@@ -155,6 +155,12 @@ class ImportMapOther
                 "Description"=>"description",
                 );
             break;
+        case 'Tasks':
+            return array(
+                'Related To ID'=>'parent_id',
+                'Related To Module'=>'parent_type',
+            );
+            break;
         //END SUGARCRM flav=pro ONLY
         default:
             return array();
