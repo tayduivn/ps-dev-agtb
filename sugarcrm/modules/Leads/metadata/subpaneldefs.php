@@ -73,6 +73,11 @@ $layout_defs['Leads'] = array(
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'calls',
 				),
+                'invited_calls' => array(
+					'module' => 'Calls',
+					'subpanel_name' => 'ForActivities',
+					'get_subpanel_data' => 'invited_calls',
+				),
 				'oldcalls' => array(
 					'module' => 'Calls',
 					'subpanel_name' => 'ForActivities',
