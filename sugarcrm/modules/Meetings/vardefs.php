@@ -88,7 +88,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   'host_url' =>
   array (
     'name' => 'host_url',
-    'vname' => 'LBL_URL',
+    'vname' => 'LBL_HOST_URL',
     'type' => 'varchar',
     'len' => '400',
     'comment' => 'Host URL',
@@ -98,7 +98,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   'displayed_url' =>
   array (
     'name' => 'displayed_url',
-    'vname' => 'LBL_URL',
+    'vname' => 'LBL_DISPLAYED_URL',
     'type' => 'url',
     'len' => '400',
     'comment' => 'Meeting URL',
@@ -174,7 +174,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   'parent_type' =>
   array (
     'name' => 'parent_type',
-    'vname'=>'LBL_LIST_RELATED_TO',
+    'vname'=>'LBL_PARENT_TYPE',
     'type' =>'parent_type',
     'dbType' => 'varchar',
     'group'=>'parent_name',
@@ -228,7 +228,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   'parent_id' =>
   array (
     'name' => 'parent_id',
-    'vname'=>'LBL_LIST_RELATED_TO',
+    'vname'=>'LBL_PARENT_ID',
     'type' => 'id',
     'group'=>'parent_name',
     'reportable'=>false,
