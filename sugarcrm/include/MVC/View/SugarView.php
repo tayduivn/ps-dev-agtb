@@ -610,10 +610,24 @@ class SugarView
 		if(!empty($current_user->id) && !$this->_getOption('view_print')){
 			require_once('include/DashletContainer/DCFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
-			$data = $dcm->getLayout();
+			//$data = $dcm->getLayout();
+			$notifData = $dcm->getNotifications();
+			$menuData = $dcm->getMenus();
 			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
+			$ss->assign('NOTIFCLASS', $notifData['class']);
+			$ss->assign('NOTIFCODE', $notifData['code']);
+			$ss->assign('NOTIFICON', $notifData['icon']);
+			$ss->assign('DCSCRIPT', $dcm->getScript());
+			$ss->assign('ICONSEARCH', $dcm->getSearchIcon());
+			$ss->assign('DCACTIONS', $menuData['DCActions']);
+			$ss->assign('DYNAMICDCACTIONS', $menuData['dynamicDCActions']);
+			if(is_admin($GLOBALS['current_user'])){
+				$ss->assign('ISADMIN', true);
+			} else {
+				$ss->assign('ISADMIN', false);
+			}
 			$ss->assign('SUGAR_DCJS', $dcjs);
-			$ss->assign('SUGAR_DCMENU', $data['html']);
+			//$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
         //END SUGARCRM flav=sales || flav=pro ONLY

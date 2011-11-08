@@ -73,7 +73,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
 			. " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
-			. ' class="listViewTdToolsS1">' . self::$edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
+			. ' class="listViewTdToolsS1">' . self::$edit_icon_html . $app_strings['LNK_EDIT'] .'</a>';
 		}
 
         return '';

@@ -29,7 +29,7 @@
 {include file="_head.tpl" theme_template=true}
 <body class="yui-skin-sam">
 	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
-	{$SUGAR_DCMENU}
+	{include file="_dcmenu.tpl" theme_template=true}
 	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 	<div id="header">
     {include file="_companyLogo.tpl" theme_template=true}
