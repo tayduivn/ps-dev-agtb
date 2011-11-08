@@ -1821,24 +1821,12 @@ SUGAR.kb = function() {
 
                 new_row_button_embed.onclick = function() {
                     var filename = this.parentNode.parentNode.id;
-                    cid = 'cid:' + filename;
-                    /*
-                     var imglocation = unescape(document.location.pathname.substr(1));
-                     imglocation = imglocation.substring(0,imglocation.lastIndexOf('/')+1);
-                     imglocation='/'+imglocation+sugar_cache_dir+'images/';
-                     */
-                    var imglocation = sugar_cache_dir + 'images/';
-                    embedImage = "<img src=" + imglocation + unescape(filename) + ">";
+                    embedImage = "<img src=\"cache/images/" + unescape(filename) + "\">";
                     var tiny = tinyMCE.getInstanceById('body_html');
-                    embedImage = embedImage;
-                    embedImage1 = "<img src=cid:" + filename + ">";
-                    //tiny.setContent(embedImage1);
                     tiny.getWin().focus();
                     tiny.execCommand('mceInsertRawHTML', false, embedImage);
-                    //tiny.setContent(embedImage);
                 };
 
-                //new_row_file_name.value =element.value;
                 new_row_file_name_tab = element.value.split("\\");
                 nbr_elements = new_row_file_name_tab.length;
                 new_row_file_name.innerHTML = new_row_file_name_tab[nbr_elements - 1];
