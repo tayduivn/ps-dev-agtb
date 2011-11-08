@@ -3451,6 +3451,9 @@ function upgradeUserPreferences() {
  */
 function upgradeLocaleNameFormat($name_format) {
     global $sugar_config, $sugar_version, $mod_strings;
+    if(empty($sugar_config['name_formats'])) {
+        $sugar_config['name_formats'] = array();
+    }
     if (!in_array($name_format, $sugar_config['name_formats'])) {
         $new_config = sugarArrayMerge($sugar_config['name_formats'], array($name_format=>$name_format));
         $sugar_config['name_formats'] = $new_config;
