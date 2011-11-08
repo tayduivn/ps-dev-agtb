@@ -1459,25 +1459,25 @@ EOQ;
 
     public function validateQuery($query)
     {
-        $stmt = oci_parse($this->database, $query);
+        $stmt = @oci_parse($this->database, $query);
         if(!$stmt) {
             return false;
         }
-        if(oci_statement_type($stmt) != "SELECT") {
+        if(@oci_statement_type($stmt) != "SELECT") {
             return false;
         }
         $valid = false;
         // try query, but don't generate result set and do not commit
-        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
+        $res = @oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         if(!empty($res)) {
             // check that we got good metadata
-            $name = oci_field_name($stmt, 1);
+            $name = @oci_field_name($stmt, 1);
             if(!empty($name)) {
                 $valid = true;
             }
         }
         // just in case, rollback all changes
-        oci_rollback($this->database);
+        @oci_rollback($this->database);
         return $valid;
     }
 
