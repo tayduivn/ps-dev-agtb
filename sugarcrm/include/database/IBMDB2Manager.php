@@ -288,50 +288,6 @@ class IBMDB2Manager  extends DBManager
 		return $this->query($sql, $dieOnError, $msg);
 	}
 
-
-	/**
-	 * @see DBManager::checkQuery()
-	 */
-	protected function checkQuery($sql)
-	{
-		$result   = $this->query('EXPLAIN PLAN FOR' . $sql);
-		$badQuery = array();
-		while ($row = $this->fetchByAssoc($result)) {
-			if (empty($row['table']))
-				continue;
-			$badQuery[$row['table']] = '';
-			if (strtoupper($row['type']) == 'ALL')
-				$badQuery[$row['table']]  .=  ' Full Table Scan;';
-			if (empty($row['key']))
-				$badQuery[$row['table']] .= ' No Index Key Used;';
-			if (!empty($row['Extra']) && substr_count($row['Extra'], 'Using filesort') > 0)
-				$badQuery[$row['table']] .= ' Using FileSort;';
-			if (!empty($row['Extra']) && substr_count($row['Extra'], 'Using temporary') > 0)
-				$badQuery[$row['table']] .= ' Using Temporary Table;';
-		}
-
-		if ( empty($badQuery) )
-			return true;
-
-		foreach($badQuery as $table=>$data ){
-			if(!empty($data)){
-				$warning = ' Table:' . $table . ' Data:' . $data;
-				//BEGIN SUGARCRM flav=int ONLY
-				// _pp('Warning Check Query:' . $warning);
-				//END SUGARCRM flav=int ONLY
-				if(!empty($GLOBALS['sugar_config']['check_query_log'])){
-					$this->log->fatal($sql);
-					$this->log->fatal('CHECK QUERY:' .$warning);
-				}
-				else{
-					$this->log->warn('CHECK QUERY:' .$warning);
-				}
-			}
-		}
-
-		return false;
-	}
-
 	/**~
 	 * Get list of DB column definitions
 	 *
