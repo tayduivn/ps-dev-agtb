@@ -69,7 +69,6 @@ class SugarFieldExpression extends GenericExpression
                 if(empty($date)) {
                     throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }
-                $timedate->tzUser($date);
                 $date->def = $def;
                 return $date;
             case 'time':
