@@ -3769,9 +3769,10 @@ function save_relationship_changes($is_update, $exclude=array())
                 $next_offset--;
                 $previous_offset++;
             }
-        } else {
-            $rows_found = $index - $row_offset;
+        } else if($rows_found == null){
+            $rows_found = $row_offset + count($list);
         }
+
         $response = Array();
         $response['list'] = $list;
         $response['row_count'] = $rows_found;
