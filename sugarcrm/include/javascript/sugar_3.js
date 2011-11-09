@@ -2210,7 +2210,7 @@ sugarListView.get_checks_count = function() {
 // saves the checks on the current page into the uid textarea
 sugarListView.get_checks = function() {
 	ar = new Array();
-
+	if(typeof document.MassUpdate != 'undefined' ){
 	if(document.MassUpdate.uid.value != '') {
 		oldUids = document.MassUpdate.uid.value.split(',');
 		for(uid in oldUids) {
@@ -2240,6 +2240,8 @@ sugarListView.get_checks = function() {
 
 	if(uids.length == 0) return false; // return false if no checks to get
 	return true; // there are saved checks
+	}
+	else return false;
 }
 
 sugarListView.prototype.order_checks = function(order,orderBy,moduleString){
@@ -2260,6 +2262,7 @@ sugarListView.prototype.order_checks = function(order,orderBy,moduleString){
 }
 sugarListView.prototype.save_checks = function(offset, moduleString) {
 	checks = sugarListView.get_checks();
+	if(typeof document.MassUpdate != 'undefined'){
 	eval('document.MassUpdate.' + moduleString + '.value = offset');
 
 	if(typeof document.MassUpdate.massupdate != 'undefined') {
@@ -2274,6 +2277,8 @@ sugarListView.prototype.save_checks = function(offset, moduleString) {
 
 
 	return !checks;
+	}
+	else return false;
 }
 
 sugarListView.prototype.check_item = function(cb, form) {
