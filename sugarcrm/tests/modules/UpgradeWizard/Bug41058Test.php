@@ -180,35 +180,29 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
     }
 
-//    /**
-//     * Tests that UI presents a message on the locale settings page when there was an invalid name format during an upgrade
-//     * @param $name_format invalid name format from data provider
-//     * @dataProvider badLocaleNameFormatProvider
-//     * @depends testCheckReturnsFalseForInvalidNameFormats
-//     */
-//    public function testMessageIsShownWhenInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
-//        // TODO: implement this test
-//        $this->markTestIncomplete();
-//    }
-//
-//    /**
-//     * Tests that UI does not present a message on the locale settings page when there wasn't an invalid name format during an upgrade
-//     * @param $name_format invalid name format from data provider
-//     * @dataProvider goodLocaleNameFormatProvider
-//     * @depends testCheckReturnsTrueForValidNameFormats
-//     */
-//    public function testMessageIsNotShownWhenNoInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
-//        // TODO: implement this test
-//        $this->markTestIncomplete();
-//    }
-//
-//    /**
-//     * Test that file gets removed after a save from Locale page
-//     */
-//    public function testFileGetsRemovedAfterLocaleSave() {
-//        // TODO: implement this test
-//        $this->markTestIncomplete();
-//    }
+    /**
+     * Tests that UI presents a message on the locale settings page when there was an invalid name format during an upgrade
+     */
+    public function testMessageIsShownWhenInvalidLocaleNameFormatIsFoundInUpgrade() {
+        // TODO: implement this test
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Tests that UI does not present a message on the locale settings page when there wasn't an invalid name format during an upgrade
+     */
+    public function testMessageIsNotShownWhenNoInvalidLocaleNameFormatIsFoundInUpgrade() {
+        // TODO: implement this test
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * Test that file gets removed after a save from Locale page
+     */
+    public function testFileGetsRemovedAfterLocaleSave() {
+        // TODO: implement this test
+        $this->markTestIncomplete();
+    }
 
     /**
      * Data provider of allowed name formats
