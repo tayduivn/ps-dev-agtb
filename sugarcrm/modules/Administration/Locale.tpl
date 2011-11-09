@@ -100,11 +100,6 @@
 		<td>
             {html_options name='default_locale_name_format' id="default_locale_name_format" selected=$config.default_locale_name_format options=$NAMEFORMATS}
 		</td>
-        {if isset($upgradeInvalidLocaleNameFormat)}
-        <td>
-            {$MOD.ERR_INVALID_LOCALE_NAME_FORMAT_UPGRADE}
-        </td>
-        {/if}
 	</tr>
 
 	</table>
@@ -208,4 +203,5 @@
 
 <script language="Javascript" type="text/javascript">
 {$getNameJs}
+setPreview();
 </script>

@@ -59,9 +59,6 @@ if(isset($_REQUEST['process']) && $_REQUEST['process'] == 'true') {
 	}
 	$cfg->populateFromPost();
 	$cfg->handleOverride();
-    if ($locale->invalidLocaleNameFormatUpgrade()) {
-        $locale->removeInvalidLocaleNameFormatUpgradeNotice();
-    }
 	header('Location: index.php?module=Administration&action=index');
 }
 
@@ -91,13 +88,6 @@ $sugar_smarty->assign("exportCharsets", get_select_options_with_id($locale->getC
 //$sugar_smarty->assign('first_name', 'John');
 //$sugar_smarty->assign('last_name', 'Doe');
 $sugar_smarty->assign('NAMEFORMATS', $locale->getPrettyLocaleNameOptions($sugar_config['name_formats']));
-
-if ($locale->invalidLocaleNameFormatUpgrade()) {
-    $sugar_smarty->assign('upgradeInvalidLocaleNameFormat', 'bad name format upgrade');
-} else {
-    $sugar_smarty->clear_assign('upgradeInvalidLocaleNameFormat');
-}
-
 $sugar_smarty->assign('getNameJs', $locale->getNameJs());
 
 $sugar_smarty->display('modules/Administration/Locale.tpl');
