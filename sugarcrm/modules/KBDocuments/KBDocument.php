@@ -576,15 +576,11 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 		         $cBox = "'$kbtag_id'";
 		         $tags .= "<div id=$cTag onmouseover = '' onmouseout=''>";
 		         if($screen == 'Edit'){
-			       $tags .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage('.$cTag.','.$cBox.','.$att.')\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
+			       $tags .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage($cTag,$cBox,$att)\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
 
 
 			       //store already saved tags
 			       $tags .= '<input id="savedTagIds[]" name="savedTagIds[]" type="hidden"  value="'.$kbtag_id.'">';
-			       //$tags .= '<input id="'.$kbtag_id.'" type="checkbox"  style="visibility:hidden" onclick="strikeOutFromBox('.$cTag.','.$cBox.')" name="'.$kbtag_id.'" value="'.$kbtag_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
-			       //$tags .= SugarThemeRegistry::current()->getImage('delete', 'onclick=\"strikeOutFromImage('.$cTag.','.$cBox.')\"', null, null, ".gif", $mod_strings['LBL_REMOVE']);
-
-
 			       $tags .= "<strong>$tag_heirachy&nbsp;&nbsp";
 			     }
 
