@@ -24,7 +24,7 @@
 
 require_once 'modules/UpgradeWizard/uw_utils.php';
 
-class Bug41058Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug41058Test extends Sugar_PHPUnit_Framework_OutputTestCase {
 
     var $user;
     var $backupConfig;
@@ -73,6 +73,7 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_TestCase {
         unset($sugar_config);
         unset($sugar_version);
         unset($mod_strings);
+        unset($locale);
         unset($_REQUEST);
     }
 
@@ -135,8 +136,7 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertArrayNotHasKey($name_format, $sugar_config['name_formats']);
         upgradeUserPreferences();
         $this->assertArrayNotHasKey($name_format, $sugar_config['name_formats']);
-        $l = new Localization();
-        $coreDefaults = $l->getLocaleConfigDefaults();
+        $coreDefaults = $this->loc->getLocaleConfigDefaults();
         $this->assertSame($coreDefaults['default_locale_name_format'], $this->user->getPreference('default_locale_name_format'));
     }
 
@@ -174,34 +174,74 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_TestCase {
         upgradeUserPreferences();
         $this->assertNotSame($name_format, $sugar_config['default_locale_name_format']);
         require ('config.php');
-        $l = new Localization();
-        $coreDefaults = $l->getLocaleConfigDefaults();
+        $coreDefaults = $this->loc->getLocaleConfigDefaults();
         $this->assertSame($coreDefaults['default_locale_name_format'], $sugar_config['default_locale_name_format']);
         $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
     }
 
     /**
      * Tests that UI presents a message on the locale settings page when there was an invalid name format during an upgrade
+     * @param $name_format invalid name format from data provider
+     * @dataProvider badLocaleNameFormatProvider
+     * @depends testCheckReturnsFalseForInvalidNameFormats
      */
-    public function testMessageIsShownWhenInvalidLocaleNameFormatIsFoundInUpgrade() {
-        // TODO: implement this test
-        $this->markTestIncomplete();
+    public function testMessageIsShownWhenInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
+        global $sugar_config, $locale;
+
+        require('modules/Administration/language/en_us.lang.php');
+
+        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $sugar_config['default_locale_name_format'] = $name_format;
+        upgradeUserPreferences();
+        $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
+
+        $this->expectOutputRegex('/'.$mod_strings['ERR_INVALID_LOCALE_NAME_FORMAT_UPGRADE'].'/');
+        require('modules/Administration/Locale.php');
     }
 
     /**
      * Tests that UI does not present a message on the locale settings page when there wasn't an invalid name format during an upgrade
+     * @param $name_format valid name format from data provider
+     * @dataProvider goodLocaleNameFormatProvider
+     * @depends testCheckReturnsTrueForValidNameFormats
      */
-    public function testMessageIsNotShownWhenNoInvalidLocaleNameFormatIsFoundInUpgrade() {
-        // TODO: implement this test
-        $this->markTestIncomplete();
+    public function testMessageIsNotShownWhenNoInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
+        global $sugar_config, $locale;
+        
+        require('modules/Administration/language/en_us.lang.php');
+
+        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $sugar_config['default_locale_name_format'] = $name_format;
+        upgradeUserPreferences();
+        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+
+        $this->expectOutputNotRegex('/'.$mod_strings['ERR_INVALID_LOCALE_NAME_FORMAT_UPGRADE'].'/');
+        require('modules/Administration/Locale.php');
+        
     }
 
     /**
      * Test that file gets removed after a save from Locale page
+     * @param $name_format invalid name format from data provider
+     * @dataProvider badLocaleNameFormatProvider
+     * @depends testCheckReturnsFalseForInvalidNameFormats
      */
-    public function testFileGetsRemovedAfterLocaleSave() {
-        // TODO: implement this test
-        $this->markTestIncomplete();
+    public function testFileGetsRemovedAfterLocaleSave($name_format) {
+        global $sugar_config, $locale;
+        require('modules/Administration/language/en_us.lang.php');
+
+        $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        $sugar_config['default_locale_name_format'] = $name_format;
+        upgradeUserPreferences();
+        $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
+
+        try {
+            $_REQUEST['process'] = 'true';
+            require('modules/Administration/Locale.php');
+        } catch (Exception $e) {
+            $this->assertContains('Cannot modify header information - headers already sent', $e->getMessage());
+            $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
+        }
     }
 
     /**
