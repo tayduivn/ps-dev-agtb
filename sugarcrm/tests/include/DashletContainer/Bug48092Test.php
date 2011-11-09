@@ -84,7 +84,7 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLotusLiveLinks($def)
     {
-        $mock = new DCMenuMock();
+        $mock = new DCMenuMock2();
         $GLOBALS['sugar_config']['use_sprites'] = true;
         $html = $mock->getDynamicMenuItem($def);
         $this->assertRegExp('/\<span\s+?class/', $html, 'Assert that with sprites on we get link with span tag');
@@ -101,7 +101,7 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
  *
  * Mock object for DCMenu to override protect access of getDynamicMenuItem method
  */
-class DCMenuMock extends DCMenu
+class DCMenuMock2 extends DCMenu
 {
 
     public function getDynamicMenuItem($def)
