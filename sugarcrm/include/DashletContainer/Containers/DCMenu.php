@@ -46,20 +46,20 @@ EOQ;
 
 	protected function getDynamicMenuItem($def)
 	{
-		if (!empty($def['icon']))
+  		if (!empty($def['icon']))
+        {
 			$imageName = $def['icon'];
-	    else
+        } else {
 	    	$imageName = SugarThemeRegistry::current()->getImageURL("icon_generic_bar_32.png");
-
+        }
+        
 	    $module = !empty($def['module']) ? $def['module'] : "";
 	    $label = isset($def['label']) ? translate($def['label'], $module) : "";
         $modal = isset($def['modal']) ? $def['modal'] : true;
 	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label', $modal);";
 	    $script = isset($def['script_url']) ? '<script type="text/javascript" src="' . $def['script_url'] . '"></script>' : "";
-
-
-		$url = "javascript: $action";
-		$image = SugarThemeRegistry::current()->getLink($url, $label, '', $imageName, 'class="icon"');
+		$url = "javascript: {$action}";
+        $image = SugarThemeRegistry::current()->getLink($url, $label, 'class="icon"', $imageName, null, null);
 	    return "<li>$script $image</li>";
 	}
 

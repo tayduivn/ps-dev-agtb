@@ -47,13 +47,13 @@ if ( is_object(ExternalAPIFactory::loadAPI('LotusLive',true)) ) {
         'module' => 'Meetings',
         'label' => translate('LBL_VIEW_LOTUS_LIVE_MEETINGS','EAPM'),
         'action'=> "DCMenu.hostMeetingUrl='".$lotusLiveUrl."'; DCMenu.loadView('".translate('LBL_TITLE_LOTUS_LIVE_MEETINGS','EAPM')."','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'".$llNowButton."');",
-        'icon'=> SugarThemeRegistry::current()->getImageURL("icon_LotusMeetings_bar_32.png"),
+        'icon'=> 'icon_LotusMeetings_bar_32.png',
         );
 
     $dynamicDCActions['LotusLiveDocuments'] = array(
 		'module' => 'Documents',
 		'label' => translate('LBL_VIEW_LOTUS_LIVE_DOCUMENTS','EAPM'),
 		'action' => 'DCMenu.loadView(\''.translate('LBL_TITLE_LOTUS_LIVE_DOCUMENTS','EAPM').'\',\'index.php?module=Documents&action=extdoc&type=LotusLive\');',
-		'icon' => SugarThemeRegistry::current()->getImageURL("icon_LotusDocuments_bar_32.png"),
+		'icon' => 'icon_LotusDocuments_bar_32.png',
         );
 }
