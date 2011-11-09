@@ -24,7 +24,7 @@ $dictionary['Manufacturer'] = array('table' => 'manufacturers', 'comment' => 'Ma
   'id' =>
   array (
     'name' => 'id',
-    'vname' => 'LBL_NAME',
+    'vname' => 'LBL_ID',
     'type' => 'id',
     'required'=>true,
     'reportable'=>false,
@@ -60,7 +60,7 @@ $dictionary['Manufacturer'] = array('table' => 'manufacturers', 'comment' => 'Ma
     'name' => 'modified_user_id',
     'rname' => 'user_name',
     'id_name' => 'modified_user_id',
-    'vname' => 'LBL_ASSIGNED_TO',
+    'vname' => 'LBL_MODIFIED_BY',
     'type' => 'assigned_user_name',
     'table' => 'users',
     'isnull' => 'false',
@@ -73,7 +73,7 @@ $dictionary['Manufacturer'] = array('table' => 'manufacturers', 'comment' => 'Ma
     'name' => 'created_by',
     'rname' => 'user_name',
     'id_name' => 'modified_user_id',
-    'vname' => 'LBL_ASSIGNED_TO',
+    'vname' => 'LBL_CREATED_BY',
     'type' => 'assigned_user_name',
     'table' => 'users',
     'isnull' => 'false',
