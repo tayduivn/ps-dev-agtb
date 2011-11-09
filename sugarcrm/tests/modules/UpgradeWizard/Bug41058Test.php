@@ -186,7 +186,7 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_OutputTestCase {
      * @depends testCheckReturnsFalseForInvalidNameFormats
      */
     public function testMessageIsShownWhenInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
-        global $sugar_config, $locale;
+        global $sugar_config, $locale, $app_strings;
 
         require('modules/Administration/language/en_us.lang.php');
 
@@ -206,7 +206,7 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_OutputTestCase {
      * @depends testCheckReturnsTrueForValidNameFormats
      */
     public function testMessageIsNotShownWhenNoInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
-        global $sugar_config, $locale;
+        global $sugar_config, $locale, $app_strings;
         
         require('modules/Administration/language/en_us.lang.php');
 
@@ -227,7 +227,7 @@ class Bug41058Test extends Sugar_PHPUnit_Framework_OutputTestCase {
      * @depends testCheckReturnsFalseForInvalidNameFormats
      */
     public function testFileGetsRemovedAfterLocaleSave($name_format) {
-        global $sugar_config, $locale;
+        global $sugar_config, $locale, $app_strings;
         require('modules/Administration/language/en_us.lang.php');
 
         $this->assertFileNotExists($this->loc->invalidNameFormatUpgradeFilename);
