@@ -39,23 +39,7 @@
   
 	<div id="themeTabGroupMenu_{$tabGroupName}" class="themeTabGroupMenu yuimenubar yuimenubarnav"><div class="bd" id="themeTabGroup_{$tabGroupName}"  style="border: 0px !important; margin: 0px !important;{if $tabGroupName != $currentGroupTab}display:none;{/if}">
       <ul class="first-of-type">
-      {if $USE_GROUP_TABS}
-        <script type="text/javascript">
-        sugar_theme_gm_current = '{$currentGroupTab}';
-        Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
-        </script>
-        {* Tab group selection *}
-        <li class="yuimenubaritem moduleTabGroupMenu">
-        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">{$tabGroupName}{sugar_getimage name="grouped-menu-arrow" ext=".png" other_attributes='class="arrow" '}</a>
-        <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
-			<ul>
-          {foreach from=$groupTabs item=module key=group name=groupList}
-          <li><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="yuimenuitemlabel">{$group}</a></li>
-          {/foreach}
-		  </ul>
-        </div><div class="clear"></div></div> 
-        </li>
-      {/if}
+
 
 		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			{if $name == $MODULE_TAB}
@@ -91,7 +75,7 @@
 		{/foreach}
 			{if count($tabGroup.extra) > 0}
 			<li class="yuimenubaritem moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
-				<a href="#" class="yuimenuitemlabel more"><em>&gt;&gt;</em></a>
+				<a href="#" class="yuimenuitemlabel more"><span style="float: left;"> more</span><em>&gt;&gt;</em></a>
 				<div id="More{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
 				<ul>
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}

@@ -26,19 +26,23 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{if $AUTHENTICATED}
 {$DCSCRIPT}
 <div id='dcmenutop'></div>
 <div id='dcmenu' class='dcmenu dcmenuFloat'>
 
-
+<!--
 <div id="dcmenuSugarCube" {$NOTIFCLASS}>
   {$NOTIFICON}
   {$NOTIFCODE}
 </div>
+-->
 	
 			
-<div class="dcmenuDivider" id="notificationsDivider"></div>
 
+  {include file="_headerModuleList.tpl" theme_template=true}
+    
+<!--   
 <div id="dcmenuContainer">
 <ul id="dcmenuitems">
 
@@ -54,6 +58,7 @@
 	
 </ul>
 </div>
+-->
 
 //BEGIN SUGARCRM flav=sales ONLY
 {if !$ISADMIN}
@@ -66,3 +71,4 @@
 
 </div>
 </div>
+{/if}
