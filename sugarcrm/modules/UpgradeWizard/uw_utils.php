@@ -3254,10 +3254,22 @@ function upgradeDashletsForSalesAndMarketing() {
  *
  */
 function upgradeUserPreferences() {
-
+    global $sugar_config, $sugar_version, $mod_strings;
+    
     // check the current system wide default_locale_name_format and add it to the list if it's not there
-    global $sugar_config;
-    upgradeLocaleNameFormat($sugar_config['default_locale_name_format']);
+    $currentDefaultLocaleNameFormat = $sugar_config['default_locale_name_format'];
+    if (Localization::isAllowedNameFormat($currentDefaultLocaleNameFormat)) {
+        upgradeLocaleNameFormat($currentDefaultLocaleNameFormat);
+    } else {
+        $localization = new Localization();
+        $coreLocaleDefaults = $localization->getLocaleConfigDefaults();
+        $sugar_config['default_locale_name_format'] = $coreLocaleDefaults['default_locale_name_format'];
+        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+            logThis('*** ERROR: could not write config.php! - upgrade will fail!');
+            $errors[] = $mod_strings['ERR_UW_CONFIG_WRITE'];
+        }
+        $localization->createInvalidLocaleNameFormatUpgradeNotice();
+    }
 
 //BEGIN SUGARCRM flav=pro ONLY
 	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
@@ -3295,16 +3307,24 @@ function upgradeUserPreferences() {
    	while($row = $db->fetchByAssoc($result))
     {
         $current_user = new User();
+        $current_user->retrieve($row['id']);
 
         // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
-        upgradeLocaleNameFormat($current_user->getPreference('default_locale_name_format'));
+        $currentUserNameFormat = $current_user->getPreference('default_locale_name_format');
+        if (Localization::isAllowedNameFormat($currentUserNameFormat)) {
+            upgradeLocaleNameFormat($currentUserNameFormat);
+        } else {
+            $localization = new Localization();
+            $coreLocaleDefaults = $localization->getLocaleConfigDefaults();
+            $current_user->setPreference('default_locale_name_format', $coreLocaleDefaults['default_locale_name_format'], 0, 'global');
+            $current_user->savePreferencesToDB();
+        }
 
         //BEGIN SUGARCRM flav=pro ONLY
-          $changed = false;
-	      $current_user->retrieve($row['id']);
+        $changed = false;
 
 
-
+          
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3391,7 +3411,7 @@ function upgradeUserPreferences() {
         //END SUGARCRM flav=pro ONLY
 	} //while
 //BEGIN SUGARCRM flav=pro ONLY
-
+    
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable

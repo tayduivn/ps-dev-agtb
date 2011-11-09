@@ -64,6 +64,7 @@ class Localization {
 	var $default_export_charset = 'UTF-8';
 	var $default_email_charset = 'UTF-8';
 	var $currencies = array(); // array loaded with current currencies
+    var $invalidNameFormatUpgradeFilename = 'upgradeInvalidLocaleNameFormat.php';
 
 
 	/**
@@ -685,6 +686,46 @@ eoq;
 	}
 
     /**
+     * Checks to see that the characters in $name_format are allowed:  s, f, l, space/tab or punctuation
+     * @param $name_format
+     * @return bool
+     */
+    public static function isAllowedNameFormat($name_format) {
+        // will result in a match as soon as a disallowed char is hit in $name_format
+        $match = preg_match('/[^sfl[:punct:][:^alnum:]\s]/', $name_format);
+        if ($match !== false && $match === 0) {
+            return true;
+        } 
+        return false;
+    }
+
+    /**
+     * Checks to see if there was an invalid Name Format encountered during the upgrade
+     * @return bool true if there was an invalid name, false if all went well.
+     */
+    public function invalidLocaleNameFormatUpgrade() {
+        return file_exists($this->invalidNameFormatUpgradeFilename);
+    }
+
+    /**
+     * Creates the file that is created when there is an invalid name format during an upgrade
+     */
+    public function createInvalidLocaleNameFormatUpgradeNotice() {
+        $fh = fopen($this->invalidNameFormatUpgradeFilename,'w');
+        fclose($fh);
+    }
+
+    /**
+     * Removes the file that is created when there is an invalid name format during an upgrade
+     */
+    public function removeInvalidLocaleNameFormatUpgradeNotice() {
+        if ($this->invalidLocaleNameFormatUpgrade()) {
+            unlink($this->invalidNameFormatUpgradeFilename);
+        }
+    }
+
+
+    /**
      * Creates dropdown items that have localized example names, instead of cryptic strings like 's f l'
      *
      * @param array un-prettied dropdown list
@@ -695,8 +736,7 @@ eoq;
 
         $examples = array('s' => $app_strings['LBL_LOCALE_NAME_EXAMPLE_SALUTATION'],
                         'f' => $app_strings['LBL_LOCALE_NAME_EXAMPLE_FIRST'],
-                        'l' => $app_strings['LBL_LOCALE_NAME_EXAMPLE_LAST'],
-                        't' =>  $app_strings['LBL_LOCALE_NAME_EXAMPLE_TITLE']);
+                        'l' => $app_strings['LBL_LOCALE_NAME_EXAMPLE_LAST']);
         $newOpts = array();
         foreach ($options as $key => $val) {
             $newVal = '';
