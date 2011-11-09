@@ -3769,7 +3769,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 $next_offset--;
                 $previous_offset++;
             }
-        } else if($rows_found == null){
+        } else if(!isset($rows_found)){
             $rows_found = $row_offset + count($list);
         }
 
