@@ -29,11 +29,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=pro ONLY
 class TrackerReporter{
 
-	private $queries = array(
+	private $default_queries = array(
 	                    'all' => array(
 							"ShowLastModifiedRecords" => "", //See function below
                        		"ShowActiveUsers" => "SELECT distinct u.user_name as user_name, u.first_name, u.last_name, ts.date_end as last_action from users u, tracker_sessions ts where u.id = ts.user_id and ts.active = 1 and ts.date_end > {0} order by ts.date_end desc",
-                    	"ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions where active = 1 and date_end > {0}",
+                    	    "ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions where active = 1 and date_end > {0}",
 							"ShowTopUser" => "", //See function below
 							"ShowMyWeeklyActivities" => "", //See function below
 							"ShowMyModuleUsage" => "select module_name, count(module_name) as total_count from tracker where user_id = '{0}' and module_name != 'UserPreferences' group by module_name order by total_count desc",
@@ -42,6 +42,7 @@ class TrackerReporter{
 							"ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) as total_login_time from tracker_sessions t, users u where t.user_id = u.id and t.date_start > {0} group by u.user_name"
 	                    ),
     );
+	private $queries;
 
     //Customize sort types for non-string values.  Strings are used by default
     public $sort_types = array(
@@ -66,9 +67,16 @@ class TrackerReporter{
 		if(file_exists('custom/modules/Trackers/tracker_reporter.php')){
 			require_once('custom/modules/Trackers/tracker_reporter.php');
 			//merge queries from custom file
-			$this->queries = array_merge($this->queries('all'), $this->queries[$GLOBALS['db']->dbType], $queries['all'], $queries[$GLOBALS['db']->dbType]);
+			$all_queries = array_merge_recursive($this->default_queries, $queries);
 			//merge functions from custom file as well.
 			$this->included_methods = $this->getFileMethods('custom/modules/Trackers/tracker_reporter.php');
+		} else {
+		    $all_queries = $this->default_queries;
+		}
+		if(!empty($all_queries[$GLOBALS['db']->dbType])) {
+		    $this->queries = array_merge($all_queries['all'], $all_queries[$GLOBALS['db']->dbType]);
+		} else {
+		    $this->queries = $all_queries['all'];
 		}
 	}
 
@@ -362,7 +370,7 @@ class TrackerReporter{
 	 * @return array - array of queries that can be run.
 	 */
 	private function getQueries(){
-		$keys = array_keys($this->queries[$GLOBALS['db']->dbType]);
+		$keys = array_keys($this->queries);
 		//get methods
 		$methods = get_class_methods($this);
 		$methods = array_merge($methods, $this->included_methods);
@@ -410,10 +418,10 @@ class TrackerReporter{
 	 * @return string - the query to execute
 	 */
 	private function setup($query, $args){
-		if(!empty($this->queries[$GLOBALS['db']->dbType][$query])){
+		if(!empty($this->queries[$query])){
 			if(empty($args[0]))
 				$args = array();
-			return string_format($this->queries[$GLOBALS['db']->dbType][$query], $args);
+			return string_format($this->queries[$query], $args);
 		}else{
 			return null;
 		}

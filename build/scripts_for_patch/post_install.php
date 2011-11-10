@@ -415,12 +415,23 @@ function post_install() {
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
 
-    if($origVersion < '630') {
+    if($origVersion < '640') {
         // move uploads dir
            if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
                _logThis('Moving upload directory');
                $sugar_config['upload_dir'] = 'upload/';
-               rename($sugar_config['cache_dir'].'upload', 'upload');
+               if(!file_exists("upload")) {
+                   if(!rename($sugar_config['cache_dir'].'upload', 'upload')) {
+                       _logThis("*** ERROR: failed to move uploaded files");
+                   } else {
+                       _logThis("Moved upload files by rename");
+                   }
+               } else {
+                   _logThis("Moving upload files by copy");
+                   copyRecursiveBetweenDirectories($sugar_config['cache_dir'].'upload', 'upload');
+                   deleteDirectory($sugar_config['cache_dir'].'upload');
+                   _logThis("Moved upload files by copy");
+               }
                if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
         	        _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
         	   }else{

@@ -51,7 +51,7 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="record" id="record" value="{$ID}">
 	<input type="hidden" name="module" value="Users">
 	<input type="hidden" name="return_module" value="Users">
-	<input type="hidden" name="return_id" value="{$ID}">
+	<input type="hidden" name="return_id" value="{$RETURN_ID}">
 	<input type="hidden" name="return_action" value="EditView">
 </form>
 
@@ -76,6 +76,7 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="is_current_admin" id="is_current_admin" value='{$IS_ADMIN}' >
 	<input type="hidden" name="edit_self" id="edit_self" value='{$EDIT_SELF}' >
 	<input type="hidden" name="required_email_address" id="required_email_address" value='{$REQUIRED_EMAIL_ADDRESS}' >
+    <input type="hidden" name="isDuplicate" id="isDuplicate" value="{$isDuplicate}">
 <!-- //BEGIN SUGARCRM flav=sales ONLY -->
 	{$ut_hidden}
 <!-- //END SUGARCRM flav!=sales ONLY -->
@@ -111,7 +112,11 @@ EditView_tabs.on('contentReady', function(e){
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
-    EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
+
+    if(EditView_tabs.getTab(5) && EditView_tabs.getTab(5).getElementsByTagName('a'))
+    {
+        EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
+    }
 {/literal}
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY

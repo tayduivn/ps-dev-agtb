@@ -112,6 +112,9 @@ class ImportFile extends ImportDataSource
         $this->_sourcename   = $filename;
         $this->_deleteFile = $deleteFile;
         $this->_delimiter  = ( empty($delimiter) ? ',' : $delimiter );
+        if ($this->_delimiter == '\t') {
+            $this->_delimiter = "\t";
+        }
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
         $this->setFpAfterBOM();
     }

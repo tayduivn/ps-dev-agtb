@@ -533,7 +533,7 @@ function get_quick_sync_data($session, $module_name, $related_module_name, $star
 	}
     //set the dbType on the client machine
 	$GLOBALS['log']->fatal("Quick Sync Data Query: ".$query);
-	$result = $seed->dbManager->generateInsertSQL($seed, $query, $start, $count, $table_name, $db_type, $is_related_query);
+	$result = $seed->db->generateInsertSQL($seed, $query, $start, $count, $table_name, $db_type, $is_related_query);
 
 	$data['data'] = $result['data'];
 	

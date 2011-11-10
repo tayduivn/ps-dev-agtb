@@ -3041,14 +3041,14 @@ $app_strings = array (
     //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav!=com ONLY
-    'LBL_PLUGIN_OUTLOOK_NAME' => 'Sugar Plug-In for Outlook',
+    'LBL_PLUGIN_OUTLOOK_NAME' => 'Sugar Plug-in for Outlook',
     'LBL_PLUGIN_OUTLOOK_DESC' => 'Integrate Sugar e-mail and calendar information with Microsoft Outlook.',
-    'LBL_PLUGIN_WORD_NAME' => 'Sugar Plug-In for Word',
+    'LBL_PLUGIN_WORD_NAME' => 'Sugar Plug-in for Word',
     'LBL_PLUGIN_WORD_DESC' => 'Automatically populate information from SugarCRM into form letters, direct mail and other Microsoft documents.',
-    'LBL_PLUGIN_EXCEL_NAME' => 'Sugar Plug-In for Excel',
+    'LBL_PLUGIN_EXCEL_NAME' => 'Sugar Plug-in for Excel',
     'LBL_PLUGIN_EXCEL_DESC' => 'Integrate Sugar with spreadsheets for better analysis of key metrics.',
     'LBL_PLUGINS_TITLE' => 'Sugar Plug-ins for Microsoft Office<sup>TM</sup>',
-    'LBL_PLUGINS_DESC' => 'Read about the plug-in features within the <a href="https://www.sugarcrm.com/crm/support/documentation/SugarPlugIns">Plug-Ins Documentation</a>.',
+    'LBL_PLUGINS_DESC' => 'Read about the plug-in features within the <a href="https://www.sugarcrm.com/crm/support/documentation/SugarPlugIns">Plug-ins Documentation</a>.',
     //END SUGARCRM flav!=com ONLY
 
      //BEGIN SUGARCRM flav=ent ONLY

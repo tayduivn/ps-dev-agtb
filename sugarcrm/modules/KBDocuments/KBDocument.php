@@ -204,7 +204,7 @@ class KBDocument extends SugarBean {
 
 
 		$this->file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'border="0"', null,null,'.gif',$mod_strings['LBL_LIST_VIEW_DOCUMENT'])."</a>";
-		$this->file_url_noimage = basename(UploadFile :: get_url($this->filename, $this->document_revision_id));
+		$this->file_url_noimage = basename(UploadFile::get_url($this->filename, $this->document_revision_id));
 
 		//get last_rev_by user name.
 		$query = "SELECT first_name,last_name, document_revisions.date_entered as rev_date FROM users, document_revisions WHERE users.id = document_revisions.created_by and document_revisions.id = '$this->document_revision_id'";
@@ -284,7 +284,8 @@ class KBDocument extends SugarBean {
         }
         //END SUGARCRM flav=pro ONLY
         if(!empty($where) && trim($where) != '') {
-            $ret_array['where'] = ' WHERE '. $where;
+            // Strip leading AND or OR for bug 48173
+            $ret_array['where'] = ' WHERE '. preg_replace('(^\s*(AND)|(OR)\s+)', '', $where);
         } else {
             $ret_array['where'] = '';
         }
@@ -486,14 +487,8 @@ class KBDocument extends SugarBean {
 			     $doc_rev ="'$doc_rev_id'";
 			     $kbdoc_atts .="<div id=$cDoc>";
 
-			     //$kbdoc_atts .="<input id=$doc$i name=$doc$i value='$doc_rev_id' type='hidden'>";
-                 //$kbdoc_atts .="<div id=tag$i";
-			     //$kbdoc_atts .="<div id='aa'<input class=button onclick=\"this.form.module.value='DocumentRevisions';this.form.id.value='$doc_rev_id';this.form.action.value='EditView';\" type='submit' value='Create Rev'>&nbsp;&nbsp;";
-			     $kbdoc_atts .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage('.$cDoc.','.$doc_rev.','.$att.');SUGAR.kb.setCheckBox('.$doc_rev.')\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
-
-
-                 //$kbdoc_atts .= '<input type="checkbox" name="remove_attachment[]" value="'.$doc_rev_id.'"> '.$app_strings['LNK_REMOVE'].'&nbsp;</div>';
-				 $kbdoc_atts .="<a href='index.php?entryPoint=download&id=$file_url_noimage&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;";
+			     $kbdoc_atts .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage($cDoc,$doc_rev,$att);SUGAR.kb.setCheckBox($doc_rev)\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
+				 $kbdoc_atts .="<a href='index.php?entryPoint=download&id=$doc_rev_id&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;";
 				 $kbdoc_atts .= '<input id="'.$doc_rev_id.'" type="checkbox"  style="visibility:hidden" onclick="SUGAR.kb.strikeOutFromBox('.$cDoc.','.$doc_rev.')" name="'.$doc_rev_id.'" value="'.$doc_rev_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
 				 $kbdoc_atts .="</div>";
 			}
@@ -581,15 +576,11 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 		         $cBox = "'$kbtag_id'";
 		         $tags .= "<div id=$cTag onmouseover = '' onmouseout=''>";
 		         if($screen == 'Edit'){
-			       $tags .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage('.$cTag.','.$cBox.','.$att.')\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
+			       $tags .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage($cTag,$cBox,$att)\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
 
 
 			       //store already saved tags
 			       $tags .= '<input id="savedTagIds[]" name="savedTagIds[]" type="hidden"  value="'.$kbtag_id.'">';
-			       //$tags .= '<input id="'.$kbtag_id.'" type="checkbox"  style="visibility:hidden" onclick="strikeOutFromBox('.$cTag.','.$cBox.')" name="'.$kbtag_id.'" value="'.$kbtag_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
-			       //$tags .= SugarThemeRegistry::current()->getImage('delete', 'onclick=\"strikeOutFromImage('.$cTag.','.$cBox.')\"', null, null, ".gif", $mod_strings['LBL_REMOVE']);
-
-
 			       $tags .= "<strong>$tag_heirachy&nbsp;&nbsp";
 			     }
 
