@@ -452,7 +452,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
   array (
   	'name' => 'calls',
     'type' => 'link',
-   'relationship' => 'lead_calls',
+   'relationship' => 'calls_leads',
     'source'=>'non-db',
 		'vname'=>'LBL_CALLS',
   ),
