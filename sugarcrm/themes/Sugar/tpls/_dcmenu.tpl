@@ -63,8 +63,38 @@
 //BEGIN SUGARCRM flav=sales ONLY
 {if !$ISADMIN}
 //END SUGARCRM flav=sales ONLY
-	<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='enter global search term'></div>
-	<div id="glblSearchBtn">{$ICONSEARCH}</div>
+	<div id="dcmenuSearchDiv">
+        <div id="sugar_spot_search_div">
+            <input size=20 id='sugar_spot_search'  title='enter global search term'/>
+            <div id="results">
+                <section>
+                    <div class="resultTitle">Top hit</div>
+                    <ul>
+                        <li><a href="">Anytime Air Support Inc - 1000 units </a></li>
+                        <li><a href="">Orville Yuen</a></li>
+                    </ul>
+                <div class="clear"></div>
+                </section>
+                <section>
+                    <div class="resultTitle">Favorites</div>
+                    <ul>
+                        <li><a href="">Nettie Tanguay</a></li>
+                    </ul>
+                <div class="clear"></div>
+                </section>
+                <section>
+                    <div class="resultTitle">Contacts</div>
+                    <ul>
+                        <li><a href="">Dena Staggs</a></li>
+                        <li><a href="">Saul Wash</a></li>
+                        <li><a href="">Alexis Tylor</a></li>
+                    </ul>
+                <div class="clear"></div>
+                </section>
+            </div>
+        </div>
+	<div id="glblSearchBtn">{$ICONSEARCH}
+    </div>
 //BEGIN SUGARCRM flav=sales ONLY
 {/if}
 //END SUGARCRM flav=sales ONLY
