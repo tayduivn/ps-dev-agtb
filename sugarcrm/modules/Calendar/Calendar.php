@@ -103,7 +103,7 @@ class Calendar {
 
 		// if date is not set in request use current date
 		if(empty($date_arr) || !isset($date_arr['year']) || !isset($date_arr['month']) || !isset($date_arr['day']) ){	
-			$today = $timedate->getNow();
+			$today = $timedate->getNow(true);
 			$date_arr = array(
 			      'year' => $today->year,
 			      'month' => $today->month,
@@ -271,13 +271,13 @@ class Calendar {
 	
 		if($this->view == "week" || $this->view == "shared"){
 			$week_start = CalendarUtils::get_first_day_of_week($this->date_time);
-			$this->grid_start_ts = $week_start->format('U') + $week_start->getOffset(); 
+			$this->grid_start_ts = $week_start->format('U') + $week_start->getOffset();		
 		}else if($this->view == "month"){
 			$month_start = $this->date_time->get_day_by_index_this_month(0);
 			$week_start = CalendarUtils::get_first_day_of_week($month_start);
 			$this->grid_start_ts = $week_start->format('U') + $week_start->getOffset(); // convert to timestamp, ignore tz
 		}else if($this->view == "day"){
-			$this->grid_start_ts = $this->date_time->format('U') + $this->date_time->getOffset();
+			$this->grid_start_ts = $this->date_time->format('U') + $this->date_time->getOffset();		
 		}else
 			$this->grid_start_ts = 0;
 	}
@@ -344,8 +344,8 @@ class Calendar {
 		else 
 			$sign = "+";
 			
-		if($this->view == 'month'){
-			$day = $this->date_time->get($sign."1 month")->get_day_begin(1);
+		if($this->view == 'month'){			
+			$day = $this->date_time->get($sign."1 month")->get_day_begin(1);			
 		}else if($this->view == 'week' || $this->view == 'shared'){
 			$day = CalendarUtils::get_first_day_of_week($this->date_time);
 			$day = $day->get($sign."7 days");
