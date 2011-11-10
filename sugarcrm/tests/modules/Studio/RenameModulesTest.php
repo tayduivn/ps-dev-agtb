@@ -128,8 +128,8 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Ensure none of the app list strings were modified.
         $app_list_string = return_app_list_strings_language('en_us');
-        $this->assertNotEquals($newSingular, $app_list_string['moduleListSingular'][$module] );
-        $this->assertNotEquals($newPlural, $app_list_string['moduleList'][$module] );
+        $this->assertFalse(isset($app_list_string['moduleListSingular'][$module] ));
+        $this->assertFalse(isset($app_list_string['moduleList'][$module] ));
          
     }
 
@@ -163,8 +163,6 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSubpanelRenaming()
     {
-        $this->markTestSkipped('Because of bug 47239,  Skipping test.');
-
         $module = 'Accounts';
         $newSingular = 'Account1';
         $newPlural = 'Accounts2';
@@ -203,8 +201,6 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDashletsRenaming()
     {
-        $this->markTestSkipped('Because of bug 47239,  Skipping test.');
-
         $module = 'Accounts';
         $newSingular = 'Account1';
         $newPlural = 'Accounts2';
