@@ -3897,7 +3897,7 @@ SUGAR.reports = function() {
 	        }
 			var dtBody = YAHOO.util.Dom.getElementsByClassName("yui-dt-bd", "", document.getElementById("module_fields"))[0];
 			if (diffOffsetHeight > 0) {
-				dtBody.style.height = dtBodyOffsetHeight - diffOffsetHeight + "px";
+				dtBody.style.height = (dtBody.offsetHeight + dtBodyOffsetHeight - diffOffsetHeight) + "px";
 			} // if
 			var dtInput = document.getElementById("dt_input");
 			dtInput.value = SUGAR.language.get('Reports','LBL_COMBO_TYPE_AHEAD');
