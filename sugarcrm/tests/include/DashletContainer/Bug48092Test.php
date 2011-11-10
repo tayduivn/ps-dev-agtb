@@ -92,7 +92,7 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
         $mock = new DCMenuMock2();
         $GLOBALS['sugar_config']['use_sprites'] = true;
         $html = $mock->getDynamicMenuItem($def);
-        $this->assertRegExp('/\<span\s+?class/', $html, 'Assert that with sprites on we get link with span tag');
+        $this->assertRegExp('/\<span\s+?.*?class[^\>]+?\>/', $html, 'Assert that with sprites on we get link with span tag');
     }
 
 
