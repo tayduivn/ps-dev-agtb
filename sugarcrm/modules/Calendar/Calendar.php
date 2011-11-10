@@ -101,14 +101,13 @@ class Calendar {
 		if(empty($_REQUEST['year']))
 			$_REQUEST['year'] = "";
 
-		// if date is not set in request set current date
+		// if date is not set in request use current date
 		if(empty($date_arr) || !isset($date_arr['year']) || !isset($date_arr['month']) || !isset($date_arr['day']) ){	
-			$user_today = $timedate->nowDb();
-			preg_match('/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/',$user_today,$matches);
+			$today = $timedate->getNow();
 			$date_arr = array(
-			      'year' => $matches[1],
-			      'month' => $matches[2],
-			      'day' => $matches[3],
+			      'year' => $today->year,
+			      'month' => $today->month,
+			      'day' => $today->day,
 			);
 		}
 		
@@ -120,8 +119,7 @@ class Calendar {
 			$this->show_tasks = SugarConfig::getInstance()->get('calendar.show_tasks_by_default',true);		
 		$this->show_calls = $current_user->getPreference('show_calls');
 		if(is_null($this->show_calls))
-			$this->show_calls = SugarConfig::getInstance()->get('calendar.show_calls_by_default',true);
-	
+			$this->show_calls = SugarConfig::getInstance()->get('calendar.show_calls_by_default',true);	
 
 		$this->day_start_time = $current_user->getPreference('day_start_time');
 		if(is_null($this->day_start_time))
