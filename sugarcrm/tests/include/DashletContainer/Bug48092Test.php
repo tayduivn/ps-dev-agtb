@@ -75,20 +75,38 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * testLotusLiveLinks
+     * testLotusLiveLinksWithSprites
      *
      * This function tests the getDynamicMenuItem method of DCMenu when given a set of LotusLive links
      *
      * @dataProvider providerLotusLiveLinks
      *
      */
-    public function testLotusLiveLinks($def)
+    public function testLotusLiveLinksWithSprites($def)
     {
+        if(!function_exists('imagecreatetruecolor'))
+        {
+            $this->markTestSkipped('Skipping test. Test environment does not have GD library extension support');
+        }
+
         $mock = new DCMenuMock2();
         $GLOBALS['sugar_config']['use_sprites'] = true;
         $html = $mock->getDynamicMenuItem($def);
         $this->assertRegExp('/\<span\s+?class/', $html, 'Assert that with sprites on we get link with span tag');
+    }
 
+
+    /**
+     * testLotusLiveLinksWithoutSprites
+     *
+     * This function tests the getDynamicMenuItem method of DCMenu when given a set of LotusLive links
+     *
+     * @dataProvider providerLotusLiveLinks
+     *
+     */
+    public function testLotusLiveLinksWithoutSprites($def)
+    {
+        $mock = new DCMenuMock2();
         $GLOBALS['sugar_config']['use_sprites'] = false;
         $html = $mock->getDynamicMenuItem($def);
         $this->assertRegExp('/\<img\s+?/', $html, 'Assert that with sprites off we get link with img tag');
@@ -97,7 +115,7 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
 }
 
 /**
- * DCMenuMock
+ * DCMenuMock2
  *
  * Mock object for DCMenu to override protect access of getDynamicMenuItem method
  */
