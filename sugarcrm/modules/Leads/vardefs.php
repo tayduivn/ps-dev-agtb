@@ -452,16 +452,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
   array (
   	'name' => 'calls',
     'type' => 'link',
-   'relationship' => 'lead_calls',
-    'source'=>'non-db',
-		'vname'=>'LBL_CALLS',
-  ),
-  //Calls where a lead is invited but not the parent
-  'invited_calls' =>
-  array (
-  	'name' => 'invited_calls',
-    'type' => 'link',
-    'relationship' => 'calls_leads',
+   'relationship' => 'calls_leads',
     'source'=>'non-db',
 		'vname'=>'LBL_CALLS',
   ),
