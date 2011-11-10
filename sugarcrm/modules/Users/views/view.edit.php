@@ -70,12 +70,36 @@ class UsersViewEdit extends ViewEdit {
             $this->ss->assign('RETURN_MODULE',$_REQUEST['return_module']);
         }
 
-        //reset the id if this is a duplicate bean
         if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
+            $this->ss->assign('RETURN_MODULE', $_REQUEST['return_module']);
+            $this->ss->assign('RETURN_ACTION', $_REQUEST['return_action']);
+            $this->ss->assign('RETURN_ID', $_REQUEST['record']);
             $this->bean->id = "";
             $this->bean->user_name = "";
-            $this->ss->assign('ID','');//RETURN_ID
+            $this->ss->assign('ID','');
+        } else {
+            if(isset($_REQUEST['return_module']))
+            {
+                $this->ss->assign('RETURN_MODULE', $_REQUEST['return_module']);
+            } else {
+                $this->ss->assign('RETURN_MODULE', $this->bean->module_dir);
+            }
+
+            if(isset($_REQUEST['return_id']))
+            {
+                $this->ss->assign('RETURN_ID', $_REQUEST['return_id']);
+            } else {
+                $this->ss->assign('RETURN_ID', $this->bean->id);
+            }
+
+            if(isset($_REQUEST['return_action']))
+            {
+                $this->ss->assign('RETURN_ACTION', $_REQUEST['return_action']);
+            } else {
+                $this->ss->assign('RETURN_ACTION', 'DetailView');
+            }
         }
+
 
         ///////////////////////////////////////////////////////////////////////////////
         ////	REDIRECTS FROM COMPOSE EMAIL SCREEN
@@ -101,16 +125,14 @@ class UsersViewEdit extends ViewEdit {
         ////	END NEW USER CREATION ONLY
         ///////////////////////////////////////////////////////////////////////////////
 
-
-
-
 	    //BEGIN SUGARCRM lic=sub ONLY
         global $sugar_flavor;
+        $admin = new Administration();
+        $admin->retrieveSettings();
+
         if((isset($sugar_flavor) && $sugar_flavor != null) &&
            ($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
             if (empty($this->bean->id)) {
-                $admin = new Administration();
-                $admin->retrieveSettings();
                 $license_users = $admin->settings['license_users'];
                 if ($license_users != '') {
                     $license_seats_needed = count( get_user_array(false, "", "", false, null, " AND ".User::getLicensedUsersWhere(), false) ) - $license_users;
