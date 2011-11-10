@@ -5960,12 +5960,21 @@ margin-left:10px;
 }
 
 #results section .resultTitle{
-    font-weight:bold;
     float:left;
     color:#999;
     width:50px;
     text-align:right;
     margin-top:-11px;
+    margin-left:10px;
+}
+
+#results a.resultAll {
+    text-decoration:none;
+    margin-left:180px;
+}
+
+#results a.resultAll:hover {
+    text-decoration:underline;
 }
 
 #results section.resultNull {
@@ -5986,13 +5995,15 @@ margin-left:10px;
     width:175px;
     margin-top:-14px;
     line-height:20px;
-    padding:0 0 25px 20px;
+    padding:0 0 25px 15px;
     float:left;
     border-left: 1px solid #aaa;
+    margin-left:20px;
 }
 
 #results section ul li {
     list-style: none;
+    margin-bottom:7px;
 }
 
 #results section ul li a {

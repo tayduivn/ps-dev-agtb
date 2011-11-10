@@ -91,6 +91,7 @@
                     </ul>
                 <div class="clear"></div>
                 </section>
+                <a href="" class="resultAll">View all results</a>
 
                 <section class="resultNull">
                     <h1>No results found</h1>
