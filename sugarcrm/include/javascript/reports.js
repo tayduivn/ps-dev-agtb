@@ -3872,7 +3872,13 @@ SUGAR.reports = function() {
 	        myDataTable.subscribe("rowSelectEvent", SUGAR.reports.gridRowClickHandler);
 	        */
 	        myDataTable.subscribe("rowClickEvent", SUGAR.reports.gridRowClickHandler);
-	        
+
+            //jclark - bug 47376
+            YAHOO.util.Event.removeListener("dt_input", "keyup");
+            YAHOO.util.Event.removeListener("dt_input", "focus");
+            YAHOO.util.Event.removeListener("dt_input", "blur");
+            //end fix
+            
 			var oACDS = myDataSource;
 	        oACDS.queryMatchContains = true; 
 	        var oAutoComp = new YAHOO.widget.AutoComplete("dt_input","dt_ac_container", oACDS);
