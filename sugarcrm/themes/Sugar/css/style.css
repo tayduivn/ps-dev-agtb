@@ -5968,6 +5968,20 @@ margin-left:10px;
     margin-top:-11px;
 }
 
+#results section.resultNull {
+    padding:50px;
+    text-align:center;
+}
+
+#results section.resultNull h1 {
+    font-weight:normal;
+    margin-bottom:5px;
+}
+
+#results section.resultNull a {
+    text-decoration:none;
+}
+
 #results section ul {
     width:175px;
     margin-top:-14px;

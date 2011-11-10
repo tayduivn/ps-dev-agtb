@@ -91,6 +91,11 @@
                     </ul>
                 <div class="clear"></div>
                 </section>
+
+                <section class="resultNull">
+                    <h1>No results found</h1>
+                    <a href="">Search again</a>
+                </section>
             </div>
         </div>
 	<div id="glblSearchBtn">{$ICONSEARCH}
