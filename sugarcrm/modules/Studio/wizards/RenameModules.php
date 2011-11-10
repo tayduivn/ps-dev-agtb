@@ -565,7 +565,7 @@ class RenameModules
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
 		}
-		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+		require($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
 
         foreach($this->changedModules as $moduleName => $replacementLabels)
         {
@@ -589,7 +589,7 @@ class RenameModules
         {
             if( isset($dashletData['module']) && $dashletData['module'] == $moduleName && file_exists($dashletData['meta']) )
             {
-                require_once( $dashletData['meta'] );
+                require( $dashletData['meta'] );
                 $dashletTitle = $dashletMeta[$dashletName]['title'];
                 $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
                 $modStringKey = array_search($dashletTitle,$currentModuleStrings);
