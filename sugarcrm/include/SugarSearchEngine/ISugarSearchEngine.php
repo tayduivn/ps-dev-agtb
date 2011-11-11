@@ -1,4 +1,5 @@
-{*
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -16,31 +17,49 @@
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
+ *Reserved.
  ********************************************************************************/
-*}
-{if !empty($displayResults)}
-    {foreach from=$displayResults key=module item=data}
-    <section>
-        <div class="resultTitle">
-            {if isset($appListStrings.moduleList[$modulepair])}
-                {$appListStrings.moduleList[$module]}
-            {else}
-                {$module}
-            {/if}
-        </div>
-            <ul>
-                {foreach from=$data key=id item=name}
-                    <li><a href='index.php?module={$module}&action=DetailView&record={$id}'>{$name}</a></li>
-                {/foreach}
-            </ul>
-        <div class="clear"></div>
-    </section>
-    {/foreach}
-    <a href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}' class="resultAll">View all results</a>
-{else}
-    <section class="resultNull">
-        <h1>{$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
-        <a href="">Search again</a>
-    </section>
-{/if}
+ interface ISugarSearchEngine{
+     /**
+      *
+      * search()
+      *
+      * Perform a search against the Full Text Search Engine
+      * @abstract
+      * @param $query
+      * @param int $offset
+      * @param int $limit
+      * @return void
+      */
+     public function search($query, $offset = 0, $limit = 20);
+
+     /**
+      * connect()
+      *
+      * Make a connection to the Full Text Search Engine
+      * @abstract
+      * @param $config
+      * @return void
+      */
+     public function connect($config);
+
+     /**
+      * flush()
+      *
+      * Save the data to the Full Text Search engine backend
+      * @abstract
+      * @return void
+      */
+     public function flush();
+
+     /**
+      * indexBean()
+      *
+      * Pass in a bean and go through the list of fields to pass to the engine
+      * @abstract
+      * @param $bean
+      * @return void
+      */
+     public function indexBean($bean);
+ }
