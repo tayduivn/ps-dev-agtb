@@ -135,6 +135,27 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 			        	$display_name = Team::getDisplayName($focus->name, $focus->name_2);
 			        	$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$focus->id, 'name'=>$display_name)));
 			        }
+                    // fixing bug #40003: Teams revert to self when Previewing a report
+                    // when report isn't saved yet and team set isn't created and stored in db 
+                    // we should get teams from POST while preview report
+                    elseif(empty($this->bean->team_id) && empty($this->bean->team_set_id))
+                    {
+                        require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
+                        $teams = SugarFieldTeamset::getTeamsFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
+                        $primary_id = SugarFieldTeamset::getPrimaryTeamidFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
+                        foreach($teams as $id => $name)
+                        {
+                            // getting strings of values is needed because some problems appears when compare '1' and md5 value which begins from '1'
+                            if (strval($primary_id) === strval($id))
+                            {
+                                $this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$id, 'name'=>$name)));
+                            }
+                            else
+                            {
+                                $secondaries['secondaries'][]=array('id'=>$id, 'name'=>$name);
+                            }
+                        }
+                    }
 					$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $secondaries);
 	            } 
         	}
@@ -263,21 +284,30 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 		    		}
 	            }
 				$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);  	
-	       } else if(!empty($this->bean) && $this->add_user_private_team) {
-	       	    require_once('modules/Teams/TeamSetManager.php');
-	        	$teams = TeamSetManager::getTeamsFromSet($GLOBALS['current_user']->team_set_id);
-	        	$primary = false;
-	            $secondaries = array();
-	        	foreach($teams as $row){
-	        		if(empty($primary) && $row['id'] == $GLOBALS['current_user']->team_id){
-	        			$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$row['id'], 'name'=>$row['display_name'])));
-	        			$primary = true; 
-	        		}else{
-	        			$secondaries['secondaries'][]=array('id'=>$row['id'], 'name'=>$row['display_name']);
-	        		}
-	        	} //foreach		  			        	
-				$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $secondaries);	  		
-	       } //if-else		
+            } else if (!empty($this->bean) && $this->add_user_private_team)
+            {
+                // fixing bug #40003: Teams revert to self when Previewing a report
+                // check if array consists of subarray 'secondaries' that means we don't need to remerge it again
+                if (!array_key_exists('secondaries', $this->bean->{$this->value_name}))
+                {
+                    require_once('modules/Teams/TeamSetManager.php');
+                    $teams = TeamSetManager::getTeamsFromSet($GLOBALS['current_user']->team_set_id);
+                    $primary = false;
+                    $secondaries = array();
+                    foreach ($teams as $row)
+                    {
+                        if (empty($primary) && $row['id'] == $GLOBALS['current_user']->team_id)
+                        {
+                            $this->bean->{$this->value_name} = array_merge($this->bean->{$this->value_name}, array('primary' => array('id' => $row['id'], 'name' => $row['display_name'])));
+                            $primary = true;
+                        } else
+                        {
+                            $secondaries['secondaries'][] = array('id' => $row['id'], 'name' => $row['display_name']);
+                        }
+                    } //foreach		  			        	
+                    $this->bean->{$this->value_name} = array_merge($this->bean->{$this->value_name}, $secondaries);
+                }
+            } //if-else
         } 	
     } 
     
