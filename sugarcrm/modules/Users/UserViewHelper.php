@@ -176,6 +176,15 @@ class UserViewHelper {
         }
         
     }
+
+
+    /**
+     * setupUserTypeDropdown
+     *
+     * This function handles setting up the user type dropdown field.  It determines which user types are available for the current user.
+     * At the end of the function two Smarty variables (USER_TYPE_DROPDOWN and USER_TYPE_READONLY) are assigned.
+     *
+     */
     protected function setupUserTypeDropdown() {
         global $current_user;
         
@@ -255,7 +264,7 @@ class UserViewHelper {
         $userTypeDropdown .= '</select><div id="UserTypeDesc">&nbsp;</div>';
         
         $this->ss->assign('USER_TYPE_DROPDOWN',$userTypeDropdown);
-        $this->ss->assign('USER_TYPE_READONLY',$userTypes[$userType]['label']);
+        $this->ss->assign('USER_TYPE_READONLY',$userTypes[$userType]['label'] . "<input type='hidden' id='UserType' value='{$userType}'><div id='UserTypeDesc'>&nbsp;</div>");
         
     }
 
