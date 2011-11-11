@@ -29,7 +29,7 @@
 <div class="dcmenuDivider" id="globalLinksDivider"></div>
 <div id="globalLinksModule">
 
-<img style='max-width: 24px; max-height: 24px; margin-right: 10px; float: left; margin-top: 10px;' src='index.php?entryPoint=download&id={$PICTURE}&type=SugarFieldImage&isTempFile=1' align='absmiddle'>
+<img id="profileThumb" src='index.php?entryPoint=download&id={$PICTURE}&type=SugarFieldImage&isTempFile=1' align='absmiddle'>
 
             <ul class="clickMenu" id="globalLinks">
             <li>

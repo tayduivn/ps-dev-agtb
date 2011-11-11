@@ -5773,7 +5773,7 @@ color: #0B578F;
 }
 
 #dcmenuSearchDiv {
-	float:left;
+	float:right;
 	margin-top: 8px;
 	height: 26px;
 }
@@ -5815,7 +5815,6 @@ margin-left:10px;
 	height: 26px;
 	width: 329px;
 	display: inline-block;
-	margin-right: 10px;
 }
 #sugar_spot_search {
 	border: 0;
@@ -6213,6 +6212,8 @@ ul#globalLinks.clickMenu {
 ul#globalLinks.clickMenu li > span {
 	height: 43px;
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=tabDownArrowOff.png);
+	background-position: 5px center;
+	width: 30px;
 }
 
 ul#globalLinks.clickMenu li ul.subnav {
@@ -6302,4 +6303,17 @@ ul#detailViewActions.clickMenu {
 #quickCreate ul.clickMenu li ul.subnav {
 	top: 43px;
 	left: -155px;
+}
+
+#profileThumb {
+	max-width: 24px; max-height: 24px; 
+	margin-right: 10px; 
+	float: left; 
+	margin-top: 10px;
+	margin-left: 20px;
+}
+
+#searchDivider {
+	float: right;
+	margin: 0px;
 }
