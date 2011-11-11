@@ -112,7 +112,7 @@ class Calendar {
 		}
 		
 		$current_date_db = $date_arr['year']."-".str_pad($date_arr['month'],2,"0",STR_PAD_LEFT)."-".str_pad($date_arr['day'],2,"0",STR_PAD_LEFT);
-		$this->date_time = SugarDateTime::createFromFormat("Y-m-d",$current_date_db);	
+		$this->date_time = $GLOBALS['timedate']->fromString($current_date_db);
 				
 		$this->show_tasks = $current_user->getPreference('show_tasks');
 		if(is_null($this->show_tasks))
