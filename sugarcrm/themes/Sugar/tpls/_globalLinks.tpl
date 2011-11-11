@@ -29,7 +29,14 @@
 <div class="dcmenuDivider" id="globalLinksDivider"></div>
 <div id="globalLinksModule">
 
-<img id="profileThumb" src='index.php?entryPoint=download&id={$PICTURE}&type=SugarFieldImage&isTempFile=1' align='absmiddle'>
+
+
+<div id="dcmenuSugarCube" {$NOTIFCLASS}>
+  {$NOTIFICON}
+  {$NOTIFCODE}
+</div>
+
+
 
             <ul class="clickMenu" id="globalLinks">
             <li>

@@ -5620,14 +5620,22 @@ cursor: default;
 	height:43px;
 	border:0px;
 	padding:0px;
+	background-position: center center; 
+	display: inline-block;
+	background-repeat: no-repeat;
+	background-size: 24px 24px;
 }
 
 #dcmenuSugarCube .notifCount{
     font-weight:bold;
     font-size:9px !important;
     color:#FFFFFF;
-    position: relative; bottom: 20px; left: -8px;
+    position: relative; bottom: 20px; left: -5px;
 	text-align: center;
+	background-color: #CC0000;
+    border-radius: 2px;
+    width: 16px;
+    border: 2px solid #fff;
 }
 
 

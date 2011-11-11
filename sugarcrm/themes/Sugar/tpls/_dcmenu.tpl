@@ -30,22 +30,8 @@
 {$DCSCRIPT}
 <div id='dcmenutop'></div>
 <div id='dcmenu' class='dcmenu dcmenuFloat'>
-
-<!--
-<div id="dcmenuSugarCube" {$NOTIFCLASS}>
-  {$NOTIFICON}
-  {$NOTIFCODE}
-</div>
--->
-	
-			
-
   {include file="_headerModuleList.tpl" theme_template=true}
     
-
-
-
-
     {if $AUTHENTICATED}
     {include file="_quickcreate.tpl" theme_template=true}
     {include file="_globalLinks.tpl" theme_template=true}
