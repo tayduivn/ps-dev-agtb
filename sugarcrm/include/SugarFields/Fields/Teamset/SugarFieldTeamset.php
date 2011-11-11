@@ -251,14 +251,24 @@ class SugarFieldTeamset extends SugarFieldBase {
 	function initClassicView($fields, $formName='EditView'){
 		require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 		$this->view = new ViewSugarFieldTeamsetCollection();
-		if(!$this->add_user_private_team) {
-		   $this->view->add_user_private_team = false;
-		}else{
-			if(empty($_REQUEST['record'])){
-				$this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
-				$this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
-			}
-	    }
+        if(!$this->add_user_private_team)
+        {
+            $this->view->add_user_private_team = false;
+        }
+        else
+        {
+            if(empty($_REQUEST['record']))
+            {
+                // fixing bug #40003: Teams revert to self when Previewing a report
+                // check if there are teams in POST
+                $teams = $this->getTeamsFromRequest($this->field_name, $_POST);
+                if (empty($teams))
+                {
+                    $this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
+                    $this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
+                }
+            }
+        }
 		$this->view->form_name = $formName;
 		$displayParams['formName'] = $formName;
 		$displayParams['primaryChecked'] = true;
