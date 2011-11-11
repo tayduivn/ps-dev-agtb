@@ -20,14 +20,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
  *Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Localization.php 58128 2010-09-09 22:51:07Z kjing $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- * *******************************************************************************/
-
-
+/**
+ * Localization manager
+ * @api
+ */
 class Localization {
 	var $availableCharsets = array(
 		'BIG-5',        //Taiwan and Hong Kong
@@ -181,7 +177,7 @@ class Localization {
             $this->currencies = $load;
         }
 
-		
+
 	}
 
 	/**

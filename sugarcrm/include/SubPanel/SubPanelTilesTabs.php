@@ -28,11 +28,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
-// $Id: SubPanelTilesTabs.php 53116 2009-12-10 01:24:37Z mitani $
-
 require_once('include/SubPanel/SubPanel.php');
 require_once('include/SubPanel/SubPanelDefinitions.php');
 require_once('include/SubPanel/SubPanelTiles.php');
+/**
+ * Tabbed subpanel tiles
+ * @api
+ */
 class SubPanelTilesTabs extends SubPanelTiles
 {
 

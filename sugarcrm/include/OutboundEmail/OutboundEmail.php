@@ -3,13 +3,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-/*********************************************************************************
- * $Id: Delete.php,v 1.22 2006/01/17 22:50:52 majed Exp $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- *********************************************************************************/
-
+/**
+ * Outbuound email management
+ * @api
+ */
 class OutboundEmail {
 	/**
 	 * Necessary
@@ -430,8 +427,8 @@ class OutboundEmail {
 				}else{
 					$values .= "'{$this->$def}'";
 				}
-			
-				
+
+
 			}
 
 			$q  = "INSERT INTO outbound_email ($cols) VALUES ({$values})";

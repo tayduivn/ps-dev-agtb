@@ -25,20 +25,18 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*
- * Created on May 30, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
 require_once('include/tabs.php');
 require_once('include/ListView/ListViewSmarty.php');
 
 require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/EditView/EditView2.php');
 
-
- class SearchForm extends EditView{
+/**
+ * New search form
+ * @api
+ */
+ class SearchForm extends EditView
+ {
     var $seed = null;
     var $module = '';
     var $action = 'index';
@@ -903,7 +901,7 @@ require_once('include/EditView/EditView2.php');
 							}
 
                             $field_value = join('<>',$values);
-								
+
 							if(!empty($parms['enable_range_search']) && $parms['operator'] == '=' && $type != 'int')
 							{
 								// Databases can't really search for floating point numbers, because they can't be accurately described in binary,

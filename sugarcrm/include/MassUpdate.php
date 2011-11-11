@@ -29,12 +29,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: MassUpdate.php 56786 2010-06-02 18:29:56Z jenny $
+require_once('include/EditView/EditView2.php');
 
 /**
  * MassUpdate class for updating multiple records at once
+ * @api
  */
- require_once('include/EditView/EditView2.php');
 class MassUpdate
 {
 	/*

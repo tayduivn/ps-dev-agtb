@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * External API to news feed system
+ * @api
+ */
 interface WebFeed {
 	public function getLatestUpdates($maxTime, $maxEntries);
 }

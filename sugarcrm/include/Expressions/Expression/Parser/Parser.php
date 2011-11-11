@@ -18,6 +18,10 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/**
+ * Expression parser
+ * @api
+ */
 class Parser {
 	/**
 	 * Evaluates an expression.
@@ -78,7 +82,7 @@ class Parser {
 
 		// get the function
 		$func   = substr( $expr , 0 ,  $open_paren_loc);
-		
+
 		// handle if function is not valid
 		if(empty($FUNCTION_MAP)) {
 			if (!file_exists(sugar_cached('Expressions/functionmap.php'))) {
@@ -87,7 +91,7 @@ class Parser {
 			}
 			require_once( sugar_cached('Expressions/functionmap.php'));
 		}
-			
+
 
 		if ( !isset($FUNCTION_MAP[$func]) )	{
             throw new Exception("Attempted to evaluate expression with an invalid function '$func': $expr");
@@ -208,7 +212,7 @@ class Parser {
 	 */
 	static function toConstant($expr) {
 		require_once( "include/Expressions/Expression/Numeric/ConstantExpression.php");
-			
+
 		// a raw numeric constant
 		if ( preg_match('/^(\-)?[0-9]+(\.[0-9]+)?$/', $expr) ) {
 			return new ConstantExpression($expr);
@@ -273,7 +277,7 @@ class Parser {
 	static function throwException($function, $type, $message) {
 		throw new Exception("$function : $type ($message)");
 	}
-	
+
 	/**
      * @deprecated
 	 * returns the expression with the variables replaced with the values in target.
@@ -286,7 +290,7 @@ class Parser {
         $variables = Parser::getFieldsFromExpression($expr);
 		$ret = $expr;
 		foreach($variables as $field) {
-			if (is_array($target)) 
+			if (is_array($target))
 			{
 				if (isset($target[$field])) {
 					$val = Parser::getFormatedValue($target[$field], $field);
@@ -296,7 +300,7 @@ class Parser {
                     //throw new Exception("Unknown variable $$field in formula: $expr");
                     //return;
 				}
-			} else 
+			} else
 			{
 				//Special case for link fields
                 if (isset($target->field_defs[$field]) && $target->field_defs[$field]['type'] == "link")
@@ -317,24 +321,24 @@ class Parser {
 			}
 		return $ret;
 	}
-	
+
 	private static function getFormatedValue($val, $fieldName) {
 		//Boolean values
 		if ($val === true) {
-			return AbstractExpression::$TRUE;	
+			return AbstractExpression::$TRUE;
 		} else if ($val === false) {
 			return AbstractExpression::$FALSE;
 		}
-		
+
 		//Number values will be stripped of commas
 		if (preg_match('/^(\-)?[0-9,]+(\.[0-9]+)?$/', $val)) {
 			$val = str_replace(',', '', $val);
-		} 
+		}
 		//Strings should be quoted
 		else {
 			$val = '"' . $val . '"';
 		}
-		
+
 		return $val;
 	}
 

@@ -28,17 +28,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
-
-// $Id: SubPanel.php 51719 2009-10-22 17:18:00Z mitani $
-
-
-
-
-
-
 require_once('include/SubPanel/registered_layout_defs.php');
-
-//AG todo remove subpanedata and subpanel id  from this class...
+/**
+ * Subpanel
+ * @api
+ */
 class SubPanel
 {
 	var $hideNewButton = false;
@@ -51,17 +45,17 @@ class SubPanel
 	var $action = 'DetailView';
 	var $show_select_button = true;
 	var $subpanel_define = null;  // contains the layout_def.php
-	var $subpanel_defs; 
+	var $subpanel_defs;
 	var $subpanel_query=null;
     var $layout_def_key='';
 	function SubPanel($module, $record_id, $subpanel_id, $subpanelDef, $layout_def_key='')
 	{
 		global $theme, $beanList, $beanFiles, $focus, $app_strings;
-	
+
 		$this->subpanel_defs=$subpanelDef;
 		$this->subpanel_id = $subpanel_id;
-		$this->parent_record_id = $record_id; 
-		$this->parent_module = $module; 
+		$this->parent_record_id = $record_id;
+		$this->parent_module = $module;
         $this->layout_def_key = $layout_def_key;
 
 		$this->parent_bean = $focus;
@@ -76,7 +70,7 @@ class SubPanel
             $this->parent_bean->retrieve($this->parent_record_id);
             $result = $this->parent_bean;
 		}
-		
+
 		if($record_id!='fab4' && $result == null)
 		{
 			sugar_die($app_strings['ERROR_NO_RECORD']);
@@ -90,31 +84,31 @@ class SubPanel
 			$panelsdef=new SubPanelDefinitions($result,$layout_def_key);
 			$subpanelDef=$panelsdef->load_subpanel($subpanel_id);
 			$this->subpanel_defs=$subpanelDef;
-			
+
 		}
-		
+
 	}
 
 	function setTemplateFile($template_file)
 	{
 		$this->template_file = $template_file;
 	}
-	
+
 	function setBeanList(&$value){
 		$this->bean_list =$value;
 	}
-	
+
 	function setHideNewButton($value){
 		$this->hideNewButton = $value;
 	}
-	
-	
+
+
 	function getHeaderText( $currentModule){
 	}
-	
+
 	function get_buttons( $panel_query=null)
 	{
-		
+
 		$thisPanel =& $this->subpanel_defs;
 		$subpanel_def = $thisPanel->get_buttons();
 
@@ -140,10 +134,10 @@ class SubPanel
 			{
 				$widget_contents .= $layout_manager->widgetDisplay($widget_data);
 			}
-			
+
 			$widget_contents .= '</td>';
 		}
-		
+
 		$widget_contents .= '</tr></table></div>';
 		return $widget_contents;
 	}
@@ -154,9 +148,9 @@ class SubPanel
 		global $app_strings;
 		global $current_user;
 		global $sugar_config;
-		
+
 		if(isset($this->listview)){
-			$ListView =& $this->listview;	
+			$ListView =& $this->listview;
 		}else{
 			$ListView = new ListView();
 		}
@@ -168,9 +162,9 @@ class SubPanel
 		$ListView->xTemplateAssign("DELETE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LBL_DELETE_INLINE']));
 		$ListView->xTemplateAssign("REMOVE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LBL_ID_FF_REMOVE']));
 		$header_text= '';
-	
+
 		if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace']))
-		{	
+		{
 			$exploded = explode('/', $xTemplatePath);
 			$file_name = $exploded[sizeof($exploded) - 1];
 			$mod_name =  $exploded[sizeof($exploded) - 2];
@@ -179,7 +173,7 @@ class SubPanel
 		}
 		$ListView->setHeaderTitle('');
 		$ListView->setHeaderText('');
-		
+
 		ob_start();
 
 		$ListView->is_dynamic = true;
@@ -194,7 +188,7 @@ class SubPanel
 		$where = '';
 		$ListView->setQuery($where, '', '', '');
 		$ListView->show_export_button = false;
-		
+
 		//function returns the query that was used to populate sub-panel data.
 
 		$query=$ListView->process_dynamic_listview($this->parent_module, $this->parent_bean,$this->subpanel_defs);
@@ -205,7 +199,7 @@ class SubPanel
 	}
 
 	function display()
-	{	
+	{
 		//BEGIN SUGARCRM flav=int ONLY
 		$mircotime = microtime(true);
 		$db = DBManagerFactory::getInstance();
@@ -218,17 +212,17 @@ class SubPanel
 		global $app_list_strings;
 		global $beanList;
 		global $beanFiles;
-		global $current_language;                                                                                            
+		global $current_language;
 
 		$result_array = array();
-		
+
 		$return_string = $this->ProcessSubPanelListView($this->template_file,$result_array);
 
 		print $return_string;
 		//BEGIN SUGARCRM flav=int ONLY
 		global $total_data_retrieval_time;
 		$total_queries = $db->getQueryCount() - $q_before;
-		
+
 		echo '(Internal Only) Total Time: '. (microtime(true) - $mircotime);
 		if(!empty($total_data_retrieval_time)){
 			echo ' Data Collection Time: ' . $total_data_retrieval_time;
@@ -238,7 +232,7 @@ class SubPanel
 		unset($total_data_retrieval_time);
 		//END SUGARCRM flav=int ONLY
 	}
-       
+
 	function getModulesWithSubpanels()
 	{
 		global $beanList;
@@ -248,19 +242,19 @@ class SubPanel
 		{
 			if(file_exists('modules/' . $entry . '/layout_defs.php'))
 			{
-				$modules[$entry] = $entry;	
-			}	
+				$modules[$entry] = $entry;
+			}
 		}
 		return $modules;
 	}
-  
+
   function getModuleSubpanels($module){
   	require_once('include/SubPanel/SubPanelDefinitions.php');
   		global $beanList, $beanFiles;
   		if(!isset($beanList[$module])){
   			return array();
   		}
-  			
+
   		$class = $beanList[$module];
   		require_once($beanFiles[$class]);
   		$mod = new $class();
@@ -275,39 +269,39 @@ class SubPanel
                 }
             }
   		}
- 
+
   		return $ret_tabs;
-  
-  		
+
+
   }
-  
+
   //saves overrides for defs
   function saveSubPanelDefOverride( $panel, $subsection, $override){
   		global $layout_defs, $beanList;
-  		
+
   		//save the new subpanel
   		$name = "subpanel_layout['list_fields']";
-  		
+
   		//bugfix: load looks for moduleName/metadata/subpanels, not moduleName/subpanels
   		$path = 'custom/modules/'. $panel->_instance_properties['module'] . '/metadata/subpanels';
-  		
-  		//bug# 40171: "Custom subpanels not working as expected" 
+
+  		//bug# 40171: "Custom subpanels not working as expected"
   		//each custom subpanel needs to have a unique custom def file
   		$filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name; //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
   		$oldName1 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
   		$oldName2 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['get_subpanel_data'] ;
-  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php")){ 	
+  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php")){
   		  unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php");
   		}
-  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php")){ 
+  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php")){
          unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php");
   		}
   		$extname = '_override'.$filename;
   		//end of bug# 40171
-  		
+
   		mkdir_recursive($path, true);
   		write_array_to_file( $name, $override,$path.'/' . $filename .'.php');
-  		
+
   		//save the override for the layoutdef
         //tyoung 10.12.07 pushed panel->name to lowercase to match case in subpaneldefs.php files -
         //gave error on bad index 'module' as this override key didn't match the key in the subpaneldefs
@@ -323,24 +317,24 @@ class SubPanel
   		$moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
   		$moduleInstaller->rebuild_layoutdefs();
   		if (file_exists('modules/'.  $panel->parent_bean->module_dir . '/layout_defs.php'))
-  			include('modules/'.  $panel->parent_bean->module_dir . '/layout_defs.php');	
+  			include('modules/'.  $panel->parent_bean->module_dir . '/layout_defs.php');
   		if (file_exists('custom/modules/'.  $panel->parent_bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
-  			include('custom/modules/'.  $panel->parent_bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');	
+  			include('custom/modules/'.  $panel->parent_bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');
   }
-  
+
 	function get_subpanel_setup($module)
 	{
 		$subpanel_setup = '';
 		$layout_defs = get_layout_defs();
-		
+
 		if(!empty($layout_defs) && !empty($layout_defs[$module]['subpanel_setup']))
       {
       	$subpanel_setup = $layout_defs[$module]['subpanel_setup'];
       }
-      
+
       return $subpanel_setup;
 	}
-  
+
 	/**
 	 * Retrieve the subpanel definition from the registered layout_defs arrays.
 	 */
@@ -349,37 +343,37 @@ class SubPanel
 		$default_subpanel_define = SubPanel::_get_default_subpanel_define($module, $subpanel_id);
 		$custom_subpanel_define = SubPanel::_get_custom_subpanel_define($module, $subpanel_id);
 
-		$subpanel_define = array_merge($default_subpanel_define, $custom_subpanel_define);	
-		
+		$subpanel_define = array_merge($default_subpanel_define, $custom_subpanel_define);
+
 		if(empty($subpanel_define))
 		{
 			print('Could not load subpanel definition for: ' . $subpanel_id);
 		}
-		     
+
 		return $subpanel_define;
 	}
 
 	function _get_custom_subpanel_define($module, $subpanel_id)
 	{
 		$ret_val = array();
-		
+
 		if($subpanel_id != '')
 		{
 			$layout_defs = get_layout_defs();
-			
+
 			if(!empty($layout_defs[$module]['custom_subpanel_defines'][$subpanel_id]))
 			{
 				$ret_val = $layout_defs[$module]['custom_subpanel_defines'][$subpanel_id];
 			}
 		}
-		
+
 		return $ret_val;
 	}
 
 	function _get_default_subpanel_define($module, $subpanel_id)
 	{
 		$ret_val = array();
-		
+
 		if($subpanel_id != '')
 		{
 	  		$layout_defs = get_layout_defs();
@@ -389,7 +383,7 @@ class SubPanel
 				$ret_val = $layout_defs[$subpanel_id]['default_subpanel_define'];
 			}
 		}
-		
+
 		return $ret_val;
 	}
 }

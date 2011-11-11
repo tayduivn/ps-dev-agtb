@@ -25,7 +25,7 @@ require_once('service/core/REST/SugarRestSerialize.php');
 
 /**
  * This class is a JSON implementation of REST protocol
- *
+ * @api
  */
 class SugarRestJSON extends SugarRestSerialize{
 
@@ -76,7 +76,7 @@ class SugarRestJSON extends SugarRestSerialize{
 	function fault($errorObject){
 		$this->faultServer->faultObject = $errorObject;
 	} // fn
-	
+
 	function generateFaultResponse($errorObject){
 		$error = $errorObject->number . ': ' . $errorObject->name . '<br>' . $errorObject->description;
 		$GLOBALS['log']->error($error);

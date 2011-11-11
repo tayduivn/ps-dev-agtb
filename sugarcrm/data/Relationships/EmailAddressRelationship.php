@@ -24,6 +24,7 @@ require_once("data/Relationships/M2MRelationship.php");
 
 /**
  * Represents a many to many relationship that is table based.
+ * @api
  */
 class EmailAddressRelationship extends M2MRelationship
 {

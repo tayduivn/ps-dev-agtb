@@ -23,7 +23,11 @@ require_once("include/Expressions/Trigger.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 require_once("include/Expressions/Actions/ActionFactory.php");
 
-class DependencyManager {
+/**
+ * Dependent field manager
+ * @api
+ */
+ class DependencyManager {
     static $default_trigger = "true";
 
 	/**
@@ -72,7 +76,7 @@ class DependencyManager {
 	    }
         if ($orderMatters)
             $deps = self::orderCalculatedFields($deps, $formulaFields);
-        else 
+        else
             $deps = array_values($deps);
 
 	    return array_merge($deps, $ro_deps);
@@ -188,7 +192,7 @@ class DependencyManager {
     				continue;
 
     			$trigger_list_id = $fields[$grid [ 'trigger' ]]['options'];
-    			$trigger_values = $app_list_strings[$trigger_list_id];  
+    			$trigger_values = $app_list_strings[$trigger_list_id];
 
     			$options = $app_list_strings[$def['options']];
     			$result_keys = array();
@@ -213,7 +217,7 @@ class DependencyManager {
     					    . ', getDD("' . $trigger_list_id . '")), -1), enum(""), '
     						. 'valueAt(indexOf($' . $grid [ 'trigger' ]
     						. ',getDD("' . $trigger_list_id . '")),' . $keys . '))';
-    			//Have SetOptionsAction pull from the javascript language files. 
+    			//Have SetOptionsAction pull from the javascript language files.
                 $labels_expression = '"' . $def['options'] . '"';
                 $dep = new Dependency ( $field . "DDD");
     			$dep -> setTrigger( new Trigger ('true', $grid['trigger']));
@@ -295,7 +299,7 @@ class DependencyManager {
                 }
                 foreach($notActions as $aDef)
                 {
-                    $dep->addFalseAction(   
+                    $dep->addFalseAction(
                         ActionFactory::getNewAction($aDef['name'], $aDef['params']));
                 }
                 $dep->setFireOnLoad(!isset($def['onload']) || $def['onload'] !== false);

@@ -18,6 +18,10 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/**
+ * Base expression class
+ * @api
+ */
 abstract class AbstractExpression
 {
 	// constants
@@ -222,7 +226,7 @@ abstract class AbstractExpression
 				return ((is_string($variable) && new DateTime($variable) !== false));
 				break;
             case AbstractExpression::$RELATE_TYPE:
-                return true; 
+                return true;
 		}
 
 		// just return whether it is an instance or not

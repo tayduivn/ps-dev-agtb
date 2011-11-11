@@ -43,6 +43,7 @@ require_once('include/utils/sugar_file_utils.php');
 
 /**
  * Class that provides tools for working with a theme.
+ * @api
  */
 class SugarTheme
 {
