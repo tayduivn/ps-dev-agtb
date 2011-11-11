@@ -186,46 +186,47 @@ var resources = new Array();
 					<th width="8%">{$MOD.LBL_RESOURCE_NAMES}</th>		
 					<th id="optional_0" width="4%">{$MOD.LBL_ACTUAL_DURATION}</th>		
 				</tr>	
-				{foreach from=$TASKS item="TASK" }
-				<tr id="project_task_row_{$TASK->project_task_id}" height="23">
-					<td style="cursor:default" scope="row" align="center" onClick="SUGAR.grid.clickedRow({$TASK->project_task_id}, event);">
-						<div id='id_{$TASK->project_task_id}_divlink' style="display:inline;">{$TASK->project_task_id}{if $TASK->milestone_flag == 1}*{/if}</div>
-						<input type="hidden" name="mapped_row_{$TASK->project_task_id}" id="mapped_row_{$TASK->project_task_id}" value="{$TASK->project_task_id}">
-						<input type="hidden" name="parent_{$TASK->project_task_id}" id="parent_{$TASK->project_task_id}" value="{$TASK->parent_task_id}">
-						<input type="hidden" name="obj_id_{$TASK->project_task_id}" id="obj_id_{$TASK->project_task_id}" value="{$TASK->id}">
-						<input type="hidden" name="is_milestone_{$TASK->project_task_id}" id="is_milestone_{$TASK->project_task_id}" value="{$TASK->milestone_flag}">
-						<input type="hidden" name="time_start_{$TASK->project_task_id}" id="time_start_{$TASK->project_task_id}" value="{$TASK->time_start}">
-						<input type="hidden" name="time_finish_{$TASK->project_task_id}" id="time_finish_{$TASK->project_task_id}" value="{$TASK->time_finish}">
+				{foreach from=$TASKS item="TASK" name=taskLoop}
+                                {assign var='task_id' value=`$smarty.foreach.taskLoop.index+1`}
+				<tr id="project_task_row_{$task_id}" height="23">
+					<td style="cursor:default" scope="row" align="center" onClick="SUGAR.grid.clickedRow({$task_id}, event);">
+						<div id='id_{$task_id}_divlink' style="display:inline;">{$task_id}{if $TASK->milestone_flag == 1}*{/if}</div>
+						<input type="hidden" name="mapped_row_{$task_id}" id="mapped_row_{$task_id}" value="{$task_id}">
+						<input type="hidden" name="parent_{$task_id}" id="parent_{$task_id}" value="{$TASK->parent_task_id}">
+						<input type="hidden" name="obj_id_{$task_id}" id="obj_id_{$task_id}" value="{$TASK->id}">
+						<input type="hidden" name="is_milestone_{$task_id}" id="is_milestone_{$task_id}" value="{$TASK->milestone_flag}">
+						<input type="hidden" name="time_start_{$task_id}" id="time_start_{$task_id}" value="{$TASK->time_start}">
+						<input type="hidden" name="time_finish_{$task_id}" id="time_finish_{$task_id}" value="{$TASK->time_finish}">
 					</td>
 					<td>
-						<input  {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT}readonly="readonly"{/if} type=text size=5 style="border:0" name=percent_complete_{$TASK->project_task_id} id=percent_complete_{$TASK->project_task_id} value="{$TASK->percent_complete}"
+						<input  {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT}readonly="readonly"{/if} type=text size=5 style="border:0" name=percent_complete_{$task_id} id=percent_complete_{$task_id} value="{$TASK->percent_complete}"
 							onBlur="if (SUGAR.grid.validatePercentComplete(this)) {literal}{{/literal} 
-							SUGAR.grid.updateAncestorsPercentComplete({$TASK->project_task_id})
-							SUGAR.gantt.changeTask({$TASK->project_task_id});
+							SUGAR.grid.updateAncestorsPercentComplete({$task_id})
+							SUGAR.gantt.changeTask({$task_id});
 							{literal}}{/literal} ">
 					</td>
-					<td nowrap ondblclick="SUGAR.grid.toggle('description_{$TASK->project_task_id}_div', 'description_{$TASK->project_task_id}', 'description_{$TASK->project_task_id}_divlink');">
-						<div id='description_{$TASK->project_task_id}_div' style="display:none;">
-							<input {if !$CANEDIT}readonly="readonly"{/if} name=description_{$TASK->project_task_id} type=text maxlength="{ $NAME_LENGTH }" style="border:0"  size=40 id=description_{$TASK->project_task_id} value="{$TASK->name}"
-								onblur="SUGAR.grid.blurEvent({$TASK->project_task_id}, 'description_{$TASK->project_task_id}_div','description_{$TASK->project_task_id}', 'description_{$TASK->project_task_id}_divlink');">
-							<input type="hidden" name="description_divlink_input_{$TASK->project_task_id}" id="description_divlink_input_{$TASK->project_task_id}" value="{$TASK->name}">
+					<td nowrap ondblclick="SUGAR.grid.toggle('description_{$task_id}_div', 'description_{$task_id}', 'description_{$task_id}_divlink');">
+						<div id='description_{$task_id}_div' style="display:none;">
+							<input {if !$CANEDIT}readonly="readonly"{/if} name=description_{$task_id} type=text maxlength="{ $NAME_LENGTH }" style="border:0"  size=40 id=description_{$task_id} value="{$TASK->name}"
+								onblur="SUGAR.grid.blurEvent({$task_id}, 'description_{$task_id}_div','description_{$task_id}', 'description_{$task_id}_divlink');">
+							<input type="hidden" name="description_divlink_input_{$task_id}" id="description_divlink_input_{$task_id}" value="{$TASK->name}">
 
 						</div>
-						<div id='description_{$TASK->project_task_id}_divlink' style="display:inline;width:250px">{$TASK->name}</div>			
+						<div id='description_{$task_id}_divlink' style="display:inline;width:250px">{$TASK->name}</div>			
 					</td>
 					<td>
-						<input  {if !$CANEDIT}readonly="readonly"{/if} type=text  style="border:0;" size=3 name=duration_{$TASK->project_task_id} id=duration_{$TASK->project_task_id} value="{$TASK->duration}" 
+						<input  {if !$CANEDIT}readonly="readonly"{/if} type=text  style="border:0;" size=3 name=duration_{$task_id} id=duration_{$task_id} value="{$TASK->duration}" 
 							onBlur="if (SUGAR.grid.validateDuration(this)) {literal}{{/literal} 
-							SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$TASK->project_task_id}').value, this.value, {$TASK->project_task_id});
-							SUGAR.grid.updateAllDependentsAfterDateChanges({$TASK->project_task_id});
-							//SUGAR.grid.updateAncestorsTimeData({$TASK->project_task_id});
-							SUGAR.gantt.changeTask({$TASK->project_task_id});
+							SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$task_id}').value, this.value, {$task_id});
+							SUGAR.grid.updateAllDependentsAfterDateChanges({$task_id});
+							//SUGAR.grid.updateAncestorsTimeData({$task_id});
+							SUGAR.gantt.changeTask({$task_id});
 							{literal}}{/literal} ">
 					</td>
 					<td>
 						<!--Need the hidden duration unit so that even when a resource logs in and the duration_unit select is disabled, we can still export to PDF via this hidden field-->
-						<input type='hidden' name="duration_unit_hidden_{$TASK->project_task_id}" id="duration_unit_hidden_{$TASK->project_task_id}" value="{$TASK->duration_unit}">
-						<select  {if !$CANEDIT}disabled{/if} style='border:0' name=duration_unit_{$TASK->project_task_id} id=duration_unit_{$TASK->project_task_id} onChange="SUGAR.grid.changeDurationUnits('{$TASK->project_task_id}')">
+						<input type='hidden' name="duration_unit_hidden_{$task_id}" id="duration_unit_hidden_{$task_id}" value="{$TASK->duration_unit}">
+						<select  {if !$CANEDIT}disabled{/if} style='border:0' name=duration_unit_{$task_id} id=duration_unit_{$task_id} onChange="SUGAR.grid.changeDurationUnits('{$task_id}')">
 							{foreach from=$DURATION_UNITS item="DURATION_UNIT" key="DURATION_UNIT_KEY"}
 								{if $DURATION_UNIT == $TASK->duration_unit}
 									<option value="{$DURATION_UNIT_KEY}" selected>{$DURATION_UNIT}</option>
@@ -236,40 +237,40 @@ var resources = new Array();
 						</select>
 					</td>
 					<td>					
-						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_start_{$TASK->project_task_id} id=date_start_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}');"
-							 onBlur="SUGAR.grid.processStartDate(this, '{$TASK->project_task_id}');" type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_start}"> 
+						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_start_{$task_id} id=date_start_{$task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}');"
+							 onBlur="SUGAR.grid.processStartDate(this, '{$task_id}');" type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_start}"> 
 					</td>	
 					<td>					
-						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_finish_{$TASK->project_task_id} id=date_finish_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}');"
-							onBlur="SUGAR.grid.processFinishDate(this, '{$TASK->project_task_id}');" type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_finish}"> 
+						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_finish_{$task_id} id=date_finish_{$task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}');"
+							onBlur="SUGAR.grid.processFinishDate(this, '{$task_id}');" type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_finish}"> 
 					</td>	
 					<td>
-						<input  {if !$CANEDIT}readonly="readonly"{/if} type=text size=10  style='border:0' name=predecessors_{$TASK->project_task_id} id=predecessors_{$TASK->project_task_id} value="{$TASK->predecessors}"
+						<input  {if !$CANEDIT}readonly="readonly"{/if} type=text size=10  style='border:0' name=predecessors_{$task_id} id=predecessors_{$task_id} value="{$TASK->predecessors}"
 						onblur="if (SUGAR.grid.validatePredecessors(this)){literal}{{/literal}
-							SUGAR.grid.setDependencyCheckRow({$TASK->project_task_id});
-							SUGAR.grid.validateDependencyCycles({$TASK->project_task_id});
-							SUGAR.grid.validatePredecessorIsNotAncestorOrChild({$TASK->project_task_id});
+							SUGAR.grid.setDependencyCheckRow({$task_id});
+							SUGAR.grid.validateDependencyCycles({$task_id});
+							SUGAR.grid.validatePredecessorIsNotAncestorOrChild({$task_id});
 							if (SUGAR.grid.dependencyCheckFail != 1){literal}{{/literal}
-								SUGAR.grid.updatePredecessorsAndDependents({$TASK->project_task_id});
-								SUGAR.grid.calculateDatesAfterAddingPredecessors({$TASK->project_task_id});
-								SUGAR.grid.updateAllDependentsAfterDateChanges({$TASK->project_task_id});
-								//SUGAR.grid.updateAncestorsTimeData({$TASK->project_task_id});
-								SUGAR.gantt.changeTask({$TASK->project_task_id});
+								SUGAR.grid.updatePredecessorsAndDependents({$task_id});
+								SUGAR.grid.calculateDatesAfterAddingPredecessors({$task_id});
+								SUGAR.grid.updateAllDependentsAfterDateChanges({$task_id});
+								//SUGAR.grid.updateAncestorsTimeData({$task_id});
+								SUGAR.gantt.changeTask({$task_id});
 							{literal}}{/literal}
 						{literal}}{/literal}
 						SUGAR.grid.dependencyCheckFail = 0;
-						//SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$TASK->project_task_id}').value, document.getElementById('duration_{$TASK->project_task_id}').value, {$TASK->project_task_id});">
+						//SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$task_id}').value, document.getElementById('duration_{$task_id}').value, {$task_id});">
 					</td>
 					<td>
-						<input type='hidden' name="resource_full_name_{$TASK->project_task_id}" id="resource_full_name_{$TASK->project_task_id}">
-						<input type='hidden' name="resource_type_{$TASK->project_task_id}" id="resource_type_{$TASK->project_task_id}">
-						<select  {if !$CANEDIT}disabled{/if} style='border:0' name=resource_{$TASK->project_task_id} id=resource_{$TASK->project_task_id}
-						 onChange="SUGAR.grid.updateResourceFullNameAndType('{$TASK->project_task_id}');
-						 	SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$TASK->project_task_id}').value, document.getElementById('duration_{$TASK->project_task_id}').value, {$TASK->project_task_id});
-						 	SUGAR.grid.calculateDatesAfterAddingPredecessors({$TASK->project_task_id});
-							SUGAR.grid.updateAllDependentsAfterDateChanges({$TASK->project_task_id});
-							//SUGAR.grid.updateAncestorsTimeData({$TASK->project_task_id});
-							SUGAR.gantt.changeTask({$TASK->project_task_id});">
+						<input type='hidden' name="resource_full_name_{$task_id}" id="resource_full_name_{$task_id}">
+						<input type='hidden' name="resource_type_{$task_id}" id="resource_type_{$task_id}">
+						<select  {if !$CANEDIT}disabled{/if} style='border:0' name=resource_{$task_id} id=resource_{$task_id}
+						 onChange="SUGAR.grid.updateResourceFullNameAndType('{$task_id}');
+						 	SUGAR.grid.calculateEndDate(document.getElementById('date_start_{$task_id}').value, document.getElementById('duration_{$task_id}').value, {$task_id});
+						 	SUGAR.grid.calculateDatesAfterAddingPredecessors({$task_id});
+							SUGAR.grid.updateAllDependentsAfterDateChanges({$task_id});
+							//SUGAR.grid.updateAncestorsTimeData({$task_id});
+							SUGAR.gantt.changeTask({$task_id});">
 							<option value="">----</option>
 							{foreach from=$RESOURCES item="RESOURCE"}
 								{if $RESOURCE->id == $TASK->resource_id}
@@ -282,13 +283,13 @@ var resources = new Array();
 							{/foreach}
 						</select>
 					</td>
-					<td id="optional_{$TASK->project_task_id}"><input {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT}readonly="readonly"{/if} type=text size=10 style="border:0" name=actual_duration_{$TASK->project_task_id} id=actual_duration_{$TASK->project_task_id} value="{$TASK->actual_duration}" onBlur="SUGAR.grid.validateDuration(this);">
+					<td id="optional_{$task_id}"><input {if $CURRENT_USER != $TASK->resource_id && !$CANEDIT}readonly="readonly"{/if} type=text size=10 style="border:0" name=actual_duration_{$task_id} id=actual_duration_{$task_id} value="{$TASK->actual_duration}" onBlur="SUGAR.grid.validateDuration(this);">
 					</td>
 				</tr>
 				<script type="text/javascript">
-					document.getElementById('resource_full_name_{$TASK->project_task_id}').value="{$resource_full_name}";
-					document.getElementById('resource_type_{$TASK->project_task_id}').value="{$resource_type}";
-					SUGAR.grid.setUpIndentedRow("{$TASK->project_task_id}", "{$TASK->parent_task_id}");
+					document.getElementById('resource_full_name_{$task_id}').value="{$resource_full_name}";
+					document.getElementById('resource_type_{$task_id}').value="{$resource_type}";
+					SUGAR.grid.setUpIndentedRow("{$task_id}", "{$TASK->parent_task_id}");
 				</script>
 				{assign var=resource_full_name value=""}
 				{assign var=resource_type value=""}
