@@ -57,8 +57,16 @@ $viewdefs['Users']['EditView'] = array(
                       'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$EMPLOYEE_STATUS_READONLY}{/if}',
                   ),
                   'show_on_employees'),
-            array('title','phone_work'),
-            array('department','phone_mobile'),
+            array(array(
+                      'name'=>'title',
+                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$TITLE_READONLY}{/if}',
+                  ),
+                  'phone_work'),
+            array(array(
+                      'name'=>'department',
+                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$DEPT_READONLY}{/if}',
+                  ),
+                  'phone_mobile'),
             array(array(
                       'name'=>'reports_to_name',
                       'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$REPORTS_TO_READONLY}{/if}',
