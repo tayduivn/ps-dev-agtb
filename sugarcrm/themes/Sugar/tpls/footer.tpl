@@ -38,11 +38,16 @@
 {$BOTTOMLINKS}
 {/if}
 </div>
+
+<div class="clear"></div>
+<div id="arrow"></div>
 <div id="footer">
-    {$STATISTICS}
-    <div id="copyright">
+    <img src="index.php?entryPoint=getImage&imageName=SugarCRM_logo.gif"/>
+    <p>&#169; 2004-2011 SugarCRM Inc. All Rights Reserved. {$STATISTICS}</p>
+    <!--<div id="copyright">
         {$COPYRIGHT}
-    </div>
+    </div>-->
+    <div class="clear"></div>
 </div>
 <script>
 {literal}

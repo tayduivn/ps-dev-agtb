@@ -1320,7 +1320,8 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 #bottomLinks {
 	padding: 0 25px;
-	float: right;	
+	float: right;
+    margin-bottom:20px;
 }
 
 #bottomLinks a {
@@ -1337,12 +1338,52 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 	margin-left: 5px;
 }
 /* Footer styles */
+#arrow {
+    height:20px;
+    width:25px;
+    background:#fff;
+    left:30px;
+    bottom:0;
+    position:fixed;
+    cursor:pointer;
+    z-index:999;
+    border-top-left-radius:3px;
+    border-top-right-radius:3px;
+    border-top:1px solid #ccc;
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
+}
+.up {
+
+}
 #footer 
 {
-    padding-top: 10px;
-    text-align: center;
-    padding-bottom: 5px;
-    clear: both;
+    display:none;
+    border-top:1px solid #ccc;
+    background: rgb(255,255,255); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(246,246,246,1) 47%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(47%,rgba(246,246,246,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* IE10+ */
+    background: linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+    padding:7px 20px 10px 20px;
+    position:fixed;
+    bottom:0;
+    width:100%;
+    z-index:1;
+}
+
+#footer img {
+    margin-top:2px;
+    float:left;
+}
+
+#footer p {
+    margin-left:10px;
+    line-height:24px;
+    float:left;
 }
 
 #themePicker, #langPicker 

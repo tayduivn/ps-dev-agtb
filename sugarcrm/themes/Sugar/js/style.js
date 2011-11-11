@@ -55,7 +55,14 @@ $(document).ready(function(){
 			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
 	});
 	
-	
+    $("#arrow").click(function(){
+        $(this).toggleClass("up");
+        if ($(this).hasClass('up'))
+            $(this).animate({bottom:'41px'},200);
+        else
+            $(this).animate({bottom:'0'},200);
+        $("#footer").slideToggle("fast");
+    });
 
 });
  
