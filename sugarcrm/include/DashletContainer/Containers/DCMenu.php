@@ -59,7 +59,7 @@ EOQ;
 	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label', $modal);";
 	    $script = isset($def['script_url']) ? '<script type="text/javascript" src="' . $def['script_url'] . '"></script>' : "";
 		$url = "javascript: {$action}";
-        $image = SugarThemeRegistry::current()->getLink($url, $label, 'class="icon"', $imageName, null, null);
+        $image = SugarThemeRegistry::current()->getLink($url, $label, 'class="icon"', $imageName, 'border="0"', null, null, $label);
 	    return "<li>$script $image</li>";
 	}
 

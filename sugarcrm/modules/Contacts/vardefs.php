@@ -395,17 +395,16 @@ array (
 			'bean_name' => 'Quote',
 			'vname' => 'LBL_QUOTES',
 		),
-    'quotes_billing'=>
-		array (
-			'name' => 'quotes_billing',
-			'type' => 'link',
-			'relationship' => 'quotes_contacts_billto',
-			'source' => 'non-db',
-			'ignore_role' => 'true',
-			'module' => 'Quotes',
-			'bean_name' => 'Quote',
-			'vname' => 'LBL_QUOTES',
-		),
+    'billing_quotes'=> array (
+        'name' => 'billing_quotes',
+        'type' => 'link',
+        'relationship' => 'quotes_contacts_billto',
+        'source' => 'non-db',
+        'ignore_role' => 'true',
+        'module' => 'Quotes',
+        'bean_name' => 'Quote',
+        'vname' => 'LBL_QUOTES',
+    ),
 //END SUGARCRM flav=pro ONLY
 
 	'tasks'=>

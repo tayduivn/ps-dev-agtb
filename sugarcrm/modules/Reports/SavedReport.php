@@ -268,7 +268,7 @@ class SavedReport extends SugarBean
 		{
 			$this->schedule_id = $row['schedule_id'];
 			$this->active = $row['active'];
-			$this->next_run = $row['next_run'];
+			$this->next_run = $this->db->fromConvert($row['next_run'],'datetime');
 		}
 		else
 		{

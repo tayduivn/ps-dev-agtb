@@ -1153,11 +1153,14 @@ function repairTableDictionaryExtFile()
 /**
  * sugar_cached
  *
- * Inline this method here since it is not yet defined in utils.php
+ * Inline this method here if it is not yet defined in utils.php (true for version upgrades, false for flavor upgrades)
  *
  * @param $file The path to retrieve cache lookup information for
  * @return string The cached path according to $GLOBALS['sugar_config']['cache_dir'] or just appended with cache if not defined
  */
+if(!function_exists('sugar_cached'))
+{
+
 function sugar_cached($file)
 {
     static $cdir = null;
@@ -1170,5 +1173,6 @@ function sugar_cached($file)
     return "$cdir/$file";
 }
 
+}
 
 ?>

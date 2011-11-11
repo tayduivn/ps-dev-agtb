@@ -60,6 +60,11 @@ class ViewModulefields extends SugarView
         $fieldsData = array();
         $customFieldsData = array();
 
+        //use fieldTypes variable to map field type to displayed field type
+        $fieldTypes = $mod_strings['fieldTypes'];
+        //add datetimecombo type field from the vardef overrides to point to Datetime type
+        $fieldTypes['datetime'] = $fieldTypes['datetimecombo'];
+
         if(!isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
             //$this->loadPackageHelp($module_name);
             $studioClass = new stdClass;
@@ -84,6 +89,7 @@ class ViewModulefields extends SugarView
                        $def['custom'] = false;
                     }
 
+                    $def['type'] = isset($fieldTypes[$def['type']]) ? $fieldTypes[$def['type']] : ucfirst($def['type']);
                     $fieldsData[] = $def;
                     $customFieldsData[$def['name']] = $def['custom'];
                 }
@@ -147,6 +153,9 @@ class ViewModulefields extends SugarView
                        $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($this->mbModule->mblanguage->strings[$current_language][$def['vname']]) ? $this->mbModule->mblanguage->strings[$current_language][$def['vname']] : $field;
                        $customFieldsData[$field] = ($k == $this->mbModule->name) ? true : false;
                        $loadedFields[$field] = true;
+                        
+                       $type = $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['type'];
+                       $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['type'] = isset($fieldTypes[$type]) ? $fieldTypes[$type] : ucfirst($type);
                        $fieldsData[] = $this->mbModule->mbvardefs->vardefs['fields'][$k][$field];
                     }
                 }

@@ -47,6 +47,10 @@ if($version < '640')
 {
 	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.css';
 	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.js';
+	$files[] = 'modules/Users/DetailView.html';
+	$files[] = 'modules/Users/EditView.html';
+	$files[] = 'modules/Users/DetailView.php';
+	$files[] = 'modules/Users/EditView.php';
 }
 
 return $files;	

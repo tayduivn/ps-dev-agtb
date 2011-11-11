@@ -353,7 +353,7 @@ class CalendarDisplay {
 
 	/**
 	 * display header
-	 * @param boolean $controls display ui contol itmes 
+	 * @param boolean $controls display ui contol elements 
 	 */
 	public function display_calendar_header($controls = true){
 		global $cal_strings;
@@ -435,8 +435,6 @@ class CalendarDisplay {
 			
 			$tpl = "modules/Calendar/tpls/shared_users.tpl";	
 			echo $ss->fetch($tpl);
-			
-			return;	
 	}	
 	
 }

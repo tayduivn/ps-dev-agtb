@@ -95,7 +95,7 @@
 							</select>
 							<span id='active_date_field_span' style="display:{$A_DATE1_STYLE}">
 								<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date' id='active_date_field' type="text" size='11' maxlength='10' value="{$active_date}"/> 
-                                {capture assign="other_attributes"}align="absmiddle" id="active_date_trigger{/capture}
+                                {capture assign="other_attributes"}align="absmiddle" id="active_date_trigger"{/capture}
                                 {sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE other_attributes=$other_attributes}
 								<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 	

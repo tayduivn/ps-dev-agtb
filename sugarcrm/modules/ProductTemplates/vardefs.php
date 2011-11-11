@@ -90,7 +90,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'required'=>false,
 		'function' => array('name'=>'getProductTypes', 'returns'=>'html'),
 		'reportable'=>false,
-		'vname' => 'LBL_TYPE',
+		'vname' => 'LBL_TYPE_ID',
 		'importable' => 'true',
 		'comment' => 'Product type (ex: hardware, software)'
 	),

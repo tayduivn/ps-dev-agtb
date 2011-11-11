@@ -112,11 +112,7 @@ EditView_tabs.on('contentReady', function(e){
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
-
-    if(EditView_tabs.getTab(5) && EditView_tabs.getTab(5).getElementsByTagName('a'))
-    {
-        EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
-    }
+    EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
 {/literal}
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY
