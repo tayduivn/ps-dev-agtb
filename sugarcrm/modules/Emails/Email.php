@@ -135,7 +135,8 @@ class Email extends SugarBean {
 		$this->safe->whiteProtocols[] = "cid";
 		$this->safe->clear();
 		$this->emailAddress = new SugarEmailAddress();
-		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}cache/images/";
+
+		$this->imagePrefix = rtrim($GLOBALS['sugar_config']['site_url'], "/")."/cache/images/";
 	}
 
 	function email2init() {
