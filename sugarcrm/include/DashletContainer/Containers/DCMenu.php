@@ -88,7 +88,7 @@ class DCMenu extends DashletContainer
 		$attr = 'class="notice"';
 		if($unreadNotifications > 0) {
 			$iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1";
-			$code = '<div id="notifCount" class="notifCount">'.$unreadNotifications.'</div>';
+			$code = '<div id="notifCount" class="notifCount" onclick="DCMenu.notificationsList();">'.$unreadNotifications.'</div>';
 			$class = "";
 		} else {
 			$iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1";

@@ -3937,6 +3937,13 @@ font-weight: normal;
 border-left: 0px none;
 }
 
+
+#moduleList .yuimenuitemlabel img {
+	position: inherit;
+    vertical-align: inherit;
+    left: 0px;
+}
+
 #moduleList .dashletPanelMenu .yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel:link, .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel:link, li.current .dashletPanelMenu  a.yuimenuitemlabel:visited { 
 background: none;
 background-color: transparent;
@@ -5638,14 +5645,14 @@ span.dcmenuitem:hover{
 
 #dcmenuSugarCube {
 float: left;
-margin: 0px 0px 0 10px;
+margin: 0px 0px 0 0px;
 }
 
 #dcmenuSugarCube a{
 width: 36px;
 height: 43px;
 background-repeat:no-repeat;
-padding: 0px 0 0 0;
+padding: 0px 0 0 10px;
 margin: 0 0 0 0;
 text-decoration: none;
 display: block;
@@ -5671,12 +5678,13 @@ cursor: default;
     font-weight:bold;
     font-size:9px !important;
     color:#FFFFFF;
-    position: relative; bottom: 20px; left: -5px;
+    position: relative; bottom: 20px; left: 5px;
 	text-align: center;
 	background-color: #CC0000;
     border-radius: 2px;
     width: 16px;
     border: 2px solid #fff;
+    cursor: pointer;
 }
 
 
@@ -6256,6 +6264,7 @@ border-radius: 0px;
 ul#globalLinks.clickMenu {
 	background: none;
 	border: 0px none;
+	padding-right: 0px;
 }
 
 ul#globalLinks.clickMenu li > span {

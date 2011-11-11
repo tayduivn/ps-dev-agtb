@@ -36,7 +36,7 @@
 
 $(document).ready(function(){
 
-	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	$("#globalLinksModule ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
 	$("ul.clickMenu li").click(function() { //When trigger is clicked...
 		

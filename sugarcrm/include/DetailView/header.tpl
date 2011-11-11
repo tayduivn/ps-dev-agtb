@@ -30,14 +30,15 @@
 {{if $preForm}}
 	{{$preForm}}
 {{/if}}
+
 <script>
 testing_module = "{$module}";
 {literal}
 $(document).ready(function(){
 
-	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	$("#contentTable ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
-	$("ul.clickMenu li").click(function() { //When trigger is clicked...
+	$("#contentTable ul.clickMenu li").click(function() { //When trigger is clicked...
 		
 		//Following events are applied to the subnav itself (moving subnav up and down)
 		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
@@ -59,6 +60,7 @@ $(document).ready(function(){
 
 {/literal}
 </script>
+
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>
