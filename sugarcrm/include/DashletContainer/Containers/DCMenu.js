@@ -316,6 +316,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	DCMenu.history = function(q){
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=modulelistmenu', spotResults);
 	}
+    DCMenu.startSearch = function(e){
+        if (window.event) { e = window.event; }
+            if (e.keyCode == 13)
+            {
+                DCMenu.spot(document.getElementById('sugar_spot_search').value);
+            }
+    }
 	Y.spot = function(q){
         DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
@@ -325,14 +332,19 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
 	}
 	spotResults = function(id, data){
-		var overlay = setBody(data.responseText, 0, 'sugar_spot_search');
-		overlay.set('x', overlay.get('x') - 60);
+		//var overlay = setBody(data.responseText, 0, 'sugar_spot_search');
+        document.getElementById('sugar_spot_search').className = 'searching';
+                        
+        var resultsDiv = document.getElementById('sugar_spot_search_results');
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = data.responseText;
+		//overlay.set('x', overlay.get('x') - 60);
 		ajaxStatus.hideStatus();
 		//set focus on first sugaraction element, identified by id sugaraction1
-		var focuselement=document.getElementById('sugaraction1');
-		if (typeof(focuselement) != 'undefined' && focuselement != null) {
-			focuselement.focus();
-		}
+		//var focuselement=document.getElementById('sugaraction1');
+		//if (typeof(focuselement) != 'undefined' && focuselement != null) {
+		//	focuselement.focus();
+		//}
 	}
 
     DCMenu.showQELoadingPanel = function(){

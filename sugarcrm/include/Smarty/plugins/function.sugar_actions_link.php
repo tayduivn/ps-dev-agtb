@@ -57,6 +57,10 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 			return '{if $bean->aclAccess("edit")}<li><a title="{$APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" onclick="document.getElementById(\'form\').return_module.value=\'' . $module . '\'; document.getElementById(\'form\').return_action.value=\'DetailView\'; document.getElementById(\'form\').return_id.value=\'{$id}\'; document.getElementById(\'form\').action.value=\'EditView\';SUGAR.ajaxUI.submitForm(document.getElementById(\'form\'));" name="Edit" id="edit_button">{$APP.LBL_EDIT_BUTTON_LABEL}</a></li>{/if} ';
 			break;
 
+            case "EDIT2";
+			return '{if $bean->aclAccess("edit")}<a title="{$APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" onclick="document.getElementById(\'form\').return_module.value=\'' . $module . '\'; document.getElementById(\'form\').return_action.value=\'DetailView\'; document.getElementById(\'form\').return_id.value=\'{$id}\'; document.getElementById(\'form\').action.value=\'EditView\';SUGAR.ajaxUI.submitForm(document.getElementById(\'form\'));" name="Edit">{$APP.LBL_EDIT_BUTTON_LABEL}</a>{/if} ';
+			break;
+
 			case "FIND_DUPLICATES":
 			return '{if $bean->aclAccess("edit") && $bean->aclAccess("delete")}<li><a title="{$APP.LBL_DUP_MERGE}" accessKey="M" onclick="document.getElementById(\'form\').return_module.value=\'' . $module . '\'; document.getElementById(\'form\').return_action.value=\'DetailView\'; document.getElementById(\'form\').return_id.value=\'{$id}\'; document.getElementById(\'form\').action.value=\'Step1\'; document.getElementById(\'form\').module.value=\'MergeRecords\';SUGAR.ajaxUI.submitForm(document.getElementById(\'form\'));" name="Merge"  id="merge_duplicate_button">{$APP.LBL_DUP_MERGE}</a></li>{/if} ';
 			break;

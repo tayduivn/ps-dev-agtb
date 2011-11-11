@@ -30,7 +30,9 @@
 {{if $preForm}}
 	{{$preForm}}
 {{/if}}
+
 <script>
+testing_module = "{$module}";
 {literal}
 $(document).ready(function(){
 
@@ -56,11 +58,9 @@ $(document).ready(function(){
 });
  
 
-{/literal}	
-
-
-        
+{/literal}
 </script>
+
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>
@@ -82,14 +82,22 @@ $(document).ready(function(){
 {{/foreach}}
 {{/if}}
         <ul class="clickMenu" id="detailViewActions">
-            <li>
-                <a id=''  href="javascript: void(0);">Actions</a>
+            <li style="cursor: pointer">
+
+            {{if $module == "Contacts"}}
+            {{sugar_actions_link module="$module" id="EDIT2" view="$view"}}
+            {{else}}
+                <a id='' href="javascript: void(0);">Actions</a>
+            {{/if}}
 
                 <ul class="subnav">
 
 
+
 {{if !isset($form.buttons)}}
-{{sugar_actions_link module="$module" id="EDIT" view="$view"}}
+    {{if $module != "Contacts"}}
+        {{sugar_actions_link module="$module" id="EDIT" view="$view"}}
+    {{/if}}
 {{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
 {{sugar_actions_link module="$module" id="DELETE" view="$view"}}
 {{else}}
@@ -97,7 +105,9 @@ $(document).ready(function(){
 	{{foreach from=$form.buttons key=val item=button}}
 	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
 	     {{counter print=false}}
-	     {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+	         {{if $module != "Contacts" || $button != "EDIT"}}
+	         {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+            {{/if}}
 	  {{/if}}
 	{{/foreach}}
 
