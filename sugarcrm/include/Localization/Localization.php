@@ -656,27 +656,7 @@ eoq;
 
 		$ret = "
 		function setPreview() {
-			format = document.getElementById('default_locale_name_format').value;
-			field = document.getElementById('nameTarget');
 
-			stuff = new Object();
-
-			stuff['s'] = '{$salutation}';
-			stuff['f'] = '{$first}';
-			stuff['l'] = '{$last}';
-			stuff['t'] = '{$title}';
-
-			var name = '';
-			for(i=0; i<format.length; i++) {
-                if(stuff[format.substr(i,1)] != undefined) {
-                    name += stuff[format.substr(i,1)];
-				} else {
-                    name += format.substr(i,1);
-				}
-			}
-
-			//alert(name);
-			field.value = name;
 		}
 
         ";
