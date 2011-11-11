@@ -167,6 +167,12 @@ class UsersViewEdit extends ViewEdit {
             if( !empty($this->bean->reports_to_id) ) {
                 $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
             }
+            if( !empty($this->bean->title) ) {
+                $this->ss->assign('TITLE_READONLY', $this->bean->title);
+            }
+            if( !empty($this->bean->department) ) {
+                $this->ss->assign('DEPT_READONLY', $this->bean->department);
+            }
         }
 
         $processSpecial = false;
