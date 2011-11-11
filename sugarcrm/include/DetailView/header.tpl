@@ -31,6 +31,8 @@
 	{{$preForm}}
 {{/if}}
 <script>
+testing_module = "{$module}";
+if (testing_module == "Contacts") 
 {literal}
 $(document).ready(function(){
 
@@ -56,10 +58,7 @@ $(document).ready(function(){
 });
  
 
-{/literal}	
-
-
-        
+{/literal}
 </script>
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
