@@ -117,7 +117,7 @@ function getNextRunDate($date_start,$interval)
  * TODO XXX Move this whole module to use SugarBeans
  */
 protected function fromConvertReportScheduleDBRow($row){
-
+    if(!$row) return false;
     foreach($row as $name => $value){
         switch($name){
             case 'date_start':

@@ -1821,7 +1821,7 @@ SUGAR.kb = function() {
 
                 new_row_button_embed.onclick = function() {
                     var filename = this.parentNode.parentNode.id;
-                    embedImage = "<img src=\"cache/images/" + unescape(filename) + "\">";
+                    embedImage = "<img src=\"index.php?entryPoint=download&type=SugarFieldImage&isTempFile=1&id=" + unescape(filename) + "\">";
                     var tiny = tinyMCE.getInstanceById('body_html');
                     tiny.getWin().focus();
                     tiny.execCommand('mceInsertRawHTML', false, embedImage);

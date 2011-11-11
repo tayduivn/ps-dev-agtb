@@ -200,8 +200,3 @@
 </div>
 {$JAVASCRIPT}
 </form>
-
-<script language="Javascript" type="text/javascript">
-{$getNameJs}
-setPreview();
-</script>

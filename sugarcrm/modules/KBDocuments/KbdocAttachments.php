@@ -45,18 +45,18 @@ $currGuid = create_guid();
 $is_file_image = 0;
 
 if($not_a_file == 0){
-	$imgType = array('image/gif', 'image/png',  'image/x-png', 'application/octet-stream','image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
-	//Save the currently uploaded file
-		if(in_array(strtolower($_FILES[$element_name]['type']), $imgType)) {
-			$currGuid = $currGuid . $_FILES[$element_name]['name'];
-			$_FILES[$element_name]['name'] = $currGuid;
-			$dest = sugar_cached('images/').$_FILES[$element_name]['name'];
-			if(is_uploaded_file($_FILES[$element_name]['tmp_name'])) {
-				move_uploaded_file($_FILES[$element_name]['tmp_name'], $dest);
-				$is_file_image = 1;
-			}
-
-		}
+    $upload = new UploadFile($element_name);
+    if(!$upload->confirm_upload()) {
+        $not_a_file = 1;
+    } else {
+        $currGuid .= preg_replace('/[^-a-z0-9_.]/i', '_', $_FILES[$element_name]['name']);
+        $file_name = "upload://$currGuid";
+        if(!$upload->final_move($file_name)) {
+            $not_a_file = 1;
+        } else {
+            $is_file_image = verify_uploaded_image($file_name);
+        }
+    }
 }
 
 if($not_a_file == 1){
