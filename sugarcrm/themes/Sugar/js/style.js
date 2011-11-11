@@ -32,67 +32,35 @@
 /**
  * Handles the global links slide
  */
-YAHOO.util.Event.onContentReady("globalLinksModule", function() 
-{
-    if ( !Get_Cookie('globalLinksOpen') ) {
-        Set_Cookie('globalLinksOpen','true',30,'/','','');
-    }
-    if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-        document.getElementById('globalLinks').style.width = "auto";
-    }
-    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("node", "anim", function(Y) {
-        var module = Y.one('#globalLinksModule');
-    
-        if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-            var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 0
-                     
-            },
-            to: {
-                width: 
-                function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    }
-            },
-            easing: Y.Easing.easeOut,
-            duration: 0.5
-        });
-            module.toggleClass('yui-closed');
-            
-        } else {
-        var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 
-                    function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    } 
-            },
-            to: {
-                width: 0
-            },
-            easing: Y.Easing.backIn,
-            duration: 0.5
-        });
-        }
-        
-        var onClick = function(e) {
-            module.toggleClass('yui-closed');
-            content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
-            content.fx.run();
-            if ( document.getElementById('globalLinksModule').className == 'yui-closed' )
-                Set_Cookie('globalLinksOpen','true',30,'/','','');
-            else
-                Set_Cookie('globalLinksOpen','false',30,'/','','');
-        };
-    
-        // use dynamic control for dynamic behavior
-        var control = Y.Node.create(
-        '<a title="show/hide content" class="yui-toggle"><em>toggle</em></a>'
-        );
-        module.one('#globalLinksCtrl').appendChild(control);
-        control.on('click', onClick);
-    });
-});
 
+
+$(document).ready(function(){
+
+	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("ul.clickMenu li").click(function() { //When trigger is clicked...
+		
+		//Following events are applied to the subnav itself (moving subnav up and down)
+		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+		$(this).parent().hover(function() {
+		}, function(){	
+			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+		});
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+	
+	
+
+});
+ 
+ 
+ 
 SUGAR.themes = SUGAR.namespace("themes");
 
 SUGAR.append(SUGAR.themes, {

@@ -31,21 +31,7 @@
 	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
 	{include file="_dcmenu.tpl" theme_template=true}
 	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
-	<div id="header">
-    {include file="_companyLogo.tpl" theme_template=true}
-    {if $AUTHENTICATED}
-    {include file="_globalLinks.tpl" theme_template=true}
-	{/if}
-    <div class="clear"></div>
-    <div class="clear"></div>
-    {if !$AUTHENTICATED}
-    <br /><br />
-    {/if}
 
-	
-    <div class="clear"></div>
-    <div class="clear"></div>
-</div>
 	<div class="clear"></div>
     <div class="clear"></div>
 
@@ -62,7 +48,7 @@ if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 }
 </script>
 {/literal}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/jquery.js'}"></script>
+
 
 <div id="main">
     <div id="content">

@@ -621,6 +621,7 @@ class SugarView
 			$ss->assign('ICONSEARCH', $dcm->getSearchIcon());
 			$ss->assign('DCACTIONS', $menuData['DCActions']);
 			$ss->assign('DYNAMICDCACTIONS', $menuData['dynamicDCActions']);
+			$ss->assign('PICTURE', $current_user->picture);
 			if(is_admin($GLOBALS['current_user'])){
 				$ss->assign('ISADMIN', true);
 			} else {

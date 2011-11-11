@@ -32,6 +32,7 @@
 <link rel="SHORTCUT ICON" href="{$FAVICON_URL}">
 <meta http-equiv="Content-Type" content="text/html; charset={$APP.LBL_CHARSET}">
 <title>{$SYSTEM_NAME}</title>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/jquery.js'}"></script>
 {$SUGAR_CSS}
 {$SUGAR_JS}
 {literal}

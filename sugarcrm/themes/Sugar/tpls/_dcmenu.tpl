@@ -42,23 +42,7 @@
 
   {include file="_headerModuleList.tpl" theme_template=true}
     
-<!--   
-<div id="dcmenuContainer">
-<ul id="dcmenuitems">
 
-	{foreach from=$DCACTIONS item=action}
-		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);">{$action.image}</a></li>
-	{/foreach}
-	
-	
-	{foreach from=$DYNAMICDCACTIONS item=action}
-		<li>{$action.script} {$action.image}</li>
-	{/foreach}
-	
-	
-</ul>
-</div>
--->
 
 //BEGIN SUGARCRM flav=sales ONLY
 {if !$ISADMIN}
@@ -69,6 +53,15 @@
 {/if}
 //END SUGARCRM flav=sales ONLY
 
+
+	
+	
 </div>
+
+    {if $AUTHENTICATED}
+    {include file="_quickcreate.tpl" theme_template=true}
+    {include file="_globalLinks.tpl" theme_template=true}
+    
+	{/if}
 </div>
 {/if}
