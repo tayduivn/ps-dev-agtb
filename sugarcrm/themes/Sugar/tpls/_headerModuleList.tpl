@@ -75,7 +75,7 @@
 		{/foreach}
 			{if count($tabGroup.extra) > 0}
 			<li class="yuimenubaritem moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
-				<a href="#" class="yuimenuitemlabel more"><span style="float: left;"> more</span><em>&gt;&gt;</em></a>
+				<a href="#" class="yuimenuitemlabel more"><span style="float: left;">More</span><em>&gt;&gt;</em></a>
 				<div id="More{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
 				<ul>
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}

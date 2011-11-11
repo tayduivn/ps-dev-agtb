@@ -26,38 +26,27 @@
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<div class="dcmenuDivider" id="globalLinksDivider"></div>
-<div id="globalLinksModule">
 
+<div id="quickCreate">
 
+<ul class="clickMenu">
 
-<div id="dcmenuSugarCube" {$NOTIFCLASS}>
-  {$NOTIFICON}
-  {$NOTIFCODE}
-</div>
-
-
-
-            <ul class="clickMenu" id="globalLinks">
             <li>
-                <a id="welcome_link" href='javascript: void(0);'>{$CURRENT_USER}</a>
+                <a href='javascript: void(0);'></a>
 
                 <ul class="subnav">
-                <li><a id="welcome_link" href='index.php?module=Users&action=EditView&record={$CURRENT_USER_ID}'>Profile</a></li>
-    {foreach from=$GCLS item=GCL name=gcl key=gcl_key}
+				{foreach from=$DCACTIONS item=action}
+					<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);">{$action.createRecordTitle}</a></li>
+				{/foreach}
+				
+				
+				{foreach from=$DYNAMICDCACTIONS item=action}
+					<li>{$action.script} {$action.image}</li>
+				{/foreach}
+				</ul>
+			</li>
+	
+</ul>
 
-
-    			<li><a id="{$gcl_key}_link" href="{$GCL.URL}" {if $smarty.foreach.gcl.last}class="last"{/if}{if !empty($GCL.ONCLICK)} onclick="{$GCL.ONCLICK}"{/if}>{$GCL.LABEL}</a></li>
-
-	    {foreach from=$GCL.SUBMENU item=GCL_SUBMENU name=gcl_submenu key=gcl_submenu_key}
-	    <a id="{$gcl_submenu_key}_link" href="{$GCL_SUBMENU.URL}"{if !empty($GCL_SUBMENU.ONCLICK)} onclick="{$GCL_SUBMENU.ONCLICK}"{/if}>{$GCL_SUBMENU.LABEL}</a>
-	    {/foreach}
-    {/foreach}
-    			<li><a id="logout_link" href='{$LOGOUT_LINK}' class='utilsLink'>{$LOGOUT_LABEL}</a> </li>
-                </ul>
-            </li>
-
-        </ul>
-        
 
 </div>
