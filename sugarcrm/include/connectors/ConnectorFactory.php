@@ -20,10 +20,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/**
+ * Connector factory
+ * @api
+ */
 class ConnectorFactory{
-	
+
 	static $source_map = array();
-	
+
 	public static function getInstance($source_name){
 		if(empty(self::$source_map[$source_name])) {
 			require_once('include/connectors/sources/SourceFactory.php');
@@ -45,15 +49,15 @@ class ConnectorFactory{
 	public static function load($class, $type){
 		self::loadClass($class, $type);
 	}
-	
+
 	/**
 	 * include a source class file.
 	 * @param string $class a class file to include.
 	 */
-	public static function loadClass($class, $type){		
+	public static function loadClass($class, $type){
 		$dir = str_replace('_','/',$class);
 		$parts = explode("/", $dir);
-		$file = $parts[count($parts)-1] . '.php';	
+		$file = $parts[count($parts)-1] . '.php';
 		if(file_exists("custom/modules/Connectors/connectors/{$type}/{$dir}/$file")){
 			require_once("custom/modules/Connectors/connectors/{$type}/{$dir}/$file");
 		} else if(file_exists("modules/Connectors/connectors/{$type}/{$dir}/$file")) {

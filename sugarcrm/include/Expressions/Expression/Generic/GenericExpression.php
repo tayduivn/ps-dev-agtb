@@ -19,6 +19,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/AbstractExpression.php');
+/**
+ * Generic expression
+ * @api
+ */
 abstract class GenericExpression extends AbstractExpression
 {
 	/**

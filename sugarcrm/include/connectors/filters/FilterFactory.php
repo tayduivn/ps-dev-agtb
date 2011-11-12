@@ -27,19 +27,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * Filter factory
+ * @api
+ */
 class FilterFactory{
-    
+
 	static $filter_map = array();
-    
+
 	public static function getInstance($source_name, $filter_name=''){
 		require_once('include/connectors/filters/default/filter.php');
-		$key = $source_name . $filter_name;		
+		$key = $source_name . $filter_name;
 		if(empty(self::$filter_map[$key])) {
-			
+
 			if(empty($filter_name)){
 			   $filter_name = $source_name;
-			}			
-			
+			}
+
 			//split the wrapper name to find the path to the file.
 			$dir = str_replace('_','/',$filter_name);
 			$parts = explode("/", $dir);
@@ -59,7 +63,7 @@ class FilterFactory{
 				//if there is no override wrapper, use the default.
 				$filter_name = 'default_filter';
 			}
-	
+
 			$component = ConnectorFactory::getInstance($source_name);
 			$filter = new $filter_name();
 			$filter->setComponent($component);
@@ -67,6 +71,6 @@ class FilterFactory{
 		} //if
 		return self::$filter_map[$key];
 	}
-	
+
 }
 ?>

@@ -23,10 +23,14 @@ require_once("include/Expressions/Dependency.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 require_once("include/Expressions/Expression/AbstractExpression.php");
 
+/**
+ * Base action class
+ * @api
+ */
 abstract class AbstractAction {
 	protected $targetField = array();
     protected $params = array();
-	
+
 	/**
 	 * Actions are expressions which modify data or layouts.
 	 *
@@ -48,7 +52,7 @@ abstract class AbstractAction {
 	 * @return string javascript.
 	 */
 	abstract static function getJavascriptClass() ;
-	
+
 	/**
 	 * Returns the javascript code to create a new action of this type
 	 * and execute the action.
@@ -56,27 +60,27 @@ abstract class AbstractAction {
 	 * @return string javascript.
 	 */
 	abstract function getJavascriptFire();
-	
+
 	/**
 	 * Applies the Action to the target.
 	 *
 	 * @param SugarBeam $target
 	 */
 	abstract function fire(&$target);
-	
+
 	/**
 	 * Returns the definition of this action in array format.
 	 *
 	 */
 	function getDefinition() {
-		return array(	
-			"action" => $this->getActionName(), 
+		return array(
+			"action" => $this->getActionName(),
 	        "params" => $this->params,
 	    );
 	}
-	
+
 	abstract static function getActionName();
-	
+
 }
 
 function handleExpressionError($errno, $errstr, $errfile, $errline, array $errcontext)

@@ -20,14 +20,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *
  * $Id: EditView.php 45763 2009-04-01 19:16:18Z majed $
- * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
-
-
+/**
+ * Old EditView
+ * @deprecated
+ */
 class EditView {
     /**
      * smarty object

@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * Global search
+ * @api
+ */
 class SugarSpot
 {
 	/**
@@ -133,19 +137,19 @@ EOHTML;
 	{
 		$searchFields = array();
 
-		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) 
+		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php"))
 		{
 		    require("modules/{$moduleName}/metadata/SearchFields.php");
 		}
-		
-		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) 
+
+		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php"))
 		{
 		    require("custom/modules/{$moduleName}/metadata/SearchFields.php");
 		}
-		
+
 		return $searchFields;
 	}
-	
+
 	//BEGIN SUGARCRM flav=spotactions ONLY
 	/**
 	 * Performs a search for actions based upon the query string
@@ -217,16 +221,16 @@ EOHTML;
 			$limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20 );
 		}
     	$totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
- 	
-			
+
+
 	    foreach($modules as $moduleName){
 		    if (empty($primary_module))
 		    {
 		    	$primary_module=$moduleName;
-		    } 
+		    }
 
-			$searchFields = SugarSpot::getSearchFields($moduleName);         			
-			
+			$searchFields = SugarSpot::getSearchFields($moduleName);
+
 			if (empty($searchFields[$moduleName]))
 			{
 				continue;
@@ -240,7 +244,7 @@ EOHTML;
 			if ($class == 'aCase') {
 		            $class = 'Case';
 			}
-			
+
 			foreach($searchFields[$moduleName] as $k=>$v){
 				$keep = false;
 				$searchFields[$moduleName][$k]['value'] = $query;
@@ -339,7 +343,7 @@ EOHTML;
 			$searchForm = new SearchForm ( $seed, $moduleName ) ;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
-			
+
 			if(empty($where_clauses)) {
 			    continue;
 			}

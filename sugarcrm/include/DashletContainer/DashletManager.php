@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * The DashletManager is a way for searching for Dashlets installed on the current system as well as providing a method for accessing
  * a specific Dashlets information. It also allows for instantiating an instance of a Dashlet.
  * @author mitani
- *
+ * @api
  */
 class DashletManager
 {

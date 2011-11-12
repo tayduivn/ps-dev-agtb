@@ -27,18 +27,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
- 
-// $Id: SugarTab.php 45763 2009-04-01 19:16:18Z majed $
-
-
 if(empty($GLOBALS['sugar_smarty']))$GLOBALS['sugar_smarty'] = new Sugar_Smarty();
 class SugarTab{
-    
+
     function SugarTab($type='singletabmenu'){
         $this->type = $type;
-        
+
     }
-    
+
     function setup($mainTabs, $otherTabs=array(), $subTabs=array(), $selected_group='All'){
     	// TODO - prefs here
         //_pp($subTabs);_pp($otherTabs);
@@ -93,17 +89,13 @@ class SugarTab{
             $GLOBALS['sugar_smarty']->assign('moreTab', $mainTabs[$mtak[min(count($mtak)-1, $max_tabs-1)]]['label']);
         }
     }
-    
+
     function fetch(){
         return $GLOBALS['sugar_smarty']->fetch('include/SugarTabs/tpls/' . $this->type . '.tpl');
     }
     function display(){
        $GLOBALS['sugar_smarty']->display('include/SugarTabs/tpls/' . $this->type . '.tpl');
     }
-    
-    
+
+
 }
-
-
-
-?>

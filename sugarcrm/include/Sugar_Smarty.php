@@ -33,6 +33,10 @@ if(!defined('SUGAR_SMARTY_DIR'))
 	define('SUGAR_SMARTY_DIR', sugar_cached('smarty/'));
 }
 
+/**
+ * Smarty wrapper for Sugar
+ * @api
+ */
 class Sugar_Smarty extends Smarty
 {
 
@@ -53,7 +57,7 @@ class Sugar_Smarty extends Smarty
 		if(file_exists('custom/include/Smarty/plugins'))
 			$plugins_dir[] = 'custom/include/Smarty/plugins';
 		$this->plugins_dir = $plugins_dir;
-		
+
 		//BEGIN SUGARCRM flav=int ONLY
 		$this->clear_all_cache(); // removes pre-compiled template files for debugging
 		//END SUGARCRM flav=int ONLY

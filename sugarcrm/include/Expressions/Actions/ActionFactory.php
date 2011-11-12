@@ -20,7 +20,10 @@
  ********************************************************************************/
 require_once("include/Expressions/Actions/AbstractAction.php");
 
-
+/**
+ * SugarLogic action factory
+ * @api
+ */
 class ActionFactory {
 	static $exclude_files = array("ActionFactory.php", "AbstractAction.php");
 	static $action_directory = "include/Expressions/Actions";

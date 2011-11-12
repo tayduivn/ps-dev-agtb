@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * External API to meeting system
+ * @api
+ */
 interface WebMeeting {
 	public function scheduleMeeting($bean);
 	public function unscheduleMeeting($bean);

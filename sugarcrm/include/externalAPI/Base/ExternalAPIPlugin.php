@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * External API interface
+ * @api
+ */
 interface ExternalAPIPlugin {
     /**
      * Check if this API supports certain authentication method
