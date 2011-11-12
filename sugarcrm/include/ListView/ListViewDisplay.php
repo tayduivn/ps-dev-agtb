@@ -364,33 +364,55 @@ class ListViewDisplay {
 		if ( empty($menuItems) )
 		    return '';
 
-		return <<<EOHTML
-<script type="text/javascript">
-<!--
+        if ($_REQUEST['module'] == "Contacts") {
+            return <<<EOHTML
+          <script type="text/javascript">
+          <!--
 
--->
-</script>
+          -->
+          </script>
+                  <ul class="clickMenu" id="selectActions">
+                      <li>
+                      <a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a>
+                          <ul class="subnav">
+                              {$menuItems}
+
+                          </ul>
+                      </li>
+
+                  </ul>
+          		<div id="selectActionsDisabled">
+          			<a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a><span></span>
+          		</div>
+EOHTML;
+        } else {
+            return <<<EOHTML
+          <script type="text/javascript">
+          <!--
+
+          -->
+          </script>
 
 
-        <ul class="clickMenu" id="selectActions">
-            <li>
-                <a id='$id'  href="javascript: void(0);">{$app_strings['LBL_LINK_ACTIONS']}</a>
+                  <ul class="clickMenu" id="selectActions">
+                      <li>
+                          <a id='$id'  href="javascript: void(0);">{$app_strings['LBL_LINK_ACTIONS']}</a>
 
-                <ul class="subnav">
-                    {$menuItems}
+                          <ul class="subnav">
+                              {$menuItems}
 
-                </ul>
-            </li>
+                          </ul>
+                      </li>
 
-        </ul>
-		<div id="selectActionsDisabled">
-			<a>Actions</a> <span></span>
-		</div>
-
+                  </ul>
+          		<div id="selectActionsDisabled">
+          			<a>Actions</a> <span></span>
+          		</div>
 
 
 
 EOHTML;
+        }
 	}
 
 	/**
@@ -471,7 +493,9 @@ EOHTML;
 	protected function buildDeleteLink()
 	{
 		global $app_strings;
-
+        if ($_REQUEST["module"] == "Contacts") {
+            return "";
+        }
 		return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_mass_update('selected', '{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
 	}
 	/**
