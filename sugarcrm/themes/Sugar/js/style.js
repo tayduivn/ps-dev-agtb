@@ -100,6 +100,7 @@ SUGAR.append(SUGAR.themes, {
     setModuleTabs: function(html) {
         var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
         var el = document.getElementById('moduleList');
+        var qc = document.getElementById('quickCreate');
         if (el && el.parentNode) {
             var parent = el.parentNode;
 
@@ -115,7 +116,10 @@ SUGAR.append(SUGAR.themes, {
                 window.location.reload();
             }
             parent.removeChild(el);
-            parent.innerHTML += html;
+            var newdiv = document.createElement("div");
+            newdiv.innerHTML += html;
+            
+            parent.insertBefore(newdiv,qc);
             el = document.getElementById('moduleList');
             this.loadModuleList();
         }
