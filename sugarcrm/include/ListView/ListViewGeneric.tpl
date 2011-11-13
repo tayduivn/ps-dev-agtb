@@ -35,11 +35,15 @@
 
 
 <script>
+testing_module = "{$smarty.request.module}";
+
 {literal}
 $(document).ready(function(){
-
-	$("ul#selectActions.clickMenu ul.subnav").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-	
+    if (testing_module == "Contacts") {
+        $("ul#selectActions.clickMenu ul.subnav").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    } else {
+	    $("ul#selectActions.clickMenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    }
 	$("ul#selectActions.clickMenu li").click(function() { //When trigger is clicked...
 		
 		//Following events are applied to the subnav itself (moving subnav up and down)
