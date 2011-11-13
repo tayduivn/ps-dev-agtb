@@ -481,7 +481,7 @@ array (
             'table' => 'campaigns',
             'isnull' => 'true',
             'module' => 'Campaigns',
-//            'reportable'=>false,
+            'reportable'=>false,
             'massupdate' => false,
                 'duplicate_merge'=> 'disabled',
           ),

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -26,26 +26,56 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
- 
-require_once('include/MVC/View/views/view.detail.php');
-require_once('include/MVC/View/ViewFactory.php');
+require_once('data/SugarBean.php');
 
-class Bug47572Test extends Sugar_PHPUnit_Framework_TestCase
-{   
-    /*
-     * @group bug47572
+/**
+ * @ticket 47731
+ */
+class Bug47731Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    private $contact = null;
+
+    /**
+     *
      */
-    public function testShowSubpanelsSettingForPrint()
+    public function setUp()
     {
-        $viewClass = 'ViewDetail';
-        $type = 'detail';
+        $this->contact = new Contact();
+        $this->contact->field_defs["as_tetrispe_accounts_name"] = array (
+          'name' => 'as_tetrispe_accounts_name',
+          'type' => 'relate',
+          'source' => 'non-db',
+          'vname' => 'LBL_AS_TETRISPERSON_ACCOUNTS_FROM_ACCOUNTS_TITLE',
+          'save' => true,
+          'id_name' => 'as_tetrispac95ccounts_ida',
+          'link' => 'as_tetrisperson_accounts',
+          'table' => 'accounts',
+          'module' => 'Accounts',
+          'rname' => 'name',
+        );
 
-        $_REQUEST['print'] = true;
-        $view = new $viewClass();
-        $view->module = 'Cases';
-        ViewFactory::_loadConfig($view, $type);
-        $view->preDisplay();
+        $this->contact->field_defs["as_tetrispac95ccounts_ida"] = array (
+          'name' => 'as_tetrispac95ccounts_ida',
+          'type' => 'link',
+          'relationship' => 'as_tetrisperson_accounts',
+          'source' => 'non-db',
+          'reportable' => false,
+          'side' => 'right',
+          'vname' => 'LBL_AS_TETRISPERSON_ACCOUNTS_FROM_AS_TETRISPERSON_TITLE',
+        );
+    }
 
-        $this->assertFalse($view->options['show_subpanels'], 'show_subpanels should be false for print');
+    /**
+     * Test getting import fields from a bean when a relationship has been defined and the id field is only defined as a link
+     * and not a relate entry. The id field should be exposed so that users can select it from a list during the import process.  
+     *
+     * @return void
+     */
+    public function testGetImportableFields()
+    {
+        $c = new Contact();
+        $importableFields = $c->get_importable_fields();
+        $this->assertTrue(isset($importableFields['as_tetrispac95ccounts_ida']));
     }
 }
+
