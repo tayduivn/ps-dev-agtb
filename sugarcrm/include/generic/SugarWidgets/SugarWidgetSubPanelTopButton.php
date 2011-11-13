@@ -252,7 +252,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
     }
 
 	/** This default function is used to create the HTML for a simple button */
-	function display($defines, $additionalFormFields = null)
+	function display($defines, $additionalFormFields = null, $nonbutton = false)
 	{
 		$temp='';
 		$inputID = $this->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($this->form_value)).'_button';
@@ -272,6 +272,10 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         } else {
             $button = $this->_get_form($defines, $additionalFormFields);
             $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n</form>";
+        }
+
+        if ($nonbutton) {
+            $button = "<a onclick=''>$->form_value";
         }
         return $button;
 	}
