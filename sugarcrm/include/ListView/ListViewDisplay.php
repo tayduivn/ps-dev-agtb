@@ -283,27 +283,16 @@ class ListViewDisplay {
 			. "<li><a  name='selectall' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$total});' href='#'>{$app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$total}&#x29;&#x200E;</a></li>"
 			. "<li><a name='deselect' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.clear_all(document.MassUpdate, \"mass[]\", false);' href='#'>{$app_strings['LBL_LISTVIEW_NONE']}</a></li>";
 
-
-
 		    $script = "<ul class='clickMenu' id='selectLink'>";
             $script .= "<li>";
                 $script .="<input title=\"".$app_strings['LBL_SELECT_ALL_TITLE']."\" type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked);' /><a id='$id'  href='javascript: void(0);'></a>";
-
                 $script .="<ul class='subnav'>";
                     $script .= $menuItems;
-
                 $script .="</ul>";
             $script .="</li>";
-
         $script .="</ul>";
-        
-        
-        
 		return $script;
 	}
-
-
-
 
 	/**
 	 * Display the actions link
@@ -379,38 +368,28 @@ class ListViewDisplay {
 
                           </ul>
                       </li>
-
                   </ul>
           		<div id="selectActionsDisabled">
-          			<a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a><span></span>
+          			<a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a><span class="ab"></span>
           		</div>
 EOHTML;
         } else {
             return <<<EOHTML
           <script type="text/javascript">
           <!--
-
           -->
           </script>
-
-
                   <ul class="clickMenu" id="selectActions">
                       <li>
                           <a id='$id'  href="javascript: void(0);">{$app_strings['LBL_LINK_ACTIONS']}</a>
-
                           <ul class="subnav">
                               {$menuItems}
-
                           </ul>
                       </li>
-
                   </ul>
           		<div id="selectActionsDisabled">
-          			<a>Actions</a> <span></span>
+          			<a>Actions</a><span></span>
           		</div>
-
-
-
 EOHTML;
         }
 	}
