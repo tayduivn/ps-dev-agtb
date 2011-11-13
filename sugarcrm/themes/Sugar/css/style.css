@@ -3867,6 +3867,7 @@ background-color: #276499;
 	
 	border-left: 0px;
 	color: #fff;
+	background-color: #276499;
 
 }
 
@@ -6235,10 +6236,12 @@ ul#globalLinks.clickMenu li > span {
 	height: 43px;
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=tabDownArrowOff.png);
 	background-position: 5px center;
-	width: 30px;
+	width: 20px;
+	margin-left: 5px;
+    padding-left: 5px;
 }
 
-ul#globalLinks.clickMenu li > span, ul.clickMenu li > span.ab {
+ul.clickMenu li > span.ab {
     border-left: 1px #aaa solid;
     margin-left: 5px;
     padding-left: 5px;

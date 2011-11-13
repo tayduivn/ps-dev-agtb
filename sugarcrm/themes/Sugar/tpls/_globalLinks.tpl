@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+
+
 <div class="dcmenuDivider" id="globalLinksDivider"></div>
 <div id="globalLinksModule">
 
@@ -39,7 +41,7 @@
 
 
             <ul class="clickMenu" id="globalLinks">
-            <li>
+            <li id="lammmy">
                 <a id="welcome_link" href='javascript: void(0);'>{$CURRENT_USER}</a>
 
                 <ul class="subnav">

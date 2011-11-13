@@ -52,4 +52,5 @@ if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 
 <div id="main">
     <div id="content">
+    
         <table style="width:100%" id="contentTable"><tr><td>
