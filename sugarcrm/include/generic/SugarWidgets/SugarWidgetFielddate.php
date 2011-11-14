@@ -40,12 +40,12 @@ class SugarWidgetFieldDate extends SugarWidgetFieldDateTime
 
     function queryFilterBefore($layout_def)
     {
-        return $this->queryDateOp($this->_get_column_select($layout_def), $layout_def['input_name0'], ">", "date");
+        return $this->queryDateOp($this->_get_column_select($layout_def), $layout_def['input_name0'], "<", "date");
     }
 
     function queryFilterAfter($layout_def)
     {
-        return $this->queryDateOp($this->_get_column_select($layout_def), $layout_def['input_name0'], "<", "date");
+        return $this->queryDateOp($this->_get_column_select($layout_def), $layout_def['input_name0'], ">", "date");
     }
 
     function queryFilterNot_Equals_str($layout_def)
@@ -65,8 +65,8 @@ class SugarWidgetFieldDate extends SugarWidgetFieldDateTime
         $end = $layout_def['input_name1'];
         $column = $this->_get_column_select($layout_def);
 
-        return "(".$this->queryDateOp($column, $begin, ">=", "date")." AND ".
-            $this->queryDateOp($column, $end, "<=", "date").")\n";
+        return "(".$this->queryDateOp($column, $begin, "<=", "date")." AND ".
+            $this->queryDateOp($column, $end, ">=", "date").")\n";
     }
 
 }
