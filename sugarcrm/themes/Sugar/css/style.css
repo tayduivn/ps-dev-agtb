@@ -3834,6 +3834,10 @@ border: none;
 border: none;
 }
 
+#moduleList.yuimenubarnav .yuimenubaritem.home {
+	height: 43px;
+}
+
 #moduleList.yuimenubar .yuimenuitemlabel.group img  {
 position: relative;
 left: 0px;
@@ -3872,6 +3876,11 @@ background-color: #276499;
 }
 
 
+#moduleList.yuimenubar li.current.home .yuimenuitemlabel, #moduleList.yuimenubarnav .home .yuimenubaritemlabel-selected {
+	height: 28px;
+    padding-bottom: 7px;	
+}
+
 
 @media screen and (-webkit-min-device-pixel-ratio:0) 
 {
@@ -3897,6 +3906,11 @@ font-weight: normal;
 border-left: 0px none;
 }
 
+
+#moduleList .home > .yuimenuitemlabel, .home > a.yuimenuitemlabel, .home > a.yuimenuitemlabel:link, .home > a.yuimenuitemlabel:visited {
+		height: 28px;
+    padding-bottom: 7px;
+}
 
 #moduleList .yuimenuitemlabel img {
 	position: inherit;
@@ -4192,7 +4206,7 @@ padding: 8px 0 5px 0;
 
 
 /* global links and theme picker */
-#globalLinks ul li a:hover, #themepickerLinkSpan a:hover
+#themepickerLinkSpan a:hover
 {
     color: #56778F;
 }
@@ -6249,6 +6263,8 @@ ul.clickMenu li > span.ab {
 
 ul#globalLinks.clickMenu li ul.subnav {
 	top: 43px;
+	right: 0px;
+	left: auto;
 }
 
 ul#globalLinks.clickMenu > li > a {
@@ -6328,18 +6344,25 @@ ul#detailViewActions.clickMenu {
 #quickCreate ul.clickMenu {
 	background: none;
 	border: 0px none;
-	min-width: 35px;
+	padding-right: 0px;
 }
 
+
+#quickCreate ul.clickMenu > li {
+	width: 40px;
+
+}
 #quickCreate ul.clickMenu li > span {
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=quick-create.png);
-	height: 40px;
+	height: 43px;
+	width: 40px;
 }
 
 
 #quickCreate ul.clickMenu li ul.subnav {
 	top: 43px;
-	left: -155px;
+	right: 0;
+	left: auto;
 }
 
 #profileThumb {

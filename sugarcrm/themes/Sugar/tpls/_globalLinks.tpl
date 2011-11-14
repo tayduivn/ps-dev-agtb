@@ -41,7 +41,7 @@
 
 
             <ul class="clickMenu" id="globalLinks">
-            <li id="lammmy">
+            <li>
                 <a id="welcome_link" href='javascript: void(0);'>{$CURRENT_USER}</a>
 
                 <ul class="subnav">

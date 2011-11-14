@@ -44,13 +44,13 @@
 		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			{if $name == $MODULE_TAB}
 				{if $name == "Home"}
-				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module label=$homeImage class="yuimenuitemlabel"}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current home">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module label=$homeImage class="yuimenuitemlabel"}
 				{else}
 				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
 				{/if}
 			{else}
 				{if $name == "Home"}
-				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module label=$homeImage class="yuimenuitemlabel"}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} home">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module label=$homeImage class="yuimenuitemlabel"}
 				{else}
 				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
 				{/if}

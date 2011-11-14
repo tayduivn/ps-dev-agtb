@@ -219,7 +219,13 @@ SUGAR.append(SUGAR.themes, {
 	if (this.parent) {
 
 		oElement = this.element;
+		if(oElement.id == "Home") {
+			offsetPadding = -10;
+		} else {
+			offsetPadding = 0;
+			}
 		var newLeft = oElement.offsetLeft + offsetPadding;
+		
 		oElement.style.left = newLeft + "px";
 		oBd = oElement.firstChild;
 		oShadow = oElement.lastChild;
