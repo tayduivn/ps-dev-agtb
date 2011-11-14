@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * External API based on Oauth
+ * @api
+ */
 interface ExternalOAuthAPIPlugin {
     /**
      * Get OAuth parameters, to create OAuth client

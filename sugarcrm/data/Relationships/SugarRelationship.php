@@ -37,8 +37,7 @@ define('REL_ONE_ONE', 'one-to-one');
  * It contains at least two links.
  * Each link represents a connection from one record to the records linked in this relationship.
  * Links have a context(focus) bean while relationships do not.
- *
- *
+ * @api
  */
 abstract class SugarRelationship
 {
@@ -359,7 +358,7 @@ abstract class SugarRelationship
     }
 
     /**
-     * 
+     *
      * @static
      * @return void
      */

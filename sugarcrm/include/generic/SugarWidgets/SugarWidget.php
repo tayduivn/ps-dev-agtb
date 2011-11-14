@@ -33,20 +33,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidget.php 38393 2008-07-29 19:44:00Z Collin Lee $
 
+/**
+ * Generic Sugar widget
+ * @api
+ */
 class SugarWidget
 {
 	var $layout_manager = null;
 	var $widget_id;
-	
+
 	function SugarWidget(&$layout_manager)
 	{
 		$this->layout_manager = $layout_manager;
 	}
 	function display(&$layout_def)
 	{
-		return 'display class undefined'; 
+		return 'display class undefined';
 	}
-	
+
 	/**
 	 * getSubpanelWidgetId
 	 * This is a utility function to return a widget's unique id
@@ -55,7 +59,7 @@ class SugarWidget
 	public function getWidgetId() {
 	   return $this->widget_id;
 	}
-	
+
 	/**
 	 * setSubpanelWidgetId
 	 * This is a utility function to set the id for a widget
@@ -63,8 +67,8 @@ class SugarWidget
 	 */
 	public function setWidgetId($id='') {
 		$this->widget_id = $id;
-	}		
-	
+	}
+
    /**
     * getTruncatedColumnAlias
     * This function ensures that a column alias is no more than 28 characters.  Should the column_name
@@ -78,8 +82,8 @@ class SugarWidget
 	  	{
 	  	   return $column_name;
 	  	}
-	    return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));  	
-    }	
+	    return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));
+    }
 }
 
 ?>

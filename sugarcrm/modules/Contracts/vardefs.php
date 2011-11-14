@@ -317,8 +317,6 @@ $dictionary['Contract'] = array(
 			'rhs_module' => 'ContractTypes',
 			'rhs_table' => 'contract_types',
 			'rhs_key' => 'id',
-			'relationship_role_column' => 'type',
-			'relationship_role_column_value' => 'Contracts',
 			'relationship_type' => 'one-to-many',
 		),
 		'contract_notes' => array(

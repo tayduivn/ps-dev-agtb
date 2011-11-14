@@ -20,10 +20,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/**
+ * Formatter factory
+ * @api
+ */
 class FormatterFactory {
-	
+
 	static $formatter_map = array();
-	
+
 	/**
 	 * getInstance
 	 * This method returns a formatter instance for the given source name and
@@ -37,13 +41,13 @@ class FormatterFactory {
 	 */
 	public static function getInstance($source_name, $formatter_name=''){
 		require_once('include/connectors/formatters/default/formatter.php');
-		$key = $source_name . $formatter_name;		
+		$key = $source_name . $formatter_name;
 		if(empty(self::$formatter_map[$key])) {
-			
+
 			if(empty($formatter_name)){
 			   $formatter_name = $source_name;
-			}			
-			
+			}
+
 			//split the wrapper name to find the path to the file.
 			$dir = str_replace('_','/',$formatter_name);
 			$parts = explode("/", $dir);
@@ -63,7 +67,7 @@ class FormatterFactory {
 				//if there is no override wrapper, use the default.
 				$formatter_name = 'default_formatter';
 			}
-	
+
 			$component = ConnectorFactory::getInstance($source_name);
 			$formatter = new $formatter_name();
 			$formatter->setComponent($component);
@@ -76,6 +80,6 @@ class FormatterFactory {
 		} //if
 		return self::$formatter_map[$key];
 	}
-	
+
 }
 ?>

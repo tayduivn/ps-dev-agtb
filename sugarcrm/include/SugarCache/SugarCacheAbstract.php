@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * Abstract cache class
+ * @api
+ */
 abstract class SugarCacheAbstract
 {
     /**

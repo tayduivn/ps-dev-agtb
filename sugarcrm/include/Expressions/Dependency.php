@@ -24,22 +24,27 @@ require_once("include/Expressions/Actions/ReadOnlyAction.php");
 require_once("include/Expressions/Actions/VisibilityAction.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 
-class Dependency {
+/**
+ * Generic dependency
+ * @api
+ */
+class Dependency
+{
 	protected $trigger;
 	protected $actions = array();
 	protected $falseActions = array();
 	protected $id = "";
 	protected $fireOnLoad = false;
-	
+
 	function Dependency($id) {
 		$this->id = $id;
 		$this->trigger = new Trigger('true');
 	}
-	
+
 	function setFireOnLoad($onLoad) {
 		$this->fireOnLoad = $onLoad;
 	}
-	
+
 	/**
 	 * Sets the trigger expressions of this dependency or creates a new Trigger from the array if
 	 * Trigger metadata is passed.
@@ -53,7 +58,7 @@ class Dependency {
 			$this->trigger = $trigger;
 		}
 	}
-	
+
 	/**
 	 * Adds a new action to this dependency or creates a new Action from the meta if
 	 * Action metadata is passed.
@@ -70,7 +75,7 @@ class Dependency {
 			$this->actions[] = $action;
 		}
 	}
-	
+
 	/**
 	 * Adds a new action which will be fired when this dependency's trigger is false.
 	 *
@@ -83,14 +88,14 @@ class Dependency {
 			$this->falseActions[] = $action;
 		}
 	}
-	
+
 	/**
 	 * Returns the javascript equivalent of this dependency.
 	 */
 	function getJavascript($form = "EditView") {
 		if (empty($this->actions)) return "";
-		
-		$js = "var {$this->id}dep = new SUGAR.forms.Dependency(" . 
+
+		$js = "var {$this->id}dep = new SUGAR.forms.Dependency(" .
 			$this->trigger->getJavascript() . ", ";
 		//Normal Actions
 		$js .= "[";
@@ -115,29 +120,29 @@ class Dependency {
 		} else {
             $js .= ",false";
         }
-		
+
 		$js .= ",'$form');\n";
 
 		return $js;
 	}
-	
+
 	/**
 	 * Returns the definition of the dependency in array format.
 	 */
 	function getDefinition() {
-		$def = array (	
+		$def = array (
 			"name" => $this->id,
 	        "condition" => $this->trigger->getCondition(),
 			"actions" => array(),
 		);
-		
+
 		foreach($this->actions as $action) {
 			$def['actions'][] = $action->getDefinition();
 		}
-		
+
 		return  $def;
 	}
-	
+
 	/**
 	 * Runs the dependency on the target bean.
 	 *
@@ -156,10 +161,10 @@ class Dependency {
 			$GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
 		}
 	}
-	
+
 	/**
 	 * Performs the actions in this dependency on the target.
-	 * 
+	 *
 	 * @param SugarBean $target
 	 * @param boolean $useFalse
 	 */
@@ -177,14 +182,14 @@ class Dependency {
             $GLOBALS['log']->fatal($e->getMessage());
             $GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
             $GLOBALS['log']->fatal("Target was : " . print_r($action, true));
-            
+
         }
 	}
-	
+
 	function getFireOnLoad()
 	{
 		return $this->fireOnLoad;
 	}
-	
+
 }
 ?>

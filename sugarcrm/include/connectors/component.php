@@ -26,8 +26,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
 
  ********************************************************************************/
-
-
+/**
+ * Connector component
+ * @api
+ */
 class component{
 	protected $_has_testing_enabled = false;
 	protected $_source;

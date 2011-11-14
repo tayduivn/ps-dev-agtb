@@ -24,8 +24,9 @@ require_once("data/Relationships/SugarRelationship.php");
 
 /**
  * Represents a many to many relationship that is table based.
+ * @api
  */
-class M2MRelationship extends SugarRelationship 
+class M2MRelationship extends SugarRelationship
 {
     var $type = "many-to-many";
 

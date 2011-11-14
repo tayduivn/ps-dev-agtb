@@ -27,18 +27,20 @@
  */
 
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-// $Id: WorkFlowHandler.php 51719 2009-10-22 17:18:00Z mitani $
 //FILE SUGARCRM flav=pro ONLY
-
 require_once('include/workflow/workflow_utils.php');
 
+/**
+ * Workflow manager class
+ * @api
+ */
 class WorkFlowHandler {
-	
+
 function WorkFlowHandler(&$focus, $event){
 
 	//Confirm we are not running populating seed data
 	if(!isset($_SESSION['disable_workflow'])){
-	
+
 	//Now just include the modules workflow from this bean
 		global $triggeredWorkflows;
 		//Ensure that the array is set, but don't reset it if it is not empty.
@@ -46,29 +48,29 @@ function WorkFlowHandler(&$focus, $event){
 		{
 			$triggeredWorkflows = array();
 		}
-		
+
 		if($event=="before_save"){
 
 			$workflow_path = "custom/modules/".$focus->module_dir."/workflow/workflow.php";
 
 			if(file_exists($workflow_path)){
 				include_once($workflow_path);
-				
+
 				$target_class = $focus->module_dir."_workflow";
 				$workflow_class = new $target_class();
                 $workflow_class->process_wflow_triggers($focus);
-	
+
 			//if file exists
 			}
 		//end if logic hook is beforesave
-		}	
+		}
 		//Reset the infinit loop check for workflows
 		$triggeredWorkflows = array();
-		
+
 	//End confirmation that we are not running installation
-	}	
-		
-	
+	}
+
+
 //end function process_workflow
 }
 
@@ -76,19 +78,19 @@ function WorkFlowHandler(&$focus, $event){
  * Process all of the workflow alerts in the session for this bean
  * @param focus - the bean to use in the alert
  * @param alerts - the alerts that were saved in the session
- * 
+ *
  */
 function process_alerts(&$focus, $alerts){
 
     //Confirm we are not running populating seed data
     if(!isset($_SESSION['disable_workflow'])){
-    
+
     //Now just include the modules workflow from this bean
             $workflow_path = "custom/modules/".$focus->module_dir."/workflow/workflow.php";
 
             if(file_exists($workflow_path)){
                 include_once($workflow_path);
-                
+
                 $target_class = $focus->module_dir."_workflow";
                 $workflow_class = new $target_class();
                     if(!empty($focus->emailAddress) && isset($focus->emailAddress->addresses)) {//addresses maybe cleared
@@ -110,11 +112,11 @@ function process_alerts(&$focus, $alerts){
                             }
                         }
                     }
-                }  
+                }
     //End confirmation that we are not running installation
-    }     
+    }
 //end function process_workflow
-}   	
+}
 
 //end class WorkFlowHandler
 }

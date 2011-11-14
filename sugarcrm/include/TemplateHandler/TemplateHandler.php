@@ -2,17 +2,17 @@
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-/**
- * TemplateHandler builds templates using SugarFields and a generic view.
- * Currently it handles EditViews and DetailViews. It creates a smarty template cached in
- * cache/modules/moduleName/view
- *
- */
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once("include/Expressions/DependencyManager.php");
 //END SUGARCRM flav=pro ONLY
 
+/**
+ * TemplateHandler builds templates using SugarFields and a generic view.
+ * Currently it handles EditViews and DetailViews. It creates a smarty template cached in
+ * cache/modules/moduleName/view
+ * @api
+ */
 class TemplateHandler {
     var $cacheDir;
     var $templateDir = 'modules/';
@@ -386,7 +386,7 @@ class TemplateHandler {
 					   $field['id_name'] = $field['name'] . "_" . $field['id_name'];
                 }
 				$name = $qsd->form_name . '_' . $field['name'];
-				
+
 
 
                 if($field['type'] == 'relate' && isset($field['module']) && (preg_match('/_name$|_c$/si',$name) || !empty($field['quicksearch']))) {
@@ -404,7 +404,7 @@ class TemplateHandler {
                             else {
                                 if ($view == "ConvertLead")
 								    $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
-								else 
+								else
 								    $sqs_objects[$name] = $qsd->getQSUser();
 							}
                         //BEGIN SUGARCRM flav!=sales ONLY
@@ -457,7 +457,7 @@ class TemplateHandler {
                 } //if-else
             } //foreach
         }
-        
+
        //Implement QuickSearch for the field
        if(!empty($sqs_objects) && count($sqs_objects) > 0) {
            $quicksearch_js = '<script language="javascript">';
@@ -492,7 +492,7 @@ class TemplateHandler {
            DependencyManager::getDependenciesForView($viewDefs, $view, $module)
         );
 
-        
+
         foreach($dependencies as $dep) {
             $js .= $dep->getJavascript($view);
         }

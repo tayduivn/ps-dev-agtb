@@ -19,15 +19,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: vCard.php 55279 2010-03-15 13:45:53Z jmertic $
- * Description:
- ********************************************************************************/
-
+/**
+ * vCard implementation
+ * @api
+ */
 class vCard
 {
 	protected $properties = array();
-	
+
 	protected $name = 'no_name';
 
 	public function clear()

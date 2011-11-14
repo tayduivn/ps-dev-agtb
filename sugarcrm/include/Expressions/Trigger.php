@@ -23,21 +23,26 @@ require_once("include/Expressions/Actions/AbstractAction.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 require_once("include/Expressions/Expression/AbstractExpression.php");
 
-class Trigger {
+/**
+ * Expression trigger
+ * @api
+ */
+class Trigger
+{
 	public $triggerFields = array();
 	public $conditionFunction = "";
 	static $ValueNotSetError = -1;
-	
+
 	function Trigger($condition, $fields = array()) {
 		$this->conditionFunction = $condition;
 		if (!is_array($fields))
 			$fields = array($fields);
 		$this->triggerFields = $fields;
 	}
-	
+
 	function evaluate($target) {
 		foreach($this->triggerFields as $field){
-			if (!isset($target->$field)) 
+			if (!isset($target->$field))
 			{
 				return Trigger::$ValueNotSetError;
 			}
@@ -49,7 +54,7 @@ class Trigger {
 			return false;
 		}
 	}
-	
+
 	function getJavascript() {
 		$js = "new SUGAR.forms.Trigger([";
 		for ($i=0; $i < sizeOf($this->triggerFields); $i++) {
@@ -61,7 +66,7 @@ class Trigger {
 		$js .= "], '" . str_replace("\n","",$this->conditionFunction) . "')";
 		return $js;
 	}
-	
+
 	function getCondition() {
 		return $this->conditionFunction;
 	}

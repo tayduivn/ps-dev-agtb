@@ -20,20 +20,24 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * Sugar Cache manager
+ * @api
+ */
 class SugarCache
 {
     const EXTERNAL_CACHE_NULL_VALUE = "SUGAR_CACHE_NULL_ZZ";
-    
+
     protected static $_cacheInstance;
-    
+
     /**
-     * @var true if the cache has been reset during this request, so we no longer return values from 
+     * @var true if the cache has been reset during this request, so we no longer return values from
      *      cache until the next reset
      */
     public static $isCacheReset = false;
-    
+
     private function __construct() {}
-    
+
     /**
      * initializes the cache in question
      */
@@ -44,7 +48,7 @@ class SugarCache
  	    foreach ( $locations as $location ) {
             if (sugar_is_dir($location) && $dir = opendir($location)) {
                 while (($file = readdir($dir)) !== false) {
-                    if ($file == ".." 
+                    if ($file == ".."
                             || $file == "."
                             || !is_file("$location/$file")
                             )
@@ -54,7 +58,7 @@ class SugarCache
                     if ( class_exists($cacheClass) && is_subclass_of($cacheClass,'SugarCacheAbstract') ) {
                         $GLOBALS['log']->debug("Found cache backend $cacheClass");
                         $cacheInstance = new $cacheClass();
-                        if ( $cacheInstance->useBackend() 
+                        if ( $cacheInstance->useBackend()
                                 && $cacheInstance->getPriority() < $lastPriority ) {
                             $GLOBALS['log']->debug("Using cache backend $cacheClass, since ".$cacheInstance->getPriority()." is less than ".$lastPriority);
                             self::$_cacheInstance = $cacheInstance;
@@ -65,7 +69,7 @@ class SugarCache
             }
         }
     }
-    
+
     /**
      * Returns the instance of the SugarCacheAbstract object, cooresponding to the external
      * cache being used.
@@ -74,10 +78,10 @@ class SugarCache
     {
         if ( !is_subclass_of(self::$_cacheInstance,'SugarCacheAbstract') )
             self::_init();
-        
+
         return self::$_cacheInstance;
     }
-    
+
     /**
      * Try to reset any opcode caches we know about
      *
@@ -150,9 +154,9 @@ function sugar_cache_clear($key)
 }
 
 /**
- * Turn off external caching for the rest of this round trip and for all round 
+ * Turn off external caching for the rest of this round trip and for all round
  * trips for the next cache timeout.  This function should be called when global arrays
- * are affected (studio, module loader, upgrade wizard, ... ) and it is not ok to 
+ * are affected (studio, module loader, upgrade wizard, ... ) and it is not ok to
  * wait for the cache to expire in order to see the change.
  */
 function sugar_cache_reset()
@@ -179,8 +183,8 @@ function sugar_clean_opcodes()
 }
 
 /**
- * Internal -- Determine if there is an external cache available for use.  
- * 
+ * Internal -- Determine if there is an external cache available for use.
+ *
  * @deprecated
  */
 function check_cache()
@@ -191,7 +195,7 @@ function check_cache()
 /**
  * This function is called once an external cache has been identified to ensure that it is correctly
  * working.
- * 
+ *
  * @deprecated
  *
  * @return true for success, false for failure.
@@ -199,7 +203,7 @@ function check_cache()
 function sugar_cache_validate()
 {
     $instance = SugarCache::instance();
-    
+
     return is_object($instance);
 }
 
