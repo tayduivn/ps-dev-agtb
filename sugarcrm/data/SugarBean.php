@@ -1075,8 +1075,7 @@ class SugarBean
         $fieldDefs= $this->getFieldDefinitions();
 
         if (!empty($fieldDefs)) {
-            foreach ($fieldDefs as $key=>$value_array)
-            {
+            foreach ($fieldDefs as $key=>$value_array) {
                 if ( (isset($value_array['importable'])
                         && (is_string($value_array['importable']) && $value_array['importable'] == 'false'
                             || is_bool($value_array['importable']) && $value_array['importable'] == false))
@@ -1093,20 +1092,7 @@ class SugarBean
                         $importableFields[$key]=$value_array;
                     }
                 }
-                else
-                {
-                    //Expose the cooresponding id field of a relate field if it is only defined as a link so that users can relate records by id during import
-                    if( isset($value_array['type']) && ($value_array['type'] == 'relate') && isset($value_array['id_name']) )
-                    {
-                        $idField = $value_array['id_name'];
-                        if( isset($fieldDefs[$idField]) && isset($fieldDefs[$idField]['type'] ) && $fieldDefs[$idField]['type'] == 'link' )
-                        {
-                            $tmpFieldDefs = $fieldDefs[$idField];
-                            $tmpFieldDefs['vname'] = translate($value_array['vname'], $this->module_dir) . " " . $GLOBALS['app_strings']['LBL_ID'];
-                            $importableFields[$idField]=$tmpFieldDefs;
-                        }
-                    }
-
+                else {
                     $importableFields[$key]=$value_array;
                 }
             }
