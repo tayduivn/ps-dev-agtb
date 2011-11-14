@@ -32,13 +32,15 @@
 {{/if}}
 
 <script>
-testing_module = "{$module}";
+testing_module = "{$smarty.request.module}";
 {literal}
 $(document).ready(function(){
-
-	$("#contentTable ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-	
-	$("#contentTable ul.clickMenu li").click(function() { //When trigger is clicked...
+    if (testing_module == "Contacts") {
+        $("#content ul.subnav").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    } else {
+	    $("#content ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    }
+	$("#content ul.clickMenu li").click(function() { //When trigger is clicked...
 		
 		//Following events are applied to the subnav itself (moving subnav up and down)
 		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
@@ -62,7 +64,7 @@ $(document).ready(function(){
 </script>
 
 
-<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" id="">
 <tr>
 <td class="buttons" align="left" NOWRAP>
 <div class="actionsContainer">

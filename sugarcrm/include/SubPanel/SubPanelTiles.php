@@ -419,22 +419,42 @@ EOQ;
 	function get_buttons($thisPanel,$panel_query=null)
 	{
 		$subpanel_def = $thisPanel->get_buttons();
-		$layout_manager = $this->getLayoutManager();
-		$widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>'. "\n";
-		$widget_contents .= '<td class="buttons">' . "\n";
-		$widget_contents .= '<ul class="clickMenu">'. "\n";
-        $widget_contents .= '<li>'. "\n";
-        $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";
-        $widget_contents .= '<ul class="subnav">' . "\n";
-        
+        $count = 0;
+        if (empty($subpanel_def)) {
+            return;
+            $layout_manager = $this->getLayoutManager();
+            $widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>' . "\n";
+            $widget_contents .= '<td class="buttons">' . "\n";
+            $widget_contents .= '<ul class="clickMenu">' . "\n";
+            $widget_contents .= '<li>' . "\n";
+            $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
+
+            $widget_contents .= '<ul class="subnav">' . "\n";
+        }
 		foreach($subpanel_def as $widget_data)
 		{
-			$widget_data['query']=urlencode($panel_query);
-			$widget_data['action'] = $_REQUEST['action'];
-			$widget_data['module'] =  $thisPanel->get_inst_prop_value('module');
-			$widget_data['focus'] = $this->focus;
-			$widget_data['subpanel_definition'] = $thisPanel;
-			
+            $widget_data['query']=urlencode($panel_query);
+            $widget_data['action'] = $_REQUEST['action'];
+            $widget_data['module'] = $thisPanel->get_inst_prop_value('module');
+            $widget_data['focus'] = $this->focus;
+            $widget_data['subpanel_definition'] = $thisPanel;
+
+            if ($count == 0) {
+                $layout_manager = $this->getLayoutManager();
+                $widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>' . "\n";
+                $widget_contents .= '<td class="buttons">' . "\n";
+                $widget_contents .= '<ul class="clickMenu">' . "\n";
+                $widget_contents .= '<li>' . "\n";
+                if ($_REQUEST['module'] == "Contacts" && $count == 0) {
+                    $widget_contents .= "<a>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
+                } else {
+                    $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
+                }
+
+                $widget_contents .= '<ul class="subnav">' . "\n";
+                $count++;
+                continue;
+            }
 
 			if(empty($widget_data['widget_class']))
 			{

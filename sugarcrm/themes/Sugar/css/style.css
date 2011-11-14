@@ -3908,6 +3908,7 @@ background-color: #276499;
 	
 	border-left: 0px;
 	color: #fff;
+	background-color: #276499;
 
 }
 
@@ -6131,7 +6132,6 @@ ul.clickMenu {
 	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
 	   border: 1px solid #aaaaaa;
 	   display: inline-block;
-	   min-width: 70px;
 }
 ul.clickMenu li {
 	float: left;
@@ -6157,6 +6157,12 @@ ul.clickMenu li > span { /*--Drop down trigger styles--*/
 	float: left;
 	background: url(../../../../index.php?entryPoint=getImage&imageName=MoreDetail.png) no-repeat center center;
 	cursor: pointer;
+}
+
+ul.clickMenu li > span.ab { /*--Drop down trigger styles--*/
+    border-left: 1px #aaa solid;
+    margin-left: 5px;
+    padding-left: 5px;
 }
 ul.clickMenu li span.subhover {cursor: pointer;} /*--Hover effect for trigger--*/
 ul.clickMenu li ul.subnav {
@@ -6271,7 +6277,15 @@ ul#globalLinks.clickMenu li > span {
 	height: 43px;
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=tabDownArrowOff.png);
 	background-position: 5px center;
-	width: 30px;
+	width: 20px;
+	margin-left: 5px;
+    padding-left: 5px;
+}
+
+ul.clickMenu li > span.ab {
+    border-left: 1px #aaa solid;
+    margin-left: 5px;
+    padding-left: 5px;
 }
 
 ul#globalLinks.clickMenu li ul.subnav {
@@ -6332,6 +6346,12 @@ ul#detailViewActions.clickMenu {
 	background: url(../../../../index.php?entryPoint=getImage&imageName=MoreDetail.png) no-repeat center center;
 	opacity: .5;
 	}
+
+#selectActionsDisabled span.ab {
+    border-left: 1px #ccc solid;
+    margin-left: 5px;
+    padding-left: 5px;
+}
 
 #selectActionsDisabled a, #selectActionsDisabled a:hover {
 	float: left;

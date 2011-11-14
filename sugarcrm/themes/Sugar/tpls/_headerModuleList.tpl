@@ -49,7 +49,11 @@
 				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
 				{/if}
 			{else}
-			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
+				{if $name == "Home"}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module label=$homeImage class="yuimenuitemlabel"}
+				{else}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
+				{/if}
 			{/if}
 			{if $shortcutTopMenu.$name}
 				<div id="{$groupTabId}{$name}" class="yuimenu dashletPanelMenu"><div class="bd">

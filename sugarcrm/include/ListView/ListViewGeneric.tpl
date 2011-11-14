@@ -33,13 +33,17 @@
 
 <script type='text/javascript' src='{sugar_getjspath file='include/javascript/popup_helper.js'}'></script>
 
-	
+
 <script>
+testing_module = "{$smarty.request.module}";
+
 {literal}
 $(document).ready(function(){
-
-	$("ul#selectActions.clickMenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-	
+    if (testing_module == "Contacts") {
+        $("ul#selectActions.clickMenu ul.subnav").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    } else {
+	    $("ul#selectActions.clickMenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    }
 	$("ul#selectActions.clickMenu li").click(function() { //When trigger is clicked...
 		
 		//Following events are applied to the subnav itself (moving subnav up and down)
@@ -51,7 +55,7 @@ $(document).ready(function(){
 		});
 
 		//Following events are applied to the trigger (Hover events for the trigger)
-		}).hover(function() { 
+		}).hover(function() {
 			$(this).addClass("subhover"); //On hover over, add class "subhover"
 		}, function(){	//On Hover Out
 			$(this).removeClass("subhover"); //On hover out, remove class "subhover"

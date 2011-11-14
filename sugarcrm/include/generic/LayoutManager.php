@@ -306,7 +306,7 @@ class LayoutManager
 		return null;
 	}
 
-	function widgetDisplay($widget_def, $use_default = false)
+	function widgetDisplay($widget_def, $use_default = false, $grabName = false, $nonbutton = false)
 	{
 		$theclass = $this->getClassFromWidgetDef($widget_def, $use_default);
  		$label = isset($widget_def['module']) ? $widget_def['module'] : '';
@@ -323,7 +323,10 @@ class LayoutManager
 		}
 		//end
 
-		return $theclass->display($widget_def);
+        if ($grabName) {
+            return $theclass->form_value;
+        }
+		return $theclass->display($widget_def, null, $nonbutton);
 	}
 
 	function widgetQuery($widget_def, $use_default = false)

@@ -36,9 +36,9 @@
 
 $(document).ready(function(){
 
-	$("#globalLinksModule ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	$("#dcmenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
-	$("ul.clickMenu li").click(function() { //When trigger is clicked...
+	$("#dcmenu ul.clickMenu li").click(function() { //When trigger is clicked...
 		
 		//Following events are applied to the subnav itself (moving subnav up and down)
 		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
@@ -107,6 +107,7 @@ SUGAR.append(SUGAR.themes, {
     setModuleTabs: function(html) {
         var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
         var el = document.getElementById('moduleList');
+        var qc = document.getElementById('quickCreate');
         if (el && el.parentNode) {
             var parent = el.parentNode;
 
@@ -122,7 +123,10 @@ SUGAR.append(SUGAR.themes, {
                 window.location.reload();
             }
             parent.removeChild(el);
-            parent.innerHTML += html;
+            var newdiv = document.createElement("div");
+            newdiv.innerHTML += html;
+            
+            parent.insertBefore(newdiv,qc);
             el = document.getElementById('moduleList');
             this.loadModuleList();
         }
