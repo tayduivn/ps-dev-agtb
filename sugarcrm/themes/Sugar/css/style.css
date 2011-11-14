@@ -1341,7 +1341,9 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #arrow {
     height:20px;
     width:25px;
-    background:#fff;
+    background-image:url(../../../../index.php?entryPoint=getImage&imageName=footer.png);
+    background-position:  0 -70px;
+    background-color:#fff;
     left:30px;
     bottom:0;
     position:fixed;
@@ -1354,7 +1356,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     border-right:1px solid #ccc;
 }
 .up {
-
+    background-position: 0 0!important;
 }
 #footer 
 {
