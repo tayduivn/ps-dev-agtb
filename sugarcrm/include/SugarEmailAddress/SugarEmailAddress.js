@@ -225,17 +225,12 @@
 		    var td6 = document.createElement("td");
 		    var td7 = document.createElement("td");
 		    var td8 = document.createElement("td");
-            var tabIndexCount = 0;
-
-            if(typeof(SUGAR.TabFields) !='undefined' && typeof(SUGAR.TabFields['email1']) != 'undefined'){
-                tabIndexCount = SUGAR.TabFields['email1'];
-            }
 
 		    // set input field attributes
 		    newContent.setAttribute("type", "text");
 		    newContent.setAttribute("name", this.id + "emailAddress" + this.numberEmailAddresses);
 		    newContent.setAttribute("id", this.id + "emailAddress" + this.numberEmailAddresses);
-		    newContent.setAttribute("tabindex", tabIndexCount);
+		    newContent.setAttribute("tabindex", "0");
 		    newContent.setAttribute("size", "30");
             newContent.setAttribute("title", SUGAR.language.get('app_strings', 'LBL_EMAIL_TITLE'));
 		
