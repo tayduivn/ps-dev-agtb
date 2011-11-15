@@ -446,14 +446,12 @@ EOQ;
                 $widget_contents .= '<ul class="clickMenu">' . "\n";
                 $widget_contents .= '<li>' . "\n";
                 if ($_REQUEST['module'] == "Contacts" && $count == 0) {
-                    $widget_contents .= "<a>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
+                    $widget_contents .= "<a onclick='document.getElementById(\"".$layout_manager->widgetDisplay($widget_data, false, false, true)."\").form.onsubmit()'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
                 } else {
                     $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
                 }
 
                 $widget_contents .= '<ul class="subnav">' . "\n";
-                $count++;
-                continue;
             }
 
 			if(empty($widget_data['widget_class']))
@@ -462,11 +460,16 @@ EOQ;
 			}
 			else
 			{
-				$widget_contents .= "<li>".$layout_manager->widgetDisplay($widget_data)."</li>";
+                if ($count == 0) {
+                    $hide = " style='display:none' class='noooo'";
+                } else {
+                    $hide = '';
+                }
+				$widget_contents .= "<li".$hide.">".$layout_manager->widgetDisplay($widget_data)."</li>";
 			}
 
-			
-		}
+            $count++;
+        }
 		
 		$widget_contents .= ' </ul>' . "\n";
         $widget_contents .= '</li>' . "\n";
