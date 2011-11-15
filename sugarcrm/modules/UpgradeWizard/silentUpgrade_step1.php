@@ -984,12 +984,6 @@ require_once('modules/Administration/Administration.php');
 $admin = new Administration();
 $admin->saveSetting('system','adminwizard',1);
 
-logThis('Upgrading user preferences start .', $path);
-if(function_exists('upgradeUserPreferences')){
-   upgradeUserPreferences();
-}
-logThis('Upgrading user preferences finish .', $path);
-
 //BEGIN SUGARCRM flav=pro ONLY
 if($ce_to_pro_ent){
 	if(function_exists('upgradeDashletsForSalesAndMarketing')){
