@@ -2289,7 +2289,7 @@ class Email extends SugarBean {
 
 
 	function fill_in_additional_list_fields() {
-		global $timedate;
+		global $timedate, $mod_strings;
 		$this->fill_in_additional_detail_fields();
 
 		$this->link_action = 'DetailView';
