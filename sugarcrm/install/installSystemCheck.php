@@ -208,7 +208,7 @@ if(!make_writable('./custom')) {
 }
 
 // data dir
-if(!make_writable('./data') || !make_writable('./data/upload')) {
+if(!make_writable('./data')) {
     $dataStatus = "<b><span class='stop'>{$mod_strings['ERR_CHECKSYS_FILES_NOT_WRITABLE']}</span></b>";
     installLog("ERROR:: {$mod_strings['ERR_CHECKSYS_FILES_NOT_WRITABLE']}");
     $error_found = true;
@@ -222,9 +222,6 @@ if(!make_writable('./data') || !make_writable('./data/upload')) {
             <b>'.$mod_strings['LBL_CHECKSYS_FIX_FILES'].'</b>';
         if(!make_writable('./data')) {
                 $error_txt .='<br>'.getcwd().'/data';
-            }
-        if(!make_writable('./data/upload')) {
-                $error_txt .='<br>'.getcwd().'/data/upload';
             }
         $error_txt .= '</td>
       </tr>';

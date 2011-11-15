@@ -637,7 +637,6 @@ EOQ;
 
         // data dir
         make_writable('./data');
-        create_writable_dir('./data/upload');
 
         // cache dir
         create_writable_dir(sugar_cached('custom_fields'));
