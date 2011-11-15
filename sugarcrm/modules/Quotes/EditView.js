@@ -120,7 +120,7 @@ function confirm_address_update(popup_reply_data)
 		if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account_(id|name)/)) {
 			
 			var displayValue = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
-			var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'');
+			var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'').replace(/<\/?[^>]+(>|$)/g, "");
 	
 			if(window.document.forms[form_name].elements[the_key]) {
 				

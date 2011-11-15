@@ -216,6 +216,7 @@ $mod_strings = array (
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	'LBL_QUOTE_INFORMATION' => 'Overview',
 	'LBL_LIST_MY_QUOTES' => 'My Quotes',
+    'LBL_ATTACHMENT' => 'Attachment' /*for 508 compliance fix*/,
     'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'This record currently contains values in the Address fields. To overwrite these values with the following Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );

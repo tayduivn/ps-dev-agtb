@@ -43,7 +43,6 @@ function process_create_instance($template_path, $instance_path, $template_url, 
 	sugar_cached('smarty'),
 	'custom',
 	'data',
-	'data/upload',
 	'include',
 	'include/javascript',
 	);

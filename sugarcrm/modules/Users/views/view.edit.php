@@ -165,7 +165,10 @@ class UsersViewEdit extends ViewEdit {
                 $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
             }
             if( !empty($this->bean->reports_to_id) ) {
-                $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
+                $reportsToUser = get_assigned_user_name($this->bean->reports_to_id);
+                $reportsToUserField = "<input type='text' name='reports_to_name' id='reports_to_name' value='{$reportsToUser}' disabled>\n";
+                $reportsToUserField .= "<input type='hidden' name='reports_to_id' id='reports_to_id' value='{$this->bean->reports_to_id}'>";
+                $this->ss->assign('REPORTS_TO_READONLY', $reportsToUserField);
             }
             if( !empty($this->bean->title) ) {
                 $this->ss->assign('TITLE_READONLY', $this->bean->title);
@@ -196,4 +199,36 @@ class UsersViewEdit extends ViewEdit {
         
     }
 
+
+    /**
+     * getHelpText
+     *
+     * This is a protected function that returns the help text portion.  It is called from getModuleTitle.
+     * We override the function from SugarView.php to make sure the create link only appears if the current user
+     * meets the valid criteria.
+     *
+     * @param $module String the formatted module name
+     * @return $theTitle String the HTML for the help text
+     */
+    protected function getHelpText($module)
+    {
+        $theTitle = '';
+
+        if($GLOBALS['current_user']->isAdminForModule('Users')
+		//BEGIN SUGARCRM flav=sales ONLY
+		|| $current_user->user_type == 'UserAdministrator'
+		//END SUGARCRM flav=sales ONLY
+        ) {
+        $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+        $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
+        $theTitle = <<<EOHTML
+&nbsp;
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'>
+<a href="{$url}" class="utilsLink">
+{$GLOBALS['app_strings']['LNK_CREATE']}
+</a>
+EOHTML;
+        }
+        return $theTitle;
+    }
 }
