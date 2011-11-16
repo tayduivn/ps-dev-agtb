@@ -81,21 +81,49 @@
 			{/if}
 			</li>
 		{/foreach}
-			{if count($tabGroup.extra) > 0}
-			<li class="yuimenubaritem moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
+			
+			<li class="yuimenubaritem moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
 				<a href="#" class="yuimenuitemlabel more"><span style="float: left;">More</span><em>&gt;&gt;</em></a>
 				<div id="More{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
 				<ul>
+
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}
-                  
-					<li>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}
+
+					<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}</li>
+
 					{/foreach}
+					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: void(0);" onclick="toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="moreItems.png"}"></a></li>
+					<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','less');">Show Less <img src="{sugar_getimagepath file="lessItems.png"}"></a></li>
+					
+	 {if $USE_GROUP_TABS}
+	 
+	 	{if count($tabGroup.extra) > 0}
+	 		<li class="menuHR"></li>
+	 	{/if}
+        <script type="text/javascript">
+        sugar_theme_gm_current = '{$currentGroupTab}';
+        Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
+        </script>
+        {* Tab group selection *}
+        <li class="">
+        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">Filter Menu By</a>
+        <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
+			<ul>
+          {foreach from=$groupTabs item=module key=group name=groupList}
+          <li {if $tabGroupName eq $group}class="yuimenuitem yuimenuitem-selected selected"{/if}><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="yuimenuitemlabel{if $tabGroupName eq $group} yuimenuitemlabel-selected selected{/if}">{$group}</a></li>
+          {/foreach}
+		  </ul>
+        </div><div class="clear"></div></div> 
+        </li>
+      {/if}
+      
+      
 				</ul>
 				</div>
 				<div class="clear"></div>
 				</div> 
 			</li>
-			{/if}
+			
 			
 		</ul>            
 	</div></div>

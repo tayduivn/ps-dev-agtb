@@ -2780,10 +2780,8 @@ embed
 	}
 	
 	.dashletPanelMenu .bd {
-	overflow:hidden;
 		background:none; 
 		border: 0;
-		position: relative;
 		padding: 0 22px;
 	}
 	
@@ -3891,7 +3889,7 @@ float: right;
 }
 
 #moduleList.yuimenubar .yuimenuitemlabel.group {
-color: #999;
+	
 }
 
 #moduleList.yuimenubar .yuimenuitemlabel.group img.folder  {
@@ -3989,9 +3987,12 @@ background-color: #355b7e;
 color: #fff;
 }
 
-#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover {
+#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover,  #moduleList .more .yuimenuitemlabel-selected,  #moduleList .more .selected{
 background-color: #355b7e;
 color: #fff;
+border-radius: 4px;
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
 }
 
 #moduleList .yui-menu-shadow-visible {
@@ -4030,7 +4031,7 @@ background-color: #cccccc\9;  /*ie hack */
 #moduleList .dashletPanelMenu .bd  {
 float: left;
 padding: 10px 10px 10px 10px;
-position: relative;
+
 width: 435px;
 
 background-color: #ffffff;
@@ -4190,6 +4191,33 @@ height: 43px;
 #moduleList .moduleTabExtraMenu  .yuimenuitemlabel.more.yuimenubaritemlabel-selected em {
 
 }
+
+
+
+#moduleList .menuHR {
+   border-top: 1px solid #DDDDDD;
+   margin: 10px 0;
+}
+
+#moduleList .moduleMenuOverFlowLess .yuimenuitemlabel img, #moduleList .moduleMenuOverFlowMore .yuimenuitemlabel img
+{
+	vertical-align: middle;
+}
+#moduleList .moduleTabExtraMenu .moduleMenuOverFlowLess .yuimenuitemlabel, #moduleList .moduleTabExtraMenu .moduleMenuOverFlowMore .yuimenuitemlabel {
+	font-weight: normal;
+}
+
+
+#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess{
+	display: none;
+}
+
+
+ #moduleList .moduleTabExtraMenu.showMore .moduleMenuOverFlowMore
+{
+display: none;	
+}
+
 
 #subModuleList 
 {

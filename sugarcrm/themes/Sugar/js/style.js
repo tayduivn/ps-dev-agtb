@@ -161,6 +161,8 @@ SUGAR.append(SUGAR.themes, {
 			oShadow = oElement.lastChild;
 			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
 
+			
+
             // We need to figure out the module name from the ID. Sometimes it will have the group name in it
             // But sometimes it will just use the module name (in the case of the All group which don't have the
             // group prefixes due to the automated testing suite.
@@ -176,6 +178,12 @@ SUGAR.append(SUGAR.themes, {
 				if(!oItem) return;
 
                 oSubmenu = oItem.cfg.getProperty("submenu");
+                
+                
+                
+                
+                
+                
 				if (!oSubmenu) return;
                 oSubmenu.removeItem(1,1);
 				oSubmenu.addItems(data,1);
@@ -222,6 +230,9 @@ SUGAR.append(SUGAR.themes, {
 		oShadowBodyCenter,
 		oBd,
 		oVR;
+		
+		parentIndex = this.parent.index;
+		 
 
 	if (this.parent) {
 
@@ -232,7 +243,23 @@ SUGAR.append(SUGAR.themes, {
 			offsetPadding = 0;
 			}
 		var newLeft = oElement.offsetLeft + offsetPadding;
+
 		
+			if(oElement.id == "MoreAll") {
+				
+				var aItemsMore = oMenuBar.getItems();
+				var oItemMore = aItemsMore[parentIndex];
+				oSubmenuMore = oItemMore.cfg.getProperty("submenu");
+				
+				oSubmenuMore.subscribe("click", oSubmenuMore.show);
+				var showMoreLiId = oSubmenuMore._aItemGroups[0][12].id;
+				var showMore = document.getElementById(showMoreLiId);
+				var showMoreLink = showMore.firstChild;
+				
+
+			}
+			
+			
 		oElement.style.left = newLeft + "px";
 		oBd = oElement.firstChild;
 		oShadow = oElement.lastChild;
@@ -262,7 +289,7 @@ SUGAR.append(SUGAR.themes, {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
 		    autosubmenudisplay: true,
             visible: false,
-		    hidedelay: 750,
+		    hidedelay: 70050,
 		    lazyload: true });
 	    /*
 	      Subscribe to the "beforeShow" and "show" events for
@@ -387,6 +414,19 @@ function sugar_theme_gm_switch( groupName ) {
 }
 
 offsetPadding = 0;
+
+function toggleMenuOverFlow(menuName,group,maction) {
+	var Sel = YAHOO.util.Selector, Dom = YAHOO.util.Dom;
+	if(maction == "more") {
+	Dom.addClass("moduleTabExtraMenu"+group, "showMore");
+	YAHOO.util.Dom.removeClass("moduleTabExtraMenu"+group,"showLess");
+	} else {
+	
+	Dom.addClass("moduleTabExtraMenu"+group, "showLess");
+	YAHOO.util.Dom.removeClass("moduleTabExtraMenu"+group,"showMore");
+	}
+	
+}
 
 function resizeHeader() {
 	var e = document.getElementById("contentTable");
