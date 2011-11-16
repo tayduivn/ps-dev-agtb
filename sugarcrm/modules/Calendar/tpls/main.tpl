@@ -52,6 +52,7 @@
 		CAL.item_text = "{$item_text}";
 		CAL.mouseover_expand = "{$mouseover_expand}";		
 		
+		CAL.celcount = {$celcount};
 		CAL.cells_per_day = {$cells_per_day};	
 		CAL.current_params = {literal}{}{/literal};
 		CAL.dashlet = "{$dashlet}";	
