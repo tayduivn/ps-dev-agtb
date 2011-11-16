@@ -464,17 +464,32 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         }
 		$button_count = 1;
 		$widget_contents = "";
+        $first = true;
 		foreach ($button_contents as $actions => $action) {
-			
-			$widget_contents .= "<li>".$action."</li>";
+            if ($first) {
+                $hide = " style:'display: none'";
+            } else {
+                $hide = "";
+            }
+			$widget_contents .= "<li$hide>".$action."</li>";
 			if(sizeof($button_contents) == $button_count) {
 				$count++;
                 $this->xTemplate->assign('CELL_COUNT', $count);
+                $pre = '<ul class="clickMenu subpanel records">'. "\n";
                 $this->xTemplate->assign('CLASS', "inlineButtons");
-                $pre = '<ul class="clickMenu subpanel records">'. "\n";;
-        		$pre .= '<li>'. "\n";;
-        		$pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";;
-        		$pre .= '<ul class="subnav">' . "\n";
+        		$pre .= '<li>'. "\n";
+                if ($_REQUEST['module'] == "Contacts") {
+                    $tempid = create_guid();
+                    $tempid2 = create_guid();
+                    $pre .= '<script type="text/javascript">
+                            var zzz = "'.$action.'";
+                            $("#'.$tempid.'").children().first().children()[0];
+                        </script>
+                        <span id='''></span>
+                } else {
+                    $pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";
+                }
+        		$pre .= '<ul class="subnav" id="'.$tempid.'">' . "\n";
         		$post = ' </ul>' . "\n";
 		        $post .= '</li>' . "\n";
 		        $post .= '</ul>' . "\n";
@@ -483,6 +498,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $this->xTemplate->parse($xtemplateSection.".row.cell");
 			}
 			$button_count++;
+            $first = false;
 		}
 
         $aItem->setupCustomFields($aItem->module_dir);
