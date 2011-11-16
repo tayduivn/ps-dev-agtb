@@ -478,7 +478,6 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
             }
 			$widget_contents .= "<li$hide>".$action."</li>";
-            echo sizeof($button_contents);
 			if(sizeof($button_contents) == $button_count) {
 				$count++;
                 $this->xTemplate->assign('CELL_COUNT', $count);
@@ -489,7 +488,6 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                     $tempid = create_guid();
                     $pre .= '<script type="text/javascript">
                             var zz = $("#'.$tempid.'").children().first().find("span").remove();
-                            console.log(zz);
                         </script>';
                     $pre .= "<div style='display: inline' id='$tempid'>".$firstaction."</div>";
                 } else {

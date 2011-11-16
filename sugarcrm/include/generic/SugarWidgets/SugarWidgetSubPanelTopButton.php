@@ -275,7 +275,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         }
 
         if ($nonbutton) {
-            $button = "<a onclick=''>$->form_value";
+            $button = "<a onclick=''>$this->form_value";
         }
         return $button;
 	}

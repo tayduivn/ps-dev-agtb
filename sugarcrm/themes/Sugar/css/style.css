@@ -869,6 +869,7 @@ border-radius: 6px;
 
 .list tr td.inlineButtons {
 	text-align: right;
+	min-width: 100px;
 }
 /* style for page content tables */
 .other
