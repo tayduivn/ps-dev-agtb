@@ -182,7 +182,7 @@ class UsersViewDetail extends ViewDetail {
 
         if($GLOBALS['current_user']->isAdminForModule('Users')
 		//BEGIN SUGARCRM flav=sales ONLY
-		|| $current_user->user_type == 'UserAdministrator'
+		|| $GLOBALS['current_user']->user_type == 'UserAdministrator'
 		//END SUGARCRM flav=sales ONLY
         ) {
         $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
