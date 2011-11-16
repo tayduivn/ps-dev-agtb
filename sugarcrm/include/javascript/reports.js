@@ -104,7 +104,6 @@ SUGAR.reports = function() {
 
 	var totalFilterRows = 0;
 	var totalDisplayColRows = 0;
-    var totalSummaryColRows = 0; // Bug #27623 we need another counter for summary display fields
 	var totalGroupByRows = 0;
 	var totalSqsEnabledFields = 0;
 	var fieldGridCell;
@@ -1933,7 +1932,7 @@ SUGAR.reports = function() {
 		},	
 			
 		addFieldToDisplaySummaries: function(e, linkedGroupById) {
-            totalSummaryColRows++;
+			totalDisplayColRows++;
 			var table = document.getElementById('displaySummariesTable');
 			if (document.getElementById('display_summary_help_row')) {
 				var tBody = table.childNodes[0];
@@ -1944,9 +1943,7 @@ SUGAR.reports = function() {
 			if (typeof(linkedGroupById) != 'undefined')
 				id = 'display_summaries_row_' + linkedGroupById;
 			else 
-            {
-                id = 'display_summaries_row_' + totalSummaryColRows;
-            }
+				id = 'display_summaries_row_' + totalDisplayColRows;
 
 			row.setAttribute('id', id);
 
@@ -2169,69 +2166,6 @@ SUGAR.reports = function() {
 			var displaySummaryTbl = document.getElementById('displaySummariesTable');
 			var tBody = displaySummaryTbl.childNodes[0];
 			tBody.removeChild(deleteRow);			
-            SUGAR.reports.rebuildSummaryIndexes(); // Bug #27623 We need to rebuild indexes
-		},
-        // Bug #27623 This function rebuild id of html nodes and full_table_list array of javascript
-        rebuildSummaryIndexes: function()
-        {
-            var oNode = document.getElementById('displaySummariesTable').childNodes[0];
-            var iIndex = 0;
-            var oAliases = {};
-            for (var i = 0; i < oNode.childNodes.length; i++)
-            {
-                var oItem = oNode.childNodes[i];
-                if (oItem.id == '')
-                {
-                    continue;
-                }
-
-                iIndex++;
-                if (oItem.id.match(/^display_summaries_row_\d+$/) == null)
-                {
-                    continue;
-                }
-                if (oItem.id == ('display_summaries_row_' + iIndex))
-                {
-                    continue;
-                }
-
-                oAliases[oItem.id] = 'display_summaries_row_' + iIndex;
-                var oldIndex = oItem.id.replace(/^[^\d]*/,'');
-                SUGAR.reports.rebuildSummaryNode(oItem, oldIndex, iIndex);
-            }
-            totalSummaryColRows = iIndex;
-
-            for (var i in full_table_list)
-            {
-                if (typeof full_table_list[i].dependents != 'object')
-                {
-                    continue;
-                }
-                for (var j =0; j < full_table_list[i].dependents.length; j++)
-                {
-                    if (typeof oAliases[full_table_list[i].dependents[j]] != 'undefined')
-                    {
-                        full_table_list[i].dependents[j] = oAliases[full_table_list[i].dependents[j]];
-                    }
-                }
-            }
-        },
-        // Bug #27623 This method change id of nodes recursive
-        rebuildSummaryNode: function(oNode, oldIndex, iIndex)
-        {
-            if (typeof oNode.id == 'undefined')
-            {
-                return;
-            }
-            oNode.id = oNode.id.replace(oldIndex, iIndex);
-            if (oNode.tagName == 'IMG' && oNode.src.match(/\bdelete_inline\.gif$/) != null)
-            {
-                oNode.onclick = 'SUGAR.reports.deleteDisplaySummary("display_summaries_row_' + iIndex + '")';
-            }
-            for (var i = 0; i < oNode.childNodes.length; i++)
-            {
-                SUGAR.reports.rebuildSummaryNode(oNode.childNodes[i], oldIndex, iIndex);
-            }
 		},		
 		deleteFilter: function(index, row, table) {
 			var deleteRow = document.getElementById(row);
@@ -3202,38 +3136,37 @@ SUGAR.reports = function() {
 				return;
 			key = key.replace(/>/g,':');
 			//Upgraded content strings don't have dependents.
-            // Bug #27623 We should remove dependents from all items of full_table_list
-            for (var i in full_table_list)
-            {
-                if (typeof full_table_list[i].dependents != 'object')
-                {
-                    continue;
-                }
-                var dependents = [];
-                for (var j =0; j < full_table_list[i].dependents.length; j++)
-                {
-                    if (full_table_list[i].dependents[j] == rowId || full_table_list[i].dependents[j] == null || document.getElementById(full_table_list[i].dependents[j]) == null)
-                    {
-                        delete full_table_list[i].dependents[j];
-                    }
-                    else
-                    {
-                        dependents.push(full_table_list[i].dependents[j]);
-                    }
-                }
-                if (dependents.length == 0)
-                {
-                    delete full_table_list[i].dependents;
-                }
-                else
-                {
-                    full_table_list[i].dependents = dependents;
-                }
-            }
-            if (typeof full_table_list[key].dependents == 'undefined' && key != 'self')
-            {
-                delete full_table_list[key];
-            }
+			if (full_table_list[key].dependents) {
+				if (full_table_list[key].dependents.length == 1){
+					delete full_table_list[key];
+				}
+				else {
+					var dependents = full_table_list[key].dependents;
+					for (var i = 0; i < dependents.length; i++) {
+						if (dependents[i] == rowId) {
+							delete dependents[i];
+						}
+					}
+					var allUndefined = true;
+					for (var i = 0; i < dependents.length; i++) {
+						if (typeof(dependents[i]) != 'undefined') {
+							allUndefined = false;
+							break;
+						}
+					}
+					if ((typeof(full_table_list[key].dependents) == 'undefined' || allUndefined) && key !='self') {
+						delete full_table_list[key];
+					}
+					
+					/*
+					for (var i = 0; i < dependents.length; i++) {
+						if (dependents[i] == rowId) {
+							dependents.splice(i,1);
+							break;
+						}
+					}*/
+				}
+			}
 		},
 		cleanFullTableList: function() {
 			for (i in full_table_list) {
@@ -3586,7 +3519,7 @@ SUGAR.reports = function() {
 			if (typeof(field) == 'undefined')
 				return;
 
-            totalSummaryColRows++;
+			totalDisplayColRows++;
 			var link = summaryColumn.table_key.replace(/:/g,'>');
 			if (link == "self") {
 				link = module;
@@ -3620,9 +3553,7 @@ SUGAR.reports = function() {
 			if (linkedGroupById != null)
 				id = 'display_summaries_row_' + linkedGroupById;
 			else 
-            {
-                id = 'display_summaries_row_' + totalSummaryColRows;
-            }
+				id = 'display_summaries_row_' + totalDisplayColRows;
 			
 			row.setAttribute('id', id);
 			var cell = row.insertCell(0);
@@ -3951,13 +3882,7 @@ SUGAR.reports = function() {
 	        myDataTable.subscribe("rowSelectEvent", SUGAR.reports.gridRowClickHandler);
 	        */
 	        myDataTable.subscribe("rowClickEvent", SUGAR.reports.gridRowClickHandler);
-
-            //jclark - bug 47376
-            YAHOO.util.Event.removeListener("dt_input", "keyup");
-            YAHOO.util.Event.removeListener("dt_input", "focus");
-            YAHOO.util.Event.removeListener("dt_input", "blur");
-            //end fix
-            
+	        
 			var oACDS = myDataSource;
 	        oACDS.queryMatchContains = true; 
 	        var oAutoComp = new YAHOO.widget.AutoComplete("dt_input","dt_ac_container", oACDS);
@@ -3976,7 +3901,7 @@ SUGAR.reports = function() {
 	        }
 			var dtBody = YAHOO.util.Dom.getElementsByClassName("yui-dt-bd", "", document.getElementById("module_fields"))[0];
 			if (diffOffsetHeight > 0) {
-				dtBody.style.height = (dtBody.offsetHeight + dtBodyOffsetHeight - diffOffsetHeight) + "px";
+				dtBody.style.height = dtBodyOffsetHeight - diffOffsetHeight + "px";
 			} // if
 			var dtInput = document.getElementById("dt_input");
 			dtInput.value = SUGAR.language.get('Reports','LBL_COMBO_TYPE_AHEAD');
@@ -4185,7 +4110,6 @@ SUGAR.reports = function() {
 			report_type = reportType;
 			totalFilterRows = 0;
 			totalDisplayColRows = 0;
-            totalSummaryColRows = 0;
 			totalGroupByRows = 0;			
 			currWizardStep = 1;
 			if (matrixReport && matrixReport == true)

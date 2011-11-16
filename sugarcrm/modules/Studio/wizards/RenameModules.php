@@ -450,13 +450,13 @@ class RenameModules
 
 		$layout_defs = array();
 
-        if ( isset($bean->module_dir) && file_exists( 'modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') )
+        if ( file_exists( 'modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') )
             require('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php');
 
-        if ( isset($bean->module_dir) && file_exists( 'custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
+        if ( file_exists( 'custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
             require('custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');
 
-        return isset($bean->module_dir) && isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
+         return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
 	}
 
     /**
@@ -568,8 +568,7 @@ class RenameModules
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
 		}
-
-		require(sugar_cached('dashlets/dashlets.php'));
+		require_once(sugar_cached('dashlets/dashlets.php'));
 
         foreach($this->changedModules as $moduleName => $replacementLabels)
         {
