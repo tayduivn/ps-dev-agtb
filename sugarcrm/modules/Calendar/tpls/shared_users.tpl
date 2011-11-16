@@ -84,19 +84,33 @@
 {/literal}
 </script>
 
-<div id="shared_cal_edit" style="display: none;">
+<div id="shared_cal_edit" style="{$style}">
 	<form name="shared_cal" action="index.php" method="post">
 	<input type="hidden" name="module" value="Calendar">
 	<input type="hidden" name="action" value="index">
+	<input type="hidden" name="edit_shared" value="">
 	<input type="hidden" name="view" value="shared">
+	
+	{* //BEGIN SUGARCRM flav=pro ONLY *}
+	<table cellpadding="1" cellspacing="1" border="0" class="edit view" align="center">
+		<tr>
+			<td valign='top' nowrap><b>{$MOD.LBL_FILTER_BY_TEAM}</b></td>
+			<td valign='top'>
+				<select id="shared_team_id" onchange="this.form.edit_shared.value = '1'; this.form.submit();" name="shared_team_id">
+					{$teams_options}
+				</select>
+		</tr>
+	</table>
+	{* //END SUGARCRM flav=pro ONLY *}
+	
 	<table cellpadding="0" cellspacing="3" border="0" align="center">
 		<tr><th valign="top" align="center" colspan="2">{$MOD.LBL_SELECT_USERS}</th></tr>
 		<tr><td valign="top"></td><td valign="top">
 			<table cellpadding="1" cellspacing="1" border="0" class="edit view" align="center">
 				<tr>
-					<td valign="top" nowrap=""><b>{$MOD.LBL_USERS}</b></td>
+					<td valign="top" nowrap=""><b>{$MOD.LBL_USERS}:</b></td>
 					<td valign="top" id="shared_ids_td">
-						<select id="shared_ids" name="shared_ids[]" multiple size="8">{$options}</select>
+						<select id="shared_ids" name="shared_ids[]" multiple size="8">{$users_options}</select>
 					</td>					
 					<td>
 						<a onclick="up('shared_ids');">{$UP}</a><br>

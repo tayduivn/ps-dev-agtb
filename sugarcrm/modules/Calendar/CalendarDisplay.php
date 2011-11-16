@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
 class CalendarDisplay {	
 
 	/** 
@@ -418,20 +416,51 @@ class CalendarDisplay {
 	}
 	
 	/**
-	 * display html used in shared view (legacy code from old calendar)
+	 * display html used in shared view
 	 */
 	public function display_shared_html(){
-			global $app_strings,$cal_strings,$action;
-			
-			if(empty($_SESSION['shared_ids']))
-				$_SESSION['shared_ids'] = "";
-				
+			global $app_strings,$cal_strings,$action;			
+							
 			$ss = new Sugar_Smarty();
 			$ss->assign("APP",$app_strings);
 			$ss->assign("MOD",$cal_strings);
 			$ss->assign("UP",SugarThemeRegistry::current()->getImage('uparrow_big', 'border="0" style="margin-bottom: 1px;"', null, null, '.gif', $app_strings['LBL_SORT']));
 			$ss->assign("DOWN",SugarThemeRegistry::current()->getImage('downarrow_big', 'border="0" style="margin-top: 1px;"', null, null, '.gif', $app_strings['LBL_SORT']));
-			$ss->assign("options",get_select_options_with_id(get_user_array(false), $this->cal->shared_ids));
+			
+			if(empty($_REQUEST['edit_shared'])){
+				$ss->assign("style","display: none");
+			}
+			
+			//BEGIN SUGARCRM flav=pro ONLY
+			$teams = get_team_array(false);
+			array_unshift($teams, '');
+			$ss->assign("teams_options",get_select_options_with_id($teams, $this->cal->shared_team_id));
+			//END SUGARCRM flav=pro ONLY	
+			
+			//BEGIN SUGARCRM flav=pro ONLY
+			if(!empty($this->cal->shared_team_id)){
+				$team = new Team();
+				$team->retrieve($this->cal->shared_team_id);
+               			$users = $team->get_team_members(true);
+				$user_ids = array();
+				
+				$use_real_names = $GLOBALS['current_user']->getPreference('use_real_names');
+				$showLastNameFirst = $GLOBALS['current_user']->showLastNameFirst();			
+				foreach($users as $user){
+					if($use_real_names){
+						if($showLastNameFirst){
+							$user_ids[$user->id] = trim($user->last_name . ' ' . $user->first_name);
+						}else{
+							$user_ids[$user->id] = trim($user->first_name . ' ' . $user->last_name);
+						}
+					}else{
+ 	                     			$user_ids[$user->id] = $user->user_name;
+					}
+				}
+				$ss->assign("users_options",get_select_options_with_id($user_ids, $this->cal->shared_ids));
+			}else
+			//END SUGARCRM flav=pro ONLY
+			$ss->assign("users_options",get_select_options_with_id(get_user_array(false), $this->cal->shared_ids));
 			
 			$tpl = "modules/Calendar/tpls/shared_users.tpl";	
 			echo $ss->fetch($tpl);

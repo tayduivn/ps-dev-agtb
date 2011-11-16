@@ -6126,3 +6126,17 @@ li.active a img.deletePageImg {
     font-weight: bold;
     font-size: 1.2em;
 }
+
+/* miscellaneaous 508 classes */
+.detail508 tr td[scope="col"]
+{
+    color: #888;
+    background-color: #eee;
+    border-color: #ccc;
+    text-align: right;
+}
+
+.edit508 tr td[scope="col"]
+{
+    background-color: #eee;
+}

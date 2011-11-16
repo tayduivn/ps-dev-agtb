@@ -27,13 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-
 require_once('include/utils/activity_utils.php');
 require_once('modules/Calendar/CalendarUtils.php');
 require_once('modules/Calendar/CalendarActivity.php');
-
 
 class Calendar {
 	
@@ -49,6 +45,10 @@ class Calendar {
 	public $acts_arr = array(); // Array of activities objects	
 	public $items = array(); // Array of activities data to be displayed	
 	public $shared_ids = array(); // ids of users for shared view
+	
+	//BEGIN SUGARCRM flav=pro ONLY
+	public $shared_team_id = ''; // team id for user list of shared view
+	//END SUGARCRM flav=pro ONLY
 	
 	public $cells_per_day; // entire 24h day count of slots 	
 	public $grid_start_ts; // start timestamp of calendar grid
@@ -253,6 +253,19 @@ class Calendar {
 	 */	
 	public function init_shared(){
 		global $current_user;
+		
+		//BEGIN SUGARCRM flav=pro ONLY
+		$shared_team_id = $current_user->getPreference('shared_team_id');
+		if(!empty($shared_team_id) && !isset($_REQUEST['shared_team_id'])) {
+			$this->shared_team_id = $shared_team_id;
+		}else if(isset($_REQUEST['shared_team_id'])) {
+			$this->shared_team_id = $_REQUEST['shared_team_id'];
+			$current_user->setPreference('shared_team_id', $_REQUEST['shared_team_id']);
+		}else{
+			$this->shared_team_id = '';
+		}
+		//END SUGARCRM flav=pro ONLY
+		
 		$user_ids = $current_user->getPreference('shared_ids');
 		if(!empty($user_ids) && count($user_ids) != 0 && !isset($_REQUEST['shared_ids'])) {
 			$this->shared_ids = $user_ids;

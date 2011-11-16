@@ -38,10 +38,17 @@ $viewdefs['Users']['EditView'] = array(
                       ),
     'panels' => array (
         'LBL_USER_INFORMATION' => array (
-            array('user_name','first_name'),
+            array(
+                array(
+                    'name'=>'user_name',
+                    'displayParams' => array('required'=>true),
+                    ),
+                'first_name'
+            ),
             array(array(
                       'name' => 'status',
                       'customCode' => '{if $IS_ADMIN}@@FIELD@@{else}{$STATUS_READONLY}{/if}',
+                      'displayParams' => array('required'=>true),
                   ),
                   'last_name'),
             array(array(
