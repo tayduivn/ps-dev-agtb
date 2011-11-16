@@ -468,8 +468,14 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 		foreach ($button_contents as $actions => $action) {
             if ($first) {
                 $hide = " style:'display: none'";
+                $firstaction = $action;
+
+                			$button_count++;
+                            $first = false;
+                continue;
             } else {
                 $hide = "";
+
             }
 			$widget_contents .= "<li$hide>".$action."</li>";
             echo sizeof($button_contents);
@@ -485,7 +491,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                             var zz = $("#'.$tempid.'").children().first().find("span").remove();
                             console.log(zz);
                         </script>';
-                    $pre .= "<div style='display: inline' id='$tempid'>".$action."</div>";
+                    $pre .= "<div style='display: inline' id='$tempid'>".$firstaction."</div>";
                 } else {
                     $pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";
                 }
