@@ -65,8 +65,8 @@ class SugarWidgetFieldDate extends SugarWidgetFieldDateTime
         $end = $layout_def['input_name1'];
         $column = $this->_get_column_select($layout_def);
 
-        return "(".$this->queryDateOp($column, $begin, "<=", "date")." AND ".
-            $this->queryDateOp($column, $end, ">=", "date").")\n";
+        return "(".$this->queryDateOp($column, $begin, ">=", "date")." AND ".
+            $this->queryDateOp($column, $end, "<=", "date").")\n";
     }
 
 }
