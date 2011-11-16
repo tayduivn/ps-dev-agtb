@@ -595,9 +595,12 @@ class UserViewHelper {
         $dformat = $locale->getPrecedentPreference($this->bean->id?'datef':'default_date_format', $this->bean);
         $tformat = $locale->getPrecedentPreference($this->bean->id?'timef':'default_time_format', $this->bean);
         $nformat = $locale->getPrecedentPreference('default_locale_name_format', $this->bean);
+        if (!array_key_exists($nformat, $sugar_config['name_formats'])) {
+            $nformat = $sugar_config['default_locale_name_format'];
+        }
         $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $tformat);
         $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $dformat);
-        $nameOptions = get_select_options_with_id($locale->getPrettyLocaleNameOptions($sugar_config['name_formats']), $nformat);
+        $nameOptions = get_select_options_with_id($locale->getUsableLocaleNameOptions($sugar_config['name_formats']), $nformat);
         $this->ss->assign('TIMEOPTIONS', $timeOptions);
         $this->ss->assign('DATEOPTIONS', $dateOptions);
         $this->ss->assign('NAMEOPTIONS', $nameOptions);

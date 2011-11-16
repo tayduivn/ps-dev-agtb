@@ -658,6 +658,7 @@ function deleteChance(){
  * @param $file String path to uploaded zip file
  */
 function upgradeUWFiles($file) {
+    echo("***** upgradeUWFiles *****");
 	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached("upgrades/temp"));
 
 	unzip($file, $cacheUploadUpgradesTemp);
@@ -672,41 +673,46 @@ function upgradeUWFiles($file) {
 	$allFiles = array();
 	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
 
-	// upgradeWizard
-	if(file_exists("$from_dir/modules/UpgradeWizard")) {
-		$allFiles[] = findAllFiles("$from_dir/modules/UpgradeWizard", $allFiles);
-	}
-	// moduleInstaller
-	if(file_exists("$from_dir/ModuleInstall")) {
-		$allFiles[] = findAllFiles("$from_dir/ModuleInstall", $allFiles);
-	}
-	if(file_exists("$from_dir/include/javascript/yui")) {
-		$allFiles[] = findAllFiles("$from_dir/include/javascript/yui", $allFiles);
-	}
-	if(file_exists("$from_dir/HandleAjaxCall.php")) {
-		$allFiles[] = "$from_dir/HandleAjaxCall.php";
-	}
-	if(file_exists("$from_dir/include/SugarTheme")) {
-		$allFiles[] = findAllFiles("$from_dir/include/SugarTheme", $allFiles);
-	}
-	if(file_exists("$from_dir/include/SugarCache")) {
-		$allFiles[] = findAllFiles("$from_dir/include/SugarCache", $allFiles);
-	}
-	if(file_exists("$from_dir/include/utils/external_cache.php")) {
-		$allFiles[] = "$from_dir/include/utils/external_cache.php";
-	}
-	if(file_exists("$from_dir/include/upload_file.php")) {
-		$allFiles[] = "$from_dir/include/upload_file.php";
-	}
-	if(file_exists("$from_dir/include/file_utils.php")) {
-		$allFiles[] = "$from_dir/include/file_utils.php";
-	}
-	if(file_exists("$from_dir/include/upload_file.php")) {
-		$allFiles[] = "$from_dir/include/upload_file.php";
-	}
-	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
-		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
-	}
+    // Localization
+    echo("***** upgradeUWFiles - Localization *****");
+    if(file_exists("$from_dir/include/Localization/Localization.php")) {
+        $allFiles[] = "$from_dir/include/Localization/Localization.php";
+    }
+    // upgradeWizard
+    if(file_exists("$from_dir/modules/UpgradeWizard")) {
+        $allFiles[] = findAllFiles("$from_dir/modules/UpgradeWizard", $allFiles);
+    }
+    // moduleInstaller
+    if(file_exists("$from_dir/ModuleInstall")) {
+        $allFiles[] = findAllFiles("$from_dir/ModuleInstall", $allFiles);
+    }
+    if(file_exists("$from_dir/include/javascript/yui")) {
+        $allFiles[] = findAllFiles("$from_dir/include/javascript/yui", $allFiles);
+    }
+    if(file_exists("$from_dir/HandleAjaxCall.php")) {
+        $allFiles[] = "$from_dir/HandleAjaxCall.php";
+    }
+    if(file_exists("$from_dir/include/SugarTheme")) {
+        $allFiles[] = findAllFiles("$from_dir/include/SugarTheme", $allFiles);
+    }
+    if(file_exists("$from_dir/include/SugarCache")) {
+        $allFiles[] = findAllFiles("$from_dir/include/SugarCache", $allFiles);
+    }
+    if(file_exists("$from_dir/include/utils/external_cache.php")) {
+        $allFiles[] = "$from_dir/include/utils/external_cache.php";
+    }
+    if(file_exists("$from_dir/include/upload_file.php")) {
+        $allFiles[] = "$from_dir/include/upload_file.php";
+    }
+    if(file_exists("$from_dir/include/file_utils.php")) {
+        $allFiles[] = "$from_dir/include/file_utils.php";
+    }
+    if(file_exists("$from_dir/include/upload_file.php")) {
+        $allFiles[] = "$from_dir/include/upload_file.php";
+    }
+    if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+        $allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
+    }
     // users
     if(file_exists("$from_dir/modules/Users")) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);
@@ -3254,10 +3260,31 @@ function upgradeDashletsForSalesAndMarketing() {
  *
  */
 function upgradeUserPreferences() {
+    global $sugar_config, $sugar_version;
+    $uw_strings = return_module_language($GLOBALS['current_language'], 'UpgradeWizard');
+
+    $localization = new Localization();
+    $localeCoreDefaults = $localization->getLocaleConfigDefaults();
 
     // check the current system wide default_locale_name_format and add it to the list if it's not there
-    global $sugar_config;
-    upgradeLocaleNameFormat($sugar_config['default_locale_name_format']);
+    if(empty($sugar_config['name_formats'])) {
+        $sugar_config['name_formats'] = $localeCoreDefaults['name_formats'];
+        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+            $errors[] = $uw_strings['ERR_UW_CONFIG_WRITE'];
+        }
+    }
+
+    $currentDefaultLocaleNameFormat = $sugar_config['default_locale_name_format'];
+
+    if ($localization->isAllowedNameFormat($currentDefaultLocaleNameFormat)) {
+        upgradeLocaleNameFormat($currentDefaultLocaleNameFormat);
+    } else {
+        $sugar_config['default_locale_name_format'] = $localeCoreDefaults['default_locale_name_format'];
+        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+            $errors[] = $uw_strings['ERR_UW_CONFIG_WRITE'];
+        }
+        $localization->createInvalidLocaleNameFormatUpgradeNotice();
+    }
 
 //BEGIN SUGARCRM flav=pro ONLY
 	if(file_exists($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
@@ -3295,16 +3322,22 @@ function upgradeUserPreferences() {
    	while($row = $db->fetchByAssoc($result))
     {
         $current_user = new User();
+        $current_user->retrieve($row['id']);
 
         // get the user's name locale format, check if it's in our list, add it if it's not, keep it as user's default
-        upgradeLocaleNameFormat($current_user->getPreference('default_locale_name_format'));
+        $currentUserNameFormat = $current_user->getPreference('default_locale_name_format');
+        if ($localization->isAllowedNameFormat($currentUserNameFormat)) {
+            upgradeLocaleNameFormat($currentUserNameFormat);
+        } else {
+            $current_user->setPreference('default_locale_name_format', 's f l', 0, 'global');
+            $current_user->savePreferencesToDB();
+        }
 
         //BEGIN SUGARCRM flav=pro ONLY
-          $changed = false;
-	      $current_user->retrieve($row['id']);
+        $changed = false;
 
 
-
+          
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3391,7 +3424,7 @@ function upgradeUserPreferences() {
         //END SUGARCRM flav=pro ONLY
 	} //while
 //BEGIN SUGARCRM flav=pro ONLY
-
+    
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable
@@ -3444,22 +3477,30 @@ function upgradeUserPreferences() {
 	//END SUGARCRM flav=pro ONLY
 }
 
+
 /**
  * Checks if a locale name format is part of the default list, if not adds it to the config
  * @param $name_format string a local name format string such as 's f l'
  * @return bool true on successful write to config file, false on failure;
  */
 function upgradeLocaleNameFormat($name_format) {
-    global $sugar_config, $sugar_version, $mod_strings;
+    global $sugar_config, $sugar_version;
+
+    $localization = new Localization();
+    $localeConfigDefaults = $localization->getLocaleConfigDefaults();
+
+    $uw_strings = return_module_language($GLOBALS['current_language'], 'UpgradeWizard');
     if(empty($sugar_config['name_formats'])) {
-        $sugar_config['name_formats'] = array();
+        $sugar_config['name_formats'] = $localeConfigDefaults['name_formats'];
+        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+            $errors[] = $uw_strings['ERR_UW_CONFIG_WRITE'];
+        }
     }
     if (!in_array($name_format, $sugar_config['name_formats'])) {
         $new_config = sugarArrayMerge($sugar_config['name_formats'], array($name_format=>$name_format));
         $sugar_config['name_formats'] = $new_config;
         if(!rebuildConfigFile($sugar_config, $sugar_version)) {
-            logThis('*** ERROR: could not write config.php! - upgrade will fail!');
-            $errors[] = $mod_strings['ERR_UW_CONFIG_WRITE'];
+            $errors[] = $uw_strings['ERR_UW_CONFIG_WRITE'];
             return false;
         }
     }
