@@ -97,8 +97,8 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $begin = $this->expandDate($layout_def['input_name0']);
      	$end = $this->expandDate($layout_def['input_name1'], true);
         $column = $this->_get_column_select($layout_def);
-	    return "(".$this->queryDateOp($column, $begin, "<=", "datetime")." AND ".
-            $this->queryDateOp($column, $end, ">=", "datetime").")\n";
+	    return "(".$this->queryDateOp($column, $begin, ">=", "datetime")." AND ".
+            $this->queryDateOp($column, $end, "<=", "datetime").")\n";
 	}
 
 	function queryFilterNot_Equals_str($layout_def)
