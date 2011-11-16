@@ -25,7 +25,7 @@ require_once('modules/Users/UserViewHelper.php');
 
 
 class UsersViewEdit extends ViewEdit {
-
+var $useForSubpanel = true;
  	function UsersViewEdit(){
  		parent::ViewEdit();
  	}
@@ -68,6 +68,18 @@ class UsersViewEdit extends ViewEdit {
         //lets set the return values
         if(isset($_REQUEST['return_module'])){
             $this->ss->assign('RETURN_MODULE',$_REQUEST['return_module']);
+        }
+
+        //lets set the return values
+        $this->ss->assign('IS_ADMIN',false);
+        if($current_user->is_admin){
+            $this->ss->assign('IS_ADMIN',true);
+        }
+
+        //make sure we can populate user type dropdown.  This usually gets populated in predisplay unless this is a quickeditform
+        if(!isset($this->fieldHelper)){
+            $this->fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
+            $this->fieldHelper->setupUserTypeDropdown();
         }
 
         if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
@@ -181,11 +193,11 @@ class UsersViewEdit extends ViewEdit {
         $processSpecial = false;
         $processFormName = '';
         //BEGIN SUGARCRM flav!=sales ONLY
-        if ( $this->fieldHelper->usertype == 'GROUP'
+        if ( isset($this->fieldHelper->usertype) && ($this->fieldHelper->usertype == 'GROUP'
              //BEGIN SUGARCRM flav=ent ONLY
              || $this->fieldHelper->usertype == 'PORTAL_ONLY'
              //END SUGARCRM flav=ent ONLY
-            ) {
+            )) {
             $this->ev->formName = 'EditViewGroup';
             
             $processSpecial = true;
@@ -216,7 +228,7 @@ class UsersViewEdit extends ViewEdit {
 
         if($GLOBALS['current_user']->isAdminForModule('Users')
 		//BEGIN SUGARCRM flav=sales ONLY
-		|| $current_user->user_type == 'UserAdministrator'
+		|| $GLOBALS['current_user']->user_type == 'UserAdministrator'
 		//END SUGARCRM flav=sales ONLY
         ) {
         $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');

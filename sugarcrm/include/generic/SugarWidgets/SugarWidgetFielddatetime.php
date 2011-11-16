@@ -72,7 +72,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	    if($this->hasTime($date)) {
 	        return $date;
 	    }
-	    $date = $timedate->fromUserDate($date);
+	    $date = $timedate->fromString($date);
 	    if($end) {
 	        return $date->setTime(23, 59, 59);
 	    } else {
@@ -97,8 +97,8 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $begin = $this->expandDate($layout_def['input_name0']);
      	$end = $this->expandDate($layout_def['input_name1'], true);
         $column = $this->_get_column_select($layout_def);
-	    return "(".$this->queryDateOp($column, $begin, "<=", "datetime")." AND ".
-            $this->queryDateOp($column, $end, ">=", "datetime").")\n";
+	    return "(".$this->queryDateOp($column, $begin, ">=", "datetime")." AND ".
+            $this->queryDateOp($column, $end, "<=", "datetime").")\n";
 	}
 
 	function queryFilterNot_Equals_str($layout_def)
@@ -186,7 +186,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	        $field_name = $this->reporter->db->convert(
 	            $this->reporter->db->convert($this->_get_column_select($layout_def), 'date_format', '%Y-%m-%d'),
 	            "CONCAT",
-	            array(' ', $this->reporter->db->convert($layout_def['rel_field'], 'time_format'))
+	            array("' '", $this->reporter->db->convert($layout_def['rel_field'], 'time_format'))
 	        );
 	    } else {
 	       $field_name = $this->_get_column_select($layout_def);
@@ -497,7 +497,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	    $column = $this->_get_column_select($layout_def);
 	    return $this->reporter->db->convert($this->reporter->db->convert($column, "date_format", array('%Y')),
 	        	'CONCAT',
-	            array('-', $this->reporter->db->convert($column, "quarter")))
+	            array("'-'", $this->reporter->db->convert($column, "quarter")))
 	        ." ".$this->_get_column_alias($layout_def)."\n";
 	}
 
@@ -516,7 +516,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $column = $this->_get_column_select($layout_def);
 	    return $this->reporter->db->convert($this->reporter->db->convert($column, "date_format", array('%Y')),
 	        	'CONCAT',
-	            array('-', $this->reporter->db->convert($column, "quarter")));
+	            array("'-'", $this->reporter->db->convert($column, "quarter")));
 	}
 
     function displayInput(&$layout_def) {

@@ -185,7 +185,7 @@ class UserViewHelper {
      * At the end of the function two Smarty variables (USER_TYPE_DROPDOWN and USER_TYPE_READONLY) are assigned.
      *
      */
-    protected function setupUserTypeDropdown() {
+    public function setupUserTypeDropdown() {
         global $current_user;
         
 
