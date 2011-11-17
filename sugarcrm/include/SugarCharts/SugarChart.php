@@ -804,29 +804,17 @@ class SugarChart {
 		return $templateFile;
 	}
 
-<<<<<<< HEAD
-	function getDashletScript($id,$xmlFile="")
-    {
-		global $current_user;
-        $xmlFile = (!$xmlFile) ? sugar_cached("xml/"). $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
-        $chartStringsXML = sugar_cached("xml/").'chart_strings.' . $current_language .'.lang.xml';
-
-        $this->ss->assign('chartName', $id);
-        $this->ss->assign('chartXMLFile', $xmlFile);
-        $this->ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
-        $this->ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
-        $this->ss->assign('chartLangFile', sugar_cached("xml/").'chart_strings.' . $GLOBALS['current_language'] .'.lang.xml');
  	        
 	function getDashletScript($id,$xmlFile="") {
 
-	$xmlFile = (!$xmlFile) ? sugar_cached("xml/"). $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
-	$chartStringsXML = sugar_cached("xml/").'chart_strings.' . $current_language .'.lang.xml';
+	$xmlFile = (!$xmlFile) ? $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
+	$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
 
 	$this->ss->assign('chartName', $id);
     $this->ss->assign('chartXMLFile', $xmlFile);
     $this->ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
     $this->ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
-    $this->ss->assign('chartLangFile', sugar_cached("xml/").'chart_strings.' . $GLOBALS['current_language'] .'.lang.xml');
+    $this->ss->assign('chartLangFile', $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $GLOBALS['current_language'] .'.lang.xml');
 
 		$templateFile = "";
 		return $templateFile;
