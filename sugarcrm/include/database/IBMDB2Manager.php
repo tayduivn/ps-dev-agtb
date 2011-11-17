@@ -1210,21 +1210,6 @@ EOQ;
 		return "utf8_general_ci";
 	}
 
-	/**
-	 * List of available collation settings
-	 * @return array
-	 */
-	public function getCollationList()
-	{
-		$q = "SHOW COLLATION LIKE 'utf8%'";
-		$r = $this->query($q);
-		$res = array();
-		while($a = $this->fetchByAssoc($r)) {
-			$res[] = $a['Collation'];
-		}
-		return $res;
-	}
-
 	/**+
 	 * @see DBManager::renameColumnSQL()
 	 * Only supported
