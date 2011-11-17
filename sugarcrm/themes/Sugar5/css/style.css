@@ -3633,7 +3633,8 @@ ul.tablist li a.current:link, ul.tablist li a.current:visited, ul.tablist li a.c
 {
     padding-left:10px;
 }
-/* //END SUGARCRM flav!=com */
+/* //END SUGARCRM flav!=com || flav=dev ONLY */
+
 #basic_search_link
 {
     margin-left:6px !important;
@@ -3668,4 +3669,14 @@ li div.star {float:none;}
     top: 7px;
     border: 1px solid #aaa;
 	padding: 5px;
+}
+
+
+/* miscellaneaous 508 classes */
+.detail508 tr td[scope="col"]
+{
+    background-color: #F6F6F6;
+    border-color: #CBDAE6;
+    color: #000000;
+    text-align: right;
 }
