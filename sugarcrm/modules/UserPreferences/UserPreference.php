@@ -384,10 +384,6 @@ class UserPreference extends SugarBean
             if($user->id == $GLOBALS['current_user']->id) {
                 SugarApplication::redirect('index.php');
             }
-            else{
-                SugarApplication::redirect("index.php?module=Users&record=".$_REQUEST['record']."&action=DetailView"); //bug 48170 
-            }
-
         }
     }
 
