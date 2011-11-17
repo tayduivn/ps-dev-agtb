@@ -29,15 +29,20 @@
 
 <div id="quickCreate">
 
-<ul class="clickMenu">
+<ul class="clickMenu showLess">
 
             <li>
                 <a href='javascript: void(0);'></a>
 
                 <ul class="subnav">
-				{foreach from=$DCACTIONS item=action}
-					<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);">{$action.createRecordTitle}</a></li>
+				{foreach from=$DCACTIONS item=action name=quickCreate}
+					<li {if $smarty.foreach.quickCreate.index > 4}class="moreOverflow"{/if}><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);">{$action.createRecordTitle}</a></li>
+					
 				{/foreach}
+				
+				{if count($DCACTIONS) > 4}
+					<li><a href="javascript: toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','less');">Show More</a></li>
+				{/if}
 				
 				
 				{foreach from=$DYNAMICDCACTIONS item=action}

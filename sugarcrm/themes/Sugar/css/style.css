@@ -4209,7 +4209,7 @@ height: 43px;
 }
 
 
-#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess{
+#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess, #quickCreate .clickMenu.showLess .moreOverflow{
 	display: none;
 }
 
@@ -6192,7 +6192,13 @@ ul.clickMenu li a{
 	font-weight: normal !important;
 	padding: 1px 0px 1px 10px !important;
 	color: #000;
+	font-size: 13px;
 }
+
+ul.clickMenu li.single a{ 
+	padding-right: 8px !important;	
+}
+
 ul.clickMenu li a:hover{
 text-decoration: none !important;
 }

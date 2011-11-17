@@ -431,6 +431,7 @@ EOQ;
 
             $widget_contents .= '<ul class="subnav">' . "\n";
         }
+        //for action button at the top of each subpanel
 		foreach($subpanel_def as $widget_data)
 		{
             $widget_data['query']=urlencode($panel_query);
@@ -444,14 +445,22 @@ EOQ;
                 $widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>' . "\n";
                 $widget_contents .= '<td class="buttons">' . "\n";
                 $widget_contents .= '<ul class="clickMenu">' . "\n";
-                $widget_contents .= '<li>' . "\n";
+                if(count($subpanel_def) == 1) {
+                	$widget_contents .= '<li class="single">' . "\n";
+                } else {
+                	$widget_contents .= '<li>' . "\n";
+                }
                 if ($_REQUEST['module'] == "Contacts" && $count == 0) {
-                    $widget_contents .= "<a onclick='document.getElementById(\"".$layout_manager->widgetDisplay($widget_data, false, false, true)."\").form.onsubmit()'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
+                    $widget_contents .= "<a onclick='document.getElementById(\"".$layout_manager->widgetDisplay($widget_data, false, false, true)."\").form.onsubmit()' href='javascript: void(0);'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
                 } else {
                     $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
                 }
 
-                $widget_contents .= '<ul class="subnav">' . "\n";
+                $widget_contents .= '<ul class="subnav' . "\n";
+                if(count($subpanel_def) > 1) {
+                	$widget_contents .= " multi";	
+                }
+                $widget_contents .= '">';
             }
 
 			if(empty($widget_data['widget_class']))

@@ -465,6 +465,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 		$button_count = 1;
 		$widget_contents = "";
         $first = true;
+        // this is for inline buttons on listviews
 		foreach ($button_contents as $actions => $action) {
             if ($first) {
                 $hide = " style:'display: none'";
@@ -483,7 +484,11 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $this->xTemplate->assign('CELL_COUNT', $count);
                 $pre = '<ul class="clickMenu subpanel records">'. "\n";
                 $this->xTemplate->assign('CLASS', "inlineButtons");
-        		$pre .= '<li>'. "\n";
+                if(sizeof($button_contents) == 1) {
+        			$pre .= '<li class="single">'. "\n";
+                } else {
+                	$pre .= '<li>'. "\n";
+                }
                 if ($_REQUEST['module'] == "Contacts") {
                     $tempid = create_guid();
                     $pre .= '<script type="text/javascript">
@@ -493,7 +498,12 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 } else {
                     $pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";
                 }
-        		$pre .= '<ul class="subnav" id="'.$tempid.'">' . "\n";
+        		$pre .= '<ul class="subnav';
+        		if(sizeof($button_contents) > 1) {
+        			$pre .= " multi";
+        		}
+        		
+        		$pre .='" id="'.$tempid.'">' . "\n";
         		$post = ' </ul>' . "\n";
 		        $post .= '</li>' . "\n";
 		        $post .= '</ul>' . "\n";

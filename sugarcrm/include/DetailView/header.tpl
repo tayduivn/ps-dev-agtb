@@ -37,10 +37,10 @@ testing_module = "{$smarty.request.module}";
 $(document).ready(function(){
     if (testing_module == "Contacts") {
     	var selector = "#content ul.clickMenu li span";
-        $("#content ul.subnav").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+        $("#content ul.subnav.multi").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
     } else {
     	var selector = "#content ul.clickMenu li";
-	    $("#content ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	    $("#content ul.subnav.multi").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
     }
     
     
@@ -96,7 +96,7 @@ $(document).ready(function(){
                 <a id='' href="javascript: void(0);">Actions</a>
             {{/if}}
 
-                <ul class="subnav">
+                <ul class="subnav multi">
 
 
 

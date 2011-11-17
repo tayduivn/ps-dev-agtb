@@ -92,8 +92,10 @@
 					<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}</li>
 
 					{/foreach}
-					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: void(0);" onclick="toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="moreItems.png"}"></a></li>
+					{if count($tabGroup.extra) > 5}
+					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="moreItems.png"}"></a></li>
 					<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','less');">Show Less <img src="{sugar_getimagepath file="lessItems.png"}"></a></li>
+					{/if}
 					
 	 {if $USE_GROUP_TABS}
 	 
