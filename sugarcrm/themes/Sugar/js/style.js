@@ -123,10 +123,7 @@ SUGAR.append(SUGAR.themes, {
                 window.location.reload();
             }
             parent.removeChild(el);
-            var newdiv = document.createElement("div");
-            newdiv.innerHTML += html;
-            
-            parent.insertBefore(newdiv,qc);
+            parent.innerHTML += html;
             el = document.getElementById('moduleList');
             this.loadModuleList();
         }
@@ -289,7 +286,7 @@ SUGAR.append(SUGAR.themes, {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
 		    autosubmenudisplay: true,
             visible: false,
-		    hidedelay: 70050,
+		    hidedelay: 750,
 		    lazyload: true });
 	    /*
 	      Subscribe to the "beforeShow" and "show" events for

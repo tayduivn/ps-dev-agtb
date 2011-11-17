@@ -496,6 +496,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                         </script>';
                     $pre .= "<div style='display: inline' id='$tempid'>".$firstaction."</div>";
                 } else {
+                	$tempid = "";
                     $pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";
                 }
         		$pre .= '<ul class="subnav';
