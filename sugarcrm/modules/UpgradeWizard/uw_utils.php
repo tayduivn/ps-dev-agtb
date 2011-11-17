@@ -658,8 +658,7 @@ function deleteChance(){
  * @param $file String path to uploaded zip file
  */
 function upgradeUWFiles($file) {
-    echo("***** upgradeUWFiles *****");
-	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached("upgrades/temp"));
+    $cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached("upgrades/temp"));
 
 	unzip($file, $cacheUploadUpgradesTemp);
 
@@ -674,7 +673,6 @@ function upgradeUWFiles($file) {
 	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
 
     // Localization
-    echo("***** upgradeUWFiles - Localization *****");
     if(file_exists("$from_dir/include/Localization/Localization.php")) {
         $allFiles[] = "$from_dir/include/Localization/Localization.php";
     }
