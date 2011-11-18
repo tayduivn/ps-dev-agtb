@@ -28,6 +28,7 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $globalDefaultTheme;
     var $unavailableThemes;
+    var $customThemeDef;
 
     public function setUp()
     {
@@ -42,6 +43,13 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
             $this->unavailableThemes = $GLOBALS['sugar_config']['disabled_themes'];
             unset($GLOBALS['sugar_config']['disabled_themes']);
         }
+
+        if(file_exists('custom/themes/default/themedef.php'))
+        {
+            $this->customThemeDef = file_get_contents('custom/themes/default/themedef.php');
+            unlink('custom/themes/default/themedef.php');
+        }
+
     }
 
     public function tearDown()
@@ -56,6 +64,11 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
         {
             $GLOBALS['sugar_config']['disabled_themes'] = $this->unavailableThemes;
             unset($this->unavailableThemes);
+        }
+
+        if(!empty($this->customThemeDef))
+        {
+            file_put_contents('custom/themes/default/themedef.php', $this->customThemeDef);
         }
     }
 
