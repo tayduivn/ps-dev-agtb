@@ -3357,7 +3357,7 @@ ul.subTabs li a:link, ul.subTabs li a:visited
 /* module list in header.tpl */
 #moduleList
 {
-    height: 45px;
+    height: 43px;
 }
 
 #subModuleList
@@ -4209,7 +4209,7 @@ height: 43px;
 }
 
 
-#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess, #quickCreate .clickMenu.showLess .moreOverflow{
+#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess {
 	display: none;
 }
 
@@ -6311,6 +6311,11 @@ text-shadow: none;
 border-radius: 0px;
 -webkit-border-radius: 0px;
 
+}
+
+
+ul.clickMenu.showLess .moreOverflow , ul.clickMenu.showLess .moduleMenuOverFlowLess, ul.clickMenu.showMore .moduleMenuOverFlowMore {
+	display:none;
 }
 
 #globalLinksDivider {

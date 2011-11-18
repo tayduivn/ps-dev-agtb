@@ -38,15 +38,28 @@ $(document).ready(function(){
 
 	$("#dcmenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
-	$("#dcmenu ul.clickMenu li").click(function() { //When trigger is clicked...
-		
+	$("#dcmenu ul.clickMenu li").click(function(event) { //When trigger is clicked...
+	console.log(event.currentTarget.className);
+	if(event.currentTarget.className != "moduleMenuOverFlowMore subhover" && event.currentTarget.className != "moduleMenuOverFlowLess subhover") {
+		$(document).find("ul.subnav").hide();//hide all menus
+	}
 		//Following events are applied to the subnav itself (moving subnav up and down)
-		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+		$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
 
-		$(this).parent().hover(function() {
-		}, function(){	
-			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
-		});
+
+$('body').click(function() {
+  //Hide the menus if visible
+  //console.log($(this).parent().find("ul.subnav"));
+   $(this).parent().find("ul.subnav").hide();;
+});
+
+  
+     
+
+  event.stopPropagation();
+
+
+
 
 		//Following events are applied to the trigger (Hover events for the trigger)
 		}).hover(function() { 
@@ -122,9 +135,12 @@ SUGAR.append(SUGAR.themes, {
                 //If the menu fails to load, we can get leave the user stranded, reload the page instead.
                 window.location.reload();
             }
-            parent.removeChild(el);
-            parent.innerHTML += html;
-            el = document.getElementById('moduleList');
+            //parent.removeChild(el);
+            //var newdiv = document.createElement("div");
+            el.innerHTML = html;
+            
+            //parent.insertBefore(newdiv,qc);
+            //el = document.getElementById('moduleList');
             this.loadModuleList();
         }
     },
@@ -412,15 +428,14 @@ function sugar_theme_gm_switch( groupName ) {
 
 offsetPadding = 0;
 
-function toggleMenuOverFlow(menuName,group,maction) {
+function toggleMenuOverFlow(menuName,maction) {
 	var Sel = YAHOO.util.Selector, Dom = YAHOO.util.Dom;
 	if(maction == "more") {
-	Dom.addClass("moduleTabExtraMenu"+group, "showMore");
-	YAHOO.util.Dom.removeClass("moduleTabExtraMenu"+group,"showLess");
+		Dom.addClass(menuName, "showMore");
+		YAHOO.util.Dom.removeClass(menuName,"showLess");
 	} else {
-	
-	Dom.addClass("moduleTabExtraMenu"+group, "showLess");
-	YAHOO.util.Dom.removeClass("moduleTabExtraMenu"+group,"showMore");
+		Dom.addClass(menuName, "showLess");
+		YAHOO.util.Dom.removeClass(menuName,"showMore");
 	}
 	
 }

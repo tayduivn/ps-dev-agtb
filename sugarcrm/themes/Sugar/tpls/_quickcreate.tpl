@@ -29,7 +29,7 @@
 
 <div id="quickCreate">
 
-<ul class="clickMenu showLess">
+<ul class="clickMenu showLess" id="quickCreateUL">
 
             <li>
                 <a href='javascript: void(0);'></a>
@@ -41,7 +41,8 @@
 				{/foreach}
 				
 				{if count($DCACTIONS) > 4}
-					<li><a href="javascript: toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','less');">Show More</a></li>
+					<li class="moduleMenuOverFlowMore"><a href="javascript: toggleMenuOverFlow('quickCreateUL','more');">Show More</a></li>
+					<li class="moduleMenuOverFlowLess"><a href="javascript: toggleMenuOverFlow('quickCreateUL','less');">Show Less</a></li>
 				{/if}
 				
 				

@@ -44,15 +44,16 @@ $(document).ready(function(){
     }
     
     
-	$(selector).click(function() { //When trigger is clicked...
-		
-		//Following events are applied to the subnav itself (moving subnav up and down)
-		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+	$(selector).click(function(event) { //When trigger is clicked...
+	$(document).find("ul.subnav").hide();//hide all menus
+	$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
 
-		$(this).parent().hover(function() {
-		}, function(){	
-			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
-		});
+  $('body').one('click',function() {
+    // Hide the menus
+     $(this).parent().find("ul.subnav").hide();
+  });
+
+  event.stopPropagation();
 
 		//Following events are applied to the trigger (Hover events for the trigger)
 		}).hover(function() { 

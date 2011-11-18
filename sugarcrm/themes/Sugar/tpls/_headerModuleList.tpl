@@ -27,7 +27,9 @@
  ********************************************************************************/
 *}
 {assign var='underscore' value='_'}
+{if $AJAX ne "1"}
 <div class="yuimenubar yuimenubarnav" id="moduleList">
+{/if}
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
   {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
   {if $tabGroupName == 'All'}
@@ -93,8 +95,8 @@
 
 					{/foreach}
 					{if count($tabGroup.extra) > 5}
-					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="moreItems.png"}"></a></li>
-					<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleMenu','{$currentGroupTab}','less');">Show Less <img src="{sugar_getimagepath file="lessItems.png"}"></a></li>
+					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="moreItems.png"}"></a></li>
+					<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','less');">Show Less <img src="{sugar_getimagepath file="lessItems.png"}"></a></li>
 					{/if}
 					
 	 {if $USE_GROUP_TABS}
@@ -130,4 +132,7 @@
 		</ul>            
 	</div></div>
 {/foreach}
+
+{if $AJAX ne "1"}
 </div>
+{/if}
