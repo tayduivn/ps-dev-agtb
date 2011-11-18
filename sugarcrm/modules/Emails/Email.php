@@ -139,6 +139,7 @@ class Email extends SugarBean {
 		require_once('modules/Emails/EmailUI.php');
 		$this->et = new EmailUI();
 	}
+
 	function bean_implements($interface){
 		switch($interface){
 			case 'ACL': return true;
@@ -678,9 +679,6 @@ class Email extends SugarBean {
 		if(!empty($request['documents'])) {
 			$exDocs = explode("::", $request['documents']);
 
-
-
-
 			foreach($exDocs as $docId) {
 				$docId = trim($docId);
 				if(!empty($docId)) {
@@ -1043,8 +1041,6 @@ class Email extends SugarBean {
 	 */
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType)
 	{
-	    global $sugar_config;
-
 	    $tmpNote = new Note();
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
