@@ -1345,19 +1345,18 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background-image:url(../../../../index.php?entryPoint=getImage&imageName=footer.png);
     background-position:  0 -70px;
     background-color:#fff;
-    left:30px;
+    right:0;
     bottom:0;
     position:fixed;
     cursor:pointer;
     z-index:999;
     border-top-left-radius:3px;
-    border-top-right-radius:3px;
     border-top:1px solid #ccc;
     border-left:1px solid #ccc;
-    border-right:1px solid #ccc;
 }
 .up {
     background-position: 0 0!important;
+    border:0!important;
 }
 #footer 
 {
