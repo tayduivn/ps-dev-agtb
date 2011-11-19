@@ -50,6 +50,12 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/themes/default/themedef.php');
         }
 
+        //Blowout all existing cache/themes that may not have been cleaned up
+        if(file_exists('cache/themes'))
+        {
+            rmdir_recursive('cache/themes');
+        }
+
     }
 
     public function tearDown()
