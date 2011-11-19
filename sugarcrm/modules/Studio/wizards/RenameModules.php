@@ -567,8 +567,9 @@ class RenameModules
             require_once('include/Dashlets/DashletCacheBuilder.php');
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
-		}
-		include(sugar_cached('dashlets/dashlets.php'));
+	}
+
+        include(sugar_cached('dashlets/dashlets.php'));
 
         foreach($this->changedModules as $moduleName => $replacementLabels)
         {

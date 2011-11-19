@@ -195,8 +195,8 @@ abstract class DBManager
 			'double'   => 'float',
 			'float'    => 'float',
 			'uint'     => 'int',
-			'ulong'    => 'int',
-			'long'     => 'int',
+			'ulong'    => 'bigint',
+			'long'     => 'bigint',
 			'short'    => 'int',
 			'date'     => 'date',
 			'datetime' => 'date',
@@ -2069,6 +2069,15 @@ protected function checkQuery($sql, $object_name = false)
 						return 0;
 					}
 					return intval($val);
+                case 'bigint' :
+                    $val = (float)$val;
+					if (!empty($fieldDef['required']) && $val == false){
+						if (isset($fieldDef['default'])){
+							return $fieldDef['default'];
+						}
+						return 0;
+					}
+                    return $val;
 				case 'float':
 					if (!empty($fieldDef['required'])  && $val == ''){
 						if (isset($fieldDef['default'])){
