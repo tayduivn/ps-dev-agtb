@@ -69,4 +69,20 @@ class SugarWidgetFieldDate extends SugarWidgetFieldDateTime
             $this->queryDateOp($column, $end, "<=", "date").")\n";
     }
 
+    /**
+     * queryDay
+     *
+     * This function create a date specific query.  For date fields (not datetime) we just call queryFilterOn to
+     * trigger an equals match rather than a range.
+     *
+     * @param $layout_def Mixed value containing the field's layout definition from the report
+     * @param $day SugarDateTime instance
+     */
+    protected function queryDay($layout_def, SugarDateTime $day)
+    {
+        //When querying for (yesterday, today or tomorrow) on date field we set the input_name0 to the db date format
+        $layout_def['input_name0'] = $day->get_day_begin()->asDbDate();
+        return $this->queryFilterOn($layout_def);
+    }
+
 }
