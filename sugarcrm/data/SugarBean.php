@@ -1303,7 +1303,7 @@ class SugarBean
                 $type == 'enum') &&
                 !empty($this->$key)
             ) {
-                $this->$key = SugarCleaner::cleanHtml($this->$key);
+                $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             }
         }
     }

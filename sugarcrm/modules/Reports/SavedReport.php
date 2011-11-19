@@ -112,7 +112,7 @@ class SavedReport extends SugarBean
 		}
 
 		// cn: SECURITY bug 12272
-		$name = SugarCleaner::cleanHtml($name);
+		$name = filter_var($name, FILTER_SANITIZE_STRIPPED, FILTER_FLAG_NO_ENCODE_QUOTES);
 		$json = getJSONobj();
 		$tmpContent = $json->decode($content, false);
 

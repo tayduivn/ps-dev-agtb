@@ -1956,18 +1956,12 @@ function getDefaultXssTags() {
 /**
  * Remove potential xss vectors from strings
  * @param string str String to search for XSS attack vectors
- * @param bool cleanImg Flag to allow <img> tags to survive - only used by InboundEmail for inline images.
+ * @deprecated
  * @return string
  */
-function remove_xss($str, $cleanImg=true)
+function remove_xss($str)
 {
-    $potentials = clean_xss($str, $cleanImg);
-    if(is_array($potentials) && !empty($potentials)) {
-        foreach($potentials as $bad) {
-            $str = str_replace($bad, "", $str);
-        }
-    }
-    return $str;
+    return SugarCleaner::cleanHtml($str, false);
 }
 
 /**
