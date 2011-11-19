@@ -68,8 +68,7 @@ class JotPadDashlet extends Dashlet {
      */
     function display() {
         $ss = new Sugar_Smarty();
-        $xss = SugarCleaner::cleanHtml($this->savedText, false);
-        $ss->assign('savedText', $this->savedText);
+        $ss->assign('savedText', SugarCleaner::cleanHtml($this->savedText));
         $ss->assign('saving', $this->dashletStrings['LBL_SAVING']);
         $ss->assign('saved', $this->dashletStrings['LBL_SAVED']);
         $ss->assign('id', $this->id);
@@ -130,9 +129,7 @@ class JotPadDashlet extends Dashlet {
             else $options['height'] = '100';
         }
 
-//        $options['savedText'] = br2nl($this->savedText);
         $options['savedText'] = $this->savedText;
-
         return $options;
     }
 
@@ -144,9 +141,8 @@ class JotPadDashlet extends Dashlet {
         $json = getJSONobj();
     	if(isset($_REQUEST['savedText'])) {
             $optionsArray = $this->loadOptions();
-//            _pp($_REQUEST['savedText']);
             $optionsArray['savedText']=$json->decode(html_entity_decode($_REQUEST['savedText']));
-            $optionsArray['savedText']=SugarCleaner::cleanHtml(nl2br($optionsArray['savedText']), false);
+            $optionsArray['savedText']=SugarCleaner::cleanHtml(nl2br($optionsArray['savedText']));
             $this->storeOptions($optionsArray);
 
         }

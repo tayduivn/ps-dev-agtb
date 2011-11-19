@@ -1183,9 +1183,9 @@ class Email extends SugarBean {
 
 		if($ret) {
 			$ret->retrieveEmailText();
-		    $ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source, false);
-			$ret->description = SugarCleaner::cleanHtml(to_html($ret->description), false);
-            $ret->description_html = SugarCleaner::cleanHtml($ret->description_html, false);
+		    $ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source);
+			$ret->description = to_html($ret->description);
+            $ret->description_html = SugarCleaner::cleanHtml($ret->description_html);
 			$ret->retrieveEmailAddresses();
 
 			$ret->date_start = '';

@@ -798,7 +798,7 @@ class InboundEmail extends SugarBean {
 						break;
 
 						default:
-							$overview->$colDef['name'] = SugarCleaner::cleanHtml(from_html($overview->$colDef['name']), false);
+							$overview->$colDef['name'] = SugarCleaner::cleanHtml(from_html($overview->$colDef['name']));
 							$values .= $this->db->quoted($overview->$colDef['name']);
 						break;
 					}

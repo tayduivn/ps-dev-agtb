@@ -1003,7 +1003,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
         $exemptDropdowns[] = "parent_type_display";
         $exemptDropdowns[] = "record_type_display";
         $exemptDropdowns[] = "record_type_display_notes";
-   
+
 	foreach($app_list_strings as $key=>$value)
 	{
 		if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
@@ -1955,18 +1955,12 @@ function getDefaultXssTags() {
 /**
  * Remove potential xss vectors from strings
  * @param string str String to search for XSS attack vectors
- * @param bool cleanImg Flag to allow <img> tags to survive - only used by InboundEmail for inline images.
+ * @deprecated
  * @return string
  */
-function remove_xss($str, $cleanImg=true)
+function remove_xss($str)
 {
-    $potentials = clean_xss($str, $cleanImg);
-    if(is_array($potentials) && !empty($potentials)) {
-        foreach($potentials as $bad) {
-            $str = str_replace($bad, "", $str);
-        }
-    }
-    return $str;
+    return SugarCleaner::cleanHtml($str, false);
 }
 
 /**
@@ -3725,10 +3719,10 @@ function getPhpInfo($level=-1) {
  */
 function string_format($format, $args){
 	$result = $format;
-    
+
     /** Bug47277 fix.
      * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
-     * IN () fails and IN ('') works. 
+     * IN () fails and IN ('') works.
      */
     if (count($args) == 1)
     {
@@ -3740,7 +3734,7 @@ function string_format($format, $args){
         }
     }
     /* End of fix */
-    
+
 	for($i = 0; $i < count($args); $i++){
 		$result = str_replace('{'.$i.'}', $args[$i], $result);
 	}
