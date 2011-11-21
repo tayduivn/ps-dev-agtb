@@ -381,9 +381,6 @@ class UserPreference extends SugarBean
             $this->setPreference('ut', $ut);
             $this->setPreference('timezone', $timezone);
             $this->savePreferencesToDB();
-            if($user->id == $GLOBALS['current_user']->id) {
-                SugarApplication::redirect('index.php');
-            }
         }
     }
 
