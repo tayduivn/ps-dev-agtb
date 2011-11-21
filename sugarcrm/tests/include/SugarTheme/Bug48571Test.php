@@ -28,6 +28,7 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $globalDefaultTheme;
     var $unavailableThemes;
+    var $customThemeDef;
 
     public function setUp()
     {
@@ -42,6 +43,19 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
             $this->unavailableThemes = $GLOBALS['sugar_config']['disabled_themes'];
             unset($GLOBALS['sugar_config']['disabled_themes']);
         }
+
+        if(file_exists('custom/themes/default/themedef.php'))
+        {
+            $this->customThemeDef = file_get_contents('custom/themes/default/themedef.php');
+            unlink('custom/themes/default/themedef.php');
+        }
+
+        //Blowout all existing cache/themes that may not have been cleaned up
+        if(file_exists('cache/themes'))
+        {
+            rmdir_recursive('cache/themes');
+        }
+
     }
 
     public function tearDown()
@@ -57,16 +71,21 @@ class Bug48571Test extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['sugar_config']['disabled_themes'] = $this->unavailableThemes;
             unset($this->unavailableThemes);
         }
+
+        if(!empty($this->customThemeDef))
+        {
+            file_put_contents('custom/themes/default/themedef.php', $this->customThemeDef);
+        }
     }
 
     public function testBuildRegistry()
     {
+        //BEGIN SUGARCRM flav=com ONLY
+        $this->markTestSkipped('Skip for community edition builds for now as this was to test a ce->pro upgrade');
+        //END SUGARCRM flav=com ONLY
+        
         SugarThemeRegistry::buildRegistry();
         $themeObject = SugarThemeRegistry::current();
-        //BEGIN SUGARCRM flav=com ONLY
-        $this->assertRegExp('/Classic/i', $themeObject->__get('name'), 'Assert that buildRegistry defaults to the Sugar theme');
-        //END SUGARCRM flav=com ONLY
-
         //BEGIN SUGARCRM flav=pro ONLY
         $this->assertRegExp('/Pacific/i', $themeObject->__get('name'), 'Assert that buildRegistry defaults to the Sugar theme');
         //END SUGARCRM flav=pro ONLY
