@@ -1355,6 +1355,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     border-left:1px solid #ccc;
 }
 .up {
+    background-color:transparent!important;
     background-position: 0 0!important;
     border:0!important;
 }
@@ -1370,7 +1371,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* IE10+ */
     background: linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
-    padding:7px 20px 10px 20px;
+    padding:5px 10px;
     position:fixed;
     bottom:0;
     width:100%;
@@ -1378,14 +1379,27 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img {
-    margin-top:2px;
     float:left;
 }
 
+#footer img.logo {
+    margin-top:5px;
+}
+
+#footer #partner {
+    float:right;
+    margin-right:50px;
+}
+
 #footer p {
+    margin-top:4px;
     margin-left:10px;
     line-height:24px;
     float:left;
+}
+
+#footer #partner .partner-logo {
+    margin-left:10px;
 }
 
 #themePicker, #langPicker 
