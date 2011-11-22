@@ -141,6 +141,7 @@ class ViewPopup extends SugarView{
 
 			$popup->setup('include/Popups/tpls/PopupGeneric.tpl');
 			
+<<<<<<< HEAD
             //We should at this point show the header and javascript even if to_pdf is true.
             //The insert_popup_header javascript is incomplete and shouldn't be relied on.
             if (isset($this->options['show_all']) && $this->options['show_all'] == false)
@@ -150,6 +151,8 @@ class ViewPopup extends SugarView{
                 $this->options['show_header'] = true;
                 $this->_displayJavascript();
             }
+=======
+>>>>>>> ae83327... Bug 47395: popup views were displaying two headers that caused javascript issues (including the same file twice).
             insert_popup_header(null, false);
 			echo $popup->display();
 
