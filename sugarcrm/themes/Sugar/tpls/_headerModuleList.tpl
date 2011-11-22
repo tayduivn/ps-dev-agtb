@@ -70,6 +70,10 @@
 										  {/if}
 										{/foreach}
 										</ul>
+										<ul class="favoritesUl" id="favoritesUl">
+											<li class="yuimenuitem">Favorites</li>
+											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
+										</ul>
 										{if $groupTabId}
 										<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
 										{else}
@@ -92,7 +96,7 @@
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
 					<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}</li>
-
+					
 					{/foreach}
 					{if count($tabGroup.extra) > 5}
 					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="moreItems.png"}"></a></li>
