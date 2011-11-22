@@ -160,13 +160,16 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         $_SESSION['ip_address'] = query_client_ip();
         $_SESSION['user_id'] = $contact->id;
         $_SESSION['portal_id'] = $current_user->id;
-
         $_SESSION['type'] = 'contact';
-
         $_SESSION['team_id'] = $contact->team_id;
         $_SESSION['team_set_id'] = $contact->team_set_id;
-        
         $_SESSION['assigned_user_id'] = $contact->assigned_user_id;
+
+        //C.L - Set the admin modules granted for portal user.  This change is necessary since the new Link2.php class does a bean retrieval
+        //against the modules to which to associate relationships.  It could be possible that the Contact's teams are not accessible by the
+        //portal user's team security restrictions.
+        $_SESSION[$current_user->user_name.'_get_admin_modules_for_user'] = array('Cases', 'Notes', 'Accounts', 'Contacts', 'Bugs', 'KBDocuments', 'Campaigns');
+
         //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'contact';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
