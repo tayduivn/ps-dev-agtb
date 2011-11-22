@@ -445,7 +445,7 @@ EOQ;
                 $widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>' . "\n";
                 $widget_contents .= '<td class="buttons">' . "\n";
                 $widget_contents .= '<ul class="clickMenu">' . "\n";
-                if(count($subpanel_def) == 1) {
+                if($_REQUEST['module'] == "Contacts" && count($subpanel_def) == 1) {
                 	$widget_contents .= '<li class="single">' . "\n";
                 } else {
                 	$widget_contents .= '<li>' . "\n";
@@ -457,7 +457,7 @@ EOQ;
                 }
 
                 $widget_contents .= '<ul class="subnav' . "\n";
-                if(count($subpanel_def) > 1) {
+                if(($_REQUEST['module'] == "Contacts" && count($subpanel_def) > 1) || $_REQUEST['module'] != "Contacts") {
                 	$widget_contents .= " multi";	
                 }
                 $widget_contents .= '">';
@@ -469,7 +469,7 @@ EOQ;
 			}
 			else
 			{
-                if ($count == 0) {
+                if ($_REQUEST['module'] == "Contacts" && $count == 0) {
                     $hide = " style='display:none' class='noooo'";
                 } else {
                     $hide = '';

@@ -1345,19 +1345,19 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background-image:url(../../../../index.php?entryPoint=getImage&imageName=footer.png);
     background-position:  0 -70px;
     background-color:#fff;
-    right:0;
+    right:0px;
     bottom:0;
     position:fixed;
     cursor:pointer;
     z-index:999;
     border-top-left-radius:3px;
+    border-top-right-radius:3px;
     border-top:1px solid #ccc;
     border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
 }
 .up {
-    background-color:transparent!important;
     background-position: 0 0!important;
-    border:0!important;
 }
 #footer 
 {
@@ -1371,7 +1371,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* IE10+ */
     background: linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
-    padding:5px 10px;
+    padding:7px 20px 10px 20px;
     position:fixed;
     bottom:0;
     width:100%;
@@ -1379,27 +1379,14 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img {
+    margin-top:2px;
     float:left;
-}
-
-#footer img.logo {
-    margin-top:5px;
-}
-
-#footer #partner {
-    float:right;
-    margin-right:50px;
 }
 
 #footer p {
-    margin-top:4px;
     margin-left:10px;
     line-height:24px;
     float:left;
-}
-
-#footer #partner .partner-logo {
-    margin-left:10px;
 }
 
 #themePicker, #langPicker 
@@ -3991,9 +3978,8 @@ border-radius: 4px;
 white-space: normal;
 }
 
-#moduleList .more .dashletPanelMenu .yuimenuitemlabel , .more .dashletPanelMenu a.yuimenuitemlabel, .more .dashletPanelMenu a.yuimenuitemlabel:link, .more .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .more .dashletPanelMenu  .yuimenuitemlabel, li.current .more .dashletPanelMenu  a.yuimenuitemlabel, li.current .more .dashletPanelMenu  a.yuimenuitemlabel:link,#moduleList .moduleTabGroupMenu .dashletPanelMenu .yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:link, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel:link{ 
-font-size: 16px;
-font-weight: bold;
+#moduleList .more > .dashletPanelMenu > .yuimenuitemlabel , .more > .dashletPanelMenu > a.yuimenuitemlabel, .more > .dashletPanelMenu > a.yuimenuitemlabel:link, .more > .dashletPanelMenu > a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .more > .dashletPanelMenu > .yuimenuitemlabel, li.current .more > .dashletPanelMenu > a.yuimenuitemlabel, li.current .more > .dashletPanelMenu > a.yuimenuitemlabel:link, #moduleList .moduleTabGroupMenu .dashletPanelMenu .yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:link, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel:link{ 
+
 }
 
 #moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover {
@@ -4036,7 +4022,7 @@ border: 1px solid #999999;
 border-top: 0px;
 }
 
-#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu  {
+#moduleList .more > .dashletPanelMenu,#moduleList .dashletPanelMenu.groupMenu  {
 width: 257px;
 padding: 10px\9; /*ie hack */
 background-color: #cccccc\9;  /*ie hack */
@@ -4056,7 +4042,7 @@ border-radius:  0px 0px 6px 6px;
 border: 1px solid #999999;
 }
 
-#moduleList .more .dashletPanelMenu .bd, #moduleList .moduleTabGroupMenu .dashletPanelMenu .bd  {
+#moduleList .more > .dashletPanelMenu > .bd, #moduleList .dashletPanelMenu.groupMenu .bd  {
 width: 235px;
 }
 
@@ -5980,9 +5966,10 @@ margin-left:10px;
 #sugar_spot_search_results section .resultTitle{
     float:left;
     color:#999;
-    width:70px;
+    width:50px;
     text-align:right;
     margin-top:-11px;
+    margin-left:10px;
 }
 
 #sugar_spot_search_results a.resultAll {
@@ -6012,7 +5999,7 @@ margin-left:10px;
     width:175px;
     margin-top:-14px;
     line-height:20px;
-    padding:0 0 25px 6px;
+    padding:0 0 25px 15px;
     float:left;
     border-left: 1px solid #aaa;
     margin-left:20px;
@@ -6021,7 +6008,6 @@ margin-left:10px;
 #sugar_spot_search_results section ul li {
     list-style: none;
     margin-bottom:7px;
-    margin-left:12px;
 }
 
 #sugar_spot_search_results section ul li a {

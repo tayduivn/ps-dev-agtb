@@ -467,7 +467,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         $first = true;
         // this is for inline buttons on listviews
 		foreach ($button_contents as $actions => $action) {
-            if ($first) {
+            if ($_REQUEST['module'] == "Contacts" && $first) {
                 $hide = " style:'display: none'";
                 $firstaction = $action;
 
@@ -484,7 +484,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $this->xTemplate->assign('CELL_COUNT', $count);
                 $pre = '<ul class="clickMenu subpanel records">'. "\n";
                 $this->xTemplate->assign('CLASS', "inlineButtons");
-                if(sizeof($button_contents) == 1) {
+                if($_REQUEST['module'] == "Contacts" && sizeof($button_contents) == 1) {
         			$pre .= '<li class="single">'. "\n";
                 } else {
                 	$pre .= '<li>'. "\n";
@@ -500,7 +500,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                     $pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";
                 }
         		$pre .= '<ul class="subnav';
-        		if(sizeof($button_contents) > 1) {
+        		if(($_REQUEST['module'] == "Contacts" && sizeof($button_contents) > 1) || $_REQUEST['module'] != "Contacts") {
         			$pre .= " multi";
         		}
         		
