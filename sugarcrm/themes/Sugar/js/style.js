@@ -39,7 +39,6 @@ $(document).ready(function(){
 	$("#dcmenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
 	$("#dcmenu ul.clickMenu li").click(function(event) { //When trigger is clicked...
-	console.log(event.currentTarget.className);
 	if(event.currentTarget.className != "moduleMenuOverFlowMore subhover" && event.currentTarget.className != "moduleMenuOverFlowLess subhover") {
 		$(document).find("ul.subnav").hide();//hide all menus
 	}
@@ -175,7 +174,7 @@ SUGAR.append(SUGAR.themes, {
 			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
 
 			
-
+console.log(oLastViewContainer);
             // We need to figure out the module name from the ID. Sometimes it will have the group name in it
             // But sometimes it will just use the module name (in the case of the All group which don't have the
             // group prefixes due to the automated testing suite.
@@ -198,8 +197,8 @@ SUGAR.append(SUGAR.themes, {
                 
                 
 				if (!oSubmenu) return;
-                oSubmenu.removeItem(1,1);
-				oSubmenu.addItems(data,1);
+                oSubmenu.removeItem(1,2);
+				oSubmenu.addItems(data,2);
 
 				//update shadow height to accomodate new items
 
@@ -284,9 +283,20 @@ SUGAR.append(SUGAR.themes, {
 			oVR.setAttribute("class", "vr");
 			oVR.setAttribute("className", "vr");
 			oElement.insertBefore(oVR,oShadow);
+
+
 			oVR.style.height = (oBd.offsetHeight - 15)+"px";
 			oVR.style.top = (oBd.offsetTop+8) +"px";
-			oVR.style.left = ((oBd.offsetWidth/2)-10) +"px";
+			oVR.style.left = ((oBd.offsetWidth/3)-10) +"px";
+			
+			oVR2 = document.createElement("div");
+			oVR2.setAttribute("class", "vr");
+			oVR2.setAttribute("className", "vr");
+			oElement.insertBefore(oVR2,oShadow);
+
+			oVR2.style.height = (oBd.offsetHeight - 15)+"px";
+			oVR2.style.top = (oBd.offsetTop+8) +"px";
+			oVR2.style.left = (((oBd.offsetWidth/3) * 2)-35) +"px";
 
 			}
 		}
