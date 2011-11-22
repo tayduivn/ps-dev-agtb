@@ -1921,9 +1921,9 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$primaryField = $bean->getPrimaryFieldDefinition();
 		$columns = array();
-
+        $fields = $bean->getFieldDefinitions();
 		// get column names and values
-		foreach ($bean->getFieldDefinitions() as $field => $fieldDef) {
+		foreach ($fields as $field => $fieldDef) {
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
 			// Do not write out the id field on the update statement.
     		// We are not allowed to change ids.
@@ -1968,10 +1968,13 @@ protected function checkQuery($sql, $object_name = false)
 
 		// build where clause
 		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
+		if(isset($fields['deleted'])) {
+		    $where .= " AND deleted=0";
+		}
 
 		return "UPDATE ".$bean->getTableName()."
 					SET ".implode(",", $columns)."
-					$where AND deleted=0";
+					$where";
 	}
 
 	/**
@@ -2043,7 +2046,7 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	protected function getWhereClause(SugarBean $bean, array $whereArray=array())
 	{
-	return " WHERE " . $this->getColumnWhereClause($bean->getTableName(), $whereArray);
+	    return " WHERE " . $this->getColumnWhereClause($bean->getTableName(), $whereArray);
 	}
 
 	/**
