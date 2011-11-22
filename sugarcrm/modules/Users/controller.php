@@ -51,6 +51,25 @@ class UsersController extends SugarController
 			$this->view = 'classic';
 		}
 	}
+/**
+ * bug 48170
+ * Action resetPreferences gets fired when user clicks on  'Reset User Preferences' button
+ * This action is set in UserViewHelper.php
+ */
+protected function action_resetPreferences(){
+    if($_REQUEST['record'] == $GLOBALS['current_user']->id || ($GLOBALS['current_user']->isAdminForModule('Users'))){
+        $u = new User();
+        $u->retrieve($_REQUEST['record']);
+        $u->resetPreferences();
+        if($u->id == $GLOBALS['current_user']->id) {
+                SugarApplication::redirect('index.php');
+            }
+            else{
+                SugarApplication::redirect("index.php?module=Users&record=".$_REQUEST['record']."&action=DetailView"); //bug 48170]
+
+            }
+    }
+}
     //END SUGARCRM flav=pro || flav=sales ONLY	
 	protected function action_delete()
 	{
