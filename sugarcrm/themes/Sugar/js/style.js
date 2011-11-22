@@ -70,7 +70,7 @@ $('body').click(function() {
     $("#arrow").click(function(){
         $(this).toggleClass("up");
         if ($(this).hasClass('up'))
-            $(this).animate({bottom:'41px'},200);
+            $(this).animate({bottom:'10px'},200);
         else
             $(this).animate({bottom:'0'},200);
         $("#footer").slideToggle("fast");
