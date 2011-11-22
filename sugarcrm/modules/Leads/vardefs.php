@@ -205,7 +205,8 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'link_type' => 'one',
         'relationship' => 'contact_leads',
         'source' => 'non-db',
-        'vname' => 'LBL_CONTACTS',
+        'vname' => 'LBL_LEADS',
+        'reportable' => false,
     ),
   'account_id' =>
   array (
