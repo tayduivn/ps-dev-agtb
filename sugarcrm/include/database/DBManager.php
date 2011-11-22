@@ -1936,6 +1936,9 @@ protected function checkQuery($sql, $object_name = false)
     		//custom fields handle their save seperatley
     		if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
 
+    		// no need to clear deleted since we only update not deleted records anyway
+    		if($fieldDef['name'] == 'deleted' && empty($bean->deleted)) continue;
+
     		if(isset($bean->$field)) {
     			$val = from_html($bean->$field);
     		} else {
