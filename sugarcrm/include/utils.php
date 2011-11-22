@@ -4901,7 +4901,6 @@ function utf8_recursive_encode($data)
     return $result;
 }
 
-
 /**
  * get_language_header
  *
