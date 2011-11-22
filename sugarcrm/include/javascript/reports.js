@@ -1985,7 +1985,7 @@ SUGAR.reports = function() {
 			}
 			if (typeof(linkedGroupById) == 'undefined')
 				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(this)' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
-			SUGAR.reports.addToFullTableList(id, fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));		
+			SUGAR.reports.addToFullTableList(id, fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));
 			if (typeof(linkedGroupById) == 'undefined') {
 				var dd11 = YAHOO.util.Dom.get(id);
 		        dd11.dd = new SUGAR.reports.reportDDProxy(id, 'group_summaries');
