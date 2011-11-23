@@ -72,7 +72,7 @@ if(!empty($collationOptions)) {
 	if(!isset($sugar_config['dbconfigoption']['collation'])) {
 		$sugar_config['dbconfigoption']['collation'] = $GLOBALS['db']->getDefaultCollation();
 	}
-	$sugar_smarty->assign('collationOptions', get_select_options_with_id($collationOptions, $sugar_config['dbconfigoption']['collation']));
+	$sugar_smarty->assign('collationOptions', get_select_options_with_id(array_combine($collationOptions, $collationOptions), $sugar_config['dbconfigoption']['collation']));
 }
 ////	END DB COLLATION
 ///////////////////////////////////////////////////////////////////////////////
