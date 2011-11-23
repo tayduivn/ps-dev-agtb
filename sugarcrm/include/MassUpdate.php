@@ -158,10 +158,9 @@ eoq;
 				  $_POST[$post] = '';
 				}else{
 				  unset($_POST[$post]);
-			        }
-            }elseif ( $value == '--null--'){  //Bug36693 MassUpdate for ENUM with Option '0'
-				$_POST[$post] = '';
-			}
+			    }
+            }
+
 			if(is_string($value) && isset($this->sugarbean->field_defs[$post])) {
 		        if(($this->sugarbean->field_defs[$post]['type'] == 'bool'
 				 	|| (!empty($this->sugarbean->field_defs[$post]['custom_type']) && $this->sugarbean->field_defs[$post]['custom_type'] == 'bool'
