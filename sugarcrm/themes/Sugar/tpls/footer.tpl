@@ -42,10 +42,13 @@
 <div class="clear"></div>
 <div id="arrow"></div>
 <div id="footer">
-    <img src="index.php?entryPoint=getImage&imageName=SugarCRM_logo.gif" class="logo" title='&#169; 2004-2011 SugarCRM Inc. All Rights Reserved. {$STATISTICS}'/>
+    <div id="logo-hover" class="hover">&#169; 2004-2011 SugarCRM Inc. All Rights Reserved. {$STATISTICS}</div>
+    <img src="index.php?entryPoint=getImage&imageName=SugarCRM_logo.gif" id="logo" class="logo"/>
     <div id="partner">
-        <img src="index.php?entryPoint=getImage&imageName=boxnet.png" class="partner-logo"/>
-        <img src="index.php?entryPoint=getImage&imageName=linkedin.png" class="partner-logo"/>
+        <div id="boxnet-hover" class="hover">Box.net</div>
+        <img src="index.php?entryPoint=getImage&imageName=boxnet.png" id="boxnet" class="partner-logo"/>
+        <div id="linkedin-hover" class="hover">LinkedIn</div>
+        <img src="index.php?entryPoint=getImage&imageName=linkedin.png" id="linkedin" class="partner-logo"/>
     </div>
     <!--<div id="copyright">
         {$COPYRIGHT}

@@ -75,7 +75,17 @@ $('body').click(function() {
             $(this).animate({bottom:'0'},200);
         $("#footer").slideToggle("fast");
     });
+    $("#logo").hover(function() {$("#logo-hover").fadeIn();},function() {$("#logo-hover").fadeOut();});
+    $(".partner-logo").each(function() {
+       $(this).hover(function() {
+           var title=$(this).attr("id");
+           $("#"+title+"-hover").fadeIn();
+       }, function() {
+           var title=$(this).attr("id");
+           $("#"+title+"-hover").fadeOut();
+       });
 
+    });
 });
  
  

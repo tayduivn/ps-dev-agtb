@@ -1382,6 +1382,23 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     float:left;
 }
 
+#footer .hover {
+    position:absolute;
+    margin-top:-35px;
+    background:rgba(0,0,0,0.7);
+    padding:5px 10px;
+    color:#fff;
+    border-radius:3px;
+    display:none;
+}
+
+#footer #boxnet-hover {
+    margin-left:-7px;
+}
+#footer #linkedin-hover {
+    margin-left:32px;
+}
+
 #footer img.logo {
     margin-top:5px;
 }
