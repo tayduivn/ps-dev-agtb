@@ -1572,16 +1572,52 @@ SE.composeLayout = {
                 newHtml = htmlBeg + htmlBodPreSig + htmlBodPostSig + htmlEnd;
             }
 
+            // pre|append
+			start = html.indexOf('<div><hr></div>');
+            if(SE.userPrefs.signatures.signature_prepend == 'true' && start > -1) {
+				var htmlPart1 = html.substr(0, start);
+				var htmlPart2 = html.substr(start, html.length);
+                var newHtml = htmlPart1 + openTag + newSignature + closeTag + htmlPart2;
+            } else if(SUGAR.email2.userPrefs.signatures.signature_prepend == 'true') {
 
+            	//bug 48285
+                var newHtml = html;
 
+                //remove custom spacing
+                var spacing = '<span id="spacing"><br /><br /><br /></span>&nbsp;';
+                var customSpacingStart = html.indexOf(spacing);
 
-            // [pre|ap]pend
-            if(SE.userPrefs.signatures.signature_prepend == 'true' || SUGAR.email2.userPrefs.signatures.signature_prepend == 'true'){
-                //we need to prepend the signature, so recreate the string with the new signature after the htmlBeg token
-                newHtml = htmlBeg + newSignature + htmlBodPreSig + htmlBodPostSig + htmlEnd;
-            }else{
-                //we need to append the signature, so recreate the string with the new signature after the htmlPostSig token
-                newHtml = htmlBeg + htmlBodPreSig + htmlBodPostSig + newSignature + htmlEnd;
+                if (customSpacingStart > -1)
+                {
+                    var part1 = newHtml.substr(0, customSpacingStart);
+                    var part2 = newHtml.substr(customSpacingStart+spacing.length, newHtml.length);
+                    newHtml = part1 + part2;
+                }
+
+                //append signature
+                var bodyStartTag = '<body>';
+                var body = newHtml.indexOf(bodyStartTag);
+
+                if (body > -1)
+                {
+                    var part1 = newHtml.substr(0, body+bodyStartTag.length);
+                    var part2 = newHtml.substr(body+bodyStartTag.length, newHtml.length);
+                    newHtml = part1 + spacing + openTag + newSignature + closeTag + part2;
+                }
+                else
+                {
+                    newHtml = openTag + newSignature + closeTag + newHtml;
+                }
+                //end bug 48285
+            } else {
+                var body = html.indexOf('</body>');
+                if (body > -1) {
+                    var part1 = html.substr(0, body);
+                    var part2 = html.substr(body, html.length);
+                    var newHtml = part1 + openTag + newSignature + closeTag + part2;
+                } else {
+                    var newHtml = html + openTag + newSignature + closeTag;
+                }
             }
 
             t.setContent(newHtml);
@@ -2074,16 +2110,32 @@ SE.composeLayout = {
             composePackage.body = decodeURI(encodeURI(composePackage.body)).replace(/<BR>/ig, '\n').replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
         } // if
         //Flag determines if we should clear the tiny contents or just append
-        if (typeof(composePackage.clearBody) != 'undefined' && composePackage.clearBody) {
-            SE.composeLayout.tinyHTML = '';
-        }else{
 
-            //check to see if tiny is defined, and this is not a recursive call if not, then call self function one more time
-            if(typeof tiny == 'undefined'  &&  typeof recursive == 'undefined'){
-                //call this same function again, this time setting the recursive flag to true
-                setTimeout("SE.composeLayout.setContentOnThisTiny(true);", 3000);
-                return;
+        if (typeof(composePackage.clearBody) != 'undefined' && composePackage.clearBody)
+        {
+            SE.composeLayout.tinyHTML = '';
+        }
+        else
+        {
+            //bug 48179
+            //check tinyHTML for closing tags
+            var body = tinyHTML.lastIndexOf('</body>');
+            spacing = '<span id="spacing"><br /><br /><br /></span>&nbsp;';
+
+            if (body > -1)
+            {
+                var part1 = tinyHTML.substr(0, body);
+                var part2 = tinyHTML.substr(body, tinyHTML.length);
+                var newHtml = part1 + spacing + composePackage.body + part2;
             }
+            else
+            {
+                var newHtml = tinyHTML + spacing + composePackage.body;
+            }
+            //end bug 48179
+
+            SE.composeLayout.tinyHTML = newHtml;
+        }
 
             var tinyHTML = tiny.getContent();
             htmlBeg = '';
