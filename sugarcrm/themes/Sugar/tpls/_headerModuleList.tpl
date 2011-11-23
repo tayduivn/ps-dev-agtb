@@ -95,8 +95,33 @@
 
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
-					<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}</li>
-					
+					<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}
+						{if $shortcutTopMenu.$name}
+							<div id="{$groupTabId}{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
+										<ul class="shortCutsUl">
+										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
+										{foreach from=$shortcutTopMenu.$name item=shortcut_item}
+										  {if $shortcut_item.URL == "-"}
+                                            <hr style="margin-top: 2px; margin-bottom: 2px" />
+										  {else}
+                                             <li class="yuimenuitem"><a href="{sugar_ajax_url url=$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
+										  {/if}
+										{/foreach}
+										</ul>
+										<ul class="favoritesUl" id="favoritesUl">
+											<li class="yuimenuitem">Favorites</li>
+											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
+										</ul>
+										{if $groupTabId}
+										<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{else}
+										<ul id="lastViewedContainer{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{/if}
+							</div>
+							<div class="clear"></div>
+							</div> 
+						{/if}
+						</li>
 					{/foreach}
 					{if count($tabGroup.extra) > 5}
 					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="moreItems.png"}"></a></li>
@@ -115,7 +140,7 @@
         {* Tab group selection *}
         <li class="">
         <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">Filter Menu By</a>
-        <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
+        <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu groupMenu"><div class="bd">
 			<ul>
           {foreach from=$groupTabs item=module key=group name=groupList}
           <li {if $tabGroupName eq $group}class="yuimenuitem yuimenuitem-selected selected"{/if}><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="yuimenuitemlabel{if $tabGroupName eq $group} yuimenuitemlabel-selected selected{/if}">{$group}</a></li>
