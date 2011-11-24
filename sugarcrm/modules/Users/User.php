@@ -1862,18 +1862,18 @@ EOQ;
             $condition+=1;
         }
 
-        // if there is more requirements than the minimum lenght, minimum lenght= number of requirements
-        $lenght = $res['minpwdlength'] <= $condition ? $condition : $res['minpwdlength'];
-        if ($lenght < 6)
+        // if there is more requirements than the minimum length, minimum length= number of requirements
+        $length = $res['minpwdlength'] <= $condition ? $condition : $res['minpwdlength'];
+        if ($length < 6)
         {
 		//END SUGARCRM flav=pro ONLY
-            $lenght = '6';
+            $length = '6';
 		//BEGIN SUGARCRM flav=pro ONLY
         }
 		//END SUGARCRM flav=pro ONLY
 
         // Create random characters for the ones that doesnt have requirements
-        for ($i=0; $i < $lenght - $condition; $i ++)  // loop and create password
+        for ($i=0; $i < $length - $condition; $i ++)  // loop and create password
         {
             $password = $password . substr ($charBKT, rand() % strlen($charBKT), 1);
         }
