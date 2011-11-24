@@ -26,3 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<style>
+{literal}
+.yui-navset .yui-content, .yui-navset .yui-navset-top .yui-content  {
+	padding: 5px 10px 5px 10px;
+{/literal}
+</style>

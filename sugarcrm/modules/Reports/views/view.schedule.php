@@ -44,6 +44,9 @@ class ViewSchedule extends SugarView
         $smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
         $smarty->assign("RECORD", $_REQUEST['id']);
 
+        $cache_dir = !empty($GLOBALS['sugar_config']['cache_dir']) ? rtrim($GLOBALS['sugar_config']['cache_dir'], '/\\') : 'cache';
+        $smarty->assign('CACHE_DIR', $cache_dir);
+
         $refreshPage = (isset($_REQUEST['refreshPage']) ? $_REQUEST['refreshPage'] : "true");
         $smarty->assign("REFRESH_PAGE", $refreshPage);
         $time_interval_select = translate('DROPDOWN_SCHEDULE_INTERVALS', 'Reports');
