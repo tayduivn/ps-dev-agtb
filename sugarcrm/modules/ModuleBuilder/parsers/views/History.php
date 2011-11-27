@@ -54,11 +54,16 @@ class History implements HistoryInterface
         else
         {
             // Reconstruct the history from the saved files
- 	        foreach (glob($this->getFileByTimestamp('*')) as $filename)
+            if (glob($this->getFileByTimestamp('*')) === FALSE)
             {
-                 if(preg_match('/(\d+)$/', $filename, $match)) {
- 	                $this->_list [] = $match[1];
-                 }
+                $filenameList = array();
+            }
+            foreach ($filenameList as $filename)
+            {
+                if(preg_match('(\d+)$', $filename, $match))
+                {
+                    $this->_list [] = $match[1];
+                }
             }
         }
         // now sort the files, oldest first
