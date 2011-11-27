@@ -54,15 +54,15 @@ class History implements HistoryInterface
         else
         {
             // Reconstruct the history from the saved files
-            if (glob($this->getFileByTimestamp('*')) === FALSE)
+            $filenameList = glob($this->getFileByTimestamp('*'));
+            if (!empty($filenameList))
             {
-                $filenameList = array();
-            }
-            foreach ($filenameList as $filename)
-            {
-                if(preg_match('(\d+)$', $filename, $match))
+                foreach ($filenameList as $filename)
                 {
-                    $this->_list [] = $match[1];
+                    if(preg_match('/(\d+)$/', $filename, $match))
+                    {
+                        $this->_list [] = $match[1];
+                    }
                 }
             }
         }
