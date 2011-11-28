@@ -174,7 +174,6 @@ SUGAR.append(SUGAR.themes, {
 			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
 
 			
-console.log(oLastViewContainer);
             // We need to figure out the module name from the ID. Sometimes it will have the group name in it
             // But sometimes it will just use the module name (in the case of the All group which don't have the
             // group prefixes due to the automated testing suite.
@@ -296,7 +295,7 @@ console.log(oLastViewContainer);
 
 			oVR2.style.height = (oBd.offsetHeight - 15)+"px";
 			oVR2.style.top = (oBd.offsetTop+8) +"px";
-			oVR2.style.left = (((oBd.offsetWidth/3) * 2)-35) +"px";
+			oVR2.style.left = (((oBd.offsetWidth/3) * 2)-20) +"px";
 
 			}
 		}

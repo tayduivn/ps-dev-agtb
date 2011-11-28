@@ -50,6 +50,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     				this.get('boundingBox').setStyle('visibility','visible');
     				if(Y.one('#dcboxbody')) {
     					Y.one('#dcboxbody').setStyle('display','');
+    					Y.one('#dcboxbody').setStyle('visibility','hidden');
     				}
     			}
     			overlays[depth].hide = function(){
@@ -86,10 +87,22 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     }
                 }
     		}
-			var dcmenuContainer = Y.one('#dcmenu');
-			var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
-    		overlays[depth].set('xy', [20,dcmenuContainerHeight]);
+			//var dcmenuContainer = Y.one('#dcmenu');
+			//var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
+    		//overlays[depth].set('xy', [20,dcmenuContainerHeight]);
    	  	    overlays[depth].render();
+   	  	    
+   	  	    
+   	  	    //overlays[depth].center();
+   	  	    YAHOO.util.Event.onContentReady("dcboxbody", function() {
+   	  	    		
+   	  	    	   	//console.log(Y.one('#dcboxbody').get('offsetWidth'));
+		   	  	    //overlays[depth].set("width", Y.one('#dcboxbody').get('offsetWidth')+"px");
+		   	  	    //overlays[depth].set("height", Y.one('#dcboxbody').get('offsetHeight')+"px");
+		   	  	    //overlays[depth].set("centered", true);
+		   	  	    //Y.one('#dcboxbody').setStyle('display','');
+   	  	    	});
+
             if(modal)
                 overlays[depth].toggleModal();
     		return overlays[depth]
@@ -509,6 +522,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
+						
+						setTimeout(function() {
+							overlay.set("width", dcboxbody.get('offsetWidth')+"px");
+							overlay.set("height", dcboxbody.get('offsetHeight')+"px");
+							overlay.set("centered", true);
+							dcboxbody.setStyle("visibility", "visible");
+						}, 1000);
 
                         //set margins on modal so it is visible on all browsers
                         Y.one('#dcboxbody').setStyle('margin', '0 5% 0 0');
@@ -553,11 +573,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		var overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');
         var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
    		var dcboxbody = Y.one('#dcboxbody');
-
+		Y.one('#dcboxbody').setStyle('visibility','visible');
 		var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 		var dcmenuSugarCubeWidth = dcmenuSugarCube.get('offsetWidth');
 		var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-
+		overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
+		
+		
 		if(isRTL) {
 			overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
 		}

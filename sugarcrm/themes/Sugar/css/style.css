@@ -4090,13 +4090,13 @@ margin-right: 20px;
 float: left;
 width: 30%;
 border-top: 0px;
-margin-right: 20px;
 }
 
 #moduleList .dashletPanelMenu  .bd  ul.favoritesUl {
 float: left;
 width: 30%;
-border-top: 0px;;
+margin-right: 20px;
+border-top: 0px;
 }
 
 #moduleList .dashletPanelMenu  .bd  ul li:first-child {
@@ -6461,3 +6461,5 @@ ul#detailViewActions.clickMenu {
 	float: right;
 	margin: 0px;
 }
+
+.yui3-overlay {width: 100%;}
