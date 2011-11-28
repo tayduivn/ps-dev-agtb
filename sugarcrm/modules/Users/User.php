@@ -870,7 +870,6 @@ EOQ;
 		$result = $this->db->query($query, true, "Error filling in additional detail fields");
 
 		$row = $this->db->fetchByAssoc($result);
-		$GLOBALS['log']->debug("additional detail query results: $row");
 
 		if ($row != null) {
 			$this->reports_to_name = stripslashes($row['first_name'].' '.$row['last_name']);
