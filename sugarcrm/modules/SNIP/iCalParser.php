@@ -49,6 +49,11 @@ class vBasic{
 	protected $stack = array();
 	protected $parent = null;
 
+	public function __construct()
+	{
+	    $this->event = new Event();
+	}
+
 	/**
 	 * Takes in a vCalendar formatted date and generates a (Y-m-d H:i:s) formatted date string
 	 * @param object $key - this is parsed to determine any timezone information
