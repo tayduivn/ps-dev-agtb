@@ -248,7 +248,7 @@ class SugarWidgetReportField extends SugarWidgetField
 
         if ( ! empty($layout_def['group_function']) && $layout_def['group_function']=='count')
         {
-                return 'count';
+                return $layout_def['table_alias'] . '_count';
         }
 
         if ( ! empty($layout_def['table_alias']))
