@@ -43,6 +43,7 @@ class EmailTemplate extends SugarBean {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
+    var $assigned_user_name;
 	var $name;
 	var $published;
 	var $description;
@@ -219,6 +220,7 @@ class EmailTemplate extends SugarBean {
         }
 		$this->created_by_name = get_assigned_user_name($this->created_by);
 		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
+        $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
 		$this->fill_in_additional_parent_fields();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->assigned_name = get_assigned_team_name($this->team_id);
