@@ -283,6 +283,9 @@ YAHOO.util.Event.onDOMReady(function(){
 	.schedulerDiv h3{
 		display: none;
 	}
+    .schedulerDiv{
+        width: auto !important;
+    }
 {/literal}
 </style>	
 {if $view == 'day'}
