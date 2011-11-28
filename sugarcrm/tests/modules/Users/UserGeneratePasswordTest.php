@@ -41,7 +41,11 @@ class UserGeneratePasswordTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $this->_passwordSetting = $GLOBALS['sugar_config']['passwordsetting'];
         }
-        $GLOBALS['sugar_config']['passwordsetting'] = array();
+        $GLOBALS['sugar_config']['passwordsetting'] = array('onenumber'=>0,
+                                                            'onelower'=>0,
+                                                            'oneupper'=>0,
+                                                            'onespecial'=>0,
+                                                            'minpwdlength'=>6);
     }
 
     public function tearDown()

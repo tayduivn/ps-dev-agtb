@@ -407,7 +407,7 @@ YUI().use('node', 'event-base', function(Y) {
         alClickEventHandler.detach();
     }
 
-    if (Y.one('div.listViewBody'))
+    if (Y.one('div.listViewBody') != null)
     {
         var alClickEventHandler = Y.one('div.listViewBody').delegate('click', actions_overlib, actionLinkSelector);
     }
