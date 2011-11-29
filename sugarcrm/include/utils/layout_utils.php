@@ -334,7 +334,6 @@ function insert_popup_header(
 <html {$langHeader}>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset="{$charset}">
-<<<<<<< HEAD
 EOHTML;
     }
     echo "<title>{$app_strings['LBL_BROWSER_TITLE']}</title>" . $themeCSS;
