@@ -639,10 +639,11 @@
 							}
 							
 							CAL.get("radio_call").setAttribute("disabled","disabled");
-							CAL.get("radio_meeting").setAttribute("disabled","disabled");														
-		
+							CAL.get("radio_meeting").setAttribute("disabled","disabled");
+							
 							eval(res.gr);							
-							SugarWidgetScheduler.update_time();											
+							SugarWidgetScheduler.update_time();
+																
 							if(CAL.record_editable){
 								CAL.get("btn-save").removeAttribute("disabled");
 								CAL.get("btn-delete").removeAttribute("disabled");
@@ -797,10 +798,9 @@
 							}
 														
 							CAL.get("title-cal-edit").innerHTML = CAL.lbl_create_new;
-																					
-							SugarWidgetScheduler.update_time();
-								
+	
 							setTimeout(function(){
+								SugarWidgetScheduler.update_time();
 								enableQS(false);
 								disableOnUnloadEditView();
 							},500);
