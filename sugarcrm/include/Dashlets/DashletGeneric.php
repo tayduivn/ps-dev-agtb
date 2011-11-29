@@ -201,6 +201,7 @@ class DashletGeneric extends Dashlet {
                     $this->filters[$name] = $params['default'];
             }
         }
+        $currentSearchFields = array();
         foreach($this->searchFields as $name=>$params) {
             if(!empty($name)) {
                 $name = strtolower($name);
