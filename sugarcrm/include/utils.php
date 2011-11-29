@@ -382,7 +382,7 @@ function get_sugar_config_defaults() {
 	  'default_view' => 'week',
 	  'show_calls_by_default' => true,
 	  'show_tasks_by_default' => true,
-	  'editview_width' => 960,
+	  'editview_width' => 990,
 	  'editview_height' => 480,
 	  'day_timestep' => 15,
 	  'week_timestep' => 30,

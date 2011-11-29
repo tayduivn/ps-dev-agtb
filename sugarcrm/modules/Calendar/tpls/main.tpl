@@ -253,6 +253,7 @@
 	
 <script type="text/javascript">	
 {literal}
+
 YAHOO.util.Event.onDOMReady(function(){	
 	var schedulerLoader = new YAHOO.util.YUILoader({
 		require : ["jsclass_scheduler"],
@@ -282,6 +283,9 @@ YAHOO.util.Event.onDOMReady(function(){
 {literal}
 	.schedulerDiv h3{
 		display: none;
+	}
+	.schedulerDiv{
+		width: auto !important;
 	}
 {/literal}
 </style>	
