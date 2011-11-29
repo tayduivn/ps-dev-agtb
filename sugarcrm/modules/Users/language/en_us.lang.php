@@ -469,6 +469,9 @@ $mod_strings = array (
 	'LBL_REASS_BUTTON_RETURN' 			=> 'Return',
 	// js
 	'LBL_REASS_CONFIRM_REASSIGN'		=> 'Would you like to reassign all of this user\'s records?',
+  'LBL_REASS_CONFIRM_REASSIGN_YES' => 'Yes',
+  'LBL_REASS_CONFIRM_REASSIGN_NO'    => 'No',
+  'LBL_REASS_CONFIRM_REASSIGN_TITLE'    => 'Re-assign',
 	// end js
 	'ERR_REASS_SELECT_MODULE'			=> 'Please go back and select at least one module.',
 	'ERR_REASS_DIFF_USERS'				=> 'Please select a To User that is different from the From User.',

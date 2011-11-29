@@ -206,10 +206,10 @@ function confirmReassignRecords() {
                                                 close: true,
                                                 text: SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN'),
                                                 constraintoviewport: true,
-                                                buttons: [ { text:'Yes', handler:handleYes, isDefault:true },
-                                                           { text:'No',  handler:handleNo } ]
+                                                buttons: [ { text:SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN_YES'), handler:handleYes, isDefault:true },
+                                                           { text:SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN_NO'),  handler:handleNo } ]
                                               } );
-            YAHOO.example.container.simpledialog1.setHeader('Re-Assign');
+            YAHOO.example.container.simpledialog1.setHeader(SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN_TITLE'));
             YAHOO.example.container.simpledialog1.render('popup_window');
             YAHOO.util.Event.addListener('Save', 'click', YAHOO.example.container.simpledialog1.show, YAHOO.example.container.simpledialog1, true);
         }
