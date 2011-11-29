@@ -46,14 +46,20 @@ class Bug48616Test extends PHPUnit_Framework_TestCase
     {
         $layout_def =  array ('name' => 'donotinvoiceuntil_c', 'table_key' => 'self', 'qualifier_name' => 'before', 'input_name0' => 'Today', 'input_name1' => '01:00am', 'input_name2' => 'on', 'table_alias' => 'pordr_purchaseorders_cstm', 'column_key' => 'self:donotinvoiceuntil_c', 'type' => 'datetimecombo');
         $filter = $this->sugarWidgetField->queryFilterBefore($layout_def);
-        $this->assertRegExp("/pordr_purchaseorders_cstm\.donotinvoiceuntil_c < \'\d{4}\-\d{1,2}-\d{1,2} 00:00:00\'/", $filter);
+        if($GLOBALS['db']->getScriptName() == 'mysql')
+        {
+            $this->assertRegExp("/pordr_purchaseorders_cstm\.donotinvoiceuntil_c < \'\d{4}\-\d{1,2}-\d{1,2} 00:00:00\'/", $filter);
+        }
     }
 
     public function testQueryFilterAfter()
     {
         $layout_def =  array ('name' => 'donotinvoiceuntil_c', 'table_key' => 'self', 'qualifier_name' => 'after', 'input_name0' => 'Today', 'input_name1' => '01:00am', 'input_name2' => 'on', 'table_alias' => 'pordr_purchaseorders_cstm', 'column_key' => 'self:donotinvoiceuntil_c', 'type' => 'datetimecombo');
         $filter = $this->sugarWidgetField->queryFilterAfter($layout_def);
-        $this->assertRegExp("/pordr_purchaseorders_cstm\.donotinvoiceuntil_c > \'\d{4}\-\d{1,2}-\d{1,2} 23:59:59\'/", $filter);
+        if($GLOBALS['db']->getScriptName() == 'mysql')
+        {
+            $this->assertRegExp("/pordr_purchaseorders_cstm\.donotinvoiceuntil_c > \'\d{4}\-\d{1,2}-\d{1,2} 23:59:59\'/", $filter);
+        }
     }
 
     public function testQueryFilterNotEqualsStr()
@@ -63,7 +69,10 @@ class Bug48616Test extends PHPUnit_Framework_TestCase
         $filter = preg_replace('/\s{2,}/', ' ', $filter);
         $filter = str_replace("\n", '', $filter);
         $filter = str_replace("\r", '', $filter);
-        $this->assertRegExp("/\(pordr_purchaseorders_cstm\.donotinvoiceuntil_c IS NULL OR pordr_purchaseorders_cstm\.donotinvoiceuntil_c < \'\d{4}\-\d{1,2}-\d{1,2} 00:00:00\' OR pordr_purchaseorders_cstm\.donotinvoiceuntil_c > \'\d{4}\-\d{1,2}-\d{1,2} 23:59:59\'\)/", $filter);
+        if($GLOBALS['db']->getScriptName() == 'mysql')
+        {
+            $this->assertRegExp("/\(pordr_purchaseorders_cstm\.donotinvoiceuntil_c IS NULL OR pordr_purchaseorders_cstm\.donotinvoiceuntil_c < \'\d{4}\-\d{1,2}-\d{1,2} 00:00:00\' OR pordr_purchaseorders_cstm\.donotinvoiceuntil_c > \'\d{4}\-\d{1,2}-\d{1,2} 23:59:59\'\)/", $filter);
+        }
     }
 
 
