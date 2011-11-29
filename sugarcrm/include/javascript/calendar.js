@@ -294,7 +294,6 @@ Calendar.setup = function (params) {
             	}
             	
             	//If it's not a valid date format, use the current date.
-                
                 //fixing bug #48823: 
                 //'Stack overflow at line : 80' alert displayed when user clicks on the calendar icon 
                 if(dateArray.length != 3)
@@ -305,6 +304,7 @@ Calendar.setup = function (params) {
                     dateArray[dateParams.monthPos] = oDate.getMonth() + 1;
                     dateArray[dateParams.yearPos] = oDate.getFullYear();
                 }
+
             	
             	for(var i = 0; i < dateArray.length; i++){
             		if (dateArray[i] > 32){
