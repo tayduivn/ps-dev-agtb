@@ -629,6 +629,7 @@ class SugarView
 			$ss->assign('DCACTIONS', $menuData['DCActions']);
 			$ss->assign('DYNAMICDCACTIONS', $menuData['dynamicDCActions']);
 			$ss->assign('PICTURE', $current_user->picture);
+			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
 			if(is_admin($GLOBALS['current_user'])){
 				$ss->assign('ISADMIN', true);
 			} else {

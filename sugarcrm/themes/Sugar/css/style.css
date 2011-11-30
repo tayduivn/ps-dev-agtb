@@ -6004,10 +6004,9 @@ margin-left:10px;
 #sugar_spot_search_results section .resultTitle{
     float:left;
     color:#999;
-    width:50px;
+    width:70px;
     text-align:right;
     margin-top:-11px;
-    margin-left:10px;
 }
 
 #sugar_spot_search_results a.resultAll {
@@ -6037,10 +6036,10 @@ margin-left:10px;
     width:175px;
     margin-top:-14px;
     line-height:20px;
-    padding:0 0 25px 15px;
+    padding:0 0 25px 10px;
     float:left;
     border-left: 1px solid #aaa;
-    margin-left:20px;
+    margin-left:15px;
 }
 
 #sugar_spot_search_results section ul li {
@@ -6056,6 +6055,8 @@ margin-left:10px;
 #sugar_spot_search_results section ul li a:hover {
     text-decoration:underline;
 }
+
+.highlight { background-color: yellow }
 
 .dcmenuDivider {
 	background-image:url('../../../../index.php?entryPoint=getImage&imageName=dcMenuDivider.png');

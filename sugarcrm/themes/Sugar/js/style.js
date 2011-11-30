@@ -39,19 +39,15 @@ $(window).resize(function() {
   
   $('#sugar_spot_search').css("width",Math.round($(window).width()*.13));
 
-
 });
 
 
 $(document).ready(function(){
   $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.13) + 43);
   $('#sugar_spot_search').css("width",Math.round($(window).width()*.13));
-  
-  
-	
+
 	$("#sugar_spot_search").keypress(function(event) {
 		DCMenu.startSearch(event);
-		
 		
 		$('body').click(function() {
 		   $(this).parent().find("div#sugar_spot_search_results").hide();
