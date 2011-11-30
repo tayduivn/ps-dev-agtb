@@ -89,7 +89,8 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         //C.L. Bug 48616 - If the $date is set to the Today macro, then adjust accordingly
         if(strtolower($date) == 'today')
         {
-           $date = $timedate->asDbDate($timedate->getNow(true));
+           $startEnd = $timedate->getDayStartEndGMT($timedate->getNow(true));
+           return $end ? $startEnd['end'] : $startEnd['start'];
         }
 
 	    $date = $timedate->tzUser($timedate->fromDbDate($date));
