@@ -32,9 +32,22 @@
 /**
  * Handles the global links slide
  */
+$(window).resize(function() {
+  //$('body').prepend('<div>' + $(window).width() + '</div>');
+  
+  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.13) + 43);
+  
+  $('#sugar_spot_search').css("width",Math.round($(window).width()*.13));
+
+
+});
+
 
 $(document).ready(function(){
-
+  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.13) + 43);
+  $('#sugar_spot_search').css("width",Math.round($(window).width()*.13));
+  
+  
 	
 	$("#sugar_spot_search").keypress(function(event) {
 		DCMenu.startSearch(event);
@@ -348,7 +361,8 @@ SUGAR.append(SUGAR.themes, {
 		    autosubmenudisplay: true,
             visible: false,
 		    hidedelay: 750,
-		    lazyload: true });
+		    lazyload: true,
+		    constraintoviewport: true });
 	    /*
 	      Subscribe to the "beforeShow" and "show" events for
 	      each submenu of the MenuBar instance.

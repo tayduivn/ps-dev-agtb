@@ -173,6 +173,12 @@ height: 120px !important;
 
 #globalLinksModule {
 float: right;
+height: 43px;
+}
+
+
+#globalLinksModule:hover {
+	background-color: #276499;	
 }
 
 #globalLinksCtrl img{
@@ -5724,6 +5730,7 @@ span.dcmenuitem:hover{
 #dcmenuSugarCube {
 float: left;
 margin: 0px 0px 0 0px;
+height: 43px;
 }
 
 #dcmenuSugarCube a{
@@ -5948,12 +5955,12 @@ margin-left:10px;
 		
 #sugar_spot_search_div {
 	height: 26px;
-	width: 329px;
+	width: 174px;
 	display: inline-block;
 }
 #sugar_spot_search {
 	border: 0;
-	width:286px;
+	width:131px;
 	font-size: 12px;
     padding:5px 6px 5px 20px;
     border-radius: 4px;
@@ -6465,12 +6472,17 @@ ul#detailViewActions.clickMenu {
 
 #quickCreate ul.clickMenu > li {
 	width: 40px;
+	height: 43px;
 
 }
 #quickCreate ul.clickMenu li > span {
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=quick-create.png);
 	height: 43px;
 	width: 40px;
+}
+
+#quickCreate ul.clickMenu > li:hover {
+	background-color: #276499;
 }
 
 
