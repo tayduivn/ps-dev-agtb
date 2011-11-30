@@ -85,7 +85,9 @@
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
 		if(scrollable){
-			scrollable.scrollTop = 15 * CAL.scroll_slot;
+			scrollable.scrollTop = 15 * CAL.scroll_slot - 1;
+			if(CAL.view == "day")
+				scrollable.scrollTop++;	
 		}
 		{/literal}			
 
