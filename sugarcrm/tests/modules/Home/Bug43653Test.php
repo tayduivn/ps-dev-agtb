@@ -26,6 +26,9 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     public function setUp()
     {
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		if(file_exists($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules.php'))
 		{
@@ -59,6 +62,9 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
 		SugarTestTaskUtilities::removeAllCreatedTasks();
 		SugarTestAccountUtilities::removeAllCreatedAccounts();
+
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
 
 	public function testFisrtUnifiedSearchWithoutUserPreferences()
