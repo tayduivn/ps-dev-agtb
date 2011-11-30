@@ -1090,14 +1090,14 @@ EOHTML;
     {
         $endTime = microtime(true);
         $deltaTime = $endTime - $GLOBALS['startTime'];
-        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' <span id="responseTime">' . number_format(round($deltaTime, 2), 2) . '</span> ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
+        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' ' . number_format(round($deltaTime, 2), 2) . ' ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
-        $return .= '<br />';
+       // $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY
         // Output the DB instances only ifthere is more than one actually created(the error case)
         $checkDB = DBManagerFactory::getInstance();
         if ($checkDB->count_id > 1) {
-            $return .= '<b>(Internal Only)DB Instances: ' . $checkDB->count_id . ' references:' . $checkDB->references . '</b><br />';
+            $return .= ' (Internal Only)DB Instances: ' . $checkDB->count_id . ' references:' . $checkDB->references . '';
         }
 
         //END SUGARCRM flav=int ONLY

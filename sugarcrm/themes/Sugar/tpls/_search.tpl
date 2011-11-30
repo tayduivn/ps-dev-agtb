@@ -4,7 +4,7 @@
 <div class="dcmenuDivider" id="searchDivider"></div>
 <div id="dcmenuSearchDiv">
         <div id="sugar_spot_search_div">
-            <input size=20 id='sugar_spot_search'  title='enter global search term' onkeypress="DCMenu.startSearch(event);"/>
+            <input size=20 id='sugar_spot_search'  title='Enter global search term'/>
             <div id="sugar_spot_search_results" style="display: none;">
                
             </div>

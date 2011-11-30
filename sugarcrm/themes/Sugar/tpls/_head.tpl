@@ -33,7 +33,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset={$APP.LBL_CHARSET}">
 <title>{$SYSTEM_NAME}</title>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/jquery/jquery.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/jquery/jquery.elementReady.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/jquery/jquery.tipTip.js'}"></script>
 {$SUGAR_CSS}
 {$SUGAR_JS}
 {literal}

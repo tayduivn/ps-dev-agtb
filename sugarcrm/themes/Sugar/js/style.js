@@ -33,10 +33,27 @@
  * Handles the global links slide
  */
 
-
 $(document).ready(function(){
 
-	$("#dcmenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("#sugar_spot_search").keypress(function(event) {
+		DCMenu.startSearch(event);
+		
+		
+		$('body').click(function() {
+		   $(this).parent().find("div#sugar_spot_search_results").hide();
+		   $("#sugar_spot_search").val("");
+		   $("#sugar_spot_search").removeClass("searching");
+//		   console.log($("#sugar_spot_search").val());
+		});
+
+
+
+	});
+
+
+	$("#dcmenu #quickCreateUL ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	$("#dcmenu #globalLinks ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
 	$("#dcmenu ul.clickMenu li").click(function(event) { //When trigger is clicked...
 	if(event.currentTarget.className != "moduleMenuOverFlowMore subhover" && event.currentTarget.className != "moduleMenuOverFlowLess subhover") {
@@ -49,7 +66,7 @@ $(document).ready(function(){
 $('body').click(function() {
   //Hide the menus if visible
   //console.log($(this).parent().find("ul.subnav"));
-   $(this).parent().find("ul.subnav").hide();;
+   $(this).parent().find("ul.subnav").hide();
 });
 
   
@@ -69,23 +86,32 @@ $('body').click(function() {
 	
     $("#arrow").click(function(){
         $(this).toggleClass("up");
-        if ($(this).hasClass('up'))
-            $(this).animate({bottom:'10px'},200);
-        else
+        if ($(this).hasClass('up')) {
+        	$(this).attr("title","Hide");
+        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 7});
+            $(this).animate({bottom:'7px'},200);
+        } else {
+        	$(this).attr("title","Show");
+        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 7});
             $(this).animate({bottom:'0'},200);
+        }
         $("#footer").slideToggle("fast");
+        
     });
-    $("#logo").hover(function() {$("#logo-hover").fadeIn();},function() {$("#logo-hover").fadeOut();});
-    $(".partner-logo").each(function() {
-       $(this).hover(function() {
-           var title=$(this).attr("id");
-           $("#"+title+"-hover").fadeIn();
-       }, function() {
-           var title=$(this).attr("id");
-           $("#"+title+"-hover").fadeOut();
-       });
+    
+    //Tool Tips
+   	$(function(){
+		$("#moduleTab_Home").tipTip({maxWidth: "auto", edgeOffset: 7});
+		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 7});
+		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 7});
+		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 7});
+		$("#linkedin").tipTip({maxWidth: "auto", edgeOffset: 7});
+		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 7, content: "Quick Create"});
+		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 7});
+		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});
+		
+	});
 
-    });
 });
  
  
