@@ -73,7 +73,7 @@ $viewdefs['Employees']['QuickCreate'] = array(
 	      	),
                 array(
                     'name'=>'email1',
-                    'displayParams' => array('required'=>true),
+                    'displayParams' => array('required'=>false),
                 ),
             ),
         ),

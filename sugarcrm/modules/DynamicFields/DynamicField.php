@@ -88,12 +88,6 @@ class DynamicField {
             return false;
         if($module == '../data')return false;
 
-        // Employees is a fake module that actually loads it's fields from the
-        // Users module
-        if ($module == 'Employees') {
-            $module = 'Users';
-        }
-
         static $results = array ( ) ;
 
         $where = '';
