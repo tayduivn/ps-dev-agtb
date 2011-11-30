@@ -112,7 +112,11 @@ class SugarFieldRelate extends SugarFieldBase {
         } else {
            $displayParams['readOnly'] = $displayParams['readOnly'] == false ? '' : 'READONLY';  
         }
-        
+
+        if( isset($displayParams['formName']) && ($displayParams['formName'] == 'form_DCQuickCreate_Users' ||  $displayParams['formName'] == 'form_DCQuickCreate_Employees')){        
+            $this->ss->assign('quickSearchCode', $this->returnRelatedUserQuickSearchCodeForQuickEdits($form_name, $vardef, $vardef['id_name'],$vardef['name'] ));
+        }
+    
         $keys = $this->getAccessKey($vardef,'RELATE',$vardef['module']);
         $displayParams['accessKeySelect'] = $keys['accessKeySelect'];
         $displayParams['accessKeySelectLabel'] = $keys['accessKeySelectLabel'];
@@ -353,4 +357,32 @@ class SugarFieldRelate extends SugarFieldBase {
         
         return $value;
     }
+
+	/**
+	 * create the quicksearch js code for use with quickedit forms in user module
+	 * @param string $formName the name of the form that should be used when creating the quicksearch code
+     * @param array $vardef the vardef of the field being processed
+     * @param string $id_field id field to be populated by quicksearch
+     * @param string $name_field name field to be populated by quicksearch
+	 * @return string returns the quickseach javascript code ready for insertion into tpl/html
+	 */
+    function returnRelatedUserQuickSearchCodeForQuickEdits($formName = 'EditView', $vardef, $id_field='assigned_user_id', $name_field='assigned_user_name'){
+
+         require_once('include/QuickSearchDefaults.php');
+         $json = getJSONobj();
+
+         //Get the parent sqs definition
+         $qsd = new QuickSearchDefaults();
+         $qsd->setFormName($formName);
+         $sqsFieldArray = $qsd->getQSUser($name_field, $id_field);//<--turn to vars
+         $qsFieldName = $formName . "_" . $vardef['name'];
+
+         //Build the javascript
+         $quicksearch_js = '<script language="javascript">';
+         $quicksearch_js.= "if(typeof sqs_objects == 'undefined') {var sqs_objects = new Array; }";
+         $quicksearch_js .= "sqs_objects['$qsFieldName']=" . $json->encode($sqsFieldArray) .";";
+ 
+         return $quicksearch_js .= "</script>";
+    }
+
 }
