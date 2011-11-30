@@ -194,7 +194,9 @@
 						CAL.arrange_slot(this.el.parentNode.getAttribute("id"));
 						if(CAL.dropped == 0){
 							this.el.childNodes[0].innerHTML = CAL.old_caption;
-						}				 
+						}
+						CAL.records_openable = true;
+						CAL.disable_creating = false;				 
 					}					
 									
 					dd.onMouseDown = function(e){
