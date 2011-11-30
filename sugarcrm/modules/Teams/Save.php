@@ -83,12 +83,12 @@ if($focus->private && !empty($focus->associated_user_id)){
 function checkDupTeamName($focus){
     global $db;
     $contact_result = $db->concat('teams', array ('name','name_2'));
-	if(((null != $focus->fetched_row) && ($focus->name == $focus->fetched_row['name']) && (0 == $focus->private))
-	 ||((null != $focus->fetched_row) && ($focus->name . ' ' . $focus->name_2 == $focus->fetched_row['name'] . ' ' . $focus->fetched_row['name_2']) && (1 == $focus->private))
+	if((!empty($focus->fetched_row) && ($focus->name == $focus->fetched_row['name']) && (0 == $focus->private))
+	 ||(!empty($focus->fetched_row) && ($focus->name . ' ' . $focus->name_2 == $focus->fetched_row['name'] . ' ' . $focus->fetched_row['name_2']) && (1 == $focus->private))
 	  ){
     	return false;
     }
-    if((null == $focus->fetched_row) || (null != $focus->fetched_row && 0 == $focus->private)) {
+    if(!empty($focus->fetched_row) || (null != $focus->fetched_row && 0 == $focus->private)) {
         $query = "SELECT id from teams WHERE (private = 0 AND name = '" . $db->quote(trim($focus->name)) . "') OR (private = 1 AND " . $contact_result . " = '" . $db->quote(trim($focus->name)) . "')";	
     }
 	else {

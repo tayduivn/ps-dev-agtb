@@ -205,7 +205,7 @@ class SugarBean
     var $additional_column_fields = array();
     var $relationship_fields = array();
     var $current_notify_user;
-    var $fetched_row=false;
+    var $fetched_row= array();
     var $layout_def;
     var $force_load_details = false;
     var $optimistic_lock = false;
@@ -1442,7 +1442,7 @@ class SugarBean
         //construct the SQL to create the audit record if auditing is enabled.
         $dataChanges=array();
         if ($this->is_AuditEnabled()) {
-            if ($isUpdate && !isset($this->fetched_row)) {
+            if ($isUpdate && empty($this->fetched_row)) {
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
                 $dataChanges=$this->db->getDataChanges($this);
