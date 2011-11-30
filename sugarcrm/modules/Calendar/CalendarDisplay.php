@@ -94,10 +94,7 @@ class CalendarDisplay {
 		}				
 		$ss->assign('activity_colors',$this->activity_colors);	
 		
-		$scroll_hour = 5;
-		if($cal->time_step < 30)
-			$scroll_hour = 8;
-		$ss->assign('scroll_slot',intval(60 / $cal->time_step) * $scroll_hour);	
+		$ss->assign('scroll_slot',$this->cal->scroll_slot);	
 		
 		$ss->assign('editview_width',SugarConfig::getInstance()->get('calendar.editview_width',800));
 		$ss->assign('editview_height',SugarConfig::getInstance()->get('calendar.editview_height',600));	

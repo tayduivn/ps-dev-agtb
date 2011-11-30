@@ -40,6 +40,7 @@ class CalendarGrid {
 	protected $time_step = 30; // time step
 	protected $time_format; // user time format
 	protected $date_time_format; // user date time format
+	protected $scroll_height; // height of scrollable div
 	
 	/**
 	 * constructor
@@ -65,6 +66,10 @@ class CalendarGrid {
 		$this->scrollable = false;		
 		if(in_array($this->cal->view,array('day','week'))){
 			$this->scrollable = true;
+			if($this->cal->time_step < 30)
+				$this->scroll_height = 480;
+			else
+				$this->scroll_height = $this->cal->celcount * 15 + 1;
 		}
 		
 		$this->time_step = $this->cal->time_step;
@@ -206,8 +211,8 @@ class CalendarGrid {
 				}
 				$str .= "</div>";		
 			$str .= "</div>";		
-		
-			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; clear: both; height: 479px;'>";			
+			
+			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; clear: both; height: ".$this->scroll_height ."px;'>";			
 				$str .= $this->get_time_column($week_start_ts);			
 				$str .= "<div class='week_block'>";
 				for($d = 0; $d < 7; $d++){
@@ -231,9 +236,10 @@ class CalendarGrid {
 		$current_date = $this->cal->date_time;
 		$day_start_ts = $current_date->format('U') + $current_date->getOffset(); // convert to timestamp, ignore tz
 		
+		
 		$str = "";
 		$str .= "<div id='cal-grid' style=' min-width: 300px; visibility: hidden;'>";
-			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; height: 479px;'>";			
+			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; height: ".$this->scroll_height ."px;'>";			
 				$str .= $this->get_time_column($day_start_ts);
 				$d = 0;
 				$curr_time = $day_start_ts + $d*86400;

@@ -194,7 +194,9 @@
 						CAL.arrange_slot(this.el.parentNode.getAttribute("id"));
 						if(CAL.dropped == 0){
 							this.el.childNodes[0].innerHTML = CAL.old_caption;
-						}				 
+						}
+						CAL.records_openable = true;
+						CAL.disable_creating = false;				 
 					}					
 									
 					dd.onMouseDown = function(e){
@@ -263,6 +265,13 @@
 						
 						var callback = {
 							success: function(o){
+								try{
+									res = eval("("+o.responseText+")");
+								}catch(err){
+									alert(CAL.lbl_error_saving);							
+									ajaxStatus.hideStatus();
+									return;	
+								}
 								CAL.records_openable = true;
 								CAL.update_vcal();
 								ajaxStatus.hideStatus();
@@ -613,7 +622,14 @@
 			var callback = {
 																	
 					success: function(o){
-						res = eval("("+o.responseText+")");			
+						try{
+							res = eval("("+o.responseText+")");
+						}catch(err){
+							alert(CAL.lbl_error_loading);
+							CAL.editDialog.cancel();							
+							ajaxStatus.hideStatus();
+							return;	
+						}									
 						if(res.success == 'yes'){						
 							var fc = document.getElementById("form_content");
 							CAL.script_evaled = false;
@@ -776,8 +792,15 @@
 			
 			var callback = {
 																	
-					success: function(o){
-						res = eval("("+o.responseText+")");			
+					success: function(o){						
+						try{
+							res = eval("("+o.responseText+")");
+						}catch(err){
+							alert(CAL.lbl_error_loading);
+							CAL.editDialog.cancel();							
+							ajaxStatus.hideStatus();
+							return;	
+						}									
 						if(res.success == 'yes'){						
 							var fc = document.getElementById("form_content");
 							CAL.script_evaled = false;
@@ -870,7 +893,14 @@
 												
 						var callback = {
 								success: function(o){
-									res = eval('('+o.responseText+')');	
+									try{
+										res = eval("("+o.responseText+")");
+									}catch(err){
+										alert(CAL.lbl_error_saving);
+										CAL.editDialog.cancel();							
+										ajaxStatus.hideStatus();
+										return;	
+									}
 									if(res.success == 'yes'){
 										CAL.add_item(res);
 										CAL.editDialog.cancel();
@@ -908,7 +938,14 @@
 
 						var callback = {
 								success: function(o){
-									res = eval('('+o.responseText+')');	
+									try{
+										res = eval("("+o.responseText+")");
+									}catch(err){
+										alert(CAL.lbl_error_saving);
+										CAL.editDialog.cancel();							
+										ajaxStatus.hideStatus();
+										return;	
+									}
 									if(res.success == 'yes'){										
 										var e;
 										CAL.get("record").value = res.record;	
@@ -943,7 +980,14 @@
 											
 									var callback = {
 											success: function(o){
-												res = eval('('+o.responseText+')');
+												try{
+													res = eval("("+o.responseText+")");
+												}catch(err){
+													alert(CAL.lbl_error_saving);
+													CAL.editDialog.cancel();							
+													ajaxStatus.hideStatus();
+													return;	
+												}
 													
 												var e,cell_id;
 												if(e = CAL.get(CAL.deleted_id))
