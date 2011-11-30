@@ -56,9 +56,10 @@ value="{$APP.LBL_CLEAR_BUTTON_LABEL}" {{if isset($displayParams.javascript.btn_c
 {{if !empty($displayParams.allowNewValue) }}
 <input type="hidden" name="{{$idname}}_allow_new_value" id="{{$idname}}_allow_new_value" value="true">
 {{/if}}
+{literal} {{$quickSearchCode}} {/literal}
 <script type="text/javascript">
 SUGAR.util.doWhen(
 		"typeof(sqs_objects) != 'undefined' && typeof(sqs_objects['{$form_name}_{{$idname}}']) != 'undefined'",
-		enableQS
+		enableQS(false)
 );
 </script>
