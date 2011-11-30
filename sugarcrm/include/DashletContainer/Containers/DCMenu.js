@@ -358,6 +358,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		//if (typeof(focuselement) != 'undefined' && focuselement != null) {
 		//	focuselement.focus();
 		//}
+        $('#sugar_spot_search_results').removeHighlight();
+        $('#sugar_spot_search_results li a').highlight($("#sugar_spot_search").val());
 	}
 
     DCMenu.showQELoadingPanel = function(){

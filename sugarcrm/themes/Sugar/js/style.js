@@ -35,10 +35,8 @@
 
 $(document).ready(function(){
 
-	
 	$("#sugar_spot_search").keypress(function(event) {
 		DCMenu.startSearch(event);
-		
 		
 		$('body').click(function() {
 		   $(this).parent().find("div#sugar_spot_search_results").hide();
