@@ -70,7 +70,7 @@ if(empty($focus->user_name))
     //END SUGARCRM flav=int ONLY
     clear_register_value('user_array');
 } else {
-    else $newUser = false;
+    $newUser = false;
 }
 	
 
