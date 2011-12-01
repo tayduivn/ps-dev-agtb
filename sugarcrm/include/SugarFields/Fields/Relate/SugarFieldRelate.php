@@ -113,7 +113,7 @@ class SugarFieldRelate extends SugarFieldBase {
            $displayParams['readOnly'] = $displayParams['readOnly'] == false ? '' : 'READONLY';  
         }
 
-        if( isset($displayParams['formName']) && ($displayParams['formName'] == 'form_DCQuickCreate_Users' ||  $displayParams['formName'] == 'form_DCQuickCreate_Employees')){        
+        if($displayParams['formName'] == 'form_DCQuickCreate_Users' ||  $displayParams['formName'] == 'form_DCQuickCreate_Employees'){
             $this->ss->assign('quickSearchCode', $this->returnRelatedUserQuickSearchCodeForQuickEdits($form_name, $vardef, $vardef['id_name'],$vardef['name'] ));
         }
     
