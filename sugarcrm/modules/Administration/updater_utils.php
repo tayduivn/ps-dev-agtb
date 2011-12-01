@@ -678,7 +678,7 @@ function checkSystemLicenseStatus(){
 			$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
 		}
 
-		if(isset($license->settings['license_expire_date'])){
+		if(!empty($license->settings['license_expire_date'])){
 			$_SESSION['LICENSE_EXPIRES_IN'] = isAboutToExpire($license->settings['license_expire_date']);
 		}else{
 			$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
