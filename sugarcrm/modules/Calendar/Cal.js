@@ -142,7 +142,7 @@
 			
 			YAHOO.util.Event.on(el,"click",function(){
 					if(this.getAttribute('detail') == "1")
-						CAL.load_from(this.getAttribute('module_name'),this.getAttribute('record'),false);
+						CAL.load_form(this.getAttribute('module_name'),this.getAttribute('record'),false);
 			});
 			YAHOO.util.Event.on(el,"mouseover",function(){
 				if(!CAL.records_openable)
@@ -471,9 +471,11 @@
 		if(e = CAL.get("list_div_win"))
 			e.style.display = "none";			
 
-	
  		CAL.GR_update_focus("Meetings",""); 
- 		CAL.select_tab("cal-tab-1");
+ 		CAL.select_tab("cal-tab-1"); 		
+		
+		QSFieldsArray = new Array();
+		QSProcessedFieldsArray = new Array();
 	}
 
 	CAL.select_tab = function (tid){
@@ -596,7 +598,7 @@
 	}	
 				
 	
-	CAL.load_from = function (module_name,record,run_one_time){
+	CAL.load_form = function (module_name,record,run_one_time){
 	
 		var e;
 		var to_open = true;
@@ -670,9 +672,6 @@
 							CAL.get("form_content").style.display = "";
 							CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
 							ajaxStatus.hideStatus();
-							
-							if(typeof changeParentQS != 'undefined')							
-								changeParentQS("parent_name");
 								
 							setTimeout(function(){
 								enableQS(false);
@@ -821,7 +820,7 @@
 							}
 														
 							CAL.get("title-cal-edit").innerHTML = CAL.lbl_create_new;
-	
+
 							setTimeout(function(){
 								SugarWidgetScheduler.update_time();
 								enableQS(false);
