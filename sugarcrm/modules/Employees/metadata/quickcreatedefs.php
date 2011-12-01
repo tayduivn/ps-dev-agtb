@@ -41,11 +41,11 @@ $viewdefs['Employees']['QuickCreate'] = array(
             array(
                 array(
                       'name'=>'employee_status',
-                      'customCode'=>'{if $IS_ADMIN || $EDIT_REPORTS_TO}@@FIELD@@{else}{$EMPLOYEE_STATUS_READONLY}{/if}',
+                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$EMPLOYEE_STATUS_READONLY}{/if}',
                 ),
                 array(
                       'name'=>'title',
-                      'customCode'=>'{if $IS_ADMIN || $EDIT_REPORTS_TO}@@FIELD@@{else}{$TITLE_READONLY}{/if}',
+                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$TITLE_READONLY}{/if}',
                 ),
             ),
             array(
@@ -58,19 +58,15 @@ $viewdefs['Employees']['QuickCreate'] = array(
             array(
                 array(
                     'name'=>'department',
-                    'customCode'=>'{if $IS_ADMIN || $EDIT_REPORTS_TO}@@FIELD@@{else}{$DEPT_READONLY}{/if}',
+                    'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$DEPT_READONLY}{/if}',
                 ),
                 'phone_work'
             ),
             array(
                 array(
-	      		'name' => 'reports_to_name',
-	      		'label' => 'LBL_REPORTS_TO_NAME',
-	      		'customCode' => '{if $IS_ADMIN || $EDIT_REPORTS_TO}@@FIELD@@'.
-
-
-								'{else}{$fields.reports_to_name.value}<input type="hidden" name="{$fields.reports_to_id.name}" id="{$fields.reports_to_id.name}" value="{$fields.reports_to_id.value}">{/if}',
-	      	),
+                    'name'=>'reports_to_name',
+                    'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$REPORTS_TO_READONLY}{/if}',
+                ),
                 array(
                     'name'=>'email1',
                     'displayParams' => array('required'=>false),
