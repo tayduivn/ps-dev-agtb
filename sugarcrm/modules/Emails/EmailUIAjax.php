@@ -691,7 +691,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         if(isset($_REQUEST['uid']) && !empty($_REQUEST['uid']) && isset($_REQUEST['ieId']) && !empty($_REQUEST['ieId'])) {
             $out = $email->et->getSingleMessage($ie);
             //Bug: 
-            echo $json->encode(utf8_recursive_encode($out));
+            echo $json->encode($out);
+            //header("Content-Type: application/json; charset=UTF-8");
+            //echo $json->encode(utf8_recursive_encode($out));
         } else {
             echo "error: no UID";
         }
