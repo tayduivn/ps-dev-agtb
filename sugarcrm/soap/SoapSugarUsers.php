@@ -2106,13 +2106,13 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 				if( $seed->ACLAccess('Save'))
                 {
                     //Determine if this is a first time sync.  We find out based on whether or not a contacts_users relationship exists
+                    $seed->id = $duplicate_id;
                     $seed->load_relationship("user_sync");
                     $beans = $seed->user_sync->getBeans();
                     $first_sync = empty($beans);
 
                     //Now apply the values and indicate whether or not this is a first time sync
                     apply_values($seed, $dataValues, $first_sync);
-					$seed->id = $duplicate_id;
 					$seed->contacts_users_id = $current_user->id;
 					$seed->save();
 					$ids[] = $duplicate_id;//we have a conflict
