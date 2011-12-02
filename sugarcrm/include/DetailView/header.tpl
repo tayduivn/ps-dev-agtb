@@ -62,6 +62,12 @@ $(document).ready(function(){
 			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
 	});
 
+
+    //Tool Tips
+   	$(function(){
+		$(".clickMenu span.ab").tipTip({maxWidth: "auto", edgeOffset: 10, content: "More Actions", defaultPosition: "top"});
+		
+	});
 });
  
 

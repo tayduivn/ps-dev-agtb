@@ -32,7 +32,7 @@
 <ul class="clickMenu showLess" id="quickCreateUL">
 
             <li>
-                <a href='javascript: void(0);'></a>
+               
 
                 <ul class="subnav">
 				{foreach from=$DCACTIONS item=action name=quickCreate}
@@ -41,8 +41,8 @@
 				{/foreach}
 				
 				{if count($DCACTIONS) > 4}
-					<li class="moduleMenuOverFlowMore"><a href="javascript: toggleMenuOverFlow('quickCreateUL','more');">Show More</a></li>
-					<li class="moduleMenuOverFlowLess"><a href="javascript: toggleMenuOverFlow('quickCreateUL','less');">Show Less</a></li>
+					<li class="moduleMenuOverFlowMore"><a href="javascript: toggleMenuOverFlow('quickCreateUL','more');">Show More <img src="{sugar_getimagepath file="advanced_search.gif"}"></a></li>
+					<li class="moduleMenuOverFlowLess"><a href="javascript: toggleMenuOverFlow('quickCreateUL','less');">Show Less <img src="{sugar_getimagepath file="basic_search.gif"}"></a></li>
 				{/if}
 				
 				

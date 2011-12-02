@@ -75,6 +75,11 @@
 							deactive_tiptip();
 						});
 					}
+					
+					org_elem.click(function(){
+						deactive_tiptip();
+						//return false;
+					});
 				} else if(opts.activation == "focus"){
 					org_elem.focus(function(){
 						active_tiptip();
@@ -146,7 +151,7 @@
 					var top_compare = (top + org_height + opts.edgeOffset + tip_h + 8) > parseInt($(window).height() + $(window).scrollTop());
 					var bottom_compare = ((top + org_height) - (opts.edgeOffset + tip_h + 8)) < 0;
 					
-					if(top_compare || (t_class == "_bottom" && top_compare) || (t_class == "_top" && !bottom_compare)){
+					if(top_compare || (t_class == "_bottom" && top_compare) || (t_class == "_top" && !bottom_compare) || opts.defaultPosition == 'top'){
 						if(t_class == "_top" || t_class == "_bottom"){
 							t_class = "_top";
 						} else {

@@ -97,11 +97,11 @@ $('body').click(function() {
         $(this).toggleClass("up");
         if ($(this).hasClass('up')) {
         	$(this).attr("title","Hide");
-        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 7});
+        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
             $(this).animate({bottom:'7px'},200);
         } else {
         	$(this).attr("title","Show");
-        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 7});
+        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
             $(this).animate({bottom:'0'},200);
         }
         $("#footer").slideToggle("fast");
@@ -110,13 +110,13 @@ $('body').click(function() {
     
     //Tool Tips
    	$(function(){
-		$("#moduleTab_Home").tipTip({maxWidth: "auto", edgeOffset: 7});
-		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 7});
-		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 7});
-		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 7});
-		$("#linkedin").tipTip({maxWidth: "auto", edgeOffset: 7});
-		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 7, content: "Quick Create"});
-		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 7});
+		$("#moduleTab_Home").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#linkedin").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
+		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});
 		
 	});
@@ -331,7 +331,7 @@ SUGAR.append(SUGAR.themes, {
 
 			oVR.style.height = (oBd.offsetHeight - 15)+"px";
 			oVR.style.top = (oBd.offsetTop+8) +"px";
-			oVR.style.left = ((oBd.offsetWidth/3)-10) +"px";
+			oVR.style.left = ((oBd.offsetWidth/3)) +"px";
 			
 			oVR2 = document.createElement("div");
 			oVR2.setAttribute("class", "vr");
@@ -340,7 +340,7 @@ SUGAR.append(SUGAR.themes, {
 
 			oVR2.style.height = (oBd.offsetHeight - 15)+"px";
 			oVR2.style.top = (oBd.offsetTop+8) +"px";
-			oVR2.style.left = (((oBd.offsetWidth/3) * 2)-20) +"px";
+			oVR2.style.left = (((oBd.offsetWidth/3) * 2)) +"px";
 
 			}
 		}
@@ -356,7 +356,7 @@ SUGAR.append(SUGAR.themes, {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
 		    autosubmenudisplay: true,
             visible: false,
-		    hidedelay: 750,
+		    hidedelay: 700050,
 		    lazyload: true,
 		    constraintoviewport: true });
 	    /*
