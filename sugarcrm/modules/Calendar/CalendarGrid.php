@@ -338,7 +338,7 @@ class CalendarGrid {
 		if($weekEnd2 < 0)
 			$weekEnd2 += 7;	
 
-		$year_start = SugarDateTime::createFromFormat("Y-m-d",$this->cal->date_time->year.'-01-01');
+		$year_start = $GLOBALS['timedate']->fromString($this->cal->date_time->year.'-01-01');
 
 		$str = "";
 		$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';
@@ -376,8 +376,7 @@ class CalendarGrid {
 										if($d == $weekEnd1 || $d == $weekEnd2)	
 											$str .= "<td class='weekEnd monthCalBodyWeekEnd'>"; 
 										else
-											$str .= "<td class='monthCalBodyWeekDay'>";				
-								
+											$str .= "<td class='monthCalBodyWeekDay'>";
 												$str .= $monC;
 											$str .= "</td>";
 									}
