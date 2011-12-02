@@ -112,8 +112,14 @@ SUGAR.ajaxUI = {
     },
     canAjaxLoadModule : function(module)
     {
-        // Return false if ajax ui is completely disabled
-        if(typeof(SUGAR.config.disableAjaxUI) != 'undefined' && SUGAR.config.disableAjaxUI == true){
+        //BEGIN SUGARCRM flav=int ONLY
+        //checking for string 'LicState=check', which is set in updater_utls.php::setSystemState when the license status is in question.
+        // In this case we need to temporarily disable ajax UI navigation to prevent conflict with php Header navigation, resulting in a navigation loop
+        //END SUGARCRM flav=int ONLY
+        var checkLS = /&LicState=check/.exec(window.location.search);
+
+        // Return false if ajax ui is completely disabled, or if license state is set to check
+        if( checkLS || (typeof(SUGAR.config.disableAjaxUI) != 'undefined' && SUGAR.config.disableAjaxUI == true)){
             return false;
         }
         

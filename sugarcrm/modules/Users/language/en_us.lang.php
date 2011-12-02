@@ -148,7 +148,7 @@ $mod_strings = array (
 	'LBL_DECIMAL_SEP'					=> 'Decimal Symbol',
 	'LBL_DECIMAL_SEP_TEXT'				=> 'Character used to separate decimal portion',
 	'LBL_FDOW'					=> 'First Day of Week',
-	'LBL_FDOW_TEXT'				=> 'First day showed up in Month views',
+	'LBL_FDOW_TEXT'				=> 'First Day displayed in Week, Month, and Year Views',
 	'LBL_DATE_FORMAT_TEXT'				=> 'Set the display format for date stamps',
 	'LBL_DATE_FORMAT'					=> 'Date Format',
 	'LBL_DEFAULT_SUBPANEL_TITLE'		=> 'Users',
@@ -469,6 +469,9 @@ $mod_strings = array (
 	'LBL_REASS_BUTTON_RETURN' 			=> 'Return',
 	// js
 	'LBL_REASS_CONFIRM_REASSIGN'		=> 'Would you like to reassign all of this user\'s records?',
+  'LBL_REASS_CONFIRM_REASSIGN_YES' => 'Yes',
+  'LBL_REASS_CONFIRM_REASSIGN_NO'    => 'No',
+  'LBL_REASS_CONFIRM_REASSIGN_TITLE'    => 'Re-assign',
 	// end js
 	'ERR_REASS_SELECT_MODULE'			=> 'Please go back and select at least one module.',
 	'ERR_REASS_DIFF_USERS'				=> 'Please select a To User that is different from the From User.',

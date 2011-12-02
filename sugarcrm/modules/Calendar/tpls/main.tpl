@@ -85,7 +85,9 @@
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
 		if(scrollable){
-			scrollable.scrollTop = 15 * CAL.scroll_slot;
+			scrollable.scrollTop = 15 * CAL.scroll_slot - 1;
+			if(CAL.view == "day")
+				scrollable.scrollTop++;	
 		}
 		{/literal}			
 
@@ -253,6 +255,7 @@
 	
 <script type="text/javascript">	
 {literal}
+
 YAHOO.util.Event.onDOMReady(function(){	
 	var schedulerLoader = new YAHOO.util.YUILoader({
 		require : ["jsclass_scheduler"],
@@ -282,6 +285,9 @@ YAHOO.util.Event.onDOMReady(function(){
 {literal}
 	.schedulerDiv h3{
 		display: none;
+	}
+	.schedulerDiv{
+		width: auto !important;
 	}
 {/literal}
 </style>	

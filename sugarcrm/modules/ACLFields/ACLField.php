@@ -216,17 +216,26 @@ class ACLField  extends ACLAction{
 
     }
     }
-    /**
+
+
+   /**
+    * hasAccess
+    *
+    * This function returns an integer value representing the access level for a given field of a module for
+    * a user.  It also takes into account whether or not the user needs to have ownership of the record (assigned to the user)
+    *
     * Returns 0 - for no access
     * Returns 1 - for read access
     * returns 2 - for write access
     * returns 4 - for read/write access
     *
-    * @param unknown_type $field
-    * @param unknown_type $category
-    * @param unknown_type $is_owner
+    * @param String $field The name of the field to retrieve ACL access for
+    * @param String $module The name of the module that contains the field to lookup ACL access for
+    * @param String $user_id The user id of the user instance to check ACL access for
+    * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
+    * @return Integer value indicating the ACL field level access
     */
-    function hasAccess($field, $category,$user_id, $is_owner){
+    function hasAccess($field, $module,$user_id, $is_owner){
         static $is_admin = null;
         if (is_null($is_admin)) {
             $is_admin = is_admin($GLOBALS['current_user']);
@@ -235,10 +244,10 @@ class ACLField  extends ACLAction{
             return 4;
         }
         //if(is_admin($GLOBALS['current_user']))return 4;
-        if(!isset($_SESSION['ACL'][$user_id][$category]['fields'][$field])){
+        if(!isset($_SESSION['ACL'][$user_id][$module]['fields'][$field])){
             return 4;
         }
-        $access = $_SESSION['ACL'][$user_id][$category]['fields'][$field];
+        $access = $_SESSION['ACL'][$user_id][$module]['fields'][$field];
 
         if($access == ACL_READ_WRITE || ($is_owner && ($access == ACL_READ_OWNER_WRITE || $access == ACL_OWNER_READ_WRITE))){
             return 4;
@@ -247,6 +256,7 @@ class ACLField  extends ACLAction{
         }
         return 0;
     }
+
     function setAccessControl($module, $role_id, $field_id, $access){
         $acl = new ACLField();
         $id = md5($module. $role_id . $field_id);

@@ -290,15 +290,17 @@ class QuotesViewEdit extends ViewEdit
 						if(empty($product_list)){
 								$add_row .= "quotesManager.addTable('group_$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name' , ' ".format_money($product_bundle->shipping,FALSE)."');\n";
 						} //if
-						$bundle_list = $product_bundle->get_product_bundle_line_items();
-						if (is_array($bundle_list)) {
-    						while (list($key, $line_item) = each ($bundle_list)) {
-    						    if ($line_item->object_name == "ProductBundleNote") {
-    						        $encoded_description = js_escape(br2nl($line_item->description));
-    								$add_row .= "quotesManager.addCommentRow('$line_item->id', 'group_$product_bundle->id', '$encoded_description');\n";
-    							}
-    						}
-					    }
+                        //bug 39573 - Comments are not duplicated in quotes
+                        $bundle_list = $product_bundle->get_product_bundle_line_items();
+                        if (is_array($bundle_list)){
+                            while (list($key, $line_item) = each ($bundle_list)){
+                                if ($line_item->object_name == "ProductBundleNote"){
+                                    $encoded_description = js_escape(br2nl($line_item->description));
+                                    $add_row .= "quotesManager.addCommentRow('$line_item->id', 'group_$product_bundle->id', '$encoded_description');\n";
+
+                                }
+                            }
+                        } //end bug 39573
 					} //if
 				}
 			}
@@ -328,5 +330,5 @@ class QuotesViewEdit extends ViewEdit
  		parent::display();
  		echo '<script>sqs_must_match = false;</script>';
  	}
-}
 
+}

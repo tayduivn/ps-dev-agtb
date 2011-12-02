@@ -62,8 +62,16 @@ $focus->retrieve($_POST['record']);
 
 // Flag to determine whether to save a new password or not.
 // Bug 43241 - Changed $focus->id to $focus->user_name to make sure that a system generated password is made when converting employee to user
-if(empty($focus->user_name)) $newUser = true;
-else $newUser = false;
+if(empty($focus->user_name))
+{
+    $newUser = true;
+    //BEGIN SUGARCRM flav=int ONLY
+    //C.L. Bug 48898 - Clear the user_array register value that may be cached to resolve the get_assigned_user_name function calls when create new user
+    //END SUGARCRM flav=int ONLY
+    clear_register_value('user_array');
+} else {
+    $newUser = false;
+}
 	
 
 if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')
