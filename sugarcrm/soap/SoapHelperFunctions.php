@@ -1000,9 +1000,8 @@ function add_create_account($seed)
 
 function check_for_duplicate_contacts($seed){
 
-
-	if(isset($seed->id)){
-		return null;
+    if(isset($seed->id)){
+	   return null;
 	}
 
 	$query = '';
@@ -1011,12 +1010,14 @@ function check_for_duplicate_contacts($seed){
     $trimmed_email2 = trim($seed->email2);
 	$trimmed_last = trim($seed->last_name);
 	$trimmed_first = trim($seed->first_name);
+
 	if(!empty($trimmed_email) || !empty($trimmed_email2)){
 
 		//obtain a list of contacts which contain the same email address
 		$contacts = $seed->emailAddress->getBeansByEmailAddress($trimmed_email);
         $contacts2 = $seed->emailAddress->getBeansByEmailAddress($trimmed_email2);
         $contacts = array_merge($contacts, $contacts2);
+
 		if(count($contacts) == 0){
 			return null;
 		}else{
@@ -1125,6 +1126,40 @@ function canViewPath( $path, $base ){
   $base = realpath( $base );
   return 0 !== strncmp( $path, $base, strlen( $base ) );
 }
+
+
+/**
+ * apply_values
+ *
+ * This function applies the given values to the bean object.  If it is a first time sync
+ * then empty values will not be copied over.
+ *
+ * @param Mixed $seed Object representing SugarBean instance
+ * @param Array $dataValues Array of fields/values to set on the SugarBean instance
+ * @param boolean $firstSync Boolean indicating whether or not this is a first time sync
+ */
+function apply_values($seed, $dataValues, $firstSync)
+{
+    if(!$seed instanceof SugarBean || !is_array($dataValues))
+    {
+        return;
+    }
+
+    foreach($dataValues as $field=>$value)
+    {
+        if($firstSync)
+        {
+            //If this is a first sync AND the value is not empty then we set it
+            if(!empty($value))
+            {
+                $seed->$field = $value;
+            }
+        } else {
+            $seed->$field = $value;
+        }
+    }
+}
+
 /*END HELPER*/
 
 ?>

@@ -631,9 +631,12 @@ function isNeedRedirectDependingOnUserAndSystemState($state, $module = null, $ac
  */
 function setSystemState($state){
 	global $current_user;
-
-	$admin_redirect_url		= 'index.php?action=LicenseSettings&module=Administration';
-	$not_admin_redirect_url	= 'index.php?module=Users&action=Logout';
+//BEGIN SUGARCRM flav=int ONLY
+    //adding string 'LicState=check that will be used to temporarily disable ajax UI navigation.  This is done to prevent
+    //ajax UI navigation conflicting with php Header navigation and resulting in a navigation loop when the license is expired
+//END SUGARCRM flav=int ONLY
+	$admin_redirect_url		= 'index.php?action=LicenseSettings&module=Administration&LicState=check';
+	$not_admin_redirect_url	= 'index.php?module=Users&action=Logout&LicState=check';
 	
 	if(isset($current_user) && !empty($current_user->id)){
 		if(isNeedRedirectDependingOnUserAndSystemState($state, $_REQUEST['module'], $_REQUEST['action'], getModuleWhiteListForLicenseCheck($current_user))) {
