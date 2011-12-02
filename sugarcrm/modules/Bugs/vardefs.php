@@ -213,6 +213,14 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'source'=>'non-db',
 		'vname'=>'LBL_CASES'
   ),
+  'project' =>
+  array (
+  	'name' => 'project',
+        'type' => 'link',
+        'relationship' => 'projects_bugs',
+        'source'=>'non-db',
+        'vname'=>'LBL_PROJECTS',
+  ),
   'release_link' =>
   array (
         'name' => 'release_link',
