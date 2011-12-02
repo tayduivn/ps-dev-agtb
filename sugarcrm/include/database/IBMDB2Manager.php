@@ -271,7 +271,9 @@ class IBMDB2Manager  extends DBManager
 	 */
 	public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
 	{
-		if ($start < 0)
+        $start = (int)$start;
+        $count = (int)$count;
+	    if ($start < 0)
 			$start = 0;
 		$this->log->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
