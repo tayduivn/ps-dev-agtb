@@ -25,6 +25,17 @@ require_once('data/SugarBean.php');
 class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    public static function setUpBeforeClass()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
+
+	public static function tearDownAfterClass()
+	{
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+	}
+
     public function testGetObjectName(){
         $bean = new BeanMockTestObjectName();
         $this->assertEquals($bean->getObjectName(), 'my_table', "SugarBean->getObjectName() is not returning the table name when object_name is empty.");
