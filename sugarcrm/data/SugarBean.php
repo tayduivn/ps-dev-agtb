@@ -2305,7 +2305,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $query .= ' ' . $custom_join['join'];
         }
-        $query .= " WHERE $this->table_name.id = '$id' ";
+        $query .= " WHERE $this->table_name.id = ".$this->db->quoted($id);
         if ($deleted) $query .= " AND $this->table_name.deleted=0";
         $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
         $result = $this->db->limitQuery($query,0,1,true, "Retrieving record by id $this->table_name:$id found ");
@@ -4780,27 +4780,26 @@ function save_relationship_changes($is_update, $exclude=array())
 
     /**
      * Construct where clause from a list of name-value pairs.
-     *
+     * @param array $fields_array Name/value pairs for column checks
+     * @return string The WHERE clause
      */
-    function get_where(&$fields_array)
+    function get_where($fields_array)
     {
-        $where_clause = "WHERE ";
-        $first = 1;
+        $where_clause = "";
         foreach ($fields_array as $name=>$value)
         {
-            if ($first)
-            {
-                $first = 0;
-            }
-            else
-            {
+            if (!empty($where_clause)) {
                 $where_clause .= " AND ";
             }
+            $name = $this->db->getValidDBName($name);
 
-            $where_clause .= "$name = '".$this->db->quote($value,false)."'";
+            $where_clause .= "$name = ".$this->db->quoted($value,false);
         }
-        $where_clause .= " AND deleted=0";
-        return $where_clause;
+        if(!empty($where_clause)) {
+            return "WHERE $where_clause AND deleted=0";
+        } else {
+            return "WHERE deteled=0";
+        }
     }
 
 
