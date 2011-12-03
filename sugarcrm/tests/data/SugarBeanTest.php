@@ -60,10 +60,10 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = new BeanMockTestObjectName();
         $bean->db = new MockMysqlDb();
-        $bean->retrieve_by_string_fields(array("test1" => "bad'string")); //, "evil'key" => "data", 'tricky-(select * from config)' => 'test'));
+        $bean->retrieve_by_string_fields(array("test1" => "bad'string", "evil'key" => "data", 'tricky-(select * from config)' => 'test'));
         $this->assertNotContains("bad'string", $bean->db->lastQuery);
-//        $this->assertNotContains("evil'key", $bean->db->lastQuery);
-//        $this->assertNotContains("select * from config", $bean->db->lastQuery);
+        $this->assertNotContains("evil'key", $bean->db->lastQuery);
+        $this->assertNotContains("select * from config", $bean->db->lastQuery);
     }
 
 }
