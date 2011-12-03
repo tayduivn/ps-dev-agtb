@@ -4791,7 +4791,6 @@ function save_relationship_changes($is_update, $exclude=array())
             if (!empty($where_clause)) {
                 $where_clause .= " AND ";
             }
-            $name = $this->db->getValidDBName($name);
 
             $where_clause .= "$name = ".$this->db->quoted($value,false);
         }
