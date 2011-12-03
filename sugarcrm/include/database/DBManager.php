@@ -919,7 +919,7 @@ protected function checkQuery($sql, $object_name = false)
 				continue;
 
 
-			$validDBName = $this->helper->getValidDBName($value['name'], true, 'index', true);
+			$validDBName = $this->getValidDBName($value['name'], true, 'index', true);
 			if (isset($compareIndices[$validDBName])) {
 				$value['name'] = $validDBName;
 			}
