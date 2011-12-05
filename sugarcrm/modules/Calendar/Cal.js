@@ -214,6 +214,7 @@
 						this.el.style.zIndex = 5;
 						CAL.dropped = 0;						
 						CAL.records_openable = false;
+						CAL.disable_creating = true;
 						CAL.old_caption = this.el.childNodes[0].innerHTML;
 						CAL.moved_from_cell = this.el.parentNode.id;							
 						
@@ -273,6 +274,7 @@
 									return;	
 								}
 								CAL.records_openable = true;
+								CAL.disable_creating = false;
 								CAL.update_vcal();
 								ajaxStatus.hideStatus();
 							}							 
@@ -284,13 +286,9 @@
 								"record" : this.el.getAttribute("record"),
 								"datetime" : slot.getAttribute("datetime")
 						};						
-						YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));						
-											
+						YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));
 					
-						YAHOO.util.Dom.removeClass(slot,"slot_active");	
-						CAL.disable_creating = false;	
-						CAL.records_openable = true;							
-										
+						YAHOO.util.Dom.removeClass(slot,"slot_active");
 					}
 					
 					dd.onDragOver = function(e,id){

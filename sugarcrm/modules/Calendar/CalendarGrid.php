@@ -212,7 +212,7 @@ class CalendarGrid {
 				$str .= "</div>";		
 			$str .= "</div>";		
 			
-			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; clear: both; height: ".$this->scroll_height ."px;'>";			
+			$str .= "<div id='cal-scrollable' style='clear: both; height: ".$this->scroll_height ."px;'>";			
 				$str .= $this->get_time_column($week_start_ts);			
 				$str .= "<div class='week_block'>";
 				for($d = 0; $d < 7; $d++){
@@ -239,7 +239,7 @@ class CalendarGrid {
 		
 		$str = "";
 		$str .= "<div id='cal-grid' style=' min-width: 300px; visibility: hidden;'>";
-			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; height: ".$this->scroll_height ."px;'>";			
+			$str .= "<div id='cal-scrollable' style='height: ".$this->scroll_height ."px;'>";			
 				$str .= $this->get_time_column($day_start_ts);
 				$d = 0;
 				$curr_time = $day_start_ts + $d*86400;
