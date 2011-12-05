@@ -6380,13 +6380,13 @@ ul#globalLinks.clickMenu > li > a {
 }
 
 ul#selectLink.clickMenu {
-	height: 19px;
+	height: 22px;
 	min-width: 20px;
 }
 
 ul#selectLink.clickMenu #massall{
 	float: left;
-	margin: 2px 4px;
+	margin: 3px 4px;
 }
 
 ul#selectLink.clickMenu > li > a{
@@ -6413,16 +6413,16 @@ ul#detailViewActions.clickMenu {
 	display: inline-block;
 	background-color: #eee;
 	border: 1px solid #ddd;	
-	-webkit-border-radius: 4px; 
-	-moz-border-radius: 4px; 
-	border-radius: 4px; 
+	-webkit-border-radius: 1px; 
+	-moz-border-radius: 1px; 
+	border-radius: 1px; 
 	vertical-align: bottom;
 	padding: 0 3px 0 10px;
 }
 
 #selectActionsDisabled span {
 	width: 17px;
-	height: 19px;
+	height: 22px;
 	float: left;
 	background: url(../../../../index.php?entryPoint=getImage&imageName=MoreDetail.png) no-repeat center center;
 	opacity: .5;
@@ -6430,7 +6430,7 @@ ul#detailViewActions.clickMenu {
 
 #selectActionsDisabled span.ab {
     border-left: 1px #ccc solid;
-    margin-left: 5px;
+    margin-left: 10px;
     padding-left: 5px;
 }
 
@@ -6439,8 +6439,10 @@ ul#detailViewActions.clickMenu {
 	display: block;
 	text-decoration: none !important;
 	color: #999 !important;
-	padding: 1px 0 1px 0px!important;
+	padding: 3px 0 3px 0px!important;
 	text-shadow: 1px 1px #FFFFFF;
+	font-weight: normal;
+	font-size: 13px;
 }
 
 #quickCreate {
@@ -6470,21 +6472,22 @@ ul#detailViewActions.clickMenu {
 }
 
 
-#quickCreate ul.clickMenu li ul.subnav {
+#quickCreate ul.clickMenu li ul.subnav, #globalLinksModule ul.clickMenu li ul.subnav{
 	top: 43px;
 	right: 0;
 	left: auto;
 	padding: 10px 0px;
+	border: 1px solid #999;
 }
 
-#quickCreate ul.clickMenu li ul.subnav li a {
+#quickCreate ul.clickMenu li ul.subnav li a, #globalLinksModule ul.clickMenu li ul.subnav li a {
 	padding: 4px 10px !important;
 	font-size: 13px !important;
 	color: #666666 !important;
 	line-height: 1.45;
 }
 
-#quickCreate ul.clickMenu li ul.subnav li a:hover {
+#quickCreate ul.clickMenu li ul.subnav li a:hover, #globalLinksModule ul.clickMenu li ul.subnav li a:hover {
 	color: #fff !important;
 }
 

@@ -110,7 +110,7 @@ $('body').click(function() {
     
     //Tool Tips
    	$(function(){
-		$("#moduleTab_Home").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 10});
@@ -186,6 +186,7 @@ SUGAR.append(SUGAR.themes, {
             //parent.insertBefore(newdiv,qc);
             //el = document.getElementById('moduleList');
             this.loadModuleList();
+            $("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
         }
     },
 
@@ -356,7 +357,7 @@ SUGAR.append(SUGAR.themes, {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
 		    autosubmenudisplay: true,
             visible: false,
-		    hidedelay: 700050,
+		    hidedelay: 7050,
 		    lazyload: true,
 		    constraintoviewport: true });
 	    /*
