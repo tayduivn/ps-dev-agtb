@@ -2309,8 +2309,6 @@ class Email extends SugarBean {
 
 		if ($row !=null) {
 			$this->attachment_image = SugarThemeRegistry::current()->getImage('attachment',"","","",'.gif',translate('LBL_ATTACHMENT', 'Emails'));
-		} else {
-			$this->attachment_image = SugarThemeRegistry::current()->getImage('blank',"","","",'.gif'," ");
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->assigned_name = get_assigned_team_name($this->team_id);
