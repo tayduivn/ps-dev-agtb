@@ -46,11 +46,11 @@ EOQ;
 
 	protected function getDynamicMenuItem($def)
 	{
-  		if (!empty($def['icon']))
+  	if (!empty($def['icon']))
         {
-			$imageName = $def['icon'];
+		$imageName = basename($def['icon']);
         } else {
-	    	$imageName = SugarThemeRegistry::current()->getImageURL("icon_generic_bar_32.png");
+	    	$imageName = "icon_generic_bar_32.png";
         }
         
 	    $module = !empty($def['module']) ? $def['module'] : "";
