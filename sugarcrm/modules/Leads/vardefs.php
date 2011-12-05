@@ -119,6 +119,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 		'side'=>'right',
         'source'=>'non-db',
 		'vname'=>'LBL_REPORTS_TO',
+        'reportable'=>false
   ),
     'reportees' => array (
   	    'name' => 'reportees',
