@@ -610,6 +610,7 @@ class UploadStream
     public function stream_open($path, $mode)
     {
         $fullpath = self::path($path);
+        if(empty($fullpath)) return false;
         if($mode == 'r') {
             $this->fp = fopen($fullpath, $mode);
         } else {

@@ -123,11 +123,14 @@ EOQ;
 		$sugarsurvey = "http://survey-js.sugarcrm.com/SugarSurvey/index.php?do=jssurvey&version={$version}&build={$build}&flavor={$flavor}";
 		//END SUGARCRM flav=sugarsurvey ONLY
 		$html = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
-		// TODO: Come back and make a SugarFields grouping file for all of these
-		$html .= getVersionedScript('include/SugarFields/Fields/Collection/SugarFieldCollection.js');
-		$html .= getVersionedScript('include/SugarFields/Fields/Teamset/Teamset.js');
-		$html .= getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
-		$html .= <<<EOQ
+
+        if (!is_file(sugar_cached("include/javascript/sugar_field_grp.js"))) {
+            $_REQUEST['root_directory'] = ".";
+            require_once("jssource/minify_utils.php");
+            ConcatenateFiles(".");
+        }
+        $html .= getVersionedScript('cache/include/javascript/sugar_field_grp.js');
+        $html .= <<<EOQ
 		<script>
 		YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('node-base', 'event-key', function(Y){
 			function init(){

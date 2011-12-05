@@ -1553,7 +1553,7 @@ array('return'=>'tns:get_sync_result_encoded'),
 $NAMESPACE);
 
 /**
- * Enter description here...
+ * Get MailMerge document
  *
  * @param String $session -- Session ID returned by a previous call to login.
  * @param unknown_type $file_name
@@ -1569,15 +1569,20 @@ function get_mailmerge_document($session, $file_name, $fields)
         $error->set_error('invalid_login');
         return array('result'=>'', 'error'=>$error->get_soap_array());
     }
+    if(!preg_match('/^sugardata\d+[.]php$/', $file_name)) {
+        $error->set_error('no_records');
+        return array('result'=>'', 'error'=>$error->get_soap_array());
+    }
     $html = '';
-    $file_name = sugar_cached('MergedDocuments/').$file_name;
+
+    $file_name = sugar_cached('MergedDocuments/').pathinfo($file_name, PATHINFO_BASENAME);
 
     $master_fields = array();
     $related_fields = array();
 
     if(file_exists($file_name))
     {
-        require_once($file_name);
+        include($file_name);
 
         $class1 = $merge_array['master_module'];
         $beanL = $beanList[$class1];
@@ -1694,15 +1699,20 @@ function get_mailmerge_document2($session, $file_name, $fields)
         $error->set_error('invalid_login');
         return array('result'=>'', 'error'=>$error->get_soap_array());
     }
+    if(!preg_match('/^sugardata\d+[.]php$/', $file_name)) {
+        $error->set_error('no_records');
+        return array('result'=>'', 'error'=>$error->get_soap_array());
+    }
     $html = '';
-    $file_name = sugar_cached('MergedDocuments/').$file_name;
+
+    $file_name = sugar_cached('MergedDocuments/').pathinfo($file_name, PATHINFO_BASENAME);
 
     $master_fields = array();
     $related_fields = array();
 
     if(file_exists($file_name))
     {
-        require_once($file_name);
+        include($file_name);
 
         $class1 = $merge_array['master_module'];
         $beanL = $beanList[$class1];
