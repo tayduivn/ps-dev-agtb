@@ -137,10 +137,8 @@ class M2MRelationship extends SugarRelationship
         if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
         {
         //END SUGARCRM flav=pro ONLY
-            if ($lhs->$lhsLinkName->beansAreLoaded())
-                $lhs->$lhsLinkName->addBean($rhs);
-            if ($rhs->$rhsLinkName->beansAreLoaded())
-                $rhs->$rhsLinkName->addBean($lhs);
+            $lhs->$lhsLinkName->addBean($rhs);
+            $rhs->$rhsLinkName->addBean($lhs);
 
             $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
             $this->callAfterAdd($rhs, $lhs, $rhsLinkName);

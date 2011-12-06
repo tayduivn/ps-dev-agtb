@@ -48,6 +48,8 @@ class Link2 {
     protected $rows;   //any additional fields on the relationship
     protected $loaded; //true if this link has been loaded from the database
     protected $relationship_fields = array();
+    //Used to store unsaved beans on this relationship that will be combined with the ones pulled from the DB if getBeans() is called.
+    protected $tempBeans = array();
 
     /**
      * @param  $linkName String name of a link field in the module's vardefs
@@ -343,11 +345,18 @@ class Link2 {
         {
             $this->beans = array();
             $rel_module = $this->getRelatedModuleName();
+            //First swap in the temp loaded beans
+            $this->beans = $this->tempBeans;
+            $this->tempBeans = array();
+            //now load from the rows
             foreach ($this->rows as $id => $vals)
             {
-                $tmpBean = BeanFactory::getBean($rel_module, $id);
-                if($tmpBean !== FALSE)
-                    $this->beans[$id] = $tmpBean;
+                if (empty($this->beans[$id]))
+                {
+                    $tmpBean = BeanFactory::getBean($rel_module, $id);
+                    if($tmpBean !== FALSE)
+                        $this->beans[$id] = $tmpBean;
+                }
             }
         }
 
@@ -473,8 +482,13 @@ class Link2 {
     public function addBean($bean)
     {
         if (!is_array($this->beans))
-            $this->getBeans();
-        $this->beans[$bean->id] = $bean;
+        {
+            $this->tempBeans[$bean->id] = $bean;
+        }
+        else {
+            $this->beans[$bean->id] = $bean;
+        }
+
     }
 
     /**
@@ -483,10 +497,13 @@ class Link2 {
      */
     public function removeBean($bean)
     {
-        if (!is_array($this->beans))
-            $this->getBeans();
-        unset($this->beans[$bean->id]);
-        unset($this->rows[$bean->id]);
+        if (!is_array($this->beans) && isset($this->tempBeans[$bean->id]))
+        {
+            unset($this->tempBeans[$bean->id]);
+        } else {
+            unset($this->beans[$bean->id]);
+            unset($this->rows[$bean->id]);
+        }
     }
 
 
