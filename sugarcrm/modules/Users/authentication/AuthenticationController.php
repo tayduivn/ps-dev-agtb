@@ -51,16 +51,15 @@ class AuthenticationController
         // check in custom dir first, in case someone want's to override an auth controller
 		if (file_exists('custom/modules/Users/authentication/'.$type.'/' . $type . '.php')) {
             require_once('custom/modules/Users/authentication/'.$type.'/' . $type . '.php');
-        }
-        elseif (file_exists('modules/Users/authentication/'.$type.'/' . $type . '.php')) {
+        } elseif (file_exists('modules/Users/authentication/'.$type.'/' . $type . '.php')) {
             require_once('modules/Users/authentication/'.$type.'/' . $type . '.php');
-        }
-        else {
+        } else {
             require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php');
             $type = 'SugarAuthenticate';
         }
 
         $this->authController = new $type();
+        $this->authController->pre_login();
 	}
 
 
@@ -89,8 +88,6 @@ class AuthenticationController
 	 */
 	public function login($username, $password, $PARAMS = array()) 
 	{
-        $this->authController->pre_login();
-
 		//kbrill bug #13225
 		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
 		unset($GLOBALS['login_error']);

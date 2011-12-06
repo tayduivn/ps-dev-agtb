@@ -22,9 +22,10 @@
  * All Rights Reserved.
  ********************************************************************************/
 require_once('modules/Users/authentication/AuthenticationController.php');
+require_once('modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php');
 require_once('tests/modules/Users/AuthenticateTest.php');
 
-class Bug49069Test extends AuthenticateTest
+class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
 {
 
 	public function setUp()
@@ -37,6 +38,7 @@ class Bug49069Test extends AuthenticateTest
     	$_SESSION['hasExpiredPassword'] = false;
     	$_SESSION['isMobile'] = null;
         $GLOBALS['sugar_config']['authenticationClass'] = 'SAMLAuthenticate';
+        //$this->useOutputBuffering = false;
 	}
 
 	public function tearDown()
@@ -53,16 +55,56 @@ class Bug49069Test extends AuthenticateTest
         unset($_SESSION['isMobile']);
 	}
 
-    public function testDefaultUserNamePasswordSet()
+    public function testDefaultUserNamePasswordNotSet()
     {
+        unset($GLOBALS['sugar_config']['default_module']);
+        unset($GLOBALS['sugar_config']['default_action']);
+        $_REQUEST['login_module'] = 'foo';
+        $_REQUEST['login_action'] = 'bar';
+        $_REQUEST['login_record'] = '123';
         unset($_REQUEST['user_name']);
         unset($_REQUEST['user_password']);
         $authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
-        $authController->authController->pre_login();
+
+        $url = '';
+        require('modules/Users/Authenticate.php');
+
+        $this->assertEquals(
+            'Location: index.php?module=foo&action=bar&record=123',
+            $url
+            );
+
+
         $this->assertTrue(!empty($_REQUEST['user_name']), 'Assert that we automatically set a user_name in $_REQUEST');
         $this->assertEquals('onelogin', $_REQUEST['user_name']);
         $this->assertTrue(!empty($_REQUEST['user_password']), 'Assert that we automatically set a user_password in $_REQUEST');
         $this->assertEquals('onelogin', $_REQUEST['user_password']);
+
+
+
+    }
+
+    public function testDefaultUserNamePasswordSet()
+    {
+        unset($GLOBALS['sugar_config']['default_module']);
+        unset($GLOBALS['sugar_config']['default_action']);
+        $_REQUEST['login_module'] = 'foo';
+        $_REQUEST['login_action'] = 'bar';
+        $_REQUEST['login_record'] = '123';
+        $authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
+
+        $url = '';
+        require('modules/Users/Authenticate.php');
+
+        $this->assertEquals(
+            'Location: index.php?module=foo&action=bar&record=123',
+            $url
+            );
+        
+        $this->assertTrue(!empty($_REQUEST['user_name']), 'Assert that we automatically set a user_name in $_REQUEST');
+        $this->assertEquals('foo', $_REQUEST['user_name']);
+        $this->assertTrue(!empty($_REQUEST['user_password']), 'Assert that we automatically set a user_password in $_REQUEST');
+        $this->assertEquals('bar', $_REQUEST['user_password']);
     }
 }
 ?>
