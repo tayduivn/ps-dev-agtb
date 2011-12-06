@@ -44,6 +44,7 @@ $dictionary['User'] = array(
             'len' => '32',
             'reportable' => false,
             'importable' => 'false',
+            'studio' => false,
         ) ,
         'system_generated_password' => array(
             'name' => 'system_generated_password',
