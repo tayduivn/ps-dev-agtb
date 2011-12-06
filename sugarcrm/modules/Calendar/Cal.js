@@ -414,13 +414,6 @@
 						var nodes = CAL.query("#cal-tabs li a");
 						CAL.each(nodes,function(i,v){
 							YAHOO.util.Event.on(nodes[i], 'click', function(){
-								var nodes_li = CAL.query("#cal-tabs li");
-								CAL.each(nodes_li,function(j,v){
-									CAL.dom.removeClass(nodes_li[j],"selected");
-								});
-							
-								if(!CAL.dom.hasClass(this.parentNode,"selected"))
-									CAL.dom.addClass(this.parentNode,"selected");	
 								CAL.select_tab(this.getAttribute("tabname"));
 							});
 						});
@@ -477,6 +470,15 @@
 	}
 
 	CAL.select_tab = function (tid){
+	
+		var nodes_li = CAL.query("#cal-tabs li");
+		CAL.each(nodes_li,function(j,v){
+			CAL.dom.removeClass(nodes_li[j],"selected");
+		});							
+		
+		CAL.dom.addClass(CAL.get(tid + "-link").parentNode,"selected");
+		
+									
  		var nodes = CAL.query("#cal-tabs .yui-content");
  		CAL.each(nodes,function(i,v){
  			nodes[i].style.display = "none";
