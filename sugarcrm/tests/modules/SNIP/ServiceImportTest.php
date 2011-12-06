@@ -21,6 +21,8 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+//FILE SUGARCRM flav=pro ONLY
+
 require_once('tests/service/APIv3Helper.php');
 
 class ServiceImportTest extends Sugar_PHPUnit_Framework_TestCase
