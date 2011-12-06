@@ -89,6 +89,8 @@ class AuthenticationController
 	 */
 	public function login($username, $password, $PARAMS = array()) 
 	{
+        $this->authController->pre_login();
+
 		//kbrill bug #13225
 		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
 		unset($GLOBALS['login_error']);
