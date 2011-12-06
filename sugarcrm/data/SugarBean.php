@@ -3938,13 +3938,13 @@ function save_relationship_changes($is_update, $exclude=array())
 
                             if (isset($row[$field]))
                             {
-                                $current_bean->$field = $row[$field];
+                                $current_bean->$field = $this->convertField($row[$field], $value);
                                 unset($row[$field]);
                             }
                             else if (isset($row[$this->table_name .'.'.$field]))
                             {
-                                $current_bean->$field = $row[$current_bean->table_name .'.'.$field];
-                                unset($row[$current_bean->table_name .'.'.$field]);
+                                $current_bean->$field = $this->convertField($row[$this->table_name .'.'.$field], $value);
+                                unset($row[$this->table_name .'.'.$field]);
                             }
                             else
                             {
@@ -5480,15 +5480,29 @@ function save_relationship_changes($is_update, $exclude=array())
         foreach($this->field_defs as $name => $fieldDef)
 		{
 		    // skip empty fields and non-db fields
-		    if(empty($row[$name])) continue;
-            if(isset($fieldDef['source']) &&
-               !in_array($fieldDef['source'], array('db', 'custom_fields', 'relate'))
-               && !isset($fieldDef['dbType']))
-                continue;
-		    // fromConvert other fields
-		    $row[$name] = $this->db->fromConvert($row[$name], $this->db->getFieldType($fieldDef));
-		}
+            $row[$name] = $this->convertField($row[$name], $fieldDef);
+        }
 		return $row;
+    }
+
+    /**
+     * Converts the field value based on the provided fieldDef
+     * @param $fieldvalue
+     * @param $fieldDef
+     * @return string
+     */
+    public function convertField($fieldvalue, $fieldDef)
+    {
+        if (!empty($fieldvalue)) {
+            if (!(isset($fieldDef['source']) &&
+                !in_array($fieldDef['source'], array('db', 'custom_fields', 'relate'))
+                && !isset($fieldDef['dbType']))
+            ) {
+                // fromConvert other fields
+                $fieldvalue = $this->db->fromConvert($fieldvalue, $this->db->getFieldType($fieldDef));
+            }
+        }
+        return $fieldvalue;
     }
 
     /**
