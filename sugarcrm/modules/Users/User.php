@@ -1680,11 +1680,6 @@ EOQ;
             return true;
         }
 
-        //bug #46690: Developer Access to Users/Teams/Roles
-        if ($this->isDeveloperForModule($module))
-        {
-            return true;
-        }
         return false;
     }
 	/**
