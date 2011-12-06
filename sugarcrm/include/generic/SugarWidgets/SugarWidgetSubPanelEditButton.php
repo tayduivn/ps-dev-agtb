@@ -90,6 +90,11 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
             if (file_exists ( "custom/modules/$module_dir/Ext/Layoutdefs/layoutdefs.ext.php" ))
                 require "custom/modules/$module_dir/Ext/Layoutdefs/layoutdefs.ext.php";
 
+            if(!isset($layout_defs))
+            {
+                return null;
+            }
+
             self::$defs[$module_dir] = $layout_defs;
         }
 
@@ -149,17 +154,18 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 	function getFormName($layout_def)
 	{
+        global $currentModule;
         $formname = "formform";
+        $mod = $currentModule;
 
         //we need to retrieve the relationship name as the form name
-
         //if this is a collection, just return the module name, start by loading the subpanel definitions
-        $layout_defs = $this->getSubpanelDefs($_REQUEST['module']);
+        $layout_defs = $this->getSubpanelDefs($mod);
 
         //check to make sure the proper arrays were loaded
-        if (!empty($layout_defs) && is_array($layout_defs) && !empty($layout_defs[$_REQUEST['module']]) && !empty($layout_defs[$_REQUEST['module']]['subpanel_setup'][$layout_def['subpanel_id']] )){
+        if (!empty($layout_defs) && is_array($layout_defs) && !empty($layout_defs[$mod]) && !empty($layout_defs[$mod]['subpanel_setup'][$layout_def['subpanel_id']] )){
             //return module name if this is a collection
-            $def_to_check = $layout_defs[$_REQUEST['module']]['subpanel_setup'][$layout_def['subpanel_id']];
+            $def_to_check = $layout_defs[$mod]['subpanel_setup'][$layout_def['subpanel_id']];
             if(isset($def_to_check['type']) && $def_to_check['type'] == 'collection'){
                 $formname .= $layout_def['module'];
                 return $formname;
@@ -167,6 +173,8 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         }
 
         global $beanList;
+
+
 		if(empty($this->bean)) {
             $this->bean = new $beanList[$layout_def['module']]();
 		}
@@ -181,9 +189,9 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
             //return relationship name
             return $formname . $this->bean->field_name_map[$link]['relationship'];
 
-        }else{
+        } else {
             //if the relationship was not found on the subpanel bean, then see if the relationship is defined on the parent bean
-	        $parentBean = new $beanList[$_REQUEST['module']]();
+	        $parentBean = new $beanList[$mod]();
             $subpanelMod = strtolower($layout_def['module']);
             if(!empty($parentBean->field_name_map[$subpanelMod]) && !empty($parentBean->field_name_map[$subpanelMod]['relationship'])){
                 //return relationship name
