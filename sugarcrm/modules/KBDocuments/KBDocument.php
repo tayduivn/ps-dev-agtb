@@ -486,7 +486,7 @@ class KBDocument extends SugarBean {
 			     $att = true;
 			     $doc_rev ="'$doc_rev_id'";
 			     $kbdoc_atts .="<div id=$cDoc>";
-			     $kbdoc_atts .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage($cDoc,$doc_rev,$att);SUGAR.kb.setCheckBox($doc_rev)\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
+			     $kbdoc_atts .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage($cDoc,$doc_rev,$att);SUGAR.kb.setCheckBox($doc_rev)\"", null, null, ".gif", $app_strings['LBL_REMOVE']);
 				 $kbdoc_atts .="<a href='index.php?entryPoint=download&id=$doc_rev_id&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;";
 				 $kbdoc_atts .= '<input id="'.$doc_rev_id.'" type="checkbox"  style="visibility:hidden" onclick="SUGAR.kb.strikeOutFromBox('.$cDoc.','.$doc_rev.')" name="'.$doc_rev_id.'" value="'.$doc_rev_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
 				 $kbdoc_atts .="</div>";
