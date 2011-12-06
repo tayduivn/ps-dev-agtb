@@ -5480,7 +5480,9 @@ function save_relationship_changes($is_update, $exclude=array())
         foreach($this->field_defs as $name => $fieldDef)
 		{
 		    // skip empty fields and non-db fields
-            $row[$name] = $this->convertField($row[$name], $fieldDef);
+            if (isset($name) && !empty($row[$name])) {
+                $row[$name] = $this->convertField($row[$name], $fieldDef);
+            }
         }
 		return $row;
     }
