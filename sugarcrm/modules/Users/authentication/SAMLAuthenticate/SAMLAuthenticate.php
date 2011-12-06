@@ -59,8 +59,11 @@ class SAMLAuthenticate extends SugarAuthenticate {
      */
     function pre_login()
     {
-        if(empty($_REQUEST['user_name']))$_REQUEST['user_name'] = 'onelogin';
-        if(empty($_REQUEST['user_password']))$_REQUEST['user_password'] = 'onelogin';
+        if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'Authenticate')
+        {
+            if(empty($_REQUEST['user_name']))$_REQUEST['user_name'] = 'onelogin';
+            if(empty($_REQUEST['user_password']))$_REQUEST['user_password'] = 'onelogin';
+        }
     }
 
 }

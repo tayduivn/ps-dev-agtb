@@ -59,6 +59,7 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['sugar_config']['default_module']);
         unset($GLOBALS['sugar_config']['default_action']);
+        $_REQUEST['action'] = 'Authenticate';
         $_REQUEST['login_module'] = 'foo';
         $_REQUEST['login_action'] = 'bar';
         $_REQUEST['login_record'] = '123';
@@ -88,6 +89,7 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['sugar_config']['default_module']);
         unset($GLOBALS['sugar_config']['default_action']);
+        $_REQUEST['action'] = 'Authenticate';
         $_REQUEST['login_module'] = 'foo';
         $_REQUEST['login_action'] = 'bar';
         $_REQUEST['login_record'] = '123';
