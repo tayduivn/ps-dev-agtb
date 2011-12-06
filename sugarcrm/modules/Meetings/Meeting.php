@@ -172,7 +172,7 @@ class Meeting extends SugarBean {
 
         // Do any external API saving
         // Clear out the old external API stuff if we have changed types
-        if (!empty($this->fetched_row) && $this->fetched_row['type'] != $this->type ) {
+        if (isset($this->fetched_row) && $this->fetched_row['type'] != $this->type ) {
             $this->join_url = '';
             $this->host_url = '';
             $this->external_id = '';
