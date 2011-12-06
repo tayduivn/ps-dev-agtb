@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  * ****************************************************************************** */
 
-require_once 'modules/Users/user.php';
+require_once 'modules/Users/User.php';
 
 /**
  * Bug #46690
