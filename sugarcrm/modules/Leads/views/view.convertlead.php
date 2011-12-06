@@ -552,9 +552,8 @@ class ViewConvertLead extends SugarView
                     $bean->id = create_guid();
 		            $bean->new_with_id = true;
                 }
-                if($_POST['lead_conv_ac_op_sel'] != $app_strings['LBL_NONE'])
+                if( isset($_POST['lead_conv_ac_op_sel']) && $_POST['lead_conv_ac_op_sel'] != $app_strings['LBL_NONE'])
                 {
-              
 	                foreach($activities as $activity)
 			    	{
 	                            if (!isset($sugar_config['lead_conv_activity_opt']) || $sugar_config['lead_conv_activity_opt'] == 'copy') {
