@@ -2092,7 +2092,7 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
 
 	if (preg_match($filters[$filter], $str)) {
 		if (isset($GLOBALS['log']) && is_object($GLOBALS['log'])) {
-			$GLOBALS['log']->fatal("SECURITY: bad data passed in; string: {$str}");
+			$GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$str}");
 		}
 		if ( $dieOnBadData ) {
 			die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
@@ -2149,6 +2149,9 @@ function set_superglobals($key, $val){
 // Works in conjunction with clean_string() to defeat SQL injection, file inclusion attacks, and XSS
 function clean_incoming_data() {
 	global $sugar_config;
+    global $RAW_REQUEST;
+
+    $RAW_REQUEST = $_REQUEST;
 
 	if (get_magic_quotes_gpc() == 1) {
 		$req  = array_map("preprocess_param", $_REQUEST);
@@ -2230,7 +2233,7 @@ function securexss($value) {
 function securexsskey($value, $die=true){
 	global $sugar_config;
 	$matches = array();
-	preg_match("/[\'\"\<\>]/", $value, $matches);
+	preg_match('/[\'"<>]/', $value, $matches);
 	if(!empty($matches)){
 		if($die){
 			die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");

@@ -52,7 +52,7 @@ class SugarRestJSON extends SugarRestSerialize{
 	 */
 	function serve(){
 		$GLOBALS['log']->info('Begin: SugarRestJSON->serve');
-		$json_data = !empty($_REQUEST['rest_data'])? $_REQUEST['rest_data']: '';
+		$json_data = !empty($_REQUEST['rest_data'])? $GLOBALS['RAW_REQUEST']['rest_data']: '';
 		if(empty($_REQUEST['method']) || !method_exists($this->implementation, $_REQUEST['method'])){
 			$er = new SoapError();
 			$er->set_error('invalid_call');
@@ -60,10 +60,11 @@ class SugarRestJSON extends SugarRestSerialize{
 		}else{
 			$method = $_REQUEST['method'];
 			$json = getJSONObj();
-			$data = $json->decode(from_html($json_data));
+			$data = $json->decode($json_data);
 			if(!is_array($data))$data = array($data);
+			$res = call_user_func_array(array( $this->implementation, $method),$data);
 			$GLOBALS['log']->info('End: SugarRestJSON->serve');
-			return call_user_func_array(array( $this->implementation, $method),$data);
+			return $res;
 		} // else
 	} // fn
 
