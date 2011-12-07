@@ -36,6 +36,7 @@ $dictionary['User'] = array(
             'len' => '60',
             'importable' => 'required',
             'required' => false,
+            'studio' => array('no_duplicate' => true),
         ) ,
         'user_hash' => array(
             'name' => 'user_hash',
