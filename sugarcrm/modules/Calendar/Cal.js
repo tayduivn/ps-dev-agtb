@@ -847,8 +847,6 @@
 				"assigned_user_id" : params.user_id,
 				"assigned_user_name" : params.user_name,
 				"date_start" : params.date_start,
-				"duration_hours" : 1,
-				"duration_minutes" : 0
 			};
 			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));	
 	}
