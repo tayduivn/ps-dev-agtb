@@ -107,7 +107,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
      * if the list should filter for favorites.  Should eventually update the SugarBean function as well.
      *
      */
-    function get_data_list($seed, $order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $favorites = false, $singleSelect=false)
+    function get_data_list($seed, $order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $favorites = false)
 	{
 		$GLOBALS['log']->debug("get_list:  order_by = '$order_by' and where = '$where' and limit = '$limit'");
 		if(isset($_SESSION['show_deleted']))
@@ -116,23 +116,14 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		}
 		$order_by=$seed->process_order_by($order_by, null);
 
-		if($seed->bean_implements('ACL') && ACLController::requireOwner($seed->module_dir, 'list') )
-		{
-			global $current_user;
-			$owner_where = $seed->getOwnerWhere($current_user->id);
-			if(!empty($owner_where)){
-				if(empty($where)){
-					$where = $owner_where;
-				}else{
-					$where .= ' AND '.  $owner_where;
-				}
-			}
-		}
 		$params = array();
-		if($favorites === TRUE )
+		if(!empty($favorites)) {
 		  $params['favorites'] = true;
+		}
 
-		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted,'',false,null,$singleSelect);
+		$idquery = $seed->create_new_list_query('', $where, array('id'), $params, $show_deleted);
+
+		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted);
 		return $seed->process_list_query($query, $row_offset, $limit, $max, $where);
 	}
 
