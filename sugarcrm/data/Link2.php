@@ -476,6 +476,8 @@ class Link2 {
     }
 
     /**
+     * Add a bean object to the list of beans currently loaded to this relationship.
+     * This for the most part should not need to be called except by the relatipnship implementation classes.
      * @param SugarBean $bean
      * @return void
      */
@@ -492,6 +494,9 @@ class Link2 {
     }
 
     /**
+     * Remove a bean object from the list of beans currently loaded to this relationship.
+     * This for the most part should not need to be called except by the relatipnship implementation classes.
+     *
      * @param SugarBean $bean
      * @return void
      */
@@ -508,6 +513,8 @@ class Link2 {
 
 
     /**
+     * Directly queries the databse for set of values. The relationship classes and not link should handle this.
+     * @deprecated
      * @param $table_name string relationship table
      * @param $join_key_values array of key=>values to identify this relationship by
      * @return bool true if the given join key set exists in the relationship table
@@ -575,7 +582,7 @@ class Link2 {
     }
 
     /**
-     * @depricated
+     * @deprecated
      * Gets the vardef for the relationship of this link.
      */
     public function _get_link_table_definition($table_name, $def_name) {
@@ -587,7 +594,7 @@ class Link2 {
     }
 
     /**
-     * @depricated
+     * @deprecated
      * Return the name of the role field for the passed many to many table.
      * if there is no role filed : return false
      * @param $table_name name of relationship table to inspect
