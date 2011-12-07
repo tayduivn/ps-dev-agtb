@@ -186,7 +186,7 @@ class TeamSetLink extends Link {
 	 */
 	public function replace($rel_keys, $additional_values=array(), $save = true){
 		$this->_teamList = $rel_keys;
-		$this->_saved = false;
+		$this->_saved = false; //bug 48733 - "New team added during merge duplicate is not saved"
 		if($save){
 			$this->save();
 		}
