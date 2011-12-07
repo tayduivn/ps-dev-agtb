@@ -441,6 +441,26 @@ function post_install() {
                if(file_exists('upload/upgrades/temp')) {
                    rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
                }
+
+               //Now uprade the upgrade_history table entries
+               $results = $GLOBALS['db']->query('SELECT id, filename FROM upgrade_history');
+               $upload_dir = $sugar_config['cache_dir'].'upload/';
+               //Create regular expression string
+               $match = '/^' . str_replace('/', '\/', $upload_dir) . '(.*?)$/';
+               while(($row = $GLOBALS['db']->fetchByAssoc($results)))
+               {
+               	    $file = $row['filename'];
+               	    $id = $row['id'];
+
+               		if(!empty($file) && preg_match($match, $file, $matches))
+               		{
+               			//Update new file location to use the new $sugar_config['upload_dir'] value
+               			$new_file_location = $sugar_config['upload_dir'] . $matches[1];
+               			_logThis("Updating filenmae for upgrade_history table entry [{$id}] from {$file} to {$new_file_location}", $path);
+               			$update_sql = "UPDATE upgrade_history SET filename = '{$new_file_location}' WHERE id = '{$id}'";
+               			$GLOBALS['db']->query($update_sql);
+               		}
+               }
            }
     }
 
