@@ -167,7 +167,9 @@
 			
 			var slot;
 			if(slot = CAL.get("t_" + time_cell + suffix)){
-				slot.appendChild(el);						
+				slot.appendChild(el);	
+				
+				CAL.cut_record(item.record + id_suffix);					
 				
 				if(duration_coef < 1.75 && CAL.mouseover_expand){
 					YAHOO.util.Event.on(elm_id,"mouseover",function(){
@@ -303,8 +305,7 @@
 						YAHOO.util.Dom.removeClass(slot,"slot_active");
 					}					
 				}
-
-				CAL.cut_record(item.record + id_suffix);				
+								
 				CAL.arrange_slot("t_" + time_cell + suffix);
 			}
 				
