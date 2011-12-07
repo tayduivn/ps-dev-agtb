@@ -4234,7 +4234,7 @@ height: 43px;
 }
 
 
-#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess {
+#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess, #moduleList .moduleTabExtraMenu .flexMenuItems {
 	display: none;
 }
 
@@ -5949,7 +5949,7 @@ margin-left:10px;
 	border: 0;
 	width:131px;
 	font-size: 12px;
-    padding:5px 6px 5px 20px;
+    padding:5px 20px 5px 20px;
     border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
@@ -6044,6 +6044,15 @@ margin-left:10px;
     text-decoration:underline;
 }
 
+
+#close_spot_search {
+display: inline-block;	
+position: relative;
+left: -18px;
+top: 1px;
+display: none;
+cursor: pointer;
+}
 .highlight { background-color: yellow }
 
 .dcmenuDivider {

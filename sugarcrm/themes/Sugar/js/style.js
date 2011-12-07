@@ -35,30 +35,38 @@
 $(window).resize(function() {
   //$('body').prepend('<div>' + $(window).width() + '</div>');
   
-  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.11) + 43);
+  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
   
-  $('#sugar_spot_search').css("width",Math.round($(window).width()*.11));
-
+  $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
+	resizeMenu();
 });
 
 
 $(document).ready(function(){
-  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.11) + 43);
-  $('#sugar_spot_search').css("width",Math.round($(window).width()*.11));
+
+	
+	
+	
+	
+  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
+  $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
 
 	$("#sugar_spot_search").keypress(function(event) {
 		DCMenu.startSearch(event);
-		
+		$('#close_spot_search').css("display","inline-block");
+		$('#close_spot_search').click(function() {
+			clearSearch();
+		});
 		$('body').click(function() {
-		   $(this).parent().find("div#sugar_spot_search_results").hide();
-		   $("#sugar_spot_search").val("");
-		   $("#sugar_spot_search").removeClass("searching");
+			clearSearch();
 //		   console.log($("#sugar_spot_search").val());
 		});
 
 
 
 	});
+
+
 
 
 	$("#dcmenu #quickCreateUL ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
@@ -123,8 +131,42 @@ $('body').click(function() {
 
 });
  
- 
- 
+function resizeMenu() {
+	var maxMenuWidth = Math.round($(window).width()*.55);
+	var menuWidth = $('#moduleList').width();
+	var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
+	
+	//console.log($('#themeTabGroup_All ul').children(".yuimenubaritem").length);
+	//if(menuWidth > maxMenuWidth) {
+		$('#themeTabGroup_All ul').children(".yuimenubaritem").each(
+			function(index) {
+				//if($(this).css("display") == "list-item") {
+					menuItemsWidth += $(this).width();
+				//}
+				if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenuAll") {
+		    		//console.log($(this).attr("id"));
+		    		$(this).css("display","none");
+		    		$("#"+$(this).attr("id")+"_flex").css("display","list-item");
+				}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenuAll") {
+					//console.log($(this).attr("id"));
+					$(this).css("display","list-item");
+					$("#"+$(this).attr("id")+"_flex").css("display","none");
+				}
+			}
+		);	
+		
+	//}
+	
+}
+function clearSearch() {
+	$("div#sugar_spot_search_results").hide();
+	$('#close_spot_search').css("display","none");
+	$("#sugar_spot_search").val("");
+	$("#sugar_spot_search").removeClass("searching");	
+}
+
+
+
 SUGAR.themes = SUGAR.namespace("themes");
 
 SUGAR.append(SUGAR.themes, {
