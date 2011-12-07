@@ -2306,10 +2306,12 @@ class Email extends SugarBean {
 		$result =$this->db->query($query,true," Error filling in additional list fields: ");
 
 		$row = $this->db->fetchByAssoc($result);
+        $this->attachment_image = ($row !=null) ? SugarThemeRegistry::current()->getImage('attachment',"","","") : "";
 
 		if ($row !=null) {
 			$this->attachment_image = SugarThemeRegistry::current()->getImage('attachment',"","","",'.gif',translate('LBL_ATTACHMENT', 'Emails'));
 		}
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->assigned_name = get_assigned_team_name($this->team_id);
 		//END SUGARCRM flav=pro ONLY
