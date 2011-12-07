@@ -36,6 +36,7 @@ $dictionary['User'] = array(
             'len' => '60',
             'importable' => 'required',
             'required' => false,
+            'studio' => array('no_duplicate' => true),
         ) ,
         'user_hash' => array(
             'name' => 'user_hash',
@@ -44,7 +45,21 @@ $dictionary['User'] = array(
             'len' => '32',
             'reportable' => false,
             'importable' => 'false',
-            'studio' => false,
+            'studio' => array(
+               'no_duplicate' => true,
+               'editview' => false,
+               'detailview' => false,
+               'quickcreate' => false,
+               'basic_search' => false,
+               'advanced_search' => false,
+               //BEGIN SUGARCRM flav=pro
+               'wirelesseditview' => false,
+               'wirelessdetailview' => false,
+               'wirelesslistview' => 'visible',
+               'wireless_basic_search' => false,
+               'wireless_advanced_search' => false,
+               //END SUGARCRM flav=pro
+               ),
         ) ,
         'system_generated_password' => array(
             'name' => 'system_generated_password',
