@@ -50,6 +50,7 @@ $(document).ready(function(){
 	
   $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
   $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
+resizeMenu();
 
 	$("#sugar_spot_search").keypress(function(event) {
 		DCMenu.startSearch(event);
