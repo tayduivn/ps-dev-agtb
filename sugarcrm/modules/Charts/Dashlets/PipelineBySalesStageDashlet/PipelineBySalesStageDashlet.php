@@ -201,8 +201,8 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
         //BEGIN SUGARCRM flav=pro ONLY
         $this->getSeedBean()->add_team_security_where_clause($query);
         //END SUGARCRM flav=pro ONLY
-        $query .= " WHERE opportunities.date_closed >= ". db_convert("'".$this->pbss_date_start."'",'datetime').
-                        " AND opportunities.date_closed <= ".db_convert("'".$this->pbss_date_end."'",'datetime') .
+        $query .= " WHERE opportunities.date_closed >= ". db_convert("'".$this->pbss_date_start."'",'date').
+                        " AND opportunities.date_closed <= ".db_convert("'".$this->pbss_date_end."'",'date') .
                         " AND opportunities.assigned_user_id = users.id  AND opportunities.deleted=0 ";
         if ( count($this->pbss_sales_stages) > 0 )
             $query .= " AND opportunities.sales_stage IN ('" . implode("','",$this->pbss_sales_stages) . "') ";
