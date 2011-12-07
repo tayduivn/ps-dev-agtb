@@ -132,7 +132,7 @@ class ViewGS extends SugarWirelessView
             //Check if we have a search match and set the highlight flag
             $matchReplace = $this->matchHitStart . '${0}' . $this->matchHitEnd;
 
-            if($field['name'] == 'email1' || $field['name'] == 'email2')
+            if(isset($field['name']) && ($field['name'] == 'email1' || $field['name'] == 'email2'))
             {
                 if(preg_match_all("/\<a.*?\>(.*?)\<\/a\>/is", $field['value'], $matches))
                 {
