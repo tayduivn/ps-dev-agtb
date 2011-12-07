@@ -186,6 +186,7 @@ class TeamSetLink extends Link {
 	 */
 	public function replace($rel_keys, $additional_values=array(), $save = true){
 		$this->_teamList = $rel_keys;
+		$this->_saved = false;
 		if($save){
 			$this->save();
 		}
