@@ -245,5 +245,4 @@ ModuleBuilder.addConvertLeadLayout = function()
 ModuleBuilder.module = '{$view_module}';
 ModuleBuilder.MBpackage = '{$view_package}';
 ModuleBuilder.helpSetup('studioWizard','convertLeadHelp');
-
 </script>
