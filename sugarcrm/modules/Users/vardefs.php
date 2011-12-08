@@ -36,7 +36,21 @@ $dictionary['User'] = array(
             'len' => '60',
             'importable' => 'required',
             'required' => false,
-            'studio' => array('no_duplicate' => true),
+            'studio' => array(
+               'no_duplicate' => true,
+               'editview' => false,
+               'detailview' => true,
+               'quickcreate' => false,
+               'basic_search' => false,
+               'advanced_search' => false,
+               //BEGIN SUGARCRM flav=pro
+               'wirelesseditview' => false,
+               'wirelessdetailview' => true,
+               'wirelesslistview' => false,
+               'wireless_basic_search' => false,
+               'wireless_advanced_search' => false,
+               //END SUGARCRM flav=pro
+               ),
         ) ,
         'user_hash' => array(
             'name' => 'user_hash',
@@ -45,21 +59,7 @@ $dictionary['User'] = array(
             'len' => '32',
             'reportable' => false,
             'importable' => 'false',
-            'studio' => array(
-               'no_duplicate' => true,
-               'editview' => false,
-               'detailview' => false,
-               'quickcreate' => false,
-               'basic_search' => false,
-               'advanced_search' => false,
-               //BEGIN SUGARCRM flav=pro
-               'wirelesseditview' => false,
-               'wirelessdetailview' => false,
-               'wirelesslistview' => 'visible',
-               'wireless_basic_search' => false,
-               'wireless_advanced_search' => false,
-               //END SUGARCRM flav=pro
-               ),
+            'studio' => array('no_duplicate'=>true, 'listview' => false, 'searchview'=>false),
         ) ,
         'system_generated_password' => array(
             'name' => 'system_generated_password',
@@ -68,6 +68,7 @@ $dictionary['User'] = array(
             'required' => false,
             'reportable' => false,
             'massupdate' => false,
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
 
         'pwd_last_changed' => array(
@@ -87,6 +88,7 @@ $dictionary['User'] = array(
             'len' => '100',
             'reportable' => false,
             'importable' => 'false',
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         /**
          * sugar_login will force the user to use sugar authentication
@@ -100,6 +102,7 @@ $dictionary['User'] = array(
             'reportable' => false,
             'massupdate' => false,
             'importable' => false,
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         //BEGIN SUGARCRM flav!=com ONLY
         'picture' => array(
@@ -165,6 +168,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_IS_ADMIN',
             'type' => 'bool',
             'default' => '0',
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         'external_auth_only' => array(
             'name' => 'external_auth_only',
@@ -173,6 +177,7 @@ $dictionary['User'] = array(
             'reportable' => false,
             'massupdate' => false,
             'default' => '0',
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         'receive_notifications' => array(
             'name' => 'receive_notifications',
@@ -180,6 +185,7 @@ $dictionary['User'] = array(
             'type' => 'bool',
             'default' => '1',
             'massupdate' => false,
+            'studio' => false,
         ) ,
         'description' => array(
             'name' => 'description',
@@ -222,7 +228,8 @@ $dictionary['User'] = array(
             'type' => 'assigned_user_name',
             'table' => 'users',
             'isnull' => 'false',
-            'dbType' => 'id'
+            'dbType' => 'id',
+            'studio' => false,
         ) ,
         'created_by_name' => array(
             'name' => 'created_by_name',
@@ -343,6 +350,7 @@ $dictionary['User'] = array(
             'reportable' => false,
             'type' => 'varchar',
             'len' => '36',
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         'team_id' => array(
             'name' => 'team_id',
@@ -351,6 +359,7 @@ $dictionary['User'] = array(
         	'source' => 'non-db',
             'type' => 'varchar',
             'len' => '36',
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
 			'team_set_id' =>
 			array (
@@ -402,6 +411,7 @@ $dictionary['User'] = array(
 				'source' => 'non-db',
 				'len' => 36,
 				'custom_type' => 'teamset',
+                'studio' => array('listview' => false, 'searchview'=>false),
 			),
 			'team_link' =>
 		    array (
@@ -475,7 +485,8 @@ $dictionary['User'] = array(
             //BEGIN SUGARCRM flav=sales ONLY
             'importable' => false,
             //END SUGARCRM flav=sales ONLY
-            'default' => '0'
+            'default' => '0',
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         'show_on_employees' => array(
             'name' => 'show_on_employees',
@@ -613,6 +624,7 @@ $dictionary['User'] = array(
             'importable' => false,
             'reportable' => false,
             'source' => 'non-db',
+            'studio' => false,
         ),
         
         'aclroles' => array(
@@ -628,6 +640,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_GROUP_USER',
             'type' => 'bool',
             'massupdate' => false,
+            'studio' => array('listview' => false, 'searchview'=>false),
             //BEGIN SUGARCRM flav=sales ONLY
             'importable' => false,
             //END SUGARCRM flav=sales ONLY
@@ -646,7 +659,7 @@ $dictionary['User'] = array(
             'link_type' => 'relationship_info',
             'source' => 'non-db',
             'importable' => 'false',
-            'studio' => array('listview' => false),
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         'm_accept_status_fields' => array(
             'name' => 'm_accept_status_fields',
@@ -661,7 +674,7 @@ $dictionary['User'] = array(
             'link_type' => 'relationship_info',
             'source' => 'non-db',
             'importable' => 'false',
-            'studio' => array('listview' => false),
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         'accept_status_id' => array(
             'name' => 'accept_status_id',
@@ -669,7 +682,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_LIST_ACCEPT_STATUS',
             'importable' => 'false',
-        	'studio' => array('listview' => false),
+        	'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         'accept_status_name' => array(
             'name' => 'accept_status_name',
@@ -678,6 +691,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_LIST_ACCEPT_STATUS',
             'options' => 'dom_meeting_accept_status',
             'massupdate' => false,
+            'studio' => array('listview' => false, 'searchview'=>false),
         ) ,
         //BEGIN SUGARCRM flav!=sales ONLY
         'prospect_lists' => array(
