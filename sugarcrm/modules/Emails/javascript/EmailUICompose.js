@@ -1490,7 +1490,8 @@ SE.composeLayout = {
         }
         else
         {
-            var html = '';
+            //if tinymce isntance is undefined, then we can't do anything useful, just return
+            return;
         }
 
         var htmllow = html.toLowerCase();
