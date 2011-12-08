@@ -1,30 +1,37 @@
 {*
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 *}
-{* $Id: ConvertLead.tpl 21451 2007-04-04 22:04:34Z dwheeler $ *}
+
 
 {literal}
 <style>
-.yui-dt-col-required .yui-dt-liner, .yui-dt-col-select .yui-dt-liner, .yui-dt-col-copyData .yui-dt-liner, 
+.yui-dt-col-required .yui-dt-liner, .yui-dt-col-select .yui-dt-liner, .yui-dt-col-copyData .yui-dt-liner,
 .yui-dt-col-edit .yui-dt-liner, .yui-dt-col-delete .yui-dt-liner
 {
     text-align:center;
@@ -40,8 +47,8 @@
 {html_options name="convertSelectNewModule" id="convertSelectNewModule" options=$availibleModules}
 <input type='button' name='addModule' value='{sugar_translate label="LBL_CONVERT_ADD_MODULE"}'
     class='button' onclick='ModuleBuilder.addConvertLeadLayout();' style="margin-bottom:5px;">
-    
-    
+
+
 <div id='relGrid'></div>
 {if $studio}{sugar_translate label='LBL_CUSTOM_RELATIONSHIPS' module='ModuleBuilder'}</h3>{/if}
 <script>
@@ -67,7 +74,7 @@ var editLayout = function(row)
             scroll: true,
             cacheData: true,
             active :true,
-            content: "{sugar_getimage alt=$mod_strings.LBL_LOADING name="loading" ext=".gif" other_attributes=''}{sugar_translate label='LBL_LOADING'}"{literal}
+            content: "{sugar_getimage alt='{$mod_strings.LBL_LOADING}' name='loading' ext='.gif' other_attributes=''}{sugar_translate label='LBL_LOADING'}"{literal}
         }, ModuleBuilder.tabPanel);
         ModuleBuilder.tabPanel.addTab(panel);
     } else {
@@ -96,7 +103,7 @@ var removeLayout = function(row)
 	        removeLayout: true,
                 targetModule:getModuleNameFromLabel(row.module)
 	    };
-	    
+
 	    ModuleBuilder.asyncRequest(params, function(o) {
 	        ajaxStatus.hideStatus();
 	        ModuleBuilder.updateContent(o);
@@ -113,7 +120,7 @@ var formatSelect = function(el, rec, col, data)
     if(typeof(relationships[row.module]) == "undefined" || row.module == "Contacts")
     	ret += " disabled />";
     else {
-        ret += "onclick='ModuleBuilder.convertLayoutGrid.getRecord(this).setData(\"select\", this.checked ? \"" 
+        ret += "onclick='ModuleBuilder.convertLayoutGrid.getRecord(this).setData(\"select\", this.checked ? \""
             + relationships[row.module][0] + "\" : false);'";
         if (selected)
         	ret += " checked='true'";
@@ -122,14 +129,14 @@ var formatSelect = function(el, rec, col, data)
     el.innerHTML = ret;
 }
 var getEditButton = function(el, rec, col, data){
-    var out = {/literal}"{sugar_getimage alt=$mod_strings.LBL_EDIT_INLINE name="edit_inline" ext=".gif" other_attributes=''}";{literal}
+    var out = {/literal}"<img alt='{$mod_strings.LBL_EDIT_INLINE}' name='edit_inline' src='{sugar_getimagepath file='edit_inline.gif'}' />";{literal}
 	el.innerHTML = out;
 	YAHOO.util.Event.addListener(el, "click", function(){editLayout(grid.getRecord(el).getData());});
 }
 var getRemoveButton = function(el, rec, col, data){
 	if (rec.getData().module =="Contacts")
 	   return;
-    var out = {/literal}"{sugar_getimage alt=$mod_strings.LBL_EDIT_INLINE name="delete_inline" ext=".gif" other_attributes=''}";{literal}
+    var out = {/literal}"<img alt='{$mod_strings.LBL_EDIT_INLINE}' name='delete_inline' src='{sugar_getimagepath file='delete_inline.gif'}' />";{literal}
     el.innerHTML = out;
     YAHOO.util.Event.addListener(el, "click", function(){removeLayout(grid.getRecord(el).getData());});
 }
@@ -166,8 +173,8 @@ var grid = ModuleBuilder.convertLayoutGrid = new YAHOO.SUGAR.DragDropTable('relG
     }),
     {MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
 );
-grid.subscribe("rowMouseoverEvent", grid.onEventHighlightRow); 
-grid.subscribe("rowMouseoutEvent", grid.onEventUnhighlightRow); 
+grid.subscribe("rowMouseoverEvent", grid.onEventHighlightRow);
+grid.subscribe("rowMouseoutEvent", grid.onEventUnhighlightRow);
 grid.render();
 {/literal}
 //tooltips
@@ -216,7 +223,7 @@ ModuleBuilder.saveConvertLeadLayout = function()
         updateOrder: true,
         data:YAHOO.lang.JSON.stringify(out)
     };
-    
+
 	ModuleBuilder.asyncRequest(params, function(o) {
 	    ajaxStatus.hideStatus();
 	    ModuleBuilder.updateContent(o);
@@ -238,4 +245,5 @@ ModuleBuilder.addConvertLeadLayout = function()
 ModuleBuilder.module = '{$view_module}';
 ModuleBuilder.MBpackage = '{$view_package}';
 ModuleBuilder.helpSetup('studioWizard','convertLeadHelp');
+
 </script>
