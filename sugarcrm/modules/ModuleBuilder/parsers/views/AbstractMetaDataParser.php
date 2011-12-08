@@ -107,7 +107,7 @@ abstract class AbstractMetaDataParser
 	    $fieldDefs = $this->implementation->getFielddefs();
 	    $newAry = array();
 	    foreach($fieldDefs as $field){
-	        if(isset($field['required']) && $field['required'] && isset($field['name']) && $field['type'] != 'readonly'){
+	        if(isset($field['required']) && $field['required'] && isset($field['name']) && empty( $field['readonly'])) {
 	            array_push($newAry , '"'.$field['name'].'"');
             }
         }
