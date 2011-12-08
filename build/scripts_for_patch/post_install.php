@@ -449,7 +449,7 @@ function post_install() {
                $match = '/^' . str_replace('/', '\/', $upload_dir) . '(.*?)$/';
                while(($row = $GLOBALS['db']->fetchByAssoc($results)))
                {
-               	    $file = $row['filename'];
+               	    $file = str_replace('//', '/', $row['filename']); //Strip out double-paths (from modulebuilder)
                	    $id = $row['id'];
 
                		if(!empty($file) && preg_match($match, $file, $matches))
