@@ -781,6 +781,10 @@
 		document.forms["CalendarEditView"].elements["current_module"].value = mod_name; 	
 	
 		CAL.current_params.module_name = mod_name;
+		
+		QSFieldsArray = new Array();
+		QSProcessedFieldsArray = new Array();
+		
 		CAL.load_create_form(CAL.current_params);				
 	}
 
@@ -846,7 +850,7 @@
 				"current_module" : params.module_name,
 				"assigned_user_id" : params.user_id,
 				"assigned_user_name" : params.user_name,
-				"date_start" : params.date_start,
+				"date_start" : params.date_start
 			};
 			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));	
 	}
