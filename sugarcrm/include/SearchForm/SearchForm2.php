@@ -627,18 +627,18 @@ require_once('include/EditView/EditView2.php');
                 } else if (preg_match('/^range_(.*?)$/', $field, $match) && isset($this->searchFields[$field]['value'])) {
                     $real_field = $match[1];
 
-                    //Special case for datetime and datetimecombo fields.  By setting the type here we allow an actual between search
-                    if(in_array($parms['operator'], array('=', 'between', "not_equal", 'less_than', 'greater_than', 'less_than_equals', 'greater_than_equals')))
-                    {
-                       $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';
-                       if(strtolower($field_type) == 'readonly' && isset($this->seed->field_name_map[$real_field]['dbType'])) {
-                           $field_type = $this->seed->field_name_map[$real_field]['dbType'];                       
-                       }
-                       if($field_type == 'datetimecombo' || $field_type == 'datetime' || $field_type == 'int')
-                       {
-                          $type = $field_type;
-                       }
-                    }
+					//Special case for datetime and datetimecombo fields.  By setting the type here we allow an actual between search
+					if($parms['operator'] == '=')
+					{
+					   $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';
+                       if(strtolower($field_type) == 'readonly' && isset($this->seed->field_name_map[$real_field]['dbType']))
+                           $field_type = $this->seed->field_name_map[$real_field]['dbType'];
+
+					   if($field_type == 'datetimecombo' || $field_type == 'datetime' || $field_type == 'int')
+					   {
+					   	  $type = $field_type;
+					   }
+					}
 
                     $this->searchFields[$real_field]['value'] = $this->searchFields[$field]['value'];
                     $this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];
