@@ -126,10 +126,10 @@ class SOAPAPI3Test extends SOAPTestCase
     {
         $GLOBALS['reload_vardefs'] = TRUE;
         //Test a regular module
-        $result = $this->_getVardefsMD5('ProductCategories');
-        $a = new ProductCategory();
+        $result = $this->_getVardefsMD5('Currencies');
+        $a = new Currency();
         $soapHelper = new SugarWebServiceUtilv3();
-        $actualVardef = $soapHelper->get_return_module_fields($a,'ProductCategories','');
+        $actualVardef = $soapHelper->get_return_module_fields($a,'Currencies','');
         $actualMD5 = md5(serialize($actualVardef));
         $this->assertEquals($actualMD5, $result[0], "Unable to retrieve vardef md5.");
 
