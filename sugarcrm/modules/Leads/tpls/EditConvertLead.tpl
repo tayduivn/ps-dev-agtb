@@ -74,7 +74,7 @@ var editLayout = function(row)
             scroll: true,
             cacheData: true,
             active :true,
-            content: "{sugar_getimage alt='{$mod_strings.LBL_LOADING}' name='loading' ext='.gif' other_attributes=''}{sugar_translate label='LBL_LOADING'}"{literal}
+            content: "<img alt='{$mod_strings.LBL_LOADING}' name='loading' src='{sugar_getimagepath file='loading.gif'}' />{sugar_translate label='LBL_LOADING'}"{literal}
         }, ModuleBuilder.tabPanel);
         ModuleBuilder.tabPanel.addTab(panel);
     } else {
