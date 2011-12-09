@@ -2151,7 +2151,12 @@ function clean_incoming_data() {
 	global $sugar_config;
     global $RAW_REQUEST;
 
-    $RAW_REQUEST = $_REQUEST;
+    if(get_magic_quotes_gpc()) {
+        // magic quotes screw up data, we'd have to clean up
+        $RAW_REQUEST = array_map("cleanup_slashes", $_REQUEST);
+    } else {
+        $RAW_REQUEST = $_REQUEST;
+    }
 
 	if (get_magic_quotes_gpc() == 1) {
 		$req  = array_map("preprocess_param", $_REQUEST);
@@ -2254,11 +2259,15 @@ function preprocess_param($value){
 		$value = securexss($value);
 	}
 
-
 	return $value;
-
-
 }
+
+function cleanup_slashes($value)
+{
+    if(is_string($value)) return stripslashes($value);
+    return $value;
+}
+
 
 function set_register_value($category, $name, $value){
     return sugar_cache_put("{$category}:{$name}", $value);
