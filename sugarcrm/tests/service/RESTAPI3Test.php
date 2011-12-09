@@ -424,17 +424,17 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $session = $result['id'];
 
         //Test a regular module
-        $fullResult = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'Calls' ));
-        $result = $fullResult['Calls'];
-        $a = new Call();
+        $fullResult = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'ProductCategories' ));
+        $result = $fullResult['ProductCategories'];
+        $a = new ProductCategory();
         $soapHelper = new SugarWebServiceUtilv3();
-        $actualVardef = $soapHelper->get_return_module_fields($a,'Calls','');
+        $actualVardef = $soapHelper->get_return_module_fields($a,'ProductCategories','');
         $actualMD5 = md5(serialize($actualVardef));
         $this->assertEquals($actualMD5, $result, "Unable to retrieve vardef md5.");
 
         //Test a fake module
         $result = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'BadModule' ));
-        $this->assertTrue($result['name'] == 'Module Does Not Exist');
+        $this->assertEquals('Module Does Not Exist', $result['name']);
         unset($GLOBALS['reload_vardefs']);
     }
 

@@ -126,16 +126,16 @@ class SOAPAPI3Test extends SOAPTestCase
     {
         $GLOBALS['reload_vardefs'] = TRUE;
         //Test a regular module
-        $result = $this->_getVardefsMD5('Calls');
-        $a = new Call();
+        $result = $this->_getVardefsMD5('ProductCategories');
+        $a = new ProductCategory();
         $soapHelper = new SugarWebServiceUtilv3();
-        $actualVardef = $soapHelper->get_return_module_fields($a,'Calls','');
+        $actualVardef = $soapHelper->get_return_module_fields($a,'ProductCategories','');
         $actualMD5 = md5(serialize($actualVardef));
         $this->assertEquals($actualMD5, $result[0], "Unable to retrieve vardef md5.");
 
         //Test a fake module
         $result = $this->_getVardefsMD5('BadModule');
-        $this->assertTrue($result['faultstring'] == 'Module Does Not Exist');
+        $this->assertEquals('Module Does Not Exist', $result['faultstring']);
     }
 
     public function testGetUpcomingActivities()
