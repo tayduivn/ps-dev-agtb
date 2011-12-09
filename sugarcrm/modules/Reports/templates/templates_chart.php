@@ -81,8 +81,8 @@ function get_row_remap(& $row, & $reporter) {
     $row_remap['numerical_value'] = $numerical_value = unformat_number($row['cells'][$reporter->chart_numerical_position]['val']);
     global $do_thousands;
     if ($do_thousands) {
-    	// MRF - Bug # 13501 - added intval() below:
-        $row_remap['numerical_value'] = round(unformat_number(intval($row_remap['numerical_value'])) / 1000);
+        // MRF - Bug # 13501, 47148 - added floor() below:
+        $row_remap['numerical_value'] = round(unformat_number(floor($row_remap['numerical_value'])) / 1000);
     }
     $row_remap['group_text'] = $group_text = (isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? chop($row['cells'][$reporter->chart_group_position]['val']) : '';
     $row_remap['group_key'] = ((isset($reporter->chart_group_position) && !is_array($reporter->chart_group_position)) ? $row['cells'][$reporter->chart_group_position]['key'] : '');

@@ -89,11 +89,9 @@ class QuotesViewDetail extends ViewDetail
 				$client = $defaultPref;
 			}
 			$pdfButtons = '<form action="index.php" method="{$PDFMETHOD}" name="ViewPDF" id="form"><input type="hidden" name="module" value="Quotes"><input type="hidden" name="record" value="{$fields.id.value}"><input type="hidden" name="action" value="sugarpdf"><input type="hidden" name="email_action">';
-			if ($client != 'sugar') {
-				$pdfButtons .= '<input title="{$APP.LBL_EMAIL_COMPOSE}" accessKey="{$APP.LBL_EMAIL_PDF_BUTTON_KEY}" class="button" type="submit" name="button" value="{$APP.LBL_EMAIL_COMPOSE}" onclick="location.href=\'mailto:\';return false;"> ';
-			} else {
-				$pdfButtons .= '<input title="{$APP.LBL_EMAIL_PDF_BUTTON_TITLE}" accessKey="{$APP.LBL_EMAIL_PDF_BUTTON_KEY}" class="button" type="submit" name="button" value="{$APP.LBL_EMAIL_PDF_BUTTON_LABEL}" onclick="this.form.email_action.value=\'EmailLayout\';"> ';
-			}
+			$pdfButtons .= '{nocache}';
+			$pdfButtons .= '{sugar_email_btn}';
+			$pdfButtons .= '{/nocache}';
 			$pdfButtons .= '<input title="{$APP.LBL_VIEW_PDF_BUTTON_TITLE}" accessKey="{$APP.LBL_VIEW_PDF_BUTTON_KEY}" class="button" type="submit" name="button" value="{$APP.LBL_VIEW_PDF_BUTTON_LABEL}">';
 			
 		    $this->dv->defs['templateMeta']['form']['buttons'] = array('EDIT', 'DUPLICATE', 'DELETE',
@@ -101,8 +99,10 @@ class QuotesViewDetail extends ViewDetail
 		        array('customCode'=>$pdfButtons)
 		        );
 				
-		}		
+		}
+		
  		parent::display();
+		
  	}
 }
 

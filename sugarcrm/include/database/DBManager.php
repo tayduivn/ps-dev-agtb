@@ -835,7 +835,7 @@ protected function checkQuery($sql, $object_name = false)
 			if (isset($value['source']) && $value['source'] != 'db')
 				continue;
 
-			$name = $value['name'];
+			$name = strtolower($value['name']);
 			// add or fix the field defs per what the DB is expected to give us back
 			$this->massageFieldDef($value,$tablename);
 

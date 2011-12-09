@@ -1984,7 +1984,7 @@ SUGAR.reports = function() {
 				cell.setAttribute('scope', 'row');
 			}
 			if (typeof(linkedGroupById) == 'undefined')
-				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
+				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(this)' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' alt='"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			SUGAR.reports.addToFullTableList(id, fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));		
 			if (typeof(linkedGroupById) == 'undefined') {
 				var dd11 = YAHOO.util.Dom.get(id);
@@ -2160,12 +2160,80 @@ SUGAR.reports = function() {
 			}
 			
 		},
-		deleteDisplaySummary: function(row) {
-			var deleteRow = document.getElementById(row);
-			SUGAR.reports.deleteFromFullTableList(row);
+        deleteDisplaySummary: function(oTrigger) {
+            var oRow = oTrigger;
+            do
+            {
+                oRow = oRow.parentNode;
+                if (!oRow)
+                {
+                    return;
+                }
+            }
+            while ('TR' != oRow.tagName);
+            SUGAR.reports.deleteFromFullTableList(oRow.id);
 			var displaySummaryTbl = document.getElementById('displaySummariesTable');
 			var tBody = displaySummaryTbl.childNodes[0];
-			tBody.removeChild(deleteRow);			
+            tBody.removeChild(oRow);
+            SUGAR.reports.rebuildSummaryIndexes(); // Bug #27623 We need to rebuild indexes
+		},
+        // Bug #27623 This function rebuild id of html nodes and full_table_list array of javascript
+        rebuildSummaryIndexes: function()
+        {
+            var oNode = document.getElementById('displaySummariesTable').childNodes[0];
+            var iIndex = 0;
+            var oAliases = {};
+            for (var i = 0; i < oNode.childNodes.length; i++)
+            {
+                var oItem = oNode.childNodes[i];
+                if (oItem.id == '')
+                {
+                    continue;
+                }
+
+                iIndex++;
+                if (oItem.id.match(/^display_summaries_row_\d+$/) == null)
+                {
+                    continue;
+                }
+                if (oItem.id == ('display_summaries_row_' + iIndex))
+                {
+                    continue;
+                }
+
+                oAliases[oItem.id] = 'display_summaries_row_' + iIndex;
+                var oldIndex = oItem.id.replace(/^[^\d]*/,'');
+                SUGAR.reports.rebuildSummaryNode(oItem, oldIndex, iIndex);
+            }
+            totalSummaryColRows = iIndex;
+
+            for (var i in full_table_list)
+            {
+                if (typeof full_table_list[i].dependents != 'object')
+                {
+                    continue;
+                }
+                for (var j =0; j < full_table_list[i].dependents.length; j++)
+                {
+                    if (typeof oAliases[full_table_list[i].dependents[j]] != 'undefined')
+                    {
+                        full_table_list[i].dependents[j] = oAliases[full_table_list[i].dependents[j]];
+                    }
+                }
+            }
+        },
+        // Bug #27623 This method change id of nodes recursive
+        rebuildSummaryNode: function(oNode, oldIndex, iIndex)
+        {
+            if (typeof oNode.id == 'undefined')
+            {
+                return;
+            }
+            oNode.id = oNode.id.replace(oldIndex, iIndex);
+            for (var i = 0; i < oNode.childNodes.length; i++)
+            {
+                SUGAR.reports.rebuildSummaryNode(oNode.childNodes[i], oldIndex, iIndex);
+            }
 		},		
 		deleteFilter: function(index, row, table) {
 			var deleteRow = document.getElementById(row);
@@ -2284,13 +2352,14 @@ SUGAR.reports = function() {
 			SUGAR.reports.addFilterInput(filter_row.input_cell,filter,filter_row.id);
 		},
 		
-		addFilterInputSelectSingle: function(row,options,filter) {
+		addFilterInputSelectSingle: function(row,options,filter,rowId) {
 			var cell = document.createElement('td');
 			row.appendChild(cell);
 		
 			var select_html_info = new Object();
 			var options_arr = new Array();
 			var select_info = new Object();
+            select_info['id'] = 'select_' + rowId;
 			select_info['name'] = 'input';
             select_info['title'] = 'select filter input';
 			select_html_info['select'] = select_info;
@@ -2326,12 +2395,13 @@ SUGAR.reports = function() {
 			filter_row.input_field0 = cell.getElementsByTagName('select')[0];
 			filter_row.input_field1 = null;
 		},		
-		addFilterInputSelectMultiple: function(row,options,filter) {
+		addFilterInputSelectMultiple: function(row,options,filter,rowId) {
 			var cell = document.createElement('td');
 			row.appendChild(cell);
 			var select_html_info = new Object();
 			var options_arr = new Array();
 			var select_info = new Object();
+            select_info['id'] = 'select_' + rowId;
 			select_info['size'] = '5';
 			select_info['multiple'] = true;
             select_info['title'] = 'filter multi-select input';
@@ -2992,27 +3062,27 @@ SUGAR.reports = function() {
 					SUGAR.reports.loadXML();
 				}
 				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
-					SUGAR.reports.addFilterInputSelectMultiple(row,users_array,filter);
+					SUGAR.reports.addFilterInputSelectMultiple(row,users_array,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
 				else {
-					SUGAR.reports.addFilterInputSelectSingle(row,users_array,filter);
+					SUGAR.reports.addFilterInputSelectSingle(row,users_array,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
 			} 
 			else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type') {
 				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
-					SUGAR.reports.addFilterInputSelectMultiple(row,field.options,filter);
+					SUGAR.reports.addFilterInputSelectMultiple(row,field.options,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
 				else {
-					SUGAR.reports.addFilterInputSelectSingle(row,field.options,filter);
+					SUGAR.reports.addFilterInputSelectSingle(row,field.options,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
 			}
 			else if (field_type=='bool') {
 		            var options = ['yes','no'];
-		            SUGAR.reports.addFilterInputSelectSingle(row,options,filter);
+		            SUGAR.reports.addFilterInputSelectSingle(row,options,filter,rowId);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 		    }
 			//BEGIN SUGARCRM flav!=sales ONLY
@@ -3595,7 +3665,7 @@ SUGAR.reports = function() {
 				cell.setAttribute('scope', 'row');
 			}
 			if (linkedGroupById == null)
-				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' '"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
+				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(this)' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif' '"+SUGAR.language.get("Reports", "LBL_REMOVE")+"'>";
 			SUGAR.reports.addToFullTableList(id,
 				parentsUIStrSoFar, link);		
 

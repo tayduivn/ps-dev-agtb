@@ -38,13 +38,14 @@ class IsValidDateExpression extends BooleanExpression {
             return AbstractExpression::$TRUE;
         }
         try {
-            $date = TimeDate::getInstance()->fromUser($dtStr, $current_user);
-            if(!empty($date)) {
+            $td = TimeDate::getInstance();
+            $date = $td->fromUser($dtStr, $current_user);
+            if(!empty($date) && $td->asUser($date) == $dtStr) {
                 return AbstractExpression::$TRUE;
             }
             //Next try without time
-            $date = TimeDate::getInstance()->fromUserDate($dtStr, $current_user);
-            if(!empty($date)) {
+            $date = $td->fromUserDate($dtStr, $current_user);
+            if(!empty($date) && $td->asUserDate($date) == $dtStr)  {
                 return AbstractExpression::$TRUE;
             }
             return AbstractExpression::$FALSE;

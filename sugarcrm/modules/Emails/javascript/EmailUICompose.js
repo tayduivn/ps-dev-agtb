@@ -2074,7 +2074,7 @@ SE.composeLayout = {
             composePackage.body = decodeURI(encodeURI(composePackage.body)).replace(/<BR>/ig, '\n').replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
         } // if
         //Flag determines if we should clear the tiny contents or just append
-        if (typeof(composePackage.clearBody) != 'undefined' && composePackage.clearBody){
+        if (typeof(composePackage.clearBody) != 'undefined' && composePackage.clearBody) {
             SE.composeLayout.tinyHTML = '';
         }else{
 

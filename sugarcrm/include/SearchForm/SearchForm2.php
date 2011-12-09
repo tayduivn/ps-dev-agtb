@@ -631,6 +631,9 @@ require_once('include/EditView/EditView2.php');
                     if(in_array($parms['operator'], array('=', 'between', "not_equal", 'less_than', 'greater_than', 'less_than_equals', 'greater_than_equals')))
                     {
                        $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';
+                       if(strtolower($field_type) == 'readonly' && isset($this->seed->field_name_map[$real_field]['dbType'])) {
+                           $field_type = $this->seed->field_name_map[$real_field]['dbType'];                       
+                       }
                        if($field_type == 'datetimecombo' || $field_type == 'datetime' || $field_type == 'int')
                        {
                           $type = $field_type;
