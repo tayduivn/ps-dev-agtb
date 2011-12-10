@@ -1145,7 +1145,15 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	// build WHERE clauses, if any
 	$where_clauses = array();
 	if (!empty($query)) {
-		$where_clauses[] = $query;
+	    require_once 'include/SugarSQLValidate.php';
+	    $valid = new SugarSQLValidate();
+	    if(!$valid->validateQueryClauses($query)) {
+		    $error->set_error('no_access');
+	        return array(
+    			'result_count' => -1,
+    		);
+	    }
+	    $where_clauses[] = $query;
 	}
 	if ($deleted == 0) {
 		$where_clauses[] = $seed->table_name . '.deleted = 0';

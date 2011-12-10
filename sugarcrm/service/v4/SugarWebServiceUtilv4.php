@@ -116,12 +116,15 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		}
 		$order_by=$seed->process_order_by($order_by, null);
 
+		if(!$this->validateQueryClauses($where, $order_by)) {
+		    $GLOBALS['log']->fatal("get_data_list: bad query: $where $order_by");
+		    return null;
+		}
+
 		$params = array();
 		if(!empty($favorites)) {
 		  $params['favorites'] = true;
 		}
-
-		$idquery = $seed->create_new_list_query('', $where, array('id'), $params, $show_deleted);
 
 		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted);
 		return $seed->process_list_query($query, $row_offset, $limit, $max, $where);
