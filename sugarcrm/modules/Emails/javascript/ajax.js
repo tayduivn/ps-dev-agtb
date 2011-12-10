@@ -1539,13 +1539,13 @@ var callbackReplyForward = {
 		var t = tinyMCE.getInstanceById('htmleditor' + idx);
         try {
 			var html = t.getContent();
+
             html = "&nbsp;";
             //add hr tag if this is not a reply draft or forward draft
             if(!isReOrFwDraft){
                 html += "<div><hr></div>";
             }
             html +=  a.description;
-
 
 			t.setContent(html);//
 

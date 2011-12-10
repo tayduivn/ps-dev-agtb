@@ -373,29 +373,28 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_PROJECTS',
 		),
-     'project_resource'=>
-		array (
-			'name' => 'project_resource',
-			'type' => 'link',
-			'relationship' => 'projects_contacts_resources',
-			'source' => 'non-db',
-			'vname' => 'LBL_PROJECTS',
-		),
+    'project_resource' => array(
+        'name' => 'project_resource',
+        'type' => 'link',
+        'relationship' => 'projects_contacts_resources',
+        'source' => 'non-db',
+        'vname' => 'LBL_PROJECTS_RESOURCES',
+    ),
 
 
 //BEGIN SUGARCRM flav=pro ONLY
-	'quotes'=>
-		array (
-			'name' => 'quotes',
-			'type' => 'link',
-			'relationship' => 'quotes_contacts_shipto',
-			'source' => 'non-db',
-			'ignore_role' => 'true',
-			'module' => 'Quotes',
-			'bean_name' => 'Quote',
-			'vname' => 'LBL_QUOTES',
-		),
-    'billing_quotes'=> array (
+	'quotes' => array(
+        'name' => 'quotes',
+        'type' => 'link',
+        'relationship' => 'quotes_contacts_shipto',
+        'source' => 'non-db',
+        'ignore_role' => 'true',
+        'module' => 'Quotes',
+        'bean_name' => 'Quote',
+        'vname' => 'LBL_QUOTES_SHIP_TO',
+    ),
+
+    'billing_quotes' => array(
         'name' => 'billing_quotes',
         'type' => 'link',
         'relationship' => 'quotes_contacts_billto',
@@ -403,7 +402,7 @@ array (
         'ignore_role' => 'true',
         'module' => 'Quotes',
         'bean_name' => 'Quote',
-        'vname' => 'LBL_QUOTES',
+        'vname' => 'LBL_QUOTES_BILL_TO',
     ),
 //END SUGARCRM flav=pro ONLY
 
@@ -415,14 +414,14 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_TASKS',
 		),
-	'tasks_parent'=>
-		array (
-			'name' => 'tasks_parent',
-			'type' => 'link',
-			'relationship' => 'contact_tasks_parent',
-			'source' => 'non-db',
-			'vname' => 'LBL_TASKS',
-	),
+	'tasks_parent' => array(
+        'name' => 'tasks_parent',
+        'type' => 'link',
+        'relationship' => 'contact_tasks_parent',
+        'source' => 'non-db',
+        'vname' => 'LBL_TASKS',
+        'reportable' => false
+    ),
 		'user_sync'=>
 		array (
 			'name' => 'user_sync',

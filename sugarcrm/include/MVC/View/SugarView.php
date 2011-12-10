@@ -594,6 +594,7 @@ class SugarView
                         "MODULE_NAME" => $menu_item[2],
                         "IMAGE"       => $themeObject
                         ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                        "ID"          => $menu_item[2]."_link",
                         );
                 }
             }
@@ -1229,7 +1230,17 @@ EOHTML;
 
         if ($show_help) {
             $theTitle .= "<span class='utils'>";
-            $theTitle .= $this->getHelpText($module);
+
+            $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+            $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
+            $theTitle .= <<<EOHTML
+&nbsp;
+<a id="create_image" href="{$url}" class="utilsLink">
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a id="create_link" href="{$url}" class="utilsLink">
+{$GLOBALS['app_strings']['LNK_CREATE']}
+</a>
+EOHTML;
         }
 
         $theTitle .= "</span></div>\n";

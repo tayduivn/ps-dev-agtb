@@ -82,7 +82,7 @@ class TeamNotice extends SugarBean {
 
 	function fill_in_additional_list_fields()
 	{
-		global $current_language;
+		global $mod_strings, $current_language;
 		$mod_strings = return_module_language($current_language, 'TeamNotices');
 		if(isset($this->description)){
 			$this->description = str_replace("\r\n", "<br>", $this->description);
@@ -105,6 +105,7 @@ class TeamNotice extends SugarBean {
 	}
 
 	function get_list_view_data(){
+        global $mod_strings;
 	  $temp_array = $this->get_list_view_array();
       $temp_array['ENCODED_NAME']=$this->name;
       //BEGIN SUGARCRM flav=pro ONLY

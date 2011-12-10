@@ -167,7 +167,9 @@
 			
 			var slot;
 			if(slot = CAL.get("t_" + time_cell + suffix)){
-				slot.appendChild(el);						
+				slot.appendChild(el);	
+				
+				CAL.cut_record(item.record + id_suffix);					
 				
 				if(duration_coef < 1.75 && CAL.mouseover_expand){
 					YAHOO.util.Event.on(elm_id,"mouseover",function(){
@@ -303,8 +305,7 @@
 						YAHOO.util.Dom.removeClass(slot,"slot_active");
 					}					
 				}
-
-				CAL.cut_record(item.record + id_suffix);				
+								
 				CAL.arrange_slot("t_" + time_cell + suffix);
 			}
 				
@@ -414,13 +415,6 @@
 						var nodes = CAL.query("#cal-tabs li a");
 						CAL.each(nodes,function(i,v){
 							YAHOO.util.Event.on(nodes[i], 'click', function(){
-								var nodes_li = CAL.query("#cal-tabs li");
-								CAL.each(nodes_li,function(j,v){
-									CAL.dom.removeClass(nodes_li[j],"selected");
-								});
-							
-								if(!CAL.dom.hasClass(this.parentNode,"selected"))
-									CAL.dom.addClass(this.parentNode,"selected");	
 								CAL.select_tab(this.getAttribute("tabname"));
 							});
 						});
@@ -477,6 +471,15 @@
 	}
 
 	CAL.select_tab = function (tid){
+	
+		var nodes_li = CAL.query("#cal-tabs li");
+		CAL.each(nodes_li,function(j,v){
+			CAL.dom.removeClass(nodes_li[j],"selected");
+		});							
+		
+		CAL.dom.addClass(CAL.get(tid + "-link").parentNode,"selected");
+		
+									
  		var nodes = CAL.query("#cal-tabs .yui-content");
  		CAL.each(nodes,function(i,v){
  			nodes[i].style.display = "none";
@@ -844,8 +847,6 @@
 				"assigned_user_id" : params.user_id,
 				"assigned_user_name" : params.user_name,
 				"date_start" : params.date_start,
-				"duration_hours" : 1,
-				"duration_minutes" : 0
 			};
 			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));	
 	}

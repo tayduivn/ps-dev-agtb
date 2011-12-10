@@ -43,6 +43,7 @@ class EmailTemplate extends SugarBean {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
+    var $assigned_user_id;
     var $assigned_user_name;
 	var $name;
 	var $published;

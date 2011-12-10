@@ -52,15 +52,18 @@ function drop_tables ()
 
 function save_schedule($id, $user_id, $report_id, $date_start, $interval, $active, $schedule_type){
 	global $timedate;
-	$time = time();
 	$origDateStart = $date_start;
 	$date_start_str = "";
+	$now = $timedate->nowDb();
+	$interval = (int)$interval;
+
+	$report_id = $this->db->quote($report_id);
 	if(empty($id))
 	{
 		$id = create_guid();
 
 		if( empty($date_start) )
-		    $date_start = $timedate->nowDb();
+		    $date_start = $now;
 
         $next_run_date = $this->getNextRunDate($date_start, $interval);
 
@@ -69,16 +72,17 @@ function save_schedule($id, $user_id, $report_id, $date_start, $interval, $activ
 	    else
 	        $date_start_str = " '$origDateStart' ";
 
-		$query = "INSERT INTO $this->table_name (id, user_id, report_id, date_start,next_run, time_interval, active, schedule_type) VALUES ('$id', '$user_id', '$report_id', $date_start_str , '$next_run_date', '$interval', '$active', '$schedule_type')";
+		$query = "INSERT INTO $this->table_name (id, user_id, report_id, date_start,next_run, time_interval, active, schedule_type, date_modified) VALUES ('$id', '$user_id', '$report_id', $date_start_str , '$next_run_date', '$interval', '$active', '$schedule_type', '$now')";
 	}
 	else
 	{
+	    $id = $this->db->quote($id);
 	    if(strlen(trim($origDateStart))==0)
 	       $date_start_str = " date_start = NULL, ";
 	    else
 	       $date_start_str = " date_start = '$origDateStart', ";
 
-		$query = "UPDATE $this->table_name  SET time_interval=$interval, ".$date_start_str." active=$active, schedule_type='".$schedule_type."'";
+		$query = "UPDATE $this->table_name  SET time_interval=$interval, ".$date_start_str." active=$active, schedule_type='$schedule_type', date_modified='$now'";
 		if(!empty($date_start) && $active)
 		{
 		    $next_run_date = $this->getNextRunDate($date_start, $interval);
@@ -235,4 +239,3 @@ function mark_deleted($id){
     $GLOBALS['db']->query($query);
 }
 }
-?>

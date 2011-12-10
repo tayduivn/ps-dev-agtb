@@ -3815,7 +3815,7 @@ class InboundEmail extends SugarBean {
 		// Safe_HTML
 		$this->safe->clear();
 		$this->safe->setUrlCallback(array($this, "urlCleaner"));
-		$str = $this->safe->parse($str);
+		$str = $this->safe->parse($str, false);
 		return $this->cleanXssContent($str);
 	}
 

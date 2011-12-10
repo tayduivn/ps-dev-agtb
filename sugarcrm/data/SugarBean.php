@@ -3221,8 +3221,8 @@ function save_relationship_changes($is_update, $exclude=array())
 
             if($data['type'] != 'relate' && isset($data['db_concat_fields']))
             {
-                $ret_array['select'] .= ", " . db_concat($this->table_name, $data['db_concat_fields']) . " as $field";
-                $selectedFields[db_concat($this->table_name, $data['db_concat_fields'])] = true;
+                $ret_array['select'] .= ", " . $this->db->concat($this->table_name, $data['db_concat_fields']) . " as $field";
+                $selectedFields[$this->db->concat($this->table_name, $data['db_concat_fields'])] = true;
             }
             //Custom relate field or relate fields built in module builder which have no link field associated.
             if ($data['type'] == 'relate' && (isset($data['custom_module']) || isset($data['ext2']))) {
@@ -3258,7 +3258,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         $name_field_def = $rel_mod->field_defs['name'];
                         if(isset($name_field_def['db_concat_fields']))
                         {
-                            $nameField = db_concat($joinTableAlias, $name_field_def['db_concat_fields']);
+                            $nameField = $this->db->concat($joinTableAlias, $name_field_def['db_concat_fields']);
                         }
                     }
                     $ret_array['select'] .= ", $nameField {$data['name']} ";
@@ -3353,7 +3353,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
                         if(isset($data['db_concat_fields']))
                         {
-                            $ret_array['secondary_select'] .= ' , ' . db_concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
+                            $ret_array['secondary_select'] .= ' , ' . $this->db->concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
                         }
                         else
                         {
@@ -3405,7 +3405,7 @@ function save_relationship_changes($is_update, $exclude=array())
                                 }
                             }
                             //END SUGARCRM flav=pro ONLY
-                            $ret_array['select'] .= ' , ' . db_concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
+                            $ret_array['select'] .= ' , ' . $this->db->concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
                         }
                         else
                         {
@@ -3455,7 +3455,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     	   	  //Create three search conditions - first + last, first, last
                     	   	  $first_name_search = str_replace($data['name'], $params['join_table_alias'] . '.first_name', $search_expression);
                     	   	  $last_name_search = str_replace($data['name'], $params['join_table_alias'] . '.last_name', $search_expression);
-							  $full_name_search = str_replace($data['name'], db_concat($params['join_table_alias'], $data['db_concat_fields']), $search_expression);
+							  $full_name_search = str_replace($data['name'], $this->db->concat($params['join_table_alias'], $data['db_concat_fields']), $search_expression);
 							  $buildWhere = true;
 							  $where = str_replace($search_expression, '(' . $full_name_search . ' OR ' . $first_name_search . ' OR ' . $last_name_search . ')', $where);
                     	   }
@@ -3463,7 +3463,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
                     	if(!$buildWhere)
                     	{
-	                       $db_field = db_concat($params['join_table_alias'], $data['db_concat_fields']);
+	                       $db_field = $this->db->concat($params['join_table_alias'], $data['db_concat_fields']);
 	                       $where = preg_replace('/'.$data['name'].'/', $db_field, $where);
                     	}
                     }else{
@@ -3593,7 +3593,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         $field_def = $templates[$child_info['parent_type']]->field_defs['name'];
                         if(isset($field_def['db_concat_fields']))
                         {
-                            $queries[$child_info['parent_type']] .= ' , ' . db_concat($templates[$child_info['parent_type']]->table_name, $field_def['db_concat_fields']) . ' parent_name';
+                            $queries[$child_info['parent_type']] .= ' , ' . $this->db->concat($templates[$child_info['parent_type']]->table_name, $field_def['db_concat_fields']) . ' parent_name';
                         }
                         else
                         {
@@ -4888,7 +4888,7 @@ function save_relationship_changes($is_update, $exclude=array())
         $query  = 'SELECT id';
         foreach($fields as $field=>$alias){
             if(!empty($GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields'])){
-                $query .= ' ,' .db_concat($table, $GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields']) .  ' as ' . $alias ;
+                $query .= ' ,' .$this->db->concat($table, $GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields']) .  ' as ' . $alias ;
             }else if(!empty($GLOBALS['dictionary'][$object]['fields'][$field]) &&
                 (empty($GLOBALS['dictionary'][$object]['fields'][$field]['source']) ||
                 $GLOBALS['dictionary'][$object]['fields'][$field]['source'] != "non-db"))
