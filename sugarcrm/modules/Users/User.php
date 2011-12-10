@@ -1420,7 +1420,10 @@ EOQ;
 			$to_addrs_names = '';
 			$to_addrs_emails = '';
 
-			$fullName = $focus->name;
+            if(!empty($focus->name))
+            {
+			    $fullName = $focus->name;
+            }
 
 			if(!empty($focus->$attribute)) {
 				$email = $focus->$attribute;
