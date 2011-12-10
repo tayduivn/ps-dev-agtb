@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'service/core/SoapHelperWebService.php';
+require_once 'include/SugarSQLValidate.php';
 
 class QuerySanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 {
