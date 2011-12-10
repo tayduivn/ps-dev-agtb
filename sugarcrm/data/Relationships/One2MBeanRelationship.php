@@ -61,7 +61,7 @@ class One2MBeanRelationship extends One2MRelationship
 
         //Make sure we load the current relationship state to the LHS link
         if ((isset($lhs->$lhsLinkName) && is_a($lhs->$lhsLinkName, "Link2")) || $lhs->load_relationship($lhsLinkName)) {
-            $lhs->$lhsLinkName->getBeans();
+            $lhs->$lhsLinkName->load();
         }
 
         $this->updateFields($lhs, $rhs, $additionalFields);

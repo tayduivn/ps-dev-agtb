@@ -460,6 +460,7 @@ loader.insert();
 
 EmailMan = {};
 
+var first_load = true;
 function testOutboundSettings() {
 	if (document.getElementById('mail_sendtype').value == 'sendmail') {
 		testOutboundSettingsDialog();
@@ -592,15 +593,21 @@ function notify_setrequired(f) {
 
 function setDefaultSMTPPort() 
 {
-    useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
-    
-    if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
-        document.getElementById("mail_smtpport").value = '465';
+    if (!first_load)
+    {
+        useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
+
+        if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
+            document.getElementById("mail_smtpport").value = '465';
+        }
+        if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
+            document.getElementById("mail_smtpport").value = '25';
+        }
     }
-    if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
-        document.getElementById("mail_smtpport").value = '25';
+    else
+    {
+        first_load = false;
     }
-        
 }
 
 //BEGIN SUGARCRM flav!=sales ONLY

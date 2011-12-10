@@ -158,17 +158,18 @@ var relationships = {$relationships};
 YAHOO.SUGAR.DragDropTable.groups = [];
 var grid = ModuleBuilder.convertLayoutGrid = new YAHOO.SUGAR.DragDropTable('relGrid',
     [
-        {ldelim}key:'module',   label: '{sugar_translate label="LBL_CONVERT_MODULE_NAME"}', width: 200,sortable: true {rdelim},
-        {ldelim}key:'required', label: '{sugar_translate label="LBL_CONVERT_REQUIRED"}',    width: 80, sortable: false, formatter:getDisabledCheckbox{rdelim},
-        {ldelim}key:'copyData', label: '{sugar_translate label="LBL_CONVERT_COPY"}',        width: 80, sortable: false, formatter:getDisabledCheckbox{rdelim},
-        {ldelim}key:'select',   label: '{sugar_translate label="LBL_CONVERT_SELECT"}',      width: 80, sortable: false, formatter:formatSelect{rdelim},
-        {ldelim}key:'edit',     label: '{sugar_translate label="LBL_CONVERT_EDIT"}',        width: 40, sortable: false, formatter:getEditButton{rdelim},
-        {ldelim}key:'delete',   label: '{sugar_translate label="LBL_CONVERT_DELETE"}',      width: 40, sortable: false, formatter:getRemoveButton{rdelim}
+        {ldelim}key:'module',       label: '{sugar_translate label="LBL_CONVERT_MODULE_NAME"}', hidden: true {rdelim},
+        {ldelim}key:'moduleName',   label: '{sugar_translate label="LBL_CONVERT_MODULE_NAME"}', width: 200,sortable: true {rdelim},
+        {ldelim}key:'required',     label: '{sugar_translate label="LBL_CONVERT_REQUIRED"}',    width: 80, sortable: false, formatter:getDisabledCheckbox{rdelim},
+        {ldelim}key:'copyData',     label: '{sugar_translate label="LBL_CONVERT_COPY"}',        width: 80, sortable: false, formatter:getDisabledCheckbox{rdelim},
+        {ldelim}key:'select',       label: '{sugar_translate label="LBL_CONVERT_SELECT"}',      width: 80, sortable: false, formatter:formatSelect{rdelim},
+        {ldelim}key:'edit',         label: '{sugar_translate label="LBL_CONVERT_EDIT"}',        width: 40, sortable: false, formatter:getEditButton{rdelim},
+        {ldelim}key:'delete',       label: '{sugar_translate label="LBL_CONVERT_DELETE"}',      width: 40, sortable: false, formatter:getRemoveButton{rdelim}
     ],{literal}
     new YAHOO.util.LocalDataSource(modules, {
         responseSchema: {
            resultsList : "modules",
-           fields : [{key : "module"}, {key: "required"}, {key: "select"}, {key: "copyData"}, {key: "edit"}, {key: "delete"}]
+           fields : [{key : "module"}, {key : "moduleName"},{key: "required"}, {key: "select"}, {key: "copyData"}, {key: "edit"}, {key: "delete"}]
         }
     }),
     {MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
@@ -245,5 +246,4 @@ ModuleBuilder.addConvertLeadLayout = function()
 ModuleBuilder.module = '{$view_module}';
 ModuleBuilder.MBpackage = '{$view_package}';
 ModuleBuilder.helpSetup('studioWizard','convertLeadHelp');
-
 </script>

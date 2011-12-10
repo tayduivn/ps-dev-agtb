@@ -793,6 +793,7 @@ protected function checkQuery($sql, $object_name = false)
 		return false;
 	}
 
+
 	/**
 	 * Builds the SQL commands that repair a table structure
 	 *
@@ -835,7 +836,7 @@ protected function checkQuery($sql, $object_name = false)
 			if (isset($value['source']) && $value['source'] != 'db')
 				continue;
 
-			$name = $value['name'];
+			$name = strtolower($value['name']);
 			// add or fix the field defs per what the DB is expected to give us back
 			$this->massageFieldDef($value,$tablename);
 
@@ -847,6 +848,7 @@ protected function checkQuery($sql, $object_name = false)
 				$value['required'] = false;
 			}
 			//Should match the conditions in DBManager::oneColumnSQLRep for DB required fields, type='id' fields will sometimes
+
 			//come into this function as 'type' = 'char', 'dbType' = 'id' without required set in $value. Assume they are correct and leave them alone.
 			else if (($name == 'id' || $value['type'] == 'id' || (isset($value['dbType']) && $value['dbType'] == 'id'))
 				&& (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])))

@@ -615,8 +615,7 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
     			return $field_value;
         }
 	}
-    else if (isset($temp_module->field_defs[$field]['calculated'])
-            && $temp_module->field_defs[$field]['calculated'])
+    else if (!empty($temp_module->field_defs[$field]['calculated']) && !empty($context['for_action_display']))
     {
         //Cannot set the value of calculated fields.
         return false;
