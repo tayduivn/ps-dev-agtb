@@ -169,6 +169,11 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
 
+    if (!self::$helperObject->checkQuery($error, $query, $order_by)) {
+		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+    	return;
+    } // if
+
     if (!self::$helperObject->checkACLAccess($seed, 'Export', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
     	return;
@@ -355,7 +360,12 @@ function get_relationships($session, $module_name, $module_id, $link_field_name,
 	$mod = new $class_name();
 	$mod->retrieve($module_id);
 
-    if (!self::$helperObject->checkACLAccess($mod, 'DetailView', $error, 'no_access')) {
+    if (!self::$helperObject->checkQuery($error, $related_module_query)) {
+		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
+    	return;
+    } // if
+
+	if (!self::$helperObject->checkACLAccess($mod, 'DetailView', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
     	return;
     } // if
@@ -1132,6 +1142,11 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
 
+    if (!self::$helperObject->checkQuery($error, $query)) {
+		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries_count');
+    	return;
+    } // if
+
     if (!self::$helperObject->checkACLAccess($seed, 'ListView', $error, 'no_access')) {
     	return;
     }
@@ -1145,14 +1160,6 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	// build WHERE clauses, if any
 	$where_clauses = array();
 	if (!empty($query)) {
-	    require_once 'include/SugarSQLValidate.php';
-	    $valid = new SugarSQLValidate();
-	    if(!$valid->validateQueryClauses($query)) {
-		    $error->set_error('no_access');
-	        return array(
-    			'result_count' => -1,
-    		);
-	    }
 	    $where_clauses[] = $query;
 	}
 	if ($deleted == 0) {

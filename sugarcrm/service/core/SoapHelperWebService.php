@@ -302,6 +302,19 @@ function validate_user($user_name, $password){
 		return true;
 	} // fn
 
+	function checkQuery($errorObject, $query, $order_by = '')
+    {
+        require_once 'include/SugarSQLValidate.php';
+    	$valid = new SugarSQLValidate();
+    	if(!$valid->validateQueryClauses($query, $order_by)) {
+    		$GLOBALS['log']->error("SoapHelperWebServices->checkQuery - bad query: $query $order_by");
+    	    $errorObject->set_error('no_access');
+    		setFaultObject($errorObject);
+    		return false;
+    	}
+        return true;
+    }
+
 	function get_name_value($field,$value){
 		return array('name'=>$field, 'value'=>$value);
 	}
