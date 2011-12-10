@@ -328,6 +328,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 	require_once 'include/SugarSQLValidate.php';
 	$valid = new SugarSQLValidate();
 	if(!$valid->validateQueryClauses($query, $order_by)) {
+        $GLOBALS['log']->error("Bad query: $query $order_by");
 	    $error->set_error('no_access');
 	    return array(
     			'result_count' => -1,
@@ -1122,8 +1123,9 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 	require_once 'include/SugarSQLValidate.php';
 	$valid = new SugarSQLValidate();
 	if(!$valid->validateQueryClauses($related_module_query)) {
-		    $error->set_error('no_access');
-	        return array(
+        $GLOBALS['log']->error("Bad query: $related_module_query");
+        $error->set_error('no_access');
+	    return array(
     			'result_count' => -1,
     			'error' => $error->get_soap_array()
     		);
@@ -1971,7 +1973,8 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	    require_once 'include/SugarSQLValidate.php';
 	    $valid = new SugarSQLValidate();
 	    if(!$valid->validateQueryClauses($query)) {
-		    $error->set_error('no_access');
+            $GLOBALS['log']->error("Bad query: $query");
+	        $error->set_error('no_access');
 	        return array(
     			'result_count' => -1,
     			'error' => $error->get_soap_array()
