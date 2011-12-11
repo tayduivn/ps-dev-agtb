@@ -116,11 +116,6 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		}
 		$order_by=$seed->process_order_by($order_by, null);
 
-		if(!$this->validateQueryClauses($where, $order_by)) {
-		    $GLOBALS['log']->fatal("get_data_list: bad query: $where $order_by");
-		    return null;
-		}
-
 		$params = array();
 		if(!empty($favorites)) {
 		  $params['favorites'] = true;
