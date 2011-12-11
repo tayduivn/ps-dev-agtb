@@ -46,6 +46,7 @@ class QuerySanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             array("", "something BAD", false),
             array("id='' AND 1=0 UNION SELECT from_addr,1,to_addrs,description FROM emails_text LIMIT 1#", "", false),
             array("", "foo UNION ALL SELECT * from users", false),
+            array("", "(leads.status='' OR leads.status IS NULL) DESC,leads.status='New' DESC,leads.status='Assigned' DESC,leads.status='In Process' DESC,leads.status='Converted' DESC,leads.status='Recycled' DESC,leads.status='Dead' DESC", true),
             );
     }
 
