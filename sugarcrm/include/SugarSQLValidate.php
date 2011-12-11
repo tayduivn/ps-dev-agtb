@@ -93,8 +93,8 @@ class SugarSQLValidate
 	        if(isset($term['type']) && $term['type'] == 'expression') {
 	            continue;
 	        }
-	        if($term['expr_type'] == 'const') {
-	            // constants are OK
+	        if($term['expr_type'] == 'const' || $term['expr_type'] == 'expression') {
+	            // constants are OK, expressions checked above
 	            continue;
 	        }
 	        if($term['expr_type'] == 'subquery') {
@@ -115,7 +115,7 @@ class SugarSQLValidate
 	            return false;
 	        }
 	        if(!empty($term['alias']) && $term['alias'] != $term['base_expr'] && $term['alias'] != "`".$term['base_expr']."`") {
-	            $GLOBALS['log']->debug("validation failed alias");
+	            $GLOBALS['log']->debug("validation failed alias: ".var_export($term, true));
 	            return false;
 	        }
 	    }
