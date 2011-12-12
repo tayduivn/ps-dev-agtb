@@ -832,9 +832,21 @@ protected function checkQuery($sql, $object_name = false)
 
 		// do column comparisions
 		$sql .=	"/*COLUMNS*/\n";
-		foreach ($fielddefs as $value) {
+		foreach ($fielddefs as $name => $value) {
 			if (isset($value['source']) && $value['source'] != 'db')
 				continue;
+
+            // Bug #42406. Skipping breaked vardef without type or name
+            if (isset($value['name']) == false || $value['name'] == false)
+            {
+                $sql .= "/* NAME IS MISSING IN VARDEF $tablename::$name */\n";
+                continue;
+            }
+            else if (isset($value['type']) == false || $value['type'] == false)
+            {
+                $sql .= "/* TYPE IS MISSING IN VARDEF $tablename::$name */\n";
+                continue;
+            }
 
 			$name = strtolower($value['name']);
 			// add or fix the field defs per what the DB is expected to give us back
