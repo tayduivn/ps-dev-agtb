@@ -289,8 +289,30 @@ else {
     ksort($projectTasks);
 }
 
+
+// Bug 47490 ensure the project task ids are continuous and begin with 1
+// also make sure parent_task_id is correctly changed accordingly
+$count = count($projectTasks);
+$id_map = array(); // $id_map[<old_task_id>] = <new_task_id>
+
+// first loop, construct the id_map and assign new project_task_id
+for ($i = 0; $i < $count; $i++) {
+    $id_map[$projectTasks[$i]->project_task_id] = $i + 1;
+    $projectTasks[$i]->project_task_id = $i + 1;
+}
+
+// second loop, modify parent_project_id based on id_map
+for ($i = 0; $i < $count; $i++) {
+    if (!empty($projectTasks[$i]->parent_task_id) && isset($id_map[$projectTasks[$i]->parent_task_id])) {
+        $projectTasks[$i]->parent_task_id = $id_map[$projectTasks[$i]->parent_task_id];
+    } else {
+        $projectTasks[$i]->parent_task_id = '';
+    }
+}
+// end Bug 47490
+
 $sugar_smarty->assign("TASKS", $projectTasks);
-$sugar_smarty->assign("TASKCOUNT", count($projectTasks));
+$sugar_smarty->assign("TASKCOUNT", $count);
 $sugar_smarty->assign("BG_COLOR", $hilite_bg);
 $sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 $sugar_smarty->assign("TEAM", $focus->team_id);
