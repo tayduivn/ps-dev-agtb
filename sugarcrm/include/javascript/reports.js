@@ -955,9 +955,10 @@ SUGAR.reports = function() {
 				document.getElementById("resultsDiv").style.display="none";
 			
 			currEditorDiv="module_select";
-			currWizardStep++;
 
-			if (currWizardStep <= 2) {
+            if (currWizardStep < 2)
+            {
+                currWizardStep++;
 				if (report_type == 'tabular') {
 					document.getElementById('wizard_outline_div').innerHTML = 
 						SUGAR.language.get('Reports','LBL_ROWS_AND_COLUMNS_REPORT') + ' : ' +
@@ -1015,8 +1016,10 @@ SUGAR.reports = function() {
 				document.getElementById("resultsDiv").style.display="none";
 			
 			currEditorDiv="filters";	
-			currWizardStep++;
-			if (currWizardStep <= 3) {
+			
+            if (currWizardStep < 3)
+            {
+                currWizardStep++;
 				if (report_type == 'tabular') {
 					document.getElementById('wizard_outline_div').innerHTML = 
 						SUGAR.language.get('Reports','LBL_ROWS_AND_COLUMNS_REPORT') + ' : ' +
