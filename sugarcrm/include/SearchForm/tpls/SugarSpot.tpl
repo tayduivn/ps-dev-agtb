@@ -39,7 +39,7 @@ border:0;
 {if !empty($displayResults)}
 {foreach from=$displayResults key=module item=data}
 <div>
-    {if isset($appListStrings.moduleList[$modulepair])}
+    {if isset($appListStrings.moduleList[$module])}
         {$appListStrings.moduleList[$module]}
     {else}
         {$module}
