@@ -64,17 +64,20 @@ function mkdir_recursive($path, $check_is_parent_dir = false)
 		return false;
 	}
 
-	$path = rtrim(clean_path($path), '/');
-	$base = rtrim(clean_path(getcwd()), '/');
+    //make variables with file paths
+	$pathcmp = $path = rtrim(clean_path($path), '/');
+	$basecmp =$base = rtrim(clean_path(getcwd()), '/');
 	if(is_windows()) {
-	    $path = strtolower($path);
-	    $base = strtolower($base);
+        //make path variable lower case for comparison in windows
+	    $pathcmp = strtolower($path);
+	    $basecmp = strtolower($base);
 	}
-    if($base == $path) {
+
+    if($basecmp == $pathcmp) {
         return true;
     }
     $base .= "/";
-	if(strncmp($path, $base, strlen($base)) == 0) {
+	if(strncmp($pathcmp, $basecmp, strlen($basecmp)) == 0) {
         /* strip current path prefix */
 	    $path = substr($path, strlen($base));
 	}
