@@ -286,6 +286,20 @@ if(!$passed_write) {
  installLog("/module  directory and subdirectory check passed");
 }
 
+// check upload dir
+if (!make_writable('./upload'))
+{
+    $uploadStatus = "<b><span class='stop'>{$mod_strings['ERR_CHECKSYS_NOT_WRITABLE']}</span></b>";
+    installLog("ERROR: Upload directory is not writable.");
+    $error_found = true;
+    $error_txt .= '
+    <tr>
+        <td><strong>'.$mod_strings['LBL_CHECKSYS_UPLOAD'].'</strong></td>
+        <td align="right" class="error">'.$uploadStatus.'</td>
+    </tr>';
+} else {
+    installLog("/upload directory check passed");
+}
 
 
 // PHP.ini
