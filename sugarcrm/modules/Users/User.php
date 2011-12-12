@@ -1330,13 +1330,12 @@ EOQ;
 		//END SUGARCRM flav=pro ONLY
 
 		if($client == 'sugar') {
-			$fullName = '';
 			$email = '';
 			$to_addrs_ids = '';
 			$to_addrs_names = '';
 			$to_addrs_emails = '';
 			
-			$fullName = $focus->name;
+            $fullName = !empty($focus->name) ? $focus->name : '';
 
 			if(empty($ret_module)) $ret_module = $focus->module_dir;
 			if(empty($ret_id)) $ret_id = $focus->id;
@@ -1414,16 +1413,12 @@ EOQ;
 		//END SUGARCRM flav=pro ONLY
 
 		if($client == 'sugar') {
-			$fullName = '';
 			$email = '';
 			$to_addrs_ids = '';
 			$to_addrs_names = '';
 			$to_addrs_emails = '';
 
-            if(!empty($focus->name))
-            {
-			    $fullName = $focus->name;
-            }
+            $fullName = !empty($focus->name) ? $focus->name : '';
 
 			if(!empty($focus->$attribute)) {
 				$email = $focus->$attribute;
