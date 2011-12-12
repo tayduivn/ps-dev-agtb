@@ -2164,7 +2164,7 @@ SE.composeLayout = {
             }
             SE.composeLayout.tinyHTML = htmlBeg + composePackage.body + htmlEnd;
             //SE.composeLayout.tinyHTML = tinyHTML + composePackage.body;
-        }
+
         //check to see if tiny is defined, and this is not a recursive call if not, then call self function one more time
         if(typeof tiny == 'undefined'  &&  typeof recursive == 'undefined'){
             //call this same function again, this time setting the recursive flag to true
