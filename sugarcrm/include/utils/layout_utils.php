@@ -326,6 +326,8 @@ function insert_popup_header(
 
     $themeCSS = SugarThemeRegistry::current()->getCSS();
 
+    $langHeader = get_language_header();
+
     //The SugarView will insert the header now, this function should no longer do the actual head element.
     if ($includeJS)
     {
