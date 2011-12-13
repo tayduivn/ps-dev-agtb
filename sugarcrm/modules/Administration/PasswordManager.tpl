@@ -176,7 +176,7 @@
 											{/if}
 										</tr>
 										<tr>
-											<td colspan="2" id='SystemGeneratedPassword_warning'scope="row" style='display:{$smtp_warning}';>
+											<td colspan="2" id="SystemGeneratedPassword_warning" scope="row" style='display:{$smtp_warning}';>
 											<i>{if $SMTP_SERVER_NOT_SET}&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.ERR_SMTP_SERVER_NOT_SET}<br>{/if}
 											&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE}</i>
 										</td>
