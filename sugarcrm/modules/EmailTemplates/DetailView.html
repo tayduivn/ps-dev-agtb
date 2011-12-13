@@ -102,7 +102,8 @@ function toggle_textarea(obj)
         document.getElementById('toggle_textarea_elem').value = '{MOD.LBL_SHOW_ALT_TEXT}'
  }
 }
-document.getElementById("html_frame").contentWindow.document.body.innerHTML = {BODY_HTML};
+document.getElementById("html_frame").contentWindow.document.write({BODY_HTML});
+document.getElementById("html_frame").contentWindow.document.close();
 </script>
 
 	</tr>

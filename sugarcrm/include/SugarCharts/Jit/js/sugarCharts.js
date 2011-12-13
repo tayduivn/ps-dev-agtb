@@ -28,6 +28,11 @@
 // $Id: customSugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
 function loadSugarChart (chartId,jsonFilename,css,chartConfig,pageCols) {
+
+                //Bug#45831
+                if(document.getElementById(chartId) == null) {
+                    return false;
+                }
 				var labelType, useGradients, nativeTextSupport, animate;		    	
 				(function() {
 				  var ua = navigator.userAgent,

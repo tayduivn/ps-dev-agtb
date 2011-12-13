@@ -116,9 +116,10 @@ if (is_array($_POST['merged_ids'])) {
 				$teamSetField = new SugarFieldTeamset('Teamset');	
 			    if($teamSetField != null){
 			       $teamSetField->save($focus->merge_bean, $_REQUEST, 'team_name', '');
+                   $focus->merge_bean->teams->setSaved(FALSE);
 			       $focus->merge_bean->teams->save();
 			       $focus->merge_bean->save();
-			    }               	
+			    }
             	continue;
             }	
             //END SUGARCRM flav=pro ONLY

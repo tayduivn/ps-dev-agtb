@@ -703,6 +703,14 @@ $dictionary['User'] = array(
             'vname' => 'LBL_PROSPECT_LIST',
         ) ,
         //END SUGARCRM flav!=sales ONLY
+        'emails_users' => array(
+            'name' => 'emails_users',
+            'type' => 'link',
+            'relationship' => 'emails_users_rel',
+            'module' => 'Emails',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAILS'
+        ),
         'holidays' => array(
             'name' => 'holidays',
             'type' => 'link',
