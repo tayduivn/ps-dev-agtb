@@ -67,7 +67,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
-
+        $GLOBALS['db']->query("DELETE FROM calls WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM tasks WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM meetings WHERE name like 'UNIT TEST%' ");
         //$this->useOutputBuffering = false;
     }
 
@@ -87,6 +89,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM calls WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM tasks WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM meetings WHERE name like 'UNIT TEST%' ");
 	}
 
     protected function _makeRESTCall($method,$parameters)
@@ -806,8 +811,14 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                              )
          );
 
-         $this->assertEquals($expected[0] ,$results[0]['id'] , "Unable to get upcoming activities");
-         $this->assertEquals($expected[1] ,$results[1]['id'] , "Unable to get upcoming activities");
+         $ids = array();
+         foreach($results as $activity)
+         {
+             $ids[$activity['id']] = $activity['id'];
+         }
+
+         $this->assertArrayHasKey($expected[0] , $ids , "Unable to get upcoming activities");
+         $this->assertArrayHasKey($expected[1] ,$ids , "Unable to get upcoming activities");
 
          $this->_removeUpcomingActivities();
      }

@@ -34,15 +34,21 @@
  * @author mgusev@sugarcrm.com
  * @ticket 49109
  */
-class Bug47949Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49109Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;
+    }
+
     /**
      * @group 49109
      */
     public function testRelations()
     {
         global $beanFiles;
-        require_once($beanFiles['Email']);
         $bean = new Email();
         $bean->load_relationship('users', $bean);
         $relation = $bean->users->getRelationshipObject();
