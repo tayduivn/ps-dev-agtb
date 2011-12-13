@@ -420,6 +420,10 @@ class User extends Person {
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
+   /**
+    * Get WHERE clause that fetches all users counted for licensing purposes
+    * @return string
+    */
 	public static function getLicensedUsersWhere()
 	{
 		//BEGIN SUGARCRM dep=od ONLY
@@ -439,14 +443,9 @@ class User extends Person {
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM dep=od ONLY
-		$query = "SELECT count(id) as total from users WHERE status='Active' AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
-		//END SUGARCRM dep=od ONLY
-		//BEGIN SUGARCRM dep=os ONLY
-		$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
-		//END SUGARCRM dep=os ONLY
+		$query = "SELECT count(id) as total from users WHERE ".self::getLicensedUsersWhere();
 
-		  //BEGIN SUGARCRM lic=sub ONLY
+ 	    //BEGIN SUGARCRM lic=sub ONLY
 
 		global $sugar_flavor;
         $admin = new Administration();
@@ -990,9 +989,9 @@ EOQ;
 	function get_list_view_data() {
 
 		global $current_user, $mod_strings;
-        // Bug #48555 Not User Name Format of User's locale. 
+        // Bug #48555 Not User Name Format of User's locale.
         $this->_create_proper_name_field();
-                
+
 		$user_fields = $this->get_list_view_array();
 		if ($this->is_admin)
 			$user_fields['IS_ADMIN_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',$mod_strings['LBL_CHECKMARK']);
@@ -1219,9 +1218,9 @@ EOQ;
 		return $ret;
 	}
 
-	function getUsersNameAndEmail() 
+	function getUsersNameAndEmail()
 	{
-	    // Bug #48555 Not User Name Format of User's locale. 
+	    // Bug #48555 Not User Name Format of User's locale.
 	    $this->_create_proper_name_field();
 
 		$prefAddr = $this->emailAddress->getPrimaryAddress($this);
@@ -1334,15 +1333,15 @@ EOQ;
 			$to_addrs_ids = '';
 			$to_addrs_names = '';
 			$to_addrs_emails = '';
-			
-            $fullName = !empty($focus->name) ? $focus->name : '';
+
+			$fullName = !empty($focus->name) ? $focus->name : '';
 
 			if(empty($ret_module)) $ret_module = $focus->module_dir;
 			if(empty($ret_id)) $ret_id = $focus->id;
 			if($focus->object_name == 'Contact') {
 				$contact_id = $focus->id;
 				$to_addrs_ids = $focus->id;
-				// Bug #48555 Not User Name Format of User's locale. 
+				// Bug #48555 Not User Name Format of User's locale.
 				$focus->_create_proper_name_field();
 			    $fullName = $focus->name;
 			    $to_addrs_names = $fullName;
@@ -1428,7 +1427,7 @@ EOQ;
 			if(empty($ret_module)) $ret_module = $focus->module_dir;
 			if(empty($ret_id)) $ret_id = $focus->id;
 			if($focus->object_name == 'Contact') {
-				// Bug #48555 Not User Name Format of User's locale. 
+				// Bug #48555 Not User Name Format of User's locale.
 				$focus->_create_proper_name_field();
 			    $fullName = $focus->name;
 			    $contact_id = $focus->id;
@@ -2050,7 +2049,7 @@ EOQ;
 
         return $result;
     }
-    
+
     // Bug #48014 Must to send password to imported user if this action is required
     function afterImportSave()
     {
