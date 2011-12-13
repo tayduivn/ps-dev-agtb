@@ -262,6 +262,19 @@ class SugarFieldBase {
     }
 
     /**
+     * getSearchWhereValue
+     *
+     * Checks and returns a sane value based on the field type that can be used when building the where clause in a
+     * search form.
+     *
+     * @param $value Mixed value being searched on
+     * @return Mixed the value for the where clause used in search
+     */
+    function getSearchWhereValue($value) {
+        return $value;
+    }
+
+    /**
      * getSearchInput
      *
      * This function allows the SugarFields to handle returning the search input value given arguments (typically from $_REQUEST/$_POST)
