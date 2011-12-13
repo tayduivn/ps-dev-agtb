@@ -262,6 +262,11 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             return;
         } // if
 
+        if (!self::$helperObject->checkQuery($error, $query, $order_by)) {
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+        	return;
+        } // if
+
         // If the maximum number of entries per page was specified, override the configuration value.
         if($max_results > 0){
             global $sugar_config;

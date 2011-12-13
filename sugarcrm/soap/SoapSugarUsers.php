@@ -324,6 +324,17 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		$error->set_error('no_access');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
+
+	require_once 'include/SugarSQLValidate.php';
+	$valid = new SugarSQLValidate();
+	if(!$valid->validateQueryClauses($query, $order_by)) {
+        $GLOBALS['log']->error("Bad query: $query $order_by");
+	    $error->set_error('no_access');
+	    return array(
+    			'result_count' => -1,
+    			'error' => $error->get_soap_array()
+    	);
+	}
 	if($query == ''){
 		$where = '';
 	}
@@ -1109,7 +1120,18 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 		return array('ids'=>$ids, 'error'=>$error->get_soap_array());
 	}
 
-	$id_list = get_linked_records($related_module, $module_name, $module_id);
+	require_once 'include/SugarSQLValidate.php';
+	$valid = new SugarSQLValidate();
+	if(!$valid->validateQueryClauses($related_module_query)) {
+        $GLOBALS['log']->error("Bad query: $related_module_query");
+        $error->set_error('no_access');
+	    return array(
+    			'result_count' => -1,
+    			'error' => $error->get_soap_array()
+    		);
+    }
+
+    $id_list = get_linked_records($related_module, $module_name, $module_id);
 
 	if ($id_list === FALSE) {
 		$error->set_error('no_relationship_support');
@@ -1948,6 +1970,16 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	// build WHERE clauses, if any
 	$where_clauses = array();
 	if (!empty($query)) {
+	    require_once 'include/SugarSQLValidate.php';
+	    $valid = new SugarSQLValidate();
+	    if(!$valid->validateQueryClauses($query)) {
+            $GLOBALS['log']->error("Bad query: $query");
+	        $error->set_error('no_access');
+	        return array(
+    			'result_count' => -1,
+    			'error' => $error->get_soap_array()
+    		);
+	    }
 		$where_clauses[] = $query;
 	}
 	if ($deleted == 0) {
