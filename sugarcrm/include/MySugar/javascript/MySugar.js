@@ -1170,9 +1170,18 @@ SUGAR.mySugar = function() {
 		//END SUGARCRM flav=pro ONLY
 		
 		renderDashletsDialog: function(){	
+            var minHeight = 120;
+            var maxHeight = 520;
+            var minMargin = 16;
+
+            // adjust dialog height according to current page height
+            var pageHeight = document.documentElement.clientHeight;
+            var height = Math.min(maxHeight, pageHeight - minMargin * 2);
+            height = Math.max(height, minHeight);
+
 			SUGAR.mySugar.dashletsDialog = new YAHOO.widget.Dialog("dashletsDialog", 
 			{ width : "480px",
-			  height: "520px",
+			  height: height + "px",
 			  fixedcenter : true,
 			  draggable:false,
 			  visible : false, 
