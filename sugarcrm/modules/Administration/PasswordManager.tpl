@@ -147,12 +147,6 @@
 									</table>
 								</td>
 							</tr>
-							<tr>
-							    <td colspan="4" id='SystemGeneratedPassword_warning2'scope="row" style='display:{$smtp_warning_2}';>
-                                   <i>{if $SMTP_SERVER_NOT_SET}&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.ERR_SMTP_SERVER_NOT_SET}<br>{/if}
-                                   &nbsp;&nbsp;&nbsp;&nbsp;{$MOD.LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE}</i>
-                               </td>
-                           </tr>
 						</table>
 						<!--//END SUGARCRM flav=pro ONLY -->
 
@@ -267,7 +261,7 @@
 												{assign var='smtp_warning_2' value='none'}
 											{/if}
 										</tr>
-										<tr><td colspan="4" id='SystemGeneratedPassword_warning2'scope="row" style='display:{$smtp_warning_2}';>
+										<tr><td colspan="4" id="SystemGeneratedPassword_warning2" scope="row" style='display:{$smtp_warning_2}';>
 											<i>{if $SMTP_SERVER_NOT_SET}&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.ERR_SMTP_SERVER_NOT_SET}<br>{/if}
 											&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE}</i>
 											</td>
