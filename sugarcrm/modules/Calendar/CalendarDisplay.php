@@ -364,6 +364,7 @@ class CalendarDisplay {
 			$tabs_params = array();		
 			foreach($tabs as $tab){ 
 				$tabs_params[$tab]['title'] = $cal_strings["LBL_".strtoupper($tab)];
+				$tabs_params[$tab]['id'] = $tabs_params[$tab]['title']. "tab";
 				$tabs_params[$tab]['link'] = "window.location.href='".ajaxLink("index.php?module=Calendar&action=index&view=". $tab . $this->cal->date_time->get_date_str())."'";
 			}		
 			$ss->assign('controls',$controls);
