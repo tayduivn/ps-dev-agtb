@@ -526,7 +526,7 @@ class User extends Person {
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
-        if(!$this->portal_only) {
+        if($this->status != 'Reserved' && !$this->portal_only) {
 		   // If this is not an update, then make sure the new user logic is executed.
             if (!$isUpdate) {
                 // If this is a new user, make sure to add them to the appriate default teams
