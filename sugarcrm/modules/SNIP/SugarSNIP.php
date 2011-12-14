@@ -469,7 +469,7 @@ class SugarSNIP
         }
         // For snipLite, use Global team
         $e->team_id = $e->default_team = '1';
-        $tid = self::assignUserTeam($e, $e->assigned_user_id);
+        self::assignUserTeam($e, $e->assigned_user_id);
 
         $e->save(FALSE);
         // Object creation hook
@@ -577,6 +577,8 @@ class SugarSNIP
         if(empty($userid)) return null;
 
         $teamid = User::staticGetPrivateTeamID($userid);
+        if(empty($teamid)) return null;
+
         if(empty($email->teams)){
             $email->load_relationship('teams');
         }
