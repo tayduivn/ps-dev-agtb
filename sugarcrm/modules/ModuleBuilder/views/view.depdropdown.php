@@ -25,49 +25,42 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*
- * Created on May 14, 2007
- *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
- //format '<action_name>' => '<view_name>',
- $action_view_map = array(
- 						'index' => 'main',
- 						'module'=>'module',
- 						'modulefields'=>'modulefields',
- 						'modulelabels'=>'modulelabels',
- 						'relationships'=>'relationships',
- 						'relationship'=>'relationship',
-                        'resetmodule'=>'resetmodule',
- 						'modulefield'=>'modulefield',
- 						'displaydeploy'=>'displaydeploy',
- 						'package'=>'package',
- 						'dropdown'=>'dropdown',
- 						'dropdowns'=>'dropdowns',
- 						'detailview' => 'detail',
- 						'editview' => 'edit',
- 						'popup' => 'popup',
- 						'home'=>'home',
-                        'visibilityeditor' => 'visibilityeditor',
- 						'exportcustomizations'=>'exportcustomizations',
- 						//BEGIN SUGARCRM flav=ent ONLY
- 						'portalstyle' => 'portalstyle',
- 						'portalpreview' => 'portalpreview',
- 						'portalsync' => 'portalsync',
- 						'portalstylesave' => 'portalstylesave',
-                        'depdropdown' => 'depdropdown',
- 						//END SUGARCRM flav=ent ONLY
 
- 					);
-    // add those we need from the global action_view_map
-    $action_view_map['dc'] = 'dc';
-    $action_view_map['dcajax'] = 'dcajax';
-    $action_view_map['quick'] = 'quick';
-    $action_view_map['quickcreate'] = 'quickcreate';
-    $action_view_map['spot'] = 'spot';
-    $action_view_map['inlinefield'] = 'inlinefield';
-    $action_view_map['inlinefieldsave'] = 'inlinefieldsave';
-    $action_view_map['pluginlist'] = 'plugins';
-    $action_view_map['downloadplugin'] = 'downloadplugin';
-?>
+class ViewDepDropdown extends SugarView
+{
+    protected $vars = array("editModule", "field", "parentList", "list");
+
+    function display ()
+    {
+        $this->ss = new Sugar_Smarty();
+        foreach($this->vars as $var)
+        {
+            if(isset($_REQUEST[$var])) {
+                $this->$var = $_REQUEST[$var];
+                $this->ss->assign($var, $_REQUEST[$var]);
+            }
+        }
+        $this->ss->assign("parent_list_options", translate($this->parentList));
+        $parentOptions = translate($this->parentList);
+        $parentOptionsArray = array();
+        foreach($parentOptions as $value => $label)
+        {
+            $parentOptionsArray[] = array("value" => $value, "label" => $label);
+        }
+        $this->ss->assign("parentOptions",  json_encode(translate($this->parentList)));
+        $this->ss->assign("child_list_options",  translate("industry_dom"));
+        $childOptions = translate("industry_dom");
+        $childOptionsArray = array();
+        foreach($childOptions as $value => $label)
+        {
+            $childOptionsArray[] = array("value" => $value, "label" => $label);
+        }
+        $this->ss->assign("childOptions",  json_encode($childOptionsArray));
+        if (!empty($_REQUEST['mode']) && $_REQUEST['mode'] == "2")
+            $this->ss->display("modules/Modulebuilder/tpls/depdropdown2.tpl");
+        else
+            $this->ss->display("modules/Modulebuilder/tpls/depdropdown.tpl");
+    }
+
+
+}
