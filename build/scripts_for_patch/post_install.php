@@ -175,9 +175,12 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 			ob_start();
 			@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
 			ob_end_clean();
-		} else {
-			logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-		}
+            } else if(strcmp($origVersion, $destVersion) == 0){
+                logThis("*** Skipping schema upgrade for point release.", $path);
+            }
+        else {
+            logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
+        }
 
 	} else {
 		_logThis('*** Skipping Schema Change Scripts - Admin opted to run queries manually and should have done so by now.', $path);
