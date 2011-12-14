@@ -54,7 +54,7 @@ class SugarSpot
             $total = count($data['data']);
 			$countRemaining = $data['pageData']['offsets']['total'] - $total;
 
-            if(!$results[$m]['readAccess'])
+            if(isset($results[$m]['readAccess']) && !$results[$m]['readAccess'])
             {
                $displayTotal = $countRemaining > 0 ? ($total + $countRemaining) : $total;
                $displayResults[$m]['link'] = array('total'=>$displayTotal, 'count_remaining'=>$countRemaining, 'query_encoded'=>$query_encoded);
