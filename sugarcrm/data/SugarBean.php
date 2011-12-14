@@ -688,7 +688,7 @@ class SugarBean
         foreach($this->field_defs as $field=>$value){
             if((isset($value['default']) || !empty($value['display_default'])) && ($force || empty($this->$field))){
                 $type = $value['type'];
-
+                
                 switch($type){
                     case 'date':
                         if(!empty($value['display_default'])){
@@ -707,6 +707,10 @@ class SugarBean
                         else
                             $this->$field = $value['default'];
                         break;
+                    case 'bool':
+                    	if(isset($this->$field)){
+                    		break;
+                    	}
                     default:
                         if ( isset($value['default']) && $value['default'] !== '' ) {
                             $this->$field = htmlentities($value['default'], ENT_QUOTES, 'UTF-8');
