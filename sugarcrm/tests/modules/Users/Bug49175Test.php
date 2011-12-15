@@ -48,7 +48,9 @@ class Bug49175Test extends  Sugar_PHPUnit_Framework_TestCase
         return array(
             array('is_admin' => '1', 'is_group' => '0', 'portal_only' => '0', 'type' => 'Administrator'),
             array('is_admin' => '0', 'is_group' => '1', 'portal_only' => '0', 'type' => 'GROUP'),
+            //BEGIN SUGARCRM flav=ent ONLY
             array('is_admin' => '0', 'is_group' => '0', 'portal_only' => '1', 'type' => 'PORTAL_ONLY'),
+            //END SUGARCRM flav=ent ONLY
             array('is_admin' => '0', 'is_group' => '0', 'portal_only' => '0', 'type' => 'RegularUser')
         );
     }
@@ -57,12 +59,13 @@ class Bug49175Test extends  Sugar_PHPUnit_Framework_TestCase
      * @group 49175
      * @dataProvider userTypes
      */
-    public function testGetUserType($is_admin, $is_group, $portal_only, $type)
+    public function testGetUserType($is_admin, $is_group, $portal_only=0, $type)
     {
         $this->user->is_admin = $is_admin;
         $this->user->is_group = $is_group;
+        //BEGIN SUGARCRM flav=ent ONLY
         $this->user->portal_only = $portal_only;
-
+        //END SUGARCRM flav=ent ONLY
         $userViewHelper = new MockUserViewHelper();
         $userViewHelper->setUserType($this->user);
         $this->assertEquals($this->user->user_type, $type);
