@@ -66,7 +66,7 @@
 					</script>
 	</span>
 	{/if}
-	<input type="button" class="button" onclick="CAL.toggle_settings()" value="{$MOD.LBL_SETTINGS}">
+	<input type="button" class="button" id="cal_settings" onclick="CAL.toggle_settings()" value="{$MOD.LBL_SETTINGS}">
 </div>
 
 <div style='clear: both;'></div>
