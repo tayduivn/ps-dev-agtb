@@ -146,13 +146,6 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 		$origVersion = substr($origVersion, 0, 2) . 'x';
 		$destVersion = substr($destVersion, 0, 2) . 'x';
 
-        //If they're the same version, it is a patch upgrade, skip running .sql file
-        if($origVersion == $destVersion)
-        {
-           _logThis("Upgrading to the same version (patch upgrade), skipping schema script execution", $path);
-           return;
-        }
-
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
 		switch($sugar_config['dbconfig']['db_type']) {
@@ -175,11 +168,10 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 			ob_start();
 			@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
 			ob_end_clean();
-            } else if(strcmp($origVersion, $destVersion) == 0){
-                logThis("*** Skipping schema upgrade for point release.", $path);
-            }
-        else {
-            logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
+        } else if(strcmp($origVersion, $destVersion) == 0){
+            _logThis("*** Skipping schema upgrade for point release.", $path);
+        } else {
+            _logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
         }
 
 	} else {
