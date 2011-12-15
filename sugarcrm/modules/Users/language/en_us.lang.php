@@ -265,6 +265,7 @@ $mod_strings = array (
 	'LBL_MESSENGER_TYPE'				=> 'IM Type',
 	'LBL_MOBILE_PHONE'					=> 'Mobile',
 	'LBL_MODIFIED_BY'                  =>'Modified By',
+	'LBL_CREATED_BY_NAME' => 'Created By', //bug 48978
     'LBL_MODIFIED_BY_ID'               =>'Modified By ID',
     'LBL_MODULE_NAME'					=> 'Users',
 	'LBL_MODULE_TITLE'					=> 'Users: Home',
