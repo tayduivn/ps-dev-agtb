@@ -471,6 +471,10 @@ class SugarSNIP
         $e->team_id = $e->default_team = '1';
         $tid = self::assignUserTeam($e, $e->assigned_user_id);
 
+        $e->call_custom_logic("before_email_import");
+        // If custom logic cleared the object, skip it
+        if(empty($e->id)) return;
+
         $e->save(FALSE);
         // Object creation hook
         if(!empty($e->all_addrs)) {
@@ -483,6 +487,11 @@ class SugarSNIP
             {
                 $this->processEmailAttachment($attach,$e);
             }
+        }
+
+        // Relate records
+        if(!empty($e->subject)) {
+            $this->relateRecords($e);
         }
     }
 
@@ -643,6 +652,28 @@ class SugarSNIP
 
         $note->save();
         $upload_file->final_move($note->id);
+    }
+
+    /**
+     * Relate records to this email
+     * @param Email $e
+     */
+    protected function relateRecords($e)
+    {
+        // relate a case
+        $case = new aCase();
+        $subj = str_replace("%1", '(\d+)', preg_quote($case->getEmailSubjectMacro(), "#"));
+        if(preg_match("#$subj#", $e->subject, $match) && !empty($match[1])) {
+            $caseid = $match[1];
+            $GLOBALS['log']->info("Trying to link to case $caseid");
+            $case->retrieve_by_string_fields(array("case_number" => $caseid));
+            if(!empty($case->id)) {
+                $case->load_relationship("emails");
+                $case->emails->add($e);
+            }
+        }
+        // allow custom stuff
+        $e->call_custom_logic("after_email_import");
     }
 }
 
