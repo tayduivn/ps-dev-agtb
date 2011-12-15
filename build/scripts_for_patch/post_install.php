@@ -145,6 +145,14 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 		_logThis("Upgrading the database from {$origVersion} to version {$destVersion}", $path);
 		$origVersion = substr($origVersion, 0, 2) . 'x';
 		$destVersion = substr($destVersion, 0, 2) . 'x';
+
+        //If they're the same version, it is a patch upgrade, skip running .sql file
+        if($origVersion == $destVersion)
+        {
+           _logThis("Upgrading to the same version (patch upgrade), skipping schema script execution", $path);
+           return;
+        }
+
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
 		switch($sugar_config['dbconfig']['db_type']) {
