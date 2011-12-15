@@ -2690,7 +2690,7 @@ SUGAR.reports = function() {
 			new_input.size="30";
 			new_input.maxsize="255";
 			new_input.visible="true";
-			new_input.setAttribute('id','jscal_field'); 
+			new_input.setAttribute('id','jscal_field_' + current_filter_id);
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 		
@@ -2698,7 +2698,7 @@ SUGAR.reports = function() {
 			cell.setAttribute('valign','middle'); 
 			var img_element = document.createElement("img");
 			img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-			img_element.setAttribute('id','jscal_trigger'); 
+			img_element.setAttribute('id','jscal_trigger_' + current_filter_id);
 			cell.appendChild(img_element);
 			row.appendChild(cell);
 			Calendar.setup ({
@@ -2747,12 +2747,12 @@ SUGAR.reports = function() {
 			new_input.size="13";
 			new_input.maxsize="255";
 			new_input.visible="true";
-			new_input.setAttribute('id','jscal_field'); 
+			new_input.setAttribute('id','jscal_field_' + current_filter_id);
 			cellInput.appendChild(new_input);
 			
 			var img_element = document.createElement("img");
 			img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-			img_element.setAttribute('id','jscal_trigger'); 
+			img_element.setAttribute('id','jscal_trigger_' + current_filter_id);
 			img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 			cellInput.appendChild(img_element);
 			Calendar.setup ({
@@ -2792,22 +2792,22 @@ SUGAR.reports = function() {
 			new_input.size="12";
 			new_input.maxsize="255";
 			new_input.visible="true";
-			new_input.setAttribute('id','jscal_field'); 
+			new_input.setAttribute('id','jscal_field_' + current_filter_id);
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 			filter_row.input_field1 = new_input;
 		
 			var cell = document.createElement("td");
 			cell.setAttribute('valign','middle'); 
-			var img_element = document.createElement("img");
-			img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-			img_element.setAttribute('id','jscal_trigger'); 
-			cell.appendChild(img_element);
+			var img_element1 = document.createElement("img");
+			img_element1.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
+			img_element1.setAttribute('id','jscal_trigger_' + current_filter_id);
+			cell.appendChild(img_element1);
 			row.appendChild(cell);
 		
 			Calendar.setup ({ 
 				inputFieldObj : new_input , 
-				buttonObj : img_element, 	
+				buttonObj : img_element1,
 				ifFormat : cal_date_format, 
 				showsTime : false, 
 				singleClick : true,
@@ -2833,20 +2833,20 @@ SUGAR.reports = function() {
 			new_input.size="12";
 			new_input.maxsize="255";
 			new_input.visible="true";
-			new_input.setAttribute('id','jscal_field2'); 
+			new_input.setAttribute('id','jscal_field2_' + current_filter_id);
 			cell.appendChild(new_input);
 			row.appendChild(cell);
 			filter_row.input_field1 = new_input;
 		
 			var cell = document.createElement("td");
-			var img_element = document.createElement("img");
-			img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-			img_element.setAttribute('id','jscal_trigger2'); 
-			cell.appendChild(img_element);
+			var img_element2 = document.createElement("img");
+			img_element2.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
+			img_element2.setAttribute('id','jscal_trigger2_' + current_filter_id);
+			cell.appendChild(img_element2);
 			row.appendChild(cell);
 			Calendar.setup ({ 
 				inputFieldObj : new_input , 
-				buttonObj : img_element, 	
+				buttonObj : img_element2,
 				ifFormat : cal_date_format, 
 				showsTime : false, 
 				singleClick : true,
@@ -2910,13 +2910,13 @@ SUGAR.reports = function() {
 			new_input.size="12";
 			new_input.maxsize="255";
 			new_input.visible="true";
-			new_input.setAttribute('id','jscal_field'); 
+			new_input.setAttribute('id','jscal_field_' + current_filter_id);
 			div1.appendChild(new_input);
 			filter_row.input_field1 = new_input;
 		
 			var img_element = document.createElement("img");
 			img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-			img_element.setAttribute('id','jscal_trigger'); 
+			img_element.setAttribute('id','jscal_trigger_' + current_filter_id);
 			img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 			div1.appendChild(img_element);
 			div1.appendChild(this.newSelectSpanElement('namestart', filter.input_name1));
@@ -2949,13 +2949,13 @@ SUGAR.reports = function() {
 			new_input.size="12";
 			new_input.maxsize="255";
 			new_input.visible="true";
-			new_input.setAttribute('id','jscal_field2'); 
+			new_input.setAttribute('id','jscal_field2_' + current_filter_id);
 			div3.appendChild(new_input);
 			filter_row.input_field1 = new_input;
 		
 			var img_element = document.createElement("img");
 			img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-			img_element.setAttribute('id','jscal_trigger2'); 
+			img_element.setAttribute('id','jscal_trigger2_' + current_filter_id);
 			img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 			div3.appendChild(img_element);
 			Calendar.setup ({ 
