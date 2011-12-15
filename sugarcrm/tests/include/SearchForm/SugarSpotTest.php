@@ -63,6 +63,7 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
+                'readAccess' => true,
             );
         
         $sugarSpot = $this->getMock('SugarSpot', array('_performSearch'));
@@ -106,6 +107,7 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
+                'readAccess' => true,
             );
         
         $sugarSpot = $this->getMock('SugarSpot', array('_performSearch'));

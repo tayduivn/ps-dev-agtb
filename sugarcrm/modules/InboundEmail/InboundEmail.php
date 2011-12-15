@@ -3183,8 +3183,8 @@ class InboundEmail extends SugarBean {
 			}
 
 			$msgPart = $text;
-			if(isset($upperCaseKeyDecodeHeader[strtoupper('Content-Type')]['charset']) && !empty($upperCaseKeyDecodeHeader[strtoupper('Content-Type')]['charset'])) {
-				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader[strtoupper('Content-Type')]['charset']);
+			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader[$upperCaseKeyDecodeHeader['CONTENT-TYPE']]['charset'])) {
+				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
 			}
 		} // end else clause
 

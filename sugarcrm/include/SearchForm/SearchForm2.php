@@ -670,18 +670,11 @@ require_once('include/EditView/EditView2.php');
                  $customField = true;
              }
 
-             if ($type == 'int' && !empty($parms['value']) && strpos($parms['value'], ',') > 0) {
-                     $tempVal = explode(',', $parms['value']);
-                     $newVal = '';
-                     foreach($tempVal as $key => $val) {
-                         if (!empty($newVal))
-                             $newVal .= ',';
-                         if(!empty($val) && !(is_numeric($val)))
-                             $newVal .= -1;
-                         else
-                             $newVal .= $val;
-                     }
-                     $parms['value'] = $newVal;
+             if ($type == 'int' && isset($parms['value']) && !empty($parms['value'])) {
+                 require_once ('include/SugarFields/SugarFieldHandler.php');
+                 $intField = SugarFieldHandler::getSugarField('int');
+                 $newVal = $intField->getSearchWhereValue($parms['value']);
+                 $parms['value'] = $newVal;
              } elseif($type == 'html' && $customField) {
                  continue;
              }

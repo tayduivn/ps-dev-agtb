@@ -145,6 +145,7 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 		_logThis("Upgrading the database from {$origVersion} to version {$destVersion}", $path);
 		$origVersion = substr($origVersion, 0, 2) . 'x';
 		$destVersion = substr($destVersion, 0, 2) . 'x';
+
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
 		switch($sugar_config['dbconfig']['db_type']) {
@@ -167,9 +168,11 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 			ob_start();
 			@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
 			ob_end_clean();
-		} else {
-			logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-		}
+        } else if(strcmp($origVersion, $destVersion) == 0){
+            _logThis("*** Skipping schema upgrade for point release.", $path);
+        } else {
+            _logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
+        }
 
 	} else {
 		_logThis('*** Skipping Schema Change Scripts - Admin opted to run queries manually and should have done so by now.', $path);
