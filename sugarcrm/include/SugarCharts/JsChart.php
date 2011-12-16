@@ -568,7 +568,12 @@ class JsChart extends SugarChart {
 		$this->chartType = $xml->properties->type;
 		$html = "<table align=\"left\" cellpadding=\"2\" cellspacing=\"2\">";
 
-		if ($this->chartType == "group by chart" || $this->chartType == "horizontal group by chart") {
+        if (
+            $this->chartType == "group by chart"
+            || $this->chartType == "horizontal group by chart"
+            || $this->chartType == 'line chart'
+        )
+        {
 			$groups = $xml->data->group[0]->subgroups->group;
 			$items = (sizeof($xml->data->group[0]->subgroups->group) <= 5) ? 5 : sizeof($xml->data->group[0]->subgroups->group);
 		} else {
