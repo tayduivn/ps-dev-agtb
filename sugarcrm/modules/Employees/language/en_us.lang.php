@@ -132,6 +132,7 @@ $mod_strings = array (
   'LBL_GROUP_USER' => 'Group User',
   'LBL_LIST_ACCEPT_STATUS' => 'Accept Status',
   'LBL_MODIFIED_BY' =>'Modified By',
+  'LBL_MODIFIED_BY_ID' =>'Modified By Id',
   'LBL_CREATED_BY_NAME' => 'Created By', //bug48978
   'LBL_PORTAL_ONLY_USER' => 'Portal API User',
   'LBL_PSW_MODIFIED' => 'Password Last Changed',
