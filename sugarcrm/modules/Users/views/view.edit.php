@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/MVC/View/views/view.edit.php');
 require_once('modules/Users/UserViewHelper.php');
 
 
