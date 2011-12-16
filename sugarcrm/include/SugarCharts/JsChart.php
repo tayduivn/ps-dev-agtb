@@ -572,6 +572,7 @@ class JsChart extends SugarChart {
             $this->chartType == "group by chart"
             || $this->chartType == "horizontal group by chart"
             || $this->chartType == 'line chart'
+            || $this->chartType == 'stacked group by chart'
         )
         {
 			$groups = $xml->data->group[0]->subgroups->group;
