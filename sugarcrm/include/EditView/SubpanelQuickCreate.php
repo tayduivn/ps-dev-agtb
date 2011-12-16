@@ -66,8 +66,10 @@ class SubpanelQuickCreate{
 		// Bug 49219 - Check empty before set defaults, or the settings from viewdefs above will be overridden.
 		if (empty($this->ev->defs['templateMeta']['form']['headerTpl'])) $this->ev->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
 		if (empty($this->ev->defs['templateMeta']['form']['footerTpl'])) $this->ev->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
-		if (empty($this->ev->defs['templateMeta']['form']['buttons'])) $this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');	
-
+		// Comment below, breaks many out of the box viewdefs
+		/*if (empty($this->ev->defs['templateMeta']['form']['buttons'])) $this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');*/
+		$this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');
+		
 	    //Load the parent view class if it exists.  Check for custom file first
         loadParentView('edit');
 
