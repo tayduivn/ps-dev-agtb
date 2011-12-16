@@ -501,8 +501,8 @@ class ProjectTask extends SugarBean {
 
         if (!empty($this->parent_task_id) && !empty($this->project_id))
         {
-            $query = "SELECT id FROM project_task WHERE project_id = '{$this->project_id}' AND project_task_id = '{$this->parent_task_id}' AND deleted = 0 ORDER BY date_modified DESC limit 1";
-            $result = $this->db->query($query,true,"Error retrieving parent project task");
+            $query = "SELECT id FROM project_task WHERE project_id = '{$this->project_id}' AND project_task_id = '{$this->parent_task_id}' AND deleted = 0 ORDER BY date_modified DESC";
+            $result = $this->db->getOne($query, true, "Error retrieving parent project task");
 
             while($row = $this->db->fetchByAssoc($result))
             {
@@ -524,7 +524,7 @@ class ProjectTask extends SugarBean {
         if (!empty($this->project_task_id) && !empty($this->project_id))
 		{
             $query = "SELECT id FROM project_task WHERE project_id = '{$this->project_id}' AND parent_task_id = '{$this->project_task_id}' AND deleted = 0 ORDER BY project_task_id";
-            $result = $this->db->query($query,true,"Error retrieving child project tasks");
+            $result = $this->db->query($query, true, "Error retrieving child project tasks");
 
             while($row = $this->db->fetchByAssoc($result))
             {
