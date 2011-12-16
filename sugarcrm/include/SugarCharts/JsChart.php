@@ -591,7 +591,7 @@ class JsChart extends SugarChart {
 			$colorArr[] = str_replace("0x","#",$color);
 		}
 
-
+        $isTrClosed = false;
 		foreach($groups as $group) {
 			if($i == 5) {$i = 0;}
 			$html .= ($i == 0) ? "<tr>" : "";
@@ -602,11 +602,22 @@ class JsChart extends SugarChart {
 			$html .= $group->title;
 			$html .= "</td>";
 			$html .= ($x+1 == $items) ? "<td colspan=".($remainder*2)."></td>" : "";
-			$html .= ($i == 4) ? "</tr>" : "";
+            if ($i == 4)
+            {
+                $html .= "</tr>";
+                $isTrClosed = true;
+            }
+            else
+            {
+                $isTrClosed = false;
+            }
 			$x++;
 			$i++;
 		}
-
+        if ($isTrClosed == false)
+        {
+            $html .= '</tr>';
+        }
 
 		$html .= "</table>";
 		return $html;
