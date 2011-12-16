@@ -43,6 +43,7 @@
 	CAL.editDialog = false;
 	CAL.settingsDialog = false;	
 	CAL.scroll_slot = 0;
+	CAL.update_dd = new YAHOO.util.CustomEvent("update_dd");
 	
 	CAL.dom = YAHOO.util.Dom;
 	CAL.get = YAHOO.util.Dom.get;
@@ -72,6 +73,163 @@
 					}
 			}
 		}
+	}
+	
+	// prevent item overlapping
+	CAL.arrange_column = function(column){
+		
+		for(var i = 0; i < column.childNodes.length; i++){
+			for(var j = 0; j < column.childNodes[i].childNodes.length; j++){
+				var el = column.childNodes[i].childNodes[j];
+				if(YAHOO.util.Dom.hasClass(el,"empty")){
+					el.parentNode.removeChild(el);
+					j--;
+				}
+			}
+		}
+	
+		var slots = column.childNodes;
+		
+		var start = 0;
+		var end = slots.length;	
+		var slot_count = end;
+		var level = 0;
+		
+		var affected_slots = new Array();
+		var affected_items = Array();		
+		var ol = new Array();		
+		
+		// fill ol array with groups of overlapping items to fit them bit later
+		find_overlapping(null,start,end,level,null);
+		
+		// add transparent empty blocks to the left
+		for(var i = 0; i < ol.length; i++){
+			var ol_group = ol[i];
+			var depth = ol_group.depth;
+			for(var j = 0; j < ol_group.items.length; j++){
+				var el_id = ol_group.items[j]['id'];
+				var level = ol_group.items[j]['level'];				
+				var el = CAL.get(el_id);					
+				var node = el;			
+				var pos = 0;
+				while(node.previousSibling){
+					pos++;
+					node = node.previousSibling;
+				}				
+				insert_empty_items(el,level - 1 - pos,false);
+			}				
+		}
+		
+		// add transparent empty blocks to the right
+		for(var i = 0; i < ol.length; i++){
+			var ol_group = ol[i];
+			var depth = ol_group.depth;
+			for(var j = 0; j < ol_group.items.length; j++){
+				var el_id = ol_group.items[j]['id'];
+				
+				var el = CAL.get(el_id);
+				var cnt = el.parentNode.childNodes.length;
+				insert_empty_items(el,depth - cnt,true);
+			}				
+		}
+		
+		CAL.each(affected_slots,function(i,v){			
+			CAL.arrange_slot(affected_slots[i]);
+		});		
+	
+
+		function find_overlapping(el,start,end,level,ol_group){
+		
+			if(level > 20)
+				return;
+		
+			var depth = level;
+
+			if(el != null){
+				if(level == 1){
+					ol_group = {};
+					ol_group.items = new Array();	
+				}
+				ol_group.items.push({
+					id: el.id,
+					level: level
+				});				
+				affected_items.push(el.id);			
+			}			
+						
+			for(var i = start; i < end; i++){
+				if(i >= slot_count)
+					break;
+					
+				if(typeof slots[i].childNodes != 'undefined' && typeof slots[i].childNodes[0] != 'undefined'){
+				
+					var pos = 0;					
+					if(i == start){						
+						var node = slots[i].childNodes[0];
+						while(node.nextSibling && contains(affected_items,node.id)){																
+							node = node.nextSibling;
+							pos ++;
+						}												
+					}
+						
+					var current = slots[i].childNodes[pos];														
+					var slots_takes = parseInt(current.getAttribute('duration_coef'));
+					
+					if(contains(affected_items,current.id))
+						continue;
+					
+					if(pos == 0){
+						var slot_id = current.parentNode.id;	
+						if(!contains(affected_slots,slot_id))
+							affected_slots.push(slot_id);
+					}
+																			
+					if(slots_takes > 0){
+						var k = find_overlapping(current, i, i + slots_takes, level + 1,ol_group);
+						if(k > depth)
+							depth = k;							
+					}
+				}
+			}						
+			
+			if(level == 1){
+				ol_group.depth = depth;
+				ol.push(ol_group);
+			}
+						
+			return depth;
+		}
+		
+		function insert_empty_items(el,count,to_end){
+			var slot = el.parentNode;
+			for(var i = 0; i < count; i++){
+				var empty = document.createElement("div");
+				empty.className = "act_item empty";
+				empty.style.zIndex = "-1";
+				empty.style.width = "1px";				
+				if(to_end == true){
+					slot.appendChild(empty);
+				}else{	
+					slot.insertBefore(empty,slot.firstChild);
+				}						
+			}
+		}
+		
+		function contains(a, obj){
+			var i = a.length;
+			while(i--)
+				if (a[i] === obj)
+					return true;
+			return false;
+		}	
+	}
+	
+	CAL.arrange_advanced = function (){
+		var nodes = CAL.query("#cal-grid .day_col");
+		for(var i = 0; i < nodes.length; i++){
+			CAL.arrange_column(nodes[i]);	
+		}
+		CAL.update_dd.fire();
 	}
 	
 	CAL.add_item_to_grid = function (item){
@@ -747,8 +905,9 @@
 						);																	 						
 					}											 					
 				);
-			}			
+			}
 			
+			CAL.arrange_advanced();
 	}
 		
 	CAL.move_activity = function (box_id,slot_id,ex_slot_id){
@@ -756,8 +915,11 @@
 				if(u = CAL.get(box_id)){
 					if(s = CAL.get(slot_id)){
 						s.appendChild(u);
-						CAL.arrange_slot(slot_id);
-						CAL.arrange_slot(ex_slot_id);
+						
+						CAL.arrange_column(document.getElementById(slot_id).parentNode);
+						CAL.arrange_column(document.getElementById(ex_slot_id).parentNode);
+						CAL.update_dd.fire();
+
 						CAL.cut_record(box_id);					
 						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('time'),u.getAttribute('status'),u.getAttribute('record'));
 						var date_field = "date_start";
@@ -1000,8 +1162,8 @@
 												if(e = CAL.get(CAL.deleted_id))
 													e.parentNode.removeChild(e);									
 												
-												CAL.arrange_slot(cell_id);												
-							
+												
+												CAL.arrange_advanced();
 																										
 											},
 											failure: function(){
@@ -1188,9 +1350,10 @@
 		init: function(){
 			YAHOO.util.DDCAL.superclass.init.apply(this, arguments);
 			this.initConstraints();
-			YAHOO.util.Event.on(window, 'resize', function() {
-				this.initConstraints();
-			}, this, true);	
+			CAL.update_dd.subscribe(function(type, args, dd){
+				dd.resetConstraints();					
+				dd.initConstraints();
+			},this);
 		},
 		initConstraints: function() { 
 			var region = YAHOO.util.Dom.getRegion(this.cont);
