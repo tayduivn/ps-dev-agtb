@@ -475,6 +475,19 @@ class SugarBean
     }
 
     /**
+     * Returns the name of the custom table.
+     * Custom table's name is based on implementing class' table name.
+     *
+     * @return String Custom table name.
+     *
+     * Internal function, do not override.
+     */
+    public function get_custom_table_name() 
+    { 
+        return $this->getTableName().'_cstm'; 
+    }
+    
+    /**
      * If auditing is enabled, create the audit table.
      *
      * Function is used by the install scripts and a repair utility in the admin panel.
