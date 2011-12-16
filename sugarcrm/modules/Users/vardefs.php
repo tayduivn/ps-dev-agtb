@@ -233,6 +233,7 @@ $dictionary['User'] = array(
         ) ,
         'created_by_name' => array(
             'name' => 'created_by_name',
+	    'vname' => 'LBL_CREATED_BY_NAME', //bug 48978
             'type' => 'varchar',
             'source' => 'non-db',
             'importable' => 'false',
