@@ -86,7 +86,7 @@ if($focus->campaign_id) {
 }
 $xtpl->assign("CAMPAIGN_ID", $campaign_id);
 
-if(empty($time_ampm)) {
+if(empty($time_ampm) || empty($focus->time_start)) {
     $time_start = $focus->time_start;
 } else {
     $split = $timedate->splitTime($focus->time_start, $timedate->get_time_format());
