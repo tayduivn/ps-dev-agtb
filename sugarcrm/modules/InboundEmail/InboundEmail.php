@@ -228,7 +228,7 @@ class InboundEmail extends SugarBean {
 	 */
 	function mark_deleted($id) {
 		parent::mark_deleted($id);
-		$q = "update inbound_email set groupfolder_id = null WHERE id = $id";
+		$q = "update inbound_email set groupfolder_id = null WHERE id = '{$id}'";
 		$r = $this->db->query($q);
 		$this->deleteCache();
 	}
@@ -240,11 +240,11 @@ class InboundEmail extends SugarBean {
 	function mark_answered($mailid, $type = 'smtp') {
 		switch ($type) {
 			case 'smtp' :
-				$q = "update email_cache set answered = 1 WHERE imap_uid = $mailid and ie_id = '$this->id'";
+				$q = "update email_cache set answered = 1 WHERE imap_uid = $mailid and ie_id = '{$this->id}'";
 				$this->db->query($q);
 				break;
 			case 'pop3' :
-				$q = "update email_cache set answered = 1 WHERE message_id = '$mailid' and ie_id = '$this->id'";
+				$q = "update email_cache set answered = 1 WHERE message_id = '$mailid' and ie_id = '{$this->id}'";
 				$this->db->query($q);
 				break;
 		}
