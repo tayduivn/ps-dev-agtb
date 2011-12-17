@@ -1106,7 +1106,7 @@ return str_replace(' > ','_',
                     else {
                         $do_id = 1;
                     }
-
+                    // Bug 45019: don't add ID column if this column is the ID column
                     if (($field_list_name != 'total_select_fields' && $field_list_name != 'summary_select_fields') && $do_id) {
                         $id_column['name'] = 'id';
                         $id_column['type'] = 'id';
@@ -1118,7 +1118,9 @@ return str_replace(' > ','_',
                         }
                         $id_column['column_key'] = $id_column['table_key'] . ':' . $id_column['name'];
                         $select_piece = $this->layout_manager->widgetQuery($id_column);
-                        array_push($this->$field_list_name, $select_piece);
+                        if (!$this->select_already_defined($select_piece, $field_list_name)) {
+                            array_push($this->$field_list_name, $select_piece);
+                        }
                     }
                 }
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
