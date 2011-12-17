@@ -96,18 +96,11 @@ var $useForSubpanel = true;
                 $this->ss->assign('RETURN_MODULE', $this->bean->module_dir);
             }
 
-            if(isset($_REQUEST['return_id']))
-            {
-                $this->ss->assign('RETURN_ID', $_REQUEST['return_id']);
-            } else {
-                $this->ss->assign('RETURN_ID', $this->bean->id);
-            }
-
-            if(isset($_REQUEST['return_action']))
-            {
-                $this->ss->assign('RETURN_ACTION', $_REQUEST['return_action']);
-            } else {
-                $this->ss->assign('RETURN_ACTION', 'DetailView');
+            $return_id = isset($_REQUEST['return_id'])?$_REQUEST['return_id']:$this->bean->id;
+            if (isset($return_id)) {
+                $return_action = isset($_REQUEST['return_action'])?$_REQUEST['return_action']:'DetailView';
+                $this->ss->assign('RETURN_ID', $return_id);
+                $this->ss->assign('RETURN_ACTION', $return_action);
             }
         }
 
