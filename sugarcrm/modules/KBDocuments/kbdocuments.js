@@ -1668,6 +1668,12 @@ SUGAR.kb = function() {
                                     }
                                     else {
                                         thediv.setAttribute('id', rets['new_file_name']);
+
+                                        //if the embed button can be retrieved, change the id to reflect the image file name
+                                        var embedImageDiv = document.getElementById('embed_div_number'+currCount);
+                                        if (typeof(embedImageDiv !='undefined')){
+                                            embedImageDiv.setAttribute('id', 'embed_'+ rets['new_file_name']);
+                                        }
                                     }
                                 }
                             }
@@ -1767,6 +1773,9 @@ SUGAR.kb = function() {
                 //new_row_button_embed.setAttribute("height","20");
                 //new_row_button_embed.setAttribute("width","20");
 
+                //add a default id value to the embed button
+                new_row_button_embed.setAttribute('id', 'embed_'+div_id);
+
 
                 /*
                  var new_row_button_embed = document.createElement( 'input' );
@@ -1820,7 +1829,15 @@ SUGAR.kb = function() {
                 };
 
                 new_row_button_embed.onclick = function() {
+                    //grab the default image file name from the parent id
                     var filename = this.parentNode.parentNode.id;
+
+                    //check to see if we have the file name set directly on this button id
+                    if (this.id.indexOf('embed_div_number') !=0){
+                        //the button id does not start with the default string, so it has been changed to hold the imgae file name, use it
+                        var filename = filename.replace('embed_', this.id);
+                    }
+
                     embedImage = "<img src=\"index.php?entryPoint=download&type=SugarFieldImage&isTempFile=1&id=" + unescape(filename) + "\">";
                     var tiny = tinyMCE.getInstanceById('body_html');
                     tiny.getWin().focus();
