@@ -2633,7 +2633,23 @@ eoq;
 				//END SUGARCRM flav=pro ONLY
 				$archived->save();
 
-			// set flag to show that this was run
+				// Archived Emails
+				$archived = new SugarFolder();
+				$archived->name = $mod_strings['LBL_LIST_TITLE_MY_ARCHIVES'];
+				$archived->has_child = 0;
+				$archived->parent_folder = $folder->id;
+				$archived->created_by = $user->id;
+				$archived->modified_by = $user->id;
+				$archived->is_dynamic = 1;
+				$archived->folder_type = "archived";
+				$archived->dynamic_query = '';
+				//BEGIN SUGARCRM flav=pro ONLY
+				$archived->team_id = $privateTeam;
+				$archived->team_set_id = $team_set_id;
+				//END SUGARCRM flav=pro ONLY
+				$archived->save();
+
+				// set flag to show that this was run
 			$user->setPreference("email2Preflight", true, 1, "Emails");
 		}
 	}
