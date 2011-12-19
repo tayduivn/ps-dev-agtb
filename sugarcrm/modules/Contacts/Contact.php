@@ -489,17 +489,6 @@ class Contact extends Person {
 		$temp_array['NAME'] = $this->name;
 		$temp_array['ENCODED_NAME'] = $this->name;
 
-		if(isset($system_config->settings['system_skypeout_on'])
-			&& $system_config->settings['system_skypeout_on'] == 1)
-		{
-			if(!empty($temp_array['PHONE_WORK'])
-				&& skype_formatted($temp_array['PHONE_WORK']))
-			{
-				$temp_array['PHONE_WORK'] = '<a href="callto://'
-					. $temp_array['PHONE_WORK']. '">'
-					. $temp_array['PHONE_WORK']. '</a>' ;
-			}
-		}
 		if($filter_fields && !empty($filter_fields['sync_contact'])){
 			$this->load_contacts_users_relationship();
 			$temp_array['SYNC_CONTACT'] = !empty($this->contacts_users_id) ? 1 : 0;
