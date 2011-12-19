@@ -30,8 +30,45 @@
 
 // $Id: popup_helper.js 56952 2010-06-14 21:44:26Z sadek $
 
+/**
+ * Helper function used in send_backs to close the popup window if closePopup is true.
+ */
+function closePopup() {
+	var closePopup = window.opener.get_close_popup();
+	if (closePopup)
+	{
+		window.close();
+	}	
+}
+
+/**
+ * Bug: 48726
+ * Helper function used in send_backs to show confirm dialog with appropriate message. 
+ * Collects label data from the the parent window.
+ */
+function confirmDialog(array_contents) {
+	var newData = '';
+	eval("var data = {" + array_contents.join(",") + "}");
+	for (var key in data)
+	{
+		var displayValue = data[key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+		if (window.opener.document.getElementById(key + '_label') != null)
+		{
+	        var dataLabel = window.opener.document.getElementById(key + '_label').innerHTML.replace(/\n/gi,'').replace(/<\/?[^>]+(>|$)/g, "");
+			newData += dataLabel + ' ' + displayValue + '\n';
+		}
+	}
+	if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + newData))
+	{
+		array_contents.push('"popupConfirm":1');
+	} else {
+		array_contents.push('"popupConfirm":0');
+	}
+	return array_contents;
+}
+
 function send_back(module, id)
-{
+{	
 	var associated_row_data = associated_javascript_data[id];
 
 	// cn: bug 12274 - stripping false-positive security envelope
@@ -76,8 +113,6 @@ function send_back(module, id)
                }
 			}
 			
-			
-			
 			if (typeof(the_value) == 'string') {
 				the_value = the_value.replace(/\r\n|\n|\r/g, '\\n');
 			}
@@ -86,19 +121,20 @@ function send_back(module, id)
 		}
 	}
 	
+	// Bug 48726 Start
+	array_contents = confirmDialog(array_contents);
+	// Bug 48726 End
+	
 	eval("var name_to_value_array = {" + array_contents.join(",") + "}");
-
+	
+	closePopup();
+	
 	var result_data = {"form_name":form_name,"name_to_value_array":name_to_value_array,"passthru_data":passthru_data};
-	var close_popup = window.opener.get_close_popup();
 	call_back_function(result_data);
-
-	if(close_popup)
-	{
-		window.close();
-	}
 }
 
-function send_back_teams(module, form, field, error_message, request_data, form_team_id) {	
+function send_back_teams(module, form, field, error_message, request_data, form_team_id)
+{	
 	var array_contents = Array();
 	
 	if(form_team_id){
@@ -144,14 +180,10 @@ function send_back_teams(module, form, field, error_message, request_data, form_
 	var field_name = request_data.field_name;
 	var call_back_function = eval("window.opener." + request_data.call_back_function);
 
+	closePopup();
+	
 	var result_data={"form_name":form_name,"field_name":field_name,"teams":array_teams,"passthru_data":passthru_data};
-	var close_popup = window.opener.get_close_popup();
-	call_back_function(result_data);
-	if(close_popup)
-	{
-		window.close();
-	}	
-
+	call_back_function(result_data);	
 }
 
 function send_back_selected(module, form, field, error_message, request_data)
@@ -193,15 +225,11 @@ function send_back_selected(module, form, field, error_message, request_data)
 	var form_name = request_data.form_name;
 	var field_to_name_array = request_data.field_to_name_array;
 	
+	closePopup();
+	
 	var call_back_function = eval("window.opener." + request_data.call_back_function);
 	var result_data={"form_name":form_name,"selection_list":selection_list_array ,"passthru_data":passthru_data,"select_entire_list":form.select_entire_list.value,"current_query_by_page":form.current_query_by_page.value};
-	var close_popup = window.opener.get_close_popup();
 	call_back_function(result_data);
-
-	if(close_popup)
-	{
-		window.close();
-	}
 }
 
 
