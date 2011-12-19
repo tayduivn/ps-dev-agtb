@@ -604,9 +604,12 @@ class SugarView
             // This is here for backwards compatibility, someday, somewhere, it will be able to be removed
             $ss->assign("moduleTopMenu",$groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules']);
             $ss->assign("moduleExtraMenu",$groupTabs[$app_strings['LBL_TABGROUP_ALL']]['extra']);
+            
 
         }
-
+        $imageURL = SugarThemeRegistry::current()->getImageURL("dashboard.png");
+        $homeImage = "<img src='$imageURL'>";
+		$ss->assign("homeImage",$homeImage);
         global $mod_strings;
         $mod_strings = $bakModStrings;
         //BEGIN SUGARCRM flav=sales || flav=pro ONLY
@@ -614,10 +617,26 @@ class SugarView
 		if(!empty($current_user->id) && !$this->_getOption('view_print')){
 			require_once('include/DashletContainer/DCFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
-			$data = $dcm->getLayout();
+			//$data = $dcm->getLayout();
+			$notifData = $dcm->getNotifications();
+			$menuData = $dcm->getMenus();
 			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
+			$ss->assign('NOTIFCLASS', $notifData['class']);
+			$ss->assign('NOTIFCODE', $notifData['code']);
+			$ss->assign('NOTIFICON', $notifData['icon']);
+			$ss->assign('DCSCRIPT', $dcm->getScript());
+			$ss->assign('ICONSEARCH', $dcm->getSearchIcon());
+			$ss->assign('DCACTIONS', $menuData['DCActions']);
+			$ss->assign('DYNAMICDCACTIONS', $menuData['dynamicDCActions']);
+			$ss->assign('PICTURE', $current_user->picture);
+			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
+			if(is_admin($GLOBALS['current_user'])){
+				$ss->assign('ISADMIN', true);
+			} else {
+				$ss->assign('ISADMIN', false);
+			}
 			$ss->assign('SUGAR_DCJS', $dcjs);
-			$ss->assign('SUGAR_DCMENU', $data['html']);
+			//$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
         //END SUGARCRM flav=sales || flav=pro ONLY
@@ -678,12 +697,11 @@ class SugarView
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
         echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-        if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_jquery.js"))) {
+        if (!is_file(sugar_cached("include/javascript/sugar_grp1.js"))) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
             ConcatenateFiles(".");
         }
-        echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery.js');
         echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
         echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
         //BEGIN SUGARCRM flav=pro ONLY
@@ -779,11 +797,12 @@ EOHTML;
                 $js_vars['action_sugar_grp1'] = $_REQUEST['action'];
             }
             echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-            if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js"))) {
+            if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_jquery.js"))) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
                 ConcatenateFiles(".");
             }
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
@@ -1073,14 +1092,14 @@ EOHTML;
     {
         $endTime = microtime(true);
         $deltaTime = $endTime - $GLOBALS['startTime'];
-        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' <span id="responseTime">' . number_format(round($deltaTime, 2), 2) . '</span> ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
+        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' ' . number_format(round($deltaTime, 2), 2) . ' ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
-        $return .= '<br />';
+       // $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY
         // Output the DB instances only ifthere is more than one actually created(the error case)
         $checkDB = DBManagerFactory::getInstance();
         if ($checkDB->count_id > 1) {
-            $return .= '<b>(Internal Only)DB Instances: ' . $checkDB->count_id . ' references:' . $checkDB->references . '</b><br />';
+            $return .= ' (Internal Only)DB Instances: ' . $checkDB->count_id . ' references:' . $checkDB->references . '';
         }
 
         //END SUGARCRM flav=int ONLY
@@ -1220,7 +1239,7 @@ EOHTML;
             $index++;
             $paramString .= $parm;
             if($index < $count){
-                $paramString .= $this->getBreadCrumbSymbol();
+               // $paramString .= $this->getBreadCrumbSymbol();
             }
         }
 
@@ -1228,12 +1247,9 @@ EOHTML;
                $theTitle .= "<h2> $paramString </h2>\n";
            }
 
-        if ($show_help) {
-            $theTitle .= "<span class='utils'>";
-            $theTitle .= $this->getHelpText($module);
-        }
 
-        $theTitle .= "</span></div>\n";
+
+        $theTitle .= "</div>\n";
         return $theTitle;
     }
 
@@ -1291,8 +1307,8 @@ EOHTML;
             switch ($this->action) {
             case 'EditView':
                 if(!empty($this->bean->id)) {
-                    $params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$this->bean->get_summary_text()."</a>";
-                    $params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
+                    $params[] = $this->bean->get_summary_text();
+                    //$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
                 }
                 else
                     $params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
@@ -1338,13 +1354,12 @@ EOHTML;
     	if($this->action == "ListView" || $this->action == "index") {
     	    if (!empty($iconPath) && !$browserTitle) {
     	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
-					return "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$firstParam."' title='".$firstParam."' align='absmiddle'></a>"
-					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
-    	    	} else {
     	    		return $app_strings['LBL_SEARCH'].$this->getBreadCrumbSymbol()
-    	    			 . "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$firstParam."' title='".$firstParam."' align='absmiddle'></a>";
+    	    			 . "$firstParam";
+
+    	    	} else {
+					return "$firstParam"
+					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
     	    	}
 			} else {
 				return $firstParam;
@@ -1352,8 +1367,7 @@ EOHTML;
     	}
     	else {
 		    if (!empty($iconPath) && !$browserTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'>"
-				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
+				//return "<a href='index.php?module={$this->module}&action=index'>$this->module</a>";
 			} else {
 				return "{$firstParam}";
 			}
@@ -1400,10 +1414,12 @@ EOHTML;
     public function getBreadCrumbSymbol()
     {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='pointer'>&raquo;</span>";
+        	//return "<span class='pointer'>&raquo;</span>";
+        	return "<span class='pointer'>&nbsp;</span>";
         }
         else {
-        	return "<span class='pointer'>&laquo;</span>";
+        	//return "<span class='pointer'>&laquo;</span>";
+        	return "<span class='pointer'>&nbsp;</span>";
         }
     }
 

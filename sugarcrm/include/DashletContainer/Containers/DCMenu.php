@@ -39,9 +39,9 @@ class DCMenu extends DashletContainer
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 
 	    $image = SugarThemeRegistry::current()->getImage($imageName, "class='icon' alt='{$createRecordTitle}' title='{$createRecordTitle}' id='dcMenu_{$module}_quick_create_icon'");
-	    return <<<EOQ
-		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle', true);">{$image}</a></li>
-EOQ;
+	    
+	    return array('module'=>$module,'createRecordTitle'=>$createRecordTitle, 'image' => $image);
+
 	}
 
 	protected function getDynamicMenuItem($def)
@@ -58,18 +58,23 @@ EOQ;
         $modal = isset($def['modal']) ? $def['modal'] : true;
 	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label', $modal);";
 	    $script = isset($def['script_url']) ? '<script type="text/javascript" src="' . $def['script_url'] . '"></script>' : "";
-		$url = "javascript: {$action}";
-        $image = SugarThemeRegistry::current()->getLink($url, $label, 'class="icon"', $imageName, 'border="0"', null, null, $label);
-	    return "<li>$script $image</li>";
+
+
+		$url = "javascript: $action";
+		$image = SugarThemeRegistry::current()->getLink($url, $label, '', $imageName, 'class="icon"');
+	    return array('script'=>$script, 'image' => $image);
 	}
 
-	public function getLayout()
-	{
-		$record = !empty($_REQUEST['record'])?$_REQUEST['record']:'';
-		$module = !empty($_REQUEST['module'])?$_REQUEST['module']:'';
 
+	public function getSearchIcon() {
+		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
+		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"',null,null,$GLOBALS['app_strings']['LBL_ALT_SPOT_SEARCH']);	
+		return $iconSearch;
+	}
+	
+	public function getNotifications() {
 		global $current_user;
-				$notificationsHTML = '';
+		$notificationsHTML = '';
 		if(is_admin($current_user)){
 		    $shouldSkip = sugar_cache_retrieve('dcmenu_check_notifications');
 		    $unreadNotifications = 0;
@@ -84,37 +89,33 @@ EOQ;
 		$url = "javascript: DCMenu.notificationsList();";
 		$attr = 'class="notice"';
 		if($unreadNotifications > 0) {
-			$iconImage = "dcMenuSugarCube_alert.png";
-			$code = '<div id="notifCount" class="notifCount">'.$unreadNotifications.'</div>';
+			$iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1";
+			$code = '<div id="notifCount" class="notifCount" onclick="DCMenu.notificationsList();">'.$unreadNotifications.'</div>';
 			$class = "";
 		} else {
-			$iconImage = "dcMenuSugarCube.png";
+			$iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1";
 			$code = '';
 			$class = ' class="none"';
 		}
 
-		$image = SugarThemeRegistry::current()->getLink($url, '', $attr, $iconImage, 'class="dc_notif_icon" border="0" alt="'.$unreadNotifications.' '.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'"');
+		//$image = SugarThemeRegistry::current()->getLink($url, '', $attr, $iconImage, 'class="dc_notif_icon" border="0" alt="'.$unreadNotifications.' '.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'"');
+		$image = '<a href="'.$url.'" title="'.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'" ><span class="dc_notif_icon" border="0" alt="'.$unreadNotifications.'" style="background-image: url('.$iconImage.');  "></span></a>';
 
-		$notificationsHTML = <<<EOQ
-
-			<div id="dcmenuSugarCube" $class>
-			  $image
-			  $code
-			</div>
-
-EOQ;
 		} else {
-			$iconImage = SugarThemeRegistry::current()->getImage("dcMenuSugarCube.png", 'class="dc_notif_icon" border="0"');
+			$image = SugarThemeRegistry::current()->getImage("index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1", 'class="dc_notif_icon" border="0"');
 				$code = '';
 				$class = ' class="none"';
-				$notificationsHTML = <<<EOQ
-
-			<div id="dcmenuSugarCube" $class>
-			  $iconImage
-			  $code
-			</div>
-EOQ;
 		}
+		
+		return array('class'=>$class,'icon'=>$image, 'code'=> $code);	
+	}
+	
+	
+	public function getScript() {
+		$record = !empty($_REQUEST['record'])?$_REQUEST['record']:'';
+		$module = !empty($_REQUEST['module'])?$_REQUEST['module']:'';
+
+
 		$action = $GLOBALS['app']->controller->action;
 		//BEGIN SUGARCRM flav=sugarsurvey ONLY
 		$version = urlencode($GLOBALS['sugar_version']);
@@ -154,16 +155,21 @@ EOQ;
 		<script src='{$sugarsurvey}'></script>
 		//END SUGARCRM flav=sugarsurvey ONLY
 EOQ;
-		$html .= <<<EOQ
-		<div id='dcmenutop'></div>
-		<div id='dcmenu' class='dcmenu dcmenuFloat'>
-		{$notificationsHTML}
-		<div class="dcmenuDivider" id="notificationsDivider"></div>
 
-		<div id="dcmenuContainer">
-		<ul id="dcmenuitems">
+	return $html;	
+	}
+	
+	public function getLayout() {
+		
+	}
+	public function getMenus()
+	{
+		$record = !empty($_REQUEST['record'])?$_REQUEST['record']:'';
+		$module = !empty($_REQUEST['module'])?$_REQUEST['module']:'';
 
-EOQ;
+
+		$action = $GLOBALS['app']->controller->action;
+
         $DCActions = array();
         $dynamicDCActions = array();
 		$actions_path = "include/DashletContainer/Containers/DCActions.php";
@@ -173,14 +179,17 @@ EOQ;
 		    include($actions_path);
 		if (is_file('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php'))
 			include 'custom/application/Ext/DashletContainer/Containers/dcactions.ext.php';
-
+		$html = "";
+		
+		$filterDCActions = array();
+		$filterDynamicDCActions = array();
 		foreach($DCActions as $action){
 			if(ACLController::checkAccess($action, 'edit', true)) {
 			   //BEGIN SUGARCRM flav=sales ONLY
 			   $ss_admin_whitelist = getSugarSalesAdminWhiteList();
 			   if(!is_admin($GLOBALS['current_user']) || in_array($action, $ss_admin_whitelist))
 			   //END SUGARCRM flav=sales ONLY
-			   $html .= $this->getMenuItem($action);
+			   $filterDCActions[] = $this->getMenuItem($action);
 			}
 		}
 
@@ -195,30 +204,11 @@ EOQ;
         }
 
 		foreach($dynamicDCActions as $def){
-			$html .= $this->getDynamicMenuItem($def);
+			$filterDynamicDCActions[] = $this->getDynamicMenuItem($def);
 		}
 
-		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
-		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"',null,null,$GLOBALS['app_strings']['LBL_ALT_SPOT_SEARCH']);
-		$html .= <<<EOQ
-		</ul>
-		</div>
-EOQ;
-//BEGIN SUGARCRM flav=sales ONLY
-if(!is_admin($GLOBALS['current_user'])){
-//END SUGARCRM flav=sales ONLY
-$html .= <<<EOQ
-		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='enter global search term'></div>
-		<div id="glblSearchBtn">$iconSearch</div>
-EOQ;
-//BEGIN SUGARCRM flav=sales ONLY
-}
-//END SUGARCRM flav=sales ONLY
-$html .= <<<EOQ
-		</div>
-		</div>
 
-EOQ;
-		return array('html'=>$html, 'jsfiles'=>array());
+
+		return array('DCActions'=>$filterDCActions, 'dynamicDCActions'=>$filterDynamicDCActions);
 	}
 }

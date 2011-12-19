@@ -26,31 +26,17 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{include file="_head.tpl" theme_template=true}
-<body class="yui-skin-sam">
-	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
-	{include file="_dcmenu.tpl" theme_template=true}
-	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
-
-	<div class="clear"></div>
-    <div class="clear"></div>
-
-{literal}
-<iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png'  title='empty'  style='display:none'></iframe>
-<input id='ajaxUI-history-field' type='hidden'>
-<script type='text/javascript'>
-if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
-{
-	YAHOO.util.History.register('ajaxUILoc', "", SUGAR.ajaxUI.go);
-	{/literal}{if $smarty.request.module != "ModuleBuilder"}{* Module builder will init YUI history on its own *}
-	YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
-	{/if}{literal}
-}
-</script>
-{/literal}
-
-
-<div id="main">
-    <div id="content">
+{if $AUTHENTICATED}
+{$DCSCRIPT}
+<div id='dcmenutop'></div>
+<div id='dcmenu' class='dcmenu dcmenuFloat'>
+  {include file="_headerModuleList.tpl" theme_template=true}
     
-        <table style="width:100%" id="contentTable"><tr><td>
+    {if $AUTHENTICATED}
+    {include file="_quickcreate.tpl" theme_template=true}
+    {include file="_globalLinks.tpl" theme_template=true}
+    {include file="_search.tpl" theme_template=true}
+    
+	{/if}
+</div>
+{/if}

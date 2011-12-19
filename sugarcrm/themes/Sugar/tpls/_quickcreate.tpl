@@ -1,6 +1,6 @@
 {*
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Enterprise End User
+ * The contents of this file are subject to the SugarCRM Sales Subscription
  * License Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
@@ -23,34 +23,36 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{include file="_head.tpl" theme_template=true}
-<body class="yui-skin-sam">
-	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
-	{include file="_dcmenu.tpl" theme_template=true}
-	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 
-	<div class="clear"></div>
-    <div class="clear"></div>
+<div id="quickCreate">
 
-{literal}
-<iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png'  title='empty'  style='display:none'></iframe>
-<input id='ajaxUI-history-field' type='hidden'>
-<script type='text/javascript'>
-if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
-{
-	YAHOO.util.History.register('ajaxUILoc', "", SUGAR.ajaxUI.go);
-	{/literal}{if $smarty.request.module != "ModuleBuilder"}{* Module builder will init YUI history on its own *}
-	YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
-	{/if}{literal}
-}
-</script>
-{/literal}
+<ul class="clickMenu showLess" id="quickCreateUL">
+
+            <li>
+               
+
+                <ul class="subnav">
+				{foreach from=$DCACTIONS item=action name=quickCreate}
+					<li {if $smarty.foreach.quickCreate.index > 4}class="moreOverflow"{/if}><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);">{$action.createRecordTitle}</a></li>
+					
+				{/foreach}
+				
+				{if count($DCACTIONS) > 4}
+					<li class="moduleMenuOverFlowMore"><a href="javascript: toggleMenuOverFlow('quickCreateUL','more');">Show More <img src="{sugar_getimagepath file="advanced_search.gif"}"></a></li>
+					<li class="moduleMenuOverFlowLess"><a href="javascript: toggleMenuOverFlow('quickCreateUL','less');">Show Less <img src="{sugar_getimagepath file="basic_search.gif"}"></a></li>
+				{/if}
+				
+				
+				{foreach from=$DYNAMICDCACTIONS item=action}
+					<li>{$action.script} {$action.image}</li>
+				{/foreach}
+				</ul>
+			</li>
+	
+</ul>
 
 
-<div id="main">
-    <div id="content">
-    
-        <table style="width:100%" id="contentTable"><tr><td>
+</div>

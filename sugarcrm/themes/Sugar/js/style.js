@@ -32,66 +32,154 @@
 /**
  * Handles the global links slide
  */
-YAHOO.util.Event.onContentReady("globalLinksModule", function() 
-{
-    if ( !Get_Cookie('globalLinksOpen') ) {
-        Set_Cookie('globalLinksOpen','true',30,'/','','');
-    }
-    if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-        document.getElementById('globalLinks').style.width = "auto";
-    }
-    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("node", "anim", function(Y) {
-        var module = Y.one('#globalLinksModule');
-    
-        if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-            var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 0
-                     
-            },
-            to: {
-                width: 
-                function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    }
-            },
-            easing: Y.Easing.easeOut,
-            duration: 0.5
-        });
-            module.toggleClass('yui-closed');
-            
-        } else {
-        var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 
-                    function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    } 
-            },
-            to: {
-                width: 0
-            },
-            easing: Y.Easing.backIn,
-            duration: 0.5
-        });
-        }
-        
-        var onClick = function(e) {
-            module.toggleClass('yui-closed');
-            content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
-            content.fx.run();
-            if ( document.getElementById('globalLinksModule').className == 'yui-closed' )
-                Set_Cookie('globalLinksOpen','true',30,'/','','');
-            else
-                Set_Cookie('globalLinksOpen','false',30,'/','','');
-        };
-    
-        // use dynamic control for dynamic behavior
-        var control = Y.Node.create(
-        '<a title="show/hide content" class="yui-toggle"><em>toggle</em></a>'
-        );
-        module.one('#globalLinksCtrl').appendChild(control);
-        control.on('click', onClick);
-    });
+$(window).resize(function() {
+  //$('body').prepend('<div>' + $(window).width() + '</div>');
+  
+  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
+  
+  $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
+	resizeMenu();
 });
+
+
+$(document).ready(function(){
+
+	
+firstHit = false;
+	
+	
+  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
+  $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
+	resizeMenu();
+	
+	$("#sugar_spot_search").keypress(function(event) {
+		DCMenu.startSearch(event);
+		$('#close_spot_search').css("display","inline-block");
+		
+		 if(event.charCode == 0 && !firstHit) {
+		$('#sugar_spot_search_div').css("left",110);
+		$('#sugar_spot_search_div').css("width",344);
+		$('#sugar_spot_search').css("width",290);
+		firstHit = true;
+		 	}
+
+		 
+		$('#close_spot_search').click(function() {
+			clearSearch();
+		});
+		$('body').click(function() {
+			clearSearch();
+//		   console.log($("#sugar_spot_search").val());
+		});
+
+
+
+	});
+
+
+
+
+	$("#dcmenu #quickCreateUL ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	$("#dcmenu #globalLinks ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("#dcmenu ul.clickMenu li").click(function(event) { //When trigger is clicked...
+	if(event.currentTarget.className != "moduleMenuOverFlowMore subhover" && event.currentTarget.className != "moduleMenuOverFlowLess subhover") {
+		$(document).find("ul.subnav").hide();//hide all menus
+	}
+		//Following events are applied to the subnav itself (moving subnav up and down)
+		$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
+
+
+$('body').click(function() {
+  //Hide the menus if visible
+  //console.log($(this).parent().find("ul.subnav"));
+   $(this).parent().find("ul.subnav").hide();
+});
+
+  
+     
+
+  event.stopPropagation();
+
+
+
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+	
+    $("#arrow").click(function(){
+        $(this).toggleClass("up");
+        if ($(this).hasClass('up')) {
+        	$(this).attr("title","Hide");
+        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+            $(this).animate({bottom:'7px'},200);
+        } else {
+        	$(this).attr("title","Show");
+        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+            $(this).animate({bottom:'0'},200);
+        }
+        $("#footer").slideToggle("fast");
+        
+    });
+    
+    //Tool Tips
+   	$(function(){
+		$("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#linkedin").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
+		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});
+		
+	});
+
+});
+ 
+function resizeMenu() {
+	var maxMenuWidth = Math.round($(window).width()*.45);
+	var menuWidth = $('#moduleList').width();
+	var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
+	
+	//console.log($('#themeTabGroup_All ul').children(".yuimenubaritem").length);
+	//if(menuWidth > maxMenuWidth) {
+		$('#themeTabGroup_All ul').children(".yuimenubaritem").each(
+			function(index) {
+				//if($(this).css("display") == "list-item") {
+					menuItemsWidth += $(this).width();
+				//}
+				if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenuAll") {
+		    		//console.log($(this).attr("id"));
+		    		$(this).css("display","none");
+		    		$("#"+$(this).attr("id")+"_flex").css("display","list-item");
+				}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenuAll") {
+					//console.log($(this).attr("id"));
+					$(this).css("display","list-item");
+					$("#"+$(this).attr("id")+"_flex").css("display","none");
+				}
+			}
+		);	
+		
+	//}
+	
+}
+function clearSearch() {
+	$("div#sugar_spot_search_results").hide();
+	$('#close_spot_search').css("display","none");
+	$("#sugar_spot_search").val("");
+	$("#sugar_spot_search").removeClass("searching");
+	$('#sugar_spot_search_div').css("left",0);
+	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
+  	$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));	
+  	firstHit = false;
+}
+
+
 
 SUGAR.themes = SUGAR.namespace("themes");
 
@@ -132,6 +220,7 @@ SUGAR.append(SUGAR.themes, {
     setModuleTabs: function(html) {
         var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
         var el = document.getElementById('moduleList');
+        var qc = document.getElementById('quickCreate');
         if (el && el.parentNode) {
             var parent = el.parentNode;
 
@@ -146,10 +235,14 @@ SUGAR.append(SUGAR.themes, {
                 //If the menu fails to load, we can get leave the user stranded, reload the page instead.
                 window.location.reload();
             }
-            parent.removeChild(el);
-            parent.innerHTML += html;
-            el = document.getElementById('moduleList');
+            //parent.removeChild(el);
+            //var newdiv = document.createElement("div");
+            el.innerHTML = html;
+            
+            //parent.insertBefore(newdiv,qc);
+            //el = document.getElementById('moduleList');
             this.loadModuleList();
+            $("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
         }
     },
 
@@ -182,6 +275,7 @@ SUGAR.append(SUGAR.themes, {
 			oShadow = oElement.lastChild;
 			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
 
+			
             // We need to figure out the module name from the ID. Sometimes it will have the group name in it
             // But sometimes it will just use the module name (in the case of the All group which don't have the
             // group prefixes due to the automated testing suite.
@@ -197,9 +291,15 @@ SUGAR.append(SUGAR.themes, {
 				if(!oItem) return;
 
                 oSubmenu = oItem.cfg.getProperty("submenu");
+                
+                
+                
+                
+                
+                
 				if (!oSubmenu) return;
-                oSubmenu.removeItem(1,1);
-				oSubmenu.addItems(data,1);
+                oSubmenu.removeItem(1,2);
+				oSubmenu.addItems(data,2);
 
 				//update shadow height to accomodate new items
 
@@ -243,11 +343,36 @@ SUGAR.append(SUGAR.themes, {
 		oShadowBodyCenter,
 		oBd,
 		oVR;
+		
+		parentIndex = this.parent.index;
+		 
 
 	if (this.parent) {
 
 		oElement = this.element;
+		if(oElement.id == "Home") {
+			offsetPadding = -10;
+		} else {
+			offsetPadding = 0;
+			}
 		var newLeft = oElement.offsetLeft + offsetPadding;
+
+		
+			if(oElement.id == "MoreAll") {
+				
+				var aItemsMore = oMenuBar.getItems();
+				var oItemMore = aItemsMore[parentIndex];
+				oSubmenuMore = oItemMore.cfg.getProperty("submenu");
+				
+				oSubmenuMore.subscribe("click", oSubmenuMore.show);
+				var showMoreLiId = oSubmenuMore._aItemGroups[0][12].id;
+				var showMore = document.getElementById(showMoreLiId);
+				var showMoreLink = showMore.firstChild;
+				
+
+			}
+			
+			
 		oElement.style.left = newLeft + "px";
 		oBd = oElement.firstChild;
 		oShadow = oElement.lastChild;
@@ -259,9 +384,20 @@ SUGAR.append(SUGAR.themes, {
 			oVR.setAttribute("class", "vr");
 			oVR.setAttribute("className", "vr");
 			oElement.insertBefore(oVR,oShadow);
+
+
 			oVR.style.height = (oBd.offsetHeight - 15)+"px";
 			oVR.style.top = (oBd.offsetTop+8) +"px";
-			oVR.style.left = ((oBd.offsetWidth/2)-10) +"px";
+			oVR.style.left = ((oBd.offsetWidth/3)) +"px";
+			
+			oVR2 = document.createElement("div");
+			oVR2.setAttribute("class", "vr");
+			oVR2.setAttribute("className", "vr");
+			oElement.insertBefore(oVR2,oShadow);
+
+			oVR2.style.height = (oBd.offsetHeight - 15)+"px";
+			oVR2.style.top = (oBd.offsetTop+8) +"px";
+			oVR2.style.left = (((oBd.offsetWidth/3) * 2)) +"px";
 
 			}
 		}
@@ -277,8 +413,9 @@ SUGAR.append(SUGAR.themes, {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
 		    autosubmenudisplay: true,
             visible: false,
-		    hidedelay: 750,
-		    lazyload: true });
+		    hidedelay: 7050,
+		    lazyload: true,
+		    constraintoviewport: true });
 	    /*
 	      Subscribe to the "beforeShow" and "show" events for
 	      each submenu of the MenuBar instance.
@@ -402,6 +539,18 @@ function sugar_theme_gm_switch( groupName ) {
 }
 
 offsetPadding = 0;
+
+function toggleMenuOverFlow(menuName,maction) {
+	var Sel = YAHOO.util.Selector, Dom = YAHOO.util.Dom;
+	if(maction == "more") {
+		Dom.addClass(menuName, "showMore");
+		YAHOO.util.Dom.removeClass(menuName,"showLess");
+	} else {
+		Dom.addClass(menuName, "showLess");
+		YAHOO.util.Dom.removeClass(menuName,"showMore");
+	}
+	
+}
 
 function resizeHeader() {
 	var e = document.getElementById("contentTable");

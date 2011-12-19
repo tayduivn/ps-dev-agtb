@@ -27,7 +27,9 @@
  ********************************************************************************/
 *}
 {assign var='underscore' value='_'}
+{if $AJAX ne "1"}
 <div class="yuimenubar yuimenubarnav" id="moduleList">
+{/if}
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
   {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
   {if $tabGroupName == 'All'}
@@ -39,31 +41,23 @@
   
 	<div id="themeTabGroupMenu_{$tabGroupName}" class="themeTabGroupMenu yuimenubar yuimenubarnav"><div class="bd" id="themeTabGroup_{$tabGroupName}"  style="border: 0px !important; margin: 0px !important;{if $tabGroupName != $currentGroupTab}display:none;{/if}">
       <ul class="first-of-type">
-      {if $USE_GROUP_TABS}
-        <script type="text/javascript">
-        sugar_theme_gm_current = '{$currentGroupTab}';
-        Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
-        </script>
-        {* Tab group selection *}
-        <li class="yuimenubaritem moduleTabGroupMenu">
-        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">{$tabGroupName}{sugar_getimage name="grouped-menu-arrow" ext=".png" other_attributes='class="arrow" '}</a>
-        <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
-			<ul>
-          {foreach from=$groupTabs item=module key=group name=groupList}
-          <li><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="yuimenuitemlabel">{$group}</a></li>
-          {/foreach}
-		  </ul>
-        </div><div class="clear"></div></div> 
-        </li>
-      {/if}
+
 
 		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			{if $name == $MODULE_TAB}
-			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
+				{if $name == "Home"}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current home">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImage class="yuimenuitemlabel" title=$name}
+				{else}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current" id="moduleTabMain_{$tabGroupName}{$name}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module class="yuimenuitemlabel"}
+				{/if}
 			{else}
-			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
+				{if $name == "Home"}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} home">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImage class="yuimenuitemlabel" title=$name}
+				{else}
+				<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}" id="moduleTabMain_{$tabGroupName}{$name}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module class="yuimenuitemlabel"}
+				{/if}
 			{/if}
-			{if $shortcutTopMenu.$name}
+			{if $shortcutTopMenu.$name && $name != "Home"}
 				<div id="{$groupTabId}{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
 				
 										<ul class="shortCutsUl">
@@ -75,6 +69,10 @@
                                              <li class="yuimenuitem"><a href="{sugar_ajax_url url=$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
 										  {/if}
 										{/foreach}
+										</ul>
+										<ul class="favoritesUl" id="favoritesUl">
+											<li class="yuimenuitem">Favorites</li>
+											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
 										</ul>
 										{if $groupTabId}
 										<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
@@ -89,23 +87,114 @@
 			{/if}
 			</li>
 		{/foreach}
-			{if count($tabGroup.extra) > 0}
-			<li class="yuimenubaritem moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
-				<a href="#" class="yuimenuitemlabel more"><em>&gt;&gt;</em></a>
+			
+			<li class="yuimenubaritem moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
+				<a href="#" class="yuimenuitemlabel more"><span style="float: left;">More</span><em>&gt;&gt;</em></a>
 				<div id="More{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
 				<ul>
+		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
+			
+			{if $shortcutTopMenu.$name && $name != "Home"}
+				<li class="flexMenuItems"  id="moduleTabMain_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module" class="yuimenuitemlabel" module="$module" data="$name"}
+				<div id="{$groupTabId}{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
+				
+										<ul class="shortCutsUl">
+										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
+										{foreach from=$shortcutTopMenu.$name item=shortcut_item}
+										  {if $shortcut_item.URL == "-"}
+                                            <hr style="margin-top: 2px; margin-bottom: 2px" />
+										  {else}
+                                             <li class="yuimenuitem"><a href="{sugar_ajax_url url=$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
+										  {/if}
+										{/foreach}
+										</ul>
+										<ul class="favoritesUl" id="favoritesUl">
+											<li class="yuimenuitem">Favorites</li>
+											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
+										</ul>
+										{if $groupTabId}
+										<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{else}
+										<ul id="lastViewedContainer{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{/if}
+								
+				
+				</div>
+				<div class="clear"></div>
+				</div>      
+			{/if}
+			</li>
+		{/foreach}
+
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}
-                  
-					<li>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}
+
+					<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}
+						{if $shortcutTopMenu.$name}
+							<div id="{$groupTabId}{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
+										<ul class="shortCutsUl">
+										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
+										{foreach from=$shortcutTopMenu.$name item=shortcut_item}
+										  {if $shortcut_item.URL == "-"}
+                                            <hr style="margin-top: 2px; margin-bottom: 2px" />
+										  {else}
+                                             <li class="yuimenuitem"><a href="{sugar_ajax_url url=$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
+										  {/if}
+										{/foreach}
+										</ul>
+										<ul class="favoritesUl" id="favoritesUl">
+											<li class="yuimenuitem">Favorites</li>
+											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
+										</ul>
+										{if $groupTabId}
+										<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{else}
+										<ul id="lastViewedContainer{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{/if}
+							</div>
+							<div class="clear"></div>
+							</div> 
+						{/if}
+						</li>
 					{/foreach}
+					{if count($tabGroup.extra) > 5}
+					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="advanced_search.gif"}"></a></li>
+					<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','less');">Show Less <img src="{sugar_getimagepath file="basic_search.gif"}"></a></li>
+					{/if}
+					
+	 {if $USE_GROUP_TABS}
+	 
+	 	{if count($tabGroup.extra) > 0}
+	 		<li class="menuHR"></li>
+	 	{/if}
+        <script type="text/javascript">
+        sugar_theme_gm_current = '{$currentGroupTab}';
+        Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
+        </script>
+        {* Tab group selection *}
+        <li class="">
+        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">Filter Menu By</a>
+        <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu groupMenu"><div class="bd">
+			<ul>
+          {foreach from=$groupTabs item=module key=group name=groupList}
+          <li {if $tabGroupName eq $group}class="yuimenuitem yuimenuitem-selected selected"{/if}><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="yuimenuitemlabel{if $tabGroupName eq $group} yuimenuitemlabel-selected selected{/if}">{$group}</a></li>
+          {/foreach}
+		  </ul>
+        </div><div class="clear"></div></div> 
+        </li>
+      {/if}
+      
+      
 				</ul>
 				</div>
 				<div class="clear"></div>
 				</div> 
 			</li>
-			{/if}
+			
 			
 		</ul>            
 	</div></div>
 {/foreach}
+
+{if $AJAX ne "1"}
 </div>
+{/if}

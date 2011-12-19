@@ -60,6 +60,8 @@
 			//jquery libraries
 			$sugar_grp_jquery = array(
 			'include/javascript/jquery/jquery-min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery.tipTip.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			),
 			
             $sugar_grp1_yui = array(
