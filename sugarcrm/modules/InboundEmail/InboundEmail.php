@@ -1482,7 +1482,14 @@ class InboundEmail extends SugarBean {
     function checkEmailIMAPPartial($prefetch=true, $synch = false) {
     	$GLOBALS['log']->info("*****************INBOUNDEMAIL: at IMAP check partial");
         global $sugar_config;
-        $this->connectMailserver();
+        $result = $this->connectMailserver();
+        if ($result == 'false')
+        {
+            return array(
+                'status' => 'error',
+                'message' => 'Email server is down'
+            );
+        }
         $mailboxes = $this->getMailboxes(true);
         if (!in_array('INBOX', $mailboxes)) {
             $mailboxes[] = 'INBOX';
