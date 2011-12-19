@@ -22,6 +22,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'include/MVC/SugarModule.php';
+require_once 'modules/OAuthKeys/OAuthKey.php';
+require_once 'modules/OAuthTokens/OAuthToken.php';
+
 /**
  * SNIP data handling implementation
  */
@@ -169,8 +172,8 @@ class SugarSNIP
             $consumer = $this->getSnipConsumer();
             $request['oauth_token'] = $token->token;
             $request['oauth_secret'] = $token->secret;
-            $request['oauth_key'] = $consumer->c_key;
-            $request['oauth_csecret'] = $consumer->c_secret;
+            $request['consumer_key'] = $consumer->c_key;
+            $request['consumer_secret'] = $consumer->c_secret;
         }
 
         $response = $this->callRest('register', $request, true, $connectionfailed);
