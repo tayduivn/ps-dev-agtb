@@ -42,6 +42,7 @@ $mod_strings = array(
     'LBL_SNIP_SUGAR_URL' => 'This Sugar instance URL',
 	'LBL_SNIP_CALLBACK_URL' => 'Email Archiving service URL',
     'LBL_SNIP_USER_DESC' => 'Email Archiving user',
+    'LBL_SNIP_KEY_DESC' => 'Email Archiving OAuth key. Used for acessing this instance for purposes of importing emails.',
     'LBL_SNIP_STATUS_OK' => 'Enabled',
     'LBL_SNIP_STATUS_OK_SUMMARY' => 'This Sugar instance is successfully connected to the Email Archiving server.',
     'LBL_SNIP_STATUS_ERROR' => 'Error',

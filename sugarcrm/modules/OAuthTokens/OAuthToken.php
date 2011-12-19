@@ -150,6 +150,23 @@ class OAuthToken extends SugarBean
 	}
 
 	/**
+	 * Create a new authorized token for specific user
+	 * This bypasses normal OAuth process and creates a ready-made access token
+	 * @param OAuthKey $consumer
+	 * @param User $user
+	 * @return OAuthToken
+	 */
+	public static function createAuthorized($consumer, $user)
+	{
+	    $token = self::generate();
+	    $token->setConsumer($consumer);
+	    $token->setState(self::ACCESS);
+	    $token->assigned_user_id = $user->id;
+        $token->save();
+        return $token;
+	}
+
+	/**
 	 * Authorize request token
 	 * @param mixed $authdata
 	 * @return string Validation token
