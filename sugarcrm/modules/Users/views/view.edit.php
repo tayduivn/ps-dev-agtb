@@ -78,7 +78,7 @@ var $useForSubpanel = true;
         //make sure we can populate user type dropdown.  This usually gets populated in predisplay unless this is a quickeditform
         if(!isset($this->fieldHelper)){
             $this->fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
-            $this->fieldHelper->setupUserTypeDropdown();
+            $this->fieldHelper->setupAdditionalFields();
         }
 
         if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
