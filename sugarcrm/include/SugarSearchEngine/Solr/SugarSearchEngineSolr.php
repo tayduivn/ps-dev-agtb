@@ -18,8 +18,7 @@ class SugarSearchEngineSolr implements SugarSearchEngineInterface
 
     public function indexBean($bean)
     {
-        $instance = SugarSearchEngine::getInstance();
-        
+        //TODO: Needs to be re-implemented to pickup correct fields.
         $document = new Apache_Solr_Document();
         $document->addField('category', $bean->module_name);
         $document->addField('id', $bean->id);
@@ -31,13 +30,14 @@ class SugarSearchEngineSolr implements SugarSearchEngineInterface
     public function flush()
     {
         $this->_backend->commit();
-        $this->_backend->optimize();
+
+        //TODO: Optimizations should probably not be called here.
+        //$this->_backend->optimize();
     }
 
     public function delete($bean)
     {
         $this->_backend->deleteById($bean->id);
-        $this->_backend->optimize();
     }
 
     public function search($query, $offset = 0, $limit = 20)

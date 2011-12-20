@@ -117,6 +117,7 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
                     {
                         $GLOBALS['log']->debug("Found full text engine backend $engineClass");
                         $engineInstance = new $engineClass();
+                        //TODO: Not sure what this check really gets us, not defined in the interface either.
                         if (method_exists($engineInstance, "useEngine") && $engineInstance->useEngine())
                         {
                             $this->_searchEngine = $engineInstance;

@@ -32,7 +32,6 @@ class ViewSpot extends ViewAjax
     public function display()
     {
         $usa = new UnifiedSearchAdvanced();
-        $unified_search_modules = $usa->getUnifiedSearchModules();
         $unified_search_modules_display = $usa->getUnifiedSearchModulesDisplay();
 		
         // load the list of unified search enabled modules
@@ -49,7 +48,6 @@ class ViewSpot extends ViewAjax
 		        }
 		    }
 		} else {
-			global $beanList;
 			foreach($unified_search_modules_display as $key=>$data) {
 			    if (!empty($data['visible'])) 
 			    {
