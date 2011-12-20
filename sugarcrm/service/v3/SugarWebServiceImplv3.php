@@ -153,9 +153,9 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      * @exception 'SoapFault' -- The SOAP error, if any
      */
     function get_module_fields_md5($session, $module_name){
-        
+
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields_md5(v3) for module: '. print_r($module_name, true));
-        
+
         $results = array();
         if( is_array($module_name) )
         {
@@ -179,7 +179,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_server_info');
     	require_once('sugar_version.php');
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_server_info');
-    	
+
     	return array('flavor' => $GLOBALS['sugar_flavor'], 'version' => $GLOBALS['sugar_version'], 'gmt_time' => TimeDate::getInstance()->nowDb());
     } // fn
 
@@ -194,7 +194,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      */
     function get_module_layout($session, $a_module_names, $a_type, $a_view,$md5 = FALSE){
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout');
-    
+
     	global  $beanList, $beanFiles;
     	$error = new SoapError();
         $results = array();
@@ -577,6 +577,11 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	require_once($beanFiles[$class_name]);
     	$mod = new $class_name();
     	$mod->retrieve($module_id);
+
+        if (!self::$helperObject->checkQuery($error, $related_module_query, $order_by)) {
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
+        	return;
+        } // if
 
         if (!self::$helperObject->checkACLAccess($mod, 'DetailView', $error, 'no_access')) {
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');

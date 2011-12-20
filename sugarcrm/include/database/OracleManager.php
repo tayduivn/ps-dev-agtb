@@ -253,6 +253,9 @@ class OracleManager extends DBManager
      */
     public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
+        $start = (int)$start;
+        $count = (int)$count;
+
         $matches = array();
         $start = (int)$start;
         $count = (int)$count;
