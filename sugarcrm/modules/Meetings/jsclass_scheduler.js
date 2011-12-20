@@ -188,7 +188,7 @@ SugarWidgetSchedulerSearch.prototype.display = function() {
 	div.setAttribute('id','list_div_win');
 	div.style.overflow = 'auto';
 	div.style.width = '100%';
-	div.style.height= '125px';
+	div.style.height= '100%';
 	div.style.display = 'none';
     this.parentNode.appendChild(div);
 	
