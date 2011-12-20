@@ -1,8 +1,8 @@
 <?php
-require_once('include/SugarSearchEngine/ISugarSearchEngine.php');
+require_once('include/SugarSearchEngine/Interface.php');
 require_once('include/SugarSearchEngine/Solr/PHPSolr/Service.php');
 
-class SugarSearchEngineSolr implements ISugarSearchEngine
+class SugarSearchEngineSolr implements SugarSearchEngineInterface
 {
     private $_backend;
     protected $_documents = array();
@@ -11,11 +11,13 @@ class SugarSearchEngineSolr implements ISugarSearchEngine
     {
     }
 
-    public function connect($config){
+    public function connect($config)
+    {
         $this->_backend = new Apache_Solr_Service($config['host'], $config['port'], $config['path']);
     }
 
-    public function indexBean($bean){
+    public function indexBean($bean)
+    {
         $instance = SugarSearchEngine::getInstance();
         
         $document = new Apache_Solr_Document();
@@ -26,8 +28,15 @@ class SugarSearchEngineSolr implements ISugarSearchEngine
         $this->_backend->addDocument($document);
     }
 
-    public function flush(){
-        $this->_backend->commit(); //commit to see the deletes and the document
+    public function flush()
+    {
+        $this->_backend->commit();
+        $this->_backend->optimize();
+    }
+
+    public function delete($bean)
+    {
+        $this->_backend->deleteById($bean->id);
         $this->_backend->optimize();
     }
 
