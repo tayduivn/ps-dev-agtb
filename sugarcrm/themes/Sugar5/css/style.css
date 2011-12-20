@@ -3684,4 +3684,5 @@ div#chartDashlets
     border-color: #CBDAE6;
     color: #000000;
     text-align: right;
+    white-space: nowrap;
 }
