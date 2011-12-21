@@ -27,14 +27,6 @@ require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
 class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-
-    public function factoryProvider()
-    {
-        return array(
-            array('','SugarSearchEngine'),
-            array('Solr','SugarSearchEngineSolr')
-        );
-    }
     /**
      * @dataProvider factoryProvider
      * @param string $engineName
@@ -46,5 +38,12 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(get_class($instance), $expectedClass);
     }
 
+    public function factoryProvider()
+    {
+        return array(
+            array('','SugarSearchEngine'),
+            array('Solr','SugarSearchEngineSolr')
+        );
+    }
 
 }

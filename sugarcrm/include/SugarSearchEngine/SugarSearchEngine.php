@@ -22,152 +22,63 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once("include/SugarSearchEngine/Interface.php");
+require_once('include/SearchForm/SugarSpot.php');
 
+/**
+ * This class is an adapter to the existing SugarSpot/UnifiedSearch capabilities and is the default
+ * search engine if no other external engines have been configured.
+ *
+ */
 class SugarSearchEngine implements SugarSearchEngineInterface{
 
-     public static $_instance;
-     private $_searchEngine;
 
-
-     public function search($query, $offset = 0, $limit = 20){
-         if($this->_hasSearchEngine)
-         {
-            return $this->_searchEngine->search($query, $offset, $limit);
-         }
-     }
-
-     public function connect($config){
-         if($this->_hasSearchEngine)
-         {
-            $this->_searchEngine->connect($config);
-         }
-     }
-
-     public function flush(){
-         if($this->_hasSearchEngine)
-         {
-            $this->_searchEngine->flush();
-         }
-     }
-
-     public function indexBean($bean)
-     {
-         if($this->_hasSearchEngine)
-         {
-            $this->_searchEngine->indexBean($bean);
-         }
-     }
-
-     public function delete($bean)
-     {
-          if($this->_hasSearchEngine)
-          {
-             $this->_searchEngine->indexBean($bean);
-          }
-     }
-
-    public function __toString()
+    public function search($query, $offset = 0, $limit = 20, $options = array() )
     {
-        if($this->_hasSearchEngine)
-        {
-            return get_class($this->_searchEngine);
-        }
+        $sugarSpot = new SugarSpot();
+        return $sugarSpot->search($query, $offset);
 
-        return __CLASS__;
     }
-     /**
-      * getInstance()
-      *
-      * Connect to the backend engine and store for later use
-      * 
-      * @static
-      * @return void
-      */
-     public static function getInstance($name = '')
-     {
-        if (!isset(self::$_instance))
-        {
-            self::$_instance = new SugarSearchEngine();
-            self::$_instance->setupEngine($name);
-        } // if
-        return self::$_instance;
-     }
 
     /**
-     * initializes the cache in question
+     * No-op
+     * @param $config
      */
-    public function setupEngine($name = '')
+    public function connect($config)
     {
-        $this->_hasSearchEngine = false;
-        if( empty($name) )
-        {
-            //if the name is empty then let's try to see if we have one configured in the config
-            if(!empty($GLOBALS['sugar_config']['full_text_engine']))
-            {
-                $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
-                $name = $keys[0];
-            }
-        }
 
-        $defaultLocation = "include/SugarSearchEngine/{$name}/SugarSearchEngine{$name}.php";
-        $engineInstance = $this->loadSearchEngineFromLocation("custom" . DIRECTORY_SEPARATOR . $defaultLocation);
 
-        if($engineInstance === FALSE)
-        {
-            $engineInstance = $this->loadSearchEngineFromLocation($defaultLocation);
-        }
-
-        $this->_searchEngine = $engineInstance;
-        $this->_hasSearchEngine = true;
-
-        $GLOBALS['log']->debug("Found Sugar Search Engine: {$this}");
     }
 
-    private function loadSearchEngineFromLocation($filePath)
+    /**
+     * No-op
+     */
+    public function flush()
     {
-        $filePath = realpath($filePath);
-        if( is_file($filePath) )
-        {
-            require_once($filePath);
-            $engineClass = basename($filePath, ".php");
-            $engineInstance = new $engineClass();
 
-            if ($engineInstance instanceof SugarSearchEngineInterface )
-            {
-                return $engineInstance;
-            }
-            else
-            {
-                return FALSE;
-            }
-        }
-        else
-        {
-            return FALSE;
-        }
+
     }
-     /**
-	 * Returns the array containing the $searchFields for a module.  This function
-	 * first checks the default installation directories for the SearchFields.php file and then
-	 * loads any custom definition (if found)
-	 *
-	 * @param  $moduleName String name of module to retrieve SearchFields entries for
-	 * @return array of SearchFields
-	 */
-	public static function getSearchFields($moduleName)
-	{
-		$searchFields = array();
 
-		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php"))
-		{
-		    require("modules/{$moduleName}/metadata/SearchFields.php");
-		}
+    /**
+     * No-op
+     *
+     * @param $bean
+     */
+    public function indexBean($bean)
+    {
 
-		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php"))
-		{
-		    require("custom/modules/{$moduleName}/metadata/SearchFields.php");
-		}
 
-		return $searchFields;
-	}
- }
+    }
+
+    /**
+     * No-op
+     *
+     * @param $bean
+     */
+    public function delete($bean)
+    {
+
+
+    }
+
+
+}

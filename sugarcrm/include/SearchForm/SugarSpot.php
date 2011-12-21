@@ -26,6 +26,15 @@
  */
 class SugarSpot
 {
+    protected $module = "";
+
+    /**
+     * @param string $current_module
+     */
+    public function __construct($current_module = "")
+    {
+        $this->module = $current_module;
+    }
 	/**
      * searchAndDisplay
      *
@@ -35,68 +44,16 @@ class SugarSpot
 	 * @param  $modules array modules we are searching in
 	 * @param  $offset int search result offset
 	 * @return string HTML code containing results
+     *
+     * @deprecated deprecated since 6.5
 	 */
 	public function searchAndDisplay($query, $modules, $offset=-1)
 	{
-		$query_encoded = urlencode($query);
-	    $results = $this->_performSearch($query, $modules, $offset);
-        $displayResults = array();
-        $displayMoreForModule = array();
-		//$actions=0;
-		foreach($results as $m=>$data)
-        {
-			if(empty($data['data']))
-            {
-				continue;
-			}
+        $query_encoded = urlencode($query);
+        $formattedResults = $this->formatSearchResultsToDisplay($query, $modules, $offset);
+        $displayMoreForModule = $formattedResults['displayMoreForModule'];
+        $displayResults = $formattedResults['displayResults'];
 
-			$countRemaining = $data['pageData']['offsets']['total'] - count($data['data']);
-			if($offset > 0)
-            {
-                $countRemaining -= $offset;
-            }
-
-			if($countRemaining > 0)
-            {
-                $displayMoreForModule[$m] = array('query'=>$query,
-                                                  'offset'=>$data['pageData']['offsets']['next']++,
-                                                  'countRemaining'=>$countRemaining);
-			}
-
-            foreach($data['data'] as $row)
-            {
-				$name = '';
-
-                //Determine a name to use
-				if(!empty($row['NAME']))
-                {
-					$name = $row['NAME'];
-				} else if(!empty($row['DOCUMENT_NAME'])) {
-				    $name = $row['DOCUMENT_NAME'];
-				} else {
-                    $foundName = '';
-					foreach($row as $k=>$v){
-						if(strpos($k, 'NAME') !== false)
-                        {
-                            if(!empty($row[$k]))
-                            {
-							    $name = $v;
-							    break;
-                            } else if(empty($foundName)) {
-                                $foundName = $v;
-                            }
-						}
-					}
-
-					if(empty($name))
-					{
-					   $name = $foundName;
-					}
-				}
-
-				$displayResults[$m][$row['ID']] = $name;
-		    }
-        }
         $ss = new Sugar_Smarty();
         $ss->assign('displayResults', $displayResults);
         $ss->assign('displayMoreForModule', $displayMoreForModule);
@@ -111,6 +68,77 @@ class SugarSpot
         return $ss->fetch($template);
 	}
 
+
+    protected function formatSearchResultsToDisplay($query, $modules, $offset=-1)
+    {
+        $results = $this->_performSearch($query, $modules, $offset);
+        $displayResults = array();
+        $displayMoreForModule = array();
+        //$actions=0;
+        foreach($results as $m=>$data)
+        {
+            if(empty($data['data']))
+            {
+                continue;
+            }
+
+            $countRemaining = $data['pageData']['offsets']['total'] - count($data['data']);
+            if($offset > 0)
+            {
+                $countRemaining -= $offset;
+            }
+
+            if($countRemaining > 0)
+            {
+                $displayMoreForModule[$m] = array('query'=>$query,
+                    'offset'=>$data['pageData']['offsets']['next']++,
+                    'countRemaining'=>$countRemaining);
+            }
+
+            foreach($data['data'] as $row)
+            {
+                $name = '';
+
+                //Determine a name to use
+                if(!empty($row['NAME']))
+                {
+                    $name = $row['NAME'];
+                }
+                else if(!empty($row['DOCUMENT_NAME']))
+                {
+                    $name = $row['DOCUMENT_NAME'];
+                }
+                else
+                {
+                    $foundName = '';
+                    foreach($row as $k=>$v)
+                    {
+                        if(strpos($k, 'NAME') !== false)
+                        {
+                            if(!empty($row[$k]))
+                            {
+                                $name = $v;
+                                break;
+                            }
+                            else if(empty($foundName))
+                            {
+                                $foundName = $v;
+                            }
+                        }
+                    }
+
+                    if(empty($name))
+                    {
+                        $name = $foundName;
+                    }
+                }
+
+                $displayResults[$m][$row['ID']] = $name;
+            }
+        }
+
+        return array('displayResults' => $displayResults, 'displayMoreForModule' => $displayMoreForModule);
+    }
 	/**
 	 * Returns the array containing the $searchFields for a module.  This function
 	 * first checks the default installation directories for the SearchFields.php file and then
@@ -175,15 +203,76 @@ class SugarSpot
 		return isset($row['c'])?$row['c']:0;
 	}
 
+    /**
+     * Determine which modules should be searched against.
+     *
+     * @return array
+     */
+    protected function getSearchModules()
+    {
+        $usa = new UnifiedSearchAdvanced();
+        $unified_search_modules_display = $usa->getUnifiedSearchModulesDisplay();
+
+        // load the list of unified search enabled modules
+        $modules = array();
+
+        //check to see if the user has  customized the list of modules available to search
+        $users_modules = $GLOBALS['current_user']->getPreference('globalSearch', 'search');
+
+        if(!empty($users_modules))
+        {
+            // use user's previous selections
+            foreach ($users_modules as $key => $value )
+            {
+                if (isset($unified_search_modules_display[$key]) && !empty($unified_search_modules_display[$key]['visible']))
+                {
+                    $modules[$key] = $key;
+                }
+            }
+        }
+        else
+        {
+            foreach($unified_search_modules_display as $key=>$data)
+            {
+                if (!empty($data['visible']))
+                {
+                    $modules[$key] = $key;
+                }
+            }
+        }
+        // make sure the current module appears first in the list
+        if(isset($modules[$this->module]))
+        {
+            unset($modules[$this->module]);
+            $modules = array_merge(array($this->module=>$this->module),$modules);
+        }
+
+        return $modules;
+    }
+
+    /**
+     * Perform a search
+     *
+     * @param $query string what we are searching for
+     * @param $offset int search result offset
+     * @return array
+     */
+    public function search($query, $offset = -1, $limit = 20)
+    {
+        $modules = $this->getSearchModules();
+        return $this->_performSearch($query, $modules, $offset, $limit);
+
+    }
 	/**
 	 * Performs the search
 	 *
 	 * @param  $query   string what we are searching for
 	 * @param  $modules array  modules we are searching in
-	 * @param  $offset  int    search result offset
+	 * @param  $offset  int   search result offset
+     * @param  $limit  int    search limit
 	 * @return array
 	 */
-    protected function _performSearch($query, $modules, $offset = -1)
+    protected function _performSearch($query, $modules, $offset = -1, $limit = 20)
     {
         if(empty($query)) return array();
         $primary_module='';
@@ -192,13 +281,7 @@ class SugarSpot
         $where = '';
         $searchEmail = preg_match('/^([^%]|%)*@([^%]|%)*$/', $query);
 
-        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
-        if($offset !== -1)
-        {
-            $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20 );
-        }
         $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
-
 
         foreach($modules as $moduleName)
         {
@@ -388,7 +471,8 @@ class SugarSpot
             if($limit < -1)
             {
                 $result = $seed->db->query($main_query);
-            } else
+            }
+            else
             {
                 if($limit == -1)
                 {
