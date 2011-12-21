@@ -226,7 +226,11 @@ class SugarSNIP
         $request = array ('sugarkey' => $sugar_config['unique_key'],
                         'user' => $snipuser->user_name,
                         'password' => $snipuser->user_hash);
-
+        $consumer = $this->getSnipConsumer();
+        if(!empty($consumer)) {
+            $request['consumer_key'] = $consumer->c_key;
+            $request['consumer_secret'] = $consumer->c_secret;
+        }
         $response = $this->callRest('unregister', $request, true, $connectionfailed);
 
         if ($connectionfailed)
@@ -422,9 +426,10 @@ class SugarSNIP
         $user->status='Reserved';
         $user->receive_notifications = 0;
         $user->is_admin = 0;
-        $user->user_hash = '*locked*';
+        $user->user_hash = '';
         $user->default_team = '1';
         $user->created_by = '1';
+        $user->external_auth_only = 1;
         $user->save();
         // create oauth token
         $this->createSnipToken($user);
