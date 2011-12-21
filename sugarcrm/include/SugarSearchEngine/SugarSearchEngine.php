@@ -66,6 +66,15 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
           }
      }
 
+    public function __toString()
+    {
+        if($this->_hasSearchEngine)
+        {
+            return get_class($this->_searchEngine);
+        }
+
+        return __CLASS__;
+    }
      /**
       * getInstance()
       *
@@ -84,13 +93,13 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
         return self::$_instance;
      }
 
-         /**
+    /**
      * initializes the cache in question
      */
     public function setupEngine($name = '')
     {
         $this->_hasSearchEngine = false;
-        if(empty($name))
+        if( empty($name) )
         {
             //if the name is empty then let's try to see if we have one configured in the config
             if(!empty($GLOBALS['sugar_config']['full_text_engine']))
@@ -99,37 +108,44 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
                 $name = $keys[0];
             }
         }
-        $locations = array('include/SugarSearchEngine/'.$name,'custom/include/SugarSearchEngine/'.$name);
- 	    foreach ( $locations as $location )
-         {
-            if (sugar_is_dir($location) && $dir = opendir($location))
-            {
-                while (($file = readdir($dir)) !== false)
-                {
-                    if ($file == ".." || $file == "." || !is_file("$location/$file") )
-                        continue;
 
-                    require_once("$location/$file");
+        $defaultLocation = "include/SugarSearchEngine/{$name}/SugarSearchEngine{$name}.php";
+        $engineInstance = $this->loadSearchEngineFromLocation("custom" . DIRECTORY_SEPARATOR . $defaultLocation);
 
-                    $engineClass = basename($file, ".php");
-
-                    if ( class_exists($engineClass))
-                    {
-                        $GLOBALS['log']->debug("Found full text engine backend $engineClass");
-                        $engineInstance = new $engineClass();
-                        //TODO: Not sure what this check really gets us, not defined in the interface either.
-                        if (method_exists($engineInstance, "useEngine") && $engineInstance->useEngine())
-                        {
-                            $this->_searchEngine = $engineInstance;
-                            $this->connect($GLOBALS['sugar_config']['full_text_engine'][$name]);
-                            $this->_hasSearchEngine = true;
-                        }
-                    }
-                }
-            }
+        if($engineInstance === FALSE)
+        {
+            $engineInstance = $this->loadSearchEngineFromLocation($defaultLocation);
         }
+
+        $this->_searchEngine = $engineInstance;
+        $this->_hasSearchEngine = true;
+
+        $GLOBALS['log']->debug("Found Sugar Search Engine: {$this}");
     }
 
+    private function loadSearchEngineFromLocation($filePath)
+    {
+        $filePath = realpath($filePath);
+        if( is_file($filePath) )
+        {
+            require_once($filePath);
+            $engineClass = basename($filePath, ".php");
+            $engineInstance = new $engineClass();
+
+            if ($engineInstance instanceof SugarSearchEngineInterface )
+            {
+                return $engineInstance;
+            }
+            else
+            {
+                return FALSE;
+            }
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
      /**
 	 * Returns the array containing the $searchFields for a module.  This function
 	 * first checks the default installation directories for the SearchFields.php file and then
