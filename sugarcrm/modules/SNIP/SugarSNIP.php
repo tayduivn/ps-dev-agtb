@@ -385,9 +385,26 @@ class SugarSNIP
     {
         if(empty($this->token)) {
             $user = $this->getSnipUser();
-            $this->token = OAuthToken::load($user->token);
+            if(!empty($user->authenticate_id)) {
+                $this->token = OAuthToken::load($user->authenticate_id);
+            }
+            if(empty($this->token)) {
+                $this->token = $this->createSnipToken($user);
+            }
         }
         return $this->token;
+    }
+
+    /**
+     * Create oauth token for the SNIP user
+     * @param User $user
+     */
+    protected function createSnipToken($user)
+    {
+        $consumer = $this->getSnipConsumer();
+        $token = OAuthToken::createAuthorized($consumer, $user);
+        $user->authenticate_id = $token->token;
+        $user->save();
     }
 
     /**
@@ -410,10 +427,7 @@ class SugarSNIP
         $user->created_by = '1';
         $user->save();
         // create oauth token
-        $consumer = $this->getSnipConsumer();
-        $token = OAuthToken::createAuthorized($consumer, $user);
-        $user->authenticate_id = $token->token;
-        $user->save();
+        $this->createSnipToken($user);
         return $user;
     }
 
