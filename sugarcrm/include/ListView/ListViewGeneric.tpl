@@ -95,10 +95,8 @@ $(document).ready(function(){
 {include file='include/ListView/ListViewPagination.tpl'}
 <tr height='20'>
 		{if $prerow}
-			<td width='1%' class="selectCol td_alt">
-				<div>
-				{$selectLink}
-				</div>
+			<td width='1%' class="td_alt">
+				&nbsp;
 			</td>
 		{/if}
 		{* //BEGIN SUGARCRM flav=pro ONLY *}
