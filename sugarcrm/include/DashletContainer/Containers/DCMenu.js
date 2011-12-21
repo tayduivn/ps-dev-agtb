@@ -87,11 +87,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     }
                 }
     		}
-<<<<<<< HEAD
-			//var dcmenuContainer = Y.one('#dcmenuContainer');
-=======
-			//var dcmenuContainer = Y.one('#dcmenu');
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
+
 			//var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
     		//overlays[depth].set('xy', [20,dcmenuContainerHeight]);
    	  	    overlays[depth].render();
