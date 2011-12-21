@@ -4270,8 +4270,8 @@ display: none;
 	border-left-color:#0046ad;
 }
 
-.showMoreArrow, .showLessArrow {
-	background-image: url(../../../../index.php?entryPoint=getImage&imageName=dropdown_menu_toggle_more.gif);
+.showMoreArrow {
+	background-image: url(../../../../index.php?entryPoint=getImage&imageName=advanced_search.gif);
     display: inline-block;
     height: 8px;
     margin-left: 4px;
@@ -4280,21 +4280,18 @@ display: none;
 }
 
 .showLessArrow {
-    background-position: center 16px;
+	background-image: url(../../../../index.php?entryPoint=getImage&imageName=basic_search.gif);
+    display: inline-block;
+    height: 8px;
+    margin-left: 4px;
+    opacity: 0.6;
+    width: 8px;
 }
 
-#moduleList .moduleTabExtraMenu .moduleMenuOverFlowMore a:hover .showMoreArrow {
-	background-position: center -8px;
-	opacity: 1;
-}
-
-#moduleList .moduleTabExtraMenu .moduleMenuOverFlowLess a:hover .showLessArrow{
+#moduleList .moduleTabExtraMenu .moduleMenuOverFlowLess a:hover .showLessArrow, #moduleList .moduleTabExtraMenu .moduleMenuOverFlowMore a:hover .showMoreArrow {
 	background-position: center 8px;
 	opacity: 1;
 }
-
-
-
 
 /* lists in the header */
 .headerList 
