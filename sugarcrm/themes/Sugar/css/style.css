@@ -1409,11 +1409,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img.logo {
-<<<<<<< HEAD
     margin: 0px 0px 0px 0px;
-=======
-    margin: 5px 0px 0px 0px;
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 }
 #footer #partner img {
 	width: 25px;
@@ -5971,10 +5967,7 @@ margin-left:10px;
 	height: 26px;
 	width: 174px;
 	display: inline-block;
-<<<<<<< HEAD
 	position: relative;
-=======
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 }
 #sugar_spot_search {
 	border: 0;
@@ -6007,32 +6000,19 @@ margin-left:10px;
 }
 
 #sugar_spot_search_results {
-<<<<<<< HEAD
 	width:290px;
     box-shadow:0 1px 1px #999;
     padding: 20px;
-=======
-	width:272px;
-    box-shadow:0 1px 1px #999;
-    padding:25px 20px 0 20px;
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
     background:#fff;
     border-bottom-left-radius:4px;
     border-bottom-right-radius:4px;
     position: relative;
-<<<<<<< HEAD
     max-height: 600px;
     overflow: auto;
 }
 
 #sugar_spot_search_results section {
 
-=======
-}
-
-#sugar_spot_search_results section {
-    margin-bottom:-5px;
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 }
 
 #sugar_spot_search_results section .resultTitle{
@@ -6040,11 +6020,7 @@ margin-left:10px;
     color:#999;
     width:70px;
     text-align:right;
-<<<<<<< HEAD
     padding-right: 10px;
-=======
-    margin-top:-11px;
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 }
 
 #sugar_spot_search_results a.resultAll {
@@ -6072,19 +6048,11 @@ margin-left:10px;
 
 #sugar_spot_search_results section ul {
     width:175px;
-<<<<<<< HEAD
-=======
-    margin-top:-14px;
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
     line-height:20px;
     padding:0 0 25px 10px;
     float:left;
     border-left: 1px solid #aaa;
-<<<<<<< HEAD
 	margin: 0px;
-=======
-    margin-left:15px;
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 }
 
 #sugar_spot_search_results section ul li {
@@ -6245,12 +6213,6 @@ li.active a img.deletePageImg {
     font-size: 1.2em;
 }
 
-
-<<<<<<< HEAD
-
-
-=======
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 ul.clickMenu {
 	list-style: none;
 	padding: 0px 3px 0px 0px;	
@@ -6557,7 +6519,7 @@ ul#detailViewActions.clickMenu {
 	color: #666666 !important;
 	line-height: 1.45;
 }
-<<<<<<< HEAD
+
 #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {
 	color: #999 !important;
 }
@@ -6569,15 +6531,6 @@ ul#detailViewActions.clickMenu {
 ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav li a:hover .showMoreArrow {
 	background-position: center 8px;
 	opacity: 1;
-=======
-
-#quickCreate ul.clickMenu li ul.subnav li a:hover, #globalLinksModule ul.clickMenu li ul.subnav li a:hover {
-	color: #fff !important;
-}
-
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {
-	color: #999 !important;
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 }
 
 
@@ -6702,7 +6655,6 @@ ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav l
 		border-top-color: rgba(20,20,20,0.92);
 	}
 }
-<<<<<<< HEAD
 
 /* miscellaneaous 508 classes */
 .detail508 tr td[scope="col"]
@@ -6721,5 +6673,4 @@ ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav l
 
 
 
-=======
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
+
