@@ -35,7 +35,6 @@
 testing_module = "{$smarty.request.module}";
 {literal}
 $(document).ready(function(){
-<<<<<<< HEAD
     if (testing_module == "Contacts") {
     	var selector = "#content ul.clickMenu li span";
         $("#content ul.subnav.multi").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
@@ -45,12 +44,6 @@ $(document).ready(function(){
     }
     
     
-=======
-    
-	var selector = "#content ul.clickMenu li span";
-    $("#content ul.subnav.multi").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 	$(selector).click(function(event) { //When trigger is clicked...
 	$(document).find("ul.subnav").hide();//hide all menus
 	$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
@@ -62,50 +55,19 @@ $(document).ready(function(){
 
   event.stopPropagation();
 
-<<<<<<< HEAD
 		//Following events are applied to the trigger (Hover events for the trigger)
 		}).hover(function() { 
 			$(this).addClass("subhover"); //On hover over, add class "subhover"
 		}, function(){	//On Hover Out
 			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
-=======
-	//Following events are applied to the trigger (Hover events for the trigger)
-	}).hover(function() { 
-		$(this).addClass("subhover"); //On hover over, add class "subhover"
-	}, function(){	//On Hover Out
-		$(this).removeClass("subhover"); //On hover out, remove class "subhover"
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 	});
 
 
     //Tool Tips
    	$(function(){
 		$(".clickMenu span.ab").tipTip({maxWidth: "auto", edgeOffset: 10, content: "More Actions", defaultPosition: "top"});
-<<<<<<< HEAD
 		
 	});
-=======
-	});
-	
-	//Fix custom code buttons programatically to prevent metadata edits
-	$("ul.subnav input[type='submit']").each(function(index, node){
-	var jNode = $(node);
-	var parent = jNode.parent();
-
-	if(parent.is("ul") && parent.hasClass("subnav")){
-		var newItem = $(document.createElement("li"));
-		var newItemA = $(document.createElement("a"));
-		newItemA.html(jNode.val());
-		newItemA.click(function(event){
-			jNode.click();
-		});
-			
-		newItem.append(newItemA);
-		jNode.before(newItem);
-		jNode.css("display", "none");
-	}
-});
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 });
  
 
@@ -134,7 +96,6 @@ $(document).ready(function(){
 {{/if}}
         <ul class="clickMenu" id="detailViewActions">
             <li style="cursor: pointer">
-<<<<<<< HEAD
 
             {{if $module == "Contacts"}}
             {{sugar_actions_link module="$module" id="EDIT2" view="$view"}}
@@ -150,21 +111,6 @@ $(document).ready(function(){
     {{if $module != "Contacts"}}
         {{sugar_actions_link module="$module" id="EDIT" view="$view"}}
     {{/if}}
-=======
-
-            {{if $module == "Contacts"}}
-            {{sugar_actions_link module="$module" id="EDIT2" view="$view"}}
-            {{else}}
-                <a id='' href="javascript: void(0);">Actions</a>
-            {{/if}}
-
-                <ul class="subnav multi">
-
-
-
-{{if !isset($form.buttons)}}   
-{{sugar_actions_link module="$module" id="EDIT" view="$view"}}
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 {{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
 {{sugar_actions_link module="$module" id="DELETE" view="$view"}}
 {{else}}
@@ -172,15 +118,9 @@ $(document).ready(function(){
 	{{foreach from=$form.buttons key=val item=button}}
 	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
 	     {{counter print=false}}
-<<<<<<< HEAD
 	         {{if $module != "Contacts" || $button != "EDIT"}}
 	         {{sugar_actions_link module="$module" id="$button" view="EditView"}}
             {{/if}}
-=======
-	         
-	        {{sugar_actions_link module="$module" id="$button" view="EditView"}}
-            
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 	  {{/if}}
 	{{/foreach}}
 

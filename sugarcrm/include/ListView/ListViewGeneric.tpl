@@ -39,17 +39,11 @@ testing_module = "{$smarty.request.module}";
 
 {literal}
 $(document).ready(function(){
-<<<<<<< HEAD
     if (testing_module == "Contacts") {
         $("ul#selectActions.clickMenu ul.subnav").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
     } else {
 	    $("ul#selectActions.clickMenu ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
     }
-=======
-    
-    $("ul#selectActions.clickMenu ul.subnav").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-  
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 	$("ul#selectActions.clickMenu li").click(function() { //When trigger is clicked...
 		
 		//Following events are applied to the subnav itself (moving subnav up and down)
@@ -93,8 +87,8 @@ $(document).ready(function(){
 
 </script>
 {if $overlib}
-	<script type='text/javascript' src='{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}'></script>
-	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
+<script type='text/javascript' src='cache/include/javascript/sugar_grp_overlib.js'></script>
+<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 {/if}
 
 {$multiSelectData}
@@ -103,15 +97,8 @@ $(document).ready(function(){
 {include file='include/ListView/ListViewPagination.tpl'}
 <tr height='20'>
 		{if $prerow}
-<<<<<<< HEAD
 			<td width='1%' class="td_alt">
 				&nbsp;
-=======
-			<td width='1%' class="selectCol td_alt">
-				<div>
-				{$selectLink}
-				</div>
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 			</td>
 		{/if}
 		{* //BEGIN SUGARCRM flav=pro ONLY *}

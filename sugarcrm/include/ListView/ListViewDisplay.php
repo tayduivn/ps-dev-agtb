@@ -358,11 +358,7 @@ class ListViewDisplay {
 		if ( empty($menuItems) )
 		    return '';
 
-<<<<<<< HEAD
         if ($_REQUEST['module'] == "Contacts") {
-=======
-        
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
             return <<<EOHTML
           <script type="text/javascript">
           <!--
@@ -381,7 +377,6 @@ class ListViewDisplay {
           		<div id="selectActionsDisabled">
           			<a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a><span class="ab"></span>
           		</div>
-<<<<<<< HEAD
 EOHTML;
         } else {
             return <<<EOHTML
@@ -404,11 +399,6 @@ EOHTML;
         }
 	}
 
-=======
-EOHTML;
-        
-}
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 	/**
 	 * Builds the export link
 	 *
@@ -429,17 +419,12 @@ EOHTML;
 	{
 		global $app_strings;
 <<<<<<< HEAD
-<<<<<<< HEAD
         $onClick = "document.getElementById('massupdate_form').style.display = ''; var yLoc = YAHOO.util.Dom.getY('massupdate_form'); scroll(0,yLoc);";
 		return "<a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"$onClick\">{$app_strings['LBL_MASS_UPDATE']}</a>";
 =======
 
 		return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"document.getElementById('massupdate_form').style.display = '';\">{$app_strings['LBL_MASS_UPDATE']}</a>";
 >>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
-=======
-
-		return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"document.getElementById('massupdate_form').style.display = '';\">{$app_strings['LBL_MASS_UPDATE']}</a>";
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 	}
 
 	/**
@@ -497,16 +482,10 @@ EOHTML;
 	protected function buildDeleteLink()
 	{
 		global $app_strings;
-<<<<<<< HEAD
         if ($_REQUEST["module"] == "Contacts") {
             return "";
         }
 		return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_mass_update('selected', '{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
-=======
-            return "";
-        
-		//return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_mass_update('selected', '{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
->>>>>>> e3483ce1aa9eb1e9a9fef9316ae7cb669124e4d8
 	}
 	/**
 	 * Display the selected object span object
