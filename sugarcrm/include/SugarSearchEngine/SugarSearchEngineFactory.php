@@ -60,6 +60,7 @@ class SugarSearchEngineFactory
      */
     protected static function setupEngine($name = '')
     {
+        $config = array();
         if( empty($name) )
         {
             //if the name is empty then let's try to see if we have one configured in the config
@@ -67,15 +68,16 @@ class SugarSearchEngineFactory
             {
                 $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
                 $name = $keys[0];
+                $config = $GLOBALS['sugar_config']['full_text_engine'][$name];
             }
         }
 
         $defaultLocation = "include/SugarSearchEngine/{$name}/SugarSearchEngine{$name}.php";
-        $engineInstance = self::loadSearchEngineFromLocation("custom" . DIRECTORY_SEPARATOR . $defaultLocation);
+        $engineInstance = self::loadSearchEngineFromLocation("custom" . DIRECTORY_SEPARATOR . $defaultLocation, $config);
 
         if($engineInstance === FALSE)
         {
-            $engineInstance = self::loadSearchEngineFromLocation($defaultLocation);
+            $engineInstance = self::loadSearchEngineFromLocation($defaultLocation, $config);
         }
 
         $GLOBALS['log']->fatal("Found Sugar Search Engine: " . get_class($engineInstance));
@@ -88,14 +90,14 @@ class SugarSearchEngineFactory
      * @param $filePath
      * @return bool
      */
-    protected static function loadSearchEngineFromLocation($filePath)
+    protected static function loadSearchEngineFromLocation($filePath, $config)
     {
         $filePath = realpath($filePath);
         if( is_file($filePath) )
         {
             require_once($filePath);
             $engineClass = basename($filePath, ".php");
-            $engineInstance = new $engineClass();
+            $engineInstance = new $engineClass($config);
 
             if ($engineInstance instanceof SugarSearchEngineInterface )
             {
