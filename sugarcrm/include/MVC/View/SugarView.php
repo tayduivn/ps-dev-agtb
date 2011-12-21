@@ -257,6 +257,10 @@ class SugarView
         $ss->assign("MODULE_NAME", $this->module);
         $ss->assign("langHeader", get_language_header());
 
+        // set ab testing if exists
+        $testing = (isset($_REQUEST["testing"]) ? $_REQUEST['testing'] : "a");
+        $ss->assign("ABTESTING", $testing);
+
         // get browser title
         $ss->assign("SYSTEM_NAME", $this->getBrowserTitle());
 
@@ -1288,8 +1292,13 @@ EOHTML;
                $theTitle .= "<h2> $paramString </h2>\n";
            }
 
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
         $theTitle .= "</div>\n";
         return $theTitle;
     }
@@ -1343,7 +1352,7 @@ EOHTML;
     protected function _getModuleTitleParams($browserTitle = false)
     {
         $params = array($this->_getModuleTitleListParam($browserTitle));
-
+		//$params = array();
         if (isset($this->action)){
             switch ($this->action) {
             case 'EditView':

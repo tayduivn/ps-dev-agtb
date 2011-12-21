@@ -104,7 +104,7 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
                     .", '$record', $refresh_page);\"" 
 			. ' class="listViewTdToolsS1"'
 			. " onclick=\"return sp_rem_conf();\""
-			. ">$icon_remove_html&nbsp;$icon_remove_text</a>";
+			. ">$icon_remove_html$icon_remove_text</a>";
         return $retStr;
             
 		}else{

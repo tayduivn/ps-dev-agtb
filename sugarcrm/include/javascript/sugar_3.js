@@ -2284,12 +2284,31 @@ sugarListView.prototype.save_checks = function(offset, moduleString) {
 sugarListView.prototype.check_item = function(cb, form) {
 	if(cb.checked) {
 		sugarListView.update_count(1, true);
+		
 	}else{
 		sugarListView.update_count(-1, true);
 		if(typeof form != 'undefined' && form != null) {
 			sugarListView.prototype.updateUid(cb, form);
 		}
 	}
+	sugarListView.prototype.toggleSelected();
+}
+
+sugarListView.prototype.toggleSelected = function() {
+	var numSelected = sugarListView.get_num_selected();
+	var selectedRecords = document.getElementById("selectedRecordsTop");
+	var selectActions = document.getElementById("selectActions");
+	var selectActionsDisabled = document.getElementById("selectActionsDisabled");
+	if(numSelected > 0) {
+		selectedRecords.style.display = "inline-block";
+		selectActions.style.display = "inline-block";
+		selectActionsDisabled.style.display = "none";
+	} else {
+		selectedRecords.style.display = "none";
+		selectActions.style.display = "none";
+		selectActionsDisabled.style.display = "inline-block";
+	}
+		
 }
 
 /**#28000, remove the  unselect record id from MassUpdate.uid **/
@@ -2352,6 +2371,8 @@ sugarListView.prototype.check_all = function(form, field, value, pageTotal) {
 		sugarListView.update_count(count, true);
 	else
 		sugarListView.update_count(-1 * count, true);
+		
+	sugarListView.prototype.toggleSelected();
 }
 sugarListView.check_all = sugarListView.prototype.check_all;
 sugarListView.confirm_action = sugarListView.prototype.confirm_action;
@@ -2516,6 +2537,7 @@ sugarListView.prototype.clear_all = function() {
 	document.MassUpdate.massall.checked = false;
 	document.MassUpdate.massall.disabled = false;
 	sugarListView.update_count(0);
+	sugarListView.prototype.toggleSelected();
 }
 
 sListView = new sugarListView();

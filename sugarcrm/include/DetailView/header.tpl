@@ -30,9 +30,55 @@
 {{if $preForm}}
 	{{$preForm}}
 {{/if}}
-<table cellpadding="1" cellspacing="0" border="0" width="100%" class="actionsContainer">
+
+<script>
+testing_module = "{$smarty.request.module}";
+{literal}
+$(document).ready(function(){
+    if (testing_module == "Contacts") {
+    	var selector = "#content ul.clickMenu li span";
+        $("#content ul.subnav.multi").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    } else {
+    	var selector = "#content ul.clickMenu li";
+	    $("#content ul.subnav.multi").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    }
+    
+    
+	$(selector).click(function(event) { //When trigger is clicked...
+	$(document).find("ul.subnav").hide();//hide all menus
+	$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
+
+  $('body').one('click',function() {
+    // Hide the menus
+     $(this).parent().find("ul.subnav").hide();
+  });
+
+  event.stopPropagation();
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+
+
+    //Tool Tips
+   	$(function(){
+		$(".clickMenu span.ab").tipTip({maxWidth: "auto", edgeOffset: 10, content: "More Actions", defaultPosition: "top"});
+		
+	});
+});
+ 
+
+{/literal}
+</script>
+
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%" id="">
 <tr>
 <td class="buttons" align="left" NOWRAP>
+<div class="actionsContainer">
 <form action="index.php" method="post" name="DetailView" id="form">
 <input type="hidden" name="module" value="{$module}">
 <input type="hidden" name="record" value="{$fields.id.value}">
@@ -48,47 +94,63 @@
 {{$field}}
 {{/foreach}}
 {{/if}}
+        <ul class="clickMenu" id="detailViewActions">
+            <li style="cursor: pointer">
+
+            {{if $module == "Contacts"}}
+            {{sugar_actions_link module="$module" id="EDIT2" view="$view"}}
+            {{else}}
+                <a id='' href="javascript: void(0);">Actions</a>
+            {{/if}}
+
+                <ul class="subnav multi">
+
+
 
 {{if !isset($form.buttons)}}
-{{sugar_button module="$module" id="EDIT" view="$view"}}
-{{sugar_button module="$module" id="DUPLICATE" view="EditView"}}
-{{sugar_button module="$module" id="DELETE" view="$view"}}
+    {{if $module != "Contacts"}}
+        {{sugar_actions_link module="$module" id="EDIT" view="$view"}}
+    {{/if}}
+{{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
+{{sugar_actions_link module="$module" id="DELETE" view="$view"}}
 {{else}}
 	{{counter assign="num_buttons" start=0 print=false}}
 	{{foreach from=$form.buttons key=val item=button}}
 	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
 	     {{counter print=false}}
-	     {{sugar_button module="$module" id="$button" view="EditView"}}
+	         {{if $module != "Contacts" || $button != "EDIT"}}
+	         {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+            {{/if}}
 	  {{/if}}
 	{{/foreach}}
-	{{if isset($closeFormBeforeCustomButtons)}}
-	</form>
-	</td>
-	{{/if}}
+
 	{{if count($form.buttons) > $num_buttons}}
 			{{foreach from=$form.buttons key=val item=button}}
 			  {{if is_array($button) && $button.customCode}}
-              {{if isset($closeFormBeforeCustomButtons)}}
-              <td class="buttons" align="left" NOWRAP>
-              {{/if}}
-			  {{sugar_button module="$module" id="$button" view="EditView"}}
-              {{if isset($closeFormBeforeCustomButtons)}}
-              </td>
-              {{/if}}
+
+			  {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+
 			  {{/if}}
 			{{/foreach}}
 	{{/if}}
 {{/if}}
-{{if !isset($closeFormBeforeCustomButtons)}}
-</form>
-</td>
-{{/if}}
+
 {{if empty($form.hideAudit) || !$form.hideAudit}}
-<td class="buttons" align="left" NOWRAP>
-{{sugar_button module="$module" id="Audit" view="EditView"}}
-</td>
+{{sugar_actions_link module="$module" id="Audit" view="EditView"}}
 {{/if}}
-<td align="right" width="100%">{$ADMIN_EDIT}
+
+
+                </ul>
+            </li>
+
+        </ul>
+</form>
+</div>
+
+</td>
+
+
+<td align="right" width="50%">{$ADMIN_EDIT}
 	{{if $panelCount == 0}}
 	    {{* Render tag for VCR control if SHOW_VCR_CONTROL is true *}}
 		{{if $SHOW_VCR_CONTROL}}

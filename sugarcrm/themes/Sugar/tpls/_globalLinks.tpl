@@ -26,6 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 <div class="dcmenuDivider" id="globalLinksDivider"></div>
 <div id="globalLinksModule">
 

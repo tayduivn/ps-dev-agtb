@@ -19,6 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<<<<<<< HEAD
 
 {literal}
 <style type="text/css">
@@ -62,9 +63,30 @@ border:0;
 {/foreach}
 </table>
 {/foreach}
+=======
+{if !empty($displayResults)}
+    {foreach from=$displayResults key=module item=data}
+    <section>
+        <div class="resultTitle">
+            {if isset($appListStrings.moduleList[$modulepair])}
+                {$appListStrings.moduleList[$module]}
+            {else}
+                {$module}
+            {/if}
+        </div>
+            <ul>
+                {foreach from=$data key=id item=name}
+                    <li><a href='index.php?module={$module}&action=DetailView&record={$id}'>{$name}</a></li>
+                {/foreach}
+            </ul>
+        <div class="clear"></div>
+    </section>
+    {/foreach}
+    <a href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}' class="resultAll">View all results</a>
+>>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 {else}
-{$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}
+    <section class="resultNull">
+        <h1>{$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
+        <a href="">Search again</a>
+    </section>
 {/if}
-<p>
-<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}'">{$appStrings.LBL_EMAIL_SHOW_READ}</button>
-</div>

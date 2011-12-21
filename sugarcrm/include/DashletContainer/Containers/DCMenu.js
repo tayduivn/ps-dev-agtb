@@ -87,10 +87,26 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     }
                 }
     		}
+<<<<<<< HEAD
 			//var dcmenuContainer = Y.one('#dcmenuContainer');
+=======
+			//var dcmenuContainer = Y.one('#dcmenu');
+>>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 			//var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
     		//overlays[depth].set('xy', [20,dcmenuContainerHeight]);
    	  	    overlays[depth].render();
+   	  	    
+   	  	    
+   	  	    //overlays[depth].center();
+   	  	    YAHOO.util.Event.onContentReady("dcboxbody", function() {
+   	  	    		
+   	  	    	   	//console.log(Y.one('#dcboxbody').get('offsetWidth'));
+		   	  	    //overlays[depth].set("width", Y.one('#dcboxbody').get('offsetWidth')+"px");
+		   	  	    //overlays[depth].set("height", Y.one('#dcboxbody').get('offsetHeight')+"px");
+		   	  	    //overlays[depth].set("centered", true);
+		   	  	    //Y.one('#dcboxbody').setStyle('display','');
+   	  	    	});
+
             if(modal)
                 overlays[depth].toggleModal();
     		return overlays[depth]
