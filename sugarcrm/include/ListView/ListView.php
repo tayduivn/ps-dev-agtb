@@ -1604,7 +1604,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 if($orderBy == $column_name || (isset($widget_args['sort_by']) && str_replace('.','_',$widget_args['sort_by']) == $orderBy))
                 {
                     $imgArrow = "_down";
-                    if($this->sort_order == 'asc') {
+                    if($this->sort_order == 'desc') {
                         $imgArrow = "_up";
                     }
                 }
