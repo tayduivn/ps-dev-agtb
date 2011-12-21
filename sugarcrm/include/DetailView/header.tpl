@@ -35,15 +35,10 @@
 testing_module = "{$smarty.request.module}";
 {literal}
 $(document).ready(function(){
-    if (testing_module == "Contacts") {
-    	var selector = "#content ul.clickMenu li span";
-        $("#content ul.subnav.multi").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-    } else {
-    	var selector = "#content ul.clickMenu li";
-	    $("#content ul.subnav.multi").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-    }
     
-    
+	var selector = "#content ul.clickMenu li span";
+    $("#content ul.subnav.multi").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+
 	$(selector).click(function(event) { //When trigger is clicked...
 	$(document).find("ul.subnav").hide();//hide all menus
 	$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
@@ -55,19 +50,37 @@ $(document).ready(function(){
 
   event.stopPropagation();
 
-		//Following events are applied to the trigger (Hover events for the trigger)
-		}).hover(function() { 
-			$(this).addClass("subhover"); //On hover over, add class "subhover"
-		}, function(){	//On Hover Out
-			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	//Following events are applied to the trigger (Hover events for the trigger)
+	}).hover(function() { 
+		$(this).addClass("subhover"); //On hover over, add class "subhover"
+	}, function(){	//On Hover Out
+		$(this).removeClass("subhover"); //On hover out, remove class "subhover"
 	});
 
 
     //Tool Tips
    	$(function(){
 		$(".clickMenu span.ab").tipTip({maxWidth: "auto", edgeOffset: 10, content: "More Actions", defaultPosition: "top"});
-		
 	});
+	
+	//Fix custom code buttons programatically to prevent metadata edits
+	$("ul.subnav input[type='submit']").each(function(index, node){
+	var jNode = $(node);
+	var parent = jNode.parent();
+
+	if(parent.is("ul") && parent.hasClass("subnav")){
+		var newItem = $(document.createElement("li"));
+		var newItemA = $(document.createElement("a"));
+		newItemA.html(jNode.val());
+		newItemA.click(function(event){
+			jNode.click();
+		});
+			
+		newItem.append(newItemA);
+		jNode.before(newItem);
+		jNode.css("display", "none");
+	}
+});
 });
  
 
@@ -107,10 +120,8 @@ $(document).ready(function(){
 
 
 
-{{if !isset($form.buttons)}}
-    {{if $module != "Contacts"}}
-        {{sugar_actions_link module="$module" id="EDIT" view="$view"}}
-    {{/if}}
+{{if !isset($form.buttons)}}   
+{{sugar_actions_link module="$module" id="EDIT" view="$view"}}
 {{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
 {{sugar_actions_link module="$module" id="DELETE" view="$view"}}
 {{else}}
@@ -118,9 +129,9 @@ $(document).ready(function(){
 	{{foreach from=$form.buttons key=val item=button}}
 	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
 	     {{counter print=false}}
-	         {{if $module != "Contacts" || $button != "EDIT"}}
-	         {{sugar_actions_link module="$module" id="$button" view="EditView"}}
-            {{/if}}
+	         
+	        {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+            
 	  {{/if}}
 	{{/foreach}}
 

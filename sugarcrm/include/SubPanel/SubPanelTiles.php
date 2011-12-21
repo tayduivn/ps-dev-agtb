@@ -448,13 +448,13 @@ EOQ;
                 $widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>' . "\n";
                 $widget_contents .= '<td class="buttons">' . "\n";
                 $widget_contents .= '<ul class="clickMenu">' . "\n";
-                if($_REQUEST['module'] == "Contacts" && count($subpanel_def) == 1) {
+                if(count($subpanel_def) == 1) {
                 	$widget_contents .= '<li class="single">' . "\n";
                 } else {
                 	$widget_contents .= '<li>' . "\n";
                 }
-                if ($_REQUEST['module'] == "Contacts" && $count == 0) {
-                    $widget_contents .= "<a onclick='document.getElementById(\"".$layout_manager->widgetDisplay($widget_data, false, false, true)."\").form.onsubmit()' href='javascript: void(0);'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
+                if ($count == 0) {
+                    $widget_contents .= "<a onclick='$(\"#".$layout_manager->widgetDisplay($widget_data, false, false, true)."\").click();' href='javascript: void(0);'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
                 } else {
                     $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
                 }
@@ -472,7 +472,7 @@ EOQ;
 			}
 			else
 			{
-                if ($_REQUEST['module'] == "Contacts" && $count == 0) {
+                if ($count == 0) {
                     $hide = " style='display:none' class='noooo'";
                 } else {
                     $hide = '';
