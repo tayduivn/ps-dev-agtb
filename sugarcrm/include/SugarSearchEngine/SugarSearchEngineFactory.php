@@ -45,12 +45,12 @@ class SugarSearchEngineFactory
      */
     public static function getInstance($name = '')
     {
-       if (!isset(self::$_instance))
+       if (!isset(self::$_instance[$name]))
        {
-           self::$_instance = self::setupEngine($name);
+           self::$_instance[$name] = self::setupEngine($name);
        }
 
-       return self::$_instance;
+       return self::$_instance[$name];
     }
 
     /**
@@ -68,10 +68,6 @@ class SugarSearchEngineFactory
                 $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
                 $name = $keys[0];
             }
-            else
-            {
-
-            }
         }
 
         $defaultLocation = "include/SugarSearchEngine/{$name}/SugarSearchEngine{$name}.php";
@@ -82,7 +78,7 @@ class SugarSearchEngineFactory
             $engineInstance = self::loadSearchEngineFromLocation($defaultLocation);
         }
 
-        $GLOBALS['log']->fatal("Found Sugar Search Engine: {$engineInstance}");
+        $GLOBALS['log']->fatal("Found Sugar Search Engine: " . get_class($engineInstance));
 
         return $engineInstance;
     }
