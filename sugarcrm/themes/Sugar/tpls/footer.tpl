@@ -42,7 +42,6 @@
 <div class="clear"></div>
 <div id="arrow" title="Show"></div>
 <div id="footer">
-<<<<<<< HEAD
     <img src="{$COMPANY_LOGO_URL}" width="{$COMPANY_LOGO_WIDTH}" class="logo" id="logo" height="{$COMPANY_LOGO_HEIGHT}"
         title="&#169; 2004-2011 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/>
     <div id="partner">

@@ -44,17 +44,12 @@ $(window).resize(function() {
 
 $(document).ready(function(){
 
-	
-<<<<<<< HEAD
+
 firstHit = false;
-=======
-	
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 	
 	
   $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
   $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
-<<<<<<< HEAD
 	resizeMenu();
 	
 	$("#sugar_spot_search").keypress(function(event) {
@@ -69,13 +64,7 @@ firstHit = false;
 		 	}
 
 		 
-=======
-resizeMenu();
 
-	$("#sugar_spot_search").keypress(function(event) {
-		DCMenu.startSearch(event);
-		$('#close_spot_search').css("display","inline-block");
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 		$('#close_spot_search').click(function() {
 			clearSearch();
 		});
@@ -128,11 +117,7 @@ $('body').click(function() {
         if ($(this).hasClass('up')) {
         	$(this).attr("title","Hide");
         	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
-<<<<<<< HEAD
             $(this).animate({bottom:'5px'},200);
-=======
-            $(this).animate({bottom:'7px'},200);
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
         } else {
         	$(this).attr("title","Show");
         	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
@@ -158,11 +143,7 @@ $('body').click(function() {
 });
  
 function resizeMenu() {
-<<<<<<< HEAD
 	var maxMenuWidth = Math.round($(window).width()*.45);
-=======
-	var maxMenuWidth = Math.round($(window).width()*.55);
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 	var menuWidth = $('#moduleList').width();
 	var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
 	
@@ -192,15 +173,11 @@ function clearSearch() {
 	$("div#sugar_spot_search_results").hide();
 	$('#close_spot_search').css("display","none");
 	$("#sugar_spot_search").val("");
-<<<<<<< HEAD
 	$("#sugar_spot_search").removeClass("searching");
 	$('#sugar_spot_search_div').css("left",0);
 	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
   	$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));	
   	firstHit = false;
-=======
-	$("#sugar_spot_search").removeClass("searching");	
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 }
 
 
@@ -437,11 +414,7 @@ SUGAR.append(SUGAR.themes, {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
 		    autosubmenudisplay: true,
             visible: false,
-<<<<<<< HEAD
 		    hidedelay: 750,
-=======
-		    hidedelay: 7050,
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 		    lazyload: true,
 		    constraintoviewport: true });
 	    /*

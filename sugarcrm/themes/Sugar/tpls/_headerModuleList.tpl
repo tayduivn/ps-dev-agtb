@@ -71,11 +71,7 @@
 										{/foreach}
 										</ul>
 										<ul class="favoritesUl" id="favoritesUl">
-<<<<<<< HEAD
 											<li class="yuimenuitem">{$APP.LBL_FAVORITES}</li>
-=======
-											<li class="yuimenuitem">Favorites</li>
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
 										</ul>
 										{if $groupTabId}
@@ -93,11 +89,7 @@
 		{/foreach}
 			
 			<li class="yuimenubaritem moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
-<<<<<<< HEAD
 				<a href="#" class="yuimenuitemlabel more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
-=======
-				<a href="#" class="yuimenuitemlabel more"><span style="float: left;">More</span><em>&gt;&gt;</em></a>
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 				<div id="More{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
 				<ul>
 		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
@@ -117,11 +109,7 @@
 										{/foreach}
 										</ul>
 										<ul class="favoritesUl" id="favoritesUl">
-<<<<<<< HEAD
 											<li class="yuimenuitem">{$APP.LBL_FAVORITES}</li>
-=======
-											<li class="yuimenuitem">Favorites</li>
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
 										</ul>
 										{if $groupTabId}
@@ -154,11 +142,7 @@
 										{/foreach}
 										</ul>
 										<ul class="favoritesUl" id="favoritesUl">
-<<<<<<< HEAD
 											<li class="yuimenuitem">{$APP.LBL_FAVORITES}</li>
-=======
-											<li class="yuimenuitem">Favorites</li>
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 											<li class="yuimenuitem"><a href="#" class="yuimenuitemlabel">Favorite Record One</a></li>
 										</ul>
 										{if $groupTabId}
@@ -173,13 +157,8 @@
 						</li>
 					{/foreach}
 					{if count($tabGroup.extra) > 5}
-<<<<<<< HEAD
 					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
 					<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
-=======
-					<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">Show More <img src="{sugar_getimagepath file="advanced_search.gif"}"></a></li>
-					<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a class="yuimenuitemlabel" href="javascript: toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','less');">Show Less <img src="{sugar_getimagepath file="basic_search.gif"}"></a></li>
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
 					{/if}
 					
 	 {if $USE_GROUP_TABS}
@@ -193,11 +172,7 @@
         </script>
         {* Tab group selection *}
         <li class="">
-<<<<<<< HEAD
         <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
-=======
-        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">Filter Menu By</a>
->>>>>>> f9f35a417b744232980beb4f1f2db4cd29cb00f0
         <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu groupMenu"><div class="bd">
 			<ul>
           {foreach from=$groupTabs item=module key=group name=groupList}
