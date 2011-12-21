@@ -1409,7 +1409,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img.logo {
-    margin: 5px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 #footer #partner img {
 	width: 25px;
@@ -4266,6 +4266,29 @@ display: none;
 	border-left-color:#0046ad;
 }
 
+.showMoreArrow {
+	background-image: url(../../../../index.php?entryPoint=getImage&imageName=advanced_search.gif);
+    display: inline-block;
+    height: 8px;
+    margin-left: 4px;
+    opacity: 0.6;
+    width: 8px;
+}
+
+.showLessArrow {
+	background-image: url(../../../../index.php?entryPoint=getImage&imageName=basic_search.gif);
+    display: inline-block;
+    height: 8px;
+    margin-left: 4px;
+    opacity: 0.6;
+    width: 8px;
+}
+
+#moduleList .moduleTabExtraMenu .moduleMenuOverFlowLess a:hover .showLessArrow, #moduleList .moduleTabExtraMenu .moduleMenuOverFlowMore a:hover .showMoreArrow {
+	background-position: center 8px;
+	opacity: 1;
+}
+
 /* lists in the header */
 .headerList 
 {
@@ -6499,13 +6522,17 @@ ul#detailViewActions.clickMenu {
 	color: #666666 !important;
 	line-height: 1.45;
 }
+#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {
+	color: #999 !important;
+}
 
-#quickCreate ul.clickMenu li ul.subnav li a:hover, #globalLinksModule ul.clickMenu li ul.subnav li a:hover {
+#quickCreate ul.clickMenu li ul.subnav li a:hover, #globalLinksModule ul.clickMenu li ul.subnav li a:hover, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a:hover, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a:hover {
 	color: #fff !important;
 }
 
-#quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {
-	color: #999 !important;
+ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav li a:hover .showMoreArrow {
+	background-position: center 8px;
+	opacity: 1;
 }
 
 

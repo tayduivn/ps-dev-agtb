@@ -41,8 +41,8 @@
 				{/foreach}
 				
 				{if count($DCACTIONS) > 4}
-					<li class="moduleMenuOverFlowMore"><a href="javascript: toggleMenuOverFlow('quickCreateUL','more');">Show More <img src="{sugar_getimagepath file="advanced_search.gif"}"></a></li>
-					<li class="moduleMenuOverFlowLess"><a href="javascript: toggleMenuOverFlow('quickCreateUL','less');">Show Less <img src="{sugar_getimagepath file="basic_search.gif"}"></a></li>
+					<li class="moduleMenuOverFlowMore"><a href="javascript: toggleMenuOverFlow('quickCreateUL','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
+					<li class="moduleMenuOverFlowLess"><a href="javascript: toggleMenuOverFlow('quickCreateUL','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
 				{/if}
 				
 				

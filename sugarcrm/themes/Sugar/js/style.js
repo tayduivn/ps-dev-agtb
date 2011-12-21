@@ -116,7 +116,7 @@ $('body').click(function() {
         if ($(this).hasClass('up')) {
         	$(this).attr("title","Hide");
         	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
-            $(this).animate({bottom:'7px'},200);
+            $(this).animate({bottom:'5px'},200);
         } else {
         	$(this).attr("title","Show");
         	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
@@ -413,7 +413,7 @@ SUGAR.append(SUGAR.themes, {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
 		    autosubmenudisplay: true,
             visible: false,
-		    hidedelay: 7050,
+		    hidedelay: 750,
 		    lazyload: true,
 		    constraintoviewport: true });
 	    /*
