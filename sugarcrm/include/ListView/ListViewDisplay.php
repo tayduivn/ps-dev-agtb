@@ -368,7 +368,7 @@ class ListViewDisplay {
                   <ul class="clickMenu" id="selectActions">
                       <li>
                       <a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a>
-                          <ul class="subnav">
+                          <ul class="subnav fancymenu">
                               {$menuItems}
 
                           </ul>
@@ -401,7 +401,7 @@ EOHTML;
 		global $app_strings;
 
         $onClick = "document.getElementById('massupdate_form').style.display = ''; var yLoc = YAHOO.util.Dom.getY('massupdate_form'); scroll(0,yLoc);";
-		return "<a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"$onClick\">{$app_strings['LBL_MASS_UPDATE']}</a>";
+		return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"$onClick\">{$app_strings['LBL_MASS_UPDATE']}</a></li>";
 
 	}
 

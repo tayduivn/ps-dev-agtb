@@ -34,56 +34,9 @@
 <script>
 testing_module = "{$smarty.request.module}";
 {literal}
-$(document).ready(function(){
-    
-	var selector = "#content ul.clickMenu li span";
-    $("#content ul.subnav.multi").parent().append("<span class='ab'></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-
-	$(selector).click(function(event) { //When trigger is clicked...
-	$(document).find("ul.subnav").hide();//hide all menus
-	$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
-
-  $('body').one('click',function() {
-    // Hide the menus
-     $(this).parent().find("ul.subnav").hide();
-  });
-
-  event.stopPropagation();
-
-	//Following events are applied to the trigger (Hover events for the trigger)
-	}).hover(function() { 
-		$(this).addClass("subhover"); //On hover over, add class "subhover"
-	}, function(){	//On Hover Out
-		$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	$(document).ready(function(){
+	   $().sugarActionMenu();
 	});
-
-
-    //Tool Tips
-   	$(function(){
-		$(".clickMenu span.ab").tipTip({maxWidth: "auto", edgeOffset: 10, content: "More Actions", defaultPosition: "top"});
-	});
-	
-	//Fix custom code buttons programatically to prevent metadata edits
-	$("ul.subnav input[type='submit']").each(function(index, node){
-	var jNode = $(node);
-	var parent = jNode.parent();
-
-	if(parent.is("ul") && parent.hasClass("subnav")){
-		var newItem = $(document.createElement("li"));
-		var newItemA = $(document.createElement("a"));
-		newItemA.html(jNode.val());
-		newItemA.click(function(event){
-			jNode.click();
-		});
-			
-		newItem.append(newItemA);
-		jNode.before(newItem);
-		jNode.css("display", "none");
-	}
-});
-});
- 
-
 {/literal}
 </script>
 
@@ -116,7 +69,7 @@ $(document).ready(function(){
                 <a id='' href="javascript: void(0);">Actions</a>
             {{/if}}
 
-                <ul class="subnav multi">
+                <ul class="subnav multi fancymenu">
 
 
 

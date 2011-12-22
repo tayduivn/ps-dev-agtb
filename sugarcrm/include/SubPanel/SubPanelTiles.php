@@ -459,8 +459,8 @@ EOQ;
                     $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
                 }
 
-                $widget_contents .= '<ul class="subnav' . "\n";
-                if(($_REQUEST['module'] == "Contacts" && count($subpanel_def) > 1) || $_REQUEST['module'] != "Contacts") {
+                $widget_contents .= '<ul class="subnav fancymenu' . "\n";
+                if(count($subpanel_def) > 1) {
                 	$widget_contents .= " multi";	
                 }
                 $widget_contents .= '">';

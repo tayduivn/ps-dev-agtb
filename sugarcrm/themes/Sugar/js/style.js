@@ -77,40 +77,9 @@ firstHit = false;
 
 	});
 
+	//set up any action style menus
+	$().sugarActionMenu();
 
-
-
-	$("#dcmenu #quickCreateUL ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-	$("#dcmenu #globalLinks ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-	
-	$("#dcmenu ul.clickMenu li").click(function(event) { //When trigger is clicked...
-	if(event.currentTarget.className != "moduleMenuOverFlowMore subhover" && event.currentTarget.className != "moduleMenuOverFlowLess subhover") {
-		$(document).find("ul.subnav").hide();//hide all menus
-	}
-		//Following events are applied to the subnav itself (moving subnav up and down)
-		$(this).parent().find("ul.subnav").show(); //Drop down the subnav on click
-
-
-$('body').click(function() {
-  //Hide the menus if visible
-  //console.log($(this).parent().find("ul.subnav"));
-   $(this).parent().find("ul.subnav").hide();
-});
-
-  
-     
-
-  event.stopPropagation();
-
-
-
-
-		//Following events are applied to the trigger (Hover events for the trigger)
-		}).hover(function() { 
-			$(this).addClass("subhover"); //On hover over, add class "subhover"
-		}, function(){	//On Hover Out
-			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
-	});
 	
     $("#arrow").click(function(){
         $(this).toggleClass("up");
