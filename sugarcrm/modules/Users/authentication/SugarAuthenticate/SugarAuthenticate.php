@@ -401,6 +401,13 @@ class SugarAuthenticate{
 	}
 
 
-
+    /**
+     * pre_login
+     * 
+     * This function allows the SugarAuthenticate subclasses to perform some pre login initialization as needed
+     */
+    function pre_login()
+    {
+    }
 
 }

@@ -51,6 +51,25 @@ if($version < '640')
 	$files[] = 'modules/Users/EditView.html';
 	$files[] = 'modules/Users/DetailView.php';
 	$files[] = 'modules/Users/EditView.php';
+
+    //Remove files from the include/database directory
+    $files[] = 'include/database/MysqliHelper.php';
+    $files[] = 'include/database/PearDatabase.php';
+    $files[] = 'include/database/SqlsrvHelper.php';
+
+    //Remove grouping js & css files
+    $files[] = 'include/javascript/sugar_grp1.js';
+    $files[] = 'include/javascript/sugar_grp1_yui.js';
+    $files[] = 'include/javascript/sugar_grp_emails.js';
+    $files[] = 'include/javascript/sugar_grp_jsolait.js';
+    $files[] = 'include/javascript/sugar_grp_overlib.js';
+    $files[] = 'include/javascript/sugar_grp_quickcomp.js';
+    $files[] = 'include/javascript/sugar_grp_yui2.js';
+    $files[] = 'include/javascript/sugar_grp_yui_widgets.css';
+    $files[] = 'include/javascript/sugar_grp_yui_widgets.js';
+
+    $files[] = 'data/upload/index.html';
+
 }
 
 return $files;	

@@ -134,6 +134,7 @@ class SugarView
                 'title' => $this->getBrowserTitle(),
                 'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : "",
                 'record' => isset($_REQUEST['record']) ? $_REQUEST['record'] : "",
+                'favicon' => $this->getFavicon(),
             );
             if(empty($this->responseTime)) $this->_calculateFooterMetrics();
             $ajax_ret['responseTime'] = $this->responseTime;
@@ -280,17 +281,8 @@ class SugarView
         else
             $module_favicon = false;
 
-        $favicon = '';
-        if ( $module_favicon )
-            //BEGIN SUGARCRM flav=sales || flav=pro ONLY
-            $favicon = $themeObject->getImageURL($this->module.'_favico.png',false);
-            //END SUGARCRM flav=sales || flav=pro ONLY
-            //BEGIN SUGARCRM flav=com ONLY
-            $favicon = $themeObject->getImageURL($this->module.'.gif',false);
-            //END SUGARCRM flav=com ONLY
-        if ( !sugar_is_file($favicon) || !$module_favicon )
-            $favicon = $themeObject->getImageURL('sugar_icon.ico',false);
-        $ss->assign('FAVICON_URL',getJSPath($favicon));
+        $favicon = $this->getFavicon();
+        $ss->assign('FAVICON_URL', $favicon['url']);
 
         // build the shortcut menu
         $shortcut_menu = array();
@@ -594,6 +586,7 @@ class SugarView
                         "MODULE_NAME" => $menu_item[2],
                         "IMAGE"       => $themeObject
                         ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                        "ID"          => $menu_item[2]."_link",
                         );
                 }
             }
@@ -1230,7 +1223,17 @@ EOHTML;
 
         if ($show_help) {
             $theTitle .= "<span class='utils'>";
-            $theTitle .= $this->getHelpText($module);
+
+            $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+            $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
+            $theTitle .= <<<EOHTML
+&nbsp;
+<a id="create_image" href="{$url}" class="utilsLink">
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a id="create_link" href="{$url}" class="utilsLink">
+{$GLOBALS['app_strings']['LNK_CREATE']}
+</a>
+EOHTML;
         }
 
         $theTitle .= "</span></div>\n";
@@ -1454,5 +1457,50 @@ EOHTML;
 </a>
 EOHTML;
         return $theTitle;
+    }
+
+    /**
+     * Retrieves favicon corresponding to currently requested module
+     *
+     * @return array
+     */
+    protected function getFavicon()
+    {
+        // get favicon
+        if(isset($GLOBALS['sugar_config']['default_module_favicon']))
+            $module_favicon = $GLOBALS['sugar_config']['default_module_favicon'];
+        else
+            $module_favicon = false;
+
+        $themeObject = SugarThemeRegistry::current();
+
+        $favicon = '';
+        if ( $module_favicon )
+            //BEGIN SUGARCRM flav=sales || flav=pro ONLY
+            $favicon = $themeObject->getImageURL($this->module.'_favico.png',false);
+            //END SUGARCRM flav=sales || flav=pro ONLY
+            //BEGIN SUGARCRM flav=com ONLY
+            $favicon = $themeObject->getImageURL($this->module.'.gif',false);
+            //END SUGARCRM flav=com ONLY
+        if ( !sugar_is_file($favicon) || !$module_favicon )
+            $favicon = $themeObject->getImageURL('sugar_icon.ico',false);
+
+        $extension = pathinfo($favicon, PATHINFO_EXTENSION);
+        switch ($extension)
+        {
+            case 'png':
+                $type = 'image/png';
+                break;
+            case 'ico':
+                // fall through
+            default:
+                $type = 'image/x-icon';
+                break;
+        }
+
+        return array(
+            'url'  => getJSPath($favicon),
+            'type' => $type,
+        );
     }
 }

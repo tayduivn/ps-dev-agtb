@@ -203,8 +203,8 @@ class KBDocument extends SugarBean {
 		}
 
 
-		$this->file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'border="0"', null,null,'.gif',$mod_strings['LBL_LIST_VIEW_DOCUMENT'])."</a>";
-		$this->file_url_noimage = basename(UploadFile::get_url($this->filename, $this->document_revision_id));
+		$this->file_url = "<a href='index.php?entryPoint=download&id={$this->document_revision_id}&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'border="0"', null,null,'.gif',$mod_strings['LBL_LIST_VIEW_DOCUMENT'])."</a>";
+		$this->file_url_noimage = "index.php?entryPoint=download&type=Documents&id={$this->document_revision_id}";
 
 		//get last_rev_by user name.
 		$query = "SELECT first_name,last_name, document_revisions.date_entered as rev_date FROM users, document_revisions WHERE users.id = document_revisions.created_by and document_revisions.id = '$this->document_revision_id'";
@@ -486,8 +486,7 @@ class KBDocument extends SugarBean {
 			     $att = true;
 			     $doc_rev ="'$doc_rev_id'";
 			     $kbdoc_atts .="<div id=$cDoc>";
-
-			     $kbdoc_atts .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage($cDoc,$doc_rev,$att);SUGAR.kb.setCheckBox($doc_rev)\"", null, null, ".gif", $mod_strings['LBL_REMOVE']);
+			     $kbdoc_atts .= SugarThemeRegistry::current()->getImage('delete', "onclick=\"SUGAR.kb.strikeOutFromImage($cDoc,$doc_rev,$att);SUGAR.kb.setCheckBox($doc_rev)\"", null, null, ".gif", $app_strings['LBL_REMOVE']);
 				 $kbdoc_atts .="<a href='index.php?entryPoint=download&id=$doc_rev_id&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;";
 				 $kbdoc_atts .= '<input id="'.$doc_rev_id.'" type="checkbox"  style="visibility:hidden" onclick="SUGAR.kb.strikeOutFromBox('.$cDoc.','.$doc_rev.')" name="'.$doc_rev_id.'" value="'.$doc_rev_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
 				 $kbdoc_atts .="</div>";

@@ -303,7 +303,7 @@ ENDQ;
 	function addTeamSecurityClause() {
 		global $current_user;
 		if(!is_admin($current_user)) {
-			return " INNER JOIN	team_sets_teams tst	ON tst.team_set_id = emails.team_set_id	INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$current_user->id}' AND team_memberships.deleted=0 ";
+			return " INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id  = team_memberships.team_id AND team_memberships.user_id = '{$current_user->id}' AND team_memberships.deleted=0 group by tst.team_set_id) folder_tf on folder_tf.team_set_id = emails.team_set_id ";
 		}
 	}
 	//END SUGARCRM flav=pro ONLY
@@ -353,7 +353,7 @@ ENDQ;
 			$temp['status'] = (is_null($a['reply_to_status']) || $a['reply_to_status'] == '0') ? '' : 1;
 			$temp['from']	= preg_replace('/[\x00-\x08\x0B-\x1F]/', '', $a['from_addr']);
 			$temp['subject'] = $a['name'];
-			$temp['date']	= $timedate->to_display_date_time($a['date_sent']);
+			$temp['date']	= $timedate->to_display_date_time($this->db->fromConvert($a['date_sent'], 'datetime'));
 			$temp['uid'] = $a['id'];
 			$temp['mbox'] = 'sugar::'.$a['polymorphic_module'];
 			$temp['ieId'] = $folderId;

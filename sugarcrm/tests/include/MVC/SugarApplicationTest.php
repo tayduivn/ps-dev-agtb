@@ -297,6 +297,12 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
 class SugarApplicationMock extends SugarApplication
 {
+    public function __construct()
+    {
+        parent::SugarApplication();
+        $this->controller = new stdClass();
+    }
+
     public function checkHTTPReferer()
 	{
 	    return parent::checkHTTPReferer(false);

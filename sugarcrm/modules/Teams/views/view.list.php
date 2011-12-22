@@ -30,11 +30,12 @@ require_once('include/MVC/View/views/view.list.php');
 
 class TeamsViewList extends ViewList
 {
- 	public function preDisplay()
- 	{
- 	    if ( !$GLOBALS['current_user']->isAdminForModule('Users') )
- 	        sugar_die("Unauthorized access to administration.");
- 	    
- 	    parent::preDisplay();
- 	}
+    public function preDisplay()
+    {
+        //bug #46690: Developer Access to Users/Teams/Roles
+        if (!$GLOBALS['current_user']->isAdminForModule('Users') && !$GLOBALS['current_user']->isDeveloperForModule('Users'))
+            sugar_die("Unauthorized access to administration.");
+
+        parent::preDisplay();
+    }
 }

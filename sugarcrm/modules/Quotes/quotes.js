@@ -1043,6 +1043,7 @@ function QuotesEditManager(Y){
         buttonEl.count = this.count;
         buttonEl.onclick = function(){
             quotesManager.openPopup( quotesManager.lookup_item(this.textElement, document).value, this.count);
+            return false;
         }
         spanEl.appendChild(buttonEl);
 			
@@ -1092,9 +1093,9 @@ function QuotesEditManager(Y){
             optionEl.text = this.tax_rate_keys[i];
             optionEl.value = this.tax_rates[optionEl.text];
             try{
-                selectEl.add(optionEl, null);
-            }catch(ex){
-                selectEl.add(optionEl);
+                selectEl.appendChild(optionEl, null);
+            }catch(exception){
+                selectEl.appendChild(optionEl);
             }	
         }
 			

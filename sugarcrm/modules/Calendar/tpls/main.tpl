@@ -85,7 +85,9 @@
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
 		if(scrollable){
-			scrollable.scrollTop = 15 * CAL.scroll_slot;
+			scrollable.scrollTop = 15 * CAL.scroll_slot - 1;
+			if(CAL.view == "day")
+				scrollable.scrollTop++;	
 		}
 		{/literal}			
 
@@ -154,25 +156,32 @@
 		
 		YAHOO.util.Event.on(window, 'resize', function(){
 			CAL.fit_grid();
+			CAL.update_dd.fire();
 		});		
 				
 		YAHOO.util.Event.on("btn-save","click",function(){																		
-			if(!(check_form('CalendarEditView') && cal_isValidDuration()))
-				return false;								
+			if(!(check_form('CalendarEditView') && cal_isValidDuration())){
+				CAL.select_tab("cal-tab-1");
+				return false;
+			}								
 			CAL.dialog_save();	
 		});
 		
 		YAHOO.util.Event.on("btn-send-invites","click",function(){																		
-			if(!(check_form('CalendarEditView') && cal_isValidDuration()))
-				return false;				
+			if(!(check_form('CalendarEditView') && cal_isValidDuration())){
+				CAL.select_tab("cal-tab-1");
+				return false;
+			}			
 			CAL.get("send_invites").value = "1";							
 			CAL.dialog_save();	
 		});		
 		
 
 		YAHOO.util.Event.on("btn-apply","click",function(){
-			if(!(check_form('CalendarEditView') && cal_isValidDuration()))
+			if(!(check_form('CalendarEditView') && cal_isValidDuration())){
+				CAL.select_tab("cal-tab-1");
 				return false;
+			}
 			CAL.dialog_apply();
 		});	
 				
@@ -210,7 +219,9 @@
 		{/literal}
 		
 		{if $view != "year"}
-		CAL.fit_grid();	
+		CAL.arrange_advanced();
+		CAL.fit_grid();
+		CAL.update_dd.fire();
 		{/if}
 		
 		cal_loaded = null;		
@@ -223,8 +234,8 @@
 	<div class="bd" id="edit-dialog-content">
 		<div id="cal-tabs" class="yui-navset yui-navset-top yui-content" style="height: auto; padding: 0 2px;">
 			<ul class="yui-nav">
-				<li id="tab_general"><a tabname="cal-tab-1"><em>{$MOD.LBL_GENERAL_TAB}</em></a></li>
-				<li id="tab_invitees"><a tabname="cal-tab-2"><em>{$MOD.LBL_PARTICIPANTS_TAB}</em></a></li>
+				<li id="tab_general"><a tabname="cal-tab-1" id="cal-tab-1-link"><em>{$MOD.LBL_GENERAL_TAB}</em></a></li>
+				<li id="tab_invitees"><a tabname="cal-tab-2" id="cal-tab-2-link"><em>{$MOD.LBL_PARTICIPANTS_TAB}</em></a></li>
 			</ul>
 			<div id="cal-tab-1" class="yui-content">
 				{include file=$form}
@@ -253,6 +264,7 @@
 	
 <script type="text/javascript">	
 {literal}
+
 YAHOO.util.Event.onDOMReady(function(){	
 	var schedulerLoader = new YAHOO.util.YUILoader({
 		require : ["jsclass_scheduler"],
@@ -282,6 +294,9 @@ YAHOO.util.Event.onDOMReady(function(){
 {literal}
 	.schedulerDiv h3{
 		display: none;
+	}
+	.schedulerDiv{
+		width: auto !important;
 	}
 {/literal}
 </style>	

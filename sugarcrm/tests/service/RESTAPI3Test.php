@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('service/v3/SugarWebServiceUtilv3.php');
 require_once('tests/service/APIv3Helper.php');
 
@@ -67,7 +67,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
-
+        $GLOBALS['db']->query("DELETE FROM calls WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM tasks WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM meetings WHERE name like 'UNIT TEST%' ");
         //$this->useOutputBuffering = false;
     }
 
@@ -87,6 +89,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM calls WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM tasks WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->query("DELETE FROM meetings WHERE name like 'UNIT TEST%' ");
 	}
 
     protected function _makeRESTCall($method,$parameters)
@@ -424,17 +429,17 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $session = $result['id'];
 
         //Test a regular module
-        $fullResult = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'Accounts' ));
-        $result = $fullResult['Accounts'];
-        $a = new Account();
+        $fullResult = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'Currencies' ));
+        $result = $fullResult['Currencies'];
+        $a = new Currency();
         $soapHelper = new SugarWebServiceUtilv3();
-        $actualVardef = $soapHelper->get_return_module_fields($a,'Accounts','');
+        $actualVardef = $soapHelper->get_return_module_fields($a,'Currencies','');
         $actualMD5 = md5(serialize($actualVardef));
         $this->assertEquals($actualMD5, $result, "Unable to retrieve vardef md5.");
 
         //Test a fake module
         $result = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'BadModule' ));
-        $this->assertTrue($result['name'] == 'Module Does Not Exist');
+        $this->assertEquals('Module Does Not Exist', $result['name']);
         unset($GLOBALS['reload_vardefs']);
     }
 
@@ -494,7 +499,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
             );
 
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$accountId}'");
-        
+
         $this->assertTrue(!empty($result['entry_list'][0]['id']) && $result['entry_list'][0]['id'] != -1,$this->_returnLastRawResponse());
         $this->assertEquals($result['entry_list'][0]['name_value_list'][0]['name'],'warning',$this->_returnLastRawResponse());
         $this->assertEquals($result['entry_list'][0]['name_value_list'][0]['value'],"Access to this object is denied since it has been deleted or does not exist",$this->_returnLastRawResponse());
@@ -780,9 +785,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
 
-        //BEGIN SUGARCRM flav=pro ONLY 
+        //BEGIN SUGARCRM flav=pro ONLY
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());
-        //END SUGARCRM flav=pro ONLY 
+        //END SUGARCRM flav=pro ONLY
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $this->_user->id);
         $monitor->setValue('module_name', $module);
@@ -806,8 +811,14 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                              )
          );
 
-         $this->assertEquals($expected[0] ,$results[0]['id'] , "Unable to get upcoming activities");
-         $this->assertEquals($expected[1] ,$results[1]['id'] , "Unable to get upcoming activities");
+         $ids = array();
+         foreach($results as $activity)
+         {
+             $ids[$activity['id']] = $activity['id'];
+         }
+
+         $this->assertArrayHasKey($expected[0] , $ids , "Unable to get upcoming activities");
+         $this->assertArrayHasKey($expected[1] ,$ids , "Unable to get upcoming activities");
 
          $this->_removeUpcomingActivities();
      }

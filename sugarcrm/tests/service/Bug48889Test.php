@@ -21,45 +21,45 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('include/SugarCharts/SugarChartFactory.php');
 
-class Bug43574 extends Sugar_PHPUnit_Framework_TestCase
+require_once 'service/v4/SugarWebServiceImplv4.php';
+require_once 'modules/Employees/Employee.php';
+
+class Bug48889Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $sugarChart;
-	public function setUp()
+
+    public function setUp()
     {
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->sugarChart = SugarChartFactory::getInstance('Jit', 'Reports');
+        $GLOBALS['current_user']->status = 'Active';
+        $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['current_user']->save();
+
+        $this->useOutputBuffering = false;
     }
-    
+
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
     }
 
-    /**
-     * @dataProvider _xmlChartNodes
-     */
-    public function testJitCharXMLFormat($dirty, $clean)
+    public function testGetRelationshipsWithCustomFields()
     {
-        $this->assertEquals($clean, $this->sugarChart->tab($dirty,1) );
-    }
+        $employee = new Employee();
+        $web_service_util = new SugarWebServiceUtilv4();
+        $result = $web_service_util->get_data_list($employee);
 
-    public function _xmlChartNodes()
-    {
-        return array(
-          array('simple string',"\tsimple string\n"),
-          array('12345',"\t12345\n"),
-          array('<xml_node/>',"\t<xml_node/>\n"),
-          array('<xml_node>No bad data</xml_node>',"\t<xml_node>No bad data</xml_node>\n"),
-          array('<xml_node>5852 string</xml_node>',"\t<xml_node>5852 string</xml_node>\n"),
-          array('<xml_node>with ampersand &</xml_node>',"\t<xml_node>with ampersand &amp;</xml_node>\n"),
-          array('<xml_node>with less than <</xml_node>',"\t<xml_node>with less than &lt;</xml_node>\n"),
-          array('<xml_node>with greater than ></xml_node>',"\t<xml_node>with greater than &gt;</xml_node>\n"),
-          array('<xml_node>Multiple & < > \'</xml_node>',"\t<xml_node>Multiple &amp; &lt; &gt; '</xml_node>\n"),
-        );
+        //$total = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM users WHERE portal_only=0 AND deleted=0");
+        $this->assertArrayHasKey('list', $result, 'Assert that we have a list of results and that the get_data_list query on Employees does not cause an error');
     }
-
 }
+

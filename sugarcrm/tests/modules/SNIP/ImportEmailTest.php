@@ -61,12 +61,11 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// get the email object if it imported correctly
 		$e = new Email();
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertTrue(isset($e->id) && !empty($e->id), 'Unable to retrieve email object');
+		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
 		$this->email_id = $e->id;
 
 		// populate the whole bean
-		if (isset ($e->id) && !empty ($e->id))
-			$e->retrieve($e->id);
+        $e->retrieve($e->id);
 
 		// get the meeting
 		$meeting = new Meeting();
@@ -83,7 +82,8 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($email['message']['subject'], $meeting->parent_name);
 	}
 
-	public function testNewEmail () {
+	public function testNewEmail()
+	{
 		global $current_user;
 
 		// import email through snip
@@ -102,12 +102,11 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// get the email object if it imported correctly
 		$e = new Email();
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertTrue(isset($e->id) && !empty($e->id));
+		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
 		$this->email_id = $e->id;
 
 		// populate the whole bean
-		if (isset ($e->id) && !empty ($e->id))
-			$e->retrieve($e->id);
+		$e->retrieve($e->id);
 
         // validate if everything was saved correctly
 		$this->assertEquals($email['message']['message_id'], $e->message_id);
@@ -152,12 +151,11 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// now, get the email with the mesage id '2002'
 		$e = new Email();
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertTrue(isset($e->id) && !empty($e->id));
+		$this->assertAttributeNotEmpty("id", $e, "ID is empty!");
 		$this->email_id = $e->id;
 
 		// populate the whole bean
-		if (isset ($e->id) && !empty ($e->id))
-			$e->retrieve($e->id);
+		$e->retrieve($e->id);
 
         // everything should match the content of the first email because the second email should've been rejected
 		$this->assertEquals($email['message']['message_id'], $e->message_id);
@@ -208,13 +206,10 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertContains($e->id, $ids, "Email not found linked to the case");
 	}
 
-	public function setUp ()
-	{
-	    global $current_user;
 
+	public function setUp () {
 	    // setup test user and initiate snip
-	    $current_user = SugarTestUserUtilities::createAnonymousUser();
-	    $GLOBALS['current_user'] = $current_user;
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		$this->snip = SugarSNIP::getInstance();
 
 		// get configured date format

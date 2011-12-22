@@ -31,6 +31,11 @@
 	overflow:hidden;
 }
 
+#cal-scrollable {
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
 #cal-grid .day_col {
 	width: 14.2%; 
 	float: left; 
@@ -106,6 +111,10 @@
 	border-top-width: 1px;
 	overflow: hidden;
 	cursor: default;
+}
+
+.act_item.empty {
+	border-color: transparent;
 }
 
 .act_item, #cal-grid .day_col {

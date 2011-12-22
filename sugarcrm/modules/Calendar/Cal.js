@@ -43,6 +43,7 @@
 	CAL.editDialog = false;
 	CAL.settingsDialog = false;	
 	CAL.scroll_slot = 0;
+	CAL.update_dd = new YAHOO.util.CustomEvent("update_dd");
 	
 	CAL.dom = YAHOO.util.Dom;
 	CAL.get = YAHOO.util.Dom.get;
@@ -72,6 +73,163 @@
 					}
 			}
 		}
+	}
+	
+	// prevent item overlapping
+	CAL.arrange_column = function(column){
+		
+		for(var i = 0; i < column.childNodes.length; i++){
+			for(var j = 0; j < column.childNodes[i].childNodes.length; j++){
+				var el = column.childNodes[i].childNodes[j];
+				if(YAHOO.util.Dom.hasClass(el,"empty")){
+					el.parentNode.removeChild(el);
+					j--;
+				}
+			}
+		}
+	
+		var slots = column.childNodes;
+		
+		var start = 0;
+		var end = slots.length;	
+		var slot_count = end;
+		var level = 0;
+		
+		var affected_slots = new Array();
+		var affected_items = Array();		
+		var ol = new Array();		
+		
+		// fill ol array with groups of overlapping items to fit them bit later
+		find_overlapping(null,start,end,level,null);
+		
+		// add transparent empty blocks to the left
+		for(var i = 0; i < ol.length; i++){
+			var ol_group = ol[i];
+			var depth = ol_group.depth;
+			for(var j = 0; j < ol_group.items.length; j++){
+				var el_id = ol_group.items[j]['id'];
+				var level = ol_group.items[j]['level'];				
+				var el = CAL.get(el_id);					
+				var node = el;			
+				var pos = 0;
+				while(node.previousSibling){
+					pos++;
+					node = node.previousSibling;
+				}				
+				insert_empty_items(el,level - 1 - pos,false);
+			}				
+		}
+		
+		// add transparent empty blocks to the right
+		for(var i = 0; i < ol.length; i++){
+			var ol_group = ol[i];
+			var depth = ol_group.depth;
+			for(var j = 0; j < ol_group.items.length; j++){
+				var el_id = ol_group.items[j]['id'];
+				
+				var el = CAL.get(el_id);
+				var cnt = el.parentNode.childNodes.length;
+				insert_empty_items(el,depth - cnt,true);
+			}				
+		}
+		
+		CAL.each(affected_slots,function(i,v){			
+			CAL.arrange_slot(affected_slots[i]);
+		});		
+	
+
+		function find_overlapping(el,start,end,level,ol_group){
+		
+			if(level > 20)
+				return;
+		
+			var depth = level;
+
+			if(el != null){
+				if(level == 1){
+					ol_group = {};
+					ol_group.items = new Array();	
+				}
+				ol_group.items.push({
+					id: el.id,
+					level: level
+				});				
+				affected_items.push(el.id);			
+			}			
+						
+			for(var i = start; i < end; i++){
+				if(i >= slot_count)
+					break;
+					
+				if(typeof slots[i].childNodes != 'undefined' && typeof slots[i].childNodes[0] != 'undefined'){
+				
+					var pos = 0;					
+					if(i == start){						
+						var node = slots[i].childNodes[0];
+						while(node.nextSibling && contains(affected_items,node.id)){																
+							node = node.nextSibling;
+							pos ++;
+						}												
+					}
+						
+					var current = slots[i].childNodes[pos];														
+					var slots_takes = parseInt(current.getAttribute('duration_coef'));
+					
+					if(contains(affected_items,current.id))
+						continue;
+					
+					if(pos == 0){
+						var slot_id = current.parentNode.id;	
+						if(!contains(affected_slots,slot_id))
+							affected_slots.push(slot_id);
+					}
+																			
+					if(slots_takes > 0){
+						var k = find_overlapping(current, i, i + slots_takes, level + 1,ol_group);
+						if(k > depth)
+							depth = k;							
+					}
+				}
+			}						
+			
+			if(level == 1){
+				ol_group.depth = depth;
+				ol.push(ol_group);
+			}
+						
+			return depth;
+		}
+		
+		function insert_empty_items(el,count,to_end){
+			var slot = el.parentNode;
+			for(var i = 0; i < count; i++){
+				var empty = document.createElement("div");
+				empty.className = "act_item empty";
+				empty.style.zIndex = "-1";
+				empty.style.width = "1px";				
+				if(to_end == true){
+					slot.appendChild(empty);
+				}else{	
+					slot.insertBefore(empty,slot.firstChild);
+				}						
+			}
+		}
+		
+		function contains(a, obj){
+			var i = a.length;
+			while(i--)
+				if (a[i] === obj)
+					return true;
+			return false;
+		}	
+	}
+	
+	CAL.arrange_advanced = function (){
+		var nodes = CAL.query("#cal-grid .day_col");
+		for(var i = 0; i < nodes.length; i++){
+			CAL.arrange_column(nodes[i]);	
+		}
+		CAL.update_dd.fire();
 	}
 	
 	CAL.add_item_to_grid = function (item){
@@ -142,7 +300,7 @@
 			
 			YAHOO.util.Event.on(el,"click",function(){
 					if(this.getAttribute('detail') == "1")
-						CAL.load_from(this.getAttribute('module_name'),this.getAttribute('record'),false);
+						CAL.load_form(this.getAttribute('module_name'),this.getAttribute('record'),false);
 			});
 			YAHOO.util.Event.on(el,"mouseover",function(){
 				if(!CAL.records_openable)
@@ -167,7 +325,9 @@
 			
 			var slot;
 			if(slot = CAL.get("t_" + time_cell + suffix)){
-				slot.appendChild(el);						
+				slot.appendChild(el);	
+				
+				CAL.cut_record(item.record + id_suffix);					
 				
 				if(duration_coef < 1.75 && CAL.mouseover_expand){
 					YAHOO.util.Event.on(elm_id,"mouseover",function(){
@@ -194,7 +354,9 @@
 						CAL.arrange_slot(this.el.parentNode.getAttribute("id"));
 						if(CAL.dropped == 0){
 							this.el.childNodes[0].innerHTML = CAL.old_caption;
-						}				 
+						}
+						CAL.records_openable = true;
+						CAL.disable_creating = false;				 
 					}					
 									
 					dd.onMouseDown = function(e){
@@ -212,6 +374,7 @@
 						this.el.style.zIndex = 5;
 						CAL.dropped = 0;						
 						CAL.records_openable = false;
+						CAL.disable_creating = true;
 						CAL.old_caption = this.el.childNodes[0].innerHTML;
 						CAL.moved_from_cell = this.el.parentNode.id;							
 						
@@ -263,7 +426,15 @@
 						
 						var callback = {
 							success: function(o){
+								try{
+									res = eval("("+o.responseText+")");
+								}catch(err){
+									alert(CAL.lbl_error_saving);							
+									ajaxStatus.hideStatus();
+									return;	
+								}
 								CAL.records_openable = true;
+								CAL.disable_creating = false;
 								CAL.update_vcal();
 								ajaxStatus.hideStatus();
 							}							 
@@ -275,13 +446,9 @@
 								"record" : this.el.getAttribute("record"),
 								"datetime" : slot.getAttribute("datetime")
 						};						
-						YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));						
-											
+						YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));
 					
-						YAHOO.util.Dom.removeClass(slot,"slot_active");	
-						CAL.disable_creating = false;	
-						CAL.records_openable = true;							
-										
+						YAHOO.util.Dom.removeClass(slot,"slot_active");
 					}
 					
 					dd.onDragOver = function(e,id){
@@ -296,8 +463,7 @@
 						YAHOO.util.Dom.removeClass(slot,"slot_active");
 					}					
 				}
-
-				CAL.cut_record(item.record + id_suffix);				
+								
 				CAL.arrange_slot("t_" + time_cell + suffix);
 			}
 				
@@ -407,13 +573,6 @@
 						var nodes = CAL.query("#cal-tabs li a");
 						CAL.each(nodes,function(i,v){
 							YAHOO.util.Event.on(nodes[i], 'click', function(){
-								var nodes_li = CAL.query("#cal-tabs li");
-								CAL.each(nodes_li,function(j,v){
-									CAL.dom.removeClass(nodes_li[j],"selected");
-								});
-							
-								if(!CAL.dom.hasClass(this.parentNode,"selected"))
-									CAL.dom.addClass(this.parentNode,"selected");	
 								CAL.select_tab(this.getAttribute("tabname"));
 							});
 						});
@@ -462,12 +621,23 @@
 		if(e = CAL.get("list_div_win"))
 			e.style.display = "none";			
 
-	
  		CAL.GR_update_focus("Meetings",""); 
- 		CAL.select_tab("cal-tab-1");
+ 		CAL.select_tab("cal-tab-1"); 		
+		
+		QSFieldsArray = new Array();
+		QSProcessedFieldsArray = new Array();
 	}
 
 	CAL.select_tab = function (tid){
+	
+		var nodes_li = CAL.query("#cal-tabs li");
+		CAL.each(nodes_li,function(j,v){
+			CAL.dom.removeClass(nodes_li[j],"selected");
+		});							
+		
+		CAL.dom.addClass(CAL.get(tid + "-link").parentNode,"selected");
+		
+									
  		var nodes = CAL.query("#cal-tabs .yui-content");
  		CAL.each(nodes,function(i,v){
  			nodes[i].style.display = "none";
@@ -587,7 +757,7 @@
 	}	
 				
 	
-	CAL.load_from = function (module_name,record,run_one_time){
+	CAL.load_form = function (module_name,record,run_one_time){
 	
 		var e;
 		var to_open = true;
@@ -613,7 +783,14 @@
 			var callback = {
 																	
 					success: function(o){
-						res = eval("("+o.responseText+")");			
+						try{
+							res = eval("("+o.responseText+")");
+						}catch(err){
+							alert(CAL.lbl_error_loading);
+							CAL.editDialog.cancel();							
+							ajaxStatus.hideStatus();
+							return;	
+						}									
 						if(res.success == 'yes'){						
 							var fc = document.getElementById("form_content");
 							CAL.script_evaled = false;
@@ -639,10 +816,11 @@
 							}
 							
 							CAL.get("radio_call").setAttribute("disabled","disabled");
-							CAL.get("radio_meeting").setAttribute("disabled","disabled");														
-		
+							CAL.get("radio_meeting").setAttribute("disabled","disabled");
+							
 							eval(res.gr);							
-							SugarWidgetScheduler.update_time();											
+							SugarWidgetScheduler.update_time();
+																
 							if(CAL.record_editable){
 								CAL.get("btn-save").removeAttribute("disabled");
 								CAL.get("btn-delete").removeAttribute("disabled");
@@ -653,9 +831,6 @@
 							CAL.get("form_content").style.display = "";
 							CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
 							ajaxStatus.hideStatus();
-							
-							if(typeof changeParentQS != 'undefined')							
-								changeParentQS("parent_name");
 								
 							setTimeout(function(){
 								enableQS(false);
@@ -730,8 +905,9 @@
 						);																	 						
 					}											 					
 				);
-			}			
+			}
 			
+			CAL.arrange_advanced();
 	}
 		
 	CAL.move_activity = function (box_id,slot_id,ex_slot_id){
@@ -739,8 +915,11 @@
 				if(u = CAL.get(box_id)){
 					if(s = CAL.get(slot_id)){
 						s.appendChild(u);
-						CAL.arrange_slot(slot_id);
-						CAL.arrange_slot(ex_slot_id);
+						
+						CAL.arrange_column(document.getElementById(slot_id).parentNode);
+						CAL.arrange_column(document.getElementById(ex_slot_id).parentNode);
+						CAL.update_dd.fire();
+
 						CAL.cut_record(box_id);					
 						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('time'),u.getAttribute('status'),u.getAttribute('record'));
 						var date_field = "date_start";
@@ -764,6 +943,10 @@
 		document.forms["CalendarEditView"].elements["current_module"].value = mod_name; 	
 	
 		CAL.current_params.module_name = mod_name;
+		
+		QSFieldsArray = new Array();
+		QSProcessedFieldsArray = new Array();
+		
 		CAL.load_create_form(CAL.current_params);				
 	}
 
@@ -775,8 +958,15 @@
 			
 			var callback = {
 																	
-					success: function(o){
-						res = eval("("+o.responseText+")");			
+					success: function(o){						
+						try{
+							res = eval("("+o.responseText+")");
+						}catch(err){
+							alert(CAL.lbl_error_loading);
+							CAL.editDialog.cancel();							
+							ajaxStatus.hideStatus();
+							return;	
+						}									
 						if(res.success == 'yes'){						
 							var fc = document.getElementById("form_content");
 							CAL.script_evaled = false;
@@ -797,10 +987,9 @@
 							}
 														
 							CAL.get("title-cal-edit").innerHTML = CAL.lbl_create_new;
-																					
-							SugarWidgetScheduler.update_time();
-								
+
 							setTimeout(function(){
+								SugarWidgetScheduler.update_time();
 								enableQS(false);
 								disableOnUnloadEditView();
 							},500);
@@ -823,9 +1012,7 @@
 				"current_module" : params.module_name,
 				"assigned_user_id" : params.user_id,
 				"assigned_user_name" : params.user_name,
-				"date_start" : params.date_start,
-				"duration_hours" : 1,
-				"duration_minutes" : 0
+				"date_start" : params.date_start
 			};
 			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));	
 	}
@@ -870,7 +1057,14 @@
 												
 						var callback = {
 								success: function(o){
-									res = eval('('+o.responseText+')');	
+									try{
+										res = eval("("+o.responseText+")");
+									}catch(err){
+										alert(CAL.lbl_error_saving);
+										CAL.editDialog.cancel();							
+										ajaxStatus.hideStatus();
+										return;	
+									}
 									if(res.success == 'yes'){
 										CAL.add_item(res);
 										CAL.editDialog.cancel();
@@ -908,7 +1102,14 @@
 
 						var callback = {
 								success: function(o){
-									res = eval('('+o.responseText+')');	
+									try{
+										res = eval("("+o.responseText+")");
+									}catch(err){
+										alert(CAL.lbl_error_saving);
+										CAL.editDialog.cancel();							
+										ajaxStatus.hideStatus();
+										return;	
+									}
 									if(res.success == 'yes'){										
 										var e;
 										CAL.get("record").value = res.record;	
@@ -943,7 +1144,14 @@
 											
 									var callback = {
 											success: function(o){
-												res = eval('('+o.responseText+')');
+												try{
+													res = eval("("+o.responseText+")");
+												}catch(err){
+													alert(CAL.lbl_error_saving);
+													CAL.editDialog.cancel();							
+													ajaxStatus.hideStatus();
+													return;	
+												}
 													
 												var e,cell_id;
 												if(e = CAL.get(CAL.deleted_id))
@@ -954,8 +1162,8 @@
 												if(e = CAL.get(CAL.deleted_id))
 													e.parentNode.removeChild(e);									
 												
-												CAL.arrange_slot(cell_id);												
-							
+												
+												CAL.arrange_advanced();
 																										
 											},
 											failure: function(){
@@ -1142,9 +1350,10 @@
 		init: function(){
 			YAHOO.util.DDCAL.superclass.init.apply(this, arguments);
 			this.initConstraints();
-			YAHOO.util.Event.on(window, 'resize', function() {
-				this.initConstraints();
-			}, this, true);	
+			CAL.update_dd.subscribe(function(type, args, dd){
+				dd.resetConstraints();					
+				dd.initConstraints();
+			},this);
 		},
 		initConstraints: function() { 
 			var region = YAHOO.util.Dom.getRegion(this.cont);

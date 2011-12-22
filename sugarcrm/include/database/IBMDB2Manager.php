@@ -271,7 +271,9 @@ class IBMDB2Manager  extends DBManager
 	 */
 	public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
 	{
-		if ($start < 0)
+        $start = (int)$start;
+        $count = (int)$count;
+	    if ($start < 0)
 			$start = 0;
 		$this->log->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
@@ -1035,15 +1037,18 @@ EOQ;
 			 * http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.sql.rtn.doc/doc/r0051989.html
 			 */
 			$local = isset($definition['message_locale']) ? $definition['message_locale'] : "";
-			if ($drop)
-				$sql = "CALL SYSPROC.SYSTS_DROP('', '{$name}', '{$local}', ?)";
-			else
+
+            // When using stored procedures DB2 becomes case sensitive.
+			$sql = strtoupper("CALL SYSPROC.SYSTS_DROP('', '{$name}', '{$local}', ?)");
+			if(!$drop)
 			{
+                if($this->getOne(strtoupper("SELECT count(*) FROM SYSIBMTS.TSINDEXES WHERE INDNAME = '{$name}'")) == 1) {
+                    $this->query($sql); // DROP THE TS INDEX IF IT EXISTS
+                }
 				$options = isset($definition['options']) ? $definition['options'] : "";
-				$sql = "CALL SYSPROC.SYSTS_CREATE('', '{$name}', '{$table} ({$fields})', '{$options}', '{$local}', ?)";
+				$sql = strtoupper("CALL SYSPROC.SYSTS_CREATE('', '{$name}', '{$table} ({$fields})', '{$options}', '{$local}', ?)");
 			}
 			// Note that the message output parameter is bound automatically and logged in query
-			$sql = strtoupper($sql); // When using stored procedures DB2 becomes case sensitive.
 			break;
 		}
 

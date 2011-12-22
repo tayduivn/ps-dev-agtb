@@ -40,6 +40,7 @@ class CalendarGrid {
 	protected $time_step = 30; // time step
 	protected $time_format; // user time format
 	protected $date_time_format; // user date time format
+	protected $scroll_height; // height of scrollable div
 	
 	/**
 	 * constructor
@@ -65,6 +66,10 @@ class CalendarGrid {
 		$this->scrollable = false;		
 		if(in_array($this->cal->view,array('day','week'))){
 			$this->scrollable = true;
+			if($this->cal->time_step < 30)
+				$this->scroll_height = 480;
+			else
+				$this->scroll_height = $this->cal->celcount * 15 + 1;
 		}
 		
 		$this->time_step = $this->cal->time_step;
@@ -206,8 +211,8 @@ class CalendarGrid {
 				}
 				$str .= "</div>";		
 			$str .= "</div>";		
-		
-			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; clear: both; height: 479px;'>";			
+			
+			$str .= "<div id='cal-scrollable' style='clear: both; height: ".$this->scroll_height ."px;'>";			
 				$str .= $this->get_time_column($week_start_ts);			
 				$str .= "<div class='week_block'>";
 				for($d = 0; $d < 7; $d++){
@@ -231,9 +236,10 @@ class CalendarGrid {
 		$current_date = $this->cal->date_time;
 		$day_start_ts = $current_date->format('U') + $current_date->getOffset(); // convert to timestamp, ignore tz
 		
+		
 		$str = "";
 		$str .= "<div id='cal-grid' style=' min-width: 300px; visibility: hidden;'>";
-			$str .= "<div id='cal-scrollable' style='overflow-y: scroll; height: 479px;'>";			
+			$str .= "<div id='cal-scrollable' style='height: ".$this->scroll_height ."px;'>";			
 				$str .= $this->get_time_column($day_start_ts);
 				$d = 0;
 				$curr_time = $day_start_ts + $d*86400;
@@ -332,7 +338,7 @@ class CalendarGrid {
 		if($weekEnd2 < 0)
 			$weekEnd2 += 7;	
 
-		$year_start = SugarDateTime::createFromFormat("Y-m-d",$this->cal->date_time->year.'-01-01');
+		$year_start = $GLOBALS['timedate']->fromString($this->cal->date_time->year.'-01-01');
 
 		$str = "";
 		$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';
@@ -344,13 +350,14 @@ class CalendarGrid {
 			$month_end = $month_start->get("+".$month_start->format('t')." days");			
 			$week_start = CalendarUtils::get_first_day_of_week($month_start);
 			$week_start_ts = $week_start->format('U') + $week_start->getOffset(); // convert to timestamp, ignore tz
-			$month_end_ts = $month_end->format('U') + $month_end->getOffset();	
+			$month_end_ts = $month_end->format('U') + $month_end->getOffset();
+			$table_id = "daily_cal_table".$m; //bug 47471	
 						
 			if($m % 3 == 0)
 				$str .= "<tr>";		
 					$str .= '<td class="yearCalBodyMonth" align="center" valign="top" scope="row">';
 						$str .= '<a class="yearCalBodyMonthLink" href="'.ajaxLink('index.php?module=Calendar&action=index&view=month&&hour=0&day=1&month='.($m+1).'&year='.$GLOBALS['timedate']->fromTimestamp($month_start_ts)->format('Y')).'">'.$GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1].'</a>';
-						$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';	
+						$str .= '<table id="'. $table_id. '" cellspacing="1" cellpadding="0" border="0" width="100%">';	
 							$str .= '<tr class="monthCalBodyTH">';
 								for($d = 0; $d < 7; $d++)
 									$str .= '<th width="14%">'.$this->weekday_names[$d].'</th>';			
@@ -370,8 +377,7 @@ class CalendarGrid {
 										if($d == $weekEnd1 || $d == $weekEnd2)	
 											$str .= "<td class='weekEnd monthCalBodyWeekEnd'>"; 
 										else
-											$str .= "<td class='monthCalBodyWeekDay'>";				
-								
+											$str .= "<td class='monthCalBodyWeekDay'>";
 												$str .= $monC;
 											$str .= "</td>";
 									}

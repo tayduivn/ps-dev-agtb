@@ -91,8 +91,6 @@ $xtpl->assign("REVISION",$focus->kbdocument_revision_number);
 
 global $locale;
 
-$save_file = basename($focus->file_url_noimage);
-      
 $xtpl->assign("KBDOC_TAGS",KBDocument::get_kbdoc_tags_heirarchy($focus->id,"Detail"));
 //get the document body
 $article_body = KBDocument::get_kbdoc_body_without_incrementing_count($focus->id);
@@ -106,7 +104,6 @@ $xtpl->assign("FILE_URL", $focus->file_url);
 $xtpl->assign("ACTIVE_DATE", $focus->active_date);
 $xtpl->assign("EXP_DATE", $focus->exp_date);
 $xtpl->assign("FILE_NAME", $focus->filename);
-$xtpl->assign("SAVE_FILE", $save_file);
 $xtpl->assign("FILE_URL_NOIMAGE", $focus->file_url_noimage);
 $xtpl->assign("LAST_REV_CREATOR", $focus->last_rev_created_name);
 
@@ -126,20 +123,20 @@ if (isset($focus->date_entered) && !empty($focus->date_entered)) {
 
 
 if (!empty($focus->team_id)) {
-	
+
 	$team = new Team();
 	$team->retrieve($focus->team_id,true);
 	require_once('modules/Teams/TeamSetManager.php');
 	$xtpl->assign("TEAM", TeamSetManager::getCommaDelimitedTeams($focus->team_set_id, $focus->team_id, true));
 }
 if (!empty($focus->kbdoc_approver_id)) {
-	
+
 	$user = new User();
 	$user->retrieve($focus->kbdoc_approver_id,true);
 	$xtpl->assign("KBDOC_APPROVED_BY", $user->name);
 }
 if (!empty($focus->assigned_user_id)) {
-	
+
 	$user = new User();
 	$user->retrieve($focus->assigned_user_id,true);
 	$xtpl->assign("KBARTICLE_AUTHOR_NAME", $user->name);

@@ -1413,13 +1413,19 @@ class Email extends SugarBean {
 	 * @param string str The text to safe
 	 * @return string Safed text
 	 */
-	function safeText($str) {
-		// Safe_HTML
-		$this->safe->clear();
-		$ret = $this->safe->parse($str);
+	function safeText($str)
+	{
+        if(empty($str)) return $str;
+
+        if(!strchr($str, "<")) {
+            return $str;
+        }
+    	// Safe_HTML
+    	$this->safe->clear();
+    	$ret = $this->safe->parse($str);
 
 		// Julian's XSS cleaner
-		$potentials = clean_xss($str, false);
+		$potentials = clean_xss($ret, false);
 
 		if(is_array($potentials) && !empty($potentials)) {
 			//_ppl($potentials);
@@ -1618,6 +1624,7 @@ class Email extends SugarBean {
 			//// get the email to see if we're dealing with a dupe
 			//// what crappy coding
 			preg_match("/[A-Z0-9._%-\']+@[A-Z0-9.-]+\.[A-Z]{2,}/i",$v, $match);
+
 
 			if(!empty($match[0]) && !in_array(trim($match[0]), $knownEmails)) {
 				$knownEmails[] = $match[0];
@@ -2299,12 +2306,12 @@ class Email extends SugarBean {
 		$result =$this->db->query($query,true," Error filling in additional list fields: ");
 
 		$row = $this->db->fetchByAssoc($result);
+        $this->attachment_image = ($row !=null) ? SugarThemeRegistry::current()->getImage('attachment',"","","") : "";
 
 		if ($row !=null) {
-			$this->attachment_image = SugarThemeRegistry::current()->getImage('attachment',"","","",'.gif',$mod_strings['LBL_ATTACHMENT']);
-		} else {
-			$this->attachment_image = SugarThemeRegistry::current()->getImage('blank',"","","",'.gif'," ");
+			$this->attachment_image = SugarThemeRegistry::current()->getImage('attachment',"","","",'.gif',translate('LBL_ATTACHMENT', 'Emails'));
 		}
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->assigned_name = get_assigned_team_name($this->team_id);
 		//END SUGARCRM flav=pro ONLY
