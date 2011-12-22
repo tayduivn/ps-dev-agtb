@@ -28,6 +28,7 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
     private $_server = "";
     private $_config = array();
     private $_backend = null;
+    
     public function __construct($params)
     {
         $this->_config = $params;
@@ -38,7 +39,8 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
         $host = isset($this->_config['host']) ? $this->_config['host'] : 'localhost';
         $index = isset($this->_config['index']) ? $this->_config['index'] : ($GLOBALS['sugar_config']['unique_key']);
         $this->_server = "{$scheme}://{$host}:$port/$index";
-        $this->_backend = new SugarSearchEngineElasticClient();
+
+        spl_autoload_register(array($this, 'loader'));
     }
 
     public function connect($config)
@@ -63,51 +65,28 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
 
     public function search($query, $offset = 0, $limit = 20)
     {
-        $url = $this->_server . "/_search?" . http_build_query(array('q' => $query));
-        $rs = $this->_backend->callRest($url, TRUE);
-        return $rs;
-
-    }
-}
-
-
-class SugarSearchEngineElasticClient
-{
-    private $last_error;
-
-    public function callRest($url, $isGET = true, $postArgs = array() )
-    {
-        if(!function_exists("curl_init")) {
-            $this->last_error = 'ERROR_NO_CURL';
-            $GLOBALS['log']->fatal("Sugar Elastic Search Failed - no cURL!");
-            return false;
-        }
-
-        $curl = curl_init($url);
-        if(!$isGET)
+        $results = array();
+        try
         {
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $postArgs);
+            $client = new Elastica_Client();
+            $s = new Elastica_Search($client);
+            $results = $s->search($query);
         }
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        $GLOBALS['log']->debug("Elastic Search call: $url -> $postArgs");
-        $response = curl_exec($curl);
-        if($response === false) {
-            $this->last_error = 'ERROR_REQUEST_FAILED';
-            $curl_errno = curl_errno($curl);
-            $curl_error = curl_error($curl);
-            $GLOBALS['log']->error("cURL call failed: error $curl_errno: $curl_error");
-            return false;
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
         }
-        $GLOBALS['log']->debug("Elastic Search response: $response");
-        curl_close($curl);
-        return $response;
+
+        return $results;
     }
 
+    protected function loader($className)
+    {
+        $fileName = str_replace('_', '/', $className);
+        $path = 'include/SugarSearchEngine/Elastic/' . $fileName . '.php';
+        if( file_exists($path) )
+            require_once($path);
+        else
+            return FALSE;
+    }
 }
-
-

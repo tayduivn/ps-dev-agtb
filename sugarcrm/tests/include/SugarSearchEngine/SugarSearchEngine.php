@@ -42,7 +42,10 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('','SugarSearchEngine'),
-            array('Solr','SugarSearchEngineSolr')
+            array('Solr','SugarSearchEngineSolr'),
+            array('Elastic','SugarSearchEngineElastic'),
+            //Fallback to default.
+            array('BadClassName','SugarSearchEngine')
         );
     }
 
