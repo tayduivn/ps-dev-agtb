@@ -28,6 +28,7 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
     private $_server = "";
     private $_config = array();
     private $_client = null;
+    private $_indexName = "";
     
     public function __construct($params)
     {
@@ -39,7 +40,7 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
         $host = isset($this->_config['host']) ? $this->_config['host'] : 'localhost';
         $index = isset($this->_config['index']) ? $this->_config['index'] : ($GLOBALS['sugar_config']['unique_key']);
         $this->_server = "{$scheme}://{$host}:$port/$index";
-
+        $this->_indexName = $GLOBALS['sugar_config']['unique_key'];
         spl_autoload_register(array($this, 'loader'));
 
         $this->_client = new Elastica_Client();
@@ -53,6 +54,24 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
     public function indexBean($bean, $batch = TRUE)
     {
         $GLOBALS['log']->fatal("GOING TO INDEX BEAN");
+        if($batch)
+            $this->indexSingleBean($bean);
+
+    }
+
+    protected function indexSingleBean($bean)
+    {
+        try
+        {
+            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $type = new Elastica_Type($index, 'SugarBean');
+            $doc = new Elastica_Document($bean->id, array('name' => $bean->name));
+            $type->addDocument($doc);
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to index bean with error: {$e->getMessage()}");
+        }
 
     }
 
@@ -68,18 +87,18 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
 
     public function search($query, $offset = 0, $limit = 20)
     {
+        $GLOBALS['log']->fatal("Going to search with query $query");
         $results = array();
         try
         {
-            $client = new Elastica_Client();
-            $s = new Elastica_Search($client);
+            $s = new Elastica_Search($this->_client);
             $results = $s->search($query);
         }
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
         }
-
+        $GLOBALS['log']->fatal("finished searching with results " . var_export($results, TRUE));
         return $results;
     }
 

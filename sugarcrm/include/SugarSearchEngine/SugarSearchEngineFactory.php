@@ -72,6 +72,8 @@ class SugarSearchEngineFactory
             }
         }
 
+        //TODO: Add support for custom location.
+
         $defaultTemplateLocation = "include/SugarSearchEngine/%s/SugarSearchEngine%s.php";
         $defaultLocation = sprintf($defaultTemplateLocation, $name,$name);
         $engineInstance = self::loadSearchEngineFromLocation("custom" . DIRECTORY_SEPARATOR . $defaultLocation, $config);
