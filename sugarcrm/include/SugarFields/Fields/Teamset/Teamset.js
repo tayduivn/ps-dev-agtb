@@ -17,7 +17,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
-
 function set_return_teams_for_editview(popup_reply_data) {
 	var form_name = popup_reply_data.form_name;
 	var field_name = popup_reply_data.field_name;
