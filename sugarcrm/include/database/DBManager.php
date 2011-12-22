@@ -1959,6 +1959,10 @@ protected function checkQuery($sql, $object_name = false)
     			}
     		}
 
+    		if(!empty($val) && !empty($fieldDef['len']) && strlen($val) > $fieldDef['len']) {
+			    $val = $this->truncate($val, $fieldDef['len']);
+			}
+
     		if(!is_null($val) || !empty($fieldDef['required'])) {
     			$columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
     		} elseif($this->isNullable($fieldDef)) {
@@ -2106,7 +2110,11 @@ protected function checkQuery($sql, $object_name = false)
 						}
 						return "NULL";
 					}
-					// fall through
+					break;
+			}
+		} else {
+		    if(!empty($val) && !empty($fieldDef['len']) && strlen($val) > $fieldDef['len']) {
+			    $val = $this->truncate($val, $fieldDef['len']);
 			}
 		}
 
