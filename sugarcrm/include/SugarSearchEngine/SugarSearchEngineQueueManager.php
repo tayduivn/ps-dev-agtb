@@ -21,63 +21,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
-require_once("include/SugarSearchEngine/Interface.php");
-require_once('include/SearchForm/SugarSpot.php');
-
-/**
- * This class is an adapter to the existing SugarSpot/UnifiedSearch capabilities and is the default
- * search engine if no other external engines have been configured.
- *
- */
-class SugarSearchEngine implements SugarSearchEngineInterface{
-
-
-    public function search($query, $offset = 0, $limit = 20, $options = array() )
-    {
-        $sugarSpot = new SugarSpot();
-        return $sugarSpot->search($query, $offset);
-
-    }
+class SugarSearchEngineQueueManager
+{
 
     /**
-     * No-op
-     */
-    public function connect()
-    {
-
-
-    }
-
-    /**
-     * No-op
-     */
-    public function flush()
-    {
-
-
-    }
-
-    /**
-     * No-op
-     *
      * @param $bean
+     * @param $event
+     * @param $args
      */
-    public function indexBean($bean, $batched = TRUE)
+    function populateIndexQueue($bean, $event, $args)
     {
-
-
+        $GLOBALS['log']->debug("Adding the following bean to the populate queue.... {$bean->id}");
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $searchEngine->indexBean($bean);
     }
-
-    /**
-     * No-op
-     *
-     * @param $bean
-     */
-    public function delete($bean)
-    {
-
-
-    }
-
-
 }

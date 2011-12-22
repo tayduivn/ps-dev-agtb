@@ -27,7 +27,7 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
 {
     private $_server = "";
     private $_config = array();
-    private $_backend = null;
+    private $_client = null;
     
     public function __construct($params)
     {
@@ -41,15 +41,18 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
         $this->_server = "{$scheme}://{$host}:$port/$index";
 
         spl_autoload_register(array($this, 'loader'));
+
+        $this->_client = new Elastica_Client();
     }
 
-    public function connect($config)
+    public function connect()
     {
 
     }
 
-    public function indexBean($bean)
+    public function indexBean($bean, $batch = TRUE)
     {
+        $GLOBALS['log']->fatal("GOING TO INDEX BEAN");
 
     }
 

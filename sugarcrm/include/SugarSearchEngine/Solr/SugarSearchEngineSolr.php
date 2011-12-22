@@ -33,12 +33,12 @@ class SugarSearchEngineSolr implements SugarSearchEngineInterface
     {
     }
 
-    public function connect($config)
+    public function connect()
     {
-        $this->_backend = new Apache_Solr_Service($config['host'], $config['port'], $config['path']);
+        //$this->_backend = new Apache_Solr_Service($config['host'], $config['port'], $config['path']);
     }
 
-    public function indexBean($bean)
+    public function indexBean($bean, $batched = TRUE)
     {
         //TODO: Needs to be re-implemented to pickup correct fields.
         $document = new Apache_Solr_Document();

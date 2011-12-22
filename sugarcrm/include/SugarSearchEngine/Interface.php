@@ -43,10 +43,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
       *
       * Make a connection to the Full Text Search Engine
       * @abstract
-      * @param $config
       * @return void
       */
-     public function connect($config);
+     public function connect();
 
      /**
       * flush()
@@ -65,7 +64,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
       * @param $bean
       * @return void
       */
-     public function indexBean($bean);
+     public function indexBean($bean, $batched = TRUE);
 
      /**
        * delete()
