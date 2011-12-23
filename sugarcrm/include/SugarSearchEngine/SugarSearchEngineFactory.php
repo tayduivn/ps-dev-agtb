@@ -27,13 +27,9 @@ class SugarSearchEngineFactory
     public static $_instance;
 
     /**
-     *
+     * Singleton pattern
      */
-    private function __construct()
-    {
-
-
-    }
+    private function __construct(){}
 
     /**
      * getInstance()

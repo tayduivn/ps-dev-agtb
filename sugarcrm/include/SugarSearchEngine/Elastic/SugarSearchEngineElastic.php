@@ -29,8 +29,12 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
     private $_config = array();
     private $_client = null;
     private $_indexName = "";
-    
-    public function __construct($params)
+    private $_documents = array();
+
+    const MAX_BULK_THRESHOLD = 100;
+    const INDEX_TYPE = 'SugarBean';
+
+    public function __construct($params = array())
     {
         $this->_config = $params;
 
@@ -44,6 +48,7 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
         spl_autoload_register(array($this, 'loader'));
 
         $this->_client = new Elastica_Client();
+        $GLOBALS['log']->fatal("CONSTRUCT IS CALLED");
     }
 
     public function connect()
@@ -54,17 +59,22 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
     public function indexBean($bean, $batch = TRUE)
     {
         $GLOBALS['log']->fatal("GOING TO INDEX BEAN");
-        if($batch)
+        if(!$batch)
             $this->indexSingleBean($bean);
-
+        else
+        {
+            $GLOBALS['log']->fatal("Adding bean to doc list....");
+            $this->_documents[] = $bean;
+        }
     }
 
     protected function indexSingleBean($bean)
     {
+        $GLOBALS['log']->fatal("Preforming single bean index");
         try
         {
             $index = new Elastica_Index($this->_client, $this->_indexName);
-            $type = new Elastica_Type($index, 'SugarBean');
+            $type = new Elastica_Type($index, self::INDEX_TYPE);
             $doc = new Elastica_Document($bean->id, array('name' => $bean->name));
             $type->addDocument($doc);
         }
@@ -85,6 +95,50 @@ class SugarSearchEngineElastic implements SugarSearchEngineInterface
 
     }
 
+    /**
+     * TODO: Destruct function wont be called if exit is thrown in so we may weant to register this as a shutdown function or another logic hook....
+     */
+    public function __destruct()
+    {
+        $GLOBALS['log']->fatal("We are destructing and now adding a document to the index: " . count($this->_documents));
+
+        if (count($this->_documents) > 0 )
+        {
+            try
+            {
+                $index = new Elastica_Index($this->_client, $this->_indexName);
+                $type = new Elastica_Type($index, self::INDEX_TYPE);
+                $batchedDocs = array();
+                $x = 0;
+                foreach($this->_documents as $doc)
+                {
+                    if($x != 0 && $x % self::MAX_BULK_THRESHOLD == 0)
+                    {
+                        $type->addDocuments($batchedDocs);
+                        $batchedDocs = array();
+                    }
+                    else
+                    {
+                        $batchedDocs[] = $doc;
+                    }
+
+                    $x++;
+                }
+
+                //Commit the stragglers
+                if(count($batchedDocs) > 0)
+                {
+                    $type->addDocuments($batchedDocs);
+                }
+            }
+            //TODO: Add a mechanism to handle failures here.
+            catch(Exception $e)
+            {
+                $GLOBALS['log']->fatal("Error performing bulk update operation: {$e->getMessage()}");
+            }
+        }
+
+    }
     public function search($query, $offset = 0, $limit = 20)
     {
         $GLOBALS['log']->fatal("Going to search with query $query");

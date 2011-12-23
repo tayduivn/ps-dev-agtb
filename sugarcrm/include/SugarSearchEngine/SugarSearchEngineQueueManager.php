@@ -34,6 +34,6 @@ class SugarSearchEngineQueueManager
         $GLOBALS['log']->debug("Adding the following bean to the populate queue.... {$bean->id}");
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
-        $searchEngine->indexBean($bean);
+        $searchEngine->indexBean($bean, TRUE);
     }
 }
