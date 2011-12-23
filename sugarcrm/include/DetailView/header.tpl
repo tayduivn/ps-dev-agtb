@@ -60,21 +60,11 @@ testing_module = "{$smarty.request.module}";
 {{$field}}
 {{/foreach}}
 {{/if}}
-        <ul class="clickMenu" id="detailViewActions">
-            <li style="cursor: pointer">
-
-            {{if $module == "Contacts"}}
-            {{sugar_actions_link module="$module" id="EDIT2" view="$view"}}
-            {{else}}
-                <a id='' href="javascript: void(0);">Actions</a>
-            {{/if}}
-
-                <ul class="subnav multi fancymenu">
-
-
-
-{{if !isset($form.buttons)}}   
-{{sugar_actions_link module="$module" id="EDIT" view="$view"}}
+    <ul class="clickMenu" id="detailViewActions">
+        <li style="cursor: pointer">
+        	{{sugar_actions_link module="$module" id="EDIT2" view="$view"}}  
+       			<ul class="subnav multi fancymenu">       
+{{if !isset($form.buttons)}} 
 {{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
 {{sugar_actions_link module="$module" id="DELETE" view="$view"}}
 {{else}}
@@ -82,16 +72,16 @@ testing_module = "{$smarty.request.module}";
 	{{foreach from=$form.buttons key=val item=button}}
 	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
 	     {{counter print=false}}
-	         
-	        {{sugar_actions_link module="$module" id="$button" view="EditView"}}
-            
+	     	{{if $button != "EDIT"}}
+	        	{{sugar_actions_link module="$module" id="$button" view="EditView"}}
+            {{/if}}
 	  {{/if}}
 	{{/foreach}}
 
 	{{if count($form.buttons) > $num_buttons}}
 			{{foreach from=$form.buttons key=val item=button}}
 			  {{if is_array($button) && $button.customCode}}
-
+	
 			  {{sugar_actions_link module="$module" id="$button" view="EditView"}}
 
 			  {{/if}}
