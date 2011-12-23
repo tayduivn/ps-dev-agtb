@@ -383,12 +383,13 @@ function get_sugar_config_defaults() {
 	  'show_calls_by_default' => true,
 	  'show_tasks_by_default' => true,
 	  'editview_width' => 990,
-	  'editview_height' => 480,
+	  'editview_height' => 480,	
 	  'day_timestep' => 15,
 	  'week_timestep' => 30,
-	  'month_timestep' => 60,
 	  'items_draggable' => true,
-	  'mouseover_expand' => true,
+	  'items_resizable' => true,
+	  'enable_repeat' => true,
+	  'max_repeat_count' => 1000,
 	),
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (

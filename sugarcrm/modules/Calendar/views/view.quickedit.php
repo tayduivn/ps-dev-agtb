@@ -44,7 +44,7 @@ class CalendarViewQuickEdit extends SugarView {
 			
 		if(!$this->bean->ACLAccess('DetailView')) {
 			$json_arr = array(
-				'success' => 'no',
+				'access' => 'no',
 			);
 			echo json_encode($json_arr);
 			die;	
@@ -100,13 +100,17 @@ class CalendarViewQuickEdit extends SugarView {
         	}	
 	
 		$json_arr = array(
-				'success' => 'yes',
+				'access' => 'yes',
 				'module_name' => $this->bean->module_dir,
 				'record' => $this->bean->id,
 				'edit' => $this->editable,
 				'html'=> $this->ev->display(false, true),
 				'gr' => $GRjavascript,
 		);
+		
+		if($repeat_arr = CalendarUtils::get_sendback_repeat_data($this->bean)){
+			$json_arr = array_merge($json_arr,array("repeat" => $repeat_arr));
+		}
 			
 		ob_clean();		
 		echo json_encode($json_arr);

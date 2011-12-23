@@ -165,6 +165,10 @@ class Meeting extends SugarBean {
 			$this->reminder_checked = '1';
 			$this->reminder_time = $current_user->getPreference('reminder_time');
 		}*/
+		
+		// prevent a mass mailing for recurring meetings created in Calendar module
+		if(empty($this->id) && $_REQUEST['module'] == "Calendar" && !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id))
+			$check_notify = false;
 
         if (empty($this->status) ) {
             $this->status = $this->getDefaultStatus();

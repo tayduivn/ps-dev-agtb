@@ -38,8 +38,7 @@ class CalendarViewReschedule extends SugarView {
 	}
 	
 	function display(){
-		require_once("modules/Calls/Call.php");
-		require_once("modules/Meetings/Meeting.php");
+		require_once("modules/Calendar/CalendarUtils.php");
 
 		global $beanFiles,$beanList;
 		$module = $_REQUEST['current_module'];
@@ -47,26 +46,32 @@ class CalendarViewReschedule extends SugarView {
 		$bean = new $beanList[$module]();	
 	
 		$bean->retrieve($_REQUEST['record']);
-
+		
+		$_REQUEST['parent_name'] = $bean->parent_name;		
+		
 		if(!$bean->ACLAccess('Save')){
 			die;	
 		}
 		
-		$field = "date_start";
-		if($module == "Tasks")
-			$field = "date_due";	
-			
-		$_POST[$field] = $_REQUEST['datetime'];
-			
-		require_once('include/formbase.php');		
-		$bean = populateFromPost("",$bean);
+		$date_field = "date_start";
+		if($_REQUEST['current_module'] == "Tasks")
+			$date_field = "date_due";
 		
+		if($_REQUEST['calendar_style'] == "basic"){
+			list($tmp,$time) = explode(" ",$bean->$date_field);			
+			list($date,$tmp) = explode(" ",$_REQUEST['datetime']);
+			$_REQUEST['datetime'] = $date." ".$time;			
+		}
+		$_POST[$date_field] = $_REQUEST['datetime'];
+			
+		require_once('include/formbase.php');
+		$bean = populateFromPost("",$bean);				
 		$bean->save();
 		
-		$json_arr = array(
-				'success' => 'yes',
-		);			
-		ob_clean();		
+		$bean->retrieve($_REQUEST['record']);
+		$json_arr = CalendarUtils::get_sendback_array($bean);
+		
+		ob_clean();
 		echo json_encode($json_arr);
 	}	
 

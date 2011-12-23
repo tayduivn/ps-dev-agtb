@@ -1469,6 +1469,13 @@ $app_list_strings = array (
                                     '30'=>'30',
                                     '45'=>'45'),
 
+    'repeat_type_dom' => array(
+    	'' => 'None',
+    	'Daily'	=> 'Daily',
+	'Weekly' => 'Weekly',
+	'Monthly' => 'Monthly',
+	'Yearly' => 'Yearly',
+    ),
 
 // deferred
 /*// QUEUES MODULE DOMs
