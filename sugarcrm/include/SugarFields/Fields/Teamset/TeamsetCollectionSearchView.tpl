@@ -97,7 +97,7 @@
             {foreach item=secondary_field from=$values.secondaries key=key}
                 <script type="text/javascript">
                     var temp_array = new Array();
-                    temp_array['name'] = '{$secondary_field.name}';
+                    temp_array['name'] = replaceHTMLChars('{$secondary_field.name}');
                     temp_array['id'] = '{$secondary_field.id}';
                     collection["{$displayParams.formName}_{$vardef.name}"].secondaries_values.push(temp_array);
                 </script>
@@ -142,7 +142,7 @@ YAHOO.util.Event.onDOMReady(function() {
 {if !empty($values.primary.id) && !empty($values.primary.name)}
 <script type="text/javascript">
  	document.forms["{$displayParams.formName}"].elements["id_{$vardef.name}_collection_0"].value = "{$values.primary.id}";
- 	document.forms["{$displayParams.formName}"].elements["{$vardef.name}_collection_0"].value = "{$values.primary.name}";
+ 	document.forms["{$displayParams.formName}"].elements["{$vardef.name}_collection_0"].value = replaceHTMLChars("{$values.primary.name}");
 </script>
 {/if}
 {$quickSearchCode}
