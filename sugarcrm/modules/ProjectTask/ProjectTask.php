@@ -1,21 +1,19 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/**
- * Data access layer for the project_task table
- *
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
  *  (i) the "Powered by SugarCRM" logo and
@@ -26,14 +24,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
- */
-
-// $Id: ProjectTask.php 55444 2010-03-17 18:30:25Z jmertic $
-
-
-
-
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 
 
 
@@ -48,9 +40,7 @@ class ProjectTask extends SugarBean {
 	//var $assigned_user_id;
 	//var $modified_user_id;
 	//var $created_by;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
-	//END SUGARCRM flav=pro ONLY
 	var $name;
     var $description;
     var $project_id;
@@ -62,10 +52,8 @@ class ProjectTask extends SugarBean {
     var $percent_complete;
     var $parent_task_id;
     var $predecessors;
-    //BEGIN SUGARCRM flav=pro ONLY
     var $resource_id;
     var $resource_name;
-    //END SUGARCRM flav=pro ONLY
     var $priority;
 
 	// related information
@@ -73,9 +61,7 @@ class ProjectTask extends SugarBean {
 	var $parent_name;
 	var $depends_on_name;
 	var $email_id;
-	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
-	//END SUGARCRM flav=pro ONLY
 
 	var $table_name = 'project_task';
 	var $object_name = 'ProjectTask';
@@ -116,14 +102,12 @@ class ProjectTask extends SugarBean {
 				$this->assigned_user_name = $current_user->user_name;
 			}
 
-			//BEGIN SUGARCRM flav=pro ONLY
 			global $current_user;
 			if(!empty($current_user)) {
 				$this->team_id = $current_user->default_team;	//default_team is a team id
 			} else {
 				$this->team_id = 1; // make the item globally accessible
 			}
-			//END SUGARCRM flav=pro ONLY
 		}
 	}
 
@@ -143,10 +127,8 @@ class ProjectTask extends SugarBean {
    function fill_in_additional_detail_fields()
    {
       $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
-		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_name = get_assigned_team_name($this->team_id);
         $this->resource_name = $this->getResourceName();
-		//END SUGARCRM flav=pro ONLY
       $this->project_name = $this->_get_project_name($this->project_id);
 		/*
         $this->depends_on_name = $this->_get_depends_on_name($this->depends_on_id);
@@ -167,9 +149,7 @@ class ProjectTask extends SugarBean {
 	 */
    function fill_in_additional_list_fields()
    {
-      //BEGIN SUGARCRM flav=pro ONLY
       $this->resource_name = $this->getResourceName();
-      //END SUGARCRM flav=pro ONLY
       $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
       //$this->parent_name = $this->_get_parent_name($this->parent_id);
       $this->project_name = $this->_get_project_name($this->project_id);
@@ -339,27 +319,21 @@ class ProjectTask extends SugarBean {
 		$query = "SELECT
 				project_task.*,
                 users.user_name as assigned_user_name ";
-        //BEGIN SUGARCRM flav=pro ONLY
         $query .= ", teams.name AS team_name ";
-        //END SUGARCRM flav=pro ONLY
         if($custom_join){
 			$query .=  $custom_join['select'];
 		}
 
         $query .= " FROM project_task LEFT JOIN project ON project_task.project_id=project.id AND project.deleted=0 ";
 
-		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
 		if($custom_join){
 			$query .=  $custom_join['join'];
 		}
         $query .= " LEFT JOIN users
                    	ON project_task.assigned_user_id=users.id ";
-        //BEGIN SUGARCRM flav=pro ONLY
         $query .= getTeamSetNameJoin('project_task');
-        //END SUGARCRM flav=pro ONLY
 
         $where_auto = " project_task.deleted=0 ";
 
@@ -383,7 +357,6 @@ class ProjectTask extends SugarBean {
         return $query;
     }
 
-	//BEGIN SUGARCRM flav=pro ONLY
     function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false)
     {
         if(isset($filter['resource_name']) && $filter['resource_name'] === true) {
@@ -421,38 +394,162 @@ class ProjectTask extends SugarBean {
 			return '';
 		}
     }
-    //END SUGARCRM flav=pro ONLY
 
-	public function updateParentProjectTaskPercentage()
+    /**
+    * This method recalculates the percent complete of a parent task
+    */
+    public function updateParentProjectTaskPercentage()
 	{
+
 		if (empty($this->parent_task_id))
 		{
 			return;
 		}
-		$projectId = $this->project_id;
-		if (!empty($projectId))
+
+		if (!empty($this->project_id))
 		{
-			$project = new Project();
-			$project->retrieve($projectId);
-			$projectTasks = $project->getAllProjectTasks();
-			$dependentTaskId = $this->parent_task_id;
-			$collectPercentage = 0;
-			$parentProjectTask = false;
-			foreach ($projectTasks as $key => $value)
-			{
-				if ($value->project_task_id == $dependentTaskId)
-				{
-					$parentProjectTask = $value;
-					continue;
-				}
-				$collectPercentage += $value->percent_complete;
-			}
-			if ($parentProjectTask)
-			{
-				$parentProjectTask->percent_complete = round($collectPercentage / (count($projectTasks) - 1));
-				$parentProjectTask->save(isset($GLOBALS['check_notify']) ? $GLOBALS['check_notify'] : '');
-			}
+            //determine parent task
+            $parentProjectTask = $this->getProjectTaskParent();
+
+            //get task children
+            if ($parentProjectTask)
+            {
+                $subProjectTasks = $parentProjectTask->getAllSubProjectTasks();
+
+                $totalHours = 0;
+                $cumulativeDone = 0;
+
+                //update cumulative calculation - mimics gantt calculation
+                foreach ($subProjectTasks as $key => $value)
+                {
+                    if ($value->duration == "")
+                    {
+                        $value->duration = 0;
+                    }
+
+                    if ($value->percent_complete == "")
+                    {
+                        $value->percent_complete = 0;
+                    }
+
+                    if ($value->duration_unit == "Hours")
+                    {
+                        $totalHours += $value->duration;
+                        $cumulativeDone += $value->duration * ($value->percent_complete / 100);
+                    }
+                    else
+                    {
+                        $totalHours += ($value->duration * 8);
+                        $cumulativeDone += ($value->duration * 8) * ($value->percent_complete / 100);
+                    }
+                }
+
+                $cumulativePercentage = 0;
+				if ($totalHours != 0)
+                {
+					$cumulativePercentage = ($cumulativeDone/$totalHours) * 100;
+                }
+
+                $parentProjectTask->percent_complete = round($cumulativePercentage);
+                $parentProjectTask->save(isset($GLOBALS['check_notify']) ? $GLOBALS['check_notify'] : '');
+            }
 		}
+	}
+
+    /**
+    * Retrieves the parent project task of a project task
+    * returns project task bean
+    */
+    function getProjectTaskParent()
+    {
+
+        $projectTaskParent=false;
+
+        if (!empty($this->parent_task_id) && !empty($this->project_id))
+        {
+            $query = "SELECT id FROM project_task WHERE project_id = '{$this->project_id}' AND project_task_id = '{$this->parent_task_id}' AND deleted = 0 ORDER BY date_modified DESC";
+            $project_task_id = $this->db->getOne($query, true, "Error retrieving parent project task");
+
+            if (!empty($project_task_id))
+            {
+                $projectTaskParent = BeanFactory::getBean('ProjectTask', $project_task_id);
+            }
+        }
+
+        return $projectTaskParent;
+    }
+
+    /**
+    * Retrieves all the child project tasks of a project task
+    * returns project task bean array
+    */
+    function getAllSubProjectTasks()
+    {
+		$projectTasksBeans = array();
+
+        if (!empty($this->project_task_id) && !empty($this->project_id))
+		{
+            //select all tasks from a project
+            $query = "SELECT id, project_task_id, parent_task_id FROM project_task WHERE project_id = '{$this->project_id}' AND deleted = 0 ORDER BY project_task_id";
+
+            $result = $this->db->query($query, true, "Error retrieving child project tasks");
+
+            $projectTasks=array();
+            while($row = $this->db->fetchByAssoc($result))
+            {
+                $projectTasks[$row['id']]['project_task_id'] = $row['project_task_id'];
+                $projectTasks[$row['id']]['parent_task_id'] = $row['parent_task_id'];
+            }
+
+            $potentialParentTaskIds[$this->project_task_id] = $this->project_task_id;
+            $actualParentTaskIds=array();
+            $subProjectTasks=array();
+
+            $startProjectTasksCount=0;
+            $endProjectTasksCount=0;
+
+            //get all child tasks
+            $run = true;
+            while ($run)
+            {
+                $count=0;
+
+                foreach ($projectTasks as $id=>$values)
+                {
+                    if (in_array($values['parent_task_id'], $potentialParentTaskIds))
+                    {
+                        $potentialParentTaskIds[$values['project_task_id']] = $values['project_task_id'];
+                        $actualParentTaskIds[$values['parent_task_id']] = $values['parent_task_id'];
+
+                        $subProjectTasks[$id]=$values;
+                        $count=$count+1;
+                    }
+                }
+
+                $endProjectTasksCount = count($subProjectTasks);
+
+                if ($startProjectTasksCount == $endProjectTasksCount)
+                {
+                    $run = false;
+                }
+                else
+                {
+                    $startProjectTasksCount = $endProjectTasksCount;
+                }
+            }
+
+            foreach($subProjectTasks as $id=>$values)
+            {
+                //ignore tasks that are parents
+                if(!in_array($values['project_task_id'], $actualParentTaskIds))
+                {
+                    $projectTaskBean = BeanFactory::getBean('ProjectTask', $id);
+                    array_push($projectTasksBeans, $projectTaskBean);
+                }
+            }
+		}
+
+		return $projectTasksBeans;
 	}
 }
 
