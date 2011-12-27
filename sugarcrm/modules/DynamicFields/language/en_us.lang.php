@@ -110,6 +110,11 @@ $mod_strings = array (
 	'LBL_ENFORCED'=>'Enforced',
 	'LBL_HELP' => 'Help' /*for 508 compliance fix*/,
 	'COLUMN_TITLE_GLOBAL_SEARCH'=>'Global Search',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_HAS_PARENT' => 'Has Parent',
+    'LBL_PARENT_DROPDOWN' => 'Parent Dropdown',
+    'LBL_EDIT_VIS' => 'Edit Visibility',
+    //END SUGARCRM flav=pro ONLY
 );
 
 

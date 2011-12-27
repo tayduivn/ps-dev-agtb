@@ -1070,42 +1070,97 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if (!targetId)
                 targetId = "formula";
             if(!returnType)
-				returnType = "";
+                returnType = "";
 
             if (!ModuleBuilder.formulaEditorWindow)
-            	ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
-					width: 512,
-					draggable: true,
-					close: true,
-					constraintoviewport: true,
-					fixedcenter: false,
-					script: true,
-					modal: true
-				});
-			var win = ModuleBuilder.formulaEditorWindow;
-			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
-			win.setBody("loading...");
-			win.render(document.body);
-			win.params = {
+                ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
+                    width: 512,
+                    draggable: true,
+                    close: true,
+                    constraintoviewport: true,
+                    fixedcenter: false,
+                    script: true,
+                    modal: true
+                });
+            var win = ModuleBuilder.formulaEditorWindow;
+            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+            win.setBody("loading...");
+            win.render(document.body);
+            win.params = {
                 module:"ExpressionEngine",
                 action:"editFormula",
                 targetField: targetId,
-				returnType: returnType,
+                returnType: returnType,
                 loadExt:false,
                 embed: true,
                 targetModule:ModuleBuilder.module,
                 package:ModuleBuilder.MBpackage,
                 formula:encodeURIComponent(YAHOO.lang.JSON.stringify(formula))
             };
-			win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
-			{
-				ModuleBuilder.formulaEditorWindow.center();
-				SUGAR.util.evalScript(ModuleBuilder.formulaEditorWindow.body.innerHTML);
-			});
-			win.show();
-			win.center();
+            win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
+            {
+                ModuleBuilder.formulaEditorWindow.center();
+                SUGAR.util.evalScript(ModuleBuilder.formulaEditorWindow.body.innerHTML);
+            });
+            win.show();
+            win.center();
         },
-        
+        editVisibilityGrid: function(targetId, parent_options, child_options){
+            if (!targetId)
+                targetId = "visibility_grid";
+
+            if (!ModuleBuilder.visGridWindow)
+                ModuleBuilder.visGridWindow = new YAHOO.SUGAR.AsyncPanel('visGridWindow', {
+                    width: 950,
+                    height: 700,
+                    draggable: true,
+                    close: true,
+                    constraintoviewport: true,
+                    fixedcenter: false,
+                    script: true,
+                    modal: true,
+                    buttons: [
+                        {text:"Save", handler:function(){
+
+                        }, isDefault:true },
+                        { text:"Cancel",  handler:function(){
+                            ModuleBuilder.visGridWindow.hide()}
+                        }
+                    ]
+                });
+            var win = ModuleBuilder.visGridWindow;
+            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+            win.setBody("loading...");
+            win.render(document.body);
+            win.params = {
+                module:"ModuleBuilder",
+                action:"depdropdown",
+                targetModule: ModuleBuilder.module,
+                parentList: parent_options,
+                childList: child_options,
+                targetId:targetId,
+                mode:2,
+                mapping: Dom.get(targetId).value
+            };
+            win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
+            {
+                SUGAR.util.evalScript(win.body.innerHTML);
+                win.body.style.height = "570px";
+                win.center();
+            });
+            win.show();
+            win.center();
+        },
+        toggleParent: function(enable){
+            if (typeof(enable) == 'undefined') {
+                enable = Dom.get('has_parent').checked;
+            }
+            var display = enable ? "" : "none";
+            Dom.setStyle("visGridRow", "display", display);
+            if(Dom.get('has_parent')){
+                Dom.get('has_parent').value = enable;
+            }
+        },
 		toggleCF: function(enable) {
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('calculated').checked;

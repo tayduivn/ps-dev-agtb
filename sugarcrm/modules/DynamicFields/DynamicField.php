@@ -582,7 +582,7 @@ class DynamicField {
             $to_save = array();
             $base_field = get_widget ( $field->type) ;
         foreach ($field->vardef_map as $property => $fmd_col){
-
+            //Skip over attribes that are either the default or part of the normal attributes stored in the DB
             if (!isset($field->$property) || in_array($fmd_col, $column_fields) || in_array($property, $column_fields)
                 || $this->isDefaultValue($property, $field->$property, $base_field)
                 || $property == "action" || $property == "label_value" || $property == "label"
