@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -19,20 +19,43 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-global $dictionary;
-if(empty($dictionary['User'])){
-	include('modules/Users/vardefs.php');
+
+class Bug49281Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    protected $contact;
+
+    public function setUp()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
+
+	public function tearDown()
+	{
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+	}
+    /**
+     * @ticket 49281
+     */
+    public function testInsertUpdateLongData()
+    {
+        $acc = new Account();
+        $acc->name = "PHPUNIT test";
+        $acc->assigned_user_id = $GLOBALS['current_user']->id;
+        $acc->sic_code = 'mnbvcxzasdfghjklpoiuytrewqmnbvcxzasdfghjklpoiuytre';
+        $acc->save();
+        $id = $acc->id;
+        SugarTestAccountUtilities::setCreatedAccount(array($id));
+        $acc = new Account();
+        $acc->retrieve($id);
+        $this->assertEquals('mnbvcxzasd', $acc->sic_code);
+
+        $acc->sic_code = 'f094f59daaed0983a6a2e5913ddcc5fb';
+        $acc->save();
+        $acc = new Account();
+        $acc->retrieve($id);
+        $this->assertEquals('f094f59daa', $acc->sic_code);
+    }
+
 }
-$dictionary['Employee']=$dictionary['User'];
-//users of emloyees modules are not allowed to change the employee/user status.
-$dictionary['Employee']['fields']['status']['massupdate']=false;
-$dictionary['Employee']['fields']['is_admin']['massupdate']=false;
-//begin bug 48033 
-$dictionary['Employee']['fields']['UserType']['massupdate']=false; 
-$dictionary['Employee']['fields']['messenger_type']['massupdate']=false;
-$dictionary['Employee']['fields']['email_link_type']['massupdate']=false;
-//end bug 48033 
-$dictionary['Employee']['fields']['email1']['required']=false;
-$dictionary['Employee']['fields']['email_addresses']['required']=false;
-$dictionary['Employee']['fields']['email_addresses_primary']['required']=false;
-?>

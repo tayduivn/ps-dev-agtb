@@ -6134,6 +6134,7 @@ li.active a img.deletePageImg {
     background-color: #eee;
     border-color: #ccc;
     text-align: right;
+    white-space: nowrap;
 }
 
 .edit508 tr td[scope="col"]
