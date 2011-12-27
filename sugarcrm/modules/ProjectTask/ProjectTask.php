@@ -400,7 +400,7 @@ class ProjectTask extends SugarBean {
     */
     public function updateParentProjectTaskPercentage()
 	{
-        $GLOBALS['log']->fatal($this->project_task_id);
+
 		if (empty($this->parent_task_id))
 		{
 			return;
@@ -408,7 +408,6 @@ class ProjectTask extends SugarBean {
 
 		if (!empty($this->project_id))
 		{
-
             //determine parent task
             $parentProjectTask = $this->getProjectTaskParent();
 
@@ -417,48 +416,38 @@ class ProjectTask extends SugarBean {
             {
                 $subProjectTasks = $parentProjectTask->getAllSubProjectTasks();
 
-                $GLOBALS['log']->fatal('count: ' . count($subProjectTasks));
-                $workDayHours = 8;
                 $totalHours = 0;
                 $cumulativeDone = 0;
 
                 //update cumulative calculation - mimics gantt calculation
                 foreach ($subProjectTasks as $key => $value)
                 {
-
                     if ($value->duration == "")
                     {
                         $value->duration = 0;
                     }
 
-                    if ($value->duration_unit == "Hours")
-                    {
-                        $totalHours += $value->duration;
-                    }
-                    else
-                    {
-                        $totalHours += ($value->duration * $workDayHours);
-                    }
-
-                    if (empty($value->percent_complete))
+                    if ($value->percent_complete == "")
                     {
                         $value->percent_complete = 0;
                     }
+
                     if ($value->duration_unit == "Hours")
                     {
+                        $totalHours += $value->duration;
                         $cumulativeDone += $value->duration * ($value->percent_complete / 100);
                     }
                     else
                     {
-                        $cumulativeDone += ($value->duration * $workDayHours) * ($value->percent_complete / 100);
+                        $totalHours += ($value->duration * 8);
+                        $cumulativeDone += ($value->duration * 8) * ($value->percent_complete / 100);
                     }
-
                 }
 
                 $cumulativePercentage = 0;
 				if ($totalHours != 0)
                 {
-					$cumulativePercentage = ($cumulativeDone/$totalHours)* 100;
+					$cumulativePercentage = ($cumulativeDone/$totalHours) * 100;
                 }
 
                 $parentProjectTask->percent_complete = round($cumulativePercentage);
@@ -468,7 +457,7 @@ class ProjectTask extends SugarBean {
 	}
 
     /**
-    * This method is used to retrieve the parent project task of a project task
+    * Retrieves the parent project task of a project task
     * returns project task bean
     */
     function getProjectTaskParent()
@@ -491,7 +480,7 @@ class ProjectTask extends SugarBean {
     }
 
     /**
-    * This method is used to retrieve all the child project tasks of a project task
+    * Retrieves all the child project tasks of a project task
     * returns project task bean array
     */
     function getAllSubProjectTasks()
