@@ -83,15 +83,15 @@ class SugarAuthenticateUser{
 
 		$GLOBALS['log']->debug("Starting user load for ". $name);
 		if(empty($name) || empty($password)) return false;
-		$user_hash = $password;
+		$input_hash = $password;
 		$passwordEncrypted = false;
 		if (!empty($PARAMS) && isset($PARAMS['passwordEncrypted']) && $PARAMS['passwordEncrypted']) {
 			$passwordEncrypted = true;
 		}// if
 		if (!$passwordEncrypted) {
-			$user_hash = SugarAuthenticate::encodePassword($password);
+			$input_hash = SugarAuthenticate::encodePassword($password);
 		} // if
-		$user_id = $this->authenticateUser($name, $user_hash, $fallback);
+		$user_id = $this->authenticateUser($name, $input_hash, $fallback);
 		if(empty($user_id)) {
 			$GLOBALS['log']->fatal('SECURITY: User authentication for '.$name.' failed');
 			return false;

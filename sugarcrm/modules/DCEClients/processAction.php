@@ -21,7 +21,7 @@
  * language governing these rights and limitations under the License.
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
- ********************************************************************************/ 
+ ********************************************************************************/
 
 //change directories to where this file is located.
 //this is to make sure it can find dce_config.php
@@ -36,21 +36,21 @@ chdir(realpath(dirname(__FILE__)));
 
   $singleActionLog .= $nl;
  //first check to see this ip is in array of active clients.  If not, abort job now.
-             
+
     //get client Name
     $client_name = shell_exec('hostname ');
     $client_name = trim($client_name);
-    //get list of active IP's    
+    //get list of active IP's
     $an = $dce_config['active_clients'];
-    
-    $singleActionLog .= "{$nl}processing ip: $client_name";    
+
+    $singleActionLog .= "{$nl}processing ip: $client_name";
     //make sure ip is active
     if(!in_array($client_name, $an)){
      actionLog("aborting job on $client_name, DCE Client is not active");
-     return false;   
+     return false;
     }
-    
- 
+
+
 
      // get the number of jobs to process and iterate
     $timesToIterate = $dce_config['job_per_call'];
@@ -59,36 +59,36 @@ chdir(realpath(dirname(__FILE__)));
     while($timesIterated<$timesToIterate){
         $timesIterated = $timesIterated + 1;
         $singleActionLog .= "{$nl}iteration #$timesIterated";
-         
+
         //create db object
         $db = new DB();
-    
-        //declare information for connection     
+
+        //declare information for connection
         $db->server = $dce_config['dce_dbServer'];
         $db->user = $dce_config['dce_dbUser'];
         $db->password = $dce_config['dce_dbPass'];
         $db->database= $dce_config['dce_dbName'];
-    
+
         //connect to DCE DB
         $db->connect();
-    
-        //create and execute query for queued actions    
+
+        //create and execute query for queued actions
         $getActionQry = "select * from dceactions where status = 'queued' and cluster_id = '".$dce_config['client_cluster_id']."' and deleted = 0 and priority != '-1' order by priority desc, date_entered asc, start_date asc";
         $qid = $db->query($getActionQry);
-    
+
         //just grab first row
         $row = $db->fetch_array($qid);
         $confRow = '';
         $excludeIDs = '';
         $startDate = '';
-    
-            
+
+
         //lets make sure start date is ok, lets grab the start_date
         if(!empty($row)){
             $startDate = $row['start_date'];
-        }    
+        }
         $currDate = TimeDate::getInstance()->nowDb();
-    
+
         //compare start date with current time in a loop
         while(!empty($row) && ($startDate > $currDate)){
             $singleActionLog .=  "skipping action record #".$row['id'].", date to execute is in future";
@@ -102,46 +102,46 @@ chdir(realpath(dirname(__FILE__)));
             $ActionReQry = "select * from dceactions where status = 'queued' and cluster_id = '".$dce_config['client_cluster_id']."' and deleted = 0 and id not in($excludeIDs)  order by priority desc,  date_entered asc, start_date asc";
             $rqid = $db->query($ActionReQry);
             $row = $db->fetch_array($rqid);
-            
+
             //grab the new start date and current date
             if(!empty($row)){
                 $startDate = $row['start_date'];
-            }    
+            }
                 $currDate = gmdate('Y-m-d H:i:s');
         }
-        
+
         if(empty($row)){
             //no actions pending
             $db->close();
             continue;
         }else{
-                 
+
             //change the action status to show it has been taken.  Check to see it has not already been
-            //taken by another node first to avoid conflicts. 
+            //taken by another node first to avoid conflicts.
             $takeActionQry = "update dceactions set status = 'started', client_name = '$client_name', date_started='".gmdate('Y-m-d H:i:s')."' where id = '".$row['id']."' and status = 'queued'";
             $db->query($takeActionQry);
-            
-            //now confirm we have this job    
+
+            //now confirm we have this job
             $confirmActionQry = "select * from dceactions where status = 'started' and cluster_id = '".$dce_config['client_cluster_id']."'  and id = '".$row['id']."' and deleted = 0";
-            
+
             $cid = $db->query($confirmActionQry);
             //just grab first row
             $confRow = $db->fetch_array($cid);
-            
-        }    
-        
+
+        }
+
         //call right action steps, based on type
         if(empty($confRow) || empty($confRow['type'])){
             actionLog('could not get exclusive lock on action record: '.$row['id']);
-            continue;   
+            continue;
         }
-        
-        //create and execute query for Action Instance    
+
+        //create and execute query for Action Instance
         $getInstQry = "select * from dceinstances where id = '".$confRow['instance_id']."'";
         $qid = $db->query($getInstQry);
         $inst = $db->fetch_array($qid);
         $singleActionLog .=  "processing action record: ".$confRow['id'];
-    
+
         switch($confRow['type']){
             case 'create':
             if(empty($inst->parent_dceinstance_id)){
@@ -152,47 +152,47 @@ chdir(realpath(dirname(__FILE__)));
                 cloneInstance($db, $confRow,$inst);
             }
             break;
-    
+
             case 'convert':
             if ($inst['from_copy_template'] ==0)
                 convertInstance($db, $confRow,$inst);
              break;
-    
+
             case 'clone':
              if ($inst['from_copy_template'] ==0)
                 cloneInstance($db, $confRow,$inst);
              break;
-    
+
             case 'archive':
              archiveInstance($db, $confRow,$inst);
              break;
-    
+
             case 'delete':
              deleteInstance($db, $confRow,$inst);
              break;
-    
+
             case 'recover':
              recoverInstance($db, $confRow,$inst);
              break;
-    
+
             case 'toggle_on':
              toggleUserOn($db, $confRow,$inst);
              break;
-    
+
             case 'toggle_off':
              toggleUserOff($db, $confRow,$inst);
              break;
-    
+
             case 'upgrade_test':
-             if ($inst['from_copy_template'] ==0)    
+             if ($inst['from_copy_template'] ==0)
                 upgradeInstance($db, $confRow,$inst, true, false);
              break;
-    
+
             case 'upgrade_live':
              if ($inst['from_copy_template'] ==0)
                 upgradeInstance($db, $confRow,$inst,false, true);
              break;
-    
+
             case 'report':
               if ($inst['from_copy_template'] ==0)
                 gatherReportData($db, $confRow,$inst);
@@ -205,32 +205,32 @@ chdir(realpath(dirname(__FILE__)));
             case 'license':
              updateLicense($db, $confRow,$inst);
              break;
-    
+
             case 'key':
              updateKey($db, $confRow,$inst);
              break;
-    
+
             default:
              actionLog('could not resolve action type: '.$confRow['type']);
              break;
         }
-      
+
         //close db connection
         $db->close();
         //clear single action log
-        $singleActionLog .=  ""; 
+        $singleActionLog .=  "";
   }
-  
-  
+
+
   function createInstance($db, $action, $inst){
     require_once('createInstance.php');
-    global $dce_config, $singleActionLog,$nl; 
+    global $dce_config, $singleActionLog,$nl;
     $sprintStr ='';
-     
+
      $singleActionLog .=  "{$nl}Using Instance ----";
      $singleActionLog .=  var_export($inst, false);
      $singleActionLog .=  $nl;
- 
+
     //create and execute query for Action Template
     $getTmpltQry = "select template_name from dcetemplates where id = '".$action['template_id']."'";
     $qtd = $db->query($getTmpltQry);
@@ -238,13 +238,13 @@ chdir(realpath(dirname(__FILE__)));
      $singleActionLog .=  "{$nl}Using Template ----";
      $singleActionLog .=  var_export($Tmpl, false);
      $singleActionLog .=  $nl;
- 
-   
+
+
     if(empty($Tmpl) || empty($inst)){
         $errString = "Action with id: ".$action['id']." could not be completed...  ";
         if(empty($Tmpl))$errString .= 'The template record could not be found for this action.';
         if(empty($inst))$errString .= 'The instance record could not be found for this action.';
-        reportError($action['id'], $inst, $db, $errString);   
+        reportError($action['id'], $inst, $db, $errString);
         return false;
     }
 
@@ -255,8 +255,8 @@ chdir(realpath(dirname(__FILE__)));
      $singleActionLog .=  "{$nl}Related DB's ----";
      $singleActionLog .=  var_export($dbArr, false);
      $singleActionLog .=  $nl;
- 
-       
+
+
 
     // process new instance to be created
      $singleActionLog .=  " processing new instance $nl";
@@ -268,15 +268,15 @@ chdir(realpath(dirname(__FILE__)));
     $instExists = file_exists($inst_path);
     //make sure the template exists in path
     $tempExists = file_exists($temp_path);
-   
+
    //give error message if temp does not exist, or instance already exists
     if($instExists || !$tempExists){
         $errString = "Action with id: ".$action['id']." could not be completed...  ";
         if($instExists)  $errString .= 'Instance Directory already exists on local filesystem ';
         if(!$tempExists) $errString .= 'The template directory does not exist on local filesystem';
-        reportError($action['id'], $inst, $db, $errString);   
+        reportError($action['id'], $inst, $db, $errString);
         return false;
-    }        
+    }
 
     //call method that copies over instance directory
     $singleActionLog .=  " copying over instance directory ";
@@ -286,7 +286,7 @@ chdir(realpath(dirname(__FILE__)));
     $instExists = file_exists($inst_path);
     $iniExists = file_exists($inst_path . '/ini_setup.php');
 
-   
+
    //give error message if files were not created
     if(!$success || !$instExists || !$iniExists){
         //create error string
@@ -294,13 +294,13 @@ chdir(realpath(dirname(__FILE__)));
         if(!$instExists)  $errString .= 'Instance Directory was not created succesfully on filesystem ';
         if(!$iniExists) $errString .= 'The instance directory was created, but ini_setup.php file could not be created on local filesystem ';
         if(!$iniExists) $errString .= 'Will roll back changes made to file system.  ';
-        
+
         //remove directory if created
         if($instExists) shell_exec("rm -rf '".$inst_path."'");
-                
-        reportError($action['id'], $inst, $db, $errString);   
+
+        reportError($action['id'], $inst, $db, $errString);
         return false;
-    }        
+    }
 
 
     //Change permissions on files as needed.
@@ -308,23 +308,23 @@ chdir(realpath(dirname(__FILE__)));
     $perms_script = sprintf($perms = "chmod 777 '%s' -R ",$inst_path);
     //note we are not yet using php chmod because we need the call to be recursive.
     $sprintStr .= $nl . shell_exec($perms_script);
-    
 
-    //Parse si_config file to populate for silent install. Will take in info from instance record such as 
+
+    //Parse si_config file to populate for silent install. Will take in info from instance record such as
     //lic key, instance name, etc. and Execute Silent Installer.
     $singleActionLog .=  " processing si $nl";
     $action_params = retrieveParamsFromString($action['action_parms']);
-    $uneek = '';    
+    $uneek = '';
     if(isset($action_params['unique_key'])){$uneek = $action_params['unique_key'];}
     $installRet = process_si($db, $inst, $inst_path, $dbArr, $uneek);
-    
-    //check to see if return value is a string, if so, then install 
+
+    //check to see if return value is a string, if so, then install
     //failed and string is the error message
     if(empty($installRet) || $installRet === false){
         //create error string
-        $errString = 'Action with id: '.$action['id'].' could not be completed...  
-        Instance '.$inst['name'] .' could not be installed, below is the install output: 
-        '.$installRet.' 
+        $errString = 'Action with id: '.$action['id'].' could not be completed...
+        Instance '.$inst['name'] .' could not be installed, below is the install output:
+        '.$installRet.'
         Will roll back changes made to file system.  ';
 
         //call delete to remove the directory and db entries
@@ -334,10 +334,10 @@ chdir(realpath(dirname(__FILE__)));
         return false;
     }else{
         //assign returned object to be Instance
-        $inst = $installRet;   
+        $inst = $installRet;
     }
 
-   
+
     //change permissions back to 755 from 777
     $singleActionLog .=  " changing permissions back on directory, we are done. $nl";
     $perms_script = sprintf($perms = "chmod 755 '%s' -R ",$inst_path);
@@ -349,11 +349,11 @@ chdir(realpath(dirname(__FILE__)));
     //change User/Group ownership(if specified).
     if(isset($dce_config['client_cluster_group'])  && !empty($dce_config['client_cluster_group'])){
         $singleActionLog .=  " changing group $nl";
-        $sprintStr .= $nl . shell_exec("chgrp -R ". $dce_config['client_cluster_group'] ." '".$inst_path."'"); 
+        $sprintStr .= $nl . shell_exec("chgrp -R ". $dce_config['client_cluster_group'] ." '".$inst_path."'");
     }
     if(isset($dce_config['client_cluster_user'])  && !empty($dce_config['client_cluster_user'])){
         $singleActionLog .=  " changing owner $nl";
-        $sprintStr .= $nl . shell_exec("chown -R ".$dce_config['client_cluster_user'] ." '".$inst_path."'"); 
+        $sprintStr .= $nl . shell_exec("chown -R ".$dce_config['client_cluster_user'] ." '".$inst_path."'");
     }
 
     //load db with any sql scripts if they are included in template
@@ -368,34 +368,34 @@ chdir(realpath(dirname(__FILE__)));
             $filenames[] = $inst_path.'/sugarcrm.log';
             updateDCEAction($inst, $action['id'], $db, $filenames);
 
-        $singleActionLog .=  " done!!!! $nl";        
+        $singleActionLog .=  " done!!!! $nl";
     }else{
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." finished with errors...  ";
         $errString .= 'the following messages were returned while processing.. ';
         $errString .= $sprintStr;
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-    }        	
+    }
   }
-  
-  
+
+
   function convertInstance($db, $action, $inst){
     global $dce_config, $singleActionLog;
 /*
 This is here as a hook, for future use.  Currently no client action needs to occur
-*/       
-    
-       
+*/
+
+
   }
 
 
   function cloneInstance($db,$action,$inst){
     global $dce_config, $singleActionLog;
-    
+
     //retrieve parent instance
     //create and execute query for Action Instance
-    $singleActionLog .=  "executing cloneInstance";    
+    $singleActionLog .=  "executing cloneInstance";
     $getParInstQry = "select name from dceinstances where id = '".$inst['parent_dceinstance_id']."'";
     $pid = $db->query($getParInstQry);
     $parent_inst = $db->fetch_array($pid);
@@ -405,15 +405,15 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $par_inst_path = checkSlash($dce_config['client_instancePath']) . $parent_inst['name'];
     if(!file_exists($par_inst_path)){
         $errString = 'Clone Action with record '.$action['id'].' could not be completed, parent instance directory could not be found.  ';
-        reportError($action['id'], $inst, $db, $errString);   
+        reportError($action['id'], $inst, $db, $errString);
         return false;
-    }    
+    }
 
     //call core clone code
     $retArr = cloneCore($db,$inst,$parent_inst,$action['action_parms']);
     $filenames = $retArr['filenames'];
     $inst = $retArr['inst'];
-    
+
     //if there were any errors, send out an error message
     if(!isset($filenames['sprintStr'])) $filenames['sprintStr'] = '';
 
@@ -429,13 +429,13 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString .= 'the following messages were returned while processing.. ';
         $errString .= $filenames['sprintStr'];
         //remove files and database
-        deleteCore($db, $action,$inst,false);        
+        deleteCore($db, $action,$inst,false);
         reportError($action['id'], $inst, $db, $errString);
         $singleActionLog .=  " done with errors\n";
         return false;
-               
+
     }
-    
+
   }
 
 
@@ -451,7 +451,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $singleActionLog .=  " copying files to new directory $nl";
     $cp_script = sprintf("cp -rf '%s' '%s' ",$par_inst_path, $inst_path);
     //note we are not yet using php copy() because we need the call to be recursive.
-    $sprintStr .= $nl . shell_exec($cp_script);    
+    $sprintStr .= $nl . shell_exec($cp_script);
 
     //if the file was not copied over, then return error message.
     if(!file_exists($inst_path)){
@@ -459,18 +459,18 @@ This is here as a hook, for future use.  Currently no client action needs to occ
                 error is: '.$cp_script;
         return $filenames;
     }
-    
+
     //change ownership and permissions
     $singleActionLog .=  " changing permissions while we work on directory $nl";
     $perms_script = sprintf($perms = "chmod 777 '%s' -R ",$inst_path);
     //note we are not yet using php chmod because we need the call to be recursive.
-    $sprintStr .= $nl . shell_exec($perms_script);    
+    $sprintStr .= $nl . shell_exec($perms_script);
 
 
     //lets change ini_setup.php to point to new directory
     $singleActionLog .=  " rewriting ini_setup.php and .htaccess to point to new directory";
     file_replace($parent_inst['name'], $inst['name'], $inst_path .'/ini_setup.php');
-    file_replace($parent_inst['name'], $inst['name'], $inst_path .'/.htaccess');    
+    file_replace($parent_inst['name'], $inst['name'], $inst_path .'/.htaccess');
 
 
     //grab any action params
@@ -483,32 +483,32 @@ This is here as a hook, for future use.  Currently no client action needs to occ
             from clonecore, params are ".print_r($action_params)."
     ";
     if(isset($action_params['clone_db']) && $action_params['clone_db']){
-        $inst['db_user'] .= '_c'; 
-        $singleActionLog .=  "clone db flag is checked, so clone parent db$nl";       
+        $inst['db_user'] .= '_c';
+        $singleActionLog .=  "clone db flag is checked, so clone parent db$nl";
         //replace the name of old instance info in config.php
         file_replace($parent_inst['name'], $inst['name'], $inst_path .'/config.php');
-        
+
         //dump db
         $getDBDump = $dbPath."mysqldump -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']."  ".$parent_inst['db_user']." > ".$inst_path ."/dump.sql" ;
-        $sprintStr .= $nl . shell_exec($getDBDump);    
+        $sprintStr .= $nl . shell_exec($getDBDump);
 
-        //create new db 
+        //create new db
         $newDB = "echo    \"create database ". $inst['db_user']." \" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
-        $sprintStr .= $nl . shell_exec($newDB);    
-         
+        $sprintStr .= $nl . shell_exec($newDB);
+
         //create new db user
         $newUSR = "echo    \" grant all on ".$inst['db_user'].".* to '".$inst['db_user']."'@'localhost' identified by '".$inst['db_user']."'\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
-        shell_exec($newUSR);    
-        
+        shell_exec($newUSR);
+
         //load db
         $getDBDump = $dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']."  ".$inst['db_user']." < ".$inst_path ."/dump.sql" ;
-        $sprintStr .= $nl . shell_exec($getDBDump);    
+        $sprintStr .= $nl . shell_exec($getDBDump);
 
         //point the db to new one in confg.php
         file_replace($parent_inst['name'], $inst['name'], $inst_path .'/.config.php');
 
         $filenames[] = 'processLog.php';
-        
+
     }else{
         $singleActionLog .=  " Clone DB flag was NOT set, so run install$nl";
         //if cloneDB flag is not checked, remove config, parse si and run silent install
@@ -521,13 +521,13 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $singleActionLog .=  " recreate config.php with 0 file size$nl";
         $handle = fopen($inst_path .'/config.php', 'w');
         fclose($handle);
-        
+
         //now parse the config_si file and run installation.
         $singleActionLog .=  " run installer $nl";
         $inst = process_si($db, $inst, $inst_path);
         $filenames[] = $inst_path.'/install.log';
         $filenames[] = $inst_path.'/sugarcrm.log';
-        
+
     }
 
     //change permissions back to 755 from 777
@@ -539,11 +539,11 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     //change User/Group ownership(if specified).
     if(isset($dce_config['client_cluster_group'])  && !empty($dce_config['client_cluster_group'])){
         $singleActionLog .=  " changing group $nl";
-        $sprintStr .= $nl . shell_exec("chgrp -R ". $dce_config['client_cluster_group'] ." '".$inst_path."'"); 
+        $sprintStr .= $nl . shell_exec("chgrp -R ". $dce_config['client_cluster_group'] ." '".$inst_path."'");
     }
     if(isset($dce_config['client_cluster_user'])  && !empty($dce_config['client_cluster_user'])){
         $singleActionLog .=  " changing owner $nl";
-        $sprintStr .= $nl . shell_exec("chown -R ".$dce_config['client_cluster_user'] ." '".$inst_path."'"); 
+        $sprintStr .= $nl . shell_exec("chown -R ".$dce_config['client_cluster_user'] ." '".$inst_path."'");
     }
     echo " from clonecore::  sprint_str = '$sprintStr'";
 
@@ -552,13 +552,13 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $retArr ['inst'] = $inst;
     echo " from clonecore::  return array is = "; print_r($retArr);
     return $retArr;
-    
+
   }
 
 
   function deleteInstance($db, $action,$inst){
     global $dce_config, $singleActionLog;
-    
+
     $singleActionLog .=  "processing delete action\n";
     $sprintStr = deleteCore($db, $action,$inst);
 
@@ -566,7 +566,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     if(empty($sprintStr)){
         // No errors, Connect to DCE DB and Update actions record to have status of ’Done’.
             $singleActionLog .=  " updating actions table\n";
-            updateDCEAction($inst, $action['id'], $db, '');   
+            updateDCEAction($inst, $action['id'], $db, '');
 
         $singleActionLog .=  " done!!!!\n";
     }else{
@@ -576,8 +576,8 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         reportError($action['id'], $inst, $db, $errString);
         $singleActionLog .=  " done with errors\n";
         return false;
-               
-    }    
+
+    }
   }
 
 
@@ -587,20 +587,20 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $dbPath = '';
     if ( empty($inst['name'])){
      $sprintStr .= 'Directory was not deleted because the passed in instance name is empty';
-     return;   
+     return;
     }
     if(!empty($dce_config['client_mysql_path'])){$dbPath = checkSlash($dce_config['client_mysql_path']);}
-    
+
     //grab right path
         $inst_path = checkSlash($dce_config['client_instancePath']) . $inst['name'];
         if($inst['status'] == 'archived'){
             $inst_path = checkSlash($dce_config['client_archivePath']) .$inst['name'];
         }
         $singleActionLog .=  "processing delete on path ". $inst_path;
-    // check to make sure directory exists 
+    // check to make sure directory exists
     if (!file_exists(dirname($inst_path)) || !file_exists($inst_path)){
         $errString  = "Action with of type delete on instance".$inst['name']."could not be finished ...  ";
-        if(!file_exists(dirname($inst_path))){ 
+        if(!file_exists(dirname($inst_path))){
             $errString .= 'delete path'.dirname($inst_path).' is invalid';
         }else{
             $errString .= 'delete path'.($inst_path).' is invalid';
@@ -608,37 +608,37 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         if($reportErr){
             reportError($action['id'], $inst, $db, $errString);
         }
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-        
-    }    
-    
+
+    }
+
     //delete directory
     $singleActionLog .=  "removing path $nl";
     //using shell command because we need delete to be recursive
     $sprintStr .= $nl . shell_exec("rm -rf '".$inst_path."'");
-    
+
     //remove user
     $singleActionLog .=  "removing user $nl";
-    $removeUSR1 = "echo    \"delete from mysql.user where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];  
+    $removeUSR1 = "echo    \"delete from mysql.user where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
     $sprintStr .= $nl . shell_exec($removeUSR1);
-    $removeUSR2 = "echo    \"delete from mysql.db where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];  
-    $sprintStr .= $nl . shell_exec($removeUSR2);    
-        
+    $removeUSR2 = "echo    \"delete from mysql.db where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
+    $sprintStr .= $nl . shell_exec($removeUSR2);
+
     //remove db
     $singleActionLog .=  "removing db $nl";
-    $removeDV = "echo    \"drop database ".$inst['db_user']." ;\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']; 
+    $removeDV = "echo    \"drop database ".$inst['db_user']." ;\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
     $sprintStr .= $nl . shell_exec($removeDV);
 
     //flush the priviliges
     $singleActionLog .=  "flushing privileges $nl";
-    $flush = "echo    \"flush privileges;\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']; 
+    $flush = "echo    \"flush privileges;\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
     $sprintStr .= $nl . shell_exec($flush);
 
     return $sprintStr;
   }
 
-       
+
 
   function archiveInstance($db, $action,$inst){
     global $dce_config, $singleActionLog, $nl;
@@ -649,38 +649,38 @@ This is here as a hook, for future use.  Currently no client action needs to occ
    //grab inst path
         $inst_path = checkSlash($dce_config['client_instancePath']) . $inst['name'];
     //grab archive path
-        $arch_path = checkSlash($dce_config['client_archivePath']) . $inst['name'];        
+        $arch_path = checkSlash($dce_config['client_archivePath']) . $inst['name'];
     $singleActionLog .=  "processing archive action on instance $inst_path";
 
-    // check to make sure directories exist, and that archive does not already exist 
+    // check to make sure directories exist, and that archive does not already exist
     if (!file_exists($inst_path) || file_exists($arch_path) || !file_exists($dce_config['client_archivePath'])){
         $errString  = "Action of type archive on instance".$inst['name']."could not be finished ...  ";
-        if(!file_exists($inst_path)){ 
+        if(!file_exists($inst_path)){
             $errString .= ' instance path '.$inst_path.' is invalid '.$nl;
         }
-        if(!file_exists($dce_config['client_archivePath'])){ 
+        if(!file_exists($dce_config['client_archivePath'])){
             $errString .= ' archive path '.$dce_config['client_archivePath'].' is invalid'.$nl;
         }
-        if(!file_exists($arch_path)){ 
+        if(!file_exists($arch_path)){
             $errString .= ' archive directory already exists for instance '.dirname($inst_path) .$nl;
         }
         //  this is a big error, no need to go on
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-        
-    }    
+
+    }
 
     //check to see if db has been dumped before
     if(file_exists("'$inst_path/dump.sql'")){
-        //file has been dumped before, so rename   
+        //file has been dumped before, so rename
         rename("'$inst_path/dump.sql'",  "'".$inst_path.'/dump.sql'.TimeDate::getInstance()->nowDb()."'" );
     }
 
     //dump db
     $singleActionLog .=  "  dumping database $nl";
     $getDBDump = $dbPath."mysqldump -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']."  ".$inst['db_user']." > ".$inst_path ."/dump.sql" ;
-    $sprintStr .= $nl . shell_exec($getDBDump);    
+    $sprintStr .= $nl . shell_exec($getDBDump);
 
 
     //move files over
@@ -694,40 +694,40 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         //this is a big error, no need to go on
         $sprintStr .= "Folder was not moved succesfully from '$inst_path' to '$arch_path' $nl";
         reportError($action['id'], $inst, $db, $sprintStr);
-        return false;       
+        return false;
     }
-        
-    
+
+
     //remove user only if no errors have been returned
     $sprintStr = trim($sprintStr);
     if(empty($sprintStr) && file_exists($arch_path ."/dump.sql")){
         $singleActionLog .=  "  removing db user $nl";
-        $removeUSR1 = "echo    \"delete from mysql.user where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];  
+        $removeUSR1 = "echo    \"delete from mysql.user where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
         $sprintStr .= $nl . shell_exec($removeUSR1);
-        $removeUSR2 = "echo    \"delete from mysql.db where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];  
-        $sprintStr .= $nl . shell_exec($removeUSR2);    
+        $removeUSR2 = "echo    \"delete from mysql.db where User='".$inst['db_user']."';\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
+        $sprintStr .= $nl . shell_exec($removeUSR2);
     }else{
         $sprintStr .= $nl.' did not delete user from db because '.$nl;
         if(!empty($sprintStr)) $sprintStr .= $nl.'- shell exec returns are not empty.';
-        if(!file_exists($arch_path ."/dump.sql")) $sprintStr .= $nl.' - sql dump file was not found in: '.$arch_path .'/dump.sql '.$nl;   
+        if(!file_exists($arch_path ."/dump.sql")) $sprintStr .= $nl.' - sql dump file was not found in: '.$arch_path .'/dump.sql '.$nl;
     }
 
     //remove db only if no errors have been returned and dump succeeded
     $sprintStr = trim($sprintStr);
     if(empty($sprintStr) && file_exists($arch_path ."/dump.sql")){
         $singleActionLog .=  "  dropping db$nl";
-        $removeDV = "echo    drop database ".$inst['db_user']." |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']; 
+        $removeDV = "echo    drop database ".$inst['db_user']." |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
         $sprintStr .= $nl . shell_exec($removeDV);
     }else{
         $sprintStr .= $nl.' did not delete user from db because: '.$nl;
         if(!empty($sprintStr)) $sprintStr .= $nl.' - shell exec returns are not empty.';
-        if(!file_exists($arch_path ."/dump.sql")) $sprintStr .= $nl.' - sql dump file was not found in: '.$arch_path .'/dump.sql ';   
-    }    
+        if(!file_exists($arch_path ."/dump.sql")) $sprintStr .= $nl.' - sql dump file was not found in: '.$arch_path .'/dump.sql ';
+    }
 
     //flush the priviliges
     $singleActionLog .=  "flushing privileges $nl";
-    $flush = "echo    \"flush privileges;\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']; 
-    $sprintStr .= $nl . shell_exec($flush);    
+    $flush = "echo    \"flush privileges;\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
+    $sprintStr .= $nl . shell_exec($flush);
 
     //change permissions back to 644 from 755
     $singleActionLog .=  "  changing permissions $nl";
@@ -739,19 +739,19 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     if(empty($sprintStr)){
         // No errors, Connect to DCE DB and Update actions record to have status of ’Done’.
             $singleActionLog .=  " updating actions table. $nl";
-            updateDCEAction($inst, $action['id'], $db, '');   
+            updateDCEAction($inst, $action['id'], $db, '');
 
-        $singleActionLog .=  " done!!!! $nl";        
+        $singleActionLog .=  " done!!!! $nl";
     }else{
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." finished with errors...  ";
         $errString .= 'the following messages were returned while processing.. ';
         $errString .= $sprintStr;
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-               
-    }    
-       
+
+    }
+
   }
 
 
@@ -764,21 +764,21 @@ This is here as a hook, for future use.  Currently no client action needs to occ
 
    //grab inst path
     $inst_path = checkSlash($dce_config['client_instancePath']) . $inst['name'];
-    
+
     //grab archive path
-    $arch_path = checkSlash($dce_config['client_archivePath']) . $inst['name'];        
+    $arch_path = checkSlash($dce_config['client_archivePath']) . $inst['name'];
     $singleActionLog .=  "  recovering files for  instance on path $arch_path $nl";
 
-    // check to make sure directory exists 
+    // check to make sure directory exists
     if (!file_exists($arch_path) || file_exists($inst_path)){
         $errString  = "$nl Action with id: ".$action['id']." of type ".$action['type']." could not finish ...  $nl";
         if(!file_exists($arch_path)) $errString  .= "archived instance on path: ".$arch_path ."could not be found ...  $nl";
         if(file_exists($inst_path)) $errString  .= "instance on path: ".$inst_path ."already exists, recovery would overwrite the directory..$nl";
         $errString  .= " processing was stopped. $nl";
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-    }    
+    }
 
 
     //recover files
@@ -792,10 +792,10 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString .= $nl.' the archived directory could not be moved back to the instance path, processing was halted.';
         $errString .= $sprintStr;
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " recovery action failed $nl";   
+        $singleActionLog .=  " recovery action failed $nl";
         return false;
-    }    
-       
+    }
+
 
 
     //change permissions on files
@@ -807,27 +807,27 @@ This is here as a hook, for future use.  Currently no client action needs to occ
 
     //change User/Group ownership(if specified).
     if(isset($dce_config['client_cluster_group'])  && !empty($dce_config['client_cluster_group'])){
-        $sprintStr .= $nl . shell_exec("chgrp -R ". $dce_config['client_cluster_group'] ." '".$inst_path."'"); 
+        $sprintStr .= $nl . shell_exec("chgrp -R ". $dce_config['client_cluster_group'] ." '".$inst_path."'");
     }
     if(isset($dce_config['client_cluster_user'])  && !empty($dce_config['client_cluster_user'])){
-        $sprintStr .= $nl . shell_exec("chown -R ".$dce_config['client_cluster_user'] ." '".$inst_path."'"); 
+        $sprintStr .= $nl . shell_exec("chown -R ".$dce_config['client_cluster_user'] ." '".$inst_path."'");
     }
 
-    
+
     //create new db
-    $singleActionLog .=  "  creating db $nl"; 
+    $singleActionLog .=  "  creating db $nl";
     $newDB = "echo    \"create database ". $inst['db_user']." \" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
-    $sprintStr .= $nl . shell_exec($newDB);    
-     
+    $sprintStr .= $nl . shell_exec($newDB);
+
     //create new db user
     $singleActionLog .=  "  creating db user $nl";
     $newUSR = "echo    \" grant all on ".$inst['db_user'].".* to '".$inst['db_user']."'@'localhost' identified by '".$inst['name']."'\" |".$dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer'];
-    $sprintStr .= $nl . shell_exec($newUSR);    
-    
+    $sprintStr .= $nl . shell_exec($newUSR);
+
     //load db
     $singleActionLog .=  "  loading db $nl";
     $getDBDump = $dbPath."mysql -u ".$dce_config['client_dbUser']." --password=".$dce_config['client_dbPass']."   --host=".$dce_config['client_dbServer']."  ".$inst['db_user']." < ".$inst_path ."/dump.sql" ;
-    $sprintStr .= $nl . shell_exec($getDBDump);    
+    $sprintStr .= $nl . shell_exec($getDBDump);
 
     //reset the admin password
     $randomPass = createRandPass(5);//site password
@@ -838,34 +838,34 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString  .= "a database connection could not be made to instance  ".$inst['name'];
         $errString .= 'the following messages were returned while processing.. ';
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-    }        
-    $usrUpdateQRY = "update users set user_hash = '".strtolower(md5($randomPass))."' where id = '1'";
+    }
+    $usrUpdateQRY = "update users set user_hash = '".User::getPasswordHash($randomPass)."' where id = '1'";
     $instDB->query($usrUpdateQRY);
-    
+
     $inst['site_pass'] = $randomPass;
-    $inst['admin_pass'] = $randomPass;    
+    $inst['admin_pass'] = $randomPass;
     $instDB->close();
-    
+
     $sprintStr = trim($sprintStr);
     if(empty($sprintStr)){
         // No errors, Connect to DCE DB and Update actions record to have status of ’Done’.
         $singleActionLog .=  " updating actions table. $nl";
-        updateDCEAction($inst, $action['id'], $db, '');   
-        $singleActionLog .=  " done!!!! $nl";        
+        updateDCEAction($inst, $action['id'], $db, '');
+        $singleActionLog .=  " done!!!! $nl";
     }else{
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." finished with errors...  ";
         $errString .= 'the following messages were returned while processing.. ';
         $errString .= $sprintStr;
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-    }    
-       
-       
+    }
 
-  }  
+
+
+  }
 
 
   function toggleUserOn($db, $action, $inst){
@@ -885,14 +885,14 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString .= 'the following query did not succeed ..'.$nl;
         $errString .= $row['qry'];
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-        
+
     }
-    
+
     //update actions table with user password param
-    updateDCEAction($inst, $action['id'], $db, '', "usr_name:".$row['user_name'].",usr_pass:".$row['pass']);   
-       
+    updateDCEAction($inst, $action['id'], $db, '', "usr_name:".$row['user_name'].",usr_pass:".$row['pass']);
+
   }
 
 
@@ -900,17 +900,17 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     global $dce_config, $singleActionLog, $nl;
 
     //grab the user record from dce
-    //create and execute query for User from Action  
+    //create and execute query for User from Action
     $getUsrQry = "select id, user_name, first_name, last_name, is_admin, date_entered, date_modified, modified_user_id, created_by, title, status , deleted, employee_status from users ";
     $getUsrQry .= " where id = '$modUserId'";
     $singleActionLog .=  " Running query: $getUsrQry $nl";
-    
+
     $usrQ = $db->query($getUsrQry);
     $Usr = $db->fetch_array($usrQ);
      $singleActionLog .=  "$nl User ----";
      $singleActionLog .=  var_export($Usr, false);
      $singleActionLog .=  $nl;
- 
+
      //import the intance sugarconfig file and grab db info
      $singleActionLog .=  " grabbing sugarconfig file from instance $instName";
      $instDB = returnInstanceDB($instName);
@@ -921,7 +921,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString  .= "a database connection could not be made to instance  ".$instName;
         $singleActionLog .= $errString;
         return $errString;
-    }        
+    }
     $Usr['id'] = $Usr['user_name'].'_SupportUser';
     $Usr['user_name'] = $Usr['user_name'].'_SupportUser';
     /*
@@ -941,7 +941,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $qry_insert .= " '".$Usr['first_name']."', ";
     $qry_insert .= " 1, '".gmdate('Y-m-d H:i:s')."', '".gmdate('Y-m-d H:i:s')."', '1', '1', 'DCE_CREATED', 'Active', 0, 'Active' )";
 
-    
+
 
     //execute script
     $singleActionLog .=  "creating user in instance with following query:$qry_insert";
@@ -957,7 +957,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $instDB->close();
 
     return $row;
-       
+
   }
 
 
@@ -966,35 +966,35 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     toggleUserOffCore($action['modified_user_id'],$inst['name'], $db);
 
     //update status
-    updateDCEAction($inst, $action['id'], $db);   
-       
+    updateDCEAction($inst, $action['id'], $db);
+
   }
 
   function toggleUserOffCore($modUserId, $instName, $db){
     global $dce_config, $singleActionLog, $nl;
 
     //grab the user record from dce
-    //create and execute query for User from Action  
+    //create and execute query for User from Action
     $getUsrQry = "select id, user_name, first_name, last_name, is_admin, date_entered, date_modified, modified_user_id, created_by, title, status , deleted, employee_status from users ";
     $getUsrQry .= " where id = '$modUserId'";
     $singleActionLog .=  " Running query: $getUsrQry $nl";
-    
+
     $usrQ = $db->query($getUsrQry);
     $Usr = $db->fetch_array($usrQ);
 
     $userId = $Usr['user_name'].'_SupportUser';
 
     //create the record to insert into db
-    $singleActionLog .=  " processing toggle user off ".$instName."with user $modUserId $nl";    
+    $singleActionLog .=  " processing toggle user off ".$instName."with user $modUserId $nl";
     /*
     if ($modUserId == '1' || strpos($modUserId,'_id')){
          $modUserId = $modUserId.'dce1234';
     }
     */
-    $qry_delete  = "delete from users where id = '$userId' and title = 'DCE_CREATED'"; 
+    $qry_delete  = "delete from users where id = '$userId' and title = 'DCE_CREATED'";
 
     //import the intance sugarconfig file and grab db info
-    $singleActionLog .=  " grabbing sugarconfig file from instance ". $instName;    
+    $singleActionLog .=  " grabbing sugarconfig file from instance ". $instName;
     $instDB = returnInstanceDB($instName);
 
     if(empty($instDB)){
@@ -1003,13 +1003,13 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString  .= "a database connection could not be made to instance  ".$instName;
         $singleActionLog .= $errString;
         return $errString;
-    }        
+    }
 
     //execute script
     $singleActionLog .=  "executing delete query: $qry_delete";
     $instDB->query($qry_delete);
     $instDB->close();
-       
+
   }
 
 
@@ -1025,15 +1025,15 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     //gather info for each instance
     foreach($instRows as $row){
         if(empty($row['name'])) continue;
-        
-        //gather info for each instance Data is split into hours, 
+
+        //gather info for each instance Data is split into hours,
         //resulting in 24 Data Collection records inserted into dce per instance.
         $reportQueries = gatherInstanceData($row);
 
    //create db object to be used for inserting report queries
     $tempdb = new DB();
 
-    //declare information for connection     
+    //declare information for connection
     $tempdb->server = $dce_config['dce_dbServer'];
     $tempdb->user = $dce_config['dce_dbUser'];
     $tempdb->password = $dce_config['dce_dbPass'];
@@ -1050,9 +1050,9 @@ This is here as a hook, for future use.  Currently no client action needs to occ
                 $tempdb->query($insertSQL);
             }
         }
-        $tempdb->close();      
+        $tempdb->close();
     }
-    
+
     //update Action
     updateDCEAction( null, $action['id'], $db, '', '', true);
 
@@ -1071,7 +1071,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
             $errString  .= "a database connection could not be made to instance  ".$inst['name'];
             $singleActionLog .= $errString;
             return false;
-        }        
+        }
 
         //get time ranges array
         $ranges = returnTimeRanges();
@@ -1088,10 +1088,10 @@ This is here as a hook, for future use.  Currently no client action needs to occ
             while(($loginSum = $instDB->fetch_array($loginRes))!= null){
                 if(empty($loginSum)) continue;
                 $numOfLogins = $numOfLogins + 1;
-            }                                   
-            
+            }
+
             //Num_of_users - get all active users, as well as inactive users that were modified in that time range
-            $usersQry = "select id from users where status = 'Active' and deleted = 0 and date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."' ";  
+            $usersQry = "select id from users where status = 'Active' and deleted = 0 and date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."' ";
             $usersQry .= " Union select id from users where status = 'Inactive' and date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";
             $singleActionLog .= "$nl numOfUsers query is: $usersQry ";
             $usersRes = $instDB->query($usersQry);
@@ -1100,11 +1100,11 @@ This is here as a hook, for future use.  Currently no client action needs to occ
             while(($usersSum = $instDB->fetch_array($usersRes))!= null){
                 if(empty($usersSum)) continue;
                 $numOfUsers = $numOfUsers + 1;
-            }         
-                     
+            }
+
 
             //Max_num_sessions - # of sessions started in given time range
-            $sessQry = "select id from tracker_sessions where date_start >= '". $hour['start']."' and date_start <= '".$hour['end'] ."'";  
+            $sessQry = "select id from tracker_sessions where date_start >= '". $hour['start']."' and date_start <= '".$hour['end'] ."'";
 
             $singleActionLog .= "$nl NumOfSessions query is: $sessQry ";
             $sessRes = $instDB->query($sessQry);
@@ -1113,54 +1113,54 @@ This is here as a hook, for future use.  Currently no client action needs to occ
             while(($sesSum = $instDB->fetch_array($sessRes))!= null){
                 if(empty($sesSum)) continue;
                 $numOfSess = $numOfSess + 1;
-            }                       
+            }
 
-            //Num_of_requests - Sum of roundtrips per session 
-            $reqsQry = "select round_trips requests from tracker_sessions where date_start >= '". $hour['start']."' and date_start <= '".$hour['end'] ."'";  
+            //Num_of_requests - Sum of roundtrips per session
+            $reqsQry = "select round_trips requests from tracker_sessions where date_start >= '". $hour['start']."' and date_start <= '".$hour['end'] ."'";
             $singleActionLog .= "$nl numOfRequests query is:  $reqsQry ";
             $reqsRes = $instDB->query($reqsQry);
             $numOfreqs = 0;
             while(($reqSum = $instDB->fetch_array($reqsRes))!= null){
                 if(empty($reqSum['requests'])) continue;
                 $numOfreqs = $numOfreqs + $reqSum['requests'] ;
-            }         
+            }
 
-            //Memory - Sum of memory Usage 
-            $memQry = "select memory_usage memory from tracker_perf where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";  
+            //Memory - Sum of memory Usage
+            $memQry = "select memory_usage memory from tracker_perf where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";
             $singleActionLog .= "$nl memory query is: $memQry ";
             $memRes = $instDB->query($memQry);
             $memUsg = 0;
             while(($memSum = $instDB->fetch_array($memRes))!= null){
                 if(empty($memSum['memory'])) continue;
                 $memUsg = $memUsg + $memSum['memory'] ;
-            }         
-         
+            }
+
 
             //Num_of_files
-            $fileQry = "select files_opened files from tracker_perf where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";  
+            $fileQry = "select files_opened files from tracker_perf where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";
             $singleActionLog .= "$nl file query is: $fileQry ";
             $fileRes = $instDB->query($fileQry);
             $fileUsg = 0;
             while(($fileSum = $instDB->fetch_array($fileRes))!= null){
                 if(empty($fileSum['files'])) continue;
                 $fileUsg = $fileUsg + $fileSum['files'] ;
-            }         
+            }
 
 
             //Num_of_queries - sum of db trips for given time range
 
-            $dbQry = "select db_round_trips queries from tracker_perf where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";  
+            $dbQry = "select db_round_trips queries from tracker_perf where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";
             $singleActionLog .= "$nl Query Usage query is: $dbQry ";
             $dbRes = $instDB->query($dbQry);
             $dbUsg = 0;
             while(($dbSum = $instDB->fetch_array($dbRes))!= null){
                 if(empty($dbSum['queries'])) continue;
                 $dbUsg = $dbUsg + $dbSum['queries'] ;
-            }         
+            }
 
 
-            //Last_login_time  
-            $lastLoginsQry = "select date_start from tracker_sessions where date_start >= '". $hour['start']."' and date_start <= '".$hour['end'] ."'";  
+            //Last_login_time
+            $lastLoginsQry = "select date_start from tracker_sessions where date_start >= '". $hour['start']."' and date_start <= '".$hour['end'] ."'";
             $singleActionLog .= "$nl Last Log in query is: $lastLoginsQry ";
             $lastLoginRes = $instDB->query($lastLoginsQry);
             $lastLogin = null;
@@ -1168,9 +1168,9 @@ This is here as a hook, for future use.  Currently no client action needs to occ
                 if(empty($lastLoginRow))continue;
                 $lastLogin = $lastLoginRow['date_start'];
             }
-                         
+
             //Slow_logged_queries compilation of all slow logging queries
-            $sloLogQry = "select query_id, text from tracker_queries where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";  
+            $sloLogQry = "select query_id, text from tracker_queries where date_modified >= '". $hour['start']."' and date_modified <= '".$hour['end'] ."'";
             $singleActionLog .= "$nl slo Log query is: $lastLoginsQry ";
             $sloLogRes = $instDB->query($sloLogQry);
             $sloLog = '';
@@ -1180,7 +1180,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
                 $sloLog .= $sloLogRow['text'];
                 $sloLog .= "$nl --------- ( End Query Id ".$sloLogRow['query_id'].") --------$nl";
             }
-                         
+
             //Inst_name
             $in = $inst['name'];
             //Inst_id
@@ -1191,7 +1191,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
             $te = $hour['end'];
             $g = createGuidOnDN();
 
-            //use info gathered to create sql string            
+            //use info gathered to create sql string
             $insertReportQRY  = 'INSERT INTO dcereports (id, name, date_entered, date_modified, modified_user_id , created_by , description, ';
             $insertReportQRY .= '  deleted ,  team_id , num_of_logins , num_of_users , max_num_sessions , num_of_requests ,';
             $insertReportQRY .= ' memory , num_of_files , num_of_queries , last_login_time , slow_logged_queries ,';
@@ -1201,18 +1201,18 @@ This is here as a hook, for future use.  Currently no client action needs to occ
             $insertReportQRY .= "  '0', '1', '$numOfLogins', '$numOfUsers', '$numOfSess', '$numOfreqs', ";
             $insertReportQRY .= " '$memUsg', '$fileUsg', '$dbUsg', '$lastLogin', '$sloLog', ";
             $insertReportQRY .= " '$in', '$ii', '$ts', '$te' )";
-            
+
             //put query into return array
             $returnQueries[] = $insertReportQRY;
-            
-            }        
-        
+
+            }
+
         //we are done gathering summary info for this instance, close db
         $instDB->close();
 
         //return array of queries representing 24 hours
         return $returnQueries;
-       
+
   }
 
   function importInstances($db, $action, $inst){
@@ -1221,11 +1221,11 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $singleActionLog .=  " processing new instance\n";
     $rootpath =  checkSlash($dce_config['client_instancePath']) .$inst['name'];
 
-    $importResult = importClientInstances($rootpath,$db);    
-    
+    $importResult = importClientInstances($rootpath,$db);
+
     //update Action
     updateDCEAction( null, $action['id'], $db, '', '', true);
-    
+
   }
 
 
@@ -1234,7 +1234,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     global $dce_config, $singleActionLog, $nl;
     $sprintStr ='';
     $cleanupParms="parent_name:".$inst['name'].", ";
-    
+
     //clone instance with db
     //create a copy of the instance to pass into clone_db;
     $cloneInst = $inst;
@@ -1248,7 +1248,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $retArr = cloneCore($db,$cloneInst, $inst, $prms);
     $filenames = $retArr['filenames'];
     $returned_clon_inst = $retArr['inst'];
-    
+
     //if there were any errors, send out an error message
     if(!isset($filenames['sprintStr'])) $filenames['sprintStr'] = '';
 
@@ -1258,11 +1258,11 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString .= 'the following messages were returned while processing.. ';
         $errString .= $filenames['sprintStr'];
         //remove files and database
-        deleteCore($db, $action,$returned_clon_inst,false);        
+        deleteCore($db, $action,$returned_clon_inst,false);
         reportError($action['id'], $returned_clon_inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-               
+
     }
 
     $upGradeVars = getUpgradeVars($db, $action, $returned_clon_inst);
@@ -1271,11 +1271,11 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." could not be completed... ";
         $errString .= 'Upgrade variables could not be retrieved for this action ';
         //remove files and database
-        deleteCore($db, $action,$returned_clon_inst,false);        
+        deleteCore($db, $action,$returned_clon_inst,false);
         reportError($action['id'], $returned_clon_inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors $nl";
         return false;
-               
+
     }
     if(isset($upGradeVars['delete_clone'])){
         $deleteClone = $upGradeVars['delete_clone'];
@@ -1286,30 +1286,30 @@ This is here as a hook, for future use.  Currently no client action needs to occ
 
 
     //perform upgrade dry run
-    $upgradeSTR  ="silentUpgrade.php "; 
-    $upgradeSTR .=$upGradeVars['destTempUpgradePath']." "; 
+    $upgradeSTR  ="silentUpgrade.php ";
+    $upgradeSTR .=$upGradeVars['destTempUpgradePath']." ";
     $upgradeSTR .=$upGradeVars['logPath']." ";
     $upgradeSTR .=$upGradeVars['instPath']." ";
     $upgradeSTR .=$upGradeVars['srcTempPath']." ";
     $upgradeSTR .=$skipDB." " ;
     $upgradeSTR .=$exitOnConflict." ";
-    $upgradeSTR .=checkSlash($dce_config['client_dir_path']).' ';    
+    $upgradeSTR .=checkSlash($dce_config['client_dir_path']).' ';
 
-    //Execute upgrade call    
+    //Execute upgrade call
     $sprintStr .= $nl . shell_exec(' php -f '. checkSlash($upGradeVars['destTempPath']).'modules/UpgradeWizard/'. $upgradeSTR);
-    
+
     //change permissions and ownership
     $sprintStr .= $nl . changeFilePerms($upGradeVars['instPath'], true, 'chown');
     $sprintStr .= $nl . changeFilePerms($upGradeVars['instPath'], true, 'chmod');
 
     //call function to see if silentupgrade was succesful
-    $dryRunStatus = checkHaystackFileForNeedle($upGradeVars['logPath'], "SilentUpgrade completed successfully"); 
-    
+    $dryRunStatus = checkHaystackFileForNeedle($upGradeVars['logPath'], "SilentUpgrade completed successfully");
+
     //if conflicts are found, then fail
     if(!$dryRunStatus){
-        //dump clone record into a string, this will be used on dce side cleanup    
-        $firstTime  = true;  
-        $cleanupParms.=", clone:";  
+        //dump clone record into a string, this will be used on dce side cleanup
+        $firstTime  = true;
+        $cleanupParms.=", clone:";
         foreach($returned_clon_inst as $col=>$val){
             if($firstTime){
                 $cleanupParms.=$col.'='.$val;
@@ -1324,16 +1324,16 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString = 'Upgrade action could not be completed on instance '. $inst['name'] .'Upgrade failed during dryrun. Check clone instance named '.$cloneName;
         $filenames[] = $upGradeVars['logPath'];
         //pass in instance query to run, as well as path to log file
-        reportError($action['id'], $inst, $db, $errString, $filenames,$cleanupParms);   
+        reportError($action['id'], $inst, $db, $errString, $filenames,$cleanupParms);
         return false;
     }
         //no conflicts were found we can delete clone now if this is to go live
         if($deleteClone){
-            deleteCore($db, $action,$returned_clon_inst,false);              
+            deleteCore($db, $action,$returned_clon_inst,false);
         }else{
-            //dump clone record into a string, this will be used on dce side cleanup    
+            //dump clone record into a string, this will be used on dce side cleanup
 
-            $firstTime  = true;    
+            $firstTime  = true;
             $cleanupParms.="clone:";
             foreach($returned_clon_inst as $col=>$val){
                 if($firstTime){
@@ -1341,7 +1341,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
                     $firstTime  = false;
                 }else{
                     $cleanupParms.="| $col=$val";
-                }            
+                }
             }
             $cleanupParms.=",";
         }
@@ -1368,16 +1368,16 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $skipDB = 'no';
         $exitOnConflict = 'no';
         $instPath = checkSlash($dce_config['client_instancePath']) . $inst['name'];
-        $logPath = checkslash($instPath).'silentupgrade_live.log'; 
+        $logPath = checkslash($instPath).'silentupgrade_live.log';
 
-   
+
         //change permissions and ownership
         $sprintStr .= $nl . changeFilePerms($instPath, true, 'chown');
-        $sprintStr .= $nl . changeFilePerms($instPath, true, 'chmod');        
-        
+        $sprintStr .= $nl . changeFilePerms($instPath, true, 'chmod');
+
         //perform upgrade live run
-        $upgradeSTR  ="silentUpgrade.php "; 
-        $upgradeSTR .=$upGradeVars['destTempUpgradePath']." "; 
+        $upgradeSTR  ="silentUpgrade.php ";
+        $upgradeSTR .=$upGradeVars['destTempUpgradePath']." ";
         $upgradeSTR .=$logPath." ";
         $upgradeSTR .=$instPath." ";
         $upgradeSTR .=$upGradeVars['srcTempPath']." ";
@@ -1387,24 +1387,24 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $sprintStr .= $nl . shell_exec($upgradeSTR);
         $sprintStr .= $nl . shell_exec(' php -f '. checkSlash($upGradeVars['destTempPath']).'modules/UpgradeWizard/'. $upgradeSTR);
 
-    
+
         //change permissions and ownership
         $sprintStr .= $nl . changeFilePerms($instPath, true, 'chown');
         $sprintStr .= $nl . changeFilePerms($instPath, true, 'chmod');
-        
+
         //call function to see if silentupgrade was succesful
-        //$upgradeStatus = checkHaystackFileForNeedle(checkSlash($dce_config['client_instancePath']) . $inst['name'], "SUCCESS"); 
+        //$upgradeStatus = checkHaystackFileForNeedle(checkSlash($dce_config['client_instancePath']) . $inst['name'], "SUCCESS");
         $upgradeStatus = checkHaystackFileForNeedle($logPath, "SilentUpgrade completed successfully");
 
         //if conflicts are found, then fail
         if(!$upgradeStatus){
-    
+
             //report failure.
-            $errString = 'Upgrade action could not be completed on instance '. $inst['name'] .'Upgrade failed after live run. '; 
+            $errString = 'Upgrade action could not be completed on instance '. $inst['name'] .'Upgrade failed after live run. ';
             $filenames[] = $logPath;
             //pass in instance query to run, as well as path to log file
-            //note that we are continuing upgrade sine we want the 'site down' page removed 
-            reportError($action['id'], $inst, $db, $errString, $filenames,$cleanupParms);   
+            //note that we are continuing upgrade sine we want the 'site down' page removed
+            reportError($action['id'], $inst, $db, $errString, $filenames,$cleanupParms);
             return false;
         }
 
@@ -1415,30 +1415,30 @@ This is here as a hook, for future use.  Currently no client action needs to occ
 
         //lets change ini_setup.php to point to new directory
         $singleActionLog .=  " rewriting ini_setup.php and .htaccess to point to new directory";
-        file_replace($upGradeVars['srcTempPath'], $upGradeVars['destTempPath'], $instPath .'/ini_setup.php'); 
+        file_replace($upGradeVars['srcTempPath'], $upGradeVars['destTempPath'], $instPath .'/ini_setup.php');
         file_replace($upGradeVars['srcTempURL'], $upGradeVars['destTempURL'], $instPath .'/ini_setup.php');
-        file_replace($upGradeVars['srcTempURL'], $upGradeVars['destTempURL'], $instPath .'/.htaccess'); 
+        file_replace($upGradeVars['srcTempURL'], $upGradeVars['destTempURL'], $instPath .'/.htaccess');
 
         //change permissions and ownership
         $sprintStr .= $nl . changeFilePerms($instPath, true, 'chown');
         $sprintStr .= $nl . changeFilePerms($instPath, true, 'chmod');
-                    
+
         // Connect to DCE DB and Update actions record to have status of ’Done’ if upgrade succeeded
 
-           
+
            $filenames[] = $upGradeVars['instPath'].'/upgradeWizard.log';
            updateDCEAction($inst, $action['id'], $db, $filenames,$cleanupParms);
     }
-           
-   
-    $singleActionLog .=  " done!!!! $nl";    
-    
+
+
+    $singleActionLog .=  " done!!!! $nl";
+
   }
 
   function updateKey($db, $action, $inst){
     global $singleActionLog, $nl;
-    //update the license values in install config table 
-    
+    //update the license values in install config table
+
     $instDB = returnInstanceDB($inst['name']);
     if(empty($instDB)){
         // did not receive db, throw error
@@ -1446,10 +1446,10 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $errString  .= "a database connection could not be made to instance  ".$inst['name'];
         $errString .= 'the following messages were returned while processing.. ';
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " Could not update the license info for instance ".$inst['name']." .done with errors $nl";   
+        $singleActionLog .=  " Could not update the license info for instance ".$inst['name']." .done with errors $nl";
         return false;
     }
-    $singleActionLog .=  "$nl about to update license info for db $instDB->database $nl";        
+    $singleActionLog .=  "$nl about to update license info for db $instDB->database $nl";
     //create query using values from instance
     if(isset($inst['license_oc']) && !empty($inst['license_oc'])){
         $cnfgUpdateQRYArr['num_lic_oc'] = "update config set '{$inst['license_oc']}' where name='num_lic_oc' and category='license'";
@@ -1469,12 +1469,12 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         $singleActionLog .=  "$nl running query: $cnfgUpdateQRY $nl";
         $instDB->query($cnfgUpdateQRY);
     }
-    $singleActionLog .=  " closing instance db $nl";  
+    $singleActionLog .=  " closing instance db $nl";
     $instDB->close();
-    
+
   //we are done, update success
   $singleActionLog .=  " update license info action is complete $nl";
     updateDCEAction( null, $action['id'], $db, '', '', true);
-  
+
  }
 ?>

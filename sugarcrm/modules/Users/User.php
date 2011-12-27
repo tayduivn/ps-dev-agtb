@@ -794,6 +794,7 @@ EOQ;
 	 * Check that md5-encoded password matches existing hash
 	 * @param string $password MD5-encoded password
 	 * @param string $user_hash DB hash
+	 * @return bool Match or not?
 	 */
 	public static function checkPasswordMD5($password_md5, $user_hash)
 	{
@@ -810,6 +811,7 @@ EOQ;
 	 * @param string $name Username
 	 * @param string $password MD5-encoded password
 	 * @param string $where Limiting query
+	 * @return the matching User of false if not found
 	 */
 	public static function findUserPassword($name, $password, $where = '')
 	{
