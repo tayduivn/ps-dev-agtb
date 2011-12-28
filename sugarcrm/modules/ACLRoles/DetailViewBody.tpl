@@ -31,7 +31,7 @@
 
 *}
 
-
+{strip}
 <TABLE width='100%' class='detail view' border='0' cellpadding=0 cellspacing = 1  >
 <TR>
 <td style="background: transparent;"></td>
@@ -85,3 +85,4 @@
 	<tr> <td colspan="2">No Actions</td></tr>
 {/foreach}
 </TABLE>
+{/strip}

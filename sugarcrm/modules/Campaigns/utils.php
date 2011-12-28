@@ -140,7 +140,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
         }
 
         //retrieve campaign log.
-        $trkr_query = "select * from campaign_log where target_tracker_key='$identifier ' and related_id = '$clicked_url_key'";
+        $trkr_query = "select * from campaign_log where target_tracker_key='$identifier' and related_id = '$clicked_url_key'";
         $current_trkr=$db->query($trkr_query);
         $row=$db->fetchByAssoc($current_trkr);
 

@@ -578,7 +578,15 @@ class JsChart extends SugarChart {
 			$groups = $xml->data->group[0]->subgroups->group;
 			$items = (sizeof($xml->data->group[0]->subgroups->group) <= 5) ? 5 : sizeof($xml->data->group[0]->subgroups->group);
 		} else {
-			$groups = $xml->data->group;
+            if ($this->chartType == "funnel chart 3D") {
+                // reverse legend
+                $groups = array();
+                foreach($xml->data->group as $group) {
+                    array_unshift($groups, $group);
+                }
+            } else {
+                $groups = $xml->data->group;
+            }
 			$items = (sizeof($xml->data->group) <= 5) ? 5 : sizeof($xml->data->group);
 		}
 
