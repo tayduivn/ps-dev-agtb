@@ -529,6 +529,9 @@ class IBMDB2Manager  extends DBManager
 
 		if ($persistConnection) {
 			$this->database = db2_pconnect($dsn, '', '', $configOptions['db_options']);
+			if (!$this->database) {
+				$this->log->fatal(__CLASS__ . ": Persistent connection specified, but failed. Error: " . db2_conn_error() . ": " . db2_conn_errormsg());
+			}
 		}
 
 		if (!$this->database) {
@@ -538,13 +541,16 @@ class IBMDB2Manager  extends DBManager
 					. "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false "
 					. "in your config.php file</b>";
 			}
+			if (!$this->database) {
+				$this->log->fatal(__CLASS__ . ": Could not connect to Database with non-persistent connection. Error " . db2_conn_error() . ": " . db2_conn_errormsg());
+			}
 		}
 
 		// Skipping check for statement errors as there is a bug in the DB2 driver
 		// http://pecl.php.net/bugs/bug.php?id=22854
 		// TODO take this skip out when the DB2 bug is fixed
 		$this->ignoreErrors = true;
-		if(!$this->checkError('Could Not Connect:', $dieOnError))
+		if(!$this->checkError('Could Not Connect:', $dieOnError) && $this->database != false)
 		{
 			$this->log->info("connected to db");
 
@@ -556,7 +562,7 @@ class IBMDB2Manager  extends DBManager
 		}
 		$this->ignoreErrors = false;
 		$this->log->info("Connect:".$this->database);
-		return true;
+		return !empty($this->database);
 	}
 
     protected $date_formats = array(
