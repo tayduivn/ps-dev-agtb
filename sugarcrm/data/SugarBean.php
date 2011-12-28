@@ -688,7 +688,7 @@ class SugarBean
         foreach($this->field_defs as $field=>$value){
             if((isset($value['default']) || !empty($value['display_default'])) && ($force || empty($this->$field))){
                 $type = $value['type'];
-                
+
                 switch($type){
                     case 'date':
                         if(!empty($value['display_default'])){
@@ -2503,7 +2503,7 @@ function save_relationship_changes($is_update, $exclude=array())
     * @param int $row_offset Optaional,default 0, starting row number
     * @param init $limit Optional, default -1
     * @param int $max Optional, default -1
-    * @param boolean $show_deleted Optioanl, default 0, if set to 1 system will show deleted records.
+    * @param boolean $show_deleted Optional, default 0, if set to 1 system will show deleted records.
     * @return array Fetched data.
     *
     * Internal function, do not override.
