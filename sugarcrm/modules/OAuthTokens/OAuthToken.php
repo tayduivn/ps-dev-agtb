@@ -260,7 +260,7 @@ class OAuthToken extends SugarBean
 	public static function deleteByConsumer($consumer_id)
 	{
 	   global $db;
-	   $db->query("DELETE FROM {$this->table_name} WHERE consumer='".$db->quote($consumer_id) ."'");
+	   $db->query("DELETE FROM oauth_tokens WHERE consumer='".$db->quote($consumer_id) ."'");
 	}
 
 	/**
@@ -270,7 +270,7 @@ class OAuthToken extends SugarBean
 	public static function deleteByUser($user_id)
 	{
 	   global $db;
-	   $db->query("DELETE FROM {$this->table_name} WHERE assigned_user_id='".$db->quote($user_id) ."'");
+	   $db->query("DELETE FROM oauth_tokens WHERE assigned_user_id='".$db->quote($user_id) ."'");
 	}
 
 
