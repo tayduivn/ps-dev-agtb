@@ -241,6 +241,7 @@ class SugarSNIP
 
                 // change snip user's password for security purposes
                 $user = $this->getSnipUser();
+                $token = $this->deleteSnipTokens($user);
                 $user->user_hash = strtolower(md5(time().mt_rand()));
                 $user->save();
             }
@@ -409,6 +410,19 @@ class SugarSNIP
         $token = OAuthToken::createAuthorized($consumer, $user);
         $user->authenticate_id = $token->token;
         $user->save();
+    }
+
+    /**
+     * Create oauth token for the SNIP user
+     * @param User $user
+     */
+    protected function deleteSnipTokens($user)
+    {
+        $consumer = $this->getSnipConsumer();
+        if(!empty($consumer)) {
+            OAuthToken::deleteByConsumer($consumer->id);
+        }
+        OAuthToken::deleteByUser($user->id);
     }
 
     /**

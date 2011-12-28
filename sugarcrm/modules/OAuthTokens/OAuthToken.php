@@ -243,10 +243,37 @@ class OAuthToken extends SugarBean
 	    return Zend_Oauth_Provider::OK;
 	}
 
+	/**
+	 * Delete token by ID
+	 * @param string id
+	 * @see SugarBean::mark_deleted($id)
+	 */
 	public function mark_deleted($id)
 	{
 	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
 	}
+
+	/**
+	 * Delete tokens by consumer ID
+	 * @param string $user
+	 */
+	public static function deleteByConsumer($consumer_id)
+	{
+	   global $db;
+	   $db->query("DELETE FROM {$this->table_name} WHERE consumer='".$db->quote($consumer_id) ."'");
+	}
+
+	/**
+	 * Delete tokens by user ID
+	 * @param string $user
+	 */
+	public static function deleteByUser($user_id)
+	{
+	   global $db;
+	   $db->query("DELETE FROM {$this->table_name} WHERE assigned_user_id='".$db->quote($user_id) ."'");
+	}
+
+
 }
 
 function displayDateFromTs($focus, $field, $value, $view='ListView')
