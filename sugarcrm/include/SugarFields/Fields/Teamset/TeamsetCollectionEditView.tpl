@@ -133,7 +133,7 @@ and push it outside the screen.
                 {foreach from=$values.secondaries item=secondary_field}
                 var temp_array = new Array();
                 temp_array['name'] = '{$secondary_field.name}';
-
+	  			// Bug 48166 - Replace HTML chars when putting the value in a text box
    			 	temp_array['name'] = replaceHTMLChars(temp_array['name']);
    			 	
                 temp_array['id'] = '{$secondary_field.id}';
