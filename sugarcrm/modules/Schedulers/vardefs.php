@@ -84,8 +84,8 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'len' => '36',
 			'reportable' => true,
 		),
-		'modified_user_id_link' => array (
-			'name' => 'modified_user_id_link',
+		'modified_user_link' => array (
+			'name' => 'modified_user_link',
 			'type' => 'link',
 			'relationship' => 'schedulers_modified_user_id_rel',
 			'vname' => 'LBL_MODIFIED_BY_USER',
@@ -93,7 +93,7 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'module' => 'Users',
 			'bean_name' => 'User',
 			'source' => 'non-db',
-		),
+		),        
 		'name' => array (
 			'name' => 'name',
 			'vname' => 'LBL_NAME',
@@ -217,7 +217,7 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'rhs_module'		=> 'Schedulers',
 			'rhs_table'			=> 'schedulers',
 			'rhs_key'			=> 'modified_user_id',
-			'relationship_type'	=> 'one-to-one'
+			'relationship_type'	=> 'one-to-many'
 		),
 		'schedulers_jobs_rel' => array(
 			'lhs_module'					=> 'Schedulers',
