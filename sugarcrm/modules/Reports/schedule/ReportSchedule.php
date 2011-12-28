@@ -101,10 +101,14 @@ function getNextRunDate($date_start,$interval)
 	$time = time();
 
     $date_start = $timedate->fromDb($date_start)->ts;
-    // bug #44555: Start Dates are not Respected for Scheduled Reports
-    while($date_start <= $time)
+
+    if($interval > 0)
     {
-        $date_start += $interval;
+        // bug #44555: Start Dates are not Respected for Scheduled Reports
+        while($date_start <= $time)
+        {
+            $date_start += $interval;
+        }
     }
 
     return $timedate->fromTimestamp($date_start)->asDb();
