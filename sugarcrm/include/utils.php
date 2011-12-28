@@ -774,7 +774,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 			$query = "SELECT id, first_name, last_name, user_name from users WHERE 1=1".$portal_filter;
 		}
 		else {
-			$query = "SELECT id, first_name, last_name, user_name from users WHERE status='$status'".$portal_fitler;
+			$query = "SELECT id, first_name, last_name, user_name from users WHERE status='$status'".$portal_filter;
 		}
 
 		if (!empty($user_name_filter)) {
