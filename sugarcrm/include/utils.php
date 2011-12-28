@@ -738,33 +738,50 @@ function get_user_name($id) {
 
 
 //TODO Update to use global cache
-function get_user_array($add_blank=true, $status="Active", $assigned_user="", $use_real_name=false, $user_name_begins = null, $is_group=' AND portal_only=0 ', $from_cache = true) {
+/**
+ * get_user_array
+ *
+ * This is a helper function to return an Array of users depending on the parameters passed into the function.
+ * This function uses the get_register_value function by default to use a caching layer where supported.
+ *
+ * @param bool $add_blank Boolean value to add a blank entry to the array results, true by default
+ * @param string $status String value indicating the status to filter users by, "Active" by default
+ * @param string $user_id String value to specify a particular user id value (searches the id column of users table), blank by default
+ * @param bool $use_real_name Boolean value indicating whether or not results should include the full name or just user_name, false by default
+ * @param String $user_name_filter String value indicating the user_name filter (searches the user_name column of users table) to optionally search with, blank by default
+ * @param string $portal_filter String query filter for portal users (defaults to searching non-portal users), change to blank if you wish to search for all users including portal users
+ * @param bool $from_cache Boolean value indicating whether or not to use the get_register_value function for caching, true by default
+ * @return array Array of users matching the filter criteria that may be from cache (if similar search was previously run)
+ */
+function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true) {
 	global $locale;
 	global $sugar_config;
 
 	if(empty($locale)) {
-
 		$locale = new Localization();
 	}
-	if($from_cache)
-		$user_array = get_register_value('user_array', $add_blank. $status . $assigned_user);
+
+	if($from_cache) {
+        $key_name = $add_blank. $status . $user_id;
+		$user_array = get_register_value('user_array', $key_name);
+    }
 
 	if(empty($user_array)) {
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
 		// Including deleted users for now.
 		if (empty($status)) {
-			$query = "SELECT id, first_name, last_name, user_name from users WHERE 1=1".$is_group;
+			$query = "SELECT id, first_name, last_name, user_name from users WHERE 1=1".$portal_filter;
 		}
 		else {
-			$query = "SELECT id, first_name, last_name, user_name from users WHERE status='$status'".$is_group;
+			$query = "SELECT id, first_name, last_name, user_name from users WHERE status='$status'".$portal_fitler;
 		}
 
-		if (!empty($user_name_begins)) {
-			$query .= " AND user_name LIKE '$user_name_begins%' ";
+		if (!empty($user_name_filter)) {
+			$query .= " AND user_name LIKE '$user_name_filter%' ";
 		}
-		if (!empty($assigned_user)) {
-			$query .= " OR id='$assigned_user'";
+		if (!empty($user_id)) {
+			$query .= " OR id='{$user_id}'";
 		}
 		$query = $query.' ORDER BY user_name ASC';
 		$GLOBALS['log']->debug("get_user_array query: $query");
@@ -790,7 +807,9 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
 
 		$user_array = $temp_result;
 		if($from_cache)
-			set_register_value('user_array', $add_blank. $status . $assigned_user, $temp_result);
+        {
+			set_register_value('user_array', $key_name, $temp_result);
+        }
 	}
 
 
