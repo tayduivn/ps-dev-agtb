@@ -1108,9 +1108,13 @@ SUGAR.util.DateUtils = {
 			var c = format.charAt(i);
 			switch (c) {
                 case 'm':
-                    out += date.getMonth() + 1; break;
+                    var m= date.getMonth() + 1; 
+                    out += m < 10 ? "0" + m : m;
+                    break;
                 case 'd':
-                    out += date.getDate(); break;
+                    var d = date.getDate();
+                    out += d < 10 ? "0" + d : d;
+                    break;
                 case 'Y':
                     out += date.getFullYear(); break;
 				case 'H':

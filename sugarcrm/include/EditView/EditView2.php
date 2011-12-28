@@ -670,7 +670,7 @@ class EditView
         }
         else
         {
-           $this->th->ss->assign("PORTABL_ENABLED", false);
+           $this->th->ss->assign("PORTAL_ENABLED", false);
         }
         //END SUGARCRM flav=pro ONLY
 
