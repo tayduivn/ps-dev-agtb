@@ -562,7 +562,7 @@ class IBMDB2Manager  extends DBManager
 		}
 		$this->ignoreErrors = false;
 		$this->log->info("Connect:".$this->database);
-		return $this->database == false ? false : true;
+		return !empty($this->database);
 	}
 
     protected $date_formats = array(
