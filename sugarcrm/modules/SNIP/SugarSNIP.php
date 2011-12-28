@@ -373,7 +373,7 @@ class SugarSNIP
         if(empty($consumer)) {
             $consumer = new OAuthKey();
             $consumer->c_key = self::OAUTH_KEY;
-            $consumer->c_secret = Zend_Oauth_Provider::generateToken(16);
+            $consumer->c_secret = bin2hex(Zend_Oauth_Provider::generateToken(16));
             $consumer->name = self::OAUTH_KEY;
             $consumer->description = translate('LBL_SNIP_KEY_DESC', 'SNIP');
             $consumer->save();
@@ -426,7 +426,7 @@ class SugarSNIP
         $user->status='Reserved';
         $user->receive_notifications = 0;
         $user->is_admin = 0;
-        $user->user_hash = '';
+        $user->user_hash = md5(uniqid().microtime().mt_rand());
         $user->default_team = '1';
         $user->created_by = '1';
         $user->external_auth_only = 1;
