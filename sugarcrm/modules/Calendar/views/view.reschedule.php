@@ -55,8 +55,8 @@ class CalendarViewReschedule extends SugarView {
 		
 		$date_field = "date_start";
 		if($_REQUEST['current_module'] == "Tasks")
-			$date_field = "date_due";
-		
+			$date_field = "date_due";			
+
 		if($_REQUEST['calendar_style'] == "basic"){
 			list($tmp,$time) = explode(" ",$bean->$date_field);			
 			list($date,$tmp) = explode(" ",$_REQUEST['datetime']);

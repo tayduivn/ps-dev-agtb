@@ -137,10 +137,6 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Duration (hours)',
     'importable' => 'required',
     'required' => true,
-    'validation' => array (
-        'type' => 'callback',
-        'callback' => 'isValidDuration'
-    )
   ),
   'duration_minutes' =>
   array (
@@ -148,7 +144,6 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_DURATION_MINUTES',
     'type' => 'int',
     'group'=>'duration_hours',
-    'function' => array('name'=>'getDurationMinutesOptions', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php'),
     'len' => '2',
     'comment' => 'Duration (minutes)'
   ),
@@ -163,13 +158,15 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'required' => true,
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
+    'validation' => array('type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false),
   ),
 
   'date_end' =>
   array (
     'name' => 'date_end',
     'vname' => 'LBL_DATE_END',
-    'type' => 'datetime',
+    'type' => 'datetimecombo',
+    'dbType' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date meeting ends',
     'enable_range_search' => true,
@@ -445,6 +442,18 @@ $dictionary['Meeting'] = array('table' => 'meetings',
 		'massupdate' => false,
 		'reportable' => false,
 		'studio' => 'false',
+	),
+	'duration' =>
+	array(
+		'name' => 'duration',
+		'vname' => 'LBL_DURATION',
+		'type' => 'enum',
+		'options' => 'duration_dom',
+		'source' => 'non-db',
+		'comment' => 'Duration handler dropdown',
+		'massupdate' => false,
+		'reportable' => false,
+		'importable' => false,
 	),
 ),
  'relationships' => array (

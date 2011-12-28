@@ -287,6 +287,8 @@
 				CAL.disable_creating = false;						
 		});
 		
+		CAL.clear_additional_details(params.id);	
+		
 		return el;		
 	}
 	
@@ -503,8 +505,9 @@
 							ajaxStatus.hideStatus();
 							return;	
 						}	
-						if(res.access == 'yes'){							
+						if(res.access == 'yes'){						
 							CAL.update_vcal();
+							CAL.clear_additional_details(el.getAttribute("record"));
 							CAL.arrange_column(slot.parentNode);
 							CAL.update_dd.fire();
 							ajaxStatus.hideStatus();
@@ -1668,7 +1671,14 @@
 		var module_name = obj.getAttribute("module_name");		
 		SUGAR.util.getAdditionalDetails(module_name, record, '', true);
 		return;
-	}		
+	}
+	
+	CAL.clear_additional_details = function (id){
+		if(typeof SUGAR.util.additionalDetailsCache[id] != "undefined")
+			SUGAR.util.additionalDetailsCache[id] = undefined;		
+		if(typeof SUGAR.util.additionalDetailsCalls[id] != "undefined")
+			SUGAR.util.additionalDetailsCalls[id] = undefined;		
+	}			
 	
 	CAL.toggle_shared_edit = function (id){
 		if(document.getElementById(id).style.display == 'none'){
@@ -1692,7 +1702,7 @@
 		window.location.href = "index.php?module=Calendar&view="+CAL.view+"&day="+date_arr[1]+"&month="+date_arr[0]+"&year="+date_arr[2];	
 	}
 	
-	CAL.check_forms = function (){
+	CAL.check_forms = function (){	
 		if(!(check_form('CalendarEditView') && cal_isValidDuration())){
 			CAL.select_tab("cal-tab-1");
 			return false;

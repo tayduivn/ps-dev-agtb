@@ -138,6 +138,10 @@ class Meeting extends SugarBean {
         	if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
 	        {
 	    	    $td = $timedate->fromDb($this->date_start);
+	    	    if(!$td){
+	    	    		$this->date_start = $timedate->to_db($this->date_start);
+	    	    		$td = $timedate->fromDb($this->date_start);
+	    	    }
 	    	    if($td)
 	    	    {
 		        	$this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
@@ -390,6 +394,11 @@ class Meeting extends SugarBean {
 		}
 		if (is_null($this->duration_minutes))
 			$this->duration_minutes = "1";
+		
+		if(empty($this->id) && !empty($_REQUEST['date_start'])){
+			$this->date_start = $_REQUEST['date_start'];
+		}
+		$this->date_end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start)->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")->format($GLOBALS['timedate']->get_date_time_format());
 
 		global $app_list_strings;
 		$parent_types = $app_list_strings['record_type_display'];

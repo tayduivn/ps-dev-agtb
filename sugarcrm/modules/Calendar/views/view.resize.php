@@ -49,9 +49,9 @@ class CalendarViewResize extends SugarView {
 		if(!$bean->ACLAccess('Save')){
 			die;	
 		}
-			
+		
 		require_once('include/formbase.php');
-		$bean = populateFromPost("",$bean);				
+		$bean = populateFromPost("",$bean);
 		$bean->save();
 			
 		$json_arr = array(
