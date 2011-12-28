@@ -17,7 +17,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
-
 function set_return_teams_for_editview(popup_reply_data) {
 	var form_name = popup_reply_data.form_name;
 	var field_name = popup_reply_data.field_name;
@@ -32,9 +31,6 @@ function set_return_teams_for_editview(popup_reply_data) {
 		 if(teams[team_id]['team_id']) {
 			 var temp_array = []; 
 			 temp_array['name'] = teams[team_id]['team_name'];
-
-			 temp_array['name'] = replaceHTMLChars(temp_array['name']);
-			 
 	         temp_array['id'] = teams[team_id]['team_id'];
 	         if(isFirstFieldEmpty && index == 0){
 	         	collection[form_name + '_' + field_name].replace_first(temp_array);

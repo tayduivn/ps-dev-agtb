@@ -133,9 +133,6 @@ and push it outside the screen.
                 {foreach from=$values.secondaries item=secondary_field}
                 var temp_array = new Array();
                 temp_array['name'] = '{$secondary_field.name}';
-	  			// Bug 48166 - Replace HTML chars when putting the value in a text box
-   			 	temp_array['name'] = replaceHTMLChars(temp_array['name']);
-   			 	
                 temp_array['id'] = '{$secondary_field.id}';
                 collection[field_id].secondaries_values.push(temp_array);
                 {/foreach}
@@ -146,7 +143,7 @@ and push it outside the screen.
     {rdelim});
 {rdelim})();
  	document.getElementById("id_{$displayParams.formName}_{$idname}_collection_0").value = "{$values.primary.id}";
- 	document.getElementById("{$displayParams.formName}_{$idname}_collection_0").value = replaceHTMLChars("{$values.primary.name}");
+ 	document.getElementById("{$displayParams.formName}_{$idname}_collection_0").value = "{$values.primary.name}";
     {if isset($displayParams.arrow) && $displayParams.arrow == 'show'}
         setTimeout('call_js_more(collection_field)',1000);
     {else}

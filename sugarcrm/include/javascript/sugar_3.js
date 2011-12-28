@@ -171,7 +171,7 @@ function addAlert(type, name,subtitle, description,time, redirect) {
 	alertList[addIndex]['name'] = name;
 	alertList[addIndex]['type'] = type;
 	alertList[addIndex]['subtitle'] = subtitle;
-	alertList[addIndex]['description'] = replaceHTMLChars(description.replace(/<br>/gi, "\n"));
+	alertList[addIndex]['description'] = description.replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 	alertList[addIndex]['time'] = time;
 	alertList[addIndex]['done'] = 0;
 	alertList[addIndex]['redirect'] = redirect;
@@ -4061,11 +4061,6 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
  */
 var from_popup_return  = false;
 
-//Function replaces special HTML chars for usage in text boxes 
-function replaceHTMLChars(value) {
-	return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
-}
-
 function set_return_basic(popup_reply_data,filter)
 {
 	var form_name = popup_reply_data.form_name;
@@ -4078,7 +4073,7 @@ function set_return_basic(popup_reply_data,filter)
 		}
 		else if(the_key.match(filter))
 		{
-			var displayValue=replaceHTMLChars(name_to_value_array[the_key]);
+			var displayValue=name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');;
 			// begin andopes change: support for enum fields (SELECT)
 			if(window.document.forms[form_name] && window.document.forms[form_name].elements[the_key]) {
 				if(window.document.forms[form_name].elements[the_key].tagName == 'SELECT') {
@@ -4118,7 +4113,7 @@ function set_return(popup_reply_data)
 			}
 			else
 			{
-				var displayValue=replaceHTMLChars(name_to_value_array[the_key]);
+				var displayValue=name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 				if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account/)) {
                     var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'').replace(/<\/?[^>]+(>|$)/g, "");
 					label_str += data_label + ' \n';
