@@ -44,6 +44,8 @@
 	CAL.basic = {};
 	CAL.basic.items = {};
 	CAL.update_dd = new YAHOO.util.CustomEvent("update_dd");
+	CAL.dd_registry = new Object();
+	CAL.resize_registry = new Object();
 	
 	CAL.dom = YAHOO.util.Dom;
 	CAL.get = YAHOO.util.Dom.get;
@@ -311,7 +313,9 @@
 			id_prefix = "t_";
 		}		
 	
-		var dd = new YAHOO.util.DDCAL(id,prefix+"cal",{isTarget: false,cont: border}); 									
+		var dd = new YAHOO.util.DDCAL(id,prefix+"cal",{isTarget: false,cont: border});
+		
+		CAL.dd_registry[id] = dd; 									
 											
 		dd.onInvalidDrop = function(e){ 
 			if(type == "basic"){
@@ -327,8 +331,7 @@
 			CAL.disable_creating = false;						 
 		}					
 						
-		dd.onMouseDown = function(e){
-			//this.initConstraints();		
+		dd.onMouseDown = function(e){		
 			YAHOO.util.DDM.mode = YAHOO.util.DDM.POINT;
 			YAHOO.util.DDM.clickPixelThresh = 20;
 		}
@@ -454,8 +457,10 @@
 		var resize = new YAHOO.util.Resize(id,{
 			handles: ['b'],
 			maxHeight : max_height
-		});			
-	
+		});
+		
+		CAL.resize_registry[id] = resize;
+		
 		resize.on('startResize', function(e){
 			var el = CAL.get(id);
 			if(el){
@@ -527,6 +532,16 @@
 				YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));											
 			}						
 		});	
+	}
+	
+	CAL.destroy_ui = function (id){
+		if(CAL.items_resizable && typeof CAL.resize_registry[id] != "undefined"){
+			CAL.resize_registry[id].destroy();
+			delete CAL.resize_registry[id];
+		}
+		if(CAL.items_draggable && typeof CAL.dd_registry[id] != "undefined")
+			CAL.dd_registry[id].unreg();
+			delete CAL.dd_registry[id];
 	}
 	
 	CAL.basic.remove = function (item){		
@@ -706,6 +721,7 @@
 			var e = CAL.get(item.record + id_suffix);
 			if(e){
 				e.parentNode.removeChild(e);
+				CAL.destroy_ui(item.record + id_suffix);
 			}
 			
 			CAL.basic.remove(item);
@@ -1280,13 +1296,16 @@
 					var record = nodes[i].getAttribute("record");
 					if(!CAL.contains(arr,record))
 						arr.push(record);
-					nodes[i].parentNode.removeChild(nodes[i]);			
+					nodes[i].parentNode.removeChild(nodes[i]);
+					CAL.destroy_ui(nodes[i].id);			
 				});
 			}
 								
 			CAL.each(CAL.shared_users,function(user_id,v){				
-				if(e = CAL.get(record_id + '____' + v))	
-					e.parentNode.removeChild(e);				
+				if(e = CAL.get(record_id + '____' + v)){
+					CAL.destroy_ui(e.id);
+					e.parentNode.removeChild(e);
+				}				
 				CAL.basic.remove({
 					record: record_id,
 					user_id: user_id 
@@ -1366,8 +1385,8 @@
 				if(u = CAL.get(box_id)){
 					if(s = CAL.get(slot_id)){
 						s.appendChild(u);
-						//CAL.arrange_slot(slot_id);
-						//CAL.arrange_slot(ex_slot_id);						
+						
+						CAL.destroy_ui(box_id);			
 						
 						CAL.arrange_column(document.getElementById(slot_id).parentNode);
 						CAL.arrange_column(document.getElementById(ex_slot_id).parentNode);
@@ -1622,8 +1641,10 @@
 												if(CAL.view == 'shared'){	
 													CAL.remove_shared(CAL.deleted_id);
 												}else{														
-													if(e = CAL.get(CAL.deleted_id))
+													if(e = CAL.get(CAL.deleted_id)){
 														e.parentNode.removeChild(e);
+														CAL.destroy_ui(CAL.deleted_id);
+													}
 													
 													CAL.basic.remove({
 														record: CAL.deleted_id,
@@ -1637,7 +1658,8 @@
 																record: nodes[i].getAttribute("record"),
 																user_id: CAL.current_user_id
 															});
-															nodes[i].parentNode.removeChild(nodes[i]);			
+															nodes[i].parentNode.removeChild(nodes[i]);
+															CAL.destroy_ui(nodes[i].id);			
 														});
 													}
 												}
