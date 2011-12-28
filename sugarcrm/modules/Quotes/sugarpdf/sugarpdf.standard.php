@@ -373,7 +373,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
      */
     function buildFileName(){
         global $mod_strings;
-        $fileName = html_entity_decode($this->bean->shipping_account_name, ENT_QUOTES, 'UTF-8');//bug #8584
+        $fileName = str_replace(array('/', '\\'), '_', html_entity_decode($this->bean->shipping_account_name, ENT_QUOTES, 'UTF-8'));//bug #8584
 
         if (!empty($this->bean->quote_num)) {
             $fileName .= "_{$this->bean->quote_num}";
