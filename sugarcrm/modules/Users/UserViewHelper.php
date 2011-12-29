@@ -451,10 +451,11 @@ class UserViewHelper {
         //BEGIN SUGARCRM flav=ent ONLY
         $oc_status = $this->bean->getPreference('OfflineClientStatus');
         $this->ss->assign('OC_STATUS', get_select_options_with_id($app_list_strings['oc_status_dom'], $oc_status));
+
         if(!empty($oc_status)) {
             $this->ss->assign('OC_STATUS_DISPLAY', $app_list_strings['oc_status_dom'][$oc_status]);
         } else {
-            $this->ss->assign("OC_STATUS_DISPLAY", $app_strings['LBL_OC_DEFAULT_STATUS']);
+            $this->ss->assign("OC_STATUS_DISPLAY", '');
         }
         //END SUGARCRM flav=ent ONLY
         //END SUGARCRM flav!=dce ONLY
@@ -474,7 +475,8 @@ class UserViewHelper {
         }else{
             if(!empty($GLOBALS['system_config']->settings['system_ldap_enabled'])){
                 $this->ss->assign('EXTERNAL_AUTH_CLASS_1', translate('LBL_LDAP','Users'));
-                $this->ss->assign('EXTERNAL_AUTH_CLASS', translate('LBL_LDAP_AUTHENTICATION','Users'));
+                $this->ss
+                        ->assign('EXTERNAL_AUTH_CLASS', translate('LBL_LDAP_AUTHENTICATION','Users'));
                 $authclass = 'LDAPAuthenticate';
             }
         }
