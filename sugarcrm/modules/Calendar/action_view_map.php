@@ -31,6 +31,7 @@
 
 $action_view_map['saveactivity'] = 'saveactivity';
 $action_view_map['reschedule'] = 'reschedule';
+$action_view_map['resize'] = 'resize';
 $action_view_map['remove'] = 'remove';
 $action_view_map['getgr'] = 'getgr';
 $action_view_map['getgrusers'] = 'getgrusers';

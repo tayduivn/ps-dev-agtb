@@ -27,6 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
+
 class CalendarDisplay {	
 
 	/** 
@@ -52,8 +54,8 @@ class CalendarDisplay {
 	 * @param Calendar $cal
 	 * @param string $dashlet_id for dashlet mode 
 	 */
-	function __construct(&$cal,$dashlet_id = ""){
-		$this->cal = &$cal;
+	function __construct(Calendar $cal,$dashlet_id = ""){
+		$this->cal = $cal;
 		$this->dashlet_id = $dashlet_id;
 	}	
 	
@@ -72,21 +74,40 @@ class CalendarDisplay {
 		$ss->assign('MOD',$GLOBALS['cal_strings']);
 
 		$ss->assign('view',$cal->view);
+		$ss->assign('style',$cal->style);
 		$ss->assign('t_step',$cal->time_step);
 		$ss->assign('current_user_id',$GLOBALS['current_user']->id);
 		$ss->assign('current_user_name',$GLOBALS['current_user']->name);
-		$ss->assign('time_format',$GLOBALS['timedate']->get_user_time_format());
-		$ss->assign('items_draggable',SugarConfig::getInstance()->get('calendar.items_draggable',true));		
-		$ss->assign('mouseover_expand',SugarConfig::getInstance()->get('calendar.mouseover_expand',true));
+		$ss->assign('time_format',$GLOBALS['timedate']->get_user_time_format());		
+		$ss->assign('enable_repeat',$this->cal->enable_repeat);
+		$ss->assign('items_draggable',SugarConfig::getInstance()->get('calendar.items_draggable',true));
+		$ss->assign('items_resizable',SugarConfig::getInstance()->get('calendar.items_resizable',true));		
 		$ss->assign('item_text','name');
 		$ss->assign('cells_per_day',$cal->cells_per_day);
-		$ss->assign('img_edit_inline',SugarThemeRegistry::current()->getImageURL('edit_inline.gif',false));
-		$ss->assign('img_view_inline',SugarThemeRegistry::current()->getImageURL('view_inline.gif',false));
-		$ss->assign('img_close',SugarThemeRegistry::current()->getImageURL('close.gif',false));		
+	
 		$ss->assign('dashlet',$cal->dashlet);
+		$ss->assign('grid_start_ts',intval($cal->grid_start_ts));		
 		
-		$ss->assign('grid_start_ts',$cal->grid_start_ts);
-		$ss->assign('celcount',$cal->celcount);		
+		$ss->assign('CALENDAR_FORMAT',$GLOBALS['timedate']->get_cal_date_format());
+		$ss->assign('CALENDAR_FDOW',$GLOBALS['current_user']->get_first_day_of_week());
+		
+		
+		if($cal->style == "basic"){
+			switch($cal->view){
+				case "day":
+					$height = 250; break;
+				case "week":
+					$height = 250; break;
+				case "shared":
+					$height = 100; break;
+				default:
+					$height = 80; break;					
+			}
+		}else{		
+			$height = 20;
+		}
+		$ss->assign('basic_min_height',$height);
+			
 		
 		if(count($cal->shared_ids)){
 			$ss->assign('shared_ids',$cal->shared_ids);
@@ -97,8 +118,9 @@ class CalendarDisplay {
 		$ss->assign('scroll_slot',$this->cal->scroll_slot);	
 		
 		$ss->assign('editview_width',SugarConfig::getInstance()->get('calendar.editview_width',800));
-		$ss->assign('editview_height',SugarConfig::getInstance()->get('calendar.editview_height',600));	
-		$ss->assign('a_str',$cal->get_activities_js());
+		$ss->assign('editview_height',SugarConfig::getInstance()->get('calendar.editview_height',600));
+			
+		$ss->assign('a_str',json_encode($cal->items));
 
 		$ss->assign('sugar_body_only',(isset($_REQUEST['to_pdf']) && $_REQUEST['to_pdf'] || isset($_REQUEST['sugar_body_only']) && $_REQUEST['sugar_body_only']));
 		require_once('include/json_config.php');
@@ -123,11 +145,35 @@ class CalendarDisplay {
 		$main = "custom/modules/Calendar/tpls/main.tpl";
 		if(!file_exists($main))
 			$main = "modules/Calendar/tpls/main.tpl";
+			
 		$form_tpl = "custom/modules/Calendar/tpls/form.tpl";
 		if(!file_exists($form_tpl))
-			$form_tpl = "modules/Calendar/tpls/form.tpl";			
+			$form_tpl = "modules/Calendar/tpls/form.tpl";
+		$ss->assign("form",$form_tpl);	
+		
+		if($this->cal->enable_repeat){
+			$repeat_tpl = "custom/modules/Calendar/tpls/repeat.tpl";
+			if(!file_exists($repeat_tpl))
+				$repeat_tpl = "modules/Calendar/tpls/repeat.tpl";
+			$ss->assign("repeat",$repeat_tpl);
+			
+			$repeat_intevals = array();
+			for($i = 1; $i <= 30; $i++)
+				$repeat_intevals[$i] = $i;
+			$ss->assign("repeat_intevals",$repeat_intevals);
+			
+			
+			$fdow = $GLOBALS['current_user']->get_first_day_of_week();
+			$dow = array();			
+			for($i = $fdow; $i < $fdow + 7; $i++){
+				$day_index = $i % 7;				
+				$dow[] = array("index" => $day_index , "label" => $GLOBALS['app_list_strings']['dom_cal_day_short'][$day_index + 1]);
+			}
+			$ss->assign("dow",$dow);		
+
+		}			
 	
-		$ss->assign("form",$form_tpl);
+		
 			
 		echo $ss->fetch($main);	
 		
@@ -135,13 +181,13 @@ class CalendarDisplay {
 		$grid = new CalendarGrid($cal);
 		echo $grid->display();
 		// end grid	
-	}
+	}	
 	
 	/**
 	 * load settings popup template
 	 */	
-	protected function load_settings_template(&$ss){	
-		
+	protected function load_settings_template(&$ss){
+	
 		list($d_start_hour,$d_start_min) =  explode(":",$this->cal->day_start_time);		
 		list($d_end_hour,$d_end_min) =  explode(":",$this->cal->day_end_time);	
 
@@ -215,20 +261,25 @@ class CalendarDisplay {
 		$TIME_START_HOUR_OPTIONS = get_select_options_with_id($hours_arr, $d_start_hour);
 		$TIME_START_MINUTES_OPTIONS = get_select_options_with_id(array('0'=>'00','15'=>'15','30'=>'30','45'=>'45'), $d_start_min);
 		$TIME_END_HOUR_OPTIONS = get_select_options_with_id($hours_arr, $d_end_hour);
-		$TIME_END_MINUTES_OPTIONS = get_select_options_with_id(array('0'=>'00','15'=>'15','30'=>'30','45'=>'45'), $d_end_min);
+		$TIME_END_MINUTES_OPTIONS = get_select_options_with_id(array('0'=>'00','15'=>'15','30'=>'30','45'=>'45'), $d_end_min);	
+			
+		$style = $GLOBALS['current_user']->getPreference('calendar_style');
+			if(is_null($style))
+				$style = SugarConfig::getInstance()->get('calendar.default_style','advanced');
 		
 		$ss->assign('day',$_REQUEST['day']);
 		$ss->assign('week',$_REQUEST['week']);
 		$ss->assign('month',$_REQUEST['month']);
-		$ss->assign('year',$_REQUEST['year']);
+		$ss->assign('year',$_REQUEST['year']);	
+		$ss->assign('settings_style',$style);
+		$ss->assign('show_calls',$this->cal->show_calls);
+		$ss->assign('show_tasks',$this->cal->show_tasks);
 		$ss->assign('TIME_START_HOUR_OPTIONS',$TIME_START_HOUR_OPTIONS);		
 		$ss->assign('TIME_START_MINUTES_OPTIONS',$TIME_START_MINUTES_OPTIONS);
 		$ss->assign('TIME_START_MERIDIEM',$TIME_START_MERIDIEM);
 		$ss->assign('TIME_END_HOUR_OPTIONS',$TIME_END_HOUR_OPTIONS);		
 		$ss->assign('TIME_END_MINUTES_OPTIONS',$TIME_END_MINUTES_OPTIONS);
 		$ss->assign('TIME_END_MERIDIEM',$TIME_END_MERIDIEM);
-		$ss->assign('show_calls',$this->cal->show_calls);
-		$ss->assign('show_tasks',$this->cal->show_tasks);
 	}
 	
 	/** 
@@ -348,7 +399,7 @@ class CalendarDisplay {
 
 	/**
 	 * display header
-	 * @param boolean $controls display ui contol elements 
+	 * @param boolean $controls display ui contol itmes 
 	 */
 	public function display_calendar_header($controls = true){
 		global $cal_strings;
@@ -364,7 +415,7 @@ class CalendarDisplay {
 			$tabs_params = array();		
 			foreach($tabs as $tab){ 
 				$tabs_params[$tab]['title'] = $cal_strings["LBL_".strtoupper($tab)];
-				$tabs_params[$tab]['id'] = $tab . "_tab";
+				$tabs_params[$tab]['id'] = $tab . "-tab";
 				$tabs_params[$tab]['link'] = "window.location.href='".ajaxLink("index.php?module=Calendar&action=index&view=". $tab . $this->cal->date_time->get_date_str())."'";
 			}		
 			$ss->assign('controls',$controls);

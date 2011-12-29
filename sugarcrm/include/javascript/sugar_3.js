@@ -3010,7 +3010,9 @@ SUGAR.util = function () {
 		/**
 		 * Retrieves additional details dynamically
 		 */
-		getAdditionalDetails: function(bean, id, spanId) {
+		getAdditionalDetails: function(bean, id, spanId, show_buttons) {
+			if(typeof show_buttons == "undefined")
+				show_buttons = false;				
 			go = function() {
 				oReturn = function(body, caption, width, theme) {
 					var _refx = 25-width;
@@ -3020,23 +3022,25 @@ SUGAR.util = function () {
 				success = function(data) {
 					eval(data.responseText);
 
-					SUGAR.util.additionalDetailsCache[spanId] = new Array();
-					SUGAR.util.additionalDetailsCache[spanId]['body'] = result['body'];
-					SUGAR.util.additionalDetailsCache[spanId]['caption'] = result['caption'];
-					SUGAR.util.additionalDetailsCache[spanId]['width'] = result['width'];
-					SUGAR.util.additionalDetailsCache[spanId]['theme'] = result['theme'];
+					SUGAR.util.additionalDetailsCache[id] = new Array();
+					SUGAR.util.additionalDetailsCache[id]['body'] = result['body'];
+					SUGAR.util.additionalDetailsCache[id]['caption'] = result['caption'];
+					SUGAR.util.additionalDetailsCache[id]['width'] = result['width'];
+					SUGAR.util.additionalDetailsCache[id]['theme'] = result['theme'];
 					ajaxStatus.hideStatus();
-					return oReturn(SUGAR.util.additionalDetailsCache[spanId]['body'], SUGAR.util.additionalDetailsCache[spanId]['caption'], SUGAR.util.additionalDetailsCache[spanId]['width'], SUGAR.util.additionalDetailsCache[spanId]['theme']);
+					return oReturn(SUGAR.util.additionalDetailsCache[id]['body'], SUGAR.util.additionalDetailsCache[id]['caption'], SUGAR.util.additionalDetailsCache[id]['width'], SUGAR.util.additionalDetailsCache[id]['theme']);
 				}
 
-				if(typeof SUGAR.util.additionalDetailsCache[spanId] != 'undefined')
-					return oReturn(SUGAR.util.additionalDetailsCache[spanId]['body'], SUGAR.util.additionalDetailsCache[spanId]['caption'], SUGAR.util.additionalDetailsCache[spanId]['width'], SUGAR.util.additionalDetailsCache[spanId]['theme']);
+				if(typeof SUGAR.util.additionalDetailsCache[id] != 'undefined')
+					return oReturn(SUGAR.util.additionalDetailsCache[id]['body'], SUGAR.util.additionalDetailsCache[id]['caption'], SUGAR.util.additionalDetailsCache[id]['width'], SUGAR.util.additionalDetailsCache[id]['theme']);
 
-				if(typeof SUGAR.util.additionalDetailsCalls[spanId] != 'undefined') // call already in progress
+				if(typeof SUGAR.util.additionalDetailsCalls[id] != 'undefined') // call already in progress
 					return;
 				ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 				url = 'index.php?to_pdf=1&module=Home&action=AdditionalDetailsRetrieve&bean=' + bean + '&id=' + id;
-				SUGAR.util.additionalDetailsCalls[spanId] = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});
+				if(show_buttons)
+					url += '&show_buttons=true';
+				SUGAR.util.additionalDetailsCalls[id] = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});
 
 				return false;
 			}
