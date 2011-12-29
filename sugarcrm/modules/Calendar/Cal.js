@@ -849,8 +849,7 @@
 	
 
 	CAL.open_edit_dialog = function (params){
-	
-					
+												
 						CAL.editDialog.show();		
 						
 						var nodes = CAL.query("#cal-tabs li a");
@@ -1166,10 +1165,12 @@
 		if(to_open && CAL.records_openable){
 			CAL.get("form_content").style.display = "none";
 		
-			CAL.get("btn-delete").setAttribute("disabled","disabled");
+			CAL.get("btn-delete").setAttribute("disabled","disabled");			
 			CAL.get("btn-apply").setAttribute("disabled","disabled");
 			CAL.get("btn-save").setAttribute("disabled","disabled");
-			CAL.get("btn-send-invites").setAttribute("disabled","disabled");		
+			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
+			// Reset display parameter, if the delete button was hidden 
+			CAL.get("btn-delete").style.display = "";		
 	
 			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;
 			
@@ -1498,6 +1499,7 @@
 			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;														
 			CAL.open_edit_dialog();
 			CAL.get("btn-delete").setAttribute("disabled","disabled");
+			CAL.get("btn-delete").style.display = "none";
 			
 			var module_name = CAL.get("current_module").value;
 			
@@ -1602,6 +1604,7 @@
 										
 										// If new data is added with Apply, show the Delete button
 										CAL.get("btn-delete").removeAttribute("disabled");
+										CAL.get("btn-delete").style.display = "";
 																				
 										ajaxStatus.hideStatus();											
 									}else{
@@ -1812,12 +1815,10 @@
 					YAHOO.util.Connect.asyncRequest('GET',url,callback,false);
 	}
 	
-	CAL.fit_grid = function(){
+	CAL.fit_grid = function(control_call){
 		
 		var day_width;
-		//var cal_width = document.getElementById("cal-grid").parentNode.parentNode.offsetWidth;		
 		var cal_width = document.getElementById("cal-width-helper").offsetWidth;
-		
 			
 		var left_width = 80;
 		if(CAL.style == "basic"){
@@ -1825,13 +1826,21 @@
 				left_width = 20;
 			}else
 				left_width = 60;		
-		}				
+		}						
 		
-		if(CAL.view == "day")
-			day_width = parseInt((cal_width - left_width));
-		else							
+		if(CAL.view == "day"){
+			day_width = parseInt((cal_width - left_width - 10));	
+			if(typeof control_call == "undefined" || !control_call){
+				setTimeout(function(){
+					CAL.fit_grid(true);
+					setTimeout(function(){
+						CAL.fit_grid(true);					
+					},100);					
+				},100);
+			}
+		}else{							
 			day_width = parseInt((cal_width - left_width) / 7);
-			
+		}			
 			
 		var nodes = CAL.query("#cal-grid div.col");
 		CAL.each(nodes, function(i,v){		

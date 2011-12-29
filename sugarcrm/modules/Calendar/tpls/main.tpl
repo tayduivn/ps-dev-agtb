@@ -239,11 +239,11 @@
 		</div>
 	</div>	
 	<div id="cal-edit-buttons" class="ft">
-		<button id="btn-save" class="button" type="button">{$MOD.LBL_SAVE_BUTTON}</button>&nbsp;
-		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>&nbsp;
-		<button id="btn-apply" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>&nbsp;
-		<button id="btn-send-invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>&nbsp;
-		<button id="btn-cancel" class="button" type="button" style="float: right;">{$MOD.LBL_CANCEL_BUTTON}</button>&nbsp;
+		<button id="btn-save" class="button" type="button">{$MOD.LBL_SAVE_BUTTON}</button>
+		<button id="btn-cancel" class="button" type="button">{$MOD.LBL_CANCEL_BUTTON}</button>
+		<button id="btn-apply" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>
+		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>		
+		<button id="btn-send-invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>
 	</div>
 </div>
 
