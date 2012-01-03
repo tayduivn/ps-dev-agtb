@@ -1419,19 +1419,23 @@ SE.composeLayout = {
 
         // query based on template, contact_id0,related_to
         //jchi 09/10/2008 refix #7743
-        if(json_objects['email_template_object']['fields']['subject'] != '' ) { // cn: bug 7743, don't stomp populated Subject Line
+        if(json_objects['email_template_object']['fields']['subject'] != '' )
+        {
+            // cn: bug 7743, don't stomp populated Subject Line
             document.getElementById('emailSubject' + idx).value = decodeURI(encodeURI(json_objects['email_template_object']['fields']['subject']));
         }
         var text = '';
-        if(json_objects['email_template_object']['fields']['text_only'] == 1){
+        if(json_objects['email_template_object']['fields']['text_only'] == 1)
+        {
         	text = "<p>" + decodeURI(encodeURI(json_objects['email_template_object']['fields']['body'])).replace(/<BR>/ig, '</p><p>').replace(/<br>/gi, "</p><p>").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"') + "</p>";
-        	document.getElementById("setEditor1").checked = true;
-        	SUGAR.email2.composeLayout.renderTinyMCEToolBar('1', 1);
+        	document.getElementById('setEditor' + idx).checked = true;
+        	SUGAR.email2.composeLayout.renderTinyMCEToolBar(idx, 1);
         }
-        else{
+        else
+        {
         	text = decodeURI(encodeURI(json_objects['email_template_object']['fields']['body_html'])).replace(/<BR>/ig, '\n').replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
-        	document.getElementById("setEditor1").checked = false;
-        	SUGAR.email2.composeLayout.renderTinyMCEToolBar('1', 0);
+        	document.getElementById('setEditor' + idx).checked = false;
+        	SUGAR.email2.composeLayout.renderTinyMCEToolBar(idx, 0);
         }
 
 
