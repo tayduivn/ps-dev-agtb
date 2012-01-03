@@ -2559,9 +2559,7 @@ function get_emails_by_assign_or_link($params)
     ));
     $rel_join = str_replace("{$bean->table_name}.id", "'{$bean->id}'", $rel_join);
     $return_array['select']='SELECT emails.id ';
-//    $return_array['from']='FROM emails ';
-//    $return_array['where']="WHERE emails.id IN ".
-    $return_array['from'] = " FROM emails ";
+    $return_array['from'] = "FROM emails ";
     $return_array['join'] = " INNER JOIN (".
         // directly assigned emails
         	"select eb.email_id FROM emails_beans eb where eb.bean_module = '{$bean->module_dir}' AND eb.bean_id = '{$bean->id}' AND eb.deleted=0 ".
