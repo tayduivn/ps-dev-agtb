@@ -1112,7 +1112,8 @@ return str_replace(' > ','_',
                         $id_column['type'] = 'id';
                         $id_column['table_key'] = $display_column['table_key'];
                         if (preg_match('/_cstm/', $display_column['table_alias']) > 0) {
-                            $id_column['table_alias'] = strtolower($this->module);
+                            // bug #49475
+                            $id_column['table_alias'] = $this->focus->table_name;
                         } else {
                             $id_column['table_alias'] = $display_column['table_alias'];
                         }
