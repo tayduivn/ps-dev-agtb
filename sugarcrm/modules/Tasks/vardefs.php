@@ -273,6 +273,7 @@ $dictionary['Task'] = array('table' => 'tasks',
 			'type' => 'link',
 			'relationship' => 'contact_tasks_parent',
 			'source' => 'non-db',
+            'reportable' => false
 	),
 )
 ,
