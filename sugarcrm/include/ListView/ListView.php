@@ -466,6 +466,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
             }
         }
+       
 		$button_count = 1;
 		$widget_contents = "";
         $first = true;

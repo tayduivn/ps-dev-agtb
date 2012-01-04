@@ -46,11 +46,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 	function displayList($layout_def)
 	{
 		global $app_strings;
-
-		if(empty(self::$edit_icon_html)) {
-		    self::$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif','');//setting alt to blank on purpose on subpanels for 508
-		}
-
+		
         $onclick ='';
 //BEGIN SUGARCRM flav=pro ONLY
 		$formname = $this->getFormName($layout_def);
