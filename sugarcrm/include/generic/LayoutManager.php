@@ -197,6 +197,14 @@ class LayoutManager
 					'return_type'=>'report',
 				)
 			),
+			 'SugarWidgetSubPanelTopCreateAccountNameButton' => array(
+                'widget_class'=>'SugarWidgetSubPanelTopCreateAccountNameButton',
+                'module'=>'Contacts',
+                'title'=>'LBL_NEW_BUTTON_TITLE',
+                'access_key'=>'LBL_NEW_BUTTON_KEY',
+                'form_value'=>'LBL_NEW_BUTTON_LABEL',
+                'ACL'=>'edit',
+            ),
 			//BEGIN SUGARCRM flav!=sales ONLY
 			'SugarWidgetSubPanelAddToProspectListButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopSelectButton',
@@ -340,6 +348,7 @@ class LayoutManager
         if ($grabId) {
             return $theclass->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($theclass->form_value)).'_button';
         }
+        
 		return $theclass->display($widget_def, null, null);
 	}
 
