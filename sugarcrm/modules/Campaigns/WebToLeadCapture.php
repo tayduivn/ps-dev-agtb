@@ -93,12 +93,26 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 
 		        //link campaignlog and lead
 
-		        if(isset($_POST['webtolead_email1']) && $_POST['webtolead_email1'] != null){
+		        if (isset($_POST['email1']) && $_POST['email1'] != null)
+                {
+                    $lead->email1 = $_POST['email1'];
+		        } 
+                //in case there are old forms used webtolead_email1
+                elseif (isset($_POST['webtolead_email1']) && $_POST['webtolead_email1'] != null)
+                {
                     $lead->email1 = $_POST['webtolead_email1'];
-		        }
-		        if(isset($_POST['webtolead_email2']) && $_POST['webtolead_email2'] != null){
+                }
+                
+		        if (isset($_POST['email2']) && $_POST['email2'] != null)
+                {
+                    $lead->email2 = $_POST['email2'];
+		        } 
+                //in case there are old forms used webtolead_email2
+                elseif (isset($_POST['webtolead_email2']) && $_POST['webtolead_email2'] != null)
+                {
                     $lead->email2 = $_POST['webtolead_email2'];
-		        }
+                }
+                
 		        $lead->load_relationship('campaigns');
 		        $lead->campaigns->add($camplog->id);
                 if(!empty($GLOBALS['check_notify'])) {
