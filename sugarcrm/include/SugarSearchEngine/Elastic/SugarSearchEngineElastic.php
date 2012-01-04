@@ -20,10 +20,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
  *Reserved.
  ********************************************************************************/
-require_once('include/SugarSearchEngine/Interface.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineBase.php');
 require_once('include/SugarSearchEngine/Solr/PHPSolr/Service.php');
 
-class SugarSearchEngineElastic implements SugarSearchEngineInterface
+class SugarSearchEngineElastic extends SugarSearchEngineBase
 {
     private $_server = "";
     private $_config = array();

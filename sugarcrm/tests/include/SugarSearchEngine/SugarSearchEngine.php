@@ -23,6 +23,7 @@
  ********************************************************************************/
 
 require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
+require_once('include/SugarSearchEngine/SugarSearchEngineBase.php');
 
 class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -49,4 +50,42 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetFtsSearchFields()
+    {
+        $instance = new SugarSearchEngineTestStub();
+        $ftsFields = $instance->retrieveFtsEnabledFieldsPerModuleStub('Accounts');
+        $this->assertContains('name', array_keys($ftsFields));
+        $this->assertContains('email_addresses', array_keys($ftsFields));
+    }
+
+    public function testGetFtsSearchFieldsForAllModules()
+    {
+        $instance = new SugarSearchEngineTestStub();
+        $ftsFields = $instance->retrieveFtsEnabledFieldsForAllModulesStub();
+        
+    }
+
+}
+
+class SugarSearchEngineTestStub extends SugarSearchEngineBase
+{
+    public function connect() {}
+
+    public function indexBean($bean, $batched = TRUE){}
+
+    public function flush() {}
+
+    public function delete($bean){}
+
+    public function search($query, $offset = 0, $limit = 20) {}
+
+    public function retrieveFtsEnabledFieldsPerModuleStub($module)
+    {
+        return $this->retrieveFtsEnabledFieldsPerModule($module);
+    }
+
+    public function retrieveFtsEnabledFieldsForAllModulesStub()
+    {
+        return $this->retrieveFtsEnabledFieldsForAllModules();
+    }
 }
