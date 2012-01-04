@@ -421,6 +421,10 @@ require_once ('install/createSnipUser.php');
 installLog("Enable InsideView Connector");
 enableInsideViewConnector();
 
+// Install the logic hook for FTS
+installLog("Creating FTS logic hook");
+createFTSLogicHook();
+
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
 
