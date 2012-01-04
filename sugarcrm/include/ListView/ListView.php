@@ -471,10 +471,9 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         $first = true;
         // this is for inline buttons on listviews
 		foreach ($button_contents as $actions => $action) {
-            if ($_REQUEST['module'] == "Contacts" && $first) {
+            if ($first) {
                 $hide = " style:'display: none'";
                 $firstaction = $action;
-
                 			$button_count++;
                             $first = false;
                 continue;
@@ -488,23 +487,20 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $this->xTemplate->assign('CELL_COUNT', $count);
                 $pre = '<ul class="clickMenu subpanel records">'. "\n";
                 $this->xTemplate->assign('CLASS', "inlineButtons");
-                if($_REQUEST['module'] == "Contacts" && sizeof($button_contents) == 1) {
+                if(sizeof($button_contents) == 1) {
         			$pre .= '<li class="single">'. "\n";
                 } else {
                 	$pre .= '<li>'. "\n";
                 }
-                if ($_REQUEST['module'] == "Contacts") {
-                    $tempid = create_guid();
-                    $pre .= '<script type="text/javascript">
-                            var zz = $("#'.$tempid.'").children().first().find("span").remove();
-                        </script>';
-                    $pre .= "<div style='display: inline' id='$tempid'>".$firstaction."</div>";
-                } else {
-                	$tempid = "";
-                    $pre .= '<a id=""  href="javascript: void(0);">Actions</a>'. "\n";
-                }
+                
+                $tempid = create_guid();
+                $pre .= '<script type="text/javascript">
+                        var zz = $("#'.$tempid.'").children().first().find("span").remove();
+                    </script>';
+                $pre .= "<div style='display: inline' id='$tempid'>".$firstaction."</div>";
+               
         		$pre .= '<ul class="subnav';
-        		if(($_REQUEST['module'] == "Contacts" && sizeof($button_contents) > 1) || $_REQUEST['module'] != "Contacts") {
+        		if(sizeof($button_contents) > 1){
         			$pre .= " multi";
         		}
         		
