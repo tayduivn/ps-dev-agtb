@@ -365,9 +365,9 @@ class UploadFile
 	{
 		if(!empty($doc_type)&&$doc_type!='Sugar') {
 			global $sugar_config;
-	        $destination = clean_path($this->get_upload_path($bean_id));
+	        $destination = $this->get_upload_path($bean_id);
 	        sugar_rename($destination, str_replace($bean_id, $bean_id.'_'.$file_name, $destination));
-	        $new_destination = clean_path($this->get_upload_path($bean_id.'_'.$file_name));
+	        $new_destination = $this->get_upload_path($bean_id.'_'.$file_name);
 
 		    try{
                 $this->api = ExternalAPIFactory::loadAPI($doc_type);
