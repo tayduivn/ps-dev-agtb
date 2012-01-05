@@ -688,7 +688,7 @@ class SugarBean
         foreach($this->field_defs as $field=>$value){
             if((isset($value['default']) || !empty($value['display_default'])) && ($force || empty($this->$field))){
                 $type = $value['type'];
-                
+
                 switch($type){
                     case 'date':
                         if(!empty($value['display_default'])){
@@ -1303,7 +1303,7 @@ class SugarBean
                 $type == 'enum') &&
                 !empty($this->$key)
             ) {
-                $this->$key = SugarCleaner::cleanHtml($this->$key, true);
+                $this->$key = SugarCleaner::cleanHtml($this->$key);
             }
         }
     }
