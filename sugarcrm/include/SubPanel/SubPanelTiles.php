@@ -447,7 +447,7 @@ EOQ;
                 $layout_manager = $this->getLayoutManager();
                 $widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>' . "\n";
                 $widget_contents .= '<td class="buttons">' . "\n";
-                $widget_contents .= '<ul class="clickMenu">' . "\n";
+                $widget_contents .= '<ul class="clickMenu fancymenu">' . "\n";
                 if(count($subpanel_def) == 1) {
                 	$widget_contents .= '<li class="single">' . "\n";
                 } else {
@@ -459,7 +459,7 @@ EOQ;
                     $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
                 }
 
-                $widget_contents .= '<ul class="subnav fancymenu' . "\n";
+                $widget_contents .= '<ul class="subnav' . "\n";
                 if(count($subpanel_def) > 1) {
                 	$widget_contents .= " multi";	
                 }

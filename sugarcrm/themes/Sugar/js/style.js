@@ -78,7 +78,9 @@ firstHit = false;
 	});
 
 	//set up any action style menus
-	$().sugarActionMenu();
+	$("ul.clickMenu").each(function(index, node){
+  		$(node).sugarActionMenu();
+  	});
 
 	
     $("#arrow").click(function(){

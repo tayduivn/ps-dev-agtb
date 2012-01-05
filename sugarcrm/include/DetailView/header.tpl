@@ -35,7 +35,9 @@
 testing_module = "{$smarty.request.module}";
 {literal}
 	$(document).ready(function(){
-	   $().sugarActionMenu();
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
 	});
 {/literal}
 </script>
@@ -60,10 +62,10 @@ testing_module = "{$smarty.request.module}";
 {{$field}}
 {{/foreach}}
 {{/if}}
-    <ul class="clickMenu" id="detailViewActions">
+    <ul class="clickMenu fancymenu" id="detailViewActions">
         <li style="cursor: pointer">
         	{{sugar_actions_link module="$module" id="EDIT2" view="$view"}}  
-       			<ul class="subnav multi fancymenu">       
+       			<ul class="subnav multi">       
 {{if !isset($form.buttons)}} 
 {{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
 {{sugar_actions_link module="$module" id="DELETE" view="$view"}}

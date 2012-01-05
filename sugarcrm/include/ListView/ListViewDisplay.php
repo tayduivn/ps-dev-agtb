@@ -365,10 +365,10 @@ class ListViewDisplay {
 
           -->
           </script>
-                  <ul class="clickMenu" id="selectActions">
+                  <ul class="clickMenu fancymenu" id="selectActions">
                       <li>
                       <a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a>
-                          <ul class="subnav fancymenu">
+                          <ul class="subnav">
                               {$menuItems}
 
                           </ul>

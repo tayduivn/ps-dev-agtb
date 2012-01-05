@@ -37,7 +37,9 @@
 <script>
 {literal}
 	$(document).ready(function(){
-	    $().sugarActionMenu();
+	    $("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
 	});
 {/literal}	
 </script>
