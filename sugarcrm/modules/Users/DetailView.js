@@ -141,7 +141,7 @@ function user_status_display(field){
 
 function confirmDelete() {
     var handleYes = function() {
-        window.location="?module=Users&action=delete&record="+document.forms.DetailView.record.value;
+        SUGAR.util.hrefURL("?module=Users&action=delete&record="+document.forms.DetailView.record.value);
     };
 
     var handleNo = function() {
