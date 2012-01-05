@@ -45,10 +45,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         $index = isset($this->_config['index']) ? $this->_config['index'] : ($GLOBALS['sugar_config']['unique_key']);
         $this->_server = "{$scheme}://{$host}:$port/$index";
         $this->_indexName = $GLOBALS['sugar_config']['unique_key'];
+
+        //Elastica client uses own auto-load schema similar to ZF.
         spl_autoload_register(array($this, 'loader'));
 
         $this->_client = new Elastica_Client();
-        $GLOBALS['log']->fatal("CONSTRUCT IS CALLED");
     }
 
     public function connect()
@@ -64,8 +65,33 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         else
         {
             $GLOBALS['log']->fatal("Adding bean to doc list....");
-            $this->_documents[] = $bean;
+            //TODO: Create index document at this point so we don't need to store a large number of beans at once.
+            $this->_documents[] = $this->createIndexDocument($bean);
         }
+    }
+
+    /**
+     * TODO: We should probably add this function to the interface as logically it is different than the indexSingleBean function.
+     *
+     * @param $bean
+     * @return Elastica_Document|null
+     */
+    protected function createIndexDocument($bean)
+    {
+        $searchFields = $this->retrieveFtsEnabledFieldsPerModule($bean);
+
+        $keyValues = array();
+        foreach($searchFields as $fieldName => $fieldDef)
+        {
+            //TODO: We may need to convert data at this point (date formats, etc)
+            if( isset($bean->$fieldName) )
+                $keyValues[$fieldName] = $bean->$fieldName;
+        }
+
+        if( empty($keyValues) )
+            return null;
+        else
+            return new Elastica_Document($bean->id, $keyValues);
     }
 
     protected function indexSingleBean($bean)
@@ -75,8 +101,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         {
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $type = new Elastica_Type($index, self::INDEX_TYPE);
-            $doc = new Elastica_Document($bean->id, array('name' => $bean->name));
-            $type->addDocument($doc);
+            $doc = $this->createIndexDocument($bean);
+            if($doc != null)
+                $type->addDocument($doc);
         }
         catch(Exception $e)
         {
@@ -96,7 +123,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
     }
 
     /**
-     * TODO: Destruct function wont be called if exit is thrown in so we may weant to register this as a shutdown function or another logic hook....
+     *
      */
     public function __destruct()
     {

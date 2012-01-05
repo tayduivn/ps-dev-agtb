@@ -33,8 +33,20 @@ abstract class SugarSearchEngineBase implements SugarSearchEngineInterface
     protected function retrieveFtsEnabledFieldsPerModule($module)
     {
         $results = array();
-        $beanName = BeanFactory::getBeanName($module);
-        $obj = new $beanName();
+        if( is_string($module))
+        {
+            $obj = BeanFactory::getBean($module, null);
+
+        }
+        else if( is_a($module, 'SugarBean') )
+        {
+            $obj = $module;
+        }
+        else
+        {
+            return $results;
+        }
+
         foreach($obj->field_defs as $field => $def)
         {
             if( isset($def['unified_search']) && ( $def['unified_search'] === TRUE ||
@@ -48,18 +60,41 @@ abstract class SugarSearchEngineBase implements SugarSearchEngineInterface
     }
 
     /**
+     * Retrieve all FTS fields for all FTS enabled modules.
      *
+     * @return array
      */
     protected function retrieveFtsEnabledFieldsForAllModules()
     {
         $results = array();
         foreach( $GLOBALS['moduleList'] as $moduleName )
         {
-            $results[$moduleName] = array();
-        }
+            if( $this->isModuleFtsEnabled($moduleName) )
+            {
+                $results[$moduleName] = $this->retrieveFtsEnabledFieldsPerModule($moduleName);
+            }
 
+        }
         return $results;
     }
 
+    /**
+     * Determine if a module is FTS enabled.
+     *
+     * @param $module
+     * @return bool
+     */
+    protected function isModuleFtsEnabled($module)
+    {
+        $obj = BeanFactory::getBean($module, null);
+        if( $obj !== FALSE && isset( $GLOBALS['dictionary'][$obj->object_name]) && !empty($GLOBALS['dictionary'][$obj->object_name]['unified_search']) )
+        {
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
 
 }

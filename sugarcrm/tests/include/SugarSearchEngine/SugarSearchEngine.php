@@ -50,19 +50,49 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+
     public function testGetFtsSearchFields()
     {
         $instance = new SugarSearchEngineTestStub();
         $ftsFields = $instance->retrieveFtsEnabledFieldsPerModuleStub('Accounts');
         $this->assertContains('name', array_keys($ftsFields));
         $this->assertContains('email_addresses', array_keys($ftsFields));
+
+        //Pass in a sugar bean for the test
+        $account = BeanFactory::getBean('Accounts', null);
+        $ftsFields = $instance->retrieveFtsEnabledFieldsPerModuleStub($account);
+        $this->assertContains('name', array_keys($ftsFields));
+        $this->assertContains('email_addresses', array_keys($ftsFields));
     }
+
 
     public function testGetFtsSearchFieldsForAllModules()
     {
         $instance = new SugarSearchEngineTestStub();
-        $ftsFields = $instance->retrieveFtsEnabledFieldsForAllModulesStub();
-        
+        $ftsFieldsByModule = $instance->retrieveFtsEnabledFieldsForAllModulesStub();
+        $this->assertContains('Contacts', array_keys($ftsFieldsByModule));
+        $this->assertContains('first_name', array_keys($ftsFieldsByModule['Contacts']));
+    }
+
+
+    /**
+     * @dataProvider isModuleEnabledProvider
+     */
+    public function testIsModuleFtsEnabled($module,$actualResult)
+    {
+        $instance = new SugarSearchEngineTestStub();
+        $expected = $instance->isModuleFtsEnabledStub($module);
+        $this->assertEquals($expected, $actualResult);
+    }
+
+    public function isModuleEnabledProvider()
+    {
+        return array(
+            array('Accounts', true),
+            array('Contacts', true),
+            array('BadModule', false),
+            array('Notifications', false),
+        );
     }
 
 }
@@ -87,5 +117,10 @@ class SugarSearchEngineTestStub extends SugarSearchEngineBase
     public function retrieveFtsEnabledFieldsForAllModulesStub()
     {
         return $this->retrieveFtsEnabledFieldsForAllModules();
+    }
+
+    public function isModuleFtsEnabledStub($module)
+    {
+        return $this->isModuleFtsEnabled($module);
     }
 }
