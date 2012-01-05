@@ -189,13 +189,13 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
 			<tr>
 				<td align='left'><input type='button' title="{$MOD.LBL_PREVIOUS}" class="button" name="{$MOD.LBL_PREVIOUS}" value="{$MOD.LBL_PREVIOUS}" 
-					onClick='SUGAR.reports.showWizardStep(1);'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}" 
-					onClick='SUGAR.reports.showWizardStep(0);'>{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.saveReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}" 
-					onClick='SUGAR.reports.previewReport();'>{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}" 
-					onClick='SUGAR.reports.runReport();'>{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.deleteReport();'>{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}" 
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"'></td>				
+					onClick='SUGAR.reports.showWizardStep(1);' id="previousBtn">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}"
+					onClick='SUGAR.reports.showWizardStep(0);' id="nextBtn">{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.saveReport();' id="saveBtn">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}"
+					onClick='SUGAR.reports.previewReport();' id="previewBtn">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
+					onClick='SUGAR.reports.runReport();' id="saveAndRunBtn">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.deleteReport();' id="deleteBtn">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
+					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelBtn"></td>
 			</tr>
 		</table>	
 		</br>
@@ -240,13 +240,13 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td align='left'><input type='button' title="{$MOD.LBL_PREVIOUS}" class="button" name="{$MOD.LBL_PREVIOUS}" value="{$MOD.LBL_PREVIOUS}" 
-					onClick='SUGAR.reports.showWizardStep(1);'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}" 
-					onClick='SUGAR.reports.showWizardStep(0);'>{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.saveReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}" 
-					onClick='SUGAR.reports.previewReport();'>{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}" 
-					onClick='SUGAR.reports.runReport();'>{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.deleteReport();'>{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}" 
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"'></td>				
+					onClick='SUGAR.reports.showWizardStep(1);' id="previousButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}"
+					onClick='SUGAR.reports.showWizardStep(0);' id="nextButton">{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.saveReport();' id="saveButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}"
+					onClick='SUGAR.reports.previewReport();' id="previewButton">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
+					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
+					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
 			</tr>
 		</table>	
 	</div>
@@ -254,13 +254,13 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td align='left'><input type='button' title="{$MOD.LBL_PREVIOUS}" class="button" name="{$MOD.LBL_PREVIOUS}" value="{$MOD.LBL_PREVIOUS}" 
-					onClick='SUGAR.reports.showWizardStep(1);'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}" 
-					onClick='SUGAR.reports.showWizardStep(0);'>{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.saveReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}" 
-					onClick='SUGAR.reports.previewReport();'>{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}" 
-					onClick='SUGAR.reports.runReport();'>{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.deleteReport();'>{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}" 
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"'></td>				
+					onClick='SUGAR.reports.showWizardStep(1);' id="previousButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}"
+					onClick='SUGAR.reports.showWizardStep(0);' id="nextButton">{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.saveReport();' id="saveButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}"
+					onClick='SUGAR.reports.previewReport();' id="previewButton">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
+					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
+					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
 			</tr>
 		</table>	
 		</br>
@@ -290,13 +290,13 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 			<tr>
 				<td scope="row">{$MOD.LBL_CHART_DESCRIPTION}:</td>
 				<td align=left>
-					<input name='chart_description' size='50' value="{$chart_description}" maxsize="255"/>
+					<input name='chart_description' id="chart_description" size='50' value="{$chart_description}" maxsize="255"/>
 				</td>
 			</tr>
 			<tr>
 				<td scope="row">{$MOD.LBL_DO_ROUND}:{$do_round_help}</td>
 				<td align=left>
-					<input type="checkbox" class="checkbox" name="do_round"  {if ($do_round)}CHECKED{/if}>
+					<input type="checkbox" class="checkbox" name="do_round" id="do_round" {if ($do_round)}CHECKED{/if}>
 				</td>
 			</tr>			
 		</table>
@@ -305,13 +305,13 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td align='left'><input type='button' title="{$MOD.LBL_PREVIOUS}" class="button" name="{$MOD.LBL_PREVIOUS}" value="{$MOD.LBL_PREVIOUS}" 
-					onClick='SUGAR.reports.showWizardStep(1);'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}" 
-					onClick='SUGAR.reports.showWizardStep(0);'>{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.saveReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}" 
-					onClick='SUGAR.reports.previewReport();'>{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}" 
-					onClick='SUGAR.reports.runReport();'>{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.deleteReport();'>{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}" 
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"'></td>				
+					onClick='SUGAR.reports.showWizardStep(1);' id="previousButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}"
+					onClick='SUGAR.reports.showWizardStep(0);' id="nextButton">{if $RUN_QUERY == 1 || $id || $record}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.saveReport();' id="saveButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}"
+					onClick='SUGAR.reports.previewReport();' id="previewButton">{/if}{if $record}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
+					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{/if}{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
+					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
 			</tr>
 		</table>	
 	</div>	
@@ -319,12 +319,12 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<table  width='100%' border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td align='left'><input type='button' title="{$MOD.LBL_PREVIOUS}" class="button" name="{$MOD.LBL_PREVIOUS}" value="{$MOD.LBL_PREVIOUS}" 
-					onClick='SUGAR.reports.showWizardStep(1);'>&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.saveReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}" 
-					onClick='SUGAR.reports.previewReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}" 
-					onClick='SUGAR.reports.runReport();'>{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.deleteReport();'>{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}" 
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"'></td>				
+					onClick='SUGAR.reports.showWizardStep(1);' id="previousButton">&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.saveReport();' id="saveButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}"
+					onClick='SUGAR.reports.previewReport();' id="previewButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
+					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
+					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
 							
 			</tr>
 		</table>
@@ -370,12 +370,12 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 		<table  width='100%' border="0" cellspacing="0" cellpadding="0" >
 			<tr>
 				<td align='left'><input type='button' title="{$MOD.LBL_PREVIOUS}" class="button" name="{$MOD.LBL_PREVIOUS}" value="{$MOD.LBL_PREVIOUS}" 
-					onClick='SUGAR.reports.showWizardStep(1);'>&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.saveReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}" 
-					onClick='SUGAR.reports.previewReport();'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}" 
-					onClick='SUGAR.reports.runReport();'>{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}" 
-					onClick='SUGAR.reports.deleteReport();'>{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}" 
-					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"'></td>				
+					onClick='SUGAR.reports.showWizardStep(1);' id="previousButton">&nbsp;&nbsp;<input type='button' title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" name="{$APP.LBL_SAVE_BUTTON_LABEL}" value="{$APP.LBL_SAVE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.saveReport();' id="saveButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_PREVIEW_REPORT}" class="button" name="{$MOD.LBL_PREVIEW_REPORT}" value="{$MOD.LBL_PREVIEW_REPORT}"
+					onClick='SUGAR.reports.previewReport();' id="previewButton">&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_SAVE_RUN}" class="button" name="{$MOD.LBL_SAVE_RUN}" value="{$MOD.LBL_SAVE_RUN}"
+					onClick='SUGAR.reports.runReport();' id="saveAndRunButton">{if $record && ($IS_ADMIN == 1|| $IS_OWNER == 1)}&nbsp;&nbsp;<input type='button' title="{$APP.LBL_DELETE_BUTTON_LABEL}" class="button" name="{$APP.LBL_DELETE_BUTTON_LABEL}" value="{$APP.LBL_DELETE_BUTTON_LABEL}"
+					onClick='SUGAR.reports.deleteReport();' id="deleteButton">{/if}&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_CANCEL}" class="button" name="{$MOD.LBL_CANCEL}" value="{$MOD.LBL_CANCEL}"
+					onClick='document.location.href = "index.php?module=Reports&action=index&query=true&clear_query=true"' id="cancelButton"></td>
 							
 			</tr>
 		</table>	
