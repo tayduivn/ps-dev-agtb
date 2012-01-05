@@ -55,7 +55,15 @@ class Bug49310Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->_user = SugarTestUserUtilities::createAnonymousUser();
+
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+
+
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
 		$GLOBALS['current_user'] = $this->_user;
 		$this->project = SugarTestProjectUtilities::createProject();
 		$projectId = $this->project->id;
@@ -124,6 +132,8 @@ class Bug49310Test extends Sugar_PHPUnit_Framework_TestCase
 		unset($this->projectTasks);
         unset($this->_user);
 		unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
 	}
 
 	public function testResourceName()
