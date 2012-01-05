@@ -38,25 +38,25 @@ class CalendarViewRemove extends SugarView {
 	}
 	
 	function display(){
-		require_once("modules/Calls/Call.php");
-		require_once("modules/Meetings/Meeting.php");
 		require_once("modules/Calendar/CalendarUtils.php");
 
 		global $beanFiles,$beanList;
 		$module = $_REQUEST['current_module'];
 		require_once($beanFiles[$beanList[$module]]);
 		$bean = new $beanList[$module]();
-
 		$bean->retrieve($_REQUEST['record']);
 
 		if(!$bean->ACLAccess('delete')){
 			die;	
 		}
+		
+		if($module == "Meetings")
+			CalendarUtils::mark_repeat_deleted($bean);
 
 		$bean->mark_deleted($_REQUEST['record']);
 
 		$json_arr = array(
-			'success' => 'yes',
+			'access' => 'yes',
 		);
 
 		ob_clean();

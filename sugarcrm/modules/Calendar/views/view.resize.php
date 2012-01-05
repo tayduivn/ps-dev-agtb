@@ -1,4 +1,4 @@
-{*
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -25,5 +25,43 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-*}
+require_once('include/MVC/View/SugarView.php');
 
+class CalendarViewResize extends SugarView {
+
+	function CalendarViewResize(){
+ 		parent::SugarView();
+	}
+	
+	function process(){
+		$this->display();
+	}
+	
+	function display(){
+		
+
+		global $beanFiles,$beanList;
+		$module = $_REQUEST['current_module'];
+		require_once($beanFiles[$beanList[$module]]);
+		$bean = new $beanList[$module]();	
+		$bean->retrieve($_REQUEST['record']);
+		
+		if(!$bean->ACLAccess('Save')){
+			die;	
+		}
+		
+		require_once('include/formbase.php');
+		$bean = populateFromPost("",$bean);
+		$bean->save();
+			
+		$json_arr = array(
+			'access' => 'yes',
+		);
+		
+		ob_clean();
+		echo json_encode($json_arr);
+	}	
+
+}
+
+?>
