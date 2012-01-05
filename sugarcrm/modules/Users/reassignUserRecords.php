@@ -104,7 +104,7 @@ $inactive_users = get_user_array(FALSE, "Inactive");
 $all_users = array_merge($active_users, $inactive_users);
 // sb - issue with php array_merge causing array index '1' to change to '0'
 if(isset($all_users[0])){
-	$all_users[1] = 'admin';
+    $all_users[1] = $all_users[0];
 	unset($all_users[0]);
 }
 asort($all_users);
