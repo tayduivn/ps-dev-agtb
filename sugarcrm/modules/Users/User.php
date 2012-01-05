@@ -1586,7 +1586,12 @@ EOQ;
                 continue;
             }
 
-            $key = 'module';
+            $focus = SugarModule::get($module)->loadBean();
+            if ( $focus instanceOf SugarBean ) {
+                $key = $focus->acltype;
+            } else {
+                $key = 'module';
+            }
 
             if (($this->isAdmin() && isset($actions[$module][$key]))
             //BEGIN SUGARCRM flav=pro ONLY
