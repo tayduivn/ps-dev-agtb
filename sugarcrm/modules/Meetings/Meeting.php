@@ -169,9 +169,9 @@ class Meeting extends SugarBean {
 			$this->reminder_checked = '1';
 			$this->reminder_time = $current_user->getPreference('reminder_time');
 		}*/
-		
+
 		// prevent a mass mailing for recurring meetings created in Calendar module
-		if(empty($this->id) && $_REQUEST['module'] == "Calendar" && !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id))
+		if(empty($this->id) && !empty($_REQUEST['module']) && $_REQUEST['module'] == "Calendar" && !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id))
 			$check_notify = false;
 
         if (empty($this->status) ) {
@@ -394,11 +394,19 @@ class Meeting extends SugarBean {
 		}
 		if (is_null($this->duration_minutes))
 			$this->duration_minutes = "1";
-		
+
 		if(empty($this->id) && !empty($_REQUEST['date_start'])){
 			$this->date_start = $_REQUEST['date_start'];
 		}
-		$this->date_end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start)->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")->format($GLOBALS['timedate']->get_date_time_format());
+		if(!empty($this->date_start)) {
+		    $start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
+		    if(!empty($start)) {
+		        $this->date_end = $start->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")
+		            ->format($GLOBALS['timedate']->get_date_time_format());
+		    } else {
+		        $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
+		    }
+		}
 
 		global $app_list_strings;
 		$parent_types = $app_list_strings['record_type_display'];
