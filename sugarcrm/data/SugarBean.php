@@ -3338,22 +3338,16 @@ function save_relationship_changes($is_update, $exclude=array())
                                 if(isset($rel_mod->field_defs['assigned_user_id']))
                                 {
                                     $ret_array['secondary_select'].= " , ".	$params['join_table_alias'] . ".assigned_user_id {$field}_owner, '$rel_module' {$field}_mod";
-
                                 }
                                 else
                                 {
                                     if(isset($rel_mod->field_defs['created_by']))
                                     {
                                         $ret_array['secondary_select'].= " , ".	$params['join_table_alias'] . ".created_by {$field}_owner , '$rel_module' {$field}_mod";
-
                                     }
                                 }
-
-
                             }
                         }
-
-
 
                         if(isset($data['db_concat_fields']))
                         {
@@ -3369,13 +3363,17 @@ function save_relationship_changes($is_update, $exclude=array())
                         if(!$singleSelect)
                         {
                             $ret_array['select'] .= ", '                                                                                                                                                                                                                                                              ' $field ";
-                            $ret_array['select'] .= ", '                                    '  " . $join['rel_key'] . ' ';
                         }
                         $count_used =0;
-                            foreach($used_join_key as $used_key) {
-                               if($used_key == $join['rel_key']) $count_used++;
-                            }
+                        foreach($used_join_key as $used_key) {
+                            if($used_key == $join['rel_key']) $count_used++;
+                        }
                         if($count_used <= 1) {//27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
+                            // add rel_key only if it was not aready added
+                            if(!$singleSelect)
+                            {
+                                $ret_array['select'] .= ", '                                    '  " . $join['rel_key'] . ' ';
+                            }
                             $ret_array['secondary_select'] .= ', ' . $params['join_table_link_alias'].'.'. $join['rel_key'] .' ' . $join['rel_key'];
                         }
                         if(isset($data['relationship_fields']))
