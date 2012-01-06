@@ -33,9 +33,16 @@ class SugarSeachEngineElasticResult implements SugarSeachEngineResult
      */
     private $elasticaResult;
 
+    /**
+     * @var SugarBean
+     */
+    private $bean;
+
     public function __construct(Elastica_Result $result)
     {
         $this->elasticaResult = $result;
+        //No need to lazy load, will always want to load the bean to fill in the details
+        $this->bean = BeanFactory::getBean($this->getModule(), $this->getId());
     }
 
     /**
@@ -57,9 +64,33 @@ class SugarSeachEngineElasticResult implements SugarSeachEngineResult
         return $this->elasticaResult->module;
     }
 
+    public function getModuleName()
+    {
+        $moduleName = $this->getModule();
+        if( isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) )
+            return $GLOBALS['app_list_strings']['moduleList'][$moduleName];
+        else
+            return $moduleName;
+    }
+
+    //TODO: Move this to a base class
+    public function getSummaryText()
+    {
+        echo "<pre>";
+        $a = $this->elasticaResult->getHighlights();
+        //print_r($a);
+        foreach($a as $h)
+        {
+            print_r($h);
+        }
+       // print_r($this->elasticaResult->getHit());
+        die();
+        return $this->bean->get_summary_text();
+    }
+
     public function __toString()
     {
-        return __CLASS__ . " " . $this->getId();
+        return __CLASS__ . " " . $this->getModule() . ": " . $this->getSummaryText() . " " . $this->getId();
     }
 
 }

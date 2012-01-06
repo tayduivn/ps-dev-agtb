@@ -185,24 +185,21 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         $results = null;
         try
         {
-            $query = new Elastica_Query_QueryString('asfd');
-            $query->setParam('size',1);
-            print_r($query);
+            $queryObj = new Elastica_Query_QueryString($queryString);
+            $queryObj->setAnalyzeWildcard(false);
+            $queryObj->setAutoGeneratePhraseQueries(false);
+            $query = new Elastica_Query($queryObj);
+
+            $query->setParam('from',$offset);
+            if( !is_admin($GLOBALS['current_user']) )
+            {
+                //TODO: Add team set id filter here.
+                //$query->setFilter();
+            }
+
             $s = new Elastica_Search($this->_client);
-            $esResultSet = $s->search($query);
-
+            $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
-
-            /*
-            $query = Elastica_Query::create($query);
-            $query->setLimit($limit);
-            $path = $this->_client->getPath();
-
-            $response = $this->_client->request($path, Elastica_Request::GET, $query->toArray());
-            $esResultSet = new Elastica_ResultSet($response);
-            $results = new SugarSeachEngineElasticResultSet($esResultSet);
-            */
-
 
         }
         catch(Exception $e)

@@ -5,6 +5,6 @@
 
 {foreach from=$resultSet item=result}
 
-Module:{$result->getModule()} ID: {$result->getId()} <br>
+Module:{$result->getModuleName()} ID: {$result->getId()} {$result->getSummaryText()} <br>
 
 {/foreach}

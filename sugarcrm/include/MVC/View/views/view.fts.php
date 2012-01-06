@@ -33,8 +33,7 @@ class ViewFts extends ViewAjax
     public function display()
     {
 
-		$offset = -1;
-        $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : -1;
+        $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
 
