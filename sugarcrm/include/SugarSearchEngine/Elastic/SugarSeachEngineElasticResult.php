@@ -76,16 +76,18 @@ class SugarSeachEngineElasticResult implements SugarSeachEngineResult
     //TODO: Move this to a base class
     public function getSummaryText()
     {
-        echo "<pre>";
-        $a = $this->elasticaResult->getHighlights();
-        //print_r($a);
-        foreach($a as $h)
-        {
-            print_r($h);
-        }
-       // print_r($this->elasticaResult->getHit());
-        die();
-        return $this->bean->get_summary_text();
+        if($this->bean !== FALSE)
+            return $this->bean->get_summary_text();
+    }
+
+    public function getHighlightedHitText()
+    {
+
+    }
+
+    public function getHighlightedFieldName()
+    {
+
     }
 
     public function __toString()

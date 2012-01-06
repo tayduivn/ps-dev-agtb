@@ -103,6 +103,18 @@ interface SugarSeachEngineResult
      */
     public function getId();
 
+    /**
+     * @abstract
+     *
+     */
+    public function getHighlightedHitText();
+
+    /**
+     * @abstract
+     *
+     */
+    public function getHighlightedFieldName();
+
     public function __toString();
 
 
