@@ -39,7 +39,7 @@
 <tr>
 
 	<td>
-		<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary"  type="submit"  name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " >
+		<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="ConfigureSettings_save_button" type="submit"  name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " >
 		&nbsp;<input title="{$MOD.LBL_SAVE_BUTTON_TITLE}"  class="button"  type="submit" name="restore" value="  {$MOD.LBL_RESTORE_BUTTON_LABEL}  " >
 		&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  " > </td>
 	</tr>
@@ -55,11 +55,11 @@
 	<tr>
 		<td  scope="row">{$MOD.LIST_ENTRIES_PER_LISTVIEW}: </td>
 		<td  >
-			<input type='text' size='4' name='list_max_entries_per_page' value='{$config.list_max_entries_per_page}'>
+			<input type='text' size='4' id='ConfigureSettings_list_max_entries_per_page' name='list_max_entries_per_page' value='{$config.list_max_entries_per_page}'>
 		</td>
 		<td  scope="row">{$MOD.LIST_ENTRIES_PER_SUBPANEL}: </td>
 		<td  >
-			<input type='text' size='4' name='list_max_entries_per_subpanel' value='{$config.list_max_entries_per_subpanel}'>
+			<input type='text' size='4' id='ConfigureSettings_list_max_entries_per_subpanel' name='list_max_entries_per_subpanel' value='{$config.list_max_entries_per_subpanel}'>
 		</td>
 	</tr>
 	{* //END SUGARCRM flav!=sales ONLY*}
