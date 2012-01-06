@@ -1624,6 +1624,18 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
+	 * @abstract
+	 * Check if query has LIMIT clause
+	 * Relevant for now only for Mysql
+	 * @param string $sql
+	 * @return bool
+	 */
+	protected function hasLimit($sql)
+	{
+	    return false;
+	}
+
+	/**
 	 * Runs a query and returns a single row containing single value
 	 *
 	 * @param  string   $sql        SQL Statement to execute
@@ -1634,7 +1646,13 @@ protected function checkQuery($sql, $object_name = false)
 	public function getOne($sql, $dieOnError = false, $msg = '')
 	{
 		$this->log->info("Get One: |$sql|");
-		$queryresult = $this->query($sql, $dieOnError, $msg);
+		if(!$this->hasLimit($sql)) {
+		    $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+		} else {
+		    // support old code that passes LIMIT to sql
+		    // works only for mysql, so do not rely on this
+		    $queryresult = $this->query($sql, $dieOnError, $msg);
+		}
 		$this->checkError($msg.' Get One Failed:' . $sql, $dieOnError);
 		if (!$queryresult) return false;
 		$row = $this->fetchByAssoc($queryresult);
