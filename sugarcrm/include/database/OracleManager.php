@@ -263,7 +263,11 @@ class OracleManager extends DBManager
             if(!empty($GLOBALS['sugar_config']['check_query'])){
             	$this->checkQuery($sql);
          	}
-            return $this->query( $sql);
+         	if($execute) {
+                return $this->query( $sql, $dieOnError, $msg);
+         	} else {
+         	    return $sql;
+         	}
         }
 
         $start++; //count is 1 based.
@@ -278,7 +282,11 @@ class OracleManager extends DBManager
             if (!empty($GLOBALS['sugar_config']['check_query']))
                 $this->checkQuery($sql);
 
-            return $this->query($sql);
+         	if($execute) {
+                return $this->query( $sql, $dieOnError, $msg);
+         	} else {
+         	    return $sql;
+         	}
         }
         if (!empty($GLOBALS['sugar_config']['check_query']))
             $this->checkQuery($sql);
