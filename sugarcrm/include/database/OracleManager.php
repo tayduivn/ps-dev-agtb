@@ -278,7 +278,7 @@ class OracleManager extends DBManager
             $next=$start;
 
         if (!empty($matches[2])) {
-            $sql = "SELECT /*+ FIRST_ROWS($count) */ * FROM (SELECT  ROWNUM as orc_row, MSI.* FROM (".$sql. ') MSI  WHERE ROWNUM <= '. $next . ') WHERE  orc_row >= ' . $start;
+            $sql = "SELECT /*+ FIRST_ROWS($count) */ * FROM (SELECT  MSI.*, ROWNUM as orc_row FROM (".$sql. ') MSI  WHERE ROWNUM <= '. $next . ') WHERE  orc_row >= ' . $start;
             if (!empty($GLOBALS['sugar_config']['check_query']))
                 $this->checkQuery($sql);
 
@@ -291,7 +291,7 @@ class OracleManager extends DBManager
         if (!empty($GLOBALS['sugar_config']['check_query']))
             $this->checkQuery($sql);
 
-        $query = "SELECT * FROM (SELECT ROWNUM AS orc_row , MSI.* FROM ($sql) MSI where ROWNUM <= $next) WHERE orc_row >= $start";
+        $query = "SELECT * FROM (SELECT MSI.*, ROWNUM AS orc_row FROM ($sql) MSI where ROWNUM <= $next) WHERE orc_row >= $start";
         if ($execute)
             return $this->query($query, $dieOnError, $msg);
 
