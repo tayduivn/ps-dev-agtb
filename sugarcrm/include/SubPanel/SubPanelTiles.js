@@ -431,34 +431,40 @@ SUGAR.subpanelUtils = function() {
 		inlineSave: function(theForm, buttonName) {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 			var success = function(data) {
-				var element = document.getElementById(buttonName);
-				do {
-					element = element.parentNode;
-				} while ( element.className != 'quickcreate' && element.parentNode ) ;
+                var module = get_module_name();
+                var id = get_record_id();
+                var layout_def_key = get_layout_def_key();
+                try {
+                    eval('result = ' + data.responseText);
+                } catch (err) {
 
-				if (element.className == 'quickcreate') {
-					var subpanel = element.id.slice(9,-7) ; // retrieve the subpanel name from the div id - the name is encoded as 'subpanel_<subpanelname>_newdiv'
+                }
 
-					var module = get_module_name();
-					var id = get_record_id();
-					var layout_def_key = get_layout_def_key();
-					try {
-						eval('result = ' + data.responseText);
-					} catch (err) {
+                if (typeof(result) != 'undefined' && result != null && result['status'] == 'dupe') {
+                    document.location.href = "index.php?" + result['get'].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"').replace(/\r\n/gi,'\n');
+                    return;
+                } else {
+                    SUGAR.subpanelUtils.cancelCreate(buttonName);
 
-					}
+                    // parse edit form name in order to get the name of
+                    // module which saved item belongs to
+                    var savedModule = theForm.replace(/.*?_([^_]+)$/, "$1");
+                    if (window.ModuleSubPanels && window.ModuleSubPanels[savedModule])
+                    {
+                        var subPanels = window.ModuleSubPanels[savedModule];
 
-					if (typeof(result) != 'undefined' && result != null && result['status'] == 'dupe') {
-						document.location.href = "index.php?" + result['get'].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"').replace(/\r\n/gi,'\n');
-						return;
-					} else {
-						SUGAR.subpanelUtils.cancelCreate(buttonName);
-						showSubPanel(subpanel, null, true);
-						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVED'));
-						window.setTimeout('ajaxStatus.hideStatus()', 1000);
-	                    if(reloadpage) window.location.reload(false);
-					}
-				}
+                        // reload all sub-panels that may contain the bean
+                        // has been edited
+                        for (var i = 0; i < subPanels.length; i++)
+                        {
+                            showSubPanel(subPanels[i], null, true);
+                        }
+                    }
+
+                    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVED'));
+                    window.setTimeout('ajaxStatus.hideStatus()', 1000);
+                    if(reloadpage) window.location.reload(false);
+                }
 			}
             // reload page if we are setting status to Held
             var reloadpage = false;
