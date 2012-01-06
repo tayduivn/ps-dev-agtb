@@ -112,7 +112,7 @@ function getSystemInfo($send_usage_info=true){
 			$info['latest_tracker_id'] = -1;
 		}else{
 			$query=$db->limitQuerySql("select id from tracker order by date_modified desc", 0, 1);
-			$id=$db->getOne($query,'fetching most recent tracker entry',false);
+			$id=$db->getOne($query, false, 'fetching most recent tracker entry');
 			if ( $id !== false )
 			    $info['latest_tracker_id'] = $id;
 		}
