@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/SugarSearchEngine/SugarSearchEngineBase.php');
 require_once('include/SugarSearchEngine/Solr/PHPSolr/Service.php');
+require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php');
 
 class SugarSearchEngineElastic extends SugarSearchEngineBase
 {
@@ -32,7 +33,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
     private $_documents = array();
 
     const MAX_BULK_THRESHOLD = 100;
-    const INDEX_TYPE = 'SugarBean';
+    const INDEX_TYPE = 'SugarBean'; //TODO: Determine if we use module type here.
 
     public function __construct($params = array())
     {
@@ -88,6 +89,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
                 $keyValues[$fieldName] = $bean->$fieldName;
         }
 
+        //Always add our module
+        $keyValues['module'] = $bean->module_dir;
+
+        //TODO: Also add team ids
+
         if( empty($keyValues) )
             return null;
         else
@@ -123,7 +129,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
     }
 
     /**
-     *
+     * TODO: Add this logic to the base class.
      */
     public function __destruct()
     {
@@ -166,14 +172,38 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         }
 
     }
-    public function search($query, $offset = 0, $limit = 20)
+
+    /**
+     * @param $queryString
+     * @param int $offset
+     * @param int $limit
+     * @return null|SugarSeachEngineElasticResultSet
+     */
+    public function search($queryString, $offset = 0, $limit = 20)
     {
-        $GLOBALS['log']->fatal("Going to search with query $query");
-        $results = array();
+        $GLOBALS['log']->fatal("Going to search with query $queryString");
+        $results = null;
         try
         {
+            $query = new Elastica_Query_QueryString('asfd');
+            $query->setParam('size',1);
+            print_r($query);
             $s = new Elastica_Search($this->_client);
-            $results = $s->search($query);
+            $esResultSet = $s->search($query);
+
+            $results = new SugarSeachEngineElasticResultSet($esResultSet);
+
+            /*
+            $query = Elastica_Query::create($query);
+            $query->setLimit($limit);
+            $path = $this->_client->getPath();
+
+            $response = $this->_client->request($path, Elastica_Request::GET, $query->toArray());
+            $esResultSet = new Elastica_ResultSet($response);
+            $results = new SugarSeachEngineElasticResultSet($esResultSet);
+            */
+
+
         }
         catch(Exception $e)
         {

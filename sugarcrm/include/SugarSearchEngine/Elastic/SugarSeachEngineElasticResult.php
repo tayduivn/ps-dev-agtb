@@ -21,89 +21,45 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
+require_once("include/SugarSearchEngine/Interface.php");
 
-
-
-interface SugarSearchEngineInterface{
- /**
-  *
-  * search()
-  *
-  * Perform a search against the Full Text Search Engine
-  * @abstract
-  * @param $query
-  * @param int $offset
-  * @param int $limit
-  * @return void
-  */
- public function search($query, $offset = 0, $limit = 20);
-
- /**
-  * connect()
-  *
-  * Make a connection to the Full Text Search Engine
-  * @abstract
-  * @return void
-  */
- public function connect();
-
- /**
-  * flush()
-  *
-  * Save the data to the Full Text Search engine backend
-  * @abstract
-  * @return void
-  */
- public function flush();
-
- /**
-  * indexBean()
-  *
-  * Pass in a bean and go through the list of fields to pass to the engine
-  * @abstract
-  * @param $bean
-  * @return void
-  */
- public function indexBean($bean, $batched = TRUE);
-
- /**
-   * delete()
-   *
-   * Delete a bean from the Full Text Search Engine
-   * @abstract
-   * @param $bean
-   * @return void
-   */
-  public function delete($bean);
-
-}
-
-
-interface SugarSeachEngineResultSet extends Iterator, Countable
+/**
+ * Adapter class to Elastica Result
+ */
+class SugarSeachEngineElasticResult implements SugarSeachEngineResult
 {
     /**
-     * Get the total hits found by the search criteria.
-     *
-     * @abstract
-     * @return int
+     * @var \Elastica_Result
      */
-    public function getTotalHits();
+    private $elasticaResult;
 
+    public function __construct(Elastica_Result $result)
+    {
+        $this->elasticaResult = $result;
+    }
 
-
-}
-
-interface SugarSeachEngineResult
-{
     /**
-     * Get the id of the result
+     * Return the id of the
      *
-     * @abstract
-     * @return String The id of the result, typically a SugarBean id.
+     * @return string
      */
-    public function getId();
+    public function getId()
+    {
+        return $this->elasticaResult->getId();
+    }
 
-    public function __toString();
+    /**
+     * TODO: We may store the module by type rather than as a field within the document.
+     * @return array
+     */
+    public function getModule()
+    {
+        return $this->elasticaResult->module;
+    }
 
+    public function __toString()
+    {
+        return __CLASS__ . " " . $this->getId();
+    }
 
 }

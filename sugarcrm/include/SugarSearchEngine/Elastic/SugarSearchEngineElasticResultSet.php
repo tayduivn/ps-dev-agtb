@@ -21,89 +21,70 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
+require_once("include/SugarSearchEngine/Interface.php");
+require_once('include/SugarSearchEngine/Elastic/SugarSeachEngineElasticResult.php');
 
-
-
-interface SugarSearchEngineInterface{
- /**
-  *
-  * search()
-  *
-  * Perform a search against the Full Text Search Engine
-  * @abstract
-  * @param $query
-  * @param int $offset
-  * @param int $limit
-  * @return void
-  */
- public function search($query, $offset = 0, $limit = 20);
-
- /**
-  * connect()
-  *
-  * Make a connection to the Full Text Search Engine
-  * @abstract
-  * @return void
-  */
- public function connect();
-
- /**
-  * flush()
-  *
-  * Save the data to the Full Text Search engine backend
-  * @abstract
-  * @return void
-  */
- public function flush();
-
- /**
-  * indexBean()
-  *
-  * Pass in a bean and go through the list of fields to pass to the engine
-  * @abstract
-  * @param $bean
-  * @return void
-  */
- public function indexBean($bean, $batched = TRUE);
-
- /**
-   * delete()
-   *
-   * Delete a bean from the Full Text Search Engine
-   * @abstract
-   * @param $bean
-   * @return void
-   */
-  public function delete($bean);
-
-}
-
-
-interface SugarSeachEngineResultSet extends Iterator, Countable
+/**
+ * Adapter class to Elastica Result Set
+ */
+class SugarSeachEngineElasticResultSet implements SugarSeachEngineResultSet
 {
+
     /**
-     * Get the total hits found by the search criteria.
+     * @var \Elastica_ResultSet
+     */
+    private $elasticaResultSet;
+
+    /**
+     * @param Elastica_ResultSet $rs
+     */
+    public function __construct(Elastica_ResultSet $rs)
+    {
+        $this->elasticaResultSet = $rs;
+    }
+
+    /**
+     * Return the total number of hits found from our search
      *
-     * @abstract
      * @return int
      */
-    public function getTotalHits();
+    public function getTotalHits()
+    {
+        return $this->elasticaResultSet->getTotalHits();
+    }
 
+    public function current()
+    {
+        return new SugarSeachEngineElasticResult($this->elasticaResultSet->current());
+    }
 
+    public function key()
+    {
+        return $this->elasticaResultSet->key();
+    }
 
-}
+    public function next()
+    {
+        $this->elasticaResultSet->next();
+    }
 
-interface SugarSeachEngineResult
-{
+    public function rewind()
+    {
+        $this->elasticaResultSet->rewind();
+    }
+
+    public function valid()
+    {
+        return $this->elasticaResultSet->valid();
+    }
+
     /**
-     * Get the id of the result
+     * Return the count of hits returned, may not necessarily equal total hits.
      *
-     * @abstract
-     * @return String The id of the result, typically a SugarBean id.
+     * @return int
      */
-    public function getId();
-
-    public function __toString();
-
-
+    public function count()
+    {
+        return $this->elasticaResultSet->count();
+    }
 }

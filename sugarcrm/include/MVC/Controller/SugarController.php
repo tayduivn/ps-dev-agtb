@@ -477,6 +477,24 @@ class SugarController{
 		$this->bean->save(!empty($this->bean->notify_on_save));
 	}
 
+
+    public function action_spot()
+    {
+
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        //Default db search will be handled by the spot view, everything else by fts.
+        if($searchEngine instanceOf SugarSearchEngine)
+        {
+            $this->view = 'spot';
+        }
+        else
+        {
+            $this->view = 'fts';
+        }
+    }
+
+
 	/**
 	 * Specify what happens after the save has occurred.
 	 */

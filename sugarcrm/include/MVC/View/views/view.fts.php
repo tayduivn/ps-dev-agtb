@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -17,93 +18,46 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
- *Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/MVC/View/views/view.ajax.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 
-
-interface SugarSearchEngineInterface{
- /**
-  *
-  * search()
-  *
-  * Perform a search against the Full Text Search Engine
-  * @abstract
-  * @param $query
-  * @param int $offset
-  * @param int $limit
-  * @return void
-  */
- public function search($query, $offset = 0, $limit = 20);
-
- /**
-  * connect()
-  *
-  * Make a connection to the Full Text Search Engine
-  * @abstract
-  * @return void
-  */
- public function connect();
-
- /**
-  * flush()
-  *
-  * Save the data to the Full Text Search engine backend
-  * @abstract
-  * @return void
-  */
- public function flush();
-
- /**
-  * indexBean()
-  *
-  * Pass in a bean and go through the list of fields to pass to the engine
-  * @abstract
-  * @param $bean
-  * @return void
-  */
- public function indexBean($bean, $batched = TRUE);
-
- /**
-   * delete()
-   *
-   * Delete a bean from the Full Text Search Engine
-   * @abstract
-   * @param $bean
-   * @return void
-   */
-  public function delete($bean);
-
-}
-
-
-interface SugarSeachEngineResultSet extends Iterator, Countable
+class ViewFts extends ViewAjax
 {
     /**
-     * Get the total hits found by the search criteria.
-     *
-     * @abstract
-     * @return int
+     * @see SugarView::display()
      */
-    public function getTotalHits();
+    public function display()
+    {
 
+		$offset = -1;
+        $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : -1;
 
+        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
 
+        $options = array('current_module' => $this->module);
+
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $trimmed_query = trim($_REQUEST['q']);
+        $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
+
+        $query_encoded = urlencode($trimmed_query);
+        $ss = new Sugar_Smarty();
+        //$ss->assign('displayResults', $displayResults);
+        //$ss->assign('displayMoreForModule', $displayMoreForModule);
+        //$ss->assign('appStrings', $GLOBALS['app_strings']);
+        //$ss->assign('appListStrings', $GLOBALS['app_list_strings']);
+        $ss->assign('queryEncoded', $query_encoded);
+        $ss->assign('resultSet', $rs);
+        $template = 'include/MVC/View/tpls/fts_spot.tpl';
+        if(file_exists('custom/include/MVC/View/tpls/fts_spot.tpl'))
+        {
+            $template = 'custom/include/MVC/View/tpls/fts_spot.tpl';
+        }
+        echo $ss->fetch($template);
+    }
 }
 
-interface SugarSeachEngineResult
-{
-    /**
-     * Get the id of the result
-     *
-     * @abstract
-     * @return String The id of the result, typically a SugarBean id.
-     */
-    public function getId();
-
-    public function __toString();
-
-
-}
