@@ -227,6 +227,18 @@ class MysqlManager extends DBManager
 
 
 	/**
+	 * @abstract
+	 * Check if query has LIMIT clause
+	 * Relevant for now only for Mysql
+	 * @param string $sql
+	 * @return bool
+	 */
+	protected function hasLimit($sql)
+	{
+	    return stripos($sql, " limit ") !== false;
+	}
+
+	/**
 	 * @see DBManager::limitQuery()
 	 */
 	public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
@@ -391,8 +403,10 @@ class MysqlManager extends DBManager
 		$this->log->info("tableExists: $tableName");
 
 		if ($this->getDatabase()) {
-			$result = $this->getOne("SHOW TABLES LIKE ".$this->quoted($tableName));
-			return !empty($result);
+			$result = $this->query("SHOW TABLES LIKE ".$this->quoted($tableName));
+			if(empty($result)) return false;
+			$row = $this->fetchByAssoc($result);
+			return !empty($row);
 		}
 
 		return false;
@@ -1150,17 +1164,22 @@ class MysqlManager extends DBManager
 
 	public function validateQuery($query)
 	{
-		$res = $this->getOne("EXPLAIN $query");
+		$res = $this->query("EXPLAIN $query");
 		return !empty($res);
 	}
 
 	protected function makeTempTableCopy($table)
 	{
 		$this->log->debug("creating temp table for [$table]...");
-		$create = $this->getOne("SHOW CREATE TABLE {$table}");
-		if(empty($create)) {
+		$result = $this->query("SHOW CREATE TABLE {$table}");
+		if(empty($result)) {
 			return false;
 		}
+		$row = $this->fetchByAssoc($result);
+		if(empty($row) || empty($row['Create Table'])) {
+		    return false;
+		}
+		$create = $row['Create Table'];
 		// rewrite DDL with _temp name
 		$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $create);
 		$r2 = $this->query($tempTableQuery);
