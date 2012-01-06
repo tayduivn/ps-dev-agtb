@@ -36,7 +36,7 @@ function getSystemInfo($send_usage_info=true){
 	global $db, $authLevel, $administration, $timedate;
 	$info=array();
 	$info = getBaseSystemInfo($send_usage_info);
-    	if($send_usage_info){
+    if($send_usage_info){
 		if($authLevel > 0){
 			if(isset($_SERVER['SERVER_ADDR']))
 				$info['ip_address'] = $_SERVER['SERVER_ADDR'];
@@ -72,32 +72,25 @@ function getSystemInfo($send_usage_info=true){
 		$info['system_name'] = (!empty($administration->settings['system_name']))?substr($administration->settings['system_name'], 0 ,255):'';
 
 
-		$query="select count(*) count from users where status='Active' and deleted=0 and is_admin='1'";
-		$result=$db->query($query, 'fetching admin count', false);
-		$row = $db->fetchByAssoc($result);
-		if(!empty($row)) {
-			$info['admin_users'] = $row['count'];
+		$result=$db->getOne("select count(*) count from users where status='Active' and deleted=0 and is_admin='1'", false, 'fetching admin count');
+		if($result !== false) {
+			$info['admin_users'] = $result;
 		}
+
 		if(empty($authLevel)){
 			$authLevel = 0;
 		}
-		$query="select count(*) count from users";
-		$result=$db->query($query, 'fetching all users count', false);
-		$row = $db->fetchByAssoc($result);
 
-		if(!empty($row)) {
-			$info['registered_users'] = $row['count'];
+		$result=$db->getOne("select count(*) count from users", false, 'fetching all users count');
+		if($result !== false) {
+			$info['registered_users'] = $result;
 		}
-		$lastMonth = db_convert("'". $timedate->getNow()->modify("-30 days")->asDb(false) . "'", 'datetime');
-		if( !$send_usage_info){
+
+		$lastMonth = $db->convert("'". $timedate->getNow()->modify("-30 days")->asDb(false) . "'", 'datetime');
+		if( !$send_usage_info) {
 			$info['users_active_30_days'] = -1;
-		}
-		else{
-			$query = "SELECT count( DISTINCT users.id ) user_count FROM tracker, users WHERE users.id = tracker.user_id AND  tracker.date_modified >= $lastMonth";
-			$result=$db->query($query, 'fetching last 30 users count', false);
-			$row = $db->fetchByAssoc($result);
-			$info['users_active_30_days'] = $row['user_count'];
-
+		} else {
+			$info['users_active_30_days'] = $db->getOne("SELECT count( DISTINCT users.id ) user_count FROM tracker, users WHERE users.id = tracker.user_id AND  tracker.date_modified >= $lastMonth", false, 'fetching last 30 users count');
 		}
 
 
@@ -118,15 +111,14 @@ function getSystemInfo($send_usage_info=true){
 		if(!$send_usage_info){
 			$info['latest_tracker_id'] = -1;
 		}else{
-			$query="select id from tracker order by date_modified desc";
+			$query=$db->limitQuerySql("select id from tracker order by date_modified desc", 0, 1);
 			$id=$db->getOne($query,'fetching most recent tracker entry',false);
 			if ( $id !== false )
 			    $info['latest_tracker_id'] = $id;
 		}
 
-		$dbManager = &DBManagerFactory::getInstance();
 		$info['db_type']=$sugar_config['dbconfig']['db_type'];
-		$info['db_version']=$dbManager->version();
+		$info['db_version']=$db->version();
 	}
 	if(file_exists('distro.php')){
 		include('distro.php');
@@ -134,17 +126,14 @@ function getSystemInfo($send_usage_info=true){
 	}
 	$info['auth_level'] = $authLevel;
 	//BEGIN SUGARCRM flav=pro ONLY
-	$query = "SELECT count(*) as record_count FROM session_history WHERE is_violation =1 AND date_entered >= $lastMonth";
-	$result = $GLOBALS['db']->query($query);
-	$info['license_portal_ex'] = 0;
-	if($row = $GLOBALS['db']->fetchByAssoc($result)){
-		$info['license_portal_ex'] = $row['record_count'];
+	$result = $db->getOne("SELECT count(*) as record_count FROM session_history WHERE is_violation =1 AND date_entered >= $lastMonth");
+	if($result){
+		$info['license_portal_ex'] = $result;
 	}
-	$query = "SELECT MAX(num_active_sessions) as record_max FROM session_history WHERE date_entered >= $lastMonth";
-	$result = $GLOBALS['db']->query($query);
+	$result = $db->getOne("SELECT MAX(num_active_sessions) as record_max FROM session_history WHERE date_entered >= $lastMonth");
 	$info['license_portal_max'] = 0;
-	if($row = $GLOBALS['db']->fetchByAssoc($result)){
-		$info['license_portal_max'] = $row['record_max'];
+	if($result !== false) {
+		$info['license_portal_max'] = $result;
 	}
 	//END SUGARCRM flav=pro ONLY
 	$info['os'] = php_uname('s');
@@ -362,17 +351,17 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
  */
 function compareVersions($ver1, $ver2)
 {
-    $ver_arr_1 = preg_split("/[^0-9]/", $ver1); 
-    $ver_arr_2 = preg_split("/[^0-9]/", $ver2); 
+    $ver_arr_1 = preg_split("/[^0-9]/", $ver1);
+    $ver_arr_2 = preg_split("/[^0-9]/", $ver2);
     $count = (count($ver_arr_1) >= count($ver_arr_2)) ? count($ver_arr_1) : count($ver_arr_2);
     for ($i = 0; $i < $count; $i++)
     {
         if (!isset($ver_arr_1[$i]))
             $ver_arr_1[$i] = 0;
-        
+
         if (!isset($ver_arr_2[$i]))
             $ver_arr_2[$i] = 0;
-        
+
         if ($ver_arr_1[$i] > $ver_arr_2[$i])
             return true;
     }
@@ -596,7 +585,7 @@ function checkDownloadKey($data){
 
 /**
  * Whitelist of modules and actions that don't need redirect
- * 
+ *
  * Use following standard for whitelist:
  * array(
  *		'module_name_1' => array('action_name_1', 'action_name_2', ...),	// Allow only "action_name_1" and "action_name_2" for "module_name_1"
@@ -626,11 +615,11 @@ function getModuleWhiteListForLicenseCheck(User $user) {
 
 /**
  * Check if $module and $action don't get into whitelist and do we need redirect
- * 
+ *
  * @param string	$state	Now works only for 'LICENSE_KEY' state (TODO: do we need any other state?)
  * @param string	$module	Module to check
  * @param string	$action	(optional) Action to check. Can be omitted because some modules include all actions
- * @return boolean 
+ * @return boolean
  */
 function isNeedRedirectDependingOnUserAndSystemState($state, $module = null, $action = null, $whiteList = array()) {
 	if($module !== null) {
@@ -659,7 +648,7 @@ function setSystemState($state){
 //END SUGARCRM flav=int ONLY
 	$admin_redirect_url		= 'index.php?action=LicenseSettings&module=Administration&LicState=check';
 	$not_admin_redirect_url	= 'index.php?module=Users&action=Logout&LicState=check';
-	
+
 	if(isset($current_user) && !empty($current_user->id)){
 		if(isNeedRedirectDependingOnUserAndSystemState($state, $_REQUEST['module'], $_REQUEST['action'], getModuleWhiteListForLicenseCheck($current_user))) {
 			$redirect_url			= is_admin($current_user)?$admin_redirect_url:$not_admin_redirect_url;
