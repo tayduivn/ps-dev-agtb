@@ -191,9 +191,10 @@ function get_reports_to_email($user_id= '', $schedule_type="pro"){
 
 	$results = $this->db->query($query);
 	$return_array = array();
-	while($row = $this->db->fetchByAssoc($results)){
-			$return_array[$row['report_id']] = $this->fromConvertReportScheduleDBRow($row);
-	}
+    while ($row = $this->db->fetchByAssoc($results))
+    {
+        $return_array[] = $this->fromConvertReportScheduleDBRow($row);
+    }
 	return $return_array;
 
 }
@@ -216,9 +217,10 @@ function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 			"ORDER BY $this->table_name.next_run ASC";
 	$results = $this->db->query($query);
 	$return_array = array();
-	while($row = $this->db->fetchByAssoc($results)){
-			$return_array[$row['report_id']] = $this->fromConvertReportScheduleDBRow($row);
-	}
+    while ($row = $this->db->fetchByAssoc($results))
+    {
+       $return_array[] = $this->fromConvertReportScheduleDBRow($row);
+    }
 	return $return_array;
 
 }
