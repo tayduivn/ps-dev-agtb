@@ -536,8 +536,6 @@ class DynamicField {
         if(!$is_update){
             $fmd->new_with_id=true;
         }
-        $fmd->save();
-        $this->buildCache($this->module);
         if($field){
             if(!$is_update){
                 //Do two SQL calls here in this case
@@ -553,20 +551,22 @@ class DynamicField {
                 // unsetting temporary member variable
                 unset($field->no_default);
                 if(!empty($query)){
-                	$GLOBALS['db']->query($query);
+                	$GLOBALS['db']->query($query, true, "Cannot create column");
 	                $field->default = $fmd->default_value;
 	                $field->default_value = $fmd->default_value;
 	                $query = $field->get_db_modify_alter_table($this->bean->table_name . '_cstm');
 	                if(!empty($query)){
-	                	$GLOBALS['db']->query($query);
+	                	$GLOBALS['db']->query($query, true, "Cannot set default");
 	            	}
                 }
             }else{
                 $query = $field->get_db_modify_alter_table($this->bean->table_name . '_cstm');
                 if(!empty($query)){
-                	$GLOBALS['db']->query($query);
+                	$GLOBALS['db']->query($query, true, "Cannot modify field");
             	}
             }
+            $fmd->save();
+            $this->buildCache($this->module);
             $this->saveExtendedAttributes($field, array_keys($fmd->field_defs));
         }
 
