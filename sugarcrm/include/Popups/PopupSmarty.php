@@ -375,6 +375,25 @@ class PopupSmarty extends ListViewSmarty{
             }
         }
 
+        /**
+         * Bug #46842 : The relate field field_to_name_array fails to copy over custom fields 
+         * By default bean's create_new_list_query function loads fields displayed on the page or used in the search
+         * add fields used to populate forms from _viewdefs :: field_to_name_array to retrive from db
+         */
+        if ( isset($_REQUEST['field_to_name']) && $_REQUEST['field_to_name'] )
+        {
+            $_REQUEST['field_to_name'] = is_array($_REQUEST['field_to_name']) ? $_REQUEST['field_to_name'] : array($_REQUEST['field_to_name']);
+            foreach ( $_REQUEST['field_to_name'] as $add_field )
+            {
+                $add_field = strtolower($add_field);
+                if ( $add_field != 'id' && !isset($this->filter_fields[$add_field]) && isset($this->seed->field_defs[$add_field]) )
+                {
+                    $this->filter_fields[$add_field] = true;
+                }
+            }
+            
+        }
+        
         //BEGIN SUGARCRM flav=pro ONLY
         //check for team_set_count
         if(!empty($this->filter_fields['team_name']) && empty($this->filter_fields['team_count'])){
