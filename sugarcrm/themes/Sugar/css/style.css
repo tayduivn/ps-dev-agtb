@@ -6280,7 +6280,7 @@ ul.clickMenu li span.subhover {cursor: pointer;} /*--Hover effect for trigger--*
 ul.clickMenu li ul.subnav {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
-	left: 0; top: 20px;
+	left: 0; top: 23px;
 	background: #fff;
 	margin: 0;
 	display: none;

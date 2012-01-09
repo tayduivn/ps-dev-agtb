@@ -34,22 +34,24 @@
 				this.addClass("SugarActionMenu");
 				
 				//Fix custom code buttons programatically to prevent metadata edits
-				this.find("input[type='submit']").each(function(index, node){
+				this.find("input[type='submit'], input[type='button']").each(function(idx, node){
 					var jNode = $(node);
 					var parent = jNode.parent();
 				
-					if(parent.is("ul") && parent.hasClass("subnav") && jNode.css("display") != "none"){
+					//if(parent.is("ul") && parent.hasClass("subnav") && jNode.css("display") != "none"){
 						var newItem = $(document.createElement("li"));
 						var newItemA = $(document.createElement("a"));
 						newItemA.html(jNode.val());
 						newItemA.click(function(event){
 							jNode.click();
 						});
+						newItemA.attr("id", jNode.attr("id"));
+						jNode.attr("id", jNode.attr("id") + "_old");
 							
 						newItem.append(newItemA);
-						jNode.before(newItem);
+						menuNode.sugarActionMenu("addItem", {item: newItem, index:idx});
 						jNode.css("display", "none");
-					}
+					//}
 				});
 				
 				
@@ -113,6 +115,13 @@
 						$(subnode).bind("click", function(){
 							jNode.slideUp(slideUpSpeed);
 							jNode.removeClass("ddopen");
+						});
+					});
+					
+					//fix up text of <a> tags so they span correctly
+					jNode.find("a").each(function(index, subnode){
+						$(subnode).html(function(index, oldhtml){
+							return oldhtml.replace(" ", "&nbsp;");
 						});
 					});
 				});
