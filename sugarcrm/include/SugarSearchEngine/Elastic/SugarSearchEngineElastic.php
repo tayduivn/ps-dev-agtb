@@ -33,7 +33,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
     private $_documents = array();
 
     const MAX_BULK_THRESHOLD = 100;
-    const INDEX_TYPE = 'SugarBean'; //TODO: Determine if we use module type here.
+    const DEFAULT_INDEX_TYPE = 'SugarBean';
+
+    private $_indexType = 'SugarBean';
 
     public function __construct($params = array())
     {
@@ -72,6 +74,21 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
     }
 
     /**
+     * Return the 'type' for the index.  By using the bean type we can specify mappings on a per bean basis if we need
+     * to in the future.
+     *
+     * @param $bean
+     * @return string
+     */
+    protected function getIndexType($bean)
+    {
+        if(!empty($bean->table_name))
+            return $bean->table_name;
+        else
+            return self::DEFAULT_INDEX_TYPE;
+    }
+
+    /**
      * TODO: We should probably add this function to the interface as logically it is different than the indexSingleBean function.
      *
      * @param $bean
@@ -106,7 +123,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         try
         {
             $index = new Elastica_Index($this->_client, $this->_indexName);
-            $type = new Elastica_Type($index, self::INDEX_TYPE);
+            $type = new Elastica_Type($index, $this->getIndexType($bean));
             $doc = $this->createIndexDocument($bean);
             if($doc != null)
                 $type->addDocument($doc);
@@ -140,7 +157,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
             try
             {
                 $index = new Elastica_Index($this->_client, $this->_indexName);
-                $type = new Elastica_Type($index, self::INDEX_TYPE);
+                $type = new Elastica_Type($index, $this->getIndexType($bean));
                 $batchedDocs = array();
                 $x = 0;
                 foreach($this->_documents as $doc)
