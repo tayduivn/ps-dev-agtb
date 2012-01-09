@@ -31,15 +31,16 @@
 
 <style>
 {literal}
-.yui-dt table, .yui-dt td, .yui-dt tr th, .yui-dt-liner {
+#visGridWindow .yui-dt table, #visGridWindow .yui-dt td, .yui-dt tr th, #visGridWindow .yui-dt-liner {
 	padding: 1px 0px 1px 0 !important
 }
-tr.yui-dt-rec {
+
+#visGridWindow tr.yui-dt-rec {
     border-left-width: 0px;
     border-right-width: 0px;
 }
 
-ul.ddd_table{
+#visGridWindow ul.ddd_table{
     padding: 5px;
     margin: 0px 10px 10px 10px;
     border: solid 1px grey;
@@ -48,13 +49,13 @@ ul.ddd_table{
     min-height: 20px;
 }
 
-ul li {
+#visGridWindow ul li {
     list-style-type: none;
     margin: 3px;
     padding: 2px;
 }
 
-ul li.title {
+#visGridWindow ul li.title {
     font-weight: bold;
     font-size: 16px;
     float:left;
@@ -62,7 +63,7 @@ ul li.title {
     position: relative;
 }
 
-h3.title {
+#visGridWindow h3.title {
     margin-left: auto;
     margin-right: auto;
     width: 90%;

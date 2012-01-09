@@ -36,7 +36,8 @@ SUGAR.expressions.initFormulaBuilder = function() {
 /**
  * Run through the javascript function cache to find all the loaded functions.
  */
-SUGAR.expressions.getFunctionList = function(){
+SUGAR.expressions.getFunctionList = function()
+{
 	var typeMap = SUGAR.expressions.Expression.TYPE_MAP;
 	var funcMap = SUGAR.FunctionMap;
 	var funcList = [];
@@ -176,7 +177,9 @@ SUGAR.expressions.validateRelateFunctions = function(t)
         return;
 	}
 };
-SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
+
+SUGAR.expressions.validateCurrExpression = function(silent, matchType)
+{
 	try {
 		var varTypeMap = {};
 		for (var i = 0; i < fieldsArray.length; i++){
@@ -208,6 +211,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 		return false;
 	}
 }
+
 SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 {
 	if (!SUGAR.expressions.validateCurrExpression(true, returnType))
@@ -259,7 +263,10 @@ SUGAR.expressions.GridToolTip = {
 	}
 };
 
-	var typeFormatter = function(el, rec, col, data)
+	/*
+	 * Set up the function and field list s
+	 */
+    var typeFormatter = function(el, rec, col, data)
 	{
 		var out = "";
 		switch(data)
@@ -498,4 +505,362 @@ SUGAR.expressions.GridToolTip = {
 	
 	if(ModuleBuilder && ModuleBuilder.formulaEditorWindow)
 		ModuleBuilder.formulaEditorWindow.center();
+
+
+    SUGAR.expressions.updateSelRFLink = function(link)
+    {
+        var win = SUGAR.formulaRelFieldWin;
+        win.params = {
+            module:"ExpressionEngine",
+            action:"selectRelatedField",
+            tmodule:ModuleBuilder.module,
+            selLink:link,
+            package:ModuleBuilder.MBpackage
+        };
+        win.load(ModuleBuilder.paramsToUrl(win.params), null, function(){win.center();});
+    };
+
+    SUGAR.expressions.updateRollupWizard = function(link, type)
+    {
+        var win = SUGAR.rollupWindow;
+        win.params = {
+            module:"ExpressionEngine",
+            action:"rollupWizard",
+            tmodule:ModuleBuilder.module,
+            selLink:link,
+            type:type,
+            package:ModuleBuilder.MBpackage
+        };
+        win.load(ModuleBuilder.paramsToUrl(win.params), null, function(){win.center();});
+    };
+
+    SUGAR.expressions.insertRollup = function(){
+        $.markItUp({
+            closeWith: 'rollup' + $("#rollwiz_type").val() + '($' + $('#rollwiz_rmodule').val() + ', "' + $('#rollwiz_rfield').val() + '")'
+        });
+        SUGAR.rollupWindow.hide();
+    }
+
+    $("#formulaInput").markItUp({
+    	onShiftEnter:  	{keepDefault:true},
+    	onCtrlEnter:  	{keepDefault:true},
+    	onTab:    		{keepDefault:false, replaceWith:'    '},
+    	markupSet:  [
+            {name:'Related Field', className:'rel_field',  beforeInsert:function(){
+                if (!SUGAR.formulaRelFieldWin)
+                    SUGAR.formulaRelFieldWin = new YAHOO.SUGAR.AsyncPanel('relatedFieldWindow', {
+                        width: 400,
+                        draggable: true,
+                        close: true,
+                        constraintoviewport: true,
+                        fixedcenter: false,
+                        script: false,
+                        modal: true
+                    });
+                var win = SUGAR.formulaRelFieldWin;
+                win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+                win.setBody("loading...");
+                win.render(document.body);
+                SUGAR.expressions.updateSelRFLink("");
+                win.show();
+                win.center();
+            }},
+            {name:'Rollup', className:'rollup',  beforeInsert:function(){
+                if (!SUGAR.rollupWindow)
+                    SUGAR.rollupWindow = new YAHOO.SUGAR.AsyncPanel('rollupWindow', {
+                        width: 400,
+                        draggable: true,
+                        close: true,
+                        constraintoviewport: true,
+                        fixedcenter: false,
+                        script: false,
+                        modal: true
+                    });
+                var win = SUGAR.rollupWindow;
+                win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+                win.setBody("loading...");
+                win.render(document.body);
+                SUGAR.expressions.updateRollupWizard("", "");
+                win.show();
+                win.center();
+            }}
+    	]
+    });
+
+    if($("#fb_ac_wrapper").length == 0){
+        $("body").append(
+            "<input id='fb_ac_input' style='display:none;z-index:50;position:relative'>" +
+            "<div id='fb_ac_wrapper' style='position: absolute;'>" +
+                "<div id='fb_ac_spacer'></div>" +
+            "</div>"
+        )
+        $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput"});
+    }
+
+
+    var fb_ac_open = false;
+    var getCompStart = function(val, offset)
+    {
+        var start = 0;
+        for( var c in {",":"", ".":"", "(":"", ")":""})
+        {
+            var pos = val.lastIndexOf(c, offset - 1);
+            if (pos !== false && pos > start)
+                start = pos + 1;
+        }
+        return start;
+    };
+    var getCompEnd = function(val, offset)
+    {
+        var end = val.length;
+        for( var c in {",":0, ".":0, "(":0, ")":0})
+        {
+            var pos = val.indexOf(c, offset);
+            if (pos > -1 && pos < end)
+                end = pos;
+        }
+        return end;
+    };
+    var getComponentText = SUGAR.expressions.fb_getComponentText = function(val, offset)
+    {
+        var target = $("#formulaInput")[0];
+        val = typeof(val) == "undefined" ? $("#formulaInput").val() : val;
+        offset = typeof(offset) == "undefined" ? target.selectionEnd : offset;
+        //Start by getting everything back to the next comma, period, or (
+        var start = getCompStart(val, offset);
+        if (start > offset)
+            start = offset;
+        //Now find where the end point of the current string is
+        var end = getCompEnd(val, offset);
+
+        return $.trim(val.substring(start, end));
+    };
+
+    //Walk back through the string with a counter finding the first open paren without a clsoe
+    var getOpenParenIndex = function(val, offset){
+        var commas = 0, count = 0, inQuotes = false;
+        for (var i = offset; i > -1; i--)
+        {
+            if (inQuotes && val[i] != '"')
+                continue;
+            else if (val[i] == '"')
+                inQuotes = !inQuotes;
+            else if (val[i] == "(")
+            {
+                if (count > 0)
+                    count--;
+                else
+                    return [i, commas];
+            }
+            else if (val[i] == ")")
+                count++;
+            else if(val[i] == "," && count == 0)
+                commas++;
+        }
+        return -1;
+    };
+
+    var getExpectedComponentType = SUGAR.expressions.fb_getComponentType = function()
+    {
+        var target = $("#formulaInput")[0],
+            val = $("#formulaInput").val(),
+            offset = target.selectionEnd - 1,
+            start = getCompStart(val, offset);
+        if (start > offset)
+            start = offset;
+
+        //Find out the name of the calling function
+        var lastParen = getOpenParenIndex(val, start);
+        if (lastParen != -1)
+        {
+            var parent = getComponentText(val, lastParen[0] - 1);
+            console.log("function " + getComponentText(val, lastParen[0] - 1) + " index " + lastParen[1]);
+            var fMap = SUGAR.FunctionMap;
+            var see = SUGAR.expressions.Expression;
+
+            if(typeof(fMap[parent]) == "undefined")
+            {
+                console.log("unknown parent function: " + parent);
+                return false;
+            };
+
+            var types = fMap[parent].prototype.getParameterTypes();
+            var count = fMap[parent].prototype.getParamCount();
+            if (count != -1 && lastParen[1] >= count)
+            {
+                console.log("too many arguments!");
+                return false;
+            }
+            if($.isArray(types))
+            {
+                return types[lastParen[1]];
+            }
+            return types;
+        }
+
+        return false;
+    };
+
+    //Return an array of all the field names from the current module of a given type
+    //Optionally it can take a search string to filter the fields by name
+    var getFieldsByType = function(type, search, limit ){
+        if (!type)
+            type = "generic";
+        if (search)
+            search  = search.toLowerCase();
+
+        var ret = [];
+        for(var i = 0; i < fieldsArray.length; i++)
+        {
+            var f = fieldsArray[i];
+            if ((type == "generic" || f[1] == type)
+                && (!search || f[0].toLowerCase().indexOf(search) > -1)
+            ){
+                ret.push(f[0]);
+            }
+
+            if (limit && ret.length >= limit)
+                break;
+        }
+        return ret;
+    };
+
+    var getFunctionsByType = function(type, search, limit)
+    {
+        if (!type)
+            type = "generic";
+        if (search)
+            search  = search.toLowerCase();
+
+        console.log(type);
+
+        var ret = [],
+            fMap = SUGAR.FunctionMap,
+        	see = SUGAR.expressions.Expression;
+        for(var i in fMap)
+        {
+            try{
+                if ((!search || i.toLowerCase().indexOf(search) > -1)
+                    && see.prototype.isProperType(fMap[i].prototype, type)
+                ){
+                    ret.push(i);
+                }
+            }catch(e){
+                console.log(i);
+            }
+
+            if (limit && ret.length >= limit)
+                break;
+        }
+        return ret;
+    }
+
+    $( "#fb_ac_input" ).autocomplete({
+        source: function(e, fn){
+            //Fields
+            console.log(e.term);
+            if(e.term[0] == "$")
+            {
+                fn(getFieldsByType(getExpectedComponentType(), e.term.substr(1), 10));
+            }
+            else {
+                fn(getFunctionsByType(getExpectedComponentType(), e.term, 10));
+            }
+        },
+        appendTo: "#fb_ac_wrapper",
+        position: { my : "left top", at: "left top"},
+        open: function(event, ui) {
+            fb_ac_open = true;
+            //Set the content of the spacer to the same as the formula input to offset the autocomplete location by that amount
+            $("#fb_ac_spacer").html($("#formulaInput").val().substring(0, $("#formulaInput")[0].selectionEnd));
+            $("ul.ui-autocomplete").css("left", "6px");
+            $("ul.ui-autocomplete").css("top", "8px");
+            $("ul.ui-autocomplete").css("position", "relative");
+            $("ul.ui-autocomplete").css("width", "150px");
+        },
+        close: function(){
+            fb_ac_open = false;
+        },
+        select: function(event, ui) {
+            //On selection, relpace the currrent element in the forumla with the selection
+            var target = $("#formulaInput"),
+                el = target[0],
+                val = target.val(),
+                offset = el.selectionEnd,
+                start = getCompStart(val, offset),
+                end = getCompEnd(val, offset),
+                comp = getComponentText(),
+                selected = ui.item.value,
+                cursorOffset = 0;
+                if (start > offset)
+                    start = offset;
+
+            //Fields need the dollar sign replaced
+            if (comp[0] == "$")
+                selected = "$" + selected;
+            else if (val[getCompEnd(val, offset)] != "("){
+                selected += "(";
+                cursorOffset = 1;
+            }
+
+            var begin = val.substring(0, start);
+            var ending = val.substring(end);
+            //Refill any whitespace in front and back of the component
+            var ws = new RegExp("^(\\s+)[!\s]*").exec(val.substring(start, end));
+            if (ws) selected = ws[0] + selected;
+
+            ws = new RegExp("[!\s]*(\\s+)$").exec(val.substring(start, end));
+            if (ws) selected += ws[0];
+
+
+            //slice the selected item into the formula
+            target.val(begin + selected + ending);
+            end = getCompEnd(target.val(), offset) + cursorOffset,
+            el.setSelectionRange(end, end);
+            fb_ac_open = false;
+        }
+    });
+
+    $("#formulaInput").keyup(function(e){
+        $("#fb_ac_input").val(getComponentText());
+        //$("#fb_ac_input").trigger(e);
+        if(!(e.keyCode == 38 || e.keyCode == 40) && e.keyCode != 13 && e.keyCode != 27)
+        {
+            if (SUGAR.expressions.fb_ac_timer)
+                window.clearTimeout(SUGAR.expressions.fb_ac_timer);
+
+            //Use a 300ms timer before showing/updating the autocomplete
+            SUGAR.expressions.fb_ac_timer = window.setTimeout(function(){
+                //Reposition the autocomplete wrapper if it closed as the window may have moved
+                if (!fb_ac_open)
+                    $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput"});
+                //DO not open the auto complete for moving the curser. Only modify it if its already open
+
+                if ((e.keyCode != 37 && e.keyCode != 39) || fb_ac_open){
+                    console.log("key was " + e.keyCode + " and ac_open was " + fb_ac_open + ".");
+                    $( "#fb_ac_input" ).autocomplete("search", getComponentText());
+                }
+            }, 300);
+        }
+    })
+
+    $("#formulaInput").keydown(function(e){
+        //Prevent arrow key default when the autocomplete is visible and pass it the event
+        if ((e.keyCode == 38 || e.keyCode == 40) && fb_ac_open){
+            e.preventDefault();
+        }
+
+        if(fb_ac_open)
+            $('#fb_ac_input').trigger(e);
+        //$("#fb_ac_input").trigger('keydown', [e]);
+        //$("#fb_ac_input").trigger('keydown.autocomplete', [e]);
+    })
+
+    $("#formulaInput").click(function()
+    {
+        $( "#fb_ac_input" ).autocomplete("close");
+    });
+
+
+
 };

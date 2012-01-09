@@ -122,5 +122,13 @@ class ExpressionEngineController extends SugarController
     function action_getRelatedValue() {
         $this->view ='getRelatedField';
     }
+
+    function action_selectRelatedField() {
+        $this->view ='selectRelatedField';
+    }
+
+    function action_rollupWizard() {
+        $this->view ='rollupWizard';
+    }
 }
 ?>
