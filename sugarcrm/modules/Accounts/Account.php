@@ -285,7 +285,11 @@ class Account extends Company {
 			$camp = new Campaign();
 		    $where = "campaigns.id='{$this->campaign_id}'";
 		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
-		    $this->campaign_name = $campaign_list[0]->name;	
+            //Make sure a campaign is found
+            if(!empty($campaign_list))
+            {
+		       $this->campaign_name = $campaign_list[0]->name;
+            }
 		}
 //END SUGARCRM flav!=sales ONLY        
 	}
