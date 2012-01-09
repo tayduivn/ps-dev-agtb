@@ -119,6 +119,8 @@ class="yui-navset"
 			{{elseif isset($fields[$colData.field.name])}}
 			   {capture name="label" assign="label"}{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}{/capture}
 			   <label for="{{$fields[$colData.field.name].name}}">{$label|strip_semicolon}:</label>
+			{{else}}
+			    &nbsp;
 			{{/if}}
 			{{* Show the required symbol if field is required, but override not set.  Or show if override is set *}}
 				{{if ($fields[$colData.field.name].required && (!isset($colData.field.displayParams.required) || $colData.field.displayParams.required)) ||
