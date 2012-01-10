@@ -719,6 +719,24 @@ class ViewConvertLead extends SugarView
 				if($field == 'date_entered') $bean->$field = gmdate($GLOBALS['timedate']->get_db_date_time_format()); //bug 41030
 			}
 		}
+
+        // Bug #40279 Fixing related fields values by field name from Studio instead of field name from DB
+        foreach ($bean->field_defs as $field => $def)
+        {
+            if (
+                $def['type'] != 'relate'
+                || isset($def['id_name']) == false
+                || isset($lead->field_defs[$field]) == false
+                || isset($lead->field_defs[$field]['id_name']) == false
+            )
+            {
+                continue;
+            }
+            $beanField = $def['id_name'];
+            $leadField = $lead->field_defs[$field]['id_name'];
+            $bean->$beanField = $lead->$leadField;
+        }
+
 		//Try to link to the new contact
 		$contactRel = "";
 		if (!empty($vdef['ConvertLead']['select']))
