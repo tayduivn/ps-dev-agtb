@@ -1087,6 +1087,29 @@ function getGroupByColumnName(&$reporter, $index, $header_row, $row) {
 	if (empty($headerValue)) {
 		$headerValue = "None";
 	}
+    // Bug #39763 Summary label should be displayed instead of group label.
+    if (isset($reporter->report_def['summary_columns']))
+    {
+        foreach ($reporter->report_def['summary_columns'] as $summaryField)
+        {
+            $isValid = true;
+            if (isSet($attributeInfo['qualifier']))
+            {
+                if (!isSet($summaryField['qualifier']))
+                {
+                    $isValid = false;
+                }
+                elseif ($attributeInfo['qualifier'] != $summaryField['qualifier'])
+                {
+                    $isValid = false;
+                }
+            }
+            if ($summaryField['table_key'] == $attributeInfo['table_key'] && $summaryField['name'] == $attributeInfo['name'] && $isValid == true)
+            {
+                $groupByColumnLabel = $summaryField['label'];
+            }
+        }
+    }
 	$returnData = $groupByColumnLabel . " = " . $headerValue;
 	return (empty($columnValues) ? $returnData : $returnData . ", " . $columnValues);
 } // fn

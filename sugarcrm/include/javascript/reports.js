@@ -185,8 +185,33 @@ SUGAR.reports = function() {
 				}
 				if (report_def_str.group_defs) {
 					group_defs = report_def_str.group_defs;
-					for (i = 0; i < report_def_str.group_defs.length; i++) 
+					for (i = 0; i < report_def_str.group_defs.length; i++)
+                    {
+                        // Bug #39763 Summary label should be displayed instead of group label.
+                        if (typeof report_def_str.summary_columns != 'undefined')
+                        {
+                            for (var j =0; j < report_def_str.summary_columns.length; j++)
+                            {
+                                var isValid = true;
+                                if (typeof report_def_str.group_defs[i].qualifier != 'undefined')
+                                {
+                                    if (typeof report_def_str.summary_columns[j].qualifier == 'undefined')
+                                    {
+                                        isValid = false;
+                                    }
+                                    else if (report_def_str.group_defs[i].qualifier != report_def_str.summary_columns[j].qualifier)
+                                    {
+                                        isValid = false;
+                                    }
+                                }
+                                if (report_def_str.summary_columns[j].table_key == report_def_str.group_defs[i].table_key && report_def_str.summary_columns[j].name == report_def_str.group_defs[i].name && isValid == true)
+                                {
+                                    report_def_str.group_defs[i].force_label = report_def_str.summary_columns[j].label;
+                                }
+                            }
+                        }
 						SUGAR.reports.addFieldToGroupByOnLoad(report_def_str.group_defs[i], report_def_str.summary_order_by);
+                    }
 				}
 				//Only add summary columns that weren't auto added by group by.
 				if (report_def_str.summary_columns) {
@@ -3573,6 +3598,11 @@ SUGAR.reports = function() {
 			SUGAR.reports.addFieldToDisplaySummariesOnLoad(groupByColumn, 'group_by_row_' + totalGroupByRows, summaryOrderBy);
 		},	
 		addFieldToDisplaySummariesOnLoad: function(summaryColumn, linkedGroupById, summaryOrderBy) {
+            // Bug #39763 override label if force_label exists.
+            if (typeof summaryColumn.force_label != 'undefined')
+            {
+                summaryColumn.label = summaryColumn.force_label;
+            }
 			var module = full_table_list[summaryColumn.table_key].module;
 			if (summaryColumn.qualifier)
 				var fieldName = summaryColumn.name+":"+summaryColumn.qualifier;		
