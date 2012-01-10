@@ -40,15 +40,6 @@ interface SugarSearchEngineInterface{
     public function search($query, $offset = 0, $limit = 20);
 
     /**
-    * connect()
-    *
-    * Make a connection to the Full Text Search Engine
-    * @abstract
-    * @return void
-    */
-    public function connect();
-
-    /**
     * flush()
     *
     * Save the data to the Full Text Search engine backend

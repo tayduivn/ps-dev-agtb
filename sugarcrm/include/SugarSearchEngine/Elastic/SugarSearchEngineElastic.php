@@ -55,14 +55,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         $this->_client = new Elastica_Client();
     }
 
-    public function connect()
-    {
-
-    }
-
     public function indexBean($bean, $batch = TRUE)
     {
         $GLOBALS['log']->fatal("GOING TO INDEX BEAN");
+        if(!$this->isModuleFtsEnabled($bean->module_dir) )
+            return;
+
         if(!$batch)
             $this->indexSingleBean($bean);
         else

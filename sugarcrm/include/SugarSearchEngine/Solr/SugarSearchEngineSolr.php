@@ -31,11 +31,7 @@ class SugarSearchEngineSolr extends SugarSearchEngineBase
     
     public function __construct()
     {
-    }
 
-    public function connect()
-    {
-        //$this->_backend = new Apache_Solr_Service($config['host'], $config['port'], $config['path']);
     }
 
     public function indexBean($bean, $batched = TRUE)
