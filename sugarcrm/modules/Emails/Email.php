@@ -533,7 +533,7 @@ class Email extends SugarBean {
 		$this->description = $this->decodeDuringSend($this->description);
 
 		/* from account */
-		$replyToAddress = $current_user->emailAddress->getReplyToAddress($current_user, true);
+		$replyToAddress = $current_user->emailAddress->getReplyToAddress($current_user);
 		$replyToName = "";
 		if(empty($request['fromAccount'])) {
 			$defaults = $current_user->getPreferredEmail();
@@ -565,7 +565,7 @@ class Email extends SugarBean {
 			{
 				if (empty($replyToAddress))
 				{
-					$replyToAddress = $current_user->emailAddress->getReplyToAddress($current_user, true);
+					$replyToAddress = $current_user->emailAddress->getReplyToAddress($current_user);
 				} // if
 				if (empty($replyToName))
 				{
