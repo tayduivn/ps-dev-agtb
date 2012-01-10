@@ -66,7 +66,7 @@ interface SugarSearchEngineInterface{
     * @param $bean
     * @return void
     */
-    public function delete($bean);
+    public function delete(SugarBean $bean);
 
 
     /**

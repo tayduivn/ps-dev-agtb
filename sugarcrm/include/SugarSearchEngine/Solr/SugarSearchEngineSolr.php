@@ -53,7 +53,7 @@ class SugarSearchEngineSolr extends SugarSearchEngineAbstractBase
         //$this->_backend->optimize();
     }
 
-    public function delete($bean)
+    public function delete(SugarBean $bean)
     {
         $this->_backend->deleteById($bean->id);
     }

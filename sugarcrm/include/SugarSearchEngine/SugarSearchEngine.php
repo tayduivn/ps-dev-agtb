@@ -56,7 +56,7 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
      *
      * @param $bean
      */
-    public function delete($bean) {}
+    public function delete(SugarBean $bean) {}
 
     /**
      * No-op

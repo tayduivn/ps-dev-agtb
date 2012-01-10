@@ -523,6 +523,9 @@ class SugarController{
 				sugar_cleanup(true);
 			}
 			$this->bean->mark_deleted($_REQUEST['record']);
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance();
+            $searchEngine->delete($this->bean);
 		}else{
 			sugar_die("A record number must be specified to delete");
 		}

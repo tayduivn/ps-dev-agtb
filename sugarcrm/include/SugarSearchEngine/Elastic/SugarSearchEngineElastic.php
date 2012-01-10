@@ -148,9 +148,22 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     }
 
-    public function delete($bean)
+    public function delete(SugarBean $bean)
     {
-
+        if(empty($bean->id))
+            return;
+        
+        try
+        {
+            $GLOBALS['log']->fatal("Going to delete {$bean->id}");
+            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $type = new Elastica_Type($index, $this->getIndexType($bean));
+            $type->deleteById($bean->id);
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to delete index: {$e->getMessage()}");
+        }
     }
 
     /**
