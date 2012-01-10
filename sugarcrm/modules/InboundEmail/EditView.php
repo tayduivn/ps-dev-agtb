@@ -372,16 +372,18 @@ $sqs_objects = array_merge($sqs_objects, $teamSetField->createQuickSearchCode(fa
 $json = getJSONobj();
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';
 //add custom fields to validation
-foreach($javascript->sugarbean->field_name_map as $field=>$value){
-
-    if(isset($value['custom_type'])) {
-        if ($value['custom_type'] != 'link') {
-            //pass in required flag if set to required
-            if(isset($value['required']) && $value['required']){
-              $javascript->addField($field, true);
-            }else{
+foreach($javascript->sugarbean->field_name_map as $field=>$value)
+{
+    if(isset($value['custom_type']))
+    {
+        if ($value['custom_type'] != 'link')
+        {
+            // fixing bug #49015: The same error message is shown three times
+            // all required fields were added to validate before
+            if(!isset($value['required']) || !$value['required'])
+            {
                 //if not required, then just pass in to validate
-              $javascript->addField($field,false);
+                $javascript->addField($field, false);
             }
         }
     }
