@@ -27,7 +27,7 @@ require_once('include/SugarSearchEngine/Elastic/SugarSeachEngineElasticResult.ph
 /**
  * Adapter class to Elastica Result Set
  */
-class SugarSeachEngineElasticResultSet implements SugarSeachEngineResultSet
+class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
 {
 
     /**

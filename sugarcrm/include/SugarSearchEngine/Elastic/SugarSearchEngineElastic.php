@@ -30,9 +30,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     private $_config = array();
     private $_client = null;
     private $_indexName = "";
-    private $_documents = array();
 
-    const MAX_BULK_THRESHOLD = 100;
     const DEFAULT_INDEX_TYPE = 'SugarBean';
 
     private $_indexType = 'SugarBean';
@@ -152,7 +150,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         if(empty($bean->id))
             return;
-        
+
         try
         {
             $GLOBALS['log']->fatal("Going to delete {$bean->id}");

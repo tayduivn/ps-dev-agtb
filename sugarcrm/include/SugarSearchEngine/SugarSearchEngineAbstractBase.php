@@ -24,11 +24,23 @@ require_once('include/SugarSearchEngine/Interface.php');
 
 abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterface
 {
+    /**
+     * @var array
+     */
+    protected $_documents = array();
 
     /**
+     * The max number of documents to bulk insert at a time
+     */
+    const MAX_BULK_THRESHOLD = 100;
+
+    /**
+     * For a given module, return all of the full text search enabled fields.
+     *
+     * TODO: Add a caching mechanism.
+     *
      * @param $module
      *
-     * TODO: We may want to move this to a helper class so that our implementations will 'has-a' rather than 'is-a'.
      */
     protected function retrieveFtsEnabledFieldsPerModule($module)
     {
@@ -106,9 +118,9 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         {
             $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
             $obj = BeanFactory::getBean($module, null);
-            $rs = $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0' ";
+            $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0' ";
 
-            //TOD: We need a way to perform multiple retrieve calls in a bulk request.
+            //TODO: We need a way to perform multiple SugarBean instantiation with a single query (6.6?)
             $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
 
             $docs = array();

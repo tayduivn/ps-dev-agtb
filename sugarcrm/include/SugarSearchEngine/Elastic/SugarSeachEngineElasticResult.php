@@ -26,7 +26,7 @@ require_once("include/SugarSearchEngine/Interface.php");
 /**
  * Adapter class to Elastica Result
  */
-class SugarSeachEngineElasticResult implements SugarSeachEngineResult
+class SugarSeachEngineElasticResult implements SugarSearchEngineResult
 {
     /**
      * @var \Elastica_Result

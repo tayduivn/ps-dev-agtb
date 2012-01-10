@@ -23,54 +23,53 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-
+/**
+ * Generic interface all sublcasses must implement in order to be pluggable with FTS.
+ */
 interface SugarSearchEngineInterface{
 
     /**
-    *
-    * search()
-    *
-    * Perform a search against the Full Text Search Engine
-    * @abstract
-    * @param $query
-    * @param int $offset
-    * @param int $limit
-    * @return void
-    */
+     *
+     * Perform a search against the Full Text Search Engine
+     *
+     * @abstract
+     * @param $query
+     * @param int $offset
+     * @param int $limit
+     * @return void
+     */
     public function search($query, $offset = 0, $limit = 20);
 
     /**
-    * flush()
-    *
-    * Save the data to the Full Text Search engine backend
-    * @abstract
-    * @return void
-    */
+     * Save the data to the Full Text Search engine backend
+     *
+     * @abstract
+     * @return void
+     */
     public function flush();
 
     /**
-    * indexBean()
-    *
-    * Pass in a bean and go through the list of fields to pass to the engine
-    * @abstract
-    * @param $bean
-    * @return void
-    */
+     * Pass in a bean and go through the list of fields to pass to the engine
+     *
+     * @abstract
+     * @param $bean
+     * @return void
+     */
     public function indexBean($bean, $batched = TRUE);
 
     /**
-    * delete()
-    *
-    * Delete a bean from the Full Text Search Engine
-    * @abstract
-    * @param $bean
-    * @return void
-    */
+     *
+     * Delete a bean from the Full Text Search Engine
+     *
+     * @abstract
+     * @param $bean
+     * @return void
+     */
     public function delete(SugarBean $bean);
 
 
     /**
-     * Index the entire system.
+     * Index the entire system. This should only be called from a worker process as this is a time intensive process.
      *
      * @abstract
      *
@@ -79,6 +78,7 @@ interface SugarSearchEngineInterface{
 
 
     /**
+     * Perform bulk inserts on serveral documents to mitigate performance issues.
      *
      * @abstract
      *
@@ -87,8 +87,10 @@ interface SugarSearchEngineInterface{
 
 }
 
-
-interface SugarSeachEngineResultSet extends Iterator, Countable
+/**
+ *  Interface to access results from a FTS search.  Is composed of zero or more SugarSearchEngineResult objects.
+ */
+interface SugarSearchEngineResultSet extends Iterator, Countable
 {
     /**
      * Get the total hits found by the search criteria.
@@ -102,7 +104,10 @@ interface SugarSeachEngineResultSet extends Iterator, Countable
 
 }
 
-interface SugarSeachEngineResult
+/**
+ * Interface for a single FTS result.
+ */
+interface SugarSearchEngineResult
 {
     /**
      * Get the id of the result
@@ -113,17 +118,27 @@ interface SugarSeachEngineResult
     public function getId();
 
     /**
+     * Return the highlighted text of a hit.
+     *
      * @abstract
      *
      */
     public function getHighlightedHitText();
 
     /**
+     * Return the field name(s) for any hits
+     *
      * @abstract
      *
      */
     public function getHighlightedFieldName();
 
+    /**
+     * Never called within the view but helpful for debugging purposes.
+     *
+     * @abstract
+     *
+     */
     public function __toString();
 
 
