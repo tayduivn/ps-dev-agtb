@@ -42,42 +42,32 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
     /**
      * No-op
      */
-    public function connect()
-    {
-
-
-    }
+    public function connect() {}
 
     /**
      * No-op
      */
-    public function flush()
-    {
-
-
-    }
+    public function flush() {}
 
     /**
      * No-op
      *
      * @param $bean
      */
-    public function indexBean($bean, $batched = TRUE)
-    {
-
-
-    }
+    public function indexBean($bean, $batched = TRUE) {}
 
     /**
      * No-op
      *
      * @param $bean
      */
-    public function delete($bean)
-    {
+    public function delete($bean) {}
 
-
-    }
+    /**
+     * No-op
+     *
+     */
+    public function performFullSystemIndex() {}
 
 
 }

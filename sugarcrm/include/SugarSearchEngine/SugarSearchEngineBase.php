@@ -97,4 +97,38 @@ abstract class SugarSearchEngineBase implements SugarSearchEngineInterface
         }
     }
 
+    public function performFullSystemIndex()
+    {
+        $GLOBALS['log']->fatal("Performing Full System Index");
+        $allModules = $this->retrieveFtsEnabledFieldsForAllModules();
+        $db = DBManagerFactory::getInstance();
+        foreach($allModules as $module => $fieldDefinitions)
+        {
+            $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
+            $obj = BeanFactory::getBean($module, null);
+            $rs = $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0' ";
+            $GLOBALS['log']->fatal("Query is: $selectAllQuery");
+
+            //TOD: We need a way to perform multiple retrieve calls in a bulk request.
+            $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
+
+            $docs = arary();
+            while ($row = $db->fetchByAssoc($result))
+            {
+                $beanID = $row['id'];
+                $bean = BeanFactory::getBean($module, $beanID);
+                if($bean !== FALSE)
+                    $docs[] = $this->createIndexDocument($bean, $fieldDefinitions);
+
+
+            }
+
+            $results = array($this->getIndexType() => $docs);
+            $this->bulkInsert($results);
+
+
+        }
+
+    }
+
 }

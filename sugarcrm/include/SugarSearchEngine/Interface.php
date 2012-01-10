@@ -25,56 +25,74 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 interface SugarSearchEngineInterface{
- /**
-  *
-  * search()
-  *
-  * Perform a search against the Full Text Search Engine
-  * @abstract
-  * @param $query
-  * @param int $offset
-  * @param int $limit
-  * @return void
-  */
- public function search($query, $offset = 0, $limit = 20);
 
- /**
-  * connect()
-  *
-  * Make a connection to the Full Text Search Engine
-  * @abstract
-  * @return void
-  */
- public function connect();
+    /**
+    *
+    * search()
+    *
+    * Perform a search against the Full Text Search Engine
+    * @abstract
+    * @param $query
+    * @param int $offset
+    * @param int $limit
+    * @return void
+    */
+    public function search($query, $offset = 0, $limit = 20);
 
- /**
-  * flush()
-  *
-  * Save the data to the Full Text Search engine backend
-  * @abstract
-  * @return void
-  */
- public function flush();
+    /**
+    * connect()
+    *
+    * Make a connection to the Full Text Search Engine
+    * @abstract
+    * @return void
+    */
+    public function connect();
 
- /**
-  * indexBean()
-  *
-  * Pass in a bean and go through the list of fields to pass to the engine
-  * @abstract
-  * @param $bean
-  * @return void
-  */
- public function indexBean($bean, $batched = TRUE);
+    /**
+    * flush()
+    *
+    * Save the data to the Full Text Search engine backend
+    * @abstract
+    * @return void
+    */
+    public function flush();
 
- /**
-   * delete()
-   *
-   * Delete a bean from the Full Text Search Engine
-   * @abstract
-   * @param $bean
-   * @return void
-   */
-  public function delete($bean);
+    /**
+    * indexBean()
+    *
+    * Pass in a bean and go through the list of fields to pass to the engine
+    * @abstract
+    * @param $bean
+    * @return void
+    */
+    public function indexBean($bean, $batched = TRUE);
+
+    /**
+    * delete()
+    *
+    * Delete a bean from the Full Text Search Engine
+    * @abstract
+    * @param $bean
+    * @return void
+    */
+    public function delete($bean);
+
+
+    /**
+     * Index the entire system.
+     *
+     * @abstract
+     *
+     */
+    public function performFullSystemIndex();
+
+
+    /**
+     *
+     * @abstract
+     *
+     */
+    public function bulkInsert($docs);
 
 }
 

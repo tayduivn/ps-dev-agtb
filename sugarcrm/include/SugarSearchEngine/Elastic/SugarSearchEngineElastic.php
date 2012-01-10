@@ -69,11 +69,19 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         {
             $GLOBALS['log']->fatal("Adding bean to doc list....");
             //TODO: Create index document at this point so we don't need to store a large number of beans at once.
-            $this->_documents[] = $this->createIndexDocument($bean);
+
+            //Group our beans by index type for bulk insertion
+            $indexType = $this->getIndexType($bean);
+            if(! isset($this->_documents[$indexType]) )
+                $this->_documents[$indexType] = array();
+
+            $this->_documents[$indexType][] = $this->createIndexDocument($bean);
         }
     }
 
     /**
+     * //TODO: Move to pass class, we do use it in the bulkInsert function so it needs to be defined.
+     *
      * Return the 'type' for the index.  By using the bean type we can specify mappings on a per bean basis if we need
      * to in the future.
      *
@@ -92,16 +100,18 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
      * TODO: We should probably add this function to the interface as logically it is different than the indexSingleBean function.
      *
      * @param $bean
+     * @param $searchFields
      * @return Elastica_Document|null
      */
-    protected function createIndexDocument($bean)
+    protected function createIndexDocument($bean, $searchFields = null)
     {
-        $searchFields = $this->retrieveFtsEnabledFieldsPerModule($bean);
+        if($searchFields == null)
+            $searchFields = $this->retrieveFtsEnabledFieldsPerModule($bean);
 
         $keyValues = array();
         foreach($searchFields as $fieldName => $fieldDef)
         {
-            //TODO: We may need to convert data at this point (date formats, etc)
+            //TODO: We may need to convert data at this point (date formats, etc) or go through SugarFields
             if( isset($bean->$fieldName) )
                 $keyValues[$fieldName] = $bean->$fieldName;
         }
@@ -146,30 +156,28 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
     }
 
     /**
-     * TODO: Add this logic to the base class.
+     * TODO: Add to interface?
      */
-    public function __destruct()
+    public function bulkInsert(array $docs)
     {
-        $GLOBALS['log']->fatal("We are destructing and now adding a document to the index: " . count($this->_documents));
-
-        if (count($this->_documents) > 0 )
+        try
         {
-            try
+            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $batchedDocs = array();
+            $x = 0;
+            foreach($docs as $indexType => $elasticaDocs)
             {
-                $index = new Elastica_Index($this->_client, $this->_indexName);
-                $type = new Elastica_Type($index, $this->getIndexType($bean));
-                $batchedDocs = array();
-                $x = 0;
-                foreach($this->_documents as $doc)
+                $type = new Elastica_Type($index, $indexType);
+                foreach($elasticaDocs as $singleDoc)
                 {
                     if($x != 0 && $x % self::MAX_BULK_THRESHOLD == 0)
                     {
-                        $type->addDocuments($batchedDocs);
-                        $batchedDocs = array();
+                       $type->addDocuments($batchedDocs);
+                       $batchedDocs = array();
                     }
                     else
                     {
-                        $batchedDocs[] = $doc;
+                       $batchedDocs[] = $singleDoc;
                     }
 
                     $x++;
@@ -181,11 +189,23 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
                     $type->addDocuments($batchedDocs);
                 }
             }
-            //TODO: Add a mechanism to handle failures here.
-            catch(Exception $e)
-            {
-                $GLOBALS['log']->fatal("Error performing bulk update operation: {$e->getMessage()}");
-            }
+        }
+        //TODO: Add a mechanism to handle failures here.
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Error performing bulk update operation: {$e->getMessage()}");
+        }
+
+    }
+    /**
+     * TODO: Add this logic to the base class.
+     */
+    public function __destruct()
+    {
+        $GLOBALS['log']->fatal("We are destructing and now adding a document to the index: " . count($this->_documents));
+        if (count($this->_documents) > 0 )
+        {
+            $this->bulkInsert($this->_documents);
         }
 
     }
