@@ -324,7 +324,7 @@ YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
 /**
  * For the module list menu scrolling functionality
  */
-YAHOO.util.Event.onContentReady("tabListContainer", function() 
+YAHOO.util.Event.onContentReady("tabListContainerTable", function()
 {
     YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y) 
     {
