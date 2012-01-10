@@ -1628,8 +1628,15 @@ function sendAndRetrieve(theForm, theDiv, loadingStr) {
 	}
 	if(typeof loadingStr == 'undefined') SUGAR.language.get('app_strings', 'LBL_LOADING');
 	ajaxStatus.showStatus(loadingStr);
-	YAHOO.util.Connect.setForm(theForm);
-	var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
+    oForm = new YAHOO.util.Element(theForm);
+    if ( oForm.get('enctype') && oForm.get('enctype') == 'multipart/form-data' ) {
+        // the second argument is true to indicate file upload.
+        YAHOO.util.Connect.setForm(theForm, true);
+        var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {upload: success, failure: success});
+    } else {
+        YAHOO.util.Connect.setForm(theForm);
+        var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
+    }
 	return false;
 }
 
@@ -1643,8 +1650,15 @@ function sendAndRedirect(theForm, loadingStr, redirect_location) {
 	}
 	if(typeof loadingStr == 'undefined') SUGAR.language.get('app_strings', 'LBL_LOADING');
 	ajaxStatus.showStatus(loadingStr);
-	YAHOO.util.Connect.setForm(theForm);
-	var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
+    oForm = new YAHOO.util.Element(theForm);
+    if ( oForm.get('enctype') && oForm.get('enctype') == 'multipart/form-data' ) {
+        // the second argument is true to indicate file upload.
+        YAHOO.util.Connect.setForm(theForm, true);
+        var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {upload: success, failure: success});
+    } else {
+        YAHOO.util.Connect.setForm(theForm);
+        var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
+    }
 	return false;
 }
 
