@@ -136,7 +136,7 @@ $count= 0;
 foreach($lead->field_defs as $field_def)
 {
 	$email_fields = false;
-    if($field_def['name']== 'webtolead_email1' || $field_def['name']== 'webtolead_email2')
+    if($field_def['name']== 'email1' || $field_def['name']== 'email2')
     {
     	$email_fields = true;
     }
