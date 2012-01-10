@@ -40,6 +40,10 @@
     border-right-width: 0px;
 }
 
+#visGridWindow tr td{
+    vertical-align: top;
+}
+
 #visGridWindow ul.ddd_table{
     padding: 5px;
     margin: 0px 10px 10px 10px;
@@ -72,14 +76,31 @@
     color:black;
 }
 
+.dd_title{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#ddd_delete span {
+    border: 1px solid white;
+    border-radius: 5px;
+    width:48px;
+    height:48px;
+}
+#ddd_delete.drophover span{
+    border-color: gray;
+}
+
 {/literal}
 </style>
-{* <table class="edit view" style="margin-left: auto;margin-right: auto; width:900px;">
-<tr>
-	<td colspan="2"><button onclick="SUGAR.ddd.save()">Save</button></td>
-</tr>
-<tr><td style="white-space: nowrap;"> *}
-<div style="float:left; max-height: 550px; overflow-y: auto; overflow-x: hidden">
+<div class="dd_title" style="width:600px">
+    Drag items from the list of availible options on the left to one of the lists on the right to make that option availible when the given parent option is selected.
+</div>
+<div style="float:left; max-height: 510px; overflow-y: auto; overflow-x: hidden">
+    <div class="dd_title">Availible Options<br/>
+        <div id="ddd_delete">{sugar_image name=Delete width=48 height=48 id="ddd_delete"}</div>
+    </div>
     <ul id="childTable" style="float:left" class="ddd_table">
         {foreach from=$child_list_options key=val item=label}
             {if $val==""}
@@ -90,11 +111,9 @@
         {/foreach}
     </ul>
 </div>
-{* </td><td > *}
-<div style="max-height: 550px; overflow-y: auto; overflow-x: hidden">
+<div style="max-height: 510px; overflow-y: auto; overflow-x: hidden">
 <table ><tr>
     {foreach from=$parent_list_options key=val item=label name=parentloop}
-        <div style="text-align: center; float:left">
         {if $smarty.foreach.parentloop.index % 4 == 0 && !$smarty.foreach.parentloop.first}
             </tr><tr>
         {/if}
@@ -104,13 +123,12 @@
         {/if}
         <td>
             <h3 class="title">{$label}</h3>
-            <ul id="ddd_{$val}_list" class="ddd_table" >
+            <ul id="ddd_{$val}_list" class="ddd_table ddd_parent_option" >
                 {foreach from=$mapping.$val key=iv item=il name=parentElLoop}
                     <li class="ui-state-default" val="{$il}">{$iv}{$il}{$child_list_options.$il}</li>
                 {/foreach}
             </ul>
         </td>
-        </div>
     {/foreach}
     </tr></table>
 </div>
@@ -164,10 +182,10 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         }
     }
 
-
+    //Disable text selection
+    $("#visGridWindow").disableSelection();
 
     //Create a custom sortable list that prevents duplicate drops
-    var re = $.ui.sortable.prototype._rearrange;
     var listContainsItem = function(list, val)
     {
         var c = list.children("li[val=" + val + "]");
@@ -175,6 +193,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     }
 
     $.widget("ui.sugardddlist", $.extend({}, $.ui.sortable.prototype, {
+        //Override the rearrange function to prevent drags into the availible option list or duplicate options into a list
         _rearrange: function(event, i, a, hardRefresh) {
             if(i){
                 //If the target list isn't empty and contains the value we are dragging, return.
@@ -191,12 +210,15 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
 
     SUGAR.ddd.childTable =  $( "#childTable" ).sugardddlist({
         connectWith: ".ddd_table",
+        scope: "ddd_table",
         type: "semi-dynamic", //Semi-dynamic will prevent reordering within this list
         helper: function(ev, el){
             return el.clone().show();
         },
         placeholder: {
             element: function(el) {
+                if (el[0].id == "ddd_delete")
+                    return false;
                 //for the parent table, we don't hide the item, we just create a clone for dragging
                 el.hide();
                 SUGAR.ddd.oldPos = el.prev();
@@ -225,6 +247,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         if (i == "") i = "--blank--";
         $( "#ddd_" + i + "_list" ).sugardddlist({
             connectWith: ".ddd_table",
+            scope: "ddd_table",
             helper: "clone",
             placeholder: {
                 element: function(el) {
@@ -234,10 +257,27 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
                 },
                 update: function(ev, el) {
                     el.show();
+                },
+                stop: function(event, ui) {
+                    console.log("stopped");
+                },
+                beforeStop: function(event, ui) {
+                    console.log(" before stopped");
                 }
             }
         }).disableSelection();
     }
+
+    $("#ddd_delete").droppable({
+        accept: ".ddd_parent_option li",
+        greedy: true,
+        scope: "ddd_table",
+        hoverClass: 'drophover',
+        drop: function (event, ui) {
+            ui.draggable.parent("ul").sortable("cancel");
+            ui.draggable.remove();
+        }
+    });
 
     var blank = "--blank--";
     SUGAR.ddd.getMapping = function()
@@ -265,16 +305,6 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
             values : mapping
         };
     }
-    /*$.ajax({
-        type: "POST",
-        url: "index.php?module=ModuleBuilder&action=saveVisibility",
-        data: "visibility_grid=" + $.toJSON({
-            trigger: "account_type",
-            values : mapping
-        })
-    }).done(function( msg ) {
-        console.log(msg);
-    });*/
 });
 </script>
 {/literal}
