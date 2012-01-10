@@ -180,7 +180,7 @@ class iCal extends vCal {
             $str .= "STATUS:COMPLETED\n";
             $str .= "PERCENT-COMPLETE:100\n";
             $str .= "COMPLETED:" . $this->getUtcDateTime($due_date_time) . "\n";
-        } else if ($task->percent_complete) {
+        } else if (!empty($task->percent_complete)) {
             $str .= "PERCENT-COMPLETE:" . $task->percent_complete . "\n";
         }
         if ($task->priority == "Low") {
@@ -352,10 +352,12 @@ class iCal extends vCal {
     protected function getDSTRange($current_user, $year)
     {
         $tz = $this->getUserTimezone($current_user);
+        $idx = 0;
+        $result = array();
 
         if (version_compare(PHP_VERSION, '5.3.0') >= 0)
         {
-            $year_date = SugarDateTime::createFromFormat("Y", $year, $gmtTZ);
+            $year_date = SugarDateTime::createFromFormat("Y", $year, new DateTimeZone("UTC"));
             $year_end = clone $year_date;
             $year_end->setDate((int) $year, 12, 31);
             $year_end->setTime(23, 59, 59);
@@ -363,32 +365,35 @@ class iCal extends vCal {
             $year_date->setTime(0, 0, 0);
 
             $transitions = $tz->getTransitions($year_date->getTimestamp(), $year_end->getTimestamp());
-
-            $idx = 0;
-            while ((!$transitions[$idx]["isdst"]) && ($idx < count($transitions)))
-                $idx ++;
-            if (!$transitions[$idx]["isdst"])
-            {
-                // No DST transitions found
-                return array();
+            foreach($transitions as $transition) {
+                if($transition['isdst']) {
+                    break;
+                }
+                $idx++;
             }
-            $startTransition = $transitions[$idx];
-            while ($transitions[$idx]["isdst"])
-                $idx ++;
-            $endTransition = $transitions[$idx];
-        } else
-        {
+        } else {
             $transitions = $tz->getTransitions();
 
             $idx = 0;
-            while (! $transitions[$idx]["isdst"] || intval(substr($transitions[$idx]["time"], 0, 4)) < intval(date("Y")))
-                $idx ++;
-            $startTransition = $transitions[$idx];
-            while ($transitions[$idx]["isdst"] || intval(substr($transitions[$idx]["time"], 0, 4)) < intval(date("Y")))
-                $idx ++;
-            $endTransition = $transitions[$idx];
+            foreach($transitions as $transition) {
+                if($transition['isdst'] && intval(substr($transition["time"], 0, 4)) == intval(date("Y"))) {
+                    break;
+                }
+                $idx++;
+            }
         }
-        return array("start" => $startTransition, "end" => $endTransition);
+
+        if (empty($transitions[$idx]["isdst"])) {
+            // No DST transitions found
+            return $result;
+        }
+        $result["start"] = $transitions[$idx]; // DST begins here
+        // scan till DST ends
+        while (isset($transitions[$idx]) && $transitions[$idx]["isdst"]) $idx++;
+        if(isset($transitions[$idx])) {
+            $result["end"] = $transitions[$idx];
+        }
+        return $result;
     }
 
     /**

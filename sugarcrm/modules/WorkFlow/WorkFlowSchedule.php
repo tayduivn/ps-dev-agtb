@@ -220,18 +220,6 @@ class WorkFlowSchedule extends SugarBean {
         }
 
         if($update == true || $time_array['time_int_type']=="datetime") {
-            //convert date_expired into time stamp and add time_interval
-            if($update) {
-                if($time_array['target_field'] == 'none') {
-                    $target_stamp = TimeDate::getInstance()->nowDb();
-                } else {
-                    $target_field = $time_array['target_field'];
-                    $target_stamp = $bean_object->$target_field;
-                }
-            } else {
-                $target_stamp = null;
-            }
-
             // Bug # 46938, cannot call get_expiry_date in action_utils directly
             $this->date_expired = $this->get_expiry_date($bean_object, $time_array['time_int'], true, $time_array['target_field']);
             //end if update is true, then just update existing expiry
@@ -248,7 +236,16 @@ class WorkFlowSchedule extends SugarBean {
             if($target_field=="none"){
                 $target_stamp = TimeDate::getInstance()->nowDb();
             } else {
-                $target_stamp = $bean_object->$target_field;
+                //Date fields need to be reformated to datetimes to be used with scheduler
+                if ($bean_object->field_defs[$target_field]['type'] == "date" &&
+                    is_string($bean_object->$target_field))
+                {
+                    $date = TimeDate::getInstance()->fromDbDate($bean_object->$target_field);
+                    $target_stamp = TimeDate::getInstance()->asDb($date);
+                }
+                else {
+                    $target_stamp = $bean_object->$target_field;
+                }
             }
         } else {
             $target_stamp = null;

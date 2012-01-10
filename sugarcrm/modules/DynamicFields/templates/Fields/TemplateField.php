@@ -434,11 +434,13 @@ class TemplateField{
 	function populateFromPost(){
 		foreach($this->vardef_map as $vardef=>$field){
 			if(isset($_REQUEST[$vardef])){
-				$this->$vardef = $_REQUEST[$vardef];
+				_ppl("$vardef was set to {$_REQUEST[$vardef]}, saving it to this->$field");
+                $this->$vardef = $_REQUEST[$vardef];
 				if($vardef != $field){
 					$this->$field = $this->$vardef;
 				}
-			}
+			} else
+                _ppl("$vardef was not set");
 		}
 		$this->applyVardefRules();
 		$GLOBALS['log']->debug('populate: '.print_r($this,true));

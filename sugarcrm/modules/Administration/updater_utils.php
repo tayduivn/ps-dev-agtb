@@ -347,7 +347,8 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 
 	include('sugar_version.php');
 
-	if(sizeof($resultData) == 1 && !empty($resultData['versions'][0]['version']) &&  $resultData['versions'][0]['version'] < $sugar_version)
+	if(sizeof($resultData) == 1 && !empty($resultData['versions'][0]['version'])
+        && compareVersions($sugar_version, $resultData['versions'][0]['version']))
 	{
 		$resultData['versions'][0]['version'] = $sugar_version;
 		$resultData['versions'][0]['description'] = "You have the latest version.";
@@ -355,6 +356,27 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 
 
 	return $resultData['versions'];
+}
+/*
+ * returns true if $ver1 > $ver2
+ */
+function compareVersions($ver1, $ver2)
+{
+    $ver_arr_1 = preg_split("/[^0-9]/", $ver1); 
+    $ver_arr_2 = preg_split("/[^0-9]/", $ver2); 
+    $count = (count($ver_arr_1) >= count($ver_arr_2)) ? count($ver_arr_1) : count($ver_arr_2);
+    for ($i = 0; $i < $count; $i++)
+    {
+        if (!isset($ver_arr_1[$i]))
+            $ver_arr_1[$i] = 0;
+        
+        if (!isset($ver_arr_2[$i]))
+            $ver_arr_2[$i] = 0;
+        
+        if ($ver_arr_1[$i] > $ver_arr_2[$i])
+            return true;
+    }
+    return false;
 }
 function set_CheckUpdates_config_setting($value) {
 
@@ -631,9 +653,12 @@ function isNeedRedirectDependingOnUserAndSystemState($state, $module = null, $ac
  */
 function setSystemState($state){
 	global $current_user;
-
-	$admin_redirect_url		= 'index.php?action=LicenseSettings&module=Administration';
-	$not_admin_redirect_url	= 'index.php?module=Users&action=Logout';
+//BEGIN SUGARCRM flav=int ONLY
+    //adding string 'LicState=check that will be used to temporarily disable ajax UI navigation.  This is done to prevent
+    //ajax UI navigation conflicting with php Header navigation and resulting in a navigation loop when the license is expired
+//END SUGARCRM flav=int ONLY
+	$admin_redirect_url		= 'index.php?action=LicenseSettings&module=Administration&LicState=check';
+	$not_admin_redirect_url	= 'index.php?module=Users&action=Logout&LicState=check';
 	
 	if(isset($current_user) && !empty($current_user->id)){
 		if(isNeedRedirectDependingOnUserAndSystemState($state, $_REQUEST['module'], $_REQUEST['action'], getModuleWhiteListForLicenseCheck($current_user))) {
@@ -678,7 +703,7 @@ function checkSystemLicenseStatus(){
 			$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
 		}
 
-		if(isset($license->settings['license_expire_date'])){
+		if(!empty($license->settings['license_expire_date'])){
 			$_SESSION['LICENSE_EXPIRES_IN'] = isAboutToExpire($license->settings['license_expire_date']);
 		}else{
 			$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';

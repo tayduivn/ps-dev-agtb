@@ -420,6 +420,10 @@ class User extends Person {
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
+   /**
+    * Get WHERE clause that fetches all users counted for licensing purposes
+    * @return string
+    */
 	public static function getLicensedUsersWhere()
 	{
 		//BEGIN SUGARCRM dep=od ONLY
@@ -439,14 +443,9 @@ class User extends Person {
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM dep=od ONLY
-		$query = "SELECT count(id) as total from users WHERE status='Active' AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
-		//END SUGARCRM dep=od ONLY
-		//BEGIN SUGARCRM dep=os ONLY
-		$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
-		//END SUGARCRM dep=os ONLY
+		$query = "SELECT count(id) as total from users WHERE ".self::getLicensedUsersWhere();
 
-		  //BEGIN SUGARCRM lic=sub ONLY
+ 	    //BEGIN SUGARCRM lic=sub ONLY
 
 		global $sugar_flavor;
         $admin = new Administration();
@@ -527,7 +526,7 @@ class User extends Person {
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
-        if(!$this->portal_only) {
+        if($this->status != 'Reserved' && !$this->portal_only) {
 		   // If this is not an update, then make sure the new user logic is executed.
             if (!$isUpdate) {
                 // If this is a new user, make sure to add them to the appriate default teams
@@ -870,7 +869,6 @@ EOQ;
 		$result = $this->db->query($query, true, "Error filling in additional detail fields");
 
 		$row = $this->db->fetchByAssoc($result);
-		$GLOBALS['log']->debug("additional detail query results: $row");
 
 		if ($row != null) {
 			$this->reports_to_name = stripslashes($row['first_name'].' '.$row['last_name']);
@@ -991,6 +989,8 @@ EOQ;
 	function get_list_view_data() {
 
 		global $current_user, $mod_strings;
+        // Bug #48555 Not User Name Format of User's locale.
+        $this->_create_proper_name_field();
 
 		$user_fields = $this->get_list_view_array();
 		if ($this->is_admin)
@@ -1218,22 +1218,17 @@ EOQ;
 		return $ret;
 	}
 
-	function getUsersNameAndEmail() {
-		$salutation = '';
-		$fullName = '';
-		if(!empty($this->salutation)) $salutation = $this->salutation;
+	function getUsersNameAndEmail()
+	{
+	    // Bug #48555 Not User Name Format of User's locale.
+	    $this->_create_proper_name_field();
 
-		if(!empty($this->first_name)) {
-			$fullName = trim($salutation.' '.$this->first_name.' '.$this->last_name);
-		} elseif(!empty($this->name)) {
-			$fullName = $this->name;
-		}
 		$prefAddr = $this->emailAddress->getPrimaryAddress($this);
 
 		if (empty ($prefAddr)) {
 			$prefAddr = $this->emailAddress->getReplyToAddress($this);
 		}
-		return array('email' => $prefAddr , 'name' => $fullName);
+		return array('email' => $prefAddr , 'name' => $this->name);
 
 	} // fn
 
@@ -1334,27 +1329,22 @@ EOQ;
 		//END SUGARCRM flav=pro ONLY
 
 		if($client == 'sugar') {
-			$salutation = '';
-			$fullName = '';
 			$email = '';
 			$to_addrs_ids = '';
 			$to_addrs_names = '';
 			$to_addrs_emails = '';
 
-			if(!empty($focus->salutation)) $salutation = $focus->salutation;
-
-			if(!empty($focus->first_name)) {
-				$fullName = trim($salutation.' '.$focus->first_name.' '.$focus->last_name);
-			} elseif(!empty($focus->name)) {
-				$fullName = $focus->name;
-			}
+			$fullName = !empty($focus->name) ? $focus->name : '';
 
 			if(empty($ret_module)) $ret_module = $focus->module_dir;
 			if(empty($ret_id)) $ret_id = $focus->id;
 			if($focus->object_name == 'Contact') {
 				$contact_id = $focus->id;
 				$to_addrs_ids = $focus->id;
-				$to_addrs_names = $fullName;
+				// Bug #48555 Not User Name Format of User's locale.
+				$focus->_create_proper_name_field();
+			    $fullName = $focus->name;
+			    $to_addrs_names = $fullName;
 				$to_addrs_emails = $focus->email1;
 			}
 
@@ -1422,20 +1412,13 @@ EOQ;
 		//END SUGARCRM flav=pro ONLY
 
 		if($client == 'sugar') {
-			$salutation = '';
-			$fullName = '';
 			$email = '';
 			$to_addrs_ids = '';
 			$to_addrs_names = '';
 			$to_addrs_emails = '';
 
-			if(!empty($focus->salutation)) $salutation = $focus->salutation;
+            $fullName = !empty($focus->name) ? $focus->name : '';
 
-			if(!empty($focus->first_name)) {
-				$fullName = trim($salutation.' '.$focus->first_name.' '.$focus->last_name);
-			} elseif(!empty($focus->name)) {
-				$fullName = $focus->name;
-			}
 			if(!empty($focus->$attribute)) {
 				$email = $focus->$attribute;
 			}
@@ -1444,7 +1427,10 @@ EOQ;
 			if(empty($ret_module)) $ret_module = $focus->module_dir;
 			if(empty($ret_id)) $ret_id = $focus->id;
 			if($focus->object_name == 'Contact') {
-				$contact_id = $focus->id;
+				// Bug #48555 Not User Name Format of User's locale.
+				$focus->_create_proper_name_field();
+			    $fullName = $focus->name;
+			    $contact_id = $focus->id;
 				$to_addrs_ids = $focus->id;
 				$to_addrs_names = $fullName;
 				$to_addrs_emails = $focus->email1;
@@ -1806,7 +1792,6 @@ EOQ;
 
    }
 
-
     /**
      * Get user first day of week.
      *
@@ -1824,4 +1809,267 @@ EOQ;
         return $fdow;
     }
 
+    /**
+     * Method for password generation
+     *
+     * @static
+     * @return string password
+     */
+    public static function generatePassword()
+    {
+        $res = $GLOBALS['sugar_config']['passwordsetting'];
+        $charBKT = '';
+        //chars to select from
+        $LOWERCASE = "abcdefghijklmnpqrstuvwxyz";
+        $NUMBER = "0123456789";
+        $UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $SPECIAL = '~!@#$%^&*()_+=-{}|';
+        $condition = 0;
+        $charBKT .= $UPPERCASE . $LOWERCASE . $NUMBER;
+        $password = "";
+		//BEGIN SUGARCRM flav=pro ONLY
+
+        // Count the number of requirements
+        if ($res['onenumber'] == '1')
+        {
+            $condition += 1;
+        }
+        if ($res['onelower'] == '1')
+        {
+            $condition += 1;
+        }
+        if ($res['oneupper'] == '1')
+        {
+            $condition += 1;
+        }
+        if ($res['onespecial']=='1')
+        {
+            $condition+=1;
+        }
+
+        // if there is more requirements than the minimum length, minimum length= number of requirements
+        $length = $res['minpwdlength'] <= $condition ? $condition : $res['minpwdlength'];
+        if ($length < 6)
+        {
+		//END SUGARCRM flav=pro ONLY
+            $length = '6';
+		//BEGIN SUGARCRM flav=pro ONLY
+        }
+		//END SUGARCRM flav=pro ONLY
+
+        // Create random characters for the ones that doesnt have requirements
+        for ($i=0; $i < $length - $condition; $i ++)  // loop and create password
+        {
+            $password = $password . substr ($charBKT, rand() % strlen($charBKT), 1);
+        }
+		//BEGIN SUGARCRM flav=pro ONLY
+        if ($res['onelower'] == '1') // If a lower caracter is required, i add one in the password
+        {
+            if (strlen($password) != '0') // If there is other characters in the password, I insert one in a random position
+            {
+                $password = substr_replace($password, substr($LOWERCASE, rand() % strlen($LOWERCASE), 1), rand() % strlen($password), 0);
+            }
+            else // otherwise i put one in first position
+            {
+                $password = $password . substr($LOWERCASE, rand() % strlen($LOWERCASE), 1);
+            }
+        }
+        if ($res['onenumber'] == '1')
+        {
+            if (strlen($password) != '0')
+            {
+                $password = substr_replace($password, substr($NUMBER, rand() % strlen($NUMBER), 1), rand() % strlen($password), 0);
+            }
+            else
+            {
+                $password = $password . substr ($NUMBER, rand() % strlen($NUMBER), 1);
+            }
+        }
+        if ($res['oneupper'] == '1')
+        {
+            if (strlen($password) != '0')
+            {
+                $password = substr_replace($password, substr($UPPERCASE, rand() % strlen($UPPERCASE), 1), rand() % strlen($password), 0);
+            }
+            else
+            {
+                $password = $password . substr($UPPERCASE, rand() % strlen($UPPERCASE), 1);
+            }
+        }
+        if ($res['onespecial'] == '1')
+        {
+            if (strlen($password) != '0')
+            {
+                $password = substr_replace($password, substr($SPECIAL, rand() % strlen($SPECIAL), 1), rand() % strlen($password), 0);
+            }
+            else
+            {
+                $password = $password . substr ($SPECIAL, rand() % strlen($SPECIAL), 1);
+            }
+        }
+	    //END SUGARCRM flav=pro ONLY
+
+        return $password;
+    }
+
+    /**
+     * Send new password or link to user
+     *
+     * @param string $templateId Id of email template
+     * @param array $additionalData additional params: link, url, password
+     * @return array status: true|false, message: error message, if status = false and message = '' it means that send method has returned false
+     */
+    public function sendEmailForPassword($templateId, array $additionalData = array())
+    {
+        global $sugar_config, $current_user;
+        $mod_strings = return_module_language('', 'Users');
+        $result = array(
+            'status' => false,
+            'message' => ''
+        );
+
+        $emailTemp = new EmailTemplate();
+        $emailTemp->disable_row_level_security = true;
+        if ($emailTemp->retrieve($templateId) == '')
+        {
+            $result['message'] = $mod_strings['LBL_EMAIL_TEMPLATE_MISSING'];
+            return $result;
+        }
+
+        //replace instance variables in email templates
+        $htmlBody = $emailTemp->body_html;
+        $body = $emailTemp->body;
+        if (isset($additionalData['link']) && $additionalData['link'] == true)
+        {
+            $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], $htmlBody);
+            $body = str_replace('$contact_user_link_guid', $additionalData['url'], $body);
+        }
+        else
+        {
+            $htmlBody = str_replace('$contact_user_user_hash', $additionalData['password'], $htmlBody);
+            $body = str_replace('$contact_user_user_hash', $additionalData['password'], $body);
+        }
+        // Bug 36833 - Add replacing of special value $instance_url
+        $htmlBody = str_replace('$config_site_url', $sugar_config['site_url'], $htmlBody);
+        $body = str_replace('$config_site_url', $sugar_config['site_url'], $body);
+
+        $htmlBody = str_replace('$contact_user_user_name', $this->user_name, $htmlBody);
+        $htmlBody = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
+        $body = str_replace('$contact_user_user_name', $this->user_name, $body);
+        $body = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
+        $emailTemp->body_html = $htmlBody;
+        $emailTemp->body = $body;
+
+        $itemail = $this->emailAddress->getPrimaryAddress($this);
+        //retrieve IT Admin Email
+        //_ppd( $emailTemp->body_html);
+        //retrieve email defaults
+        $emailObj = new Email();
+        $defaults = $emailObj->getSystemDefaultEmail();
+        require_once('include/SugarPHPMailer.php');
+        $mail = new SugarPHPMailer();
+        $mail->setMailerForSystem();
+        //$mail->IsHTML(true);
+        $mail->From = $defaults['email'];
+        $mail->FromName = $defaults['name'];
+        $mail->ClearAllRecipients();
+        $mail->ClearReplyTos();
+        $mail->Subject = from_html($emailTemp->subject);
+        if ($emailTemp->text_only != 1)
+        {
+            $mail->IsHTML(true);
+            $mail->Body = from_html($emailTemp->body_html);
+            $mail->AltBody = from_html($emailTemp->body);
+        }
+        else
+        {
+            $mail->Body_html = from_html($emailTemp->body_html);
+            $mail->Body = from_html($emailTemp->body);
+        }
+        if ($mail->Body == '' && $current_user->is_admin)
+        {
+            $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
+            return $result;
+        }
+        if ($mail->Mailer == 'smtp' && $mail->Host =='' && $current_user->is_admin)
+        {
+            $result['message'] = $mod_strings['ERR_SERVER_SMTP_EMPTY'];
+            return $result;
+        }
+
+        $mail->prepForOutbound();
+        $hasRecipients = false;
+
+        if (!empty($itemail))
+        {
+            if ($hasRecipients)
+            {
+                $mail->AddBCC($itemail);
+            }
+            else
+            {
+                $mail->AddAddress($itemail);
+            }
+            $hasRecipients = true;
+        }
+        if ($hasRecipients)
+        {
+            $result['status'] = @$mail->Send();
+        }
+
+        if ($result['status'] == true)
+        {
+            $emailObj->team_id = 1;
+            $emailObj->to_addrs = '';
+            $emailObj->type = 'archived';
+            $emailObj->deleted = '0';
+            $emailObj->name = $mail->Subject ;
+            $emailObj->description = $mail->Body;
+            $emailObj->description_html = null;
+            $emailObj->from_addr = $mail->From;
+            $emailObj->parent_type = 'User';
+            $emailObj->date_sent = TimeDate::getInstance()->nowDb();
+            $emailObj->modified_user_id = '1';
+            $emailObj->created_by = '1';
+            $emailObj->status = 'sent';
+            $emailObj->save();
+            if (!isset($additionalData['link']) || $additionalData['link'] == false)
+            {
+                $user_hash = strtolower(md5($additionalData['password']));
+                $this->setPreference('loginexpiration', '0');
+                $this->setPreference('lockout', '');
+                $this->setPreference('loginfailed', '0');
+                $this->savePreferencesToDB();
+                //set new password
+                $now=TimeDate::getInstance()->nowDb();
+                $query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='1', pwd_last_changed='$now' where id='$this->id'";
+                $this->db->query($query, true, "Error setting new password for $this->user_name: ");
+            }
+        }
+
+        return $result;
+    }
+
+    // Bug #48014 Must to send password to imported user if this action is required
+    function afterImportSave()
+    {
+        if(
+            $this->user_hash == false
+            && !$this->is_group
+            && !$this->portal_only
+            && isset($GLOBALS['sugar_config']['passwordsetting']['SystemGeneratedPasswordON'])
+            && $GLOBALS['sugar_config']['passwordsetting']['SystemGeneratedPasswordON']
+        )
+        {
+            $backUpPost = $_POST;
+            $_POST = array(
+                'userId' => $this->id
+            );
+            ob_start();
+            require('modules/Users/GeneratePassword.php');
+            $result = ob_get_clean();
+            $_POST = $backUpPost;
+            return $result == true;
+        }
+    }
 }

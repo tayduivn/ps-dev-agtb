@@ -690,7 +690,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         quickRequest('showGAView', 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q), function(id,data)
         {
 
-            content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;">';
+            var content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;">';
             content += '<div class="dashletPanel dc"><div class="hd">';
             if(SUGAR.themes.theme_name == 'RTL')
             {

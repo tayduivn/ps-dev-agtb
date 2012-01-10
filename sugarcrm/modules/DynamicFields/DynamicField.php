@@ -88,12 +88,6 @@ class DynamicField {
             return false;
         if($module == '../data')return false;
 
-        // Employees is a fake module that actually loads it's fields from the
-        // Users module
-        if ($module == 'Employees') {
-            $module = 'Users';
-        }
-
         static $results = array ( ) ;
 
         $where = '';
@@ -542,8 +536,6 @@ class DynamicField {
         if(!$is_update){
             $fmd->new_with_id=true;
         }
-        $fmd->save();
-        $this->buildCache($this->module);
         if($field){
             if(!$is_update){
                 //Do two SQL calls here in this case
@@ -554,29 +546,27 @@ class DynamicField {
             	$field->default_value = '';
                 // resetting default and default_value does not work for multienum and causes trouble for mssql
                 // so using a temporary variable here to indicate that we don't want default for this query
-                if ($GLOBALS['db']->dbType == 'mssql') {
-                    $field->no_default = 1;
-                }
+                $field->no_default = 1;
                 $query = $field->get_db_add_alter_table($this->bean->table_name . '_cstm');
                 // unsetting temporary member variable
-                if ($GLOBALS['db']->dbType == 'mssql') {
-                    unset($field->no_default);
-                }
+                unset($field->no_default);
                 if(!empty($query)){
-                	$GLOBALS['db']->query($query);
+                	$GLOBALS['db']->query($query, true, "Cannot create column");
 	                $field->default = $fmd->default_value;
 	                $field->default_value = $fmd->default_value;
 	                $query = $field->get_db_modify_alter_table($this->bean->table_name . '_cstm');
 	                if(!empty($query)){
-	                	$GLOBALS['db']->query($query);
+	                	$GLOBALS['db']->query($query, true, "Cannot set default");
 	            	}
                 }
             }else{
                 $query = $field->get_db_modify_alter_table($this->bean->table_name . '_cstm');
                 if(!empty($query)){
-                	$GLOBALS['db']->query($query);
+                	$GLOBALS['db']->query($query, true, "Cannot modify field");
             	}
             }
+            $fmd->save();
+            $this->buildCache($this->module);
             $this->saveExtendedAttributes($field, array_keys($fmd->field_defs));
         }
 
@@ -592,7 +582,7 @@ class DynamicField {
             $to_save = array();
             $base_field = get_widget ( $field->type) ;
         foreach ($field->vardef_map as $property => $fmd_col){
-
+            //Skip over attribes that are either the default or part of the normal attributes stored in the DB
             if (!isset($field->$property) || in_array($fmd_col, $column_fields) || in_array($property, $column_fields)
                 || $this->isDefaultValue($property, $field->$property, $base_field)
                 || $property == "action" || $property == "label_value" || $property == "label"

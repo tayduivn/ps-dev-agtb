@@ -29,7 +29,7 @@ var $upload_file;
 	function DocumentSoap(){
 		$this->upload_file = new UploadFile('filename_file');
 	}
-	
+
 	function saveFile($document, $portal = false){
         global $sugar_config;
 
@@ -44,6 +44,9 @@ var $upload_file;
 
         if(!empty($document['id'])){
                 $focus->retrieve($document['id']);
+                if(empty($focus->id)) {
+                    return '-1';
+                }
         }else{
                 return '-1';
         }
@@ -57,8 +60,8 @@ var $upload_file;
                 if (in_array($this->upload_file->file_ext, $sugar_config['upload_badext'])) {
                         $this->upload_file->stored_file_name .= ".txt";
                         $this->upload_file->file_ext = "txt";
-                } 
-                
+                }
+
                 $revision = new DocumentRevision();
 				$revision->filename = $this->upload_file->get_stored_file_name();
           		$revision->file_mime_type = $this->upload_file->getMimeSoap($revision->filename);
@@ -67,7 +70,7 @@ var $upload_file;
 				$revision->revision = $document['revision'];
 				$revision->document_id = $document['id'];
 				$revision->save();
-				
+
                	$focus->document_revision_id = $revision->id;
                	$focus->save();
                 $return_id = $revision->id;

@@ -38,7 +38,9 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
     var $array;
 
     public function setUp() {
-        global $beanList;
+        require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;
 
         require "modules/".$this->module."/metadata/searchdefs.php";
         require "modules/".$this->module."/metadata/SearchFields.php";
@@ -243,7 +245,10 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
         $now = $timedate->getNow(true);
-        $month = $now->get_day_begin(1, $now->month-1);
+        $month_number = $now->month == 1 ? 12 : $now->month-1;
+        $year_number = $now->month == 1 ? $now->year - 1 : $now->year;
+        $month = $now->get_day_begin(1, $month_number, $year_number);
+
         $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
         $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin($month->days_in_month));
 

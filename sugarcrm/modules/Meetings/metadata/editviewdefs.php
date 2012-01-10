@@ -102,7 +102,7 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             'type' => 'datetimecombo',
             'displayParams' =>
             array (
-
+              'required' => true,
               'updateCallback' => 'SugarWidgetScheduler.update_time();',
             ),
           ),
@@ -112,17 +112,45 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             'label' => 'LBL_LIST_RELATED_TO',
           ),
         ),
-       
-        array (
+        
+        
+      array (
           array (
-            'name' => 'duration_hours',
-            'label' => 'LBL_DURATION',
-            'customCode' => '{literal}<script type="text/javascript">function isValidDuration(formName) { var form = document.getElementById(formName); if ( form.duration_hours.value + form.duration_minutes.value <= 0 ) { return false; } return true; }</script>{/literal}<div class="duration"><input name="duration_hours" size="2" maxlength="2" type="text" value="{$fields.duration_hours.value}" onkeyup="SugarWidgetScheduler.update_time();"/>{$fields.duration_minutes.value}&nbsp;<span class="dateFormat">{$MOD.LBL_HOURS_MINS}</span></div>',
+            'name' => 'date_end',
+            'type' => 'datetimecombo',
+            'displayParams' =>
+            array (
+              'required' => true,
+              'updateCallback' => 'SugarWidgetScheduler.update_time();',
+            ),
           ),
+          
           array (
             'name' => 'location',
             'comment' => 'Meeting location',
             'label' => 'LBL_LOCATION',
+          ),
+        ),      
+        
+        array(
+        
+          array (
+            'name' => 'duration',
+            'customCode' => '
+            	<select id="duration" name="duration">{html_options options=$fields.duration.options}</select>
+            	<span id="duration_text"></span>
+            	<input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
+            	<input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
+            	{sugar_getscript file="modules/Meetings/duration_dependency.js"}
+            	<script type="text/javascript">
+            		var date_time_format = "{$CALENDAR_FORMAT}";
+            		{literal}
+			SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){			
+				var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);	
+			});
+			{/literal}
+            	</script>            	
+            ',
           ),
 
         ),

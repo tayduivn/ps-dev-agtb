@@ -1469,6 +1469,29 @@ $app_list_strings = array (
                                     '30'=>'30',
                                     '45'=>'45'),
 
+    'repeat_type_dom' => array(
+    	'' => 'None',
+    	'Daily'	=> 'Daily',
+	'Weekly' => 'Weekly',
+	'Monthly' => 'Monthly',
+	'Yearly' => 'Yearly',
+    ),
+    
+    'duration_dom' => array(
+    	'' => 'None',
+    	'900' => '15 minutes',
+	'1800' => '30 minutes',
+	'2700' => '45 minutes',
+	'3600' => '1 hour',
+	'5400' => '1.5 hours',
+	'7200' => '2 hours',
+	'10800' => '3 hours',
+	'21600' => '6 hours',
+	'86400' => '1 day',
+	'172800' => '2 days',
+	'259200' => '3 days',
+	'604800' => '1 week',
+    ),
 
 // deferred
 /*// QUEUES MODULE DOMs
@@ -3160,6 +3183,13 @@ $app_strings = array (
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
+    
+    'LBL_DURATION_DAY' => 'day',
+    'LBL_DURATION_HOUR' => 'hour',
+    'LBL_DURATION_MINUTE' => 'minute',
+    'LBL_DURATION_DAYS' => 'days',
+    'LBL_DURATION_HOURS' => 'hours',
+    'LBL_DURATION_MINUTES' => 'minutes',
 
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
@@ -3989,7 +4019,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'WebEx'=>'WebEx',
     'GoToMeeting'=>'GoToMeeting',
     'LotusLive'=>'LotusLive',
-    'Google' => 'Google Docs',
+    'Google' => 'Google',
     'Box' => 'Box.net',
     'Facebook'=>'Facebook',
     'Twitter'=>'Twitter',

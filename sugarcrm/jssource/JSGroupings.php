@@ -56,12 +56,17 @@
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
             ),
-            
 			//jquery libraries
 			$sugar_grp_jquery = array(
-			'include/javascript/jquery/jquery-min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery-min.js'             => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery-ui.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
 			),
-			
+           $sugar_field_grp = array(
+               'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
+               'include/SugarFields/Fields/Teamset/Teamset.js' => 'include/javascript/sugar_field_grp.js',
+               'include/SugarFields/Fields/Datetimecombo/Datetimecombo.js' => 'include/javascript/sugar_field_grp.js',
+           ),
             $sugar_grp1_yui = array(
 			//YUI scripts loaded on first page
             'include/javascript/yui3/build/yui/yui-min.js'              => 'include/javascript/sugar_grp1_yui.js',
@@ -91,7 +96,7 @@
 			'include/javascript/sugar_connection_event_listener.js'     => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/calendar/calendar.js'     => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui/build/history/history.js'     => 'include/javascript/sugar_grp1_yui.js',
-
+            'include/javascript/yui/build/resize/resize-min.js'     => 'include/javascript/sugar_grp1_yui.js',
             ),
 
             $sugar_grp_yui_widgets = array(
@@ -157,6 +162,8 @@
 
             //Grouping for the quick compose functionality.
             $sugar_grp_quick_compose = array(
+            'include/javascript/jsclass_base.js' => 'include/javascript/sugar_grp_quickcomp.js',
+            'include/javascript/jsclass_async.js' => 'include/javascript/sugar_grp_quickcomp.js',
             'modules/Emails/javascript/vars.js' => 'include/javascript/sugar_grp_quickcomp.js',
             'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_grp_quickcomp.js', //For team selection
             'modules/Emails/javascript/EmailUIShared.js' => 'include/javascript/sugar_grp_quickcomp.js',

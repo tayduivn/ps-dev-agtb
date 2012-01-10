@@ -234,6 +234,8 @@ function make_sugar_config(&$sugar_config)
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
 		'use_sprites' => function_exists('imagecreatetruecolor'),
+                'search_wildcard_infront' => false,
+                'search_wildcard_char' => '%',
 	);
 }
 
@@ -382,13 +384,14 @@ function get_sugar_config_defaults() {
 	  'default_view' => 'week',
 	  'show_calls_by_default' => true,
 	  'show_tasks_by_default' => true,
-	  'editview_width' => 960,
-	  'editview_height' => 480,
+	  'editview_width' => 990,
+	  'editview_height' => 485,	
 	  'day_timestep' => 15,
 	  'week_timestep' => 30,
-	  'month_timestep' => 60,
 	  'items_draggable' => true,
-	  'mouseover_expand' => true,
+	  'items_resizable' => true,
+	  'enable_repeat' => true,
+	  'max_repeat_count' => 1000,
 	),
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -445,6 +448,8 @@ function get_sugar_config_defaults() {
 	// REMOVE BEFORE SHIPPING
 	'new_subpanels' => true,
 	//END SUGARCRM flav=int ONLY
+        'search_wildcard_infront' => false,
+        'search_wildcard_char' => '%',
 	);
 
 	if(!is_object($locale)) {
@@ -1003,7 +1008,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
         $exemptDropdowns[] = "parent_type_display";
         $exemptDropdowns[] = "record_type_display";
         $exemptDropdowns[] = "record_type_display_notes";
-   
+
 	foreach($app_list_strings as $key=>$value)
 	{
 		if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
@@ -1981,45 +1986,37 @@ function clean_xss($str, $cleanImg=true) {
 	if(empty($sugar_config['email_xss']))
 	$sugar_config['email_xss'] = getDefaultXssTags();
 
-	$arr = unserialize(base64_decode($sugar_config['email_xss']));
-
-	$regex = '';
-	foreach($arr as $v) {
-		if(!empty($regex)) {
-			$regex .= "|";
-		}
-		$regex .= $v;
-	}
-
-	$tag_regex        = "#<({$regex})[^>]*>?#sim";
+	$xsstags = unserialize(base64_decode($sugar_config['email_xss']));
 
 	// cn: bug 13079 - "on\w" matched too many non-events (cONTact, strONG, etc.)
 	$jsEvents  = "onblur|onfocus|oncontextmenu|onresize|onscroll|onunload|ondblclick|onclick|";
 	$jsEvents .= "onmouseup|onmouseover|onmousedown|onmouseenter|onmouseleave|onmousemove|onload|onchange|";
 	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror|ondragdrop";
 
-	$attribute_regex	= "#<.+({$jsEvents})[^=>]*=[^>]*>#sim";
+	$attribute_regex	= "#\b({$jsEvents})\s*=\s*(?|(?!['\"])\S+|['\"].+?['\"])#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http(s)?://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
 
+	$tagsrex = '#<\/?(\w+)((?:\s+(?:\w|\w[\w-]*\w)(?:\s*=\s*(?:\".*?\"|\'.*?\'|[^\'\">\s]+))?)+\s*|\s*)\/?>#im';
 
-	$str = str_replace("\t", "", $str);
-
-	$matches = array_merge(
-	xss_check_pattern($tag_regex, $str),
-	xss_check_pattern($javascript_regex, $str)
-	);
-
-
-    $jsMatches = xss_check_pattern($attribute_regex, $str);
-    if(!empty($jsMatches)){
-        preg_match_all($attribute_regex, $str, $newMatches, PREG_PATTERN_ORDER);
-        if(!empty($newMatches[0][0])){
-            $matches2 = array_merge(xss_check_pattern("#({$jsEvents})#sim", $newMatches[0][0]));
-            $matches = array_merge($matches, $matches2);
+	$tagmatches = array();
+	$matches = array();
+	preg_match_all($tagsrex, $str, $tagmatches, PREG_PATTERN_ORDER);
+    foreach($tagmatches[1] as $no => $tag) {
+        if(in_array($tag, $xsstags)) {
+            // dangerous tag - take out whole
+            $matches[] = $tagmatches[0][$no];
+            continue;
+        }
+        $attrmatch = array();
+        preg_match_all($attribute_regex, $tagmatches[2][$no], $attrmatch, PREG_PATTERN_ORDER);
+        if(!empty($attrmatch[0])) {
+            $matches = array_merge($matches, $attrmatch[0]);
         }
     }
+
+	$matches = array_merge($matches, xss_check_pattern($javascript_regex, $str));
 
 	if($cleanImg) {
 		$matches = array_merge($matches,
@@ -2100,7 +2097,7 @@ function clean_string($str, $filter = "STANDARD", $dieOnBadData = true)
 
 	if (preg_match($filters[$filter], $str)) {
 		if (isset($GLOBALS['log']) && is_object($GLOBALS['log'])) {
-			$GLOBALS['log']->fatal("SECURITY: bad data passed in; string: {$str}");
+			$GLOBALS['log']->fatal("SECURITY[$filter]: bad data passed in; string: {$str}");
 		}
 		if ( $dieOnBadData ) {
 			die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
@@ -2157,6 +2154,14 @@ function set_superglobals($key, $val){
 // Works in conjunction with clean_string() to defeat SQL injection, file inclusion attacks, and XSS
 function clean_incoming_data() {
 	global $sugar_config;
+    global $RAW_REQUEST;
+
+    if(get_magic_quotes_gpc()) {
+        // magic quotes screw up data, we'd have to clean up
+        $RAW_REQUEST = array_map("cleanup_slashes", $_REQUEST);
+    } else {
+        $RAW_REQUEST = $_REQUEST;
+    }
 
 	if (get_magic_quotes_gpc() == 1) {
 		$req  = array_map("preprocess_param", $_REQUEST);
@@ -2229,7 +2234,7 @@ function securexss($value) {
         }
         return $new;
     }
-	static $xss_cleanup=  array('"' =>'&quot;', "'" =>  '&#039;' , '<' =>'&lt;' , '>'=>'&gt;');
+	static $xss_cleanup=  array("&quot;" => "&#38;", '"' =>'&quot;', "'" =>  '&#039;' , '<' =>'&lt;' , '>'=>'&gt;');
 	$value = preg_replace(array('/javascript:/i', '/\0/'), array('java script:', ''), $value);
 	$value = preg_replace('/javascript:/i', 'java script:', $value);
 	return str_replace(array_keys($xss_cleanup), array_values($xss_cleanup), $value);
@@ -2238,7 +2243,7 @@ function securexss($value) {
 function securexsskey($value, $die=true){
 	global $sugar_config;
 	$matches = array();
-	preg_match("/[\'\"\<\>]/", $value, $matches);
+	preg_match('/[\'"<>]/', $value, $matches);
 	if(!empty($matches)){
 		if($die){
 			die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
@@ -2259,11 +2264,15 @@ function preprocess_param($value){
 		$value = securexss($value);
 	}
 
-
 	return $value;
-
-
 }
+
+function cleanup_slashes($value)
+{
+    if(is_string($value)) return stripslashes($value);
+    return $value;
+}
+
 
 function set_register_value($category, $name, $value){
     return sugar_cache_put("{$category}:{$name}", $value);
@@ -3724,10 +3733,10 @@ function getPhpInfo($level=-1) {
  */
 function string_format($format, $args){
 	$result = $format;
-    
+
     /** Bug47277 fix.
      * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
-     * IN () fails and IN ('') works. 
+     * IN () fails and IN ('') works.
      */
     if (count($args) == 1)
     {
@@ -3739,7 +3748,7 @@ function string_format($format, $args){
         }
     }
     /* End of fix */
-    
+
 	for($i = 0; $i < count($args); $i++){
 		$result = str_replace('{'.$i.'}', $args[$i], $result);
 	}
@@ -4862,6 +4871,39 @@ function order_beans($beans, $field_name)
     return $beans;
 }
 
+/**
+ * Return search like string
+ * This function takes a user input string and returns a string that contains wild card(s) that can be used in db query.
+ * @param string $str  string to be searched
+ * @param string $like_char  Database like character, usually '%'
+ * @return string Returns a string to be searched in db query
+ */
+function sql_like_string($str, $like_char) {
+
+    // default behaviour
+    $wildcard = '%';
+
+    // override default wildcard character
+    if (isset($GLOBALS['sugar_config']['search_wildcard_char']) &&
+        strlen($GLOBALS['sugar_config']['search_wildcard_char']) == 1) {
+        $wildcard = $GLOBALS['sugar_config']['search_wildcard_char'];
+    }
+
+    // add wildcard at the beginning of the search string
+    if (isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
+        $GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
+        if (substr($str,0,1) <> $wildcard)
+          $str = $wildcard.$str;
+    }
+
+    // add wildcard at the end of search string (default)
+    if(substr($str,-1) <> $wildcard) {
+        $str .= $wildcard;
+    }
+
+    return str_replace($wildcard, $like_char, $str);
+}
+
 //check to see if custom utils exists
 if(file_exists('custom/include/custom_utils.php')){
 	include_once('custom/include/custom_utils.php');
@@ -4883,6 +4925,28 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
     return htmlentities($input, $quotes, $charset);
 }
 
+
+/**
+ * utf8_recursive_encode
+ * 
+ * This function walks through an Array and recursively calls utf8_encode on the
+ * values of each of the elements.
+ *
+ * @param $data Array of data to encode
+ * @return utf8 encoded Array data
+ */
+function utf8_recursive_encode($data)
+{
+    $result = array();
+    foreach($data as $key=>$val) {
+        if(is_array($val)) {
+           $result[$key] = utf8_recursive_encode($val);
+        } else {
+           $result[$key] = utf8_encode($val);
+        }
+    }
+    return $result;
+}
 
 /**
  * get_language_header

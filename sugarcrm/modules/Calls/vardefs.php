@@ -204,9 +204,9 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'importable' => 'false',
     'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
   ),
-  'opportunity' =>
+  'opportunities' =>
   array (
-  	'name' => 'opportunity',
+  	'name' => 'opportunities',
     'type' => 'link',
     'relationship' => 'opportunity_calls',
     'source'=>'non-db',
@@ -305,7 +305,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 		'name' => 'contact_id',
 		'type' => 'id',
 		'source' => 'non-db',
-		'importable' => false,
 	),
 ),
 'indices' => array (

@@ -140,6 +140,7 @@ protected function action_resetPreferences(){
 	    $_POST['should_remind'] = '1';
 	    $_POST['reminder_time'] = 1800;
         $_POST['mailmerge_on'] = 'on';
+        $_POST['receive_notifications'] = $current_user->receive_notifications;
         //BEGIN SUGARCRM flav=sales ONLY
         $_POST['email_link_type'] = $sugar_config['default_email_client'];
         //END SUGARCRM flav=sales ONLY

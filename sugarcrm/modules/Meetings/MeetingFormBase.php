@@ -27,8 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+require_once('include/SugarObjects/forms/FormBase.php');
 
-class MeetingFormBase{
+class MeetingFormBase extends FormBase {
 
 	function getFormBody($prefix, $mod='', $formname=''){
 		if(!ACLController::checkAccess('Meetings', 'edit', true)){
@@ -216,7 +217,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	  	$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
 
 	  	//add current user if the assigned to user is different than current user.
-	  	if($current_user->id != $_POST['assigned_user_id']){
+	  	if($current_user->id != $_POST['assigned_user_id'] && $_REQUEST['module'] != "Calendar"){
 	  		$_POST['user_invitees'] .= ','.$current_user->id.', ';
 	  	}
 
@@ -231,10 +232,10 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
         $focus->save(true);
         $return_id = $focus->id;
 	}else{
-		if(empty($_REQUEST['return_module']) && empty($_REQUEST['return_action']) && $focus->status == 'Held'){
-    		//if we are closing the meeting, and the request does not have a return module AND return action set, then
-    		//the request is coming from a dashlet or subpanel close icon and there is no need to process user invitees,
-    		//just save the current values.
+		if($focus->status == 'Held' && $this->isEmptyReturnModuleAndAction() && !$this->isSaveFromDCMenu()){
+    		//if we are closing the meeting, and the request does not have a return module AND return action set and it is not a save
+            //being triggered by the DCMenu (shortcut bar) then the request is coming from a dashlet or subpanel close icon and there is no
+            //need to process user invitees, just save the current values.
     		$focus->save(true);
 	    }else{
 	    	///////////////////////////////////////////////////////////////////////////

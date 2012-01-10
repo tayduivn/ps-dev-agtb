@@ -28,7 +28,7 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']); 
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
     
     public function tearDown()
@@ -63,6 +63,7 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
+                'readAccess' => true,
             );
         
         $sugarSpot = $this->getMock('SugarSpot', array('_performSearch'));
@@ -71,9 +72,9 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($result));
             
         $returnValue = $sugarSpot->searchAndDisplay('','');
-        
-        $this->assertRegExp('/Foo/',$returnValue);
-        $this->assertNotRegExp('/Bar/',$returnValue);
+
+        $this->assertRegExp('/Bar/',$returnValue);
+        $this->assertRegExp('/DCMenu\.showQuickView\s*?\(\'Foo\'/',$returnValue);
     }
 
     /**
@@ -106,6 +107,7 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
+                'readAccess' => true,
             );
         
         $sugarSpot = $this->getMock('SugarSpot', array('_performSearch'));

@@ -31,10 +31,7 @@
 
 *}
 
-{include file="modules/DynamicFields/templates/Fields/Forms/coreTop.tpl"}
-<script language="Javascript">
-app_list_strings = {$app_list_strings};
-</script>
+ {include file="modules/DynamicFields/templates/Fields/Forms/coreTop.tpl"}
 
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DROP_DOWN_LIST"}:</td>
@@ -56,6 +53,29 @@ app_list_strings = {$app_list_strings};
 	{/if}
 	</td>
 </tr>
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+<tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_HAS_PARENT"}:</td>
+    <td><input type="checkbox" name="has_parent" id="has_parent" value="1" onclick ="ModuleBuilder.toggleParent()"
+        {if !empty($vardef.visibility_grid)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+        <script>
+			ModuleBuilder.toggleParent({if empty($vardef.visibility_grid)}false{else}true{/if});
+		</script>
+    </td>
+</tr>
+<tr id='visGridRow' {if empty($vardef.visibility_grid)}style="display:none"{/if} >
+    <td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_PARENT_DROPDOWN"}:</td>
+	<td>
+        {html_options name="parent_dd" id="parent_dd" selected=$vardef.visibility_grid.trigger options=$module_dd_fields}
+        {php}$this->_tpl_vars['visgridJSON'] = empty($this->_tpl_vars['vardef']['visibility_grid']) ? "" : json_encode($this->_tpl_vars['vardef']['visibility_grid']){/php}
+        <input type="hidden" name="visibility_grid" id="visibility_grid" value='{$visgridJSON}'/>
+	{if $hideLevel < 5}
+        <button onclick="ModuleBuilder.editVisibilityGrid('visibility_grid', YAHOO.util.Dom.get('parent_dd').value, YAHOO.util.Dom.get('options').value)">
+            {sugar_translate module="DynamicFields" label="LBL_EDIT_VIS"}
+        </button>
+	{/if}
+	</td>
+</tr>
+{* //END SUGARCRM flav=pro ONLY *}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MASS_UPDATE"}:</td>
 	<td>

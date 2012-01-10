@@ -29,6 +29,33 @@ function setSymbolValue(id) {
 }
 
 function user_status_display(field){
+        if (typeof field.form.is_admin == 'undefined')
+        {
+            var input = document.createElement("input");
+            input.setAttribute("id", "is_admin");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "is_admin");
+            input.setAttribute("value", "");
+            field.form.appendChild(input);
+        }
+        if (typeof field.form.is_group == 'undefined')
+        {
+            var input = document.createElement("input");
+            input.setAttribute("id", "is_group");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "is_group");
+            input.setAttribute("value", "");
+            field.form.appendChild(input);
+        }
+        if (typeof field.form.portal_only == 'undefined')
+        {
+            var input = document.createElement("input");
+            input.setAttribute("id", "portal_only");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "portal_only");
+            input.setAttribute("value", "");
+            field.form.appendChild(input);
+        }
 		switch (field.value){
 		case 'Administrator':
 		    document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users',"LBL_ADMIN_DESC");
@@ -206,10 +233,10 @@ function confirmReassignRecords() {
                                                 close: true,
                                                 text: SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN'),
                                                 constraintoviewport: true,
-                                                buttons: [ { text:'Yes', handler:handleYes, isDefault:true },
-                                                           { text:'No',  handler:handleNo } ]
+                                                buttons: [ { text:SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN_YES'), handler:handleYes, isDefault:true },
+                                                           { text:SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN_NO'),  handler:handleNo } ]
                                               } );
-            YAHOO.example.container.simpledialog1.setHeader('Re-Assign');
+            YAHOO.example.container.simpledialog1.setHeader(SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN_TITLE'));
             YAHOO.example.container.simpledialog1.render('popup_window');
             YAHOO.util.Event.addListener('Save', 'click', YAHOO.example.container.simpledialog1.show, YAHOO.example.container.simpledialog1, true);
         }
@@ -250,7 +277,7 @@ function verify_data(form)
         return false;
     }
 	
-	if (document.EditView.return_id.value != '' && (document.EditView.return_id.value == form.reports_to_id.value)) {
+	if (document.EditView.return_id.value != '' && (typeof(form.reports_to_id)!="undefined") && (document.EditView.return_id.value == form.reports_to_id.value)) {
 		alert(SUGAR.language.get('app_strings','ERR_SELF_REPORTING'));
 		return false;
 	}

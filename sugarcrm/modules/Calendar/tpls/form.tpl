@@ -35,6 +35,16 @@
 <input type="hidden" name="lead_invitees" id="lead_invitees">
 <input type="hidden" name="send_invites" id="send_invites">
 
+{if $enable_repeat}
+<input type="hidden" name="edit_all_recurrences" id="edit_all_recurrences">
+<input type="hidden" name="repeat_parent_id" id="repeat_parent_id">
+<input type="hidden" name="repeat_type" id="repeat_type">
+<input type="hidden" name="repeat_interval" id="repeat_interval">
+<input type="hidden" name="repeat_count" id="repeat_count">
+<input type="hidden" name="repeat_until" id="repeat_until">
+<input type="hidden" name="repeat_dow" id="repeat_dow">
+{/if}
+
 <div style="padding: 4px 0; font-size: 12px;">
 	{literal}
 	<input type="radio" id="radio_meeting" value="Meetings" onclick="CAL.change_activity_type(this.value);" checked="true"  name="appttype" tabindex="100"/>
@@ -49,7 +59,7 @@
 <div id="form_content">
 	<input type="hidden" name="date_start" id="date_start" value="{$user_default_date_start}">
 	<input type="hidden" name="duration_hours" id="duration_hours">
-	<input type="hidden" name="duration_minutes" id="duration_minutes">	
+	<input type="hidden" name="duration_minutes" id="duration_minutes">
 </div>
 
 </form>
@@ -58,7 +68,9 @@
 enableQS(false);
 {literal}
 function cal_isValidDuration(){ 
-	form = document.getElementById('CalendarEditView'); 
+	form = document.getElementById('CalendarEditView');
+	if(typeof form.duration_hours == "undefined" || typeof form.duration_minutes == "undefined")
+		return true;
 	if(form.duration_hours.value + form.duration_minutes.value <= 0){
 		alert('{/literal}{$MOD.NOTICE_DURATION_TIME}{literal}'); 
 		return false; 

@@ -19,17 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: CampaignLog.php 51719 2009-10-22 17:18:00Z mitani $
- * Description:
- ********************************************************************************/
-
-
-
-
-
-
-
 
 class CampaignLog extends SugarBean {
 
@@ -68,21 +57,12 @@ class CampaignLog extends SugarBean {
         //make sure that both items in array are set to some value, else return null
         if(!(isset($temp_array['TARGET_TYPE']) && $temp_array['TARGET_TYPE']!= '') || !(isset($temp_array['TARGET_ID']) && $temp_array['TARGET_ID']!= ''))
         {   //needed values to construct query are empty/null, so return null
-            $GLOBALS['log']->debug("CampaignLog.php:get_list_view_data duntion: temp_array['TARGET_TYPE'] and/or temp_array['TARGET_ID'] are empty, return null");
+            $GLOBALS['log']->debug("CampaignLog.php:get_list_view_data: temp_array['TARGET_TYPE'] and/or temp_array['TARGET_ID'] are empty, return null");
             $emptyArr = array();
             return $emptyArr;
         }
 
         $table = strtolower($temp_array['TARGET_TYPE']);
-
-        if ( ( $this->db->dbType == 'mysql' ) or ( $this->db->dbType == 'oci8' ) )
-        {
-            $query="select first_name, last_name, CONCAT(CONCAT(first_name, ' '), last_name) name from ".strtolower($temp_array['TARGET_TYPE']) .  " where id ='{$temp_array['TARGET_ID']}'";
-        }
-        if($this->db->dbType == 'mssql')
-        {
-            $query="select first_name, last_name, (first_name + ' ' + last_name) name from ".strtolower($temp_array['TARGET_TYPE']) .  " where id ='{$temp_array['TARGET_ID']}'";
-        }
 
         if($temp_array['TARGET_TYPE']=='Accounts'){
             $query = "select name from $table where id = ".$this->db->quoted($temp_array['TARGET_ID']);

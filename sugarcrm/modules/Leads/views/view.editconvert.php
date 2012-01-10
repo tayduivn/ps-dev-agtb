@@ -131,7 +131,7 @@ class ViewEditConvert extends SugarView {
 
     protected function getModulesFromDefs(){
         global $app_list_strings;
-
+        
         $modules = array();
         if (!isset($this->defs))
         {
@@ -142,7 +142,8 @@ class ViewEditConvert extends SugarView {
             foreach($views as $view => $def)
             {
                 $modules[] = array(
-                    "module" => $app_list_strings['moduleList'][$module],
+                    "module" => $module,
+                    "moduleName" => $app_list_strings['moduleList'][$module],
                     "required" => isset($def['required']) ? $def['required'] : false,
                     "select"   => isset($def['select'])   ? $def['select']   : false,
                     "copyData" => isset($def['copyData']) ? $def['copyData'] : false,

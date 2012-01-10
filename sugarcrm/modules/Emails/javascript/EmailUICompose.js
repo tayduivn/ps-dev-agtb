@@ -14,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "PowerecomposePackage.clearBodyd by SugarCRM" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -1422,13 +1422,18 @@ SE.composeLayout = {
         if(json_objects['email_template_object']['fields']['subject'] != '' ) { // cn: bug 7743, don't stomp populated Subject Line
             document.getElementById('emailSubject' + idx).value = decodeURI(encodeURI(json_objects['email_template_object']['fields']['subject']));
         }
-
-        var text = decodeURI(encodeURI(json_objects['email_template_object']['fields']['body_html'])).replace(/<BR>/ig, '\n').replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
-
-        // cn: bug 14361 - text-only templates don't fill compose screen
-        if(text == '') {
-            text = decodeURI(encodeURI(json_objects['email_template_object']['fields']['body'])).replace(/<BR>/ig, '\n').replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"').replace(/\r\n/gi,"<br/>");
+        var text = '';
+        if(json_objects['email_template_object']['fields']['text_only'] == 1){
+        	text = "<p>" + decodeURI(encodeURI(json_objects['email_template_object']['fields']['body'])).replace(/<BR>/ig, '</p><p>').replace(/<br>/gi, "</p><p>").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"') + "</p>";
+        	document.getElementById("setEditor1").checked = true;
+        	SUGAR.email2.composeLayout.renderTinyMCEToolBar('1', 1);
         }
+        else{
+        	text = decodeURI(encodeURI(json_objects['email_template_object']['fields']['body_html'])).replace(/<BR>/ig, '\n').replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+        	document.getElementById("setEditor1").checked = false;
+        	SUGAR.email2.composeLayout.renderTinyMCEToolBar('1', 0);
+        }
+
 
         var tiny = SE.util.getTiny('htmleditor' + idx);
         var tinyHTML = tiny.getContent();
@@ -1459,7 +1464,7 @@ SE.composeLayout = {
 			return;
         }
 
-        if(idx) {
+        if(idx != null) {
             var sel = document.getElementById('signatures' + idx);
         } else {
             var sel = document.getElementById('signature_id');
@@ -1533,14 +1538,43 @@ SE.composeLayout = {
                 html = htmlPart1 + htmlPart2;
             }
 
-            // [pre|ap]pend
+            // pre|append
 			start = html.indexOf('<div><hr></div>');
             if(SE.userPrefs.signatures.signature_prepend == 'true' && start > -1) {
 				var htmlPart1 = html.substr(0, start);
 				var htmlPart2 = html.substr(start, html.length);
                 var newHtml = htmlPart1 + openTag + newSignature + closeTag + htmlPart2;
             } else if(SUGAR.email2.userPrefs.signatures.signature_prepend == 'true') {
-            	var newHtml = '<br/>' + openTag + newSignature + closeTag + html;
+
+            	//bug 48285
+                var newHtml = html;
+
+                //remove custom spacing
+                var spacing = '<span id="spacing"><br /><br /><br /></span>&nbsp;';
+                var customSpacingStart = html.indexOf(spacing);
+
+                if (customSpacingStart > -1)
+                {
+                    var part1 = newHtml.substr(0, customSpacingStart);
+                    var part2 = newHtml.substr(customSpacingStart+spacing.length, newHtml.length);
+                    newHtml = part1 + part2;
+                }
+
+                //append signature
+                var bodyStartTag = '<body>';
+                var body = newHtml.indexOf(bodyStartTag);
+
+                if (body > -1)
+                {
+                    var part1 = newHtml.substr(0, body+bodyStartTag.length);
+                    var part2 = newHtml.substr(body+bodyStartTag.length, newHtml.length);
+                    newHtml = part1 + spacing + openTag + newSignature + closeTag + part2;
+                }
+                else
+                {
+                    newHtml = openTag + newSignature + closeTag + newHtml;
+                }
+                //end bug 48285
             } else {
                 var body = html.indexOf('</body>');
                 if (body > -1) {
@@ -2009,7 +2043,7 @@ SE.composeLayout = {
             if (composePackage.body != null && composePackage.body.length > 0) {
 		        var tiny = SE.util.getTiny('htmleditor' + SE.composeLayout.currentInstanceId);
 		        SE.composeLayout.loadedTinyInstances[SE.composeLayout.currentInstanceId] = false;
-        		setTimeout("SE.composeLayout.setContentOnThisTiny();", 4000);
+        		setTimeout("SE.composeLayout.setContentOnThisTiny();", 3000);
             } // if
             if (composePackage.attachments != null) {
 				SE.composeLayout.loadAttachments(composePackage.attachments);
@@ -2033,46 +2067,49 @@ SE.composeLayout = {
         } // if
     },
 
-    setContentOnThisTiny : function() {
+    setContentOnThisTiny : function(recursive) {
     	var tiny = SE.util.getTiny('htmleditor' + SE.composeLayout.currentInstanceId);
-
+        var tinyHTML = tiny.getContent();
         composePackage.body = decodeURI(encodeURI(composePackage.body));
         // cn: bug 14361 - text-only templates don't fill compose screen
         if(composePackage.body == '') {
             composePackage.body = decodeURI(encodeURI(composePackage.body)).replace(/<BR>/ig, '\n').replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
         } // if
         //Flag determines if we should clear the tiny contents or just append
-        if (typeof(composePackage.clearBody) != 'undefined' && composePackage.clearBody){
+        if (typeof(composePackage.clearBody) != 'undefined' && composePackage.clearBody)
+        {
             SE.composeLayout.tinyHTML = '';
-        }else{
-            var tinyHTML = tiny.getContent();
-            htmlBeg = '';
-            htmlEnd = '';
-            htmlBod = tinyHTML;
-            //process if html is not empty
-            if(typeof(htmlBod)!='undefined' && htmlBod != null && htmlBod !=''){
-                //search for ending body tag
-                if (htmlBod.indexOf('</body>') < 0 ){
-                    //if not found, search for ending html tag
-                        if (htmlBod.indexOf('</html>') >= 0 ){
-                            htmlBeg = htmlBod.substr(0,htmlBod.indexOf('</html>') );
-                            htmlEnd = htmlBod.substr(htmlBod.indexOf('</html>') );
-
-                        }
-                }else{
-                    //html tag was found, append right before the tag
-                    htmlBeg = htmlBod.substr(0,htmlBod.indexOf('</body>') );
-                    htmlEnd = htmlBod.substr(htmlBod.indexOf('</body>') );
-                }
-                if(htmlBeg == ''){
-                    //html and body tags were not found, so append to end
-                    htmlBeg = htmlBod;
-                }
-
-            }
-            SE.composeLayout.tinyHTML = htmlBeg + composePackage.body + htmlEnd;
-            //SE.composeLayout.tinyHTML = tinyHTML + composePackage.body;
         }
+        else
+        {
+
+            //check to see if tiny is defined, and this is not a recursive call if not, then call self function one more time
+            if(typeof tiny == 'undefined'  &&  typeof recursive == 'undefined'){
+                //call this same function again, this time setting the recursive flag to true
+                setTimeout("SE.composeLayout.setContentOnThisTiny(true);", 3000);
+                return;
+            }
+            
+            //bug 48179
+            //check tinyHTML for closing tags
+            var body = tinyHTML.lastIndexOf('</body>');
+            spacing = '<span id="spacing"><br /><br /><br /></span>&nbsp;';
+
+            if (body > -1)
+            {
+                var part1 = tinyHTML.substr(0, body);
+                var part2 = tinyHTML.substr(body, tinyHTML.length);
+                var newHtml = part1 + spacing + composePackage.body + part2;
+            }
+            else
+            {
+                var newHtml = tinyHTML + spacing + composePackage.body;
+            }
+            //end bug 48179
+
+            SE.composeLayout.tinyHTML = newHtml;
+        }
+
          tiny.setContent(SE.composeLayout.tinyHTML);
          //Indicate that the contents has been loaded successfully.
          SE.composeLayout.loadedTinyInstances[SE.composeLayout.currentInstanceId] = true;

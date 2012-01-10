@@ -145,6 +145,7 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 		_logThis("Upgrading the database from {$origVersion} to version {$destVersion}", $path);
 		$origVersion = substr($origVersion, 0, 2) . 'x';
 		$destVersion = substr($destVersion, 0, 2) . 'x';
+
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
 		switch($sugar_config['dbconfig']['db_type']) {
@@ -167,9 +168,11 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 			ob_start();
 			@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
 			ob_end_clean();
-		} else {
-			logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-		}
+        } else if(strcmp($origVersion, $destVersion) == 0){
+            _logThis("*** Skipping schema upgrade for point release.", $path);
+        } else {
+            _logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
+        }
 
 	} else {
 		_logThis('*** Skipping Schema Change Scripts - Admin opted to run queries manually and should have done so by now.', $path);
@@ -440,6 +443,26 @@ function post_install() {
                mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
                if(file_exists('upload/upgrades/temp')) {
                    rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
+               }
+
+               //Now uprade the upgrade_history table entries
+               $results = $GLOBALS['db']->query('SELECT id, filename FROM upgrade_history');
+               $upload_dir = $sugar_config['cache_dir'].'upload/';
+               //Create regular expression string
+               $match = '/^' . str_replace('/', '\/', $upload_dir) . '(.*?)$/';
+               while(($row = $GLOBALS['db']->fetchByAssoc($results)))
+               {
+               	    $file = str_replace('//', '/', $row['filename']); //Strip out double-paths (from modulebuilder)
+               	    $id = $row['id'];
+
+               		if(!empty($file) && preg_match($match, $file, $matches))
+               		{
+               			//Update new file location to use the new $sugar_config['upload_dir'] value
+               			$new_file_location = $sugar_config['upload_dir'] . $matches[1];
+               			_logThis("Updating filenmae for upgrade_history table entry [{$id}] from {$file} to {$new_file_location}", $path);
+               			$update_sql = "UPDATE upgrade_history SET filename = '{$new_file_location}' WHERE id = '{$id}'";
+               			$GLOBALS['db']->query($update_sql);
+               		}
                }
            }
     }

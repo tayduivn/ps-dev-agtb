@@ -25,6 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once ("modules/ModuleBuilder/Module/StudioModuleFactory.php");
 
 class ViewDepDropdown extends SugarView
 {
@@ -40,6 +41,15 @@ class ViewDepDropdown extends SugarView
                 $this->ss->assign($var, $_REQUEST[$var]);
             }
         }
+
+        $mapping = empty($_REQUEST['mapping']) ? array() : json_decode(html_entity_decode($_REQUEST['mapping']), true);
+
+        $this->ss->assign("mapping", $mapping);
+
+        $sm = StudioModuleFactory::getStudioModule($_REQUEST['targetModule']);
+        $fields = $sm->getFields();
+        if (!empty($fields[$this->parentList]) && !empty($fields[$this->parentList]['options']))
+            $this->parentList = $fields[$this->parentList]['options'];
         $this->ss->assign("parent_list_options", translate($this->parentList));
         $parentOptions = translate($this->parentList);
         $parentOptionsArray = array();
@@ -48,7 +58,8 @@ class ViewDepDropdown extends SugarView
             $parentOptionsArray[] = array("value" => $value, "label" => $label);
         }
         $this->ss->assign("parentOptions",  json_encode(translate($this->parentList)));
-        $this->ss->assign("child_list_options",  translate("industry_dom"));
+        $child = !empty($_REQUEST["childList"]) ? $_REQUEST["childList"] : "industry_dom";
+        $this->ss->assign("child_list_options",  translate($child));
         $childOptions = translate("industry_dom");
         $childOptionsArray = array();
         foreach($childOptions as $value => $label)
@@ -56,10 +67,7 @@ class ViewDepDropdown extends SugarView
             $childOptionsArray[] = array("value" => $value, "label" => $label);
         }
         $this->ss->assign("childOptions",  json_encode($childOptionsArray));
-        if (!empty($_REQUEST['mode']) && $_REQUEST['mode'] == "2")
-            $this->ss->display("modules/Modulebuilder/tpls/depdropdown2.tpl");
-        else
-            $this->ss->display("modules/Modulebuilder/tpls/depdropdown.tpl");
+        $this->ss->display("modules/Modulebuilder/tpls/depdropdown.tpl");
     }
 
 

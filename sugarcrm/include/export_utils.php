@@ -267,13 +267,13 @@ function export($type, $records = null, $members = false, $sample=false) {
                     //if our value is a datetime field, then apply the users locale
                     case 'datetime':
                     case 'datetimecombo':
-                        $value = $timedate->to_display_date_time($value);
+                        $value = $timedate->to_display_date_time($db->fromConvert($value, 'datetime'));
                         $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
                         break;
 
                     //kbrill Bug #16296
                     case 'date':
-                        $value = $timedate->to_display_date($value, false);
+                        $value = $timedate->to_display_date($db->fromConvert($value, 'date'), false);
                         break;
 
                     // Bug 32463 - Properly have multienum field translated into something useful for the client
@@ -380,10 +380,20 @@ function generateSearchWhere($module, $query) {//this function is similar with f
             require_once('modules/'.$module.'/metadata/searchdefs.php');
         }
 
-        if(!empty($metafiles[$module]['searchfields']))
+        //fixing bug #48483: Date Range search on custom date field then export ignores range filter
+        // first of all custom folder should be checked
+        if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
+        {
+            require_once('custom/modules/'.$module.'/metadata/SearchFields.php');
+        }
+        elseif(!empty($metafiles[$module]['searchfields']))
+        {
             require_once($metafiles[$module]['searchfields']);
+        }
         elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
+        {
             require_once('modules/'.$module.'/metadata/SearchFields.php');
+        }
         if(empty($searchdefs) || empty($searchFields)) {
            //for some modules, such as iframe, it has massupdate, but it doesn't have search function, the where sql should be empty.
             return;

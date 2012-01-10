@@ -38,19 +38,30 @@
 		<table class='edit view tabForm'>
 				<tr>
 					<td scope="row" valign="top">
+						{$MOD.LBL_SETTINGS_CALENDAR_STYLE}
+					</td>
+					<td>	
+						<select size="1" name="calendar_style" tabindex="102">
+							<option value='basic' {if $settings_style == 'basic'}selected{/if}>{$MOD.LBL_STYLE_BASIC}</option>
+							<option value='advanced' {if $settings_style == 'advanced'}selected{/if}>{$MOD.LBL_STYLE_ADVANCED}</option>								
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td scope="row" valign="top">
 						{$MOD.LBL_SETTINGS_TIME_STARTS}
 					</td>
 					<td>
 						<div id="d_start_time_section">
 							<select size="1" id="day_start_hours" name="day_start_hours" tabindex="102">
-								{$TIME_START_HOUR_OPTIONS1}
+								{$TIME_START_HOUR_OPTIONS}
 							</select>&nbsp;:
 							
 							<select size="1" id="day_start_minutes" name="day_start_minutes"  tabindex="102">
-								{$TIME_START_MINUTES_OPTIONS1}
+								{$TIME_START_MINUTES_OPTIONS}
 							</select>
 								&nbsp;
-							{$TIME_MERIDIEM1}
+							{$TIME_START_MERIDIEM}
 						</div>
 					</td>
 				</tr>
@@ -61,14 +72,14 @@
 					<td>
 						<div id="d_end_time_section">
 							<select size="1" id="day_end_hours" name="day_end_hours" tabindex="102">
-								{$TIME_START_HOUR_OPTIONS2}
+								{$TIME_END_HOUR_OPTIONS}
 							</select>&nbsp;:
 							
 							<select size="1" id="day_end_minutes" name="day_end_minutes"  tabindex="102">
-								{$TIME_START_MINUTES_OPTIONS2}
+								{$TIME_END_MINUTES_OPTIONS}
 							</select>
 								&nbsp;
-							{$TIME_MERIDIEM2}
+							{$TIME_END_MERIDIEM}
 						</div>
 					</td>
 				</tr>

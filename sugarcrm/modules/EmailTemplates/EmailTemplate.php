@@ -43,6 +43,8 @@ class EmailTemplate extends SugarBean {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
+    var $assigned_user_id;
+    var $assigned_user_name;
 	var $name;
 	var $published;
 	var $description;
@@ -219,6 +221,7 @@ class EmailTemplate extends SugarBean {
         }
 		$this->created_by_name = get_assigned_user_name($this->created_by);
 		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
+        $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
 		$this->fill_in_additional_parent_fields();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->assigned_name = get_assigned_team_name($this->team_id);
@@ -306,7 +309,15 @@ class EmailTemplate extends SugarBean {
 			$this->parsed_entities=array();
 
 		//parse the template and find all the dynamic strings that need replacement.
-		$pattern_prefix = '$'.strtolower($beanList[$focus_name]).'_';
+        // Bug #48111 It's strange why prefix for User module is contact_user (see self::generateFieldDefsJS method)
+        if ($beanList[$focus_name] == 'User')
+        {
+            $pattern_prefix = '$contact_user_';
+        }
+        else
+        {
+            $pattern_prefix = '$'.strtolower($beanList[$focus_name]).'_';
+        }
 		$pattern_prefix_length = strlen($pattern_prefix);
 		$pattern = '/\\'.$pattern_prefix.'[A-Za-z_0-9]*/';
 

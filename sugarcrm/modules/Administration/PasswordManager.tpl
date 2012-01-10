@@ -40,7 +40,7 @@
 
 		<td style="padding-bottom: 2px;" >
 			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="btn_save" type="submit" onclick="addcheck(form);return check_form('ConfigurePasswordSettings');"  name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" >
-			&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" >
+			&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}" id="btn_cancel" onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" >
 		</td>
 	</tr>
 </table>
@@ -61,7 +61,7 @@
 									{$MOD.LBL_PASSWORD_MINIMUM_LENGTH}:
 								</td>
 								<td  	width='25%' >
-									<input type='text' size='4' name='passwordsetting_minpwdlength' value='{$config.passwordsetting.minpwdlength}'>
+									<input type='text' size='4' id='passwordsetting_minpwdlength' name='passwordsetting_minpwdlength' value='{$config.passwordsetting.minpwdlength}'>
 								</td>
 								<td  scope="row"	width='25%'>
 									{$MOD.LBL_PASSWORD_MAXIMUM_LENGTH}:
@@ -147,12 +147,6 @@
 									</table>
 								</td>
 							</tr>
-							<tr>
-							    <td colspan="4" id='SystemGeneratedPassword_warning2'scope="row" style='display:{$smtp_warning_2}';>
-                                   <i>{if $SMTP_SERVER_NOT_SET}&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.ERR_SMTP_SERVER_NOT_SET}<br>{/if}
-                                   &nbsp;&nbsp;&nbsp;&nbsp;{$MOD.LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE}</i>
-                               </td>
-                           </tr>
 						</table>
 						<!--//END SUGARCRM flav=pro ONLY -->
 
@@ -182,7 +176,7 @@
 											{/if}
 										</tr>
 										<tr>
-											<td colspan="2" id='SystemGeneratedPassword_warning'scope="row" style='display:{$smtp_warning}';>
+											<td colspan="2" id="SystemGeneratedPassword_warning" scope="row" style='display:{$smtp_warning}';>
 											<i>{if $SMTP_SERVER_NOT_SET}&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.ERR_SMTP_SERVER_NOT_SET}<br>{/if}
 											&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE}</i>
 										</td>
@@ -267,7 +261,7 @@
 												{assign var='smtp_warning_2' value='none'}
 											{/if}
 										</tr>
-										<tr><td colspan="4" id='SystemGeneratedPassword_warning2'scope="row" style='display:{$smtp_warning_2}';>
+										<tr><td colspan="4" id="SystemGeneratedPassword_warning2" scope="row" style='display:{$smtp_warning_2}';>
 											<i>{if $SMTP_SERVER_NOT_SET}&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.ERR_SMTP_SERVER_NOT_SET}<br>{/if}
 											&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE}</i>
 											</td>
@@ -471,7 +465,7 @@
 												<td width='30%'>
 	                                                <input type="radio" id="required_lockout_exp_login" name="passwordsetting_lockoutexpiration" value='1' {$lockouttypelogin} onclick="document.getElementById('dione').style.display='';">
 	                                                {$MOD.LBL_PASSWORD_LOCKOUT_ATTEMPT1}
-	                                                <input type='text' maxlength="3" and style="width:2em" name='passwordsetting_lockoutexpirationlogin' value='{$config.passwordsetting.lockoutexpirationlogin}'>
+	                                                <input type='text' maxlength="3" and style="width:2em" id='passwordsetting_lockoutexpirationlogin' name='passwordsetting_lockoutexpirationlogin' value='{$config.passwordsetting.lockoutexpirationlogin}'>
 	                                            	{$MOD.LBL_PASSWORD_LOCKOUT_ATTEMPT2}
 	                                            </td>
 	                                            <td width='40%'>
@@ -496,7 +490,7 @@
     	        											{if ($config.passwordsetting.lockoutexpirationtype ) == '1440'}
     	        												{assign var='ldays' value='SELECTED'}
     	        											{/if}
-    	        												<input type='text' maxlength="3" and style="width:2em" name='passwordsetting_lockoutexpirationtime' value="{$config.passwordsetting.lockoutexpirationtime}">
+    	        												<input type='text' maxlength="3" and style="width:2em" id="passwordsetting_lockoutexpirationtime" name='passwordsetting_lockoutexpirationtime' value="{$config.passwordsetting.lockoutexpirationtime}">
     	        												<SELECT NAME="passwordsetting_lockoutexpirationtype">
     	        													<OPTION VALUE='1' {$lminutes}>{$MOD.LBL_MINUTES}
     	        													<OPTION VALUE='60' {$lhours}>{$MOD.LBL_HOURS}
@@ -644,7 +638,7 @@
 							</table>
 
 						             <!-- start SAML -->
-						   {if !empty($config.authenticationClass) && $config.authenticationClass === 'SAMLAuthenticate'}
+						   {if !empty($config.authenticationClass) && $config.authenticationClass == 'SAMLAuthenticate'}
                            {assign var='saml_enabled_checked' value='CHECKED'}
                            {assign var='saml_display' value='inline'}
                         {else}

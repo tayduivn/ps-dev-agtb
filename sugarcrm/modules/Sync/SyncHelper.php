@@ -111,7 +111,7 @@ function get_altered( $module_name,$from_date,$to_date){
 	//by the server and synced down.
 	$seed->disable_row_level_security = DISABLE_ROW_LEVEL_SECURITY;
 
-	$response = $seed->get_list('', "$table_name.date_modified > '$from_date' && $table_name.date_modified <= '$to_date'", 0,-1,-1, 2);
+	$response = $seed->get_list('', "$table_name.date_modified > ".db_convert("'".$GLOBALS['db']->quote($from_date)."'",'datetime')." && $table_name.date_modified <= ".db_convert("'".$GLOBALS['db']->quote($to_date)."'",'datetime'), 0,-1,-1, 2);
 
 	$list = $response['list'];
 	$output_list = array();
@@ -177,7 +177,7 @@ function save_altered($module_name, $list){
 
 				}
 			}
-			$result = $cur->db->query("SELECT * FROM $cur->table_name WHERE id = '$cur->id'");
+			$result = $cur->db->query("SELECT * FROM $cur->table_name WHERE id = '".$cur->db->quote($cur->id)."'");
 
 			if(!$result ||  !$cur->db->fetchByAssoc($result) ){
 				//teammemberships will be synced
@@ -206,7 +206,7 @@ function get_altered_relationships( $module_name,$related_module,$from_date,$to_
 	global $disable_date_format;
 	$disable_date_format = true;
 
-	$results = retrieve_relationships($module_name,  $related_module, "rt.date_modified > " . db_convert("'$from_date'", 'datetime'). " AND rt.date_modified <= ". db_convert("'$to_date'", 'datetime'), 2, 0, -99);
+	$results = retrieve_relationships($module_name,  $related_module, "rt.date_modified > " . db_convert("'".$GLOBALS['db']->quote($from_date)."'", 'datetime'). " AND rt.date_modified <= ". db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime'), 2, 0, -99);
 	$list = $results['result'];
 	$output_list = array();
 	foreach($list as $value)
@@ -244,9 +244,9 @@ function client_save_relationships($list){
 		foreach($record['name_value_list'] as $name_value){
 			$name = $name_value['name'];
 			if($name == 'date_modified'){
-					$value = db_convert("'".$name_value['value']. "'", 'datetime');
+                $value = db_convert("'".$GLOBALS['db']->quote($name_value['value']). "'", 'datetime');
 			}else{
-					$value = db_convert("'".$name_value['value']. "'", 'varchar');
+                $value = db_convert("'".$GLOBALS['db']->quote($name_value['value']). "'", 'varchar');
 			}
 
 			if(empty($insert)){
@@ -285,8 +285,8 @@ function client_save_relationships($list){
 		//see if we have a matching id
 
 		if($row = $db->fetchByAssoc($result)){
-			$db->query($update ."'".$row['id']."'" );
-			$db->query($delete_cleanup."'".$row['id']."'" );
+			$db->query($update ."'".$db->quote($row['id'])."'" );
+			$db->query($delete_cleanup."'".$db->quote($row['id'])."'" );
 			$modify++;
 
 		}else{
@@ -294,7 +294,7 @@ function client_save_relationships($list){
 			$result = $db->query($select_by_value);
 
 			if($row = $db->fetchByAssoc($result)){
-				$db->query($update ."'".$row['id']."'" );
+				$db->query($update ."'".$db->quote($row['id'])."'" );
 				$modify++;
 			}else{
 				$db->query($insert);
