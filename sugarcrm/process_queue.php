@@ -56,8 +56,7 @@ require_once('modules/ReportMaker/process_scheduled.php');
 
 global $report_modules,$modListHeader,$current_user;
 
-foreach ($reports_to_email as $schedule_info)
-{
+foreach($reports_to_email as $schedule_id => $schedule_info) {
 	$GLOBALS['log']->debug('-----> in Reports foreach() loop');
 	
 	$user = new User();
