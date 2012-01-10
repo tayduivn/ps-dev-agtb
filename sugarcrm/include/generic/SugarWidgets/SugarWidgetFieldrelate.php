@@ -22,6 +22,102 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetFieldRelate extends SugarWidgetReportField
 {
+    /**
+     * Method returns HTML of input on configure dashlet page
+     *
+     * @param array $layout_def definition of a field
+     * @return string HTML of select for edit page
+     */
+    public function displayInput($layout_def)
+    {
+        $values = array();
+        if (is_array($layout_def['input_name0']))
+        {
+            $values = $layout_def['input_name0'];
+        }
+        else
+        {
+            $values[] = $layout_def['input_name0'];
+        }
+        $html = '<select name="' . $layout_def['name'] . '[]" multiple="true">';
+
+        $sql = 'SELECT id, ' . $layout_def['rname'] . ' title FROM ' . $layout_def['table'] . ' ORDER BY title ASC';
+        $result = $this->reporter->db->query($sql);
+        while ($row = $this->reporter->db->fetchByAssoc($result))
+        {
+            $html .= '<option value="' . $row['id'] . '"';
+            if (in_array($row['id'], $values))
+            {
+                $html .= ' selected="selected"';
+            }
+            $html .= '>' . htmlspecialchars($row['title']) . '</option>';
+        }
+
+        $html .= '</select>';
+        return $html;
+    }
+
+    /**
+     * Method returns part of where in style table_alias.id IN (...) because we can't join of relation
+     *
+     * @param array $layout_def definition of a field
+     * @param bool $rename_columns unused
+     * @return string SQL where part
+     */
+    public function queryFilterStarts_With($layout_def, $rename_columns = true)
+    {
+        $ids = array();
+
+        $relation = new Relationship();
+        $relation->retrieve_by_name($layout_def['link']);
+
+        $seed = new $relation->lhs_table();
+        $seed->retrieve($layout_def['input_name0']);
+
+        $link = new Link2($layout_def['link'], $seed);
+        $sql = $link->getQuery();
+        $result = $this->reporter->db->query($sql);
+        while ($row = $this->reporter->db->fetchByAssoc($result))
+        {
+            $ids[] = $row['id'];
+        }
+        $layout_def['name'] = 'id';
+        return $this->_get_column_select($layout_def) . " IN ('" . implode("', '", $ids) . "')";
+    }
+
+    /**
+     * Method returns part of where in style table_alias.id IN (...) because we can't join of relation
+     *
+     * @param array $layout_def definition of a field
+     * @param bool $rename_columns unused
+     * @return string SQL where part
+     */
+    public function queryFilterone_of($layout_def, $rename_columns = true)
+    {
+        $ids = array();
+
+        $relation = new Relationship();
+        $relation->retrieve_by_name($layout_def['link']);
+
+        $seed = new $relation->lhs_table();
+
+        foreach($layout_def['input_name0'] as $beanId)
+        {
+            $seed->retrieve($beanId);
+
+            $link = new Link2($layout_def['link'], $seed);
+            $sql = $link->getQuery();
+            $result = $this->reporter->db->query($sql);
+            while ($row = $this->reporter->db->fetchByAssoc($result))
+            {
+                $ids[] = $row['id'];
+            }
+        }
+        $ids = array_unique($ids);
+        $layout_def['name'] = 'id';
+        return $this->_get_column_select($layout_def) . " IN ('" . implode("', '", $ids) . "')";
+    }
+
 	//for to_pdf/to_csv
 	function displayListPlain($layout_def) {
 	    $reporter = $this->layout_manager->getAttribute("reporter");
