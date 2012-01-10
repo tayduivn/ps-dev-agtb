@@ -182,15 +182,15 @@
 	{else}
 		{assign var='proxy_on_checked' value=''}
 	{/if}
-	<td width="75%" align="left"  valign='middle' colspan='3'><input type='hidden' name='proxy_on' value='0'><input name="proxy_on" value="1" class="checkbox" tabindex='1' type="checkbox" {$proxy_on_checked} onclick='toggleDisplay_2("proxy_config_display")'></td>
+	<td width="75%" align="left"  valign='middle' colspan='3'><input type='hidden' name='proxy_on' value='0'><input name="proxy_on" id="proxy_on" value="1" class="checkbox" tabindex='1' type="checkbox" {$proxy_on_checked} onclick='toggleDisplay_2("proxy_config_display")'></td>
 	</tr><tr>
 	<td colspan="4">
 	<div id="proxy_config_display" style='display:{$PROXY_CONFIG_DISPLAY}'>
 		<table width="100%" cellpadding="0" cellspacing="1"><tr>
 		<td width="15%" scope="row">{$MOD.LBL_PROXY_HOST}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
-		<td width="35%" ><input type="text" name="proxy_host" size="25"  value="{$settings.proxy_host}" tabindex='1' ></td>
+		<td width="35%" ><input type="text" id="proxy_host" name="proxy_host" size="25"  value="{$settings.proxy_host}" tabindex='1' ></td>
 		<td width="15%" scope="row">{$MOD.LBL_PROXY_PORT}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
-		<td width="35%" ><input type="text" name="proxy_port" size="6"  value="{$settings.proxy_port}" tabindex='1' ></td>
+		<td width="35%" ><input type="text" id="proxy_port" name="proxy_port" size="6"  value="{$settings.proxy_port}" tabindex='1' ></td>
 		</tr><tr>
 		<td width="15%" scope="row" valign='middle'>{$MOD.LBL_PROXY_AUTH}</td>
 	{if !empty($settings.proxy_auth)}
@@ -198,7 +198,7 @@
 	{else}
 		{assign var='proxy_auth_checked' value=''}
 	{/if}
-		<td width="35%" align="left"  valign='middle' ><input type='hidden' name='proxy_auth' value='0'><input name="proxy_auth" value="1" class="checkbox" tabindex='1' type="checkbox" {$proxy_auth_checked} onclick='toggleDisplay_2("proxy_auth_display")'> </td>
+		<td width="35%" align="left"  valign='middle' ><input type='hidden' name='proxy_auth' value='0'><input id="proxy_auth" name="proxy_auth" value="1" class="checkbox" tabindex='1' type="checkbox" {$proxy_auth_checked} onclick='toggleDisplay_2("proxy_auth_display")'> </td>
 		</tr></table>
 
 		<div id="proxy_auth_display" style='display:{$PROXY_AUTH_DISPLAY}'>
@@ -206,9 +206,9 @@
 		<table width="100%" cellpadding="0" cellspacing="1"><tr>
 		<td width="15%" scope="row">{$MOD.LBL_PROXY_USERNAME}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 
-		<td width="35%" ><input type="text" name="proxy_username" size="25"  value="{$settings.proxy_username}" tabindex='1' ></td>
+		<td width="35%" ><input type="text" id="proxy_username" name="proxy_username" size="25"  value="{$settings.proxy_username}" tabindex='1' ></td>
 		<td width="15%" scope="row">{$MOD.LBL_PROXY_PASSWORD}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
-		<td width="35%" ><input type="password" name="proxy_password" size="25"  value="{$settings.proxy_password}" tabindex='1' ></td>
+		<td width="35%" ><input type="password" id="proxy_password" name="proxy_password" size="25"  value="{$settings.proxy_password}" tabindex='1' ></td>
 		</tr></table>
 		</div>
 	</div>
