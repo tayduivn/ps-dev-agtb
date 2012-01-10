@@ -21,10 +21,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
-require_once('include/SugarSearchEngine/SugarSearchEngineBase.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/Solr/PHPSolr/Service.php');
 
-class SugarSearchEngineSolr extends SugarSearchEngineBase
+class SugarSearchEngineSolr extends SugarSearchEngineAbstractBase
 {
     private $_backend;
     protected $_documents = array();

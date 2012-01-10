@@ -24,6 +24,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarSearchEngineFactory
 {
+    /**
+     * @var SugarSearchEngineInterface
+     */
     public static $_instance;
 
     /**
@@ -37,7 +40,7 @@ class SugarSearchEngineFactory
      * Connect to the backend engine and store for later use
      *
      * @static
-     * @return void
+     * @return SugarSearchEngineInterface
      */
     public static function getInstance($name = '')
     {

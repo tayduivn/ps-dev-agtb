@@ -42,11 +42,6 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
     /**
      * No-op
      */
-    public function connect() {}
-
-    /**
-     * No-op
-     */
     public function flush() {}
 
     /**
@@ -69,5 +64,9 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
      */
     public function performFullSystemIndex() {}
 
+    /**
+     * No-op
+     */
+    public function bulkInsert(array $docs) {}
 
 }

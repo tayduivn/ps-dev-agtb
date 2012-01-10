@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/SugarSearchEngine/Interface.php');
 
-abstract class SugarSearchEngineBase implements SugarSearchEngineInterface
+abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterface
 {
 
     /**
@@ -107,12 +107,11 @@ abstract class SugarSearchEngineBase implements SugarSearchEngineInterface
             $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
             $obj = BeanFactory::getBean($module, null);
             $rs = $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0' ";
-            $GLOBALS['log']->fatal("Query is: $selectAllQuery");
 
             //TOD: We need a way to perform multiple retrieve calls in a bulk request.
             $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
 
-            $docs = arary();
+            $docs = array();
             while ($row = $db->fetchByAssoc($result))
             {
                 $beanID = $row['id'];
@@ -123,7 +122,7 @@ abstract class SugarSearchEngineBase implements SugarSearchEngineInterface
 
             }
 
-            $results = array($this->getIndexType() => $docs);
+            $results = array($this->getIndexType($bean) => $docs);
             $this->bulkInsert($results);
 
 
@@ -131,4 +130,15 @@ abstract class SugarSearchEngineBase implements SugarSearchEngineInterface
 
     }
 
+    /**
+     * Bulk insert any documents that have been marked for bulk insertion.
+     */
+    public function __destruct()
+    {
+        if (count($this->_documents) > 0 )
+        {
+            $this->bulkInsert($this->_documents);
+        }
+
+    }
 }

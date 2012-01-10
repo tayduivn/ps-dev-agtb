@@ -20,11 +20,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
  *Reserved.
  ********************************************************************************/
-require_once('include/SugarSearchEngine/SugarSearchEngineBase.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/Solr/PHPSolr/Service.php');
 require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php');
 
-class SugarSearchEngineElastic extends SugarSearchEngineBase
+class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 {
     private $_server = "";
     private $_config = array();
@@ -66,13 +66,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         else
         {
             $GLOBALS['log']->fatal("Adding bean to doc list....");
-            //TODO: Create index document at this point so we don't need to store a large number of beans at once.
 
             //Group our beans by index type for bulk insertion
             $indexType = $this->getIndexType($bean);
             if(! isset($this->_documents[$indexType]) )
                 $this->_documents[$indexType] = array();
 
+            //Create and store our document index which will be bunlk inserted later, do not store beans as they are heavy.
             $this->_documents[$indexType][] = $this->createIndexDocument($bean);
         }
     }
@@ -154,7 +154,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
     }
 
     /**
-     * TODO: Add to interface?
+     *
      */
     public function bulkInsert(array $docs)
     {
@@ -195,18 +195,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineBase
         }
 
     }
-    /**
-     * TODO: Add this logic to the base class.
-     */
-    public function __destruct()
-    {
-        $GLOBALS['log']->fatal("We are destructing and now adding a document to the index: " . count($this->_documents));
-        if (count($this->_documents) > 0 )
-        {
-            $this->bulkInsert($this->_documents);
-        }
 
-    }
 
     /**
      * @param $queryString

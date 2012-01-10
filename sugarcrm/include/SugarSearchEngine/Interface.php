@@ -83,7 +83,7 @@ interface SugarSearchEngineInterface{
      * @abstract
      *
      */
-    public function bulkInsert($docs);
+    public function bulkInsert(array $docs);
 
 }
 
