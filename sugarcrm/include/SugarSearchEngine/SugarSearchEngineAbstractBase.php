@@ -76,7 +76,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      *
      * @return array
      */
-    protected function retrieveFtsEnabledFieldsForAllModules()
+    public function retrieveFtsEnabledFieldsForAllModules()
     {
         $results = array();
         foreach( $GLOBALS['moduleList'] as $moduleName )
@@ -106,36 +106,6 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         else
         {
             return FALSE;
-        }
-    }
-
-    public function performFullSystemIndex()
-    {
-        $GLOBALS['log']->fatal("Performing Full System Index");
-        $allModules = $this->retrieveFtsEnabledFieldsForAllModules();
-        $db = DBManagerFactory::getInstance();
-        foreach($allModules as $module => $fieldDefinitions)
-        {
-            $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
-            $obj = BeanFactory::getBean($module, null);
-            $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0' ";
-
-            //TODO: We need a way to perform multiple SugarBean instantiation with a single query (6.6?)
-            $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
-
-            $docs = array();
-            while ($row = $db->fetchByAssoc($result))
-            {
-                //TODO: We may want to throttle here to avoid mem limits for very large data sets
-                $beanID = $row['id'];
-                $bean = BeanFactory::getBean($module, $beanID);
-                if($bean !== FALSE)
-                    $docs[] = $this->createIndexDocument($bean, $fieldDefinitions);
-
-            }
-
-            $this->bulkInsert($docs);
-
         }
     }
 
