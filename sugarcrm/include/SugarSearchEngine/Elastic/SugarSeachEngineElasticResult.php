@@ -100,7 +100,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         if (isset($hit['_source']) && is_array($hit['_source'])) {
 
             foreach ($hit['_source'] as $field=>$value) {
-                $replaced = str_replace($q, $replace, $value, $count);
+                $replaced = str_ireplace($q, $replace, $value, $count);
                 if ($count > 0) {
                     // replacement occurs on this field, add it to the returned array
                     $ret[$field] = $replaced;
