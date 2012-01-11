@@ -121,12 +121,15 @@ input.empty {
     background-color: rgba(225,225,255, 0.8);
 }
 
-
-#fb_ac_spacer {
+.fb_ac_spacer {
     font: 12px 'Courier New', Courier, monospace;
-    padding: 5px;
+    padding-right: 5px;
     clear: both;
     line-height: 18px;
     visibility: hidden;
     float:left
+}
+
+.fb_ac_spacer_line {
+    width: 800px;
 }
