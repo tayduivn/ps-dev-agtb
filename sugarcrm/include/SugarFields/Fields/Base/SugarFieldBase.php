@@ -100,7 +100,12 @@ class SugarFieldBase {
 
     function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
         $tabindex = 1;
-		$parentFieldArray = $this->setupFieldArray($parentFieldArray, $vardef);
+        //fixing bug #46666: don't need to format enum and radioenum fields 
+        //because they are already formated in SugarBean.php in the function get_list_view_array() as fix of bug #21672
+        if ($this->type != 'Enum' && $this->type != 'Radioenum')
+        {
+            $parentFieldArray = $this->setupFieldArray($parentFieldArray, $vardef);
+        }
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
 
         $this->ss->left_delimiter = '{';
