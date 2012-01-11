@@ -80,11 +80,35 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
             return $this->bean->get_summary_text();
     }
 
-    public function getHighlightedHitText()
+    public function getHighlightedHitText($preTag = '<em>', $postTag = '</em>')
     {
+        $ret = array();
 
+        // this is the word to be searched
+        if (!isset($_GET['q'])) {
+            return $ret;
+        }
+
+        $replace = $preTag . $_GET['q'] . $postTag;
+
+        $hit = $this->elasticaResult->getHit();
+        if (isset($hit['_source']) && is_array($hit['_source'])) {
+
+            foreach ($hit['_source'] as $field=>$value) {
+                $replaced = str_replace($_GET['q'], $replace, $value, $count);
+                if ($count > 0) {
+                    // replacement occurs on this field, add it to the returned array
+                    $ret[$field] = $replaced;
+                }
+            }
+        }
+
+        // TODO: should return an array $ret instead of a string, returning a string to test for now
+        return implode('<br>', $ret);
+        //return $ret;
     }
 
+    // TODO: we probably don't need this function
     public function getHighlightedFieldName()
     {
 
