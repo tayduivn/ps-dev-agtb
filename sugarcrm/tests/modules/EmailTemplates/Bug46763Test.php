@@ -69,6 +69,9 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
         global $sugar_config;
         $this->language = $sugar_config['default_language'];
 
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
+
         // generate module localization data
         $data = array('<?php');
         $template = '$app_list_strings["moduleListSingular"]["%s"] = "%s";';
