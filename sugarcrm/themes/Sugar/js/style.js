@@ -207,6 +207,17 @@ SUGAR.append(SUGAR.themes, {
             }
             $(el).parent().addClass("current");
         }
+    },
+    toggleMenuOverFlow: function(menuName,maction) {
+    	
+    	var menuName = "#"+menuName;
+	    if(maction == "more") {
+			$(menuName).addClass("showMore");
+			$(menuName).removeClass("showLess");
+		} else {
+			$(menuName).addClass("showLess");
+			$(menuName).removeClass("showMore");
+		}
     }
 });
 
@@ -297,17 +308,6 @@ function sugar_theme_gm_switch( groupName ) {
 
 offsetPadding = 0;
 
-function toggleMenuOverFlow(menuName,maction) {
-	var Sel = YAHOO.util.Selector, Dom = YAHOO.util.Dom;
-	if(maction == "more") {
-		Dom.addClass(menuName, "showMore");
-		YAHOO.util.Dom.removeClass(menuName,"showLess");
-	} else {
-		Dom.addClass(menuName, "showLess");
-		YAHOO.util.Dom.removeClass(menuName,"showMore");
-	}
-	
-}
 
 function resizeHeader() {
 	var e = document.getElementById("contentTable");
