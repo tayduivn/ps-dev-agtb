@@ -47,7 +47,25 @@
 	<script type='text/javascript' src='{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}'></script>
 	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 {/if}
-
+{if count($data) == 0 && $totalCount == 0}
+	<div class="listViewEmpty">
+		<p>
+			{capture assign="createLink"}<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
+			{capture assign="importLink"}<a href="?module=Import&action=Step1&import_module={$pageData.bean.moduleDir}&return_module={$pageData.bean.moduleDir}&return_action=index">{$APP.LBL_IMPORT}</a>{/capture}
+			{capture assign="helpLink}<a href="">{$APP.LBL_CLICK_HERE}</a>{/capture}
+			{$APP.MSG_EMPTY_LIST_VIEW|replace:"\n":"<br>"|replace:"<item1>":$pageData.bean.moduleDir|replace:"<item2>":$createLink|replace:"<item3>":$importLink|replace:"<item4>":$helpLink}
+		</p>
+	</div>
+	{literal}
+	<script>
+		$(document).ready(function(){
+			$("#search_form").hide();
+			$("table.list").hide();
+			$(".moduleTitle").hide();
+		});
+	</script>
+	{/literal}
+{/if}
 {$multiSelectData}
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>

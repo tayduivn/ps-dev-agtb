@@ -6674,7 +6674,14 @@ ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav l
     background-color: #eee;
 }
 
-
-
+.listViewEmpty{
+	padding:10px;
+}
+.listViewEmpty p, .listViewEmpty a {
+	font-size:20px;
+}
+.listViewEmpty a{
+	text-decoration:none;
+}
 
 
