@@ -41,6 +41,23 @@ $(window).resize(function() {
 	resizeMenu();
 });
 
+(function($) {
+    $.fn.extend({
+        isChildOf: function( filter_string ) {
+          
+          var parents = $(this).parents().get();
+         
+          for ( j = 0; j < parents.length; j++ ) {
+           if ( $(parents[j]).is(filter_string) ) {
+      return true;
+           }
+          }
+          
+          return false;
+        }
+    });
+})(jQuery); 
+
 
 $(document).ready(function(){
 
@@ -157,278 +174,57 @@ SUGAR.themes = SUGAR.namespace("themes");
 
 SUGAR.append(SUGAR.themes, {
     setRightMenuTab: function(el, params) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var extraMenu = Dom.get("moduleTabExtraMenuAll");
-        //Check if the menu we want to show is in the more menu
-        if (Dom.isAncestor("MoreAll", el)) {
-            var currRight = Dom.getPreviousSibling(extraMenu);
-            if (currRight.id == "moduleTab_")
-                currRight = Dom.getPreviousSibling(extraMenu);
-            //Insert the el to the menu
-            Dom.insertAfter(el, currRight);
-            //Move the curr right back into the more menu
-            Dom.insertBefore(currRight, Sel.query("ul>li", "MoreAll", true));
-            Dom.removeClass(currRight, "yuimenubaritem");
-            Dom.removeClass(currRight, "yuimenubaritem-hassubmenu");
-            Dom.removeClass(currRight, "current");
-        }
+
+        var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+        
+		//Check if the menu we want to show is in the more menu
+		if($(el+"Overflow").parents().is(extraMenu)) {
+			//get the previous sibling of extraMenu
+			var $currRight = $(extraMenu).prev();
+			//add menu after prev sib
+			console.log($currRight.children("a:first-child").attr("id"));
+			 $(el+"Overflow").parent().insertAfter($currRight);
+			 var newId = el.replace("#","");
+			 var currRightId = $currRight.children("a:first-child").attr("id") + "Overflow";
+			 $(el+"Overflow").attr("id",newId);
+			 $(el).parent().addClass("current");
+			 //remove prev sib
+			 
+			 $(el).parent().prev().remove();
+			 $("#"+currRightId).parent().css("display","list-item");
+			 
+			 
+		}
     },
     setCurrentTab: function(params) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleTab_' + params.module);
-        if (el && el.parentNode) {
-            el = el.parentNode;
+        var el = '#moduleTab_'+ sugar_theme_gm_current + params.module;
+        if ($(el) && $(el).parent()) {
             SUGAR.themes.setRightMenuTab(el, params);
-            var currActiveTab = Sel.query("li.yuimenubaritem.current", "themeTabGroupMenu_All", true);
-            if (currActiveTab) {
-                if (currActiveTab == el) return;
-                Dom.removeClass(currActiveTab, "current");
+            var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";   
+            if ($(currActiveTab)) {
+                if ($(currActiveTab) == $(el).parent()) return;
+                $(currActiveTab).removeClass("current");
             }
-            Dom.addClass(el, "yuimenubaritem  yuimenubaritem-hassubmenu current");
-            var right = Sel.query("li.yuimenubaritem.currentTabRight", "themeTabGroupMenu_All", true);
-            Dom.insertAfter(right, el);
+            $(el).parent().addClass("current");
         }
     },
-    setModuleTabs: function(html) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleList');
-        var qc = document.getElementById('quickCreate');
-        if (el && el.parentNode) {
-            var parent = el.parentNode;
-
-            try {
-                //This can fail hard if multiple events fired at the same time
-                YAHOO.util.Event.purgeElement(el, true);
-                for (var i in allMenuBars) {
-                    if (allMenuBars[i].destroy)
-                        allMenuBars[i].destroy();
-                }
-            } catch (e) {
-                //If the menu fails to load, we can get leave the user stranded, reload the page instead.
-                window.location.reload();
-            }
-            //parent.removeChild(el);
-            //var newdiv = document.createElement("div");
-            el.innerHTML = html;
-            
-            //parent.insertBefore(newdiv,qc);
-            //el = document.getElementById('moduleList');
-            this.loadModuleList();
-            $("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
-        }
-    },
-
-    loadModuleList: function() {
-
-    // Indentation not changed to preserve history.
-    function onSubmenuBeforeShow(p_sType, p_sArgs)
-    {
-		var oElement,
-			oBd,
-			oShadow,
-			oShadowBody,
-			oShadowBodyCenter,
-			oVR,
-		    oLastViewContainer,
-			parentIndex,
-			oItem,
-			oSubmenu,
-			data,
-			aItems;
-
-
-			parentIndex = this.parent.index;
-
-
-		if (this.parent) {
-
-			oElement = this.element;
-			oBd = oElement.firstChild;
-			oShadow = oElement.lastChild;
-			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
-
-			
-            // We need to figure out the module name from the ID. Sometimes it will have the group name in it
-            // But sometimes it will just use the module name (in the case of the All group which don't have the
-            // group prefixes due to the automated testing suite.
-            var moduleName = oElement.id;
-            var groupName = oElement.parentNode.parentNode.parentNode.id.replace('themeTabGroup_','');
-            moduleName = moduleName.replace(groupName+'_','');
-
-			var handleSuccess = function(o){
-				if(o.responseText !== undefined){
-				data = YAHOO.lang.JSON.parse(o.responseText);
-				aItems = oMenuBar.getItems();
-				oItem = aItems[parentIndex];
-				if(!oItem) return;
-
-                oSubmenu = oItem.cfg.getProperty("submenu");
-                
-                
-                
-                
-                
-                
-				if (!oSubmenu) return;
-                oSubmenu.removeItem(1,2);
-				oSubmenu.addItems(data,2);
-
-				//update shadow height to accomodate new items
-
-				oVR = oShadow.previousSibling;
-				oVR.style.height = (oShadow.offsetHeight - 15)+"px";
-
-
-
-				}
-			}
-
-			var handleFailure = function(o){
-				if(o.responseText !== undefined){
-					oLastViewContainer.innerHTML = "Failed to load menu";
-				}
-			}
-
-			var callback =
-			{
-			  success:handleSuccess,
-			  failure:handleFailure
-			};
-
-			var sUrl = "index.php?module="+moduleName+"&action=modulelistmenu";
-
-			if(oLastViewContainer && oLastViewContainer.lastChild.firstChild.innerHTML == "&nbsp;") {
-				var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback);
-			}
-
-
-		}
-
-	}
-
-
-	function onSubmenuShow(p_sType, p_sArgs) {
-
-	var oElement,
-		oShadow,
-		oShadowBody,
-		oShadowBodyCenter,
-		oBd,
-		oVR;
-		
-		parentIndex = this.parent.index;
-		 
-
-	if (this.parent) {
-
-		oElement = this.element;
-		if(oElement.id == "Home") {
-			offsetPadding = -10;
+    toggleMenuOverFlow: function(menuName,maction) {
+    	
+    	var menuName = "#"+menuName;
+	    if(maction == "more") {
+			$(menuName).addClass("showMore");
+			$(menuName).removeClass("showLess");
 		} else {
-			offsetPadding = 0;
-			}
-		var newLeft = oElement.offsetLeft + offsetPadding;
-
-		
-			if(oElement.id == "MoreAll") {
-				
-				var aItemsMore = oMenuBar.getItems();
-				var oItemMore = aItemsMore[parentIndex];
-				oSubmenuMore = oItemMore.cfg.getProperty("submenu");
-				
-				oSubmenuMore.subscribe("click", oSubmenuMore.show);
-				var showMoreLiId = oSubmenuMore._aItemGroups[0][12].id;
-				var showMore = document.getElementById(showMoreLiId);
-				var showMoreLink = showMore.firstChild;
-				
-
-			}
-			
-			
-		oElement.style.left = newLeft + "px";
-		oBd = oElement.firstChild;
-		oShadow = oElement.lastChild;
-		oElement.style.top = oElement.offsetTop + "px";
-		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
-			if(oShadow.previousSibling.className != "vr") {
-
-			oVR = document.createElement("div");
-			oVR.setAttribute("class", "vr");
-			oVR.setAttribute("className", "vr");
-			oElement.insertBefore(oVR,oShadow);
-
-
-			oVR.style.height = (oBd.offsetHeight - 15)+"px";
-			oVR.style.top = (oBd.offsetTop+8) +"px";
-			oVR.style.left = ((oBd.offsetWidth/3)) +"px";
-			
-			oVR2 = document.createElement("div");
-			oVR2.setAttribute("class", "vr");
-			oVR2.setAttribute("className", "vr");
-			oElement.insertBefore(oVR2,oShadow);
-
-			oVR2.style.height = (oBd.offsetHeight - 15)+"px";
-			oVR2.style.top = (oBd.offsetTop+8) +"px";
-			oVR2.style.left = (((oBd.offsetWidth/3) * 2)) +"px";
-
-			}
+			$(menuName).addClass("showLess");
+			$(menuName).removeClass("showMore");
 		}
-
-		}
-
-	}
-
-    var nodes = YAHOO.util.Selector.query('#moduleList>div');
-    allMenuBars = {};
-
-    for ( var i = 0 ; i < nodes.length ; i++ ) {
-	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
-		    autosubmenudisplay: true,
-            visible: false,
-		    hidedelay: 750,
-		    lazyload: true,
-		    constraintoviewport: true });
-	    /*
-	      Subscribe to the "beforeShow" and "show" events for
-	      each submenu of the MenuBar instance.
-	    */
-
-	    currMenuBar.subscribe("beforeShow", onSubmenuBeforeShow);
-	    currMenuBar.subscribe("show", onSubmenuShow);
-
-	    /*
-	      Call the "render" method with no arguments since the
-	      markup for this MenuBar already exists in the page.
-	    */
-
-	    currMenuBar.render();
-        allMenuBars[nodes[i].id.substr(nodes[i].id.indexOf('_')+1)] = currMenuBar;
-
-
-
-        if (typeof YAHOO.util.Dom.getChildren(nodes[i]) == 'object' && YAHOO.util.Dom.getChildren(nodes[i]).shift().style.display != 'none')
-        {
-            // This is the currently displayed menu bar
-            oMenuBar = currMenuBar;
-        }
     }
-
-
-	// Remove the href attribute if we are on an touch device ( like an iPad )
-	if ( SUGAR.util.isTouchScreen() ) {
-	    var nodes = YAHOO.util.Selector.query('#moduleList a.yuimenubaritemlabel-hassubmenu');
-	    YAHOO.util.Dom.batch(nodes, function(el,o) {
-	        el.href = '#';
-	    });
-	}
-
-    } // loadModuleList()
 });
 
 /**
  * For the module list menu
  */
-YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
+//YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
 
 /**
  * For the module list menu scrolling functionality
@@ -502,27 +298,16 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
 });
 
 function sugar_theme_gm_switch( groupName ) {
-    document.getElementById('themeTabGroup_'+sugar_theme_gm_current).style.display='none';
+    document.getElementById('themeTabGroupMenu_'+sugar_theme_gm_current).style.display='none';
     sugar_theme_gm_current = groupName;
     YAHOO.util.Connect.asyncRequest('POST','index.php?module=Users&action=ChangeGroupTab&to_pdf=true',false,'newGroup='+groupName);
-    document.getElementById('themeTabGroup_'+groupName).style.display='block';
+    document.getElementById('themeTabGroupMenu_'+groupName).style.display='block';
     
-    oMenuBar = allMenuBars[groupName];
+    //oMenuBar = allMenuBars[groupName];
 }
 
 offsetPadding = 0;
 
-function toggleMenuOverFlow(menuName,maction) {
-	var Sel = YAHOO.util.Selector, Dom = YAHOO.util.Dom;
-	if(maction == "more") {
-		Dom.addClass(menuName, "showMore");
-		YAHOO.util.Dom.removeClass(menuName,"showLess");
-	} else {
-		Dom.addClass(menuName, "showLess");
-		YAHOO.util.Dom.removeClass(menuName,"showMore");
-	}
-	
-}
 
 function resizeHeader() {
 	var e = document.getElementById("contentTable");
