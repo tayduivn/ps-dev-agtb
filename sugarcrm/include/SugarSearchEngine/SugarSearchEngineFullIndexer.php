@@ -40,6 +40,11 @@ class SugarSearchEngineFullIndexer
     private $results;
 
     /**
+     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
+     */
+    const MAX_BULK_THRESHOLD = 5000;
+
+    /**
      * @param SugarSearchEngineAbstractBase $engine
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
@@ -76,7 +81,6 @@ class SugarSearchEngineFullIndexer
             $docs = array();
             while ($row = $db->fetchByAssoc($result))
             {
-                //TODO: We may want to throttle here to avoid mem limits for very large data sets
                 $beanID = $row['id'];
                 $bean = BeanFactory::getBean($module, $beanID);
                 if($bean !== FALSE)
@@ -85,15 +89,30 @@ class SugarSearchEngineFullIndexer
                     $count++;
                 }
 
+                if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
+                {
+                    $this->SSEngine->bulkInsert($docs);
+                    $docs = array();
+                }
+
+            }
+
+            if(count($docs) > 0)
+            {
+                $this->SSEngine->bulkInsert($docs);
             }
 
             $this->results[$module] = $count;
-            $this->SSEngine->bulkInsert($docs);
         }
 
         return $this;
     }
 
+    /**
+     * Return statistics about how many records per module were indexed.
+     *
+     * @return array
+     */
     public function getStatistics()
     {
         return $this->results;
