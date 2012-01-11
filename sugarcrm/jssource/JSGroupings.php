@@ -50,6 +50,7 @@
                 'include/javascript/phpjs/license.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/get_html_translation_table.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/html_entity_decode.js' => 'include/javascript/sugar_grp1.js',
+                'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
 	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
@@ -149,7 +150,7 @@
             'modules/Emails/javascript/EmailUIShared.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/EmailUI.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/EmailUICompose.js' => 'include/javascript/sugar_grp_emails.js',
-             'modules/Emails/javascript/ajax.js' => 'include/javascript/sugar_grp_emails.js',
+            'modules/Emails/javascript/ajax.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/grid.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/init.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/complexLayout.js' => 'include/javascript/sugar_grp_emails.js',

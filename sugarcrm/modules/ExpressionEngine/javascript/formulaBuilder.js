@@ -755,6 +755,25 @@ SUGAR.expressions.GridToolTip = {
         return ret;
     }
 
+    var updateACSpacer = function()
+    {
+        var val = $("#formulaInput").val(),
+            rows = val.substring(0, getCompStart(val, $("#formulaInput")[0].selectionEnd)).split("\n"),
+            html = "";
+
+        for(var i=0; i < rows.length; i++)
+        {
+            var line = htmlentities(rows[i], "ENT_NOQUOTES").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/ /g, "&nbsp;");
+            html += "<div class='fb_ac_spacer"+ (i != rows.length - 1 ? " fb_ac_spacer_line'>" : "'>") + line + "</div>";
+        }
+
+        //Clear the old spacer
+        $("#fb_ac_wrapper .fb_ac_spacer").remove();
+        //Insert the new spacer before the autocomplete widget
+        console.log(html);
+        $("#fb_ac_wrapper ul.ui-autocomplete").before(html);
+    }
+
     $( "#fb_ac_input" ).autocomplete({
         source: function(e, fn){
             //Fields
@@ -772,9 +791,9 @@ SUGAR.expressions.GridToolTip = {
         open: function(event, ui) {
             fb_ac_open = true;
             //Set the content of the spacer to the same as the formula input to offset the autocomplete location by that amount
-            $("#fb_ac_spacer").html($("#formulaInput").val().substring(0, $("#formulaInput")[0].selectionEnd));
+            updateACSpacer();
             $("ul.ui-autocomplete").css("left", "6px");
-            $("ul.ui-autocomplete").css("top", "8px");
+            $("ul.ui-autocomplete").css("top", "2em");
             $("ul.ui-autocomplete").css("position", "relative");
             $("ul.ui-autocomplete").css("width", "150px");
         },
@@ -832,8 +851,9 @@ SUGAR.expressions.GridToolTip = {
             //Use a 300ms timer before showing/updating the autocomplete
             SUGAR.expressions.fb_ac_timer = window.setTimeout(function(){
                 //Reposition the autocomplete wrapper if it closed as the window may have moved
-                if (!fb_ac_open)
-                    $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput"});
+                if (!fb_ac_open){
+                    $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput", collision:"none"});
+                }
                 //DO not open the auto complete for moving the curser. Only modify it if its already open
 
                 if ((e.keyCode != 37 && e.keyCode != 39) || fb_ac_open){
@@ -860,6 +880,13 @@ SUGAR.expressions.GridToolTip = {
     {
         $( "#fb_ac_input" ).autocomplete("close");
     });
+
+    SUGAR.expressions.closeFormulaBuilder = function()
+    {
+        $('#fb_ac_input').autocomplete( "destroy" );
+        $("#fb_ac_wrapper").remove();
+        ModuleBuilder.formulaEditorWindow.hide();
+    }
 
 
 

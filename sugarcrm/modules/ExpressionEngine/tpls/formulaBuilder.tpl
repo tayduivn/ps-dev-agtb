@@ -49,9 +49,9 @@
 </table>
 <div style="width:100%;text-align:right">
 <input type='button' class='button' name='formulacancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'
-	onclick="ModuleBuilder.formulaEditorWindow.hide()" >
+	onclick="SUGAR.expressions.closeFormulaBuilder()" >
 <input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}'
-	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))ModuleBuilder.formulaEditorWindow.hide()">
+	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))SUGAR.expressions.closeFormulaBuilder()">
 </div>
 <script src="{sugar_getjspath file='include/javascript/markitup/jquery.markitup.js'}"></script>
 <script src="{sugar_getjspath file='include/javascript/markitup/sets/default/set.js'}"></script>
