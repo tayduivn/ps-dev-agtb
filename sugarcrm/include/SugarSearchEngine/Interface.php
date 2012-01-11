@@ -69,21 +69,21 @@ interface SugarSearchEngineInterface{
 
 
     /**
-     * Index the entire system. This should only be called from a worker process as this is a time intensive process.
-     *
-     * @abstract
-     *
-     */
-    public function performFullSystemIndex();
-
-
-    /**
      * Perform bulk inserts on serveral documents to mitigate performance issues.
      *
      * @abstract
      *
      */
     public function bulkInsert(array $docs);
+
+    /**
+     * Create the index document that will be sent to the IR System.
+     *
+     * @abstract
+     * @param SugarBean $bean
+     * @param array|null $searchFields
+     */
+    public function createIndexDocument(SugarBean $bean, $searchFields = null);
 
 }
 

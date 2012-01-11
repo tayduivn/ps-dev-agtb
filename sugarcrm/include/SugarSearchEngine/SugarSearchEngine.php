@@ -58,15 +58,15 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
      */
     public function delete(SugarBean $bean) {}
 
-    /**
-     * No-op
-     *
-     */
-    public function performFullSystemIndex() {}
 
     /**
      * No-op
      */
     public function bulkInsert(array $docs) {}
+
+    /**
+     * No-op
+     */
+    public function createIndexDocument(SugarBean $bean, $searchFields = null) {}
 
 }

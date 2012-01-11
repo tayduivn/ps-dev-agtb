@@ -92,13 +92,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
-     * TODO: We should probably add this function to the interface as logically it is different than the indexSingleBean function.
      *
-     * @param $bean
+     * @param SugarBean $bean
      * @param $searchFields
      * @return Elastica_Document|null
      */
-    protected function createIndexDocument($bean, $searchFields = null)
+    public function createIndexDocument(SugarBean $bean, $searchFields = null)
     {
         if($searchFields == null)
             $searchFields = $this->retrieveFtsEnabledFieldsPerModule($bean);
