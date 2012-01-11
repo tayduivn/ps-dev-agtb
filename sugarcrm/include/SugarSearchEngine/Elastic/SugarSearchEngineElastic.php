@@ -55,7 +55,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     public function indexBean($bean, $batch = TRUE)
     {
-        $GLOBALS['log']->fatal("GOING TO INDEX BEAN");
         if(!$this->isModuleFtsEnabled($bean->module_dir) )
             return;
 
@@ -63,15 +62,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $this->indexSingleBean($bean);
         else
         {
-            $GLOBALS['log']->fatal("Adding bean to doc list....");
+            $GLOBALS['log']->fatal("Adding bean to doc list with id: {$bean->id}");
 
             //Group our beans by index type for bulk insertion
             $indexType = $this->getIndexType($bean);
             if(! isset($this->_documents[$indexType]) )
-                $this->_documents[$indexType] = array();
+                $this->_documents = array();
 
-            //Create and store our document index which will be bunlk inserted later, do not store beans as they are heavy.
-            $this->_documents[$indexType][] = $this->createIndexDocument($bean);
+            //Create and store our document index which will be bulk inserted later, do not store beans as they are heavy.
+            $this->_documents[] = $this->createIndexDocument($bean);
         }
     }
 
@@ -120,7 +119,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if( empty($keyValues) )
             return null;
         else
-            return new Elastica_Document($bean->id, $keyValues);
+            return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
     }
 
     protected function indexSingleBean($bean)
@@ -174,29 +173,25 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $batchedDocs = array();
             $x = 0;
-            foreach($docs as $indexType => $elasticaDocs)
+            foreach($docs as $singleDoc)
             {
-                $type = new Elastica_Type($index, $indexType);
-                foreach($elasticaDocs as $singleDoc)
+                if($x != 0 && $x % self::MAX_BULK_THRESHOLD == 0)
                 {
-                    if($x != 0 && $x % self::MAX_BULK_THRESHOLD == 0)
-                    {
-                       $type->addDocuments($batchedDocs);
-                       $batchedDocs = array();
-                    }
-                    else
-                    {
-                       $batchedDocs[] = $singleDoc;
-                    }
-
-                    $x++;
+                    $index->addDocuments($batchedDocs);
+                    $batchedDocs = array();
+                }
+                else
+                {
+                   $batchedDocs[] = $singleDoc;
                 }
 
-                //Commit the stragglers
-                if(count($batchedDocs) > 0)
-                {
-                    $type->addDocuments($batchedDocs);
-                }
+                $x++;
+            }
+
+            //Commit the stragglers
+            if(count($batchedDocs) > 0)
+            {
+                $index->addDocuments($batchedDocs);
             }
         }
         //TODO: Add a mechanism to handle failures here.
