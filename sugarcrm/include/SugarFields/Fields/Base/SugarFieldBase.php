@@ -143,6 +143,12 @@ class SugarFieldBase {
     		$this->type = $type;
     		return $result;
     	}
+    	// jpereira@dri - #Bug49513 - Readonly type not working as expected
+	// If readonly is set in displayParams, the vardef will be displayed as in DetailView.
+	if (isset($displayParams['readonly']) && $displayParams['readonly']) {
+		return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView');
+	}	
+	// ~ jpereira@dri - #Bug49513 - Readonly type not working as expected
        return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
     }
 
