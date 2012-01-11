@@ -118,20 +118,13 @@ interface SugarSearchEngineResult
     public function getId();
 
     /**
-     * Return the highlighted text of a hit.
+     * Return the highlighted text of a hit with the field name as the key
      *
      * @abstract
      *
      */
     public function getHighlightedHitText();
 
-    /**
-     * Return the field name(s) for any hits
-     *
-     * @abstract
-     *
-     */
-    public function getHighlightedFieldName();
 
     /**
      * Never called within the view but helpful for debugging purposes.

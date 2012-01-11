@@ -43,6 +43,10 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         $this->elasticaResult = $result;
         //No need to lazy load, will always want to load the bean to fill in the details
         $this->bean = BeanFactory::getBean($this->getModule(), $this->getId());
+        if($this->bean === FALSE)
+        {
+            $GLOBALS['log']->fatal("Unable to load bean with id for FTS result set: {$this->getId()}");
+        }
     }
 
     /**
@@ -73,7 +77,6 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
             return $moduleName;
     }
 
-    //TODO: Move this to a base class
     public function getSummaryText()
     {
         if($this->bean !== FALSE)
@@ -108,12 +111,6 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         // TODO: should return an array $ret instead of a string, returning a string to test for now
         return implode('<br>', $ret);
         //return $ret;
-    }
-
-    // TODO: we probably don't need this function
-    public function getHighlightedFieldName()
-    {
-
     }
 
     public function __toString()

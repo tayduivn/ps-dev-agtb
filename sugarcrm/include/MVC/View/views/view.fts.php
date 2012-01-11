@@ -47,10 +47,10 @@ class ViewFts extends ViewAjax
         $ss = new Sugar_Smarty();
         //$ss->assign('displayResults', $displayResults);
         //$ss->assign('displayMoreForModule', $displayMoreForModule);
-        //$ss->assign('appStrings', $GLOBALS['app_strings']);
-        //$ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $ss->assign('queryEncoded', $query_encoded);
         $ss->assign('resultSet', $rs);
+        $ss->assign('appStrings', $GLOBALS['app_strings']);
+        $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $template = 'include/MVC/View/tpls/fts_spot.tpl';
         if(file_exists('custom/include/MVC/View/tpls/fts_spot.tpl'))
         {
