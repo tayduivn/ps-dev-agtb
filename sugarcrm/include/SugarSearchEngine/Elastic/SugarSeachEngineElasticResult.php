@@ -88,9 +88,10 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         if (!isset($_REQUEST['q'])) {
             return $ret;
         }
-        $q = htmlspecialchars($_REQUEST['q']); // escape user input before display to avoid cross site scripting
+        $q = $_REQUEST['q'];
 
-        $replace = $preTag . $q . $postTag;
+        // escape user input before display to avoid XSS
+        $replace = $preTag . htmlspecialchars($q) . $postTag;
 
         $hit = $this->elasticaResult->getHit();
         if (isset($hit['_source']) && is_array($hit['_source'])) {
