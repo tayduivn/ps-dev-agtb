@@ -85,7 +85,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         $ret = array();
 
         // this is the word to be searched
-        if (!isset($_GET['q'])) {
+        if (!isset($_REQUEST['q'])) {
             return $ret;
         }
         $q = htmlspecialchars($_REQUEST['q']); // escape user input before display to avoid cross site scripting
