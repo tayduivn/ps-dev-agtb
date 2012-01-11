@@ -1,12 +1,12 @@
 
-!!!! RESULTS !!!!
-
-<br>
-
 {foreach from=$resultSet item=result}
 
-Module:{$result->getModuleName()} ID: {$result->getId()} {$result->getSummaryText()} <br>
-<b>Hit Field:</b> {$result->getHighlightedFieldName()}   <b>Hit Text Highlighted:</b> {$result->getHighlightedHitText()}
+    {capture assign=url}index.php?module={$result->getModule()}&record={$result->getId()}&action=DetailView{/capture}
+<a href="{sugar_ajax_url url=$url}">{$result->getModuleName()}:  {$result->getSummaryText()} </a><br>
+
+ <i>{$result->getHighlightedHitText()}</i>
+
+
 
 <br>
 <br>
