@@ -32,7 +32,7 @@ var $db;
 public function setUp()
 {
 	
-	$this->markTestSkipped('Skip for now');	
+	$this->markTestIncomplete('Skip for now');	
     $this->db = DBManagerFactory::getInstance();	
     if($this->db->dbType == 'mysql')
     {

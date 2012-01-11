@@ -33,7 +33,7 @@ class SugarFieldTeamsetTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp() 
 	{
-		$this->markTestSkipped(
+		$this->markTestIncomplete(
             'Need to ensure proper cleanup first.'
         );
         global $beanList, $beanFiles, $moduleList, $sugar_config;

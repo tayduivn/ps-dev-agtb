@@ -32,7 +32,7 @@ class UpdateRelatedCalcFieldTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
 	{
-	    $this->markTestSkipped('');
+	    $this->markTestIncomplete('Disabled by John Mertic');
 	    require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
 	    $GLOBALS['beanFiles'] = $beanFiles;

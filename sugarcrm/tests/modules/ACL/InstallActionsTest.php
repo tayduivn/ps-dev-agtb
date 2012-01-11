@@ -26,7 +26,7 @@ class InstallActionsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->markTestSkipped('Test is no longer valid as the tested upgrades are no longer supported');
+        $this->markTestIncomplete('Test is no longer valid as the tested upgrades are no longer supported');
     }
 
     static public function setUpBeforeClass()
