@@ -80,6 +80,8 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
 
     public function testGetBeanSelectArray()
