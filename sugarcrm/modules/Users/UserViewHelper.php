@@ -195,9 +195,14 @@ class UserViewHelper {
         global $current_user;
         
 
-        if (!isset($this->bean->user_type))
-        {
+        //if this is an existing bean and the type is empty, then populate user type
+        if (empty($this->bean->user_type) && !empty($this->bean->id) )
+	{
             $this->setUserType($this->bean);
+            $userType = $this->bean->user_type;
+        }else{
+            //if this is a new bean then populate user type dropdown
+            $userType = $this->usertype;
         }
 
         $userType = $this->bean->user_type;
