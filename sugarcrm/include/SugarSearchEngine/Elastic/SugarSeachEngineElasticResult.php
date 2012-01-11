@@ -83,6 +83,11 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
             return $this->bean->get_summary_text();
     }
 
+    function highlight_callback($matches) {
+        // escape user input before display to avoid XSS
+        return $this->preTag . htmlspecialchars($matches[0]) . $this->postTag;
+    }
+
     public function getHighlightedHitText($preTag = '<em>', $postTag = '</em>')
     {
         $ret = array();
@@ -93,17 +98,18 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         }
         $q = $_REQUEST['q'];
 
-        // escape user input before display to avoid XSS
-        $replace = $preTag . htmlspecialchars($q) . $postTag;
+        $this->preTag = $preTag;
+        $this->postTag = $postTag;
+
+        $pattern = '/' . str_replace('*', '.*?', $q) . '/i';
 
         $hit = $this->elasticaResult->getHit();
         if (isset($hit['_source']) && is_array($hit['_source'])) {
 
             foreach ($hit['_source'] as $field=>$value) {
-                $replaced = str_ireplace($q, $replace, $value, $count);
+                $tmp = preg_replace_callback($pattern, array($this, 'highlight_callback'), $value, -1, $count);
                 if ($count > 0) {
-                    // replacement occurs on this field, add it to the returned array
-                    $ret[$field] = $replaced;
+                    $ret[$field] = $tmp;
                 }
             }
         }
