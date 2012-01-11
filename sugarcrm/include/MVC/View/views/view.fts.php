@@ -21,18 +21,36 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/MVC/View/views/view.ajax.php');
+require_once('include/MVC/View/SugarView.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 
-class ViewFts extends ViewAjax
+class ViewFts extends SugarView
 {
+    private $fullView = FALSE;
+    private $templateName = '';
+
+    public function __construct()
+    {
+        $this->fullView = !empty($_REQUEST['full']) ? TRUE : FALSE;
+        if($this->fullView)
+        {
+            $this->options = array('show_title'=> true,'show_header'=> true,'show_footer'=> true,'show_javascript'=> true,'show_subpanels'=> false,'show_search'=> false);
+            $this->templateName = 'fts_full.tpl';
+        }
+        else
+        {
+            $this->options = array('show_title'=> false,'show_header'=> false,'show_footer'=> false,'show_javascript'=> false,'show_subpanels'=> false,'show_search'=> false);
+            $this->templateName = 'fts_spot.tpl';
+        }
+        parent::__construct();
+
+    }
     /**
      * @see SugarView::display()
      */
     public function display()
     {
-
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
@@ -51,10 +69,10 @@ class ViewFts extends ViewAjax
         $ss->assign('resultSet', $rs);
         $ss->assign('appStrings', $GLOBALS['app_strings']);
         $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
-        $template = 'include/MVC/View/tpls/fts_spot.tpl';
-        if(file_exists('custom/include/MVC/View/tpls/fts_spot.tpl'))
+        $template = "include/MVC/View/tpls/{$this->templateName}";
+        if(file_exists("custom/$template"))
         {
-            $template = 'custom/include/MVC/View/tpls/fts_spot.tpl';
+            $template = "custom/$template";
         }
         echo $ss->fetch($template);
     }
