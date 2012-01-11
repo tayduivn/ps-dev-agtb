@@ -909,7 +909,7 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 
 			$insert_query= "INSERT INTO campaign_log (id,activity_date, campaign_id, target_tracker_key,list_id, target_id, target_type, activity_type";
 			$insert_query.=')';
-			$insert_query.= " SELECT $guid,$current_date,plc.campaign_id,$guid,plp.prospect_list_id, plp.related_id, plp.related_type,'targeted' ";
+			$insert_query.= " SELECT '{$guid}',$current_date,plc.campaign_id,'{$guid}',plp.prospect_list_id, plp.related_id, plp.related_type,'targeted' ";
 			$insert_query.= "FROM prospect_lists_prospects plp ";
 			$insert_query.= "INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = plp.prospect_list_id ";
 			$insert_query.= "WHERE plp.prospect_list_id = '{$prospect_list_id}' ";
