@@ -126,20 +126,17 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
             $docs = array();
             while ($row = $db->fetchByAssoc($result))
             {
+                //TODO: We may want to throttle here to avoid mem limits for very large data sets
                 $beanID = $row['id'];
                 $bean = BeanFactory::getBean($module, $beanID);
                 if($bean !== FALSE)
                     $docs[] = $this->createIndexDocument($bean, $fieldDefinitions);
 
-
             }
 
-            $results = array($this->getIndexType($bean) => $docs);
-            $this->bulkInsert($results);
-
+            $this->bulkInsert($docs);
 
         }
-
     }
 
     /**
