@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=int ONLY
 /*!
  * jQuery UI 1.8.16
  *
