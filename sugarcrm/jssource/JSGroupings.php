@@ -63,14 +63,9 @@
 			'include/javascript/jquery/jquery.tipTip.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			//jquery ui for menus
-			'include/javascript/jquery/jqueryui/jquery.ui.core.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.position.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.widget.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.menu.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.menubar.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.button.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.popup.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			//jquery for moddule menus
+			'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			),
 			
             $sugar_grp1_yui = array(
