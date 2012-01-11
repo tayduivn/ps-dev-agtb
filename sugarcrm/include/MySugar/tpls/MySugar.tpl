@@ -54,7 +54,7 @@ height: 10px;
 
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 {sugar_getscript file='include/javascript/dashlets.js'}
-<link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
+
 {$chartResources}
 {$mySugarChartResources}
 

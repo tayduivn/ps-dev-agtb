@@ -180,7 +180,7 @@ else {
 		// disable content type sniffing in MSIE
 		header("X-Content-Type-Options: nosniff");
 		header("Content-Length: " . filesize($local_location));
-		header("Expires: 0");
+		header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
 		set_time_limit(0);
 
 		@ob_end_clean();

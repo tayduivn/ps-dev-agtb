@@ -109,7 +109,6 @@ function qe_init(){
 	    YAHOO.util.Event.onContentReady('ajaxUI-history-field', SUGAR.ajaxUI.firstLoad);
 </script>
 {/literal}
-
 </body>
 </html>
 
