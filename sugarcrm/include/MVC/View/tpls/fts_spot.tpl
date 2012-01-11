@@ -13,4 +13,4 @@
 {/if}
 
 <br>
-<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}'">{$appStrings.LBL_EMAIL_SHOW_READ}</button>
+<button onclick="document.location.href='index.php?module=Home&action=spot&full=true&q={$queryEncoded}'">{$appStrings.LBL_EMAIL_SHOW_READ}</button>
