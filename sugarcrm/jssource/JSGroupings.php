@@ -59,7 +59,7 @@
 			//jquery libraries
 			$sugar_grp_jquery = array(
 			'include/javascript/jquery/jquery-min.js'             => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery-ui.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
 			),
            $sugar_field_grp = array(
