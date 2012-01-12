@@ -85,6 +85,14 @@ interface SugarSearchEngineInterface{
      */
     public function createIndexDocument(SugarBean $bean, $searchFields = null);
 
+    /**
+     * Return info about the server status.
+     *
+     * @abstract
+     *
+     */
+    public function getServerStatus();
+
 }
 
 /**

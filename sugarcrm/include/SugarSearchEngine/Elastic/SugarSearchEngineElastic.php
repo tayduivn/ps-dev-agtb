@@ -201,6 +201,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     }
 
+    /**
+     * Check the server status
+     */
+    public function getServerStatus()
+    {
+        $index = new Elastica_Index($this->_client, $this->_indexName);
+        return json_encode($index->getStatus()->getData());
+    }
 
     /**
      * @param $queryString
