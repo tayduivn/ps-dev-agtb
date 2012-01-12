@@ -201,8 +201,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         try
         {
-            $index = new Elastica_Index($this->_client, $this->_indexName);
-            $results = json_encode($index->getStatus()->getData());
+            $results = json_encode($this->_client->getStatus()->getServerStatus());
         }
         catch(Exception $e)
         {
