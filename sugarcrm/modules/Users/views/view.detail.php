@@ -110,7 +110,8 @@ class UsersViewDetail extends ViewDetail {
         $show_roles = false;
         //END SUGARCRM flav=sales ONLY
         $this->ss->assign('SHOW_ROLES', $show_roles);
-
+        //Mark whether or not the user is a group or portal user
+        $this->ss->assign('IS_GROUP_OR_PORTAL', ($this->bean->is_group=='1' || $this->bean->portal_only=='1') ? true : false);
         if ( $show_roles ) {
             ob_start();
             echo "<div>";
