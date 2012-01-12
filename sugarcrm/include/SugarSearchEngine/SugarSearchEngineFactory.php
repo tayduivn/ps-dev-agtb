@@ -71,25 +71,24 @@ class SugarSearchEngineFactory
             }
         }
 
-        //TODO: Add support for custom location.
-
         $defaultTemplateLocation = "include/SugarSearchEngine/%s/SugarSearchEngine%s.php";
-        $defaultLocation = sprintf($defaultTemplateLocation, $name,$name);
-        $engineInstance = self::loadSearchEngineFromLocation("custom" . DIRECTORY_SEPARATOR . $defaultLocation, $config);
 
-        if($engineInstance === FALSE)
+        $searchEngineLocations = array(
+            "custom" . DIRECTORY_SEPARATOR . sprintf($defaultTemplateLocation, $name,$name),
+            sprintf($defaultTemplateLocation, $name,$name),
+            "custom" . DIRECTORY_SEPARATOR . sprintf($defaultTemplateLocation, '',''),
+            sprintf($defaultTemplateLocation, '','')
+        );
+
+        foreach($searchEngineLocations as $engineLocation)
         {
-            $engineInstance = self::loadSearchEngineFromLocation($defaultLocation, $config);
-            if($engineInstance === FALSE)
+            $engineInstance = self::loadSearchEngineFromLocation($engineLocation, $config);
+            if($engineInstance !== FALSE)
             {
-                $GLOBALS['log']->fatal("Unable to find Sugar Search Engine: $name");
-                return self::loadSearchEngineFromLocation(sprintf($defaultTemplateLocation, '',''), $config);
+                $GLOBALS['log']->fatal("Found Sugar Search Engine: " . get_class($engineInstance));
+                return $engineInstance;
             }
         }
-
-        $GLOBALS['log']->fatal("Found Sugar Search Engine: " . get_class($engineInstance));
-
-        return $engineInstance;
     }
 
     /**
