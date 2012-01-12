@@ -38,20 +38,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function __construct($params = array())
     {
         $this->_config = $params;
-
-        //TODO: Support basic auth?
-        $scheme = isset($this->_config['scheme']) ? $this->_config['scheme'] : 'http';
-        $port = isset($this->_config['port']) ? $this->_config['port'] : '9200';
-        $host = isset($this->_config['host']) ? $this->_config['host'] : 'localhost';
-        $index = isset($this->_config['index']) ? $this->_config['index'] : ($GLOBALS['sugar_config']['unique_key']);
-        $this->_server = "{$scheme}://{$host}:$port/$index";
         $this->_indexName = $GLOBALS['sugar_config']['unique_key'];
 
         //Elastica client uses own auto-load schema similar to ZF.
         spl_autoload_register(array($this, 'loader'));
-
-        $this->_client = new Elastica_Client();
+        $this->_client = new Elastica_Client($this->_config);
     }
+
 
     public function indexBean($bean, $batch = TRUE)
     {
@@ -206,8 +199,18 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function getServerStatus()
     {
-        $index = new Elastica_Index($this->_client, $this->_indexName);
-        return json_encode($index->getStatus()->getData());
+        try
+        {
+            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $results = json_encode($index->getStatus()->getData());
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to get server status with error: {$e->getMessage()}");
+            $results = $e->getMessage();
+        }
+
+        return $results;
     }
 
     /**

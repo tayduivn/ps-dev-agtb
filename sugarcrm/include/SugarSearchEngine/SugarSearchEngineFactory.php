@@ -42,11 +42,11 @@ class SugarSearchEngineFactory
      * @static
      * @return SugarSearchEngineInterface
      */
-    public static function getInstance($name = '')
+    public static function getInstance($name = '', $config)
     {
        if (!isset(self::$_instance[$name]))
        {
-           self::$_instance[$name] = self::setupEngine($name);
+           self::$_instance[$name] = self::setupEngine($name, $config);
        }
 
        return self::$_instance[$name];
@@ -55,11 +55,11 @@ class SugarSearchEngineFactory
     /**
      * @static
      * @param string $name
+     * @param array $config
      * @return bool
      */
-    protected static function setupEngine($name = '')
+    protected static function setupEngine($name = '', $config = array())
     {
-        $config = array();
         if( empty($name) )
         {
             //if the name is empty then let's try to see if we have one configured in the config
@@ -67,7 +67,7 @@ class SugarSearchEngineFactory
             {
                 $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
                 $name = $keys[0];
-                $config = $GLOBALS['sugar_config']['full_text_engine'][$name];
+                $config = !empty($config) ? $config : $GLOBALS['sugar_config']['full_text_engine'][$name];
             }
         }
 
