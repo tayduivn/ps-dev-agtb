@@ -123,6 +123,25 @@ class AdministrationController extends SugarController
         echo "true";
     }
 
+    public function action_checkFTSConnection()
+    {
+        $type = !empty($_REQUEST['type']) ? urldecode($_REQUEST['type']) : '';
+        $host = !empty($_REQUEST['host']) ? urldecode($_REQUEST['host']) : '';
+        $port = !empty($_REQUEST['port']) ? urldecode($_REQUEST['port']) : '';
+
+        if(!empty($type) && !empty($host) && !empty($port))
+        {
+            $config = array('port' => $port, 'host' => $host);
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
+            echo json_encode(array('status' => $searchEngine->getServerStatus()));
+        }
+        else
+        {
+            echo json_encode(array('status' => FALSE));
+        }
+        sugar_cleanup(TRUE);
+    }
 
     /**
      * action_saveglobalsearchsettings

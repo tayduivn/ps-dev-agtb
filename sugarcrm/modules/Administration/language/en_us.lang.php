@@ -173,6 +173,7 @@ $mod_strings = array (
     'LBL_CLEAR_PDF_FONT_CACHE_DESC'=>'Removes cached file used to store PDF fonts data',
     'LBL_CONFIG_CHECK' =>'Config Check',
     'LBL_CONFIG_AJAX' => 'Configure AJAX User Interface',
+    'LBL_CONFIG_FTS' => 'Configure Full Text Search Engine',
     'LBL_CONFIG_AJAX_DESC' => 'Performance and page-rendering times are improved in AJAX UI-enabled modules because full page refreshes are not required in those modules. If you are experiencing display issues with modules that are not compatible with AJAX, the AJAX UI for those modules can be disabled.',
     'LBL_CONFIG_AJAX_HELP' => 'Drag and drop the names of the modules below to enable or disable the use of the AJAX UI in those modules.',
     'LBL_CONFIG_TABS'=>'Display Module Tabs and Subpanels',
@@ -1184,5 +1185,12 @@ $mod_strings = array (
     'LBL_SPRITES_PROCESSING_DIR' => 'Processing directory {0}',
     'LBL_SPRITES_ADDED' => 'Added sprite {0}',
     'LBL_SPRITES_EXCLUDING_FILE' => 'Excluding file: {0}',
+
+    //FTS
+    'LBL_FTS_TYPE' => 'System Type',
+    'LBL_FTS_URL' => 'Url',
+    'LBL_FTS_PORT' => 'Port',
+    'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
+    'LBL_FTS_TEST' => 'Test'
 	);
 
