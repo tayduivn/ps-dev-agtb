@@ -26,28 +26,13 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-
-<script type="text/javascript">
-{literal}
-// initialise plugins
-$(function(){
-	$('ul.sf-menu').superfish({
-			delay:     800,
-			autoArrows: false,
-			dropShadows: false
-		});
-});
-{/literal}
-</script>
-
-		
-		
 {assign var='underscore' value='_'}
 {if $AJAX ne "1"}
 <div id="moduleList">
 {/if}
 {* tab groups *}
 {assign var='overflowSuffix' value='Overflow'}
+{assign var='overflowHidden' value='Hidden'}
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
   {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
   {if $tabGroupName == 'All'}
@@ -131,7 +116,7 @@ $(function(){
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
 				{if $shortcutTopMenu.$name && $name != "Home"}
-					<li class="flexMenuItems"  id="moduleTabMain_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name"}
+					<li class="flexMenuItems"  id="moduleTabMain_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name"}
 					<ul class="megamenu">
 					<li>
 						<div class="megawrapper">

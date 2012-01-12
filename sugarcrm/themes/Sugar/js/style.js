@@ -182,10 +182,10 @@ SUGAR.append(SUGAR.themes, {
 			//get the previous sibling of extraMenu
 			var $currRight = $(extraMenu).prev();
 			//add menu after prev sib
-			console.log($currRight.children("a:first-child").attr("id"));
+
 			 $(el+"Overflow").parent().insertAfter($currRight);
 			 var newId = el.replace("#","");
-			 var currRightId = $currRight.children("a:first-child").attr("id") + "Overflow";
+			 var currRightId = $currRight.children("a:first-child").attr("id") + "OverflowHidden";
 			 $(el+"Overflow").attr("id",newId);
 			 $(el).parent().addClass("current");
 			 //remove prev sib
@@ -218,14 +218,38 @@ SUGAR.append(SUGAR.themes, {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
 		}
+    },
+    loadModuleList: function() {
+    	$('#moduleList ul.sf-menu').superfish({
+			delay:     800,
+			autoArrows: false,
+			dropShadows: false,
+			onBeforeShow: function() {
+				if($(this).parent().attr("id") != "moduleTabExtraMenu"+sugar_theme_gm_current) {
+					var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
+					$.ajax({
+					  url: "index.php?module="+moduleName+"&action=modulelistmenu",
+					  success: function(json){
+					    var lastViewed = $.parseJSON(json);
+					    $.each(lastViewed, function(k,v) {
+						console.log($(this).find("ul.MMLastViewed"));
+					    		$(this).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+					    });
+					  }
+					});
+				}
+			}
+		});	
     }
 });
 
 /**
  * For the module list menu
  */
-//YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
 
+$("#moduleList").ready(function(){
+	SUGAR.themes.loadModuleList();
+});
 /**
  * For the module list menu scrolling functionality
  */
