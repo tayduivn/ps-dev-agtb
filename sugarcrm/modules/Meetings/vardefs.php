@@ -443,6 +443,18 @@ $dictionary['Meeting'] = array('table' => 'meetings',
 		'reportable' => false,
 		'studio' => 'false',
 	),
+	'recurring_source' =>
+	array(
+		'name' => 'recurring_source',
+		'vname' => 'LBL_RECURRING_SOURCE',
+		'type' => 'varchar',
+		'len' => 36,
+		'comment' => 'Source of recurring meeting',
+		'importable' => false,
+		'massupdate' => false,
+		'reportable' => false,
+		'studio' => false,
+	),
 	'duration' =>
 	array(
 		'name' => 'duration',

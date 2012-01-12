@@ -66,6 +66,8 @@ class Meeting extends SugarBean {
 	var $assigned_user_name;
 	var $outlook_id;
 	var $sequence;
+	var $syncing = false;
+	var $recurring_source;
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
@@ -115,6 +117,28 @@ class Meeting extends SugarBean {
         if(!empty($GLOBALS['app_list_strings']['duration_intervals'])) {
             $this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
         }
+	}
+	
+	/**
+	 * Disable edit if meeting is recurring and source is not Sugar. It should be edited only from Outlook.
+	 * @param $view string
+	 * @param $is_owner bool
+	 */
+	function ACLAccess($view,$is_owner = 'not_set'){
+		// don't check if meeting is being synced from Outlook
+		if($this->syncing == false){
+			$view = strtolower($view);
+			switch($view){
+				case 'edit':
+				case 'save':
+				case 'editview':
+				case 'delete':
+					if(!empty($this->recurring_source) && $this->recurring_source != "Sugar"){
+						return false;
+					}
+			}
+		}
+		return parent::ACLAccess($view,$is_owner);
 	}
 
 	/**
