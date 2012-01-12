@@ -41,7 +41,7 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
         }
         $html = '<select name="' . $layout_def['name'] . '[]" multiple="true">';
 
-        $sql = 'SELECT id, ' . $layout_def['rname'] . ' title FROM ' . $layout_def['table'] . ' ORDER BY title ASC';
+        $sql = 'SELECT id, ' . $layout_def['rname'] . ' title FROM ' . $layout_def['table'] . ' WHERE deleted = 0 ORDER BY title ASC';
         $result = $this->reporter->db->query($sql);
         while ($row = $this->reporter->db->fetchByAssoc($result))
         {
