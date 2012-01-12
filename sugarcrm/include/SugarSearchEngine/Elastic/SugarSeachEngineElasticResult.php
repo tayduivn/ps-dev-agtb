@@ -85,10 +85,89 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
 
     function highlight_callback($matches) {
         // escape user input before display to avoid XSS
-        return $this->preTag . htmlspecialchars($matches[0]) . $this->postTag;
+        return $this->preTag . htmlspecialchars(trim($matches[0])) . $this->postTag;
     }
 
-    public function getHighlightedHitText($preTag = '<em>', $postTag = '</em>')
+    function castrate($string, $maxLen) {
+
+        // length is ok, no further process needed
+        if (strlen($string) <= $maxLen) {
+            return $string;
+        }
+
+        // not much room left, just return ...
+        if ($maxLen <= 10) {
+            return ' ... ';
+        }
+
+        // when a string truncate is to happen, this is the length remained on both sides of the string
+        // for example, "this is a very long string" becomes
+        // "thi ... ing" if $remainder is 3
+        $remainder = ($maxLen - 5) / 2;
+
+        return mb_strcut($string, 0, $remainder, 'UTF-8') . ' ... ' . mb_strcut($string, -$remainder, $remainder, 'UTF-8');
+    }
+
+    function post_process_highlights($original, $maxLen, $maxHits) {
+
+        // length is ok, no further process needed
+        if (strlen($original) <= $maxLen) {
+            return $original;
+        }
+
+        $pattern = "(" . $this->preTag . ".*?" . $this->postTag . ")";
+        $pattern = str_replace('/', '\/', $pattern); //escaping
+        $pattern = '/' . $pattern . '/';
+
+        // this breaks down the string and the odd indexed elements will be
+        // highlighted strings and the even ones are non-highlighted
+        $a = preg_split($pattern, $original, -1, PREG_SPLIT_OFFSET_CAPTURE|PREG_SPLIT_DELIM_CAPTURE);
+
+        $hitCount = (count($a) - 1) / 2;
+
+        // hit count already under limit, need to trim some fat
+        if ($hitCount <= $maxHits) {
+
+            // the total length of highlighted words
+            $len = 0;
+            for ($i=1; $i<=count($a)-1; $i=$i+2) {
+                $len += strlen($a[$i][0]);
+            }
+
+            // available length for the non-highlighted strings
+            $available_len = $maxLen - $len;
+            if ($available_len < 0) {
+                // this should not happen, unless a very tiny maxLen is given
+                return $a[1][0];
+            }
+
+            // available length for each non-highlighted string
+            $avail_per_str = $available_len / ($hitCount+1);
+
+            // shorten the non-highlighted strings if needed
+            for ($i=0; $i<count($a); $i=$i+2) {
+                if (strlen($a[$i][0]) > $avail_per_str) {
+                    $a[$i][0] = $this->castrate($a[$i][0], $avail_per_str);
+                }
+            }
+
+            // final string
+            $final = '';
+            foreach ($a as $hit) {
+                $final .= $hit[0];
+            }
+
+            return $final;
+        }
+        // hit count over the limit, try removing extra hits first then process again
+        else {
+            $newStr = substr($original, 0, $a[$maxHits*2+1][1]);
+
+            return $this->post_process_highlights($newStr, $maxLen, $maxHits);
+        }
+    }
+
+    public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
         $ret = array();
 
@@ -96,7 +175,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         if (!isset($_REQUEST['q'])) {
             return $ret;
         }
-        $q = $_REQUEST['q'];
+        $q = trim($_REQUEST['q']);
 
         $this->preTag = $preTag;
         $this->postTag = $postTag;
@@ -109,7 +188,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
             foreach ($hit['_source'] as $field=>$value) {
                 $tmp = preg_replace_callback($pattern, array($this, 'highlight_callback'), $value, -1, $count);
                 if ($count > 0) {
-                    $ret[$field] = $tmp;
+                    $ret[$field] = $this->post_process_highlights($tmp, $maxLen, $maxHits);
                 }
             }
         }
