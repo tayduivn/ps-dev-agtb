@@ -488,7 +488,7 @@ class ListViewData {
             $pageData['error'] = 'ACL restricted access';
         }
 
-		return array('data'=>$data , 'pageData'=>$pageData, 'totalCount'=>$this->getTotalCount($ret_array['select'] . $ret_array['from']));
+		return array('data'=>$data , 'pageData'=>$pageData);
 	}
 
 
