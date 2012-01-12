@@ -31,7 +31,8 @@ require_once('modules/Reports/config.php');
 
 //////////////////////////////////////////////
 // TEMPLATE:
-// THIS TEMPLATE IS NOW USED TO CREATE A CACHE FILE
+// THIS TEMPLATE IS NOW USED TO CREATE A JAVASCRIPT CACHED FILE
+// THE FILE IS LOCATED IN cache/modules/modules_def_<lang>_<md5>.js
 //////////////////////////////////////////////
 function template_module_defs_js(&$args) {
 global $report_modules,$current_language;
@@ -622,5 +623,5 @@ for(i in module_defs) {
     }
 }
 <?php
-} //End foreach $module
+} //End of the PHP function template_module_defs_js
 ?>
