@@ -37,13 +37,13 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     /**
      * For a given module, return all of the full text search enabled fields.
      *
-     * TODO: Add a caching mechanism.
      *
      * @param $module
      *
      */
     protected function retrieveFtsEnabledFieldsPerModule($module)
     {
+
         $results = array();
         if( is_string($module))
         {
@@ -59,6 +59,11 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
             return $results;
         }
 
+        $cacheKey = "fts_fields_{$obj->table_name}";
+        $cacheResults = sugar_cache_retrieve($cacheKey);
+        if(!empty($cacheResults))
+            return $cacheResults;
+
         foreach($obj->field_defs as $field => $def)
         {
             if( isset($def['unified_search']) && ( $def['unified_search'] === TRUE ||
@@ -67,6 +72,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
                 $results[$field] = $def;
         }
 
+        sugar_cache_put($cacheKey, $results);
         return $results;
 
     }

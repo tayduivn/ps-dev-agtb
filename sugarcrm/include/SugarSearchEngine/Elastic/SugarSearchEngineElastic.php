@@ -38,20 +38,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function __construct($params = array())
     {
         $this->_config = $params;
-
-        //TODO: Support basic auth?
-        $scheme = isset($this->_config['scheme']) ? $this->_config['scheme'] : 'http';
-        $port = isset($this->_config['port']) ? $this->_config['port'] : '9200';
-        $host = isset($this->_config['host']) ? $this->_config['host'] : 'localhost';
-        $index = isset($this->_config['index']) ? $this->_config['index'] : ($GLOBALS['sugar_config']['unique_key']);
-        $this->_server = "{$scheme}://{$host}:$port/$index";
         $this->_indexName = $GLOBALS['sugar_config']['unique_key'];
 
         //Elastica client uses own auto-load schema similar to ZF.
         spl_autoload_register(array($this, 'loader'));
-
-        $this->_client = new Elastica_Client();
+        $this->_client = new Elastica_Client($this->_config);
     }
+
 
     public function indexBean($bean, $batch = TRUE)
     {
@@ -105,15 +98,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $keyValues = array();
         foreach($searchFields as $fieldName => $fieldDef)
         {
-            //TODO: We may need to convert data at this point (date formats, etc) or go through SugarFields
-            if( isset($bean->$fieldName) )
+            //All fields have already been formatted to db values at this point so no further processing necessary
+            if( !empty($bean->$fieldName) )
                 $keyValues[$fieldName] = $bean->$fieldName;
         }
 
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
-
-        //TODO: Also add team ids
+        $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
 
         if( empty($keyValues) )
             return null;
@@ -201,6 +193,23 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     }
 
+    /**
+     * Check the server status
+     */
+    public function getServerStatus()
+    {
+        try
+        {
+            $results = json_encode($this->_client->getStatus()->getServerStatus());
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to get server status with error: {$e->getMessage()}");
+            $results = $e->getMessage();
+        }
+
+        return $results;
+    }
 
     /**
      * @param $queryString
@@ -217,15 +226,27 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $queryObj = new Elastica_Query_QueryString($queryString);
             $queryObj->setAnalyzeWildcard(false);
             $queryObj->setAutoGeneratePhraseQueries(false);
-            $query = new Elastica_Query($queryObj);
 
-            $query->setParam('from',$offset);
             if( !is_admin($GLOBALS['current_user']) )
             {
-                //TODO: Add team set id filter here.
-                //$query->setFilter();
+                $teamFilter = new Elastica_Filter_Or();
+                $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
+                //TODO: Determine why term filters aren't working with the hyphen present.
+                //Term filters dont' work for terms with '-' present so we need to clean
+                $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
+                foreach ($teamIDS as $teamID)
+                {
+                    $termFilter = new Elastica_Filter_Term();
+                    $termFilter->setTerm('team_set_id',$teamID);
+                    $teamFilter->addFilter($termFilter);
+                }
+                $query = new Elastica_Query_Filtered($queryObj, $teamFilter);
             }
-
+            else
+            {
+                $query = new Elastica_Query($queryObj);
+            }
+            $query->setParam('from',$offset);
             $s = new Elastica_Search($this->_client);
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
@@ -237,6 +258,17 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
         $GLOBALS['log']->fatal("finished searching with results " . var_export($results, TRUE));
         return $results;
+    }
+
+    /**
+     * Remove the '-' from our team sets.
+     *
+     * @param $teamSetID
+     * @return mixed
+     */
+    protected function cleanTeamSetID($teamSetID)
+    {
+        return str_replace("-", "", $teamSetID);
     }
 
     protected function loader($className)
