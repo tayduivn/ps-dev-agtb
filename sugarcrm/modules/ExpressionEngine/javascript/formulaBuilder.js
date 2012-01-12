@@ -89,6 +89,10 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 	}
 }
 
+    /**
+     * Recursively checks the paramaers passed to all the functions in the formula.
+     * @param t expression function
+     */
 SUGAR.expressions.validateReturnTypes = function(t)
 {
 	if (t.type == "function")
@@ -134,6 +138,10 @@ SUGAR.expressions.validateReturnTypes = function(t)
 	}
 };
 
+    /**
+     * validate functions with related fields which require a server call to validate
+     * @param t expression function
+     */
 SUGAR.expressions.validateRelateFunctions = function(t)
 {
 	var SU = SUGAR.util, SE = SUGAR.expressions;
@@ -178,6 +186,12 @@ SUGAR.expressions.validateRelateFunctions = function(t)
 	}
 };
 
+    /**
+     *  Grab and validate the current formula and validate it.
+     *  Exceptions will be thrown and caught if any errors are found.
+     * @param silent
+     * @param matchType
+     */
 SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 {
 	try {
@@ -212,6 +226,11 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 	}
 }
 
+    /**
+     * If the current formula is valid, save it into the target id.
+     * @param target id of input element to save the formula into
+     * @param returnType - optional - the required return type of the formula.
+     */
 SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 {
 	if (!SUGAR.expressions.validateCurrExpression(true, returnType))
@@ -226,6 +245,9 @@ SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 	return true;
 }
 
+    /**
+     * YUI Tooltip displayed when hovering over the function list.
+     */
 SUGAR.expressions.GridToolTip = {
 	tipCache : { },
 	currentHelpFunc : "",
@@ -365,6 +387,8 @@ SUGAR.expressions.GridToolTip = {
 	fieldsGrid.sortColumn(fieldsGrid.getColumn(0))
 	fieldsGrid.render();
 	SUGAR.expressions.fieldGrid = fieldsGrid;
+
+    //Setup the function list
 	var functionsArray = SUGAR.expressions.getFunctionList();
 	var usedClasses = { };
 	if (!SUGAR.expressions.funcGridData) {
@@ -429,6 +453,7 @@ SUGAR.expressions.GridToolTip = {
 		    SUGAR.expressions.functionsGrid.sortedColumn = e.newValue;
 	});
 
+    //If the expression tooltip exists, destroy it to re-initialize
     if(SUGAR.expressions.tooltip){
 	    SUGAR.expressions.tooltip.destroy();
     }
@@ -474,7 +499,8 @@ SUGAR.expressions.GridToolTip = {
 			SUGAR.expressions.funcionListJSON[i] = {name: SUGAR.expressions.funcGridData[i][0], type: SUGAR.expressions.funcGridData[i][1]};
 		}
 	}
-	Dom.get("formulaFuncSearch").onkeyup = function() {
+	//Setup the listeners for the search function input
+    Dom.get("formulaFuncSearch").onkeyup = function() {
 		if (this.value == '') {
 			Dom.addClass(this, "empty");
 			var fg = SUGAR.expressions.functionsGrid;
@@ -507,6 +533,8 @@ SUGAR.expressions.GridToolTip = {
 		ModuleBuilder.formulaEditorWindow.center();
 
 
+    //Update functions for the rel field and rollup wizards.
+    //These must be global as the windows themselves will call them on change
     SUGAR.expressions.updateSelRFLink = function(link)
     {
         var win = SUGAR.formulaRelFieldWin;
@@ -541,6 +569,11 @@ SUGAR.expressions.GridToolTip = {
         SUGAR.rollupWindow.hide();
     }
 
+    /**
+     * Set up the markitup on the formula input element.
+     * We want to allow tabs but don't override any other normal textbox actions
+     * The wizard buttons are set up here as well
+     */
     $("#formulaInput").markItUp({
     	onShiftEnter:  	{keepDefault:true},
     	onCtrlEnter:  	{keepDefault:true},
@@ -587,6 +620,11 @@ SUGAR.expressions.GridToolTip = {
     	]
     });
 
+    /****************
+     * This section sets up the formula builder autocomplete
+     */
+
+    //Insert the wrapper html
     if($("#fb_ac_wrapper").length == 0){
         $("body").append(
             "<input id='fb_ac_input' style='display:none;z-index:50;position:relative'>" +
@@ -599,10 +637,16 @@ SUGAR.expressions.GridToolTip = {
 
 
     var fb_ac_open = false;
+    /**
+     * Gets the index of the first character in the current formula component (function or variable)
+     * @param val string formula
+     * @param offset current cursor position
+     */
     var getCompStart = function(val, offset)
     {
-        var start = 0;
-        for( var c in {",":"", ".":"", "(":"", ")":""})
+        var start = 0,
+            chars = {",":"", ".":"", "(":"", ")":""};
+        for( var c in chars)
         {
             var pos = val.lastIndexOf(c, offset - 1);
             if (pos !== false && pos > start)
@@ -610,6 +654,11 @@ SUGAR.expressions.GridToolTip = {
         }
         return start;
     };
+    /**
+     * Gets the index of the last character in the current formula component (function or variable)
+     * @param val string formula
+     * @param integer offset current cursor position
+     */
     var getCompEnd = function(val, offset)
     {
         var end = val.length;
@@ -621,7 +670,13 @@ SUGAR.expressions.GridToolTip = {
         }
         return end;
     };
-    var getComponentText = SUGAR.expressions.fb_getComponentText = function(val, offset)
+
+    /**
+     * Returns the text of the current formula component (function or variable)
+     * @param string val formula
+     * @param integer offset current cursor position
+     */
+    var getComponentText = function(val, offset)
     {
         var target = $("#formulaInput")[0];
         val = typeof(val) == "undefined" ? $("#formulaInput").val() : val;
@@ -636,7 +691,12 @@ SUGAR.expressions.GridToolTip = {
         return $.trim(val.substring(start, end));
     };
 
-    //Walk back through the string with a counter finding the first open paren without a clsoe
+    /**
+     * Used to find the parent function of the current component
+     * Walks back through the string with a counter finding the first open paren without a close.
+     * @param string val formula
+     * @param integer offset current cursor position
+     */
     var getOpenParenIndex = function(val, offset){
         var commas = 0, count = 0, inQuotes = false;
         for (var i = offset; i > -1; i--)
@@ -660,7 +720,10 @@ SUGAR.expressions.GridToolTip = {
         return -1;
     };
 
-    var getExpectedComponentType = SUGAR.expressions.fb_getComponentType = function()
+    /**
+     * Returns the expected return type based on the current cursor position in the formula
+     */
+    var getExpectedComponentType = function()
     {
         var target = $("#formulaInput")[0],
             val = $("#formulaInput").val(),
@@ -674,7 +737,6 @@ SUGAR.expressions.GridToolTip = {
         if (lastParen != -1)
         {
             var parent = getComponentText(val, lastParen[0] - 1);
-            console.log("function " + getComponentText(val, lastParen[0] - 1) + " index " + lastParen[1]);
             var fMap = SUGAR.FunctionMap;
             var see = SUGAR.expressions.Expression;
 
@@ -701,8 +763,13 @@ SUGAR.expressions.GridToolTip = {
         return false;
     };
 
-    //Return an array of all the field names from the current module of a given type
-    //Optionally it can take a search string to filter the fields by name
+    /**
+     * Return an array of all the field names from the current module of a given type
+     * Optionally it can take a search string to filter the fields by name
+     * @param type optional type of fields to return
+     * @param search string optional returns only fields containing the given string
+     * @param limit integer optional maximum number of items to return.
+     */
     var getFieldsByType = function(type, search, limit ){
         if (!type)
             type = "generic";
@@ -725,14 +792,19 @@ SUGAR.expressions.GridToolTip = {
         return ret;
     };
 
+    /**
+     * Return an array of all the function names from the current module of a given type
+     * Optionally it can take a search string to filter the fields by name
+     * @param type optional type of fields to return
+     * @param search string optional returns only fields containing the given string
+     * @param limit integer optional maximum number of items to return.
+     */
     var getFunctionsByType = function(type, search, limit)
     {
         if (!type)
             type = "generic";
         if (search)
             search  = search.toLowerCase();
-
-        console.log(type);
 
         var ret = [],
             fMap = SUGAR.FunctionMap,
@@ -755,14 +827,28 @@ SUGAR.expressions.GridToolTip = {
         return ret;
     }
 
+    /**
+     * replace the contents on the hiden spacers that float left and push the ac widget in line with the cursor
+     */
     var updateACSpacer = function()
     {
         var val = $("#formulaInput").val(),
-            rows = val.substring(0, getCompStart(val, $("#formulaInput")[0].selectionEnd)).split("\n"),
+            rows = val.substring(0, $("#formulaInput")[0].selectionEnd, true).split("\n"),
             html = "";
 
         for(var i=0; i < rows.length; i++)
         {
+            //The last row should be trimmed to just the content before the start of the current component
+            if (i == rows.length - 1)
+            {
+                //If this is the first component in this row, just leave any leading whitespace
+                var start = getCompStart(rows[i], rows[i].length - 1);
+                if (start == 0){
+                    rows[i] = new RegExp("^\\s*").exec(rows[i])[0];
+                } else {
+                    rows[i] = rows[i].substring(0, start);
+                }
+            }
             var line = htmlentities(rows[i], "ENT_NOQUOTES").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/ /g, "&nbsp;");
             html += "<div class='fb_ac_spacer"+ (i != rows.length - 1 ? " fb_ac_spacer_line'>" : "'>") + line + "</div>";
         }
@@ -770,14 +856,13 @@ SUGAR.expressions.GridToolTip = {
         //Clear the old spacer
         $("#fb_ac_wrapper .fb_ac_spacer").remove();
         //Insert the new spacer before the autocomplete widget
-        console.log(html);
         $("#fb_ac_wrapper ul.ui-autocomplete").before(html);
     }
 
+    //Initialize the Autocomplete. It will used a hidden input that is updated by a listener on the formula input
     $( "#fb_ac_input" ).autocomplete({
         source: function(e, fn){
             //Fields
-            console.log(e.term);
             if(e.term[0] == "$")
             {
                 fn(getFieldsByType(getExpectedComponentType(), e.term.substr(1), 10));
@@ -792,10 +877,6 @@ SUGAR.expressions.GridToolTip = {
             fb_ac_open = true;
             //Set the content of the spacer to the same as the formula input to offset the autocomplete location by that amount
             updateACSpacer();
-            $("ul.ui-autocomplete").css("left", "6px");
-            $("ul.ui-autocomplete").css("top", "2em");
-            $("ul.ui-autocomplete").css("position", "relative");
-            $("ul.ui-autocomplete").css("width", "150px");
         },
         close: function(){
             fb_ac_open = false;
@@ -840,6 +921,7 @@ SUGAR.expressions.GridToolTip = {
         }
     });
 
+    //On keyup on the formula input, update the autocomplete widget after a 300ms delay
     $("#formulaInput").keyup(function(e){
         $("#fb_ac_input").val(getComponentText());
         //$("#fb_ac_input").trigger(e);
@@ -857,13 +939,13 @@ SUGAR.expressions.GridToolTip = {
                 //DO not open the auto complete for moving the curser. Only modify it if its already open
 
                 if ((e.keyCode != 37 && e.keyCode != 39) || fb_ac_open){
-                    console.log("key was " + e.keyCode + " and ac_open was " + fb_ac_open + ".");
                     $( "#fb_ac_input" ).autocomplete("search", getComponentText());
                 }
             }, 300);
         }
     })
 
+    //Pass keydown events from the formula input to the autocomplete
     $("#formulaInput").keydown(function(e){
         //Prevent arrow key default when the autocomplete is visible and pass it the event
         if ((e.keyCode == 38 || e.keyCode == 40) && fb_ac_open){
@@ -872,15 +954,15 @@ SUGAR.expressions.GridToolTip = {
 
         if(fb_ac_open)
             $('#fb_ac_input').trigger(e);
-        //$("#fb_ac_input").trigger('keydown', [e]);
-        //$("#fb_ac_input").trigger('keydown.autocomplete', [e]);
     })
 
+    //Allow the user to click out of the autocomplete
     $("#formulaInput").click(function()
     {
         $( "#fb_ac_input" ).autocomplete("close");
     });
 
+    //On close, destroy the autocomplete
     SUGAR.expressions.closeFormulaBuilder = function()
     {
         $('#fb_ac_input').autocomplete( "destroy" );

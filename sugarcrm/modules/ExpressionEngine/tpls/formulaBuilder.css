@@ -133,3 +133,11 @@ input.empty {
 .fb_ac_spacer_line {
     width: 800px;
 }
+
+ul.ui-autocomplete {
+    /* top and left must be important as autocomplete normally tries to position itself via javascript */
+    left: 6px !important;
+    top:  2em !important;
+    position: relative;
+    width: 150px;
+}
