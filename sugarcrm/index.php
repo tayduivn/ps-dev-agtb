@@ -25,7 +25,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * First step in removing getimage -- at least this bypasses most of the app,
  * making the images load faster.
  */
-if(array_key_exists("entryPoint", $_GET) && $_GET["entryPoint"] = "getImage"){
+if(array_key_exists("entryPoint", $_GET) && $_GET["entryPoint"] == "getImage"){
 	require_once('include/SugarTheme/SugarTheme.php');
 	require_once('include/utils.php');
 	include("include/SugarTheme/getImage.php");
