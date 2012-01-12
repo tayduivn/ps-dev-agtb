@@ -98,8 +98,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $keyValues = array();
         foreach($searchFields as $fieldName => $fieldDef)
         {
-            //TODO: We may need to convert data at this point (date formats, etc) or go through SugarFields
-            if( isset($bean->$fieldName) )
+            //All fields have already been formatted to db values at this point so no further processing necessary
+            if( !empty($bean->$fieldName) )
                 $keyValues[$fieldName] = $bean->$fieldName;
         }
 
