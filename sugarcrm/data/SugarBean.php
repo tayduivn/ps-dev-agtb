@@ -4385,7 +4385,15 @@ function save_relationship_changes($is_update, $exclude=array())
                             if(!empty($this->$id_name) && file_exists($GLOBALS['beanFiles'][$class]) && isset($this->$name)){
                                 require_once($GLOBALS['beanFiles'][$class]);
                                 $mod = new $class();
+
+                                // disable row level security in order to be able
+                                // to retrieve related bean properties (bug #44928)
+                                $backup = $mod->disable_row_level_security;
+                                $mod->disable_row_level_security = true;
                                 $mod->retrieve($this->$id_name);
+
+                                // restore row level security settings
+                                $mod->disable_row_level_security = $backup;
                                 if (!empty($field['rname'])) {
                                     $this->$name = $mod->$field['rname'];
                                 } else if (isset($mod->name)) {
