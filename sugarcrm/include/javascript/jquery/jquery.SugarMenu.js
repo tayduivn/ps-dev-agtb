@@ -82,7 +82,11 @@
 						dropDownHandle.click(function(event){
 							//close all other open menus
 							$("ul.SugarActionMenu ul.subnav").each(function(subIndex, node){
-								$(node).slideUp(slideUpSpeed);	
+								var subjNode = $(node);
+								if(!(subjNode[0] === jNode[0])){
+									subjNode.slideUp(slideUpSpeed);	
+									subjNode.removeClass("ddopen");
+								}
 							});
 							if(jNode.hasClass("ddopen")){
 								jNode.slideUp(slideUpSpeed);
@@ -90,9 +94,21 @@
 							}
 							else{
 								jNode.slideDown(slideDownSpeed).show();
-								jNode.addClass("ddopen");	
+								jNode.addClass("ddopen");
 							}
+							event.stopPropagation();
 						});
+						
+						//add submenu click off to body
+						var jBody = $("body");
+						if(jBody.data("sugarActionMenu") != true){
+							jBody.data("sugarActionMenu", true);
+							jBody.bind("click", function(){
+								$("ul.SugarActionMenu ul.subnav").each(function(subIndex, node){
+									$(node).slideUp(slideUpSpeed);	
+								});
+							});
+						}
 					
 						//add hover handler to handle
 						dropDownHandle.hover(function(){
@@ -103,12 +119,6 @@
 					
 						parent.append(dropDownHandle);
 					}
-					
-					//when mouse hovers out of the subnav, slid it back up
-					jNode.hover(function(){}, function(){
-						jNode.slideUp(slideUpSpeed);
-						jNode.removeClass("ddopen");
-					});
 					
 					//bind click event to submenu items to hide the menu on click
 					jNode.find("li").each(function(index, subnode){

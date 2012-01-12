@@ -98,6 +98,16 @@ firstHit = false;
 	$("ul.clickMenu").each(function(index, node){
   		$(node).sugarActionMenu();
   	});
+	
+	//Fix show more/show less buttons in top action menus
+	$("[class^='moduleMenuOverFlow']").each(function(index,node){
+	    var jNode = $(node);
+	    jNode.unbind("click");
+		jNode.click(function(event){
+			event.stopPropagation();
+		});
+	    
+	});
 
 	
     $("#arrow").click(function(){
