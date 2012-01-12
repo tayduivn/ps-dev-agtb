@@ -273,25 +273,12 @@ if(true) {
 	    //END SUGARCRM flav!=sales ONLY
 	}
 
-    //BEGIN SUGARCRM flav!=sales ONLY
-    // create option of "Contact/Lead/Task" from corresponding module
-    // translations
-    $lblContactAndOthers = implode('/', array(
-        $app_list_strings['moduleListSingular']['Contacts'],
-        $app_list_strings['moduleListSingular']['Leads'],
-        $app_list_strings['moduleListSingular']['Tasks'],
-    ));
-    //END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=sales ONLY
-    $lblContactAndOthers = $app_list_strings['moduleListSingular']['Contacts'];
-    //END SUGARCRM flav=sales ONLY
-
 	// The insert variable drodown should be conditionally displayed.
 	//BEGIN SUGARCRM flav!=sales ONLY
 	// If it's campaign then hide the Account.
 	if($has_campaign) {
 	    $dropdown="<option value='Contacts'>
-						".$lblContactAndOthers."
+						".$mod_strings['LBL_CONTACT_AND_OTHERS']."
 			       </option>";
 	     $xtpl->assign("DROPDOWN",$dropdown);
 	     $xtpl->assign("DEFAULT_MODULE",'Contacts');
@@ -299,13 +286,13 @@ if(true) {
 	} else {
     //END SUGARCRM flav!=sales ONLY
 	     $dropdown="<option value='Accounts'>
-						".$app_list_strings['moduleListSingular']['Accounts']."
+						".$mod_strings['LBL_ACCOUNT']."
 		  	       </option>
 			       <option value='Contacts'>
-						".$lblContactAndOthers."
+						".$mod_strings['LBL_CONTACT_AND_OTHERS']."
 			       </option>
 			       <option value='Users'>
-						".$app_list_strings['moduleListSingular']['Users']."
+						".$mod_strings['LBL_USERS']."
 			       </option>";
 		$xtpl->assign("DROPDOWN",$dropdown);
 		$xtpl->assign("DEFAULT_MODULE",'Accounts');
