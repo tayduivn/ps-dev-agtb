@@ -1188,7 +1188,7 @@ $mod_strings = array (
 
     //FTS
     'LBL_FTS_TYPE' => 'System Type',
-    'LBL_FTS_URL' => 'Url',
+    'LBL_FTS_HOST' => 'Host',
     'LBL_FTS_PORT' => 'Port',
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
     'LBL_FTS_TEST' => 'Test'

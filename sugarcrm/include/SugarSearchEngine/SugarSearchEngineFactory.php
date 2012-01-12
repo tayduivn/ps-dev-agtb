@@ -42,7 +42,7 @@ class SugarSearchEngineFactory
      * @static
      * @return SugarSearchEngineInterface
      */
-    public static function getInstance($name = '', $config)
+    public static function getInstance($name = '', $config = array())
     {
        if (!isset(self::$_instance[$name]))
        {

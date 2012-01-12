@@ -62,8 +62,14 @@ class ViewConfigureFts extends SugarView
     public function display()
     {
         global $sugar_config, $app_list_strings;
-        $this->ss->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], ''));
 
+        $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
+        $defaultEngine = $engines[0];
+        $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
+
+        $this->ss->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
+        $this->ss->assign("fts_host", $config['host']);
+        $this->ss->assign("fts_port", $config['port']);
         $this->ss->assign('title',$this->getModuleTitle(false));
         echo $this->ss->fetch('modules/Administration/templates/ConfigureFTS.tpl');
     }

@@ -51,20 +51,20 @@
             <td width="85%" align="left" valign="middle"><select name="fts_type" id="fts_type">{$fts_type}</select></td>
         </tr>
         <tr>
-            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_URL}&nbsp;</td>
-            <td width="85%" align="left" valign="middle"><input type="text" name="fts_url" id="fts_url" value=""></td>
+            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}&nbsp;</td>
+            <td width="85%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}"></td>
         </tr>
         <tr>
             <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}&nbsp;</td>
-            <td width="85%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value=""></td>
+            <td width="85%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}"></td>
         </tr>
         <tr>
             <td colspan="2">&nbsp;</td>
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td align="left">
-                <input title="{$MOD.LBL_FTS_TEST}" accessKey="{$MOD.LBL_FTS_TEST}" class="button" onclick="SUGAR.FTS.testSettings();" value="{$MOD.LBL_FTS_TEST}"/>
+            <td>
+                <input type="button" title="{$MOD.LBL_FTS_TEST}" accessKey="{$MOD.LBL_FTS_TEST}" class="button" onclick="SUGAR.FTS.testSettings();" value="{$MOD.LBL_FTS_TEST}"/>
             </td>
         </tr>
     </tbody>
@@ -83,7 +83,7 @@
 
         testSettings : function()
         {
-            var host = document.getElementById('fts_url').value;
+            var host = document.getElementById('fts_host').value;
             var port = document.getElementById('fts_port').value;
             var typeEl = document.getElementById('fts_type');
             var type = typeEl.options[typeEl.selectedIndex].value;
@@ -135,5 +135,5 @@
     {/literal}
 addForm('ConfigureFTS');
 addToValidateMoreThan('ConfigureFTS', 'fts_port', 'int', true, '{$MOD.LBL_FTS_PORT}', 1);
-addToValidate('ConfigureFTS', 'fts_url', 'varchar', 'true', '{$MOD.LBL_FTS_URL}');
+addToValidate('ConfigureFTS', 'fts_host', 'varchar', 'true', '{$MOD.LBL_FTS_URL}');
 </script>
