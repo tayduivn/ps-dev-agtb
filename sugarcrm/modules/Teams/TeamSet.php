@@ -264,6 +264,11 @@ class TeamSet extends SugarBean{
      */
     public static function getTeamSetIdsForUser($user_id)
     {
+        $cacheKey = "teamSetIdByUser{$user_id}";
+        $cachedResults = sugar_cache_retrieve($cacheKey);
+        if($cachedResults)
+            return $cachedResults;
+
         $results = array();
         $sql = "SELECT tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
                 AND team_memberships.user_id = '$user_id' AND team_memberships.deleted=0 group by tst.team_set_id";
@@ -272,6 +277,7 @@ class TeamSet extends SugarBean{
         {
             $results[] = $row['team_set_id'];
         }
+        sugar_cache_put($cacheKey, $results);
         return $results;
     }
     /**
