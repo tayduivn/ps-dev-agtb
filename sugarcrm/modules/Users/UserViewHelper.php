@@ -803,7 +803,6 @@ class UserViewHelper {
             $mail_smtpuser = "";
             $mail_smtppass = "";
             $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
-            $hide_if_can_use_default = true;
             $mail_smtpauth_req=true;
             
             if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() ) {
@@ -815,9 +814,7 @@ class UserViewHelper {
                 }
                 
                 
-                if(!$mail_smtpauth_req &&
-                   ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser)
-                     || empty($systemOutboundEmail->mail_smtppass))) {
+                if(!$mail_smtpauth_req && (empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass))) {
                     $hide_if_can_use_default = true;
                 } else{
                     $hide_if_can_use_default = false;
