@@ -175,7 +175,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         if (!isset($_REQUEST['q'])) {
             return $ret;
         }
-        $q = trim($_REQUEST['q']);
+        $q = html_entity_decode(trim($_REQUEST['q']), ENT_QUOTES);
 
         $searches = explode(' ', $q);
 

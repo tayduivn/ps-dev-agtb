@@ -223,7 +223,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $results = null;
         try
         {
-            $queryObj = new Elastica_Query_QueryString($queryString);
+            $queryObj = new Elastica_Query_QueryString(html_entity_decode($queryString, ENT_QUOTES));
             $queryObj->setAnalyzeWildcard(false);
             $queryObj->setAutoGeneratePhraseQueries(false);
 
