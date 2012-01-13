@@ -177,18 +177,24 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         }
         $q = trim($_REQUEST['q']);
 
+        $searches = explode(' ', $q);
+
         $this->preTag = $preTag;
         $this->postTag = $postTag;
-
-        $pattern = '/' . str_replace('*', '.*?', $q) . '/i';
 
         $hit = $this->elasticaResult->getHit();
         if (isset($hit['_source']) && is_array($hit['_source'])) {
 
             foreach ($hit['_source'] as $field=>$value) {
-                $tmp = preg_replace_callback($pattern, array($this, 'highlight_callback'), $value, -1, $count);
-                if ($count > 0) {
-                    $ret[$field] = $this->post_process_highlights($tmp, $maxLen, $maxHits);
+                foreach ($searches as $search) {
+                    if (empty($search)) {
+                        continue;
+                    }
+                    $pattern = '/' . str_replace('*', '.*?', $search) . '/i';
+                    $value = preg_replace_callback($pattern, array($this, 'highlight_callback'), $value, -1, $count);
+                    if ($count > 0) {
+                        $ret[$field] = $this->post_process_highlights($value, $maxLen, $maxHits);
+                    }
                 }
             }
         }
