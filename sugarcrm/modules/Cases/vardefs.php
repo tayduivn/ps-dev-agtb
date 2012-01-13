@@ -52,6 +52,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     'type'=>'text',
     'len' => 100,
     'importable' => 'false',
+    'studio' => array("formula" => false),
   ),
 
     'account_id'=>

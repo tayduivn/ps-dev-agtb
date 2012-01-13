@@ -19,14 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<link rel="stylesheet" type="text/css" href="include/javascript/markitup/skins/simple/style.css" />
+<link rel="stylesheet" type="text/css" href="include/javascript/markitup/sets/default/style.css" />
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ExpressionEngine/tpls/formulaBuilder.css'}" />
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
-		<textarea type="text" name="formulaInput" id="formulaInput" style="width:480px;height:120px;">{$formula}</textarea>
-		{*<span class="id-ff multiple"><button id="formulaInputClear" class="button"
-            onclick="Dom.get('formulaInput').value='';">
-                {sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}
-        </button></span>*}
+		<textarea type="text" name="formulaInput" id="formulaInput" style="width:480px;height:120px;position: relative;z-index:50">{$formula}</textarea>
 	</td></tr>
 	<tr>
 		<td id="functionsList" width="200">
@@ -51,10 +49,12 @@
 </table>
 <div style="width:100%;text-align:right">
 <input type='button' class='button' name='formulacancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'
-	onclick="ModuleBuilder.formulaEditorWindow.hide()" >
+	onclick="SUGAR.expressions.closeFormulaBuilder()" >
 <input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}'
-	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))ModuleBuilder.formulaEditorWindow.hide()">
+	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))SUGAR.expressions.closeFormulaBuilder()">
 </div>
+<script src="{sugar_getjspath file='include/javascript/markitup/jquery.markitup.js'}"></script>
+<script src="{sugar_getjspath file='include/javascript/markitup/sets/default/set.js'}"></script>
 <script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
 <script type="text/javascript">
 {literal}

@@ -325,7 +325,9 @@ class Zend_Oauth_Provider
 
         if($this->needsToken()) {
             $this->token = $params['oauth_token'];
-            $this->verifier = $params['oauth_verifier'];
+            if(isset($params['oauth_verifier'])) {
+                $this->verifier = $params['oauth_verifier'];
+            }
             if(!is_callable($this->tokenHandler)) {
                 throw new Zend_Oauth_Exception("Token handler not callable", self::TOKEN_REJECTED);
             }

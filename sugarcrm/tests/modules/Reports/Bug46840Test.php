@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,55 +22,36 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('modules/Emails/Email.php');
 
-class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
+require_once('modules/Reports/Report.php');
+
+class Bug46840Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    private $reportInstance;
+
+	public function setUp()
     {
-        global $current_user;
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-    }
-    
-    public function tearDown()
-    {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-    }
+    	$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
 
-    /**
-     * Save a SugarFolder 
-     */
-    public function testSaveNewFolder()
-    {
-        $this->markTestIncomplete('This test takes to long to run');
-        return;
-        
-        global $current_user, $app_strings;
+	public function tearDown()
+	{
+	    unset($GLOBALS['current_user']);
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+	    unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
+	}
 
-        $email = new Email();
-        $email->type = 'out';
-        $email->status = 'sent';
-        $email->from_addr_name = $email->cleanEmails("sender@domain.eu");
-        $email->to_addrs_names = $email->cleanEmails("to@domain.eu");
-        $email->cc_addrs_names = $email->cleanEmails("cc@domain.eu");
-        $email->save();
-
-        $_REQUEST["emailUIAction"] = "getSingleMessageFromSugar";
-        $_REQUEST["uid"] = $email->id;
-        $_REQUEST["mbox"] = "";
-        $_REQUEST['ieId'] = "";
-        ob_start();
-        require "modules/Emails/EmailUIAjax.php";
-        $jsonOutput = ob_get_contents();
-        ob_end_clean();
-        $meta = json_decode($jsonOutput);
-
-        $this->assertRegExp("/.*cc@domain.eu.*/", $meta->meta->email->cc);
-    }
-    
+	function testQuarter()
+	{
+	    // Summary report for Opportunities grouped by quarter
+	    $report = new Report('{"display_columns":[],"module":"Opportunities","group_defs":[{"name":"date_closed","label":"Quarter: Expected Close Date","column_function":"quarter","qualifier":"quarter","table_key":"self","type":"date"}],"summary_columns":[{"name":"date_closed","label":"Quarter: Expected Close Date","column_function":"quarter","qualifier":"quarter","table_key":"self"},{"name":"count","label":"Count","field_type":"","group_function":"count","table_key":"self"}],"report_name":"test report","chart_type":"none","do_round":1,"chart_description":"","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"summary","full_table_list":{"self":{"value":"Opportunities","module":"Opportunities","label":"Opportunities"}},"filters_def":{"Filter_1":{"operator":"AND"}}}');
+	    $report->run_summary_query();
+	    $this->assertNotEmpty($report->summary_result);
+	}
 }
-
-

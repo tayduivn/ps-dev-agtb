@@ -29,8 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/SugarObjects/templates/person/Person.php');
 
-require_once('include/SugarObjects/templates/person/Person.php');
-
 class Prospect extends Person {
     var $field_name_map;
 	// Stored fields
@@ -90,7 +88,7 @@ class Prospect extends Person {
 	var $object_name = "Prospect";
 	var $new_schema = true;
 	var $emailAddress;
-	
+
 	var $importable = true;
     // This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name');
@@ -99,12 +97,12 @@ class Prospect extends Person {
 	function Prospect() {
 		parent::Person();
 		//BEGIN SUGARCRM flav=pro ONLY
-		global $current_user;	
+		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
-		}		
+		}
 		//END SUGARCRM flav=pro ONLY
 	}
 
@@ -136,7 +134,7 @@ class Prospect extends Person {
 						//join email address table too.
 						$query .=  ' LEFT JOIN  email_addr_bean_rel on prospects.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Prospects\' and email_addr_bean_rel.primary_address=1 and email_addr_bean_rel.deleted=0';
 						$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
-						
+
 						if($custom_join){
   							$query .= $custom_join['join'];
 						}
@@ -154,15 +152,15 @@ class Prospect extends Person {
                 return $query;
         }
 
-    
-	function fill_in_additional_list_fields() 
+
+	function fill_in_additional_list_fields()
 	{
 		parent::fill_in_additional_list_fields();
-		$this->_create_proper_name_field();		
+		$this->_create_proper_name_field();
 		$this->email_and_name1 = $this->full_name." &lt;".$this->email1."&gt;";
 	}
 
-	function fill_in_additional_detail_fields() 
+	function fill_in_additional_detail_fields()
 	{
 		parent::fill_in_additional_list_fields();
 		$this->_create_proper_name_field();
@@ -255,7 +253,7 @@ class Prospect extends Person {
                 	$sel_fields .= $module_name.".".$field;
                 }
                 if($index < $count){
-                    $sel_fields .= ",";  
+                    $sel_fields .= ",";
                 }
                 $index++;
             }
@@ -288,23 +286,23 @@ class Prospect extends Person {
      *  and retrieve the correct type for this id
      */
     function retrieveTarget($id){
-        $query = "SELECT related_id, related_type FROM prospect_lists_prospects WHERE id = '".$id."'";
+        $query = "SELECT related_id, related_type FROM prospect_lists_prospects WHERE id = '".$this->db->quote($id)."'";
         $result = $this->db->query($query);
         if(($row = $this->db->fetchByAssoc($result))){
-             global  $beanList, $beanFiles; 
+             global  $beanList, $beanFiles;
              $module_name = $row['related_type'];
              $class_name = $beanList[$module_name];
              require_once($beanFiles[$class_name]);
              $seed = new $class_name();
-             return $seed->retrieve($row['related_id']);        
+             return $seed->retrieve($row['related_id']);
         }else{
-            return null;   
+            return null;
         }
     }
 
-    
+
 	function get_unlinked_email_query($type=array()) {
-		
+
 		return get_unlinked_email_query($type, $this);
 	}
 }

@@ -150,6 +150,23 @@ class OAuthToken extends SugarBean
 	}
 
 	/**
+	 * Create a new authorized token for specific user
+	 * This bypasses normal OAuth process and creates a ready-made access token
+	 * @param OAuthKey $consumer
+	 * @param User $user
+	 * @return OAuthToken
+	 */
+	public static function createAuthorized($consumer, $user)
+	{
+	    $token = self::generate();
+	    $token->setConsumer($consumer);
+	    $token->setState(self::ACCESS);
+	    $token->assigned_user_id = $user->id;
+        $token->save();
+        return $token;
+	}
+
+	/**
 	 * Authorize request token
 	 * @param mixed $authdata
 	 * @return string Validation token
@@ -226,10 +243,37 @@ class OAuthToken extends SugarBean
 	    return Zend_Oauth_Provider::OK;
 	}
 
+	/**
+	 * Delete token by ID
+	 * @param string id
+	 * @see SugarBean::mark_deleted($id)
+	 */
 	public function mark_deleted($id)
 	{
 	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
 	}
+
+	/**
+	 * Delete tokens by consumer ID
+	 * @param string $user
+	 */
+	public static function deleteByConsumer($consumer_id)
+	{
+	   global $db;
+	   $db->query("DELETE FROM oauth_tokens WHERE consumer='".$db->quote($consumer_id) ."'");
+	}
+
+	/**
+	 * Delete tokens by user ID
+	 * @param string $user
+	 */
+	public static function deleteByUser($user_id)
+	{
+	   global $db;
+	   $db->query("DELETE FROM oauth_tokens WHERE assigned_user_id='".$db->quote($user_id) ."'");
+	}
+
+
 }
 
 function displayDateFromTs($focus, $field, $value, $view='ListView')

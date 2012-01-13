@@ -17,11 +17,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
+ *to the License foru the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 require_once 'include/MVC/SugarModule.php';
+require_once 'modules/OAuthKeys/OAuthKey.php';
+require_once 'modules/OAuthTokens/OAuthToken.php';
+
 /**
  * SNIP data handling implementation
  */
@@ -29,6 +32,7 @@ class SugarSNIP
 {
     // Username for SNIP system user
     const SNIP_USER = 'SNIPuser';
+    const OAUTH_KEY = 'SNIPOAuthKey';
     const DEFAULT_URL = 'http://ease.sugarcrm.com:20010/';
 
     /**
@@ -48,6 +52,18 @@ class SugarSNIP
      * @var mixed
      */
     public $last_result;
+
+    /**
+     * SNIP user
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * SNIP OAuth token
+     * @var OAuthToken
+     */
+    protected $token;
 
     /**
      * Get instance of the SNIP client
@@ -78,6 +94,11 @@ class SugarSNIP
         return $this;
     }
 
+    protected function getKey()
+    {
+        return md5($this->config['unique_key'].$this->getURL());
+    }
+
     /**
      * Generic REST call to SNIP instance
      *
@@ -97,6 +118,7 @@ class SugarSNIP
 
         $url .= $name;
         $params["sugarkey"] = $this->config['unique_key'];
+        $params["idkey"] = $this->getKey();
         if($json) {
             $postArgs = http_build_query(array('data' => json_encode($params)));
         } else {
@@ -145,11 +167,20 @@ class SugarSNIP
 
         $snipuser = $this->getSnipUser();
 
-        $request = array ('sugarkey' => $sugar_config['unique_key'],
+        $request = array (
                         'user' => $snipuser->user_name,
                         'password' => $snipuser->user_hash,
                         'client_api_url' => $this->getURL(),
-                        'license' => $license);
+                        'license' => $license,
+            );
+        $token = $this->getSnipToken();
+        if(!empty($token)) {
+            $consumer = $this->getSnipConsumer();
+            $request['oauth_token'] = $token->token;
+            $request['oauth_secret'] = $token->secret;
+            $request['consumer_key'] = $consumer->c_key;
+            $request['consumer_secret'] = $consumer->c_secret;
+        }
 
         $response = $this->callRest('register', $request, true, $connectionfailed);
 
@@ -172,6 +203,7 @@ class SugarSNIP
     {
         $admin = new Administration();
         $admin->saveSetting('snip', 'email', $email);
+        $admin->saveSetting('snip', 'key', $this->getKey());
         return $this;
     }
 
@@ -198,10 +230,14 @@ class SugarSNIP
 
         $connectionfailed = false;
         $snipuser = $this->getSnipUser();
-        $request = array ('sugarkey' => $sugar_config['unique_key'],
+        $request = array (
                         'user' => $snipuser->user_name,
                         'password' => $snipuser->user_hash);
-
+        $consumer = $this->getSnipConsumer();
+        if(!empty($consumer)) {
+            $request['consumer_key'] = $consumer->c_key;
+            $request['consumer_secret'] = $consumer->c_secret;
+        }
         $response = $this->callRest('unregister', $request, true, $connectionfailed);
 
         if ($connectionfailed)
@@ -212,6 +248,7 @@ class SugarSNIP
 
                 // change snip user's password for security purposes
                 $user = $this->getSnipUser();
+                $token = $this->deleteSnipTokens($user);
                 $user->user_hash = strtolower(md5(time().mt_rand()));
                 $user->save();
             }
@@ -226,8 +263,9 @@ class SugarSNIP
     */
     public function createPurchaseURL($snipuser)
     {
+        // NOT ACTIVE right now
         global $sugar_config;
-        $msg=base64_encode(json_encode(array('unique_key' => $sugar_config['unique_key'],
+        $msg=base64_encode(json_encode(array('unique_key' => $this->config['unique_key'],
                                                'snipuser'   => $snipuser->user_name,
                                                'password'   => $snipuser->user_hash)));
         return "localhost:8080/purchaseSnip?info=$msg";
@@ -335,6 +373,67 @@ class SugarSNIP
     }
 
     /**
+     * Get consumer key belonging to SNIP
+     * @return OAuthKey
+     */
+    protected function getSnipConsumer()
+    {
+        $consumer = OAuthKey::fetchKey(self::OAUTH_KEY);
+        if(empty($consumer)) {
+            $consumer = new OAuthKey();
+            $consumer->c_key = self::OAUTH_KEY;
+            $consumer->c_secret = bin2hex(Zend_Oauth_Provider::generateToken(16));
+            $consumer->name = self::OAUTH_KEY;
+            $consumer->description = translate('LBL_SNIP_KEY_DESC', 'SNIP');
+            $consumer->save();
+        }
+        return $consumer;
+    }
+
+    /**
+     * Get OAuth token for SNIP user
+     * @return OAuthToken
+     */
+    protected function getSnipToken()
+    {
+        if(empty($this->token)) {
+            $user = $this->getSnipUser();
+            if(!empty($user->authenticate_id)) {
+                $this->token = OAuthToken::load($user->authenticate_id);
+            }
+            if(empty($this->token)) {
+                $this->token = $this->createSnipToken($user);
+            }
+        }
+        return $this->token;
+    }
+
+    /**
+     * Create oauth token for the SNIP user
+     * @param User $user
+     */
+    protected function createSnipToken($user)
+    {
+        $consumer = $this->getSnipConsumer();
+        $token = OAuthToken::createAuthorized($consumer, $user);
+        $user->authenticate_id = $token->token;
+        $user->save();
+    }
+
+    /**
+     * Create oauth token for the SNIP user
+     * @param User $user
+     */
+    protected function deleteSnipTokens($user)
+    {
+        $consumer = $this->getSnipConsumer();
+        if(!empty($consumer)) {
+            OAuthToken::deleteByConsumer($consumer->id);
+        }
+        OAuthToken::deleteByUser($user->id);
+    }
+
+    /**
      * Create user to use for SNIP imports
      * @return User
      */
@@ -349,10 +448,13 @@ class SugarSNIP
         $user->status='Reserved';
         $user->receive_notifications = 0;
         $user->is_admin = 0;
-        $user->user_hash = strtolower(md5(time().mt_rand()));
+        $user->user_hash = md5(uniqid().microtime().mt_rand());
         $user->default_team = '1';
         $user->created_by = '1';
+        $user->external_auth_only = 1;
         $user->save();
+        // create oauth token
+        $this->createSnipToken($user);
         return $user;
     }
 
@@ -362,7 +464,9 @@ class SugarSNIP
      */
     public function getSnipUser()
     {
-
+        if($this->user) {
+            return $this->user;
+        }
         $id = User::retrieve_user_id(self::SNIP_USER);
 
         if(!$id) {
@@ -370,6 +474,9 @@ class SugarSNIP
         }
         $u = new User();
         $u->retrieve($id);
+        if(!empty($u->id)) {
+            $this->user = $u;
+        }
         return $u;
     }
 

@@ -21,55 +21,53 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('modules/Emails/Email.php');
 
-class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
+require_once 'include/tcpdf/tcpdf.php';
+require_once 'include/SugarCache/SugarCacheFile.php';
+require_once 'modules/Import/sources/ImportFile.php';
+require_once 'Zend/Http/Response.php';
+
+class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+
+    public function testSugarCacheFile()
     {
-        global $current_user;
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
+        if(file_exists(sugar_cached("testevil.php"))) @unlink(sugar_cached("testevil.php"));
+        $obj = 'test';
+        try {
+            $obj = unserialize('O:14:"SugarCacheFile":3:{s:13:"_cacheChanged";b:1;s:14:"_cacheFileName";s:12:"testevil.php";s:11:"_localStore";b:1;}');
+        } catch(Exception $e) {
+            $obj = null;
+        }
+        $this->assertNull($obj);
+        unset($obj); // call dtor if object created
+        $this->assertFileNotExists(sugar_cached("testevil.php"));
     }
-    
-    public function tearDown()
+
+    public function getDestructors()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        return array(
+            array("SugarCacheFile"),
+            array("SugarTheme"),
+            array("tcpdf"),
+            array("ImportFile"),
+            array("Zend_Http_Response_Stream"),
+        );
     }
 
     /**
-     * Save a SugarFolder 
+     * @dataProvider getDestructors
+     *
      */
-    public function testSaveNewFolder()
+    public function testUnserializeExcept($name)
     {
-        $this->markTestIncomplete('This test takes to long to run');
-        return;
-        
-        global $current_user, $app_strings;
-
-        $email = new Email();
-        $email->type = 'out';
-        $email->status = 'sent';
-        $email->from_addr_name = $email->cleanEmails("sender@domain.eu");
-        $email->to_addrs_names = $email->cleanEmails("to@domain.eu");
-        $email->cc_addrs_names = $email->cleanEmails("cc@domain.eu");
-        $email->save();
-
-        $_REQUEST["emailUIAction"] = "getSingleMessageFromSugar";
-        $_REQUEST["uid"] = $email->id;
-        $_REQUEST["mbox"] = "";
-        $_REQUEST['ieId'] = "";
-        ob_start();
-        require "modules/Emails/EmailUIAjax.php";
-        $jsonOutput = ob_get_contents();
-        ob_end_clean();
-        $meta = json_decode($jsonOutput);
-
-        $this->assertRegExp("/.*cc@domain.eu.*/", $meta->meta->email->cc);
+        $len = strlen($name);
+        $obj = 'test';
+        try {
+            $obj = unserialize("O:$len:\"$name\":1:{s:4:\"test\";b:1;}");
+        } catch(Exception $e) {
+             $obj = null;
+        }
+        $this->assertEmpty($obj);
     }
-    
 }
-
-

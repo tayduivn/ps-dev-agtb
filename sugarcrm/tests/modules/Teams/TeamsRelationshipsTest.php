@@ -43,7 +43,7 @@ class TeamsRelationshipsTest extends Sugar_PHPUnit_Framework_TestCase
    
 	public function setUp() 
     {
-    	$this->markTestSkipped(
+    	$this->markTestIncomplete(
               'fixing this test'
             );
 		require('include/modules.php');

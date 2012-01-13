@@ -182,6 +182,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'bean_name'=>'Email',
     'source'=>'non-db',
     'vname'=>'LBL_EMAILS',
+    'studio' => array("formula" => false),
   ),
   'documents'=>
   array (
@@ -221,6 +222,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
 	    'reportable'=>false,
 	    'unified_search' => true,
 	    'rel_fields' => array('primary_address' => array('type'=>'bool')),
+        'studio' => array("formula" => false),
 	),
   	'email_addresses_primary' =>
 	array (
@@ -230,6 +232,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
         'source' => 'non-db',
 		'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
 		'duplicate_merge'=> 'disabled',
+        'studio' => array("formula" => false),
 	),
   'opportunities' =>
   array (
@@ -297,6 +300,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     	'bean_name'=>'CampaignLog',
     	'source'=>'non-db',
 		'vname'=>'LBL_CAMPAIGNLOG',
+        'studio' => array("formula" => false),
   ),  
   'campaign_accounts' =>
     array (

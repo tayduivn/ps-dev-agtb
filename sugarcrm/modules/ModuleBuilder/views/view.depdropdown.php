@@ -67,7 +67,7 @@ class ViewDepDropdown extends SugarView
             $childOptionsArray[] = array("value" => $value, "label" => $label);
         }
         $this->ss->assign("childOptions",  json_encode($childOptionsArray));
-        $this->ss->display("modules/Modulebuilder/tpls/depdropdown.tpl");
+        $this->ss->display("modules/ModuleBuilder/tpls/depdropdown.tpl");
     }
 
 

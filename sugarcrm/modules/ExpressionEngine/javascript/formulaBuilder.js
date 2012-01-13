@@ -36,7 +36,8 @@ SUGAR.expressions.initFormulaBuilder = function() {
 /**
  * Run through the javascript function cache to find all the loaded functions.
  */
-SUGAR.expressions.getFunctionList = function(){
+SUGAR.expressions.getFunctionList = function()
+{
 	var typeMap = SUGAR.expressions.Expression.TYPE_MAP;
 	var funcMap = SUGAR.FunctionMap;
 	var funcList = [];
@@ -88,6 +89,10 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 	}
 }
 
+    /**
+     * Recursively checks the paramaers passed to all the functions in the formula.
+     * @param t expression function
+     */
 SUGAR.expressions.validateReturnTypes = function(t)
 {
 	if (t.type == "function")
@@ -133,6 +138,10 @@ SUGAR.expressions.validateReturnTypes = function(t)
 	}
 };
 
+    /**
+     * validate functions with related fields which require a server call to validate
+     * @param t expression function
+     */
 SUGAR.expressions.validateRelateFunctions = function(t)
 {
 	var SU = SUGAR.util, SE = SUGAR.expressions;
@@ -176,7 +185,15 @@ SUGAR.expressions.validateRelateFunctions = function(t)
         return;
 	}
 };
-SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
+
+    /**
+     *  Grab and validate the current formula and validate it.
+     *  Exceptions will be thrown and caught if any errors are found.
+     * @param silent
+     * @param matchType
+     */
+SUGAR.expressions.validateCurrExpression = function(silent, matchType)
+{
 	try {
 		var varTypeMap = {};
 		for (var i = 0; i < fieldsArray.length; i++){
@@ -208,6 +225,12 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 		return false;
 	}
 }
+
+    /**
+     * If the current formula is valid, save it into the target id.
+     * @param target id of input element to save the formula into
+     * @param returnType - optional - the required return type of the formula.
+     */
 SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 {
 	if (!SUGAR.expressions.validateCurrExpression(true, returnType))
@@ -222,6 +245,9 @@ SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 	return true;
 }
 
+    /**
+     * YUI Tooltip displayed when hovering over the function list.
+     */
 SUGAR.expressions.GridToolTip = {
 	tipCache : { },
 	currentHelpFunc : "",
@@ -259,7 +285,10 @@ SUGAR.expressions.GridToolTip = {
 	}
 };
 
-	var typeFormatter = function(el, rec, col, data)
+	/*
+	 * Set up the function and field list s
+	 */
+    var typeFormatter = function(el, rec, col, data)
 	{
 		var out = "";
 		switch(data)
@@ -358,6 +387,8 @@ SUGAR.expressions.GridToolTip = {
 	fieldsGrid.sortColumn(fieldsGrid.getColumn(0))
 	fieldsGrid.render();
 	SUGAR.expressions.fieldGrid = fieldsGrid;
+
+    //Setup the function list
 	var functionsArray = SUGAR.expressions.getFunctionList();
 	var usedClasses = { };
 	if (!SUGAR.expressions.funcGridData) {
@@ -422,6 +453,7 @@ SUGAR.expressions.GridToolTip = {
 		    SUGAR.expressions.functionsGrid.sortedColumn = e.newValue;
 	});
 
+    //If the expression tooltip exists, destroy it to re-initialize
     if(SUGAR.expressions.tooltip){
 	    SUGAR.expressions.tooltip.destroy();
     }
@@ -467,7 +499,8 @@ SUGAR.expressions.GridToolTip = {
 			SUGAR.expressions.funcionListJSON[i] = {name: SUGAR.expressions.funcGridData[i][0], type: SUGAR.expressions.funcGridData[i][1]};
 		}
 	}
-	Dom.get("formulaFuncSearch").onkeyup = function() {
+	//Setup the listeners for the search function input
+    Dom.get("formulaFuncSearch").onkeyup = function() {
 		if (this.value == '') {
 			Dom.addClass(this, "empty");
 			var fg = SUGAR.expressions.functionsGrid;
@@ -498,4 +531,445 @@ SUGAR.expressions.GridToolTip = {
 	
 	if(ModuleBuilder && ModuleBuilder.formulaEditorWindow)
 		ModuleBuilder.formulaEditorWindow.center();
+
+
+    //Update functions for the rel field and rollup wizards.
+    //These must be global as the windows themselves will call them on change
+    SUGAR.expressions.updateSelRFLink = function(link)
+    {
+        var win = SUGAR.formulaRelFieldWin;
+        win.params = {
+            module:"ExpressionEngine",
+            action:"selectRelatedField",
+            tmodule:ModuleBuilder.module,
+            selLink:link,
+            package:ModuleBuilder.MBpackage
+        };
+        win.load(ModuleBuilder.paramsToUrl(win.params), null, function(){win.center();});
+    };
+
+    SUGAR.expressions.updateRollupWizard = function(link, type)
+    {
+        var win = SUGAR.rollupWindow;
+        win.params = {
+            module:"ExpressionEngine",
+            action:"rollupWizard",
+            tmodule:ModuleBuilder.module,
+            selLink:link,
+            type:type,
+            package:ModuleBuilder.MBpackage
+        };
+        win.load(ModuleBuilder.paramsToUrl(win.params), null, function(){win.center();});
+    };
+
+    SUGAR.expressions.insertRollup = function(){
+        $.markItUp({
+            closeWith: 'rollup' + $("#rollwiz_type").val() + '($' + $('#rollwiz_rmodule').val() + ', "' + $('#rollwiz_rfield').val() + '")'
+        });
+        SUGAR.rollupWindow.hide();
+    }
+
+    /**
+     * Set up the markitup on the formula input element.
+     * We want to allow tabs but don't override any other normal textbox actions
+     * The wizard buttons are set up here as well
+     */
+    $("#formulaInput").markItUp({
+    	onShiftEnter:  	{keepDefault:true},
+    	onCtrlEnter:  	{keepDefault:true},
+    	onTab:    		{keepDefault:false, replaceWith:'    '},
+    	markupSet:  [
+            {name:'Related Field', className:'rel_field',  beforeInsert:function(){
+                if (!SUGAR.formulaRelFieldWin)
+                    SUGAR.formulaRelFieldWin = new YAHOO.SUGAR.AsyncPanel('relatedFieldWindow', {
+                        width: 400,
+                        draggable: true,
+                        close: true,
+                        constraintoviewport: true,
+                        fixedcenter: false,
+                        script: false,
+                        modal: true
+                    });
+                var win = SUGAR.formulaRelFieldWin;
+                win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+                win.setBody("loading...");
+                win.render(document.body);
+                SUGAR.expressions.updateSelRFLink("");
+                win.show();
+                win.center();
+            }},
+            {name:'Rollup', className:'rollup',  beforeInsert:function(){
+                if (!SUGAR.rollupWindow)
+                    SUGAR.rollupWindow = new YAHOO.SUGAR.AsyncPanel('rollupWindow', {
+                        width: 400,
+                        draggable: true,
+                        close: true,
+                        constraintoviewport: true,
+                        fixedcenter: false,
+                        script: false,
+                        modal: true
+                    });
+                var win = SUGAR.rollupWindow;
+                win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+                win.setBody("loading...");
+                win.render(document.body);
+                SUGAR.expressions.updateRollupWizard("", "");
+                win.show();
+                win.center();
+            }}
+    	]
+    });
+
+    /****************
+     * This section sets up the formula builder autocomplete
+     */
+
+    //Insert the wrapper html
+    if($("#fb_ac_wrapper").length == 0){
+        $("body").append(
+            "<input id='fb_ac_input' style='display:none;z-index:50;position:relative'>" +
+            "<div id='fb_ac_wrapper' style='position: absolute;'>" +
+                "<div id='fb_ac_spacer'></div>" +
+            "</div>"
+        )
+        $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput"});
+    }
+
+
+    var fb_ac_open = false;
+    /**
+     * Gets the index of the first character in the current formula component (function or variable)
+     * @param val string formula
+     * @param offset current cursor position
+     */
+    var getCompStart = function(val, offset)
+    {
+        var start = 0,
+            chars = {",":"", ".":"", "(":"", ")":""};
+        for( var c in chars)
+        {
+            var pos = val.lastIndexOf(c, offset - 1);
+            if (pos !== false && pos > start)
+                start = pos + 1;
+        }
+        return start;
+    };
+    /**
+     * Gets the index of the last character in the current formula component (function or variable)
+     * @param val string formula
+     * @param integer offset current cursor position
+     */
+    var getCompEnd = function(val, offset)
+    {
+        var end = val.length;
+        for( var c in {",":0, ".":0, "(":0, ")":0})
+        {
+            var pos = val.indexOf(c, offset);
+            if (pos > -1 && pos < end)
+                end = pos;
+        }
+        return end;
+    };
+
+    /**
+     * Returns the text of the current formula component (function or variable)
+     * @param string val formula
+     * @param integer offset current cursor position
+     */
+    var getComponentText = function(val, offset)
+    {
+        var target = $("#formulaInput")[0];
+        val = typeof(val) == "undefined" ? $("#formulaInput").val() : val;
+        offset = typeof(offset) == "undefined" ? target.selectionEnd : offset;
+        //Start by getting everything back to the next comma, period, or (
+        var start = getCompStart(val, offset);
+        if (start > offset)
+            start = offset;
+        //Now find where the end point of the current string is
+        var end = getCompEnd(val, offset);
+
+        return $.trim(val.substring(start, end));
+    };
+
+    /**
+     * Used to find the parent function of the current component
+     * Walks back through the string with a counter finding the first open paren without a close.
+     * @param string val formula
+     * @param integer offset current cursor position
+     */
+    var getOpenParenIndex = function(val, offset){
+        var commas = 0, count = 0, inQuotes = false;
+        for (var i = offset; i > -1; i--)
+        {
+            if (inQuotes && val[i] != '"')
+                continue;
+            else if (val[i] == '"')
+                inQuotes = !inQuotes;
+            else if (val[i] == "(")
+            {
+                if (count > 0)
+                    count--;
+                else
+                    return [i, commas];
+            }
+            else if (val[i] == ")")
+                count++;
+            else if(val[i] == "," && count == 0)
+                commas++;
+        }
+        return -1;
+    };
+
+    /**
+     * Returns the expected return type based on the current cursor position in the formula
+     */
+    var getExpectedComponentType = function()
+    {
+        var target = $("#formulaInput")[0],
+            val = $("#formulaInput").val(),
+            offset = target.selectionEnd - 1,
+            start = getCompStart(val, offset);
+        if (start > offset)
+            start = offset;
+
+        //Find out the name of the calling function
+        var lastParen = getOpenParenIndex(val, start);
+        if (lastParen != -1)
+        {
+            var parent = getComponentText(val, lastParen[0] - 1);
+            var fMap = SUGAR.FunctionMap;
+            var see = SUGAR.expressions.Expression;
+
+            if(typeof(fMap[parent]) == "undefined")
+            {
+                console.log("unknown parent function: " + parent);
+                return false;
+            };
+
+            var types = fMap[parent].prototype.getParameterTypes();
+            var count = fMap[parent].prototype.getParamCount();
+            if (count != -1 && lastParen[1] >= count)
+            {
+                console.log("too many arguments!");
+                return false;
+            }
+            if($.isArray(types))
+            {
+                return types[lastParen[1]];
+            }
+            return types;
+        }
+
+        return false;
+    };
+
+    /**
+     * Return an array of all the field names from the current module of a given type
+     * Optionally it can take a search string to filter the fields by name
+     * @param type optional type of fields to return
+     * @param search string optional returns only fields containing the given string
+     * @param limit integer optional maximum number of items to return.
+     */
+    var getFieldsByType = function(type, search, limit ){
+        if (!type)
+            type = "generic";
+        if (search)
+            search  = search.toLowerCase();
+
+        var ret = [];
+        for(var i = 0; i < fieldsArray.length; i++)
+        {
+            var f = fieldsArray[i];
+            if ((type == "generic" || f[1] == type)
+                && (!search || f[0].toLowerCase().indexOf(search) > -1)
+            ){
+                ret.push(f[0]);
+            }
+
+            if (limit && ret.length >= limit)
+                break;
+        }
+        return ret;
+    };
+
+    /**
+     * Return an array of all the function names from the current module of a given type
+     * Optionally it can take a search string to filter the fields by name
+     * @param type optional type of fields to return
+     * @param search string optional returns only fields containing the given string
+     * @param limit integer optional maximum number of items to return.
+     */
+    var getFunctionsByType = function(type, search, limit)
+    {
+        if (!type)
+            type = "generic";
+        if (search)
+            search  = search.toLowerCase();
+
+        var ret = [],
+            fMap = SUGAR.FunctionMap,
+        	see = SUGAR.expressions.Expression;
+        for(var i in fMap)
+        {
+            try{
+                if ((!search || i.toLowerCase().indexOf(search) > -1)
+                    && see.prototype.isProperType(fMap[i].prototype, type)
+                ){
+                    ret.push(i);
+                }
+            }catch(e){
+                console.log(i);
+            }
+
+            if (limit && ret.length >= limit)
+                break;
+        }
+        return ret;
+    }
+
+    /**
+     * replace the contents on the hiden spacers that float left and push the ac widget in line with the cursor
+     */
+    var updateACSpacer = function()
+    {
+        var val = $("#formulaInput").val(),
+            rows = val.substring(0, $("#formulaInput")[0].selectionEnd, true).split("\n"),
+            html = "";
+
+        for(var i=0; i < rows.length; i++)
+        {
+            //The last row should be trimmed to just the content before the start of the current component
+            if (i == rows.length - 1)
+            {
+                //If this is the first component in this row, just leave any leading whitespace
+                var start = getCompStart(rows[i], rows[i].length - 1);
+                if (start == 0){
+                    rows[i] = new RegExp("^\\s*").exec(rows[i])[0];
+                } else {
+                    rows[i] = rows[i].substring(0, start);
+                }
+            }
+            var line = htmlentities(rows[i], "ENT_NOQUOTES").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;").replace(/ /g, "&nbsp;");
+            html += "<div class='fb_ac_spacer"+ (i != rows.length - 1 ? " fb_ac_spacer_line'>" : "'>") + line + "</div>";
+        }
+
+        //Clear the old spacer
+        $("#fb_ac_wrapper .fb_ac_spacer").remove();
+        //Insert the new spacer before the autocomplete widget
+        $("#fb_ac_wrapper ul.ui-autocomplete").before(html);
+    }
+
+    //Initialize the Autocomplete. It will used a hidden input that is updated by a listener on the formula input
+    $( "#fb_ac_input" ).autocomplete({
+        source: function(e, fn){
+            //Fields
+            if(e.term[0] == "$")
+            {
+                fn(getFieldsByType(getExpectedComponentType(), e.term.substr(1), 10));
+            }
+            else {
+                fn(getFunctionsByType(getExpectedComponentType(), e.term, 10));
+            }
+        },
+        appendTo: "#fb_ac_wrapper",
+        position: { my : "left top", at: "left top"},
+        open: function(event, ui) {
+            fb_ac_open = true;
+            //Set the content of the spacer to the same as the formula input to offset the autocomplete location by that amount
+            updateACSpacer();
+        },
+        close: function(){
+            fb_ac_open = false;
+        },
+        select: function(event, ui) {
+            //On selection, relpace the currrent element in the forumla with the selection
+            var target = $("#formulaInput"),
+                el = target[0],
+                val = target.val(),
+                offset = el.selectionEnd,
+                start = getCompStart(val, offset),
+                end = getCompEnd(val, offset),
+                comp = getComponentText(),
+                selected = ui.item.value,
+                cursorOffset = 0;
+                if (start > offset)
+                    start = offset;
+
+            //Fields need the dollar sign replaced
+            if (comp[0] == "$")
+                selected = "$" + selected;
+            else if (val[getCompEnd(val, offset)] != "("){
+                selected += "(";
+                cursorOffset = 1;
+            }
+
+            var begin = val.substring(0, start);
+            var ending = val.substring(end);
+            //Refill any whitespace in front and back of the component
+            var ws = new RegExp("^(\\s+)[!\s]*").exec(val.substring(start, end));
+            if (ws) selected = ws[0] + selected;
+
+            ws = new RegExp("[!\s]*(\\s+)$").exec(val.substring(start, end));
+            if (ws) selected += ws[0];
+
+
+            //slice the selected item into the formula
+            target.val(begin + selected + ending);
+            end = getCompEnd(target.val(), offset) + cursorOffset,
+            el.setSelectionRange(end, end);
+            fb_ac_open = false;
+        }
+    });
+
+    //On keyup on the formula input, update the autocomplete widget after a 300ms delay
+    $("#formulaInput").keyup(function(e){
+        $("#fb_ac_input").val(getComponentText());
+        //$("#fb_ac_input").trigger(e);
+        if(!(e.keyCode == 38 || e.keyCode == 40) && e.keyCode != 13 && e.keyCode != 27)
+        {
+            if (SUGAR.expressions.fb_ac_timer)
+                window.clearTimeout(SUGAR.expressions.fb_ac_timer);
+
+            //Use a 300ms timer before showing/updating the autocomplete
+            SUGAR.expressions.fb_ac_timer = window.setTimeout(function(){
+                //Reposition the autocomplete wrapper if it closed as the window may have moved
+                if (!fb_ac_open){
+                    $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput", collision:"none"});
+                }
+                //DO not open the auto complete for moving the curser. Only modify it if its already open
+
+                if ((e.keyCode != 37 && e.keyCode != 39) || fb_ac_open){
+                    $( "#fb_ac_input" ).autocomplete("search", getComponentText());
+                }
+            }, 300);
+        }
+    })
+
+    //Pass keydown events from the formula input to the autocomplete
+    $("#formulaInput").keydown(function(e){
+        //Prevent arrow key default when the autocomplete is visible and pass it the event
+        if ((e.keyCode == 38 || e.keyCode == 40) && fb_ac_open){
+            e.preventDefault();
+        }
+
+        if(fb_ac_open)
+            $('#fb_ac_input').trigger(e);
+    })
+
+    //Allow the user to click out of the autocomplete
+    $("#formulaInput").click(function()
+    {
+        $( "#fb_ac_input" ).autocomplete("close");
+    });
+
+    //On close, destroy the autocomplete
+    SUGAR.expressions.closeFormulaBuilder = function()
+    {
+        $('#fb_ac_input').autocomplete( "destroy" );
+        $("#fb_ac_wrapper").remove();
+        ModuleBuilder.formulaEditorWindow.hide();
+    }
+
+
+
 };

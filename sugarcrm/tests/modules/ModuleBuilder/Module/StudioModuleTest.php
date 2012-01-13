@@ -28,7 +28,7 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function setUp()
     {
-        $this->markTestSkipped('skipping');
+        $this->markTestIncomplete('skipping');
 
         $beanList = array();
         $beanFiles = array();

@@ -30,7 +30,7 @@ class TrackerUpgradeDashletTest extends Sugar_PHPUnit_Framework_TestCase  {
 	var $defaultTrackingDashlets = array('TrackerDashlet', 'MyModulesUsedChartDashlet', 'MyTeamModulesUsedChartDashlet');
        
     function setUp() {
-    	 $this->markTestSkipped("Skipping unless otherwise specified");
+    	 $this->markTestIncomplete("Skipping unless otherwise specified");
     	
     	TrackerTestUtility::setUp(); 
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');      	

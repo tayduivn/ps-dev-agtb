@@ -53,6 +53,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $prefix.'modules/Emails'                => true,
             $prefix.'jssource'                      => true,
             $prefix.'modules/ModuleBuilder'			=> true,
+            $prefix.'include/javascript/jquery'     => true,
         );
 
         return $compress_exempt_files;

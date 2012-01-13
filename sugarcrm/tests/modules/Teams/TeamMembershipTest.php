@@ -34,7 +34,7 @@ class TeamMembershipTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp() 
     {
     	//TODO fix this test
-    	 $this->markTestSkipped(
+    	 $this->markTestIncomplete(
               'Need to ensure proper cleanup first.'
             );
         $time = date($GLOBALS['timedate']->get_db_date_time_format());
