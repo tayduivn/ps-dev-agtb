@@ -3889,7 +3889,7 @@ span.id-ff.multiple button.button.lastChild{
 }
 
 #moduleList .sf-menu ul.megamenu {
-	width: 606px;
+	width: 600px;
 }
 
 #moduleList .sf-menu ul li {
@@ -4113,7 +4113,7 @@ Mega Column Styles
 
 #moduleList .megawrapper {
 	float: left;
-	width: 606px;
+	width: 600px;
 }
 
 #moduleList .megacolumn {
@@ -4121,8 +4121,7 @@ Mega Column Styles
 	float: left;
 }
 
-#moduleList .megacolumn-content.first, #moduleList .megacolumn-content.second {
-	border-right: 1px solid #999;
+#moduleList .megacolumn-content.divider {
 	overflow: hidden;
 }
 
@@ -4164,6 +4163,7 @@ Mega Column Styles
 
 #moduleList .sf-menu ul .megawrapper ul li.groupLabel {
 	padding-left: 10px;
+	padding-bottom: 5px;
 }
 #moduleList .sf-menu ul .megawrapper ul li a{
 	font-weight: normal;
@@ -4179,351 +4179,10 @@ Mega Column Styles
     top: 0;
 }
 
-
-
-
-#moduleList.yuimenubar li {
-
-}
-
-#moduleList.yuimenubar li.current {
-
-}
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    #moduleList.yuimenubar li.current {
-    margin-top: 1px;
-    }
-}
-
-#moduleList.yui-module .bd, #moduleList div.themeTabGroupMenu, #moduleList > div.themeTabGroupMenu > div.bd {
-background-color: transparent;
-border: none;
-}
-
-#moduleList .yuimenu {
-border: none; 
-}
-
-#moduleList .yuimenu > div.hd{
-background: none transparent;
-border: 0px none;
-height: 0px;
-}
-
-#moduleList .yuimenu > div.bd {
-
-}
-
-#moduleList.yuimenubar {
-border: none;
-}
-
-#moduleList.yuimenubarnav .yuimenubaritem {
-border: none;
-}
-
-#moduleList.yuimenubarnav .yuimenubaritem.home {
-	height: 43px;
-}
-
-#moduleList.yuimenubar .yuimenuitemlabel.group img  {
-position: relative;
-left: 0px;
-}
-
-#moduleList.yuimenubar .moduleTabGroupMenu {
-float: right;
-}
-
-#moduleList.yuimenubar .yuimenuitemlabel.group {
-	
-}
-
-#moduleList.yuimenubar .yuimenuitemlabel.group img.folder  {
-margin-right:8px;
-top: -2px;
-}
-#moduleList.yuimenubar .yuimenuitemlabel.group img.arrow  {
-margin-left:8px;
-top: -2px;
-}
-
-#moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
-border: none;
-left: 0px;
-margin-left: 0px;
-background-color: #276499;
-}
-
-#moduleList.yuimenubar li.current .yuimenuitemlabel, li.current a.yuimenuitemlabel, li.current a.yuimenuitemlabel:link, li.current a.yuimenuitemlabel:visited {
-	
-	border-left: 0px;
-	color: #fff;
-	background-color: #276499;
-
-}
-
-
-#moduleList.yuimenubar li.current.home .yuimenuitemlabel, #moduleList.yuimenubarnav .home .yuimenubaritemlabel-selected {
-	height: 28px;
-    padding-bottom: 7px;	
-}
-
-
-@media screen and (-webkit-min-device-pixel-ratio:0) 
-{
-    #moduleList.yuimenubar li.currentTabRight .yuimenuitemlabel
-    {
-        margin-top: 1px;
-    }
-}
-
-#moduleList.yuimenubar li.currentTabRight + li  .yuimenuitemlabel {
-border-left: 1px solid transparent;
-}
-
-#moduleList .yuimenuitemlabel, a.yuimenuitemlabel, a.yuimenuitemlabel:link, a.yuimenuitemlabel:visited {
-background-color: transparent;
-cursor:pointer;
-border: none;
-color:#FFF;
-font-size: 14px;
-padding:8px 12px 8px 12px;
-margin-left: 0px;
-font-weight: normal;
-border-left: 0px none;
-}
-
-
-#moduleList .home > .yuimenuitemlabel, .home > a.yuimenuitemlabel, .home > a.yuimenuitemlabel:link, .home > a.yuimenuitemlabel:visited {
-		height: 28px;
-    padding-bottom: 7px;
-}
-
-#moduleList .yuimenuitemlabel img {
-	position: inherit;
-    vertical-align: inherit;
-    left: 0px;
-}
-
-#moduleList .dashletPanelMenu .yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel:link, .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel:link, li.current .dashletPanelMenu  a.yuimenuitemlabel:visited { 
-background: none;
-background-color: transparent;
-filter: none;
-cursor:pointer;
-border: none;
-color:#666;
-font-size: 13px;
-padding:4px 10px 4px 10px;
-margin-left: 0px;
-font-weight: normal;
-text-shadow: none;
-white-space: normal;
-}
-
-#moduleList .more > .dashletPanelMenu > .yuimenuitemlabel , .more > .dashletPanelMenu > a.yuimenuitemlabel, .more > .dashletPanelMenu > a.yuimenuitemlabel:link, .more > .dashletPanelMenu > a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .more > .dashletPanelMenu > .yuimenuitemlabel, li.current .more > .dashletPanelMenu > a.yuimenuitemlabel, li.current .more > .dashletPanelMenu > a.yuimenuitemlabel:link, #moduleList .moduleTabGroupMenu .dashletPanelMenu .yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:link, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel:link{ 
-
-}
-
-#moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover {
-background-color: #355b7e;
-color: #fff;
-}
-
-#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover,  #moduleList .more .yuimenuitemlabel-selected,  #moduleList .more .selected{
-background-color: #355b7e;
-color: #fff;
-}
-
-#moduleList .yui-menu-shadow-visible {
-	background-color: transparent;
-	opacity: 1;
-	filter: none;
-	top: 0px;
-	bottom: 0px;
-	left: 0;
-	right: 0;
-	overflow: visible; /* needed for FF MAC otherwise scrollbars sho */
-}
-
-#moduleList .dashletPanelMenu  {
-padding: 0px;
-padding: 0px\9; /*ie hack */
-background-color: rgba(0,0,0,.2);
-background-color: #cccccc\9;  /*ie hack */
-box-shadow: #999 0px 5px 10px;
--moz-box-shadow: #999 0px 5px 10px;
--webkit-box-shadow: #999 0px 5px 10px;
-border: 1px solid #999999;
-border-top: 0px;
-}
-
-#moduleList .more > .dashletPanelMenu,#moduleList .dashletPanelMenu.groupMenu  {
-width: 235px;
-padding: 10px\9; /*ie hack */
-background-color: #cccccc\9;  /*ie hack */
-}
-
-#moduleList .dashletPanelMenu .bd  {
-float: left;
-padding: 10px 0px 10px 0px;
-
-width: 606px;
-
-background-color: #ffffff;
-}
-
-#moduleList .more > .dashletPanelMenu > .bd, #moduleList .dashletPanelMenu.groupMenu .bd  {
-width: 235px;
-}
-
-
-#moduleList	.dashletPanelMenu .shadow-bd {
-	position: relative; 
-	padding: 0 22px;
-}
-
-#moduleList	.dashletPanelMenu .bd-center {
-		top: 15px;
-		position: relative;
-		width: 100%;
-		border: 1px solid #999999;
-		-moz-border-radius: 6px;
-		border-radius: 6px;
-		-webkit-border-radius: 6px;
-		background-color: #fff;
-	}
-#moduleList .dashletPanelMenu  .ml {
-		top:0;
-		left:0;
-		width:22px;
-		height: 100%;
-		position:absolute;
-		background:url(../../../../index.php?entryPoint=getImage&imageName=dp-ml-menu.png) repeat-y;
-	}
-#moduleList	.dashletPanelMenu  .mr {
-		width:22px;
-		top:0;
-		right:0;
-		height: 100%;
-		position:absolute;
-		background:url(../../../../index.php?entryPoint=getImage&imageName=dp-mr-menu.png) repeat-y;
-		z-index: -3;
-	}
-
-#moduleList .dashletPanelMenu .bd  ul.shortCutsUl {
-float: left;
-width: 202px;
-}
-
-#moduleList .dashletPanelMenu .bd  ul.lastViewedUl {
-float: left;
-width: 202px;
-border-top: 0px;
-}
-
-#moduleList .dashletPanelMenu .bd  ul.favoritesUl {
-float: left;
-width: 202px;
-border-top: 0px;
-}
-
-#moduleList .dashletPanelMenu .bd ul.shortCutsUl li:first-child, #moduleList .dashletPanelMenu .bd ul.lastViewedUl li:first-child, #moduleList .dashletPanelMenu .bd ul.favoritesUl li:first-child {
-font-size: 14px;
-font-weight: bold;
-color: #999;
-padding-left: 10px;
-}
-
-#moduleList .dashletPanelMenu .ft {
-height:22px;
-padding-left: 22px;
-padding-right: 22px;
-}
-	
-#moduleList .dashletPanelMenu .ft .bl {
-background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bl-menu.png) no-repeat;
-height: 22px;
-width: 22px;
-}
-	
-#moduleList .dashletPanelMenu .ft .br {
-background:url(../../../../index.php?entryPoint=getImage&imageName=dp-br-menu.png) no-repeat;
-height: 22px;
-width: 22px;
-}
-	
-#moduleList .dashletPanelMenu .ft  .ft-center {
-background:url(../../../../index.php?entryPoint=getImage&imageName=dp-ft-menu.png) repeat-x;
-height: 22px;
-}
-
-#moduleList .dashletPanelMenu .vr {
-background-color:#CCCCCC;
-height:1px;
-position:absolute;
-width:2px;
-z-index:2;
-}
-
-#moduleList .moduleTabExtraMenu .yuimenubaritemlabel-selected { 
-
-}
-
-#moduleList .dashletPanelMenu li#shortCutsLoading .yuimenuitemlabel {
-background-image: url(../../../../index.php?entryPoint=getImage&imageName=img_loading.gif); 
-background-repeat: no-repeat;
-padding-left: 20px;
-background-position: 0 .5em;
-}
-
-#moduleList.yuimenubar li.currentTabRight + li  .yuimenuitemlabel {
-border-left: 1px solid transparent;
-}
-
 #moduleList .moduleTabExtraMenu, #moduleList .moduleTabGroupMenu
 {
 height: 43px;
 }
-
-.moduleTabExtraMenu .yuimenuitemlabel.more {
-
-}
-
-#moduleList .moduleTabExtraMenu .yuimenuitemlabel.more em
-{
-    overflow:hidden;
-    text-indent:-9999px;
-	background-image: url(../../../../index.php?entryPoint=getImage&imageName=tabDownArrowOff.png);
-    background-position: center center; /* close (minus) icon */
-    background-repeat: no-repeat;
-	width: 15px;
-	margin-left: 10px;
-	float: left;
-
-}
-
-#moduleList #moduleTabGroup {
-	float: right;
-	height: 31px;
-}
-
-#moduleList .themeTabGroupMenu .yuimenuitemlabel.group em
-{
-    overflow:hidden;
-    text-indent:-9999px;
-	background-image: url(../../../../index.php?entryPoint=getImage&imageName=grouped-menu.png);
-    background-position: center center; /* close (minus) icon */
-    background-repeat: no-repeat;
-	width: 39px;
-	float: left;
-
-}
-
-#moduleList .moduleTabExtraMenu  .yuimenuitemlabel.more.yuimenubaritemlabel-selected em {
-
-}
-
 
 
 #moduleList .menuHR {

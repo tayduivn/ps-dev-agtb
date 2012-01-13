@@ -61,7 +61,7 @@
 		<li>
 			<div class="megawrapper">
 				<div class="megacolumn">
-					<div class="megacolumn-content first">
+					<div class="megacolumn-content divider">
 					<ul class="MMShortcuts">
 					<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
 					{foreach from=$shortcutTopMenu.$name item=shortcut_item}
@@ -76,10 +76,10 @@
 				</div>
 				
 				<div class="megacolumn">
-					<div class="megacolumn-content second">
+					<div class="megacolumn-content divider">
 					<ul class="MMFavorites">
 						<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-						<li><a href="#">Favorite Record One</a></li>
+						<li><a href="#">&nbsp</a></li>
 					</ul>
 					</div>
 				</div>
@@ -121,7 +121,7 @@
 					<li>
 						<div class="megawrapper">
 							<div class="megacolumn">
-								<div class="megacolumn-content first">
+								<div class="megacolumn-content divider">
 								<ul class="MMShortcuts">
 								<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
 								{foreach from=$shortcutTopMenu.$name item=shortcut_item}
@@ -136,10 +136,10 @@
 							</div>
 							
 							<div class="megacolumn">
-								<div class="megacolumn-content second">
+								<div class="megacolumn-content divider">
 								<ul class="MMFavorites">
 									<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-									<li><a href="#">Favorite Record One</a></li>
+									<li><a href="#">&nbsp;</a></li>
 								</ul>
 								</div>
 							</div>
@@ -173,7 +173,7 @@
 				<li>
 					<div class="megawrapper">
 						<div class="megacolumn">
-							<div class="megacolumn-content first">
+							<div class="megacolumn-content divider">
 							<ul class="MMShortcuts">
 							<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
 							{foreach from=$shortcutTopMenu.$name item=shortcut_item}
@@ -188,10 +188,10 @@
 						</div>
 						
 						<div class="megacolumn">
-							<div class="megacolumn-content second">
+							<div class="megacolumn-content divider">
 							<ul class="MMFavorites">
 								<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-								<li><a href="#">Favorite Record One</a></li>
+								<li><a href="#">&nbsp;</a></li>
 							</ul>
 							</div>
 						</div>

@@ -231,23 +231,59 @@ SUGAR.append(SUGAR.themes, {
     },
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
-			delay:     800,
+			delay:     1000800,
 			autoArrows: false,
 			dropShadows: false,
 			onBeforeShow: function() {
-				if($(this).parent().attr("id") != "moduleTabExtraMenu"+sugar_theme_gm_current) {
+				if($(this).attr("class") == "megamenu") {
+					var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
 					var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
-					$.ajax({
-					  url: "index.php?module="+moduleName+"&action=modulelistmenu",
-					  success: function(json){
-					    var lastViewed = $.parseJSON(json);
-					    $.each(lastViewed, function(k,v) {
-						console.log($(this).find("ul.MMLastViewed"));
-					    		$(this).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
-					    });
-					  }
-					});
+					//Check if the menu we want to show is in the more menu		
+					if($(this).parents().is(extraMenu)) {
+						var moduleName = moduleName.replace("Overflow","");
+					}
+					that = $(this);
+					
+					//ajax call for favorites
+					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;") {
+						
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=favorites",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json);				    
+						    $(that).find("ul.MMFavorites li:last").remove();
+						    $.each(lastViewed, function(k,v) {
+						    	$(that).find("ul.MMFavorites").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
+						    //normalize the heights of the three columns
+						     wrapperHeight = $(that).find("li div.megawrapper").height();
+							$(that).find("div.megacolumn-content").height(wrapperHeight);
+							$(that).find("div.megacolumn-content.divider").css("border-right", "1px solid #ccc");
+						  }
+						});
+					}					
+					//ajax call for last viewed
+					if($(this).find("ul.MMLastViewed li:last a").html() == "&nbsp;") {
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=modulelistmenu",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json);
+						    $(that).find("ul.MMLastViewed li:last").remove();
+						    $.each(lastViewed, function(k,v) {
+						    	$(that).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
+						    //normalize the heights of the three columns
+						     wrapperHeight = $(that).find("li div.megawrapper").height();
+							$(that).find("div.megacolumn-content").height(wrapperHeight);
+							$(that).find("div.megacolumn-content.divider").css("border-right", "1px solid #ccc");
+						  }
+						});
+					}
 				}
+			},
+			onShow: function() {
+				//wrapperHeight = $(this).find("li div.megawrapper").height();
+				//$(this).find("div.megacolumn-content").height(wrapperHeight);
 			}
 		});	
     }
