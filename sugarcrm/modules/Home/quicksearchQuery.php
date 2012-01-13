@@ -369,6 +369,12 @@ class quicksearchQuery {
         
         return $listJson;
     }
+
+    function fts_query()
+    {
+        $results = array('results' => array("abc","def"));
+        echo json_encode($results);
+    }
 }
 
 $json = getJSONobj();
