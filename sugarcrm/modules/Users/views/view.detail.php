@@ -159,6 +159,7 @@ class UsersViewDetail extends ViewDetail {
         if ($this->bean->portal_only == 1 || $this->bean->is_group == 1 ) {
             $this->options['show_subpanels'] = false;
             $this->dv->formName = 'DetailViewGroup';
+            $this->dv->view = 'DetailViewGroup';
         }
 	
 	    //handle request to reset the homepage
@@ -206,4 +207,5 @@ EOHTML;
         }
         return $theTitle;
     }
+
 }
