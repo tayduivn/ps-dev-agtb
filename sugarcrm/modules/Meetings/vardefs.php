@@ -236,25 +236,53 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'ID of item indicated by parent_type',
     'studio' => array('searchview'=>false),
   ),
-  'reminder_checked'=>array(
+  'reminder_checked' => array(
     'name' => 'reminder_checked',
     'vname' => 'LBL_REMINDER',
     'type' => 'bool',
     'source' => 'non-db',
     'comment' => 'checkbox indicating whether or not the reminder value is set (Meta-data only)',
-    'massupdate'=>false,
+    'massupdate' => false,
    ),
-
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
     'vname' => 'LBL_REMINDER_TIME',
-    'type' => 'int',
-    'function' => array('name'=>'getReminderTime', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php', 'onListView'=>true ),
+    'type' => 'enum',
+    'dbType' => 'int',
+    'options' => 'reminder_time_options',
     'reportable' => false,
-    'default'=>-1,
+    'default'=> -1,
     'comment' => 'Specifies when a reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'
-  ),
+  ),  
+  'email_reminder_checked' => array(
+    'name' => 'email_reminder_checked',
+    'vname' => 'LBL_EMAIL_REMINDER',
+    'type' => 'bool',
+    'source' => 'non-db',
+    'comment' => 'checkbox indicating whether or not the email reminder value is set (Meta-data only)',
+    'massupdate' => false,
+   ),  
+  'email_reminder_time' =>
+  array (
+    'name' => 'email_reminder_time',
+    'vname' => 'LBL_EMAIL_REMINDER_TIME',
+    'type' => 'enum',
+    'dbType' => 'int',
+    'options' => 'reminder_time_options',
+    'reportable' => false,
+    'default'=> -1,
+    'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'
+  ),  
+  'email_reminder_sent' => array( 
+    'name' => 'email_reminder_sent',
+    'vname' => 'LBL_EMAIL_EMAIL_SENT',
+    'default' => 0,
+    'type' => 'bool',
+    'comment' => 'Whether email reminder is already sent',
+    'studio' => false,
+    'massupdate'=> false,
+   ), 
    'outlook_id' =>
   array (
     'name' => 'outlook_id',

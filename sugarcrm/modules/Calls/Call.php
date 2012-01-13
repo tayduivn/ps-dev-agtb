@@ -59,6 +59,9 @@ class Call extends SugarBean
 	var $reminder_time;
 	var $reminder_time_options;
 	var $reminder_checked;
+	var $email_reminder_time;
+	var $email_reminder_checked;
+	var $email_reminder_sent;
 	var $required;
 	var $accept_status;
 	var $created_by;
@@ -399,6 +402,15 @@ class Call extends SugarBean
 		}
 		$this->reminder_checked = $this->reminder_time == -1 ? false : true;
 
+		if (empty($this->email_reminder_time)) {
+			$this->email_reminder_time = -1;
+		}
+		if(empty($this->id)){ 
+			$reminder_t = $GLOBALS['current_user']->getPreference('email_reminder_time');
+			if(isset($reminder_t))
+		    		$this->email_reminder_time = $reminder_t;
+		}
+		$this->email_reminder_checked = $this->email_reminder_time == -1 ? false : true;
 
 		if (isset ($_REQUEST['parent_type'])) {
 			$this->parent_type = $_REQUEST['parent_type'];
@@ -455,6 +467,7 @@ class Call extends SugarBean
 		$call_fields['PARENT_NAME'] = $this->parent_name;
 
         $call_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
+	$call_fields['EMAIL_REMINDER_CHECKED'] = $this->email_reminder_time==-1 ? false : true;
 
 		return $call_fields;
 	}

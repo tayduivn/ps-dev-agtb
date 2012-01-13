@@ -411,19 +411,20 @@ class UserViewHelper {
             $this->ss->assign('NO_OPPS', 'CHECKED');
         }
 
-        $reminder_time = $this->bean->getPreference('reminder_time');
-        if(empty($reminder_time)){
-            $reminder_time = -1;
-        }
+	$reminder_time = $this->bean->getPreference('reminder_time');
+	if(empty($reminder_time)){
+		$reminder_time = -1;
+	}	
+	$email_reminder_time = $this->bean->getPreference('email_reminder_time');
+	if(empty($email_reminder_time)){
+		$email_reminder_time = -1;
+	}
         //BEGIN SUGARCRM flav!=sales ONLY
-        $this->ss->assign("REMINDER_TIME_OPTIONS", get_select_options_with_id($app_list_strings['reminder_time_options'],$reminder_time));
-        if($reminder_time > -1){
-            $this->ss->assign("REMINDER_TIME_DISPLAY", 'inline');
-            $this->ss->assign("REMINDER_CHECKED", 'checked');
-            $this->ss->assign("REMINDER_TIME", $app_list_strings['reminder_time_options'][$reminder_time]);
-        }else{
-            $this->ss->assign("REMINDER_TIME_DISPLAY", 'none');
-        }
+        $this->ss->assign("REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);	
+        $this->ss->assign("EMAIL_REMINDER_TIME_OPTIONS", $app_list_strings['reminder_time_options']);	        
+	$this->ss->assign("REMINDER_TIME", $reminder_time);
+	$this->ss->assign("EMAIL_REMINDER_TIME", $email_reminder_time);
+	$this->ss->assign("REMINDER_TABINDEX", "12");
         $this->ss->assign('CALENDAR_PUBLISH_KEY', $this->bean->getPreference('calendar_publish_key' ));
 
         $publish_url = $sugar_config['site_url'].'/vcal_server.php';
