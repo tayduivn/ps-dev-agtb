@@ -66,6 +66,7 @@ class SugarSearchEngineFullIndexer
             return $this;
 
         $GLOBALS['log']->fatal("Performing Full System Index");
+        $startTime = microtime(true);
         $allModules = $this->SSEngine->retrieveFtsEnabledFieldsForAllModules();
         $db = DBManagerFactory::getInstance();
         foreach($allModules as $module => $fieldDefinitions)
@@ -91,6 +92,7 @@ class SugarSearchEngineFullIndexer
 
                 if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
                 {
+                    $GLOBALS['log']->fatal("Flushing records, current count: $count");
                     $this->SSEngine->bulkInsert($docs);
                     $docs = array();
                 }
@@ -104,6 +106,10 @@ class SugarSearchEngineFullIndexer
 
             $this->results[$module] = $count;
         }
+
+        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
+        $this->results['totalTime'] = $totalTime;
+        $GLOBALS['log']->fatal("Total time to perform full system index: $totalTime (s)");
 
         return $this;
     }

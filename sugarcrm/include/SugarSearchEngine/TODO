@@ -3,9 +3,10 @@ Items which need to be completed for fts:
 1. Upgrades need to add application wide logic hook for after save, similar to how install works.
 2. Falvoritize the SugarSearchEngine functionality, is it available for CE?
 3. SugarSpot and Global search have diverged for some reason, we should clean this up now.
-4. Class review, should the base class (SugarSearchEngineBase) really contain vardef helper code or should we just use the 'has-a' relationship.
 5. UI Integration
 6. ACLs for fields -
-7. Team security
-8. Initial index load
+7. Team security - DONE
+8. Initial index load - DONE
 9. Rollback if field have been marked unified_search enabled but then FTS is not available....
+10. Kill Solr library
+11. Studio
