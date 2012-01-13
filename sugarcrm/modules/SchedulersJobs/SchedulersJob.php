@@ -21,18 +21,42 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
+/**
+ * Job queue job
+ * @api
+ */
+class SchedulersJob extends Basic
+{
+    const JOB_STATUS_QUEUED = 'queued';
+    const JOB_STATUS_RUNNING = 'running';
+    const JOB_STATUS_DONE = 'done';
 
-class SchedulersJob extends SugarBean {
-	// schema attributes
-	var $id = '';
-	var $deleted = '';
-	var $date_entered = '';
-	var $date_modified = '';
-	var $scheduler_id = '';
-	var $execute_time = '';
-	var $status;
+    const JOB_PENDING = 'queued';
+    const JOB_PARTIAL = 'partial';
+    const JOB_SUCCESS = 'success';
+    const JOB_FAILURE = 'failure';
+
+    // schema attributes
+	public $id;
+	public $name;
+	public $deleted;
+	public $date_entered;
+	public $date_modified;
+	public $scheduler_id;
+	public $execute_time; // when to execute
+    public $status;
+    public $resolution;
+    public $message;
+	public $target; // URL or function name
+    public $data; // Data set
+    public $requeue; // Requeue on failure?
+    public $retry_count;
+    public $failure_count;
+    public $interval=0; // Frequency to run it
+    public $assigned_user_id; // User under which the task is running
+
 	// standard SugarBean child attrs
-	var $table_name		= "schedulers_times";
+	var $table_name		= "job_queue";
 	var $object_name		= "SchedulersJob";
 	var $module_dir		= "SchedulersJobs";
 	var $new_schema		= true;
@@ -43,23 +67,26 @@ class SchedulersJob extends SugarBean {
 	// object specific attributes
 	var $user; // User object
 	var $scheduler; // Scheduler parent
+	public $min_interval = 30; // minimal interval for job reruns
 
 	/**
 	 * Sole constructor.
 	 */
-	function SchedulersJob($init=true) {
+	function SchedulersJob($init=true)
+	{
         parent::SugarBean();
-        if($init) {
+        // TODO: move this
+        if(0 && $init) {
             $user = new User();
             //check is default admin exists
             $adminId = $this->db->getOne(
-                'SELECT id FROM users WHERE id='.$this->db->quoted('1').' AND is_admin=1 AND deleted=0 AND status='.$this->db->quoted('Active'),
+                'SELECT id FROM users WHERE id=\'1\' AND is_admin=1 AND deleted=0 AND status=\'Active\'',
                 true,
                 'Error retrieving Admin account info'
             );
             if (false === $adminId) {//retrive other admin
                 $adminId = $this->db->getOne(
-                    'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status='.$this->db->quoted('Active'),
+                    'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status=\'Active\'',
                     true,
                     'Error retrieving Admin account info'
                 );
@@ -69,7 +96,7 @@ class SchedulersJob extends SugarBean {
                     $GLOBALS['log']->fatal('No Admin account found!');
                     return false;
                 }
-                
+
             } else {
                 $user->retrieve('1'); // Scheduler jobs run as default Admin
             }
@@ -79,135 +106,20 @@ class SchedulersJob extends SugarBean {
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
     }
-	
+
 
 	///////////////////////////////////////////////////////////////////////////
 	////	SCHEDULERSJOB HELPER FUNCTIONS
-
-	function fireSelf($id) {
-
-		$sched = new Scheduler();
-		$sched->retrieve($id);
-
-		$exJob = explode('::', $sched->job);
-
-		if(is_array($exJob)) {
-			$this->scheduler_id	= $sched->id;
-			$this->scheduler		= $sched;
-			$this->execute_time	= $this->handleDateFormat('now');
-			$this->save();
-
-			if($exJob[0] == 'function') {
-				$GLOBALS['log']->debug('----->Scheduler found a job of type FUNCTION');
-				require_once('modules/Schedulers/_AddJobsHere.php');
-
-				$this->setJobFlag(1);
-
-				$func = $exJob[1];
-				$GLOBALS['log']->debug('----->SchedulersJob firing '.$func);
-
-				$res = call_user_func($func);
-				if($res) {
-					$this->setJobFlag(2);
-					$this->finishJob();
-					return true;
-				} else {
-					$this->setJobFlag(3);
-					return false;
-				}
-			} elseif($exJob[0] == 'url') {
-				if(function_exists('curl_init')) {
-					$GLOBALS['log']->debug('----->SchedulersJob found a job of type URL');
-					$this->setJobFlag(1);
-
-					$GLOBALS['log']->debug('----->SchedulersJob firing URL job: '.$exJob[1]);
-					if($this->fireUrl($exJob[1])) {
-						$this->setJobFlag(2);
-						$this->finishJob();
-						return true;
-					} else {
-						$this->setJobFlag(3);
-						return false;
-					}
-				} else {
-					$this->setJobFlag(4);
-					return false;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * handles some date/time foramtting
-	 * @param string time Time (usually "now")
-	 * @param object user User, usually admin (id = '1')
-	 * @param boolean to_local, convert to user's time format
-	 * @return string formatted time.
-	 */
-	function handleDateFormat($time, $user=null, $to_local=true) {
-		global $timedate;
-		
-		if(!isset($timedate) || empty($timedate)) {
-			$timedate = new TimeDate();
-		}
-		
-		// get proper user
-		$user = (empty($user)) ? $this->user : $user;
-		$dbTime = $timedate->nowDb();
-
-		if ($to_local) {
-		    $ret = $timedate->to_display_date_time($dbTime, true, true, $user);
-		    return $ret;
-		}
-		
-		return $dbTime;
-	}
-
-	function setJobFlag($flag) {
-		$trackerManager = TrackerManager::getInstance();
-		$trackerManager->pause();
-		$status = array (0 => 'ready', 1 => 'in progress', 2 => 'completed', 3 => 'failed', 4 => 'no curl');
-		$statusScheduler = array (0 => 'Active', 1 => 'In Progress', 2 => 'Active', 3 => 'Active', 4 => 'Active');
-		$GLOBALS['log']->info('-----> SchedulersJob setting Job flag: '.$status[$flag].' AND setting Scheduler status to: '.$statusScheduler[$flag]);
-
-		$time = $this->handleDateFormat('now');
-		$this->status = $status[$flag];
-		$this->scheduler->retrieve($this->scheduler_id);
-		$this->scheduler->status = $statusScheduler[$flag];
-		$this->scheduler->save();
-		$this->save();
-		$this->retrieve($this->id);
-		$trackerManager->unPause();
-	}
-
-	/**
-	 * This function takes a job_id, and updates schedulers last_run as well as
-	 * soft delete the job instance from schedulers_times
-	 * @return	boolean		Success
-	 */
-	function finishJob() {
-		$trackerManager = TrackerManager::getInstance();
-		$trackerManager->pause();
-		$GLOBALS['log']->debug('----->SchedulersJob updating Job Status and finishing Job execution.');
-		$this->scheduler->retrieve($this->scheduler->id);
-		$this->scheduler->last_run = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-		if($this->scheduler->last_run == gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('Jan 01 2000 00:00:00'))) {
-			$this->scheduler->last_run = $this->handleDateFormat('now');
-			$GLOBALS['log']->fatal('Scheduler applying bogus date for "Last Run": '.$this->scheduler->last_run);
-		}
-		$this->scheduler->save();
-		$trackerManager->unPause();
-	}
 
 	/**
 	 * This function takes a passed URL and cURLs it to fake multi-threading with another httpd instance
 	 * @param	$job		String in URI-clean format
 	 * @param	$timeout	Int value in secs for cURL to timeout. 30 default.
 	 */
-	//TODO: figure out what error is thrown when no more apache instances can be spun off
-	function fireUrl($job, $timeout=30) {
-		// cURL inits
+	public function fireUrl($job, $timeout=30)
+	{
+	// TODO: figure out what error is thrown when no more apache instances can be spun off
+	    // cURL inits
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $job); // set url
 		curl_setopt($ch, CURLOPT_FAILONERROR, true); // silent failure (code >300);
@@ -233,9 +145,7 @@ class SchedulersJob extends SugarBean {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // most customers will not have Certificate Authority account
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // most customers will not have Certificate Authority account
 
-		if(constant('PHP_VERSION') > '5.0.0') {
-			curl_setopt($ch, CURLOPT_NOSIGNAL, true); // ignore any cURL signals to PHP (for multi-threading)
-		}
+		curl_setopt($ch, CURLOPT_NOSIGNAL, true); // ignore any cURL signals to PHP (for multi-threading)
 		$result = curl_exec($ch);
 		$cInfo = curl_getinfo($ch);	//url,content_type,header_size,request_size,filetime,http_code
 									//ssl_verify_result,total_time,namelookup_time,connect_time
@@ -245,11 +155,11 @@ class SchedulersJob extends SugarBean {
 		curl_close($ch);
 
 		if($result !== FALSE && $cInfo['http_code'] < 400) {
-			$GLOBALS['log']->debug('----->Firing was successful: ('.$job.') at '.$this->handleDateFormat('now'));
+			$GLOBALS['log']->debug("----->Firing was successful: $job");
 			$GLOBALS['log']->debug('----->WTIH RESULT: '.strip_tags($result).' AND '.strip_tags(print_r($cInfo, true)));
 			return true;
 		} else {
-			$GLOBALS['log']->fatal('Job errored: ('.$job.') at '.$this->handleDateFormat('now'));
+			$GLOBALS['log']->fatal("Job failed: $job");
 			return false;
 		}
 	}
@@ -262,7 +172,8 @@ class SchedulersJob extends SugarBean {
 	/**
 	 * This function gets DB data and preps it for ListViews
 	 */
-	function get_list_view_data(){
+	function get_list_view_data()
+	{
 		global $mod_strings;
 
 		$temp_array = $this->get_list_view_array();
@@ -275,35 +186,130 @@ class SchedulersJob extends SugarBean {
 	/** method stub for future customization
 	 *
 	 */
-	function fill_in_additional_list_fields() {
+	function fill_in_additional_list_fields()
+	{
 		$this->fill_in_additional_detail_fields();
 	}
 
-	function fill_in_additional_detail_fields() {
-		// get the Job Name and Job fields from schedulers table
-//		$q = "SELECT name, job FROM schedulers WHERE id = '".$this->job_id."'";
-//		$result = $this->db->query($q);
-//		$row = $this->db->fetchByAssoc($result);
-//		$this->job_name = $row['name'];
-//		$this->job = $row['job'];
-//		$GLOBALS['log']->info('Assigned Name('.$this->job_name.') and Job('.$this->job.') to Job');
-//
-//		$this->created_by_name = get_assigned_user_name($this->created_by);
-//		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
 
+    public function failJob($message = null)
+    {
+        return $this->resolveJob(self::JOB_FAILURE, $message);
     }
 
-	/**
-	 * returns the bean name - overrides SugarBean's
-	 */
-	function get_summary_text() {
-        if(isset($this->name))
-		return $this->name;
-	}
+    public function succeedJob($message = null)
+    {
+        return $this->resolveJob(self::JOB_SUCCESS, $message);
+    }
 
-	/**
-	 * function overrides the one in SugarBean.php
-	 */
+    /**
+     * Resolve job as success or failure
+     * @param string $resolution One of JOB_ constants that define job status
+     * @param string $message
+     * @return bool
+     */
+    public function resolveJob($resolution, $message = null)
+    {
+        $GLOBALS['log']->info("Resolving job {$this->id} as $resolution: $message");
+        if($resolution == self::JOB_FAILURE && $this->requeue && $this->retry_count > 0) {
+            // retry failed job
+            $this->status = self::JOB_STATUS_QUEUED;
+            if($this->interval < $this->min_interval) {
+                $this->interval = $this->min_interval;
+            }
+            $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->interval} seconds")->asDb();
+            $this->retry_count--;
+            $this->failure_count++;
+            $GLOBALS['log']->info("Will retry job {$this->id} at {$this->execute_time} ($this->retry_count)");
+        } else {
+            $this->status = self::JOB_STATUS_DONE;
+        }
+        if(!is_null($message)) {
+            $this->message = $message;
+        }
+        $this->resolution = $resolution;
+        $this->save();
+        return true;
+    }
+
+    /**
+     * Rerun this job again
+     * @param string $message
+     * @return bool
+     */
+    public function postponeJob($jobId, $message = null)
+    {
+        $this->status = self::JOB_STATUS_QUEUED;
+        if(!is_null($message)) {
+            $this->message = $message;
+        }
+        $this->resolution = self::JOB_PARTIAL;
+        $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->interval} seconds")->asDb();
+        $GLOBALS['log']->info("Postponing job {$this->id} to {$this->execute_time}: $message");
+
+        $this->save();
+        return true;
+    }
+
+    /**
+     * Delete a job
+     * @see SugarBean::mark_deleted($id)
+     */
+    public function mark_deleted($id)
+    {
+        return $this->db->query("DELETE FROM jobs WHERE id=".$this->db->quoted($id));
+    }
+
+    /**
+     * Run this job
+     */
+    public function runJob()
+    {
+        $exJob = explode('::', $this->target);
+        if($exJob[0] == 'function') {
+    		require_once('modules/Schedulers/_AddJobsHere.php');
+    		$func = $exJob[1];
+			$GLOBALS['log']->debug("----->SchedulersJob calling function: $func");
+			if(!is_callable($func)) {
+			    // TODO: label
+			    $this->resolveJob(self::JOB_FAILURE, "Cannot call function: $func");
+			}
+			$data = array($this);
+			if(!empty($this->data)) {
+			    $data += $this->data;
+			}
+			$res = call_user_func_array($func, $data);
+
+			if($this->status == self::JOB_STATUS_RUNNING) {
+			    // nobody updates the status yet - job can do that
+    			if($res) {
+    			    $this->resolveJob(self::JOB_SUCCESS);
+    				return true;
+    			} else {
+    			    // TODO: add error reporting
+    			    $this->resolveJob(self::JOB_FAILURE, $this->errors);
+    			    return false;
+    			}
+			}
+		} elseif($exJob[0] == 'url') {
+			if(function_exists('curl_init')) {
+				$GLOBALS['log']->debug('----->SchedulersJob firing URL job: '.$exJob[1]);
+                if($this->fireUrl($exJob[1])) {
+                     $this->resolveJob(self::JOB_SUCCESS);
+					return true;
+				} else {
+				    $this->resolveJob(self::JOB_FAILURE, $this->errors);
+					return false;
+				}
+			} else {
+			    // TODO: label
+			    $this->resolveJob(self::JOB_FAILURE, "No CURL - cannot run URL jobs");
+			}
+		} else {
+		    // TODO: label
+		    $this->resolveJob(self::JOB_FAILURE, "Unknown job type: {$this->target}");
+		}
+		return false;
+    }
 
 }  // end class Job
-?>

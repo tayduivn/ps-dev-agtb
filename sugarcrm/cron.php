@@ -54,53 +54,10 @@ $current_user->getSystemUser();
 ///////////////////////////////////////////////////////////////////////////////
 ////	PREP FOR SCHEDULER PID
 $GLOBALS['log']->debug('--------------------------------------------> at cron.php <--------------------------------------------');
+require_once 'include/SugarQueue/SugarCronJobs.php';
+$jobq = new SugarCronJobs();
+$jobq->runCycle();
 
-$cachePath = sugar_cached('modules/Schedulers');
-$pid = 'pid.php';
-if(!is_dir($cachePath)) {
-	mkdir_recursive($cachePath);
-}
-if(!is_file($cachePath.'/'.$pid)) {
-	if(is_writable($cachePath)) { // the "file" does not yet exist
-		write_array_to_file('timestamp', array(strtotime(date('H:i'))) , $cachePath.'/'.$pid);
-		require_once($cachePath.'/'.$pid);
-	} else {
-		$GLOBALS['log']->fatal('Scheduler cannot write PID file.  Please check permissions on '.$cachePath);
-	}
-} else {
-	if(is_writable($cachePath.'/'.$pid)) {
-		require_once($cachePath.'/'.$pid);
-	} else {
-		$GLOBALS['log']->fatal('Scheduler cannot read the PID file.  Please check permissions on '.$cachePath);
-	}
-}
-////	END PREP FOR SCHEDULER PID
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-////	EXECUTE IF VALID TIME (NOT DDOS)
-//BEGIN SUGARCRM flav=int ONLY
-$timestamp[0] = 0;
-//END SUGARCRM flav=int ONLY
-
-// mjamil | bug # 45229 - schedulers not able to run due to current time being equal to
-// $timestamp[0]
-if($timestamp[0] <= strtotime(date('H:i'))) {
-	if(is_writable($cachePath.'/'.$pid)) {
-		write_array_to_file('timestamp', array(strtotime(date('H:i'))) , $cachePath.'/'.$pid);
-		require('modules/Schedulers/Scheduler.php');
-		$s = new Scheduler();
-		$s->flushDeadJobs();
-		$s->checkPendingJobs();
-	} else {
-		$GLOBALS['log']->fatal('Scheduler cannot write PID file.  Please check permissions on '.$cachePath);
-	}
-} else {
-	$GLOBALS['log']->fatal('If you see a whole string of these, there is a chance someone is attacking your system.');
-	//BEGIN SUGARCRM flav=int ONLY
-	echo 'pid violation';
-	//END SUGARCRM flav=int ONLY
-}
 $exit_on_cleanup = true;
 //BEGIN SUGARCRM flav=dce ONLY
 if(!empty($GLOBALS['DCE_CALL']) && $GLOBALS['DCE_CALL'])
