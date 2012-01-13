@@ -79,6 +79,17 @@ meetingsLoader.addModule({
     requires: []
 });
 meetingsLoader.insert();
+YAHOO.util.Event.onContentReady("{/literal}{{$form_name}}{literal}",function() {
+    var beginTabIndex = document.getElementById('duration_minutes').tabIndex;
+    document.getElementsByName('duration_hours')[0].tabIndex = beginTabIndex+1;
+    var reminderChecked = document.getElementsByName('reminder_checked');
+    for(i=0;i<reminderChecked.length;i++) {
+        if (reminderChecked[i].type == 'checkbox') {
+            reminderChecked[i].tabIndex = beginTabIndex+2
+        }
+    }
+    document.getElementById('reminder_time').tabIndex = beginTabIndex+3;
+});
 {/literal}
 </script>
 </form>
