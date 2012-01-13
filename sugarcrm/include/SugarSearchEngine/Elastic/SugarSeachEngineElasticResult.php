@@ -190,7 +190,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
                     if (empty($search)) {
                         continue;
                     }
-                    $pattern = '/' . str_replace('*', '.*?', $search) . '/i';
+                    $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
                     $value = preg_replace_callback($pattern, array($this, 'highlight_callback'), $value, -1, $count);
                     if ($count > 0) {
                         $ret[$field] = $this->post_process_highlights($value, $maxLen, $maxHits);
