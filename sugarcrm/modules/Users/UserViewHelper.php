@@ -77,7 +77,7 @@ class UserViewHelper {
 
         $this->usertype='REGULAR';
         if($this->is_super_admin){
-            $this->usertype='ADMIN';
+            $this->usertype='Administrator';
         }
 
 
@@ -195,12 +195,14 @@ class UserViewHelper {
         global $current_user;
         
 
-        if (!isset($this->bean->user_type))
-        {
+        //if this is an existing bean and the type is empty, then populate user type
+        if (!empty($this->bean->id) && empty($this->bean->user_type))
+	    {
             $this->setUserType($this->bean);
+            $userType = $this->bean->user_type;
+        }else{
+            $userType = $this->usertype;
         }
-
-        $userType = $this->bean->user_type;
 
         $availableUserTypes = array();
         $userTypes = array(
@@ -297,7 +299,7 @@ class UserViewHelper {
         }
 
         // If my account page or portal only user or regular user without system generated password or a duplicate user
-        if((($current_user->id == $this->bean->id) || $this->usertype=='PORTAL_ONLY' || (($this->usertype=='REGULAR' || $this->usertype == 'ADMIN' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $this->usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$this->bean->external_auth_only ) {
+        if((($current_user->id == $this->bean->id) || $this->usertype=='PORTAL_ONLY' || (($this->usertype=='REGULAR' || $this->usertype == 'Administrator' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $this->usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$this->bean->external_auth_only ) {
             $this->ss->assign('CHANGE_PWD', '1');
         } else {
             $this->ss->assign('CHANGE_PWD', '0');
@@ -493,7 +495,7 @@ class UserViewHelper {
             require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 
             //If you're an administrator editing the user or if you're a module level admin, then allow the widget to display all Teams
-            if($this->usertype == 'ADMIN' || $GLOBALS['current_user']->isAdminForModule( 'Users')) {
+            if($this->usertype == 'Administrator' || $GLOBALS['current_user']->isAdminForModule( 'Users')) {
                 $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, '', $this->viewType);
             } else {
                 $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, 'get_non_private_teams_array', $this->viewType);
@@ -801,7 +803,6 @@ class UserViewHelper {
             $mail_smtpuser = "";
             $mail_smtppass = "";
             $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
-            $hide_if_can_use_default = true;
             $mail_smtpauth_req=true;
             
             if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() ) {
@@ -813,9 +814,7 @@ class UserViewHelper {
                 }
                 
                 
-                if(!$mail_smtpauth_req &&
-                   ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser)
-                     || empty($systemOutboundEmail->mail_smtppass))) {
+                if(!$mail_smtpauth_req && (empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass))) {
                     $hide_if_can_use_default = true;
                 } else{
                     $hide_if_can_use_default = false;
