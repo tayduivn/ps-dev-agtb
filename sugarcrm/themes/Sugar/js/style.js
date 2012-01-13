@@ -192,10 +192,10 @@ SUGAR.append(SUGAR.themes, {
 			//get the previous sibling of extraMenu
 			var $currRight = $(extraMenu).prev();
 			//add menu after prev sib
-			console.log($currRight.children("a:first-child").attr("id"));
+
 			 $(el+"Overflow").parent().insertAfter($currRight);
 			 var newId = el.replace("#","");
-			 var currRightId = $currRight.children("a:first-child").attr("id") + "Overflow";
+			 var currRightId = $currRight.children("a:first-child").attr("id") + "OverflowHidden";
 			 $(el+"Overflow").attr("id",newId);
 			 $(el).parent().addClass("current");
 			 //remove prev sib
@@ -228,14 +228,74 @@ SUGAR.append(SUGAR.themes, {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
 		}
+    },
+    loadModuleList: function() {
+    	$('#moduleList ul.sf-menu').superfish({
+			delay:     800,
+			autoArrows: false,
+			dropShadows: false,
+			onBeforeShow: function() {
+				if($(this).attr("class") == "megamenu") {
+					var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+					var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
+					//Check if the menu we want to show is in the more menu		
+					if($(this).parents().is(extraMenu)) {
+						var moduleName = moduleName.replace("Overflow","");
+					}
+					that = $(this);
+					
+					//ajax call for favorites
+					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;") {
+						
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=favorites",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json);				    
+						    $(that).find("ul.MMFavorites li:last").remove();
+						    $.each(lastViewed, function(k,v) {
+						    	$(that).find("ul.MMFavorites").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
+						    //normalize the heights of the three columns
+						     wrapperHeight = $(that).find("li div.megawrapper").height();
+							$(that).find("div.megacolumn-content").height(wrapperHeight);
+							$(that).find("div.megacolumn-content.divider").css("border-right", "1px solid #ccc");
+						  }
+						});
+					}					
+					//ajax call for last viewed
+					if($(this).find("ul.MMLastViewed li:last a").html() == "&nbsp;") {
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=modulelistmenu",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json);
+						    $(that).find("ul.MMLastViewed li:last").remove();
+						    $.each(lastViewed, function(k,v) {
+						    	$(that).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
+						    //normalize the heights of the three columns
+						     wrapperHeight = $(that).find("li div.megawrapper").height();
+							$(that).find("div.megacolumn-content").height(wrapperHeight);
+							$(that).find("div.megacolumn-content.divider").css("border-right", "1px solid #ccc");
+						  }
+						});
+					}
+				}
+			},
+			onShow: function() {
+				//wrapperHeight = $(this).find("li div.megawrapper").height();
+				//$(this).find("div.megacolumn-content").height(wrapperHeight);
+			}
+		});	
     }
 });
 
 /**
  * For the module list menu
  */
-//YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
 
+$("#moduleList").ready(function(){
+	SUGAR.themes.loadModuleList();
+});
 /**
  * For the module list menu scrolling functionality
  */

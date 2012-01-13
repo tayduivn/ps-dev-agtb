@@ -26,28 +26,13 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-
-<script type="text/javascript">
-{literal}
-// initialise plugins
-$(function(){
-	$('ul.sf-menu').superfish({
-			delay:     800,
-			autoArrows: false,
-			dropShadows: false
-		});
-});
-{/literal}
-</script>
-
-		
-		
 {assign var='underscore' value='_'}
 {if $AJAX ne "1"}
 <div id="moduleList">
 {/if}
 {* tab groups *}
 {assign var='overflowSuffix' value='Overflow'}
+{assign var='overflowHidden' value='Hidden'}
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
   {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
   {if $tabGroupName == 'All'}
@@ -76,7 +61,7 @@ $(function(){
 		<li>
 			<div class="megawrapper">
 				<div class="megacolumn">
-					<div class="megacolumn-content first">
+					<div class="megacolumn-content divider">
 					<ul class="MMShortcuts">
 					<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
 					{foreach from=$shortcutTopMenu.$name item=shortcut_item}
@@ -91,10 +76,10 @@ $(function(){
 				</div>
 				
 				<div class="megacolumn">
-					<div class="megacolumn-content second">
+					<div class="megacolumn-content divider">
 					<ul class="MMFavorites">
 						<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-						<li><a href="#">Favorite Record One</a></li>
+						<li><a href="#">&nbsp</a></li>
 					</ul>
 					</div>
 				</div>
@@ -131,12 +116,12 @@ $(function(){
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
 				{if $shortcutTopMenu.$name && $name != "Home"}
-					<li class="flexMenuItems"  id="moduleTabMain_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name"}
+					<li class="flexMenuItems"  id="moduleTabMain_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name"}
 					<ul class="megamenu">
 					<li>
 						<div class="megawrapper">
 							<div class="megacolumn">
-								<div class="megacolumn-content first">
+								<div class="megacolumn-content divider">
 								<ul class="MMShortcuts">
 								<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
 								{foreach from=$shortcutTopMenu.$name item=shortcut_item}
@@ -151,10 +136,10 @@ $(function(){
 							</div>
 							
 							<div class="megacolumn">
-								<div class="megacolumn-content second">
+								<div class="megacolumn-content divider">
 								<ul class="MMFavorites">
 									<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-									<li><a href="#">Favorite Record One</a></li>
+									<li><a href="#">&nbsp;</a></li>
 								</ul>
 								</div>
 							</div>
@@ -188,7 +173,7 @@ $(function(){
 				<li>
 					<div class="megawrapper">
 						<div class="megacolumn">
-							<div class="megacolumn-content first">
+							<div class="megacolumn-content divider">
 							<ul class="MMShortcuts">
 							<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
 							{foreach from=$shortcutTopMenu.$name item=shortcut_item}
@@ -203,10 +188,10 @@ $(function(){
 						</div>
 						
 						<div class="megacolumn">
-							<div class="megacolumn-content second">
+							<div class="megacolumn-content divider">
 							<ul class="MMFavorites">
 								<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-								<li><a href="#">Favorite Record One</a></li>
+								<li><a href="#">&nbsp;</a></li>
 							</ul>
 							</div>
 						</div>

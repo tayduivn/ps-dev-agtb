@@ -3097,6 +3097,7 @@ function sugar_cleanup($exit = false) {
 	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
 		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
+		&& ($_REQUEST['action']!='favorites' && $_REQUEST['action']!='DynamicAction')
 		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
 		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
 
