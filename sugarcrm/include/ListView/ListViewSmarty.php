@@ -192,7 +192,6 @@ class ListViewSmarty extends ListViewDisplay{
 		if(!$this->should_process) return $GLOBALS['app_strings']['LBL_SEARCH_POPULATE_ONLY'];
         global $app_strings;
         $this->ss->assign('data', $this->data['data']);
-        $this->ss->assign('totalCount', $this->data['totalCount']);
 		$this->data['pageData']['offsets']['lastOffsetOnPage'] = $this->data['pageData']['offsets']['current'] + count($this->data['data']);
 		$this->ss->assign('pageData', $this->data['pageData']);
 

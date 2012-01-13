@@ -20,12 +20,28 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  * $Id: index.php 56510 2010-05-17 18:54:49Z jenny $
  ********************************************************************************/
-$startTime = microtime(true);
-require_once('include/entryPoint.php');
-ob_start();
-require_once('include/MVC/SugarApplication.php');
-$app = new SugarApplication();
-$app->startSession();
-$app->execute();
 
+/* 
+ * First step in removing getimage and getYUIComboFile -- at least this bypasses most of the app,
+ * making assets load faster.
+ */
+if(array_key_exists("entryPoint", $_GET)){
+	if($_GET["entryPoint"] == "getImage"){ 
+		require_once('include/SugarTheme/SugarTheme.php');
+		require_once('include/utils.php');
+		include("include/SugarTheme/getImage.php");
+	}
+	else if($_GET["entryPoint"] == "getYUIComboFile"){
+		include("include/javascript/getYUIComboFile.php");
+	}
+}
+else{ 
+	$startTime = microtime(true);
+  	require_once('include/entryPoint.php');
+	ob_start();
+	require_once('include/MVC/SugarApplication.php');
+	$app = new SugarApplication();
+	$app->startSession();
+	$app->execute();
+}
 ?>
