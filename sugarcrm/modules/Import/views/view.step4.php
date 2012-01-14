@@ -67,6 +67,11 @@ class ImportViewStep4 extends SugarView
         if ( !$importSource->fileExists() )
             trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
 
+        if (!ImportCacheFiles::ensureWritable())
+        {
+            trigger_error($mod_strings['LBL_ERROR_IMPORT_CACHE_NOT_WRITABLE'], E_USER_ERROR);
+        }
+
         $importer = new Importer($importSource, $this->bean);
         $importer->import();
     }
