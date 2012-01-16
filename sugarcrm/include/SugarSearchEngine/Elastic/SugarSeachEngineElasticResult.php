@@ -86,8 +86,13 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
 
     public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
-        $highlighter = new SugarSearchEngineHighlighter($this->elasticaResult, $maxLen, $maxHits, $preTag, $postTag);
-        $ret = $highlighter->getHighlightedHitText();
+        $ret = array();
+        $hit = $this->elasticaResult->getHit();
+
+        if (isset($hit['_source']) && is_array($hit['_source'])) {
+            $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
+            $ret = $highlighter->getHighlightedHitText($hit['_source']);
+        }
 
         // TODO: should return an array $ret instead of a string, returning a string to test for now
         return implode('<br>', $ret);

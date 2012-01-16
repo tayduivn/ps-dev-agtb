@@ -33,9 +33,8 @@ class SugarSearchEngineHighlighter
     protected $_postTag;
     protected $_elasticaResult = null;
 
-    public function __construct($elasticaResult, $maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
+    public function __construct($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
-        $this->_elasticaResult = $elasticaResult;
         $this->_maxLen = $maxLen;
         $this->_maxHits = $maxHits;
         $this->_preTag = $preTag;
@@ -126,7 +125,7 @@ class SugarSearchEngineHighlighter
         return $this->_preTag . htmlspecialchars(trim($matches[0])) . $this->_postTag;
     }
 
-    public function getHighlightedHitText()
+    public function getHighlightedHitText($resultArray)
     {
         $ret = array();
 
@@ -138,19 +137,15 @@ class SugarSearchEngineHighlighter
 
         $searches = explode(' ', $q);
 
-        $hit = $this->_elasticaResult->getHit();
-        if (isset($hit['_source']) && is_array($hit['_source'])) {
-
-            foreach ($hit['_source'] as $field=>$value) {
-                foreach ($searches as $search) {
-                    if (empty($search)) {
-                        continue;
-                    }
-                    $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
-                    $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
-                    if ($count > 0) {
-                        $ret[$field] = $this->postProcessHighlights($value);
-                    }
+        foreach ($resultArray as $field=>$value) {
+            foreach ($searches as $search) {
+                if (empty($search)) {
+                    continue;
+                }
+                $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
+                $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
+                if ($count > 0) {
+                    $ret[$field] = $this->postProcessHighlights($value);
                 }
             }
         }
