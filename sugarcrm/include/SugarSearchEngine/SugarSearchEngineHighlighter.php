@@ -137,17 +137,12 @@ class SugarSearchEngineHighlighter
         return $this->_preTag . htmlspecialchars(trim($matches[0])) . $this->_postTag;
     }
 
-    public function getHighlightedHitText($resultArray)
+    public function getHighlightedHitText($resultArray, $searchString)
     {
         $ret = array();
 
-        // this is the word to be searched
-        if (!isset($_REQUEST['q'])) {
-            return $ret;
-        }
-        $q = html_entity_decode(trim($_REQUEST['q']), ENT_QUOTES);
-
-        $searches = explode(' ', $q);
+        // it may contain multiple words
+        $searches = explode(' ', $searchString);
 
         foreach ($resultArray as $field=>$value) {
             foreach ($searches as $search) {

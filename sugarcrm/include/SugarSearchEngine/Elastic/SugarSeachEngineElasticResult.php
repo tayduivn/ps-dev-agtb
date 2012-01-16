@@ -89,9 +89,16 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         $ret = array();
         $hit = $this->elasticaResult->getHit();
 
+        // this is the word to be searched
+        if (!isset($_REQUEST['q'])) {
+            return $ret;
+        }
+        // looks like this is encoded, so decode it first
+        $q = html_entity_decode(trim($_REQUEST['q']), ENT_QUOTES);
+
         if (isset($hit['_source']) && is_array($hit['_source'])) {
             $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
-            $ret = $highlighter->getHighlightedHitText($hit['_source']);
+            $ret = $highlighter->getHighlightedHitText($hit['_source'], $q);
         }
 
         // TODO: should return an array $ret instead of a string, returning a string to test for now
