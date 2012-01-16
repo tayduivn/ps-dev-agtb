@@ -601,6 +601,33 @@ class Meeting extends SugarBean {
 
 		return $xtpl;
 	}
+	
+	/**
+	 * Redefine method to attach ics file to notification email
+	 */
+	public function create_notification_email($notify_user){
+		$notify_mail = parent::create_notification_email($notify_user);
+						
+		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+
+		require_once("modules/vCals/vCal.php");
+		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
+				
+		if(file_put_contents($path,$content)){
+			$notify_mail->AddAttachment($path, 'meeting.ics', 'base64', 'text/calendar');
+		}
+		return $notify_mail;		
+	}
+	
+	/**
+	 * Redefine method to remove ics after email is sent
+	 */
+	public function send_assignment_notifications($notify_user, $admin){
+		parent::send_assignment_notifications($notify_user, $admin);
+		
+		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+		unlink($path);
+	}
 
 	function get_meeting_users() {
 		$template = new User();
