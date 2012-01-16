@@ -33,14 +33,7 @@ if(array_key_exists("entryPoint", $_GET)){
 	else if($_GET["entryPoint"] == "getYUIComboFile"){
 		include("include/javascript/getYUIComboFile.php");
 	}
+	die();
 }
-else{ 
-	$startTime = microtime(true);
-  	require_once('include/entryPoint.php');
-	ob_start();
-	require_once('include/MVC/SugarApplication.php');
-	$app = new SugarApplication();
-	$app->startSession();
-	$app->execute();
-}
+
 ?>
