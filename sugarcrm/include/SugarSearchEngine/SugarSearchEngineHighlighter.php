@@ -31,12 +31,24 @@ class SugarSearchEngineHighlighter
     protected $_maxHits;
     protected $_preTag;
     protected $_postTag;
-    protected $_elasticaResult = null;
 
     public function __construct($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
         $this->_maxLen = $maxLen;
         $this->_maxHits = $maxHits;
+        $this->_preTag = $preTag;
+        $this->_postTag = $postTag;
+    }
+
+    public function setMaxLen($maxLen) {
+        $this->_maxLen = $maxLen;
+    }
+
+    public function setMaxHits($maxHits) {
+        $this->_maxHits = $maxHits;
+    }
+
+    public function setTags($preTag, $postTag) {
         $this->_preTag = $preTag;
         $this->_postTag = $postTag;
     }
