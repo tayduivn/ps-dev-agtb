@@ -141,3 +141,14 @@ ul.ui-autocomplete {
     position: relative;
     width: 150px;
 }
+
+.fb_ac_help{
+    position: absolute;
+    visibility: hidden;
+    z-index: 51;
+    background-color: rgba(255, 255, 200, 0.8);
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 0 0 0 2px;
+}
