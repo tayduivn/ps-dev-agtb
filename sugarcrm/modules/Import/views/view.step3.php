@@ -404,7 +404,10 @@ class ImportViewStep3 extends ImportView
         }
         // include anything needed for quicksearch to work
         require_once("include/TemplateHandler/TemplateHandler.php");
-        $quicksearch_js = TemplateHandler::createQuickSearchCode($fields,$fields,'importstep3');
+        // Bug #46879 : createQuickSearchCode() function in IBM RTC call function getQuickSearchDefaults() to get instance and then getQSDLookup() function
+        // if we call this function as static it replaces context and use ImportViewStep3 as $this in getQSDLookup()
+        $template_handler = new TemplateHandler();
+        $quicksearch_js = $template_handler->createQuickSearchCode($fields,$fields,'importstep3');
 
         $this->ss->assign("QS_JS", $quicksearch_js);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($required));
