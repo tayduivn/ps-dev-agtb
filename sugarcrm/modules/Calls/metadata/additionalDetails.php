@@ -58,4 +58,3 @@ function additionalDetailsCall($fields) {
 				 'viewLink' => $viewLink);
 }
 
-?>
