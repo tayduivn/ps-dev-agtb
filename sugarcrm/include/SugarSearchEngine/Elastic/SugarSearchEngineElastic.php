@@ -248,6 +248,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
             $query->setParam('from',$offset);
             $s = new Elastica_Search($this->_client);
+            //Only search accross our index.
+            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $s->addIndex($index);
+
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
 
