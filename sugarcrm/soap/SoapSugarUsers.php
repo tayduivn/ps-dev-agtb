@@ -324,6 +324,17 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		$error->set_error('no_access');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
+
+	require_once 'include/SugarSQLValidate.php';
+	$valid = new SugarSQLValidate();
+	if(!$valid->validateQueryClauses($query, $order_by)) {
+        $GLOBALS['log']->error("Bad query: $query $order_by");
+	    $error->set_error('no_access');
+	    return array(
+    			'result_count' => -1,
+    			'error' => $error->get_soap_array()
+    	);
+	}
 	if($query == ''){
 		$where = '';
 	}
@@ -333,7 +344,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
-	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted,true);
+        $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted,true);
     }
 	$list = $response['list'];
 
@@ -1109,7 +1120,18 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 		return array('ids'=>$ids, 'error'=>$error->get_soap_array());
 	}
 
-	$id_list = get_linked_records($related_module, $module_name, $module_id);
+	require_once 'include/SugarSQLValidate.php';
+	$valid = new SugarSQLValidate();
+	if(!$valid->validateQueryClauses($related_module_query)) {
+        $GLOBALS['log']->error("Bad query: $related_module_query");
+        $error->set_error('no_access');
+	    return array(
+    			'result_count' => -1,
+    			'error' => $error->get_soap_array()
+    		);
+    }
+
+    $id_list = get_linked_records($related_module, $module_name, $module_id);
 
 	if ($id_list === FALSE) {
 		$error->set_error('no_relationship_support');
@@ -1121,8 +1143,7 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 
 	$list = array();
 
-	$id_list_quoted = array_map(create_function('$str','return "\'" . $str . "\'";'), $id_list);
-	$in = implode(", ", $id_list_quoted);
+	$in = "'".implode("', '", $id_list)."'";
 
 	$related_class_name = $beanList[$related_module];
 	require_once($beanFiles[$related_class_name]);
@@ -1489,9 +1510,9 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 						if($key != 'EmailAddresses'){
 							foreach($search_terms as $term){
 								if(!strpos($where_clause, 'number')){
-									$where .= string_format($where_clause,array($term));
+									$where .= string_format($where_clause,array($GLOBALS['db']->quote($term)));
 								}elseif(is_numeric($term)){
-									$where .= string_format($where_clause,array($term));
+									$where .= string_format($where_clause,array($GLOBALS['db']->quote($term)));
 								}else{
 									$addQuery = false;
 								}
@@ -1938,6 +1959,16 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	// build WHERE clauses, if any
 	$where_clauses = array();
 	if (!empty($query)) {
+	    require_once 'include/SugarSQLValidate.php';
+	    $valid = new SugarSQLValidate();
+	    if(!$valid->validateQueryClauses($query)) {
+            $GLOBALS['log']->error("Bad query: $query");
+	        $error->set_error('no_access');
+	        return array(
+    			'result_count' => -1,
+    			'error' => $error->get_soap_array()
+    		);
+	    }
 		$where_clauses[] = $query;
 	}
 	if ($deleted == 0) {

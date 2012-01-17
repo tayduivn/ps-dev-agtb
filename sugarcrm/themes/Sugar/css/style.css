@@ -4066,6 +4066,11 @@ border-top: 0px;
 	width: 225px;
 }
 
+#moduleList .more .selected{
+background-color: #355b7e;
+color: #fff;
+}
+
 /* apply hovers to modern browsers */
 #moduleList a:focus > .sf-sub-indicator,
 #moduleList  a:hover > .sf-sub-indicator,

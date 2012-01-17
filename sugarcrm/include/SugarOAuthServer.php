@@ -174,6 +174,10 @@ class SugarOAuthServer
         $GLOBALS['log']->debug("OAUTH: requestToken");
         $token = OAuthToken::generate();
         $token->setConsumer($this->consumer);
+        $params = $this->provider->getOAuthParams();
+        if(!empty($params['oauth_callback']) && $params['oauth_callback'] != 'oob') {
+            $token->setCallbackURL($params['oauth_callback']);
+        }
         $token->save();
         return $token->queryString();
     }
@@ -204,7 +208,7 @@ class SugarOAuthServer
      */
     public function authUrl()
     {
-        return urlencode($GLOBALS['sugar_config']['site_url']."index.php?module=OAuthTokens&action=authorize");
+        return urlencode(rtrim($GLOBALS['sugar_config']['site_url'],'/')."/index.php?module=OAuthTokens&action=authorize");
     }
 
     /**

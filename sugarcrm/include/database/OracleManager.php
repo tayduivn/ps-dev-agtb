@@ -253,6 +253,9 @@ class OracleManager extends DBManager
      */
     public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
+        $start = (int)$start;
+        $count = (int)$count;
+
         $matches = array();
         preg_match('/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/is',$sql, $matches);
         $GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);

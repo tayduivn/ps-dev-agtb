@@ -31,12 +31,14 @@ class OauthTokensViewAuthorize extends SugarView
             sugar_die($GLOBALS['mod_strings']['LBL_OAUTH_DISABLED']);
         }
         global $current_user;
+        if(!isset($_REQUEST['token']) && isset($_REQUEST['oauth_token'])) {
+            $_REQUEST['token'] = $_REQUEST['oauth_token'];
+        }
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
         $sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
         $sugar_smarty->assign('token', $_REQUEST['token']);
         $sugar_smarty->assign('sid', session_id());
-
         $token = OAuthToken::load($_REQUEST['token']);
         if(empty($token) || empty($token->consumer) || $token->tstate != OAuthToken::REQUEST || empty($token->consumer_obj)) {
             sugar_die('Invalid token');
@@ -60,6 +62,9 @@ class OauthTokensViewAuthorize extends SugarView
                 sugar_die('Invalid request');
             }
             $verify = $token->authorize(array("user" => $current_user->id));
+            if(!empty($token->callback_url)){
+                SugarApplication::redirect($token->callback_url."?oauth_verifier=".$verify.'&oauth_token='.$_REQUEST['token']);
+            }
             $sugar_smarty->assign('VERIFY', $verify);
             $sugar_smarty->assign('token', '');
             echo $sugar_smarty->fetch('modules/OAuthTokens/tpl/authorized.tpl');

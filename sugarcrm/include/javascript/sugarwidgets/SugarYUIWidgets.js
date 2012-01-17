@@ -192,7 +192,18 @@ sw.SelectionGrid = function(containerEl, columns, dataSource, config){
 	// Subscribe to events for row selection  
 	this.subscribe("rowMouseoverEvent", this.onEventHighlightRow); 
 	this.subscribe("rowMouseoutEvent", this.onEventUnhighlightRow); 
-	this.subscribe("rowClickEvent", this.onEventSelectRow);
+	if (config.forceMulti){
+        this.subscribe("rowClickEvent", function(o){
+            o.event.preventDefault();
+            this.clearTextSelection();
+            o.event = SUGAR.util.clone(o.event);
+            o.event.ctrlKey = o.event.metaKey = true;
+            this.onEventSelectRow(o);
+        });
+    } else {
+        this.subscribe("rowClickEvent", this.onEventSelectRow);
+    }
+
 	// Programmatically select the first row 
 	this.selectRow(this.getTrEl(0)); 
 	// Programmatically bring focus to the instance so arrow selection works immediately 

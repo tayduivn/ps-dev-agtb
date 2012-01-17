@@ -39,6 +39,7 @@ class OAuthToken extends SugarBean
     public $consumer;
     public $assigned_user_id;
     public $consumer_obj;
+    public $callback_url;
     // authdata is not preserved so far since we don't have any useful data yet
     // so it's an extension point for the future
     public $authdata;
@@ -78,6 +79,16 @@ class OAuthToken extends SugarBean
 	}
 
 	/**
+	 * Set callback URL for request token
+	 * @param string $url
+	 */
+    public function setCallbackURL($url)
+    {
+        $this->callback_url = $url;
+        return $this;
+    }
+
+    /**
 	 * Generate random token
 	 * @return string
 	 */

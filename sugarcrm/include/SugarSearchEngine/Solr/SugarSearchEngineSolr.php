@@ -20,26 +20,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
  *Reserved.
  ********************************************************************************/
-
-require_once('include/SugarSearchEngine/ISugarSearchEngine.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/Solr/PHPSolr/Service.php');
 
-class SugarSearchEngineSolr implements ISugarSearchEngine
+class SugarSearchEngineSolr extends SugarSearchEngineAbstractBase
 {
     private $_backend;
     protected $_documents = array();
     
     public function __construct()
     {
+
     }
 
-    public function connect($config){
-        $this->_backend = new Apache_Solr_Service($config['host'], $config['port'], $config['path']);
-    }
-
-    public function indexBean($bean){
-        $instance = SugarSearchEngine::getInstance();
-        
+    public function indexBean($bean, $batched = TRUE)
+    {
+        //TODO: Needs to be re-implemented to pickup correct fields.
         $document = new Apache_Solr_Document();
         $document->addField('category', $bean->module_name);
         $document->addField('id', $bean->id);
@@ -48,9 +44,17 @@ class SugarSearchEngineSolr implements ISugarSearchEngine
         $this->_backend->addDocument($document);
     }
 
-    public function flush(){
-        $this->_backend->commit(); //commit to see the deletes and the document
-        $this->_backend->optimize();
+    public function flush()
+    {
+        $this->_backend->commit();
+
+        //TODO: Optimizations should probably not be called here.
+        //$this->_backend->optimize();
+    }
+
+    public function delete(SugarBean $bean)
+    {
+        $this->_backend->deleteById($bean->id);
     }
 
     public function search($query, $offset = 0, $limit = 20)
@@ -67,10 +71,5 @@ class SugarSearchEngineSolr implements ISugarSearchEngine
             $output[] = $docResult;
         }
         return $output;
-    }
-
-    public function useEngine()
-    {
-        return true;
     }
 }

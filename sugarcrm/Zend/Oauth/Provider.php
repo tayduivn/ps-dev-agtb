@@ -56,6 +56,7 @@ class Zend_Oauth_Provider
     protected $tokenHandler;
     protected $consumerHandler;
     protected $nonceHandler;
+    protected $oauth_params;
 
     protected $requestPath;
     /**
@@ -234,7 +235,7 @@ class Zend_Oauth_Provider
 
 	    if(!empty($auth) && substr($auth, 0, 6) == 'OAuth ') {
 	        // import header data
-	        if (preg_match_all('/(oauth_[a-z_-]*)=(:?"([^"]*)"|([^,]*))/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+	        if (preg_match_all('/(oauth_[a-z_-]*)=(:?"([^"]*)"|([^,]*))/', $auth, $matches)) {
               foreach ($matches[1] as $num => $header) {
                   if($header == 'realm') {
                       continue;
@@ -262,6 +263,15 @@ class Zend_Oauth_Provider
 	}
 
 	/**
+     * Returns oauth parameters
+     * @return array
+     */
+    public function getOAuthParams()
+    {
+        return $this->oauth_params;
+    }
+
+    /**
 	 * Validate OAuth request
 	 * @param Zend_Uri_Http $url Request URL, will use current if null
 	 * @param array $params Additional parameters
@@ -286,6 +296,7 @@ class Zend_Oauth_Provider
 	        $method = 'GET';
 	    }
         $params = $this->assembleParams($method, $params);
+        $this->oauth_params = $params;
         $this->checkSignatureMethod($params['oauth_signature_method']);
         $this->checkRequiredParams($params);
 
@@ -333,6 +344,7 @@ class Zend_Oauth_Provider
         if($req_sign != $our_sign) {
             // TODO: think how to extract signature base string
             $this->problem = $our_sign;
+            $GLOBALS['log']->fatal("Bad signature: $req_sign != $our_sign");
             throw new Zend_Oauth_Exception("Invalid signature", self::INVALID_SIGNATURE);
         }
 

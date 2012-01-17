@@ -29,154 +29,30 @@
  * $Id: style.js 23344 2007-06-05 20:32:59Z eddy $
  */
 
-/**
- * Handles the global links slide
- */
+
+ //window resize event handers
 $(window).resize(function() {
-  //$('body').prepend('<div>' + $(window).width() + '</div>');
-  
-  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
-  
-  $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
-	resizeMenu();
+	SUGAR.themes.resizeSearch();
+	SUGAR.themes.resizeMenu();
 });
 
-(function($) {
-    $.fn.extend({
-        isChildOf: function( filter_string ) {
-          
-          var parents = $(this).parents().get();
-         
-          for ( j = 0; j < parents.length; j++ ) {
-           if ( $(parents[j]).is(filter_string) ) {
-      return true;
-           }
-          }
-          
-          return false;
-        }
-    });
-})(jQuery); 
 
 
 $(document).ready(function(){
-
-
-firstHit = false;
-	
-	
-  $('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
-  $('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
-	resizeMenu();
-	
-	$("#sugar_spot_search").keypress(function(event) {
-		DCMenu.startSearch(event);
-		$('#close_spot_search').css("display","inline-block");
-		
-		 if(event.charCode == 0 && !firstHit) {
-		$('#sugar_spot_search_div').css("left",110);
-		$('#sugar_spot_search_div').css("width",344);
-		$('#sugar_spot_search').css("width",290);
-		firstHit = true;
-		 	}
-
-		 
-
-		$('#close_spot_search').click(function() {
-			clearSearch();
-		});
-		$('body').click(function() {
-			clearSearch();
-//		   console.log($("#sugar_spot_search").val());
-		});
-
-
-
-	});
-
-	//set up any action style menus
-	$("ul.clickMenu").each(function(index, node){
-  		$(node).sugarActionMenu();
-  	});
-	
-	//Fix show more/show less buttons in top action menus
-	$("[class^='moduleMenuOverFlow']").each(function(index,node){
-	    var jNode = $(node);
-	    jNode.unbind("click");
-		jNode.click(function(event){
-			event.stopPropagation();
-		});
-	    
-	});
-
-	
-    $("#arrow").click(function(){
-        $(this).toggleClass("up");
-        if ($(this).hasClass('up')) {
-        	$(this).attr("title","Hide");
-        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
-            $(this).animate({bottom:'5px'},200);
-        } else {
-        	$(this).attr("title","Show");
-        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
-            $(this).animate({bottom:'0'},200);
-        }
-        $("#footer").slideToggle("fast");
-        
-    });
-    
-    //Tool Tips
-   	$(function(){
-		$("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#linkedin").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
-		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});
-		
-	});
+	SUGAR.themes.resizeSearch();
+	SUGAR.themes.resizeMenu();
+	//setup for action menus
+	SUGAR.themes.actionMenu();
+	//setup event handler for search results
+	SUGAR.themes.searchResults();
+    //setup footer for toggling
+    SUGAR.themes.toggleFooter();
+    //initialize global tooltips
+	SUGAR.themes.globalToolTips();
 
 });
  
-function resizeMenu() {
-	var maxMenuWidth = Math.round($(window).width()*.45);
-	var menuWidth = $('#moduleList').width();
-	var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
-	
-	//console.log($('#themeTabGroup_All ul').children(".yuimenubaritem").length);
-	//if(menuWidth > maxMenuWidth) {
-		$('#themeTabGroup_All ul').children(".yuimenubaritem").each(
-			function(index) {
-				//if($(this).css("display") == "list-item") {
-					menuItemsWidth += $(this).width();
-				//}
-				if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenuAll") {
-		    		//console.log($(this).attr("id"));
-		    		$(this).css("display","none");
-		    		$("#"+$(this).attr("id")+"_flex").css("display","list-item");
-				}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenuAll") {
-					//console.log($(this).attr("id"));
-					$(this).css("display","list-item");
-					$("#"+$(this).attr("id")+"_flex").css("display","none");
-				}
-			}
-		);	
-		
-	//}
-	
-}
-function clearSearch() {
-	$("div#sugar_spot_search_results").hide();
-	$('#close_spot_search').css("display","none");
-	$("#sugar_spot_search").val("");
-	$("#sugar_spot_search").removeClass("searching");
-	$('#sugar_spot_search_div').css("left",0);
-	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
-  	$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));	
-  	firstHit = false;
-}
+
 
 
 
@@ -286,7 +162,114 @@ SUGAR.append(SUGAR.themes, {
 				//$(this).find("div.megacolumn-content").height(wrapperHeight);
 			}
 		});	
-    }
+    },
+    resizeSearch: function() {
+    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54); 
+		$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
+    },
+    resizeMenu: function () {
+	    var maxMenuWidth = Math.round($(window).width()*.45);
+		var menuWidth = $('#moduleList').width();
+		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
+
+			$('ul.sf-menu').children("li").each(
+				function(index) {
+						menuItemsWidth += $(this).width();
+					if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current) {
+			    		//console.log($(this).attr("id"));
+			    		$(this).css("display","none");
+			    		$("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
+					}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current) {
+						//console.log($(this).attr("id"));
+						$(this).css("display","list-item");
+						$("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
+					}
+				}
+			);
+    },
+    globalToolTips: function () {
+    	$("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#linkedin").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
+		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});	
+    },
+    toggleFooter: function () {
+	    $("#arrow").click(function(){
+	        $(this).toggleClass("up");
+	        if ($(this).hasClass('up')) {
+	        	$(this).attr("title","Hide");
+	        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+	            $(this).animate({bottom:'5px'},200);
+	        } else {
+	        	$(this).attr("title","Show");
+	        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+	            $(this).animate({bottom:'0'},200);
+	        }
+	        $("#footer").slideToggle("fast");
+	        
+	    });	
+    },
+    searchResults: function () {
+    	firstHit = false;
+    	$("#sugar_spot_search").keypress(function(event) {
+			DCMenu.startSearch(event);
+			$('#close_spot_search').css("display","inline-block");
+			
+			 if(event.charCode == 0 && !firstHit) {
+			$('#sugar_spot_search_div').css("left",110);
+			$('#sugar_spot_search_div').css("width",344);
+			$('#sugar_spot_search').css("width",290);
+			firstHit = true;
+			 	}
+			$('#close_spot_search').click(function() {
+				SUGAR.themes.clearSearch();
+			});
+			$('body').click(function() {
+				SUGAR.themes.clearSearch();
+			});
+		});	
+    },
+    clearSearch: function() {
+   		$("div#sugar_spot_search_results").hide();
+		$('#close_spot_search').css("display","none");
+		$("#sugar_spot_search").val("");
+		$("#sugar_spot_search").removeClass("searching");
+		$('#sugar_spot_search_div').css("left",0);
+		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
+	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));	
+	  	firstHit = false;
+   	},
+   	actionMenu: function() {
+	   	//set up any action style menus
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
+		
+		//Fix show more/show less buttons in top action menus
+		$("[class^='moduleMenuOverFlow']").each(function(index,node){
+		    var jNode = $(node);
+		    jNode.unbind("click");
+			jNode.click(function(event){
+				event.stopPropagation();
+			});
+		    
+		});	
+   	},
+   	sugar_theme_gm_switch: function(groupName) {
+	   	$('#themeTabGroupMenu_'+sugar_theme_gm_current).css("display","none");
+	    sugar_theme_gm_current = groupName;
+	    $.ajax({
+	    	type: "POST",
+	    	url: "index.php?module=Users&action=ChangeGroupTab&to_pdf=true",
+	    	data: 'newGroup='+groupName
+	    });
+	    $('#themeTabGroupMenu_'+groupName).css("display","block");
+   	}
+    
 });
 
 /**
@@ -366,23 +349,3 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
         Y.all('#tabListContainer .yui-hd a').on('click', onClick);
     });
 });
-
-function sugar_theme_gm_switch( groupName ) {
-    document.getElementById('themeTabGroupMenu_'+sugar_theme_gm_current).style.display='none';
-    sugar_theme_gm_current = groupName;
-    YAHOO.util.Connect.asyncRequest('POST','index.php?module=Users&action=ChangeGroupTab&to_pdf=true',false,'newGroup='+groupName);
-    document.getElementById('themeTabGroupMenu_'+groupName).style.display='block';
-    
-    //oMenuBar = allMenuBars[groupName];
-}
-
-offsetPadding = 0;
-
-
-function resizeHeader() {
-	var e = document.getElementById("contentTable");
-	document.getElementById("moduleList").style.width = e.offsetWidth + "px";
-	document.getElementById("header").style.width = e.offsetWidth + 20 + "px";
-	document.getElementById("dcmenu").style.width = e.offsetWidth + 20 + "px";
-
-}

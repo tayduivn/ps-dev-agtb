@@ -116,7 +116,7 @@
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
 				{if $shortcutTopMenu.$name && $name != "Home"}
-					<li class="flexMenuItems"  id="moduleTabMain_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name"}
+					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name"}
 					<ul class="megamenu">
 					<li>
 						<div class="megawrapper">
@@ -235,7 +235,7 @@
 	
 				<ul>
 		          {foreach from=$groupTabs item=module key=group name=groupList}
-		          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
+		          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(SUGAR.themes.sugar_theme_gm_switch('{$group}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
 		          {/foreach}
 				</ul>
         

@@ -361,7 +361,6 @@ class Apache_Solr_Service
 
 		if ($solrResponse->getHttpStatus() != 200)
 		{
-            echo var_export($solrResponse, true);
 			throw new Apache_Solr_HttpTransportException($solrResponse);
 		}
 

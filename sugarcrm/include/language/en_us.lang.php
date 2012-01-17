@@ -317,6 +317,10 @@ $app_list_strings = array (
     'Net 30' => 'Net 30',
   ),
   'sales_stage_default_key' => 'Prospecting',
+  'fts_type' => array (
+      '' => '',
+      'Elastic' => 'Elastic Search'
+  ),
   'sales_stage_dom' =>
   array (
     'Prospecting' => 'Prospecting',
