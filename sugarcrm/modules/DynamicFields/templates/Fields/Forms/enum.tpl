@@ -53,16 +53,37 @@
 	{/if}
 	</td>
 </tr>
+<tr>
+	<td class='mbLBL' >{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MASS_UPDATE"}:</td>
+	<td>
+	{if $hideLevel < 5}
+		<input type="checkbox" id="massupdate"  name="massupdate" value="1" {if !empty($vardef.massupdate)}checked{/if}/>
+	{else}
+		<input type="checkbox" id="massupdate"  name="massupdate" value="1" disabled {if !empty($vardef.massupdate)}checked{/if}/>
+	{/if}
+	</td>
+</tr>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
-<tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_HAS_PARENT"}:</td>
-    <td><input type="checkbox" name="has_parent" id="has_parent" value="1" onclick ="ModuleBuilder.toggleParent()"
-        {if !empty($vardef.visibility_grid)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+<tr id='depTypeRow' class="toggleDep"><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>
+    <td>
+        <select id="depTypeSelect" onchange="ModuleBuilder.toggleParent(this.value == 'parent'); ModuleBuilder.toggleDF(this.value == 'formula'); ">
+            <option label="None" value="">None</option>
+            <option label="Parent Dropdown" value="parent">Parent Dropdown</option>
+            <option label="Formula" value="formula">Formula</option>
+        </select>
         <script>
-			ModuleBuilder.toggleParent({if empty($vardef.visibility_grid)}false{else}true{/if});
+			//For enums, don't use the formal dependent checkbox, use this dependency type selector
+            $('#depCheckboxRow').hide();
+            ModuleBuilder.toggleParent({if empty($vardef.visibility_grid)}false{else}true{/if});
+            {if !empty($vardef.visibility_grid)}
+                $('#depTypeSelect').val("parent");
+            {elseif !empty($vardef.dependency)}
+                $('#depTypeSelect').val("formula");
+            {/if}
 		</script>
     </td>
 </tr>
-<tr id='visGridRow' {if empty($vardef.visibility_grid)}style="display:none"{/if} >
+<tr id='visGridRow' {if empty($vardef.visibility_grid)}style="display:none"{/if} class="toggleDep">
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_PARENT_DROPDOWN"}:</td>
 	<td>
         {html_options name="parent_dd" id="parent_dd" selected=$vardef.visibility_grid.trigger options=$module_dd_fields}
@@ -76,14 +97,4 @@
 	</td>
 </tr>
 {* //END SUGARCRM flav=pro ONLY *}
-<tr>
-	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MASS_UPDATE"}:</td>
-	<td>
-	{if $hideLevel < 5}
-		<input type="checkbox" id="massupdate"  name="massupdate" value="1" {if !empty($vardef.massupdate)}checked{/if}/>
-	{else}
-		<input type="checkbox" id="massupdate"  name="massupdate" value="1" disabled {if !empty($vardef.massupdate)}checked{/if}/>
-	{/if}
-	</td>
-</tr>
 {include file="modules/DynamicFields/templates/Fields/Forms/coreBottom.tpl"}

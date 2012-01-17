@@ -1215,12 +1215,15 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 }
 			}
 		},
-        toggleDF: function(enable) {
-            if (typeof(enable) == 'undefined') {
+        toggleDF: function(enable, query) {
+            if (typeof(enable) == 'undefined' || enable === null) {
                 enable = Dom.get('dependent').checked;
             }
             var display = enable ? "" : "none";
             Dom.setStyle('visFormulaRow', 'display', display);
+            //If a query was passed in, we need to enble/disable elements that match the query as well
+            if (query)
+                $(query).css("display", display);
             Dom.get('dependency').disabled = !enable;
 			Dom.get('dependent').value = enable;
         }
