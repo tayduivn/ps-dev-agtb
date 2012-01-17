@@ -1833,7 +1833,7 @@ class SugarBean
         if(in_array('set_notification_body', get_class_methods($this))) {
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
-            $xtpl->assign("OBJECT", $this->object_name);
+            $xtpl->assign("OBJECT", translate('LBL_MODULE_NAME'));
             $template_name = "Default";
         }
         if(!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
