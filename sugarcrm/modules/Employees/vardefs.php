@@ -35,4 +35,10 @@ $dictionary['Employee']['fields']['email_link_type']['massupdate']=false;
 $dictionary['Employee']['fields']['email1']['required']=false;
 $dictionary['Employee']['fields']['email_addresses']['required']=false;
 $dictionary['Employee']['fields']['email_addresses_primary']['required']=false;
+// bugs 47553 & 49716
+$dictionary['Employee']['fields']['date_entered']['required']=false;
+$dictionary['Employee']['fields']['date_modified']['required']=false;
+$dictionary['Employee']['fields']['status']['required']=false;
+$dictionary['Employee']['fields']['system_generated_password']['required']=false;
+$dictionary['Employee']['fields']['team_name']['required']=false;
 ?>
