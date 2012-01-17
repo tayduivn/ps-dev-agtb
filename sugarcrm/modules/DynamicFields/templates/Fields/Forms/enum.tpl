@@ -81,6 +81,8 @@
                 $('#depTypeSelect').val("formula");
             {/if}
 		</script>
+        {** We can only have a formula or a vis_grid. Before we save we need to clear the one we aren't using **}
+        <input type="hidden" id="customTypeValidate" onchange="return ModuleBuilder.validateDD()" />
     </td>
 </tr>
 <tr id='visGridRow' {if empty($vardef.visibility_grid)}style="display:none"{/if} class="toggleDep">

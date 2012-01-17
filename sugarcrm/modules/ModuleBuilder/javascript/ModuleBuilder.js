@@ -1226,6 +1226,14 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 $(query).css("display", display);
             Dom.get('dependency').disabled = !enable;
 			Dom.get('dependent').value = enable;
+        },
+        //We can only have a formula or a vis_grid. Before we save we need to clear the one we aren't using
+        validateDD: function() {
+            if ($('#depTypeSelect').val() != "parent")
+                $("#visibility_grid").val("");
+            if ($('#depTypeSelect').val() != "formula")
+                $("#dependency").val("");
+            return true;
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY
