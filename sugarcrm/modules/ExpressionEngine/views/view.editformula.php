@@ -20,7 +20,7 @@
  ********************************************************************************/
 //require_once('include/Utils.php');
 
-require_once('modules/ExpressionEngine/FormulaHelper.php');
+require_once('modules/ExpressionEngine/formulaHelper.php');
 
 class ViewEditFormula extends SugarView
 {
