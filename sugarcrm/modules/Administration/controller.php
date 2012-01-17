@@ -123,6 +123,38 @@ class AdministrationController extends SugarController
         echo "true";
     }
 
+    public function action_UpdateFTS()
+    {
+        $type = !empty($_REQUEST['fts_type']) ? $_REQUEST['fts_type'] : '';
+        $host = !empty($_REQUEST['fts_host']) ? $_REQUEST['fts_host'] : '';
+        $port = !empty($_REQUEST['fts_port']) ? $_REQUEST['fts_port'] : '';
+
+        $this->cfg = new Configurator();
+        $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port));
+        $this->cfg->handleOverride();
+
+        $this->view = "configurefts";
+    }
+
+    public function action_checkFTSConnection()
+    {
+        $type = !empty($_REQUEST['type']) ? urldecode($_REQUEST['type']) : '';
+        $host = !empty($_REQUEST['host']) ? urldecode($_REQUEST['host']) : '';
+        $port = !empty($_REQUEST['port']) ? urldecode($_REQUEST['port']) : '';
+
+        if(!empty($type) && !empty($host) && !empty($port))
+        {
+            $config = array('port' => $port, 'host' => $host);
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
+            echo json_encode(array('status' => $searchEngine->getServerStatus()));
+        }
+        else
+        {
+            echo json_encode(array('status' => FALSE));
+        }
+        sugar_cleanup(TRUE);
+    }
 
     /**
      * action_saveglobalsearchsettings

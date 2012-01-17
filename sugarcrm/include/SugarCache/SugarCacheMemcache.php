@@ -101,7 +101,7 @@ class SugarCacheMemcache extends SugarCacheAbstract
         $value
         )
     {
-        $this->_getMemcacheObject()->set($key, $value, 0, $this->expireTimeout);
+        $this->_getMemcacheObject()->set($key, $value, 0, $this->_expireTimeout);
     }
 
     /**

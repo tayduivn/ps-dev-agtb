@@ -262,6 +262,11 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             return;
         } // if
 
+        if (!self::$helperObject->checkQuery($error, $query, $order_by)) {
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+        	return;
+        } // if
+
         // If the maximum number of entries per page was specified, override the configuration value.
         if($max_results > 0){
             global $sugar_config;
@@ -702,12 +707,15 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     }
     //END SUGARCRM flav=pro ONLY
 
+    /**
+     * Get OAuth reqtest token
+     */
     public function oauth_request_token()
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->oauth_request_token');
         require_once "include/SugarOAuthServer.php";
         try {
-	        $oauth = new SugarOAuthServer($GLOBALS['sugar_config']['site_url'].'service/v4/rest.php');
+	        $oauth = new SugarOAuthServer(rtrim($GLOBALS['sugar_config']['site_url'],'/').'/service/v4/rest.php');
 	        $result = $oauth->requestToken()."&oauth_callback_confirmed=true&authorize_url=".$oauth->authURL();
         } catch(OAuthException $e) {
             $GLOBALS['log']->debug("OAUTH Exception: $e");
@@ -720,6 +728,9 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         return $result;
     }
 
+    /**
+     * Get OAuth access token
+     */
     public function oauth_access_token()
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->oauth_access_token');

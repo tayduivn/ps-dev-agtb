@@ -179,5 +179,3 @@
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
         );
-
-?>

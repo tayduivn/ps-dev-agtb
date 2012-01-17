@@ -177,6 +177,20 @@ $dictionary['ProjectTask'] = array('audited'=>true,
             'required' => false,
             'audited'=>true,
         ),
+        'date_due' => array(
+            'name' => 'date_due',
+            'vname' => 'LBL_DATE_DUE',
+            'type' => 'date',
+            'rel_field' => 'time_due',
+            'audited' => true
+        ),
+        'time_due' => array(
+                    'name' => 'time_due',
+                    'vname' => 'LBL_TIME_DUE',
+                    'type' => 'time',
+                    'rel_field' => 'date_due',
+                    'audited' => true
+        ),
         'parent_task_id' => array(
             'name' => 'parent_task_id',
             'vname' => 'LBL_PARENT_TASK_ID',

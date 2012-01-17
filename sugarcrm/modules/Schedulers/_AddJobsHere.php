@@ -67,9 +67,12 @@ $job_strings = array (
     10 => 'dceCreateReportData',
     11 => 'dceCreateSalesReport',
     //END SUGARCRM flav=dce ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+    12 => 'performFullFTSIndex',
+    //END SUGARCRM flav=pro ONLY
 	//BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
-//END SUGARCRM flav=int ONLY
+    //END SUGARCRM flav=int ONLY
 //END SUGARCRM flav!=sales ONLY
 
 );
@@ -535,6 +538,17 @@ function dceCreateSalesReport() {
     return true;
 }
 //END SUGARCRM flav=dce ONLY
+
+//BEGIN SUGARCRM flav=pro ONLY
+function performFullFTSIndex()
+{
+    require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+    $indexer = new SugarSearchEngineFullIndexer();
+    $results = $indexer->performFullSystemIndex()->getStatistics();
+    $GLOBALS['log']->fatal("FTS Indexer completed with the following results:" . var_export($results, TRUE));
+    return true;
+}
+//END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=int ONLY
 /**

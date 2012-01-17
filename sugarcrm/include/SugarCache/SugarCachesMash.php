@@ -52,7 +52,7 @@ class SugarCachesMash extends SugarCacheAbstract
         $value
         )
     {
-        zput('/tmp/'.$this->_keyPrefix.'/'.$key, $value, $this->expireTimeout);
+        zput('/tmp/'.$this->_keyPrefix.'/'.$key, $value, $this->_expireTimeout);
     }
     
     /**
