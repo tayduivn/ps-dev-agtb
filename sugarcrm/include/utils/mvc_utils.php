@@ -278,10 +278,10 @@ if(!function_exists('amsi')){
 
 				$_SESSION['mvi'] = '';
 				if($q & 2){
-					//$_SESSION['mvi'] .= '<div align="center" class="copyRight">' .$str . '</div>';
+					;
 				}
 				if($q & 1){
-					//$_SESSION['mvi'] .= '<div align="center"><img style="margin-top: 2px" border="0" width="106" height="23" src="'. $image_path . '.png" alt="'.$app_strings["LBL_POWERED_BY_SUGARCRM"].'"></div>';
+					;
 				}
 				if(empty($_SESSION['mvi']) && !empty($odd))$_SESSION['mvi'] = base64_decode($odd);
 				echo $_SESSION['mvi'];
