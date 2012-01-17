@@ -235,7 +235,7 @@
 	
 				<ul>
 		          {foreach from=$groupTabs item=module key=group name=groupList}
-		          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
+		          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(SUGAR.themes.sugar_theme_gm_switch('{$group}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
 		          {/foreach}
 				</ul>
         

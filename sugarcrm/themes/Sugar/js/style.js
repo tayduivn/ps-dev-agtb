@@ -258,6 +258,16 @@ SUGAR.append(SUGAR.themes, {
 			});
 		    
 		});	
+   	},
+   	sugar_theme_gm_switch: function(groupName) {
+	   	$('#themeTabGroupMenu_'+sugar_theme_gm_current).css("display","none");
+	    sugar_theme_gm_current = groupName;
+	    $.ajax({
+	    	type: "POST",
+	    	url: "index.php?module=Users&action=ChangeGroupTab&to_pdf=true",
+	    	data: 'newGroup='+groupName
+	    });
+	    $('#themeTabGroupMenu_'+groupName).css("display","block");
    	}
     
 });
@@ -339,20 +349,3 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
         Y.all('#tabListContainer .yui-hd a').on('click', onClick);
     });
 });
-
-function sugar_theme_gm_switch( groupName ) {
-    document.getElementById('themeTabGroupMenu_'+sugar_theme_gm_current).style.display='none';
-    sugar_theme_gm_current = groupName;
-    YAHOO.util.Connect.asyncRequest('POST','index.php?module=Users&action=ChangeGroupTab&to_pdf=true',false,'newGroup='+groupName);
-    document.getElementById('themeTabGroupMenu_'+groupName).style.display='block';
-    
-    //oMenuBar = allMenuBars[groupName];
-}
-
-function resizeHeader() {
-	var e = document.getElementById("contentTable");
-	document.getElementById("moduleList").style.width = e.offsetWidth + "px";
-	document.getElementById("header").style.width = e.offsetWidth + 20 + "px";
-	document.getElementById("dcmenu").style.width = e.offsetWidth + 20 + "px";
-
-}
