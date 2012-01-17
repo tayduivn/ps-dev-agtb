@@ -68,7 +68,7 @@ $dictionary['User'] = array(
             'required' => true,
             'reportable' => false,
             'massupdate' => false,
-            'studio' => array('listview' => false, 'searchview'=>false),
+            'studio' => array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false),
         ) ,
 
         'pwd_last_changed' => array(
@@ -197,12 +197,14 @@ $dictionary['User'] = array(
             'vname' => 'LBL_DATE_ENTERED',
             'type' => 'datetime',
             'required' => true,
+            'studio' => array('editview' => false, 'quickcreate' => false, 'wirelesseditview' => false),
         ) ,
         'date_modified' => array(
             'name' => 'date_modified',
             'vname' => 'LBL_DATE_MODIFIED',
             'type' => 'datetime',
             'required' => true,
+            'studio' => array('editview' => false, 'quickcreate' => false, 'wirelesseditview' => false),
         ) ,
         'modified_user_id' => array(
             'name' => 'modified_user_id',
@@ -412,7 +414,7 @@ $dictionary['User'] = array(
 				'source' => 'non-db',
 				'len' => 36,
 				'custom_type' => 'teamset',
-                'studio' => array('listview' => false, 'searchview'=>false),
+                'studio' => array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false),
 			),
 			'team_link' =>
 		    array (
