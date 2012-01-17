@@ -41,4 +41,5 @@ $dictionary['Employee']['fields']['date_modified']['required']=false;
 $dictionary['Employee']['fields']['status']['required']=false;
 $dictionary['Employee']['fields']['system_generated_password']['required']=false;
 $dictionary['Employee']['fields']['team_name']['required']=false;
+$dictionary['Employee']['fields']['status']['studio']=array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false);
 ?>
