@@ -29,11 +29,13 @@ if(array_key_exists("entryPoint", $_GET)){
 		require_once('include/SugarTheme/SugarTheme.php');
 		require_once('include/utils.php');
 		include("include/SugarTheme/getImage.php");
+		die();
 	}
 	else if($_GET["entryPoint"] == "getYUIComboFile"){
 		include("include/javascript/getYUIComboFile.php");
+		die();
 	}
-	die();
+	
 }
 
 ?>
