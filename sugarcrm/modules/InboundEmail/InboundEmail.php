@@ -742,10 +742,16 @@ class InboundEmail extends SugarBean {
 				$cols .= "{$colDef['name']}";
 			}
 			foreach($insert as $overview) {
-				if(in_array($overview->imap_uid, $uids)) {
-					$update[] = $overview;
-					continue;
-				}
+                if(in_array($overview->imap_uid, $uids))
+                {
+                    // fixing bug #49543: setting 'mbox' property for the following updating of other items in this box
+                    if (!isset($overview->mbox))
+                    {
+                        $overview->mbox = $mbox;
+                    }
+                    $update[] = $overview;
+                    continue;
+                }
 
 				$values = '';
 
@@ -758,9 +764,13 @@ class InboundEmail extends SugarBean {
 					if(	isset($colDef['len']) && !empty($colDef['len']) &&
 						isset($colDef['type']) && !empty($colDef['type']) &&
 						$colDef['type'] == 'varchar'
-					) {
-						$overview->$colDef['name'] = substr($overview->$colDef['name'], 0, $colDef['len']);
-					}
+					)
+                    {
+                        if (isset($overview->$colDef['name']))
+                        {
+                            $overview->$colDef['name'] = substr($overview->$colDef['name'], 0, $colDef['len']);
+                        }
+                    }
 
 					switch($colDef['name']) {
 						case "imap_uid":
@@ -842,10 +852,20 @@ class InboundEmail extends SugarBean {
 						break;
 
 						default:
-							if(!empty($set)) {
-								$set .= ",";
-							}
-							$set .= "{$colDef['name']} = ".$this->db->quoted($overview->$colDef['name']);
+                            if(!empty($set))
+                            {
+                                $set .= ",";
+                            }
+                            $value = '';
+                            if (isset($overview->$colDef['name']))
+                            {
+                                $value = $this->db->quoted($overview->$colDef['name']);
+                            }
+                            else
+                            {
+                                $value = $this->db->quoted($value);
+                            }
+                            $set .= "{$colDef['name']} = " . $value;
 						break;
 					}
 				}
