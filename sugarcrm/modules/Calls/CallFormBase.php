@@ -205,6 +205,14 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
         $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Getting the users default reminder time');
 		$_POST[$prefix.'reminder_time'] = $current_user->getPreference('reminder_time');
 	}
+	
+	if(!isset($_POST['email_reminder_checked']) || (isset($_POST['email_reminder_checked']) && $_POST['email_reminder_checked'] == '0')) {
+		$_POST['email_reminder_time'] = -1;
+	}
+	if(!isset($_POST['email_reminder_time'])){
+		$_POST['email_reminder_time'] = $current_user->getPreference('email_reminder_time');
+		$_POST['email_reminder_checked'] = 1;
+	}
 
 	$time_format = $timedate->get_user_time_format();
     $time_separator = ":";

@@ -1424,6 +1424,12 @@
 	
 	CAL.load_create_form = function (params){
 	
+			CAL.get("btn-delete").setAttribute("disabled","disabled");			
+			CAL.get("btn-apply").setAttribute("disabled","disabled");
+			CAL.get("btn-save").setAttribute("disabled","disabled");
+			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
+			CAL.get("btn-delete").style.display = "";	
+	
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 			
 			CAL.repeat_tab_handle(CAL.current_params.module_name);
@@ -1462,7 +1468,11 @@
 							
 							if(typeof res.repeat != "undefined"){
 								CAL.fill_repeat_tab(res.repeat);
-							}
+							}							
+
+							CAL.get("btn-apply").removeAttribute("disabled");
+							CAL.get("btn-save").removeAttribute("disabled");
+							CAL.get("btn-send-invites").removeAttribute("disabled");
 								
 							setTimeout(function(){
 								SugarWidgetScheduler.update_time();
@@ -1524,7 +1534,10 @@
 							
 	}
 	
-	CAL.dialog_save = function(){						
+	CAL.dialog_save = function(){
+						CAL.get("btn-save").setAttribute("disabled","disabled");
+						CAL.get("btn-apply").setAttribute("disabled","disabled");
+						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
 						CAL.get("title-cal-edit").innerHTML = CAL.lbl_saving;																					
@@ -1570,6 +1583,9 @@
 	}
 	
 	CAL.dialog_apply = function(){
+						CAL.get("btn-save").setAttribute("disabled","disabled");
+						CAL.get("btn-apply").setAttribute("disabled","disabled");
+						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
 						CAL.get("title-cal-edit").innerHTML = CAL.lbl_saving;								
@@ -1604,6 +1620,8 @@
 										
 										// If new data is added with Apply, show the Delete button
 										CAL.get("btn-delete").removeAttribute("disabled");
+										CAL.get("btn-save").removeAttribute("disabled");
+										CAL.get("btn-apply").removeAttribute("disabled");
 										CAL.get("btn-delete").style.display = "";
 																				
 										ajaxStatus.hideStatus();											

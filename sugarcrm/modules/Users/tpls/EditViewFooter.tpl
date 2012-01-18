@@ -240,11 +240,7 @@
                             </td>
                             <td valign="top"  nowrap>
                                 {* //BEGIN SUGARCRM flav!=sales ONLY*}
-                                <slot>
-                                <input tabindex='12' name='mailmerge_on' type='hidden' value='0'>
-                                <input name='should_remind' size='2' maxlength='2' tabindex='12' onclick='toggleDisplay("should_remind_list");' type="checkbox" class="checkbox" value='1' {$REMINDER_CHECKED}>
-                                <div id='should_remind_list' style='display:{$REMINDER_TIME_DISPLAY}'>
-                                    <select tabindex='12' name='reminder_time'  >{$REMINDER_TIME_OPTIONS}</select></div></slot>
+                                <slot>{include file="modules/Meetings/tpls/reminders.tpl"}</slot>
                                {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                         </tr>

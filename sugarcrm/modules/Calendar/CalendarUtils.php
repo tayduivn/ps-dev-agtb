@@ -325,7 +325,7 @@ class CalendarUtils {
 		$date_modified = $GLOBALS['timedate']->nowDb();
 		$lower_name = strtolower($bean->object_name);
 		
-				$qu = "SELECT * FROM {$bean->rel_users_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
+		$qu = "SELECT * FROM {$bean->rel_users_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);	
 		$users_rel_arr = array();	
 		while($ro = $db->fetchByAssoc($re))
@@ -372,6 +372,7 @@ class CalendarUtils {
 			$date = $date->get("+{$bean->duration_hours} Hours")->get("+{$bean->duration_minutes} Minutes");
 			$date_end = $date->format($GLOBALS['timedate']->get_date_time_format());
 			$clone->date_end = $date_end;
+			$clone->recurring_source = "Sugar";
 			$clone->repeat_parent_id = $id;	
 			$clone->update_vcal = false;					
 			$clone->save(false);

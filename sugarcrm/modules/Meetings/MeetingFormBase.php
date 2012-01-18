@@ -172,6 +172,18 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 		$_POST['reminder_time'] = $current_user->getPreference('reminder_time');
 		$_POST['reminder_checked']=1;
 	}
+	
+	if(!isset($_POST['email_reminder_checked']) || (isset($_POST['email_reminder_checked']) && $_POST['email_reminder_checked'] == '0')) {
+		$_POST['email_reminder_time'] = -1;
+	}
+	if(!isset($_POST['email_reminder_time'])){
+		$_POST['email_reminder_time'] = $current_user->getPreference('email_reminder_time');
+		$_POST['email_reminder_checked'] = 1;
+	}
+	
+	// don't allow to create not-editable meetings
+	$_POST['recurring_source'] = false;
+	
 	$time_format = $timedate->get_user_time_format();
     $time_separator = ":";
     if(preg_match('/\d+([^\d])\d+([^\d]*)/s', $time_format, $match)) {

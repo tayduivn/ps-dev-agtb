@@ -54,6 +54,9 @@ class Meeting extends SugarBean {
 	var $meeting_id;
 	var $reminder_time;
 	var $reminder_checked;
+	var $email_reminder_time;
+	var $email_reminder_checked;
+	var $email_reminder_sent;
 	var $required;
 	var $accept_status;
 	var $parent_name;
@@ -66,6 +69,8 @@ class Meeting extends SugarBean {
 	var $assigned_user_name;
 	var $outlook_id;
 	var $sequence;
+	var $syncing = false;
+	var $recurring_source;
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
@@ -115,6 +120,28 @@ class Meeting extends SugarBean {
         if(!empty($GLOBALS['app_list_strings']['duration_intervals'])) {
             $this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
         }
+	}
+	
+	/**
+	 * Disable edit if meeting is recurring and source is not Sugar. It should be edited only from Outlook.
+	 * @param $view string
+	 * @param $is_owner bool
+	 */
+	function ACLAccess($view,$is_owner = 'not_set'){
+		// don't check if meeting is being synced from Outlook
+		if($this->syncing == false){
+			$view = strtolower($view);
+			switch($view){
+				case 'edit':
+				case 'save':
+				case 'editview':
+				case 'delete':
+					if(!empty($this->recurring_source) && $this->recurring_source != "Sugar"){
+						return false;
+					}
+			}
+		}
+		return parent::ACLAccess($view,$is_owner);
 	}
 
 	/**
@@ -429,6 +456,16 @@ class Meeting extends SugarBean {
 		}
 		$this->reminder_checked = $this->reminder_time == -1 ? false : true;
 
+		if (empty($this->email_reminder_time)) {
+			$this->email_reminder_time = -1;
+		}
+		if(empty($this->id)){ 
+			$reminder_t = $GLOBALS['current_user']->getPreference('email_reminder_time');
+			if(isset($reminder_t))
+		    		$this->email_reminder_time = $reminder_t;
+		}
+		$this->email_reminder_checked = $this->email_reminder_time == -1 ? false : true;
+
 		if (isset ($_REQUEST['parent_type'])) {
 			$this->parent_type = $_REQUEST['parent_type'];
 		} elseif (is_null($this->parent_type)) {
@@ -495,6 +532,7 @@ class Meeting extends SugarBean {
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
+        $meeting_fields['EMAIL_REMINDER_CHECKED'] = $this->email_reminder_time==-1 ? false : true;
 
         //BEGIN SUGARCRM flav!=com ONLY
         $oneHourAgo = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time()-3600);
@@ -562,6 +600,33 @@ class Meeting extends SugarBean {
         }
 
 		return $xtpl;
+	}
+	
+	/**
+	 * Redefine method to attach ics file to notification email
+	 */
+	public function create_notification_email($notify_user){
+		$notify_mail = parent::create_notification_email($notify_user);
+						
+		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+
+		require_once("modules/vCals/vCal.php");
+		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
+				
+		if(file_put_contents($path,$content)){
+			$notify_mail->AddAttachment($path, 'meeting.ics', 'base64', 'text/calendar');
+		}
+		return $notify_mail;		
+	}
+	
+	/**
+	 * Redefine method to remove ics after email is sent
+	 */
+	public function send_assignment_notifications($notify_user, $admin){
+		parent::send_assignment_notifications($notify_user, $admin);
+		
+		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+		unlink($path);
 	}
 
 	function get_meeting_users() {

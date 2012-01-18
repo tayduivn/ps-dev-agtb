@@ -67,6 +67,7 @@ $job_strings = array (
     10 => 'dceCreateReportData',
     11 => 'dceCreateSalesReport',
     //END SUGARCRM flav=dce ONLY
+    12 => 'sendEmailReminders',
 	//BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
 //END SUGARCRM flav=int ONLY
@@ -535,6 +536,16 @@ function dceCreateSalesReport() {
     return true;
 }
 //END SUGARCRM flav=dce ONLY
+
+/**
+ * Job 12
+ */
+function sendEmailReminders(){
+	$GLOBALS['log']->info('----->Scheduler fired job of type sendEmailReminders()');
+	require_once("modules/Activities/EmailReminder.php");
+	$reminder = new EmailReminder();
+	return $reminder->process();
+}
 
 //BEGIN SUGARCRM flav=int ONLY
 /**

@@ -1036,6 +1036,17 @@ class Scheduler extends SugarBean {
         $sched11->save();
 //END SUGARCRM flav=dce ONLY
 
+        $sched12 = new Scheduler();
+        $sched12->name               = $mod_strings['LBL_OOTB_SEND_EMAIL_REMINDERS'];
+        $sched12->job                = 'function::sendEmailReminders';
+        $sched12->date_time_start    = create_date(2008,1,1) . ' ' . create_time(0,0,1);
+        $sched12->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
+        $sched12->job_interval       = '*::*::*::*::*';
+        $sched12->status             = 'Active';
+        $sched12->created_by         = '1';
+        $sched12->modified_user_id   = '1';
+        $sched12->catch_up           = '0';
+        $sched12->save();
 
 	}
 

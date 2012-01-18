@@ -371,13 +371,17 @@ $app_list_strings = array (
         'Prof.' => 'Prof.',
       ),
   //time is in seconds; the greater the time the longer it takes;
-  'reminder_max_time'=>3600,
+  'reminder_max_time' => 18000,
   'reminder_time_options' => array( 60=> '1 minute prior',
                                   300=> '5 minutes prior',
                                   600=> '10 minutes prior',
                                   900=> '15 minutes prior',
                                   1800=> '30 minutes prior',
                                   3600=> '1 hour prior',
+                                  7200 => '2 hours prior',
+                                  10800 => '3 hours prior',
+                                  18000 => '5 hours prior',
+                                  86400 => '1 day prior',
                                  ),
 
   'task_priority_default' => 'Medium',
