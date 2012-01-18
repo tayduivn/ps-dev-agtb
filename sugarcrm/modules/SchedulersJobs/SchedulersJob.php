@@ -54,6 +54,7 @@ class SchedulersJob extends Basic
     public $job_delay=0; // Frequency to run it
     public $assigned_user_id; // User under which the task is running
     public $client; // Client ID that owns this job
+    public $execute_time_db;
 
 	// standard SugarBean child attrs
 	var $table_name		= "job_queue";
@@ -80,6 +81,13 @@ class SchedulersJob extends Basic
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
+	}
+
+	public function check_date_relationships_load()
+	{
+        // Hack to work around the mess with dates being auto-converted to user format on retrieve
+	    $this->execute_time_db = $this->db->fromConvert($this->execute_time, 'datetime');
+	    parent::check_date_relationships_load();
 	}
 
 
@@ -127,6 +135,9 @@ class SchedulersJob extends Basic
 									//pretransfer_time,size_upload,size_download,speed_download,
 									//speed_upload,download_content_length,upload_content_length
 									//starttransfer_time,redirect_time
+		if(curl_errno($ch)) {
+		    $this->errors .= curl_errno($ch)."\n";
+		}
 		curl_close($ch);
 
 		if($result !== FALSE && $cInfo['http_code'] < 400) {
@@ -211,6 +222,7 @@ class SchedulersJob extends Basic
     {
         $GLOBALS['log']->info("Resolving job {$this->id} as $resolution: $message");
         if($resolution == self::JOB_FAILURE) {
+            $this->failure_count++;
             if($this->requeue && $this->retry_count > 0) {
                 // retry failed job
                 $this->status = self::JOB_STATUS_QUEUED;
@@ -219,11 +231,11 @@ class SchedulersJob extends Basic
                 }
                 $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->job_delay} seconds")->asDb();
                 $this->retry_count--;
-                $this->failure_count++;
                 $GLOBALS['log']->info("Will retry job {$this->id} at {$this->execute_time} ($this->retry_count)");
                 $this->onFailure();
             } else {
                 // final failure
+                $this->status = self::JOB_STATUS_DONE;
                 $this->onFinalFailure();
             }
         } else {
@@ -256,7 +268,7 @@ class SchedulersJob extends Basic
      * @param string $message
      * @return bool
      */
-    public function postponeJob($jobId, $message = null)
+    public function postponeJob($message = null)
     {
         $this->status = self::JOB_STATUS_QUEUED;
         $this->addMessages($message);
@@ -350,7 +362,7 @@ class SchedulersJob extends Basic
 		        return;
     	}
         $errstr = strip_tags($errstr);
-        $this->errors .= sprintf(translate('ERR_PHP', 'SchedulersJobs'), $type, $errno, $errstr, $errfile, $errline);
+        $this->errors .= sprintf(translate('ERR_PHP', 'SchedulersJobs'), $type, $errno, $errstr, $errfile, $errline)."\n";
     }
 
     /**
@@ -365,12 +377,14 @@ class SchedulersJob extends Basic
             session_write_close();
             session_destroy();
         }
-		session_start();
-        session_regenerate_id();
-		$_SESSION['is_valid_session']= true;
-		$_SESSION['user_id'] = $user->id;
-		$_SESSION['type'] = 'user';
-		$_SESSION['authenticated_user_id'] = $user->id;
+        if(!headers_sent()) {
+    		session_start();
+            session_regenerate_id();
+    		$_SESSION['is_valid_session']= true;
+    		$_SESSION['user_id'] = $user->id;
+    		$_SESSION['type'] = 'user';
+    		$_SESSION['authenticated_user_id'] = $user->id;
+        }
     }
 
     /**
@@ -379,10 +393,10 @@ class SchedulersJob extends Basic
     public function runJob()
     {
         $this->errors = "";
-        $exJob = explode('::', $this->target);
+        $exJob = explode('::', $this->target, 2);
         if($exJob[0] == 'function') {
             // set up the current user and drop session
-            if($this->assigned_user_id) {
+            if(!empty($this->assigned_user_id)) {
                 $user = new User();
                 $user->retrieve($this->assigned_user_id);
                 if(empty($user->id)) {
@@ -403,7 +417,7 @@ class SchedulersJob extends Basic
 			}
 			$data = array($this);
 			if(!empty($this->data)) {
-			    $data += $this->data;
+			    $data[] = $this->data;
 			}
             $res = call_user_func_array($func, $data);
             restore_error_handler();
@@ -434,7 +448,7 @@ class SchedulersJob extends Basic
 			    $this->resolveJob(self::JOB_FAILURE, translate('ERR_CURL', 'SchedulersJobs'));
 			}
 		} else {
-		    $this->resolveJob(self::JOB_FAILURE, translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target));
+		    $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
 		}
 		return false;
     }
