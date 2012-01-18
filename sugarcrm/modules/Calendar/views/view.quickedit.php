@@ -75,7 +75,9 @@ class CalendarViewQuickEdit extends SugarView {
 					$source = $base . 'editviewdefs.php';
 				}
 			}
-		}		
+		}
+		
+		$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $module);	
 		
 		$tpl = "custom/include/EditView/EditView.tpl";	
 		if(!file_exists($tpl))
