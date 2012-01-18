@@ -82,7 +82,7 @@ function confirmDialog(arrayContents, formName) {
 		}
 	}
 	
-	arrayContents.push('"popupConfirm":' + popupConfirm);
+	arrayContents.push('"popupConfirm":"' + popupConfirm + '"');
 	
 	return arrayContents;
 }
