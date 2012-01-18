@@ -4139,14 +4139,13 @@ function set_return(popup_reply_data)
 		
         if(label_data_str != label_str && current_label_data_str != label_str){
         	// Bug 48726 Start
-
-        	if (typeof popupConfirm != 'undefined')
+        	if (popupConfirm == 1)
+        	{ 
+        		set_return_basic(popup_reply_data,/\S/);
+        	}
+        	else if (popupConfirm == 0)
         	{
-        		if (popupConfirm > -1) {
-        			set_return_basic(popup_reply_data,/\S/);
-        		} else {
-        			set_return_basic(popup_reply_data,/account/);
-        		}
+        		set_return_basic(popup_reply_data,/account/);
         	}
         	// Bug 48726 End
         	else if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
