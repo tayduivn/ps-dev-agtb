@@ -139,22 +139,21 @@ array (
           array (
             'name' => 'duration',
             'customCode' => '
-            	@@FIELD@@
-            	<span id="duration_text"></span>
-            	<input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
-            	<input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
-            	{sugar_getscript file="modules/Meetings/duration_dependency.js"}
-            	<script type="text/javascript">
-            		var date_time_format = "{$CALENDAR_FORMAT}";
-            		{literal} 
-			SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){			
-				var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);	
-			});
-			{/literal}
-            	</script>            	
+                @@FIELD@@
+                <span id="duration_text"></span>
+                <input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
+                <input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
+                {sugar_getscript file="modules/Meetings/duration_dependency.js"}
+                <script type="text/javascript">
+                    var date_time_format = "{$CALENDAR_FORMAT}";
+                    {literal}
+                    SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){
+                        var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);
+                    });
+                    {/literal}
+                </script>            
             ',
-          ),
-          
+          ),          
           array (
             'name' => 'reminder_time',
             'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',
