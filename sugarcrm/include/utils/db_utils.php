@@ -116,7 +116,7 @@ function from_html($string, $encode=true) {
     static $toHTML_values = null;
     static $toHTML_keys = null;
     static $cache = array();
-    if (!isset($toHTML_values) || !empty($GLOBALS['from_html_cache_clear'])) {
+    if (!empty($toHTML) && is_array($toHTML) && (!isset($toHTML_values) || !empty($GLOBALS['from_html_cache_clear']))) {
         $toHTML_values = array_values($toHTML);
         $toHTML_keys = array_keys($toHTML);
     }
