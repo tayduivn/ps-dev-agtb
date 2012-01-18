@@ -1643,6 +1643,8 @@
 	CAL.dialog_remove = function(){
 									CAL.deleted_id = CAL.get("record").value;
 									CAL.deleted_module = CAL.get("current_module").value;
+									
+									var remove_all_recurrences = CAL.get("edit_all_recurrences").value;
 											
 									var callback = {
 											success: function(o){
@@ -1660,7 +1662,7 @@
 													cell_id = e.parentNode.id;
 													
 												if(CAL.view == 'shared'){	
-													CAL.remove_shared(CAL.deleted_id);
+													CAL.remove_shared(CAL.deleted_id, remove_all_recurrences);
 												}else{														
 													if(e = CAL.get(CAL.deleted_id)){
 														e.parentNode.removeChild(e);
@@ -1672,7 +1674,7 @@
 														user_id: CAL.current_user_id
 													});	
 												
-													if(CAL.enable_repeat){
+													if(CAL.enable_repeat && remove_all_recurrences){
 														var nodes = CAL.query("div.act_item[repeat_parent_id='" + CAL.deleted_id + "']");			
 														CAL.each(nodes,function (i,v){
 															CAL.basic.remove({
@@ -1700,7 +1702,8 @@
 									
 									var data = {
 										"current_module" : CAL.deleted_module,
-										"record" : CAL.deleted_id
+										"record" : CAL.deleted_id,
+										"remove_all_recurrences": remove_all_recurrences
 									};
 									var url = "index.php?module=Calendar&action=Remove&sugar_body_only=true";									
 									YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));

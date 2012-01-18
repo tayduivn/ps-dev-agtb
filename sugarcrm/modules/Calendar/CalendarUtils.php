@@ -436,5 +436,29 @@ class CalendarUtils {
 		}		
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 	}
+	
+	/**
+	 * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
+	 * @param SugarBean $bean 
+	 */ 
+	static function check_and_change_repeat_children(SugarBean $bean){
+		global $db;
+		
+		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$bean->id}' AND deleted = 0 ORDER BY date_start";
+		$re = $db->query($qu);
+		
+		$i = 0;		
+		while($ro = $db->fetchByAssoc($re)){
+			$id = $ro['id'];
+			if($i == 0){
+				$new_parent_id = $id;
+				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '' AND recurring_source = '' WHERE id = '{$id}'";
+			}else{
+				$qu = "UPDATE {$bean->table_name} SET repeat_parent_id = '{$new_parent_id}' WHERE id = '{$id}'";
+			}
+			$db->query($qu);
+      		$i++;
+		}	
+	}
 	 
 }

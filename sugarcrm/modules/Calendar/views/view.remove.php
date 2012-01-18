@@ -50,8 +50,13 @@ class CalendarViewRemove extends SugarView {
 			die;	
 		}
 		
-		if($module == "Meetings")
-			CalendarUtils::mark_repeat_deleted($bean);
+		if($module == "Meetings"){
+			if($_REQUEST['remove_all_recurrences']){
+				CalendarUtils::mark_repeat_deleted($bean);
+			}else{
+				CalendarUtils::check_and_change_repeat_children($bean);
+			}			
+		}
 
 		$bean->mark_deleted($_REQUEST['record']);
 
