@@ -38,18 +38,18 @@ $subpanel_layout = array(
 		),
 		'status'		=> array (
 			 'vname'	=> 'LBL_STATUS',
-			 'width'	=> '50%',
-			 'sortable'	=> false,
+			 'width'	=> '10%',
+			 'sortable'	=> true,
 		),
 		'execute_time'	=> array (
 			 'vname'	=> 'LBL_EXECUTE_TIME',
-			 'width'	=> '50%',
-			 'sortable'	=> false,
+			 'width'	=> '10%',
+			 'sortable'	=> true,
 		),
 		'date_modified'	=> array (
-			 'vname'	=> 'LBL_EXECUTE_TIME',
-			 'width'	=> '50%',
-			 'sortable'	=> false,
+			 'vname'	=> 'LBL_DATE_MODIFIED',
+			 'width'	=> '10%',
+			 'sortable'	=> true,
 		),
 		),
 );

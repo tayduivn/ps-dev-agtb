@@ -847,6 +847,26 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     }
 
     /**
+     * Run cleanup and schedule
+     * @param string $session
+     * @param string $clientid
+     */
+    public function job_queue_cycle($session, $clientid)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->job_queue_cycle');
+        $error = new SoapError();
+        if (! self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', 'read', 'no_access',  $error)) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_cycle denied.');
+            return;
+        }
+        require_once 'include/SugarQueue/SugarJobQueue.php';
+        $queue = new SugarJobQueue();
+        $queue->runSchedulers();
+        $queue->cleanup();
+        return array("result" => "ok");
+    }
+
+    /**
      * Run job from queue
      * @param string $session
      * @param string $jobid

@@ -51,7 +51,7 @@ class SchedulersJob extends Basic
     public $requeue; // Requeue on failure?
     public $retry_count;
     public $failure_count;
-    public $interval=0; // Frequency to run it
+    public $job_delay=0; // Frequency to run it
     public $assigned_user_id; // User under which the task is running
     public $client; // Client ID that owns this job
 
@@ -214,10 +214,10 @@ class SchedulersJob extends Basic
             if($this->requeue && $this->retry_count > 0) {
                 // retry failed job
                 $this->status = self::JOB_STATUS_QUEUED;
-                if($this->interval < $this->min_interval) {
-                    $this->interval = $this->min_interval;
+                if($this->job_delay < $this->min_interval) {
+                    $this->job_delay = $this->min_interval;
                 }
-                $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->interval} seconds")->asDb();
+                $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->job_delay} seconds")->asDb();
                 $this->retry_count--;
                 $this->failure_count++;
                 $GLOBALS['log']->info("Will retry job {$this->id} at {$this->execute_time} ($this->retry_count)");
@@ -261,7 +261,7 @@ class SchedulersJob extends Basic
         $this->status = self::JOB_STATUS_QUEUED;
         $this->addMessages($message);
         $this->resolution = self::JOB_PARTIAL;
-        $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->interval} seconds")->asDb();
+        $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->job_delay} seconds")->asDb();
         $GLOBALS['log']->info("Postponing job {$this->id} to {$this->execute_time}: $message");
 
         $this->save();
@@ -361,8 +361,10 @@ class SchedulersJob extends Basic
     {
         $GLOBALS['current_user'] = $user;
         // Reset the session
-        session_write_close();
-        session_destroy();
+        if(session_id()) {
+            session_write_close();
+            session_destroy();
+        }
 		session_start();
         session_regenerate_id();
 		$_SESSION['is_valid_session']= true;

@@ -46,7 +46,7 @@ class SugarJobQueue
 
     public function __construct()
     {
-        $this->db = DBManager::getInstance();
+        $this->db = DBManagerFactory::getInstance();
         $job = new SchedulersJob();
         $this->job_queue_table = $job->table_name;
     }
@@ -155,11 +155,11 @@ class SugarJobQueue
         $try = $this->jobTries;
         while($try--) {
             // TODO: tranaction start
-            $id = $this->db->getOne("SELECT id FROM {$this->job_queue_table} WHERE execute_time >= $now AND status = '$queued' ORDER BY date_entered");
+            $id = $this->db->getOne("SELECT id FROM {$this->job_queue_table} WHERE execute_time <= $now AND status = '$queued' ORDER BY date_entered ASC");
             if(empty($id)) {
                 return null;
             }
-            $job = new $this->jobClass();
+            $job = new SchedulersJob();
             $job->retrieve($id);
             if(empty($job->id)) {
                 return null;

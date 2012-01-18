@@ -138,8 +138,8 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 			'required' => false,
 			'reportable' => true,
 		),
-		'interval' => array (
-			'name' => 'interval',
+		'job_delay' => array (
+			'name' => 'job_delay',
 			'vname' => 'LBL_INTERVAL',
 			'type' => 'int',
 			'required' => false,

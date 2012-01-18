@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once 'include/SugarQueue/SugarQueue.php';
+require_once 'include/SugarQueue/SugarJobQueue.php';
 require_once 'modules/Schedulers/Scheduler.php';
 
 /**
@@ -106,8 +106,9 @@ class SugarCronJobs
         // run jobs
         $cutoff = time()+$this->max_runtime;
         register_shutdown_function(array($this, "unexpectedExit"));
+        $myid = 'CRON'.$GLOBALS['sugar_config']['unique_key'].':'.getmypid();
         for($count=0;$count<$this->max_jobs;$count++) {
-            $this->job = $this->queue->nextJob();
+            $this->job = $this->queue->nextJob($myid);
             if(empty($this->job)) {
                 return;
             }
