@@ -21,6 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once 'include/SugarQueue/SugarJobQueue.php';
 require_once 'modules/Schedulers/Scheduler.php';
 
 class SchedulersTest extends Sugar_PHPUnit_Framework_TestCase
@@ -55,6 +56,8 @@ class SchedulersTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->timedate->setNow($this->now);
+        $GLOBALS['db']->query("DELETE FROM schedulers WHERE id='{$this->scheduler->id}'");
+        $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='{$this->scheduler->id}'");
     }
 
     /**
@@ -191,6 +194,95 @@ class SchedulersTest extends Sugar_PHPUnit_Framework_TestCase
         } else {
             $this->assertFalse($this->scheduler->fireQualified());
         }
+    }
+
+    public function testScheduleJob()
+    {
+        $this->scheduler->job_interval =  "*::*::*::*::*";
+        $this->scheduler->new_with_id = true;
+        $this->scheduler->status = "Active";
+        $this->scheduler->job = "test::test";
+        $this->scheduler->save();
+        $queue = new MockSchedulerQueue();
+        $this->scheduler->checkPendingJobs($queue);
+        $this->assertNotEmpty($queue->jobs, "Job was not submitted");
+        $ourjob = null;
+        foreach($queue->jobs as $job) {
+            if($job->scheduler_id == $this->scheduler->id) {
+                $ourjob = $job;
+                break;
+            }
+        }
+        $this->assertNotEmpty($ourjob, "Could not find our job in the queue");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_QUEUED, $ourjob->status, "Wrong status");
+    }
+
+    public function testScheduleJobRepeat()
+    {
+        $this->scheduler->job_interval =  "*::*::*::*::*";
+        $this->scheduler->job = "test::test";
+        $this->scheduler->status = "Active";
+        $this->scheduler->new_with_id = true;
+        $this->scheduler->save();
+        $queue = new MockSchedulerQueue();
+        $this->scheduler->checkPendingJobs($queue);
+        $this->assertNotEmpty($queue->jobs, "Job was not submitted");
+        $ourjob = null;
+        foreach($queue->jobs as $job) {
+            if($job->scheduler_id == $this->scheduler->id) {
+                $ourjob = $job;
+                break;
+            }
+        }
+        $this->assertNotEmpty($ourjob, "Could not find our job in the queue");
+        // Do that again
+        $queue = new MockSchedulerQueue();
+        $this->scheduler->checkPendingJobs($queue);
+        $ourjob2 = null;
+        foreach($queue->jobs as $job) {
+            if($job->scheduler_id == $this->scheduler->id) {
+                $ourjob2 = $job;
+                break;
+            }
+        }
+        $this->assertEmpty($ourjob2, "Copy job submitted");
+        // set job to running
+        $ourjob->status = SchedulersJob::JOB_STATUS_RUNNING;
+        $ourjob->save();
+        $queue = new MockSchedulerQueue();
+        $this->scheduler->checkPendingJobs($queue);
+        $ourjob2 = null;
+        foreach($queue->jobs as $job) {
+            if($job->scheduler_id == $this->scheduler->id) {
+                $ourjob2 = $job;
+                break;
+            }
+        }
+        $this->assertEmpty($ourjob2, "Copy job submitted");
+        // set job to done
+        $ourjob->status = SchedulersJob::JOB_STATUS_DONE;
+        $ourjob->save();
+        $queue = new MockSchedulerQueue();
+        $this->scheduler->checkPendingJobs($queue);
+        $ourjob2 = null;
+        foreach($queue->jobs as $job) {
+            if($job->scheduler_id == $this->scheduler->id) {
+                $ourjob2 = $job;
+                break;
+            }
+        }
+        $this->assertNotEmpty($ourjob, "Could not find our job in the queue");
+    }
+}
+
+class MockSchedulerQueue extends SugarJobQueue
+{
+    public $jobs = array();
+
+    public function submitJob($job)
+    {
+        $this->jobs[] = $job;
+        parent::submitJob($job);
     }
 }
 
