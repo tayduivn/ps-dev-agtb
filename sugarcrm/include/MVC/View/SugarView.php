@@ -818,6 +818,14 @@ EOHTML;
             require_once("include/Expressions/DependencyManager.php");
             echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
             //END SUGARCRM flav=pro ONLY
+
+            //echo out the $js_vars variables as javascript variables
+            echo "<script type='text/javascript'>\n";
+            foreach($js_vars as $var=>$value)
+            {
+                echo "var {$var} = '{$value}';\n";
+            }
+            echo "</script>\n";
         }
     }
 
