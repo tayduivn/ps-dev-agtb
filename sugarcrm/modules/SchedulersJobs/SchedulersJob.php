@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
 /**
  * Job queue job
  * @api
@@ -54,6 +53,7 @@ class SchedulersJob extends Basic
     public $failure_count;
     public $interval=0; // Frequency to run it
     public $assigned_user_id; // User under which the task is running
+    public $client; // Client ID that owns this job
 
 	// standard SugarBean child attrs
 	var $table_name		= "job_queue";
@@ -67,45 +67,20 @@ class SchedulersJob extends Basic
 	// object specific attributes
 	var $user; // User object
 	var $scheduler; // Scheduler parent
+	// TODO: make configurable
 	public $min_interval = 30; // minimal interval for job reruns
+	protected $job_done = true;
 
 	/**
-	 * Sole constructor.
+	 * Job constructor.
 	 */
-	function SchedulersJob($init=true)
+	function SchedulersJob()
 	{
-        parent::SugarBean();
-        // TODO: move this
-        if(0 && $init) {
-            $user = new User();
-            //check is default admin exists
-            $adminId = $this->db->getOne(
-                'SELECT id FROM users WHERE id=\'1\' AND is_admin=1 AND deleted=0 AND status=\'Active\'',
-                true,
-                'Error retrieving Admin account info'
-            );
-            if (false === $adminId) {//retrive other admin
-                $adminId = $this->db->getOne(
-                    'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status=\'Active\'',
-                    true,
-                    'Error retrieving Admin account info'
-                );
-                if ($adminId) {
-                    $user->retrieve($adminId);
-                } else {
-                    $GLOBALS['log']->fatal('No Admin account found!');
-                    return false;
-                }
-
-            } else {
-                $user->retrieve('1'); // Scheduler jobs run as default Admin
-            }
-            $this->user = $user;
-        }
+        parent::Basic();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
-    }
+	}
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -192,14 +167,38 @@ class SchedulersJob extends Basic
 	}
 
 
+	/**
+	 * Mark this job as failed
+	 * @param string $message
+	 */
     public function failJob($message = null)
     {
         return $this->resolveJob(self::JOB_FAILURE, $message);
     }
 
+	/**
+	 * Mark this job as success
+	 * @param string $message
+	 */
     public function succeedJob($message = null)
     {
         return $this->resolveJob(self::JOB_SUCCESS, $message);
+    }
+
+    /**
+     * Called if job failed but will be retried
+     */
+    public function onFailure()
+    {
+        // TODO: what we do if job fails, notify somebody?
+    }
+
+    /**
+     * Called if job has failed and will not be retried
+     */
+    public function onFinalFailure()
+    {
+        // TODO: what we do if job fails, notify somebody?
     }
 
     /**
@@ -211,25 +210,45 @@ class SchedulersJob extends Basic
     public function resolveJob($resolution, $message = null)
     {
         $GLOBALS['log']->info("Resolving job {$this->id} as $resolution: $message");
-        if($resolution == self::JOB_FAILURE && $this->requeue && $this->retry_count > 0) {
-            // retry failed job
-            $this->status = self::JOB_STATUS_QUEUED;
-            if($this->interval < $this->min_interval) {
-                $this->interval = $this->min_interval;
+        if($resolution == self::JOB_FAILURE) {
+            if($this->requeue && $this->retry_count > 0) {
+                // retry failed job
+                $this->status = self::JOB_STATUS_QUEUED;
+                if($this->interval < $this->min_interval) {
+                    $this->interval = $this->min_interval;
+                }
+                $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->interval} seconds")->asDb();
+                $this->retry_count--;
+                $this->failure_count++;
+                $GLOBALS['log']->info("Will retry job {$this->id} at {$this->execute_time} ($this->retry_count)");
+                $this->onFailure();
+            } else {
+                // final failure
+                $this->onFinalFailure();
             }
-            $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->interval} seconds")->asDb();
-            $this->retry_count--;
-            $this->failure_count++;
-            $GLOBALS['log']->info("Will retry job {$this->id} at {$this->execute_time} ($this->retry_count)");
         } else {
             $this->status = self::JOB_STATUS_DONE;
         }
-        if(!is_null($message)) {
-            $this->message = $message;
-        }
+        $this->addMessages($message);
         $this->resolution = $resolution;
         $this->save();
         return true;
+    }
+
+    /**
+     * Assemle job messages
+     * Takes messages in $this->message, errors & $message and assembles them into $this->message
+     * @param string $message
+     */
+    protected function addMessages($message)
+    {
+        if(!empty($this->errors)) {
+            $this->message .= $this->errors;
+            $this->errors = '';
+        }
+        if(!empty($message)) {
+            $this->message .= "$message\n";
+        }
     }
 
     /**
@@ -240,9 +259,7 @@ class SchedulersJob extends Basic
     public function postponeJob($jobId, $message = null)
     {
         $this->status = self::JOB_STATUS_QUEUED;
-        if(!is_null($message)) {
-            $this->message = $message;
-        }
+        $this->addMessages($message);
         $this->resolution = self::JOB_PARTIAL;
         $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->interval} seconds")->asDb();
         $GLOBALS['log']->info("Postponing job {$this->id} to {$this->execute_time}: $message");
@@ -261,53 +278,161 @@ class SchedulersJob extends Basic
     }
 
     /**
+     * Shutdown handler to be called if something breaks in the middle of the job
+     */
+    public function unexpectedExit()
+    {
+        if(!$this->job_done) {
+            // Job wasn't properly finished, fail it
+            $this->resolveJob(self::JOB_FAILURE, translate('ERR_FAILED', 'SchedulersJobs'));
+        }
+    }
+
+    /**
+     * Run the job by ID
+     * @param string $id
+     * @param string $client Client that is trying to run the job
+     */
+    public static function runJobId($id, $client)
+    {
+        $job = new self();
+        $job->retrieve($id);
+        if(empty($job->id)) {
+            $GLOBALS['log']->fatal("Job $id not found.");
+            return false;
+        }
+        if($job->status != self::JOB_STATUS_RUNNING) {
+            $GLOBALS['log']->fatal("Job $id is not marked as running.");
+            return false;
+        }
+        if($job->client != $client) {
+            $GLOBALS['log']->fatal("Job $id belongs to client {$job->client}, can not run as $client.");
+            return false;
+        }
+        $job->job_done = false;
+        register_shutdown_function(array($job, "unexpectedExit"));
+        $job->runJob();
+        $job->job_done = true;
+        return true;
+    }
+
+    /**
+     * Error handler, assembles the error messages
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int $errline
+     */
+    public function errorHandler($errno, $errstr, $errfile, $errline)
+    {
+        switch($errno)
+        {
+    		case E_USER_WARNING:
+    		case E_COMPILE_WARNING:
+    		case E_CORE_WARNING:
+    		case E_WARNING:
+    			$type = "Warning";
+    			break;
+    		case E_USER_ERROR:
+    		case E_COMPILE_ERROR:
+    		case E_CORE_ERROR:
+    		case E_ERROR:
+    			$type = "Fatal Error";
+	    		break;
+    		case E_PARSE:
+    			$type = "Parse Error";
+	    		break;
+    		case E_RECOVERABLE_ERROR:
+    			$type = "Recoverable Error";
+	    		break;
+		    default:
+		        // Ignore errors we don't know about
+		        return;
+    	}
+        $errstr = strip_tags($errstr);
+        $this->errors .= sprintf(translate('ERR_PHP', 'SchedulersJobs'), $type, $errno, $errstr, $errfile, $errline);
+    }
+
+    /**
+     * Change current user to given user
+     * @param User $user
+     */
+    protected function sudo($user)
+    {
+        $GLOBALS['current_user'] = $user;
+        // Reset the session
+        session_write_close();
+        session_destroy();
+		session_start();
+        session_regenerate_id();
+		$_SESSION['is_valid_session']= true;
+		$_SESSION['user_id'] = $user->id;
+		$_SESSION['type'] = 'user';
+		$_SESSION['authenticated_user_id'] = $user->id;
+    }
+
+    /**
      * Run this job
      */
     public function runJob()
     {
+        $this->errors = "";
         $exJob = explode('::', $this->target);
         if($exJob[0] == 'function') {
+            // set up the current user and drop session
+            if($this->assigned_user_id) {
+                $user = new User();
+                $user->retrieve($this->assigned_user_id);
+                if(empty($user->id)) {
+                    $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_NOSUCHUSER', 'SchedulersJobs'), $this->assigned_user_id));
+                    return;
+                }
+                $this->sudo($user);
+            } else {
+                $this->resolveJob(self::JOB_FAILURE, translate('ERR_NOUSER', 'SchedulersJobs'));
+                return;
+            }
     		require_once('modules/Schedulers/_AddJobsHere.php');
     		$func = $exJob[1];
 			$GLOBALS['log']->debug("----->SchedulersJob calling function: $func");
+            set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
 			if(!is_callable($func)) {
-			    // TODO: label
-			    $this->resolveJob(self::JOB_FAILURE, "Cannot call function: $func");
+			    $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_CALL', 'SchedulersJobs'), $func));
 			}
 			$data = array($this);
 			if(!empty($this->data)) {
 			    $data += $this->data;
 			}
-			$res = call_user_func_array($func, $data);
-
+            $res = call_user_func_array($func, $data);
+            restore_error_handler();
 			if($this->status == self::JOB_STATUS_RUNNING) {
 			    // nobody updates the status yet - job can do that
     			if($res) {
     			    $this->resolveJob(self::JOB_SUCCESS);
     				return true;
     			} else {
-    			    // TODO: add error reporting
-    			    $this->resolveJob(self::JOB_FAILURE, $this->errors);
+    			    $this->resolveJob(self::JOB_FAILURE);
     			    return false;
     			}
 			}
 		} elseif($exJob[0] == 'url') {
 			if(function_exists('curl_init')) {
 				$GLOBALS['log']->debug('----->SchedulersJob firing URL job: '.$exJob[1]);
-                if($this->fireUrl($exJob[1])) {
-                     $this->resolveJob(self::JOB_SUCCESS);
+                set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
+				if($this->fireUrl($exJob[1])) {
+                    restore_error_handler();
+                    $this->resolveJob(self::JOB_SUCCESS);
 					return true;
 				} else {
-				    $this->resolveJob(self::JOB_FAILURE, $this->errors);
+                    restore_error_handler();
+				    $this->resolveJob(self::JOB_FAILURE);
 					return false;
 				}
 			} else {
-			    // TODO: label
-			    $this->resolveJob(self::JOB_FAILURE, "No CURL - cannot run URL jobs");
+			    $this->resolveJob(self::JOB_FAILURE, translate('ERR_CURL', 'SchedulersJobs'));
 			}
 		} else {
-		    // TODO: label
-		    $this->resolveJob(self::JOB_FAILURE, "Unknown job type: {$this->target}");
+		    $this->resolveJob(self::JOB_FAILURE, translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target));
 		}
 		return false;
     }

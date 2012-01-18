@@ -148,7 +148,7 @@ class Scheduler extends SugarBean {
 	 */
 	public function checkPendingJobs($queue)
 	{
-		$allSchedulers = $this->get_full_list('', "schedulers.status='Active' AND NOT EXISTS(SELECT * FROM {$this->job_queue_table}");
+		$allSchedulers = $this->get_full_list('', "schedulers.status='Active' AND NOT EXISTS(SELECT id FROM {$this->job_queue_table} WHERE scheduler_id='{$this->id}' AND status=".SchedulersJob::JOB_STATUS_RUNNING.")");
 
 		$GLOBALS['log']->info('-----> Scheduler found [ '.count($allSchedulers).' ] ACTIVE jobs');
 
@@ -156,7 +156,7 @@ class Scheduler extends SugarBean {
 			foreach($allSchedulers as $focus) {
 				if($focus->fireQualified()) {
 				    $job = $focus->createJob();
-				    $queue->submitJob($job);
+				    $queue->submitJob($job, $this->user);
 				}
 			}
 		} else {

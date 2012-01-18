@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+ if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,36 +22,41 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+chdir(dirname(__FILE__));
 
-$subpanel_layout = array(
-	'top_buttons' => array(
-			/*array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Queues'),*/
-	),
-	'where' => "",
+require_once('include/entryPoint.php');
 
-	'fill_in_additional_fields'=>true,
-	'list_fields' => array(
-		'name'			=> array (
-			'vname'		=> 'LBL_NAME',
-			'width'		=> '50%',
-			'sortable'	=> false,
-		),
-		'status'		=> array (
-			 'vname'	=> 'LBL_STATUS',
-			 'width'	=> '50%',
-			 'sortable'	=> false,
-		),
-		'execute_time'	=> array (
-			 'vname'	=> 'LBL_EXECUTE_TIME',
-			 'width'	=> '50%',
-			 'sortable'	=> false,
-		),
-		'date_modified'	=> array (
-			 'vname'	=> 'LBL_EXECUTE_TIME',
-			 'width'	=> '50%',
-			 'sortable'	=> false,
-		),
-		),
-);
+$sapi_type = php_sapi_name();
+// Allow only CLI invocation
+if (substr($sapi_type, 0, 3) != 'cli') {
+    sugar_die("run_job.php is CLI only.");
+}
 
-?>
+if($argc < 3 || empty($argv[1]) || empty($argv[2])) {
+    sugar_die("run_job.php requires job ID and client ID as parameters.");
+}
+
+if(empty($current_language)) {
+	$current_language = $sugar_config['default_language'];
+}
+
+$app_list_strings = return_app_list_strings_language($current_language);
+$app_strings = return_application_language($current_language);
+
+$current_user = new User();
+$current_user->getSystemUser();
+
+$GLOBALS['log']->debug('Starting job {$argv[1]} execution as ${argv[2]}');
+require_once 'modules/SchedulersJobs/SchedulersJob.php';
+$result = SchedulersJob::runJobId($argv[1], $argv[2]);
+
+sugar_cleanup(false);
+// some jobs have annoying habit of calling sugar_cleanup(), and it can be called only once
+// but job results can be written to DB after job is finished, so we have to disconnect here again
+// just in case we couldn't call cleanup
+if(class_exists('DBManagerFactory')) {
+	$db = DBManagerFactory::getInstance();
+	$db->disconnect();
+}
+
+exit($result?0:1);

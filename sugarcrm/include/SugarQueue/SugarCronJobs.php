@@ -28,8 +28,17 @@ require_once 'modules/Schedulers/Scheduler.php';
  */
 class SugarCronJobs
 {
+    // TODO: make configurable
     public $max_jobs = 5;
     public $max_runtime = 30;
+    public $min_interval = 30;
+
+    /**
+     * Lock file to ensure the jobs aren't run too fast
+     * @var string
+     */
+    public $lockfile;
+
     /**
      * Currently running job
      * @var SchedulersJob
@@ -39,19 +48,23 @@ class SugarCronJobs
     public function __construct()
     {
         $this->queue = new SugarJobQueue();
+        $this->lockfile = sugar_cached("modules/Schedulers/lastrun");
     }
 
+    /**
+     * Check if we aren't running jobs too frequently
+     * @return bool OK to run?
+     */
     public function throttle()
     {
-        $stampfile = sugar_cached("modules/Schedulers/lastrun");
-        create_cache_directory($stampfile);
-        if(!file_exists($stampfile)) {
+        create_cache_directory($this->lockfile);
+        if(!file_exists($this->lockfile)) {
             return true;
         } else {
-            $ts = file_get_contents($stampfile);
+            $ts = file_get_contents($this->lockfile);
             $now = time();
-            if(!file_put_contents($stampfile, $now)) {
-                $GLOBALS['log']->fatal('Scheduler cannot write PID file.  Please check permissions on '.$stampfile);
+            if(!file_put_contents($this->lockfile, $now)) {
+                $GLOBALS['log']->fatal('Scheduler cannot write PID file.  Please check permissions on '.$this->lockfile);
             }
             if($now - $ts < $this->min_interval) {
                 // run too frequently
@@ -61,27 +74,37 @@ class SugarCronJobs
         return true;
     }
 
+    /**
+     * Shutdown handler to be called if something breaks in the middle of the job
+     */
     public function unexpectedExit()
     {
         if(!empty($this->job)) {
             // TODO: label
-            $this->job->failJob("Unexpected failure, please check PHP logs and sugarcrm.log");
+            $this->job->failJob(translate('ERR_FAILED', 'SchedulersJobs'));
             $this->job = null;
         }
     }
 
+    /**
+     * Run CRON cycle:
+     * - cleanup
+     * - schedule new jobs
+     * - execute pending jobs
+     */
     public function runCycle()
     {
         // clean old stale jobs
         $this->queue->cleanup();
         // throttle
         if(!$this->throttle()) {
-            $GLOBALS['log']->fatal("Job run too frequently, throttled to protect the system.");
+            $GLOBALS['log']->fatal("Job runs too frequently, throttled to protect the system.");
             return;
         }
         // run schedulers
         $this->queue->runSchedulers();
         // run jobs
+        $cutoff = time()+$this->max_runtime;
         register_shutdown_function(array($this, "unexpectedExit"));
         for($count=0;$count<$this->max_jobs;$count++) {
             $this->job = $this->queue->nextJob();
@@ -89,8 +112,10 @@ class SugarCronJobs
                 return;
             }
             $this->job->runJob();
+            if(time() >= $cutoff) {
+                break;
+            }
         }
         $this->job = null;
-
     }
 }
