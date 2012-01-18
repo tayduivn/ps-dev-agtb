@@ -45,7 +45,7 @@ class SugarSearchEngineFullIndexer
     const MAX_BULK_THRESHOLD = 5000;
 
     /**
-     * @param SugarSearchEngineAbstractBase $engine
+     * @param SugarSearchEngineAqbstractBase $engine
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
     {
@@ -76,11 +76,10 @@ class SugarSearchEngineFullIndexer
             $obj = BeanFactory::getBean($module, null);
             $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0' ";
 
-            //TODO: We need a way to perform multiple SugarBean instantiation with a single query (6.6?)
             $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
 
             $docs = array();
-            while ($row = $db->fetchByAssoc($result))
+            while ($row = $db->fetchByAssoc($result, FALSE))
             {
                 $beanID = $row['id'];
                 $bean = BeanFactory::getBean($module, $beanID);
@@ -92,11 +91,11 @@ class SugarSearchEngineFullIndexer
 
                 if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
                 {
-                    $GLOBALS['log']->fatal("Flushing records, current count: $count");
                     $this->SSEngine->bulkInsert($docs);
                     $docs = array();
+                    gc_collect_cycles();
+                    $GLOBALS['log']->fatal("Flushing records, current count: $count memory usage:" .  memory_get_usage());
                 }
-
             }
 
             if(count($docs) > 0)
@@ -110,6 +109,7 @@ class SugarSearchEngineFullIndexer
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
         $this->results['totalTime'] = $totalTime;
         $GLOBALS['log']->fatal("Total time to perform full system index: $totalTime (s)");
+
 
         return $this;
     }
