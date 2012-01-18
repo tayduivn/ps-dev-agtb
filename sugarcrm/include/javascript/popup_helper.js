@@ -68,21 +68,17 @@ function confirmDialog(arrayContents, formName) {
 		}
 	}
 
-	var popupConfirm = 0;
-	if (data['account_id'] && (newData.split("\n").length - 1) > 2)
-	{
+	if (data['account_id']) {
 		if(newData != labels && oldData != labels)
 		{
 			if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + newData))
 			{
-				popupConfirm = 1;
+				arrayContents.push('"popupConfirm":1');
 			} else {
-				popupConfirm = -1;	
+				arrayContents.push('"popupConfirm":0');
 			}
 		}
 	}
-	
-	arrayContents.push('"popupConfirm":"' + popupConfirm + '"');
 	
 	return arrayContents;
 }
@@ -146,7 +142,7 @@ function send_back(module, id)
 	eval("var name_to_value_array = {" + array_contents.join(",") + "}");
 	
 	closePopup();
-
+	
 	var result_data = {"form_name":form_name,"name_to_value_array":name_to_value_array,"passthru_data":passthru_data};
 	call_back_function(result_data);
 }
