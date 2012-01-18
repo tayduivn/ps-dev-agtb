@@ -36,5 +36,6 @@ $dictionary['Employee']['fields']['email1']['required']=false;
 $dictionary['Employee']['fields']['email_addresses']['required']=false;
 $dictionary['Employee']['fields']['email_addresses_primary']['required']=false;
 // bugs 47553 & 49716
-$dictionary['Employee']['fields']['status']['studio']=array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false);
+$dictionary['Employee']['fields']['status']['studio']=false;
+$dictionary['Employee']['fields']['status']['required']=false;
 ?>

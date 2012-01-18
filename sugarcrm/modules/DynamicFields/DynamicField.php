@@ -212,8 +212,7 @@ class DynamicField {
             // to the employees module, because they both use the same table behind
             // the scenes
             if ( $module == 'Users' ) {
-                $GLOBALS['dictionary']['Employee'] = $GLOBALS['dictionary']['User'];
-                $manager->saveCache('Employees','Employee');
+                $manager->loadVardef('Employees', 'Employee', true);
                 return;
             }
 
