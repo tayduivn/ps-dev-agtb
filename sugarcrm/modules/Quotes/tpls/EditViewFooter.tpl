@@ -40,11 +40,11 @@
 				<td width='10%' ><select  name='currency_id' id='currency_id' onchange='quotesManager.ConvertItems(this.options[selectedIndex].value);'>{$CURRENCY}</select></td>
 		<td width='10%' scope="row">{$MOD.LBL_TAXRATE}</td>
 		<td width='13%' >
-		<select name='taxrate_id' onchange="this.form.taxrate_value.value=get_taxrate(this.form.taxrate_id.options[selectedIndex].value);quotesManager.calculate(document)">{$TAXRATE_OPTIONS}</select>
+		<select name='taxrate_id' id='taxrate_id' onchange="this.form.taxrate_value.value=get_taxrate(this.form.taxrate_id.options[selectedIndex].value);quotesManager.calculate(document)">{$TAXRATE_OPTIONS}</select>
 		<input type="hidden" name="taxrate_value" value="{$TAXRATE_VALUE}">
 		</td>
         <td width='13%' scope="row">{$MOD.LBL_SHIPPING_PROVIDER}</td>
-        <td width='13%' ><select name='shipper_id'>{$SHIPPER_OPTIONS}</select></td>
+        <td width='13%' ><select name='shipper_id' id='shipper_id'>{$SHIPPER_OPTIONS}</select></td>
 		<td width='13%' scope="row">{$MOD.LBL_CALC_GRAND}</td>
 		<td width='13%' ><input  type='checkbox' class='checkbox' name='calc_grand_total' id='calc_grand_total' onClick='toggleDisplay("grand_tally");' {$CALC_GRAND_TOTAL_CHECKED}></td>
 	    <td width='13%' scope="row">{$MOD.LBL_SHOW_LINE_NUMS}</td>
@@ -114,7 +114,7 @@
 <tr><td>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr><th align="left" scope="row" colspan="2" scope="row"><h4>{$MOD.LBL_DESCRIPTION_INFORMATION}</h4></th></tr>
-		<tr><td width="15%" valign="top" scope="row">{$MOD.LBL_DESCRIPTION}</td><td width="85%" ><textarea name='description' cols="60" rows="8">{$fields.description.value}</textarea></td></tr>
+		<tr><td width="15%" valign="top" scope="row">{$MOD.LBL_DESCRIPTION}</td><td width="85%" ><textarea name='description' id='description' cols="60" rows="8">{$fields.description.value}</textarea></td></tr>
     </table>
 </td></tr>
 </table>
