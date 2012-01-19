@@ -545,7 +545,8 @@ class SugarSNIP
                 $e->$field = '';
             }
         }
-        $e->from_addr_name = $e->from_name;
+        // preserve name because bean cleanup can strip <>
+        $from_name = $e->from_addr_name = $e->from_name;
         $from = $this->splitEmailAddress($e, $e->from_name);
         $e->from_addr = $from["email"];
         $e->from_name = $from["name"];
@@ -581,8 +582,8 @@ class SugarSNIP
         $e->call_custom_logic("before_email_import");
         // If custom logic cleared the object, skip it
         if(empty($e->id)) return;
-
         $e->save(FALSE);
+        $e->from_addr_name = $from_name;
         // Object creation hook
         if(!empty($e->all_addrs)) {
         	$this->createObject($e);
@@ -651,9 +652,11 @@ class SugarSNIP
 		foreach(array("subject", "description", "description_html", "message_id", "from_addr", "from_name") as $prop) {
 			$emaildata["{".$prop."}"] = $email->$prop;
 		}
-		$emaildata["{from}"] = $email->from_addr_name;
+		$emaildata["{from}"] = to_html($email->from_addr_name);
 		$emaildata["{date}"] = $email->date_sent;
 		$emaildata["{email_id}"] = $email->id;
+
+
     	foreach($email->all_addrs as $cleanaddr) {
 			if(!isset($createdef[$cleanaddr])) {
 				continue;
@@ -667,7 +670,7 @@ class SugarSNIP
 				}
 				// instantiate the data
 				foreach($data["fields"] as $key => $value) {
-					$obj->$key = str_replace(array_keys($emaildata), array_values($emaildata), $value);;
+					$obj->$key = str_replace(array_keys($emaildata), array_values($emaildata), $value);
 				}
 				// save
 				$obj->save();

@@ -678,7 +678,6 @@ EOHTML;
 		// trap alt attributes in other_attributes
 		if(preg_match('/alt=["\']([^\'"]+)["\']/i', $other_attributes))
 			$GLOBALS['log']->debug("Sprites: alt attribute detected for $imageName");
-
 		// sprite handler, makes use of own caching mechanism
 		if(!empty($GLOBALS['sugar_config']['use_sprites']) && $GLOBALS['sugar_config']['use_sprites']) {
 			// get sprite metadata
@@ -715,10 +714,10 @@ EOHTML;
 	public function getSpriteMeta($imageName) {
 
 		// return from cache
-		if(isset($this->_spriteCache[$imageName]))
+	    if(isset($this->_spriteCache[$imageName]))
 			return $this->_spriteCache[$imageName];
 
-		// sprite keys are base on imageURL
+			// sprite keys are base on imageURL
 		$imageURL = $this->getImageURL($imageName,false);
 		if(empty($imageURL)) {
 			$this->_spriteCache[$imageName] = false;
@@ -728,7 +727,6 @@ EOHTML;
 		// load meta data, includes default images
 		require_once("include/SugarTheme/SugarSprites.php");
 		$meta = SugarSprites::getInstance();
-
 		// add current theme dir
 		$meta->loadSpriteMeta($this->dirName);
 		// add parent theme dir

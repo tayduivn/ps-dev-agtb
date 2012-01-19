@@ -108,6 +108,7 @@ class MysqlManager extends DBManager
 			'relate'   => 'varchar',
 			'multienum'=> 'text',
 			'html'     => 'text',
+			'longhtml' => 'longtext',
 			'datetime' => 'datetime',
 			'datetimecombo' => 'datetime',
 			'time'     => 'time',
@@ -691,6 +692,16 @@ class MysqlManager extends DBManager
 		return $sql;
 	}
 
+    /**
+     * Does this type represent text (i.e., non-varchar) value?
+     * @param string $type
+     */
+    public function isTextType($type)
+    {
+        $type = $this->getColumnType(strtolower($type));
+        return in_array($type, array('blob','text','longblob', 'longtext'));
+    }
+
 	/**
 	 * @see DBManager::oneColumnSQLRep()
 	 */
@@ -704,10 +715,9 @@ class MysqlManager extends DBManager
 		}
 
 		// bug 22338 - don't set a default value on text or blob fields
-		if ( isset($ref['default']) &&
-			($ref['colType'] == 'text' || $ref['colType'] == 'blob'
-				|| $ref['colType'] == 'longtext' || $ref['colType'] == 'longblob' ))
+		if ( isset($ref['default']) && $this->isTextType($this->getFieldType($fieldDef))) {
 			$ref['default'] = '';
+		}
 
 		if ( $return_as_array )
 			return $ref;

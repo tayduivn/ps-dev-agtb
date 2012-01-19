@@ -101,7 +101,7 @@ $dictionary['EmailTemplate'] = array(
 		'body_html' => array(
 			'name' => 'body_html',
 			'vname' => 'LBL_PLAIN_TEXT',
-			'type' => 'text',
+			'type' => 'html',
 			'comment' => 'HTML formatted email body to be used in resulting email'
 		),
 		'deleted' => array(
@@ -126,7 +126,7 @@ $dictionary['EmailTemplate'] = array(
 			'dbType' => 'id',
 			'audited'=>true,
 			'comment' => 'User ID assigned to record',
-            'duplicate_merge'=>'disabled'           
+            'duplicate_merge'=>'disabled'
 		),
     	 'assigned_user_name' => array (
         	 'name' => 'assigned_user_name',

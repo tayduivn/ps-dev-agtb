@@ -39,7 +39,7 @@ class ParserLabel extends ModuleBuilderParser
         if (!empty($packageName))
             $this->packageName = $packageName ;
     }
-    
+
     /**
      * Takes in the request params from a save request and processes
      * them for the save.
@@ -53,7 +53,7 @@ class ParserLabel extends ModuleBuilderParser
         {
             if (preg_match ( '/^label_/', $key ) && strcmp ( $value, 'no_change' ) != 0)
             {
-                $labels [ strtoupper(substr ( $key, 6 )) ] = remove_xss(from_html($value),false);
+                $labels [ strtoupper(substr ( $key, 6 )) ] = SugarCleaner::cleanHtml(from_html($value),false);
             }
         }
         if (!empty($this->packageName)) //we are in Module builder
@@ -151,7 +151,7 @@ class ParserLabel extends ModuleBuilderParser
 
         $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels($language, \$labels, $moduleName, $basepath );" ) ;
         $GLOBALS [ 'log' ]->debug ( "\$labels:" . print_r ( $labels, true ) ) ;
-        
+
         $deployedModule = false ;
         if (is_null ( $basepath ))
         {
@@ -205,7 +205,7 @@ class ParserLabel extends ModuleBuilderParser
 	        if ($changed)
 	        {
             $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: writing new mod_strings to $filename" ) ;
-	            $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: mod_strings=".print_r($mod_strings,true) ) ;            
+	            $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: mod_strings=".print_r($mod_strings,true) ) ;
             if (! write_array_to_file ( "mod_strings", $mod_strings, $filename ))
 	            {
                 $GLOBALS [ 'log' ]->fatal ( "Could not write $filename" ) ;
@@ -225,11 +225,11 @@ class ParserLabel extends ModuleBuilderParser
 
         return true ;
     }
-    
+
     /**
      * Takes in the request params from a save request and processes
      * them for the save.
-     * @param $metadata 
+     * @param $metadata
      * @param string $language      Language key, for example 'en_us'
      */
     function handleSaveRelationshipLabels ($metadata , $language)
