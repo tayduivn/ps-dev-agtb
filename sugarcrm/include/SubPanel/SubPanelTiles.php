@@ -454,7 +454,8 @@ EOQ;
                 	$widget_contents .= '<li>' . "\n";
                 }
                 if ($count == 0) {
-                    $widget_contents .= "<a onclick='$(\"#".$layout_manager->widgetDisplay($widget_data, false, false, true)."\").click();' href='javascript: void(0);'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
+                	//referencing <id>_old because of the sanatizing that happens in jquery.sugarMenu.js
+                    $widget_contents .= "<a id='". $layout_manager->widgetDisplay($widget_data, false, false, true) ."' onclick='$(\"#".$layout_manager->widgetDisplay($widget_data, false, false, true)."_old\").click();' href='javascript: void(0);'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
                 } else {
                     $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
                 }
