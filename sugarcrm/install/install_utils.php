@@ -2165,23 +2165,6 @@ function enableSugarFeeds()
     check_logic_hook_file('Users','after_login', array(1, 'SugarFeed old feed entry remover', 'modules/SugarFeed/SugarFeedFlush.php', 'SugarFeedFlush', 'flushStaleEntries'));
 }
 
-function createFTSLogicHook()
-{
-    $filePath = 'application/Ext/LogicHooks/logichooks.ext.php';
-    $customFileLoc = create_custom_directory($filePath);
-    $fp = sugar_fopen($customFileLoc, 'wb');
-    $contents = <<<CIA
-<?php
-\$hook_array = array();
-\$hook_array['after_save'] = array();
-\$hook_array['after_save'][] = array(1, 'fts', 'include/SugarSearchEngine/SugarSearchEngineQueueManager.php', 'SugarSearchEngineQueueManager', 'populateIndexQueue');
-CIA;
-
-    fwrite($fp,$contents);
-    fclose($fp);
-
-}
-
 function create_writable_dir($dirname)
 {
     if ((is_dir($dirname)) || @sugar_mkdir($dirname,0555)) {
