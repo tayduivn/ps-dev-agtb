@@ -41,9 +41,9 @@ function check_for_relationship($relationships, $module){
 function retrieve_relationships_properties($module_1, $module_2, $relationship_name = ""){
 	
 	$rs = new Relationship();
-	$query =  "SELECT * FROM $rs->table_name WHERE ((lhs_module = '$module_1' AND rhs_module='$module_2') OR (lhs_module = '$module_2' AND rhs_module='$module_1'))";
+	$query =  "SELECT * FROM $rs->table_name WHERE ((lhs_module = '".$rs->db->quote($module_1)."' AND rhs_module='".$rs->db->quote($module_2)."') OR (lhs_module = '".$rs->db->quote($module_2)."' AND rhs_module='".$rs->db->quote($module_1)."'))";
 	if(!empty($relationship_name) && isset($relationship_name)){
-		$query .= " AND relationship_name = '$relationship_name'";
+		$query .= " AND relationship_name = '".$rs->db->quote($relationship_name)."'";
 	}
 	$result = $rs->db->query($query);
 
@@ -64,6 +64,7 @@ function retrieve_relationships_properties($module_1, $module_2, $relationship_n
  */
 function retrieve_relationships($module_name,  $related_module, $relationship_query, $show_deleted, $offset, $max_results){
 	global  $beanList, $beanFiles, $dictionary, $current_user;
+
 	$error = new SoapError();
 	$result_list = array();
 	if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
@@ -111,7 +112,7 @@ function retrieve_relationships($module_name,  $related_module, $relationship_qu
  * module_query is a filter on the first module
  * related_module_query is a filter on the second module
  * relationship_query is a filter on the relationship between them
- * show_deleted is if deleted items should be shown or not
+ * show_deleted is if deleted items should be shown or not (IGNORED)
  *
  */
 function retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields = array(), $relationship_name = ''){
@@ -169,14 +170,16 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 		$field_select ='';
 		foreach($select_fields as $field){
 			if($field == "id"){
-				$field_select .= "DISTINCT m1.".$field;
+				$field_select .= "DISTINCT m1.".getValidDBName($field);
 			}
 			else{
 				if(strpos($field, ".") == false){
-					$field_select .= "m1.".$field;
+					$field_select .= "m1.".getValidDBName($field);
 				}
 				else{
-					$field_select .= $field;
+                    // There is a dot in here somewhere.
+                    list($table_part,$field_part) = explode('.',$field);
+                    $field_select .= getValidDBName($table_part).".".getValidDBName($field_part);
 				}
 			}
 			if($index < (count($select_fields) - 1))
@@ -225,51 +228,11 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 	return array('table_name'=>$table, 'result'=>$result_list, 'total_count'=>$total_count, 'error'=>$error->get_soap_array());
 }
 
-/*
- * retireves relationships between two modules
- * This will return all viewable relationships between two modules
- * module_query is a filter on the first module
- * related_module_query is a filter on the second module
- * relationship_query is a filter on the relationship between them
- * show_deleted is if deleted items should be shown or not
- *
- */
-function clear_relationships($module_name,  $related_module){
-	global  $beanList, $beanFiles, $dictionary;
-	$result_list = array();
-	if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
-
-
-		return false;
-	}
-
-	$row = retrieve_relationships_properties($module_name, $related_module);
-	if(empty($row)){
-
-		return false;
-	}
-
-	if($module_name == $row['lhs_module']){
-		$module_1 = $module_name;
-		$module_2 = $related_module;
-	}else{
-		$module_2 = $module_name;
-		$module_1 = $related_module;
-	}
-	$table = $row['join_table'];
-	$class_name = $beanList[$module_1];
-	require_once($beanFiles[$class_name]);
-	$mod = new $class_name();
-	$clear_query = "DELTE * FROM  $table WHERE 1=1";
-	$result = $mod->db->query($clear_query);
-	return true;
-}
-
 function server_save_relationships($list, $from_date, $to_date){
 	require_once('include/utils/db_utils.php');
 	global  $beanList, $beanFiles;
-	$from_date = db_convert("'".$from_date."'", 'datetime');
-	$to_date = db_convert("'".$to_date."'", 'datetime');
+	$from_date = db_convert("'".$GLOBALS['db']->quote($from_date)."'", 'datetime');
+	$to_date = db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime');
 	global $sugar_config;
 	$db = DBManagerFactory::getInstance();
 
@@ -292,12 +255,12 @@ function server_save_relationships($list, $from_date, $to_date){
 		$resolve = 1;
 
 		foreach($record['name_value_list'] as $name_value){
-			$name = $name_value['name'];
+			$name = $GLOBALS['db']->quote($name_value['name']);
 
 			if($name == 'date_modified'){
-					$value = $to_date;
+                $value = $to_date;
 			}else{
-					$value = db_convert("'".$name_value['value'] . "'", 'varchar');
+                $value = db_convert("'".$GLOBALS['db']->quote($name_value['value'])."'", 'varchar');
 			}
 			if($name != 'resolve'){
 			if(empty($insert)){
@@ -339,8 +302,8 @@ function server_save_relationships($list, $from_date, $to_date){
 		$insert = "INSERT INTO $table_name $insert) VALUES $insert_values)";
 		$update = "UPDATE $table_name SET $update WHERE id=";
 		$delete = "DELETE FROM $table_name WHERE id=";
-		$select_by_id_date = "SELECT id FROM $table_name WHERE id ='$id' AND date_modified > $from_date AND date_modified<= $to_date";
-		$select_by_id = "SELECT id FROM $table_name WHERE id ='$id'";
+		$select_by_id_date = "SELECT id FROM $table_name WHERE id ='".$GLOBALS['db']->quote($id)."' AND date_modified > $from_date AND date_modified<= $to_date";
+		$select_by_id = "SELECT id FROM $table_name WHERE id ='".$GLOBALS['db']->quote($id)."'";
 		$select_by_values = "SELECT id FROM $table_name WHERE $select_values";
 		$updated = false;
 
@@ -356,7 +319,7 @@ function server_save_relationships($list, $from_date, $to_date){
 				$result = $db->query($select_by_id);
 				if($row = $db->fetchByAssoc($result)){
 
-					$db->query($update ."'".$row['id']."'" );
+					$db->query($update ."'".$GLOBALS['db']->quote($row['id'])."'" );
 					$ids[] = $row['id'];
 					$modify++;
 				}else{

@@ -848,7 +848,7 @@ function process_subscriptions($subscription_string_to_parse) {
         $GLOBALS['log']->debug('set_campaign_merge: Invalid campaign id'. $campaign_id);
     } else {
         foreach ($targets as $target_list_id) {
-            $pl_query = "select * from prospect_lists_prospects where id='$target_list_id'";
+            $pl_query = "select * from prospect_lists_prospects where id='".$GLOBALS['db']->quote($target_list_id)."'";
             $result=$GLOBALS['db']->query($pl_query);
             $row=$GLOBALS['db']->fetchByAssoc($result);
             if (!empty($row)) {
@@ -867,7 +867,7 @@ function process_subscriptions($subscription_string_to_parse) {
 function write_mail_merge_log_entry($campaign_id,$pl_row) {
 
     //Update the log entry if it exists.
-    $update="update campaign_log set hits=hits+1 where campaign_id='$campaign_id' and target_tracker_key='" . $pl_row['id'] . "'";
+    $update="update campaign_log set hits=hits+1 where campaign_id='".$GLOBALS['db']->quote($campaign_id)."' and target_tracker_key='" . $GLOBALS['db']->quote($pl_row['id']) . "'";
     $result=$GLOBALS['db']->query($update);
 
     //get affected row count...
@@ -876,13 +876,13 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
         $data=array();
 
         $data['id']="'" . create_guid() . "'";
-        $data['campaign_id']="'" . $campaign_id . "'";
-        $data['target_tracker_key']="'" . $pl_row['id'] . "'";
-        $data['target_id']="'" .  $pl_row['related_id'] . "'";
-        $data['target_type']="'" .  $pl_row['related_type'] . "'";
+        $data['campaign_id']="'" . $GLOBALS['db']->quote($campaign_id) . "'";
+        $data['target_tracker_key']="'" . $GLOBALS['db']->quote($pl_row['id']) . "'";
+        $data['target_id']="'" .  $GLOBALS['db']->quote($pl_row['related_id']) . "'";
+        $data['target_type']="'" .  $GLOBALS['db']->quote($pl_row['related_type']) . "'";
         $data['activity_type']="'targeted'";
         $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
-        $data['list_id']="'" .  $pl_row['prospect_list_id'] . "'";
+        $data['list_id']="'" .  $GLOBALS['db']->quote($pl_row['prospect_list_id']) . "'";
         $data['hits']=1;
 
         $insert_query="INSERT into campaign_log (" . implode(",",array_keys($data)) . ")";
@@ -892,12 +892,12 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 }
 
     function track_campaign_prospects($focus){
-		$delete_query="delete from campaign_log where campaign_id='{$focus->id}' and activity_type='targeted'";
+		$delete_query="delete from campaign_log where campaign_id='".$GLOBALS['db']->quote($focus->id)."' and activity_type='targeted'";
 		$focus->db->query($delete_query);
 
 		$query="SELECT prospect_lists.id prospect_list_id from prospect_lists ";
 		$query.=" INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = prospect_lists.id";
-		$query.=" WHERE plc.campaign_id='{$focus->id}'";
+		$query.=" WHERE plc.campaign_id='".$GLOBALS['db']->quote($focus->id)."'"; 
 		$query.=" AND prospect_lists.deleted=0";
 		$query.=" AND plc.deleted=0";
 		$query.=" AND prospect_lists.list_type!='test' AND prospect_lists.list_type not like 'exempt%'";

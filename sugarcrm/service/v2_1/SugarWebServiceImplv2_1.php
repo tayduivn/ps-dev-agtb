@@ -26,7 +26,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  */
 require_once('service/core/SugarWebServiceImpl.php');
 
-class SugarWebServiceImplv2_1 extends SugarWebServiceImpl 
+class SugarWebServiceImplv2_1 extends SugarWebServiceImpl
 {
     //BEGIN SUGARCRM flav=pro ONLY
     /**
@@ -46,17 +46,17 @@ class SugarWebServiceImplv2_1 extends SugarWebServiceImpl
 		$fieldList = array();
 		$resultOutputList = $result['entry_list'];
 		$resultFieldList = $result['field_list'];
-		
+
 		foreach($resultOutputList as $list){
 			$outputList[]['entry_list'] = $list;
 		}
-		
+
 		foreach($resultFieldList as $list){
 			$fieldList[]['field_list'] = $list;
 		}
 		return array('field_list'=>$fieldList, 'entry_list'=>$outputList);
 	} // fn
-	//END SUGARCRM flav=pro ONLY	
+	//END SUGARCRM flav=pro ONLY
 	/**
 	 * Retrieve a list of beans.  This is the primary method for getting list of SugarBeans from Sugar using the SOAP API.
 	 *
@@ -78,6 +78,9 @@ class SugarWebServiceImplv2_1 extends SugarWebServiceImpl
 	public function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted )
 	{
 		$result = parent::get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted );
+		if(empty($result)) {
+		    return null;
+		}
 		$relationshipList = $result['relationship_list'];
 		$returnRelationshipList = array();
 		foreach($relationshipList as $rel){

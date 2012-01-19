@@ -2686,6 +2686,16 @@ protected function checkQuery($sql, $object_name = false)
 			}
 			return $result;
 		} else {
+		    if(strchr($name, ".")) {
+		        // this is a compound name with dots, handle separately
+		        $parts = explode(".", $name);
+		        if(count($parts) > 2) {
+		            // some weird name, cut to table.name
+		            array_splice($parts, 0, count($parts)-2);
+		            $parts = $this->getValidDBName($parts, $ensureUnique, $type, $force);
+                    return join(".", $parts);
+		        }
+		    }
 			// first strip any invalid characters - all but word chars (which is alphanumeric and _)
 			$name = preg_replace( '/[^\w]+/i', '', $name ) ;
 			$len = strlen( $name ) ;

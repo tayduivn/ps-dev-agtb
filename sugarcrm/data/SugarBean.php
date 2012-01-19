@@ -2517,7 +2517,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $show_deleted = 1;
         }
-        $order_by=$this->process_order_by($order_by, null);
+        $order_by=$this->process_order_by($order_by);
 
         if($this->bean_implements('ACL') && ACLController::requireOwner($this->module_dir, 'list') )
         {
@@ -2543,20 +2543,19 @@ function save_relationship_changes($is_update, $exclude=array())
     * Prefixes column names with this bean's table name.
     *
     * @param string $order_by  Order by clause to be processed
-    * @param string $submodule name of the module this order by clause is for
+    * @param SugarBean $submodule name of the module this order by clause is for
     * @return string Processed order by clause
     *
     * Internal function, do not override.
     */
-    function process_order_by ($order_by, $submodule)
+    function process_order_by ($order_by, $submodule = null)
     {
         if (empty($order_by))
             return $order_by;
-        $bean_queried = "";
         //submodule is empty,this is for list object in focus
         if (empty($submodule))
         {
-            $bean_queried = &$this;
+            $bean_queried = $this;
         }
         else
         {
@@ -3539,7 +3538,7 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($order_by))
         {
             //make call to process the order by clause
-            $ret_array['order_by'] = " ORDER BY ". $this->process_order_by($order_by, null);
+            $ret_array['order_by'] = " ORDER BY ". $this->process_order_by($order_by);
         }
         if($singleSelect)
         {
