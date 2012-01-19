@@ -475,8 +475,8 @@ class CalendarDisplay {
 			$ss->assign("UP",SugarThemeRegistry::current()->getImage('uparrow_big', 'border="0" style="margin-bottom: 1px;"', null, null, '.gif', $app_strings['LBL_SORT']));
 			$ss->assign("DOWN",SugarThemeRegistry::current()->getImage('downarrow_big', 'border="0" style="margin-top: 1px;"', null, null, '.gif', $app_strings['LBL_SORT']));
 			
-			if(empty($_REQUEST['edit_shared'])){
-				$ss->assign("style","display: none");
+			if(!empty($_REQUEST['edit_shared'])){
+				$ss->assign("edit_shared",true);
 			}
 			
 			//BEGIN SUGARCRM flav=pro ONLY

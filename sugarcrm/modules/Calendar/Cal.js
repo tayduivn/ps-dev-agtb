@@ -41,6 +41,7 @@
 	CAL.script_evaled = false;
 	CAL.editDialog = false;
 	CAL.settingsDialog = false;	
+	CAL.sharedDialog = false;
 	CAL.basic = {};
 	CAL.basic.items = {};
 	CAL.update_dd = new YAHOO.util.CustomEvent("update_dd");
@@ -1737,18 +1738,26 @@
 			SUGAR.util.additionalDetailsCalls[id] = undefined;		
 	}			
 	
-	CAL.toggle_shared_edit = function (id){
-		if(document.getElementById(id).style.display == 'none'){
-			document.getElementById(id).style.display = 'inline'
-			if(document.getElementById(id+"link") != undefined){
-				document.getElementById(id+"link").style.display='none';
-			}
-		}else{
-			document.getElementById(id).style.display = 'none'
-			if(document.getElementById(id+"link") != undefined){
-				document.getElementById(id+"link").style.display = 'inline';
-			}
+	CAL.toggle_shared_edit = function (){
+		
+		var sd = CAL.get("shared_cal_edit");			
+		if(!CAL.sharedDialog){	
+			CAL.sharedDialog = new YAHOO.widget.Dialog("shared_cal_edit",{ 
+				  	fixedcenter: true,
+				  	draggable: false,
+				  	visible : false, 
+				 	modal : true,
+				  	close: true
+			});
+			var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.sharedDialog.cancel();} } );
+			CAL.sharedDialog.cfg.queueProperty("keylisteners", listeners);
 		}
+		CAL.sharedDialog.cancelEvent.subscribe(function(e, a, o){
+			//CAL.get("form_settings").reset();
+		});
+		sd.style.display = "block";	 
+		CAL.sharedDialog.render();
+		CAL.sharedDialog.show();
 	}
 
 	CAL.goto_date_call = function (){
