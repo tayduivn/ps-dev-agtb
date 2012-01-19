@@ -104,7 +104,7 @@ class DropDownHelper{
 
            $index = $params['slot_' . $count];
            $key = (isset($params['key_' . $index]))?SugarCleaner::stripTags($params['key_' . $index]): 'BLANK';
-           $value = (isset($params['value_' . $index]))?SugarCleaner::stripTags($params['key_' . $index]): '';
+           $value = (isset($params['value_' . $index]))?SugarCleaner::stripTags($params['value_' . $index]): '';
            if($key == 'BLANK'){
                $key = '';
 
