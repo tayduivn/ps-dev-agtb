@@ -74,12 +74,12 @@ class SugarSearchEngineFullIndexer
             $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
             $count = 0;
             $obj = BeanFactory::getBean($module, null);
-            $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0' ";
+            $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0'";
 
             $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
 
             $docs = array();
-            while ($row = $db->fetchByAssoc($result, FALSE))
+            while ($row = $db->fetchByAssoc($result, FALSE) )
             {
                 $beanID = $row['id'];
                 $bean = BeanFactory::getBean($module, $beanID);
@@ -93,8 +93,13 @@ class SugarSearchEngineFullIndexer
                 {
                     $this->SSEngine->bulkInsert($docs);
                     $docs = array();
+                    sugar_cache_reset();
                     gc_collect_cycles();
-                    $GLOBALS['log']->fatal("Flushing records, current count: $count memory usage:" .  memory_get_usage());
+                    $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
+                    $currentMemUsage = memory_get_usage();
+                    $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
+                    $GLOBALS['log']->fatal("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
+                    $lastMemoryUsage = $currentMemUsage;
                 }
             }
 
