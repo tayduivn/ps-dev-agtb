@@ -101,9 +101,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
             $ret = $highlighter->getHighlightedHitText($hit['_source'], $q);
         }
 
-        // TODO: should return an array $ret instead of a string, returning a string to test for now
-        return implode('<br>', $ret);
-        //return $ret;
+        return $ret;
     }
 
     public function __toString()

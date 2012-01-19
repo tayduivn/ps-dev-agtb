@@ -5988,26 +5988,30 @@ margin-left:10px;
 
 }
 
-#sugar_spot_search_results section .resultTitle{
+#sugar_full_search_results section.odd {
+	background-color: #efefef;	
+}
+
+#sugar_spot_search_results section .resultTitle, #sugar_full_search_results section .resultTitle{
     float:left;
-    color:#999;
+    color:#666;
     width:70px;
     text-align:right;
     padding-right: 10px;
+      padding-top: 4px;
+      font-size: 11px;
 }
 
-#sugar_spot_search_results a.resultAll {
-    text-decoration:none;
-    margin-left:180px;
+
+
+#sugar_spot_search_results section .desc, #sugar_full_search_results section .desc {
+	color: #aaa;
 }
 
-#sugar_spot_search_results a.resultAll:hover {
-    text-decoration:underline;
-}
 
-#sugar_spot_search_results section.resultNull {
-    padding:50px;
-    text-align:center;
+#sugar_spot_search_results section.resultNull {   
+	 text-align:center;
+	 color: #666;
 }
 
 #sugar_spot_search_results section.resultNull h1 {
@@ -6015,33 +6019,51 @@ margin-left:10px;
     margin-bottom:5px;
 }
 
+
+
 #sugar_spot_search_results section.resultNull a {
     text-decoration:none;
 }
 
-#sugar_spot_search_results section ul {
+#sugar_spot_search_results section ul, #sugar_full_search_results section ul {
     width:175px;
     line-height:20px;
     padding:0 0 25px 10px;
     float:left;
-    border-left: 1px solid #aaa;
+    border-left: 1px solid #ccc;
 	margin: 0px;
 }
 
-#sugar_spot_search_results section ul li {
+#sugar_spot_search_results section ul li, #sugar_full_search_results section ul li  {
     list-style: none;
     margin-bottom:7px;
 }
 
-#sugar_spot_search_results section ul li a {
+#sugar_spot_search_results section ul li a, #sugar_full_search_results section ul li a {
     color:#006BB9;
     text-decoration:none;
 }
 
-#sugar_spot_search_results section ul li a:hover {
+#sugar_spot_search_results section ul li a:hover, #sugar_full_search_results section ul li a:hover {
     text-decoration:underline;
 }
 
+#sugar_spot_search_results p.fullResults {
+text-align: right;
+
+}
+
+#sugar_spot_search_results p.fullResults a {
+	text-decoration: none;
+}
+
+ #sugar_full_search_results section .resultTitle, #sugar_full_search_results section ul { 
+ 	width: auto;
+ }
+ 
+ #sugar_full_search_results section .resultTitle, #sugar_full_search_results section ul{
+	padding: 15px;
+}
 
 #close_spot_search {
 display: inline-block;	
@@ -6051,7 +6073,7 @@ top: 1px;
 display: none;
 cursor: pointer;
 }
-.highlight { background-color: yellow }
+.highlight { background-color: cyan }
 
 .dcmenuDivider {
 	background-image:url('../../../../index.php?entryPoint=getImage&imageName=dcMenuDivider.png');
