@@ -51,6 +51,13 @@ class SugarCronJobs
         $this->lockfile = sugar_cached("modules/Schedulers/lastrun");
     }
 
+    protected function markLastRun()
+    {
+        if(!file_put_contents($this->lockfile, time())) {
+            $GLOBALS['log']->fatal('Scheduler cannot write PID file.  Please check permissions on '.$this->lockfile);
+        }
+    }
+
     /**
      * Check if we aren't running jobs too frequently
      * @return bool OK to run?
@@ -59,13 +66,12 @@ class SugarCronJobs
     {
         create_cache_directory($this->lockfile);
         if(!file_exists($this->lockfile)) {
+            $this->markLastRun();
             return true;
         } else {
             $ts = file_get_contents($this->lockfile);
+            $this->markLastRun();
             $now = time();
-            if(!file_put_contents($this->lockfile, $now)) {
-                $GLOBALS['log']->fatal('Scheduler cannot write PID file.  Please check permissions on '.$this->lockfile);
-            }
             if($now - $ts < $this->min_interval) {
                 // run too frequently
                 return false;
