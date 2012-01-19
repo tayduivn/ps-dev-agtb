@@ -49,7 +49,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
             if(strlen($badoutput) > 0) {
                 ob_end_clean();
             }
-            file_put_contents("upload://$fileName", ltrim($tmp));
+            sugar_file_put_contents("upload://$fileName", ltrim($tmp));
 
             $email_id = $this->email_layout($fileName, $bean);
 

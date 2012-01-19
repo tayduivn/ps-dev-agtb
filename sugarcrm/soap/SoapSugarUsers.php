@@ -344,7 +344,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
-	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted,true);
+        $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted,true);
     }
 	$list = $response['list'];
 
@@ -1143,8 +1143,7 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 
 	$list = array();
 
-	$id_list_quoted = array_map(create_function('$str','return "\'" . $str . "\'";'), $id_list);
-	$in = implode(", ", $id_list_quoted);
+	$in = "'".implode("', '", $id_list)."'";
 
 	$related_class_name = $beanList[$related_module];
 	require_once($beanFiles[$related_class_name]);
@@ -1511,9 +1510,9 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 						if($key != 'EmailAddresses'){
 							foreach($search_terms as $term){
 								if(!strpos($where_clause, 'number')){
-									$where .= string_format($where_clause,array($term));
+									$where .= string_format($where_clause,array($GLOBALS['db']->quote($term)));
 								}elseif(is_numeric($term)){
-									$where .= string_format($where_clause,array($term));
+									$where .= string_format($where_clause,array($GLOBALS['db']->quote($term)));
 								}else{
 									$addQuery = false;
 								}

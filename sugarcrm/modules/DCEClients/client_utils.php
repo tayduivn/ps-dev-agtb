@@ -684,7 +684,7 @@ function getUpgradeVars($db, $action, $inst){
             if (strstr($cnt, $search))
             {
                 $cnt = str_replace($search, $replace, $cnt);
-                return file_put_contents($filename, $cnt);
+                return sugar_file_put_contents($filename, $cnt);
             }
             return true;
         }

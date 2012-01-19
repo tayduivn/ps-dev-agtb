@@ -109,6 +109,11 @@ SUGAR.ajaxUI = {
 					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = errorMessage;
 					window.setTimeout('throw "AjaxUI error parsing response"', 300);
 			});
+
+            //fire off a delayed check to make sure error message was rendered.
+            SUGAR.ajaxUI.errorMessage = errorMessage;
+            window.setTimeout('if((typeof(document.getElementById("ajaxErrorFrame")) == "undefined" || typeof(document.getElementById("ajaxErrorFrame")) == null  || document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML == "")){document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML=SUGAR.ajaxUI.errorMessage;}',3000);
+
             panel.show();
             panel.center();
 

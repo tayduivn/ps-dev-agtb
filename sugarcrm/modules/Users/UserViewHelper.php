@@ -196,11 +196,11 @@ class UserViewHelper {
         
 
         //if this is an existing bean and the type is empty, then populate user type
-        if (!empty($this->bean->id) && empty($this->bean->user_type))
+        if(!empty($this->bean->id) && empty($this->bean->user_type))
 	    {
             $this->setUserType($this->bean);
             $userType = $this->bean->user_type;
-        }else{
+        } else {
             $userType = $this->usertype;
         }
 
@@ -210,12 +210,12 @@ class UserViewHelper {
                 'label' => translate('LBL_REGULAR_USER','Users'),
                 'description' => translate('LBL_REGULAR_DESC','Users'),
             ),
-//BEGIN SUGARCRM flav=sales ONLY
+            //BEGIN SUGARCRM flav=sales ONLY
             'UserAdministrator' => array(
                 'label' => translate('LBL_USER_ADMINISTRATOR','Users'),
                 'description' => translate('LBL_USER_ADMIN_DESC','Users'),
             ),
-//END SUGARCRM flav=sales ONLY
+            //END SUGARCRM flav=sales ONLY
             'GROUP' => array(
                 'label' => translate('LBL_GROUP_USER','Users'),
                 'description' => translate('LBL_GROUP_DESC','Users'),
@@ -259,13 +259,15 @@ class UserViewHelper {
         $userTypeDropdown .= '>';
      
         $userTypeDescription = '';
-   
+
+        $setSelected = !empty($this->bean->id);
+
         foreach ( $availableUserTypes as $currType ) {
-            $selected = '';
-            if ( $currType == $userType ) {
-                $selected = 'SELECTED';
+            if ($setSelected && $currType == $userType ) {
+                $userTypeDropdown .= '<option value="'.$currType.'" SELECTED>'.$userTypes[$currType]['label'].'</option>';
+            } else {
+                $userTypeDropdown .= '<option value="'.$currType.'">'.$userTypes[$currType]['label'].'</option>';
             }
-            $userTypeDropdown .= '<option value="'.$currType.'" '.$selected.'>'.$userTypes[$currType]['label'].'</option>';
         }
         $userTypeDropdown .= '</select><div id="UserTypeDesc">&nbsp;</div>';
         

@@ -84,6 +84,12 @@ class ImportViewExtimport extends ImportView
             $this->handleImportError($mod_strings['LBL_EXTERNAL_ERROR_FEED_CORRUPTED']);
         }
 
+        if (!ImportCacheFiles::ensureWritable())
+        {
+            $GLOBALS['log']->fatal($mod_strings['LBL_ERROR_IMPORT_CACHE_NOT_WRITABLE']);
+            $this->handleImportError($mod_strings['LBL_ERROR_IMPORT_CACHE_NOT_WRITABLE']);
+        }
+
         $importer = new Importer($this->importSource, $this->bean);
         $importer->setFieldKeyTranslator($fieldKeyTranslator);
         $importer->import();

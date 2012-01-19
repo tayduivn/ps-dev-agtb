@@ -35,5 +35,5 @@ if(isset($_GET['DynamicAction']) && $_GET['DynamicAction'] == "saveImage") {
 	$image = str_replace(" ", "+", $_POST["imageStr"]);
 	$data = substr($image, strpos($image, ","));
 
-	file_put_contents($cache.$filename, base64_decode($data));
+	sugar_file_put_contents($cache.$filename, base64_decode($data));
 }
