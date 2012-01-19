@@ -859,6 +859,59 @@ SUGAR.expressions.GridToolTip = {
         $("#fb_ac_wrapper ul.ui-autocomplete").before(html);
     }
 
+    //create the autcomplete help text div
+    $('body').append("<div id='fb_ac_help' class='fb_ac_help'></div>'");
+
+    var hideACHelp = function(){
+        $("#fb_ac_help").css("visibility", "hidden");
+    };
+
+    var showACHelp = function(func){
+        var ggt = SUGAR.expressions.GridToolTip,
+            cache = ggt.tipCache,
+            div = $("#fb_ac_help");
+
+        if (ggt.currentHelpFunc == func && div.css("visibility") != "hidden")
+            return;
+        ggt.currentHelpFunc = func;
+
+        var do_show = function(){
+            //Don't show the help if the AC widget was closed during the 300ms wait
+            if (!fb_ac_open) return;
+            if (typeof cache[func] == 'string') {
+                div.html(cache[func]);
+            } else {
+                div.html("loading...");
+                $.ajax({
+                    url:Connect.url,
+                    data : {
+                        "function": func,
+                        action: "functionDetail",
+                        module: "ExpressionEngine"
+                    },
+                    success: function(data){
+                        var desc = $.parseJSON(data).desc;
+                        cache[func] = desc;
+                        div.html(desc);
+                    }
+                });
+            }
+            div.position({
+                my : "left top",
+                at : "right top",
+                of : "#fb_ac_wrapper ul.ui-autocomplete"
+            });
+            div.css("visibility", "visible");
+        }
+        //Force a 300ms timer on actually showing the help window
+        if (SUGAR.expressions.fb_ac_help_timer)
+           window.clearTimeout(SUGAR.expressions.fb_ac_help_timer);
+
+       //Use a 300ms timer before showing/updating the autocomplete
+       SUGAR.expressions.fb_ac_help_timer = window.setTimeout(do_show, 300);
+    };
+
+
     //Initialize the Autocomplete. It will used a hidden input that is updated by a listener on the formula input
     $( "#fb_ac_input" ).autocomplete({
         source: function(e, fn){
@@ -877,9 +930,11 @@ SUGAR.expressions.GridToolTip = {
             fb_ac_open = true;
             //Set the content of the spacer to the same as the formula input to offset the autocomplete location by that amount
             updateACSpacer();
+            hideACHelp();
         },
         close: function(){
             fb_ac_open = false;
+            hideACHelp();
         },
         select: function(event, ui) {
             //On selection, relpace the currrent element in the forumla with the selection
@@ -918,6 +973,12 @@ SUGAR.expressions.GridToolTip = {
             end = getCompEnd(target.val(), offset) + cursorOffset,
             el.setSelectionRange(end, end);
             fb_ac_open = false;
+            hideACHelp();
+        },
+        focus: function(event, ui) {
+            hideACHelp();
+            if (ui.item)
+                showACHelp(ui.item.value);
         }
     });
 
@@ -937,7 +998,6 @@ SUGAR.expressions.GridToolTip = {
                     $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput", collision:"none"});
                 }
                 //DO not open the auto complete for moving the curser. Only modify it if its already open
-
                 if ((e.keyCode != 37 && e.keyCode != 39) || fb_ac_open){
                     $( "#fb_ac_input" ).autocomplete("search", getComponentText());
                 }
@@ -957,10 +1017,9 @@ SUGAR.expressions.GridToolTip = {
     })
 
     //Allow the user to click out of the autocomplete
-    $("#formulaInput").click(function()
-    {
-        $( "#fb_ac_input" ).autocomplete("close");
-    });
+    $("body").mousedown(function(){$( "#fb_ac_input" ).autocomplete("close");});
+    //Need to prevent the body from seeing mousedown events to the AC widget
+    $("#fb_ac_wrapper").mousedown(function(){return false});
 
     //On close, destroy the autocomplete
     SUGAR.expressions.closeFormulaBuilder = function()

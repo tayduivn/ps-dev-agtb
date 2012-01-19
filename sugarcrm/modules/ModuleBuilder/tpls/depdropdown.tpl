@@ -97,19 +97,22 @@
 <div class="dd_title" style="width:600px">
     Drag items from the list of availible options on the left to one of the lists on the right to make that option availible when the given parent option is selected.
 </div>
-<div style="float:left; max-height: 510px; overflow-y: auto; overflow-x: hidden">
-    <div class="dd_title">Availible Options<br/>
-        <div id="ddd_delete">{sugar_image name=Delete width=48 height=48 id="ddd_delete"}</div>
+<div style="float:left;">
+    <div class="dd_title">
+        <div id="ddd_delete">{sugar_image name=Delete width=48 height=48 id="ddd_delete"}</div><br/>
+        Availible Options
     </div>
-    <ul id="childTable" style="float:left" class="ddd_table">
-        {foreach from=$child_list_options key=val item=label}
-            {if $val==""}
-                {assign var=val value='--blank--'}
-                {assign var=label value='--blank--'}
-            {/if}
-            <li class="ui-state-default" val="{$val}">{$label}</li>
-        {/foreach}
-    </ul>
+    <div style="max-height: 450px; overflow-y: auto; overflow-x: hidden">
+        <ul id="childTable" style="float:left" class="ddd_table">
+            {foreach from=$child_list_options key=val item=label}
+                {if $val==""}
+                    {assign var=val value='--blank--'}
+                    {assign var=label value='--blank--'}
+                {/if}
+                <li class="ui-state-default" val="{$val}">{$label}</li>
+            {/foreach}
+        </ul>
+    </div>
 </div>
 <div style="max-height: 510px; overflow-y: auto; overflow-x: hidden">
 <table ><tr>

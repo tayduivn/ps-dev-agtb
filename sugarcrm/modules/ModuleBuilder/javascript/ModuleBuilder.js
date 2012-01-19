@@ -1215,14 +1215,25 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 }
 			}
 		},
-        toggleDF: function(enable) {
-            if (typeof(enable) == 'undefined') {
+        toggleDF: function(enable, query) {
+            if (typeof(enable) == 'undefined' || enable === null) {
                 enable = Dom.get('dependent').checked;
             }
             var display = enable ? "" : "none";
             Dom.setStyle('visFormulaRow', 'display', display);
+            //If a query was passed in, we need to enble/disable elements that match the query as well
+            if (query)
+                $(query).css("display", display);
             Dom.get('dependency').disabled = !enable;
 			Dom.get('dependent').value = enable;
+        },
+        //We can only have a formula or a vis_grid. Before we save we need to clear the one we aren't using
+        validateDD: function() {
+            if ($('#depTypeSelect').val() != "parent")
+                $("#visibility_grid").val("");
+            if ($('#depTypeSelect').val() != "formula")
+                $("#dependency").val("");
+            return true;
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY
