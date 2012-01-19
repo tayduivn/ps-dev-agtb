@@ -140,7 +140,6 @@ array (
             'name' => 'duration',
             'customCode' => '
                 @@FIELD@@
-                <span id="duration_text"></span>
                 <input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
                 <input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
                 {sugar_getscript file="modules/Meetings/duration_dependency.js"}
