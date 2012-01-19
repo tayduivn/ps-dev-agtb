@@ -929,7 +929,7 @@
 			toggle_repeat_type();		
 			CAL.get("repeat_parent_id").value = "";
 			CAL.get("edit_all_recurrences").value = "";
-			CAL.get("edit_all_recurrences_btn").style.display = "none";
+			CAL.get("edit_all_recurrences_block").style.display = "none";
 			CAL.get("cal-repeat-block").style.display = "none";	
 	}
 
@@ -982,7 +982,7 @@
 	
 		if(typeof data.repeat_parent_id != "undefined"){
 			CAL.get("cal-repeat-block").style.display = "none";
-			CAL.get("edit_all_recurrences_btn").style.display = "";
+			CAL.get("edit_all_recurrences_block").style.display = "";
 			CAL.get("edit_all_recurrences").value = "";
 			CAL.get("repeat_parent_id").value = data.repeat_parent_id;			
 			return;
@@ -1015,7 +1015,7 @@
 			}			
 			
 			CAL.get("cal-repeat-block").style.display = "";
-			CAL.get("edit_all_recurrences_btn").style.display = "none";
+			CAL.get("edit_all_recurrences_block").style.display = "none";
 			toggle_repeat_type();
 		}
 		
@@ -1638,6 +1638,18 @@
 						var url = "index.php?module=Calendar&action=SaveActivity&sugar_body_only=true";
 						YAHOO.util.Connect.setForm(CAL.get("CalendarEditView"));
 						YAHOO.util.Connect.asyncRequest('POST',url,callback,false);
+	}
+	
+	CAL.remove_all_recurrences = function(){				
+	
+		if(confirm(CAL.lbl_confirm_remove_all_recurring)){
+			if(CAL.get("repeat_parent_id").value != ''){
+				CAL.get("record").value = CAL.get("repeat_parent_id").value;
+			}
+			CAL.get("edit_all_recurrences").value = true;
+			CAL.dialog_remove();		
+		}
+	
 	}
 	
 	CAL.dialog_remove = function(){

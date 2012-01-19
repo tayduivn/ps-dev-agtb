@@ -64,6 +64,8 @@
 		CAL.lbl_saving = "{$MOD.LBL_SAVING}";
 		CAL.lbl_loading = "{$MOD.LBL_LOADING}";
 		CAL.lbl_confirm_remove = "{$MOD.LBL_CONFIRM_REMOVE}";
+		CAL.lbl_confirm_remove_all_recurring = "{$MOD.LBL_CONFIRM_REMOVE_ALL_RECURRING}";
+		
 		CAL.lbl_error_saving = "{$MOD.LBL_ERROR_SAVING}";
 		CAL.lbl_error_loading = "{$MOD.LBL_ERROR_LOADING}";
 		CAL.lbl_repeat_limit_error = "{$MOD.LBL_REPEAT_LIMIT_ERROR}";
@@ -174,7 +176,7 @@
 		YAHOO.util.Event.on("btn-delete","click",function(){
 			if(CAL.get("record").value != "")
 				if(confirm(CAL.lbl_confirm_remove))
-					CAL.dialog_remove();				
+					CAL.dialog_remove();
 						
 		});	
 	

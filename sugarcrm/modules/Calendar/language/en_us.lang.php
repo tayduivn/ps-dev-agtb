@@ -84,6 +84,7 @@ $mod_strings = array (
 	'LBL_LOADING' => 'Loading ......',
 	'LBL_SAVING' => 'Saving ......',
 	'LBL_CONFIRM_REMOVE' => 'Are you sure you want to remove the record?',
+	'LBL_CONFIRM_REMOVE_ALL_RECURRING' => 'Are you sure you want to remove all recurring records?',
 	'LBL_EDIT_RECORD' => 'Edit Activity',
 	'LBL_ERROR_SAVING' => 'Error while saving',
 	'LBL_ERROR_LOADING' => 'Error while loading',
@@ -137,6 +138,7 @@ $mod_strings = array (
 	'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
 	
 	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
+	'LBL_REMOVE_ALL_RECURRENCES' => 'Remove All Recurrences',
 
 );
 

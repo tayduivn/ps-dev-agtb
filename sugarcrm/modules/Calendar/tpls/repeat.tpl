@@ -27,7 +27,10 @@
  ********************************************************************************/
 *}
 
-<button type="button" onclick="CAL.edit_all_recurrences();" id="edit_all_recurrences_btn" style="display: none; margin: 10px;"> {$MOD.LBL_EDIT_ALL_RECURRENCES} </button>
+<div id="edit_all_recurrences_block" style="display: none;">
+	<button type="button" onclick="CAL.edit_all_recurrences();"> {$MOD.LBL_EDIT_ALL_RECURRENCES} </button>
+	<button type="button" onclick="CAL.remove_all_recurrences();"> {$MOD.LBL_REMOVE_ALL_RECURRENCES} </button>
+</div>
 
 <div id="cal-repeat-block" style="dispaly: none;">
 <form name="CalendarRepeatForm" id="CalendarRepeatForm" onsubmit="return false;">
