@@ -195,3 +195,7 @@
 #cal-edit-buttons {
 	padding: 7px 5px 5px 5px;
 }
+
+#edit_all_recurrences_block button {
+	margin: 4px;
+}
