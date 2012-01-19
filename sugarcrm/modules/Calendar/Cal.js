@@ -235,7 +235,7 @@
 		
 		var content = "";
 		if(params.type == "advanced"){
-			content = "<div class='contain' " + params.contain_style + ">" + params.item_text + "</div>";
+			content = "<div class='content' " + params.content_style + ">" + params.item_text + "</div>";
 		}
 		
 		var el = document.createElement("div");	
@@ -660,7 +660,7 @@
 						if(item.ts_start < start)
 							time_start = "...&nbsp;";
 						
-						var head_text = CAL.get_header_text(item.type,time_start,item.status,item.record);
+						var head_text = CAL.get_header_text(item.type,time_start,item.name,item.record);
 
 						var el = CAL.create_item({
 							item: item,
@@ -730,7 +730,7 @@
 				return;
 			}
 				
-			var head_text = CAL.get_header_text(item.type,item.time_start,item.status,item.record);					
+			var head_text = CAL.get_header_text(item.type,item.time_start,item.name,item.record);					
 			var time_cell = item.timestamp - item.timestamp % (CAL.t_step * 60);			
 			var duration_coef; 
 			if(item.module_name == 'Tasks'){
@@ -742,13 +742,12 @@
 					duration_coef = (parseInt(item.duration_hours) * 60 + parseInt(item.duration_minutes)) / CAL.t_step;
 			}			
 
-			var item_text = "";
-			if(CAL.item_text && (typeof item[CAL.item_text] != "undefined") )
-				item_text = item[CAL.item_text];
+
+			var item_text = SUGAR.language.languages.app_list_strings[item.type +'_status_dom'][item.status];
 			
-			var contain_style = "";
+			var content_style = "";
 			if(duration_coef < 1.75)
-				contain_style = "style='display: none;'";
+				content_style = "style='display: none;'";
 			
 			var elm_id = item.record + id_suffix;
 						
@@ -760,7 +759,7 @@
 				id: item.record,
 				id_suffix: id_suffix,
 				item_text: item_text,
-				contain_style: contain_style
+				content_style: content_style
 			});	
 			
 			YAHOO.util.Event.on(el,"click",function(){
@@ -785,8 +784,8 @@
 				
 	}
 
-	CAL.get_header_text = function (type,time_start,status,record){
-			var start_text = "<span class='start_time'>" + time_start + "</span> " + SUGAR.language.languages.app_list_strings[type +'_status_dom'][status];
+	CAL.get_header_text = function (type,time_start,text,record){
+			var start_text = "<span class='start_time'>" + time_start + "</span> " + text;
 			return start_text;
 	}
 	
@@ -1394,7 +1393,7 @@
 						CAL.update_dd.fire();
 						
 						CAL.cut_record(box_id);					
-						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('time'),u.getAttribute('status'),u.getAttribute('record'));
+						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('time'),' ... ',u.getAttribute('record'));
 						var date_field = "date_start";
 						if(u.getAttribute('module_name') == "Tasks")
 							date_field = "date_due";

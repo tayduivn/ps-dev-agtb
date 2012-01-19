@@ -51,7 +51,6 @@
 		CAL.enable_repeat = "{$enable_repeat}";
 		CAL.items_draggable = "{$items_draggable}";
 		CAL.items_resizable = "{$items_resizable}";
-		CAL.item_text = "{$item_text}";		
 		CAL.cells_per_day = {$cells_per_day};	
 		CAL.current_params = {literal}{}{/literal};
 		CAL.dashlet = "{$dashlet}";		

@@ -82,7 +82,6 @@ class CalendarDisplay {
 		$ss->assign('enable_repeat',$this->cal->enable_repeat);
 		$ss->assign('items_draggable',SugarConfig::getInstance()->get('calendar.items_draggable',true));
 		$ss->assign('items_resizable',SugarConfig::getInstance()->get('calendar.items_resizable',true));		
-		$ss->assign('item_text','name');
 		$ss->assign('cells_per_day',$cal->cells_per_day);
 	
 		$ss->assign('dashlet',$cal->dashlet);
