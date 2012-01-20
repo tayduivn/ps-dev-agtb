@@ -62,6 +62,9 @@ class SugarJobQueue
         $job->new_with_id = true;
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->resolution = SchedulersJob::JOB_PENDING;
+        if(empty($job->execute_time)) {
+            $job->execute_time = $GLOBALS['timedate']->nowDb();
+        }
         $job->save();
 
         return $job->id;
@@ -165,6 +168,7 @@ class SugarJobQueue
                 return null;
             }
             $job->status = SchedulersJob::JOB_STATUS_RUNNING;
+            $job->client = $clientID;
             $client = $this->db->quote($clientID);
             // using direct query here to be able to fetch affected count
             // if count is 0 this means somebody changed the job status and we have to try again

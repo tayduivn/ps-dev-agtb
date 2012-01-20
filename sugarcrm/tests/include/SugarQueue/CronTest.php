@@ -198,4 +198,5 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
     }
+
 }
