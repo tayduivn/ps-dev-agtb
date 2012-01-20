@@ -450,6 +450,13 @@ class ModuleBuilderController extends SugarController
     {
     	global $mod_strings;
     	require_once ('modules/DynamicFields/FieldCases.php') ;
+    	
+    	// Bug 49775: strip tags
+    	if (isset($_REQUEST['dependency']))
+    	{
+    	    $_REQUEST['dependency'] = strip_tags(html_entity_decode($_REQUEST['dependency']));
+    	}
+    	    	
         $field = get_widget ( $_REQUEST [ 'type' ] ) ;
         $_REQUEST [ 'name' ] = trim ( $_POST [ 'name' ] ) ;
 
