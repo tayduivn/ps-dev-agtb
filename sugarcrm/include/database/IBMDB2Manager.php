@@ -81,6 +81,7 @@ class IBMDB2Manager  extends DBManager
 			'relate'   => 'varchar',
 			'multienum'=> 'clob(65535)',
 			'html'     => 'clob(65535)',
+			'longhtml' => 'clob(2000000000)',
 			'datetime' => 'timestamp',
 			'datetimecombo' => 'timestamp',
 			'time'     => 'time',

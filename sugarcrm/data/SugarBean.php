@@ -688,7 +688,7 @@ class SugarBean
         foreach($this->field_defs as $field=>$value){
             if((isset($value['default']) || !empty($value['display_default'])) && ($force || empty($this->$field))){
                 $type = $value['type'];
-                
+
                 switch($type){
                     case 'date':
                         if(!empty($value['display_default'])){
@@ -1298,21 +1298,14 @@ class SugarBean
             if(isset($def['dbType']))
                 $type .= $def['dbType'];
 
-            if((strpos($type, 'char') !== false ||
+            if($def['type'] == 'html') {
+                $this->$key = SugarCleaner::cleanHtml($this->$key, true);
+            } elseif((strpos($type, 'char') !== false ||
                 strpos($type, 'text') !== false ||
                 $type == 'enum') &&
                 !empty($this->$key)
             ) {
-                $str = from_html($this->$key);
-                // Julian's XSS cleaner
-                $potentials = clean_xss($str, false);
-
-                if(is_array($potentials) && !empty($potentials)) {
-                    foreach($potentials as $bad) {
-                        $str = str_replace($bad, "", $str);
-                    }
-                    $this->$key = to_html($str);
-                }
+                $this->$key = SugarCleaner::cleanHtml($this->$key);
             }
         }
     }
