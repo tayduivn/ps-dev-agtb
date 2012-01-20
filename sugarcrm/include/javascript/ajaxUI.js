@@ -38,6 +38,9 @@ SUGAR.ajaxUI = {
             window.onbeforeunload = null;
         scroll(0,0);
         SUGAR.ajaxUI.hideLoadingPanel();
+        //BEGIN SUGARCRM flav=pro ONLY
+        SUGAR.forms.AssignmentHandler.reset();
+        //END SUGARCRM flav=pro ONLY
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
