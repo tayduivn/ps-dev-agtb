@@ -415,7 +415,8 @@ class CalendarUtils {
 	 * Delete recurring activities and their invitee relationships
 	 * @param SugarBean $bean 
 	 */ 
-	static function mark_repeat_deleted(SugarBean $bean){
+	static function markRepeatDeleted(SugarBean $bean)
+	{
 		// we don't use mark_deleted method here because it runs very slowly
 		global $db;	
 		$date_modified = $GLOBALS['timedate']->nowDb();	
@@ -424,9 +425,10 @@ class CalendarUtils {
 		else
 			$modified_user_id = 1;
 		$lower_name = strtolower($bean->object_name);
+		
 		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$bean->id}' AND deleted = 0";
 		$re = $db->query($qu);
-		while($ro = $db->fetchByAssoc($re)){
+		while( $ro = $db->fetchByAssoc($re)) {
 			$id = $ro['id'];
 			$date_modified = $GLOBALS['timedate']->nowDb();			
 			$db->query("UPDATE {$bean->table_name} SET deleted = 1, date_modified = '{$date_modified}', modified_user_id = '{$modified_user_id}' WHERE id = '{$id}'");
@@ -441,14 +443,15 @@ class CalendarUtils {
 	 * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
 	 * @param SugarBean $bean 
 	 */ 
-	static function check_and_change_repeat_children(SugarBean $bean){
+	static function checkAndChangeRepeatChildren(SugarBean $bean)
+	{
 		global $db;
 		
 		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$bean->id}' AND deleted = 0 ORDER BY date_start";
 		$re = $db->query($qu);
 		
 		$i = 0;		
-		while($ro = $db->fetchByAssoc($re)){
+		while ($ro = $db->fetchByAssoc($re)) {
 			$id = $ro['id'];
 			if($i == 0){
 				$new_parent_id = $id;
