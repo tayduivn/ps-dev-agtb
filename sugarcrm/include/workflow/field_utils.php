@@ -220,6 +220,7 @@ include_once('include/workflow/expression_utils.php');
 			$field_type =="varchar" ||
             $field_type =="encrypt" ||
 			$field_type =="name" ||
+            $field_type =="user_name" ||
 			$field_type =="phone" ||
 			$field_type =="email" || 
 			$field_type =="url"
