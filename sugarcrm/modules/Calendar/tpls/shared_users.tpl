@@ -94,7 +94,7 @@
 {/literal}
 </script>
 
-<div id="shared_cal_edit" style="display: none; width: 340px;">
+<div id="shared_cal_edit" style="display: none; width: 400px;">
 <form name="shared_cal" action="index.php" method="post">
 <div class="hd">{$MOD.LBL_EDIT_USERLIST}</div>
 <div class="bd">	

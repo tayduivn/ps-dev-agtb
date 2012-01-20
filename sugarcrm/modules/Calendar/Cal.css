@@ -148,6 +148,7 @@
 	padding-right: 2px;
 	overflow: hidden;
 	height: 13px;	
+	padding-top: 1px;
 	font-size: 11px;
 }
 
@@ -165,7 +166,7 @@
 }
 
 .act_item .head div {
-	font-size: 10px;	
+	font-size: 11px;	
 }
 
 
