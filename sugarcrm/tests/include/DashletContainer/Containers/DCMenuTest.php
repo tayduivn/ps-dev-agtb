@@ -28,6 +28,18 @@ require_once 'include/DashletContainer/Containers/DCMenu.php';
 class DCMenuTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    public function setUp()
+    {
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+    }
+
+    public function tearDown()
+    {
+        unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_strings']);
+    }
+
     public function testGetMenuItem()
     {
         $dcMenu = new DCMenuMock();

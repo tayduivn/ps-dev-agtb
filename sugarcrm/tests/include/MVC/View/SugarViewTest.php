@@ -26,17 +26,21 @@ require_once 'include/MVC/View/SugarView.php';
 
 class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $_backup = array();
+
     public function setUp()
     {
         $this->_view = new SugarViewTestMock();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Users');
+        $this->_backup['currentTheme'] = SugarThemeRegistry::current();
     }
     
     public function tearDown()
     {
     	unset($GLOBALS['mod_strings']);
     	unset($GLOBALS['app_strings']);
+        SugarThemeRegistry::set($this->_backup['currentTheme']->dirName);
     }
     
     public function testGetModuleTab()
