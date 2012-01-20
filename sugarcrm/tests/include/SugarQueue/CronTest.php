@@ -57,6 +57,13 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         return true;
     }
 
+    public static function cronJobLongFunction()
+    {
+        self::$jobCalled = true;
+        sleep(2);
+        return true;
+    }
+
     public function testQueueJob()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -78,5 +85,117 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job->retrieve($jobid);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+    }
+
+    public function testJobsCount()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // job 1 - oldest, should be executed
+        $job = new SchedulersJob();
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->scheduler_id = 'unittest';
+        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->date_entered = '2010-01-01 12:00:00';
+        $job->name = "Unit test Job 1";
+        $job->target = "function::CronTest::cronJobFunction";
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->save();
+        $jobid1 = $job->id;
+        // job 2 - newer, should not be executed
+        $job = new SchedulersJob();
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->scheduler_id = 'unittest';
+        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->date_entered = '2012-01-01 12:00:00';
+        $job->name = "Unit test Job 2";
+        $job->target = "function::CronTest::cronJobFunction";
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->save();
+        $jobid2 = $job->id;
+
+        $this->jq->min_interval = 0; // disable throttle
+        $this->jq->max_jobs = 1; // only one job per cycle
+        $this->jq->disable_schedulers = true;
+        $this->jq->runCycle();
+
+        $this->assertTrue(self::$jobCalled, "Job was not called");
+        $job = new SchedulersJob();
+        $job->retrieve($jobid1);
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        // test that second one wasn't run
+        $job = new SchedulersJob();
+        $job->retrieve($jobid2);
+        $this->assertEquals(SchedulersJob::JOB_STATUS_QUEUED, $job->status, "Wrong status");
+    }
+
+    public function testJobsTimeCutoff()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // job 1 - oldest, should be executed
+        $job = new SchedulersJob();
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->scheduler_id = 'unittest';
+        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->date_entered = '2010-01-01 12:00:00';
+        $job->name = "Unit test Job 1";
+        $job->target = "function::CronTest::cronJobLongFunction";
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->save();
+        $jobid1 = $job->id;
+        // job 2 - newer, should not be executed
+        $job = new SchedulersJob();
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->scheduler_id = 'unittest';
+        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->date_entered = '2012-01-01 12:00:00';
+        $job->name = "Unit test Job 2";
+        $job->target = "function::CronTest::cronJobLongFunction";
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->save();
+        $jobid2 = $job->id;
+
+        $this->jq->min_interval = 0; // disable throttle
+        $this->jq->max_jobs = 10;
+        $this->jq->max_runtime = 1; // only 1 sec runtime
+        $this->jq->disable_schedulers = true;
+        $this->jq->runCycle();
+
+        $this->assertTrue(self::$jobCalled, "Job was not called");
+        $job = new SchedulersJob();
+        $job->retrieve($jobid1);
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        // test that second one wasn't run
+        $job = new SchedulersJob();
+        $job->retrieve($jobid2);
+        $this->assertEquals(SchedulersJob::JOB_STATUS_QUEUED, $job->status, "Wrong status");
+    }
+
+    public function testJobsCleanup()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // job 1 - oldest, should be executed
+        $job = new SchedulersJob();
+        $job->status = SchedulersJob::JOB_STATUS_RUNNING;
+        $job->scheduler_id = 'unittest';
+        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->date_entered = '2010-01-01 12:00:00';
+        $job->date_modified = '2010-01-01 12:00:00';
+        $job->name = "Unit test Job 1";
+        $job->target = "function::CronTest::cronJobFunction";
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
+        $job->save();
+        $jobid1 = $job->id;
+
+        $this->jq->min_interval = 0; // disable throttle
+        $this->jq->disable_schedulers = true;
+        $this->jq->runCycle();
+
+        $this->assertFalse(self::$jobCalled, "Job was called");
+        $job = new SchedulersJob();
+        $job->retrieve($jobid1);
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+        $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
     }
 }

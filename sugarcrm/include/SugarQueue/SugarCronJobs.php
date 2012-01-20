@@ -45,6 +45,12 @@ class SugarCronJobs
      */
     public $job;
 
+    /**
+     * This allows to disable schedulers cycle, e.g. for testing
+     * @var bool
+     */
+    public $disable_schedulers = false;
+
     public function __construct()
     {
         $this->queue = new SugarJobQueue();
@@ -100,15 +106,17 @@ class SugarCronJobs
      */
     public function runCycle()
     {
-        // clean old stale jobs
-        $this->queue->cleanup();
         // throttle
         if(!$this->throttle()) {
             $GLOBALS['log']->fatal("Job runs too frequently, throttled to protect the system.");
             return;
         }
+        // clean old stale jobs
+        $this->queue->cleanup();
         // run schedulers
-        $this->queue->runSchedulers();
+        if(!$this->disable_schedulers) {
+            $this->queue->runSchedulers();
+        }
         // run jobs
         $cutoff = time()+$this->max_runtime;
         register_shutdown_function(array($this, "unexpectedExit"));
