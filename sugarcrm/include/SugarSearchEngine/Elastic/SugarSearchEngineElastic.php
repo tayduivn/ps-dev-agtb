@@ -21,7 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
-require_once('include/SugarSearchEngine/Solr/PHPSolr/Service.php');
 require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php');
 
 class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
