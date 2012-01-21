@@ -16,7 +16,17 @@ class SchedulersViewEdit extends ViewEdit {
 				5 => 'SAT',
 				6 => 'SUN');
 
-	function display(){
+    /**
+	 * @see SugarView::_getModuleTitleListParam()
+	 */
+	protected function _getModuleTitleListParam()
+	{
+	    global $mod_strings;
+
+    	return "<a href='index.php?module=Schedulers&action=index'>".$mod_strings['LBL_MODULE_TITLE']."</a>";
+    }
+
+    function display(){
 		global $mod_strings;
 		global $app_list_strings;
 
