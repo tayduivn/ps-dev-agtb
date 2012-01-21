@@ -32,6 +32,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     private $_indexName = "";
 
     const DEFAULT_INDEX_TYPE = 'SugarBean';
+    const SUMMARY_TEXT = 'summary_text';
 
     private $_indexType = 'SugarBean';
 
@@ -106,6 +107,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
+        $keyValues[self::SUMMARY_TEXT] = $bean->get_summary_text();
 
         if( empty($keyValues) )
             return null;
@@ -217,15 +219,24 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * @param int $limit
      * @return null|SugarSeachEngineElasticResultSet
      */
-    public function search($queryString, $offset = 0, $limit = 20)
+    public function search($queryString, $offset = 0, $limit = 20, $options = array(), $isAutoComplete = false)
     {
         $GLOBALS['log']->fatal("Going to search with query $queryString");
         $results = null;
         try
         {
-            $queryObj = new Elastica_Query_QueryString(html_entity_decode($queryString, ENT_QUOTES));
+            $qString = html_entity_decode($queryString, ENT_QUOTES);
+            // for auto complete search, we need to append a wildcard
+            if ($isAutoComplete) {
+                $qString .= '*';
+            }
+            $queryObj = new Elastica_Query_QueryString($qString);
             $queryObj->setAnalyzeWildcard(false);
             $queryObj->setAutoGeneratePhraseQueries(false);
+
+            if ($isAutoComplete) {
+                $queryObj->setFields(array(self::SUMMARY_TEXT));
+            }
 
             if( !is_admin($GLOBALS['current_user']) )
             {
@@ -252,6 +263,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $s->addIndex($index);
 
+            // TODO, for non auto complete searches, ideally we should exclude summary_text field
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
 

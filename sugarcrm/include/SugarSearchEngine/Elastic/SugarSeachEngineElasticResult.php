@@ -104,6 +104,27 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         return $ret;
     }
 
+    public function getAutoCompleteText()
+    {
+        $ret = '';
+        $hit = $this->elasticaResult->getHit();
+
+        // this is the word to be searched
+        if (!isset($_REQUEST['query'])) {
+            return $ret;
+        }
+        // looks like this is encoded, so decode it first
+        $q = html_entity_decode(trim($_REQUEST['query']), ENT_QUOTES);
+
+        if (isset($hit['_source']) && is_array($hit['_source'])) {
+            $highlighter = new SugarSearchEngineHighlighter();
+            $highlighter->setTags('<b>', '</b>');
+            $ret = $highlighter->getAutoCompleteText($hit['_source'], $q);
+        }
+
+        return $ret;
+    }
+
     public function __toString()
     {
         return __CLASS__ . " " . $this->getModule() . ": " . $this->getSummaryText() . " " . $this->getId();
