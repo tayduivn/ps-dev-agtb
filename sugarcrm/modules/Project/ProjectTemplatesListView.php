@@ -169,6 +169,12 @@ else{
 	$params = array( 'massupdate' => true, 'export' => true);
 }
 $lv->setup($seedProject, 'include/ListView/ListViewGeneric.tpl', $where, $params);
+
+// Bug 49610 
+for ($i = 0; $i < count($lv->data['data']); $i++) {
+    $lv->data['data'][$i]['OFFSET'] = $i + 1;
+}
+
 $lv->ss->assign('act','pte');
 
 $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
