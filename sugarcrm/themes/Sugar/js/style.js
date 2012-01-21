@@ -117,9 +117,10 @@ SUGAR.append(SUGAR.themes, {
 					//Check if the menu we want to show is in the more menu		
 					if($(this).parents().is(extraMenu)) {
 						var moduleName = moduleName.replace("Overflow","");
+						var moduleName = moduleName.replace("Hidden","");
 					}
 					that = $(this);
-					
+					console.log(moduleName);
 					//ajax call for favorites
 					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;") {
 						
@@ -129,6 +130,9 @@ SUGAR.append(SUGAR.themes, {
 						    var lastViewed = $.parseJSON(json);				    
 						    $(that).find("ul.MMFavorites li:last").remove();
 						    $.each(lastViewed, function(k,v) {
+						    	if(v.text == "none") {
+						    		v.url = "javascript: void(0);";
+						    	}
 						    	$(that).find("ul.MMFavorites").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
 						    });
 						    //normalize the heights of the three columns
@@ -146,6 +150,9 @@ SUGAR.append(SUGAR.themes, {
 						    var lastViewed = $.parseJSON(json);
 						    $(that).find("ul.MMLastViewed li:last").remove();
 						    $.each(lastViewed, function(k,v) {
+						    	if(v.text == "none") {
+						    		v.url = "javascript: void(0);";
+						    	}
 						    	$(that).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
 						    });
 						    //normalize the heights of the three columns
