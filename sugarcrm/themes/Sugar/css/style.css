@@ -1352,7 +1352,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background-position:  0 -70px;
     background-color:#fff;
     right:0px;
-    bottom:0;
     position:fixed;
     cursor:pointer;
     z-index:999;
@@ -1366,10 +1365,11 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background-color: transparent !important;
     background-position: 0 0 !important;
     border: 0 none !important;
+    bottom: 5px;
 }
 #footer 
 {
-    display:none;
+
     border-top:1px solid #ccc;
     background: rgb(255,255,255); /* Old browsers */
     background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(246,246,246,1) 47%, rgba(237,237,237,1) 100%); /* FF3.6+ */
@@ -4126,7 +4126,7 @@ Mega Column Styles
 	float: left;
 }
 
-#moduleList .megacolumn-content.divider {
+#moduleList .megacolumn-content, #moduleList .megacolumn-content.divider {
 	overflow: hidden;
 }
 
@@ -4150,7 +4150,7 @@ Mega Column Styles
 	background-image: none;
 	position: relative;
 	top: auto;
-	width: auto;
+	width: 100%;
 	border: 0 none;
 	box-shadow: none;
 	-moz-box-shadow: none;
@@ -4164,6 +4164,7 @@ Mega Column Styles
 	color: #999999;
     font-size: 14px;
     font-weight: bold;
+    width: 100%;
 }
 
 #moduleList .sf-menu ul .megawrapper ul li.groupLabel {
@@ -4175,6 +4176,7 @@ Mega Column Styles
 	font-size: 13px;
 	padding: 4px 10px;
 	position: relative;
+	width: 100%;
 }
 
 

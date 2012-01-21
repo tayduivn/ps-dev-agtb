@@ -372,7 +372,18 @@ class quicksearchQuery {
 
     function fts_query()
     {
-        $results = array('results' => array("abc","def"));
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+
+        $results = array();
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $trimmed_query = trim($_REQUEST['query']);
+
+        $rs = $searchEngine->search($trimmed_query, 0, 10, array(), true);
+        if ($rs) {
+            foreach ($rs as $r) {
+                $results['results'][] = $r->getAutoCompleteText();
+            }
+        }
         echo json_encode($results);
     }
 }
