@@ -28,12 +28,12 @@ var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUB
 var LBL_SHOWOPTIONS = '{sugar_translate module="Users" label="LBL_SHOWOPTIONS"}';
 var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}';
 </script>
-<table cellpadding="0" align="center" width="100%" cellspacing="0" border="0">
+<table cellpadding="0" align="center" width="100%" cellspacing="0" border="0" style="margin-top: 100px;">
 	<tr>
 		<td align="center">
 		<div class="loginBoxShadow" style="width: 460px;">
 			<div class="loginBox">
-			<table cellpadding="0" cellspacing="0" border="0" align="center">
+			<table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
 				<tr>
 					<td align="left"><b>{sugar_translate module="Users" label="LBL_LOGIN_WELCOME_TO"}</b><br>
 					    {$LOGIN_IMAGE}
@@ -97,7 +97,17 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 									</tr>
 								</table>
 							</form>
-							<form action="index.php" method="post" name="fp_form" id="fp_form" >
+							
+						</div>
+
+
+					</td>
+				</tr>
+			</table>
+			</div>
+			<div class="password">
+			
+			<form action="index.php" method="post" name="fp_form" id="fp_form" >
 								<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
 									<tr>
 										<td colspan="2" class="login_more">
@@ -131,15 +141,8 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 									</tr>
 								</table>
 							</form>
-						</div>
-
-
-					</td>
-				</tr>
-			</table>
-			</div>
-
-</div>
+			</div>	
+		</div>
 		</td>
 	</tr>
 </table>
