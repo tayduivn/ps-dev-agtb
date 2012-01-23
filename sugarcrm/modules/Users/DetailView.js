@@ -27,7 +27,6 @@
 
 // $Id: DetailView.js 55503 2010-03-22 15:01:56Z jmertic $
 
-var appel;
 function generatepwd(id)
 {
     callback = {

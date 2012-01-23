@@ -563,6 +563,16 @@ function validate_user($user_name, $password){
 					);
 	}
 
+/**
+ * Fetch and array of related records
+ *
+ * @param String $bean -- Primary record
+ * @param String $link_field_name -- The name of the relationship
+ * @param Array $link_module_fields -- The keys of the array are the SugarBean attributes, the values of the array are the values the attributes should have.
+ * @param String $optional_where -- IGNORED
+ * @return Array 'rows/fields_set_on_rows' -- The list of records and what fields were actually set for thos erecords
+*/
+
 	function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '') {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
 		require_once('include/TimeDate.php');
@@ -798,7 +808,7 @@ function validate_user($user_name, $password){
 							//have an object with this outlook_id, if we do
 							//then we can set the id, otherwise this is a new object
 							$order_by = "";
-							$query = $seed->table_name.".outlook_id = '".$seed->outlook_id."'";
+							$query = $seed->table_name.".outlook_id = '".$GLOBALS['db']->quote($seed->outlook_id)."'";
 							$response = $seed->get_list($order_by, $query, 0,-1,-1,0);
 							$list = $response['list'];
 							if(count($list) > 0){

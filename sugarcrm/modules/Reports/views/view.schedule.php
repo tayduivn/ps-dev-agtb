@@ -59,7 +59,7 @@ class ViewSchedule extends SugarView
         if($schedule)
         {
         	$smarty->assign('SCHEDULE_ID', $schedule['id']);
-        	$smarty->assign('DATE_START',$timedate->to_display_date_time($schedule['date_start']));
+        	$smarty->assign('DATE_START',$timedate->to_display_date_time($schedule['date_start'],true));
 
         	if($schedule['active'])
         		$smarty->assign('SCHEDULE_ACTIVE_CHECKED', 'checked');

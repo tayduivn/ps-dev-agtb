@@ -298,7 +298,7 @@ function get_user_module_list($user){
 
 	$actions = ACLAction::getUserActions($user->id,true);
 	foreach($actions as $key=>$value){
-		if($value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
+		if(isset($value['module']) && $value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
 			if ($value['module']['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
 				unset($modules[$key]);
 			} else {
@@ -312,11 +312,14 @@ function get_user_module_list($user){
 	//Remove all modules that don't have a beanFiles entry associated with it
 	foreach($modules as $module_name=>$module)
 	{
-		$class_name = $beanList[$module_name];
-		if(empty($beanFiles[$class_name]))
-		{
-		   unset($modules[$module_name]);
-		}
+        if ( isset($beanList[$module_name]) ) {
+            $class_name = $beanList[$module_name];
+            if(empty($beanFiles[$class_name])) {
+                unset($modules[$module_name]);
+            }
+        } else {
+            unset($modules[$module_name]);
+        }
 	}
 
 	return $modules;
@@ -403,7 +406,8 @@ function filter_fields($value, $fields) {
 				continue;
 			}
 		} // if
-		$filterFields[] = $field;
+        // No valid field should be caught by this quoting.
+		$filterFields[] = getValidDBName($field);
 	} // foreach
 	return $filterFields;
 } // fn
@@ -513,7 +517,7 @@ function get_return_value_for_fields($value, $module, $fields) {
 				);
 }
 
-function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '') {
+function getRelationshipResults($bean, $link_field_name, $link_module_fields) {
 	global  $beanList, $beanFiles;
 	$bean->load_relationship($link_field_name);
 	if (isset($bean->$link_field_name)) {
@@ -540,7 +544,7 @@ function getRelationshipResults($bean, $link_field_name, $link_module_fields, $o
 			}
 		}
 		// create a query
-		$subquery = $submodule->create_new_list_query('',$optional_where ,$filterFields,$params, 0,'', true,$bean);
+		$subquery = $submodule->create_new_list_query('','',$filterFields,$params, 0,'', true,$bean);
 		$query =  $subquery['select'].$roleSelect .   $subquery['from'].$query_array['join']. $subquery['where'];
 
 		$result = $submodule->db->query($query, true);
@@ -714,7 +718,7 @@ function new_handle_set_entries($module_name, $name_value_lists, $select_fields 
 						//have an object with this outlook_id, if we do
 						//then we can set the id, otherwise this is a new object
 						$order_by = "";
-						$query = $seed->table_name.".outlook_id = '".$seed->outlook_id."'";
+						$query = $seed->table_name.".outlook_id = '".$GLOBALS['db']->quote($seed->outlook_id)."'";
 						$response = $seed->get_list($order_by, $query, 0,-1,-1,0);
 						$list = $response['list'];
 						if(count($list) > 0){

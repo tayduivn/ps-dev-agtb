@@ -1658,6 +1658,7 @@ class SugarBean
                 //Look through all calculated fields for uses of this link field
                 if(!empty($def['formula']))
                 {
+		    require_once("include/Expressions/Expression/Parser/Parser.php");
                     $fields = Parser::getFieldsFromExpression($def['formula']);
                     foreach($fields as $var)
                     {

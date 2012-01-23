@@ -40,7 +40,6 @@ require_once('install/install_utils.php');
 
 require_once('modules/TableDictionary.php');
 
-
 $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 

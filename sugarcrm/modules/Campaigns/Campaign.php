@@ -239,8 +239,12 @@ class Campaign extends SugarBean {
 
 
 	function mark_deleted($id){
+        //BEGIN SUGARCRM flav!=sales ONLY
         $query = "update contacts set campaign_id = null where campaign_id = '{$id}' ";
         $this->db->query($query);
+        $query = "update accounts set campaign_id = null where campaign_id = '{$id}' ";
+        $this->db->query($query);
+        //END SUGARCRM flav!=sales ONLY
 		return parent::mark_deleted($id);
 	}
 

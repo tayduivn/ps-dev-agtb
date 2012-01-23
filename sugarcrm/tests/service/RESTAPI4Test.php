@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('service/v3/SugarWebServiceUtilv3.php');
 require_once('tests/service/APIv3Helper.php');
 
@@ -33,10 +33,10 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     protected $_lastRawResponse;
 
     private static $helperObject;
-    
+
     protected $aclRole;
     protected $aclField;
-    
+
     public function setUp()
     {
         $beanList = array();
@@ -44,14 +44,14 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 		require('include/modules.php');
 		$GLOBALS['beanList'] = $beanList;
 		$GLOBALS['beanFiles'] = $beanFiles;
-		
+
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        
+
         $this->_admin_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_admin_user->status = 'Active';
         $this->_admin_user->is_admin = 1;
@@ -61,7 +61,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->_user;
 
         self::$helperObject = new APIv3Helper();
-        
+
         //Disable access to the website field.
         $this->aclRole = new ACLRole();
         $this->aclRole->name = "Unit Test";
@@ -86,7 +86,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 	    //END SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}' )");
 	    $GLOBALS['db']->query("DELETE FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}'");
-	    
+
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
 	    unset($GLOBALS['beanList']);
@@ -162,7 +162,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Standard']) );
         $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Invoice']) );
     }
-    
+
     /**
      * Test the get_entry_list call with Export access disabled to ensure results are returned.
      *
@@ -170,7 +170,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetEntryListWithExportRole()
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        
+
         //Set the Export Role to no access for user.
         $aclRole = new ACLRole();
         $aclRole->name = "Unit Test Export";
@@ -179,7 +179,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $role_actions = $aclRole->getRoleActions($aclRole->id);
         $action_id = $role_actions['Accounts']['module']['export']['id'];
         $aclRole->setAction($aclRole->id, $action_id, -99);
-        
+
         $result = $this->_login($this->_user);
         $session = $result['id'];
 
@@ -192,13 +192,13 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $deleted = FALSE;
         $favorites = FALSE;
         $result = $this->_makeRESTCall('get_entry_list', array($session, $module, '', $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
-        
+
         $this->assertFalse(isset($result['name']));
         if ( isset($result['name']) ) {
             $this->assertNotEquals('Access Denied',$result['name']);
         }
     }
-    
+
     /**
      * Test the ability to retrieve quote PDFs
      *
@@ -207,7 +207,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $log_result = $this->_login($this->_admin_user);
         $session = $log_result['id'];
-        
+
         //Retrieve a list of quote ids to work with
         $whereClause = "";
         $module = 'Quotes';
@@ -219,7 +219,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $deleted = FALSE;
         $favorites = FALSE;
         $list_result = $this->_makeRESTCall('get_entry_list', array($session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
-        
+
         //Test for standard oob layouts
         foreach ($list_result['entry_list'] as $entry)
         {
@@ -227,18 +227,18 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             $result = $this->_makeRESTCall('get_quotes_pdf', array($session, $quote_id, 'Standard' ));
             $this->assertTrue(!empty($result['file_contents']));
         }
-        
+
         //Test for a fake pdf type.
         if( count($list_result['entry_list']) > 0 )
         {
             $quote_id = $list_result['entry_list'][0]['id'];
             $result = $this->_makeRESTCall('get_quotes_pdf', array($session, $quote_id, 'Fake' ));
             $this->assertTrue(!empty($result['file_contents']));
-        }   
-        
+        }
+
         //Test for a fake bean.
         $result = $this->_makeRESTCall('get_quotes_pdf', array($session, '-1', 'Standard' ));
-        $this->assertTrue(!empty($result['file_contents']));     
+        $this->assertTrue(!empty($result['file_contents']));
     }
     //END SUGARCRM flav=pro ONLY
     /**
@@ -257,7 +257,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $session = $result['id'];
 
         $this->_markBeanAsFavorite($session, "Accounts", $account->id);
-        
+
         $whereClause = "accounts.name='{$account->name}'";
         $module = 'Accounts';
         $orderBy = 'name';
@@ -274,7 +274,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
     }
-    
+
     /**
      * Test set entries call with name value list format key=>value.
      *
@@ -286,8 +286,8 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $module = 'Contacts';
         $c1_uuid = uniqid();
         $c2_uuid = uniqid();
-        $contacts = array( 
-            array('first_name' => 'Unit Test', 'last_name' => $c1_uuid), 
+        $contacts = array(
+            array('first_name' => 'Unit Test', 'last_name' => $c1_uuid),
             array('first_name' => 'Unit Test', 'last_name' => $c2_uuid)
         );
         $results = $this->_makeRESTCall('set_entries',
@@ -297,7 +297,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             'name_value_lists' => $contacts,
         ));
         $this->assertTrue(isset($results['ids']) && count($results['ids']) == 2);
-        
+
         $actual_results = $this->_makeRESTCall('get_entries',
         array(
             'session' => $session,
@@ -305,13 +305,13 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             'ids' => $results['ids'],
             'select_fields' => array('first_name','last_name')
         ));
-        
+
         $this->assertTrue(isset($actual_results['entry_list']) && count($actual_results['entry_list']) == 2);
         $this->assertEquals($actual_results['entry_list'][0]['name_value_list']['last_name']['value'], $c1_uuid);
         $this->assertEquals($actual_results['entry_list'][1]['name_value_list']['last_name']['value'], $c2_uuid);
     }
-    
-    
+
+
     /**
      * Test search by module with favorites flag enabled.
      *
@@ -333,7 +333,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $account2->name = "Unit Test Fav " . $account->id;
         $account->assigned_user_id = $this->_user->id;
         $account2->save();
-        
+
         $result = $this->_login($this->_admin_user); // Logging in just before the REST call as this will also commit any pending DB changes
         $session = $result['id'];
 
@@ -354,34 +354,34 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                             'assigned_user_id'    => $this->_user->id,
                             'select_fields' => array(),
                             'unified_search_only' => true,
-                            'favorites' => true,                            
+                            'favorites' => true,
                             )
                         );
-        
+
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'Unit Test %' ");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account2->id}'");
-        
+
         $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account->id,'Accounts'), "Unable to find {$account->id} id in favorites search.");
         $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account2->id,'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
-    }    
+    }
     //BEGIN SUGARCRM flav=pro ONLY
     public function _aclEditViewFieldProvider()
     {
-        return array(       
+        return array(
 
-            array('Accounts','wireless','edit', array( 'name'=> 99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null ) ), 
-            array('Contacts','wireless','edit', array('first_name'=> 99, 'last_name'=> 99 ) ),            
+            array('Accounts','wireless','edit', array( 'name'=> 99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null ) ),
+            array('Contacts','wireless','edit', array('first_name'=> 99, 'last_name'=> 99 ) ),
             array('Reports','wireless','edit', array('name'=> 99)),
-            
-            array('Accounts','wireless','detail', array('name'=>99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null )),            
+
+            array('Accounts','wireless','detail', array('name'=>99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null )),
             array('Contacts','wireless','detail', array('first_name'=> 99, 'last_name'=> 99 )),
             array('Reports','wireless','detail', array('name'=> 99)),
 
 
             );
     }
-    
+
     /**
      * @dataProvider _aclEditViewFieldProvider
      */
@@ -402,7 +402,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             $fields = $results[$module][$view_type][$view];
         else
             $fields = $results[$module][$view_type][$view]['panels'];
-            
+
         foreach ($fields as $field_row)
         {
             foreach ($field_row as $field_def)
@@ -415,17 +415,17 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
-    
+
     public function _aclListViewFieldProvider()
     {
-        return array(       
+        return array(
             array('Accounts','wireless', array('name' => 99,  'website' => -99, 'phone_office' => 99, 'email1' => 99 )),
             array('Contacts','wireless', array('name' => 99,  'title' => 99 )),
             array('Reports','wireless', array('name' => 99 ) )
-            
+
             );
     }
-    
+
     /**
      * @dataProvider _aclListViewFieldProvider
      */
@@ -442,7 +442,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $fields = $results[$module][$view_type]['list'];
-  
+
         foreach ($fields as $field_row)
         {
             $tmpName = strtolower($field_row['name']);
@@ -565,4 +565,25 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('New Contact 1',$returnedValues,$this->_returnLastRawResponse());
         $this->assertContains('New Contact 2',$returnedValues,$this->_returnLastRawResponse());
     }
+
+    /**
+     * Test SQL injection bug in get_entries
+     */
+    public function testGetEntriesProspectFilter()
+    {
+        $result = $this->_login();
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
+        $session = $result['id'];
+
+        $result = $this->_makeRESTCall('get_entries',
+            array(
+                'session' => $session,
+                'module' => 'CampaignProspects',
+                'ids' => array("' UNION SELECT id related_id, 'Users' related_type FROM users WHERE '1'='1")
+            )
+        );
+        $this->assertNull($result);
+
+    }
+
 }
