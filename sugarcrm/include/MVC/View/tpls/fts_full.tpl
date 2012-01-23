@@ -23,8 +23,6 @@
         <div class="clear"></div>
     </section>
     {/foreach}
-    
-    <p class="fullResults"><a href="index.php?module=Home&action=spot&full=true&q={$queryEncoded}">{$appStrings.LBL_EMAIL_SHOW_READ}</a></p>
 {else}
 	<section class="resultNull">
     {$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}
