@@ -29,6 +29,11 @@ require_once("include/SugarSearchEngine/Interface.php");
 abstract class SugarSearchEngineAbstractResult implements SugarSearchEngineResult
 {
 
+    /**
+     * @var SugarBean
+     */
+    protected $bean;
+
     public function getModuleName()
     {
         $moduleName = $this->getModule();

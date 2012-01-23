@@ -34,11 +34,6 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
      */
     private $elasticaResult;
 
-    /**
-     * @var SugarBean
-     */
-    private $bean;
-
     public function __construct(Elastica_Result $result)
     {
         $this->elasticaResult = $result;
