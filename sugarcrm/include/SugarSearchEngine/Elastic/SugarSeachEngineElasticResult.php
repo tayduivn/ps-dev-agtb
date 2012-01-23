@@ -21,13 +21,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
-require_once("include/SugarSearchEngine/Interface.php");
+require_once("include/SugarSearchEngine/SugarSearchEngineAbstractResult.php");
 require_once("include/SugarSearchEngine/SugarSearchEngineHighlighter.php");
 
 /**
  * Adapter class to Elastica Result
  */
-class SugarSeachEngineElasticResult implements SugarSearchEngineResult
+class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 {
     /**
      * @var \Elastica_Result
@@ -61,27 +61,12 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
     }
 
     /**
-     * TODO: We may store the module by type rather than as a field within the document.
+     *
      * @return array
      */
     public function getModule()
     {
         return $this->elasticaResult->module;
-    }
-
-    public function getModuleName()
-    {
-        $moduleName = $this->getModule();
-        if( isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) )
-            return $GLOBALS['app_list_strings']['moduleList'][$moduleName];
-        else
-            return $moduleName;
-    }
-
-    public function getSummaryText()
-    {
-        if($this->bean !== FALSE)
-            return $this->bean->get_summary_text();
     }
 
     public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
@@ -125,10 +110,4 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
 
         return $ret;
     }
-
-    public function __toString()
-    {
-        return __CLASS__ . " " . $this->getModule() . ": " . $this->getSummaryText() . " " . $this->getId();
-    }
-
 }
