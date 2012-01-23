@@ -47,15 +47,10 @@
 	<script type='text/javascript' src='{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}'></script>
 	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 {/if}
+{assign var="currentModule" value = $pageData.bean.moduleDir}
+{assign var="singularModule" value = $moduleListSingular.$currentModule}
+
 {if count($data) == 0}
-	<div class="list view listViewEmpty">
-		<p>
-			{capture assign="createLink"}<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
-			{capture assign="importLink"}<a href="?module=Import&action=Step1&import_module={$pageData.bean.moduleDir}&return_module={$pageData.bean.moduleDir}&return_action=index">{$APP.LBL_IMPORT}</a>{/capture}
-			{capture assign="helpLink}<a href="">{$APP.LBL_CLICK_HERE}</a>{/capture}
-			{$APP.MSG_EMPTY_LIST_VIEW|replace:"\n":"<br>"|replace:"<item1>":$pageData.bean.moduleDir|replace:"<item2>":$createLink|replace:"<item3>":$importLink|replace:"<item4>":$helpLink}
-		</p>
-	</div>
 	{literal}
 	<script>
 		$(document).ready(function(){
@@ -65,6 +60,32 @@
 		});
 	</script>
 	{/literal}
+	<div class="list view listViewEmpty">
+	{if strlen($query) == 0}
+		<p> 
+			{capture assign="createLink"}<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
+			{capture assign="importLink"}<a href="?module=Import&action=Step1&import_module={$pageData.bean.moduleDir}&return_module={$pageData.bean.moduleDir}&return_action=index">{$APP.LBL_IMPORT}</a>{/capture}
+			{capture assign="helpLink}<a href="">{$APP.LBL_CLICK_HERE}</a>{/capture}
+			<p class="msg">
+				{$APP.MSG_EMPTY_LIST_VIEW2|replace:"<item2>":$createLink|replace:"<item3>":$importLink}
+			</p>
+			<p class="submsg">
+				{$APP.MSG_EMPTY_LIST_VIEW2_1|replace:"<item1>":$pageData.bean.moduleDir|replace:"<item4>":$helpLink}
+			</p>
+		</p>
+	{else}
+		<p class="msg">
+			{capture assign="quotedQuery"}"{$query}"{/capture}
+			{$APP.MSG_EMPTY_LIST_VIEW1|replace:"<item1>":$quotedQuery}
+		</p>
+		<p class = "submsg">
+			<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">
+				{$APP.MSG_EMPTY_LIST_VIEW1_1|replace:"<item1>":$quotedQuery|replace:"<item2>":$singularModule}
+			</a>
+			
+		</p>
+	{/if}
+	</div>
 {/if}
 {$multiSelectData}
 

@@ -2901,8 +2901,12 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
-  'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
-    'MSG_EMPTY_LIST_VIEW' => "There are 0 <item1> that match your query or 0 <item1> in your system. <item2> or <item3> <item1> now.\n\n <item4> to learn more about the <item1> module. To access this information in the future, use the down arrow located on the top right side of your screen to access the Help link.",
+  	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+ 	'MSG_EMPTY_LIST_VIEW1' => "No results found for <item1>",
+ 	'MSG_EMPTY_LIST_VIEW1_1' => "Create <item1> as a new <item2>",    
+	'MSG_EMPTY_LIST_VIEW2' => "You currently have no records saved. <item2> or <item3> one now.",
+	'MSG_EMPTY_LIST_VIEW2_1' =>	"<item4> to learn more about the <item1> module. In order to access more information, use the user menu drop down located on the main navigation bar to access Help.",
+   
     'LBL_CLICK_HERE' => "Click here",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
