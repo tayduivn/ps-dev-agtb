@@ -104,6 +104,7 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         return $ret;
     }
 
+    //TODO: Jimmy do we still need this since it's also defined in the highlighter class?
     public function getAutoCompleteText()
     {
         $ret = '';
