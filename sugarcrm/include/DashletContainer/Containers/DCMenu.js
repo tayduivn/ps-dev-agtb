@@ -351,7 +351,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         Y.spotFull = function(q){
         DCMenu.closeQView();
             ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-                quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&full=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
+                quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&full=true&ajax=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
         }
 	DCMenu.spotZoom = function(q, module, offset){
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);

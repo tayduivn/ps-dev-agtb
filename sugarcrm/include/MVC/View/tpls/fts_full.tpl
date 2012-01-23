@@ -1,8 +1,10 @@
 
+{if (!$smarty.get.ajax)}
 <br>
 <input type="text" size="50" placeholder="{$appStrings.LBL_SEARCH}" id="ftsSearchField">
 <div id="ftsAutoCompleteResult"></div>
 <br><br>
+{/if}
 
 <div id="sugar_full_search_results">
 {if !empty($resultSet)}
@@ -28,8 +30,6 @@
     {$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}
    	</section>
 {/if}
-</div>
-<br>
 
 {literal}
 <script>
@@ -56,3 +56,6 @@
 
 </script>
 {/literal}
+
+</div>
+<br>
