@@ -8,7 +8,7 @@
  		</div>
  		{capture assign=url}index.php?module={$result->getModule()}&record={$result->getId()}&action=DetailView{/capture}
             <ul>
-            	<li><a href="{sugar_ajax_url url=$url}"> {$result->getSummaryText()}</a>
+                <li><a href="{sugar_ajax_url url=$url}"> {$result->getHighlightedHitText(80, 1, '<b>', '</b>')}</a>
             	<br>
             	<span class="desc">Please refer to the following case for refrence.</span>
             </ul>

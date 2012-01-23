@@ -79,7 +79,7 @@
 					<div class="megacolumn-content divider">
 					<ul class="MMFavorites">
 						<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-						<li><a href="#">&nbsp</a></li>
+						<li><a href="javascript: void(0);">&nbsp;</a></li>
 					</ul>
 					</div>
 				</div>
@@ -115,7 +115,7 @@
 			{* hidden menu items that become visible in overflow menu when browser size reaches a certain width*}
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
-				{if $shortcutTopMenu.$name && $name != "Home"}
+				{if $shortcutTopMenu.$module && $module != "Home"}
 					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name"}
 					<ul class="megamenu">
 					<li>
@@ -124,7 +124,7 @@
 								<div class="megacolumn-content divider">
 								<ul class="MMShortcuts">
 								<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
-								{foreach from=$shortcutTopMenu.$name item=shortcut_item}
+								{foreach from=$shortcutTopMenu.$module item=shortcut_item}
 								  {if $shortcut_item.URL == "-"}
 					              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 								  {else}
@@ -168,7 +168,7 @@
 			{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
 			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name"}
-				{if $shortcutTopMenu.$name}
+				{if $shortcutTopMenu.$module}
 				<ul class="megamenu">
 				<li>
 					<div class="megawrapper">
@@ -176,7 +176,7 @@
 							<div class="megacolumn-content divider">
 							<ul class="MMShortcuts">
 							<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
-							{foreach from=$shortcutTopMenu.$name item=shortcut_item}
+							{foreach from=$shortcutTopMenu.$module item=shortcut_item}
 							  {if $shortcut_item.URL == "-"}
 				              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 							  {else}
