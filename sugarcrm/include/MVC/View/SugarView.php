@@ -708,6 +708,7 @@ class SugarView
             require_once("jssource/minify_utils.php");
             ConcatenateFiles(".");
         }
+        echo getVersionedScript('cache/include/javascript/sugar_grp1_jquery.js');
         echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
         echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
         //BEGIN SUGARCRM flav=pro ONLY
