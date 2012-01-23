@@ -108,6 +108,11 @@ $dictionary['SugarFavorites'] = array(
             'type'=>'index',
             'fields'=>array('module','record_id','deleted'),
           ),
+        array(
+        	'name' => 'idx_favs_id_record_id',
+        	'type' => 'index',
+        	'fields' => array('record_id', 'id')
+          ),
         ),
 	'optimistic_lock'=>true,
 );

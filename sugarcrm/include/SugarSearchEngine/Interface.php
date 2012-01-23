@@ -126,6 +126,30 @@ interface SugarSearchEngineResult
     public function getId();
 
     /**
+     * Get the module name of the result
+     *
+     * @abstract
+     * @return String
+     *
+     */
+    public function getModule();
+
+    /**
+     * Get the translated module name of the result
+     * @abstract
+     * @return String
+     */
+    public function getModuleName();
+
+    /**
+     * Get the summary text of the result
+     * @abstract
+     * @return String
+     */
+    public function getSummaryText();
+
+
+    /**
      * Return the highlighted text of a hit with the field name as the key
      *
      * @abstract

@@ -69,6 +69,7 @@ class SugarSearchEngineFullIndexer
         $startTime = microtime(true);
         $allModules = $this->SSEngine->retrieveFtsEnabledFieldsForAllModules();
         $db = DBManagerFactory::getInstance();
+        $totalCount = 0;
         foreach($allModules as $module => $fieldDefinitions)
         {
             $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
@@ -109,12 +110,14 @@ class SugarSearchEngineFullIndexer
             }
 
             $this->results[$module] = $count;
+            $totalCount += $count;
         }
 
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
         $this->results['totalTime'] = $totalTime;
         $GLOBALS['log']->fatal("Total time to perform full system index: $totalTime (s)");
-
+        $avgRecs = number_format(round(($totalCount / $totalTime), 2), 2);
+        $GLOBALS['log']->fatal("Total number of records indexed: $totalCount , records per sec. $avgRecs");
 
         return $this;
     }

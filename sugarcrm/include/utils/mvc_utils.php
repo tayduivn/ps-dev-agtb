@@ -469,7 +469,7 @@ function ajaxLink($url)
     }
     else
     {
-        return "#ajaxUILoc=" . urlencode($url);
+        return "?action=ajaxui#ajaxUILoc=" . urlencode($url);
     }
 }
 

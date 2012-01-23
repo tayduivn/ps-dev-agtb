@@ -6672,14 +6672,19 @@ ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav l
 }
 
 .listViewEmpty{
+	font-family:lucida grande;
+}
+.listViewEmpty p, .listViewEmpty a {
+	font-size:22px;
 }
 .listViewEmpty p {
-	padding:10px;
-	font-size:20px;
+	padding:5px 0px 5px 16px ;
+}
+p.submsg, p.submsg a{
+	font-size:16px;
 }
 .listViewEmpty a{
 	text-decoration:none;
-	font-size:20px;
 }
 
 
