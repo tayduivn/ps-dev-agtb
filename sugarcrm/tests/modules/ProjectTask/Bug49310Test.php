@@ -1,9 +1,9 @@
 <?php
 
-/* * *******************************************************************************
+/*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -25,7 +25,8 @@
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
- * ****************************************************************************** */
+ ********************************************************************************/
+
 
 
 
@@ -33,9 +34,9 @@ require_once "modules/ProjectTask/ProjectTask.php";
 require_once "modules/Project/Project.php";
 
 /**
- * Created: Sep 21, 2011
+ * Created: Desc 16, 2011
  */
-class Bug46350Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49310Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public $project;
 	public $projectTasks = array ();
@@ -54,33 +55,68 @@ class Bug46350Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->_user = SugarTestUserUtilities::createAnonymousUser();
+
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+
+
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
 		$GLOBALS['current_user'] = $this->_user;
 		$this->project = SugarTestProjectUtilities::createProject();
 		$projectId = $this->project->id;
+
+
 		$projectTasksData = array (
-			'parentTask' => array (
+			'taskOne' => array (
 				'project_id' => $projectId,
 				'parent_task_id' => '',
-				'project_task_id' => 1,
-				'percent_complete' => $this->countAverage(array ($this->oldPercentValue, $this->defaultStaticSecondPercent)),
+				'project_task_id' => '1',
+				'percent_complete' => '0',
 				'name' => 'Task 1',
+                'duration_unit' => 'Days',
+                'duration' => '1',
 			),
-			'firstChildTask' => array (
+            'taskTwo' => array (
 				'project_id' => $projectId,
-				'parent_task_id' => 1,
-				'project_task_id' => 2,
-				'percent_complete' => $this->oldPercentValue,
+				'parent_task_id' => '1',
+				'project_task_id' => '2',
+				'percent_complete' => '0',
 				'name' => 'Task 2',
+                'duration_unit' => 'Days',
+                'duration' => '1',
 			),
-			'secondChildTask' => array (
+			'taskThree' => array (
 				'project_id' => $projectId,
-				'parent_task_id' => 1,
-				'project_task_id' => 3,
-				'percent_complete' => $this->defaultStaticSecondPercent,
+				'parent_task_id' => '1',
+				'project_task_id' => '3',
+				'percent_complete' => '0',
 				'name' => 'Task 3',
+                'duration_unit' => 'Days',
+                'duration' => '1',
+			),
+			'taskFour' => array (
+				'project_id' => $projectId,
+				'parent_task_id' => '3',
+				'project_task_id' => '4',
+				'percent_complete' => '0',
+				'name' => 'Task 4',
+                'duration_unit' => 'Days',
+                'duration' => '1',
+			),
+            'taskFive' => array (
+				'project_id' => $projectId,
+				'parent_task_id' => '3',
+				'project_task_id' => '5',
+				'percent_complete' => '0',
+				'name' => 'Task 5',
+                'duration_unit' => 'Days',
+                'duration' => '1',
 			),
 		);
+
 		foreach ($projectTasksData as $key => $value)
 		{
 			$this->projectTasks[$key] = SugarTestProjectTaskUtilities::createProjectTask($value);
@@ -96,33 +132,24 @@ class Bug46350Test extends Sugar_PHPUnit_Framework_TestCase
 		unset($this->projectTasks);
         unset($this->_user);
 		unset($GLOBALS['current_user']);
-	}
-
-	public function countAverage($values)
-	{
-		$count = 0;
-		foreach ($values as $key => $value)
-		{
-			$count += $value;
-		}
-		return (round($count / count($values)));
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
 	}
 
 	public function testResourceName()
 	{
-		$processingTask = $this->projectTasks['firstChildTask'];
-		$processingTask->percent_complete = $this->newPercentValue;
+		$processingTask = $this->projectTasks['taskFive'];
+		$processingTask->percent_complete = '65';
 		$processingTask->save();
 
-		/**
-		 * New method testing
-		 */
-		$processingTask->updateParentProjectTaskPercentage();
+        $taskOne = new ProjectTask();
+		$taskOne->retrieve($this->projectTasks['taskOne']->id);
 
-		$testparentTask = new ProjectTask();
-		$testparentTask->retrieve($this->projectTasks['parentTask']->id);
+		$this->assertEquals('22', $taskOne->percent_complete);
 
-		$average = $this->countAverage(array ($this->newPercentValue, $this->projectTasks['secondChildTask']->percent_complete));
-		$this->assertEquals($average, $testparentTask->percent_complete);
+        $taskThree = new ProjectTask();
+		$taskThree->retrieve($this->projectTasks['taskThree']->id);
+
+		$this->assertEquals('33', $taskThree->percent_complete);
 	}
 }

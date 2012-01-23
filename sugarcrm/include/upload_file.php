@@ -216,7 +216,7 @@ class UploadFile
 		}
 
 		if(!is_uploaded_file($_FILES[$this->field_name]['tmp_name'])) {
-			return false;
+						return false;
 		} elseif($_FILES[$this->field_name]['size'] > $sugar_config['upload_maxsize']) {
 		    $GLOBALS['log']->fatal("ERROR: uploaded file was too big: max filesize: {$sugar_config['upload_maxsize']}");
 			return false;
@@ -340,7 +340,7 @@ class UploadFile
             $destination = "upload://$bean_id";
 	    }
         if($this->use_soap) {
-        	if(!file_put_contents($destination, $this->file)){
+        	if(!sugar_file_put_contents($destination, $this->file)){
         	    $GLOBALS['log']->fatal("ERROR: can't save file to $destination");
                 return false;
         	}
@@ -365,9 +365,9 @@ class UploadFile
 	{
 		if(!empty($doc_type)&&$doc_type!='Sugar') {
 			global $sugar_config;
-	        $destination = clean_path($this->get_upload_path($bean_id));
+	        $destination = $this->get_upload_path($bean_id);
 	        sugar_rename($destination, str_replace($bean_id, $bean_id.'_'.$file_name, $destination));
-	        $new_destination = clean_path($this->get_upload_path($bean_id.'_'.$file_name));
+	        $new_destination = $this->get_upload_path($bean_id.'_'.$file_name);
 
 		    try{
                 $this->api = ExternalAPIFactory::loadAPI($doc_type);

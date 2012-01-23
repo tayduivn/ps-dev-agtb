@@ -97,7 +97,7 @@ class SugarTemplateUtilities{
 	//write functions 
 	//ALL WRITE OPERATIONS MUST BE DONE ON THE INSTANCE
 	function file_put_contents($filename,$data=null, $flags=null, $context = null ){
-		return file_put_contents(SugarTemplateUtilities::getFilePath($filename, 'instance'),$data, $flags, $context);
+		return sugar_file_put_contents(SugarTemplateUtilities::getFilePath($filename, 'instance'),$data, $flags, $context);
 	}
 	
 	function chgrp($filename, $group){

@@ -89,7 +89,7 @@ class ViewConfigureshortcutbar extends SugarView
             $out = "<?php\n \$DCActions = \n" . var_export_helper ( $modules ) . ";";
             if (!is_file("custom/" . $actions_path))
                create_custom_directory("include/DashletContainer/Containers/");
-            if ( file_put_contents ( "custom/" . $actions_path, $out ) === false)
+            if ( sugar_file_put_contents ( "custom/" . $actions_path, $out ) === false)
                echo translate("LBL_SAVE_FAILED");
             else  {
                echo "true";

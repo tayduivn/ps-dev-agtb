@@ -391,7 +391,7 @@ function execute_sql($getinfo, $getdumps, $getschema)
             }
         }
         if(!empty($content)) {
-            file_put_contents($sqlInfoDir."{$db->dbName}-General-info.html", $content);
+            sugar_file_put_contents($sqlInfoDir."{$db->dbName}-General-info.html", $content);
             sodUpdateProgressBar(SQL_INFO_WEIGHT);
         }
     }
@@ -474,7 +474,7 @@ function execute_sql($getinfo, $getdumps, $getschema)
 			$contents .= "<BR><BR>";
 		}
 
-        file_put_contents($tablesSchemaDir."{$db->dbName}TablesSchema.html", $contents);
+        sugar_file_put_contents($tablesSchemaDir."{$db->dbName}TablesSchema.html", $contents);
 		//END GET ALL TABLES SCHEMAS
 		//BEGIN UPDATING PROGRESS BAR
 		sodUpdateProgressBar(SQL_SCHEMA_WEIGHT);
@@ -491,7 +491,7 @@ function execute_sql($getinfo, $getdumps, $getschema)
 		{
 			//calling function defined above to get the string for dump
 			$contents = $style .getFullTableDump($table);
-            file_put_contents($tableDumpsDir.$table.".html", $contents);
+            sugar_file_put_contents($tableDumpsDir.$table.".html", $contents);
 		}
 		//END GET TABLEDUMPS
 		//BEGIN UPDATING PROGRESS BAR

@@ -845,7 +845,7 @@ EOQ;
 	 		if(preg_match("/\s*#\s*END\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = false;
 	 	}
 	}
-	$status =  file_put_contents($htaccess_file, $contents . $restrict_str);
+	$status =  sugar_file_put_contents($htaccess_file, $contents . $restrict_str);
     if( !$status ) {
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";

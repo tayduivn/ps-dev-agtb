@@ -171,7 +171,7 @@ function addAlert(type, name,subtitle, description,time, redirect) {
 	alertList[addIndex]['name'] = name;
 	alertList[addIndex]['type'] = type;
 	alertList[addIndex]['subtitle'] = subtitle;
-	alertList[addIndex]['description'] = description.replace(/<br>/gi, "\n").replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+	alertList[addIndex]['description'] = replaceHTMLChars(description.replace(/<br>/gi, "\n"));
 	alertList[addIndex]['time'] = time;
 	alertList[addIndex]['done'] = 0;
 	alertList[addIndex]['redirect'] = redirect;
@@ -4065,6 +4065,11 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
  */
 var from_popup_return  = false;
 
+//Function replaces special HTML chars for usage in text boxes 
+function replaceHTMLChars(value) {
+	return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+}
+
 function set_return_basic(popup_reply_data,filter)
 {
 	var form_name = popup_reply_data.form_name;
@@ -4077,7 +4082,7 @@ function set_return_basic(popup_reply_data,filter)
 		}
 		else if(the_key.match(filter))
 		{
-			var displayValue=name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');;
+			var displayValue=replaceHTMLChars(name_to_value_array[the_key]);
 			// begin andopes change: support for enum fields (SELECT)
 			if(window.document.forms[form_name] && window.document.forms[form_name].elements[the_key]) {
 				if(window.document.forms[form_name].elements[the_key].tagName == 'SELECT') {
@@ -4109,15 +4114,22 @@ function set_return(popup_reply_data)
 		var label_str = '';
 		var label_data_str = '';
 		var current_label_data_str = '';
+		var popupConfirm = '';
 		for (var the_key in name_to_value_array)
 		{
-			if(the_key == 'toJSON')
+			// Bug 48726 Start
+			if (the_key == 'popupConfirm') 
+			{
+				popupConfirm = name_to_value_array[the_key];
+			}
+			// Bug 48726 End
+			else if(the_key == 'toJSON')
 			{
 				/* just ignore */
 			}
 			else
 			{
-				var displayValue=name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+				var displayValue=replaceHTMLChars(name_to_value_array[the_key]);
 				if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account/)) {
                     var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'').replace(/<\/?[^>]+(>|$)/g, "");
 					label_str += data_label + ' \n';
@@ -4128,12 +4140,25 @@ function set_return(popup_reply_data)
 				}
 			}
 		}
+		
         if(label_data_str != label_str && current_label_data_str != label_str){
-        	if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
+        	// Bug 48726 Start
+        	if (popupConfirm == 1)
+        	{ 
+        		set_return_basic(popup_reply_data,/\S/);
+        	}
+        	else if (popupConfirm == 0)
+        	{
+        		set_return_basic(popup_reply_data,/account/);
+        	}
+        	// Bug 48726 End
+        	else if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
 			{
-				set_return_basic(popup_reply_data,/\S/);
-			}else{
-				set_return_basic(popup_reply_data,/account/);
+        		set_return_basic(popup_reply_data,/\S/);
+			}
+        	else
+			{
+        		set_return_basic(popup_reply_data,/account/);
 			}
 		}else if(label_data_str != label_str && current_label_data_str == label_str){
 			set_return_basic(popup_reply_data,/\S/);

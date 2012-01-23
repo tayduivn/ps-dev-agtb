@@ -37,7 +37,7 @@ if(isset($_GET['DynamicAction']) && $_GET['DynamicAction'] == "saveImage") {
 	$data = substr($image, strpos($image, ","));
 	$filepath = sugar_cached("images/$filename");
 
-	file_put_contents($filepath, base64_decode($data));
+    sugar_file_put_contents($filepath, base64_decode($data));
 	if(!verify_uploaded_image($filepath)) {
 	    unlink($filepath);
 	    return false;
