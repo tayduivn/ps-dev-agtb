@@ -45,6 +45,7 @@ $(document).ready(function(){
 	SUGAR.themes.actionMenu();
 	//setup event handler for search results
 	SUGAR.themes.searchResults();
+	SUGAR.themes.searchResultsFull();
     //setup footer for toggling
     SUGAR.themes.toggleFooter();
     //initialize global tooltips
@@ -239,6 +240,11 @@ SUGAR.append(SUGAR.themes, {
 				SUGAR.themes.clearSearch();
 			});
 		});	
+    },
+    searchResultsFull: function () {
+        $("#ftsSearchField").keypress(function(event) {
+            DCMenu.startSearchFull(event);
+        });
     },
     clearSearch: function() {
    		$("div#sugar_spot_search_results").hide();
