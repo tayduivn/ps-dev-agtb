@@ -201,9 +201,10 @@ class SchedulersJob extends Basic
     /**
      * Called if job failed but will be retried
      */
-    public function onFailure()
+    public function onFailureRetry()
     {
         // TODO: what we do if job fails, notify somebody?
+        $this->call_custom_logic("job_failure_retry");
     }
 
     /**
@@ -212,6 +213,7 @@ class SchedulersJob extends Basic
     public function onFinalFailure()
     {
         // TODO: what we do if job fails, notify somebody?
+        $this->call_custom_logic("job_failure");
     }
 
     /**
@@ -234,7 +236,7 @@ class SchedulersJob extends Basic
                 $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->job_delay} seconds")->asDb();
                 $this->retry_count--;
                 $GLOBALS['log']->info("Will retry job {$this->id} at {$this->execute_time} ($this->retry_count)");
-                $this->onFailure();
+                $this->onFailureRetry();
             } else {
                 // final failure
                 $this->status = self::JOB_STATUS_DONE;
