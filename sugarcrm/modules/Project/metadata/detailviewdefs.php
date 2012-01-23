@@ -78,7 +78,7 @@ $viewdefs['Project']['DetailView'] = array(
 				array( 'customCode' => 
 					'{if $EDIT_RIGHTS_ONLY}<input title="{$MOD.LBL_VIEW_GANTT_TITLE}" '.
 					'accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" type="submit" '.
-					'name="EditProjectTasks" value="  {$MOD.LBL_VIEW_GANTT_TITLE}  " '.
+					'name="EditProjectTasks"  id="view_gantt_button" value="  {$MOD.LBL_VIEW_GANTT_TITLE}  " '.
 					'onclick="prep_edit_project_tasks(this.form);" />{/if}',
 				),
 				array( 'customCode' =>
