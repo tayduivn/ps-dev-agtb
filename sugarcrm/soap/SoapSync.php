@@ -61,13 +61,19 @@ function sync_get_entries($session, $module_name,$from_date,$to_date,$offset, $m
 	}
 	$table_name = $seed->table_name;
 	
-	
 	if(!empty($query)){
+	    require_once 'include/SugarSQLValidate.php';
+	    $valid = new SugarSQLValidate();
+	    if(!$valid->validateQueryClauses($query)) {
+            $GLOBALS['log']->error("Bad query: $query");
+	        $error->set_error('no_access');
+            return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
+	    }
 		$query = "( $query ) AND ";
 	}
 	
 	
-	$response = $seed->get_list('',$query. "$table_name.date_modified > '$from_date' AND $table_name.date_modified <= '$to_date'", $offset,-1,-1,$deleted);
+	$response = $seed->get_list('',$query. "$table_name.date_modified > ".db_convert("'".$GLOBALS['db']->quote($from_date)."'",'datetime')." AND $table_name.date_modified <= ".db_convert("'".$GLOBALS['db']->quote($to_date)."'",'datetime'), $offset,-1,-1,$deleted);
 	$output_list = array();
 	$field_list = array();
 	//now handle updating info on teams who we no longer have access to 
@@ -75,7 +81,7 @@ function sync_get_entries($session, $module_name,$from_date,$to_date,$offset, $m
 	if( $seed->is_AuditEnabled() && $offset == 0){
 		
 		//embeded selects would have been better
-		$query_team = "SELECT audit_table.parent_id FROM " . $seed->get_audit_table_name() . " audit_table  RIGHT JOIN team_memberships  on team_memberships.deleted = 0 AND team_memberships.team_id = audit_table.before_value_string AND team_memberships.user_id = '$current_user->id'  where audit_table.field_name = 'team_id' AND audit_table.date_created > '$from_date'  AND audit_table.date_created <= '$to_date'";
+		$query_team = "SELECT audit_table.parent_id FROM " . $seed->get_audit_table_name() . " audit_table  RIGHT JOIN team_memberships  on team_memberships.deleted = 0 AND team_memberships.team_id = audit_table.before_value_string AND team_memberships.user_id = '$current_user->id'  where audit_table.field_name = 'team_id' AND audit_table.date_created > ".db_convert("'".$GLOBALS['db']->quote($from_date)."'",'datetime')."  AND audit_table.date_created <= ".db_convert("'".$GLOBALS['db']->quote($to_date)."'",'datetime');
 		$team_results = $seed->db->query($query_team);
 		$team_result_ids = array();
 		$team_response = array('list'=>array());
@@ -169,9 +175,9 @@ function sync_set_entries($session, $module_name,$from_date, $to_date, $sync_ent
 		$ids[$value['id']] = $value['id'];
 		if($value['resolve'] == 0){
 			if(empty($in)){
-				$in .= "('" . $value['id'] . "'";	
+				$in .= "('" . $GLOBALS['db']->quote($value['id']) . "'";	
 			}else{
-				$in .= ",'" . $value['id'] . "'";	
+				$in .= ",'" . $GLOBALS['db']->quote($value['id']) . "'";	
 			}
 		}
 	}
@@ -183,7 +189,7 @@ function sync_set_entries($session, $module_name,$from_date, $to_date, $sync_ent
 		$seed = new $class_name();
 		$table_name = $seed->table_name;
 		//query for any of the records that have been modified after the fact
-		$response = $seed->get_list('', "$table_name.date_modified > '$from_date' AND $table_name.date_modified <= '$to_date' AND $table_name.id IN $in ",0,-1,-1, $deleted);
+		$response = $seed->get_list('', "$table_name.date_modified > ".db_convert("'".$GLOBALS['db']->quote($from_date)."'",'datetime')." AND $table_name.date_modified <= ".db_convert("'".$GLOBALS['db']->quote($to_date)."'",'datetime')." AND $table_name.id IN $in ",0,-1,-1, (int)$deleted);
 		$list = $response['list'];
 	
 		foreach($list as $value)
@@ -274,7 +280,7 @@ function sync_get_relationships($session, $module_name,$related_module,$from_dat
 	}
 	
 
-	$results = retrieve_relationships($module_name,  $related_module, "rt.date_modified > " . db_convert("'$from_date'", 'datetime'). " AND rt.date_modified <= ". db_convert("'$to_date'", 'datetime'), $deleted, $offset, $max_results);
+	$results = retrieve_relationships($module_name,  $related_module, "rt.date_modified > " . db_convert("'".$GLOBALS['db']->quote($from_date)."'", 'datetime'). " AND rt.date_modified <= ". db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime'), $deleted, $offset, $max_results);
 
 	$list = $results['result'];
 
@@ -487,7 +493,7 @@ function get_quick_sync_data($session, $module_name, $related_module_name, $star
 	if(empty($related_module_name) || !isset($related_module_name)){
 		$params['include_custom_fields'] = true;
 		
-		$query_list = $seed->create_new_list_query($seed->process_order_by('', null), '1=1', array(), $params,  $deleted, '', true, $seed );
+		$query_list = $seed->create_new_list_query($seed->process_order_by('', null), '1=1', array(), $params, (int)$deleted, '', true, $seed );
 
 	
 			

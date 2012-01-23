@@ -337,7 +337,7 @@ function set_relationships($session, $module_names, $module_ids, $link_field_nam
  * @param String $module_name -- The name of the module that the primary record is from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
  * @param String $module_id -- The ID of the bean in the specified module
  * @param String $link_field_name -- The name of the lnk field to return records from.  This name should be the name the relationship.
- * @param String $related_module_query -- A portion of the where clause of the SQL statement to find the related items.  The SQL query will already be filtered to only include the beans that are related to the specified bean.
+ * @param String $related_module_query -- A portion of the where clause of the SQL statement to find the related items.  The SQL query will already be filtered to only include the beans that are related to the specified bean. (IGNORED)
  * @param Array $related_fields - Array of related bean fields to be returned.
  * @param Array $related_module_link_name_to_fields_array - For every related bean returrned, specify link fields name to fields info for that bean to be returned. For ex.'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address'))).
  * @param Number $deleted -- false if deleted records should not be include, true if deleted records should be included.
@@ -981,6 +981,7 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 				$main_query = $ret_array['select'] . $params['custom_select'] . $ret_array['from'] . $params['custom_from'] . $ret_array['where'] . $params['custom_where'] . $ret_array['order_by'] . $params['custom_order_by'];
 			} else {
 				if ($beanName == "User") {
+                    // $search_string gets cleaned above, so we can use it here
 					$filterFields = array('id', 'user_name', 'first_name', 'last_name', 'email_address');
 					$main_query = "select users.id, ea.email_address, users.user_name, first_name, last_name from users ";
 					$main_query = $main_query . " LEFT JOIN email_addr_bean_rel eabl ON eabl.bean_module = '{$seed->module_dir}'
@@ -989,6 +990,7 @@ LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
 				} // if
 				 //BEGIN SUGARCRM flav!=sales ONLY
 				if ($beanName == "ProjectTask") {
+                    // $search_string gets cleaned above, so we can use it here
 					$filterFields = array('id', 'name', 'project_id', 'project_name');
 					$main_query = "select {$seed->table_name}.project_task_id id,{$seed->table_name}.project_id, {$seed->table_name}.name, project.name project_name from {$seed->table_name} ";
 					$seed->add_team_security_where_clause($main_query);

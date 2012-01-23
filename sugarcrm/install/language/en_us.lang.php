@@ -235,6 +235,7 @@ $mod_strings = array(
 	'LBL_CHECKSYS_ZIP'					=> 'ZIP Handling Module',
 	'LBL_CHECKSYS_FIX_FILES'            => 'Please fix the following files or directories before proceeding:',
     'LBL_CHECKSYS_FIX_MODULE_FILES'     => 'Please fix the following module directories and the files under them before proceeding:',
+    'LBL_CHECKSYS_UPLOAD'               => 'Writable Upload Directory',
     'LBL_CLOSE'							=> 'Close',
     'LBL_THREE'                         => '3',
 	'LBL_CONFIRM_BE_CREATED'			=> 'be created',
@@ -488,7 +489,8 @@ $mod_strings = array(
                                   permissions to make it writeable</li>
 					  <li>The following Sugar files must be writeable:<ul><li><b>/custom</li>
 <li>/cache</li>
-<li>/modules</b></li></ul></li></ul>
+<li>/modules</li>
+<li>/upload</b></li></ul></li></ul>
                                   If the check fails, you will not be able to proceed with the installation. An error message will be displayed, explaining why your system
                                   did not pass the check.
                                   After making any necessary changes, you can undergo the system

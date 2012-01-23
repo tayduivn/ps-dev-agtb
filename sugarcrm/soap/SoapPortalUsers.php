@@ -346,7 +346,7 @@ function portal_get_entry_list_filter($session, $module_name, $order_by, $select
 
                         $where .=  "$sugar->table_name$cstm.$name $operator ";
                         if($sugar->field_defs['name']['type'] == 'datetime'){
-                            $where .= db_convert("'$value'", 'datetime');
+                            $where .= db_convert("'".$GLOBALS['db']->quote($value)."'", 'datetime');
                         }else{
                             if(empty($value)) {
                                 $tmp = array();
@@ -513,7 +513,7 @@ function portal_set_entry($session,$module_name, $name_value_list){
     //BEGIN SUGARCRM flav=pro ONLY
     $seed->disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
-    set_module_in(array('in'=>"('$id')", 'list'=>array($id)), $module_name);
+    set_module_in(array('in'=>"('".$GLOBALS['db']->quote($id)."')", 'list'=>array($id)), $module_name);
     if($_SESSION['type'] == 'contact' && $module_name != 'Contacts' && !$is_update){
         if($module_name == 'Notes'){
             $seed->contact_id = $_SESSION['user_id'];
@@ -708,9 +708,9 @@ function portal_get_related_notes($session,$module_name, $module_id, $select_fie
             $error->set_error('no_access');
             return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
         }
-        $list = get_notes_in_contacts("('$module_id')", $order_by);
+        $list = get_notes_in_contacts("('".$GLOBALS['db']->quote($module_id)."')", $order_by);
     }else{
-        $list = get_notes_in_module("('$module_id')", $module_name, $order_by);
+        $list = get_notes_in_module("('".$GLOBALS['db']->quote($module_id)."')", $module_name, $order_by);
     }
 
 
@@ -758,7 +758,7 @@ function portal_get_related_list($session, $module_name, $rel_module, $module_id
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
 
-    $list = get_related_in_module("('$module_id')", $module_name, $rel_module, $order_by, $offset, $limit);
+    $list = get_related_in_module("('".$GLOBALS['db']->quote($module_id)."')", $module_name, $rel_module, $order_by, $offset, $limit);
 
     $output_list = Array();
     $field_list = Array();

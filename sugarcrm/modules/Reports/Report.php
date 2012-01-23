@@ -2035,7 +2035,7 @@ return str_replace(' > ','_',
 
             $contents = ob_get_clean();
             if (is_writable(sugar_cached('modules/'))) {
-                file_put_contents($cache, $contents);
+                sugar_file_put_contents($cache, $contents);
             }
             // Only set this if we're not being called from the home page.
             // Charts on the home page go through this code as well and

@@ -255,10 +255,6 @@ if(document.DetailView != null &&
 	        $rel->load_relationship_meta();
         }
 
-        // this array will store names of sub-panels that can contain items
-        // of each module
-        $module_sub_panels = array();
-
         foreach ($tabs as $tab)
 		{
 			//load meta definition of the sub-panel.
@@ -287,22 +283,6 @@ if(document.DetailView != null &&
 					}
 				}
 			}
-
-            // collect names of sub-panels that may contain items of each module
-            $collection_list = $thisPanel->get_inst_prop_value('collection_list');
-            if (is_array($collection_list))
-            {
-                foreach ($collection_list as $data)
-                {
-                    if (isset($data['module']))
-                    {
-                        $module_sub_panels[$data['module']][] = $tab;
-                    }
-                }
-            } else {
-                // collect names of subpanels for individual modules
-               $module_sub_panels[$thisPanel->_instance_properties['module']][] = $thisPanel->_instance_properties['module'];
-            }
 
 			echo '<li class="noBullet" id="whole_subpanel_' . $tab . '">';
 
@@ -423,13 +403,6 @@ EOQ;
     </script>
 EOQ;
         }
-
-        $jsonObj = getJSONobj();
-        echo <<<EOQ
-<script>
-    var ModuleSubPanels = {$jsonObj->encode($module_sub_panels)};
-</script>
-EOQ;
 
 		$ob_contents = ob_get_contents();
 		ob_end_clean();

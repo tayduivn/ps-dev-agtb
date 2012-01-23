@@ -216,7 +216,7 @@ class UploadFile
 		}
 
 		if(!is_uploaded_file($_FILES[$this->field_name]['tmp_name'])) {
-			return false;
+						return false;
 		} elseif($_FILES[$this->field_name]['size'] > $sugar_config['upload_maxsize']) {
 		    $GLOBALS['log']->fatal("ERROR: uploaded file was too big: max filesize: {$sugar_config['upload_maxsize']}");
 			return false;
@@ -340,7 +340,7 @@ class UploadFile
             $destination = "upload://$bean_id";
 	    }
         if($this->use_soap) {
-        	if(!file_put_contents($destination, $this->file)){
+        	if(!sugar_file_put_contents($destination, $this->file)){
         	    $GLOBALS['log']->fatal("ERROR: can't save file to $destination");
                 return false;
         	}

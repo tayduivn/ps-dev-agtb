@@ -363,7 +363,10 @@ class VardefManager{
 
         $linkFields = self::getLinkFieldsForModule($module, $object);
         if (empty($linkFields))
+        {
+            $dictionary[$object]['related_calc_fields'] = array();
             return false;
+        }
 
         $linksWithCFs = array();
 

@@ -334,7 +334,7 @@ FRA;
                mkdir_recursive($dir, null, true);
             }
             $cacheRow = $this->ss->fetch($this->findTemplate('CollectionEditViewRow'));
-            file_put_contents($cacheRowFile, $cacheRow);
+            sugar_file_put_contents($cacheRowFile, $cacheRow);
         }
         $this->ss->assign('cacheRowFile', $cacheRowFile);
         return $this->ss->fetch($this->tpl_path);

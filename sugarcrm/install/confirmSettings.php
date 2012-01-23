@@ -308,6 +308,14 @@ $envString = '
         <td  >'.$mod_strings['LBL_CHECKSYS_OK'].'</td>
       </tr>';
 
+// upload dir
+        $envString .='
+      <tr>
+        <td></td>
+        <td><strong>'.$mod_strings['LBL_CHECKSYS_UPLOAD'].'</strong></td>
+        <td>'.$mod_strings['LBL_CHECKSYS_OK'].'</td>
+      </tr>';
+
 // data dir
 
         $envString .='
