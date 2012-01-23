@@ -68,7 +68,6 @@ class SchedulersJob extends Basic
 	// object specific attributes
 	var $user; // User object
 	var $scheduler; // Scheduler parent
-	// TODO: make configurable
 	public $min_interval = 30; // minimal interval for job reruns
 	protected $job_done = true;
 
@@ -81,6 +80,9 @@ class SchedulersJob extends Basic
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
+        if(!empty($GLOBALS['sugar_config']['jobs']['min_retry_interval'])) {
+            $this->min_interval = $GLOBALS['sugar_config']['jobs']['min_retry_interval'];
+        }
 	}
 
 	public function check_date_relationships_load()

@@ -234,8 +234,18 @@ function make_sugar_config(&$sugar_config)
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
 		'use_sprites' => function_exists('imagecreatetruecolor'),
-                'search_wildcard_infront' => false,
-                'search_wildcard_char' => '%',
+    	'search_wildcard_infront' => false,
+        'search_wildcard_char' => '%',
+		'jobs' => array(
+		    'min_retry_interval' => 30, // 30 seconds minimal job retry
+		    'max_retries' => 5, // how many times to retry the job
+		    'timeout' => 86400, // how long a job may spend as running before being force-failed
+		),
+		"cron" => array(
+			'max_cron_jobs' => 10, // max jobs per cron schedule run
+		    'max_cron_runtime' => 30, // max runtime for cron jobs
+		    'min_cron_interval' => 30, // minimal interval between cron jobs
+		),
 	);
 }
 
@@ -385,7 +395,7 @@ function get_sugar_config_defaults() {
 	  'show_calls_by_default' => true,
 	  'show_tasks_by_default' => true,
 	  'editview_width' => 990,
-	  'editview_height' => 485,	
+	  'editview_height' => 485,
 	  'day_timestep' => 15,
 	  'week_timestep' => 30,
 	  'items_draggable' => true,
@@ -439,18 +449,28 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		),
-	'use_sprites' => function_exists('imagecreatetruecolor'),
+    	'use_sprites' => function_exists('imagecreatetruecolor'),
 
 	//END SUGARCRM flav=pro ONLY
-	'use_real_names' => true,
+		'use_real_names' => true,
 	//BEGIN SUGARCRM flav=int ONLY
 
 	// REMOVE BEFORE SHIPPING
-	'new_subpanels' => true,
+		'new_subpanels' => true,
 	//END SUGARCRM flav=int ONLY
         'search_wildcard_infront' => false,
         'search_wildcard_char' => '%',
-	);
+		'jobs' => array(
+		    'min_retry_interval' => 30, // 30 seconds minimal job retry
+		    'max_retries' => 5, // how many times to retry the job
+		    'timeout' => 86400, // how long a job may spend as running before being force-failed
+		),
+		"cron" => array(
+			'max_cron_jobs' => 10, // max jobs per cron schedule run
+		    'max_cron_runtime' => 30, // max runtime for cron jobs
+		    'min_cron_interval' => 30, // minimal interval between cron jobs
+		),
+    );
 
 	if(!is_object($locale)) {
 		$locale = new Localization();
@@ -4928,7 +4948,7 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
 
 /**
  * utf8_recursive_encode
- * 
+ *
  * This function walks through an Array and recursively calls utf8_encode on the
  * values of each of the elements.
  *

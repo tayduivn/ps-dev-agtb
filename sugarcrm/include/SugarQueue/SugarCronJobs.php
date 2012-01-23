@@ -28,9 +28,20 @@ require_once 'modules/Schedulers/Scheduler.php';
  */
 class SugarCronJobs
 {
-    // TODO: make configurable
-    public $max_jobs = 5;
+    /**
+     * Max number of jobs per cron run
+     * @var int
+     */
+    public $max_jobs = 10;
+    /**
+     * Max time per cron run
+     * @var int
+     */
     public $max_runtime = 30;
+    /**
+     * Min time between cron runs
+     * @var int
+     */
     public $min_interval = 30;
 
     /**
@@ -55,6 +66,15 @@ class SugarCronJobs
     {
         $this->queue = new SugarJobQueue();
         $this->lockfile = sugar_cached("modules/Schedulers/lastrun");
+        if(!empty($GLOBALS['sugar_config']['cron']['max_jobs'])) {
+            $this->max_jobs = $GLOBALS['sugar_config']['cron']['max_cron_jobs'];
+        }
+        if(!empty($GLOBALS['sugar_config']['cron']['max_cron_runtime'])) {
+            $this->max_jobs = $GLOBALS['sugar_config']['cron']['max_cron_runtime'];
+        }
+        if(!empty($GLOBALS['sugar_config']['cron']['min_cron_interval'])) {
+            $this->min_interval = $GLOBALS['sugar_config']['cron']['min_cron_interval'];
+        }
     }
 
     protected function markLastRun()
@@ -92,7 +112,6 @@ class SugarCronJobs
     public function unexpectedExit()
     {
         if(!empty($this->job)) {
-            // TODO: label
             $this->job->failJob(translate('ERR_FAILED', 'SchedulersJobs'));
             $this->job = null;
         }

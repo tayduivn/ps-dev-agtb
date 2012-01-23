@@ -28,8 +28,15 @@ require_once 'modules/SchedulersJobs/SchedulersJob.php';
  */
 class SugarJobQueue
 {
-    // TODO: make configurable
+    /**
+     * Max number of failures for job
+     * @var int
+     */
     public $jobTries = 5;
+    /**
+     * Job running timeout - longer than that, job is failed by force
+     * @var int
+     */
     public $timeout = 86400; // 24 hours
 
     /**
@@ -49,6 +56,12 @@ class SugarJobQueue
         $this->db = DBManagerFactory::getInstance();
         $job = new SchedulersJob();
         $this->job_queue_table = $job->table_name;
+        if(!empty($GLOBALS['sugar_config']['jobs']['max_retries'])) {
+            $this->jobTries = $GLOBALS['sugar_config']['jobs']['max_retries'];
+        }
+        if(!empty($GLOBALS['sugar_config']['jobs']['timeout'])) {
+            $this->timeout = $GLOBALS['sugar_config']['jobs']['timeout'];
+        }
     }
 
     /**
@@ -157,7 +170,7 @@ class SugarJobQueue
         $queued = SchedulersJob::JOB_STATUS_QUEUED;
         $try = $this->jobTries;
         while($try--) {
-            // TODO: tranaction start
+            // TODO: tranaction start?
             $id = $this->db->getOne("SELECT id FROM {$this->job_queue_table} WHERE execute_time <= $now AND status = '$queued' ORDER BY date_entered ASC");
             if(empty($id)) {
                 return null;
@@ -181,7 +194,7 @@ class SugarJobQueue
                 $job->save();
                 break;
             }
-            // TODO: commit/check
+            // TODO: commit/check?
         }
         return $job;
     }
