@@ -453,12 +453,8 @@ function get_sugar_config_defaults() {
 
 	//END SUGARCRM flav=pro ONLY
 		'use_real_names' => true,
-	//BEGIN SUGARCRM flav=int ONLY
 
-	// REMOVE BEFORE SHIPPING
-		'new_subpanels' => true,
-	//END SUGARCRM flav=int ONLY
-        'search_wildcard_infront' => false,
+		'search_wildcard_infront' => false,
         'search_wildcard_char' => '%',
 		'jobs' => array(
 		    'min_retry_interval' => 30, // 30 seconds minimal job retry
