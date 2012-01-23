@@ -646,7 +646,7 @@ $alert_file_contents = "";
 		while($row = $this->db->fetchByAssoc($result, false)){
 
 			///BEGIN check to see if this is new, update, or all, then add proper if statement
-			$record_type_needed = write_record_type($eval_dump, $row['record_type']);
+            $record_type_needed = write_record_type($eval_dump, $row['record_type'], $row);
 
 			$trigger_processed=false;
 			if($row['trigger_type']=="compare_count"){
