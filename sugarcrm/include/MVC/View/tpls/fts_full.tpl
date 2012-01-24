@@ -21,6 +21,7 @@
                 <span class="details">
                     {foreach from=$result->getHighlightedHitText(100, 2, '<span class="highlight">', '</span>') key=k item=v}
                         {$k}: {$v}
+                        <br>
                     {/foreach}
                 </span>
             </ul>

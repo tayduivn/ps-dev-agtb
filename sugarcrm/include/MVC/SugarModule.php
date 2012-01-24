@@ -168,7 +168,7 @@ class SugarModule
 
         // cn: bug 6048 - merge en_us with requested language
         if($language != $sugar_config['default_language'])
-            $loaded_mod_strings = sugarArrayMerge(
+            $loaded_mod_strings = sugarLangArrayMerge(
                 LanguageManager::loadModuleLanguage($this->_moduleName, $sugar_config['default_language'],$refresh),
                     $loaded_mod_strings
                 );
@@ -244,7 +244,7 @@ class SugarModule
         }
 
         // cn: bug 6048 - merge en_us with requested language
-        $mod_list_strings = sugarArrayMerge($en_mod_list_strings, $mod_list_strings);
+        $mod_list_strings = sugarLangArrayMerge($en_mod_list_strings, $mod_list_strings);
 
         // if we still don't have a language pack, then log an error
         if(!isset($mod_list_strings)) {
