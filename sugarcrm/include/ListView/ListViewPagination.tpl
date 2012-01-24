@@ -30,6 +30,15 @@
 
 *}
 
+<script language="JavaScript" type="text/JavaScript"> 
+{literal}
+
+    SUGAR.currentOffset = {/literal}"{$pageData.offsets.current}"{literal};
+    SUGAR.currentmoduleString = {/literal}"{$moduleString}"{literal};	
+        
+{/literal}
+</script>
+
 {assign var="alt_start" value=$navStrings.start}
 {assign var="alt_next" value=$navStrings.next}
 {assign var="alt_prev" value=$navStrings.previous}

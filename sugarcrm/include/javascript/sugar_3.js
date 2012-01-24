@@ -4475,7 +4475,10 @@ closeActivityPanel: {
                             {
                                 // Bug 45792: Firefox seems to believe reloading a page after an ajax request means you are re-submitting a form and gives you the warning for it.
                                 // So instead, we reload from a timeout
-								window.setTimeout("window.location.reload(true);",0);
+								// window.setTimeout("window.location.reload(true);",0);
+								
+                                // Bug 47068;
+                                window.location.href = 'index.php?return_action=&return_module=&module=' + module + '&action=index&lvso=&select_entire_list=0&' + SUGAR.currentmoduleString + '=' + SUGAR.currentOffset;								
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };
