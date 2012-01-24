@@ -138,9 +138,9 @@ class ACLField  extends ACLAction{
 
     function loadUserFields($category,$object, $user_id, $refresh=false){
         if(!$refresh && isset($_SESSION['ACL'][$user_id][$category]['fields']))return $_SESSION['ACL'][$user_id][$category]['fields'];
-        if(empty($_SESSION['ACL'][$user_id]) || empty($_SESSION['ACL'][$user_id][$category])) {
+        if(empty($_SESSION['ACL'][$user_id])) {
             // load actions to prevent cache poisoning for ACLAction
-            ACLAction::getUserActions($user_id, false, $category);
+            ACLAction::getUserActions($user_id);
         }
         $query = "SELECT  af.name, af.aclaccess FROM acl_fields af ";
         $query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0
@@ -151,7 +151,7 @@ class ACLField  extends ACLAction{
 
         $allFields = ACLField::getAvailableFields($category, $object);
         $_SESSION['ACL'][$user_id][$category]['fields'] = array();
-        while($row = $GLOBALS['db']->fetchByAssoc($result, FALSE)){
+        while($row = $GLOBALS['db']->fetchByAssoc($result)){
             if($row['aclaccess'] != 0 && (empty($_SESSION['ACL'][$user_id][$category]['fields'][$row['name']]) || $_SESSION['ACL'][$user_id][$category]['fields'][$row['name']] > $row['aclaccess']))
             {
                 $_SESSION['ACL'][$user_id][$category]['fields'][$row['name']] = $row['aclaccess'];
