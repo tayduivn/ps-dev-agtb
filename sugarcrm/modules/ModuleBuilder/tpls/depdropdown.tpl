@@ -169,6 +169,7 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     if ($("#" + targetId).length > 0)
     {
         var data = $.parseJSON($("#" + targetId).val());
+        console.log(data);
         if (data && data.values)
             mapping = data.values;
     }
@@ -177,10 +178,12 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     for(var i in mapping)
     {
         var vals = mapping[i];
+        if (i === "") i = "--blank--";
         var l = $("#ddd_" + i + "_list");
         for(var j = 0; j < vals.length; j++)
         {
-            var c  = p.children("li[val=" + vals[j] + "]");
+            var v = vals[j] === "" ? "--blank--" : vals[j];
+            var c  = p.children("li[val=" + v + "]");
             l.append(c.clone());
         }
     }
