@@ -46,15 +46,17 @@
 	{if $name == "Home"}
 		{assign var='homeImageLabel' value=$homeImage}
 		{assign var='homeClass' value='home'}
+		{assign var='title' value=$name}
 	{else}
 		{assign var='homeImageLabel' value=''}
 		{assign var='homeClass' value=''}
+		{assign var='title' value=''}
 	{/if}
 	
 	{if $name == $MODULE_TAB}
-		<li class="current {$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$name}
+		<li class="current {$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$title}
 	{else}
-		<li class="{$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$name}
+		<li class="{$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$title}
 	{/if}
 		{if $shortcutTopMenu.$name && $name != "Home"}
 		<ul class="megamenu">
