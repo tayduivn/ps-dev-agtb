@@ -68,19 +68,6 @@ class ListViewData {
     			$orderBy = $_REQUEST[$this->var_order_by];
     			if(!empty($_REQUEST['lvso']) && (empty($_SESSION['lvd']['last_ob']) || strcmp($orderBy, $_SESSION['lvd']['last_ob']) == 0) ){
     				$direction = $_REQUEST['lvso'];
-
-			 	    $trackerManager = TrackerManager::getInstance();
-			 		if($monitor = $trackerManager->getMonitor('tracker')){
-						//BEGIN SUGARCRM flav=pro ONLY
-				        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-						//END SUGARCRM flav=pro ONLY
-				        $monitor->setValue('module_name', $GLOBALS['module']);
-				        $monitor->setValue('item_summary', "lvso=".$direction."&".$this->var_order_by."=".$_REQUEST[$this->var_order_by]);
-				        $monitor->setValue('action', 'listview');
-						$monitor->setValue('user_id', $GLOBALS['current_user']->id);
-						$monitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
-				        $monitor->save();
-					}
     			}
             }
             $_SESSION[$this->var_order_by] = array('orderBy'=>$orderBy, 'direction'=> $direction);
