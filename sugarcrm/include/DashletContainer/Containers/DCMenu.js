@@ -336,14 +336,32 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 DCMenu.spot(document.getElementById('sugar_spot_search').value);
             }
     }
+    DCMenu.startSearchFull = function(e){
+        if (window.event) { e = window.event; }
+            if (e.keyCode == 13)
+            {
+                DCMenu.spotFull(document.getElementById('ftsSearchField').value);
+            }
+    }
 	Y.spot = function(q){
         DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
 	}
+        Y.spotFull = function(q){
+        DCMenu.closeQView();
+            ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
+                quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&full=true&ajax=true&record=' + this.record + '&q=' + encodeURIComponent(q), fullResults);
+        }
 	DCMenu.spotZoom = function(q, module, offset){
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
 	}
+        fullResults = function(id, data){
+            var resultsDiv = document.getElementById('sugar_full_search_results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = data.responseText;
+            ajaxStatus.hideStatus();
+        }
 	spotResults = function(id, data){
 		//var overlay = setBody(data.responseText, 0, 'sugar_spot_search');
         document.getElementById('sugar_spot_search').className = 'searching';

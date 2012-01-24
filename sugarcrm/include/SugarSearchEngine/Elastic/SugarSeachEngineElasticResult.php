@@ -21,23 +21,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 
-require_once("include/SugarSearchEngine/Interface.php");
-require_once("include/SugarSearchEngine/SugarSearchEngineHighlighter.php");
+require_once("include/SugarSearchEngine/SugarSearchEngineAbstractResult.php");
+require_once("include/SugarSearchEngine/Elastic/SugarSearchEngineElasticHighlighter.php");
 
 /**
  * Adapter class to Elastica Result
  */
-class SugarSeachEngineElasticResult implements SugarSearchEngineResult
+class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 {
     /**
      * @var \Elastica_Result
      */
     private $elasticaResult;
-
-    /**
-     * @var SugarBean
-     */
-    private $bean;
 
     public function __construct(Elastica_Result $result)
     {
@@ -61,27 +56,12 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
     }
 
     /**
-     * TODO: We may store the module by type rather than as a field within the document.
+     *
      * @return array
      */
     public function getModule()
     {
         return $this->elasticaResult->module;
-    }
-
-    public function getModuleName()
-    {
-        $moduleName = $this->getModule();
-        if( isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) )
-            return $GLOBALS['app_list_strings']['moduleList'][$moduleName];
-        else
-            return $moduleName;
-    }
-
-    public function getSummaryText()
-    {
-        if($this->bean !== FALSE)
-            return $this->bean->get_summary_text();
     }
 
     public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
@@ -97,13 +77,14 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         $q = html_entity_decode(trim($_REQUEST['q']), ENT_QUOTES);
 
         if (isset($hit['_source']) && is_array($hit['_source'])) {
-            $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
+            $highlighter = new SugarSearchEngineElasticHighlighter($maxLen, $maxHits, $preTag, $postTag);
             $ret = $highlighter->getHighlightedHitText($hit['_source'], $q);
         }
 
         return $ret;
     }
 
+    //TODO: Jimmy do we still need this since it's also defined in the highlighter class?
     public function getAutoCompleteText()
     {
         $ret = '';
@@ -117,17 +98,11 @@ class SugarSeachEngineElasticResult implements SugarSearchEngineResult
         $q = html_entity_decode(trim($_REQUEST['query']), ENT_QUOTES);
 
         if (isset($hit['_source']) && is_array($hit['_source'])) {
-            $highlighter = new SugarSearchEngineHighlighter();
+            $highlighter = new SugarSearchEngineElasticHighlighter();
             $highlighter->setTags('<b>', '</b>');
             $ret = $highlighter->getAutoCompleteText($hit['_source'], $q);
         }
 
         return $ret;
     }
-
-    public function __toString()
-    {
-        return __CLASS__ . " " . $this->getModule() . ": " . $this->getSummaryText() . " " . $this->getId();
-    }
-
 }

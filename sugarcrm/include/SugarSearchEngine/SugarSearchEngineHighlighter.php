@@ -146,10 +146,6 @@ class SugarSearchEngineHighlighter
 
         foreach ($resultArray as $field=>$value) {
             // skip the summary_text as it's for auto complete searches
-            // TODO: we should probably subclass this for Elastic and move this logic to the subclass
-            if ($field == SugarSearchEngineElastic::SUMMARY_TEXT) {
-                continue;
-            }
             foreach ($searches as $search) {
                 if (empty($search)) {
                     continue;
@@ -165,18 +161,9 @@ class SugarSearchEngineHighlighter
         return $ret;
     }
 
-    // TODO: move this to separate class?
     public function getAutoCompleteText($resultArray)
     {
         $ret = '';
-        foreach ($resultArray as $field=>$value) {
-            if ($field != SugarSearchEngineElastic::SUMMARY_TEXT) {
-                continue;
-            }
-
-            $ret = $value;
-            break;
-        }
         return $ret;
     }
 }
