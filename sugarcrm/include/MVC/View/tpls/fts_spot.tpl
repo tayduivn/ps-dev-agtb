@@ -13,6 +13,7 @@
                 <span class="details">
                     {foreach from=$result->getHighlightedHitText(80, 1, '<span class="highlight">', '</span>') key=k item=v}
                         {$k}: {$v}
+                        <br>
                     {/foreach}
                 </span>
             </ul>

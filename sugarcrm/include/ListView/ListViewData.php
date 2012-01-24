@@ -487,13 +487,12 @@ class ListViewData {
         if(!$this->seed->ACLAccess('ListView')) {
             $pageData['error'] = 'ACL restricted access';
         }
-        $queryString = '';
-        if(strlen($where)){
-        	$queryStart = strpos($where, "'")+1;
-	        $queryEnd = strpos($where, "%");
-			$queryString = substr($where, $queryStart, $queryEnd-$queryStart);
-        }
         
+        $queryString = '';
+        if(array_key_exists("search_name_basic", $_REQUEST)){
+        	$queryString = htmlentities($_REQUEST["search_name_basic"]);
+        }
+  
 		return array('data'=>$data , 'pageData'=>$pageData, 'query' => $queryString);
 	}
 
