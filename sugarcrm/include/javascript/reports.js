@@ -1388,8 +1388,14 @@ SUGAR.reports = function() {
 			chart_type = document.ReportsWizardForm.chart_type.value;
 			chart_description = document.ReportsWizardForm.chart_description.value;
 			numerical_chart_column = document.ReportsWizardForm.numerical_chart_column.value;
-			if (document.ReportsWizardForm.do_round.checked == false)
-				do_round = 0;
+			if (document.ReportsWizardForm.do_round.checked)
+			{
+		        do_round = 1;
+			}
+			else
+			{
+		        do_round = 0;
+			}
 			SUGAR.reports.setNumericalChartColumnType();
 		},
 		saveCurrentStep: function() {
