@@ -186,6 +186,15 @@ $dictionary['EmailTemplate'] = array(
             'reportable'=>false,
             'comment' => 'Should be checked if email template is to be sent in text only'
         ),
+        'type' => array(
+            'name' => 'type',
+            'vname' => 'LBL_TYPE',
+            'type' => 'enum',
+            'required' => false,
+            'reportable'=> false,
+            'options' => 'emailTemplates_type_list',
+            'comment' => 'Type of the email template'
+       ),
 	),
 	'indices' => array(
 		array(

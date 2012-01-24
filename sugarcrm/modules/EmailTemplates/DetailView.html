@@ -43,7 +43,10 @@
 <div class="detail view">
 <table width="100%" border="0" cellspacing="{GRIDLINE}" cellpadding="0">
 {PAGINATION}
-
+    <tr>
+    <td scope="row" width='15%'><slot>{MOD.LBL_TYPE}</slot></td>
+    <td colspan="3"><slot>{TYPE}</slot></td>
+    </tr>
 	<tr>
 	<td scope="row" width='15%'><slot>{MOD.LBL_NAME}</slot></td>
 	<td><slot>{NAME}&nbsp;</slot></td>

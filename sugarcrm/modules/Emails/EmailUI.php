@@ -2721,7 +2721,7 @@ eoq;
 
 		if(ACLController::checkAccess('EmailTemplates', 'list', true) && ACLController::checkAccess('EmailTemplates', 'view', true)) {
 			$et = new EmailTemplate();
-			$etResult = $et->db->query($et->create_new_list_query('','',array(),array(),''));
+            $etResult = $et->db->query($et->create_new_list_query('',"(type IS NULL OR type='email')",array(),array(),''));
 			$email_templates_arr = array('' => $app_strings['LBL_NONE']);
 			while($etA = $et->db->fetchByAssoc($etResult)) {
 				$email_templates_arr[$etA['id']] = $etA['name'];
