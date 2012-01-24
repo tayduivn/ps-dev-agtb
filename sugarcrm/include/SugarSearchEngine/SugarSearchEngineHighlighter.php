@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Highlighter
  */
-class SugarSearchEngineHighlighter
+abstract class SugarSearchEngineHighlighter
 {
     protected $_maxLen;
     protected $_maxHits;
@@ -132,11 +132,20 @@ class SugarSearchEngineHighlighter
         }
     }
 
-    public function highlightCallback($matches) {
+    protected function highlightCallback($matches) {
         // escape user input before display to avoid XSS
         return $this->_preTag . htmlspecialchars(trim($matches[0])) . $this->_postTag;
     }
 
+    /**
+     *
+     * This function returns an array of highlighted strings.
+     *
+     * @param $resultArray array returned from search engine
+     * @param $searchString string the string to be searched and highlighted
+     *
+     * @return array of key value pairs
+     */
     public function getHighlightedHitText($resultArray, $searchString)
     {
         $ret = array();
@@ -145,7 +154,6 @@ class SugarSearchEngineHighlighter
         $searches = explode(' ', $searchString);
 
         foreach ($resultArray as $field=>$value) {
-            // skip the summary_text as it's for auto complete searches
             foreach ($searches as $search) {
                 if (empty($search)) {
                     continue;
@@ -161,9 +169,9 @@ class SugarSearchEngineHighlighter
         return $ret;
     }
 
-    public function getAutoCompleteText($resultArray)
-    {
-        $ret = '';
-        return $ret;
-    }
+    /**
+     *
+     * abstract function, needs to be implemented by subclasses
+     */
+    abstract public function getAutoCompleteText($resultArray);
 }

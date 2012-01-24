@@ -35,6 +35,15 @@ require_once("include/SugarSearchEngine/SugarSearchEngineHighlighter.php");
  */
 class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
 {
+    /**
+     *
+     * This function returns an array of highlighted strings.
+     *
+     * @param $resultArray array returned from search engine
+     * @param $searchString string the string to be searched and highlighted
+     *
+     * @return array of key value pairs
+     */
     public function getHighlightedHitText($resultArray, $searchString)
     {
         $ret = array();
@@ -59,13 +68,21 @@ class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
             }
         }
 
+        $GLOBALS['log']->debug('FTS highligh: ' . print_r($ret,true));
         return $ret;
     }
 
+    /**
+     * Return a string that matches the auto complete search.
+     *
+     * @param $resultArray array returned from search engine
+     * @return string
+     */
     public function getAutoCompleteText($resultArray)
     {
         $ret = '';
         foreach ($resultArray as $field=>$value) {
+            // skip summary_text field for auto complete search
             if ($field != SugarSearchEngineElastic::SUMMARY_TEXT) {
                 continue;
             }
@@ -73,6 +90,7 @@ class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
             $ret = $value;
             break;
         }
+        $GLOBALS['log']->debug('FTS auto complete: ' . $ret);
         return $ret;
     }
 }
