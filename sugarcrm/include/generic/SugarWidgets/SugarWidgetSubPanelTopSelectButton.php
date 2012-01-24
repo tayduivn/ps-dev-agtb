@@ -150,8 +150,19 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 			//END SUGARCRM flav!=sales ONLY
 		}
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
-		return ' <input type="button" name="' . $this->getWidgetId() . '_select_button" id="' . $this->getWidgetId() . '_select_button" class="button"' . "\n"
-				. ' title="' . $this->title . '"'
+
+        // #49164 changing the id/name of the widget to differentiate between "Select" and "Select from Report" button
+        $customWidgetId = $this->getWidgetId();
+        if( strpos( $customWidgetId , "prospect_list_" ) === 0)
+        {
+            // add the button title in to the id/name of the button,
+            // lowercased, and with spaces replaced with underscores
+            $customWidgetId .= '_' . str_replace( ' ' , '_' , strtolower( $this->title ) );
+        }
+        $customWidgetId .= '_select_button';
+
+        return ' <input type="button" name="' . $customWidgetId . '" id="' . $customWidgetId . '" class="button"' . "\n"
+            . ' title="' . $this->title . '"'
 			. ' accesskey="' . $this->accesskey . '"'
 			. ' value="' . $this->value . "\"\n"
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' />\n";
