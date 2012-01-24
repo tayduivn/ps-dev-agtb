@@ -1428,12 +1428,6 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                     if(trim($results['string']) == '') $results['string'] = $app_strings['LBL_NONE'];
                     $fields[$results['fieldToAddTo']] = $fields[$results['fieldToAddTo']].'</a>';
                 }
-                //fixes bug for IE where empty list view rows causes IE to not display bottom border
-                if(isset($fields['DESCRIPTION']) && empty($fields['DESCRIPTION']))
-                $fields['DESCRIPTION'] = "&nbsp;";
-                if(isset($fields['LIST_ORDER']) && empty($fields['LIST_ORDER']))
-                $fields['LIST_ORDER'] = "&nbsp;";
-
                 $this->xTemplate->assign($html_varName, $fields);
                 $aItem->setupCustomFields($aItem->module_dir);
                 $aItem->custom_fields->populateAllXTPL($this->xTemplate, 'detail', $html_varName, $fields);
