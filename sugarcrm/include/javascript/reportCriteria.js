@@ -941,7 +941,11 @@ function addFilterInputSelectSingle(row,options,filter) {
 			option_value = options[i].value;
 		}
 
-		if (option_value == filter.input_name0 ) {
+		if ((option_value == filter.input_name0)
+			|| (filter.name ='user_name')
+				&& (filter.input_name0 == 'Current User')
+				&& (option_value == current_user_id)
+			) {
 			selected = true;
 		}
 		else {

@@ -222,6 +222,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 
 	template_reports_filters($smarty, $args);
 	$smarty->assign('reporter_report_type', $args['reporter']->report_type);
+	$smarty->assign('current_user_id', $current_user->id);
 	$smarty->assign('md5_current_user_id', md5($current_user->id));
 	if (!hasRuntimeFilter($reporter)) {
 		//$showRunReportButton = false;
