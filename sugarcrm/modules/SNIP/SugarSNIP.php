@@ -17,7 +17,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
+ *to the License foru the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
@@ -78,6 +78,11 @@ class SugarSNIP
         return $this;
     }
 
+    protected function getKey()
+    {
+        return md5($this->config['unique_key'].$this->getURL());
+    }
+
     /**
      * Generic REST call to SNIP instance
      *
@@ -97,6 +102,7 @@ class SugarSNIP
 
         $url .= $name;
         $params["sugarkey"] = $this->config['unique_key'];
+        $params["idkey"] = $this->getKey();
         if($json) {
             $postArgs = http_build_query(array('data' => json_encode($params)));
         } else {
@@ -145,7 +151,7 @@ class SugarSNIP
 
         $snipuser = $this->getSnipUser();
 
-        $request = array ('sugarkey' => $sugar_config['unique_key'],
+        $request = array (
                         'user' => $snipuser->user_name,
                         'password' => $snipuser->user_hash,
                         'client_api_url' => $this->getURL(),
@@ -172,6 +178,7 @@ class SugarSNIP
     {
         $admin = new Administration();
         $admin->saveSetting('snip', 'email', $email);
+        $admin->saveSetting('snip', 'key', $this->getKey());
         return $this;
     }
 
@@ -198,7 +205,7 @@ class SugarSNIP
 
         $connectionfailed = false;
         $snipuser = $this->getSnipUser();
-        $request = array ('sugarkey' => $sugar_config['unique_key'],
+        $request = array (
                         'user' => $snipuser->user_name,
                         'password' => $snipuser->user_hash);
 
@@ -226,8 +233,9 @@ class SugarSNIP
     */
     public function createPurchaseURL($snipuser)
     {
+        // NOT ACTIVE right now
         global $sugar_config;
-        $msg=base64_encode(json_encode(array('unique_key' => $sugar_config['unique_key'],
+        $msg=base64_encode(json_encode(array('unique_key' => $this->config['unique_key'],
                                                'snipuser'   => $snipuser->user_name,
                                                'password'   => $snipuser->user_hash)));
         return "localhost:8080/purchaseSnip?info=$msg";

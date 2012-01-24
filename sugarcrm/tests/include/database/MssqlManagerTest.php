@@ -121,7 +121,7 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 array(
                     array('foo','quarter'),
-                    "DATEPART(quarter, foo)"
+                    "DATENAME(quarter, foo)"
                 ),
                 array(
                     array('foo','add_date',array(1,'day')),

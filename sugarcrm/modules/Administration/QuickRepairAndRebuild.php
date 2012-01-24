@@ -346,7 +346,6 @@ class RepairAndClear
                     LanguageManager::clearLanguageCache($module_name);
             }
         }
-
         // Clear app* cache values too
         if(!empty($GLOBALS['sugar_config']['languages'])) {
             $languages = $GLOBALS['sugar_config']['languages'];

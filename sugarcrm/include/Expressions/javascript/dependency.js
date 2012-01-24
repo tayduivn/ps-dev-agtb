@@ -27,7 +27,6 @@
 
 (function() {
 
-
 /**
  * This JavaScript file provides an entire framework for the new
  * SUGAR Calculated Fields/Dependent Dropdowns implementation.
@@ -148,9 +147,8 @@ AH.registerForm = function(f, formEl) {
             {
                 //Find the parent span to get the field name
                 var span = Dom.getAncestorByTagName(el, "span");
-                sId = span.id; //Will be in the format fieldName_span
-                fieldName = sId.substring(0, sId.length - 5);
-
+                    sId = span.id; //Will be in the format fieldName_span
+                    fieldName = sId.substring(0, sId.length - 5);
                 if (!AH.VARIABLE_MAP[f][fieldName] || !Dom.isAncestor(span, AH.VARIABLE_MAP[f][fieldName])) {
                     AH.VARIABLE_MAP[f][fieldName] = el;
                     AH.updateListeners(fieldName, f, el);
@@ -270,7 +268,7 @@ AH.getElement = function(variable, view) {
 	// retrieve the variable
 	var field = AH.VARIABLE_MAP[view][variable];
 
-	if ( field == null )
+	if ( field == null )	
 		field = YAHOO.util.Dom.get(variable);
 
 	return field;
@@ -462,7 +460,7 @@ AH.showError = function(variable, error)
 	// retrieve the variable
 	var field = AH.getElement(variable);
 
-	if ( field == null )
+	if ( field == null )	
 		return null;
 
 	add_error_style(field.form.name, field, error, false);
@@ -472,7 +470,6 @@ AH.clearError = function(variable)
 {
 	// retrieve the variable
 	var field = AH.getElement(variable);
-
 	if ( field == null )
 		return;
 
