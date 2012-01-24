@@ -28,7 +28,10 @@
     {$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}
    	</section>
 {/if}
+    <br>
+</div>
 
+{if (!$smarty.get.ajax)}
 {literal}
 <script>
     var ds = new YAHOO.util.DataSource("index.php?", {
@@ -54,6 +57,5 @@
 
 </script>
 {/literal}
+{/if}
 
-</div>
-<br>
