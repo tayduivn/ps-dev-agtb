@@ -94,6 +94,7 @@ SUGAR.append(SUGAR.themes, {
             }
             $(el).parent().addClass("current");
         }
+        makeCall = true;
     },
     toggleMenuOverFlow: function(menuName,maction) {
     	
@@ -121,53 +122,54 @@ SUGAR.append(SUGAR.themes, {
 						var moduleName = moduleName.replace("Hidden","");
 					}
 					that = $(this);
-					console.log(moduleName);
 					//ajax call for favorites
-					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;") {
+					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;" || makeCall == true) {
 						
 						$.ajax({
 						  url: "index.php?module="+moduleName+"&action=favorites",
 						  success: function(json){
 						    var lastViewed = $.parseJSON(json);				    
-						    $(that).find("ul.MMFavorites li:last").remove();
+						    $(that).find("ul.MMFavorites").children().not(':eq(0)').remove();
 						    $.each(lastViewed, function(k,v) {
 						    	if(v.text == "none") {
 						    		v.url = "javascript: void(0);";
 						    	}
 						    	$(that).find("ul.MMFavorites").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
 						    });
-						    //normalize the heights of the three columns
-						     wrapperHeight = $(that).find("li div.megawrapper").height();
-							$(that).find("div.megacolumn-content").height(wrapperHeight);
-							$(that).find("div.megacolumn-content.divider").css("border-right", "1px solid #ccc");
+						    //update column heights so dividers are even
+							$(that).find("ul.MMFavorites li:nth("+lastViewed.length+")").children().ready(function() {
+								wrapperHeight = $(that).find("li div.megawrapper").height();
+								$(that).find("div.megacolumn-content").css("min-height",wrapperHeight);
+							});
 						  }
 						});
 					}					
 					//ajax call for last viewed
-					if($(this).find("ul.MMLastViewed li:last a").html() == "&nbsp;") {
+					if($(this).find("ul.MMLastViewed li:last a").html() == "&nbsp;" || makeCall == true) {
 						$.ajax({
 						  url: "index.php?module="+moduleName+"&action=modulelistmenu",
 						  success: function(json){
 						    var lastViewed = $.parseJSON(json);
-						    $(that).find("ul.MMLastViewed li:last").remove();
+						    $(that).find("ul.MMLastViewed").children().not(':eq(0)').remove();
 						    $.each(lastViewed, function(k,v) {
 						    	if(v.text == "none") {
 						    		v.url = "javascript: void(0);";
 						    	}
 						    	$(that).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
 						    });
-						    //normalize the heights of the three columns
-						     wrapperHeight = $(that).find("li div.megawrapper").height();
-							$(that).find("div.megacolumn-content").height(wrapperHeight);
-							$(that).find("div.megacolumn-content.divider").css("border-right", "1px solid #ccc");
+						    
+						    //update column heights so dividers are even
+							$(that).find("ul.MMLastViewed li:nth("+lastViewed.length+")").children().ready(function() {
+								wrapperHeight = $(that).find("li div.megawrapper").height();
+								$(that).find("div.megacolumn-content").css("min-height",wrapperHeight);
+							});
 						  }
 						});
 					}
+				makeCall = false;
 				}
 			},
 			onShow: function() {
-				//wrapperHeight = $(this).find("li div.megawrapper").height();
-				//$(this).find("div.megacolumn-content").height(wrapperHeight);
 			}
 		});	
     },
@@ -196,7 +198,7 @@ SUGAR.append(SUGAR.themes, {
 			);
     },
     globalToolTips: function () {
-    	$("#moduleList.yuimenubarnav .yuimenubaritem.home a").tipTip({maxWidth: "auto", edgeOffset: 10});
+    	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 10});

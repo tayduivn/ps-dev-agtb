@@ -4130,6 +4130,10 @@ Mega Column Styles
 	overflow: hidden;
 }
 
+#moduleList .megacolumn-content.divider {
+ 	border-right: 1px solid #ccc;
+}
+
 #moduleList .megacolumn-content p {
 	margin-bottom: 16px;
 }
@@ -4176,7 +4180,7 @@ Mega Column Styles
 	font-size: 13px;
 	padding: 4px 10px;
 	position: relative;
-	width: 100%;
+	width: 180px;
 }
 
 
