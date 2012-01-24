@@ -4039,4 +4039,12 @@ $app_list_strings['eapm_list_documents']= array(
         2 => 'Access',
         3 => 'Invalid',
     );
+
+$app_list_strings ['emailTemplates_type_list'] = array (
+    '' => '' ,
+    'campaign' => 'Campaign' ,
+    'email' => 'Email',
+    'workflow' => 'Workflow',
+  );
+
 ?>
