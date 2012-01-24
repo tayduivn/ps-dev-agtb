@@ -1435,10 +1435,28 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 	global  $beanList, $beanFiles;
 
 	$error = new SoapError();
-	if(!validate_user($user_name, $password)){
-		$error->set_error('invalid_login');
-		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
+    $hasLoginError = false;
+
+    //BEGIN SUGARCRM flav=int ONLY
+    //clee - This empty($user_name) check and !empty($password) check here are for bug 49898
+    //END SUGARCRM flav=int ONLY
+    if(empty($user_name) && !empty($password))
+    {
+        if(!validate_authenticated($password))
+        {
+            $hasLoginError = true;
+        }
+    } else if(!validate_user($user_name, $password)) {
+		$hasLoginError = true;
 	}
+
+    //If there is a login error, then return the error here
+    if($hasLoginError)
+    {
+        $error->set_error('invalid_login');
+        return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
+    }
+
 	global $current_user;
 	if($max_results > 0){
 		global $sugar_config;

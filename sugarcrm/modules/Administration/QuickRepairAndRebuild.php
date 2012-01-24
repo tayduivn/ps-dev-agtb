@@ -346,6 +346,17 @@ class RepairAndClear
                     LanguageManager::clearLanguageCache($module_name);
             }
         }
+        // Clear app* cache values too
+        if(!empty($GLOBALS['sugar_config']['languages'])) {
+            $languages = $GLOBALS['sugar_config']['languages'];
+        } else {
+            $languages = array($GLOBALS['current_language'] => $GLOBALS['current_language']);
+        }
+        foreach(array_keys($languages) as $lang) {
+        	sugar_cache_clear('app_strings.'.$language);
+        	sugar_cache_clear('app_list_strings.'.$language);
+        }
+
 	}
 
 	/**
