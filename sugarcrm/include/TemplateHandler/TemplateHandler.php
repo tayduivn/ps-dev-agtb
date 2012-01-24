@@ -482,8 +482,7 @@ class TemplateHandler {
      * @param string $view the current view type.
      */
     function createDependencyJavascript($fieldDefs, $viewDefs, $view, $module = null) {
-        //Use a doWhen to wait for the page to be fulled loaded (!SUGAR.util.ajaxCallInProgress())
-        $js = "<script type=text/javascript>SUGAR.util.doWhen('!SUGAR.util.ajaxCallInProgress()', function(){\n"
+        $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
         $js .= DependencyManager::getLinkFields($fieldDefs, $view);
@@ -498,7 +497,7 @@ class TemplateHandler {
             $js .= $dep->getJavascript($view);
         }
 
-        $js .= "});</script>";
+        $js .= "</script>";
         return $js;
     }
     //END SUGARCRM flav=pro ONLY

@@ -1181,7 +1181,7 @@ class MssqlManager extends DBManager
             case 'text2char':
                 return "CAST($string AS varchar(8000))";
             case 'quarter':
-                return "DATENAME(quarter, $string)";
+                return "DATEPART(quarter, $string)";
             case "length":
                 return "LEN($string)";
             case 'month':

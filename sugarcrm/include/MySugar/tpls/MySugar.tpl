@@ -316,18 +316,18 @@ mySugarLoader.insert();
 			<table align="center" cellpadding="15">
 				<tr>
 					<td align="center">
-						{capture assign=img_attr}border="0"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(1);" attr='id="change_layout_1_column"'
+						{capture assign=img_attr}border="0" id="change_layout_1_column"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(1);" 
 							title=$app.LBL_ICON_COLUMN_1 img_name="icon_Column_1.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
-					    {capture assign=img_attr}border="0"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(2);" attr='id="change_layout_2_column"'
+					    {capture assign=img_attr}border="0" id="change_layout_2_column"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(2);"
 							title=$app.LBL_ICON_COLUMN_2 img_name="icon_Column_2.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
-					    {capture assign=img_attr}border="0"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(3);" attr='id="change_layout_3_column"'
+					    {capture assign=img_attr}border="0" id="change_layout_3_column"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(3);" 
 							title=$app.LBL_ICON_COLUMN_3 img_name="icon_Column_3.gif" img_attr=$img_attr}
 					</td>
 				</tr>

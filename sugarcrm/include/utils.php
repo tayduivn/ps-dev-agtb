@@ -4849,7 +4849,7 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	$img_size = getimagesize($path);
 	$filetype = $img_size['mime'];
 	$ext = end(explode(".", $path));
-	if(substr_count('..', $path) > 0 || ($ext !== $path && !in_array(strtolower($ext), array_keys($supportedExtensions))) ||
+	if(substr_count('..', $path) > 0 || $ext === $path || !in_array(strtolower($ext), array_keys($supportedExtensions)) ||
 	    !in_array($filetype, array_values($supportedExtensions))) {
 	        return false;
 	}
@@ -4909,7 +4909,7 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
 
 /**
  * utf8_recursive_encode
- *
+ * 
  * This function walks through an Array and recursively calls utf8_encode on the
  * values of each of the elements.
  *

@@ -60,29 +60,27 @@ function confirmDialog(arrayContents, formName) {
 		if (opener.forms[formName] && opener.getElementById(key + '_label') != null && !key.match(/account/))
 		{
 	        var dataLabel = opener.getElementById(key + '_label').innerHTML.replace(/\n/gi,'').replace(/<\/?[^>]+(>|$)/g, "");
-	        labels += dataLabel + ' \n';
+	        labels += dataLabel + '\n';
 			newData += dataLabel + ' ' + displayValue + '\n';
 			if(window.opener.document.forms[formName].elements[key]) {
-				oldData += dataLabel + ' ' + opener.forms[formName].elements[key].value + '\n';
+				oldData += dataLabel + ' ' + opener.forms[formName].elements[key].value +'\n';
 			}
 		}
 	}
 
-	var popupConfirm = 0;
-	if (data['account_id'] && (newData.split("\n").length - 1) > 2)
-	{
-		if(newData != oldData && oldData != labels)
+	if (data['account_id']) {
+		if(newData != labels && oldData != labels)
 		{
 			if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + newData))
 			{
-				popupConfirm = 1;
+				arrayContents.push('"popupConfirm":1');
 			} else {
-				popupConfirm = -1;	
+				arrayContents.push('"popupConfirm":0');
 			}
 		}
 	}
 	
-	return popupConfirm;
+	return arrayContents;
 }
 
 function send_back(module, id)
@@ -138,14 +136,14 @@ function send_back(module, id)
 			array_contents.push('"' + the_name + '":"' + the_value + '"');
 		}
 	}
-
-	var popupConfirm = confirmDialog(array_contents, form_name);
+	
+	array_contents = confirmDialog(array_contents, form_name);
 	
 	eval("var name_to_value_array = {" + array_contents.join(",") + "}");
 	
 	closePopup();
-
-	var result_data = {"form_name":form_name,"name_to_value_array":name_to_value_array,"passthru_data":passthru_data,"popupConfirm":popupConfirm};
+	
+	var result_data = {"form_name":form_name,"name_to_value_array":name_to_value_array,"passthru_data":passthru_data};
 	call_back_function(result_data);
 }
 

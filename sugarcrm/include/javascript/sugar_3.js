@@ -4150,10 +4150,16 @@ function set_return(popup_reply_data)
 		var label_str = '';
 		var label_data_str = '';
 		var current_label_data_str = '';
-		var popupConfirm = popup_reply_data.popupConfirm;
+		var popupConfirm = '';
 		for (var the_key in name_to_value_array)
 		{
-			if(the_key == 'toJSON')
+			// Bug 48726 Start
+			if (the_key == 'popupConfirm') 
+			{
+				popupConfirm = name_to_value_array[the_key];
+			}
+			// Bug 48726 End
+			else if(the_key == 'toJSON')
 			{
 				/* just ignore */
 			}
@@ -4173,13 +4179,13 @@ function set_return(popup_reply_data)
 		
         if(label_data_str != label_str && current_label_data_str != label_str){
         	// Bug 48726 Start
-        	if (typeof popupConfirm != 'undefined')
+        	if (popupConfirm == 1)
+        	{ 
+        		set_return_basic(popup_reply_data,/\S/);
+        	}
+        	else if (popupConfirm == 0)
         	{
-        		if (popupConfirm > -1) {
-        			set_return_basic(popup_reply_data,/\S/);
-        		} else {
-        			set_return_basic(popup_reply_data,/account/);
-        		}
+        		set_return_basic(popup_reply_data,/account/);
         	}
         	// Bug 48726 End
         	else if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))

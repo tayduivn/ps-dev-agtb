@@ -64,16 +64,6 @@ if (isset($_REQUEST['object']) && $_REQUEST['object']="documentrevision") {
 			$thisversion->mark_deleted($thisversion->id);
 		}				
 	}
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    //Remove the contracts relationships
-    $focus->load_relationship('contracts');
-    if(!empty($focus->contracts))
-    {
-        $focus->contracts->delete($focus->id);
-    }
-    //END SUGARCRM flav=pro ONLY
-
 }
 
 $focus->mark_deleted($_REQUEST['record']);

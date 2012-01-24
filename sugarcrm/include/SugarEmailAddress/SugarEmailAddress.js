@@ -419,12 +419,7 @@
 		    
 		    // Add validation to field
             this.EmailAddressValidation(this.emailView, this.id+ 'emailAddress' + this.numberEmailAddresses,this.emailIsRequired, SUGAR.language.get('app_strings', 'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'));
-            //BEGIN SUGARCRM flav=pro ONLY
-            var form = Dom.getAncestorByTagName(insertInto, "form");
-            if (SUGAR.forms.AssignmentHandler.VARIABLE_MAP[form.name])
-                SUGAR.forms.AssignmentHandler.registerForm(form.name, form);
-		    //END SUGARCRM flav=pro ONLY
-            this.numberEmailAddresses++;
+		    this.numberEmailAddresses++;
 			this.addInProgress = false;
 		}, //addEmailAddress
 
@@ -436,9 +431,8 @@
 		removeEmailAddress : function(index) {
 			removeFromValidate(this.emailView, this.id + 'emailAddress' + index);
             var oNodeToRemove = Dom.get(this.id +  'emailAddressRow' + index);
-            var form = Dom.getAncestorByTagName(oNodeToRemove, "form");
             oNodeToRemove.parentNode.removeChild(oNodeToRemove);
-
+            
             var removedIndex = parseInt(index);
             //If we are not deleting the last email address, we need to shift the numbering to fill the gap
             if(this.numberEmailAddresses != removedIndex) {
@@ -489,12 +483,6 @@
                Dom.get(this.id + 'emailAddressPrimaryFlag0').checked = true;
                Dom.get(this.id + 'emailAddressPrimaryFlag0').value = this.id + 'emailAddress0';
             }
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            //if the form has already been registered, re-register it with the new element
-            if (SUGAR.forms.AssignmentHandler.VARIABLE_MAP[form.name])
-                SUGAR.forms.AssignmentHandler.registerForm(form.name, form);
-            //END SUGARCRM flav=pro ONLY
         },
 		
 		toggleCheckbox : function (el)

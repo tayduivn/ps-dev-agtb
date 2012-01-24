@@ -154,9 +154,7 @@ class DashletsDialog {
 					$cell = array( 'title' => $title,
 								   'description' => $description,
 								   'onclick' => 'return SUGAR.mySugar.addDashlet(\'' . $className . '\', \'' . $type . '\', \''.(!empty($dashletMeta[$files['class']]['module']) ? $dashletMeta[$files['class']]['module'] : '' ) .'\');',
-                                   'icon' => $icon,
-                                   'id' => $files['class'] . '_select',
-                               );
+								   'icon' => $icon, );
 
 	                if (!empty($category) && $dashletMeta[$files['class']]['category'] == $categories[$category]){
 	                	array_push($dashletsList[$categories[$category]], $cell);

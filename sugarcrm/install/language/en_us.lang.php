@@ -115,7 +115,7 @@ $mod_strings = array(
     'LBL_CHECKSYS_DB_SUPPORT_NOT_AVAILABLE' => 'Database Support was not found.  Please make sure you have the necessary drivers for one of the following supported Database Types: MySQL or MS SQLServer.  You might need to uncomment the extension in the php.ini file, or recompile with the right binary file, depending on your version of PHP.  Please refer to your PHP Manual for more information on how to enable Database Support.',
 //END SUGARCRM flav!=ent && flav!=ult ONLY
 //BEGIN SUGARCRM flav=ent ONLY
-    'LBL_CHECKSYS_DB_SUPPORT_NOT_AVAILABLE' => 'Database Support was not found.  Please make sure you have the necessary drivers for one of the following supported Database Types: MySQL, MS SQLServer, Oracle, or DB2.  You might need to uncomment the extension in the php.ini file, or recompile with the right binary file, depending on your version of PHP.  Please refer to your PHP Manual for more information on how to enable Database Support.',
+    'LBL_CHECKSYS_DB_SUPPORT_NOT_AVAILABLE' => 'Database Support was not found.  Please make sure you have the necessary drivers for one of the following supported Database Types: MySQL, MS SQLServer, or Oracle.  You might need to uncomment the extension in the php.ini file, or recompile with the right binary file, depending on your version of PHP.  Please refer to your PHP Manual for more information on how to enable Database Support.',
 //END SUGARCRM flav=ent ONLY
     'LBL_CHECKSYS_XML_NOT_AVAILABLE'        => 'Functions associated with XML Parser Libraries that are needed by the Sugar application were not found.  You might need to uncomment the extension in the  php.ini file, or recompile with the right binary file, depending on your version of PHP.  Please refer to your PHP Manual for more information.',
     'ERR_CHECKSYS_MBSTRING'             => 'Functions associated with the Multibyte Strings PHP extension (mbstring) that are needed by the Sugar application were not found. <br/><br/>Generally, the mbstring module is not enabled by default in PHP and must be activated with --enable-mbstring when the PHP binary is built. Please refer to your PHP Manual for more information on how to enable mbstring support.',
@@ -465,7 +465,7 @@ $mod_strings = array(
                     'Before you begin, please be sure that you have the supported versions of the following system
                       components:<br>
                       <ul>
-                      <li> Database/Database Management System (Examples: MySQL, SQL Server, Oracle, DB2)</li>
+                      <li> Database/Database Management System (Examples: MySQL, SQL Server, Oracle)</li>
                       <li> Web Server (Apache, IIS)</li>
                       </ul>
                       Consult the Compatibility Matrix in the Release Notes for
@@ -483,7 +483,7 @@ $mod_strings = array(
                                             <li> <b>MB Strings</b> &#8211; must be installed and enabled in php.ini</li>
 
                       <li> <b>Database Support</b> &#8211; must exist for MySQL, SQL
-                      Server, Oracle, or DB2</li>
+                      Server or Oracle</li>
 
                       <li> <b>Config.php</b> &#8211; must exist and must have the appropriate
                                   permissions to make it writeable</li>
@@ -502,7 +502,7 @@ $mod_strings = array(
                       For both <b>Typical</b> and <b>Custom</b> installations, you will need to know the following:<br>
                       <ul>
                       <li> <b>Type of database</b> that will house the Sugar data <ul><li>Compatible database
-                      types: MySQL, MS SQL Server, Oracle, DB2.<br><br></li></ul></li>
+                      types: MySQL, MS SQL Server, Oracle.<br><br></li></ul></li>
                       <li> <b>Name of the web server</b> or machine (host) on which the database is located
                       <ul><li>This may be <i>localhost</i> if the database is on your local computer or is on the same web server or machine as your Sugar files.<br><br></li></ul></li>
                       <li><b>Name of the database</b> that you would like to use to house the Sugar data</li>

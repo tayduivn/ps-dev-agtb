@@ -887,12 +887,6 @@ SUGAR.expressions.ExpressionContext.prototype.setValue = function(varname, value
 	return "";
 }
 
-SUGAR.expressions.ExpressionContext.prototype.addListener = function(varname, callback, scope)
-{
-	return "";
-}
-
-
 SUGAR.expressions.ExpressionContext.prototype.getRelatedValue = function(linkField, relField)
 {
 	return new SUGAR.RelatedFieldExpression([
@@ -1174,4 +1168,4 @@ SUGAR.util.DateUtils = {
 		}
 		return date;
 	}
- };
+ }
