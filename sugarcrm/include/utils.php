@@ -951,7 +951,7 @@ function return_app_list_strings_language($language)
 
     $app_list_strings = array();
     foreach ( $app_list_strings_array as $app_list_strings_item ) {
-        $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
+        $app_list_strings = sugarLangArrayMerge($app_list_strings, $app_list_strings_item);
     }
 
     foreach ( $langs as $lang ) {
@@ -1076,7 +1076,7 @@ function return_application_language($language)
 
 	$app_strings = array();
     foreach ( $app_strings_array as $app_strings_item ) {
-        $app_strings = sugarArrayMerge($app_strings, $app_strings_item);
+        $app_strings = sugarLangArrayMerge($app_strings, $app_strings_item);
     }
 
 	if(!isset($app_strings)) {
@@ -1160,14 +1160,14 @@ function return_module_language($language, $module, $refresh=false)
 
 	// cn: bug 6048 - merge en_us with requested language
 	if($language != $sugar_config['default_language'])
-        $loaded_mod_strings = sugarArrayMerge(
+        $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
                 $loaded_mod_strings
             );
 
     // Load in en_us strings by default
     if($language != 'en_us' && $sugar_config['default_language'] != 'en_us')
-        $loaded_mod_strings = sugarArrayMerge(
+        $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($module, 'en_us', $refresh),
                 $loaded_mod_strings
             );
@@ -1240,7 +1240,7 @@ function return_mod_list_strings_language($language,$module) {
 	}
 
 	// cn: bug 6048 - merge en_us with requested language
-	$mod_list_strings = sugarArrayMerge($en_mod_list_strings, $mod_list_strings);
+	$mod_list_strings = sugarLangArrayMerge($en_mod_list_strings, $mod_list_strings);
 
 	// if we still don't have a language pack, then log an error
 	if(!isset($mod_list_strings)) {
@@ -3847,6 +3847,53 @@ function setPhpIniSettings() {
 	}
 }
 
+/**
+ * Identical to sugarArrayMerge but with some speed improvements and used specifically to merge
+ * language files.  Language file merges do not need to account for null values so we can get some
+ * performance increases by using this specialized function. Note this merge function does not properly
+ * handle null values.
+ *
+ * @param $gimp
+ * @param $dom
+ * @return array
+ */
+function sugarLangArrayMerge($gimp, $dom)
+{
+	if(is_array($gimp) && is_array($dom))
+    {
+		foreach($dom as $domKey => $domVal)
+        {
+			if(isset($gimp[$domKey]))
+            {
+				if(is_array($domVal))
+                {
+					$tempArr = array();
+                    foreach ( $domVal as $domArrKey => $domArrVal )
+                        $tempArr[$domArrKey] = $domArrVal;
+                    foreach ( $gimp[$domKey] as $gimpArrKey => $gimpArrVal )
+                        if ( !isset($tempArr[$gimpArrKey]) )
+                            $tempArr[$gimpArrKey] = $gimpArrVal;
+                    $gimp[$domKey] = $tempArr;
+				}
+                else
+                {
+					$gimp[$domKey] = $domVal;
+				}
+			}
+            else
+            {
+				$gimp[$domKey] = $domVal;
+			}
+		}
+	}
+    // if the passed value for gimp isn't an array, then return the $dom
+    elseif(is_array($dom))
+    {
+        return $dom;
+    }
+
+	return $gimp;
+}
 /**
  * like array_merge() but will handle array elements that are themselves arrays;
  * PHP's version just overwrites the element with the new one.
