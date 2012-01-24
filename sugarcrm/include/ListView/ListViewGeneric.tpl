@@ -81,7 +81,7 @@
 {/if}
 {$multiSelectData}
 
-{if hideTable == false}
+{if $hideTable == false}
 	<table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
 	{include file='include/ListView/ListViewPagination.tpl'}
 	<tr height='20'>
