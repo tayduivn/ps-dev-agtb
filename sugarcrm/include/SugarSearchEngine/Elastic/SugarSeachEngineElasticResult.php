@@ -64,6 +64,16 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
         return $this->elasticaResult->module;
     }
 
+    /**
+     * This function returns an array of highlighted key-value pairs.
+     *
+     * @param maxLen integer the maximum length of string in the returned array values
+     * @param maxHits integer the maximum number of hits to be returned in the array elements
+     * @param preTag string the tag to be used in front of the highlighted strings
+     * @param postTag string the tag to be used after the highlighted strings
+     *
+     * @return array of key value pairs
+     */
     public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
         $ret = array();
@@ -71,6 +81,7 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 
         // this is the word to be searched
         if (!isset($_REQUEST['q'])) {
+            $GLOBALS['log']->error('Query string q not found.');
             return $ret;
         }
         // looks like this is encoded, so decode it first
@@ -84,23 +95,19 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
         return $ret;
     }
 
-    //TODO: Jimmy do we still need this since it's also defined in the highlighter class?
+    /**
+     * Return a string that matches the auto complete search.
+     *
+     * @return string
+     */
     public function getAutoCompleteText()
     {
         $ret = '';
         $hit = $this->elasticaResult->getHit();
 
-        // this is the word to be searched
-        if (!isset($_REQUEST['query'])) {
-            return $ret;
-        }
-        // looks like this is encoded, so decode it first
-        $q = html_entity_decode(trim($_REQUEST['query']), ENT_QUOTES);
-
         if (isset($hit['_source']) && is_array($hit['_source'])) {
             $highlighter = new SugarSearchEngineElasticHighlighter();
-            $highlighter->setTags('<b>', '</b>');
-            $ret = $highlighter->getAutoCompleteText($hit['_source'], $q);
+            $ret = $highlighter->getAutoCompleteText($hit['_source']);
         }
 
         return $ret;
