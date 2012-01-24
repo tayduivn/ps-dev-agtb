@@ -489,8 +489,8 @@ class ListViewData {
         }
         
         $queryString = '';
-        if(array_key_exists("search_name_basic", $_GET)){
-        	$queryString = $_GET["search_name_basic"];
+        if(array_key_exists("search_name_basic", $_REQUEST)){
+        	$queryString = htmlentities($_REQUEST["search_name_basic"]);
         }
   
 		return array('data'=>$data , 'pageData'=>$pageData, 'query' => $queryString);
