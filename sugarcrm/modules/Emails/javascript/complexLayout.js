@@ -98,7 +98,7 @@ function complexLayoutInit() {
         	se.complexLayout = new YAHOO.widget.Layout("container", {
         		border:true,
                 hideOnLayout: true,
-                height: Dom.getViewportHeight() - (document.getElementById('header').clientHeight ) - 65,
+                height: Dom.getViewportHeight() - (document.getElementById('dcmenu').clientHeight ) - 65,
                 width: Dom.getViewportWidth() - 40,
                 units: [{
                 	position: "center",
