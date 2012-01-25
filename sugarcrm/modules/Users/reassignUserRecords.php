@@ -440,7 +440,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 		echo "<tr>\n";
 		echo "<td>\n";
 		if(! $workflow){
-			$affected_rows = $GLOBALS['db']->getAffectedRowCount();
+			$affected_rows = $GLOBALS['db']->getAffectedRowCount($res);
 			echo "{$mod_strings_users['LBL_UPDATE_FINISH']}: $affected_rows {$mod_strings_users['LBL_AFFECTED']}<BR>\n";
 		}
 		else{
