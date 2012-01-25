@@ -1011,7 +1011,12 @@ class Email extends SugarBean {
 			$GLOBALS['log']->debug('-------------------------------> Email called save()');
 
 			// handle legacy concatenation of date and time fields
-			if(empty($this->date_sent)) $this->date_sent = $this->date_start." ".$this->time_start;
+			//Bug 39503 - SugarBean is not setting date_sent when seconds missing
+ 			if(empty($this->date_sent)) {
+				global $timedate;
+				$date_sent_obj = $timedate -> fromString($this->date_start." ".$this->time_start;);
+				$this->date_sent = $date_sent_obj->asDb();
+			}
 
 			parent::save($check_notify);
 
