@@ -1080,6 +1080,19 @@ EOQ;
 		return $ret;
 	}
 
+    /**
+     * Returns all active and inactive users
+     * @return array All users
+     */
+
+    public static function getAllUsers()
+    {
+        $active_users = get_user_array(FALSE);
+        $inactive_users = get_user_array(FALSE, "Inactive");
+        $result = $active_users + $inactive_users;
+        asort($result);
+        return $result;
+    }
 
 	/**
 	 * When the user's reports to id is changed, this method is called.  This method needs to remove all
