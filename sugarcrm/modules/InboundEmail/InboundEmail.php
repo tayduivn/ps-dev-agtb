@@ -4678,7 +4678,9 @@ eoq;
 			// $sub2 is XX] xxxxxxxxxxxxxx
 			$sub3 = substr($sub2, 0, strpos($sub2, $close));
 
-			$r = $this->db->query("SELECT id FROM cases WHERE case_number = '{$sub3}'", true);
+            // filter out deleted records in order to create a new case
+            // if email is related to deleted one (bug #49840)
+            $r = $this->db->query("SELECT id FROM cases WHERE case_number = '{$sub3}' and deleted = 0", true);
 			$a = $this->db->fetchByAssoc($r);
 			if(!empty($a['id'])) {
 				return $a['id'];
