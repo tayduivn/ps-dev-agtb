@@ -479,12 +479,18 @@ SUGAR.gantt = function() {
 
 	    hideGanttRow: function(row)
 	    {
-	    	document.getElementById("gantt_row_"+row).style.display = "none";
+	    	if(document.getElementById("gantt_row_"+row))
+            {
+                document.getElementById("gantt_row_"+row).style.display = "none";
+            }
 	    },
 
 	    showGanttRow: function(row)
 	    {
-	    	document.getElementById("gantt_row_"+row).style.display = "";
+            if(document.getElementById("gantt_row_"+row))
+            {
+	    	    document.getElementById("gantt_row_"+row).style.display = "";
+            }
 	    },
 
 	    setProgress: function(task_num, progress){
@@ -534,7 +540,7 @@ SUGAR.gantt = function() {
             var mappedRowId = SUGAR.grid.getMappedRow(task_num);
 	        var mappedRow = document.getElementById('project_task_row_' + task_num);
             var row_id = 'gantt_row_'+mappedRowId;
-            row.setAttribute('id', 'gantt_row_'+ row_id);
+            row.setAttribute('id', row_id);
         	row.setAttribute('height', mappedRow ? mappedRow.offsetHeight : 28);
 
 	        //row.setAttribute('onMouseOver', 'SUGAR.gantt.focusRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
