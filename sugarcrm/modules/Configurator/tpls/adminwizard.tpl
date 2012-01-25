@@ -279,7 +279,7 @@ function disableReturnSubmission(e) {
                         <span id="other" class="yui-button yui-radio-button{if $mail_smtptype == 'other' || empty($mail_smtptype)} yui-button-checked{/if}">
                             <span class="first-child">
                                 <button type="button" name="mail_smtptype" value="other">
-                                    &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_TABGROUP_OTHER}&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_OTHER}&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
                             </span>
                         </span>

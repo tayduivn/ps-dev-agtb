@@ -2262,6 +2262,7 @@ $app_strings = array (
   'LBL_SMTPTYPE_GMAIL'                    => 'Gmail',
   'LBL_SMTPTYPE_YAHOO'                    => 'Yahoo! Mail',
   'LBL_SMTPTYPE_EXCHANGE'                 => 'Microsoft Exchange',
+    'LBL_SMTPTYPE_OTHER'                  => 'Other',
     'LBL_EMAIL_SPACER_MAIL_SERVER'          => '[ Remote Folders ]',
     'LBL_EMAIL_SPACER_LOCAL_FOLDER'         => '[ Sugar Folders ]',
     'LBL_EMAIL_SUBJECT'                     => 'Subject',
