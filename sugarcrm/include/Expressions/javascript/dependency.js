@@ -270,6 +270,21 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 		throw ("Circular Reference Detected");
 	}
 
+    // Check to see if it is a currency field and if we need to format it.
+    if ( typeof currencyFields != 'undefined' ) {
+        for ( var i = 0; i < currencyFields.length; i++ ) {
+            if ( currencyFields[i] == field.id ) {
+                // Precision isn't that often available, so unfortunately we have to hardcode it to 2 if we can't find it
+                var localPrecision = 2;
+                if ( typeof precision != 'undefined' ) {
+                    localPrecision = precision;
+                }
+                value = formatNumber(value,num_grp_sep,dec_sep,localPrecision,localPrecision);
+                break;
+            }
+        }
+    }
+
 	//Detect field types and add error handling.
 	if (Dom.hasClass(field, "imageUploader"))
 	{
