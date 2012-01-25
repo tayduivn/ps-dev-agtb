@@ -1080,6 +1080,19 @@ EOQ;
 		return $ret;
 	}
 
+	/**
+	 * When the user's reports to id is changed, this method is called.  This method needs to remove all
+	 * of the implicit assignements that were created based on this user, then recreated all of the implicit
+	 * assignments in the new location
+	 */
+	function update_team_memberships($old_reports_to_id) {
+
+		$team = new Team();
+		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
+	}
+	//END SUGARCRM flav=pro ONLY
+
+	
     /**
      * Returns all active and inactive users
      * @return array All users
@@ -1093,19 +1106,7 @@ EOQ;
         asort($result);
         return $result;
     }
-
-	/**
-	 * When the user's reports to id is changed, this method is called.  This method needs to remove all
-	 * of the implicit assignements that were created based on this user, then recreated all of the implicit
-	 * assignments in the new location
-	 */
-	function update_team_memberships($old_reports_to_id) {
-
-		$team = new Team();
-		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
-	}
-	//END SUGARCRM flav=pro ONLY
-
+    	
 	function create_export_query($order_by, $where) {
 		include('modules/Users/field_arrays.php');
 
