@@ -92,33 +92,27 @@
                 check_form('ConfigureFTS');
                 return
             }
+
+            SUGAR.FTS.rsPanel = new YAHOO.widget.SimpleDialog("FTSPanel", {
+                                    modal: true,
+                                    width: "200px",
+                                    visible: true,
+                                    constraintoviewport: true,
+                                    loadingText: SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING"),
+                                    close: true
+                                });
+
+            var panel = SUGAR.FTS.rsPanel;
+            panel.setHeader(SUGAR.language.get('Administration','LBL_STATUS')) ;
+            panel.setBody(SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING"));
+            panel.render(document.body);
+            panel.show();
+            panel.center();
+
             var callback = {
                 success: function(o) {
                     var r = YAHOO.lang.JSON.parse(o.responseText);
-                    SUGAR.FTS.rsPanel = new YAHOO.widget.Panel("FTSPanel", {
-                                        modal: false,
-                                        visible: true,
-                                        constraintoviewport: true,
-                                        width	: "800px",
-                                        height : "600px",
-                                        close: true
-                                    });
-
-                                var panel = SUGAR.FTS.rsPanel;
-                                panel.setHeader(SUGAR.language.get('app_strings','LBL_STATUS')) ;
-                                panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none;marginheight="0" marginwidth="0" frameborder="0""></iframe>');
-                                panel.render(document.body);
-                                SUGAR.util.doWhen(
-                                                function(){
-                                                    var f = document.getElementById("ajaxErrorFrame");
-                                                    return f != null && f.contentWindow != null && f.contentWindow.document != null;
-                                                }, function(){
-                                                    document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = r.status;
-                                                    window.setTimeout('throw "AjaxUI error parsing response"', 300);
-                                            });
-                                panel.show();
-                                panel.center();
-
+                    panel.setBody(r.status);
 
                 },
                 failure: function(o) {}

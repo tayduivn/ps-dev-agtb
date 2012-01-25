@@ -201,9 +201,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $timeOutValue = $this->_client->getConfig('timeout');
         try
         {
-            $this->_client->setConfigValue('timeout', 3);
+            $this->_client->setConfigValue('timeout', 2);
             $results = $this->_client->getStatus()->getServerStatus();
-            $results = json_encode($results);
+            if(!empty($results['ok']) )
+                $results = $GLOBALS['app_strings']['LBL_EMAIL_SUCCESS'];
+            else
+                $results = json_encode($results);
         }
         catch(Exception $e)
         {
