@@ -186,7 +186,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $index->addDocuments($batchedDocs);
             }
         }
-        //TODO: Add a mechanism to handle failures here.
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Error performing bulk update operation: {$e->getMessage()}");
@@ -199,16 +198,20 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function getServerStatus()
     {
+        $timeOutValue = $this->_client->getConfig('timeout');
         try
         {
-            $results = json_encode($this->_client->getStatus()->getServerStatus());
+            $this->_client->setConfigValue('timeout', 3);
+            $results = $this->_client->getStatus()->getServerStatus();
+            $results = json_encode($results);
         }
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to get server status with error: {$e->getMessage()}");
             $results = $e->getMessage();
         }
-
+        //Reset previous timeout value.
+        $this->_client->setConfigValue('timeout', $timeOutValue);
         return $results;
     }
 
