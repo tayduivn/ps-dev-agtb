@@ -239,12 +239,12 @@ var resources = new Array();
 						</select>
 					</td>
 					<td>					
-						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_start_{$TASK->project_task_id} id=date_start_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}');"
-							 onBlur="SUGAR.grid.processStartDate(this, '{$TASK->project_task_id}');" type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_start}"> 
+						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_start_{$TASK->project_task_id} id=date_start_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}'); SUGAR.grid.processStartDate(this, '{$TASK->project_task_id}');"
+							 type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_start}"> 
 					</td>	
 					<td>					
-						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_finish_{$TASK->project_task_id} id=date_finish_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}');"
-							onBlur="SUGAR.grid.processFinishDate(this, '{$TASK->project_task_id}');" type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_finish}"> 
+						<input {if !$CANEDIT}readonly="readonly"{/if} name=date_finish_{$TASK->project_task_id} id=date_finish_{$TASK->project_task_id} style="border:0" onchange="parseDate(this, '{$CALENDAR_DATEFORMAT}'); SUGAR.grid.processFinishDate(this, '{$TASK->project_task_id}');"
+							type="text" tabindex='2' size='11' maxlength='10' value="{$TASK->date_finish}"> 
 					</td>	
 					<td>
 						<input  {if !$CANEDIT}readonly="readonly"{/if} type=text size=10  style='border:0' name=predecessors_{$TASK->project_task_id} id=predecessors_{$TASK->project_task_id} value="{$TASK->predecessors}"
