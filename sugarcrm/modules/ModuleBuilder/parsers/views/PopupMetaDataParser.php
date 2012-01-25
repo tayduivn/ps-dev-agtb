@@ -168,7 +168,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     		}
     	}
     	$out .= ");\n";
-    	file_put_contents($writeFile, $out);
+    	sugar_file_put_contents($writeFile, $out);
     	
     	//return back mod strings
     	$GLOBALS['mod_strings'] = $oldModStrings;

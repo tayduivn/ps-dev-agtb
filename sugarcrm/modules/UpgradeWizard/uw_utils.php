@@ -4456,7 +4456,7 @@ function upgrade_connectors($path='') {
        require($filePath);
        $fileContents = file_get_contents($filePath);
        $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
-       file_put_contents($filePath, $out);
+       sugar_file_put_contents($filePath, $out);
     }
 
     logThis('End upgrade_connectors', $path);

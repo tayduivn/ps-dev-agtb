@@ -37,6 +37,33 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class ImportCacheFiles
 {
+    /**#@+
+     * Cache file names
+     */
+    const FILE_MISCELLANEOUS      = 'misc';
+    const FILE_DUPLICATES         = 'dupes';
+    const FILE_DUPLICATES_DISPLAY = 'dupesdisplay';
+    const FILE_ERRORS             = 'error';
+    const FILE_ERROR_RECORDS      = 'errorrecords';
+    const FILE_ERROR_RECORDS_ONLY = 'errorrecordsonly';
+    const FILE_STATUS             = 'status';
+    /**#@-*/
+
+    /**
+     * List of all cache file names
+     * 
+     * @var array
+     */
+    protected static $all_files = array(
+        self::FILE_MISCELLANEOUS,
+        self::FILE_DUPLICATES,
+        self::FILE_DUPLICATES_DISPLAY,
+        self::FILE_ERRORS,
+        self::FILE_ERROR_RECORDS,
+        self::FILE_ERROR_RECORDS_ONLY,
+        self::FILE_STATUS,
+    );
+
     /**
      * Get import directory name
      * @return string
@@ -52,7 +79,7 @@ class ImportCacheFiles
      * @param  string $type string to prepend to the filename, typically to indicate the file's use
      * @return string filename
      */
-    private static function _createFileName($type = 'misc')
+    private static function _createFileName($type = self::FILE_MISCELLANEOUS)
     {
         global $current_user;
         $importdir = self::getImportDir();
@@ -63,13 +90,35 @@ class ImportCacheFiles
     }
 
     /**
+     * Ensure that all cache files are writable or can be created
+     * 
+     * @return bool
+     */
+    public static function ensureWritable()
+    {
+        foreach (self::$all_files as $type)
+        {
+            $filename = self::_createFileName($type);
+            if (file_exists($filename) && !is_writable($filename))
+            {
+                return false;
+            }
+            elseif (!is_writable(dirname($filename)))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns the duplicates filename (the ones used to download to csv file
      *
      * @return string filename
      */
     public static function getDuplicateFileName()
     {
-        return self::_createFileName("dupes");
+        return self::_createFileName(self::FILE_DUPLICATES);
     }
 
     /**
@@ -79,7 +128,7 @@ class ImportCacheFiles
      */
     public static function getDuplicateFileDisplayName()
     {
-        return self::_createFileName("dupesdisplay");
+        return self::_createFileName(self::FILE_DUPLICATES_DISPLAY);
     }
 
     /**
@@ -89,7 +138,7 @@ class ImportCacheFiles
      */
     public static function getErrorFileName()
     {
-        return self::_createFileName("error");
+        return self::_createFileName(self::FILE_ERRORS);
     }
 
     /**
@@ -99,7 +148,7 @@ class ImportCacheFiles
      */
     public static function getErrorRecordsFileName()
     {
-        return self::_createFileName("errorrecords");
+        return self::_createFileName(self::FILE_ERROR_RECORDS);
     }
 
     /**
@@ -109,7 +158,7 @@ class ImportCacheFiles
      */
     public static function getErrorRecordsWithoutErrorFileName()
     {
-        return self::_createFileName("errorrecordsonly");
+        return self::_createFileName(self::FILE_ERROR_RECORDS_ONLY);
     }
 
     /**
@@ -119,7 +168,7 @@ class ImportCacheFiles
      */
     public static function getStatusFileName()
     {
-        return self::_createFileName("status");
+        return self::_createFileName(self::FILE_STATUS);
     }
 
     /**

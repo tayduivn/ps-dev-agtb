@@ -849,7 +849,8 @@
 	
 
 	CAL.open_edit_dialog = function (params){
-												
+						// Reset display parameter, if the delete button was hidden 
+						CAL.get("btn-delete").style.display = "";
 						CAL.editDialog.show();		
 						
 						var nodes = CAL.query("#cal-tabs li a");
@@ -1508,6 +1509,8 @@
 			var e,user_id,user_name;
 			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;														
 			CAL.open_edit_dialog();
+
+			// Hide and disable delete button when creating a new record 
 			CAL.get("btn-delete").setAttribute("disabled","disabled");
 			CAL.get("btn-delete").style.display = "none";
 			
@@ -1616,15 +1619,14 @@
 										CAL.add_item(res);
 										CAL.update_vcal();											 											 				
 										CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
-										CAL.get("send_invites").value = "";											
+										if(e = CAL.get("send_invites"))
+											e.removeAttribute("checked");
+
+										ajaxStatus.hideStatus();		
 										
 										// If new data is added with Apply, show the Delete button
 										CAL.get("btn-delete").removeAttribute("disabled");
-										CAL.get("btn-save").removeAttribute("disabled");
-										CAL.get("btn-apply").removeAttribute("disabled");
 										CAL.get("btn-delete").style.display = "";
-																				
-										ajaxStatus.hideStatus();											
 									}else{
 										alert(CAL.lbl_error_saving);
 										ajaxStatus.hideStatus();

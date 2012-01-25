@@ -3609,7 +3609,7 @@ class InboundEmail extends SugarBean {
     		// deal with attachment encoding and decode the text string
 			$msgPart = $this->handleTranserEncoding($msgPartRaw, $part->encoding);
 
-			if(file_put_contents($uploadDir.$fileName, $msgPart)) {
+			if(sugar_file_put_contents($uploadDir.$fileName, $msgPart)) {
 				$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$attach->filename);
 			} else {
                 $GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$attach->filename ." - temp file target: [ {$uploadDir}{$fileName} ]");
@@ -4341,7 +4341,7 @@ class InboundEmail extends SugarBean {
 
 		$bin = convert_uudecode($UUEncode);
 		$filename = "upload://{$attach->id}";
-		if(file_put_contents($filename, $bin)) {
+		if(sugar_file_put_contents($filename, $bin)) {
     		$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$filename);
 		} else {
     		$GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$filename);

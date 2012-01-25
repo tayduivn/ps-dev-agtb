@@ -812,36 +812,43 @@ class Importer
         if ( !defined('E_USER_DEPRECATED') )
             define('E_USER_DEPRECATED','16384');
 
-        // check to see if current reporting level should be included based upon error_reporting() setting, if not
-        // then just return
-        if ( !(error_reporting() & $errno) )
-            return true;
-
+        $isFatal = false;
         switch ($errno)
         {
             case E_USER_ERROR:
-                echo "ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
-                exit(1);
+                $message = "ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                $isFatal = true;
                 break;
             case E_USER_WARNING:
             case E_WARNING:
-                echo "WARNING: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                $message = "WARNING: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 break;
             case E_USER_NOTICE:
             case E_NOTICE:
-                echo "NOTICE: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                $message = "NOTICE: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 break;
             case E_STRICT:
             case E_DEPRECATED:
             case E_USER_DEPRECATED:
                 // don't worry about these
-                //echo "STRICT ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                // $message = "STRICT ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                $message = "";
                 break;
             default:
-                echo "Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                $message = "Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 break;
         }
 
-        return true;
+        // check to see if current reporting level should be included based upon error_reporting() setting, if not
+        // then just return
+        if (error_reporting() & $errno)
+        {
+            echo $message;
+        }
+
+        if ($isFatal)
+        {
+            exit(1);
+        }
     }
 }

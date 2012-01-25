@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,41 +21,38 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once 'include/DashletContainer/Containers/DCAbstract.php';
-require_once 'include/DashletContainer/Containers/DCMenu.php';
 
-class DCMenuTest extends Sugar_PHPUnit_Framework_TestCase
-{
+/**
+ * This tests checks to see that the get_user_array function correctly returns results
+ * @author Collin Lee
+ * 
+ */
+class Bug49397est extends Sugar_PHPUnit_Framework_TestCase {
 
-    public function testGetMenuItem()
-    {
-        $dcMenu = new DCMenuMock();
-        $menuItem = $dcMenu->getMenuItem('Accounts');
-        global $sugar_config;
-        if(!empty($sugar_config['use_sprites']) && $sugar_config['use_sprites'])
-        {
-            $this->assertContains('spr_', $menuItem, "Did not contain Accounts sprite menu icon.");
-        } else {
-            $this->assertContains('icon_Accounts_bar_32.png', $menuItem, "Did not contain Accounts menu icon.");
-        }
+    var $user;
+    var $user2;
 
-        $account_mod_string = return_module_language($GLOBALS['current_language'], 'Accounts');
-        $regExp = '/' . $account_mod_string['LNK_NEW_ACCOUNT'] . '/';
-        $this->assertRegExp($regExp, $menuItem, "Did not contain {$regExp}");
+	public function setUp()
+	{
+       $this->user = SugarTestUserUtilities::createAnonymousUser();
+       $this->user2 = SugarTestUserUtilities::createAnonymousUser();
     }
 
-}
-
-
-class DCMenuMock extends DCMenu
-{
-    public function getMenuItem($module)
+    public function tearDown()
     {
-        return parent::getMenuItem($module);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($this->user);
+        unset($this->user2);
     }
 
-    public function getDynamicMenuItem($def)
+    public function testGetUserArray()
     {
-        return parent::getDynamicMenuItem($def);
+        $users1 = get_user_array(false, '');
+        $users2 = get_user_array(false, '', '', true, "{$this->user->user_name}");
+        $users3 = get_user_array(false, '', '', true, "{$this->user2->user_name}");
+        $this->assertNotEquals(count($users1), count($users2), 'get_user_array does not filter correctly on cache');
+        $this->assertEquals(1, count($users2), 'get_user_array does not filter correctly on cache');
+        $this->assertEquals(1, count($users3), 'get_user_array does not filter correctly on cache');
     }
+
 }

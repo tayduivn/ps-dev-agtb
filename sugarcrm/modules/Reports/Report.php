@@ -1112,7 +1112,8 @@ return str_replace(' > ','_',
                         $id_column['type'] = 'id';
                         $id_column['table_key'] = $display_column['table_key'];
                         if (preg_match('/_cstm/', $display_column['table_alias']) > 0) {
-                            $id_column['table_alias'] = strtolower($this->module);
+                            // bug #49475
+                            $id_column['table_alias'] = $this->focus->table_name;
                         } else {
                             $id_column['table_alias'] = $display_column['table_alias'];
                         }
@@ -2031,7 +2032,7 @@ return str_replace(' > ','_',
 
             $contents = ob_get_clean();
             if (is_writable(sugar_cached('modules/'))) {
-                file_put_contents($cache, $contents);
+                sugar_file_put_contents($cache, $contents);
             }
             // Only set this if we're not being called from the home page.
             // Charts on the home page go through this code as well and

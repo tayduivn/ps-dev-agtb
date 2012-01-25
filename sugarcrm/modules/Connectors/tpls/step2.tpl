@@ -35,9 +35,9 @@
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td align="left" style="padding-bottom: 2px;">
-		<input title="{$mod.LBL_BACK}" accessKey="{$mod.LBL_BACK}" class="button" onclick="this.form.action.value='Step1';" type="submit" value="{$mod.LBL_BACK}">&nbsp;
-		<input title="{$mod.LBL_SAVE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" type="submit" name="button" value="{$mod.LBL_SAVE}">&nbsp;
-		<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='DetailView'; this.form.module.value='{$merge_module}'; this.form.record.value='{$record->id}'" type="submit" name="button" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  ">&nbsp;
+		<input id="connectors_back_top" title="{$mod.LBL_BACK}" accessKey="{$mod.LBL_BACK}" class="button" onclick="this.form.action.value='Step1';" type="submit" value="{$mod.LBL_BACK}">&nbsp;
+		<input id="connectors_save_top" title="{$mod.LBL_SAVE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" type="submit" value="{$mod.LBL_SAVE}">&nbsp;
+		<input id="connectors_cancel_top" title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='DetailView'; this.form.module.value='{$merge_module}'; this.form.record.value='{$record->id}'" type="submit" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  ">&nbsp;
 		<input class="button" onclick="smart_copy();" type="button" name="smartCopy" value="{$MOD.LBL_SMART_COPY}"/>
 		</td>
 		<td align="right" nowrap></td>
@@ -96,9 +96,9 @@
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td align="left" style="padding-bottom: 2px;">
-		<input title="{$mod.LBL_BACK}" accessKey="{$mod.LBL_BACK}" class="button" onclick="this.form.action.value='Step1';" type="submit" value="{$mod.LBL_BACK}">&nbsp;
-		<input title="{$mod.LBL_SAVE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" type="submit" name="button" value="{$mod.LBL_SAVE}">&nbsp;
-		<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='DetailView'; this.form.module.value='{$merge_module}'; this.form.record.value='{$record->id}'" type="submit" name="button" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  ">&nbsp;
+		<input id="connectors_back_bottom" title="{$mod.LBL_BACK}" accessKey="{$mod.LBL_BACK}" class="button" onclick="this.form.action.value='Step1';" type="submit" value="{$mod.LBL_BACK}">&nbsp;
+		<input id="connectors_save_bottom" title="{$mod.LBL_SAVE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" type="submit" value="{$mod.LBL_SAVE}">&nbsp;
+		<input id="connectors_cancel_bottom" title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='DetailView'; this.form.module.value='{$merge_module}'; this.form.record.value='{$record->id}'" type="submit" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  ">&nbsp;
 		<input class="button" onclick="smart_copy();" type="button" name="smartCopy" value="{$MOD.LBL_SMART_COPY}"/>
 		</td>
 		<td align="right" nowrap></td>

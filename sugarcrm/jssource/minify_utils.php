@@ -300,7 +300,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 			        fputs( $fh, $out);
 			        fclose( $fh );
 				} else {
-				    file_put_contents($to_path, $out);
+				    sugar_file_put_contents($to_path, $out);
 				}
 
             }else{

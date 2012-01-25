@@ -276,6 +276,12 @@ EOHTML;
 				$keep = false;
 				$searchFields[$moduleName][$k]['value'] = $query;
 
+                //If force_unifiedsearch flag is true, we are essentially saying this field must be searched on (e.g. search_name in SearchFields.php file)
+                if(!empty($searchFields[$moduleName][$k]['force_unifiedsearch']))
+                {
+                    continue;
+                }
+
 				if(!empty($GLOBALS['dictionary'][$class]['unified_search'])){
 					if(empty($GLOBALS['dictionary'][$class]['fields'][$k]['unified_search'])){
 
@@ -580,7 +586,7 @@ EOHTML;
 			 	}
 			 }
 
-			 file_put_contents($user_action_map_filename,'<?php $action_list='.var_export($action_list,true). '; ?>');
+			 sugar_file_put_contents($user_action_map_filename,'<?php $action_list='.var_export($action_list,true). '; ?>');
 		 }
 		 else {
 		 	require ($user_action_map_filename);

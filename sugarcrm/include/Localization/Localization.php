@@ -293,9 +293,18 @@ class Localization {
 	 * @param bean object A SugarBean
 	 * @return bean object The bean with translated strings
 	 */
-    function prepBeanForExport($bean) {
-        foreach($bean->field_defs as $k => $field) {
-			$bean->$k = $this->translateCharset($bean->$k, 'UTF-8', $this->getExportCharset());
+    function prepBeanForExport($bean)
+    {
+        foreach($bean->field_defs as $k => $field)
+        {
+            if (is_string($bean->$k))
+            {
+			   // $bean->$k = $this->translateCharset($bean->$k, 'UTF-8', $this->getExportCharset());
+            }
+            else
+            {
+                $bean->$k = '';
+            }
         }
 
         return $bean;

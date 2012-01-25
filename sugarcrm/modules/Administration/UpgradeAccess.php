@@ -54,7 +54,7 @@ if(file_exists($htaccess_file)){
 if(substr($contents, -1) != "\n") {
     $restrict_str = "\n".$restrict_str;
 }
-$status =  file_put_contents($htaccess_file, $contents . $restrict_str);
+$status =  sugar_file_put_contents($htaccess_file, $contents . $restrict_str);
 if( !$status ){
     echo '<p>' . $mod_strings['LBL_HT_NO_WRITE'] . "<span class=stop>{$htaccess_file}</span></p>\n";
     echo '<p>' . $mod_strings['LBL_HT_NO_WRITE_2'] . "</p>\n";
@@ -88,7 +88,7 @@ if(file_exists($uploadHta) && filesize($uploadHta)) {
 		    $oldHtaccess .= "\n";
 			$oldHtaccess .= $denyAll;
 		}
-		if(!file_put_contents($uploadHta, $oldHtaccess)) {
+		if(!sugar_file_put_contents($uploadHta, $oldHtaccess)) {
 		    $htaccess_failed = true;
 		}
 	} else {
@@ -96,7 +96,7 @@ if(file_exists($uploadHta) && filesize($uploadHta)) {
 	}
 } else {
 	// no .htaccess yet, create a fill
-	if(!file_put_contents($uploadHta, $denyAll)) {
+	if(!sugar_file_put_contents($uploadHta, $denyAll)) {
 		$htaccess_failed = true;
 	}
 }

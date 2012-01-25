@@ -251,7 +251,7 @@ class SugarFieldBase {
                     // Can't find a function template, just use the base
                     $tpl = $this->findTemplate('DetailViewFunction');
                 }
-                return "<span id='{$vardef['name']}'>" . $this->fetch($tpl) . '</span>';
+                return "<span id='{$vardef['name']}_span'>" . $this->fetch($tpl) . '</span>';
             } else {
                 return '{sugar_run_helper include="'.$includeFile.'" func="'.$funcName.'" bean=$bean field="'.$fieldName.'" value=$fields.'.$fieldName.'.value displayType="'.$displayType.'"}';
             }

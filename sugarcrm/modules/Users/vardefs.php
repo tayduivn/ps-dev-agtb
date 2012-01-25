@@ -35,7 +35,7 @@ $dictionary['User'] = array(
             'dbType' => 'varchar',
             'len' => '60',
             'importable' => 'required',
-            'required' => false,
+            'required' => true,
             'studio' => array(
                'no_duplicate' => true,
                'editview' => false,
@@ -75,10 +75,10 @@ $dictionary['User'] = array(
             'name' => 'system_generated_password',
             'vname' => 'LBL_SYSTEM_GENERATED_PASSWORD',
             'type' => 'bool',
-            'required' => false,
+            'required' => true,
             'reportable' => false,
             'massupdate' => false,
-            'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
+            'studio' => array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false),
         ) ,
 
         'pwd_last_changed' => array(
@@ -208,13 +208,15 @@ $dictionary['User'] = array(
             'name' => 'date_entered',
             'vname' => 'LBL_DATE_ENTERED',
             'type' => 'datetime',
-            'required' => false,
+            'required' => true,
+            'studio' => array('editview' => false, 'quickcreate' => false, 'wirelesseditview' => false),
         ) ,
         'date_modified' => array(
             'name' => 'date_modified',
             'vname' => 'LBL_DATE_MODIFIED',
             'type' => 'datetime',
-            'required' => false,
+            'required' => true,
+            'studio' => array('editview' => false, 'quickcreate' => false, 'wirelesseditview' => false),
         ) ,
         'modified_user_id' => array(
             'name' => 'modified_user_id',
@@ -305,7 +307,7 @@ $dictionary['User'] = array(
             'len' => 100,
             'options' => 'user_status_dom',
             'importable' => 'required',
-            'required' => false,
+            'required' => true,
         ) ,
         'address_street' => array(
             'name' => 'address_street',
@@ -416,7 +418,7 @@ $dictionary['User'] = array(
 				'id_name' => 'team_id',
 				'vname' => 'LBL_TEAMS',
 				'type' => 'relate',
-	            'required' => false,
+	            'required' => true,
 				'table' => 'teams',
 				'isnull' => 'true',
 				'module' => 'Teams',
@@ -426,7 +428,7 @@ $dictionary['User'] = array(
 				'source' => 'non-db',
 				'len' => 36,
 				'custom_type' => 'teamset',
-                'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
+                'studio' => array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false),
 			),
 			'team_link' =>
 		    array (

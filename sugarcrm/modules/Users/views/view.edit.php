@@ -57,6 +57,7 @@ var $useForSubpanel = true;
         if ( $userType != 'Regular' ) {
             $this->type = $oldType;
         }
+
         return $metadataFile;
     }
 
@@ -69,11 +70,7 @@ var $useForSubpanel = true;
             $this->ss->assign('RETURN_MODULE',$_REQUEST['return_module']);
         }
 
-        //lets set the return values
-        $this->ss->assign('IS_ADMIN',false);
-        if($current_user->is_admin){
-            $this->ss->assign('IS_ADMIN',true);
-        }
+        $this->ss->assign('IS_ADMIN', $current_user->is_admin ? true : false);
 
         //make sure we can populate user type dropdown.  This usually gets populated in predisplay unless this is a quickeditform
         if(!isset($this->fieldHelper)){

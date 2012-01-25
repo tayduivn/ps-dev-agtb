@@ -122,10 +122,16 @@ class Person extends Basic
 	
 
 	function save($check_notify=false) {
-		$this->add_address_streets('primary_address_street');
-		$this->add_address_streets('alt_address_street');
+		//If we are saving due to relationship changes, don't bother trying to update the emails
+        if(!empty($GLOBALS['resavingRelatedBeans']))
+        {
+            parent::save($check_notify);
+            return $this->id;
+        }
+        $this->add_address_streets('primary_address_street');
+        $this->add_address_streets('alt_address_street');
         $ori_in_workflow = empty($this->in_workflow) ? false : true;
-		$this->emailAddress->handleLegacySave($this, $this->module_dir);
+        $this->emailAddress->handleLegacySave($this, $this->module_dir);
         parent::save($check_notify);
         $override_email = array();
         if(!empty($this->email1_set_in_workflow)) {

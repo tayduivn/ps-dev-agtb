@@ -129,11 +129,6 @@ class ReportsViewBuildreportmoduletree extends SugarView
     protected function _populateNodeItem($bean_name,$link_module,$linked_field)
     {
         $node = array();
-
-        if (isset($GLOBALS['app_list_strings']['moduleList'][$linked_field['label']])) {
-            $linked_field['label'] = $GLOBALS['app_list_strings']['moduleList'][$linked_field['label']];
-        }
-
         $node['text'] = $linked_field['label'];
         $node['href'] = "javascript:SUGAR.reports.populateFieldGrid('". $link_module . "','".$linked_field['relationship']."','".$bean_name."','".str_replace(array('&#039;', '&#39;'), "\'", $linked_field['label'])."');";
         $node['leaf'] = false;
@@ -141,7 +136,6 @@ class ReportsViewBuildreportmoduletree extends SugarView
         $node['relationship_name'] = $linked_field['relationship'];
         $node['link_name'] = $linked_field['name'];
         $node['link_module'] = $link_module;
-        
         return $node;
     }
 }
