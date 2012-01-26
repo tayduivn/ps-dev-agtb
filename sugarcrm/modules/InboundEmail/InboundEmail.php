@@ -3262,7 +3262,7 @@ class InboundEmail extends SugarBean {
 
 				for($i=1; $i<count($exValue); $i++) {
 					$exContent = explode('=', $exValue[$i]);
-					$newValue[trim($exContent[0])] = trim($exContent[1]);
+					$newValue[trim($exContent[0])] = trim($exContent[1], "\t \"");
 				}
 				$value = $newValue;
 			}
