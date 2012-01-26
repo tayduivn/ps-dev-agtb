@@ -234,7 +234,7 @@ class ListViewData {
 		$params['include_custom_fields'] = (on by default)
         $params['custom_XXXX'] = append custom statements to query
 	 * @param string:'id' $id_field
-	 * @return array('data'=> row data 'pageData' => page data information
+	 * @return array('data'=> row data, 'pageData' => page data information, 'query' => original query string)
 	 */
 	function getListViewData($seed, $where, $offset=-1, $limit = -1, $filter_fields=array(),$params=array(),$id_field = 'id') {
         global $current_user;
