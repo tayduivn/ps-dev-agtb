@@ -37,6 +37,7 @@ class ViewFts extends SugarView
         {
             $this->options = array('show_title'=> true,'show_header'=> true,'show_footer'=> true,'show_javascript'=> true,'show_subpanels'=> false,'show_search'=> false);
             $this->templateName = 'fts_full.tpl';
+
         }
         else
         {
@@ -62,19 +63,19 @@ class ViewFts extends SugarView
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
 
         $query_encoded = urlencode($trimmed_query);
-        $ss = new Sugar_Smarty();
-        //$ss->assign('displayResults', $displayResults);
-        //$ss->assign('displayMoreForModule', $displayMoreForModule);
-        $ss->assign('queryEncoded', $query_encoded);
-        $ss->assign('resultSet', $rs);
-        $ss->assign('appStrings', $GLOBALS['app_strings']);
-        $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
+
+        $this->ss->assign('queryEncoded', $query_encoded);
+        $this->ss->assign('resultSet', $rs);
+        $this->ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $template = "include/MVC/View/tpls/{$this->templateName}";
         if(file_exists("custom/$template"))
         {
             $template = "custom/$template";
         }
-        echo $ss->fetch($template);
+        if( $this->fullView )
+            $this->ss->assign('filterModules', array('Contacts' => 'Kontactor', 'Leads' => 'LEADS'));
+
+        echo $this->ss->fetch($template);
     }
 }
 
