@@ -1075,7 +1075,6 @@
 					if(CAL.record_editable){
 						CAL.get("btn-save").removeAttribute("disabled");
 						CAL.get("btn-delete").removeAttribute("disabled");
-						CAL.get("btn-apply").removeAttribute("disabled");
 						CAL.get("btn-send-invites").removeAttribute("disabled");
 					}
 				}
@@ -1169,7 +1168,6 @@
 			CAL.get("form_content").style.display = "none";
 		
 			CAL.get("btn-delete").setAttribute("disabled","disabled");			
-			CAL.get("btn-apply").setAttribute("disabled","disabled");
 			CAL.get("btn-save").setAttribute("disabled","disabled");
 			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
 			// Reset display parameter, if the delete button was hidden 
@@ -1236,7 +1234,6 @@
 							if(CAL.record_editable){
 								CAL.get("btn-save").removeAttribute("disabled");
 								CAL.get("btn-delete").removeAttribute("disabled");
-								CAL.get("btn-apply").removeAttribute("disabled");
 								CAL.get("btn-send-invites").removeAttribute("disabled");
 							}														
 							
@@ -1428,7 +1425,6 @@
 	CAL.load_create_form = function (params){
 	
 			CAL.get("btn-delete").setAttribute("disabled","disabled");			
-			CAL.get("btn-apply").setAttribute("disabled","disabled");
 			CAL.get("btn-save").setAttribute("disabled","disabled");
 			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
 			CAL.get("btn-delete").style.display = "";	
@@ -1473,7 +1469,6 @@
 								CAL.fill_repeat_tab(res.repeat);
 							}							
 
-							CAL.get("btn-apply").removeAttribute("disabled");
 							CAL.get("btn-save").removeAttribute("disabled");
 							CAL.get("btn-send-invites").removeAttribute("disabled");
 								
@@ -1539,7 +1534,6 @@
 	
 	CAL.dialog_save = function(){
 						CAL.get("btn-save").setAttribute("disabled","disabled");
-						CAL.get("btn-apply").setAttribute("disabled","disabled");
 						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
@@ -1587,7 +1581,6 @@
 	
 	CAL.dialog_apply = function(){
 						CAL.get("btn-save").setAttribute("disabled","disabled");
-						CAL.get("btn-apply").setAttribute("disabled","disabled");
 						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
@@ -1624,7 +1617,6 @@
 										// If new data is added with Apply, show the Delete button
 										CAL.get("btn-delete").removeAttribute("disabled");
 										CAL.get("btn-save").removeAttribute("disabled");
-										CAL.get("btn-apply").removeAttribute("disabled");
 										CAL.get("btn-delete").style.display = "";
 																				
 										ajaxStatus.hideStatus();											

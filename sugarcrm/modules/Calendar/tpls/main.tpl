@@ -164,13 +164,7 @@
 				return false;	
 			CAL.get("send_invites").value = "1";							
 			CAL.dialog_save();	
-		});
-		
-		YAHOO.util.Event.on("btn-apply","click",function(){
-			if(!CAL.check_forms())
-				return false;
-			CAL.dialog_apply();
-		});	
+		});		
 				
 		YAHOO.util.Event.on("btn-delete","click",function(){
 			if(CAL.get("record").value != "")
@@ -242,7 +236,6 @@
 	<div id="cal-edit-buttons" class="ft">
 		<button id="btn-save" class="button" type="button">{$MOD.LBL_SAVE_BUTTON}</button>
 		<button id="btn-cancel" class="button" type="button">{$MOD.LBL_CANCEL_BUTTON}</button>
-		<button id="btn-apply" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>
 		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>		
 		<button id="btn-send-invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>
 	</div>
