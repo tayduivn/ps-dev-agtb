@@ -120,6 +120,15 @@ $mod_strings = array (
     'LBL_EXPORT_DATE_START' => 'Start Date and Time',
     'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
     'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
+    
+    // create invitee functionallity
+    'LBL_CREATE_INVITEE' => 'Create an invitee',
+    'LBL_CREATE_CONTACT' => 'As Contact',
+    'LBL_CREATE_LEAD' => 'As Lead',
+    'LBL_CREATE_AND_ADD' => 'Create & Add',
+    'LBL_CANCEL_CREATE_INVITEE' => 'Cancel',
+    'LBL_EMPTY_SEARCH_RESULT' => 'Sorry, no results were found. Please create an invitee below.',
+    'LBL_NO_ACCESS' => 'You have no access to create $module',
 );
 
 

@@ -909,6 +909,9 @@
 		if(e = CAL.get("list_div_win"))
 			e.style.display = "none";
 			
+		if(typeof SugarWidgetSchedulerSearch.hideCreateForm != 'undefined')
+			SugarWidgetSchedulerSearch.hideCreateForm();
+			
 		if(CAL.enable_repeat){			
 			CAL.reset_repeat_form();
 		}			
