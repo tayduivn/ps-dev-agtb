@@ -10,7 +10,7 @@
 <table width="100%">
 <tr><td width="10%"><b>Module</b></td><td width="90%"></td></tr>
 <tr valign="top">
-    <td>
+    <td id="moduleListTD">
         {foreach from=$filterModules item=moduleName key=module}
             <input type="checkbox" checked="checked" id="{$module}" name="module_filter" class="ftsModuleFilter">{$moduleName}<br>
         {/foreach}
@@ -54,9 +54,40 @@
 {literal}
 <script>
     $('.ftsModuleFilter').bind('click', function() {
-        console.log(this);
+        SUGAR.FTS.search();
     });
 
+    SUGAR.FTS = {
+
+        getSelectedModules: function()
+        {
+            var results = [];
+            $('#moduleListTD').find('.ftsModuleFilter:checked').each(function(i){
+                results.push($(this).attr('id'));
+            });
+            return results;
+        },
+        search: function()
+        {
+            var m = this.getSelectedModules();
+            var q = $("#ftsSearchField").val();
+            console.log(q);
+
+            $.ajax({
+            type: "POST",
+            url: "index.php",
+            data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m},
+            success: function(o)
+            {
+            $("#sugar_full_search_results").html( o );
+
+            console.log(o);
+            }
+            });
+
+
+        }
+    }
     function applyModuleFilter()
     {
 
