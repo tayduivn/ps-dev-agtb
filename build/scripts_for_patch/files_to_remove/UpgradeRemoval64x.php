@@ -52,6 +52,12 @@ if($version < '640')
 	$files[] = 'modules/Users/DetailView.php';
 	$files[] = 'modules/Users/EditView.php';
 
+    //Remove files from the modules/DocumentRevisions directory
+    $files[] = 'modules/DocumentRevisions/DetailView.php';
+    $files[] = 'modules/DocumentRevisions/DetailView.html';
+   	$files[] = 'modules/DocumentRevisions/EditView.html';
+   	$files[] = 'modules/DocumentRevisions/EditView.php';
+
     //Remove files from the include/database directory
     $files[] = 'include/database/MysqliHelper.php';
     $files[] = 'include/database/PearDatabase.php';
