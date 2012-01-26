@@ -288,7 +288,7 @@ if ($sync_module_index > -1) {
 
 	if (!isset ($_SESSION['sync_session'])) {
 		add_to_msg("Logging Into Server...");
-		$result = $soapclient->call('login', array ('user_auth' => array ('user_name' => $current_user->user_name, 'password' => $current_user->user_hash, 'version' => '1.5'), 'application_name' => 'MobileClient'));
+		$result = $soapclient->call('login', array ('user_auth' => sync_get_user_auth_data(), 'application_name' => 'MobileClient'));
 
 		if (!has_error($result)) {
 
