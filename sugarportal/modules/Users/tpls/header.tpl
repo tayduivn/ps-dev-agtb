@@ -29,7 +29,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 	<td style="padding-bottom: 2px;">
-		<input title="ChangePassword" class="button" onclick="document.location = '{$siteUrl}/index.php?module=Users&action=EditView&id={$data.id}'" type="submit" name="ChangePassword" value="{$app.LBL_EDIT_BUTTON}">
+		<input title="ChangePassword" class="button" onclick="document.location = 'index.php?module=Users&action=EditView&id={$data.id}';" type="submit" name="ChangePassword" value="{$app.LBL_EDIT_BUTTON}">
 	</td>
 	<td align='right'></td>
 	</tr>
