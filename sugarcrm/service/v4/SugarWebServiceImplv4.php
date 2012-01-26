@@ -843,7 +843,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         } else {
             $jobid = null;
         }
-        return array("job" => $jobid);
+        return array("results" => $jobid);
     }
 
     /**
@@ -863,7 +863,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $queue = new SugarJobQueue();
         $queue->runSchedulers();
         $queue->cleanup();
-        return array("result" => "ok");
+        return array("results" => "ok");
     }
 
     /**
@@ -883,7 +883,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $GLOBALS['log']->debug('Starting job $jobid execution as $clientid');
         require_once 'modules/SchedulersJobs/SchedulersJob.php';
         $result = SchedulersJob::runJobId($jobid, $clientid);
-        return array("result" => $result);
+        return array("results" => $result);
     }
 }
 
