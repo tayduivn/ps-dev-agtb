@@ -333,10 +333,39 @@ class Document extends SugarBean {
 		$document_fields['DOCUMENT_NAME_JAVASCRIPT'] = $GLOBALS['db']->quote($document_fields['DOCUMENT_NAME']);
 		return $document_fields;
 	}
-	function mark_relationships_deleted($id) {
-		//do nothing, this call is here to avoid default delete processing since
-		//delete.php handles deletion of document revisions.
+
+
+    /**
+     * mark_relationships_deleted
+     *
+     * Override method from SugarBean to handle deleting relationships associated with a Document.  This method will
+     * remove DocumentRevision relationships and then optionally delete Contracts depending on the version.
+     *
+     * @param $id String The record id of the Document instance
+     */
+	function mark_relationships_deleted($id)
+    {
+        $this->load_relationships('revisions');
+       	$revisions= $this->get_linked_beans('revisions','DocumentRevision');
+
+       	if (!empty($revisions) && is_array($revisions)) {
+       		foreach($revisions as $key=>$version) {
+       			UploadFile::unlink_file($version->id,$version->filename);
+       			//mark the version deleted.
+       			$version->mark_deleted($version->id);
+       		}
+       	}
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        //Remove the contracts relationships
+        $this->load_relationship('contracts');
+        if(!empty($this->contracts))
+        {
+            $this->contracts->delete($id);
+        }
+        //END SUGARCRM flav=pro ONLY
 	}
+
 
 	function bean_implements($interface) {
 		switch ($interface) {

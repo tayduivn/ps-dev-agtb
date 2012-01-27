@@ -49,31 +49,6 @@ if (isset($_REQUEST['object']) && $_REQUEST['object']="documentrevision") {
 	
 	UploadFile::unlink_file($_REQUEST['revision_id'],$_REQUEST['filename']);
 	
-} else {
-	//delete document and its revisions.
-	$focus = new Document();
-	$focus->retrieve($_REQUEST['record']);
-
-	$focus->load_relationships('revisions');	
-	$revisions= $focus->get_linked_beans('revisions','DocumentRevision');
-
-	if (!empty($revisions) && is_array($revisions)) {
-		foreach($revisions as $key=>$thisversion) {
-			UploadFile::unlink_file($thisversion->id,$thisversion->filename);
-			//mark the version deleted.
-			$thisversion->mark_deleted($thisversion->id);
-		}				
-	}
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    //Remove the contracts relationships
-    $focus->load_relationship('contracts');
-    if(!empty($focus->contracts))
-    {
-        $focus->contracts->delete($focus->id);
-    }
-    //END SUGARCRM flav=pro ONLY
-
 }
 
 $focus->mark_deleted($_REQUEST['record']);
