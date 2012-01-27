@@ -90,9 +90,14 @@ class ViewFts extends SugarView
                 echo $this->ss->fetch($rsTemplate);
                 return;
             }
-            $this->ss->assign('filterModules', $this->getFilterModules());
-
+            $enabledModules =  $this->getFilterModules();
+            $this->ss->assign('filterModules',$enabledModules);
+            $this->ss->assign('enabled_modules', json_encode($enabledModules));
+            $this->ss->assign('disabled_modules', json_encode(array()));
         }
+
+
+
         echo $this->ss->fetch($template);
     }
 
@@ -112,7 +117,7 @@ class ViewFts extends SugarView
             if($data['visible'] && ACLController::checkAccess($module, 'list', true))
             {
                 $moduleName  = isset($GLOBALS['app_list_strings']['moduleList'][$module] ) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module;
-                $results[$module] = $moduleName;
+                $results[] = array("module" => $module, 'label' => $moduleName);
             }
         }
 
