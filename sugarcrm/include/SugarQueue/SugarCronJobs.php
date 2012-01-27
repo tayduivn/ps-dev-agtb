@@ -37,7 +37,7 @@ class SugarCronJobs
      * Max time per cron run
      * @var int
      */
-    public $max_runtime = 30;
+    public $max_runtime = 60;
     /**
      * Min time between cron runs
      * @var int
@@ -55,6 +55,12 @@ class SugarCronJobs
      * @var SchedulersJob
      */
     public $job;
+
+    /**
+     * Is current queue run OK?
+     * @var bool
+     */
+    public $runOk = true;
 
     /**
      * This allows to disable schedulers cycle, e.g. for testing
@@ -107,11 +113,25 @@ class SugarCronJobs
     }
 
     /**
+     * What to do if one of the jobs failed
+     * @param SchedulersJob $job
+     */
+    protected function jobFailed($job)
+    {
+        $this->runOk = false;
+        $GLOBALS['log']->fatal("Job {$job->id} ({$job->name}) failed in CRON run");
+        if($this->verbose) {
+            printf(translate('ERR_JOB_FAILED_VERBOSE', 'SchedulersJobs'), $job->id, $job->name);
+        }
+    }
+
+    /**
      * Shutdown handler to be called if something breaks in the middle of the job
      */
     public function unexpectedExit()
     {
         if(!empty($this->job)) {
+            $this->jobFailed($this->job);
             $this->job->failJob(translate('ERR_FAILED', 'SchedulersJobs'));
             $this->job = null;
         }
@@ -145,11 +165,22 @@ class SugarCronJobs
             if(empty($this->job)) {
                 return;
             }
-            $this->job->runJob();
+            if(!$this->job->runJob()) {
+                // if some job fails, change run status
+                $this->jobFailed($this->job);
+            }
             if(time() >= $cutoff) {
                 break;
             }
         }
         $this->job = null;
+    }
+
+    /**
+     * Check if the queue run was fine
+     */
+    public function runOk()
+    {
+        return $this->runOk;
     }
 }

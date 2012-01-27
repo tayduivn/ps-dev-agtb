@@ -237,13 +237,13 @@ function make_sugar_config(&$sugar_config)
     	'search_wildcard_infront' => false,
         'search_wildcard_char' => '%',
 		'jobs' => array(
-		    'min_retry_interval' => 30, // 30 seconds minimal job retry
+		    'min_retry_interval' => 60, // minimal job retry delay
 		    'max_retries' => 5, // how many times to retry the job
 		    'timeout' => 86400, // how long a job may spend as running before being force-failed
 		),
 		"cron" => array(
 			'max_cron_jobs' => 10, // max jobs per cron schedule run
-		    'max_cron_runtime' => 30, // max runtime for cron jobs
+		    'max_cron_runtime' => 60, // max runtime for cron jobs
 		    'min_cron_interval' => 30, // minimal interval between cron jobs
 		),
 	);

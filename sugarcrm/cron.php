@@ -28,17 +28,6 @@ chdir(dirname(__FILE__));
 
 require_once('include/entryPoint.php');
 
-//Bug 27991 . Redirect to index.php if the request is not come from CLI.
-//$sapi_type = php_sapi_name();
-//if (substr($sapi_type, 0, 3) != 'cgi') {
-//    global $sugar_config;
-//	if(!empty($sugar_config['site_url'])){
-//		header("Location: ".$sugar_config['site_url'] . "/index.php");
-//	}else{
-//		sugar_die("Didn't find site url in your sugarcrm config file");
-//	}
-//}
-//End of #27991
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
     sugar_die("cron.php is CLI only.");
@@ -77,4 +66,4 @@ if(class_exists('DBManagerFactory')) {
 	$db->disconnect();
 }
 
-if($exit_on_cleanup) exit;
+if($exit_on_cleanup) exit($jobq->runOk()?0:1);
