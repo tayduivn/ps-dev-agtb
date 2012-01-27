@@ -48,7 +48,7 @@ foreach($history as $row)
     echo <<<EOQ
         <tr>
           <td vAlign="top"><IMG width="20" alt="{$row['module_name']}" src="{$moduleImage}" border="0"></td>
-          <td noWrap><A title="[Alt+$current_row]" accessKey="$current_row" href="index.php?module=$row[module_name]&action=DetailView&record=$row[item_id]">$row[item_summary]</A></td>
+          <td noWrap><A accessKey="$current_row" href="index.php?module=$row[module_name]&action=DetailView&record=$row[item_id]">$row[item_summary]</A></td>
         </tr>
 EOQ;
 }

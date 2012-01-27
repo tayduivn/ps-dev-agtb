@@ -164,7 +164,7 @@ if ($filter_object->calc_enclosed == 'on') $xtpl->assign("CALC_ENCLOSED", "check
 	$xtpl->assign("LIST_ORDER", $filter_object->list_order);
 
 if(!empty($is_edit) && $is_edit==true){
-	echo "<BR><input title=\"New [Alt+N]\" accesskey=\"N\" class=\"button\" onclick=\"return set_new_calc();\" name=\"New\" value=\"New\" type=\"submit\">";
+	echo "<BR><input title=\"New\" accesskey=\"N\" class=\"button\" onclick=\"return set_new_calc();\" name=\"New\" value=\"New\" type=\"submit\">";
 	echo "<h3> Edit Calculation Part: </h3>";
 	//$xtpl->assign("ADD_CALC_BUTTON", $add_calc_button);
 

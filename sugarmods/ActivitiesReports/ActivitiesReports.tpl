@@ -62,8 +62,8 @@
 		<input id="parent_name" class="sqsEnabled" type="text" autocomplete="off" value="{$object_name}" size="" tabindex="p" name="parent_name"/>
 		<input id="parent_id" type="hidden" value="{$object_id}" name="parent_id"/>
 		<input id="object_name" type="hidden" value="{$object_name}" name="object_name"/>
-		<input type="button" onclick='open_popup(document.EditView.parent_type.value, 600, 400, "", true, false, {ldelim}"call_back_function":"set_return","form_name":"EditView","field_to_name_array":{ldelim}"id":"parent_id","name":"parent_name"{rdelim}{rdelim}, "single", true);' value="Select" class="button" accesskey="T" title="Select [Alt+T]" tabindex="p" name="btn_parent_name"/>		
-		<input type="button" value='{$MOD.LBL_CLEAR}' onclick="clearFields(true);" class="button" accesskey="C" title="Clear [Alt+C]" tabindex="p" name="btn_clr_parent_name"/>
+		<input type="button" onclick='open_popup(document.EditView.parent_type.value, 600, 400, "", true, false, {ldelim}"call_back_function":"set_return","form_name":"EditView","field_to_name_array":{ldelim}"id":"parent_id","name":"parent_name"{rdelim}{rdelim}, "single", true);' value="Select" class="button" accesskey="T" title="Select" tabindex="p" name="btn_parent_name"/>
+		<input type="button" value='{$MOD.LBL_CLEAR}' onclick="clearFields(true);" class="button" accesskey="C" title="Clear" tabindex="p" name="btn_clr_parent_name"/>
 		</td>
 	</tr>	
 	<tr>
