@@ -117,8 +117,7 @@ class SugarFieldDatetime extends SugarFieldBase {
         }
 
         $offset = strlen(trim($inputData[$prefix.$field])) < 11 ? false : true;
-        if ($timedate->check_matching_format($inputData[$prefix.$field], TimeDate::DB_DATE_FORMAT) ||
-                $timedate->check_matching_format($inputData[$prefix.$field], TimeDate::DB_DATETIME_FORMAT)) {
+        if ($timedate->check_matching_format($inputData[$prefix.$field], TimeDate::DB_DATE_FORMAT)) {
             $bean->$field = $inputData[$prefix.$field];
         } else {
             $bean->$field = $timedate->to_db_date($inputData[$prefix.$field], $offset);

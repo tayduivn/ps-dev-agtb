@@ -24,13 +24,16 @@
 
 require_once ('include/SugarFields/Fields/Datetime/SugarFieldDatetime.php');
 
-class Bug49694aTest extends Sugar_PHPUnit_Framework_TestCase {
+/**
+ * @group Bug49691
+ */
+class Bug49691bTest extends Sugar_PHPUnit_Framework_TestCase {
 
     var $bean;
     var $sugarField;
 
     public function setUp() {
-        $this->bean = new Bug49694aMockBean();
+        $this->bean = new Bug49691bMockBean();
         $this->sugarField = new SugarFieldDatetime("Account");
     }
 
@@ -59,7 +62,7 @@ class Bug49694aTest extends Sugar_PHPUnit_Framework_TestCase {
     }
 }
 
-class Bug49694aMockBean {
+class Bug49691bMockBean {
     var $test_c;
 }
 ?>
