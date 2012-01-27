@@ -726,7 +726,6 @@ $app_list_strings = array (
   array (
     'Standard' => 'Quote',
     'Invoice' => 'Invoice',
-    'Terms' => 'Payment Terms'
   ),
   //END SUGARCRM flav=PRO ONLY
   //BEGIN SUGARCRM flav!=sales ONLY

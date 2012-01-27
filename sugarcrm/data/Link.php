@@ -676,7 +676,7 @@ class Link {
 					return;
 				}
 		}
-        $GLOBALS['log']->fatal("Relationship type = {$this->_relationship->relationship_type}");
+        $GLOBALS['log']->debug("Relationship type = {$this->_relationship->relationship_type}");
         foreach($keys as $key) {
 
 			//fetch the related record using the key and update.
