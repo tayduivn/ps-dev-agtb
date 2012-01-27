@@ -1094,8 +1094,10 @@ EOQ;
 
 	
     /**
+     * getAllUsers
+     *
      * Returns all active and inactive users
-     * @return array All users
+     * @return Array of all users in the system
      */
 
     public static function getAllUsers()
@@ -1106,7 +1108,7 @@ EOQ;
         asort($result);
         return $result;
     }
-    	
+
 	function create_export_query($order_by, $where) {
 		include('modules/Users/field_arrays.php');
 
@@ -2002,6 +2004,7 @@ EOQ;
         }
         if ($mail->Body == '' && $current_user->is_admin)
         {
+            global $app_strings;
             $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
             return $result;
         }

@@ -237,7 +237,7 @@ class ConnectorUtils
         $refresh = false
         )
     {
-        if ( isset($GLOBALS['sugar_config']['developer_mode']) ) {
+        if ( isset($GLOBALS['sugar_config']['developerMode']) ) {
             $refresh = true;
         }
 
