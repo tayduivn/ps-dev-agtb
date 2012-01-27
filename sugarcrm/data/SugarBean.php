@@ -4395,12 +4395,17 @@ function save_relationship_changes($is_update, $exclude=array())
 
                                 // disable row level security in order to be able
                                 // to retrieve related bean properties (bug #44928)
+
+                                //BEGIN SUGARCRM flav=pro ONLY
                                 $backup = $mod->disable_row_level_security;
                                 $mod->disable_row_level_security = true;
+                                //END SUGARCRM flav=pro ONLY
                                 $mod->retrieve($this->$id_name);
 
+                                //BEGIN SUGARCRM flav=pro ONLY
                                 // restore row level security settings
                                 $mod->disable_row_level_security = $backup;
+                                //END SUGARCRM flav=pro ONLY
                                 if (!empty($field['rname'])) {
                                     $this->$name = $mod->$field['rname'];
                                 } else if (isset($mod->name)) {
@@ -4747,8 +4752,10 @@ function save_relationship_changes($is_update, $exclude=array())
         // cn: bug 12270 - sensitive fields being passed arbitrarily in listViews
         $sensitiveFields = array('user_hash' => '');
 
+        //BEGIN SUGARCRM flav=pro ONLY
         //fixing bug #46230: Dependent Field values are not refreshed in subpanels & listviews
         $this->updateDependentField();
+        //END SUGARCRM flav=pro ONLY
         
         $return_array = Array();
         global $app_list_strings, $mod_strings;

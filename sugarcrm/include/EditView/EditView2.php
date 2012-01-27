@@ -422,9 +422,9 @@ class EditView
             $this->focus->team_name = (empty($this->focus->team_name) && !empty($this->focus->team_id))
                 ? Team::getTeamName($this->focus->team_id)
                 : $current_user->default_team_name;
-            //END SUGARCRM flav=pro ONLY
 
             $this->focus->updateCalculatedFields(); // fire triggers for calculated fields
+            //END SUGARCRM flav=pro ONLY
             foreach ($this->focus->toArray() as $name => $value)
             {
                 $valueFormatted = false;
