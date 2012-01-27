@@ -38,9 +38,12 @@ class Bug49873Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
-        global $current_user, $currentModule ;
+        global $current_user, $currentModule, $beanFiles, $beanList;
+        include('include/modules.php');
 		$mod_strings = return_module_language($GLOBALS['current_language'], "Documents");
 		$current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->is_admin = 1;
+        $current_user->save();
 		$this->doc = new Document();
         $this->doc->document_name = 'Bug 49873 Test Document';
         $this->doc->assigned_user_id = $current_user->id;
