@@ -40,6 +40,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'len' => '255',
     'required'=>true,
     'unified_search' => true,
+    'full_text_search' => 3,
   ),
 
 'name'=>

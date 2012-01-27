@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 $dictionary['Contact'] = array('table' => 'contacts', 'audited'=>true,
 
-'unified_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true, 'fields' =>
+'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true, 'fields' =>
 array (
 
 	'email_and_name1' =>
@@ -70,6 +70,7 @@ array (
 			'len' => '255',
 			'source' => 'non-db',
 			'unified_search' => true,
+			'full_text_search' => 1,
 		),
 	'account_id' =>
 		array (
@@ -262,6 +263,7 @@ array (
 		'reportable'=>false,
 	    'rel_fields' => array('primary_address' => array('type'=>'bool')),
 		'unified_search'=>true,
+		'full_text_search'=>2,
 	),
 	'email_addresses_primary' =>
 	array (
