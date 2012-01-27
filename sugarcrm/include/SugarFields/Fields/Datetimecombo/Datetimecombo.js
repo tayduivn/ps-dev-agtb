@@ -91,7 +91,7 @@ function Datetimecombo (datetime, field, timeformat, tabindex, showCheckbox, che
 		this.hrs += 1;
 		this.mins = 0;
 		if(this.hasMeridiem && this.hrs == 12) {
-			if(this.pm == "pm") {
+			if(this.meridiem == "pm" || this.meridiem == "am") {				
 				if(this.meridiem == "pm") {
 					this.meridiem = "am";
 				} else {
@@ -104,6 +104,9 @@ function Datetimecombo (datetime, field, timeformat, tabindex, showCheckbox, che
 					this.meridiem = "PM";
 				}
 			}
+		}
+		if (this.hrs > 12) {
+			this.hrs = this.hrs - 12;
 		}			
 	} //if-else
 
