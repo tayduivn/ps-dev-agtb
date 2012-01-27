@@ -196,7 +196,7 @@ $vardefs =array(
 			'source'	=> 'non-db',
 			'group'=>'email1',
             'merge_filter' => 'enabled',
-		    'studio' => 'false',
+		    'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859 
 
 		),
 	'email2' => 
