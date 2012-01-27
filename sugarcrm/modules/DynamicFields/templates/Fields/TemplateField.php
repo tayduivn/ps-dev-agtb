@@ -336,9 +336,11 @@ class TemplateField{
 			'duplicate_merge_dom_value'=> isset($this->duplicate_merge_dom_value) ? $this->duplicate_merge_dom_value : $this->duplicate_merge,
 			'audited'=>$this->convertBooleanValue($this->audited),
 			'reportable'=>$this->convertBooleanValue($this->reportable),
-            'full_text_search'=>isset($this->full_text_search)? $this->full_text_search : 0,
             'unified_search'=>$this->convertBooleanValue($this->unified_search)
 		);
+        if (isset($this->full_text_search)) {
+            $array['full_text_search'] = $this->full_text_search;
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
             $array['calculated'] = $this->calculated;

@@ -53,7 +53,7 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'importable' => 'required',
             'required' => true,
 			'unified_search' => true,
-			'full_text_search' => 3,
+			'full_text_search' => array('boost' => 3),
 			),
 		'refer_url' => array (
 			'name' => 'refer_url',

@@ -43,7 +43,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'required'=>true,
     'importable' => 'required',
   	'unified_search' => true,
-  	'full_text_search' => 3,
+  	'full_text_search' => array('boost' => 3),
   ),
 
 'name' =>
