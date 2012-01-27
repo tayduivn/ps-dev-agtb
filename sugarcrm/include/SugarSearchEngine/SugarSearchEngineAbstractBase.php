@@ -66,9 +66,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
         foreach($obj->field_defs as $field => $def)
         {
-            if( isset($def['full_text_search']) && ( $def['full_text_search'] === TRUE ||
-                //Support the case where we can store additional metdata in the unifed_search entry
-                (is_array($def['full_text_search']) && !empty($def['full_text_search']['enabled']))) )
+            if( isset($def['full_text_search']) && is_array($def['full_text_search']) && !empty($def['full_text_search']['boost']) )
                 $results[$field] = $def;
         }
 
