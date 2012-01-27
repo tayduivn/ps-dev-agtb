@@ -336,13 +336,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 DCMenu.spot(document.getElementById('sugar_spot_search').value);
             }
     }
-    DCMenu.startSearchFull = function(e){
-        if (window.event) { e = window.event; }
-            if (e.keyCode == 13)
-            {
-                DCMenu.spotFull(document.getElementById('ftsSearchField').value);
-            }
-    }
 	Y.spot = function(q){
         DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
