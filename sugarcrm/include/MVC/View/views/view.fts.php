@@ -29,15 +29,16 @@ class ViewFts extends SugarView
 {
     private $fullView = FALSE;
     private $templateName = '';
+    private $rsTemplateName = 'fts_full_rs.tpl';
 
     public function __construct()
     {
         $this->fullView = !empty($_REQUEST['full']) ? TRUE : FALSE;
+
         if($this->fullView)
         {
             $this->options = array('show_title'=> true,'show_header'=> true,'show_footer'=> true,'show_javascript'=> true,'show_subpanels'=> false,'show_search'=> false);
             $this->templateName = 'fts_full.tpl';
-
         }
         else
         {
@@ -52,30 +53,88 @@ class ViewFts extends SugarView
      */
     public function display()
     {
+
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
 
-        $options = array('current_module' => $this->module);
+        $moduleFilter = isset($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
+        $filteredModules =  $this->getFilterModules();
+        //If no modules have been passed in then lets check user preferences.
+        if($moduleFilter === FALSE)
+        {
+            $userEnabled = $GLOBALS['current_user']->getPreference('fts_enabled_modules');
+            $moduleFilter = !empty($userEnabled) ? explode(",", $userEnabled) : array();
+        }
+        $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter);;
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $trimmed_query = trim($_REQUEST['q']);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
-
         $query_encoded = urlencode($trimmed_query);
+
+        $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
 
         $this->ss->assign('queryEncoded', $query_encoded);
         $this->ss->assign('resultSet', $rs);
         $this->ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $template = "include/MVC/View/tpls/{$this->templateName}";
+        $rsTemplate = "include/MVC/View/tpls/{$this->rsTemplateName}";
         if(file_exists("custom/$template"))
         {
             $template = "custom/$template";
         }
+        if(file_exists("custom/$rsTemplate"))
+        {
+            $rsTemplate = "custom/$rsTemplate";
+        }
+        $this->ss->assign('rsTemplate', $rsTemplate);
+
         if( $this->fullView )
-            $this->ss->assign('filterModules', array('Contacts' => 'Kontactor', 'Leads' => 'LEADS'));
+        {
+            if($resultSetOnly)
+            {
+                echo $this->ss->fetch($rsTemplate);
+                return;
+            }
+
+            $this->ss->assign('filterModules',$filteredModules['enabled']);
+            $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));
+            $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
+        }
+
+
 
         echo $this->ss->fetch($template);
+    }
+
+    /**
+     * TODO: WIP - Custom Modules won't have the enabled flag set by default so we need to re-examine how this is done.
+     * @return array
+     */
+    protected function getFilterModules()
+    {
+        require_once('modules/Home/UnifiedSearchAdvanced.php');
+        $ufs = new UnifiedSearchAdvanced();
+        $moduleList = $ufs->getUnifiedSearchModulesDisplay();
+        $enabledResults = array();
+        $disabledResults = array();
+
+        $userEnabled = $GLOBALS['current_user']->getPreference('fts_enabled_modules');
+        $userEnabled = !empty($userEnabled) ? array_flip(explode(",", $userEnabled)) : array();
+        foreach($moduleList as $module=>$data)
+        {
+            if($data['visible'] && ACLController::checkAccess($module, 'list', true))
+            {
+                $moduleName  = isset($GLOBALS['app_list_strings']['moduleList'][$module] ) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module;
+                if( isset($userEnabled[$module]) )
+                    $enabledResults[] = array("module" => $module, 'label' => $moduleName);
+                else
+                    $disabledResults[] = array("module" => $module, 'label' => $moduleName);
+            }
+        }
+
+        return array('enabled' => $enabledResults, 'disabled' => $disabledResults);
     }
 }
 

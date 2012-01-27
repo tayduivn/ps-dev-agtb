@@ -1,5 +1,5 @@
 
-{if !empty($resultSet)}
+{if count($resultSet) > 0}
     {foreach from=$resultSet item=result}
     <section>
         <div class="resultTitle">

@@ -6691,4 +6691,18 @@ p.submsg, p.submsg a{
 	text-decoration:none;
 }
 
+.loading-indicator-ui {
+    height: 80px;
+    width: 80px;
+    background: url(../../../../index.php?entryPoint=getImage&imageName=img_loading.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.loading-indicator-ui-overlay {
+    background-color: #000;
+    opacity: 0.1;
+    filter: alpha(opacity = 60);
+}
+
 
