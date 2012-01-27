@@ -4747,6 +4747,9 @@ function save_relationship_changes($is_update, $exclude=array())
         // cn: bug 12270 - sensitive fields being passed arbitrarily in listViews
         $sensitiveFields = array('user_hash' => '');
 
+        //fixing bug #46230: Dependent Field values are not refreshed in subpanels & listviews
+        $this->updateDependentField();
+        
         $return_array = Array();
         global $app_list_strings, $mod_strings;
         foreach($this->field_defs as $field=>$value){
