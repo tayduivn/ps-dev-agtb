@@ -292,24 +292,10 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function relationship_exists($lhs, $rhs)
     {
-        // we need the key that is stored on the rhs to query for
-        $leftIDName = $this->def['rhs_key'];
+        // we need the key that is stored on the rhs to compare tok
+        $lhsIDName = $this->def['rhs_key'];
 
-        // get the id's into variables
-        $leftID = $lhs->id;
-        $rightID = $rhs->id;
-
-        // query to run to see if the field is set
-        $query = "SELECT id FROM {$this->getRelationshipTable()} WHERE $leftIDName='$leftID' AND id='$rightID' AND deleted=0";
-
-        $db = DBManagerFactory::getInstance();
-        $result = $db->query($query);
-        $row = $db->fetchByAssoc($result);
-        if (!empty($row)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (isset($rhs->fetched_row[$lhsIDName]) && $rhs->$lhsIDName == $rhs->fetched_row[$lhsIDName] && $rhs->$lhsIDName == $lhs->id);
     }
 
     public function getRelationshipTable()
