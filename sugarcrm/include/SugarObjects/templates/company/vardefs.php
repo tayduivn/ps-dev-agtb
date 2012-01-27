@@ -301,7 +301,7 @@ $vardefs= array (
 	   'returns'	=> 'html'
     ),
 	'source'	=> 'non-db',
-    'studio' => array('editField' => true, 'searchview' => false),
+    'studio' => 'false',
 ), 
   
   'email_addresses_primary' => 

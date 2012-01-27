@@ -34,7 +34,7 @@ require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
  * in the Studio subpanel definition for custom module
  * @ticket 36668
  */
-class linkTest extends SubpanelMetaDataParser
+class LinkFieldTest extends SubpanelMetaDataParser
 {
     function __construct()
     {
