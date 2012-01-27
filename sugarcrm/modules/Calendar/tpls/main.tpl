@@ -62,6 +62,7 @@
 		CAL.lbl_edit = "{$MOD.LBL_EDIT_RECORD}";
 		CAL.lbl_saving = "{$MOD.LBL_SAVING}";
 		CAL.lbl_loading = "{$MOD.LBL_LOADING}";
+		CAL.lbl_sending = "{$MOD.LBL_SENDING_INVITES}";
 		CAL.lbl_confirm_remove = "{$MOD.LBL_CONFIRM_REMOVE}";
 		CAL.lbl_confirm_remove_all_recurring = "{$MOD.LBL_CONFIRM_REMOVE_ALL_RECURRING}";
 		

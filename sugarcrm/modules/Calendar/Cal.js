@@ -1535,9 +1535,15 @@
 	CAL.dialog_save = function(){
 						CAL.get("btn-save").setAttribute("disabled","disabled");
 						
+						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
-						CAL.get("title-cal-edit").innerHTML = CAL.lbl_saving;																					
+						if (CAL.get("send_invites").value == "1") {
+							CAL.get("title-cal-edit").innerHTML = CAL.lbl_sending;								
+						} else {
+							CAL.get("title-cal-edit").innerHTML = CAL.lbl_saving;
+						}
+																											
 						CAL.fill_invitees();							
 						CAL.fill_repeat_data();
 												
