@@ -4931,6 +4931,32 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
     return htmlentities($input, $quotes, $charset);
 }
 
+/**
+ * @return string - the full text search engine name
+ */
+function getFTSEngineType()
+{
+    if (isset($GLOBALS['sugar_config']['full_text_engine'])) {
+        foreach ($GLOBALS['sugar_config']['full_text_engine'] as $name => $defs) {
+            return $name;
+        }
+    }
+    return '';
+}
+
+/**
+ * @param string $optionName - name of the option to be retrieved from app_list_strings
+ * @return array - the array to be used in option element
+ */
+function getFTSBoostOptions($optionName)
+{
+    if (isset($GLOBALS['app_list_strings'][$optionName])) {
+        return $GLOBALS['app_list_strings'][$optionName];
+    }
+    else {
+        return array();
+    }
+}
 
 /**
  * get_language_header

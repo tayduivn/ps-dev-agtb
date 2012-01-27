@@ -275,6 +275,14 @@ class ViewModulefield extends SugarView
         $fv->ss->assign('field_name_exceptions', $json->encode($field_name_exceptions));
         ksort($field_types);
         $fv->ss->assign('field_types',$field_types);
+        $ftsBoostOptions = getFTSBoostOptions(getFTSEngineType().'_boost_options');
+        $fv->ss->assign('fts_options', $ftsBoostOptions);
+        // TODO: should probably add a check here to not show this for some data types, like boolean, etc?
+        if ( isset($GLOBALS['sugar_config']['full_text_engine']) && $GLOBALS['sugar_config']['full_text_engine']) {
+            $fv->ss->assign('show_fts', true);
+        } else {
+            $fv->ss->assign('show_fts', false);
+        }
         $fv->ss->assign('importable_options', $GLOBALS['app_list_strings']['custom_fields_importable_dom']);
         $fv->ss->assign('duplicate_merge_options', $GLOBALS['app_list_strings']['custom_fields_merge_dup_dom']);
 

@@ -1544,6 +1544,13 @@ $app_list_strings = array (
     'required'=>'Required',
   ),
 
+    'Elastic_boost_options' => array (
+        '0' =>'Disabled',
+        '1'=>'Enabled with Low Boost',
+        '2'=>'Enabled with Medium Boost',
+        '3'=>'Enabled with High Boost',
+    ),
+
   'custom_fields_merge_dup_dom'=> array (
         0=>'Disabled',
         1=>'Enabled',
