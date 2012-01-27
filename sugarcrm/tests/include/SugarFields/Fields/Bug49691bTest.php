@@ -35,9 +35,12 @@ class Bug49691bTest extends Sugar_PHPUnit_Framework_TestCase {
     public function setUp() {
         $this->bean = new Bug49691bMockBean();
         $this->sugarField = new SugarFieldDatetime("Account");
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
     public function tearDown() {
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->sugarField);
     }
 
@@ -46,6 +49,8 @@ class Bug49691bTest extends Sugar_PHPUnit_Framework_TestCase {
      * @return void
      */
     public function testDBDateConversion($dateValue, $expected) {
+        global $current_user;
+
         $this->bean->test_c = $dateValue;
 
         $this->sugarField->save($this->bean, array('test_c'=>$dateValue),'test_c', null, '');
