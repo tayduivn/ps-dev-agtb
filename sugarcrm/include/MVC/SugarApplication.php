@@ -715,6 +715,7 @@ class SugarApplication
 		'Trackers' => array('trackersettings'),
 	    'SugarFavorites' => array('tag'),
 	    'Import' => array('last', 'undo'),
+	    'Users' => array('changepassword', "generatepassword"),
 	);
 
 	protected function isModifyAction()
