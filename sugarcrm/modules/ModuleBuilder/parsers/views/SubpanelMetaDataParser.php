@@ -158,7 +158,8 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
     {
         foreach($defs as $index => $fieldData) 
         {
-            if (isset($fieldData['type']) && $fieldData['type'] == 'relate') 
+            if ((isset($fieldData['type']) && $fieldData['type'] == 'relate') 
+                || (isset($fieldData['link']) && self::isTrue($fieldData['link'])))
             {
                 $defs[$index]['widget_class'] = 'SubPanelDetailViewLink';
                 $defs[$index]['target_module'] = isset($this->_fielddefs[$index]['module']) ? $this->_fielddefs[$index]['module'] : $this->_moduleName;
