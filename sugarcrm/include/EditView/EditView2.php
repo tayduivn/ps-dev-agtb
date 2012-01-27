@@ -424,6 +424,7 @@ class EditView
                 : $current_user->default_team_name;
             //END SUGARCRM flav=pro ONLY
 
+            $this->focus->updateCalculatedFields(); // fire triggers for calculated fields
             foreach ($this->focus->toArray() as $name => $value)
             {
                 $valueFormatted = false;
