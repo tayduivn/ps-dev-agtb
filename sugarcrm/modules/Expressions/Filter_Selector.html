@@ -93,12 +93,23 @@ function return_filter_values(){
 		selected_text += ' ' + get_inner_text(parent_type + '__operator') + ' ';
 	}
 	
-	
-	
-	window.opener.document.getElementById(return_prefix + '_operator').value = get_value(parent_type + '__operator');
-	
-	selected_text += field_value_inner_text;
-	
+	var windowOpenerOperator = window.opener.document.getElementById(return_prefix + '_operator');
+        var operatorValue = get_value(parent_type + '__operator');
+        windowOpenerOperator.value = operatorValue;
+        
+        if (field_value_inner_text.length == 0) 
+        {
+            var label = "LBL_IS_EMPTY";
+            if (operatorValue != "Equals")
+            {
+                label = "LBL_IS_NOT_EMPTY";
+            }
+            var newOperator = SUGAR.language.get('app_strings', label);
+            changeHrefAndClose(newOperator);
+            windowOpenerOperator.value = newOperator;
+            return;
+        } 
+        
 	//Return the time int value if the field is present
 	if(window.opener.document.getElementById(return_prefix + '_time_int')!=undefined &&
 	
@@ -119,23 +130,24 @@ function return_filter_values(){
 		} else {
 			selected_text += ' for at least ' + get_inner_text('time_int');
 		}		
-			
-			
-		
-	}	
+	}
 	
 	if(window.opener.document.getElementById(return_prefix + '_exp_type')!=undefined){
 		window.opener.document.getElementById(return_prefix + '_exp_type').value = get_value('field_type');
 	}	
-	
-	
-
 	
 	window.opener.filter_changehref_text('href_' + return_prefix, selected_text);
 	window.close();
 	
 //end function return_filter_values
 }	
+
+function changeHrefAndClose(selected_text) 
+{
+    var return_prefix = get_value('return_prefix');
+    window.opener.filter_changehref_text('href_' + return_prefix, selected_text);
+    window.close();
+}
 </script>
 <!-- END: embeded -->
 <!-- BEGIN: field_selector -->

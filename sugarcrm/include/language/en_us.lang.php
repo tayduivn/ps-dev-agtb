@@ -3197,6 +3197,9 @@ $app_strings = array (
     //External API Error Messages
     'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
 
+    'LBL_EMPTY' => 'Empty',
+    'LBL_IS_EMPTY' => 'Is empty',
+    'LBL_IS_NOT_EMPTY' => 'Is not empty',
     //IMPORT SAMPLE TEXT
     'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
 "This is a sample import file which provides an example of the expected contents of a file that is ready for import."
