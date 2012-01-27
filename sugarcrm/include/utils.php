@@ -2556,6 +2556,58 @@ function get_unlinked_email_query($type, $bean) {
 	return $return_array['select'] . $return_array['from'] . $return_array['where'] . $return_array['join'] ;
 } // fn
 
+function get_emails_by_assign_or_link($params)
+{
+    $relation = $params['link'];
+	$bean = $GLOBALS['app']->controller->bean;
+    if(empty($bean->$relation)) {
+        $bean->load_relationship($relation);
+    }
+    if(empty($bean->$relation)) {
+        $GLOBALS['log']->error("Bad relation '$relation' for bean '{$bean->object_name}' id '{$bean->id}'");
+        return array();
+    }
+    $rel_module = $bean->$relation->getRelatedModuleName();
+    $rel_join = $bean->$relation->getJoin(array(
+    	'join_table_alias' => 'link_bean',
+    	'join_table_link_alias' => 'linkt',
+    ));
+    $rel_join = str_replace("{$bean->table_name}.id", "'{$bean->id}'", $rel_join);
+    $return_array['select']='SELECT emails.id ';
+    $return_array['from'] = "FROM emails ";
+    $return_array['join'] = " INNER JOIN (".
+        // directly assigned emails
+        	"select eb.email_id FROM emails_beans eb where eb.bean_module = '{$bean->module_dir}' AND eb.bean_id = '{$bean->id}' AND eb.deleted=0 ".
+            " UNION ".
+        // Assigned to contacts
+        	"select DISTINCT eb.email_id FROM emails_beans eb
+                $rel_join AND link_bean.id = eb.bean_id
+        		where eb.bean_module = '$rel_module' AND eb.deleted=0".
+        	" UNION ".
+        // Related by directly by email
+            "select DISTINCT eear.email_id from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            	ON eabr.bean_id ='{$bean->id}' AND eabr.bean_module = '{$bean->module_dir}' AND
+    			eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0".
+            " UNION ".
+        // Related by email to linked contact
+            "select DISTINCT eear.email_id FROM emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            	ON eabr.email_address_id=eear.email_address_id AND eabr.bean_module = '$rel_module' AND eabr.deleted=0
+            	$rel_join AND link_bean.id = eabr.bean_id
+            	where eear.deleted=0".
+            ") email_ids ON emails.id=email_ids.email_id ";
+        $return_array['where']=" WHERE emails.deleted=0 ";
+
+    	//$return_array['join'] = '';
+        $return_array['join_tables'][0] = '';
+
+        if(0 && $bean->object_name == "Case" && !empty($bean->case_number)) {
+            $where = str_replace("%1", $bean->case_number, 	$bean->getEmailSubjectMacro());
+    	    $return_array["where"] .= "\n AND emails.name LIKE '%$where%'";
+        }
+
+        return $return_array;
+}
+
 /**
  * Check to see if the number is empty or non-zero
  * @param $value

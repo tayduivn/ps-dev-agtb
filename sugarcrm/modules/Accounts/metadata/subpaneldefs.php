@@ -118,16 +118,11 @@ $layout_defs['Accounts'] = array(
 				),
 				'emails' => array(
 					'module' => 'Emails',
-					'subpanel_name' => 'ForHistory',
-					'get_subpanel_data' => 'emails',
+					'subpanel_name' => 'ForUnlinkedEmailHistory',
+            		'get_subpanel_data' => 'function:get_emails_by_assign_or_link',
+          			'function_parameters' => array('import_function_file' => 'include/utils.php', 'link' => 'contacts'),
+                    'generate_select'=>true,
 				),
-				'linkedemails' => array(
-	                'module' => 'Emails',
-	                'subpanel_name' => 'ForUnlinkedEmailHistory',
-	                'get_subpanel_data' => 'function:get_unlinked_email_query',
-	                'generate_select'=>true,
-	                'function_parameters' => array('return_as_array'=>'true'),
-	    		),
 			)
 		),
         'documents' => array(
@@ -318,21 +313,6 @@ $layout_defs['Accounts'] = array(
 			),
 		),
 
-        // SNIP
-        'contact_history' => array (
-			'order' => 21,
-			'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
-			'subpanel_name' => 'contact_history',   //this values is not associated with a physical file.
-            'top_buttons' => array(),
-        	'module' => 'Emails',
-            'subpanel_name' => 'ForContactHistory',
-            'get_subpanel_data' => 'function:get_unlinked_email_query_via_link',
-          	'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'link' => 'contacts'),
-            'generate_select'=>true,
-            'get_distinct_data' => true,
-		),
         //END SUGARCRM flav=pro ONLY
 //END SUGARCRM flav!=dce && flav!=sales ONLY
 	),
