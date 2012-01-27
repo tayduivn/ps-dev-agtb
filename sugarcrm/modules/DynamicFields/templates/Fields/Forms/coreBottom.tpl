@@ -57,9 +57,9 @@
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_FTS"}:</td>
     <td>
         {if empty($vardef.fts) || empty($vardef.fts.enabled)}
-            {html_options name="fts" id="fts" selected="false" options=$fts_options}
+            {html_options name="full_text_search" id="full_text_search" selected="false" options=$fts_options}
         {else}
-            {html_options name="fts" id="fts" selected=$vardef.fts.boost options=$fts_options}
+            {html_options name="full_text_search" id="full_text_search" selected=$vardef.fts.boost options=$fts_options}
         {/if}
     </td>
 </tr>

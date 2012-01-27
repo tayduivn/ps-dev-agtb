@@ -4936,7 +4936,7 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
  */
 function getFTSEngineType()
 {
-    if (isset($GLOBALS['sugar_config']['full_text_engine'])) {
+    if (isset($GLOBALS['sugar_config']['full_text_engine']) && is_array($GLOBALS['sugar_config']['full_text_engine'])) {
         foreach ($GLOBALS['sugar_config']['full_text_engine'] as $name => $defs) {
             return $name;
         }

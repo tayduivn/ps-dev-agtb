@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['Document'] = array('table' => 'documents',
 								'unified_search' => true, 
+								'full_text_search' => true, 
 								'unified_search_default_enabled' => true,
                                 'fields' => array (
 
@@ -33,6 +34,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'required'=>true,
     'importable' => 'required',
   	'unified_search' => true,
+  	'full_text_search' => 3,
   ),
   'name'=>
   array('name'=>'name', 'vname' => 'LBL_NAME', 'source'=>'non-db', 'type'=>'varchar'),
