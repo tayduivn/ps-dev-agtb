@@ -76,7 +76,7 @@
             $.ajax({
             type: "POST",
             url: "index.php",
-            data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m},
+            data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true},
             success: function(o)
             {
             $("#sugar_full_search_results").html( o );

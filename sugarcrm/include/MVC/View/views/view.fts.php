@@ -33,11 +33,11 @@ class ViewFts extends SugarView
     public function __construct()
     {
         $this->fullView = !empty($_REQUEST['full']) ? TRUE : FALSE;
+        $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
         if($this->fullView)
         {
             $this->options = array('show_title'=> true,'show_header'=> true,'show_footer'=> true,'show_javascript'=> true,'show_subpanels'=> false,'show_search'=> false);
             $this->templateName = 'fts_full.tpl';
-
         }
         else
         {
@@ -52,6 +52,7 @@ class ViewFts extends SugarView
      */
     public function display()
     {
+
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
