@@ -66,9 +66,9 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
         foreach($obj->field_defs as $field => $def)
         {
-            if( isset($def['full_text_engine']) && ( $def['full_text_engine'] === TRUE ||
+            if( isset($def['full_text_search']) && ( $def['full_text_search'] === TRUE ||
                 //Support the case where we can store additional metdata in the unifed_search entry
-                (is_array($def['full_text_engine']) && !empty($def['full_text_engine']['enabled']))) )
+                (is_array($def['full_text_search']) && !empty($def['full_text_search']['enabled']))) )
                 $results[$field] = $def;
         }
 
@@ -105,7 +105,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     protected function isModuleFtsEnabled($module)
     {
         $obj = BeanFactory::getBean($module, null);
-        if( $obj !== FALSE && isset( $GLOBALS['dictionary'][$obj->object_name]) && !empty($GLOBALS['dictionary'][$obj->object_name]['full_text_engine']) )
+        if( $obj !== FALSE && isset( $GLOBALS['dictionary'][$obj->object_name]) && !empty($GLOBALS['dictionary'][$obj->object_name]['full_text_search']) )
         {
             return TRUE;
         }
