@@ -25,6 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+//FILE SUGARCRM flav=pro ONLY
 require_once('include/workflow/glue.php');
 class Bug36460Test extends Sugar_PHPUnit_Framework_TestCase
 {
