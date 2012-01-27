@@ -6,12 +6,22 @@
     <input type="text" size="50" placeholder="{$APP.LBL_SEARCH}" id="ftsSearchField" value="{$smarty.request.q}">
 
     <a class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();'>
-        {sugar_getimage alt=$alt_show_hide name="advanced_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}
+        <span id='advanced_search_img_span'>
+            {sugar_getimage alt=$alt_show_hide name="advanced_search" ext=".gif" other_attributes='border="0" id="advanced_search_img" '}
+        </span>
+        <span id='basic_search_img_span' style="display:none;">
+            {sugar_getimage alt=$alt_show_hide name="basic_search" ext=".gif" other_attributes='border="0" id="basic_search_img" '}
+        </span>
     </a>
     <div id="ftsAutoCompleteResult"></div>
     <br><br>
 
-    <div id='inlineGlobalSearch' class='add_table' style="display:none;">
+    <div id='inlineGlobalSearch' style="display:none;">
+        <form method="POST" onsubmit="SUGAR.FTS.saveModuleFilterSettings();" >
+            <input type="hidden" name="module" value="Users">
+            <input type="hidden" name="action" value="saveftsmodules">
+            <input type="hidden" name="visible_modules" value="" id="visible_modules">
+
         <table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="30%">
             <tr>
                 <td colspan="2">
@@ -26,14 +36,21 @@
                     <div id="disabled_div"></div>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" class="button primary" value="{$APP.LBL_SAVE_BUTTON_LABEL}">&nbsp;</td>
+            </tr>
         </table>
+        </form>
     </div>
 
 {/if}
 
 
 <table width="50%">
-<tr><td width="15%"><b>Module</b></td><td width="90%"></td></tr>
+<tr><td width="15%"><b>Module Filter</b></td><td width="90%"></td></tr>
 <tr valign="top">
     <td id="moduleListTD">
         {foreach from=$filterModules item=entry key=module}
@@ -42,14 +59,7 @@
     </td>
 <td>
 <div id="sugar_full_search_results" >
-{if count($resultSet) > 0}
     {include file=$rsTemplate}
-{else}
-	<section class="resultNull">
-    {$APP.LBL_EMAIL_SEARCH_NO_RESULTS}
-   	</section>
-{/if}
-    <br>
 </div>
 </td>
     </tr>
@@ -113,13 +123,16 @@
                 SUGAR.FTS.globalSearchEnabledTable.render();
                 SUGAR.FTS.globalSearchDisabledTable.render();
                 document.getElementById('inlineGlobalSearch').style.display = '';
-                document.getElementById('up_down_img').src='index.php?entryPoint=getImage&imageName=basic_search.gif';
+                document.getElementById('basic_search_img_span').style.display = '';
+                document.getElementById('advanced_search_img_span').style.display = 'none';
                 document.getElementById('up_down_img').setAttribute('alt',SUGAR.language.get('app_strings', 'LBL_ALT_HIDE_OPTIONS'));
             }
             else
             {
+                console.log('showing image');
                 document.getElementById('inlineGlobalSearch').style.display = 'none';
-                document.getElementById('up_down_img').src='index.php?entryPoint=getImage&imageName=advanced_search.gif';
+                document.getElementById('basic_search_img_span').style.display = 'none';
+                document.getElementById('advanced_search_img_span').style.display = '';
                 document.getElementById('up_down_img').setAttribute('alt',SUGAR.language.get('app_strings', 'LBL_ALT_SHOW_OPTIONS'));
             }
         },
@@ -131,8 +144,7 @@
                     responseSchema: {fields : [{key : "module"}, {key : "label"}]}
                 }),
                 {height: "200px"}
-            ),
-
+        ),
         globalSearchDisabledTable : new YAHOO.SUGAR.DragDropTable(
                 "disabled_div",
                 [{key:"label",  label: lblDisabled, width: 200, sortable: false},
@@ -141,8 +153,23 @@
                     responseSchema: {fields : [{key : "module"}, {key : "label"}]}
                 }),
                 {height: "200px"}
-            )
+        ),
+        saveModuleFilterSettings : function()
+        {
+            var enabledTable = SUGAR.FTS.globalSearchEnabledTable;
+            var modules = "";
+            for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
+                var data = enabledTable.getRecord(i).getData();
+                if (data.module && data.module != '')
+                    modules += "," + data.module;
+            }
+            modules = modules == "" ? modules : modules.substr(1);
+            document.getElementById('visible_modules').value = modules;
+        }
     }
+
+
+
 
     var ds = new YAHOO.util.DataSource("index.php?", {
         responseType: YAHOO.util.XHRDataSource.TYPE_JSON,
