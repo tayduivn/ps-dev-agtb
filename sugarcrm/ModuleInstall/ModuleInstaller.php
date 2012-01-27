@@ -1649,7 +1649,8 @@ class ModuleInstaller{
         foreach($beans as $bean){
 			$dirs = array(
 				'custom/modules/' . $bean,
-				'custom/Extension/modules/' . $bean
+				'custom/Extension/modules/' . $bean,
+                'custom/working/modules/' . $bean
 			);
         	foreach($dirs as $dir)
         	{
