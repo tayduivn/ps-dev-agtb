@@ -1,40 +1,65 @@
-{literal} 
+<script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
-<style type="text/css">
-
-
-
-
-
-</style>
-
-{/literal}
 {if (!$smarty.get.ajax)}
-<br>
-<input type="text" size="50" placeholder="{$APP.LBL_SEARCH}" id="ftsSearchField" value="{$smarty.request.q}">
-<div id="ftsAutoCompleteResult"></div>
-<br><br>
+    <br>
+    <input type="text" size="50" placeholder="{$APP.LBL_SEARCH}" id="ftsSearchField" value="{$smarty.request.q}">
+
+    <a class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();'>
+        <span id='advanced_search_img_span'>
+            {sugar_getimage alt=$alt_show_hide name="advanced_search" ext=".gif" other_attributes='border="0" id="advanced_search_img" '}
+        </span>
+        <span id='basic_search_img_span' style="display:none;">
+            {sugar_getimage alt=$alt_show_hide name="basic_search" ext=".gif" other_attributes='border="0" id="basic_search_img" '}
+        </span>
+    </a>
+    <div id="ftsAutoCompleteResult"></div>
+    <br><br>
+
+    <div id='inlineGlobalSearch' style="display:none;">
+        <form method="POST" onsubmit="SUGAR.FTS.saveModuleFilterSettings();" >
+            <input type="hidden" name="module" value="Users">
+            <input type="hidden" name="action" value="saveftsmodules">
+            <input type="hidden" name="visible_modules" value="" id="visible_modules">
+
+        <table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="30%">
+            <tr>
+                <td colspan="2">
+                {sugar_translate label="LBL_SELECT_MODULES_TITLE" module="Administration"}
+                </td>
+            </tr>
+            <tr>
+                <td width='1%'>
+                    <div id="enabled_div"></div>
+                </td>
+                <td>
+                    <div id="disabled_div"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" class="button primary" value="{$APP.LBL_SAVE_BUTTON_LABEL}">&nbsp;</td>
+            </tr>
+        </table>
+        </form>
+    </div>
+
 {/if}
 
 
 <table width="50%">
-<tr><td width="15%"><b>Module</b></td><td width="90%"></td></tr>
+<tr><td width="15%"><b>Module Filter</b></td><td width="90%"></td></tr>
 <tr valign="top">
     <td id="moduleListTD">
-        {foreach from=$filterModules item=moduleName key=module}
-            <input type="checkbox" checked="checked" id="{$module}" name="module_filter" class="ftsModuleFilter">{$moduleName}<br>
+        {foreach from=$filterModules item=entry key=module}
+            <input type="checkbox" checked="checked" id="{$entry.module}" name="module_filter" class="ftsModuleFilter">{$entry.label}<br>
         {/foreach}
     </td>
 <td>
 <div id="sugar_full_search_results" >
-{if count($resultSet) > 0}
     {include file=$rsTemplate}
-{else}
-	<section class="resultNull">
-    {$APP.LBL_EMAIL_SEARCH_NO_RESULTS}
-   	</section>
-{/if}
-    <br>
 </div>
 </td>
     </tr>
@@ -42,8 +67,14 @@
 
 
 {if (!$smarty.get.ajax)}
-{literal}
+
 <script>
+
+    var enabled_modules = {$enabled_modules};
+    var disabled_modules = {$disabled_modules};
+    var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
+    var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
+    {literal}
     $('.ftsModuleFilter').bind('click', function() {
         SUGAR.FTS.search();
     });
@@ -84,14 +115,62 @@
                     $('#sugar_full_search_results').hideLoading();
                 }
             });
-
-
+        },
+        toggleAdvancedOptions: function()
+        {
+            if (document.getElementById('inlineGlobalSearch').style.display == 'none')
+            {
+                SUGAR.FTS.globalSearchEnabledTable.render();
+                SUGAR.FTS.globalSearchDisabledTable.render();
+                document.getElementById('inlineGlobalSearch').style.display = '';
+                document.getElementById('basic_search_img_span').style.display = '';
+                document.getElementById('advanced_search_img_span').style.display = 'none';
+                document.getElementById('up_down_img').setAttribute('alt',SUGAR.language.get('app_strings', 'LBL_ALT_HIDE_OPTIONS'));
+            }
+            else
+            {
+                console.log('showing image');
+                document.getElementById('inlineGlobalSearch').style.display = 'none';
+                document.getElementById('basic_search_img_span').style.display = 'none';
+                document.getElementById('advanced_search_img_span').style.display = '';
+                document.getElementById('up_down_img').setAttribute('alt',SUGAR.language.get('app_strings', 'LBL_ALT_SHOW_OPTIONS'));
+            }
+        },
+        globalSearchEnabledTable : new YAHOO.SUGAR.DragDropTable(
+                "enabled_div",
+                [{key:"label",  label: lblEnabled, width: 200, sortable: false},
+                 {key:"module", label: lblEnabled, hidden:true}],
+                new YAHOO.util.LocalDataSource(enabled_modules, {
+                    responseSchema: {fields : [{key : "module"}, {key : "label"}]}
+                }),
+                {height: "200px"}
+        ),
+        globalSearchDisabledTable : new YAHOO.SUGAR.DragDropTable(
+                "disabled_div",
+                [{key:"label",  label: lblDisabled, width: 200, sortable: false},
+                 {key:"module", label: lblDisabled, hidden:true}],
+                new YAHOO.util.LocalDataSource(disabled_modules, {
+                    responseSchema: {fields : [{key : "module"}, {key : "label"}]}
+                }),
+                {height: "200px"}
+        ),
+        saveModuleFilterSettings : function()
+        {
+            var enabledTable = SUGAR.FTS.globalSearchEnabledTable;
+            var modules = "";
+            for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
+                var data = enabledTable.getRecord(i).getData();
+                if (data.module && data.module != '')
+                    modules += "," + data.module;
+            }
+            modules = modules == "" ? modules : modules.substr(1);
+            document.getElementById('visible_modules').value = modules;
         }
     }
-    function applyModuleFilter()
-    {
 
-    }
+
+
+
     var ds = new YAHOO.util.DataSource("index.php?", {
         responseType: YAHOO.util.XHRDataSource.TYPE_JSON,
         responseSchema: {
@@ -112,6 +191,14 @@
         	                    	return out;
         	                    }
     });
+
+    SUGAR.FTS.globalSearchEnabledTable.disableEmptyRows = true;
+    SUGAR.FTS.globalSearchDisabledTable.disableEmptyRows = true;
+    SUGAR.FTS.globalSearchEnabledTable.addRow({module: "", label: ""});
+    SUGAR.FTS.globalSearchDisabledTable.addRow({module: "", label: ""});
+    SUGAR.FTS.globalSearchEnabledTable.render();
+    SUGAR.FTS.globalSearchDisabledTable.render();
+
 
 </script>
 {/literal}

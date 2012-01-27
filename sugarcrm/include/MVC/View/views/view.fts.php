@@ -59,6 +59,13 @@ class ViewFts extends SugarView
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
 
         $moduleFilter = isset($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
+        $filteredModules =  $this->getFilterModules();
+        //If no modules have been passed in then lets check user preferences.
+        if($moduleFilter === FALSE)
+        {
+            $userEnabled = $GLOBALS['current_user']->getPreference('fts_enabled_modules');
+            $moduleFilter = !empty($userEnabled) ? explode(",", $userEnabled) : array();
+        }
         $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter);;
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
@@ -90,14 +97,19 @@ class ViewFts extends SugarView
                 echo $this->ss->fetch($rsTemplate);
                 return;
             }
-            $this->ss->assign('filterModules', $this->getFilterModules());
 
+            $this->ss->assign('filterModules',$filteredModules['enabled']);
+            $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));
+            $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
         }
+
+
+
         echo $this->ss->fetch($template);
     }
 
     /**
-     * TODO: WIP
+     * TODO: WIP - Custom Modules won't have the enabled flag set by default so we need to re-examine how this is done.
      * @return array
      */
     protected function getFilterModules()
@@ -105,18 +117,24 @@ class ViewFts extends SugarView
         require_once('modules/Home/UnifiedSearchAdvanced.php');
         $ufs = new UnifiedSearchAdvanced();
         $moduleList = $ufs->getUnifiedSearchModulesDisplay();
-        $results = array();
+        $enabledResults = array();
+        $disabledResults = array();
 
+        $userEnabled = $GLOBALS['current_user']->getPreference('fts_enabled_modules');
+        $userEnabled = !empty($userEnabled) ? array_flip(explode(",", $userEnabled)) : array();
         foreach($moduleList as $module=>$data)
         {
             if($data['visible'] && ACLController::checkAccess($module, 'list', true))
             {
                 $moduleName  = isset($GLOBALS['app_list_strings']['moduleList'][$module] ) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module;
-                $results[$module] = $moduleName;
+                if( isset($userEnabled[$module]) )
+                    $enabledResults[] = array("module" => $module, 'label' => $moduleName);
+                else
+                    $disabledResults[] = array("module" => $module, 'label' => $moduleName);
             }
         }
 
-        return $results;
+        return array('enabled' => $enabledResults, 'disabled' => $disabledResults);
     }
 }
 
