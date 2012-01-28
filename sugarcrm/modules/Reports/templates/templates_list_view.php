@@ -992,13 +992,15 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 } // fn
 
 function getHeaderColumnNamesForMatrix($reporter, $header_row, $columnDataFor2ndGroup) {
+    global $mod_strings;
+
     $headerColumnNameArray = array();
 
     for ($i = 0; $i < count($reporter->report_def['group_defs']); $i++) {
 		$headerColumnNameArray[] = $header_row[$i];
 	} // for
 	
-	$headerColumnNameArray[] = 'Grand Total';
+	$headerColumnNameArray[] = $mod_strings['LBL_REPORT_GRAND_TOTAL'];
 	return $headerColumnNameArray;
 } // fn
 

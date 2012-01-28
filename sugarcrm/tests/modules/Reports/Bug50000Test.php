@@ -29,6 +29,7 @@ class Bug50000Test extends Sugar_PHPUnit_Framework_TestCase {
 
     public function setUp() {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['mod_strings'] = return_module_language('en_us', 'Reports');
         require_once('modules/Reports/templates/templates_reports.php');
         $this->reporter = new Bug50000MockReporter();
     }
@@ -36,6 +37,7 @@ class Bug50000Test extends Sugar_PHPUnit_Framework_TestCase {
     public function tearDown() {
         unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['mod_strings']);
         unset($this->reporter);
     }
 
@@ -53,6 +55,7 @@ class Bug50000Test extends Sugar_PHPUnit_Framework_TestCase {
      * @return array report_def, header_row, expected
      */
     public function bug50000DataProvider() {
+        $strings = return_module_language('en_us', 'Reports');
         return array(
             array(
                 array('group_defs' => array(
@@ -60,7 +63,7 @@ class Bug50000Test extends Sugar_PHPUnit_Framework_TestCase {
                     array('label'=> 'Name', 'name' => 'name', 'table_key' => 'Opportunities:accounts', 'type'=>'name'),
                 )),
                 array('User Name', 'Account Name', 'Count'),
-                array('User Name', 'Account Name', 'Grand Total'),
+                array('User Name', 'Account Name', $strings['LBL_REPORT_GRAND_TOTAL']),
             ),
         );
     }
