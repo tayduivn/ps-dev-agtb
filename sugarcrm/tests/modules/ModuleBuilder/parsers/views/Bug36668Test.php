@@ -66,7 +66,7 @@ class Bug36668Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $defs = array('name' => array('type' => $type, 'link' => $link));
         
-        $lt = new linkTest();
+        $lt = new LinkFieldTest();
         $newDefs = $lt->makeFieldsAsLink($defs);
 
         $this->assertTrue(array_key_exists('widget_class', $newDefs['name']) == $flag);
