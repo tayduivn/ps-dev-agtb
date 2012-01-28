@@ -43,6 +43,12 @@ class ViewQuickcreate extends ViewAjax
      */
     protected $footerTpl = 'include/EditView/footer.tpl';
 
+
+    /**
+     * @var defaultButtons Array of default buttons assigned to the form (see function.sugar_button.php)
+     */
+    protected $defaultButtons = array('DCMENUSAVE', 'DCMENUCANCEL', 'DCMENUFULLFORM');
+
     /**
      * @see SugarView::preDisplay()
      */
@@ -115,7 +121,7 @@ class ViewQuickcreate extends ViewAjax
 		$this->ev->showSectionPanelsTitles = false;
 	    $this->ev->defs['templateMeta']['form']['headerTpl'] = $this->headerTpl;
 		$this->ev->defs['templateMeta']['form']['footerTpl'] = $this->footerTpl;
-		$this->ev->defs['templateMeta']['form']['buttons'] = array('DCMENUSAVE', 'DCMENUCANCEL', 'DCMENUFULLFORM');
+		$this->ev->defs['templateMeta']['form']['buttons'] = $this->defaultButtons;
 		$this->ev->defs['templateMeta']['form']['button_location'] = 'bottom';
 		$this->ev->defs['templateMeta']['form']['hidden'] = '<input type="hidden" name="is_ajax_call" value="1" />';
 		$this->ev->defs['templateMeta']['form']['hidden'] .= '<input type="hidden" name="from_dcmenu" value="1" />';
