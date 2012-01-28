@@ -24,6 +24,6 @@
     <p class="fullResults"><a href="index.php?module=Home&action=spot&full=true&q={$queryEncoded}">{$APP.LBL_EMAIL_SHOW_READ}</a></p>
 {else}
 	<section class="resultNull">
-    {$APP.LBL_EMAIL_SEARCH_NO_RESULTS}
+        <h1>{$APP.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
    	</section>
 {/if}
