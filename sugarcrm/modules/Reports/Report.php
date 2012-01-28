@@ -107,6 +107,13 @@ class Report
     var $chart_total_header_row = array();
     var $jtcount = 0;
 
+    /**
+     * Array of invalid report fields. Populated during is_definition_valid() call.
+     *
+     * @var array
+     */
+    var $invalid_fields = array();
+
     function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;
@@ -753,20 +760,74 @@ class Report
         return $field_table;
     }
 
+    /**
+     * Whether the report definition is valid (currently only column definitions
+     * are considered).
+     *
+     * @return bool
+     */
+    function is_definition_valid()
+    {
+        $column_defs = array(
+            'display_columns',
+            'summary_columns',
+        );
+
+        $this->invalid_fields = array();
+
+        foreach ($column_defs as $def)
+        {
+            if (isset($this->report_def[$def]) && is_array($this->report_def[$def]))
+            {
+                foreach ($this->report_def[$def] as $layout_def)
+                {
+                    if (!$this->is_layout_def_valid($layout_def))
+                    {
+                        $this->invalid_fields[] = $layout_def['name'];
+                    }
+                }
+            }
+        }
+
+        $this->invalid_fields = array_unique($this->invalid_fields);
+
+        return 0 == count($this->invalid_fields);
+    }
+
+    /**
+     * Whether specified layout definition is valid.
+     *
+     * @param array $layout_def
+     * @return bool
+     */
+    function is_layout_def_valid($layout_def)
+    {
+        $layout_def['table_alias'] = $this->getTableFromField($layout_def);
+        $full_key = $this->_get_full_key($layout_def);
+        return !empty($this->all_fields[$full_key])
+            && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count' && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')));
+    }
+
+    /**
+     * Get report invalid fields.
+     *
+     * @return array
+     */
+    function get_invalid_fields()
+    {
+        return $this->invalid_fields;
+    }
 
     // used mainly to register the join if this column needs it
     function register_field_for_query(&$layout_def)
     {
-        $layout_def['table_alias'] = $this->getTableFromField($layout_def);
-        $field_def = $this->getFieldDefFromLayoutDef($layout_def);
-        if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
-                                                                             && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))
-        ) {
+        if (!$this->is_layout_def_valid($layout_def)) {
             global $mod_strings;
             sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>' . $layout_def['name'] . '</b>. ' . $mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
-
-
         }
+
+        $layout_def['table_alias'] = $this->getTableFromField($layout_def);
+        $field_def = $this->getFieldDefFromLayoutDef($layout_def);
         if (!empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
                                                                                          && !empty($field_def['ext2']) && !empty($field_def['id']))) && !empty($field_def['real_table'])
         ) {
