@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -74,5 +75,5 @@ class Bug50000MockReporter {
     var $report_def;
     var $group_defs_Info;
 }
+
 ?>
- 
