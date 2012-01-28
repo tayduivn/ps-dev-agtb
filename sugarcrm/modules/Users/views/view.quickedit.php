@@ -28,75 +28,32 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-require_once('include/MVC/View/views/view.ajax.php');
+/**
+ * UsersViewQuickEdit.php
+ *
+ * This class is a view extension of the include/MVC/View/views/view.edit.php file.  We are overriding the ViewQuickEdit class because the
+ * Users module quick edit treatment has some specialized behavior.  In particular, if the user's status is set to Inactive, this needs to trigger
+ * a dialog to reassign the records.  The quick edit functionality was introduced into the Users module in the 6.4 release.
+ *
+ */
+require_once('include/MVC/View/views/view.quickedit.php');
 require_once('include/EditView/EditView2.php');
 
-
-class ViewQuickedit extends ViewAjax
+class UsersViewQuickedit extends ViewQuickEdit
 {
     /**
-     * $var true if this form is used in the Dashlet Container
+     * @var footerTpl String variable of the Smarty template file used to render the footer portion.  Override here to allow for record reassignment.
      */
-	protected $_isDCForm = false;
-	
-	/**
-	 * @var EditView object
-	 */
-	protected $ev;
+    protected $footerTpl = 'modules/Users/tpls/QuickEditFooter.tpl';
+
 
     /**
-     * @var headerTpl String variable of the Smarty template file used to render the header portion
-     */
-    protected $headerTpl = 'include/EditView/header.tpl';
-
-    /**
-     * @var footerTpl String variable of the Smarty template file used to render the footer portion
-     */
-    protected $footerTpl = 'include/EditView/footer.tpl';
-
-    /**
-     * @see SugarView::preDisplay()
-     */
-    public function preDisplay() 
-    {
-    	if(!empty($_REQUEST['source_module']) && $_REQUEST['source_module'] != 'undefined' && !empty($_REQUEST['record'])) {
-			$this->bean = loadBean($_REQUEST['source_module']);
-			if ( $this->bean instanceOf SugarBean 
-			        && !in_array($this->bean->object_name,array('EmailMan')) ) {
-                $this->bean->retrieve($_REQUEST['record']);
-                if(!empty($this->bean->id))$_REQUEST['parent_id'] = $this->bean->id;
-                if(!empty($this->bean->module_dir))$_REQUEST['parent_type'] = $this->bean->module_dir;
-                if(!empty($this->bean->name))$_REQUEST['parent_name'] = $this->bean->name;
-                if(!empty($this->bean->id))$_REQUEST['return_id'] = $this->bean->id;
-                if(!empty($this->bean->module_dir))$_REQUEST['return_module'] = $this->bean->module_dir;
-                
-                //Now preload any related fields 
-			    if(isset($_REQUEST['module'])) {
-                	$target_bean = loadBean($_REQUEST['module']);
-	                foreach($target_bean->field_defs as $fields) {	
-	                	if($fields['type'] == 'relate' && isset($fields['module']) && $fields['module'] == $_REQUEST['source_module'] && isset($fields['rname'])) {
-	                	   $rel_name = $fields['rname'];
-	                	   if(isset($this->bean->$rel_name)) {
-	                	   	  $_REQUEST[$fields['name']] = $this->bean->$rel_name;
-	                	   }
-	                	 	if(!empty($_REQUEST['record']) && !empty($fields['id_name'])) {
-	                	 		$_REQUEST[$fields['id_name']] = $_REQUEST['record'];
-	                	   }
-	                	}
-	                }
-                }               
-            }
-            $this->_isDCForm = true;
-    	}
-    }    
-    
-    /**
-     * @see SugarView::display()
+     * display
+     *
+     * Override the display method here so we can change the handling of how we process saving for reassignment of records.
      */
     public function display()
-    {	    
-		
+    {
     	$view = (!empty($_REQUEST['target_view']))?$_REQUEST['target_view']: 'QuickCreate';
 		$module = $_REQUEST['module'];
 		
@@ -152,7 +109,9 @@ class ViewQuickedit extends ViewAjax
 		$this->ev->showSectionPanelsTitles = false;
 	    $this->ev->defs['templateMeta']['form']['headerTpl'] = $this->headerTpl;
 		$this->ev->defs['templateMeta']['form']['footerTpl'] = $this->footerTpl;
-		$this->ev->defs['templateMeta']['form']['buttons'] = array('DCMENUSAVE', 'DCMENUCANCEL', 'DCMENUFULLFORM');
+
+        //We will still take the DCMENUCANCEL and DCMENUFULLFORM buttons, but we inject our own Save button via the QuickEditFooter.tpl file
+		$this->ev->defs['templateMeta']['form']['buttons'] = array('DCMENUCANCEL', 'DCMENUFULLFORM');
 		$this->ev->defs['templateMeta']['form']['button_location'] = 'bottom';
 		$this->ev->defs['templateMeta']['form']['hidden'] = '<input type="hidden" name="is_ajax_call" value="1" />';
 		$this->ev->defs['templateMeta']['form']['hidden'] .= '<input type="hidden" name="from_dcmenu" value="1" />';
