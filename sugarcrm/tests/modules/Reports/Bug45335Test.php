@@ -30,6 +30,18 @@ require_once 'modules/Reports/Report.php';
  */
 class Bug45335Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+    }
+
+    public function tearDown()
+    {
+        unset($GLOBALS['beanList']);
+   	    unset($GLOBALS['beanFiles']);
+    }
+
     /**
      * Ensure that before validation invalid fields list is empty
      */
