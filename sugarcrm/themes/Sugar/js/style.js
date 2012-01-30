@@ -52,10 +52,6 @@ $(document).ready(function(){
 	SUGAR.themes.globalToolTips();
 
 });
- 
-
-
-
 
 SUGAR.themes = SUGAR.namespace("themes");
 
@@ -172,6 +168,11 @@ SUGAR.append(SUGAR.themes, {
 			onShow: function() {
 			}
 		});	
+    },
+    editMenuMode: function() {
+
+
+
     },
     resizeSearch: function() {
     	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54); 

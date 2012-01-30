@@ -66,6 +66,11 @@
 			//jquery for moddule menus
 			'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			//jqueryui
+			'include/javascript/jquery/jqueryui/jquery.ui.core.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jqueryui/jquery.ui.widget.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jqueryui/jquery.ui.mouse.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jqueryui/jquery.ui.sortable.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			),
 			
             $sugar_grp1_yui = array(
