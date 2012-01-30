@@ -3193,8 +3193,7 @@ class InboundEmail extends SugarBean {
 			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader[$upperCaseKeyDecodeHeader['CONTENT-TYPE']]['charset'])) {
 				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
 			} else {
-                global $locale;
-                $msgPart = $locale->translateCharset($text, 'UTF-8');
+                $msgPart = utf8_encode($text);
             }
 		} // end else clause
 
