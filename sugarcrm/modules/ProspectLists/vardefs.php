@@ -44,7 +44,7 @@ $dictionary['ProspectList'] = array (
 			'len' => '50',
 			'importable' => 'required',
 			'unified_search' => true,
-			'full_text_search' => 3,
+			'full_text_search' => array('boost' => 3),
 		),
 		'list_type' => array (
 		    'name' => 'list_type',

@@ -1,10 +1,39 @@
+{literal}
+<style type="text/css">
+.ftsModuleFilterSpan{
+    padding-top: 10px;
+}
+
+#moduleListTD
+{
+    padding-top: 10px;
+    padding-bottom:10px;
+    padding-left:5px;
+    background-color: #f7f7f7;
+    border-bottom-color:grey;
+    border-right-color:grey;
+    border-right-style: dashed;
+    border-right-width: 1px;
+    border-bottom-style: dashed;
+    border-bottom-width:1px;
+}
+#ftsSearchBarContainer {
+    width:30em !important;
+}
+.yui-ac-content {
+width:70%;
+}
+</style>
+{/literal}
 <script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
 {if (!$smarty.get.ajax)}
     <br>
-    <input type="text" size="50" placeholder="{$APP.LBL_SEARCH}" id="ftsSearchField" value="{$smarty.request.q}">
-
+<div id='ftsSearchBarContainer' >
+    <div id="ftsAutoCompleteResult" style="width:100%;!important"></div>
+    <input type="text" placeholder="{$APP.LBL_SEARCH}" name="ftsSearchField" id="ftsSearchField" value="{$smarty.request.q}"  style="width: 70%!important" >
+    <input type="button" class="button primary"value="{$APP.LBL_SEARCH}" onclick="SUGAR.FTS.search();">
     <a class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();'>
         <span id='advanced_search_img_span'>
             {sugar_getimage alt=$alt_show_hide name="advanced_search" ext=".gif" other_attributes='border="0" id="advanced_search_img" '}
@@ -13,7 +42,9 @@
             {sugar_getimage alt=$alt_show_hide name="basic_search" ext=".gif" other_attributes='border="0" id="basic_search_img" '}
         </span>
     </a>
-    <div id="ftsAutoCompleteResult"></div>
+
+
+</div>
     <br><br>
 
     <div id='inlineGlobalSearch' style="display:none;">
@@ -50,11 +81,12 @@
 
 
 <table width="50%">
-<tr><td width="15%"><b>Module Filter</b></td><td width="90%"></td></tr>
-<tr valign="top">
-    <td id="moduleListTD">
+<tr ><td width="15%">&nbsp;</td><td width="90%"></td></tr>
+<tr valign="top" >
+    <td id="moduleListTD" style="">
+        <b>Module Filter</b>
         {foreach from=$filterModules item=entry key=module}
-            <input type="checkbox" checked="checked" id="{$entry.module}" name="module_filter" class="ftsModuleFilter">{$entry.label}<br>
+            <div class="ftsModuleFilterSpan"><input type="checkbox" checked="checked" id="{$entry.module}" name="module_filter" class="ftsModuleFilter">{$entry.label}</div>
         {/foreach}
     </td>
 <td>
@@ -173,23 +205,21 @@
 
     var ds = new YAHOO.util.DataSource("index.php?", {
         responseType: YAHOO.util.XHRDataSource.TYPE_JSON,
-        responseSchema: {
-            resultsList: 'results'
-        },
-        connMethodPost: true
-        });
+        responseSchema: {resultsList: 'results'},connMethodPost: true}
+    );
 
-        var search = new YAHOO.widget.AutoComplete("ftsSearchField", "ftsAutoCompleteResult", ds, {
-        generateRequest : function(sQuery) {
-        	                    	var out = SUGAR.util.paramsToUrl({
-        	                    		to_pdf: 'true',
-        	                            module: 'Home',
-        	                            action: 'quicksearchQuery',
-                                        data: encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]})),
-        	                            query: sQuery
-        	                    	});
-        	                    	return out;
-        	                    }
+    var search = new YAHOO.widget.AutoComplete("ftsSearchField", "ftsAutoCompleteResult", ds, {
+        generateRequest : function(sQuery)
+        {
+            var out = SUGAR.util.paramsToUrl({
+                to_pdf: 'true',
+                module: 'Home',
+                action: 'quicksearchQuery',
+                data: encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]})),
+                query: sQuery
+            });
+            return out;
+        }
     });
 
     SUGAR.FTS.globalSearchEnabledTable.disableEmptyRows = true;

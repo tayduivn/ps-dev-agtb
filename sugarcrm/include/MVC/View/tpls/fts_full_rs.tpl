@@ -21,7 +21,7 @@
     {/foreach}
 {else}
 	<section class="resultNull">
-    {$APP.LBL_EMAIL_SEARCH_NO_RESULTS}
+        <h1>{$APP.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
    	</section>
 {/if}
     <br>

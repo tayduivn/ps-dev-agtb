@@ -41,7 +41,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     'len' => 100,
     'source'=>'non-db',
     'unified_search' => true,
-    'full_text_search' => 1,
+    'full_text_search' => array('boost' => 1),
     'comment' => 'The name of the account represented by the account_id field',
     'required' => true,
     'importable' => 'required',

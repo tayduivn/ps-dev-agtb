@@ -92,6 +92,7 @@ class TemplateField{
 	    'ext3'=>'ext3',
 		'label_value'=>'label_value',
 		'unified_search'=>'unified_search',
+        'full_text_search'=>'full_text_search',
 	//BEGIN SUGARCRM flav=pro ONLY
 		'calculated' => 'calculated',
         'formula' => 'formula',
@@ -337,6 +338,9 @@ class TemplateField{
 			'reportable'=>$this->convertBooleanValue($this->reportable),
             'unified_search'=>$this->convertBooleanValue($this->unified_search)
 		);
+        if (isset($this->full_text_search)) {
+            $array['full_text_search'] = $this->full_text_search;
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
             $array['calculated'] = $this->calculated;

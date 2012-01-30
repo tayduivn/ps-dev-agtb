@@ -620,6 +620,7 @@ class SugarView
 		/******************DC MENU*********************/
 		if(!empty($current_user->id) && !$this->_getOption('view_print')){
 			require_once('include/DashletContainer/DCFactory.php');
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
 			//$data = $dcm->getLayout();
 			$notifData = $dcm->getNotifications();
@@ -633,6 +634,11 @@ class SugarView
 			$ss->assign('DCACTIONS', $menuData['DCActions']);
 			$ss->assign('DYNAMICDCACTIONS', $menuData['dynamicDCActions']);
 			$ss->assign('PICTURE', $current_user->picture);
+            $ftsAutocompleteEnable = TRUE;
+            $searchEngine = SugarSearchEngineFactory::getInstance();
+            if($searchEngine instanceOf SugarSearchEngine)
+                $ftsAutocompleteEnable = FALSE;
+            $ss->assign('FTS_AUTOCOMPLETE_ENABLE', $ftsAutocompleteEnable);
 			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
 			$ss->assign('ACTION', isset($_REQUEST['action'])?$_REQUEST['action']:"");
 			$ss->assign('FULL', isset($_REQUEST['full'])?$_REQUEST['full']:"false");

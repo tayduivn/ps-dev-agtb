@@ -62,7 +62,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'len' => 36,
     'link'=>'member_of',
     'unified_search' => true,
-    'full_text_search' => 1,
+    'full_text_search' => array('boost' => 1),
     'importable' => 'true',
   ),
 
@@ -221,7 +221,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
 		'vname' => 'LBL_EMAIL_ADDRESSES',
 	    'reportable'=>false,
 	    'unified_search' => true,
-	    'full_text_search' => 2,
+	    'full_text_search' => array('boost' => 2),
 	    'rel_fields' => array('primary_address' => array('type'=>'bool')),
 	),
   	'email_addresses_primary' =>
