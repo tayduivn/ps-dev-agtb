@@ -1273,6 +1273,8 @@ class InboundEmail extends SugarBean {
 		global $current_user;
 		global $app_strings;
 
+        $result = 1;
+
 		$GLOBALS['log']->info("INBOUNDEMAIL: checking mailbox [ {$mailbox} ]");
 		$this->mailbox = $mailbox;
 		$this->connectMailserver();
@@ -1323,11 +1325,15 @@ class InboundEmail extends SugarBean {
 			// prefetch emails
 			if($prefetch == true) {
 				$GLOBALS['log']->info("[EMAIL] Start fetching emails for mailbox [{$mailbox}] for user [{$current_user->user_name}]");
-				$this->fetchCheckedEmails($fetchedOverview);
+				if(!$this->fetchCheckedEmails($fetchedOverview))
+                {
+                    $result = 0;
+                }
 				$GLOBALS['log']->info("[EMAIL] Done fetching emails for mailbox [{$mailbox}] for user [{$current_user->user_name}]");
 			}
 		} else {
 			$GLOBALS['log']->info("INBOUNDEMAIL: no results for mailbox [ {$mailbox} ]");
+            $result = 1;
 		}
 
 		/**
@@ -1351,6 +1357,7 @@ class InboundEmail extends SugarBean {
 				$this->getOverviewsFromCacheFile($uids, $mailbox, true);
 			}
 		}
+        return $result;
 	}
 
 	   /**
@@ -1911,11 +1918,13 @@ class InboundEmail extends SugarBean {
 					} else {
 						$GLOBALS['log']->debug("*** INBOUNDEMAIL: prefetch has a message with no UID");
 					}
+                    return true;
 				} else {
 					$GLOBALS['log']->debug("INBOUNDEMAIL: skipping email prefetch - size too large [ {$overview->size} ]");
 				}
 			}
 		}
+        return false;
 	}
 
 	/**
@@ -4312,7 +4321,7 @@ class InboundEmail extends SugarBean {
 		///////////////////////////////////////////////////////////////////////
 		////	DEAL WITH THE MAILBOX
 		if(!$forDisplay) {
-			imap_setflag_full($this->conn, $msgNo, '\\SEEN');
+			$r = imap_setflag_full($this->conn, $msgNo, '\\SEEN');
 
 			// if delete_seen, mark msg as deleted
 			if($this->delete_seen == 1  && !$forDisplay) {
@@ -4771,7 +4780,7 @@ eoq;
 			$this->stored_options = base64_encode(serialize($storedOptions));
 			$this->save();
 		} else {
-			$ret = imap_search($this->conn, 'UNDELETED UNSEEN');
+            $ret = imap_search($this->conn, 'UNDELETED UNSEEN');
 		}
 
 		$GLOBALS['log']->debug('-----> getNewMessageIds() got '.count($ret).' new Messages');
@@ -6449,6 +6458,131 @@ eoq;
 		}
 		return $service;
 	}
+
+
+    /**
+     * Get Email messages IDs from server which aren't in database
+     * @return array Ids of messages, which aren't still in database
+     */
+    public function getNewEmailsForSyncedMailbox()
+    {
+        // ids's count limit for batch processing
+        $limit = 20;
+        $msgIds = imap_search($this->conn, 'ALL UNDELETED');
+        $result = array();
+        try{
+            if(count($msgIds) > 0)
+            {
+                /*
+                 * @var collect results of queries and message headers
+                 */
+                $tmpMsgs = array();
+                $repeats = 0;
+                $counter = 0;
+
+                // sort IDs to get lastest on top
+                arsort($msgIds);
+                $GLOBALS['log']->debug('-----> getNewEmailsForSyncedMailbox() got '.count($msgIds).' Messages');
+                foreach($msgIds as $k => &$msgNo)
+                {
+                    $uid = imap_uid($this->conn, $msgNo);
+                    $header = imap_headerinfo($this->conn, $msgNo);
+                    $fullHeader = imap_fetchheader($this->conn, $msgNo);
+                    $message_id = $header->message_id;
+                    $deliveredTo = $this->id;
+                    $matches = array();
+                    preg_match('/(delivered-to:|x-real-to:){1}\s*(\S+)\s*\n{1}/im', $fullHeader, $matches);
+                    if(count($matches))
+                    {
+                        $deliveredTo = $matches[2];
+                    }
+                    if(empty($message_id) || !isset($message_id))
+                    {
+                        $GLOBALS['log']->debug('*********** NO MESSAGE_ID.');
+                        $message_id = $this->getMessageId($header);
+                    }
+
+                    // generate compound messageId
+                    $this->compoundMessageId = trim($message_id) . trim($deliveredTo);
+                    // if the length > 255 then md5 it so that the data will be of smaller length
+                    if (strlen($this->compoundMessageId) > 255)
+                    {
+                        $this->compoundMessageId = md5($this->compoundMessageId);
+                    } // if
+
+                    if (empty($this->compoundMessageId))
+                    {
+                        break;
+                    } // if
+                    $counter++;
+                    $potentials = clean_xss($this->compoundMessageId, false);
+
+                    if(is_array($potentials) && !empty($potentials))
+                    {
+                        foreach($potentials as $bad)
+                        {
+                            $this->compoundMessageId = str_replace($bad, "", $this->compoundMessageId);
+                        }
+                    }
+                    array_push($tmpMsgs, array('msgNo' => $msgNo, 'msgId' => $this->compoundMessageId, 'exists' => 0));
+                    if($counter == $limit)
+                    {
+                        $counter = 0;
+                        $query = array();
+                        foreach(array_slice($tmpMsgs, -$limit, $limit) as $k1 => $v1)
+                        {
+                            $query[] = $v1['msgId'];
+                        }
+                        $query = 'SELECT count(emails.message_id) as cnt, emails.message_id AS mid FROM emails WHERE emails.message_id IN ("' . implode('","', $query) . '") and emails.deleted = 0 group by emails.message_id';
+                        $r = $this->db->query($query);
+                        $tmp = array();
+                        while($a = $this->db->fetchByAssoc($r))
+                        {
+                            $tmp[html_entity_decode($a['mid'])] = $a['cnt'];
+                        }
+                        foreach($tmpMsgs as $k1 => $v1)
+                        {
+                            if(isset($tmp[$v1['msgId']]) && $tmp[$v1['msgId']] > 0)
+                            {
+                                $tmpMsgs[$k1]['exists'] = 1;
+                            }
+                        }
+                        foreach($tmpMsgs as $k1 => $v1)
+                        {
+                            if($v1['exists'] == 0)
+                            {
+                                $repeats = 0;
+                                array_push($result, $v1['msgNo']);
+                            }else{
+                                $repeats++;
+                            }
+                        }
+                        if($repeats > 0)
+                        {
+                            if($repeats >= $limit)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                $tmpMsgs = array_splice($tmpMsgs, -$repeats, $repeats);
+                            }
+                        }
+                        else
+                        {
+                            $tmpMsgs = array();
+                        }
+                    }
+                }
+                unset($msgNo);
+            }
+        }catch(Exception $ex)
+        {
+            $GLOBALS['log']->fatal($ex->getMessage());
+        }
+        $GLOBALS['log']->debug('-----> getNewEmailsForSyncedMailbox() got '.count($result).' unsynced messages');
+        return $result;
+    }
 
 } // end class definition
 
