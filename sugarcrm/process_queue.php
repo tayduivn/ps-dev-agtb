@@ -88,27 +88,10 @@ foreach($reports_to_email as $schedule_info)
 	$GLOBALS['log']->debug('-----> Generating Reporter');
 	$reporter = new Report(html_entity_decode($saved_report->content));
 	
-    $mod_strings = return_module_language($current_language, 'Reports');
-
-    // prevent invalid report from being processed
-    if (!$reporter->is_definition_valid())
-    {
-        $invalid_fields = $reporter->get_invalid_fields();
-
-        $message = string_format($mod_strings['ERR_REPORT_INVALID'], array(
-            $schedule_info['report_id'], implode(', ', $invalid_fields)
-        ));
-
-        $GLOBALS['log']->fatal('-----> ' . $message);
-
-        require_once 'modules/Reports/utils.php';
-        notify_of_invalid_report($saved_report, $schedule_info['report_id'], $reporter);
-        continue;
-    }
-
 	$GLOBALS['log']->debug('-----> Reporter settings attributes');
 	$reporter->layout_manager->setAttribute("no_sort",1);
 	$module_for_lang = $reporter->module;
+	$mod_strings = return_module_language($current_language, 'Reports');
 
 	$GLOBALS['log']->debug('-----> Reporter Handling PDF output');
 	$report_filename = template_handle_pdf($reporter, false);
