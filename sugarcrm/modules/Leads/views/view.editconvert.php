@@ -42,7 +42,7 @@ class ViewEditConvert extends SugarView {
         global $current_user;
         if(!$current_user->isDeveloperForModule("Leads"))
         {
-            die("Unauthorized Acccess to Administration");
+            die("Unauthorized Access to Administration");
         }
         
         if (isset($_REQUEST['action']) && ($_REQUEST['action'] == "saveLayout" || $_REQUEST['action'] == "saveAndPublishLayout"))
