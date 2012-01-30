@@ -786,7 +786,7 @@ class EmailMan extends SugarBean{
                 //will be removed for the next release.
                 if(!isset($btracker)) $btracker=false;
                 if ($btracker) {
-                    $mail->Body .= "<br><br><a href='". $tracker_url ."'>" . $tracker_text . "</a><br><br>";
+                    $mail->Body .= "<br /><br /><a href='". $tracker_url ."'>" . $tracker_text . "</a><br /><br />";
                 } else {
                     if (!empty($tracker_url)) {
                         $mail->Body = str_replace('TRACKER_URL_START', "<a href='" . $tracker_url ."'>", $mail->Body);
@@ -799,10 +799,10 @@ class EmailMan extends SugarBean{
 
                 //do not add the default remove me link if the campaign has a trackerurl of the opotout link
                 if ($this->has_optout_links==false) {
-                    $mail->Body .= "<br><font size='2'>{$mod_strings['TXT_REMOVE_ME']}<a href='". $this->tracking_url . "index.php?entryPoint=removeme&identifier={$this->target_tracker_key}'>{$mod_strings['TXT_REMOVE_ME_CLICK']}</a></font>";
+                    $mail->Body .= "<br /><span style='font-size:0.8em'>{$mod_strings['TXT_REMOVE_ME']}<a href='". $this->tracking_url . "index.php?entryPoint=removeme&identifier={$this->target_tracker_key}'>{$mod_strings['TXT_REMOVE_ME_CLICK']}</a></span>";
                 }
                 // cn: bug 11979 - adding single quote to comform with HTML email RFC
-                $mail->Body .= "<br><IMG HEIGHT='1' WIDTH='1' src='{$this->tracking_url}index.php?entryPoint=image&identifier={$this->target_tracker_key}'>";
+                $mail->Body .= "<br /><img alt='' height='1' width='1' src='{$this->tracking_url}index.php?entryPoint=image&identifier={$this->target_tracker_key}' />";
 
                 $mail->AltBody = $template_data['body'];
                 if ($btracker) {
