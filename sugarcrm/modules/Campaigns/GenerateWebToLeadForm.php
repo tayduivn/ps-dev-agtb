@@ -167,6 +167,12 @@ for($i= 0; $i<$columns;$i++){
          else{
             $field_type= $lead->field_defs[$colsFirstField]['type'];
          }
+         
+         //bug: 47574 - make sure, that webtolead_email1 field has same required attribute as email1 field
+         if($colsFirstField == 'webtolead_email1' && isset($lead->field_defs['email1']) && isset($lead->field_defs['email1']['required'])){
+             $lead->field_defs['webtolead_email1']['required'] = $lead->field_defs['email1']['required'];
+         }
+         
          $field_required = '';
          if(isset($lead->field_defs[$colsFirstField]['required']) && $lead->field_defs[$colsFirstField]['required'] != null
              && $lead->field_defs[$colsFirstField]['required'] != 0)
@@ -195,6 +201,12 @@ for($i= 0; $i<$columns;$i++){
          else{
             $field1_type= $lead->field_defs[$colsSecondField]['type'];
          }
+         
+         //bug: 47574 - make sure, that webtolead_email1 field has same required attribute as email1 field
+         if($colsSecondField == 'webtolead_email1' && isset($lead->field_defs['email1']) && isset($lead->field_defs['email1']['required'])){
+             $lead->field_defs['webtolead_email1']['required'] = $lead->field_defs['email1']['required'];
+         }
+         
          $field1_required = '';
          if(isset($lead->field_defs[$colsSecondField]['required']) && $lead->field_defs[$colsSecondField]['required'] != null
              && $lead->field_defs[$colsSecondField]['required'] != 0){

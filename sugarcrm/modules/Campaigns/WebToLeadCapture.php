@@ -71,6 +71,11 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             }
             $GLOBALS['check_notify'] = true;
 
+            //bug: 47574 - make sure, that webtolead_email1 field has same required attribute as email1 field
+            if(isset($lead->required_fields['email1'])){
+                $lead->required_fields['webtolead_email1'] = $lead->required_fields['email1'];
+            }
+            
             //bug: 42398 - have to unset the id from the required_fields since it is not populated in the $_POST
             unset($lead->required_fields['id']);
             unset($lead->required_fields['team_name']);
