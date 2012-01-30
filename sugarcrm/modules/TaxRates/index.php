@@ -84,7 +84,7 @@ $ListView->show_mass_update = false;
 $ListView->show_select_menu = false;
 $ListView->show_delete_button = false;
 $ListView->setQuery("", "", "list_order", "TAXRATE");
-$ListView->processListViewMulti($focus, "main", "TAXRATE");
+$ListView->processListView($focus, "main", "TAXRATE");
 
 
 if ($is_edit) {

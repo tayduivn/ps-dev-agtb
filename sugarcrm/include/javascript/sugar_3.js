@@ -4144,9 +4144,7 @@ function set_return(popup_reply_data)
         	{
         		if (popupConfirm > -1) {
         			set_return_basic(popup_reply_data,/\S/);
-        		} else {
-        			set_return_basic(popup_reply_data,/account/);
-        		}
+        		} 
         	}
         	// Bug 48726 End
         	else if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
