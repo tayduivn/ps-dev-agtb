@@ -25,6 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+//FILE SUGARCRM flav=pro ONLY
 
 include_once('include/workflow/alert_utils.php');
 
