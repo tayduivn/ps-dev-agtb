@@ -78,8 +78,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function getIndexType($bean)
     {
-        if(!empty($bean->table_name))
-            return $bean->table_name;
+        if(!empty($bean->module_dir))
+            return $bean->module_dir;
         else
             return self::DEFAULT_INDEX_TYPE;
     }
@@ -267,6 +267,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             //Only search accross our index.
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $s->addIndex($index);
+
+            //Search accross specific types (modules)
+            if(!empty($options['moduleFilter']))
+                $s->addTypes($options['moduleFilter']);
 
             // TODO, for non auto complete searches, ideally we should exclude summary_text field
             $esResultSet = $s->search($query, $limit);

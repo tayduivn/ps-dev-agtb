@@ -1544,6 +1544,13 @@ $app_list_strings = array (
     'required'=>'Required',
   ),
 
+    'Elastic_boost_options' => array (
+        '0' =>'Disabled',
+        '1'=>'Enabled with Low Boost',
+        '2'=>'Enabled with Medium Boost',
+        '3'=>'Enabled with High Boost',
+    ),
+
   'custom_fields_merge_dup_dom'=> array (
         0=>'Disabled',
         1=>'Enabled',
@@ -2903,7 +2910,8 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
   	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
- 	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
+ 	'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
+	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
  	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",    
 	'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no records saved. <item2> or <item3> one now.",
 	'MSG_EMPTY_LIST_VIEW_NO_RESULTS_SUBMSG' =>	"<item4> to learn more about the <item1> module. In order to access more information, use the user menu drop down located on the main navigation bar to access Help.",

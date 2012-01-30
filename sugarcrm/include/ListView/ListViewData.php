@@ -489,9 +489,15 @@ class ListViewData {
         }
         
         $queryString = '';
-        if(array_key_exists("search_name_basic", $_REQUEST)){
+        
+        if(isset($_REQUEST["search_name_basic"])){
         	$queryString = htmlentities($_REQUEST["search_name_basic"]);
         }
+       
+       	if(isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search"){
+        	$queryString = "-advanced_search";
+        }
+        
   
 		return array('data'=>$data , 'pageData'=>$pageData, 'query' => $queryString);
 	}

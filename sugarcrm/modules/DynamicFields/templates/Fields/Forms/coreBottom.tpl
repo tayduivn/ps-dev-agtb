@@ -51,7 +51,19 @@
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_AUDIT"}:</td><td><input type="checkbox" name="audited" value="1" {if !empty($vardef.audited) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="audited" value="{$vardef.audited}">{/if}</td></tr>
-<tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_FTS"}:</td><td><input type="checkbox" name="unified_search" value="1" {if !empty($vardef.unified_search) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="unified_search" value="{$vardef.unified_search}">{/if}</td></tr>
+
+{if $hideLevel < 5 && $show_fts}
+<tr>
+    <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_FTS"}:</td>
+    <td>
+        {if empty($vardef.full_text_search) || empty($vardef.full_text_search.boost)}
+            {html_options name="full_text_search[boost]" id="full_text_search" selected="0" options=$fts_options}
+        {else}
+            {html_options name="full_text_search[boost]" id="full_text_search" selected=$vardef.full_text_search.boost options=$fts_options}
+        {/if}
+    </td>
+</tr>
+{/if}
 
 {* //BEGIN SUGARCRM flav=int ONLY *}
 {*
