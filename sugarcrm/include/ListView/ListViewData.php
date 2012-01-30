@@ -490,11 +490,11 @@ class ListViewData {
         
         $queryString = '';
         
-        if(array_key_exists("search_name_basic", $_REQUEST)){
+        if(isset($_REQUEST["search_name_basic"])){
         	$queryString = htmlentities($_REQUEST["search_name_basic"]);
         }
        
-       	if(array_key_exists("searchFormTab", $_REQUEST) && $_REQUEST["searchFormTab"] == "advanced_search"){
+       	if(isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search"){
         	$queryString = "-advanced_search";
         }
         
