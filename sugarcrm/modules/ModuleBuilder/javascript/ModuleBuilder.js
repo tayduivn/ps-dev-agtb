@@ -1002,7 +1002,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		paramsToUrl : function (params) {
 			url = "";
 			for (i in params) {
-				url += i + "=" + params[i] + "&";
+				url += escape(i) + "=" + escape(params[i]) + "&";
 			}
 			return url;
 		},
