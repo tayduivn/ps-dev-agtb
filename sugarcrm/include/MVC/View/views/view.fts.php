@@ -51,7 +51,7 @@ class ViewFts extends SugarView
     /**
      * @see SugarView::display()
      */
-    public function display()
+    public function display($return = false)
     {
 
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
@@ -103,9 +103,11 @@ class ViewFts extends SugarView
             $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
         }
 
-
-
-        echo $this->ss->fetch($template);
+        $contents = $this->ss->fetch($template);
+        if($return)
+            return $contents;
+        else
+            echo $contents;
     }
 
     /**

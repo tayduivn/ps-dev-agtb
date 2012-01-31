@@ -374,6 +374,12 @@ class quicksearchQuery {
     {
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
+        $_REQUEST['q'] = trim($_REQUEST['term']);
+        $view = new ViewFts();
+        $view->init();
+        $output = $view->display(TRUE);
+        echo json_encode(array('results' =>$output));
+        /*
         $results = array();
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $trimmed_query = trim($_REQUEST['term']);
@@ -385,6 +391,7 @@ class quicksearchQuery {
             }
         }
         echo json_encode($results);
+        */
     }
 }
 
