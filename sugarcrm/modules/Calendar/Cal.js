@@ -41,6 +41,7 @@
 	CAL.script_evaled = false;
 	CAL.editDialog = false;
 	CAL.settingsDialog = false;	
+	CAL.sharedDialog = false;
 	CAL.basic = {};
 	CAL.basic.items = {};
 	CAL.update_dd = new YAHOO.util.CustomEvent("update_dd");
@@ -235,7 +236,7 @@
 		
 		var content = "";
 		if(params.type == "advanced"){
-			content = "<div class='contain' " + params.contain_style + ">" + params.item_text + "</div>";
+			content = "<div class='content' " + params.content_style + ">" + params.item_text + "</div>";
 		}
 		
 		var el = document.createElement("div");	
@@ -660,7 +661,7 @@
 						if(item.ts_start < start)
 							time_start = "...&nbsp;";
 						
-						var head_text = CAL.get_header_text(item.type,time_start,item.status,item.record);
+						var head_text = CAL.get_header_text(item.type,time_start,item.name,item.record);
 
 						var el = CAL.create_item({
 							item: item,
@@ -730,7 +731,7 @@
 				return;
 			}
 				
-			var head_text = CAL.get_header_text(item.type,item.time_start,item.status,item.record);					
+			var head_text = CAL.get_header_text(item.type,item.time_start,item.name,item.record);					
 			var time_cell = item.timestamp - item.timestamp % (CAL.t_step * 60);			
 			var duration_coef; 
 			if(item.module_name == 'Tasks'){
@@ -742,13 +743,12 @@
 					duration_coef = (parseInt(item.duration_hours) * 60 + parseInt(item.duration_minutes)) / CAL.t_step;
 			}			
 
-			var item_text = "";
-			if(CAL.item_text && (typeof item[CAL.item_text] != "undefined") )
-				item_text = item[CAL.item_text];
+
+			var item_text = SUGAR.language.languages.app_list_strings[item.type +'_status_dom'][item.status];
 			
-			var contain_style = "";
+			var content_style = "";
 			if(duration_coef < 1.75)
-				contain_style = "style='display: none;'";
+				content_style = "style='display: none;'";
 			
 			var elm_id = item.record + id_suffix;
 						
@@ -760,7 +760,7 @@
 				id: item.record,
 				id_suffix: id_suffix,
 				item_text: item_text,
-				contain_style: contain_style
+				content_style: content_style
 			});	
 			
 			YAHOO.util.Event.on(el,"click",function(){
@@ -785,8 +785,8 @@
 				
 	}
 
-	CAL.get_header_text = function (type,time_start,status,record){
-			var start_text = "<span class='start_time'>" + time_start + "</span> " + SUGAR.language.languages.app_list_strings[type +'_status_dom'][status];
+	CAL.get_header_text = function (type,time_start,text,record){
+			var start_text = "<span class='start_time'>" + time_start + "</span> " + text;
 			return start_text;
 	}
 	
@@ -910,6 +910,9 @@
 		if(e = CAL.get("list_div_win"))
 			e.style.display = "none";
 			
+		if(typeof SugarWidgetSchedulerSearch.hideCreateForm != 'undefined')
+			SugarWidgetSchedulerSearch.hideCreateForm();
+			
 		if(CAL.enable_repeat){			
 			CAL.reset_repeat_form();
 		}			
@@ -930,7 +933,7 @@
 			toggle_repeat_type();		
 			CAL.get("repeat_parent_id").value = "";
 			CAL.get("edit_all_recurrences").value = "";
-			CAL.get("edit_all_recurrences_btn").style.display = "none";
+			CAL.get("edit_all_recurrences_block").style.display = "none";
 			CAL.get("cal-repeat-block").style.display = "none";	
 	}
 
@@ -983,7 +986,7 @@
 	
 		if(typeof data.repeat_parent_id != "undefined"){
 			CAL.get("cal-repeat-block").style.display = "none";
-			CAL.get("edit_all_recurrences_btn").style.display = "";
+			CAL.get("edit_all_recurrences_block").style.display = "";
 			CAL.get("edit_all_recurrences").value = "";
 			CAL.get("repeat_parent_id").value = data.repeat_parent_id;			
 			return;
@@ -1016,7 +1019,7 @@
 			}			
 			
 			CAL.get("cal-repeat-block").style.display = "";
-			CAL.get("edit_all_recurrences_btn").style.display = "none";
+			CAL.get("edit_all_recurrences_block").style.display = "none";
 			toggle_repeat_type();
 		}
 		
@@ -1073,7 +1076,6 @@
 					if(CAL.record_editable){
 						CAL.get("btn-save").removeAttribute("disabled");
 						CAL.get("btn-delete").removeAttribute("disabled");
-						CAL.get("btn-apply").removeAttribute("disabled");
 						CAL.get("btn-send-invites").removeAttribute("disabled");
 					}
 				}
@@ -1167,7 +1169,6 @@
 			CAL.get("form_content").style.display = "none";
 		
 			CAL.get("btn-delete").setAttribute("disabled","disabled");			
-			CAL.get("btn-apply").setAttribute("disabled","disabled");
 			CAL.get("btn-save").setAttribute("disabled","disabled");
 			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
 			// Reset display parameter, if the delete button was hidden 
@@ -1234,7 +1235,6 @@
 							if(CAL.record_editable){
 								CAL.get("btn-save").removeAttribute("disabled");
 								CAL.get("btn-delete").removeAttribute("disabled");
-								CAL.get("btn-apply").removeAttribute("disabled");
 								CAL.get("btn-send-invites").removeAttribute("disabled");
 							}														
 							
@@ -1395,7 +1395,7 @@
 						CAL.update_dd.fire();
 						
 						CAL.cut_record(box_id);					
-						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('time'),u.getAttribute('status'),u.getAttribute('record'));
+						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('time'),' ... ',u.getAttribute('record'));
 						var date_field = "date_start";
 						if(u.getAttribute('module_name') == "Tasks")
 							date_field = "date_due";
@@ -1426,7 +1426,6 @@
 	CAL.load_create_form = function (params){
 	
 			CAL.get("btn-delete").setAttribute("disabled","disabled");			
-			CAL.get("btn-apply").setAttribute("disabled","disabled");
 			CAL.get("btn-save").setAttribute("disabled","disabled");
 			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
 			CAL.get("btn-delete").style.display = "";	
@@ -1471,7 +1470,6 @@
 								CAL.fill_repeat_tab(res.repeat);
 							}							
 
-							CAL.get("btn-apply").removeAttribute("disabled");
 							CAL.get("btn-save").removeAttribute("disabled");
 							CAL.get("btn-send-invites").removeAttribute("disabled");
 								
@@ -1539,11 +1537,16 @@
 	
 	CAL.dialog_save = function(){
 						CAL.get("btn-save").setAttribute("disabled","disabled");
-						CAL.get("btn-apply").setAttribute("disabled","disabled");
+						
 						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
-						CAL.get("title-cal-edit").innerHTML = CAL.lbl_saving;																					
+						if (CAL.get("send_invites").value == "1") {
+							CAL.get("title-cal-edit").innerHTML = CAL.lbl_sending;								
+						} else {
+							CAL.get("title-cal-edit").innerHTML = CAL.lbl_saving;
+						}
+																											
 						CAL.fill_invitees();							
 						CAL.fill_repeat_data();
 												
@@ -1587,7 +1590,6 @@
 	
 	CAL.dialog_apply = function(){
 						CAL.get("btn-save").setAttribute("disabled","disabled");
-						CAL.get("btn-apply").setAttribute("disabled","disabled");
 						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
@@ -1626,6 +1628,7 @@
 										
 										// If new data is added with Apply, show the Delete button
 										CAL.get("btn-delete").removeAttribute("disabled");
+										CAL.get("btn-save").removeAttribute("disabled");
 										CAL.get("btn-delete").style.display = "";
 									}else{
 										alert(CAL.lbl_error_saving);
@@ -1642,9 +1645,23 @@
 						YAHOO.util.Connect.asyncRequest('POST',url,callback,false);
 	}
 	
+	CAL.remove_all_recurrences = function(){				
+	
+		if(confirm(CAL.lbl_confirm_remove_all_recurring)){
+			if(CAL.get("repeat_parent_id").value != ''){
+				CAL.get("record").value = CAL.get("repeat_parent_id").value;
+			}
+			CAL.get("edit_all_recurrences").value = true;
+			CAL.dialog_remove();		
+		}
+	
+	}
+	
 	CAL.dialog_remove = function(){
 									CAL.deleted_id = CAL.get("record").value;
 									CAL.deleted_module = CAL.get("current_module").value;
+									
+									var remove_all_recurrences = CAL.get("edit_all_recurrences").value;
 											
 									var callback = {
 											success: function(o){
@@ -1662,7 +1679,7 @@
 													cell_id = e.parentNode.id;
 													
 												if(CAL.view == 'shared'){	
-													CAL.remove_shared(CAL.deleted_id);
+													CAL.remove_shared(CAL.deleted_id, remove_all_recurrences);
 												}else{														
 													if(e = CAL.get(CAL.deleted_id)){
 														e.parentNode.removeChild(e);
@@ -1674,7 +1691,7 @@
 														user_id: CAL.current_user_id
 													});	
 												
-													if(CAL.enable_repeat){
+													if(CAL.enable_repeat && remove_all_recurrences){
 														var nodes = CAL.query("div.act_item[repeat_parent_id='" + CAL.deleted_id + "']");			
 														CAL.each(nodes,function (i,v){
 															CAL.basic.remove({
@@ -1702,7 +1719,8 @@
 									
 									var data = {
 										"current_module" : CAL.deleted_module,
-										"record" : CAL.deleted_id
+										"record" : CAL.deleted_id,
+										"remove_all_recurrences": remove_all_recurrences
 									};
 									var url = "index.php?module=Calendar&action=Remove&sugar_body_only=true";									
 									YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));
@@ -1725,18 +1743,26 @@
 			SUGAR.util.additionalDetailsCalls[id] = undefined;		
 	}			
 	
-	CAL.toggle_shared_edit = function (id){
-		if(document.getElementById(id).style.display == 'none'){
-			document.getElementById(id).style.display = 'inline'
-			if(document.getElementById(id+"link") != undefined){
-				document.getElementById(id+"link").style.display='none';
-			}
-		}else{
-			document.getElementById(id).style.display = 'none'
-			if(document.getElementById(id+"link") != undefined){
-				document.getElementById(id+"link").style.display = 'inline';
-			}
+	CAL.toggle_shared_edit = function (){
+		
+		var sd = CAL.get("shared_cal_edit");			
+		if(!CAL.sharedDialog){	
+			CAL.sharedDialog = new YAHOO.widget.Dialog("shared_cal_edit",{ 
+				  	fixedcenter: true,
+				  	draggable: false,
+				  	visible : false, 
+				 	modal : true,
+				  	close: true
+			});
+			var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.sharedDialog.cancel();} } );
+			CAL.sharedDialog.cfg.queueProperty("keylisteners", listeners);
 		}
+		CAL.sharedDialog.cancelEvent.subscribe(function(e, a, o){
+			//CAL.get("form_settings").reset();
+		});
+		sd.style.display = "block";	 
+		CAL.sharedDialog.render();
+		CAL.sharedDialog.show();
 	}
 
 	CAL.goto_date_call = function (){

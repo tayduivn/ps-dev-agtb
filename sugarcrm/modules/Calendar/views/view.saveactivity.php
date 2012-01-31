@@ -95,7 +95,7 @@ class CalendarViewSaveActivity extends SugarView {
 		if($record = $bean->id){			
 			if($module == "Meetings"){
 				if(!empty($_REQUEST['edit_all_recurrences']))
-					CalendarUtils::mark_repeat_deleted($bean);
+					CalendarUtils::markRepeatDeleted($bean);
 				if(is_array($repeat_arr) && count($repeat_arr) > 0)
 					$repeat_created = CalendarUtils::save_repeat_activities($bean,$repeat_arr);
 			}			

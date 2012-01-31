@@ -99,9 +99,9 @@ array (
             'label' => 'LBL_DURATION',
           ),
           array(
-		'name' => 'reminder_time',
-		'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',
-		'label' => 'LBL_REMINDER',
+            'name' => 'reminder_time',
+            'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',
+            'label' => 'LBL_REMINDER',
           ),
         ),
         array (

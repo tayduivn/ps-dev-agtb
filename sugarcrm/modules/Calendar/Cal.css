@@ -142,12 +142,14 @@
 	overflow: hidden;
 	height: 13px;	
 }
-.act_item .contain {
+.act_item .content {
 	padding-top: 1px;
 	padding-left: 2px;
 	padding-right: 2px;
 	overflow: hidden;
 	height: 13px;	
+	padding-top: 1px;
+	font-size: 11px;
 }
 
 .act_item .adicon {
@@ -160,16 +162,16 @@
 	text-align: center;
 	background-image: url('../../themes/default/images/MoreDetail.png');
 	background-repeat: no-repeat;
-}
-
-.act_item .head {
-	font-size: 10px;	
-	font-weight: bold;
+	margin-left: 2px;
 }
 
 .act_item .head div {
-	font-weight: bold;	
-	font-size: 10px;
+	font-size: 11px;	
+}
+
+
+.act_item .head .start_time {
+	font-weight: bold;
 }
 
 .act_item .head a, .act_item .head a:visited, .act_item .head a:hover {
@@ -193,4 +195,8 @@
 
 #cal-edit-buttons {
 	padding: 7px 5px 5px 5px;
+}
+
+#edit_all_recurrences_block button {
+	margin: 4px;
 }

@@ -25,49 +25,46 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/MVC/View/SugarView.php');
+require_once('include/MVC/View/views/view.ajax.php');
+require_once('include/EditView/EditView2.php');
 
-class CalendarViewRemove extends SugarView {
 
-	function CalendarViewRemove(){
- 		parent::SugarView();
-	}
-	
-	function process(){
-		$this->display();
-	}
-	
-	function display(){
-		require_once("modules/Calendar/CalendarUtils.php");
-
-		global $beanFiles,$beanList;
-		$module = $_REQUEST['current_module'];
-		require_once($beanFiles[$beanList[$module]]);
-		$bean = new $beanList[$module]();
-		$bean->retrieve($_REQUEST['record']);
-
-		if(!$bean->ACLAccess('delete')){
-			die;	
-		}
-		
-		if($module == "Meetings"){
-			if($_REQUEST['remove_all_recurrences']){
-				CalendarUtils::markRepeatDeleted($bean);
-			}else{
-				CalendarUtils::checkAndChangeRepeatChildren($bean);
-			}			
-		}
-
-		$bean->mark_deleted($_REQUEST['record']);
-
-		$json_arr = array(
-			'access' => 'yes',
-		);
-
-		ob_clean();
-		echo json_encode($json_arr);
-	}	
-
+class CalendarViewCreateInvitee extends SugarView 
+{
+   
+    public function preDisplay()
+    {
+        global $beanFiles, $beanList;
+        $module = $_REQUEST['inviteeModule'];
+        require_once($beanFiles[$beanList[$module]]);
+        $this->bean = new $beanList[$module]();
+       
+        if ($this->bean->ACLAccess('save')) {
+            require_once('include/formbase.php');
+            $this->bean = populateFromPost("", $this->bean);
+            $this->bean->save();
+        } else {
+            $sendbackArr = array(
+                'noAccess' => true,
+                'module' => $this->bean->object_name,
+            );
+            echo json_encode($sendbackArr);
+            die;
+        }
+    }
+    
+    public function display()
+    {
+        $sendbackArr = array(
+            'module' => $this->bean->object_name,
+            'fields' => array(),
+        );
+        foreach ($_REQUEST['fieldList'] as $field) {
+            $sendbackArr['fields'][$field] = $this->bean->$field;
+        }
+            
+        ob_clean();
+        echo json_encode($sendbackArr);
+    }
 }
 
-?>

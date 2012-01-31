@@ -51,7 +51,6 @@
 		CAL.enable_repeat = "{$enable_repeat}";
 		CAL.items_draggable = "{$items_draggable}";
 		CAL.items_resizable = "{$items_resizable}";
-		CAL.item_text = "{$item_text}";		
 		CAL.cells_per_day = {$cells_per_day};	
 		CAL.current_params = {literal}{}{/literal};
 		CAL.dashlet = "{$dashlet}";		
@@ -63,7 +62,10 @@
 		CAL.lbl_edit = "{$MOD.LBL_EDIT_RECORD}";
 		CAL.lbl_saving = "{$MOD.LBL_SAVING}";
 		CAL.lbl_loading = "{$MOD.LBL_LOADING}";
+		CAL.lbl_sending = "{$MOD.LBL_SENDING_INVITES}";
 		CAL.lbl_confirm_remove = "{$MOD.LBL_CONFIRM_REMOVE}";
+		CAL.lbl_confirm_remove_all_recurring = "{$MOD.LBL_CONFIRM_REMOVE_ALL_RECURRING}";
+		
 		CAL.lbl_error_saving = "{$MOD.LBL_ERROR_SAVING}";
 		CAL.lbl_error_loading = "{$MOD.LBL_ERROR_LOADING}";
 		CAL.lbl_repeat_limit_error = "{$MOD.LBL_REPEAT_LIMIT_ERROR}";
@@ -163,18 +165,12 @@
 				return false;	
 			CAL.get("send_invites").value = "1";							
 			CAL.dialog_save();	
-		});
-		
-		YAHOO.util.Event.on("btn-apply","click",function(){
-			if(!CAL.check_forms())
-				return false;
-			CAL.dialog_apply();
-		});	
+		});		
 				
 		YAHOO.util.Event.on("btn-delete","click",function(){
 			if(CAL.get("record").value != "")
 				if(confirm(CAL.lbl_confirm_remove))
-					CAL.dialog_remove();				
+					CAL.dialog_remove();
 						
 		});	
 	
@@ -240,9 +236,8 @@
 	</div>	
 	<div id="cal-edit-buttons" class="ft">
 		<button id="btn-save" class="button" type="button">{$MOD.LBL_SAVE_BUTTON}</button>
-		<button id="btn-apply" class="button" type="button">{$MOD.LBL_APPLY_BUTTON}</button>
-		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>
 		<button id="btn-cancel" class="button" type="button">{$MOD.LBL_CANCEL_BUTTON}</button>
+		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>
 		<button id="btn-send-invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>
 	</div>
 </div>

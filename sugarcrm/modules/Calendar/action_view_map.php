@@ -37,3 +37,4 @@ $action_view_map['getgr'] = 'getgr';
 $action_view_map['getgrusers'] = 'getgrusers';
 $action_view_map['quickedit'] = 'quickedit';
 $action_view_map['savesettings'] = 'savesettings';
+$action_view_map['createinvitee'] = 'createinvitee';

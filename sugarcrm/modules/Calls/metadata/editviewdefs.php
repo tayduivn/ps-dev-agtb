@@ -120,9 +120,9 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration
 
           ),
           array(
-		'name' => 'reminder_time',
-		'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',
-		'label' => 'LBL_REMINDER',
+            'name' => 'reminder_time',
+            'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',
+            'label' => 'LBL_REMINDER',
           ),
         ),
         array (
