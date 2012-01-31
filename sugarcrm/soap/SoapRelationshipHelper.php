@@ -107,16 +107,29 @@ function retrieve_relationships($module_name,  $related_module, $relationship_qu
 }
 
 /*
- * retireves modified relationships between two modules
+ * retrieve_modified_relationships
+ *
+ * This method retrieves modified relationships between two modules
  * This will return all viewable relationships between two modules
- * module_query is a filter on the first module
- * related_module_query is a filter on the second module
- * relationship_query is a filter on the relationship between them
- * show_deleted is if deleted items should be shown or not (IGNORED)
+ *
+ * @param $module_name String value of the module on the left hand side of relationship
+ * @param related_module String value of the module on the right hand side of relationship
+ * @param relationship_query SQL String used to query for the relationships
+ * @show_deleted boolean value indicating whether or not deleted items should be shown (IGNORED)
+ * @offset integer value indicating the starting offset of results to return
+ * @max_results integer value indicating the maximum number of results to return
+ * @select_fields Mixed Array indicating the select fields used in the query to return in results
+ * @relationship_name String value of the relationship name as defined in the relationships table to be used in retrieving the relationship information
+ * @return Mixed Array of results with the following delta/value information:
+ *         table_name String value of the table name queried for the results
+ *         result Mixed Array of the results.  Each entry in the Array contains an Array of key/value pairs from the select_fields parameter
+ *         total_count integer value indicating the total count of results from the query
+ *         error Mixed Array containing the SOAP errors if found, empty otherwise
  *
  */
 function retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields = array(), $relationship_name = ''){
-	global  $beanList, $beanFiles, $dictionary, $current_user;
+
+    global  $beanList, $beanFiles, $dictionary, $current_user;
 	$error = new SoapError();
 	$result_list = array();
 	if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
@@ -168,6 +181,7 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 	if(isset($select_fields) && !empty($select_fields)){
 		$index = 0;
 		$field_select ='';
+
 		foreach($select_fields as $field){
 			if($field == "id"){
 				$field_select .= "DISTINCT m1.".getValidDBName($field);
@@ -175,11 +189,20 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 			else{
 				if(strpos($field, ".") == false){
 					$field_select .= "m1.".getValidDBName($field);
-				}
-				else{
+				} else{
                     // There is a dot in here somewhere.
+                    $alias = '';
+                    //Check if there is a space.  This is the case when an alias is specified
+                    $space = strpos($field, ' ');
+                    if($space > 0)
+                    {
+                        $alias = substr($field, $space);
+                        $field = substr($field, 0, $space);
+                    }
+
                     list($table_part,$field_part) = explode('.',$field);
                     $field_select .= getValidDBName($table_part).".".getValidDBName($field_part);
+                    $field_select .= $alias;
 				}
 			}
 			if($index < (count($select_fields) - 1))
@@ -225,6 +248,7 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 		$result_list[] = $row;
 	}
 
+    $total_count = !empty($result_list) ? count($result_list) : 0;
 	return array('table_name'=>$table, 'result'=>$result_list, 'total_count'=>$total_count, 'error'=>$error->get_soap_array());
 }
 
