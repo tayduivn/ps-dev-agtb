@@ -137,10 +137,10 @@
 					
 					if((right_compare && w_compare < 0) || (t_class == "_right" && !left_compare) || (t_class == "_left" && left < (tip_w + opts.edgeOffset + 5))){
 						t_class = "_right";
-						arrow_top = Math.round(tip_h - 13) / 2;
-						arrow_left = 0;
+						arrow_top = -12;
+						arrow_left = 1;
 						marg_left = Math.round(left);
-						marg_top = Math.round(top + h_compare);
+						//marg_top = Math.round(top + h_compare);
 					} else if((left_compare && w_compare < 0) || (t_class == "_left" && !right_compare)){
 						t_class = "_left";
 						arrow_top = -12;

@@ -76,6 +76,15 @@ span.id-ff.multiple button.button.firstChild{	-moz-border-radius: 4px;	border-
 #moduleList, #moduleList .sf-menu li {
 	float: right;
 }
+#moduleList .sf-menu li:hover ul, #moduleList .sf-menu li.sfHover ul {
+	right: 0px;
+	left: auto;
+}
+
+#moduleList ul.sf-menu li.moduleTabExtraMenu li:hover > ul, #moduleList ul.sf-menu li.moduleTabExtraMenu li.sfHover > ul {
+	left: auto;
+	right: 225px;	
+}
 
 #quickCreate, #searchDivider, #globalLinksDivider {
 	float: left;	
@@ -90,10 +99,32 @@ span.id-ff.multiple button.button.firstChild{	-moz-border-radius: 4px;	border-
 	left: 0px;	
 }
 
-#moduleList .dashletPanelMenu  .bd  ul.shortCutsUl {float: right;direction: rtl;}#moduleList .dashletPanelMenu  .bd  ul.lastViewedUl {float: left;width: 45%;direction: rtl;}
+#moduleList .sf-menu  ul.MMLastViewed {direction: rtl;}#moduleList .sf-menu ul.MMFavorites {direction: rtl;}
 
-#moduleList.yuimenubar li.currentTabRight + li  .yuimenuitemlabel {border-right: 1px solid transparent;
-border-left: 0px;}
+#moduleList .sf-menu ul.MMShortcuts {direction: rtl;
+float: right;}
+
+#moduleList .megacolumn {
+	float: right;
+}
+
+#moduleList .sf-menu ul .megawrapper ul li.groupLabel {
+	padding-left: 0px;
+	padding-right: 10px;	
+}
+
+#arrow {
+	left: 0px;
+}
+
+#footer img {
+	float: right;
+}
+
+#footer img.logo {
+	margin-right: 5px;	
+}
+
 
 .list tr.pagination td table td a:link,.list tr.pagination td table td a:visited,.reportGroupByDataChildTablelistViewThS1 a:link,.reportGroupByDataChildTablelistViewThS1 a:visited,.list tr th,.list tr th a:link,.list tr th a:visited,.list tr td[scope=col],.list tr td[scope=col] a:link,.list tr td[scope=col] a:visited{	direction: rtl;}
 
