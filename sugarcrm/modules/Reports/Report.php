@@ -804,8 +804,24 @@ class Report
     {
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $full_key = $this->_get_full_key($layout_def);
-        return !empty($this->all_fields[$full_key])
-            && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count' && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')));
+
+        if (!empty($this->all_fields[$full_key]))
+        {
+            return true;
+        }
+
+        if (isset($layout_def['group_function']))
+        {
+            switch ($layout_def['group_function'])
+            {
+                case 'count':           // fall through
+                case 'weighted_sum':    // fall through
+                case 'weighted_amount':
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     /**
