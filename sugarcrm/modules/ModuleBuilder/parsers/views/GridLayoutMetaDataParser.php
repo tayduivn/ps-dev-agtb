@@ -93,6 +93,16 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $this->_standardizeFieldLabels( $this->_fielddefs );
         $this->_viewdefs [ 'panels' ] = $this->_convertFromCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ; // put into our internal format
         $this->_originalViewDef = $this->getFieldsFromLayout($this->implementation->getOriginalViewdefs ());
+        //fixing bug #43787: 
+        //when adding a field to quick create layout 
+        //check its properties in edit view definitions in case 
+        //that field is absent in the default quickcreatedefs.php
+        if ($view == MB_QUICKCREATE)
+        {
+            $this->_view = MB_EDITVIEW;
+            $this->_editViewDefs = $this->getFieldsFromLayout($this->implementation->getEditViewDefs());
+            $this->_view = $view ;
+        }
     }
 
     /*
@@ -557,6 +567,17 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                         //We should copy over the tabindex if it is set.
                         if (isset ($fielddefs [ $fieldname ]) && !empty($fielddefs [ $fieldname ]['tabindex']))
                             $newRow [ $colID - $offset ]['tabindex'] = $fielddefs [ $fieldname ]['tabindex']; 
+                    }
+                    //if no matches found for quickcreate view on the previos steps see in editview vardefs
+                    else if ($this->_view == MB_QUICKCREATE)
+                    { 
+                        if (isset($this->_editViewDefs[$fieldname]))
+                        {
+                            $newRow [$colID - $offset] = $this->_editViewDefs[$fieldname];
+                            //We should copy over the tabindex if it is set.
+                            if (isset($fielddefs[$fieldname]) && !empty($fielddefs[$fieldname]['tabindex']))
+                            $newRow[$colID - $offset]['tabindex'] = $fielddefs[$fieldname]['tabindex'];
+                        }
                     }
                 	//Otherwise make up a viewdef for it from field_defs
                 	else if (isset ($fielddefs [ $fieldname ]))
