@@ -376,12 +376,12 @@ class quicksearchQuery {
 
         $results = array();
         $searchEngine = SugarSearchEngineFactory::getInstance();
-        $trimmed_query = trim($_REQUEST['query']);
+        $trimmed_query = trim($_REQUEST['term']);
 
         $rs = $searchEngine->search($trimmed_query, 0, 10, array(), true);
         if ($rs) {
             foreach ($rs as $r) {
-                $results['results'][] = $r->getAutoCompleteText();
+                $results[] = $r->getAutoCompleteText();
             }
         }
         echo json_encode($results);
