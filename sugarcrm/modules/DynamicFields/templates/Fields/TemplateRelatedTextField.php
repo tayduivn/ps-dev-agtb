@@ -186,11 +186,7 @@ class TemplateRelatedTextField extends TemplateText{
         $def = parent::get_field_def();
         $def['id_name'] = $this->ext3;
         $def['ext2'] = $this->ext2;
-        if (!empty($def['ext2'])){
-            $def['module'] = $def['ext2'];
-        } else {
-            $def['module'] = $this->module;
-        }
+        $def['module'] = $def['ext2'];
         //Special case for documents, which use a document_name rather than name
         if ($def['module'] == "Documents") {
         	$def['rname'] = 'document_name';
