@@ -41,4 +41,5 @@ $mod_strings = array (
 'ERR_NOSUCHUSER' => "User ID %s not found",
 'ERR_JOBTYPE' 	=> "Unknown job type: %s",
 'ERR_TIMEOUT' => "Forced failure on timeout",
+'ERR_JOB_FAILED_VERBOSE' => 'Job %1$s (%2$s) failed in CRON run',
 );

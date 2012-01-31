@@ -63,6 +63,12 @@ class SugarCronJobs
     public $runOk = true;
 
     /**
+     * Should the driver print reports to stdout?
+     * @var bool
+     */
+    public $verbose = false;
+
+    /**
      * This allows to disable schedulers cycle, e.g. for testing
      * @var bool
      */
@@ -116,12 +122,14 @@ class SugarCronJobs
      * What to do if one of the jobs failed
      * @param SchedulersJob $job
      */
-    protected function jobFailed($job)
+    protected function jobFailed($job = null)
     {
         $this->runOk = false;
-        $GLOBALS['log']->fatal("Job {$job->id} ({$job->name}) failed in CRON run");
-        if($this->verbose) {
-            printf(translate('ERR_JOB_FAILED_VERBOSE', 'SchedulersJobs'), $job->id, $job->name);
+        if(!empty($job)) {
+            $GLOBALS['log']->fatal("Job {$job->id} ({$job->name}) failed in CRON run");
+            if($this->verbose) {
+                printf(translate('ERR_JOB_FAILED_VERBOSE', 'SchedulersJobs'), $job->id, $job->name);
+            }
         }
     }
 
@@ -151,7 +159,9 @@ class SugarCronJobs
             return;
         }
         // clean old stale jobs
-        $this->queue->cleanup();
+        if(!$this->queue->cleanup()) {
+            $this->jobFailed();
+        }
         // run schedulers
         if(!$this->disable_schedulers) {
             $this->queue->runSchedulers();

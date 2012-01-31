@@ -139,16 +139,20 @@ class SugarJobQueue
 
     /**
      * Remove old jobs that still are marked as running
+     * @return bool true if no failed job discovered, false if some job were failed
      */
     public function cleanup()
     {
         // fail jobs that are too old
+        $ret = true;
         $date = $this->db->convert($this->db->quoted($GLOBALS['timedate']->getNow()->modify("+{$this->timeout} seconds")->asDb()), 'datetime');
         $res = $this->db->query("SELECT id FROM {$this->job_queue_table} WHERE status='".SchedulersJob::JOB_STATUS_RUNNING."' AND date_modified <= $date");
         while($row = $this->db->fetchByAssoc($res)) {
             $this->resolveJob($row["id"], SchedulersJob::JOB_FAILURE, translate('ERR_TIMEOUT', 'SchedulersJobs'));
+            $ret = false;
         }
         // TODO: soft-delete old done jobs?
+        return $ret;
     }
 
     /**
