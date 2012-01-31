@@ -237,6 +237,10 @@ EOHTML;
 		$where = '';
         $searchEmail = preg_match('/^([^%]|%)*@([^%]|%)*$/', $query);
 
+        // bug49650 - strip out asterisks from query in case
+        // user thinks asterisk is a wildcard value
+        $query = str_replace( '*' , '' , $query );
+        
         $limit = !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5;
 		if($offset !== -1){
 			$limit = !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20;
