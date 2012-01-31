@@ -121,7 +121,6 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
             //retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields = array(), $relationship_name = '')
 
             $result = retrieve_modified_relationships($data[0], $data[1], $data[2], $data[3], $data[4], $data[5], $data[6], $data[7]);
-            //echo var_export($result, true);
             $this->assertEquals($data[8]['id'], $result['result'][0]['id'], 'Ids do not match');
             $this->assertEquals($data[9], $result['total_count'], 'Totals do not match');
             $this->assertEquals($data[10], $result['error'], 'No SOAP Error');
