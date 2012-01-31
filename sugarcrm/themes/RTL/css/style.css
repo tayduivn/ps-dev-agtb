@@ -12,15 +12,6 @@ body.popupBody {
 
 #globalLinksModule {float: left;}
 
-#globalLinksCtrl {	float: left;}
-
-#globalLinksCtrl a.yui-toggle {    background-position:-20px 0; /* close (minus) icon */}
-
-#globalLinksCtrl a.yui-toggle:hover {	background-position:-60px 0;}
-#globalLinksModule.yui-closed a.yui-toggle {    background-position: 0 0; /* open (plus) icon */}
-
-#globalLinksModule.yui-closed a.yui-toggle:hover {	background-position:-40px 0;}
-
 div#content{    direction: rtl;}
 
 div.moduleTitle{    direction: rtl;}
@@ -82,15 +73,22 @@ span.id-ff {direction: ltr !important;	}
 
 span.id-ff.multiple button.button.firstChild{	-moz-border-radius: 4px;	border-radius: 4px;	-webkit-border-radius: 4px;	-moz-border-radius-topleft: 0px;  	-moz-border-radius-bottomleft: 0px; 	border-radius-topleft: 0px;  	border-radius-bottomleft: 0px; 	-webkit-border-bottom-left-radius: 0px;	-webkit-border-top-left-radius: 0px;	border-left-color: #eee;}span.id-ff.multiple button.button.lastChild{	-moz-border-radius: 4px;	border-radius: 4px;	-webkit-border-radius: 4px;  -moz-border-radius-topright: 0px;  -moz-border-radius-bottomright: 0px;  border-radius-topright: 0px;  border-radius-bottomright: 0px;  -webkit-border-bottom-right-radius: 0px;  -webkit-border-bottom-top-radius: 0px;  border-left-color: #CCCCCC;}
 
-#moduleList {	padding-left: 0px;	padding-right: 20px;}
+#moduleList, #moduleList .sf-menu li {
+	float: right;
+}
 
-#moduleList.yuimenubarnav .yuimenubaritem {float: right;}#moduleList.yuimenubar .moduleTabGroupMenu {float: left;}#moduleList.yuimenubar .yuimenuitemlabel.group {border-left: 0px;border-right: 1px solid #ccc;}
+#quickCreate, #searchDivider, #globalLinksDivider {
+	float: left;	
+}
 
-#moduleList.yuimenubar li.currentTabRight {float:right;}
+#quickCreate ul.clickMenu li ul.subnav
+{
+	right: auto;	
+}
 
-#moduleList.yuimenubar li.currentTabRight .yuimenuitemlabel{	border-right: 0px;}
-
-#moduleList .dashletPanelMenu .yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel:link, .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel:link, li.current .dashletPanelMenu  a.yuimenuitemlabel:visited { padding:4px 6px 4px 6px;text-align: right;}
+#globalLinksModule ul.clickMenu li ul.subnav {
+	left: 0px;	
+}
 
 #moduleList .dashletPanelMenu  .bd  ul.shortCutsUl {float: right;direction: rtl;}#moduleList .dashletPanelMenu  .bd  ul.lastViewedUl {float: left;width: 45%;direction: rtl;}
 
@@ -142,7 +140,8 @@ text-align: right;
 
 .star {	float:left;}
 
-#dcmenuSearchDiv {	float:left;}
+#dcmenuSearchDiv {	float:left;
+	text-align: right;}
 
 #sugar_spot_search {    direction: rtl;    }
 

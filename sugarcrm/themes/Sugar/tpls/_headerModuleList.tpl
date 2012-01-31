@@ -113,7 +113,7 @@
 		<li class="moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
 		<a href="#" class="more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
 		
-		<ul>
+		<ul id="moduleTabMore{$tabGroupName}">
 			{* hidden menu items that become visible in overflow menu when browser size reaches a certain width*}
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
@@ -242,6 +242,8 @@
 				</ul>
         
 	 		{/if}
+	 		
+	 		<li><a href="javascript: SUGAR.themes.editMenuMode();">Edit Menu</a>
 		</ul>
 		
 		</li>

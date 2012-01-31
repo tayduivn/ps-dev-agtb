@@ -37,6 +37,12 @@ if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client']){
 //BEGIN SUGARCRM flav=sales ONLY
 if(!is_admin($GLOBALS['current_user']))
 //END SUGARCRM flav=sales ONLY
+$global_control_links['profile'] = array(
+'linkinfo' => array($app_strings['LBL_PROFILE'] => 'index.php?module=Users&action=EditView&record='.$GLOBALS['current_user']->id),
+'submenu' => ''
+);
+
+
 $global_control_links['employees'] = array(
 'linkinfo' => array($app_strings['LBL_EMPLOYEES']=> 'index.php?module=Employees&action=index'),
 'submenu' => ''

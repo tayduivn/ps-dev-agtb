@@ -40,10 +40,9 @@
 
             <ul class="clickMenu" id="globalLinks">
             <li>
-                <a id="welcome_link" href='javascript: void(0);'>{$CURRENT_USER}</a>
+                <a id="welcome_link" href='index.php?module=Users&action=EditView&record={$CURRENT_USER_ID}'>{$CURRENT_USER}</a>
 
                 <ul class="subnav">
-                <li><a id="welcome_link" href='index.php?module=Users&action=EditView&record={$CURRENT_USER_ID}'>Profile</a></li>
     {foreach from=$GCLS item=GCL name=gcl key=gcl_key}
 
 
