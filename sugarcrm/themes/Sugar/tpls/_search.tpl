@@ -16,26 +16,25 @@
 {/if}
 //END SUGARCRM flav=sales ONLY
 
+</div>
+
 {if $FTS_AUTOCOMPLETE_ENABLE}
 {literal}
 <script>
-    var ftsAutoCompleteDs = new YAHOO.util.DataSource("index.php?", {
-            responseType: YAHOO.util.XHRDataSource.TYPE_JSON,
-            responseSchema: {resultsList: 'results'},connMethodPost: true}
-        );
-    var ftsAutoComplete = new YAHOO.widget.AutoComplete("sugar_spot_search", "sugar_spot_ac_results", ftsAutoCompleteDs, {
-       generateRequest : function(sQuery)
-       {
-           var out = SUGAR.util.paramsToUrl({
-               to_pdf: 'true',
-               module: 'Home',
-               action: 'quicksearchQuery',
-               data: encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]})),
-               query: sQuery
-           });
-           return out;
-       }
-   });
+
+    var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
+    $( "#sugar_spot_search" ).autocomplete({
+    			source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&data='+data,
+                select: function(event, ui) {
+                    DCMenu.spot(ui.item.value);
+                }
+    		}).data( "autocomplete" )._renderItem = function( ul, item )
+    		                {
+                                return $( "<li></li>" )
+                                				.data( "item.autocomplete", item )
+                                				.append('<a>' + item.label + '</a>')
+                                				.appendTo( ul );
+    		                };
 </script>
 {/literal}
 {/if}
