@@ -93,6 +93,14 @@ interface SugarSearchEngineInterface{
      */
     public function getServerStatus();
 
+    /**
+     * Create the index
+     *
+     * @abstract
+     * @param boolean $recreate OPTIONAL Deletes index first if already exists (default = false)
+     *
+     */
+    public function createIndex($recreate = false);
 }
 
 /**
