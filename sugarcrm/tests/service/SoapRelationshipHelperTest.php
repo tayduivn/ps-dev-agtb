@@ -38,39 +38,9 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
     var $call;
     var $nowTime;
     var $tenMinutesLaterTime;
+    var $testData;
 
-    static public function tearDownAfterClass()
-    {
-        global $current_user;
-        $GLOBALS['db']->query("DELETE FROM meetings_users WHERE user_id = '{$current_user->id}'");
-        $GLOBALS['db']->query("DELETE FROM calls_users WHERE user_id = '{$current_user->id}'");
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestCallUtilities::removeAllCreatedCalls();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
-    }
-
-
-    /**
-     * retrieveModifiedRelationshipsProvider
-     * This provider returns an Array of Array data.  Each Array contains the following data
-     * 0 => String - Left side module name
-     * 1 => String - Right side module name
-     * 2 => String - Relationship Query
-     * 3 => boolean to return deleted records or not (this is actually ignored by the function)
-     * 4 => integer offset to start with
-     * 5 => integer value for the maximum number of results
-     * 6 => array of fields to select and return
-     * 7->load_relationships('meetings' => String - Relationship name to use
-     * 8 => String - Expected table name
-     * 9 => array of expected results
-     * 10 => integer of expected total count
-     * 11 => array of expected soap error
-     * @return array The provider array
-     */
-    public function retrieveModifiedRelationshipsProvider()
+    public function setUp()
     {
         global $timedate, $current_user;
         $timedate = TimeDate::getInstance();
@@ -99,24 +69,57 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->call->load_relationships('users');
         $this->call->users->add($current_user);
         //$this->useOutputBuffering = false;
-
-        return array(
+        /**
+         * This provider returns an Array of Array data.  Each Array contains the following data
+         * 0 => String - Left side module name
+         * 1 => String - Right side module name
+         * 2 => String - Relationship Query
+         * 3 => boolean to return deleted records or not (this is actually ignored by the function)
+         * 4 => integer offset to start with
+         * 5 => integer value for the maximum number of results
+         * 6 => array of fields to select and return
+         * 7 => load_relationships - Relationship name to use
+         * 8 => array of expected results
+         * 9 => integer of expected total count
+         * 10 => array of expected soap error
+         * @return array The provider array
+         */
+        $this->testData = array(
             array('Users', 'Meetings', "( (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 0) OR (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 1) AND m1.id IN ('{$this->meeting->id}')) OR (m1.id NOT IN ('{$this->meeting->id}') AND m1.deleted = 0) AND m2.id = '{$current_user->id}'", 0, 0 , 3000, $this->callsAndMeetingsSelectFields, 'meetings_users', array('id'=>$this->meeting->id), 1, $this->noSoapErrorArray),
             array('Users', 'Calls', "( m1.deleted = 0) AND m2.id = '{$current_user->id}'",0,0,3000,$this->callsAndMeetingsSelectFields, 'calls_users', array('id'=>$this->call->id), 1, $this->noSoapErrorArray),
         );
     }
 
+    public function tearDown()
+    {
+        global $current_user;
+        $GLOBALS['db']->query("DELETE FROM meetings_users WHERE user_id = '{$current_user->id}'");
+        $GLOBALS['db']->query("DELETE FROM calls_users WHERE user_id = '{$current_user->id}'");
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestCallUtilities::removeAllCreatedCalls();
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
+    }
+
+
     /**
      * testRetrieveModifiedRelationships
      * This test checks to make sure we can correctly retrieve related Meetings and Calls (see bugs 50092 & 50093)
      *
-     * @dataProvider retrieveModifiedRelationshipsProvider();
      */
-    public function testRetrieveModifiedRelationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields, $relationship_name, $expected_result, $expected_count, $expected_error)
+    public function testRetrieveModifiedRelationships()
     {
-        $result = retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields, $relationship_name);
-        $this->assertEquals($expected_result['id'], $result['result'][0]['id'], 'Ids do not match');
-        $this->assertEquals($expected_count, $result['total_count'], 'Totals do not match');
-        $this->assertEquals($expected_error, $result['error'], 'No SOAP Error');
+        foreach($this->testData as $data)
+        {
+            //retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields = array(), $relationship_name = '')
+
+            $result = retrieve_modified_relationships($data[0], $data[1], $data[2], $data[3], $data[4], $data[5], $data[6], $data[7]);
+            //echo var_export($result, true);
+            $this->assertEquals($data[8]['id'], $result['result'][0]['id'], 'Ids do not match');
+            $this->assertEquals($data[9], $result['total_count'], 'Totals do not match');
+            $this->assertEquals($data[10], $result['error'], 'No SOAP Error');
+        }
     }
 }
