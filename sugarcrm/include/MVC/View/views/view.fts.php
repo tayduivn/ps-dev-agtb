@@ -94,8 +94,8 @@ class ViewFts extends SugarView
         {
             if($resultSetOnly)
             {
-                echo $this->ss->fetch($rsTemplate);
-                return;
+                $contents = $this->ss->fetch($rsTemplate);
+                return $this->sendOutput($contents, $return);
             }
 
             $this->ss->assign('filterModules',$filteredModules['enabled']);
@@ -104,12 +104,17 @@ class ViewFts extends SugarView
         }
 
         $contents = $this->ss->fetch($template);
+        return $this->sendOutput($contents, $return);
+
+    }
+
+    protected function sendOutput($contents, $return = false)
+    {
         if($return)
             return $contents;
         else
             echo $contents;
     }
-
     /**
      * TODO: WIP - Custom Modules won't have the enabled flag set by default so we need to re-examine how this is done.
      * @return array

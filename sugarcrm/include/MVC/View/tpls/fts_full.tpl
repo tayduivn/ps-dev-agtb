@@ -200,28 +200,39 @@ width:70%;
         }
     }
 
-
-
-
-    var ds = new YAHOO.util.DataSource("index.php?", {
-        responseType: YAHOO.util.XHRDataSource.TYPE_JSON,
-        responseSchema: {resultsList: 'results'},connMethodPost: true}
-    );
-
-    var search = new YAHOO.widget.AutoComplete("ftsSearchField", "ftsAutoCompleteResult", ds, {
-        generateRequest : function(sQuery)
-        {
-            var out = SUGAR.util.paramsToUrl({
-                to_pdf: 'true',
-                module: 'Home',
-                action: 'quicksearchQuery',
-                data: encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]})),
-                query: sQuery
-            });
-            return out;
+    //Setup autocomplete
+    var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
+    var autoCom = $( "#ftsSearchField" ).autocomplete({
+        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&data='+data,
+        select: function(event, ui) {},
+        search: function(event,ui){
+            $('#sugar_full_search_results').showLoading();
         }
-    });
+        }).data( "autocomplete" )._response = function(content)
+        {
+            var el = $("#sugar_full_search_results");
 
+            if(typeof(content.results) != 'undefined'){
+                el.html( content.results);
+            }
+            this.pending--;
+
+            $('#sugar_full_search_results').hideLoading();
+        };
+
+    //Overload the search function so we can pass additional arguments into the source call.
+    (function($) {
+        $.extend(true, $["ui"]["autocomplete"].prototype, {
+            _search: function(value) {
+                var self = this;
+                self.pending++;
+                var m = SUGAR.FTS.getSelectedModules();
+                var data = { term: value, m: m };
+                self.source(data, self.response );
+            }
+        });
+    })(jQuery);
+    //Setup enable table
     SUGAR.FTS.globalSearchEnabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchDisabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchEnabledTable.addRow({module: "", label: ""});
