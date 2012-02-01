@@ -421,6 +421,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     $tmpArray['boost'] = $fieldDef['full_text_search']['boost'];
                 }
                 $properties[$fieldName] = $tmpArray;
+
+                // analyzer
+                if (!empty($fieldDef['full_text_search']['analyzer'])) {
+                    $tmpArray['analyzer'] = $fieldDef['full_text_search']['analyzer'];
+                }
+                $properties[$fieldName] = $tmpArray;
             }
         }
         return $properties;
