@@ -40,7 +40,7 @@
 	<tr>
 		<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
 		<td width="37.5%" valign="top">
-			<select name="repeat_type" onclick="toggle_repeat_type();">{html_options options=$APPLIST.repeat_type_dom}</select>
+			<select name="repeat_type" onchange="toggle_repeat_type();">{html_options options=$APPLIST.repeat_type_dom}</select>
 		</td>
 	</tr>
 	
