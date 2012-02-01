@@ -374,17 +374,12 @@ class quicksearchQuery {
     {
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
-        $results = array();
-        $searchEngine = SugarSearchEngineFactory::getInstance();
-        $trimmed_query = trim($_REQUEST['term']);
-
-        $rs = $searchEngine->search($trimmed_query, 0, 10, array(), true);
-        if ($rs) {
-            foreach ($rs as $r) {
-                $results[] = $r->getAutoCompleteText();
-            }
-        }
-        echo json_encode($results);
+        //TODO: Should we pass in a query object to support wildcard search?
+        $_REQUEST['q'] = trim($_REQUEST['term']);
+        $view = new ViewFts();
+        $view->init();
+        $output = $view->display(TRUE);
+        echo json_encode(array('results' =>$output));
     }
 }
 

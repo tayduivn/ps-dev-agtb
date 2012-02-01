@@ -6,7 +6,7 @@
         <div id="sugar_spot_search_div">
             <input size=20 id='sugar_spot_search'  title='Enter global search term' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
             <img src="{sugar_getimagepath file="info-del.png"}" id="close_spot_search"/>
-            <div id="sugar_spot_search_results" style="display: none;"></div>
+            <div id="sugar_spot_search_results" style="display:none;"></div>
             <div id="sugar_spot_ac_results"></div>
         </div>
 	<div id="glblSearchBtn">{$ICONSEARCH}
@@ -23,18 +23,31 @@
 <script>
 
     var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
-    $( "#sugar_spot_search" ).autocomplete({
-    			source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&data='+data,
-                select: function(event, ui) {
-                    DCMenu.spot(ui.item.value);
-                }
-    		}).data( "autocomplete" )._renderItem = function( ul, item )
-    		                {
-                                return $( "<li></li>" )
-                                				.data( "item.autocomplete", item )
-                                				.append('<a>' + item.label + '</a>')
-                                				.appendTo( ul );
-    		                };
+    var autoCom = $( "#sugar_spot_search" ).autocomplete({
+        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&data='+data,
+        select: function(event, ui) {},
+        search: function(event,ui){
+        var el = $("#sugar_spot_search_results");
+                   if ( !el.is(":visible") ) {
+                       el.html('');
+                       el.show();
+                   }
+            $('#sugar_spot_search_results').showLoading();
+        }
+    	}).data( "autocomplete" )._response = function(content)
+        {
+            console.log('stuff');
+            var el = $("#sugar_spot_search_results");
+            if ( !el.is(":visible") ) {
+                el.show();
+            }
+            if(typeof(content.results) != 'undefined'){
+                el.html( content.results);
+            }
+            this.pending--;
+
+            $('#sugar_spot_search_results').hideLoading();
+        };
 </script>
 {/literal}
 {/if}

@@ -73,4 +73,9 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
      */
     public function getServerStatus() {}
 
+    /**
+     * No-op
+     */
+    public function createIndex($recreate = false){}
+
 }

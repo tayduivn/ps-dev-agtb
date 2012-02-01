@@ -35,6 +35,17 @@ require_once("include/SugarSearchEngine/SugarSearchEngineHighlighter.php");
  */
 class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
 {
+    protected $module;
+
+    /**
+     * Setter for module name
+     *
+     * @param $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+    }
     /**
      *
      * This function returns an array of highlighted strings.
@@ -51,18 +62,25 @@ class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
         // it may contain multiple words
         $searches = explode(' ', $searchString);
 
-        foreach ($resultArray as $field=>$value) {
+        foreach ($resultArray as $field=>$value)
+        {
             // skip the summary_text as it's for auto complete searches
-            if ($field == SugarSearchEngineElastic::SUMMARY_TEXT) {
+            if ($field == SugarSearchEngineElastic::SUMMARY_TEXT)
+            {
                 continue;
             }
-            foreach ($searches as $search) {
-                if (empty($search)) {
+            foreach ($searches as $search)
+            {
+                if (empty($search))
+                {
                     continue;
                 }
+
                 $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
                 $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
-                if ($count > 0) {
+                if ($count > 0)
+                {
+                    $field = $this->translateFieldName($field);
                     $ret[$field] = $this->postProcessHighlights($value);
                 }
             }
@@ -72,6 +90,35 @@ class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
         return $ret;
     }
 
+    public function translateFieldName($field)
+    {
+        if(empty($this->module))
+        {
+            return $field;
+        }
+        else
+        {
+            $tmpBean = BeanFactory::getBean($this->module, null);
+            $field_defs = $tmpBean->field_defs;
+            $field_def = isset($field_defs[$field]) ? $field_defs[$field] : FALSE;
+            if($field_def === FALSE || !isset($field_def['vname']))
+                return $field;
+
+            $module_lang = return_module_language($GLOBALS['current_language'], $this->module);
+            if(isset($module_lang[$field_def['vname']]))
+            {
+                $label = $module_lang[$field_def['vname']];
+                if( substr($label,-1) == ':')
+                    return (substr($label, 0, -1));
+                else
+                    return $label;
+            }
+            else
+            {
+                return $field;
+            }
+        }
+    }
     /**
      * Return a string that matches the auto complete search.
      *

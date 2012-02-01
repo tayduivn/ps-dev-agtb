@@ -452,4 +452,20 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         return true;
     }
+
+    /**
+     * Create the index and mapping.
+     *
+     * @param boolean $recreate OPTIONAL Deletes index first if already exists (default = false)
+     *
+     */
+    public function createIndex($recreate = false)
+    {
+        // create an elastic index
+        $index = new Elastica_Index($this->_client, $this->_indexName);
+        $index->create(array(), $recreate);
+
+        // create field mappings
+        $this->setFullMapping();
+    }
 }

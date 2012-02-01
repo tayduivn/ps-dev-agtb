@@ -89,6 +89,7 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 
         if (isset($hit['_source']) && is_array($hit['_source'])) {
             $highlighter = new SugarSearchEngineElasticHighlighter($maxLen, $maxHits, $preTag, $postTag);
+            $highlighter->setModule($this->getModule());
             $ret = $highlighter->getHighlightedHitText($hit['_source'], $q);
         }
 
