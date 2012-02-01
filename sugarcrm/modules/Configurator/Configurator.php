@@ -149,6 +149,7 @@ class Configurator {
 		return $sugar_config;
 	}
 	function saveOverride($override) {
+        require_once('install/install_utils.php');
 	    if ( !file_exists('config_override.php') ) {
 	    	touch('config_override.php');
 	    }
