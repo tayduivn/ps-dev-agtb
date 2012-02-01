@@ -31,6 +31,7 @@
 <form name="ConfigureFTS" method="POST"  method="POST" action="index.php">
 	<input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="UpdateFTS">
+    <input type="hidden" name="sched" value="" id="sched">
 	<input type="hidden" name="return_module" value="{$RETURN_MODULE}">
 	<input type="hidden" name="return_action" value="{$RETURN_ACTION}">
 
@@ -72,15 +73,29 @@
 
     <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary"
     		   type="submit" name="saveButton" value="{$APP.LBL_SAVE_BUTTON_LABEL}" onclick="return check_form('ConfigureFTS')" />
-    	<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button"
-    		   onclick="this.form.action.value='index'; this.form.module.value='Administration';" type="submit" name="CancelButton"
-    		   value="{$APP.LBL_CANCEL_BUTTON_LABEL}"/>
+    <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id='sched_button'
+        		   type="submit" name="saveButton" value="{$MOD.LBL_SAVE_SCHED_BUTTON}" onclick="return SUGAR.FTS.confirmSchedule();" style="display: none;" />
+    <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button"
+           onclick="this.form.action.value='index'; this.form.module.value='Administration';" type="submit" name="CancelButton"
+           value="{$APP.LBL_CANCEL_BUTTON_LABEL}"/>
 </form>
 
 <script type="text/javascript">
     {literal}
     SUGAR.FTS = {
-
+        confirmSchedule : function()
+        {
+            if( confirm(SUGAR.language.get('Administration','LBL_SAVE_SCHED_WARNING')) )
+            {
+                $("#sched").val('1');
+                return true;
+            }
+            else
+            {
+                $("#sched").val('0');
+                return false;
+            }
+        },
         testSettings : function()
         {
             var host = document.getElementById('fts_host').value;
@@ -113,6 +128,15 @@
                 success: function(o) {
                     var r = YAHOO.lang.JSON.parse(o.responseText);
                     panel.setBody(r.status);
+                    if(r.valid)
+                    {
+                        console.log('valid connection');
+                        $('#sched_button').show();
+                    }
+                    else
+                    {
+                        $('#sched_button').hide();
+                    }
 
                 },
                 failure: function(o) {}

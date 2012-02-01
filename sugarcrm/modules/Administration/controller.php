@@ -128,28 +128,16 @@ class AdministrationController extends SugarController
         $type = !empty($_REQUEST['fts_type']) ? $_REQUEST['fts_type'] : '';
         $host = !empty($_REQUEST['fts_host']) ? $_REQUEST['fts_host'] : '';
         $port = !empty($_REQUEST['fts_port']) ? $_REQUEST['fts_port'] : '';
-
+        $scheduleIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
         $this->cfg = new Configurator();
         $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port));
         $this->cfg->handleOverride();
-
+        if($scheduleIndex)
+        {
+            require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+            SugarSearchEngineFullIndexer::scheduleFullSystemIndex();
+        }
         $this->view = "configurefts";
-    }
-
-    public function action_createFTSSchedule()
-    {
-        $td = TimeDate::getInstance()->getNow(true)->modify("+5 min");
-        $before = TimeDate::getInstance()->getNow(true)->modify("-5 min");
-        $future = TimeDate::getInstance()->getNow(true)->modify("+5 year");
-        $sched = new Scheduler();
-        $sched->name = "Full Text Search Indexer";
-        $sched->job = "function::performFullFTSIndex";
-        $sched->status = 'Active';
-        $sched->job_interval = $td->min."::".$td->hour."::".$td->day."::".$td->month."::".$td->day_of_week;
-        $sched->date_time_start = TimeDate::getInstance()->asUser($before, $GLOBALS['current_user']);
-        $sched->date_time_end = TimeDate::getInstance()->asUser($future, $GLOBALS['current_user']);
-        $sched->catch_up = 0;
-        $sched->save();
     }
     
     public function action_checkFTSConnection()
@@ -163,11 +151,11 @@ class AdministrationController extends SugarController
             $config = array('port' => $port, 'host' => $host);
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
             $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
-            echo json_encode(array('status' => $searchEngine->getServerStatus()));
+            echo json_encode($searchEngine->getServerStatus());
         }
         else
         {
-            echo json_encode(array('status' => FALSE));
+            echo json_encode(array('valid' => FALSE));
         }
         sugar_cleanup(TRUE);
     }

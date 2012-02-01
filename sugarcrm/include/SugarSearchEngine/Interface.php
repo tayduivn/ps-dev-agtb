@@ -89,7 +89,7 @@ interface SugarSearchEngineInterface{
      * Return info about the server status.
      *
      * @abstract
-     *
+     * @return array valid: indicates if the connection was successful. status: text to display to the end user
      */
     public function getServerStatus();
 

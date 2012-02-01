@@ -1193,6 +1193,8 @@ $mod_strings = array (
     'LBL_FTS_HOST' => 'Host',
     'LBL_FTS_PORT' => 'Port',
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
-    'LBL_FTS_TEST' => 'Test'
+    'LBL_FTS_TEST' => 'Test',
+    'LBL_SAVE_SCHED_BUTTON' => 'Save And Schedule Full System Index',
+    'LBL_SAVE_SCHED_WARNING' => 'Are you sure sure?'
 	);
 

@@ -211,24 +211,29 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function getServerStatus()
     {
+        $isValid = FALSE;
+        $displayText = "";
         $timeOutValue = $this->_client->getConfig('timeout');
         try
         {
             $this->_client->setConfigValue('timeout', 2);
             $results = $this->_client->getStatus()->getServerStatus();
             if(!empty($results['ok']) )
-                $results = $GLOBALS['app_strings']['LBL_EMAIL_SUCCESS'];
+            {
+                $isValid = TRUE;
+                $displayText = $GLOBALS['app_strings']['LBL_EMAIL_SUCCESS'];
+            }
             else
-                $results = json_encode($results);
+                $displayText = $results;
         }
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to get server status with error: {$e->getMessage()}");
-            $results = $e->getMessage();
+            $displayText = $e->getMessage();
         }
         //Reset previous timeout value.
         $this->_client->setConfigValue('timeout', $timeOutValue);
-        return $results;
+        return array('valid' => $isValid, 'status' => $displayText);
     }
 
     /**

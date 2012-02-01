@@ -132,4 +132,25 @@ class SugarSearchEngineFullIndexer
         return $this->results;
     }
 
+    /**
+     * Schedule a full system index.
+     *
+     * @static
+     *
+     */
+    public static function scheduleFullSystemIndex()
+    {
+        $td = TimeDate::getInstance()->getNow(true)->modify("+5 min");
+        $before = TimeDate::getInstance()->getNow(true)->modify("-5 min");
+        $future = TimeDate::getInstance()->getNow(true)->modify("+5 year");
+        $sched = new Scheduler();
+        $sched->name = "Full Text Search Indexer";
+        $sched->job = "function::performFullFTSIndex";
+        $sched->status = 'Active';
+        $sched->job_interval = $td->min."::".$td->hour."::".$td->day."::".$td->month."::".$td->day_of_week;
+        $sched->date_time_start = TimeDate::getInstance()->asUser($before, $GLOBALS['current_user']);
+        $sched->date_time_end = TimeDate::getInstance()->asUser($future, $GLOBALS['current_user']);
+        $sched->catch_up = 0;
+        $sched->save();
+    }
 }
