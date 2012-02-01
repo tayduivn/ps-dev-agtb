@@ -157,15 +157,12 @@ width:70%;
                 document.getElementById('inlineGlobalSearch').style.display = '';
                 document.getElementById('basic_search_img_span').style.display = '';
                 document.getElementById('advanced_search_img_span').style.display = 'none';
-                document.getElementById('up_down_img').setAttribute('alt',SUGAR.language.get('app_strings', 'LBL_ALT_HIDE_OPTIONS'));
             }
             else
             {
-                console.log('showing image');
                 document.getElementById('inlineGlobalSearch').style.display = 'none';
                 document.getElementById('basic_search_img_span').style.display = 'none';
                 document.getElementById('advanced_search_img_span').style.display = '';
-                document.getElementById('up_down_img').setAttribute('alt',SUGAR.language.get('app_strings', 'LBL_ALT_SHOW_OPTIONS'));
             }
         },
         globalSearchEnabledTable : new YAHOO.SUGAR.DragDropTable(
