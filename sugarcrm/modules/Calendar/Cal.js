@@ -539,7 +539,6 @@
 		content.style.padding = "0";
 
 		CAL.editDialog = new YAHOO.widget.Dialog("cal-edit",{ 
-			fixedcenter : true,
 			draggable : true,
 			visible : false,
 			modal : true,
@@ -570,6 +569,7 @@
 						// Reset display parameter, if the delete button was hidden 
 						CAL.get("btn-delete").style.display = "";
 						
+						CAL.editDialog.center();
 						CAL.editDialog.show();		
 						
 						var nodes = CAL.query("#cal-tabs li a");
