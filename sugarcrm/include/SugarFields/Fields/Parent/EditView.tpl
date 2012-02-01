@@ -34,7 +34,10 @@ onchange='document.{$form_name}.{{sugarvar key='name'}}.value="";document.{$form
 {{if $displayParams.split}}
 <br>
 {{/if}}
-{if empty({{sugarvar key='options' string=true}}[$fields.parent_type.value])}
+{*
+    Bug fix for 45220 - when an item is created from dcmenu it should have blank related fields  
+*}
+{if ({{$create_from_dc}} == 1) || (empty({{sugarvar key='options' string=true}}[$fields.parent_type.value])) }
 	{assign var="keepParent" value = 0}
 {else}
 	{assign var="keepParent" value = 1}

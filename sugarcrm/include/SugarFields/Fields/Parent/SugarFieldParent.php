@@ -23,6 +23,16 @@ class SugarFieldParent extends SugarFieldRelate {
     		$form_name = $displayParams['formName'];
     	}
 
+        // Bug fix for 45220 - when an item is created from dcmenu it should have blank related fields
+        if (substr($form_name, 5, 13) == 'DCQuickCreate')
+        {
+            $create_from_dc = 1;
+        } else
+        {
+            $create_from_dc = 0;
+        }
+        $this->ss->assign('create_from_dc', $create_from_dc);
+        
     	$popup_request_data = array(
 			'call_back_function' => 'set_return',
 			'form_name' => $form_name,
