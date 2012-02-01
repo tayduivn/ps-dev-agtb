@@ -50,8 +50,18 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 		$camp_query  = "select name,id from campaigns where id='$campaign_id'";
 		$camp_query .= " and deleted=0";
         $camp_result=$campaign->db->query($camp_query);
-        $camp_data=$campaign->db->fetchByAssoc($camp_result);
-		
+        $camp_data = $campaign->db->fetchByAssoc($camp_result);
+        // Bug 41292 - have to select marketing_id for new lead
+        $db = DBManagerFactory::getInstance();
+        $marketing = new EmailMarketing();
+        $marketing_query = $marketing->create_new_list_query(
+                'date_start desc, date_modified desc',
+                'campaign_id = "' . $db->quote($campaign_id) . '" and status = "active" and date_start < ' . $db->convert('', 'today'),
+                array('id')
+        );
+        $marketing_result = $db->limitQuery($marketing_query, 0, 1, true);
+        $marketing_data = $db->fetchByAssoc($marketing_result);
+        // .Bug 41292
 		if (isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id'])) {
 			$current_user = new User();
 			$current_user->retrieve($_REQUEST['assigned_user_id']);
@@ -89,6 +99,10 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	            $camplog->target_type = $lead->module_dir;
 	            $campaign_log->activity_date=$timedate->now();
 	            $camplog->target_id    = $lead->id;
+                if(isset($marketing_data['id']))
+                {
+                    $camplog->marketing_id = $marketing_data['id'];
+                }
 	            $camplog->save();
 
 		        //link campaignlog and lead
