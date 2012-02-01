@@ -136,6 +136,22 @@ class AdministrationController extends SugarController
         $this->view = "configurefts";
     }
 
+    public function action_createFTSSchedule()
+    {
+        $td = TimeDate::getInstance()->getNow(true)->modify("+5 min");
+        $before = TimeDate::getInstance()->getNow(true)->modify("-5 min");
+        $future = TimeDate::getInstance()->getNow(true)->modify("+5 year");
+        $sched = new Scheduler();
+        $sched->name = "Full Text Search Indexer";
+        $sched->job = "function::performFullFTSIndex";
+        $sched->status = 'Active';
+        $sched->job_interval = $td->min."::".$td->hour."::".$td->day."::".$td->month."::".$td->day_of_week;
+        $sched->date_time_start = TimeDate::getInstance()->asUser($before, $GLOBALS['current_user']);
+        $sched->date_time_end = TimeDate::getInstance()->asUser($future, $GLOBALS['current_user']);
+        $sched->catch_up = 0;
+        $sched->save();
+    }
+    
     public function action_checkFTSConnection()
     {
         $type = !empty($_REQUEST['type']) ? urldecode($_REQUEST['type']) : '';
