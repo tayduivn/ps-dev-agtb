@@ -915,28 +915,33 @@ function getUserVariable($localVarName, $varName) {
 		$response = array();
 
         $this->sort_order = 'asc';
-        if(isset($_REQUEST['sort_order'])) {
+        if (isset($_REQUEST['sort_order']))
+        {
             $this->sort_order = $_REQUEST['sort_order'];
-        } else {
-            if(isset($subpanel_def->_instance_properties['sort_order'])) {
-                $sort_order = $subpanel_def->_instance_properties['sort_order'];
-            }
-
-            if(isset($_SESSION['last_sub' .$this->subpanel_module. '_order'])) {
+        }
+        else
+        {
+            if (isset($_SESSION['last_sub' . $this->subpanel_module . '_order']))
+            {
                 // We swap the order when the request contains an offset (indicating a column sort issued);
                 // otherwise we do not sort.  If we don't make this check, then the subpanel listview will
                 // swap ordering each time a new record is entered via quick create forms
 
-                if(isset($_REQUEST[$module. '_' . $html_var . '_offset'])) {
-                    $this->sort_order = $_SESSION['last_sub' .$this->subpanel_module. '_order'] == 'asc' ? 'desc' : 'asc';
-                } else {
-                $this->sort_order = $_SESSION['last_sub' .$this->subpanel_module. '_order'];
+                if (isset($_REQUEST[$module . '_' . $html_var . '_offset']))
+                {
+                    $this->sort_order = $_SESSION['last_sub' . $this->subpanel_module . '_order'] == 'asc' ? 'desc' : 'asc';
+                }
+                else
+                {
+                    $this->sort_order = $_SESSION['last_sub' . $this->subpanel_module . '_order'];
                 }
             }
-            elseif(isset($sort_order)) {
-                $this->sort_order = $sort_order;
+
+            if (isset($subpanel_def->_instance_properties['sort_order']))
+            {
+                $this->sort_order = $subpanel_def->_instance_properties['sort_order'];
             }
-        }
+        }        
 
         if (isset($subpanel_def->_instance_properties['sort_by'])) {
             $this->query_orderby = $subpanel_def->_instance_properties['sort_by'];
