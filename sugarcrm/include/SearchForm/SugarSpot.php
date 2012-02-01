@@ -586,7 +586,7 @@ EOHTML;
 			 	}
 			 }
 
-			 sugar_file_put_contents($user_action_map_filename,'<?php $action_list='.var_export($action_list,true). '; ?>');
+			 file_put_contents($user_action_map_filename,'<?php $action_list='.var_export($action_list,true). '; ?>');
 		 }
 		 else {
 		 	require ($user_action_map_filename);

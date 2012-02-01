@@ -334,7 +334,7 @@ require_once("include/Expressions/Actions/ActionFactory.php");
         /*  //More disabled cache code
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n"
                  . override_value_to_string('dependencies', $module, $dependencies[$module]);
-            sugar_file_put_contents($cacheLoc, $out);
+            file_put_contents($cacheLoc, $out);
         }*/
 
         return $dependencies[$module];
