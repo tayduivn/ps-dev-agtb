@@ -34,9 +34,10 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     var $noSoapErrorArray = array('number'=>0, 'name'=>'No Error', 'description'=>'No Error');
     var $callsAndMeetingsSelectFields = array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced');
-    var $callsAndMeetingsSelectFields2 =  array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced',"(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID) email1","(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address!=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID Limit 1) email2");
+    var $contactsSelectFields =  array('id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced', "(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID) email1","(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address!=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID Limit 1) email2");
     var $meeting;
     var $call;
+    var $contact;
     var $nowTime;
     var $tenMinutesLaterTime;
     var $testData;
@@ -69,6 +70,14 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->call->save();
         $this->call->load_relationships('users');
         $this->call->users->add($current_user);
+        $this->contact = SugarTestContactUtilities::createContact();
+        $this->contact->email1 = 'mark.zuckerberg@facebook.com';
+        $this->contact->contacts_users_id = $current_user->id;
+        $this->contact->load_relationship('user_sync');
+        $this->contact->user_sync->add($current_user);
+        $this->contact->sync_contact = 1;
+        $this->contact->save();
+
         //$this->useOutputBuffering = false;
         /**
          * This provider returns an Array of Array data.  Each Array contains the following data
@@ -86,12 +95,9 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
          * @return array The provider array
          */
         $this->testData = array(
-            //These are 6.0.x & 6.1.x plugin arguments
             array('Users', 'Meetings', "( (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 0) OR (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 1) AND m1.id IN ('{$this->meeting->id}')) OR (m1.id NOT IN ('{$this->meeting->id}') AND m1.deleted = 0) AND m2.id = '{$current_user->id}'", 0, 0 , 3000, $this->callsAndMeetingsSelectFields, 'meetings_users', array('id'=>$this->meeting->id), 1, $this->noSoapErrorArray),
             array('Users', 'Calls', "( m1.deleted = 0) AND m2.id = '{$current_user->id}'",0,0,3000,$this->callsAndMeetingsSelectFields, 'calls_users', array('id'=>$this->call->id), 1, $this->noSoapErrorArray),
-            //These are 6.2.x plugin arguments
-            array('Users', 'Meetings', "( (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 0) OR (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 1) AND m1.id IN ('{$this->meeting->id}')) OR (m1.id NOT IN ('{$this->meeting->id}') AND m1.deleted = 0) AND m2.id = '{$current_user->id}'", 0, 0 , 3000, $this->callsAndMeetingsSelectFields2, 'meetings_users', array('id'=>$this->meeting->id), 1, $this->noSoapErrorArray),
-            array('Users', 'Calls', "( m1.deleted = 0) AND m2.id = '{$current_user->id}'",0,0,3000,$this->callsAndMeetingsSelectFields2, 'calls_users', array('id'=>$this->call->id), 1, $this->noSoapErrorArray),
+            array('Users', 'Contacts', "( (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND {0}.deleted = 0) OR ({0}.date_modified > '{$this->nowTime}' AND {0}.date_modified <= '{$this->tenMinutesLaterTime}' AND {0}.deleted = 1) AND m1.id IN ('31a219bd-b9c1-2c3e-aa5d-4f2778ab0347','c794bc39-e4fb-f515-f1d5-4f285ca88965','d51a0555-8f84-9e62-0fbc-4f2787b5d839','a1219ae6-5a6b-0d1b-c49f-4f2854bc2912')) OR (m1.id NOT IN ('31a219bd-b9c1-2c3e-aa5d-4f2778ab0347','c794bc39-e4fb-f515-f1d5-4f285ca88965','d51a0555-8f84-9e62-0fbc-4f2787b5d839','a1219ae6-5a6b-0d1b-c49f-4f2854bc2912') AND {0}.deleted = 0) AND m2.id = '1'", 0, 0 , 3000, $this->contactsSelectFields, 'contacts_users', array('id'=>$this->contact->id, 'email1'=>'mark.zuckerberg@facebook.com'), 1, $this->noSoapErrorArray),
         );
     }
 
@@ -100,9 +106,11 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
         global $current_user;
         $GLOBALS['db']->query("DELETE FROM meetings_users WHERE user_id = '{$current_user->id}'");
         $GLOBALS['db']->query("DELETE FROM calls_users WHERE user_id = '{$current_user->id}'");
+        $GLOBALS['db']->query("DELETE FROM contacts_users WHERE user_id = '{$current_user->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestCallUtilities::removeAllCreatedCalls();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);
