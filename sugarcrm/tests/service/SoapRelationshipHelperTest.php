@@ -34,10 +34,12 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     var $noSoapErrorArray = array('number'=>0, 'name'=>'No Error', 'description'=>'No Error');
     var $callsAndMeetingsSelectFields = array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced');
+    var $tasksSelectFields = array('id', 'date_modified', 'deleted', 'name');
     var $contactsSelectFields =  array('id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced', "(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID) email1","(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address!=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID Limit 1) email2");
     var $meeting;
     var $call;
     var $contact;
+    var $task;
     var $nowTime;
     var $tenMinutesLaterTime;
     var $testData;
@@ -77,6 +79,11 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->contact->user_sync->add($current_user);
         $this->contact->sync_contact = 1;
         $this->contact->save();
+        $this->task = SugarTestTaskUtilities::createTask();
+        $this->task->assigned_user_id = $current_user->id;
+        $this->task->team_id = $current_user->id;
+        $this->task->team_set_id = $current_user->id;
+        $this->task->save();
 
         //$this->useOutputBuffering = false;
         /**
@@ -98,6 +105,7 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array('Users', 'Meetings', "( (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 0) OR (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND m1.deleted = 1) AND m1.id IN ('{$this->meeting->id}')) OR (m1.id NOT IN ('{$this->meeting->id}') AND m1.deleted = 0) AND m2.id = '{$current_user->id}'", 0, 0 , 3000, $this->callsAndMeetingsSelectFields, 'meetings_users', array('id'=>$this->meeting->id), 1, $this->noSoapErrorArray),
             array('Users', 'Calls', "( m1.deleted = 0) AND m2.id = '{$current_user->id}'",0,0,3000,$this->callsAndMeetingsSelectFields, 'calls_users', array('id'=>$this->call->id), 1, $this->noSoapErrorArray),
             array('Users', 'Contacts', "( (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND {0}.deleted = 0) OR ({0}.date_modified > '{$this->nowTime}' AND {0}.date_modified <= '{$this->tenMinutesLaterTime}' AND {0}.deleted = 1) AND m1.id IN ('31a219bd-b9c1-2c3e-aa5d-4f2778ab0347','c794bc39-e4fb-f515-f1d5-4f285ca88965','d51a0555-8f84-9e62-0fbc-4f2787b5d839','a1219ae6-5a6b-0d1b-c49f-4f2854bc2912')) OR (m1.id NOT IN ('31a219bd-b9c1-2c3e-aa5d-4f2778ab0347','c794bc39-e4fb-f515-f1d5-4f285ca88965','d51a0555-8f84-9e62-0fbc-4f2787b5d839','a1219ae6-5a6b-0d1b-c49f-4f2854bc2912') AND {0}.deleted = 0) AND m2.id = '1'", 0, 0 , 3000, $this->contactsSelectFields, 'contacts_users', array('id'=>$this->contact->id, 'email1'=>'mark.zuckerberg@facebook.com'), 1, $this->noSoapErrorArray),
+            array('Users', 'Tasks', " ( (m1.date_modified > '{$this->nowTime}' AND m1.date_modified <= '{$this->tenMinutesLaterTime}' AND {0}.deleted = 0) OR ({0}.date_modified > '{$this->nowTime}' AND {0}.date_modified <= '{$this->tenMinutesLaterTime}' AND {0}.deleted = 1) AND m1.id IN ('{$this->task->id}')) OR (m1.id NOT IN ('{$this->task->id}') AND {0}.deleted = 0) AND m2.id = '1'", 0, 0, 3000, $this->tasksSelectFields, 'tasks_assigned_user', array('id'=>$this->task->id), 1, $this->noSoapErrorArray),
         );
     }
 
@@ -111,6 +119,7 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestTaskUtilities::removeAllCreatedTasks();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);
