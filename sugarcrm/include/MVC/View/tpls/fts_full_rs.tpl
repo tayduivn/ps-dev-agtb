@@ -1,8 +1,7 @@
 {if count($resultSet) > 0}
     {foreach from=$resultSet item=result name=searchresult}
-        <section class="{if $smarty.foreach.searchresult.index  is even}even{else}odd{/if}">
+        <section class="{if ($smarty.foreach.searchresult.index + $indexOffset) is even}even{else}odd{/if}">
             <div class="resultTitle">
-
             {$result->getModuleName()}
             </div>
             {capture assign=url}index.php?module={$result->getModule()}&record={$result->getId()}&action=DetailView{/capture}

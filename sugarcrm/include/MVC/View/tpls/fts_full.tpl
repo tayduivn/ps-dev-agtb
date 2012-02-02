@@ -142,7 +142,7 @@ width:70%;
         search: function(append)
         {
             //For new searches reset the offset
-            if(typeof(append) != 'undefined' && append)
+            if(typeof(append) == 'undefined' || !append)
             {
                 SUGAR.FTS.currentOffset = 0;
             }
@@ -235,7 +235,7 @@ width:70%;
         },
         loadMore: function()
         {
-            this.currentOffset += this.limit;
+            SUGAR.FTS.currentOffset += SUGAR.FTS.limit;
             SUGAR.FTS.search(true);
         }
     }

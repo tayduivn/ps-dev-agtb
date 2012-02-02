@@ -53,11 +53,9 @@ class ViewFts extends SugarView
      */
     public function display($return = false)
     {
-
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
-
-        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 10 );
-
+        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
+        $indexOffset = $offset / $limit;
         $moduleFilter = isset($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
         $filteredModules =  $this->getFilterModules();
         //If no modules have been passed in then lets check user preferences.
@@ -79,6 +77,7 @@ class ViewFts extends SugarView
 
         $showMoreDivStyle = ($totalHitsFound > $limit) ? '' : "display:none;";
         $this->ss->assign('showMoreDivStyle', $showMoreDivStyle);
+        $this->ss->assign('indexOffset', $indexOffset);
         $this->ss->assign('offset', $offset);
         $this->ss->assign('limit', $limit);
         $this->ss->assign('totalHits', $totalHitsFound);
