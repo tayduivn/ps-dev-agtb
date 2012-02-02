@@ -636,8 +636,11 @@ class SugarView
 			$ss->assign('PICTURE', $current_user->picture);
             $ftsAutocompleteEnable = TRUE;
             $searchEngine = SugarSearchEngineFactory::getInstance();
-            if($searchEngine instanceOf SugarSearchEngine)
-                $ftsAutocompleteEnable = FALSE;
+            if( ($searchEngine instanceOf SugarSearchEngine) || (isset($GLOBALS['sugar_config']['full_text_engine'])
+                && isset($GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete']) && $GLOBALS['sugar_config']['full_text_engine']['disable_autocomplete'] )
+                )
+                    $ftsAutocompleteEnable = FALSE;
+
             $ss->assign('FTS_AUTOCOMPLETE_ENABLE', $ftsAutocompleteEnable);
 			$ss->assign('AJAX', isset($_REQUEST['ajax_load'])?$_REQUEST['ajax_load']:"0");
 			$ss->assign('ACTION', isset($_REQUEST['action'])?$_REQUEST['action']:"");
