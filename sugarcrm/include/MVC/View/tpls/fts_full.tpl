@@ -23,10 +23,15 @@
 .yui-ac-content {
 width:70%;
 }
-
-
-
-
+#showMoreDiv {
+    width:auto;
+    background-color: #EEEEEE;
+    color: #999999;
+    cursor: pointer;
+    text-align: center;
+    height:20px;
+    padding: 10px 0;
+}
 </style>
 {/literal}
 <script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
@@ -97,6 +102,7 @@ width:70%;
     <div id="sugar_full_search_results" >
         {include file=$rsTemplate}
     </div>
+    <div id="showMoreDiv"  onclick="SUGAR.FTS.loadMore();">LOAD MORE</div>
 </td>
     </tr>
 </table>
@@ -122,6 +128,9 @@ width:70%;
 
     SUGAR.FTS = {
 
+        currentOffset: 0,
+        limit: 0,
+        totalHits: 0,
         getSelectedModules: function()
         {
             var results = [];
@@ -130,7 +139,7 @@ width:70%;
             });
             return results;
         },
-        search: function()
+        search: function(append)
         {
             $('#sugar_full_search_results').showLoading();
             //TODO: Check if all modules are selected, then don't send anything down.
@@ -140,11 +149,25 @@ width:70%;
             $.ajax({
                 type: "POST",
                 url: "index.php",
-                data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true},
+                data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true, 'offset': SUGAR.FTS.currentOffset},
                 success: function(o)
                 {
-                    $("#sugar_full_search_results").html( o );
+                    if(typeof(append) != 'undefined' && append)
+                    {
+                        $("#sugar_full_search_results").append(o);
+                    }
+                    else
+                    {
+                        $("#sugar_full_search_results").html( o );
+                    }
+
                     $('#sugar_full_search_results').hideLoading();
+                    console.log('current offset: ' + SUGAR.FTS.currentOffset + " ,limit:" + SUGAR.FTS.limit + " , total:" + SUGAR.FTS.totalHits);
+                    if( SUGAR.FTS.currentOffset + SUGAR.FTS.limit >= SUGAR.FTS.totalHits)
+                    {
+                        $('#showMoreDiv').hide();
+                    }
+
                 },
                 failure: function(o)
                 {
@@ -198,6 +221,12 @@ width:70%;
             }
             modules = modules == "" ? modules : modules.substr(1);
             document.getElementById('visible_modules').value = modules;
+        },
+        loadMore: function()
+        {
+            this.currentOffset += this.limit;
+            SUGAR.FTS.search(true);
+            console.log('Loading more ' + this.currentOffset + ' ,limit:' + this.limit);
         }
     }
 
@@ -240,9 +269,11 @@ width:70%;
     SUGAR.FTS.globalSearchDisabledTable.addRow({module: "", label: ""});
     SUGAR.FTS.globalSearchEnabledTable.render();
     SUGAR.FTS.globalSearchDisabledTable.render();
-
-
+    {/literal}
+    SUGAR.FTS.offset = {$offset};
+    SUGAR.FTS.limit = {$limit};
+    SUGAR.FTS.totalHits = {$totalHits};
 </script>
-{/literal}
+
 {/if}
 

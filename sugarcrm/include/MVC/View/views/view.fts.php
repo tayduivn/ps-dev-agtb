@@ -71,10 +71,14 @@ class ViewFts extends SugarView
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $trimmed_query = trim($_REQUEST['q']);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
+
         $query_encoded = urlencode($trimmed_query);
 
         $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
 
+        $this->ss->assign('offset', $offset);
+        $this->ss->assign('limit', $limit);
+        $this->ss->assign('totalHits', $rs->getTotalHits());
         $this->ss->assign('queryEncoded', $query_encoded);
         $this->ss->assign('resultSet', $rs);
         $this->ss->assign('appListStrings', $GLOBALS['app_list_strings']);
