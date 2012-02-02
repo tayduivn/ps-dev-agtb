@@ -23,6 +23,10 @@
 .yui-ac-content {
 width:70%;
 }
+
+
+
+
 </style>
 {/literal}
 <script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
@@ -90,9 +94,9 @@ width:70%;
         {/foreach}
     </td>
 <td>
-<div id="sugar_full_search_results" >
-    {include file=$rsTemplate}
-</div>
+    <div id="sugar_full_search_results" >
+        {include file=$rsTemplate}
+    </div>
 </td>
     </tr>
 </table>

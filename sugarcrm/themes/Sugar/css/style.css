@@ -6063,7 +6063,7 @@ text-align: right;
 	text-decoration: none;
 }
 
- #sugar_full_search_results section .resultTitle, #sugar_full_search_results section ul { 
+#sugar_full_search_results section ul {
  	width: auto;
  }
  
