@@ -352,7 +352,7 @@ class RepairAndClear
         } else {
             $languages = array($GLOBALS['current_language'] => $GLOBALS['current_language']);
         }
-        foreach(array_keys($languages) as $lang) {
+        foreach(array_keys($languages) as $language) {
         	sugar_cache_clear('app_strings.'.$language);
         	sugar_cache_clear('app_list_strings.'.$language);
         }
