@@ -35,6 +35,9 @@ class Bug43773Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp() {
         parent::setUp();
+        global $beanFiles;
+        require('include/modules.php');
+
 	    sugar_mkdir("custom/modules/Contracts/metadata",null,true);
 
         require('modules/Contracts/metadata/listviewdefs.php');
