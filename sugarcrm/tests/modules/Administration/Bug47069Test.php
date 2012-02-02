@@ -28,7 +28,7 @@
 
 require_once('modules/Notes/Note.php');
 
-class Bug43773Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug47069Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp() {
         parent::setUp();
