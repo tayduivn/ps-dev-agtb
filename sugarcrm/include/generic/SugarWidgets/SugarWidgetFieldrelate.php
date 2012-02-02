@@ -155,7 +155,6 @@ class SugarWidgetFieldRelate extends SugarWidgetReportField
         $cell = "<a target='_blank' class=\"listViewTdLinkS1\" href=\"index.php?action=DetailView&module=".$field_def['ext2']."&record=$record\">";
         $cell .= $layout_def['fields'][$display];
         $cell .= "</a>";
-        $GLOBALS['log']->fatal("IKEA FOR UNIT TEST:\n-------------\n\$selected_loaded_custom_links = ".var_export($reporter->selected_loaded_custom_links,true).";\n--------FIN--------\n");
         return $cell;
     }
 }
