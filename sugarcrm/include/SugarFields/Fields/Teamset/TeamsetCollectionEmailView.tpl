@@ -92,10 +92,11 @@
             &nbsp;
 			{capture assign="attr"}id="remove_{$vardef.name}_collection_0" name="remove_{$vardef.name}_collection_0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove(0);"{/capture}
 			{capture assign="alt"}{sugar_translate label="LBL_ID_FF_REMOVE"}{/capture}
-            {sugar_getimage alt=$alt name="id-ff-remove" ext=".png" attr="$attr" alt="$alt_removeButton"}
-            {if !empty($displayParams.allowNewValue) }
-            <input type="hidden" name="allow_new_value_{$vardef.name}_collection_0" id="allow_new_value_{$vardef.name}_collection_0" value="true">
-            {/if}
+
+            <button type="button" class="id-ff-remove" {$attr}>
+                {sugar_getimage name="id-ff-remove-nobg" ext=".png" attr="" alt=$alt_removeButton}
+                {if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
+            </button>
         </td>
         <td valign='top' align='center'>
             <span id='{$displayParams.formName}_{$vardef.name}_radio_div_0'>
