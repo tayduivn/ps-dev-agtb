@@ -80,4 +80,3 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 }
-?>
