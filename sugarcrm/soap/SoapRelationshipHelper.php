@@ -39,7 +39,7 @@ function check_for_relationship($relationships, $module){
  */
 
 function retrieve_relationships_properties($module_1, $module_2, $relationship_name = ""){
-	
+
 	$rs = new Relationship();
 	$query =  "SELECT * FROM $rs->table_name WHERE ((lhs_module = '".$rs->db->quote($module_1)."' AND rhs_module='".$rs->db->quote($module_2)."') OR (lhs_module = '".$rs->db->quote($module_2)."' AND rhs_module='".$rs->db->quote($module_1)."'))";
 	if(!empty($relationship_name) && isset($relationship_name)){
@@ -107,16 +107,29 @@ function retrieve_relationships($module_name,  $related_module, $relationship_qu
 }
 
 /*
- * retireves modified relationships between two modules
+ * retrieve_modified_relationships
+ *
+ * This method retrieves modified relationships between two modules
  * This will return all viewable relationships between two modules
- * module_query is a filter on the first module
- * related_module_query is a filter on the second module
- * relationship_query is a filter on the relationship between them
- * show_deleted is if deleted items should be shown or not (IGNORED)
+ *
+ * @param $module_name String value of the module on the left hand side of relationship
+ * @param related_module String value of the module on the right hand side of relationship
+ * @param relationship_query SQL String used to query for the relationships
+ * @show_deleted boolean value indicating whether or not deleted items should be shown (IGNORED)
+ * @offset integer value indicating the starting offset of results to return
+ * @max_results integer value indicating the maximum number of results to return
+ * @select_fields Mixed Array indicating the select fields used in the query to return in results
+ * @relationship_name String value of the relationship name as defined in the relationships table to be used in retrieving the relationship information
+ * @return Mixed Array of results with the following delta/value information:
+ *         table_name String value of the table name queried for the results
+ *         result Mixed Array of the results.  Each entry in the Array contains an Array of key/value pairs from the select_fields parameter
+ *         total_count integer value indicating the total count of results from the query
+ *         error Mixed Array containing the SOAP errors if found, empty otherwise
  *
  */
 function retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields = array(), $relationship_name = ''){
-	global  $beanList, $beanFiles, $dictionary, $current_user;
+
+    global  $beanList, $beanFiles, $dictionary, $current_user;
 	$error = new SoapError();
 	$result_list = array();
 	if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
@@ -168,19 +181,46 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 	if(isset($select_fields) && !empty($select_fields)){
 		$index = 0;
 		$field_select ='';
+
 		foreach($select_fields as $field){
 			if($field == "id"){
-				$field_select .= "DISTINCT m1.".getValidDBName($field);
-			}
-			else{
-				if(strpos($field, ".") == false){
-					$field_select .= "m1.".getValidDBName($field);
-				}
-				else{
-                    // There is a dot in here somewhere.
-                    list($table_part,$field_part) = explode('.',$field);
-                    $field_select .= getValidDBName($table_part).".".getValidDBName($field_part);
-				}
+				$field_select .= "DISTINCT m1.id";
+			} else {
+			    $parts = explode(' ', $field);
+			    $alias = '';
+			    if(count($parts) > 1) {
+			        // have aliases: something like "blah.blah blah"
+                    $alias = array_pop($parts);
+                    $field = array_pop($parts); // will check for . further down
+			    }
+			    if($alias == "email1") {
+                    // special case for primary emails
+                    $field_select .= "(SELECT email_addresses.email_address FROM {$mod->table_name}
+                    	LEFT JOIN  email_addr_bean_rel ON {$mod->table_name}.id = email_addr_bean_rel.bean_id
+                    		AND email_addr_bean_rel.bean_module='{$mod->module_dir}'
+                    		AND email_addr_bean_rel.deleted=0 AND email_addr_bean_rel.primary_address=1
+                    	LEFT JOIN email_addresses ON email_addresses.id = email_addr_bean_rel.email_address_id Where {$mod->table_name}.id = m1.ID) email1";
+			    } elseif($alias == "email2") {
+                    // special case for non-primary emails
+                    $field_select .= "(".$mod->db->limitQuerySQL("SELECT email_addresses.email_address FROM {$mod->table_name}
+                    	LEFT JOIN  email_addr_bean_rel on {$mod->table_name}.id = email_addr_bean_rel.bean_id
+                    		AND email_addr_bean_rel.bean_module='{$mod->module_dir}' AND email_addr_bean_rel.deleted=0
+                    		AND email_addr_bean_rel.primary_address!=1
+                    	LEFT JOIN email_addresses ON email_addresses.id = email_addr_bean_rel.email_address_id Where {$mod->table_name}.id = m1.ID", 0, 1).") email2";
+			    } else {
+                    if(strpos($field, ".") == false) {
+                        // no dot - field for m1
+                        $fieldname = "m1.".$mod->db->getValidDBName($field);
+                    } else {
+                        // There is a dot in here somewhere.
+                        list($table_part,$field_part) = explode('.',$field);
+                        $fieldname = $mod->db->getValidDBName($table_part).".".$mod->db->getValidDBName($field_part);
+    			    }
+    			    $field_select .= $fieldname;
+    			    if(!empty($alias)) {
+    			        $field_select .= " ".$mod->db->getValidDBName($alias);
+    			    }
+			    }
 			}
 			if($index < (count($select_fields) - 1))
 			{
@@ -225,6 +265,7 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 		$result_list[] = $row;
 	}
 
+    $total_count = !empty($result_list) ? count($result_list) : 0;
 	return array('table_name'=>$table, 'result'=>$result_list, 'total_count'=>$total_count, 'error'=>$error->get_soap_array());
 }
 
@@ -400,7 +441,7 @@ function retrieve_relationship_query($module_name,  $related_module, $relationsh
 	if(!$mod->disable_row_level_security){
 		if(!empty($mod->field_defs['team_id'])){
 			$query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst ";
-			$query .= " INNER JOIN team_memberships tm1 ON tst.team_id = tm1.team_id 
+			$query .= " INNER JOIN team_memberships tm1 ON tst.team_id = tm1.team_id
 					                       AND tm1.user_id = '$current_user->id'
 						                   AND tm1.deleted=0 group by tst.team_set_id) m1_tf on m1_tf.team_set_id  = m1.team_set_id ";
 		}
@@ -408,7 +449,7 @@ function retrieve_relationship_query($module_name,  $related_module, $relationsh
 	if(!$mod2->disable_row_level_security){
 		if(!empty($mod2->field_defs['team_id'])){
 			$query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst ";
-			$query .= " INNER JOIN team_memberships tm2 ON tst.team_id = tm2.team_id 
+			$query .= " INNER JOIN team_memberships tm2 ON tst.team_id = tm2.team_id
 					                       AND tm2.user_id = '$current_user->id'
 						                   AND tm2.deleted=0 group by tst.team_set_id) m2_tf on m2_tf.team_set_id  = m2.team_set_id ";
 		}
@@ -471,8 +512,8 @@ function get_linked_records($get_module, $from_module, $get_id) {
 
 	$from_mod->load_relationship($field);
 	$id_arr = $from_mod->$field->get();
-	
-	//bug: 38065 
+
+	//bug: 38065
 	if ($get_module == 'EmailAddresses') {
 		$emails = $from_mod->emailAddress->addresses;
 		$email_arr = array();
