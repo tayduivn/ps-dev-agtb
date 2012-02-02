@@ -45,6 +45,12 @@ class SugarSearchEngineFullIndexer
     const MAX_BULK_THRESHOLD = 5000;
 
     /**
+     * Name of the scheduler to perform a full index
+     * @var string
+     */
+    public static $schedulerName = "Full Text Search Indexer";
+
+    /**
      * @param SugarSearchEngineAqbstractBase $engine
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
@@ -140,11 +146,13 @@ class SugarSearchEngineFullIndexer
      */
     public static function scheduleFullSystemIndex()
     {
+        $previousSchedulerID = self::isFTSIndexScheduled();
         $td = TimeDate::getInstance()->getNow(true)->modify("+5 min");
         $before = TimeDate::getInstance()->getNow(true)->modify("-5 min");
         $future = TimeDate::getInstance()->getNow(true)->modify("+5 year");
-        $sched = new Scheduler();
-        $sched->name = "Full Text Search Indexer";
+        $sched = new Scheduler($previousSchedulerID);
+        $sched->id = $previousSchedulerID;
+        $sched->name = self::$schedulerName;
         $sched->job = "function::performFullFTSIndex";
         $sched->status = 'Active';
         $sched->job_interval = $td->min."::".$td->hour."::".$td->day."::".$td->month."::".$td->day_of_week;
@@ -152,5 +160,23 @@ class SugarSearchEngineFullIndexer
         $sched->date_time_end = TimeDate::getInstance()->asUser($future, $GLOBALS['current_user']);
         $sched->catch_up = 0;
         $sched->save();
+    }
+
+    /**
+     * Determine if a pre-existing scheduler for fts exists.  If so return the id, else false.
+     *
+     * @static
+     * @return mixed
+     */
+    public static function isFTSIndexScheduled()
+    {
+        $sched = new Scheduler();
+        $sched = $sched->retrieve_by_string_fields(array('name'=> self::$schedulerName));
+
+        if($sched == NULL)
+            return FALSE;
+        else
+            return $sched->id;
+
     }
 }

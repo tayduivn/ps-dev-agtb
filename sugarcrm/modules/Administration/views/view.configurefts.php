@@ -22,13 +22,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: ConfigureTabs.php 54176 2010-02-01 23:07:34Z dwheeler $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+
+require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 
 class ViewConfigureFts extends SugarView
 {
@@ -63,6 +58,11 @@ class ViewConfigureFts extends SugarView
     {
         global $app_list_strings;
 
+        $mod_strings = return_module_language($GLOBALS['current_language'], $this->module) ;
+        $ftsScheduleEnabledText = $mod_strings['LBL_FTS_SCHED_ENABLED'];
+
+
+
         if(isset($GLOBALS['sugar_config']['full_text_engine']))
         {
             $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
@@ -74,10 +74,20 @@ class ViewConfigureFts extends SugarView
             $defaultEngine = '';
             $config = array('host' => '','port' => '');
         }
+
+        $scheduleDisableButton = empty($defaultEngine) ? 'disabled' : '';
+        $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
+        $ftsScheduleEnabledText = string_format($ftsScheduleEnabledText, array($schedulerID));
         $this->ss->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
         $this->ss->assign("fts_host", $config['host']);
         $this->ss->assign("fts_port", $config['port']);
+        $this->ss->assign("scheduleDisableButton", $scheduleDisableButton);
+        $this->ss->assign("fts_scheduled", !empty($schedulerID));
         $this->ss->assign('title',$this->getModuleTitle(false));
+        $this->ss->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
+
         echo $this->ss->fetch('modules/Administration/templates/ConfigureFTS.tpl');
     }
+
+
 }

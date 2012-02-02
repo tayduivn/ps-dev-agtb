@@ -6681,15 +6681,15 @@ p.submsg, p.submsg a{
 }
 
 .loading-indicator-ui {
-    height: 80px;
-    width: 80px;
+    height: 100px;
+    width: 100px;
     background: url(../../../../index.php?entryPoint=getImage&imageName=img_loading.gif);
     background-repeat: no-repeat;
     background-position: center center;
 }
 
 .loading-indicator-ui-overlay {
-    background-color: #000;
+    background-color: #fff;
     opacity: 0.1;
     filter: alpha(opacity = 60);
 }

@@ -1194,7 +1194,8 @@ $mod_strings = array (
     'LBL_FTS_PORT' => 'Port',
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
     'LBL_FTS_TEST' => 'Test',
-    'LBL_SAVE_SCHED_BUTTON' => 'Save And Schedule Full System Index',
-    'LBL_SAVE_SCHED_WARNING' => 'Are you sure sure?'
+    'LBL_SAVE_SCHED_BUTTON' => 'Schedule Full System Index',
+    'LBL_SAVE_SCHED_WARNING' => 'Are you sure sure?',
+    'LBL_FTS_SCHED_ENABLED' => 'A Full System Index operation has been scheduled, to see additional details please visit the <a href="index.php?module=Schedulers&action=DetailView&record={0}">schedulers</a> page'
 	);
 

@@ -37,6 +37,11 @@
 
 	{$title}<br>
 
+    {if $fts_scheduled}
+        {$ftsScheduleEnabledText}
+        <br><br>
+    {/if}
+
 	<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary"
 		   type="submit" name="saveButton" value="{$APP.LBL_SAVE_BUTTON_LABEL}" onclick="return check_form('ConfigureFTS')" />
 	<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button"
@@ -74,7 +79,7 @@
     <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary"
     		   type="submit" name="saveButton" value="{$APP.LBL_SAVE_BUTTON_LABEL}" onclick="return check_form('ConfigureFTS')" />
     <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id='sched_button'
-        		   type="submit" name="saveButton" value="{$MOD.LBL_SAVE_SCHED_BUTTON}" onclick="return SUGAR.FTS.confirmSchedule();" style="display: none;" />
+        		   type="submit" name="saveButton" value="{$MOD.LBL_SAVE_SCHED_BUTTON}" onclick="return SUGAR.FTS.confirmSchedule();" {$scheduleDisable} />
     <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button"
            onclick="this.form.action.value='index'; this.form.module.value='Administration';" type="submit" name="CancelButton"
            value="{$APP.LBL_CANCEL_BUTTON_LABEL}"/>
@@ -130,12 +135,11 @@
                     panel.setBody(r.status);
                     if(r.valid)
                     {
-                        console.log('valid connection');
-                        $('#sched_button').show();
+                        $('#sched_button').removeAttr('disabled');
                     }
                     else
                     {
-                        $('#sched_button').hide();
+                        $('#sched_button').attr('disabled', 'disabled');
                     }
 
                 },
@@ -150,6 +154,13 @@
         }
     };
 
+    $('#fts_type').change(function(e)
+    {
+        if($(this).val() == '')
+        {
+            $('#sched_button').attr('disabled', 'disabled');
+        }
+    });
     {/literal}
 addForm('ConfigureFTS');
 addToValidateMoreThan('ConfigureFTS', 'fts_port', 'int', true, '{$MOD.LBL_FTS_PORT}', 1);
