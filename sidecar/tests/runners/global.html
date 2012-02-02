@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Global Runner</title>
+
+    <!--required classes for tests--->
+    <script type="text/javascript" src='../../../sidecar/lib/backbone/backbone.js'></script>
+    <script type="text/javascript" src='../../../sidecar/lib/jquery/jquery.min.js'></script>
+
+    <!--jasmine and sinon core files--->
+    <script type="text/javascript" src='../../../sidecar/lib/sinon/sinon.min.js'></script>
+    <script type="text/javascript" src='../../../sidecar/lib/jasmine/jasmine.js'></script>
+    <script type="text/javascript" src='../../../sidecar/lib/jasmine/jasmine-html.js'></script>
+    <script type="text/javascript" src='../../../sidecar/lib/jasmine-sinon/jasmine-sinon.js'></script>
+    <link rel="stylesheet" href="../../../sidecar/lib/jasmine/jasmine.css"/>
+
+    <!--fixtures--->
+    <script type="text/javascript" src='../../../sidecar/tests/fixtures/sample.js'></script>
+
+    <!--tests suites--->
+
+
+    <!--init jasmine and exec suites--->
+    <script type="text/javascript">
+        (function () {
+            var jasmineEnv = jasmine.getEnv();
+            jasmineEnv.updateInterval = 1000;
+
+            var trivialReporter = new jasmine.TrivialReporter();
+
+            jasmineEnv.addReporter(trivialReporter);
+
+            jasmineEnv.specFilter = function (spec) {
+                return trivialReporter.specFilter(spec);
+            };
+
+            var currentWindowOnload = window.onload;
+
+            window.onload = function () {
+                if (currentWindowOnload) {
+                    currentWindowOnload();
+                }
+                execJasmine();
+            };
+
+            function execJasmine() {
+                jasmineEnv.execute();
+            }
+
+        })();
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
