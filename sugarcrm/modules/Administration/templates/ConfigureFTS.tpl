@@ -44,6 +44,8 @@
 
 	<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary"
 		   type="submit" name="saveButton" value="{$APP.LBL_SAVE_BUTTON_LABEL}" onclick="return check_form('ConfigureFTS')" />
+    <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary sched_button" id='sched_button' name='sched_button'
+        		   type="submit" name="saveButton" value="{$MOD.LBL_SAVE_SCHED_BUTTON}" onclick="return SUGAR.FTS.confirmSchedule();" {$scheduleDisableButton} />
 	<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button"
 		   onclick="this.form.action.value='index'; this.form.module.value='Administration';" type="submit" name="CancelButton"
 		   value="{$APP.LBL_CANCEL_BUTTON_LABEL}"/>
@@ -78,8 +80,8 @@
 
     <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary"
     		   type="submit" name="saveButton" value="{$APP.LBL_SAVE_BUTTON_LABEL}" onclick="return check_form('ConfigureFTS')" />
-    <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id='sched_button'
-        		   type="submit" name="saveButton" value="{$MOD.LBL_SAVE_SCHED_BUTTON}" onclick="return SUGAR.FTS.confirmSchedule();" {$scheduleDisable} />
+    <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary sched_button" id='sched_button' name='sched_button'
+        		   type="submit" name="saveButton" value="{$MOD.LBL_SAVE_SCHED_BUTTON}" onclick="return SUGAR.FTS.confirmSchedule();" {$scheduleDisableButton} />
     <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button"
            onclick="this.form.action.value='index'; this.form.module.value='Administration';" type="submit" name="CancelButton"
            value="{$APP.LBL_CANCEL_BUTTON_LABEL}"/>
@@ -135,11 +137,11 @@
                     panel.setBody(r.status);
                     if(r.valid)
                     {
-                        $('#sched_button').removeAttr('disabled');
+                        $('.sched_button').removeAttr('disabled');
                     }
                     else
                     {
-                        $('#sched_button').attr('disabled', 'disabled');
+                        $('.sched_button').attr('disabled', 'disabled');
                     }
 
                 },
@@ -158,7 +160,7 @@
     {
         if($(this).val() == '')
         {
-            $('#sched_button').attr('disabled', 'disabled');
+            $('.sched_button').attr('disabled', 'disabled');
         }
     });
     {/literal}

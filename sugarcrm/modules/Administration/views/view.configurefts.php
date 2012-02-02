@@ -77,12 +77,14 @@ class ViewConfigureFts extends SugarView
 
         $scheduleDisableButton = empty($defaultEngine) ? 'disabled' : '';
         $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
+        $schedulerCompleted = SugarSearchEngineFullIndexer::isFTSIndexScheduleCompleted($schedulerID);
+
         $ftsScheduleEnabledText = string_format($ftsScheduleEnabledText, array($schedulerID));
         $this->ss->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
         $this->ss->assign("fts_host", $config['host']);
         $this->ss->assign("fts_port", $config['port']);
         $this->ss->assign("scheduleDisableButton", $scheduleDisableButton);
-        $this->ss->assign("fts_scheduled", !empty($schedulerID));
+        $this->ss->assign("fts_scheduled", !empty($schedulerID) && !$schedulerCompleted);
         $this->ss->assign('title',$this->getModuleTitle(false));
         $this->ss->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
 

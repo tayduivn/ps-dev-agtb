@@ -147,11 +147,20 @@ class SugarSearchEngineFullIndexer
     public static function scheduleFullSystemIndex()
     {
         $previousSchedulerID = self::isFTSIndexScheduled();
+        //If there is an old scheduler, delete it. We only want to keep
+        //a single copy of the scheduler around so we can see if it has completed
+        //by examine the log history.
+        if($previousSchedulerID !== FALSE)
+        {
+            $oldSched = new Scheduler();
+            $oldSched->retrieve($previousSchedulerID);
+            $oldSched->deleted = 1;
+            $oldSched->save(FALSE);
+        }
         $td = TimeDate::getInstance()->getNow(true)->modify("+5 min");
         $before = TimeDate::getInstance()->getNow(true)->modify("-5 min");
         $future = TimeDate::getInstance()->getNow(true)->modify("+5 year");
-        $sched = new Scheduler($previousSchedulerID);
-        $sched->id = $previousSchedulerID;
+        $sched = new Scheduler();
         $sched->name = self::$schedulerName;
         $sched->job = "function::performFullFTSIndex";
         $sched->status = 'Active';
@@ -159,7 +168,7 @@ class SugarSearchEngineFullIndexer
         $sched->date_time_start = TimeDate::getInstance()->asUser($before, $GLOBALS['current_user']);
         $sched->date_time_end = TimeDate::getInstance()->asUser($future, $GLOBALS['current_user']);
         $sched->catch_up = 0;
-        $sched->save();
+        $sched->save(); //die($sched->job_interval);
     }
 
     /**
@@ -178,5 +187,28 @@ class SugarSearchEngineFullIndexer
         else
             return $sched->id;
 
+    }
+
+    /**
+     * Determine if a given scheduler has completed it's task. 
+     *
+     * @static
+     * @param Scheduler $s
+     * @return bool
+     */
+    public static function isFTSIndexScheduleCompleted($id)
+    {
+        if( empty($id) )
+            return FALSE;
+
+        $scheduler = new Scheduler();
+        $scheduler->retrieve($id);
+        $scheduler->load_relationship('schedulers_times');
+        $runs  = $scheduler->schedulers_times->get();
+
+        if(count($runs) >= 1)
+            return TRUE;
+        else
+            return FALSE;
     }
 }
