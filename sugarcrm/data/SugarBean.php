@@ -4758,11 +4758,11 @@ function save_relationship_changes($is_update, $exclude=array())
                 //cn: if $field is a _dom, detect and return VALUE not KEY
                 //cl: empty function check for meta-data enum types that have values loaded from a function
                 else if (((!empty($value['type']) && ($value['type'] == 'enum' || $value['type'] == 'radioenum') ))  && empty($value['function'])){
-                    if(!empty($app_list_strings[$value['options']][$this->$field])){
+                    if(!empty($value['options']) && !empty($app_list_strings[$value['options']][$this->$field])){
                         $return_array[$cache[$field]] = $app_list_strings[$value['options']][$this->$field];
                     }
                     //nsingh- bug 21672. some modules such as manufacturers, Releases do not have a listing for select fields in the $app_list_strings. Must also check $mod_strings to localize.
-                    elseif(!empty($mod_strings[$value['options']][$this->$field]))
+                    elseif(!empty($value['options']) && !empty($mod_strings[$value['options']][$this->$field]))
                     {
                         $return_array[$cache[$field]] = $mod_strings[$value['options']][$this->$field];
                     }
