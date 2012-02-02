@@ -378,7 +378,7 @@ class quicksearchQuery {
         $_REQUEST['q'] = trim($_REQUEST['term']);
         $view = new ViewFts();
         $view->init();
-        echo $view->display(TRUE);
+        echo $view->display(TRUE, TRUE);
     }
 }
 

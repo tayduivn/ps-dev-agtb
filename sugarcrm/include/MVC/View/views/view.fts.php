@@ -51,7 +51,7 @@ class ViewFts extends SugarView
     /**
      * @see SugarView::display()
      */
-    public function display($return = false)
+    public function display($return = false, $encode = false)
     {
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
@@ -101,7 +101,7 @@ class ViewFts extends SugarView
             if($resultSetOnly)
             {
                 $contents = json_encode(array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound));
-                return $this->sendOutput($contents, $return);
+                return $this->sendOutput($contents);
             }
 
             $this->ss->assign('filterModules',$filteredModules['enabled']);
@@ -110,12 +110,14 @@ class ViewFts extends SugarView
         }
 
         $contents = $this->ss->fetch($template);
-        return $this->sendOutput($contents, $return);
+        return $this->sendOutput($contents, $return, $encode);
 
     }
 
-    protected function sendOutput($contents, $return = false)
+    protected function sendOutput($contents, $return = false, $encode = false)
     {
+        if($encode)
+            $contents = json_encode(array('results' => $contents));
         if($return)
             return $contents;
         else
