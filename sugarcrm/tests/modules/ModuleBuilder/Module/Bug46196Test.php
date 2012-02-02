@@ -82,12 +82,16 @@ class Bug46196Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveCustomFieldFromSubpanelForCustomRelation()
     {
-        
+        $modules_exempt_from_availability_check = $GLOBALS['modules_exempt_from_availability_check'];
+
         $controller = new ModuleBuilderController;
         
         $module_name = 'Accounts';
         $_REQUEST['view_module'] = $module_name;
-        
+        $GLOBALS['modules_exempt_from_availability_check'] = array(
+            $module_name => $module_name
+        );
+
         $test_field_name = 'testfield_222222';
         $_REQUEST['name'] = $test_field_name;
         $_REQUEST['labelValue'] = 'testfield 222222';
@@ -120,6 +124,8 @@ class Bug46196Test extends Sugar_PHPUnit_Framework_TestCase
 
         $_REQUEST['relationship_name'] = 'accounts_accounts';
         $controller->action_DeleteRelationship();
+
+        $GLOBALS['modules_exempt_from_availability_check'] = $modules_exempt_from_availability_check;
 
         $this->assertArrayNotHasKey($test_field_name . '_c', $parser->_viewdefs);
     }
