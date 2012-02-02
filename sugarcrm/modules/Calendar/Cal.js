@@ -1073,9 +1073,7 @@
 					res = eval(o.responseText);
 					SugarWidgetScheduler.update_time();											
 					if(CAL.record_editable){
-						CAL.get("btn-save").removeAttribute("disabled");
-						CAL.get("btn-delete").removeAttribute("disabled");
-						CAL.get("btn-send-invites").removeAttribute("disabled");
+						CAL.enable_buttons();
 					}
 				}
 			};	
@@ -1167,11 +1165,7 @@
 		if(to_open && CAL.records_openable){
 			CAL.get("form_content").style.display = "none";
 		
-			CAL.get("btn-delete").setAttribute("disabled","disabled");			
-			CAL.get("btn-save").setAttribute("disabled","disabled");
-			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
-			// Reset display parameter, if the delete button was hidden 
-			CAL.get("btn-delete").style.display = "";		
+			CAL.disable_buttons();	
 	
 			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;
 			
@@ -1232,9 +1226,7 @@
 							eval(res.gr);							
 							SugarWidgetScheduler.update_time();											
 							if(CAL.record_editable){
-								CAL.get("btn-save").removeAttribute("disabled");
-								CAL.get("btn-delete").removeAttribute("disabled");
-								CAL.get("btn-send-invites").removeAttribute("disabled");
+								CAL.enable_buttons();
 							}														
 							
 							CAL.get("form_content").style.display = "";
@@ -1422,12 +1414,9 @@
 
 
 	
-	CAL.load_create_form = function (params){
-	
-			CAL.get("btn-delete").setAttribute("disabled","disabled");			
-			CAL.get("btn-save").setAttribute("disabled","disabled");
-			CAL.get("btn-send-invites").setAttribute("disabled","disabled");
-			CAL.get("btn-delete").style.display = "";	
+	CAL.load_create_form = function (params){	
+		
+			CAL.disable_buttons();	
 	
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 			
@@ -1467,10 +1456,9 @@
 							
 							if(typeof res.repeat != "undefined"){
 								CAL.fill_repeat_tab(res.repeat);
-							}							
-
-							CAL.get("btn-save").removeAttribute("disabled");
-							CAL.get("btn-send-invites").removeAttribute("disabled");
+							}
+							
+							CAL.enable_buttons();
 								
 							setTimeout(function(){
 								SugarWidgetScheduler.update_time();
@@ -1499,6 +1487,20 @@
 			};
 			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));	
 	}	
+	
+	CAL.disable_buttons = function() {
+		CAL.get("btn-save").setAttribute("disabled","disabled");
+		CAL.get("btn-send-invites").setAttribute("disabled","disabled");
+		CAL.get("btn-delete").setAttribute("disabled","disabled");		
+		
+	}
+	
+	CAL.enable_buttons = function() {
+		CAL.get("btn-save").removeAttribute("disabled");
+		CAL.get("btn-send-invites").removeAttribute("disabled");		
+		if (CAL.get("record").value != "")
+			CAL.get("btn-delete").removeAttribute("disabled");			
+	}
 		
 	
 	CAL.dialog_create = function (cell){
@@ -1506,8 +1508,8 @@
 			var e,user_id,user_name;
 			CAL.get("title-cal-edit").innerHTML = CAL.lbl_loading;														
 			CAL.open_edit_dialog();
-			CAL.get("btn-delete").setAttribute("disabled","disabled");
-			CAL.get("btn-delete").style.display = "none";
+			
+			CAL.disable_buttons();
 			
 			var module_name = CAL.get("current_module").value;
 			
@@ -1533,8 +1535,8 @@
 	}
 	
 	CAL.dialog_save = function(){
-						CAL.get("btn-save").setAttribute("disabled","disabled");
 						
+						CAL.disable_buttons();
 						
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 						
@@ -1562,8 +1564,10 @@
 										if(typeof res.limit_error != "undefined"){
 											var alert_msg = CAL.lbl_repeat_limit_error;
 											alert(alert_msg.replace("\$limit",res.limit));
-											CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
-											ajaxStatus.hideStatus(); 
+											CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;											
+											ajaxStatus.hideStatus();											
+											CAL.enable_buttons();
+											
 											return;
 										}
 										CAL.add_item(res);
@@ -1583,63 +1587,7 @@
 						var url = "index.php?module=Calendar&action=SaveActivity&sugar_body_only=true"; 
 						YAHOO.util.Connect.setForm(CAL.get("CalendarEditView"));
 						YAHOO.util.Connect.asyncRequest('POST',url,callback,false);	
-	}
-	
-	CAL.dialog_apply = function(){
-						CAL.get("btn-save").setAttribute("disabled","disabled");
-						
-						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-						
-						CAL.get("title-cal-edit").innerHTML = CAL.lbl_saving;								
-						CAL.fill_invitees();							
-						CAL.fill_repeat_data();	
-						
-						var e;
-						if(e = CAL.get("radio_call"))
-							e.setAttribute("disabled","disabled");
-						if(e = CAL.get("radio_meeting"))
-							e.setAttribute("disabled","disabled");
-						
-						var callback = {
-								success: function(o){
-									try{
-										res = eval("("+o.responseText+")");
-									}catch(err){
-										alert(CAL.lbl_error_saving);
-										CAL.editDialog.cancel();							
-										ajaxStatus.hideStatus();
-										return;	
-									}	
-									if(res.access == 'yes'){										
-										var e;
-										CAL.get("record").value = res.record;	
-										//SugarWidgetScheduler.update_time();
-										//CAL.GR_update_focus(CAL.get("current_module").value,res.record);
-										CAL.add_item(res);
-										CAL.update_vcal();											 											 				
-										CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;
-										CAL.get("send_invites").value = "";											
-										
-										// If new data is added with Apply, show the Delete button
-										CAL.get("btn-delete").removeAttribute("disabled");
-										CAL.get("btn-save").removeAttribute("disabled");
-										CAL.get("btn-delete").style.display = "";
-																				
-										ajaxStatus.hideStatus();											
-									}else{
-										alert(CAL.lbl_error_saving);
-										ajaxStatus.hideStatus();
-									}														
-								},
-								failure: function(){
-										alert(CAL.lbl_error_saving);
-										ajaxStatus.hideStatus();
-								}
-						};						
-						var url = "index.php?module=Calendar&action=SaveActivity&sugar_body_only=true";
-						YAHOO.util.Connect.setForm(CAL.get("CalendarEditView"));
-						YAHOO.util.Connect.asyncRequest('POST',url,callback,false);
-	}
+	}	
 	
 	CAL.remove_all_recurrences = function(){				
 	
