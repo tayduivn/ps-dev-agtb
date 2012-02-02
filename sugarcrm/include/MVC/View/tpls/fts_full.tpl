@@ -141,6 +141,12 @@ width:70%;
         },
         search: function(append)
         {
+            //For new searches reset the offset
+            if(typeof(append) != 'undefined' && append)
+            {
+                SUGAR.FTS.currentOffset = 0;
+            }
+
             $('#sugar_full_search_results').showLoading();
             //TODO: Check if all modules are selected, then don't send anything down.
             var m = this.getSelectedModules();
@@ -149,20 +155,21 @@ width:70%;
             $.ajax({
                 type: "POST",
                 url: "index.php",
+                dataType: 'json',
                 data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true, 'offset': SUGAR.FTS.currentOffset},
                 success: function(o)
                 {
                     if(typeof(append) != 'undefined' && append)
                     {
-                        $("#sugar_full_search_results").append(o);
+                        SUGAR.FTS.totalHits = o.totalHits;
+                        $("#sugar_full_search_results").append(o.results);
                     }
                     else
                     {
-                        $("#sugar_full_search_results").html( o );
+                        $("#sugar_full_search_results").html(o.results);
                     }
 
                     $('#sugar_full_search_results').hideLoading();
-                    console.log('current offset: ' + SUGAR.FTS.currentOffset + " ,limit:" + SUGAR.FTS.limit + " , total:" + SUGAR.FTS.totalHits);
                     if( SUGAR.FTS.currentOffset + SUGAR.FTS.limit >= SUGAR.FTS.totalHits)
                     {
                         $('#showMoreDiv').hide();
@@ -230,7 +237,6 @@ width:70%;
         {
             this.currentOffset += this.limit;
             SUGAR.FTS.search(true);
-            console.log('Loading more ' + this.currentOffset + ' ,limit:' + this.limit);
         }
     }
 
