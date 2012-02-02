@@ -39,8 +39,15 @@ require_once("modules/ModuleBuilder/Module/StudioModule.php");
  */
 class Bug46196Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $_backup = array();
+
 	public function setUp()
     {
+        $this->_backup = array(
+            '_REQUEST' => $_REQUEST,
+            'sugarCache' => sugarCache::$isCacheReset
+        );
+
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
@@ -58,6 +65,13 @@ class Bug46196Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
+        rmdir_recursive('custom/modules/Accounts/metadata');
+        rmdir_recursive('custom/modules/Accounts/Ext');
+        rmdir_recursive('custom/modules/Accounts/language');
+
+        $_REQUEST = $this->_backup['_REQUEST'];
+        sugarCache::$isCacheReset = $this->_backup['sugarCache'];
+        unset($GLOBALS['reload_vardefs']);
     }
     
     
@@ -106,10 +120,6 @@ class Bug46196Test extends Sugar_PHPUnit_Framework_TestCase
 
         $_REQUEST['relationship_name'] = 'accounts_accounts';
         $controller->action_DeleteRelationship();
-        
-        rmdir_recursive('custom\modules\Accounts\metadata');
-        rmdir_recursive('custom\modules\Accounts\Ext');
-        rmdir_recursive('custom\modules\Accounts\language');
 
         $this->assertArrayNotHasKey($test_field_name . '_c', $parser->_viewdefs);
     }
