@@ -312,7 +312,7 @@ function validate_user($user_name, $password){
     	if(!$valid->validateQueryClauses($query, $order_by)) {
     		$GLOBALS['log']->error("SoapHelperWebServices->checkQuery - bad query: $query $order_by");
     	    $errorObject->set_error('no_access');
-    		setFaultObject($errorObject);
+    		$this->setFaultObject($errorObject);
     		return false;
     	}
         return true;

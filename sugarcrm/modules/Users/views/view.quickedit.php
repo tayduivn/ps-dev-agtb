@@ -1,8 +1,10 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
+ * The contents of this file are subject to the SugarCRM Enterprise Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -25,44 +27,31 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once 'modules/Administration/updater_utils.php';
 
 /**
- * Bug #46317
- * Automatically Check For Updates issue
- * @ticket 46317
+ * UsersViewQuickEdit.php
+ * @author Collin Lee
+ *
+ * This class is a view extension of the include/MVC/View/views/view.edit.php file.  We are overriding the ViewQuickEdit class because the
+ * Users module quick edit treatment has some specialized behavior during the save operation.  In particular, if the user's status is set to
+ * Inactive, this needs to trigger a dialog to reassign records.  The quick edit functionality was introduced into the Users module in the 6.4 release.
+ *
  */
-class Bug46317Test extends Sugar_PHPUnit_Framework_TestCase
-{
+require_once('include/MVC/View/views/view.quickedit.php');
+require_once('include/EditView/EditView2.php');
 
-    function versionProvider()
-    {
-        return array(
-            array('6.3.1', '6_3_0', TRUE),
-            array('6.4', '6.3.1', TRUE),
-            array('6_4_0', '6.3.10', TRUE),
-            array('6_3_1', '6.3.1', FALSE),
-            array('6.3.0', '6_4', FALSE),
-            array('6.4.0RC3', '6.3.1', TRUE),
-            array('6.4.0RC3', '6.3.1.RC4', TRUE),
-            array('goober', 'noober', FALSE),
-            array('6.3.5b', 'noob', TRUE),
-            array('noob', '6.3.5b', FALSE),
-            array('6.5.0beta2', '6.5.0beta1', TRUE),
-            array('6.5.5.5.5', '7.5.5.5.5', FALSE),
-            array('6.3', '6.2.3.4.5.2.5.2.4superalpha', TRUE),
-            array('000000000000.1', '000000000000.1', FALSE),
-            array('000000000000.1', '000000000000.05', TRUE),
-        );
-    }
+class UsersViewQuickedit extends ViewQuickEdit
+{
+    /**
+     * @var footerTpl String variable of the Smarty template file used to render the footer portion.  Override here to allow for record reassignment.
+     */
+    protected $footerTpl = 'modules/Users/tpls/QuickEditFooter.tpl';
+
 
     /**
-     * @dataProvider versionProvider
-     * @group 46317
+     * @var defaultButtons Array of default buttons assigned to the form (see function.sugar_button.php)
+     * We will still take the DCMENUCANCEL and DCMENUFULLFORM buttons, but we inject our own Save button via the QuickEditFooter.tpl file
      */
-    function testCompareVersions($last_version, $current_version, $expectedResult)
-    {
-        $this->assertEquals($expectedResult, compareVersions($last_version, $current_version), "Current version: $current_version, last available version: $last_version");
-    }
+    protected $defaultButtons = array('DCMENUCANCEL', 'DCMENUFULLFORM');
+
 }
-?>

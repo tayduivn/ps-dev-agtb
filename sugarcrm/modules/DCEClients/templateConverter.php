@@ -301,7 +301,7 @@ if(strpos(strtolower($path), 'silentupgrade')!==false) return;
 		}
 	}
 
-	sugar_file_put_contents($path, $newContents);
+	file_put_contents($path, $newContents);
 }
 
 function revertFile($path){
@@ -357,7 +357,7 @@ function revertFile($path){
 		
 		}
 	}
-	sugar_file_put_contents($path, $newContents);
+	file_put_contents($path, $newContents);
 }
 
 	

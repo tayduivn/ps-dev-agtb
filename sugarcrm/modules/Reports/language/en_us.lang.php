@@ -589,5 +589,6 @@ $mod_strings = array (
 	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
     'LBL_ALT_INFORMATION' => 'Information',
+    'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
 );
 ?>

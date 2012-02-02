@@ -76,14 +76,19 @@ class Bug49873Test extends Sugar_PHPUnit_Framework_TestCase
      */
 	function testDocumentMarkDeleted() {
         $this->doc->load_relationship('contracts');
-        $this->assertEquals(1, count($this->doc->contracts));
+        $this->assertEquals(1, count($this->doc->contracts), 'unable to link contract to document');
 
         //Call mark_deleted
         $this->doc->mark_deleted($this->doc->id);
         $this->doc->save();
 
         //Now assert that the linked_documents entry (this holds the many-to-many documents to contracts relationship) is marked as deleted
-        $deleted = $GLOBALS['db']->getOne($GLOBALS['db']->limitQuerySql("SELECT deleted FROM linked_documents WHERE document_id = '{$this->doc->id}'", 0, 1));
+        $results = $GLOBALS['db']->query("SELECT deleted FROM linked_documents WHERE document_id = '{$this->doc->id}'");
+        while($row = $GLOBALS['db']->fetchByAssoc($results)) {
+              $deleted = $row['deleted'];
+              break;
+        }
+        //$deleted = $GLOBALS['db']->getOne($GLOBALS['db']->limitQuerySql("SELECT deleted FROM linked_documents WHERE document_id = '{$this->doc->id}'", 0, 1));
         $this->assertEquals('1', $deleted, 'linked_documents entries are not deleted');
     }
 

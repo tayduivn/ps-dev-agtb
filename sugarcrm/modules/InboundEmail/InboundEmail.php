@@ -3221,7 +3221,9 @@ class InboundEmail extends SugarBean {
 			$msgPart = $text;
 			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader[$upperCaseKeyDecodeHeader['CONTENT-TYPE']]['charset'])) {
 				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
-			}
+			} else {
+                $msgPart = utf8_encode($text);
+            }
 		} // end else clause
 
 		$msgPart = $this->customGetMessageText($msgPart);
@@ -3658,7 +3660,7 @@ class InboundEmail extends SugarBean {
     		// deal with attachment encoding and decode the text string
 			$msgPart = $this->handleTranserEncoding($msgPartRaw, $part->encoding);
 
-			if(sugar_file_put_contents($uploadDir.$fileName, $msgPart)) {
+			if(file_put_contents($uploadDir.$fileName, $msgPart)) {
 				$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$attach->filename);
 			} else {
                 $GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$attach->filename ." - temp file target: [ {$uploadDir}{$fileName} ]");
@@ -4467,7 +4469,7 @@ class InboundEmail extends SugarBean {
 
 		$bin = convert_uudecode($UUEncode);
 		$filename = "upload://{$attach->id}";
-		if(sugar_file_put_contents($filename, $bin)) {
+		if(file_put_contents($filename, $bin)) {
     		$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$filename);
 		} else {
     		$GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$filename);

@@ -262,7 +262,7 @@ $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 create_cache_directory("Expressions/functions_cache_debug.js");
-sugar_file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
+file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
 
 
 require_once("jssource/minify_utils.php");
