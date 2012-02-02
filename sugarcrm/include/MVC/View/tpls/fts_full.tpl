@@ -102,7 +102,7 @@ width:70%;
     <div id="sugar_full_search_results" >
         {include file=$rsTemplate}
     </div>
-    <div id="showMoreDiv"  onclick="SUGAR.FTS.loadMore();">LOAD MORE</div>
+    <div id="showMoreDiv"  onclick="SUGAR.FTS.loadMore();" style="{$showMoreDivStyle}">LOAD MORE</div>
 </td>
     </tr>
 </table>
@@ -166,6 +166,10 @@ width:70%;
                     if( SUGAR.FTS.currentOffset + SUGAR.FTS.limit >= SUGAR.FTS.totalHits)
                     {
                         $('#showMoreDiv').hide();
+                    }
+                    else
+                    {
+                        $('#showMoreDiv').show();
                     }
 
                 },
