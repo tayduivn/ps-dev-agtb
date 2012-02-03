@@ -3244,11 +3244,13 @@ var Canvas;
       styles.width = width + "px";
       styles.height = height + "px";
       //small ExCanvas fix
-      //if(!supportsCanvas) {
-        //this.translateToCenter(size);
-      //} else {
-        this.translateToCenter();
-      //}
+      if (!supportsCanvas) {
+        // for some unknown reason _resize() method is not being called in some
+        // IE browser instances, so call it manually
+        // in obfuscated version of flashcanvas.js the method is renamed to I()
+        this.getCtx().I(width, height);
+      }
+      this.translateToCenter();
       this.translateOffsetX =
         this.translateOffsetY = 0;
       this.scaleOffsetX = 
@@ -10392,20 +10394,12 @@ $jit.LineChart = new Class({
   	ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
   	ctx.clearRect(-size.width/2,-size.height/2,size.width,size.height);
  },
-  resizeGraph: function(json,orgWindowWidth,orgContainerDivWidth,cols) {
+  resizeGraph: function(json,width) {
   	var canvas = this.canvas,
   	size = canvas.getSize(),
-    	config = this.config,
-        orgHeight = size.height,
-        margin = config.Margin,
-        st = this.st,
-        horz = config.orientation == 'horizontal';
-        
+            orgHeight = size.height;
 
-	var newWindowWidth = document.body.offsetWidth;
-	var diff = newWindowWidth - orgWindowWidth;	
-	var newWidth = orgContainerDivWidth + (diff/cols);
-  	canvas.resize(newWidth,orgHeight);
+        canvas.resize(width,orgHeight);
   	if(typeof FlashCanvas == "undefined") {
 		canvas.clear();
   	} else {
@@ -12880,7 +12874,7 @@ $jit.BarChart = new Class({
   	ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
   	ctx.clearRect(-size.width/2,-size.height/2,size.width,size.height);
  },
-  resizeGraph: function(json,orgWindowWidth,orgContainerDivWidth,cols) {
+  resizeGraph: function(json,width) {
   	var canvas = this.canvas,
   	size = canvas.getSize(),
     	config = this.config,
@@ -12888,14 +12882,9 @@ $jit.BarChart = new Class({
         margin = config.Margin,
         st = this.st,
         grouped = config.type.split(':')[0] == 'grouped',
-        horz = config.orientation == 'horizontal',
-        	ctx = canvas.getCtx();
+        horz = config.orientation == 'horizontal';
         
-	var newWindowWidth = document.body.offsetWidth;
-	var diff = newWindowWidth - orgWindowWidth;	
-	var newWidth = orgContainerDivWidth + (diff/cols);
-	var scale = newWidth/orgContainerDivWidth;
-  	canvas.resize(newWidth,orgHeight);
+        canvas.resize(width,orgHeight);
   	if(typeof FlashCanvas == "undefined") {
 		canvas.clear();
   	} else {
@@ -13810,22 +13799,14 @@ $jit.FunnelChart = new Class({
   	ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
   	ctx.clearRect(-size.width/2,-size.height/2,size.width,size.height);
   },
-   resizeGraph: function(json,orgWindowWidth,orgContainerDivWidth,cols) {
+   resizeGraph: function(json,width) {
   	var canvas = this.canvas,
   	size = canvas.getSize(),
     	config = this.config,
-        orgHeight = size.height,
-        margin = config.Margin,
-        st = this.st,
-        label = config.Label,
-        horz = config.orientation == 'horizontal',
-        ctx = canvas.getCtx();
+        orgHeight = size.height;
         
 
-	var newWindowWidth = document.body.offsetWidth;
-	var diff = newWindowWidth - orgWindowWidth;	
-	var newWidth = orgContainerDivWidth + (diff/cols);
-  	canvas.resize(newWidth,orgHeight);
+        canvas.resize(width,orgHeight);
 
   	if(typeof FlashCanvas == "undefined") {
 		canvas.clear();
@@ -15682,21 +15663,13 @@ $jit.PieChart = new Class({
   	ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
   	ctx.clearRect(-size.width/2,-size.height/2,size.width,size.height);
   },
-  resizeGraph: function(json,orgWindowWidth,orgContainerDivWidth,cols) {
+  resizeGraph: function(json,width) {
   	var canvas = this.canvas,
   	size = canvas.getSize(),
     	config = this.config,
-        orgHeight = size.height,
-        margin = config.Margin,
-        st = this.st,
-        horz = config.orientation == 'horizontal';
+        orgHeight = size.height;
         
-
-	var newWindowWidth = document.body.offsetWidth;
-	var diff = newWindowWidth - orgWindowWidth;	
-	var newWidth = orgContainerDivWidth + (diff/cols);
-	var scale = newWidth/orgContainerDivWidth;
-  	canvas.resize(newWidth,orgHeight);
+        canvas.resize(width,orgHeight);
   	if(typeof FlashCanvas == "undefined") {
 		canvas.clear();
   	} else {
@@ -16583,20 +16556,12 @@ $jit.GaugeChart = new Class({
   	ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
   	ctx.clearRect(-size.width/2,-size.height/2,size.width,size.height);
  },
-  resizeGraph: function(json,orgWindowWidth,orgContainerDivWidth,cols) {
+  resizeGraph: function(json,width) {
   	var canvas = this.canvas,
   	size = canvas.getSize(),
-    	config = this.config,
-        orgHeight = size.height,
-        margin = config.Margin,
-        st = this.st,
-        horz = config.orientation == 'horizontal';
+            orgHeight = size.height;
         
-
-	var newWindowWidth = document.body.offsetWidth;
-	var diff = newWindowWidth - orgWindowWidth;	
-	var newWidth = orgContainerDivWidth + (diff/cols);
-  	canvas.resize(newWidth,orgHeight);
+        canvas.resize(width,orgHeight);
   	if(typeof FlashCanvas == "undefined") {
 		canvas.clear();
   	} else {

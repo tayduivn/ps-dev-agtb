@@ -46,7 +46,7 @@
 				chartConfig["scroll"] = true;
 			{/if}
 			loadCustomChartForReports = function(){ldelim}
-				loadSugarChart('{$chartId}','{$filename}',css,chartConfig,1);
+				loadSugarChart('{$chartId}','{$filename}',css,chartConfig);
 			{rdelim};
 			loadCustomChartForReports();
 			{literal}
