@@ -894,6 +894,13 @@ function validate_form(formname, startsWith){
 								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
 							}
 							break;
+                        // Bug #49614 : Check value without trimming before
+						case 'DBNameRaw':
+							if(!isDBName(form[validate[formname][i][nameIndex]].value)){
+								isError = true;
+								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
+							}
+							break;
 						case 'alphanumeric':
 							break;
 						case 'file':
