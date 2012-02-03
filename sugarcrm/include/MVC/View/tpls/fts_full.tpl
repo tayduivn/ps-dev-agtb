@@ -60,7 +60,7 @@ width:70%;
         <form method="POST" onsubmit="SUGAR.FTS.saveModuleFilterSettings();" >
             <input type="hidden" name="module" value="Users">
             <input type="hidden" name="action" value="saveftsmodules">
-            <input type="hidden" name="visible_modules" value="" id="visible_modules">
+            <input type="hidden" name="disabled_modules" value="" id="disabled_modules">
 
         <table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="30%">
             <tr>
@@ -227,7 +227,7 @@ width:70%;
         ),
         saveModuleFilterSettings : function()
         {
-            var enabledTable = SUGAR.FTS.globalSearchEnabledTable;
+            var enabledTable = SUGAR.FTS.globalSearchDisabledTable;
             var modules = "";
             for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
                 var data = enabledTable.getRecord(i).getData();
@@ -235,7 +235,7 @@ width:70%;
                     modules += "," + data.module;
             }
             modules = modules == "" ? modules : modules.substr(1);
-            document.getElementById('visible_modules').value = modules;
+            document.getElementById('disabled_modules').value = modules;
         },
         loadMore: function()
         {

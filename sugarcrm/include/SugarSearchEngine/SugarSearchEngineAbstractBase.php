@@ -133,7 +133,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
             $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$m]) ? $GLOBALS['app_list_strings']['moduleList'][$m] : $m;
             $disabledModulesTranslated[] = array('module'=> $m, 'label' => $moduleName);
         }
-        asort($enabledModules);
+        asort($enabledModulesTranslated);
         asort($disabledModulesTranslated);
         return array('enabled' => $enabledModulesTranslated, 'disabled' => $disabledModulesTranslated);
 

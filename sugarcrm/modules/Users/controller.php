@@ -154,7 +154,7 @@ protected function action_resetPreferences(){
     protected function action_saveftsmodules()
     {
         $this->view = 'fts';
-        $GLOBALS['current_user']->setPreference('fts_enabled_modules', $_REQUEST['visible_modules']);
+        $GLOBALS['current_user']->setPreference('fts_disabled_modules', $_REQUEST['disabled_modules']);
     }
 }	
 ?>

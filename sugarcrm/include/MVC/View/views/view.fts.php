@@ -61,6 +61,7 @@ class ViewFts extends SugarView
         //If no modules have been passed in then lets check user preferences.
         if($moduleFilter === FALSE)
         {
+            //TODO: FIX THIS.
             $userEnabled = $GLOBALS['current_user']->getPreference('fts_enabled_modules');
             $moduleFilter = !empty($userEnabled) ? explode(",", $userEnabled) : array();
         }
@@ -129,27 +130,29 @@ class ViewFts extends SugarView
      */
     protected function getFilterModules()
     {
-        require_once('modules/Home/UnifiedSearchAdvanced.php');
-        $ufs = new UnifiedSearchAdvanced();
-        $moduleList = $ufs->getUnifiedSearchModulesDisplay();
-        $enabledResults = array();
-        $disabledResults = array();
+        $userDisabled = $GLOBALS['current_user']->getPreference('fts_disabled_modules');
+        $userDisabled = explode(",", $userDisabled);
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $modules = $searchEngine->getModulesByFTSStatus();
 
-        $userEnabled = $GLOBALS['current_user']->getPreference('fts_enabled_modules');
-        $userEnabled = !empty($userEnabled) ? array_flip(explode(",", $userEnabled)) : array();
-        foreach($moduleList as $module=>$data)
+        $filteredEnabled = array();
+        $filteredDisabled = array();
+        foreach($modules['enabled'] as $m)
         {
-            if($data['visible'] && ACLController::checkAccess($module, 'list', true))
+            if( ! in_array($m['module'], $userDisabled) )
             {
-                $moduleName  = isset($GLOBALS['app_list_strings']['moduleList'][$module] ) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module;
-                if( isset($userEnabled[$module]) )
-                    $enabledResults[] = array("module" => $module, 'label' => $moduleName);
-                else
-                    $disabledResults[] = array("module" => $module, 'label' => $moduleName);
+                $filteredEnabled[] = $m;
             }
         }
 
-        return array('enabled' => $enabledResults, 'disabled' => $disabledResults);
+        foreach($userDisabled as $d)
+        {
+            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$d]) ? $GLOBALS['app_list_strings']['moduleList'][$d] : $d;
+            $filteredDisabled[] = array('module'=> $d, 'label' => $moduleName);
+        }
+        sort($filteredEnabled);
+        return array('enabled' => $filteredEnabled, 'disabled' => $filteredDisabled);
     }
 }
 
