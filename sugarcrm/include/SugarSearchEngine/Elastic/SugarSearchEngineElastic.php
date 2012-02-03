@@ -35,19 +35,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     private $_indexType = 'SugarBean';
 
-    // non string type map
-    private static $typeMap = array(
-        'type' => array(
-            'bool' => 'boolean',
-            'int' => 'long',
-            'currency' => 'double',
-            'date' => 'date',
-        ),
-        'dbType' => array(
-            'decimal' => 'double',
-        ),
-    );
-
     public function __construct($params = array())
     {
         $this->_config = $params;
@@ -81,7 +68,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
-     * //TODO: Move to pass class, we do use it in the bulkInsert function so it needs to be defined.
      *
      * Return the 'type' for the index.  By using the bean type we can specify mappings on a per bean basis if we need
      * to in the future.
@@ -325,146 +311,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     }
 
     /**
-     *
-     * This function creates a full mapping for all modules.
-     * index must exist before calling this function.
-     *
-     */
-    public function setFullMapping()
-    {
-        $allModules = $this->retrieveFtsEnabledFieldsForAllModules();
-
-        // if the index already exists, is there a way to create mapping for multiple modules at once?
-        // for now, create one mapping for a module at a time
-        foreach ($allModules as $name => $module) {
-            $this->setFieldMapping($name, $module);
-        }
-    }
-
-    /**
-     *
-     * This function creates the mapping for particular module/type.
-     * index must exist before calling this function.
-     *
-     * @param $module module name
-     *
-     * @return boolean true if mapping successfully created, false otherwise
-     */
-    public function setModuleMapping($module)
-    {
-        $fieldDefs = $this->retrieveFtsEnabledFieldsPerModule($module);
-
-        return $this->setFieldMapping($module, $fieldDefs);
-    }
-
-    /**
-     *
-     * This function returns elastic field type.
-     *
-     * @param $fieldDefs array of field definitions
-     *
-     * @return string elastic type
-     */
-    protected function getElasticTypeFromSugarType($fieldDef) {
-        $elasticType = '';
-        if (isset($fieldDef['type'])) {
-            $sugarType = $fieldDef['type'];
-            if (isset(self::$typeMap['type'][$sugarType])) {
-                $elasticType = self::$typeMap['type'][$sugarType];
-            }
-        }
-
-        if (empty($elasticType) && isset($fieldDef['dbType'])) {
-            $sugarType = $fieldDef['dbType'];
-            if (isset(self::$typeMap['dbType'][$sugarType])) {
-                $elasticType = self::$typeMap['dbType'][$sugarType];
-            }
-        }
-
-        if (empty($elasticType)) {
-            $elasticType = 'string'; // default
-        }
-        return $elasticType;
-    }
-
-    /**
-     *
-     * This function returns an array of properties given a field definition array.
-     *
-     * @param $fieldDefs array of field definitions
-     *
-     * @return an array of properties
-     */
-    protected function constructMappingProperties($fieldDefs) {
-        $properties = array();
-
-        foreach ($fieldDefs as $name => $fieldDef) {
-            if (!empty($fieldDef['name'])) {
-                $fieldName = $fieldDef['name'];
-            } else {
-                continue;
-            }
-
-            if (isset($fieldDef['full_text_search'])) {
-                $tmpArray = array();
-
-                // field type is required when setting mapping
-                if (isset($fieldDef['full_text_search']['type'])) {
-                    // if type is defined in vardef, use it
-                    $tmpArray['type'] = $fieldDef['full_text_search']['type'];
-                } else {
-                    $tmpArray['type'] = $this->getElasticTypeFromSugarType($fieldDef);
-                }
-
-                // boost
-                if (isset($fieldDef['full_text_search']['boost'])) {
-                    $tmpArray['boost'] = $fieldDef['full_text_search']['boost'];
-                }
-                $properties[$fieldName] = $tmpArray;
-
-                // analyzer
-                if (!empty($fieldDef['full_text_search']['analyzer'])) {
-                    $tmpArray['analyzer'] = $fieldDef['full_text_search']['analyzer'];
-                }
-                $properties[$fieldName] = $tmpArray;
-            }
-        }
-        return $properties;
-    }
-
-    /**
-     *
-     * This function creates the mapping on particular type/module and field.
-     * Ths can be used when user changes the field settings (like boost level) in Studio.
-     * index must exist before calling this function.
-     *
-     * @param $module module name
-     * @param $fieldDefs field name of the module
-     *
-     * @return boolean true if mapping successfully created, false otherwise
-     */
-    public function setFieldMapping($module, $fieldDefs)
-    {
-        $properties = $this->constructMappingProperties($fieldDefs);
-
-        if (is_array($properties) && count($properties) > 0) {
-            $index = new Elastica_Index($this->_client, $this->_indexName);
-            $type = new Elastica_Type($index, $module);
-            $mapping = new Elastica_Type_Mapping($type, $properties);
-            $mapping->setProperties($properties);
-            try {
-                $mapping->send();
-            }
-            catch (Elastica_Exception_Response $e) {
-                $GLOBALS['log']->error("elastic response exception when creating mapping, message= " . $e->getMessage());
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Create the index and mapping.
      *
      * @param boolean $recreate OPTIONAL Deletes index first if already exists (default = false)
@@ -473,10 +319,28 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function createIndex($recreate = false)
     {
         // create an elastic index
-        $index = new Elastica_Index($this->_client, $this->_indexName);
-        $index->create(array(), $recreate);
-
+        try
+        {
+            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $index->create(array(), $recreate);
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to create index with error: {$e->getMessage()}");
+        }
         // create field mappings
-        $this->setFullMapping();
+        require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
+        $elasticMapping = new SugarSearchEngineElasticMapping($this);
+        $elasticMapping->setFullMapping();
+    }
+
+    public function getClient()
+    {
+        return $this->_client;
+    }
+
+    public function getIndexName()
+    {
+        return $this->_indexName;
     }
 }

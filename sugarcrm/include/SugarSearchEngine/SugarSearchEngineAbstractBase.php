@@ -41,7 +41,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      * @param $module
      *
      */
-    protected function retrieveFtsEnabledFieldsPerModule($module)
+    public function retrieveFtsEnabledFieldsPerModule($module)
     {
 
         $results = array();

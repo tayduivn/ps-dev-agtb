@@ -71,6 +71,9 @@ class SugarSearchEngineFullIndexer
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
             return $this;
 
+        //Create the necessary index server side.
+        $this->SSEngine->createIndex(TRUE);
+
         $GLOBALS['log']->fatal("Performing Full System Index");
         $startTime = microtime(true);
         $allModules = $this->SSEngine->retrieveFtsEnabledFieldsForAllModules();
