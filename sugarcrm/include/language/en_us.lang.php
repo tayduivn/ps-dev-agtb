@@ -3000,6 +3000,7 @@ $app_strings = array (
     'LBL_SEARCH_HELP_TITLE' => 'Search Tips',
     'LBL_SEARCH_HELP_CLOSE_TOOLTIP' => 'Close',
     'LBL_SEARCH_RESULTS_FOUND' => 'Search Results Found',
+    'LBL_SEARCH_RESULTS_TIME' => 'ms.',
     'ERR_BLANK_PAGE_NAME' => 'Please enter a page name.',
     /* End MySugar Framework strings */
 

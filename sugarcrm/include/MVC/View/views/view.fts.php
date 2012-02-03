@@ -73,13 +73,14 @@ class ViewFts extends SugarView
 
         $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
         $totalHitsFound = $rs->getTotalHits();
-
+        $totalTime = $rs->getTotalTime();
         $showMoreDivStyle = ($totalHitsFound > $limit) ? '' : "display:none;";
         $this->ss->assign('showMoreDivStyle', $showMoreDivStyle);
         $this->ss->assign('indexOffset', $indexOffset);
         $this->ss->assign('offset', $offset);
         $this->ss->assign('limit', $limit);
         $this->ss->assign('totalHits', $totalHitsFound);
+        $this->ss->assign('totalTime', $totalTime);
         $this->ss->assign('queryEncoded', $query_encoded);
         $this->ss->assign('resultSet', $rs);
         $this->ss->assign('APP_LIST', $GLOBALS['app_list_strings']);
@@ -99,7 +100,7 @@ class ViewFts extends SugarView
         {
             if($resultSetOnly)
             {
-                $contents = json_encode(array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound));
+                $contents = json_encode(array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime));
                 return $this->sendOutput($contents);
             }
 

@@ -52,7 +52,7 @@ width:70%;
         </span>
     </a>
 </div>
-<div><span id='totalCount'>{$totalHits}</span> {$APP.LBL_SEARCH_RESULTS_FOUND}</div>
+<div><span id='totalCount'>{$totalHits}</span> {$APP.LBL_SEARCH_RESULTS_FOUND} (<span id='totalTime' style="font-style: italic;">{$totalTime}</span>{$APP.LBL_SEARCH_RESULTS_TIME})</div>
     <br><br>
 
     <div id='inlineGlobalSearch' style="display:none;">
@@ -168,6 +168,7 @@ width:70%;
                     {
                         $("#sugar_full_search_results").html(o.results);
                     }
+                    $("#totalTime").html(o.totalTime);
                     $("#totalCount").html(o.totalHits);
                     $('#sugar_full_search_results').hideLoading();
                     SUGAR.FTS.toogleShowMore();
@@ -260,6 +261,7 @@ width:70%;
                 el.html( content.results);
                 SUGAR.FTS.totalHits = content.totalHits;
                 $("#totalCount").html(SUGAR.FTS.totalHits);
+                $("#totalTime").html(content.totalTime);
             }
             this.pending--;
             SUGAR.FTS.toogleShowMore();

@@ -53,6 +53,16 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
         return $this->elasticaResultSet->getTotalHits();
     }
 
+    /**
+     * Get the total amount of time the search took to complete.
+     *
+     * @return int
+     */
+    public function getTotalTime()
+    {
+        return $this->elasticaResultSet->getTotalTime();
+    }
+
     public function current()
     {
         return new SugarSeachEngineElasticResult($this->elasticaResultSet->current());

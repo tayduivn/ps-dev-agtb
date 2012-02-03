@@ -122,7 +122,7 @@ interface SugarSearchEngineResultSet extends Iterator, Countable
      * @abstract
      * @return int
      */
-    public function getElapsedTime();
+    public function getTotalTime();
 
 }
 
