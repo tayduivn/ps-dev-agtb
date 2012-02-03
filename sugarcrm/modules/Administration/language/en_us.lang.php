@@ -1196,6 +1196,7 @@ $mod_strings = array (
     'LBL_FTS_TEST' => 'Test',
     'LBL_SAVE_SCHED_BUTTON' => 'Schedule Full System Index',
     'LBL_SAVE_SCHED_WARNING' => 'Are you sure sure?',
-    'LBL_FTS_SCHED_ENABLED' => 'A Full System Index operation has been scheduled, to see additional details please visit the <a href="index.php?module=Schedulers&action=DetailView&record={0}">schedulers</a> page'
+    'LBL_FTS_SCHED_ENABLED' => 'A Full System Index operation has been scheduled, to see additional details please visit the <a href="index.php?module=Schedulers&action=DetailView&record={0}">schedulers</a> page',
+    'LBL_ADVANCED' => 'Advanced'
 	);
 

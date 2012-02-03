@@ -61,8 +61,6 @@ class ViewConfigureFts extends SugarView
         $mod_strings = return_module_language($GLOBALS['current_language'], $this->module) ;
         $ftsScheduleEnabledText = $mod_strings['LBL_FTS_SCHED_ENABLED'];
 
-
-
         if(isset($GLOBALS['sugar_config']['full_text_engine']))
         {
             $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
@@ -88,8 +86,19 @@ class ViewConfigureFts extends SugarView
         $this->ss->assign('title',$this->getModuleTitle(false));
         $this->ss->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
 
+        $filteredModules =  $this->getFilterModules();
+        $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));
+        $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
         echo $this->ss->fetch('modules/Administration/templates/ConfigureFTS.tpl');
     }
 
+   protected function getFilterModules()
+   {
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $modules = $searchEngine->getModulesByFTSStatus();
+
+        return $modules;
+   }
 
 }

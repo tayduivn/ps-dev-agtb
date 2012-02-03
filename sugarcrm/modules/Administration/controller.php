@@ -137,6 +137,16 @@ class AdministrationController extends SugarController
             require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
             SugarSearchEngineFullIndexer::scheduleFullSystemIndex();
         }
+
+        //Save any disabled modules
+        if(isset($_REQUEST['disabled_modules']))
+        {
+            $disabledModules = explode(",", $_REQUEST['disabled_modules']);
+            //TODO:Change out keys
+            write_array_to_file('ftsDisabledModules', $disabledModules, sugar_cached('modules/ftsModulesCache.php'));
+            sugar_cache_put('ftsDisabledModules', $disabledModules);
+        }
+
         $this->view = "configurefts";
     }
     

@@ -35,15 +35,28 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     const MAX_BULK_THRESHOLD = 100;
 
     /**
-     * For a given module, return all of the full text search enabled fields.
      *
+     */
+    const ENABLE_MODULE_CACHE_KEY = 'ftsEnabledModules';
+
+    /**
+     *
+     */
+    const DISABLED_MODULE_CACHE_KEY = 'ftsDisabledModules';
+
+
+    public function __construct()
+    {
+        $this->cacheFtsModulesFile = sugar_cached('modules/ftsModulesCache.php');
+    }
+    /**
+     * For a given module, return all of the full text search enabled fields.
      *
      * @param $module
      *
      */
     public function retrieveFtsEnabledFieldsPerModule($module)
     {
-
         $results = array();
         if( is_string($module))
         {
@@ -82,18 +95,68 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     public function retrieveFtsEnabledFieldsForAllModules()
     {
+        $cachedResults = sugar_cache_retrieve(self::ENABLE_MODULE_CACHE_KEY);
+        if($cachedResults != null && !empty($cachedResults) )
+        {
+            $GLOBALS['log']->fatal("Retrieving enabled fts modules from cache");
+            return $cachedResults;
+        }
         $results = array();
         foreach( $GLOBALS['moduleList'] as $moduleName )
         {
-            if( $this->isModuleFtsEnabled($moduleName) )
-            {
-                $results[$moduleName] = $this->retrieveFtsEnabledFieldsPerModule($moduleName);
-            }
-
+            $fields = $this->retrieveFtsEnabledFieldsPerModule($moduleName);
+            if( !empty($fields) && $this->isModuleFtsEnabled($moduleName) )
+                $results[$moduleName] = $fields;
         }
+
+        //write_array_to_file('cacheFtsModulesFile', $results, $this->cacheFtsModulesFile);
+        sugar_cache_put(self::ENABLE_MODULE_CACHE_KEY, $results);
         return $results;
     }
 
+    /**
+     * @return array
+     */
+    public function getModulesByFTSStatus()
+    {
+        $disabledModules = $this->getDisabledFTSModules();
+        $enabledModules = array_keys($this->retrieveFtsEnabledFieldsForAllModules());
+        $enabledModulesTranslated = array();
+        $disabledModulesTranslated = array();
+        foreach($enabledModules as $m)
+        {
+            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$m]) ? $GLOBALS['app_list_strings']['moduleList'][$m] : $m;
+            $enabledModulesTranslated[] = array('module'=> $m, 'label' => $moduleName);
+        }
+        foreach($disabledModules as $m)
+        {
+            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$m]) ? $GLOBALS['app_list_strings']['moduleList'][$m] : $m;
+            $disabledModulesTranslated[] = array('module'=> $m, 'label' => $moduleName);
+        }
+        asort($enabledModules);
+        asort($disabledModulesTranslated);
+        return array('enabled' => $enabledModulesTranslated, 'disabled' => $disabledModulesTranslated);
+
+    }
+    /**
+     * @return bool|The
+     */
+    public function getDisabledFTSModules()
+    {
+        $cachedResults = sugar_cache_retrieve(self::DISABLED_MODULE_CACHE_KEY);
+        if($cachedResults != null && !empty($cachedResults) )
+        {
+            $GLOBALS['log']->fatal("Retrieving disabled fts modules from cache");
+            return $cachedResults;
+        }
+        $GLOBALS['log']->fatal("Could not resolve fts module cache, loading from file....");
+        if( file_exists($this->cacheFtsModulesFile) )
+        {
+            include($this->cacheFtsModulesFile);
+            return $ftsDisabledModules;
+        }
+        return false;
+    }
     /**
      * Determine if a module is FTS enabled.
      *
@@ -102,15 +165,13 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     protected function isModuleFtsEnabled($module)
     {
-        $obj = BeanFactory::getBean($module, null);
-        if( $obj !== FALSE && isset( $GLOBALS['dictionary'][$obj->object_name]) && !empty($GLOBALS['dictionary'][$obj->object_name]['full_text_search']) )
-        {
+        $GLOBALS['log']->fatal("Checking if module is fts enabled");
+        $disabledModules = $this->getDisabledFTSModules();
+        if( empty($disabledModules) )
             return TRUE;
-        }
-        else
-        {
-            return FALSE;
-        }
+
+        return !in_array($module, $disabledModules);
+
     }
 
     /**
