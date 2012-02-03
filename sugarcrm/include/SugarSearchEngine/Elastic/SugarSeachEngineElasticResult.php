@@ -96,22 +96,4 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
 
         return $ret;
     }
-
-    /**
-     * Return a string that matches the auto complete search.
-     *
-     * @return string
-     */
-    public function getAutoCompleteText()
-    {
-        $ret = '';
-        $hit = $this->elasticaResult->getHit();
-
-        if (isset($hit['_source']) && is_array($hit['_source'])) {
-            $highlighter = new SugarSearchEngineElasticHighlighter();
-            $ret = $highlighter->getAutoCompleteText($hit['_source']);
-        }
-
-        return $ret;
-    }
 }

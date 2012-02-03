@@ -64,11 +64,6 @@ class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
 
         foreach ($resultArray as $field=>$value)
         {
-            // skip the summary_text as it's for auto complete searches
-            if ($field == SugarSearchEngineElastic::SUMMARY_TEXT)
-            {
-                continue;
-            }
             foreach ($searches as $search)
             {
                 if (empty($search))
@@ -118,26 +113,5 @@ class SugarSearchEngineElasticHighlighter extends SugarSearchEngineHighlighter
                 return $field;
             }
         }
-    }
-    /**
-     * Return a string that matches the auto complete search.
-     *
-     * @param $resultArray array returned from search engine
-     * @return string
-     */
-    public function getAutoCompleteText($resultArray)
-    {
-        $ret = '';
-        foreach ($resultArray as $field=>$value) {
-            // skip summary_text field for auto complete search
-            if ($field != SugarSearchEngineElastic::SUMMARY_TEXT) {
-                continue;
-            }
-
-            $ret = $value;
-            break;
-        }
-        $GLOBALS['log']->debug('FTS auto complete: ' . $ret);
-        return $ret;
     }
 }
