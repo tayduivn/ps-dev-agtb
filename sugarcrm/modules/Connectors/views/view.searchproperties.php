@@ -99,6 +99,6 @@ class ViewSearchProperties extends ViewList
     	$this->ss->assign('source_id', $_REQUEST['source_id']);
     	$this->ss->assign('theme', $GLOBALS['theme']);
     	$this->ss->assign('connector_language', $connector_strings);
-    	echo $this->ss->fetch('modules/Connectors/tpls/search_properties.tpl');
+    	echo $this->ss->fetch($this->getCustomFilePathIfExists('modules/Connectors/tpls/search_properties.tpl'));
     }
 }

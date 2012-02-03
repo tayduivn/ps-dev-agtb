@@ -3873,7 +3873,16 @@ span.id-ff.multiple button.button.lastChild{
 }
 
 .id-ff-remove {
-	margin-top: 1px;
+    margin-top: 1px;
+}
+
+button.id-ff-remove {
+    padding: 4px 2px 0;
+}
+
+.button.id-ff-remove img {
+    width: 14px;
+    height: 14px;
 }
 
 /* for the main screen navigation tabs */
@@ -6144,4 +6153,8 @@ li.active a img.deletePageImg, li.active a span.deletePageImg {
 .edit508 tr td[scope="col"]
 {
     background-color: #eee;
+}
+
+td.teamset-row {
+    /* */
 }

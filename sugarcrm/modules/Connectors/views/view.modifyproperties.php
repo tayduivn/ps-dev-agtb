@@ -83,6 +83,6 @@ class ViewModifyProperties extends SugarView
 		$this->ss->assign('SOURCES', $connectorsToShow);
 		$this->ss->assign('REQUIRED_FIELDS', $required_fields);
 	    echo $this->getModuleTitle(false);
-		$this->ss->display('modules/Connectors/tpls/modify_properties.tpl');
+        $this->ss->display($this->getCustomFilePathIfExists('modules/Connectors/tpls/modify_properties.tpl'));
     }
 }

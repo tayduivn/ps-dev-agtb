@@ -76,10 +76,8 @@ class CalendarViewQuickEdit extends SugarView {
 				}
 			}
 		}		
-		
-		$tpl = "custom/include/EditView/EditView.tpl";	
-		if(!file_exists($tpl))
-			$tpl = "include/EditView/EditView.tpl";	
+
+        $tpl = $this->getCustomFilePathIfExists('include/EditView/EditView.tpl');
 		$this->ev = new EditView();
 		$this->ev->view = "QuickCreate";
 		$this->ev->ss = new Sugar_Smarty();
