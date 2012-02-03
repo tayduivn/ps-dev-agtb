@@ -1000,7 +1000,6 @@ function create_default_users(){
     $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
 
-    $GLOBALS['log']->info("Created ".$current_user->table_name." table. for user $current_user->id");
 
     if( $create_default_user ){
         $default_user = new User();

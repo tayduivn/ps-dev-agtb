@@ -20,6 +20,7 @@
  ********************************************************************************/
 require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
+require_once ('modules/ExpressionEngine/formulaHelper.php');
 
 class ExpressionEngineController extends SugarController
 {
@@ -129,6 +130,114 @@ class ExpressionEngineController extends SugarController
 
     function action_rollupWizard() {
         $this->view ='rollupWizard';
+    }
+
+    /**
+     * Used by the dependency manager to pre-load all the related fields required
+     * to load an entire view.
+     */
+    function action_getRelatedValues(){
+        if (empty($_REQUEST['tmodule']) || empty($_REQUEST['fields']))
+            return;
+        $fields = json_decode(html_entity_decode($_REQUEST['fields']), true);
+        $module = $_REQUEST['tmodule'];
+        $id = empty($_REQUEST['record_id']) ? null : $_REQUEST['record_id'];
+        $focus = BeanFactory::getBean($module, $id);
+        $ret = array();
+        foreach($fields as $rfDef)
+        {
+            $link = $rfDef['link'];
+            $type = $rfDef['type'];
+            if (!isset($ret[$link]))
+                $ret[$link] = array();
+            if (empty($ret[$link][$type]))
+                $ret[$link][$type] = array();
+
+            switch($type){
+                //The Related function is used for pulling a sing field from a related record
+                case "related":
+                    //Default it to a blank value
+                    $ret[$link]['related'][$rfDef['relate']] = "";
+
+                    //If we have neither a focus id nor a related record id, we can't retrieve anything
+                    if (!empty($id) || !empty($rfDef['relId']))
+                    {
+                        $relBean = null;
+                        if (empty($rfDef['relId']) || empty($rfDef['relModule']))
+                        {
+                            //If the relationship is invalid, just move onto another field
+                            if (!$focus->load_relationship($link))
+                                break;
+                            $beans = $focus->$link->getBeans();
+                            //No related beans means no value
+                            if (empty($beans))
+                                break;
+                            //Grab the first bean on the list
+                            reset($beans);
+                            $relBean = current($beans);
+                        } else
+                        {
+                            $relBean = BeanFactory::getBean($rfDef['relModule'], $rfDef['relId']);
+                        }
+                        //If we found a bean, grab a value from it
+                        if (!empty($relBean))
+                        {
+                            $ret[$link]['relId'] = $relBean->id;
+                            $ret[$link]['related'][$rfDef['relate']] =
+                                FormulaHelper::getFieldValue($relBean, $rfDef['relate']);
+                        }
+                    }
+                    break;
+                case "count":
+                    if(!empty($id) && $focus->load_relationship($link))
+                    {
+                        $ret[$link][$type] = count($focus->$link->get());
+                    } else
+                    {
+                        $ret[$link][$type] = 0;
+                    }
+                    break;
+                case "rollupSum":
+                case "rollupAve":
+                case "rollupMin":
+                case "rollupMax":
+                //If we are going to calculate one rollup, calculate all the rollups since there is so little cost
+                $rField = $rfDef['relate'];
+                if(!empty($id) && $focus->load_relationship($link))
+                {
+                    $relBeans = $focus->$link->getBeans();
+                    $sum = 0;
+                    $count = 0;
+                    $min = false;
+                    $max = false;
+                    foreach($relBeans as $bean)
+                    {
+                        if (isset($bean->$rField) && is_numeric($bean->$rField)) {
+                            $count++;
+                            $sum += $bean->$rField;
+                            if ($min === false || $bean->$rField < $min)
+                                $min = $bean->$rField;
+                            if ($max === false || $bean->$rField > $max)
+                                $max = $bean->$rField;
+                        }
+                    }
+                    if ($type == "rollupSum")
+                        $ret[$link][$type][$rField] = $sum;
+                    if ($type == "rollupAve")
+                        $ret[$link][$type][$rField] = $count == 0 ? 0 : $sum / $count;
+                    if ($type == "rollupMin")
+                        $ret[$link][$type][$rField] = $min;
+                    if ($type == "rollupMax")
+                        $ret[$link][$type][$rField] = $max;
+                } else
+                {
+                    $ret[$link][$type][$rField] = 0;
+                }
+                break;
+            }
+        }
+        echo json_encode($ret);
+        $this->view = "";
     }
 }
 ?>

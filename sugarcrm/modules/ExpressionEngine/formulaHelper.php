@@ -89,4 +89,22 @@ class FormulaHelper
         return $v == false;
     }
 
+    public static function getFieldValue($focus, $field)
+    {
+        //First check if the field exists
+        if(!isset($focus->field_defs[$field]) || !isset($focus->$field))
+        {
+            return "unknown field";
+        }
+        else if ($focus->field_defs[$field]['type'] == "bool")
+        {
+            return ($focus->$field ? "true" : "false");
+        }
+        //Otherwise, send it to the formula builder to evaluate further
+        else
+        {
+            return $focus->$field;
+        }
+    }
+
 }
