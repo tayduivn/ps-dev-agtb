@@ -45,7 +45,7 @@ class SugarSearchEngineMetadataHelper
         $cachedResults = sugar_cache_retrieve(self::ENABLE_MODULE_CACHE_KEY);
         if($cachedResults != null && !empty($cachedResults) )
         {
-            $GLOBALS['log']->fatal("Retrieving enabled fts modules from cache");
+            $GLOBALS['log']->debug("Retrieving enabled fts modules from cache");
             return $cachedResults;
         }
         $results = array();
@@ -71,10 +71,10 @@ class SugarSearchEngineMetadataHelper
         $cachedResults = sugar_cache_retrieve(self::DISABLED_MODULE_CACHE_KEY);
         if($cachedResults != null && !empty($cachedResults) )
         {
-            $GLOBALS['log']->fatal("Retrieving disabled fts modules from cache");
+            $GLOBALS['log']->debug("Retrieving disabled fts modules from cache");
             return $cachedResults;
         }
-        $GLOBALS['log']->fatal("Could not resolve fts module cache, loading from file....");
+        $GLOBALS['log']->debug("Could not resolve fts module cache, loading from file....");
         $cacheFtsModulesFile = sugar_cached('modules/ftsModulesCache.php');
         if( file_exists($cacheFtsModulesFile) )
         {
@@ -162,7 +162,7 @@ class SugarSearchEngineMetadataHelper
      */
     public static function isModuleFtsEnabled($module)
     {
-        $GLOBALS['log']->fatal("Checking if module is fts enabled");
+        $GLOBALS['log']->debug("Checking if module is fts enabled");
         $disabledModules = self::getSystemDisabledFTSModules();
         if( empty($disabledModules) )
             return TRUE;
