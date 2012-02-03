@@ -36,7 +36,6 @@
         }
     	}).data( "autocomplete" )._response = function(content)
         {
-            console.log('stuff');
             var el = $("#sugar_spot_search_results");
             if ( !el.is(":visible") ) {
                 el.show();
