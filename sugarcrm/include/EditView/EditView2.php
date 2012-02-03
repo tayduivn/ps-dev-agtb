@@ -460,10 +460,13 @@ class EditView
 	       			}else{
 	       				$function = $this->fieldDefs[$name]['function'];
 	       			}
+
+                    if(!empty($this->fieldDefs[$name]['function']['include']))
+                    {
+                  		require_once($this->fieldDefs[$name]['function']['include']);
+                  	}
+
 	       	 		if(!empty($this->fieldDefs[$name]['function']['returns']) && $this->fieldDefs[$name]['function']['returns'] == 'html'){
-						if(!empty($this->fieldDefs[$name]['function']['include'])){
-								require_once($this->fieldDefs[$name]['function']['include']);
-						}
 						$value = $function($this->focus, $name, $value, $this->view);
 						$valueFormatted = true;
 					}else{
