@@ -141,6 +141,12 @@ width:70%;
         },
         search: function(append)
         {
+            //For new searches reset the offset
+            if(typeof(append) == 'undefined' || !append)
+            {
+                SUGAR.FTS.currentOffset = 0;
+            }
+
             $('#sugar_full_search_results').showLoading();
             //TODO: Check if all modules are selected, then don't send anything down.
             var m = this.getSelectedModules();
@@ -149,28 +155,22 @@ width:70%;
             $.ajax({
                 type: "POST",
                 url: "index.php",
+                dataType: 'json',
                 data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true, 'offset': SUGAR.FTS.currentOffset},
                 success: function(o)
                 {
                     if(typeof(append) != 'undefined' && append)
                     {
-                        $("#sugar_full_search_results").append(o);
+                        SUGAR.FTS.totalHits = o.totalHits;
+                        $("#sugar_full_search_results").append(o.results);
                     }
                     else
                     {
-                        $("#sugar_full_search_results").html( o );
+                        $("#sugar_full_search_results").html(o.results);
                     }
 
                     $('#sugar_full_search_results').hideLoading();
-                    console.log('current offset: ' + SUGAR.FTS.currentOffset + " ,limit:" + SUGAR.FTS.limit + " , total:" + SUGAR.FTS.totalHits);
-                    if( SUGAR.FTS.currentOffset + SUGAR.FTS.limit >= SUGAR.FTS.totalHits)
-                    {
-                        $('#showMoreDiv').hide();
-                    }
-                    else
-                    {
-                        $('#showMoreDiv').show();
-                    }
+                    SUGAR.FTS.toogleShowMore();
 
                 },
                 failure: function(o)
@@ -178,6 +178,17 @@ width:70%;
                     $('#sugar_full_search_results').hideLoading();
                 }
             });
+        },
+        toogleShowMore : function()
+        {
+            if( SUGAR.FTS.currentOffset + SUGAR.FTS.limit >= SUGAR.FTS.totalHits)
+            {
+               $('#showMoreDiv').hide();
+            }
+            else
+            {
+               $('#showMoreDiv').show();
+            }
         },
         toggleAdvancedOptions: function()
         {
@@ -228,9 +239,8 @@ width:70%;
         },
         loadMore: function()
         {
-            this.currentOffset += this.limit;
+            SUGAR.FTS.currentOffset += SUGAR.FTS.limit;
             SUGAR.FTS.search(true);
-            console.log('Loading more ' + this.currentOffset + ' ,limit:' + this.limit);
         }
     }
 
@@ -248,9 +258,10 @@ width:70%;
 
             if(typeof(content.results) != 'undefined'){
                 el.html( content.results);
+                SUGAR.FTS.totalHits = content.totalHits;
             }
             this.pending--;
-
+            SUGAR.FTS.toogleShowMore();
             $('#sugar_full_search_results').hideLoading();
         };
 
@@ -262,6 +273,7 @@ width:70%;
                 self.pending++;
                 var m = SUGAR.FTS.getSelectedModules();
                 var data = { term: value, m: m };
+                SUGAR.FTS.currentOffset = 0;
                 self.source(data, self.response );
             }
         });

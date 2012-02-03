@@ -51,13 +51,11 @@ class ViewFts extends SugarView
     /**
      * @see SugarView::display()
      */
-    public function display($return = false)
+    public function display($return = false, $encode = false)
     {
-
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
-
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
-
+        $indexOffset = $offset / $limit;
         $moduleFilter = isset($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
         $filteredModules =  $this->getFilterModules();
         //If no modules have been passed in then lets check user preferences.
@@ -79,6 +77,7 @@ class ViewFts extends SugarView
 
         $showMoreDivStyle = ($totalHitsFound > $limit) ? '' : "display:none;";
         $this->ss->assign('showMoreDivStyle', $showMoreDivStyle);
+        $this->ss->assign('indexOffset', $indexOffset);
         $this->ss->assign('offset', $offset);
         $this->ss->assign('limit', $limit);
         $this->ss->assign('totalHits', $totalHitsFound);
@@ -101,8 +100,8 @@ class ViewFts extends SugarView
         {
             if($resultSetOnly)
             {
-                $contents = $this->ss->fetch($rsTemplate);
-                return $this->sendOutput($contents, $return);
+                $contents = json_encode(array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound));
+                return $this->sendOutput($contents);
             }
 
             $this->ss->assign('filterModules',$filteredModules['enabled']);
@@ -111,12 +110,14 @@ class ViewFts extends SugarView
         }
 
         $contents = $this->ss->fetch($template);
-        return $this->sendOutput($contents, $return);
+        return $this->sendOutput($contents, $return, $encode);
 
     }
 
-    protected function sendOutput($contents, $return = false)
+    protected function sendOutput($contents, $return = false, $encode = false)
     {
+        if($encode)
+            $contents = json_encode(array('results' => $contents));
         if($return)
             return $contents;
         else
