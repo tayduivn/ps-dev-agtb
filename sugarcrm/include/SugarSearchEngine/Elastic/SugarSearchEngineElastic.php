@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 
 class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 {
@@ -92,7 +93,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     public function createIndexDocument(SugarBean $bean, $searchFields = null)
     {
         if($searchFields == null)
-            $searchFields = $this->retrieveFtsEnabledFieldsPerModule($bean);
+            $searchFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($bean);
 
         $keyValues = array();
         foreach($searchFields as $fieldName => $fieldDef)

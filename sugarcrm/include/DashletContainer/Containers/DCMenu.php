@@ -207,6 +207,7 @@ EOQ;
     public function getPartnerIconMenus()
     {
         $dynamicDCActions = array();
+        $filterDynamicDCActions = array();
         $dyn_actions_path = "include/DashletContainer/Containers/DynamicDCActions.php";
         if (is_file('custom/' . $dyn_actions_path))
         {
