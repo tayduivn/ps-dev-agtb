@@ -63,7 +63,15 @@ class DocumentsViewExtdoc extends SugarView
         
         if ( !$eapmBean = EAPM::getLoginInfo($apiName,true) ) {
             $smarty = new Sugar_Smarty();
-            echo $smarty->fetch('include/externalAPI/'.$apiName.'/'.$apiName.'Signup.'.$GLOBALS['current_language'].'.tpl');
+
+            // Bug #49987 : Documents view.extdoc.php doesn't allow custom override
+            $tpl_file = 'include/externalAPI/'.$apiName.'/'.$apiName.'Signup.'.$GLOBALS['current_language'].'.tpl';
+            if ( file_exists('custom/'.$tpl_file) && is_readable('custom/'.$tpl_file) )
+            {
+                $tpl_file = 'custom/'.$tpl_file;
+            }
+            echo $smarty->fetch($tpl_file);
+            
             return;
         }
 
