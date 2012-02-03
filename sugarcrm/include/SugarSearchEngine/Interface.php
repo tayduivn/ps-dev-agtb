@@ -116,7 +116,13 @@ interface SugarSearchEngineResultSet extends Iterator, Countable
      */
     public function getTotalHits();
 
-
+    /**
+     * Get the total amount of time the search took to complete.
+     *
+     * @abstract
+     * @return int
+     */
+    public function getElapsedTime();
 
 }
 

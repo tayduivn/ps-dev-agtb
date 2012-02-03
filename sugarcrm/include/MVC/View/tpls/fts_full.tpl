@@ -51,9 +51,8 @@ width:70%;
             {sugar_getimage alt=$alt_show_hide name="basic_search" ext=".gif" other_attributes='border="0" id="basic_search_img" '}
         </span>
     </a>
-
-
 </div>
+<div><span id='totalCount'>{$totalHits}</span> {$APP.LBL_SEARCH_RESULTS_FOUND}</div>
     <br><br>
 
     <div id='inlineGlobalSearch' style="display:none;">
@@ -163,12 +162,13 @@ width:70%;
                     {
                         SUGAR.FTS.totalHits = o.totalHits;
                         $("#sugar_full_search_results").append(o.results);
+
                     }
                     else
                     {
                         $("#sugar_full_search_results").html(o.results);
                     }
-
+                    $("#totalCount").html(o.totalHits);
                     $('#sugar_full_search_results').hideLoading();
                     SUGAR.FTS.toogleShowMore();
 
@@ -259,6 +259,7 @@ width:70%;
             if(typeof(content.results) != 'undefined'){
                 el.html( content.results);
                 SUGAR.FTS.totalHits = content.totalHits;
+                $("#totalCount").html(SUGAR.FTS.totalHits);
             }
             this.pending--;
             SUGAR.FTS.toogleShowMore();

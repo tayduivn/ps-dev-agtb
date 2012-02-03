@@ -82,7 +82,7 @@ class ViewFts extends SugarView
         $this->ss->assign('totalHits', $totalHitsFound);
         $this->ss->assign('queryEncoded', $query_encoded);
         $this->ss->assign('resultSet', $rs);
-        $this->ss->assign('appListStrings', $GLOBALS['app_list_strings']);
+        $this->ss->assign('APP_LIST', $GLOBALS['app_list_strings']);
         $template = "include/MVC/View/tpls/{$this->templateName}";
         $rsTemplate = "include/MVC/View/tpls/{$this->rsTemplateName}";
         if(file_exists("custom/$template"))
