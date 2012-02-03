@@ -24,6 +24,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 
 class ViewConfigureFts extends SugarView
 {
@@ -86,19 +87,44 @@ class ViewConfigureFts extends SugarView
         $this->ss->assign('title',$this->getModuleTitle(false));
         $this->ss->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
 
-        $filteredModules =  $this->getFilterModules();
+        $filteredModules = $this->getFilterModules();
         $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));
         $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
         echo $this->ss->fetch('modules/Administration/templates/ConfigureFTS.tpl');
     }
 
-   protected function getFilterModules()
-   {
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-        $searchEngine = SugarSearchEngineFactory::getInstance();
-        $modules = $searchEngine->getModulesByFTSStatus();
+    /**
+     * Get the enabled and disabled modules for the datatable
+     *
+     * @return array
+     */
+    protected function getFilterModules()
+    {
+        $disabledModules = SugarSearchEngineMetadataHelper::getSystemDisabledFTSModules();
+        $enabledModules = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
+        $enabledModules = array_keys($enabledModules);
+        $enabledModules = $this->translateModulesList($enabledModules);
+        $disabledModules = $this->translateModulesList($disabledModules);
 
-        return $modules;
-   }
+        return array('enabled' => $enabledModules, 'disabled' => $disabledModules);
+    }
+
+    /**
+     * Translate a list of modules to the format expected by our YUI datatables.
+     *
+     * @param $module
+     * @return array
+     */
+    protected function translateModulesList($module)
+    {
+        $modulesTranslated = array();
+        asort($module);
+        foreach($module as $m)
+        {
+            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$m]) ? $GLOBALS['app_list_strings']['moduleList'][$m] : $m;
+            $modulesTranslated[] = array('module'=> $m, 'label' => $moduleName);
+        }
+        return $modulesTranslated;
+    }
 
 }

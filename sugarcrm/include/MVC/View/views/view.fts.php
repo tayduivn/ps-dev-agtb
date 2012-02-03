@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/MVC/View/SugarView.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-
+require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 
 class ViewFts extends SugarView
 {
@@ -61,9 +61,7 @@ class ViewFts extends SugarView
         //If no modules have been passed in then lets check user preferences.
         if($moduleFilter === FALSE)
         {
-            //TODO: FIX THIS.
-            $userEnabled = $GLOBALS['current_user']->getPreference('fts_enabled_modules');
-            $moduleFilter = !empty($userEnabled) ? explode(",", $userEnabled) : array();
+            $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         }
         $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter);;
 
@@ -124,35 +122,41 @@ class ViewFts extends SugarView
         else
             echo $contents;
     }
+
     /**
-     * TODO: WIP - Custom Modules won't have the enabled flag set by default so we need to re-examine how this is done.
+     * Get the enabled and disabled modules for the datatable
+     *
      * @return array
      */
     protected function getFilterModules()
     {
+        $filteredEnabled = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         $userDisabled = $GLOBALS['current_user']->getPreference('fts_disabled_modules');
         $userDisabled = explode(",", $userDisabled);
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-        $searchEngine = SugarSearchEngineFactory::getInstance();
-        $modules = $searchEngine->getModulesByFTSStatus();
 
-        $filteredEnabled = array();
-        $filteredDisabled = array();
-        foreach($modules['enabled'] as $m)
-        {
-            if( ! in_array($m['module'], $userDisabled) )
-            {
-                $filteredEnabled[] = $m;
-            }
-        }
-
-        foreach($userDisabled as $d)
-        {
-            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$d]) ? $GLOBALS['app_list_strings']['moduleList'][$d] : $d;
-            $filteredDisabled[] = array('module'=> $d, 'label' => $moduleName);
-        }
+        $userDisabled = $this->translateModulesList($userDisabled);
+        $filteredEnabled = $this->translateModulesList($filteredEnabled);
         sort($filteredEnabled);
-        return array('enabled' => $filteredEnabled, 'disabled' => $filteredDisabled);
+
+        return array('enabled' => $filteredEnabled, 'disabled' => $userDisabled);
+    }
+
+    /**
+     * Translate a list of modules to the format expected by our YUI datatables.
+     *
+     * @param $module
+     * @return array
+     */
+    protected function translateModulesList($module)
+    {
+        $modulesTranslated = array();
+        asort($module);
+        foreach($module as $m)
+        {
+            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$m]) ? $GLOBALS['app_list_strings']['moduleList'][$m] : $m;
+            $modulesTranslated[] = array('module'=> $m, 'label' => $moduleName);
+        }
+        return $modulesTranslated;
     }
 }
 

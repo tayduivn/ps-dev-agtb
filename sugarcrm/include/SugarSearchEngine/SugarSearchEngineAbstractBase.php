@@ -21,6 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 require_once('include/SugarSearchEngine/Interface.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+
 
 abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterface
 {
@@ -34,129 +36,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     const MAX_BULK_THRESHOLD = 100;
 
-    /**
-     *
-     */
-    const ENABLE_MODULE_CACHE_KEY = 'ftsEnabledModules';
 
-    /**
-     *
-     */
-    const DISABLED_MODULE_CACHE_KEY = 'ftsDisabledModules';
-
-
-    public function __construct()
-    {
-        $this->cacheFtsModulesFile = sugar_cached('modules/ftsModulesCache.php');
-    }
-    /**
-     * For a given module, return all of the full text search enabled fields.
-     *
-     * @param $module
-     *
-     */
-    public function retrieveFtsEnabledFieldsPerModule($module)
-    {
-        $results = array();
-        if( is_string($module))
-        {
-            $obj = BeanFactory::getBean($module, null);
-
-        }
-        else if( is_a($module, 'SugarBean') )
-        {
-            $obj = $module;
-        }
-        else
-        {
-            return $results;
-        }
-
-        $cacheKey = "fts_fields_{$obj->table_name}";
-        $cacheResults = sugar_cache_retrieve($cacheKey);
-        if(!empty($cacheResults))
-            return $cacheResults;
-
-        foreach($obj->field_defs as $field => $def)
-        {
-            if( isset($def['full_text_search']) && is_array($def['full_text_search']) && !empty($def['full_text_search']['boost']) )
-                $results[$field] = $def;
-        }
-
-        sugar_cache_put($cacheKey, $results);
-        return $results;
-
-    }
-
-    /**
-     * Retrieve all FTS fields for all FTS enabled modules.
-     *
-     * @return array
-     */
-    public function retrieveFtsEnabledFieldsForAllModules()
-    {
-        $cachedResults = sugar_cache_retrieve(self::ENABLE_MODULE_CACHE_KEY);
-        if($cachedResults != null && !empty($cachedResults) )
-        {
-            $GLOBALS['log']->fatal("Retrieving enabled fts modules from cache");
-            return $cachedResults;
-        }
-        $results = array();
-        foreach( $GLOBALS['moduleList'] as $moduleName )
-        {
-            $fields = $this->retrieveFtsEnabledFieldsPerModule($moduleName);
-            if( !empty($fields) && $this->isModuleFtsEnabled($moduleName) )
-                $results[$moduleName] = $fields;
-        }
-
-        //write_array_to_file('cacheFtsModulesFile', $results, $this->cacheFtsModulesFile);
-        sugar_cache_put(self::ENABLE_MODULE_CACHE_KEY, $results);
-        return $results;
-    }
-
-    /**
-     * @return array
-     */
-    public function getModulesByFTSStatus()
-    {
-        $disabledModules = $this->getDisabledFTSModules();
-        $enabledModules = array_keys($this->retrieveFtsEnabledFieldsForAllModules());
-        $enabledModulesTranslated = array();
-        $disabledModulesTranslated = array();
-        foreach($enabledModules as $m)
-        {
-            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$m]) ? $GLOBALS['app_list_strings']['moduleList'][$m] : $m;
-            $enabledModulesTranslated[] = array('module'=> $m, 'label' => $moduleName);
-        }
-        foreach($disabledModules as $m)
-        {
-            $moduleName = isset($GLOBALS['app_list_strings']['moduleList'][$m]) ? $GLOBALS['app_list_strings']['moduleList'][$m] : $m;
-            $disabledModulesTranslated[] = array('module'=> $m, 'label' => $moduleName);
-        }
-        asort($enabledModulesTranslated);
-        asort($disabledModulesTranslated);
-        return array('enabled' => $enabledModulesTranslated, 'disabled' => $disabledModulesTranslated);
-
-    }
-    /**
-     * @return bool|The
-     */
-    public function getDisabledFTSModules()
-    {
-        $cachedResults = sugar_cache_retrieve(self::DISABLED_MODULE_CACHE_KEY);
-        if($cachedResults != null && !empty($cachedResults) )
-        {
-            $GLOBALS['log']->fatal("Retrieving disabled fts modules from cache");
-            return $cachedResults;
-        }
-        $GLOBALS['log']->fatal("Could not resolve fts module cache, loading from file....");
-        if( file_exists($this->cacheFtsModulesFile) )
-        {
-            include($this->cacheFtsModulesFile);
-            return $ftsDisabledModules;
-        }
-        return false;
-    }
     /**
      * Determine if a module is FTS enabled.
      *
@@ -165,12 +45,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     protected function isModuleFtsEnabled($module)
     {
-        $GLOBALS['log']->fatal("Checking if module is fts enabled");
-        $disabledModules = $this->getDisabledFTSModules();
-        if( empty($disabledModules) )
-            return TRUE;
-
-        return !in_array($module, $disabledModules);
+        return SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
 
     }
 

@@ -1023,9 +1023,14 @@ EOHTML;
         }
         // End Required Image
         $ss->assign('COPYRIGHT',$copyright);
-        $dcm = DCFactory::getContainer(null, 'DCMenu');
-        $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
-
+        //BEGIN SUGARCRM flav=sales || flav=pro ONLY
+        if(isset($GLOBALS['current_user']) && !empty($GLOBALS['current_user']->id))
+        {
+            require_once('include/DashletContainer/DCFactory.php');
+            $dcm = DCFactory::getContainer(null, 'DCMenu');
+            $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
+        }
+        //END SUGARCRM flav=sales || flav=pro ONLY
         $ss->display(SugarThemeRegistry::current()->getTemplate('footer.tpl'));
     }
 
