@@ -233,6 +233,10 @@ class PopupSmarty extends ListViewSmarty{
 		$this->th->ss->assign('formData', $this->formData);
 		$this->th->ss->assign('APP', $GLOBALS['app_strings']);
 		$this->th->ss->assign('MOD', $GLOBALS['mod_strings']);
+        if (isset($this->_popupMeta['create']['createButton'])) 
+		{
+           $this->_popupMeta['create']['createButton'] = translate($this->_popupMeta['create']['createButton']);
+        }
 		$this->th->ss->assign('popupMeta', $this->_popupMeta);
         $this->th->ss->assign('current_query', base64_encode(serialize($_REQUEST)));
 		$this->th->ss->assign('customFields', $this->customFieldDefs);
@@ -568,7 +572,7 @@ EOQ;
 		}
 
 
-		$addformheader = get_form_header($this->_popupMeta['create']['createButton'], $formSave, false);
+		$addformheader = get_form_header(translate($this->_popupMeta['create']['createButton']), $formSave, false);
 		return $addformheader;
 	}
 
