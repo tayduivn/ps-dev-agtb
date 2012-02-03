@@ -168,10 +168,4 @@ abstract class SugarSearchEngineHighlighter
 
         return $ret;
     }
-
-    /**
-     *
-     * abstract function, needs to be implemented by subclasses
-     */
-    abstract public function getAutoCompleteText($resultArray);
 }
