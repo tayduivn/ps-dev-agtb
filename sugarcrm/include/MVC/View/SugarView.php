@@ -1510,4 +1510,20 @@ EOHTML;
             'type' => $type,
         );
     }
+
+
+    /**
+     * getCustomFileIfExists
+     *
+     * This function handles the repetitive code we have in the view layer where we first check if a file exists in the
+     * custom directory to determine whether we should load it, require it, include it, etc.  This function returns the
+     * path of the custom file if it exists.  It basically checks if custom/{$file} exists and returns this path if so.
+     *
+     * @param $file String of filename to check
+     * @return $file String of filename including custom directory if found
+     */
+    protected function getCustomFilePathIfExists($file)
+    {
+        return file_exists("custom/{$file}") ? "custom/{$file}" : $file;
+    }
 }

@@ -56,6 +56,6 @@ class ViewConnectorSettings extends SugarView
 		$this->ss->assign('mod', $mod_strings);
 		$this->ss->assign('app', $app_strings);
 		$this->ss->assign('IMG', 'themes/default/images/');
-		$this->ss->display('modules/Connectors/tpls/administration.tpl');
+		$this->ss->display($this->getCustomFilePathIfExists('modules/Connectors/tpls/administration.tpl'));
     }
 }

@@ -74,6 +74,7 @@ $mod_strings = array (
 	'ERR_LAST_ADMIN_2'					=> '" is the last user with administrator access.	At least one user must be an administrator.',
 	'ERR_PASSWORD_CHANGE_FAILED_1'		=> 'User password change failed for ',
 	'ERR_PASSWORD_CHANGE_FAILED_2'		=> ' failed.	The new password must be set.',
+	'ERR_PASSWORD_CHANGE_FAILED_3'		=> '.	The new password is invalid.',
 	'ERR_PASSWORD_INCORRECT_OLD_1'		=> 'Incorrect current password for user ',
 	'ERR_PASSWORD_INCORRECT_OLD_2'		=> '. Re-enter password information.',
 	'ERR_PASSWORD_MISMATCH'				=> 'The passwords do not match.',

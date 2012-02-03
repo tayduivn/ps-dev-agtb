@@ -3686,3 +3686,8 @@ div#chartDashlets
     text-align: right;
     white-space: nowrap;
 }
+
+
+td.teamset-row, .edit tr td.teamset-row, .edit tr td table tr td.teamset-row {
+    padding: 5px !important;
+}

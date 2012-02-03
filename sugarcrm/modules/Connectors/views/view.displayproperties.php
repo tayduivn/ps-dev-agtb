@@ -104,6 +104,6 @@ class ViewDisplayProperties extends ViewList
    	    $this->ss->assign('externalHasProperties', !empty($fields));
 
    	    $this->ss->assign('externalChecked', !empty($sources[$source]['eapm']['enabled'])?" checked":"");
-   	    echo $this->ss->fetch('modules/Connectors/tpls/display_properties.tpl');
+   	    echo $this->ss->fetch($this->getCustomFilePathIfExists('modules/Connectors/tpls/display_properties.tpl'));
     }
 }

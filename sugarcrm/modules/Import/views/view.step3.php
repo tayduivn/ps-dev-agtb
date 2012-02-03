@@ -501,7 +501,7 @@ EOCSS;
 
         $print_required_array = "";
         foreach ($required as $name=>$display) {
-            $print_required_array .= "required['$name'] = '". $display . "';\n";
+            $print_required_array .= "required['$name'] = '". sanitize($display) . "';\n";
         }
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 

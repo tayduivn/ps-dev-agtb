@@ -29,7 +29,8 @@
 {{include file=$headerTpl}}
 {sugar_include include=$includes}
 
-<span id='tabcounterJS'><script>SUGAR.TabFields=new Array();//this will be used to track tabindexes for references</script></span>
+{{** SUGAR.TabFields variable will be used to track tabindexes for references **}}
+<span id='tabcounterJS'><script>SUGAR.TabFields=new Array();</script></span>
 
 <div id="{{$form_name}}_tabs"
 {{if $useTabs}}
@@ -143,15 +144,15 @@ class="yui-navset"
 		{{math assign="tabIndexVal" equation="$tabIndexVal + 1"}}
 		{{if !empty($colData.field.tabindex)  && $colData.field.tabindex !=0}}
 		    {{assign var='tabindex' value=$colData.field.tabindex}}
+            {{** instead of tracking tabindex values for all fields, just track for email as email does not get created directly from
+                a tpl that has access to smarty values.  Email gets created through addEmailAddress() function in SugarEmailAddress.js
+                which will use the value in tabFields array
+             **}}
+            {{if $colData.field.name == 'email1'}}<script>SUGAR.TabFields['{{$colData.field.name}}'] = '{{$tabindex}}';</script>{{/if}}
 		{{else}}
 		    {** if not explicitly assigned, we will default to 0 for 508 compliance reasons, instead of the calculated tabIndexVal value **}
 		    {{assign var='tabindex' value=0}}
 		{{/if}}
-		{** instead of tracking tabindex values for all fields, just track for email as email does not get created directly from
-		    a tpl that has access to smarty values.  Email gets created through addEmailAddress() function in SugarEmailAddress.js
-		    which will use the value in tabFields array
-		 **}
-		<script>SUGAR.TabFields['{{$colData.field.name}}'] = '{{$tabindex}}';//set field and tabindex in array</script>
 		<td valign="top" width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}}>
 			{{if !empty($def.templateMeta.labelsOnTop)}}
 				{{if isset($colData.field.label)}}

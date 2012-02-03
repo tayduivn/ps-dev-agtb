@@ -44,7 +44,22 @@ class ViewQuickedit extends ViewAjax
 	 * @var EditView object
 	 */
 	protected $ev;
-	
+
+    /**
+     * @var headerTpl String variable of the Smarty template file used to render the header portion
+     */
+    protected $headerTpl = 'include/EditView/header.tpl';
+
+    /**
+     * @var footerTpl String variable of the Smarty template file used to render the footer portion
+     */
+    protected $footerTpl = 'include/EditView/footer.tpl';
+
+    /**
+     * @var defaultButtons Array of default buttons assigned to the form (see function.sugar_button.php)
+     */
+    protected $defaultButtons = array('DCMENUSAVE', 'DCMENUCANCEL', 'DCMENUFULLFORM');
+
     /**
      * @see SugarView::preDisplay()
      */
@@ -140,9 +155,9 @@ class ViewQuickedit extends ViewAjax
 		//$_REQUEST['return_action'] = 'SubPanelViewer';
 		$this->ev->setup($module, $this->bean, $source);
 		$this->ev->showSectionPanelsTitles = false;
-	    $this->ev->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
-		$this->ev->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
-		$this->ev->defs['templateMeta']['form']['buttons'] = array('DCMENUSAVE', 'DCMENUCANCEL', 'DCMENUFULLFORM');
+	    $this->ev->defs['templateMeta']['form']['headerTpl'] = $this->headerTpl;
+		$this->ev->defs['templateMeta']['form']['footerTpl'] = $this->footerTpl;
+		$this->ev->defs['templateMeta']['form']['buttons'] = $this->defaultButtons;
 		$this->ev->defs['templateMeta']['form']['button_location'] = 'bottom';
 		$this->ev->defs['templateMeta']['form']['hidden'] = '<input type="hidden" name="is_ajax_call" value="1" />';
 		$this->ev->defs['templateMeta']['form']['hidden'] .= '<input type="hidden" name="from_dcmenu" value="1" />';

@@ -498,6 +498,9 @@ eoq;
 						//BEGIN SUGARCRM flav=pro ONLY
 						case "team_list": $teamhtml = $this->addTeamList(translate('LBL_TEAMS'),  $field); break;
 						//END SUGARCRM flav=pro ONLY
+                        default:
+                            $newhtml .= $this->addDefault($displayname,  $field, $even); break;
+                            break;
 					}
 				}
 
@@ -1391,6 +1394,18 @@ EOQ;
         }
 
         return false;
+    }
+
+     /**
+     * Have to be overridden in children
+     * @param string $displayname field label
+     * @param string $field field name
+     * @param bool $even even or odd
+     * @return string html field data
+     */
+    protected function addDefault($displayname,  $field, & $even)
+    {
+        return '';
     }
 }
 

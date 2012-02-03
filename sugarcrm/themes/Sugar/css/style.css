@@ -3873,7 +3873,16 @@ span.id-ff.multiple button.button.lastChild{
 }
 
 .id-ff-remove {
-	margin-top: 1px;
+    margin-top: 1px;
+}
+
+button.id-ff-remove {
+    padding: 4px 2px 0;
+}
+
+.button.id-ff-remove img {
+    width: 14px;
+    height: 14px;
 }
 
 /* for the main screen navigation tabs */
@@ -4881,7 +4890,7 @@ background-image: none\9;
 background-color: #fff\9;
 }
 
-#tabListContainer ul.subpanelTablist li a.current img {
+#tabListContainer ul.subpanelTablist li a.current img, #tabListContainer ul.subpanelTablist li a.current span.deletePageImg {
 visibility: hidden;
 
 }
@@ -4890,7 +4899,7 @@ visibility: hidden;
 margin-right: 0px;
 }
 
-#tabListContainer ul.subpanelTablist  li a.current:hover img {
+#tabListContainer ul.subpanelTablist  li a.current:hover img, #tabListContainer ul.subpanelTablist  li a.current:hover span.deletePageImg {
 visibility: visible;
 }
 
@@ -6122,6 +6131,10 @@ li.active a img.deletePageImg {
    margin-bottom: 2px;
 }
 
+li.active a img.deletePageImg, li.active a span.deletePageImg {
+   display: inline-block !important;
+}
+
 #ajaxUIErrorPanel .ft {
     font-weight: bold;
     font-size: 1.2em;
@@ -6140,4 +6153,8 @@ li.active a img.deletePageImg {
 .edit508 tr td[scope="col"]
 {
     background-color: #eee;
+}
+
+td.teamset-row {
+    /* */
 }

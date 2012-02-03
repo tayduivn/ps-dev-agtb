@@ -450,6 +450,7 @@ class ModuleBuilderController extends SugarController
     {
     	global $mod_strings;
     	require_once ('modules/DynamicFields/FieldCases.php') ;
+    	    	
         $field = get_widget ( $_REQUEST [ 'type' ] ) ;
         $_REQUEST [ 'name' ] = trim ( $_POST [ 'name' ] ) ;
 

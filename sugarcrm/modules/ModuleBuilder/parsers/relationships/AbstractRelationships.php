@@ -527,7 +527,7 @@ class AbstractRelationships
                	$out .= '$dictionary["' . $object . '"]["fields"]["' . $definition [ 'name' ] . '"] = '
                		  . var_export_helper($definition) . ";\n";
             }
-            sugar_file_put_contents($filename, $out);
+            file_put_contents($filename, $out);
             
             $installDefs [ $moduleName ] = array ( 
             	'from' => "{$installDefPrefix}/relationships/vardefs/{$relName}_{$moduleName}.php" , 
