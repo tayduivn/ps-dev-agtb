@@ -3941,7 +3941,7 @@ border: none;
 }
 
 #moduleList .yuimenu > div.hd{
-background: none transparent;
+background:url(../../../../index.php?entryPoint=getImage&imageName=advanced_search_up.gif) center no-repeat;
 border: 0px none;
 height: 0px;
 }
@@ -4205,6 +4205,7 @@ color: #999;
 }
 
 #moduleList 	.dashletPanelMenu  .ft {
+background:url(../../../../index.php?entryPoint=getImage&imageName=advanced_search.gif) center no-repeat;
 height:22px;
 padding-left: 22px;
 padding-right: 22px;
