@@ -162,7 +162,7 @@ class ViewStep1 extends ViewList
 		$this->ss->assign('fields', $this->seed->field_defs);
 		$this->_tabs = array();
 		$first_source = '';
-		$source_instance;
+		$source_instance = null;
 		$source_list = array();
 		foreach($this->_modules_sources[$_SESSION['merge_module']] as $source) {
 			$s = SourceFactory::getSource($source);
@@ -210,11 +210,7 @@ class ViewStep1 extends ViewList
 	  	$this->ss->assign('TABS', $tab_panel->display());
        
         echo $this->getModuleTitle(false);
-        $tplFile = 'modules/Connectors/tpls/step1.tpl';
-        if ( file_exists('custom/'.$tplFile) ) {
-            $tplFile = 'custom/'.$tplFile;
-        }
-        echo $this->ss->fetch($tplFile);
+        echo $this->ss->fetch($this->getCustomFilePathIfExists('modules/Connectors/tpls/step1.tpl'));
         
         //display bean detail view
         $GLOBALS['module'] = $this->_merge_module;
