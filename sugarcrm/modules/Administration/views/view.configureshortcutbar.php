@@ -86,6 +86,18 @@ class ViewConfigureshortcutbar extends SugarView
         {
             $toDecode = html_entity_decode  ($_REQUEST['enabled_modules'], ENT_QUOTES);
             $modules = json_decode($toDecode);
+            
+            //fixing bug #49878: XSS - Administration, Configure Shortcut Bar, enabled_modules
+            //prevent attempt of html-injection
+            global $moduleList;
+            foreach($modules as $key => $value)
+            {
+                if (!in_array($value, $moduleList))
+                {
+                    unset($modules[$key]);
+                }
+            }
+            
             $out = "<?php\n \$DCActions = \n" . var_export_helper ( $modules ) . ";";
             if (!is_file("custom/" . $actions_path))
                create_custom_directory("include/DashletContainer/Containers/");
