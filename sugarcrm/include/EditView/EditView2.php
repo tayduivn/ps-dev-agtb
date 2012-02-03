@@ -461,7 +461,7 @@ class EditView
 	       				$function = $this->fieldDefs[$name]['function'];
 	       			}
 
-                    if(!empty($this->fieldDefs[$name]['function']['include']))
+                    if(isset($this->fieldDefs[$name]['function']['include']) && file_exists($this->fieldDefs[$name]['function']['include']))
                     {
                   		require_once($this->fieldDefs[$name]['function']['include']);
                   	}
