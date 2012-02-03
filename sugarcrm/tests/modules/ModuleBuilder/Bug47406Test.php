@@ -39,12 +39,15 @@ class Bug47406Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->smarty = new Smarty();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
     }
 
     public function tearDown()
     {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->mbvardef);
         unset($this->smarty);
+        unset($GLOBALS['current_user']);
     }
 
     public function providerMBVardefAddFieldVardef()
