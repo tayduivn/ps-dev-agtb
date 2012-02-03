@@ -85,7 +85,7 @@ class SugarSearchEngineFactory
             $engineInstance = self::loadSearchEngineFromLocation($engineLocation, $config);
             if($engineInstance !== FALSE)
             {
-                $GLOBALS['log']->fatal("Found Sugar Search Engine: " . get_class($engineInstance));
+                $GLOBALS['log']->debug("Found Sugar Search Engine: " . get_class($engineInstance));
                 return $engineInstance;
             }
         }

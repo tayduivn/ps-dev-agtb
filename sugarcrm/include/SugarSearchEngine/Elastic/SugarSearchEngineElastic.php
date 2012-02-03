@@ -55,7 +55,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $this->indexSingleBean($bean);
         else
         {
-            $GLOBALS['log']->fatal("Adding bean to doc list with id: {$bean->id}");
+            $GLOBALS['log']->info("Adding bean to doc list with id: {$bean->id}");
 
             //Group our beans by index type for bulk insertion
             $indexType = $this->getIndexType($bean);
@@ -115,7 +115,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     protected function indexSingleBean($bean)
     {
-        $GLOBALS['log']->fatal("Preforming single bean index");
+        $GLOBALS['log']->info("Preforming single bean index");
         try
         {
             $index = new Elastica_Index($this->_client, $this->_indexName);
@@ -143,7 +143,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         try
         {
-            $GLOBALS['log']->fatal("Going to delete {$bean->id}");
+            $GLOBALS['log']->info("Going to delete {$bean->id}");
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $type = new Elastica_Type($index, $this->getIndexType($bean));
             $type->deleteById($bean->id);
@@ -230,7 +230,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function search($queryString, $offset = 0, $limit = 20, $options = array(), $isAutoComplete = false)
     {
-        $GLOBALS['log']->fatal("Going to search with query $queryString");
+        $GLOBALS['log']->info("Going to search with query $queryString");
         $results = null;
         try
         {
@@ -285,7 +285,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         {
             $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
         }
-        $GLOBALS['log']->fatal("finished searching with results " . var_export($results, TRUE));
+
         return $results;
     }
 

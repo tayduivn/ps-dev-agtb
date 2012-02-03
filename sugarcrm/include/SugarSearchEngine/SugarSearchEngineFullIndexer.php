@@ -74,14 +74,14 @@ class SugarSearchEngineFullIndexer
         //Create the necessary index server side.
         $this->SSEngine->createIndex(TRUE);
 
-        $GLOBALS['log']->fatal("Performing Full System Index");
+        $GLOBALS['log']->info("Performing Full System Index");
         $startTime = microtime(true);
         $allModules = $this->SSEngine->retrieveFtsEnabledFieldsForAllModules();
         $db = DBManagerFactory::getInstance();
         $totalCount = 0;
         foreach($allModules as $module => $fieldDefinitions)
         {
-            $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
+            $GLOBALS['log']->info("Going to index all records in module {$module} ");
             $count = 0;
             $obj = BeanFactory::getBean($module, null);
             $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0'";
@@ -108,7 +108,7 @@ class SugarSearchEngineFullIndexer
                     $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
                     $currentMemUsage = memory_get_usage();
                     $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
-                    $GLOBALS['log']->fatal("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
+                    $GLOBALS['log']->info("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
                     $lastMemoryUsage = $currentMemUsage;
                 }
             }
@@ -124,9 +124,9 @@ class SugarSearchEngineFullIndexer
 
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
         $this->results['totalTime'] = $totalTime;
-        $GLOBALS['log']->fatal("Total time to perform full system index: $totalTime (s)");
+        $GLOBALS['log']->info("Total time to perform full system index: $totalTime (s)");
         $avgRecs = number_format(round(($totalCount / $totalTime), 2), 2);
-        $GLOBALS['log']->fatal("Total number of records indexed: $totalCount , records per sec. $avgRecs");
+        $GLOBALS['log']->info("Total number of records indexed: $totalCount , records per sec. $avgRecs");
 
         return $this;
     }
