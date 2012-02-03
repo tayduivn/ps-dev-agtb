@@ -95,11 +95,16 @@
             </span>
         </td>
 <!-- BEGIN Remove and Radio -->
-        <td valign='top' align='left' nowrap>
-			{capture assign="attr"}class="id-ff-remove" name="remove_{$idname}_collection_0" id="remove_{$idname}_collection_0" onclick="collection['{$displayParams.formName}_{$idname}'].remove(0);"{/capture}
-            {sugar_getimage name="id-ff-remove" ext=".png" attr="$attr" alt=$alt_removeButton}{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
+        <td valign='top' align='left' nowrap class="teamset-row">
+			{capture assign="attr"}class="id-ff-remove" name="remove_{$idname}_collection_0" id="remove_{$idname}_collection_0" onclick="collection['{$displayParams.formName}_{$idname}'].remove(0); return false;"{/capture}
+
+            <button type="button" class="id-ff-remove" {$attr}>
+                {sugar_getimage name="id-ff-remove-nobg" ext=".png" attr="" alt=$alt_removeButton}
+                {if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
+            </button>
+
         </td>
-        <td valign='top' align='center'>
+        <td valign='top' align='center' class="teamset-row">
             <span id='{$displayParams.formName}_{$idname}_radio_div_0'>
             &nbsp;
             <input id="primary_{$idname}_collection_0" name="primary_{$idname}_collection" type="radio" class="radio" {if $displayParams.primaryChecked}checked="checked" title="{sugar_translate label='LBL_TEAM_PRIM_TITLE'}" {else} title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" {/if} value="0" onclick="collection['{$displayParams.formName}_{$idname}'].changePrimary(true);"/>
