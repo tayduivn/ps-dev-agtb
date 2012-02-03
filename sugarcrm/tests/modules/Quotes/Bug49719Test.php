@@ -42,6 +42,7 @@ class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
         $this->quote = SugarTestQuoteUtilities::createQuote();
         $this->contact1 = SugarTestContactUtilities::createContact();
         $this->contact2 = SugarTestContactUtilities::createContact();
@@ -50,6 +51,7 @@ class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown()
     {
+        sugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();  
         SugarTestContactUtilities::removeAllCreatedContacts();
         unset($this->quote, $this->contact1, $this->contact2);
