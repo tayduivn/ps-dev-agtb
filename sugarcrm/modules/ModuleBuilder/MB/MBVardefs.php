@@ -113,7 +113,8 @@ class MBVardefs{
 	}
 		
 	function addFieldVardef($vardef){
-		if(empty($vardef['default']))unset($vardef['default']);
+        // Bug #47406 : Currency field doesn't accept 0.00 as default value
+        if ( isset($vardef['default']) && $vardef['default'] === '' ) unset($vardef['default']);
 		$this->vardef['fields'][$vardef['name']] = $vardef;
 	}
 
