@@ -162,29 +162,31 @@ EOQ;
 	public function getLayout() {
 		
 	}
+
+    /**
+     * @return array
+     */
 	public function getMenus()
 	{
-		$record = !empty($_REQUEST['record'])?$_REQUEST['record']:'';
-		$module = !empty($_REQUEST['module'])?$_REQUEST['module']:'';
-
-
-		$action = $GLOBALS['app']->controller->action;
-
         $DCActions = array();
-        $dynamicDCActions = array();
+
 		$actions_path = "include/DashletContainer/Containers/DCActions.php";
 		if (is_file('custom/' . $actions_path))
+        {
 		    include('custom/' . $actions_path);
+        }
 		else
+        {
 		    include($actions_path);
-		if (is_file('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php'))
+        }
+        if (is_file('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php'))
 			include 'custom/application/Ext/DashletContainer/Containers/dcactions.ext.php';
-		$html = "";
 		
 		$filterDCActions = array();
-		$filterDynamicDCActions = array();
-		foreach($DCActions as $action){
-			if(ACLController::checkAccess($action, 'edit', true)) {
+		foreach($DCActions as $action)
+        {
+			if(ACLController::checkAccess($action, 'edit', true))
+            {
 			   //BEGIN SUGARCRM flav=sales ONLY
 			   $ss_admin_whitelist = getSugarSalesAdminWhiteList();
 			   if(!is_admin($GLOBALS['current_user']) || in_array($action, $ss_admin_whitelist))
@@ -193,22 +195,37 @@ EOQ;
 			}
 		}
 
-		$dyn_actions_path = "include/DashletContainer/Containers/DynamicDCActions.php";
-		if (is_file('custom/' . $dyn_actions_path)) {
-		    include('custom/' . $dyn_actions_path);
-		} else if ( is_file($dyn_actions_path) ) {
-		    include($dyn_actions_path);
-        }
-		if (is_file('custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php')) {
-			include 'custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php';
-        }
+        return $filterDCActions;
 
-		foreach($dynamicDCActions as $def){
-			$filterDynamicDCActions[] = $this->getDynamicMenuItem($def);
-		}
-
-
-
-		return array('DCActions'=>$filterDCActions, 'dynamicDCActions'=>$filterDynamicDCActions);
 	}
+
+    /**
+     * Get the partner icon menus that are displayed in the bottom right footer.
+     *
+     * @return array
+     */
+    public function getPartnerIconMenus()
+    {
+        $dynamicDCActions = array();
+        $dyn_actions_path = "include/DashletContainer/Containers/DynamicDCActions.php";
+        if (is_file('custom/' . $dyn_actions_path))
+        {
+            include('custom/' . $dyn_actions_path);
+        }
+        else if ( is_file($dyn_actions_path) )
+        {
+            include($dyn_actions_path);
+        }
+        if (is_file('custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php'))
+        {
+            include 'custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php';
+        }
+
+        foreach($dynamicDCActions as $def)
+        {
+            $filterDynamicDCActions[] = $this->getDynamicMenuItem($def);
+        }
+
+        return $filterDynamicDCActions;
+    }
 }

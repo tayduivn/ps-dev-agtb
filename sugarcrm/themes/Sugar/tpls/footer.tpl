@@ -45,11 +45,12 @@
     <img src="{$COMPANY_LOGO_URL}" width="{$COMPANY_LOGO_WIDTH}" class="logo" id="logo" height="{$COMPANY_LOGO_HEIGHT}"
         title="&#169; 2004-2011 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/>
     <div id="partner">
-    <!--
+    {foreach from=$DYNAMICDCACTIONS item=action}
+       <span> {$action.script} {$action.image} </span>
+    {/foreach}
         <img src="index.php?entryPoint=getImage&imageName=boxnet.png" id="boxnet" class="partner-logo" title="Box.net"/>
         <img src="index.php?entryPoint=getImage&imageName=linkedin.png" id="linkedin" class="partner-logo" title="LinkedIn"/>
-        -->
-    </div>
+     </div>
 
     <div class="clear"></div>
 </div>

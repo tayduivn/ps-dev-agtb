@@ -622,17 +622,14 @@ class SugarView
 			require_once('include/DashletContainer/DCFactory.php');
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
-			//$data = $dcm->getLayout();
 			$notifData = $dcm->getNotifications();
-			$menuData = $dcm->getMenus();
 			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
 			$ss->assign('NOTIFCLASS', $notifData['class']);
 			$ss->assign('NOTIFCODE', $notifData['code']);
 			$ss->assign('NOTIFICON', $notifData['icon']);
 			$ss->assign('DCSCRIPT', $dcm->getScript());
 			$ss->assign('ICONSEARCH', $dcm->getSearchIcon());
-			$ss->assign('DCACTIONS', $menuData['DCActions']);
-			$ss->assign('DYNAMICDCACTIONS', $menuData['dynamicDCActions']);
+			$ss->assign('DCACTIONS',$dcm->getMenus());
 			$ss->assign('PICTURE', $current_user->picture);
             $ftsAutocompleteEnable = TRUE;
             $searchEngine = SugarSearchEngineFactory::getInstance();
@@ -1026,6 +1023,9 @@ EOHTML;
         }
         // End Required Image
         $ss->assign('COPYRIGHT',$copyright);
+        $dcm = DCFactory::getContainer(null, 'DCMenu');
+        $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
+
         $ss->display(SugarThemeRegistry::current()->getTemplate('footer.tpl'));
     }
 
