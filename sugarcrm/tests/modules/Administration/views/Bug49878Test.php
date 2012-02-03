@@ -33,11 +33,10 @@ require_once('modules/Administration/views/view.configureshortcutbar.php');
  * XSS - Administration, Configure Shortcut Bar, enabled_modules
  * @ticket 49878
  */
-class Bug49878Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug49878Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     /**
     * @group 49878
-    * @outputBuffering enabled
     */
     public function testCheckEnabledModules()
     {
