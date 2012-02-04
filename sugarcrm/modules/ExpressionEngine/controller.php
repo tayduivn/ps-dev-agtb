@@ -214,11 +214,11 @@ class ExpressionEngineController extends SugarController
                     {
                         if (isset($bean->$rField) && is_numeric($bean->$rField)) {
                             $count++;
-                            $sum += $bean->$rField;
+                            $sum += floatval($bean->$rField);
                             if ($min === false || $bean->$rField < $min)
-                                $min = $bean->$rField;
+                                $min = floatval($bean->$rField);
                             if ($max === false || $bean->$rField > $max)
-                                $max = $bean->$rField;
+                                $max = floatval($bean->$rField);
                         }
                     }
                     if ($type == "rollupSum")
