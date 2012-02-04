@@ -41,6 +41,7 @@ class Bug50220Test extends Sugar_PHPUnit_Framework_TestCase {
 
 var $disabledMonitors;
 var $isPaused;
+var $authenticatedSessionId;
 
 public function setup()
 {
@@ -55,6 +56,13 @@ public function setup()
     $trackerManager->isPaused = false;
 	$trackerManager->setDisabledMonitors(array());
     $GLOBALS['db']->query("DELETE FROM tracker_sessions WHERE session_id = 'Bug50220Test'");
+
+    if(isset($_SESSION['authenticated_user_id']))
+    {
+        $this->authenticatedSessionId = $_SESSION['authenticated_user_id'];
+        unset($_SESSION['authenticated_user_id']);
+    }
+
 }
 
 public function tearDown()
@@ -64,6 +72,10 @@ public function tearDown()
 	$trackerManager->setDisabledMonitors($this->disabledMonitors);
 	$GLOBALS['db']->query("DELETE FROM tracker_sessions WHERE session_id = 'Bug50220Test'");
     SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    if(!empty($this->authenticatedSessionId))
+    {
+        $_SESSION['authenticated_user_id'] = $this->authenticatedSessionId;
+    }
 }
 
 /**
