@@ -61,6 +61,15 @@
         {else}
             {html_options name="full_text_search[boost]" id="full_text_search" selected=$vardef.full_text_search.boost options=$fts_options}
         {/if}
+        {sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".gif" other_attributes='id="ftsTipIcon" '}
+              <script>
+                  if (!ModuleBuilder.ftsToolTip)
+                       ModuleBuilder.ftsToolTip = new YAHOO.widget.Tooltip("ftsTipPopup", {ldelim}
+                          context:"ftsTipIcon", text:"{$mod_strings.LBL_POPHELP_SEARCHABLE}"
+                       {rdelim});
+                  else
+                      ModuleBuilder.ftsToolTip.cfg.setProperty("context", "ftsTipIcon");
+              </script>
     </td>
 </tr>
 {/if}
