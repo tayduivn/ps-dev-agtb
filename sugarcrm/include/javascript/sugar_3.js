@@ -3251,7 +3251,7 @@ SUGAR.util = function () {
                         allButtons = document.getElementsByTagName('input');
                         //iterate through list and modify title if the accesskey is not empty
                         for(i=0;i<allButtons.length;i++){
-                            if(allButtons[i].getAttribute('accesskey')){
+                            if(allButtons[i].getAttribute('accesskey') && allButtons[i].getAttribute('type') && allButtons[i].getAttribute('type')=='button'){
                                 allButtons[i].setAttribute('title',allButtons[i].getAttribute('title')+' ['+controlKey+allButtons[i].getAttribute('accesskey')+']');
                             }
                         }

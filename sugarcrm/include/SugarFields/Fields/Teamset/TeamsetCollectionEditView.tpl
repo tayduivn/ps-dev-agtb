@@ -90,7 +90,7 @@
     <tr id="lineFields_{$displayParams.formName}_{$idname}_0">
         <td scope="row" valign='top'>
             <span id='{$displayParams.formName}_{$idname}_input_div_0' name='teamset_div'>          
-            <input type="text" name="{$idname}_collection_0" id="{$displayParams.formName}_{$idname}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title="{sugar_translate label='LBL_TEAM_SELECTED_TITLE'}" autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
+            <input type="text" name="{$idname}_collection_0" id="{$displayParams.formName}_{$idname}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" {if !empty($displayParams.accesskey)} accesskey='{$displayParams.accesskey}' {/if} size="{$displayParams.size}" value="" title="{sugar_translate label='LBL_TEAM_SELECTED_TITLE'}" autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$idname}_collection_0" id="id_{$displayParams.formName}_{$idname}_collection_0" value="">
             </span>
         </td>

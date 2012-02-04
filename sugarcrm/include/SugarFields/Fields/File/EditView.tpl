@@ -82,7 +82,8 @@
 <span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
 <input type="hidden" name="{{$idName}}_escaped">
 <input id="{{$idName}}_file" name="{{$idName}}_file" 
-type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}" 
+type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
+{{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}} 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
 {{elseif !empty($displayParams.maxlength)}}
@@ -100,6 +101,7 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {$APP.LBL_SEARCH_EXTERNAL_API}</h4>
 <span id="{{$idName}}_remoteNameSpan" style="display: none;">
 <input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
+{{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}} 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
 {{elseif !empty($displayParams.maxlength)}}
