@@ -47,6 +47,8 @@ class="yui-navset"
     </ul>
     {{/if}}
     <div {{if $useTabs}}class="yui-content"{{/if}}>
+
+{{assign var='tabIndexVal' value=0}}
 {{* Loop through all top level panels first *}}
 {{counter name="panelCount" start=-1 print=false assign="panelCount"}}
 
@@ -78,7 +80,6 @@ class="yui-navset"
 {{/if}}
 
 {{assign var='rowCount' value=0}}
-{{assign var='tabIndexVal' value=0}}
 {{assign var='ACCKEY' value=''}}
 {{foreach name=rowIteration from=$panel key=row item=rowData}}
 {counter name="fieldsUsed" start=0 print=false assign="fieldsUsed"}
