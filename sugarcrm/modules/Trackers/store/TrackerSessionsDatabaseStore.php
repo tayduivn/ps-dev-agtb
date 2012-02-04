@@ -38,16 +38,6 @@ class TrackerSessionsDatabaseStore implements Store {
           $monitor->client_ip = substr($monitor->client_ip, 0, 20);
        }
 
-       if(isset($monitor->date_start) && strlen($monitor->date_start) > 19)
-       {
-           $monitor->date_start = substr($monitor->date_start, 0, 19);
-       }
-
-       if(isset($monitor->date_end) && strlen($monitor->date_end) > 19)
-       {
-           $monitor->date_end = substr($monitor->date_end, 0, 19);
-       }
-
        $columns = array();
        $values = array();
        foreach($metrics as $name=>$metric) {

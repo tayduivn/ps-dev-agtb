@@ -83,6 +83,7 @@ public function tearDown()
  *
  * This function tests that the TrackerDatabaseStore implementation correctly guards against invalid datetime values
  */
+/*
 public function testTrackerSessionDatabaseStore()
 {
 	$trackerManager = TrackerManager::getInstance();
@@ -111,7 +112,7 @@ public function testTrackerSessionDatabaseStore()
         $this->markTestSkipped('Skipped Bug50220Test.php.  Could not create tracker_session monitor.');
 	}
 }
-
+*/
 
 /**
  * testSugarApplication
