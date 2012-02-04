@@ -22,11 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * $Id: ListView.php 55484 2010-03-19 14:56:16Z jmertic $
  ********************************************************************************/
-
-
-
-
-
+if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
 global $mod_strings;
 global $app_list_strings;
