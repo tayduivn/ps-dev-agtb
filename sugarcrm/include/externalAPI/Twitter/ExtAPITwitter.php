@@ -52,7 +52,6 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
             $GLOBALS['log']->error('Twitter failed, reply said: '.print_r($reply,true));
             return $reply;
         }
-        //$GLOBALS['log']->fatal('IKEA: Twitter worked, reply said: '.print_r($reply,true));
 
         $messages = array();
         foreach ( $reply['responseJSON'] as $message ) {

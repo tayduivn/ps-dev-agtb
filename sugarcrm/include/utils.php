@@ -4846,7 +4846,7 @@ function verify_image_file($path, $jpeg = false)
             imagejpeg($img);
             $image = ob_get_clean();
             // not writing directly because imagejpeg does not work with streams
-            if(sugar_file_put_contents($path, $image)) {
+            if(file_put_contents($path, $image)) {
                 return true;
             }
         } elseif ($filetype == "image/png") { // else if the filetype is png, create png
@@ -4855,7 +4855,7 @@ function verify_image_file($path, $jpeg = false)
         	ob_start();
             imagepng($img);
             $image = ob_get_clean();
-    	    if(sugar_file_put_contents($path, $image)) {
+    	    if(file_put_contents($path, $image)) {
                 return true;
     	    }
         } else {

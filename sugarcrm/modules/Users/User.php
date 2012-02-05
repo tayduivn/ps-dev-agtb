@@ -1096,7 +1096,6 @@ EOQ;
 		return $ret;
 	}
 
-
 	/**
 	 * When the user's reports to id is changed, this method is called.  This method needs to remove all
 	 * of the implicit assignements that were created based on this user, then recreated all of the implicit
@@ -1108,6 +1107,23 @@ EOQ;
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
 	//END SUGARCRM flav=pro ONLY
+
+	
+    /**
+     * getAllUsers
+     *
+     * Returns all active and inactive users
+     * @return Array of all users in the system
+     */
+
+    public static function getAllUsers()
+    {
+        $active_users = get_user_array(FALSE);
+        $inactive_users = get_user_array(FALSE, "Inactive");
+        $result = $active_users + $inactive_users;
+        asort($result);
+        return $result;
+    }
 
 	function create_export_query($order_by, $where) {
 		include('modules/Users/field_arrays.php');
@@ -2009,6 +2025,7 @@ EOQ;
         }
         if ($mail->Body == '' && $current_user->is_admin)
         {
+            global $app_strings;
             $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
             return $result;
         }

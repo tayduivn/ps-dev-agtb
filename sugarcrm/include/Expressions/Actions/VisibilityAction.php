@@ -136,7 +136,8 @@ class VisibilityAction extends AbstractAction{
                 for(var i = 0; i < el.children.length; i++)
                 {
                     var node = el.children[i];
-                    if (!YAHOO.util.Dom.hasClass(node, inv_class)) {
+                    //For each row, check if the column has the inv_class class attribute, if not, do not hide
+                    if (node.tagName.toLowerCase() == 'td' && !YAHOO.util.Dom.hasClass(node, inv_class)) {
                         hide = false;
                         break;
                     }
