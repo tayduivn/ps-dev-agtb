@@ -321,6 +321,9 @@ class VardefManager{
                 $links[$name] = $def;
             }
         }
+
+        self::$linkFields[$object] = $links;
+
         return $links;
     }
 
