@@ -67,8 +67,8 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='record' value=''>\n";
 $button .= "<input type='hidden' name='action'>\n";
-$button .= "<input title='".$mod_strings['LBL_ADD_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_ADD_BUTTON_KEY']."' class='button' onclick=\"this.form.module.value='ReportMaker'; this.form.record.value='".$focus->id."'; this.form.action.value='DetailView'\" type='submit' name='button' value='  ".$mod_strings['LBL_ADD_BUTTON_LABEL']."  '>\n";
-$button .= "<input title='".$mod_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_NEW_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$mod_strings['LBL_NEW_BUTTON_LABEL']."  '>\n";
+$button .= "<input title='".$mod_strings['LBL_ADD_BUTTON_TITLE']."' class='button' onclick=\"this.form.module.value='ReportMaker'; this.form.record.value='".$focus->id."'; this.form.action.value='DetailView'\" type='submit' name='button' value='  ".$mod_strings['LBL_ADD_BUTTON_LABEL']."  '>\n";
+$button .= "<input title='".$mod_strings['LBL_NEW_BUTTON_TITLE']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$mod_strings['LBL_NEW_BUTTON_LABEL']."  '>\n";
 $button .= "</tr></form></table>\n";
 
 

@@ -6,7 +6,7 @@ $viewdefs['Cases']['DetailView'] = array(
 'templateMeta' => array('form' => array('buttons' =>
 										array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',
                                          //BEGIN SUGARCRM flav=pro ONLY
-                                        array('customCode'=>'<input title="{$MOD.LBL_CREATE_KB_DOCUMENT}" accessKey="M" class="button" onclick="this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBDocuments\'" type="submit" name="button" value="{$MOD.LBL_CREATE_KB_DOCUMENT}">'),
+                                        array('customCode'=>'<input title="{$MOD.LBL_CREATE_KB_DOCUMENT}" class="button" onclick="this.form.return_module.value=\'Cases\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'EditView\';this.form.module.value=\'KBDocuments\'" type="submit" name="button" value="{$MOD.LBL_CREATE_KB_DOCUMENT}">'),
                                          //END SUGARCRM flav=pro ONLY
                                       ),
                         ),

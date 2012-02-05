@@ -123,7 +123,7 @@
 Put this button in here since we have moved the Add and Select buttons above the text fields, the accesskey will skip these. So create this button
 and push it outside the screen.
 -->
- <input style='position:absolute; left:-9999px; width: 0px; height: 0px;' accesskey='T' halign='left' type="button" class="button" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();'>
+ <input style='position:absolute; left:-9999px; width: 0px; height: 0px;' halign='left' type="button" class="button" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();'>
 <script type="text/javascript">
 (function() {ldelim}
     SUGAR_callsInProgress++;
