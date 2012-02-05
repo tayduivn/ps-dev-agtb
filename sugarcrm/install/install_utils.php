@@ -835,6 +835,25 @@ RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
 # END SUGARCRM RESTRICTIONS
 EOQ;
+
+$cache_headers = <<<EOQ
+
+<FilesMatch "\.(jpg|png|gif|js|css|ico)$">
+        <IfModule mod_headers.c>
+                Header set ETag ""
+                Header set Cache-Control "max-age=2592000"
+                Header set Expires "01 Jan 2112 00:00:00 GMT"
+        </IfModule>
+</FilesMatch>
+<IfModule mod_expires.c>
+        ExpiresByType text/css "access plus 1 month"
+        ExpiresByType text/javascript "access plus 1 month"
+        ExpiresByType application/x-javascript "access plus 1 month"
+        ExpiresByType image/gif "access plus 1 month"
+        ExpiresByType image/jpg "access plus 1 month"
+        ExpiresByType image/png "access plus 1 month"
+</IfModule>
+EOQ;
 	if(file_exists($htaccess_file)){
 	 	$fp = fopen($htaccess_file, 'r');
 	 	$skip = false;
@@ -845,7 +864,7 @@ EOQ;
 	 		if(preg_match("/\s*#\s*END\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = false;
 	 	}
 	}
-	$status =  file_put_contents($htaccess_file, $contents . $restrict_str);
+	$status =  file_put_contents($htaccess_file, $contents . $restrict_str . $cache_headers);
     if( !$status ) {
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";
@@ -912,26 +931,52 @@ function handleWebConfig()
     $xmldoc->setIndentString(' ');
     $xmldoc->startDocument('1.0','UTF-8');
     $xmldoc->startElement('configuration');
-    $xmldoc->startElement('system.webServer');
-    $xmldoc->startElement('rewrite');
-    $xmldoc->startElement('rules');
-    for ($i = 0; $i < count($config_array); $i++) {
-        $xmldoc->startElement('rule');
-        $xmldoc->writeAttribute('name', "redirect$i");
-        $xmldoc->writeAttribute('stopProcessing', 'true');
-        $xmldoc->startElement('match');
-        $xmldoc->writeAttribute('url', $config_array[$i]['1']);
-        $xmldoc->endElement();
-        $xmldoc->startElement('action');
-        $xmldoc->writeAttribute('type', 'Redirect');
-        $xmldoc->writeAttribute('url', $config_array[$i]['2']);
-        $xmldoc->writeAttribute('redirectType', 'Found');
-        $xmldoc->endElement();
-        $xmldoc->endElement();
-    }
-    $xmldoc->endElement();
-    $xmldoc->endElement();
-    $xmldoc->endElement();
+	    $xmldoc->startElement('system.webServer');
+		    $xmldoc->startElement('rewrite');
+			    $xmldoc->startElement('rules');
+			    for ($i = 0; $i < count($config_array); $i++) {
+			        $xmldoc->startElement('rule');
+			        	$xmldoc->writeAttribute('name', "redirect$i");
+			        	$xmldoc->writeAttribute('stopProcessing', 'true');
+			        	$xmldoc->startElement('match');
+			        		$xmldoc->writeAttribute('url', $config_array[$i]['1']);
+			        	$xmldoc->endElement();
+			        	$xmldoc->startElement('action');
+			        		$xmldoc->writeAttribute('type', 'Redirect');
+			       			$xmldoc->writeAttribute('url', $config_array[$i]['2']);
+			        		$xmldoc->writeAttribute('redirectType', 'Found');
+			        	$xmldoc->endElement();
+			        $xmldoc->endElement();
+			    }
+			    $xmldoc->endElement();
+			    $xmldoc->startElement('outboundRules');
+			    	$xmldoc->startElement('rule');
+			    		$xmldoc->writeAttribute('name', 'Remove ETag');
+			    		$xmldoc->startElement('match');
+			    			$xmldoc->writeAttribute('serverVariable', 'RESPONSE_ETag');
+							$xmldoc->writeAttribute('pattern', '.+');
+						$xmldoc->endElement();
+						$xmldoc->startElement('action');
+							$xmldoc->writeAttribute('type', 'Rewrite');
+							$xmldoc->writeAttribute('value', '');
+						$xmldoc->endElement();
+			    	$xmldoc->endElement();
+			    $xmldoc->endElement();
+		    $xmldoc->endElement();
+		    $xmldoc->startElement('caching');
+		    	$xmldoc->startElement('profiles');
+		    		$xmldoc->startElement('remove');
+		    			$xmldoc->writeAttribute('extension', ".php");
+		    		$xmldoc->endElement();
+		    	$xmldoc->endElement();
+		    $xmldoc->endElement();
+		    $xmldoc->startElement('staticContent');
+		    	$xmldoc->startElement("clientCache");
+		    		$xmldoc->writeAttribute('cacheControlMode', 'UseMaxAge');
+		    		$xmldoc->writeAttribute('cacheControlMaxAge', '30.00:00:00');
+		    	$xmldoc->endElement();
+		    $xmldoc->endElement();
+	    $xmldoc->endElement();
     $xmldoc->endElement();
     $xmldoc->endDocument();
     $xmldoc->flush();

@@ -190,8 +190,13 @@ class ListViewSmarty extends ListViewDisplay{
 	function display($end = true) {
 
 		if(!$this->should_process) return $GLOBALS['app_strings']['LBL_SEARCH_POPULATE_ONLY'];
-        global $app_strings;
+        global $app_strings, $sugar_version, $sugar_flavor, $server_unique_key, $current_module, $app_list_strings;  
+        $this->ss->assign('moduleListSingular', $app_list_strings["moduleListSingular"]);
         $this->ss->assign('data', $this->data['data']);
+        $this->ss->assign('query', $this->data['query']);
+        $this->ss->assign('sugar_info', array("sugar_version" => $sugar_version, 
+											  "sugar_flavor" => $sugar_flavor));
+      
 		$this->data['pageData']['offsets']['lastOffsetOnPage'] = $this->data['pageData']['offsets']['current'] + count($this->data['data']);
 		$this->ss->assign('pageData', $this->data['pageData']);
 

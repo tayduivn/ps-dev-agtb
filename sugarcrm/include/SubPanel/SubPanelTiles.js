@@ -277,6 +277,10 @@ function got_data(args, inline)
 			//hideSubPanel(current_child_field);
 		}
 		current_child_field = child_field;
+		//reinit action menus
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
 	}
 }
 

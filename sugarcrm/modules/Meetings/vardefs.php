@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['Meeting'] = array('table' => 'meetings',
-	'unified_search' => true, 'unified_search_default_enabled' => true,
+	'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true,
 	'comment' => 'Meeting activities'
                                ,'fields' => array (
   'name' =>
@@ -31,6 +31,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'name',
     'dbType' => 'varchar',
 	'unified_search' => true,
+	'full_text_search' => array('boost' => 3),
     'len' => '50',
     'comment' => 'Meeting name',
     'importable' => 'required',

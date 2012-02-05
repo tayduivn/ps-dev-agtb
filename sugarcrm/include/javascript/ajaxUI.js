@@ -41,9 +41,9 @@ SUGAR.ajaxUI = {
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
-            if (r.moduleList)
+            if (r.menu)
             {
-                SUGAR.themes.setModuleTabs(r.moduleList);
+               SUGAR.themes.setCurrentTab(r.menu);
             }
             if (r.title)
             {

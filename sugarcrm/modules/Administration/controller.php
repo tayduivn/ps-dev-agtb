@@ -116,6 +116,52 @@ class AdministrationController extends SugarController
         echo "true";
     }
 
+    public function action_UpdateFTS()
+    {
+        $type = !empty($_REQUEST['fts_type']) ? $_REQUEST['fts_type'] : '';
+        $host = !empty($_REQUEST['fts_host']) ? $_REQUEST['fts_host'] : '';
+        $port = !empty($_REQUEST['fts_port']) ? $_REQUEST['fts_port'] : '';
+        $scheduleIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
+        $this->cfg = new Configurator();
+        $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port));
+        $this->cfg->handleOverride();
+        if($scheduleIndex)
+        {
+            require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+            SugarSearchEngineFullIndexer::scheduleFullSystemIndex();
+        }
+
+        //Save any disabled modules
+        if(isset($_REQUEST['disabled_modules']))
+        {
+            $disabledModules = explode(",", $_REQUEST['disabled_modules']);
+            //TODO:Change out keys
+            write_array_to_file('ftsDisabledModules', $disabledModules, sugar_cached('modules/ftsModulesCache.php'));
+            sugar_cache_put('ftsDisabledModules', $disabledModules);
+        }
+
+        $this->view = "configurefts";
+    }
+    
+    public function action_checkFTSConnection()
+    {
+        $type = !empty($_REQUEST['type']) ? urldecode($_REQUEST['type']) : '';
+        $host = !empty($_REQUEST['host']) ? urldecode($_REQUEST['host']) : '';
+        $port = !empty($_REQUEST['port']) ? urldecode($_REQUEST['port']) : '';
+
+        if(!empty($type) && !empty($host) && !empty($port))
+        {
+            $config = array('port' => $port, 'host' => $host);
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
+            echo json_encode($searchEngine->getServerStatus());
+        }
+        else
+        {
+            echo json_encode(array('valid' => FALSE));
+        }
+        sugar_cleanup(TRUE);
+    }
 
     /**
      * action_saveglobalsearchsettings

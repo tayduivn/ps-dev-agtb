@@ -142,6 +142,8 @@ $mod_strings = array (
 //jobstrings
 'LBL_REFRESHJOBS' => 'Refresh Jobs',
 'LBL_POLLMONITOREDINBOXES' => 'Check Inbound Mail Accounts',
+'LBL_PERFORMFULLFTSINDEX' => 'Full-text Search Index System',
+
 //BEGIN SUGARCRM flav!=dce ONLY
 'LBL_RUNMASSEMAILCAMPAIGN' => 'Run Nightly Mass Email Campaigns',
 'LBL_POLLMONITOREDINBOXESFORBOUNCEDCAMPAIGNEMAILS' => 'Run Nightly Process Bounced Campaign Emails',

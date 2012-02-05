@@ -38,17 +38,24 @@
 {$BOTTOMLINKS}
 {/if}
 </div>
+
+<div class="clear"></div>
+<div id="arrow" title="Show" class="up"></div>
 <div id="footer">
-    {$STATISTICS}
-    <div id="copyright">
-        {$COPYRIGHT}
-    </div>
+    <img src="{$COMPANY_LOGO_URL}" width="{$COMPANY_LOGO_WIDTH}" class="logo" id="logo" height="{$COMPANY_LOGO_HEIGHT}"
+        title="&#169; 2004-2011 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/>
+    <div id="partner">
+    {foreach from=$DYNAMICDCACTIONS item=action}
+       <span> {$action.script} {$action.image} </span>
+    {/foreach}
+        <img src="index.php?entryPoint=getImage&imageName=boxnet.png" id="boxnet" class="partner-logo" title="Box.net"/>
+        <img src="index.php?entryPoint=getImage&imageName=linkedin.png" id="linkedin" class="partner-logo" title="LinkedIn"/>
+     </div>
+
+    <div class="clear"></div>
 </div>
 <script>
 {literal}
-if(SUGAR.util.isTouchScreen()) {
-	setTimeout(resizeHeader,10000);
-}
 
 //qe_init function sets listeners to click event on elements of 'quickEdit' class
  if(typeof(DCMenu) !='undefined'){
@@ -100,7 +107,6 @@ function qe_init(){
 	    YAHOO.util.Event.onContentReady('ajaxUI-history-field', SUGAR.ajaxUI.firstLoad);
 </script>
 {/literal}
-
 </body>
 </html>
 

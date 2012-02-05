@@ -1,0 +1,36 @@
+<?php
+/*********************************************************************************
+ * The contents of this file are subject to
+ * *******************************************************************************/
+require_once('include/MVC/View/SugarView.php');
+require_once('modules/SugarFavorites/SugarFavorites.php');
+
+class ViewFavorites extends SugarView
+{
+ 	public function __construct()
+ 	{
+ 		$this->options['show_title'] = false;
+		$this->options['show_header'] = false;
+		$this->options['show_footer'] = false; 	  
+		$this->options['show_javascript'] = false; 
+		$this->options['show_subpanels'] = false; 
+		$this->options['show_search'] = false; 
+ 		parent::SugarView();
+ 	}	
+ 	
+ 	public function display()
+ 	{
+ 		
+ 		$favorites = new SugarFavorites();
+ 		$results = $favorites->getUserFavoritesByModule($this->module,$GLOBALS['current_user']);
+ 		$items = array();
+ 		foreach ( $results as $key => $row ) {
+ 				 $items[$key]['label'] = $row->record_name;
+ 				 $items[$key]['record_id'] = $row->record_id;
+ 				 $items[$key]['module'] = $row->module;
+ 		}
+ 		$this->ss->assign('FAVORITES',$items);
+ 		$this->ss->display('include/MVC/View/tpls/favorites.tpl');
+ 	}
+}
+?>
