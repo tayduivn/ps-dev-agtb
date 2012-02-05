@@ -76,7 +76,7 @@ class SugarSearchEngineFullIndexer
 
         $GLOBALS['log']->info("Performing Full System Index");
         $startTime = microtime(true);
-        $allModules = $this->SSEngine->retrieveFtsEnabledFieldsForAllModules();
+        $allModules = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
         $db = DBManagerFactory::getInstance();
         $totalCount = 0;
         foreach($allModules as $module => $fieldDefinitions)

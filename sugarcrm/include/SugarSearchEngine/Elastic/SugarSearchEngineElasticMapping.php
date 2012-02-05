@@ -186,7 +186,7 @@ class SugarSearchEngineElasticMapping
      */
     public function setFullMapping()
     {
-        $allModules = $this->sse->retrieveFtsEnabledFieldsForAllModules();
+        $allModules = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
 
         // if the index already exists, is there a way to create mapping for multiple modules at once?
         // for now, create one mapping for a module at a time
