@@ -48,8 +48,6 @@
     {foreach from=$DYNAMICDCACTIONS item=action}
        <span> {$action.script} {$action.image} </span>
     {/foreach}
-        <img src="index.php?entryPoint=getImage&imageName=boxnet.png" id="boxnet" class="partner-logo" title="Box.net"/>
-        <img src="index.php?entryPoint=getImage&imageName=linkedin.png" id="linkedin" class="partner-logo" title="LinkedIn"/>
      </div>
 
     <div class="clear"></div>
