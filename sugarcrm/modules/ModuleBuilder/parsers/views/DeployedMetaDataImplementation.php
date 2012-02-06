@@ -376,9 +376,12 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	        } else {
                 $newkey = $key;
 			    $newval = $val;
-				foreach ($replacements as $var => $rep) {
-                    $newkey = str_replace($var, $rep, $newkey);
-					$newval = str_replace($var, $rep, $newval);
+                if(is_string($val))
+                {
+                    foreach ($replacements as $var => $rep) {
+                        $newkey = str_replace($var, $rep, $newkey);
+                        $newval = str_replace($var, $rep, $newval);
+                    }
                 }
                 $ret[$newkey] = $newval;
 			}
