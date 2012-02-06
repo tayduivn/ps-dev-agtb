@@ -164,19 +164,26 @@ class SugarSearchEngineHighlighter
         // it may contain multiple words
         $searches = explode(' ', $searchString);
 
-        foreach ($resultArray as $field=>$value) {
-            foreach ($searches as $search) {
-                if (empty($search)) {
+        foreach ($resultArray as $field=>$value)
+        {
+            foreach ($searches as $search)
+            {
+                if (empty($search))
+                {
                     continue;
                 }
+
                 $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
                 $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
-                if ($count > 0) {
+                if ($count > 0)
+                {
+                    $field = $this->translateFieldName($field);
                     $ret[$field] = $this->postProcessHighlights($value);
                 }
             }
         }
 
+        $GLOBALS['log']->debug('FTS highligh: ' . print_r($ret,true));
         return $ret;
     }
 

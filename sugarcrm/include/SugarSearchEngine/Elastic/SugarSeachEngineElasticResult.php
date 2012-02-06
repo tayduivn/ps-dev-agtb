@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once("include/SugarSearchEngine/SugarSearchEngineAbstractResult.php");
-require_once("include/SugarSearchEngine/Elastic/SugarSearchEngineElasticHighlighter.php");
+require_once("include/SugarSearchEngine/SugarSearchEngineHighlighter.php");
 
 /**
  * Adapter class to Elastica Result
@@ -88,7 +88,7 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
         $q = html_entity_decode(trim($_REQUEST['q']), ENT_QUOTES);
 
         if (isset($hit['_source']) && is_array($hit['_source'])) {
-            $highlighter = new SugarSearchEngineElasticHighlighter($maxLen, $maxHits, $preTag, $postTag);
+            $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
             $highlighter->setModule($this->getModule());
             $ret = $highlighter->getHighlightedHitText($hit['_source'], $q);
             $ret = array_slice($ret,0, $maxHits);
