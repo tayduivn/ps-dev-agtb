@@ -1129,7 +1129,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                     ]
                 });
             var win = ModuleBuilder.visGridWindow;
-            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_VISIBILITY_EDITOR"));
             win.setBody("loading...");
             win.render(document.body);
             win.params = {
