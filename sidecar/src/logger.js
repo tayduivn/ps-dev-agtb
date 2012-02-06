@@ -85,6 +85,7 @@
 
         if (level.value >= l.value) {
           if (typeof message === "function") message = message.call(this);
+          if (typeof message === "object") message = JSON.stringify(message);
           writer.write(level, formatter.format(level, message, new Date));
         }
       }

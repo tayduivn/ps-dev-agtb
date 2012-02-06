@@ -40,6 +40,15 @@ describe("Logger", function() {
     expect(spy.firstCall.args[0]).toMatch(/INFO\[.{15,20}\]: Test message foo/);
   });
 
+  it("should be able to log an object", function() {
+    var spy = sinon.spy(console, "info");
+
+    config.logLevel = logger.Levels.TRACE;
+    var foo = { bar: "some bar"};
+    logger.trace(foo);
+    expect(spy.firstCall.args[0]).toMatch(/TRACE\[.{15,20}\]: {"bar":"some bar"}/);
+  });
+
   it("should not log a message if log level is below the configured one", function() {
     var spy = sinon.spy(console, "info");
     config.logLevel = logger.Levels.INFO;
