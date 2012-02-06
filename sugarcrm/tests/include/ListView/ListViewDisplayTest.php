@@ -403,7 +403,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $output = $this->_lvd->buildDeleteLink();
 
-        $this->assertContains("return sListView.send_mass_update",$output);
+        $this->assertEmpty($output, 'should be empty');
     }
 
     public function testBuildSelectedObjectsSpan()
