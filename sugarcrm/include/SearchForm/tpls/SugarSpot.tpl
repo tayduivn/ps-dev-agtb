@@ -23,7 +23,7 @@
     {foreach from=$displayResults key=module item=data}
     <section>
         <div class="resultTitle">
-            {if isset($appListStrings.moduleList[$modulepair])}
+            {if isset($appListStrings.moduleList[$module])}
                 {$appListStrings.moduleList[$module]}
             {else}
                 {$module}
