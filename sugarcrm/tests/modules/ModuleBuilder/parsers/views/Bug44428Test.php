@@ -35,16 +35,19 @@ require_once ('modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php'
  */
 class Bug44428Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $account;
-
     public function setUp()
     {
-        $GLOBALS['app_list_strings']['moduleList']['Quotes'] = 'Quote';
+        global $beanList, $beanFiles;
+        require('include/modules.php');
+
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
     }
-    
+
     public function tearDown()
     {
-        unset($GLOBALS['app_list_strings']['moduleList']['Quotes']);
+        unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
 
     public function providerField()
