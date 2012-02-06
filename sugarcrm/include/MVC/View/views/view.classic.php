@@ -24,6 +24,11 @@ class ViewClassic extends SugarView
  	 */
     public function display()
     {
+		if(($this->bean instanceof SugarBean) && isset($this->view_object_map['remap_action']) && !$this->bean->ACLAccess($this->view_object_map['remap_action']))
+		{
+		  ACLController::displayNoAccess(true);
+		  return false;
+		}
  		// Call SugarController::getActionFilename to handle case sensitive file names
  		$file = SugarController::getActionFilename($this->action);
  		if(file_exists('custom/modules/' . $this->module . '/'. $file . '.php')){
