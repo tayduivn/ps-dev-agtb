@@ -130,8 +130,8 @@ public function testSugarApplication()
    		$monitor->setValue('user_id', $current_user->id);
            //Intentionally set the date_start and date_end to be over 19 characters in length
            //this mimics the case where people set the date value to the selected query value without running a database type conversion
-   		$monitor->setValue('date_start', '2011-11-06 13:32:11.000000');
-   		$monitor->setValue('date_end', '2011-11-06 13:32:11.000000');
+   		$monitor->setValue('date_start', '2011-11-06 13:32:11');
+   		$monitor->setValue('date_end', '2011-11-06 13:32:11');
    		$monitor->setValue('seconds', '5');
    		$monitor->setValue('round_trips', 1);
    		$monitor->setValue('active', 1);
