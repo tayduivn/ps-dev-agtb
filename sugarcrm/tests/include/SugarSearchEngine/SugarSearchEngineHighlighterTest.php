@@ -27,7 +27,8 @@
  ********************************************************************************/
 
 
-require_once 'include/SugarSearchEngine/SugarSearchEngineHighlighter.php';
+
+require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticHighlighter.php';
 
 class SugarSearchEngineHighlighterTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -68,7 +69,7 @@ class SugarSearchEngineHighlighterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHighlighter($resultArray, $expectedArray, $searchString, $maxLen, $maxHits, $preTag, $postTag)
     {
-        $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
+        $highlighter = new SugarSearchEngineElasticHighlighter($maxLen, $maxHits, $preTag, $postTag);
 
         $ret = $highlighter->getHighlightedHitText($resultArray, $searchString);
 
