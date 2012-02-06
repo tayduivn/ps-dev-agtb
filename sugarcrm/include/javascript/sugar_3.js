@@ -3255,6 +3255,10 @@ SUGAR.util = function () {
                                 allButtons[i].setAttribute('title',allButtons[i].getAttribute('title')+' ['+controlKey+allButtons[i].getAttribute('accesskey')+']');
                             }
                         }
+                        //now change the text in the help div
+			if(typeof(keyboardhelpText) =='string'){
+                                keyboardhelpText = keyboardhelpText.replace(/Alt\+/g,controlKey);
+                        }
                     }// end if (typeof(Y.env.ua) !== 'undefined')
                 }//end buildAccessKeyLabels()
 	};

@@ -143,7 +143,7 @@ class="yui-navset"
 		{{/if}}
 		{counter name="fieldsUsed"}
 		{{math assign="tabIndexVal" equation="$tabIndexVal + 1"}}
-		{{if $tabIndexVal==1}} {{assign var='ACCKEY' value=7}}{{else}}{{assign var='ACCKEY' value=''}}{{/if}}
+		{{if $tabIndexVal==1}} {{assign var='ACCKEY' value=$APP.LBL_FIRST_INPUT_EDIT_VIEW_KEY}}{{else}}{{assign var='ACCKEY' value=''}}{{/if}}
 		{{if !empty($colData.field.tabindex)  && $colData.field.tabindex !=0}}
 		    {{assign var='tabindex' value=$colData.field.tabindex}}
             {{** instead of tracking tabindex values for all fields, just track for email as email does not get created directly from

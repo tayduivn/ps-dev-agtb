@@ -2420,9 +2420,6 @@ $app_strings = array (
 //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_CAMPAIGNS_SEND_QUEUED' => 'Send Queued Campaign Emails',
 //END SUGARCRM flav!=sales ONLY
-    'LBL_CANCEL_BUTTON_KEY' => 'X',
-    'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
-    'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
     'LBL_SUBMIT_BUTTON_LABEL' => 'Submit',
     'LBL_CASE'=>'Case',
     'LBL_CASES'=>'Cases',
@@ -2467,9 +2464,8 @@ $app_strings = array (
     'LBL_DOCUMENTS'=>'Documents',
     'LBL_DATE_ENTERED' => 'Date Created:',
     'LBL_DATE_MODIFIED' => 'Date Modified:',
-    'LBL_DELETE_BUTTON_KEY' => 'D',
-    'LBL_DELETE_BUTTON_LABEL' => 'Delete',
-    'LBL_DELETE_BUTTON_TITLE' => 'Delete',
+    'LBL_EDIT_BUTTON' => 'Edit',
+    'LBL_DUPLICATE_BUTTON' => 'Duplicate',
     'LBL_DELETE_BUTTON' => 'Delete',
     'LBL_DELETE' => 'Delete',
     'LBL_DELETED'=>'Deleted',
@@ -2478,14 +2474,6 @@ $app_strings = array (
     'LBL_DONE_BUTTON_LABEL' => 'Done',
     'LBL_DONE_BUTTON_TITLE' => 'Done',
     'LBL_DST_NEEDS_FIXIN' => 'The application requires a Daylight Saving Time fix to be applied.  Please go to the <a href="index.php?module=Administration&action=DstFix">Repair</a> link in the Admin console and apply the Daylight Saving Time fix.',
-    'LBL_DUPLICATE_BUTTON_KEY' => 'U',
-    'LBL_DUPLICATE_BUTTON_LABEL' => 'Duplicate',
-    'LBL_DUPLICATE_BUTTON_TITLE' => 'Duplicate',
-    'LBL_DUPLICATE_BUTTON' => 'Duplicate',
-    'LBL_EDIT_BUTTON_KEY' => 'E',
-    'LBL_EDIT_BUTTON_LABEL' => 'Edit',
-    'LBL_EDIT_BUTTON_TITLE' => 'Edit',
-    'LBL_EDIT_BUTTON' => 'Edit',
     'LBL_EDIT_AS_NEW_BUTTON_LABEL' => 'Edit As New',
     'LBL_EDIT_AS_NEW_BUTTON_TITLE' => 'Edit As New',
     'LBL_VCARD' => 'vCard',
@@ -2637,10 +2625,7 @@ $app_strings = array (
     'LBL_REPORTS_TO' => 'Reports To',
     'LBL_REQUIRED_SYMBOL' => '*',
     'LBL_REQUIRED_TITLE' => 'Indicates required field',
-    'LBL_SAVE_BUTTON_KEY' => 'S',
-    'LBL_SAVE_BUTTON_LABEL' => 'Save',
     'LBL_EMAIL_DONE_BUTTON_LABEL' => 'Done',
-    'LBL_SAVE_BUTTON_TITLE' => 'Save',
     'LBL_SAVE_AS_BUTTON_KEY' => 'A',
     'LBL_SAVE_AS_BUTTON_LABEL' => 'Save As',
     'LBL_SAVE_AS_BUTTON_TITLE' => 'Save As',
@@ -3249,6 +3234,37 @@ $app_strings = array (
     'LBL_SELECT_THIS_ROW_TITLE' => 'Select this row',
     'LBL_TEAM_SELECTED_TITLE' => 'Team Selected ',
     'LBL_TEAM_SELECT_AS_PRIM_TITLE' => 'Select to make this team primary',
+
+
+    //508 used Access Keys
+    'LBL_EDIT_BUTTON_KEY' => '1',
+    'LBL_EDIT_BUTTON_LABEL' => 'Edit',
+    'LBL_EDIT_BUTTON_TITLE' => 'Edit',
+
+    'LBL_DUPLICATE_BUTTON_KEY' => '2',
+    'LBL_DUPLICATE_BUTTON_LABEL' => 'Duplicate',
+    'LBL_DUPLICATE_BUTTON_TITLE' => 'Duplicate',
+
+    'LBL_DELETE_BUTTON_KEY' => '3',
+    'LBL_DELETE_BUTTON_LABEL' => 'Delete',
+    'LBL_DELETE_BUTTON_TITLE' => 'Delete',
+
+    'LBL_SAVE_BUTTON_KEY' => '4',
+    'LBL_SAVE_BUTTON_LABEL' => 'Save',
+    'LBL_SAVE_BUTTON_TITLE' => 'Save',
+
+
+    'LBL_CANCEL_BUTTON_KEY' => '5',
+    'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
+    'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+
+    'LBL_FIRST_INPUT_EDIT_VIEW_KEY' => '6',
+    'LBL_ADV_SEARCH_LNK_KEY' => '7',
+    'LBL_FIRST_INPUT_SEARCH_KEY' => '8',
+    'LBL_GLOBAL_SEARCH_LNK_KEY' => '9',
+    'LBL_ACCESS_MAPS_KEY' => '0',
+    'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'Keyboard Shortcuts',
+    'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> 1 = Edit (detailview)<br/> 2 = Duplicate (detailview)<br/> 3 = Delete (detailview)<br/> 4 = Save (editview)<br/> 5 = Cancel (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 6 = first input on Edit form<br/> 7 = Advanced Search link<br/> 8 = First Search Form input<br/> 9 = Unified search input<br></p>' ,
 
     );
 
