@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/generic/SugarWidgets/SugarWidgetFieldVarchar.php');
+require_once('include/generic/SugarWidgets/SugarWidgetFieldvarchar.php');
 
 class SugarWidgetFieldText extends SugarWidgetFieldVarchar
 {
