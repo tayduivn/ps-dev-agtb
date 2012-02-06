@@ -23,7 +23,9 @@
  ********************************************************************************/
 
 require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
-require_once('include/SugarSearchEngine/SugarSearchEngineBase.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+
 
 class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -43,7 +45,6 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('','SugarSearchEngine'),
-            array('Solr','SugarSearchEngineSolr'),
             array('Elastic','SugarSearchEngineElastic'),
             //Fallback to default.
             array('BadClassName','SugarSearchEngine')
@@ -54,13 +55,13 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetFtsSearchFields()
     {
         $instance = new SugarSearchEngineTestStub();
-        $ftsFields = $instance->retrieveFtsEnabledFieldsPerModuleStub('Accounts');
+        $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule('Accounts');
         $this->assertContains('name', array_keys($ftsFields));
         $this->assertContains('email_addresses', array_keys($ftsFields));
 
         //Pass in a sugar bean for the test
         $account = BeanFactory::getBean('Accounts', null);
-        $ftsFields = $instance->retrieveFtsEnabledFieldsPerModuleStub($account);
+        $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($account);
         $this->assertContains('name', array_keys($ftsFields));
         $this->assertContains('email_addresses', array_keys($ftsFields));
     }
@@ -69,7 +70,7 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetFtsSearchFieldsForAllModules()
     {
         $instance = new SugarSearchEngineTestStub();
-        $ftsFieldsByModule = $instance->retrieveFtsEnabledFieldsForAllModulesStub();
+        $ftsFieldsByModule = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
         $this->assertContains('Contacts', array_keys($ftsFieldsByModule));
         $this->assertContains('first_name', array_keys($ftsFieldsByModule['Contacts']));
     }
@@ -81,7 +82,7 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
     public function testIsModuleFtsEnabled($module,$actualResult)
     {
         $instance = new SugarSearchEngineTestStub();
-        $expected = $instance->isModuleFtsEnabledStub($module);
+        $expected = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
         $this->assertEquals($expected, $actualResult);
     }
 
@@ -90,14 +91,15 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array('Accounts', true),
             array('Contacts', true),
-            array('BadModule', false),
-            array('Notifications', false),
+            array('BadModule', true),
+            array('Notifications', true),
+            //TODO: Add disabled modules
         );
     }
 
 }
 
-class SugarSearchEngineTestStub extends SugarSearchEngineBase
+class SugarSearchEngineTestStub extends SugarSearchEngineAbstractBase
 {
     public function connect() {}
 
@@ -105,22 +107,16 @@ class SugarSearchEngineTestStub extends SugarSearchEngineBase
 
     public function flush() {}
 
-    public function delete($bean){}
+    public function delete(SugarBean $bean){}
 
     public function search($query, $offset = 0, $limit = 20) {}
 
-    public function retrieveFtsEnabledFieldsPerModuleStub($module)
-    {
-        return $this->retrieveFtsEnabledFieldsPerModule($module);
-    }
+    public function bulkInsert(array $docs){}
 
-    public function retrieveFtsEnabledFieldsForAllModulesStub()
-    {
-        return $this->retrieveFtsEnabledFieldsForAllModules();
-    }
+    public function getServerStatus(){}
 
-    public function isModuleFtsEnabledStub($module)
-    {
-        return $this->isModuleFtsEnabled($module);
-    }
+    public function createIndex($recreate = false) {}
+
+    public function createIndexDocument(SugarBean $bean, $searchFields = null){}
+
 }
