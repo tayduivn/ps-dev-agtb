@@ -883,5 +883,27 @@ class EditView
 
         return '';
     }
+    /**
+     * function checks if a field is displayed on EditView layout
+     * @param string $fieldName searching field
+     * @return boolean true if field exists, false otherwise
+     */
+    public function isFieldOnLayout($fieldName)
+    {
+        foreach ($this->defs['panels'] as $panel)
+        {
+            foreach ($panel as $row)
+            {
+                foreach ($row as $key => $value)
+                {
+                    if ($value['name'] == $fieldName || $value == $fieldName)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
 
