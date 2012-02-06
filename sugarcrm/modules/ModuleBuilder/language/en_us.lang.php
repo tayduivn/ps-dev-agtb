@@ -462,6 +462,11 @@ $mod_strings = array(
 'LBL_SEARCH_FIELDS' => 'Search Fields...',
 'LBL_FORMULA' => 'Formula',
 'LBL_DYNAMIC_VALUES_CHECKBOX' => 'Dependent',
+'LBL_DEPENDENT_DROPDOWN_HELP' => 'Drag items from the list of available options on the left to one of the lists on the right to make that option available when the given parent option is selected.',
+'LBL_AVAILABLE_OPTIONS' => 'Available Options',
+'LBL_PARENT_DROPDOWN' => 'Parent Dropdown',
+'LBL_VISIBILITY_EDITOR' => 'Visibility Editor',
+
 
 //END SUGARCRM flav=pro ONLY
 

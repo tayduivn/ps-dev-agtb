@@ -67,9 +67,9 @@
 <tr id='depTypeRow' class="toggleDep"><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>
     <td>
         <select id="depTypeSelect" onchange="ModuleBuilder.toggleParent(this.value == 'parent'); ModuleBuilder.toggleDF(this.value == 'formula'); ">
-            <option label="None" value="">None</option>
-            <option label="Parent Dropdown" value="parent">Parent Dropdown</option>
-            <option label="Formula" value="formula">Formula</option>
+            <option label="{sugar_translate module="ModuleBuilder" label="LBL_NONE"}" value="">{sugar_translate module="ModuleBuilder" label="LBL_NONE"}</option>
+            <option label="{sugar_translate module="ModuleBuilder" label="LBL_PARENT_DROPDOWN"}" value="parent">{sugar_translate module="ModuleBuilder" label="LBL_PARENT_DROPDOWN"}</option>
+            <option label="{sugar_translate module="ModuleBuilder" label="LBL_FORMULA"}" value="formula">{sugar_translate module="ModuleBuilder" label="LBL_FORMULA"}</option>
         </select>
         <script>
 			//For enums, don't use the formal dependent checkbox, use this dependency type selector

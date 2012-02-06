@@ -1,4 +1,5 @@
 {*
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -53,10 +54,22 @@
     min-height: 20px;
 }
 
+#visGridWindow ul.ddd_parent_option.valid {
+    background-color: #E0F8E0;
+}
+
+#visGridWindow ul.ddd_parent_option.invalid {
+    background-color: #F8E0E0;
+}
+
 #visGridWindow ul li {
     list-style-type: none;
     margin: 3px;
     padding: 2px;
+    text-align: center;
+    background: white;
+    border-radius: 3px;
+    color: black;
 }
 
 #visGridWindow ul li.title {
@@ -80,27 +93,43 @@
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    font-size: 18px;
 }
 
-#ddd_delete span {
+.dd_help{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.left_list {
+    float:left;
+    border-right: 1px solid grey;
+    padding-right: 5px;
+    height:100%;
+}
+
+#ddd_delete div {
     border: 1px solid white;
     border-radius: 5px;
     width:48px;
     height:48px;
+    margin-left: auto;
+    margin-right: auto;
 }
-#ddd_delete.drophover span{
+#ddd_delete.drophover div{
     border-color: gray;
 }
 
 {/literal}
 </style>
-<div class="dd_title" style="width:600px">
-    Drag items from the list of availible options on the left to one of the lists on the right to make that option availible when the given parent option is selected.
-</div>
-<div style="float:left;">
+<div class="left_list">
     <div class="dd_title">
-        <div id="ddd_delete">{sugar_image name=Delete width=48 height=48 id="ddd_delete"}</div><br/>
-        Availible Options
+        <div id="ddd_delete">
+            <div>{sugar_image name=Delete width=48 height=48 id="ddd_delete"}</div>
+        </div><br/>
+        {sugar_translate label="LBL_AVAILABLE_OPTIONS" module="ModuleBuilder"}
     </div>
     <div style="max-height: 450px; overflow-y: auto; overflow-x: hidden">
         <ul id="childTable" style="float:left" class="ddd_table">
@@ -115,6 +144,9 @@
     </div>
 </div>
 <div style="max-height: 510px; overflow-y: auto; overflow-x: hidden">
+    <div class="dd_help" style="width:600px">
+        {sugar_translate label="LBL_DEPENDENT_DROPDOWN_HELP" module="ModuleBuilder"}
+    </div>
 <table ><tr>
     {foreach from=$parent_list_options key=val item=label name=parentloop}
         {if $smarty.foreach.parentloop.index % 4 == 0 && !$smarty.foreach.parentloop.first}
@@ -143,9 +175,6 @@
     {sugar_translate label="LBL_BTN_SAVE" module="ModuleBuilder"}
     </button>
 </div>
-{*</td></tr>
-</table>
-*}
 {literal}
 <script type="text/javascript">
 SUGAR.ddd = {};
@@ -169,11 +198,10 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     if ($("#" + targetId).length > 0)
     {
         var data = $.parseJSON($("#" + targetId).val());
-        console.log(data);
         if (data && data.values)
             mapping = data.values;
     }
-    //Initizalize the grids if mapping wasn't empty
+    //Initialize the grids if mapping wasn't empty
     var p = $("#childTable");
     for(var i in mapping)
     {
@@ -194,7 +222,8 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
     //Create a custom sortable list that prevents duplicate drops
     var listContainsItem = function(list, val)
     {
-        var c = list.children("li[val=" + val + "]");
+        var c = list.children("li[val=" + val + "].original").not("li.ui-sortable-helper, li:hidden");
+        console.log(c);
         return c.length != 0;
     }
 
@@ -205,15 +234,16 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
                 //If the target list isn't empty and contains the value we are dragging, return.
                 var val = this.currentItem.attr("val");
                 var p = i.item.parent();
-                var c  = p.children("li[val=" + val + "]");
                 if (p.attr("id") == "childTable" || (listContainsItem(p, val) && this.currentItem.parent()[0] != p[0]))
                     return true;
             }
+
             //Call the parent function
             return $.ui.sortable.prototype._rearrange.call(this, event, i, a, hardRefresh);
         }
     }));
 
+    //Child table is the list of items available from the child dropdown on the left side.
     SUGAR.ddd.childTable =  $( "#childTable" ).sugardddlist({
         connectWith: ".ddd_table",
         scope: "ddd_table",
@@ -225,10 +255,10 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
             element: function(el) {
                 if (el[0].id == "ddd_delete")
                     return false;
-                //for the parent table, we don't hide the item, we just create a clone for dragging
+                //for the child table, we don't hide the item, we just create a clone for dragging
                 el.hide();
                 SUGAR.ddd.oldPos = el.prev();
-                return el.clone();
+                return el.clone().removeClass("original");
             },
             update: function(ev, el) {
                 if (!ev.mouseDelayMet && $(el.context).parent()[0] != el.parent()[0]){
@@ -239,15 +269,20 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
             }
         },
         remove: function(event, ui) {
-            //If the item is being removed, put a clone back in the orginal list.
+            $("ul.ddd_parent_option").removeClass("valid invalid");
+            //If the item is being removed, put a clone back in the original list.
             if (SUGAR.ddd.oldPos[0])
                 SUGAR.ddd.oldPos.after(ui.item.clone());
             else {
                 SUGAR.ddd.childTable.children().first().before(ui.item.clone());
             }
+        },
+        stop : function(){
+            $("ul.ddd_parent_option").removeClass("valid invalid");
         }
     }).disableSelection();
 
+    //Create a list for each option on the parent dropdown
     for (var i in parentOptions)
     {
         if (i == "") i = "--blank--";
@@ -255,37 +290,49 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
             connectWith: ".ddd_table",
             scope: "ddd_table",
             helper: "clone",
+            hoverClass: "hover",
+            over: function(event, ui) {
+                $("ul.ddd_parent_option").removeClass("valid invalid");
+                if (listContainsItem($(this), $(ui.item).attr("val")))
+                   $(this).addClass("invalid");
+                else
+                    $(this).addClass("valid");
+            },
             placeholder: {
                 element: function(el) {
-                    //for the parent table, we don't hide the item, we just create a clone for dragging
+                    //hide the original and create a clone for dragging
                     el.hide();
-                    return el.clone().css( "opacity", "0.5" );
+                    return el.clone().css( "opacity", "0.5" ).removeClass("original");
                 },
                 update: function(ev, el) {
                     el.show();
-                },
-                stop: function(event, ui) {
-                    console.log("stopped");
-                },
-                beforeStop: function(event, ui) {
-                    console.log(" before stopped");
                 }
+            },
+            stop : function(){
+                $("ul.ddd_parent_option").removeClass("valid invalid");
             }
         }).disableSelection();
     }
 
+    //Mark all the li's as originals so we can distinguish them from the placeholder clones
+    $("ul.ddd_table li").addClass("original");
+
+    //Turn the trash bin into a drop target for deleting items
     $("#ddd_delete").droppable({
-        accept: ".ddd_parent_option li",
+        //accept: ".ddd_parent_option li",
         greedy: true,
         scope: "ddd_table",
         hoverClass: 'drophover',
         drop: function (event, ui) {
+            $("ul.ddd_parent_option").removeClass("valid invalid");
             ui.draggable.parent("ul").sortable("cancel");
-            ui.draggable.remove();
+            if(ui.draggable.parent("ul.ddd_parent_option").length)
+                ui.draggable.remove();
         }
     });
 
     var blank = "--blank--";
+    //Get mapping is used to get the final output for saving to the vardefs
     SUGAR.ddd.getMapping = function()
     {
         var getlistValues = function(list)
