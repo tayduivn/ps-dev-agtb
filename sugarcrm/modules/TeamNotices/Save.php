@@ -26,11 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
-
-
-
-
+if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
 $focus = new TeamNotice();
 

@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * $Id: DetailView.php 13782 2006-06-06 17:58:55Z majed $
  ********************************************************************************/
+if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
 
 include ("modules/TeamNotices/index.php");
 ?>
