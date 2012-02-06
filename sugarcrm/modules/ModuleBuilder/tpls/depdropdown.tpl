@@ -248,6 +248,9 @@ SUGAR.util.doWhen("typeof($) != 'undefined'", function()
         connectWith: ".ddd_table",
         scope: "ddd_table",
         type: "semi-dynamic", //Semi-dynamic will prevent reordering within this list
+        // Prevent the list from automatically scrolling when an item is picked up and moved to
+        // the top or bottom of one of the target lists.
+        scroll: false,
         helper: function(ev, el){
             return el.clone().show();
         },
