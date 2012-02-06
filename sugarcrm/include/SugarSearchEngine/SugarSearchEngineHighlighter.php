@@ -25,12 +25,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Highlighter
  */
-abstract class SugarSearchEngineHighlighter
+class SugarSearchEngineHighlighter
 {
     protected $_maxLen;
     protected $_maxHits;
     protected $_preTag;
     protected $_postTag;
+    protected $_module;
 
     public function __construct($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
@@ -51,6 +52,16 @@ abstract class SugarSearchEngineHighlighter
     public function setTags($preTag, $postTag) {
         $this->_preTag = $preTag;
         $this->_postTag = $postTag;
+    }
+
+    /**
+     * Setter for module name
+     *
+     * @param $module
+     */
+    public function setModule($module)
+    {
+        $this->_module = $module;
     }
 
     protected function castrate($string, $maxLen) {
@@ -167,5 +178,35 @@ abstract class SugarSearchEngineHighlighter
         }
 
         return $ret;
+    }
+
+    public function translateFieldName($field)
+    {
+        if(empty($this->_module))
+        {
+            return $field;
+        }
+        else
+        {
+            $tmpBean = BeanFactory::getBean($this->_module, null);
+            $field_defs = $tmpBean->field_defs;
+            $field_def = isset($field_defs[$field]) ? $field_defs[$field] : FALSE;
+            if($field_def === FALSE || !isset($field_def['vname']))
+                return $field;
+
+            $module_lang = return_module_language($GLOBALS['current_language'], $this->_module);
+            if(isset($module_lang[$field_def['vname']]))
+            {
+                $label = $module_lang[$field_def['vname']];
+                if( substr($label,-1) == ':')
+                    return (substr($label, 0, -1));
+                else
+                    return $label;
+            }
+            else
+            {
+                return $field;
+            }
+        }
     }
 }
