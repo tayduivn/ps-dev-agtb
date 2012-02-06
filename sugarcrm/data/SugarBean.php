@@ -3141,6 +3141,11 @@ function save_relationship_changes($is_update, $exclude=array())
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
         require('include/VarDefHandler/listvardefoverride.php');
+        if (file_exists('custom/include/VarDefHandler/listvardefoverride.php'))
+        {
+            require('custom/include/VarDefHandler/listvardefoverride.php');
+        }
+
         $joined_tables = array();
         if(!empty($params['joined_tables']))
         {
