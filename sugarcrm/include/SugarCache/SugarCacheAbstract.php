@@ -98,9 +98,7 @@ abstract class SugarCacheAbstract
      * @param  string $key
      * @return mixed
      */
-    public function __get(
-        $key
-        )
+    public function __get($key)
     {
         if ( SugarCache::$isCacheReset )
             return null;
@@ -132,10 +130,7 @@ abstract class SugarCacheAbstract
      * @param  string $key
      * @return mixed
      */
-    public function __set(
-        $key,
-        $value
-        )
+    public function __set( $key, $value)
     {
         if ( is_null($value) ) {
             $value = SugarCache::EXTERNAL_CACHE_NULL_VALUE;
@@ -153,9 +148,7 @@ abstract class SugarCacheAbstract
      * @param  string $key
      * @return mixed
      */
-    public function __isset(
-        $key
-        )
+    public function __isset($key)
     {
         return !is_null($this->__get($key));
     }
@@ -166,9 +159,7 @@ abstract class SugarCacheAbstract
      * @param  string $key
      * @return mixed
      */
-    public function __unset(
-        $key
-        )
+    public function __unset($key)
     {
         unset($this->_localStore[$key]);
         $this->_clearExternal($this->_keyPrefix.$key);
@@ -233,10 +224,7 @@ abstract class SugarCacheAbstract
      * @param string $key
      * @param mixed  $value
      */
-    abstract protected function _setExternal(
-        $key,
-        $value
-        );
+    abstract protected function _setExternal($key,$value);
 
     /**
      * Hook for the child implementations of the individual backends to provide thier own logic for
@@ -245,9 +233,7 @@ abstract class SugarCacheAbstract
      * @param  string $key
      * @return mixed  $value, returns null if the key is not in the cache
      */
-    abstract protected function _getExternal(
-        $key
-        );
+    abstract protected function _getExternal($key);
 
     /**
      * Hook for the child implementations of the individual backends to provide thier own logic for
