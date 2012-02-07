@@ -41,6 +41,7 @@ class SugarSearchEngineElasticMapping
             'int' => 'long',
             'currency' => 'double',
             'date' => 'date',
+            'datetime' => 'date',
         ),
         'dbType' => array(
             'decimal' => 'double',
