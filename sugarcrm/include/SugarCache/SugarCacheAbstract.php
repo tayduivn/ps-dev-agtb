@@ -132,16 +132,44 @@ abstract class SugarCacheAbstract
      */
     public function __set( $key, $value)
     {
-        if ( is_null($value) ) {
+        $this->set($key, $value);
+
+    }
+
+    /**
+     *  Set a value for a key in the cache, optionally specify a ttl. A ttl value of zero
+     * will indicate that a value should only be stored per the request.
+     *
+     * @param $key
+     * @param $value
+     * @param $ttl
+     */
+    public function set($key, $value, $ttl = null)
+    {
+        if ( is_null($value) )
+        {
             $value = SugarCache::EXTERNAL_CACHE_NULL_VALUE;
         }
 
-        if ( $this->useLocalStore ) {
+
+        if ( $this->useLocalStore )
+        {
             $this->_localStore[$key] = $value;
         }
-        $this->_setExternal($this->_keyPrefix.$key,$value);
-    }
 
+        if( $ttl === NULL )
+        {
+            $this->_setExternal($this->_keyPrefix.$key,$value);
+        }
+        else if( $ttl > 0 )
+        {
+            //For BC reasons the setExternal signature will remain the same.
+            $previousExpireTimeout = $this->_expireTimeout;
+            $this->_expireTimeout = $ttl;
+            $this->_setExternal($this->_keyPrefix.$key,$value);
+            $this->_expireTimeout = $previousExpireTimeout;
+        }
+    }
     /**
      * PHP's magic __isset() method, used here for checking for a key in the cache.
      *
@@ -241,9 +269,7 @@ abstract class SugarCacheAbstract
      *
      * @param string $key
      */
-    abstract protected function _clearExternal(
-        $key
-        );
+    abstract protected function _clearExternal($key);
 
     /**
      * Hook for the child implementations of the individual backends to provide thier own logic for
