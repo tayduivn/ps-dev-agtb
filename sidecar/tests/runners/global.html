@@ -10,6 +10,11 @@
     <script type="text/javascript" src='../../../sidecar/src/app.js'></script>
     <script type="text/javascript" src='../../../sidecar/src/sugarfieldmanager/sugarfieldmanager.js'></script>
 
+
+    <link rel="stylesheet" href="../../../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="../../../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap-responsive.css"/>
+    <script src="../../../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
+
     <!--jasmine and sinon core files--->
     <script type="text/javascript" src='../../../sidecar/lib/sinon/sinon.min.js'></script>
     <script type="text/javascript" src='../../../sidecar/lib/jasmine/jasmine.js'></script>
@@ -21,9 +26,17 @@
     <script type="text/javascript" src='../../../sidecar/tests/fixtures/sample.js'></script>
     <script type="text/javascript" src='../../../sidecar/tests/fixtures/sugarFields.js'></script>
 
-    <!--tests suites--->
+    <!-- app files -->
+    <script type="text/javascript" src='../../src/app.js'></script>
+    <script type="text/javascript" src='../../src/logger.js'></script>
+    <script type="text/javascript" src='../../src/config.js'></script>
 
+    <!--tests suites--->
+    <script type="text/javascript" src='../suites/utils/logger.js'></script>
+    <script type="text/javascript" src='../suites/utils/config.js'></script>
+    <script type="text/javascript" src="../suites/app/app.js"></script>
     <script type="text/javascript" src='../../../sidecar/tests/suites/sugarfieldmanager/sugarfieldmanager.js'></script>
+
     <!--init jasmine and exec suites--->
     <script type="text/javascript">
         (function () {
