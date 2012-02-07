@@ -3,8 +3,8 @@ describe("sugarAuth", function () {
     // setup to be run before every test
     beforeEach(function () {
 
-        this.user_name = 'test';
-        this.validPassword = 'Sugar123!';
+        this.user_name = 'admin';
+        this.validPassword = 'asdf';
         this.invalidPassword = 'invalid';
         this.auth = SUGAR.App.sugarAuth.getInstance();
     });
@@ -21,6 +21,7 @@ describe("sugarAuth", function () {
 
     it("should login successfully with correct passwords", function () {
         //TODO add spy to check api call
+
         //make expectations (then)
         var result = this.auth.login({
             user_name: this.user_name,
@@ -32,7 +33,7 @@ describe("sugarAuth", function () {
         expect(this.auth.isAuthenticated()).toBeTruthy();
     });
 
-    it("should not login successfully with correct passwords", function () {
+    it("should not login successfully with incorrect passwords", function () {
         //TODO add spy to check api call
         //make expectations (then)
         var result = this.auth.login({
@@ -42,7 +43,7 @@ describe("sugarAuth", function () {
         //login returned false
         expect(result).toBeFalsy();
         //is not authenticated
-        expect(this.auth.isAuthenticated()).toBeTruthy();
+        expect(this.auth.isAuthenticated()).toBeFalsy();
     });
 
     it("should logout", function () {
