@@ -123,6 +123,8 @@ class AdministrationController extends SugarController
         $port = !empty($_REQUEST['fts_port']) ? $_REQUEST['fts_port'] : '';
         $scheduleIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
         $this->cfg = new Configurator();
+        $this->cfg->config['full_text_engine'] = '';
+        $this->cfg->saveConfig();
         $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port));
         $this->cfg->handleOverride();
         if($scheduleIndex)
