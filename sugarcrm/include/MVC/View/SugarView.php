@@ -1522,6 +1522,6 @@ EOHTML;
      */
     protected function getCustomFilePathIfExists($file)
     {
-        return load_custom_file_if_exists($file);
+        return get_custom_file_if_exists($file);
     }
 }
