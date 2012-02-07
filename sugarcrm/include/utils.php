@@ -3989,7 +3989,7 @@ function getTrackerSubstring($name) {
 	}
 
 	if($strlen > $max_tracker_item_length) {
-		$chopped = function_exists('mb_substr') ? mb_substr($name, 0, $max_tracker_item_length, "UTF-8") : substr($name, 0, $max_tracker_item_length, "UTF-8");
+		$chopped = function_exists('mb_substr') ? mb_substr($name, 0, $max_tracker_item_length, "UTF-8") : substr($name, 0, $max_tracker_item_length);
 	} else {
 		$chopped = $name;
 	}
