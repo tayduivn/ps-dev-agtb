@@ -410,25 +410,19 @@ eoq;
         $tinyConf = $tiny->getConfig($type);
 
         //Generate Language Packs
-		$lang = "var app_strings = new Object();\n";
-		foreach($app_strings as $k => $v) {
-			if(strpos($k, 'LBL_EMAIL_') !== false) {
-				$lang .= "app_strings.{$k} = '{$v}';\n";
-			}
-		}
+        $langJson = getJSONobj();
+        $lang = "var app_strings = " . $langJson->encode($app_strings) . ";\n";
+
 		//Get the email mod strings but don't use the global variable as this may be overridden by
 		//other modules when the quick create is rendered.
 		$email_mod_strings = return_module_language($current_language,'Emails');
-		$modStrings = "var mod_strings = new Object();\n";
-		foreach($email_mod_strings as $k => $v) {
-			$v = str_replace("'", "\'", $v);
-			$modStrings .= "mod_strings.{$k} = '{$v}';\n";
-		}
+        $modStrings = "var mod_strings = " . $langJson->encode($email_mod_strings) . ";\n";
 		$lang .= "\n\n{$modStrings}\n";
 
 		//Grab the Inboundemail language pack
-		$ieModStrings = "var ie_mod_strings = new Object();\n";
+
 		$ie_mod_strings = return_module_language($current_language,'InboundEmail');
+        $ieModStrings = "var ie_mod_strings = " . $langJson->encode($ie_mod_strings) . ";\n";
 		foreach($ie_mod_strings as $k => $v) {
 			$v = str_replace("'", "\'", $v);
 			$ieModStrings .= "ie_mod_strings.{$k} = '{$v}';\n";
