@@ -859,7 +859,7 @@ $restHtaccess = <<<HTACCCESS
     RewriteCond %{REQUEST_FILENAME} !-f
     Options +FollowSymLinks
     RewriteEngine On
-    RewriteRule ^.*$ index.php
+    RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
 </IfModule>
 HTACCCESS;
 
