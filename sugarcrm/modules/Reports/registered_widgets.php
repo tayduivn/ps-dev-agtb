@@ -22,12 +22,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // require some crucial classes so that the dynamically loaded ones
 // won't break
 
-require_once(load_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetField.php'));
-require_once(load_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetReportField.php'));
-require_once(load_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldvarchar.php'));
-require_once(load_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldint.php'));
-require_once(load_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFielddatetime.php'));
-require_once(load_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFielddatetimecomb.php'));
-require_once(load_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldnamephp'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetField.php'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetReportField.php'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldvarchar.php'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldint.php'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFielddatetime.php'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFielddatetimecomb.php'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldnamephp'));
 
 ?>
