@@ -6698,4 +6698,10 @@ p.submsg, p.submsg a{
     filter: alpha(opacity = 60);
 }
 
+.gsLinkWrapper{
+    padding-left: 20px;
+}
 
+.SpanQuickView {
+    visibility:hidden;
+}
