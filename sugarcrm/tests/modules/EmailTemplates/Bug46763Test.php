@@ -66,6 +66,9 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        global $mod_strings;
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'EmailTemplates');
+
         global $sugar_config;
         $this->language = $sugar_config['default_language'];
 
@@ -99,11 +102,15 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         unlink($this->file);
+
+        unset($GLOBALS['mod_strings']);
     }
 
     /**
      * Tests that custom module localization data is used when combining
      * drop down list options
+     *
+     * @outputBuffering enabled
      */
     public function testCustomModuleLocalizationIsUsed()
     {
@@ -119,9 +126,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
         $app_list_strings = return_app_list_strings_language($this->language);
         $xtpl = null;
 
-        ob_start();
         require 'modules/EmailTemplates/EditView.php';
-        ob_end_clean();
 
         // clean up created global variables
         unset(

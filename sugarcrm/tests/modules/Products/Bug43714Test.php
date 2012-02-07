@@ -40,6 +40,9 @@ class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp() 
 	{
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+
         require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
 	    $GLOBALS['beanFiles'] = $beanFiles;
@@ -126,6 +129,8 @@ class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
 		SugarTestProductUtilitiesWithTypes::removeAllCreatedProducts();
 		SugarTestProductTypesUtilities::removeAllCreatedtypes();
+
+        unset($GLOBALS['app_list_strings']);
 	}
 
 	public function testListViewDataCreated() 
