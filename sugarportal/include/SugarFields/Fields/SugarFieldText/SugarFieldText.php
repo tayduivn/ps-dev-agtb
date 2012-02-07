@@ -34,10 +34,13 @@ class SugarFieldText extends SugarFieldVarchar {
         //this would result in adding html even if it is already there
         if((isset($_REQUEST['module'])&& $_REQUEST['module'] == 'KBDocuments') &&  isset($GLOBALS['portal'])){
                 $displayParams['url2html'] = false;
+                $displayParams['nl2br'] = false;
+
         }else{
                 $displayParams['url2html'] = true;
+                $displayParams['nl2br'] = true;
+
         }
-		$displayParams['nl2br'] = true;
 		return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams);
     }	
 	
