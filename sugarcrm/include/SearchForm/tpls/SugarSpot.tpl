@@ -19,16 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{literal}
-<style type="text/css">
-.SpanQuickView {
-visibility:hidden;
-}
-
-
-</style>
-{/literal}
-
 
 <div id='SpotResults'>
 {if !empty($displayResults)}
@@ -55,7 +45,7 @@ visibility:hidden;
 
                             </div>
 
-                        <div style="padding-left: 20px;">
+                        <div class="gsLinkWrapper" >
                             <a href="index.php?module={$module}&action=DetailView&record={$id}" class="gs_link">{$name}</a>
                         </div>
                         </div>

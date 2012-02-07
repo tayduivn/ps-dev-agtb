@@ -116,6 +116,10 @@ class AdministrationController extends SugarController
         echo "true";
     }
 
+    /**
+     * Save the FTS settings for the system and any modules that may be enabled/disabled
+     * by the administrator.
+     */
     public function action_UpdateFTS()
     {
         $type = !empty($_REQUEST['fts_type']) ? $_REQUEST['fts_type'] : '';
@@ -137,9 +141,9 @@ class AdministrationController extends SugarController
         if(isset($_REQUEST['disabled_modules']))
         {
             $disabledModules = explode(",", $_REQUEST['disabled_modules']);
-            //TODO:Change out keys
-            write_array_to_file('ftsDisabledModules', $disabledModules, sugar_cached('modules/ftsModulesCache.php'));
-            sugar_cache_put('ftsDisabledModules', $disabledModules);
+            require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+            write_array_to_file(SugarSearchEngineMetadataHelper::DISABLED_MODULE_CACHE_KEY, $disabledModules, sugar_cached('modules/ftsModulesCache.php'));
+            sugar_cache_put(SugarSearchEngineMetadataHelper::DISABLED_MODULE_CACHE_KEY, $disabledModules);
         }
 
         $this->view = "configurefts";
