@@ -5,13 +5,13 @@
    * - The default Backbone's sync behavior is overridden by dataManager.sync method.
    * - Bean's metadata is accessible via "module" property.
    */
-  app.Bean = Backbone.Model.extend({
+  app.augment("Bean", Backbone.Model.extend({
     sync: app.dataManager.sync,
 
     validate: function(attrs) {
       // TODO: Implement validation (the metadata is accessible via this.module property)
     }
 
-  });
+  }), false);
 
 })(SUGAR.App);
