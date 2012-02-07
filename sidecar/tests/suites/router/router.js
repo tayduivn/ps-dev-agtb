@@ -5,7 +5,7 @@ describe("Router", function() {
         };
 
     beforeEach(function() {
-        app = SUGAR.App.getInstance({el: "body"});
+        app = SUGAR.App.init({el: "body"});
     });
 
     afterEach(function() {
