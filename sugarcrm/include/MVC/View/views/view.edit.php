@@ -27,27 +27,6 @@ require_once('include/EditView/EditView2.php');
  		$this->ev->ss =& $this->ss;
  		$this->ev->setup($this->module, $this->bean, $metadataFile, 'include/EditView/EditView.tpl');
 
-        //fixing bug #46079: Calculated field has no value if a field in formula is not shown on view
-        $fieldDefs = $this->bean->field_defs;
-        foreach ($fieldDefs as $field => $def)
-        {
-            if (isset($def['calculated']) && $def['calculated'] && !empty($def['formula']))
-            {
-                if ($this->ev->isFieldOnLayout($field))
-                {
-                    require_once("include/Expressions/Expression/Parser/Parser.php");
-                    $triggerFields = Parser::getFieldsFromExpression($def['formula']);
-                    foreach($triggerFields as $fieldName)
-                    {
-                        if (!$this->ev->isFieldOnLayout($fieldName))
-                        {
-                            $this->ev->defs['templateMeta']['form']['hidden'] .= 
-                                '<input type="hidden" name="' . $fieldName . '" value="' . htmlspecialchars($this->bean->$fieldName) . '" />';
-                        }
-                    }
-                }
-            }
-        }
  	}
 
  	function display(){
