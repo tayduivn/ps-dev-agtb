@@ -1,6 +1,5 @@
 (function(app) {
     //var privateVars;
-
     app.sugarAuth = (function() {
         var instance;
 
