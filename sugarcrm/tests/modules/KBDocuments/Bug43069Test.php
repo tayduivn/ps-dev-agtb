@@ -43,19 +43,8 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
 
     public function setUp()
     {
-        if(isset($GLOBALS['current_user']))
-        {
-            $this->_current_user = $GLOBALS['current_user'];
-        }
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        if(isset($_SESSION['ACL']))
-        {
-            $this->_current_acl = $_SESSION['ACL'];
-        }
-        else
-        {
-            $_SESSION['ACL'] = array();
-        }
+        $_SESSION['ACL'] = array();
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['KBDocuments'] =
         array(
             'module' => array(
@@ -103,10 +92,7 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
             ),
             'fields' => array(),
         );
-        if(!isset($GLOBALS['mod_strings']) || !$GLOBALS['mod_strings'] || !isset($GLOBALS['mod_strings']['LBL_NO_ACCESS']))
-        {
-            $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ACL');
-        }
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ACL');
     }
 
     /**
@@ -130,22 +116,8 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        if($this->_current_user !== null)
-        {
-             $GLOBALS['current_user'] = $this->_current_user;
-        }
-        else
-        {
-            unset($GLOBALS['current_user']);
-        }
-        if($this->_current_acl)
-        {
-            $_SESSION['ACL'] = $this->_current_acl;
-        }
-        else
-        {
-            unset($_SESSION['ACL']);
-        }
+        unset($GLOBALS['current_user']);
+        unset($_SESSION['ACL']);
         unset($GLOBALS['mod_strings']);
     }
 }
