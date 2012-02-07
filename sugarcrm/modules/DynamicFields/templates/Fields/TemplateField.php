@@ -441,7 +441,14 @@ class TemplateField{
 				if (!empty($this->$vardef) && in_array($vardef, array('formula', 'dependency'))){
 				    $this->$vardef = to_html(strip_tags(from_html($this->$vardef)));
 				}
-								
+
+                //Remove potential xss code from help field
+                if($field == 'help' && !empty($this->$vardef))
+                {
+                    $help = htmlspecialchars_decode($this->$vardef, ENT_QUOTES);
+                    $this->$vardef = htmlentities(remove_xss($help));
+                }
+
 				if($vardef != $field){
 					$this->$field = $this->$vardef;
 				}
