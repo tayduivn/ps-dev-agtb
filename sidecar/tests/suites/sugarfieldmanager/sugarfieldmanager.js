@@ -5,7 +5,7 @@
  * Time: 5:15 PM
  * To change this template use File | Settings | File Templates.
  */
-describe("sugar field manager", function () {
+describe("SugarFieldManager", function () {
 
         // setup to be run before every test
         beforeEach(function () {
@@ -13,7 +13,7 @@ describe("sugar field manager", function () {
         });
 
         afterEach(function () {
-           //this.sugarFieldManager.reset();
+           this.sugarFieldManager.reset();
         });
 
         it("should sync all sugar fields from server", function () {
@@ -54,7 +54,6 @@ describe("sugar field manager", function () {
                 });
                 var syncResult=this.sugarFieldManager.syncFields();
                 expect(syncResult).toBeTruthy();
-
                 var stubbedFieldList = [
                     {name:"text",view:"editView"},
                     {name:"text", view:"detailView"},

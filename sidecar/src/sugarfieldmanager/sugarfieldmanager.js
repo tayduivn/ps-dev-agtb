@@ -7,17 +7,15 @@
  */
 (function (app) {
     //var privateVars;
-
-    app.sugarFieldManager = (function () {
+    app.augment('sugarFieldManager',
+        (function () {
         var instance;
 
         function init(args) {
             instance = new SugarFieldManager();
             _.bind(instance.handleResponse, instance);
             return instance
-        }
-
-        ;
+        };
 
         function SugarFieldManager() {
             return {
@@ -66,11 +64,12 @@
                 getFields:function (fields) {
                     // init results
                     var result = {};
+                    var fname = "";
+                    var hasView = false;
 
                     // loop over fields and set them in the result
                     for (field in fields) {
-                        var fname = fields[field].name;
-                        var hasView = false;
+                        fname = fields[field].name;
 
                         if (fields[field].view) {
                             hasView = true;
@@ -84,7 +83,7 @@
                         if (hasView && this.fieldsObj[fname] && this.fieldsObj[fname][fields[field].view]) {
                             result[fname][fields[field].view] = this.fieldsObj[fname][fields[field].view];
 
-                            // fall back to default if field for this view doesnt exist
+                        // fall back to default if field for this view doesnt exist
                         } else if (this.fieldsObj[fname] && this.fieldsObj[fname]['default']) {
                             result[fname]['default'] = this.fieldsObj[fname]['default'];
                         } else {
@@ -92,7 +91,6 @@
                         }
 
                     }
-console.log(result)
                     //return results
                     return result;
                 },
@@ -110,16 +108,12 @@ console.log(result)
                     return true;
                 }
             };
-        }
-
-        ;
+        };
 
         return {
             getInstance:function (args) {
                 return instance || init(args);
             }
         };
-    }())
-
-    return app;
+    }()))
 }(SUGAR.App));
