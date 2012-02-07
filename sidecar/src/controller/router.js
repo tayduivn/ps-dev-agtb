@@ -24,7 +24,6 @@
 
         // Route functions
         index: function() {
-            console.log(this.controller);
             this.controller.loadView();
         },
 
