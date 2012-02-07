@@ -27,7 +27,7 @@ require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidget
 require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldvarchar.php'));
 require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldint.php'));
 require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFielddatetime.php'));
-require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFielddatetimecomb.php'));
-require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldnamephp'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFielddatetimecombo.php'));
+require_once(get_custom_file_if_exists('include/generic/SugarWidgets/SugarWidgetFieldname.php'));
 
 ?>
