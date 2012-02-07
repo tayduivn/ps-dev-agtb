@@ -24,9 +24,7 @@
 .SpanQuickView {
 visibility:hidden;
 }
-.gs_link {
-padding-left:5px;
-}
+
 
 </style>
 {/literal}
@@ -50,11 +48,18 @@ padding-left:5px;
         </div>
             <ul>
                 {foreach from=$data key=id item=name}
-                    <li><div onmouseover="DCMenu.showQuickViewIcon('{$id}')" onmouseout="DCMenu.hideQuickViewIcon('{$id}')" class="gs_div">
-                        <span id="gs_div_{$id}" class="SpanQuickView">
-                            <img id="gs_img_{$id}" class="QuickView" src="themes/default/images/Search.gif" alt="quick_view_{$id}" onclick="DCMenu.showQuickView('{$module}', '{$id}');return false;">
-                        </span>
-                        <a href="index.php?module={$module}&action=DetailView&record={$id}" class="gs_link">{$name}</a></div></li>
+                    <li>
+                        <div onmouseover="DCMenu.showQuickViewIcon('{$id}')" onmouseout="DCMenu.hideQuickViewIcon('{$id}')" class="gs_div" style="position: relative" >
+                            <div id="gs_div_{$id}" style="position: absolute;left: 0" class="SpanQuickView">
+                                    <img id="gs_img_{$id}" class="QuickView" src="themes/default/images/Search.gif" alt="quick_view_{$id}" onclick="DCMenu.showQuickView('{$module}', '{$id}');return false;">
+
+                            </div>
+
+                        <div style="padding-left: 20px;">
+                            <a href="index.php?module={$module}&action=DetailView&record={$id}" class="gs_link">{$name}</a>
+                        </div>
+                        </div>
+                    </li>
                 {/foreach}
             </ul>
         <div class="clear"></div>
