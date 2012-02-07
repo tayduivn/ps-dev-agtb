@@ -3775,6 +3775,31 @@ function save_relationship_changes($is_update, $exclude=array())
                 if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
                 $temp->call_custom_logic("process_record");
 
+                // fix defect #44206. implement the same logic as sugar_currency_format
+                // Smarty modifier does.
+                if (property_exists($temp, 'currency_id') && -99 == $temp->currency_id)
+                {
+                    // manually retrieve default currency object as long as it's
+                    // not stored in database and thus cannot be joined in query
+                    require_once 'modules/Currencies/Currency.php';
+                    $currency = new Currency();
+                    $currency->retrieve($temp->currency_id);
+
+                    // walk through all currency-related fields
+                    foreach ($temp->field_defs as $temp_field)
+                    {
+                        if (isset($temp_field['type']) && 'relate' == $temp_field['type']
+                            && isset($temp_field['module'])  && 'Currencies' == $temp_field['module']
+                            && isset($temp_field['id_name']) && 'currency_id' == $temp_field['id_name'])
+                        {
+                            // populate related properties manually
+                            $temp_property     = $temp_field['name'];
+                            $currency_property = $temp_field['rname'];
+                            $temp->$temp_property = $currency->$currency_property;
+                        }
+                    }
+                }
+
                 $list[] = $temp;
 
                 $index++;
