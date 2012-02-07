@@ -257,9 +257,13 @@ class SugarSpot
      * @param $offset int search result offset
      * @return array
      */
-    public function search($query, $offset = -1, $limit = 20)
+    public function search($query, $offset = -1, $limit = 20, $options = array())
     {
-        $modules = $this->getSearchModules();
+        if( isset($options['modules']) && !empty($options['modules']) )
+            $modules = $options['modules'];
+        else
+            $modules = $this->getSearchModules();
+
         return $this->_performSearch($query, $modules, $offset, $limit);
 
     }

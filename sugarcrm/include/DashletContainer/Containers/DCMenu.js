@@ -628,15 +628,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     }
     DCMenu.closeQView = function()
     {
-        if(!overlays['sqv'] || !Y.one('#dcboxbody'))
+        if(!overlays['sqv'] || !Y.one('#SpotResults'))
         {
             return;
         }
 
         var o = overlays['sqv'];
-        var animX = Y.one('#dcboxbody').getX();
-        var animY = o.get("y");
-        var animDCcont = new Y.Anim({ node: o.get("boundingBox"), to: { xy:[animX,animY] } });
+        var animDCcont = new Y.Anim({ node: o.get("boundingBox"), to: { opacity:0 } });
         animDCcont.on('end', function() {
             o.visible = false;
             o.get('boundingBox').setStyle('visibility','hidden');
@@ -719,7 +717,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     DCMenu.showQuickView = function(module, recordID)
     {
         var qvDepth = 'sqv';
-        var boxBody = Y.one('#dcboxbody');
+        var boxBody = Y.one('#SpotResults');
         if(typeof(overlays[qvDepth]) == 'undefined')
         {
             overlays[qvDepth] = new Y.Overlay({
@@ -754,7 +752,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             content += '</div></div></div></div></div></div></div></div>';
       
             overlays[qvDepth].set("bodyContent", content);
-            overlays[qvDepth].set("align", {node:"#dcboxbody", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
+            overlays[qvDepth].set("align", {node:"#SpotResults", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
             overlays[qvDepth].visible = true;
             overlays[qvDepth].show = function()
             {

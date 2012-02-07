@@ -50,6 +50,12 @@ $(document).ready(function(){
     //initialize global tooltips
 	SUGAR.themes.globalToolTips();
 
+    $('body').click(function(e) {
+        if($(e.target).closest('#SpotResults').length == 0)
+        {
+            SUGAR.themes.clearSearch();
+        }
+    });
 });
 
 SUGAR.themes = SUGAR.namespace("themes");
@@ -238,9 +244,7 @@ SUGAR.append(SUGAR.themes, {
 			$('#close_spot_search').click(function() {
 				SUGAR.themes.clearSearch();
 			});
-			$('body').click(function() {
-				SUGAR.themes.clearSearch();
-			});
+
 		});	
     },
     clearSearch: function() {
@@ -358,4 +362,8 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
     
         Y.all('#tabListContainer .yui-hd a').on('click', onClick);
     });
+
+
 });
+
+

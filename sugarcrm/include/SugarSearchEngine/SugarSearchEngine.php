@@ -34,7 +34,7 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
     public function search($query, $offset = 0, $limit = 20, $options = array() )
     {
         $sugarSpot = new SugarSpot();
-        return $sugarSpot->search($query, $offset);
+        return $sugarSpot->search($query, $offset, $limit, $options);
 
     }
 

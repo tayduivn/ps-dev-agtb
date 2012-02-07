@@ -35,9 +35,9 @@ class ViewSpot extends ViewAjax
     {
 
 		$offset = -1;
+        $modules = array();
 
-        //TODO: Pull this out
-		if(!empty($_REQUEST['zoom']) && isset($modules[$_REQUEST['zoom']]))
+		if(!empty($_REQUEST['zoom']) )
         {
 			$modules = array($_REQUEST['zoom']);
 			if(isset($_REQUEST['offset'])){
@@ -51,12 +51,12 @@ class ViewSpot extends ViewAjax
             $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20 );
         }
 
-        $options = array('current_module' => $this->module);
+        $options = array('current_module' => $this->module, 'modules' => $modules);
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $trimmed_query = trim($_REQUEST['q']);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
-        $formattedResults = $this->formatSearchResultsToDisplay($rs, $offset);
+        $formattedResults = $this->formatSearchResultsToDisplay($rs, $offset,$trimmed_query);
 
         $query_encoded = urlencode($trimmed_query);
         $displayMoreForModule = $formattedResults['displayMoreForModule'];
@@ -77,7 +77,7 @@ class ViewSpot extends ViewAjax
     }
 
 
-    protected function formatSearchResultsToDisplay($results, $offset)
+    protected function formatSearchResultsToDisplay($results, $offset, $trimmedQuery)
     {
         $displayResults = array();
         $displayMoreForModule = array();
@@ -97,7 +97,7 @@ class ViewSpot extends ViewAjax
 
             if($countRemaining > 0)
             {
-                $displayMoreForModule[$m] = array('query'=>$query,
+                $displayMoreForModule[$m] = array('query'=>$trimmedQuery,
                     'offset'=>$data['pageData']['offsets']['next']++,
                     'countRemaining'=>$countRemaining);
             }

@@ -19,6 +19,20 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{literal}
+<style type="text/css">
+.SpanQuickView {
+visibility:hidden;
+}
+.gs_link {
+padding-left:5px;
+}
+
+</style>
+{/literal}
+
+
+<div id='SpotResults'>
 {if !empty($displayResults)}
     {foreach from=$displayResults key=module item=data}
     <section>
@@ -28,10 +42,19 @@
             {else}
                 {$module}
             {/if}
+            {if !empty($displayMoreForModule[$module])}
+                {assign var="more" value=$displayMoreForModule[$module]}
+                <br>
+                <small class='more' onclick="DCMenu.spotZoom('{$more.query}', '{$module}', '{$more.offset}');">({$more.countRemaining} {$appStrings.LBL_SEARCH_MORE})</small>
+            {/if}
         </div>
             <ul>
                 {foreach from=$data key=id item=name}
-                    <li><a href='index.php?module={$module}&action=DetailView&record={$id}'>{$name}</a></li>
+                    <li><div onmouseover="DCMenu.showQuickViewIcon('{$id}')" onmouseout="DCMenu.hideQuickViewIcon('{$id}')" class="gs_div">
+                        <span id="gs_div_{$id}" class="SpanQuickView">
+                            <img id="gs_img_{$id}" class="QuickView" src="themes/default/images/Search.gif" alt="quick_view_{$id}" onclick="DCMenu.showQuickView('{$module}', '{$id}');return false;">
+                        </span>
+                        <a href="index.php?module={$module}&action=DetailView&record={$id}" class="gs_link">{$name}</a></div></li>
                 {/foreach}
             </ul>
         <div class="clear"></div>
@@ -44,3 +67,4 @@
         <a href="">Search again</a>
     </section>
 {/if}
+</div>
