@@ -2768,10 +2768,8 @@ class InboundEmail extends SugarBean {
 			_pp('found Case with id ('.$caseId.') using Subject: '.$email->name.' -- Linking items.');
 			//END SUGARCRM flav=int ONLY
 			$c->retrieve($caseId);
-			$c->load_relationship('emails');
-			$c->emails->add($email->id);
-
 			$email->retrieve($email->id);
+            //assign the case info to parent id and parent type so that the case can be linked to the email on Email Save
 			$email->parent_type = "Cases";
 			$email->parent_id = $caseId;
 			// assign the email to the case owner
