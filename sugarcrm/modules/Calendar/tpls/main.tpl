@@ -177,6 +177,10 @@
 		YAHOO.util.Event.on("btn-cancel","click",function(){			
 			CAL.editDialog.cancel();						
 		}); 
+		
+		YAHOO.util.Event.on("btn-full-form","click",function(){			
+			CAL.full_form();						
+		}); 
 
 		CAL.select_tab("cal-tab-1");
 
@@ -239,6 +243,7 @@
 		<button id="btn-cancel" class="button" type="button">{$MOD.LBL_CANCEL_BUTTON}</button>
 		<button id="btn-delete" class="button" type="button">{$MOD.LBL_DELETE_BUTTON}</button>		
 		<button id="btn-send-invites" class="button" type="button">{$MOD.LBL_SEND_INVITES}</button>
+		<button id="btn-full-form" class="button" type="button">{$APP.LBL_FULL_FORM_BUTTON_LABEL}</button>
 	</div>
 </div>
 

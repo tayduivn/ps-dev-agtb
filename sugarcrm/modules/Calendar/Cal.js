@@ -1486,12 +1486,32 @@
 				"date_start" : params.date_start
 			};
 			YAHOO.util.Connect.asyncRequest('POST',url,callback,CAL.toURI(data));	
+	}
+	
+	CAL.full_form = function() {
+		var e = document.createElement('input');
+		e.setAttribute('type', 'hidden');
+		e.setAttribute('name', 'module');
+		e.value = CAL.get('current_module').value;		
+		CAL.get('form_content').parentNode.appendChild(e);
+		
+		var e = document.createElement('input');
+		e.setAttribute('type', 'hidden');
+		e.setAttribute('name', 'action');
+		e.value = 'EditView';
+		CAL.get('form_content').parentNode.appendChild(e);
+		
+		document.forms['CalendarEditView'].action = "index.php";
+		document.forms['CalendarEditView'].full_form = "true";		
+		document.forms['CalendarEditView'].submit();
+		
 	}	
 	
 	CAL.disable_buttons = function() {
 		CAL.get("btn-save").setAttribute("disabled","disabled");
 		CAL.get("btn-send-invites").setAttribute("disabled","disabled");
-		CAL.get("btn-delete").setAttribute("disabled","disabled");		
+		CAL.get("btn-delete").setAttribute("disabled","disabled");
+		CAL.get("btn-full-form").setAttribute("disabled","disabled");		
 		
 	}
 	
@@ -1499,7 +1519,8 @@
 		CAL.get("btn-save").removeAttribute("disabled");
 		CAL.get("btn-send-invites").removeAttribute("disabled");		
 		if (CAL.get("record").value != "")
-			CAL.get("btn-delete").removeAttribute("disabled");			
+			CAL.get("btn-delete").removeAttribute("disabled");	
+		CAL.get("btn-full-form").removeAttribute("disabled");		
 	}
 		
 	
