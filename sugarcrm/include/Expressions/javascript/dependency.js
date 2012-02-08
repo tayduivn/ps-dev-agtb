@@ -146,10 +146,11 @@ AH.registerForm = function(f, formEl) {
             //Check for collections
             if (el.type && el.type == "text" && Dom.getAncestorByClassName(el, "emailaddresses"))
             {
-                //Find the parent spant to get the field name
-                var span = Dom.getAncestorByTagName(el, "span"),
-                    sId = span.id, //Will be in the format fieldName_span
-                    fieldName = sId.substring(0, sId.length - 5);
+                //Find the parent span to get the field name
+                var span = Dom.getAncestorByTagName(el, "span");
+                sId = span.id; //Will be in the format fieldName_span
+                fieldName = sId.substring(0, sId.length - 5);
+
                 if (!AH.VARIABLE_MAP[f][fieldName] || !Dom.isAncestor(span, AH.VARIABLE_MAP[f][fieldName])) {
                     AH.VARIABLE_MAP[f][fieldName] = el;
                     AH.updateListeners(fieldName, f, el);
