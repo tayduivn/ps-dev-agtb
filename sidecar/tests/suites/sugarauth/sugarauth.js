@@ -22,6 +22,17 @@ describe("sugarAuth", function () {
     it("should login successfully with correct passwords", function () {
         //TODO add spy to check api call
 
+        SUGAR.App.login = function () {
+        };
+        var stub = sinon.stub(SUGAR.App, "login", function (args, scallback, fcallback){
+            if (args.user_name == 'admin' && args.password == 'asdf'){
+                scallback();
+            } else {
+                fcallback();
+            }
+            return result;
+        });
+
         //make expectations (then)
         var result = this.auth.login({
             user_name: this.user_name,
