@@ -62,7 +62,7 @@ class SugarTab
         }
 
         $subpanelTitles = array();
-        if(isset($otherTabs[$key_all]['tabs'])) {}
+        if(isset($otherTabs[$key_all]['tabs'])) {
 	        foreach($otherTabs[$key_all]['tabs'] as $subtab)
 	        {
 	            $subpanelTitles[$subtab['key']] = $subtab['label'];
