@@ -68,15 +68,16 @@
             </span>
         </td>
 <!-- BEGIN Remove and Radio -->
-        <td valign='top'>
+        <td valign='top' class="teamset-row">
             &nbsp;
             {capture assign="otherAttributes"}class="id-ff-remove" id="remove_{$vardef.name}_collection_0" name="remove_{$vardef.name}_collection_0" onclick='collection["{$displayParams.formName}_{$vardef.name}"].remove(0);'{/capture}
-            {sugar_getimage alt=$app_strings.LBL_ID_FF_REMOVE name="id-ff-remove" ext=".png" other_attributes="$otherAttributes" alt="$alt_removeButton"}
-            {if !empty($displayParams.allowNewValue) }
-            <input type="hidden" name="allow_new_value_{$vardef.name}_collection_0" id="allow_new_value_{$vardef.name}_collection_0" value="true">
-            {/if}
+
+            <button type="button" class="id-ff-remove" {$attr}>
+                {sugar_getimage name="id-ff-remove-nobg" ext=".png" attr="" alt=$alt_removeButton}
+                {if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
+            </button>
         </td>
-        <td valign='top' align="center">
+        <td valign='top' align="center" class="teamset-row">
             <span id='{$displayParams.formName}_{$vardef.name}_radio_div_0'>
             <input id="primary_{$vardef.name}_collection_0" name="primary_{$vardef.name}_collection" type="radio" class="radio" value="0" title="{sugar_translate label='LBL_TEAM_SELECT_AS_PRIM_TITLE'}" onclick="collection['{$displayParams.formName}_{$vardef.name}'].changePrimary(true);" />
             </span>

@@ -132,7 +132,23 @@ SUGAR.forms.AssignmentHandler.registerForm = function(f, formEl) {
 	for ( var i = 0; i < form.length; i++ ) {
 		var el = form[i];
 		if ( el != null && el.value != null && el.id != null && el.id != "")
+        {
+            //Check for collections
+            if (el.type && el.type == "text" && Dom.getAncestorByClassName(el, "emailaddresses"))
+            {
+                //Find the parent span to get the field name
+                var span = Dom.getAncestorByTagName(el, "span");
+                sId = span.id; //Will be in the format fieldName_span
+                fieldName = sId.substring(0, sId.length - 5);
+
+                if (!AH.VARIABLE_MAP[f][fieldName] || !Dom.isAncestor(span, AH.VARIABLE_MAP[f][fieldName])) {
+                    AH.VARIABLE_MAP[f][fieldName] = el;
+                    AH.updateListeners(fieldName, f, el);
+                }
+            }
 			AH.VARIABLE_MAP[f][el.id] = el;
+            AH.updateListeners(el.id, f, el);
+        }
 		else if ( el != null && el.value && el.type=="hidden")
 			AH.VARIABLE_MAP[f][el.name] = el;
 	}

@@ -32,7 +32,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class QuickSearchDefaults {
 
 	var $form_name = 'EditView';
-	
+
+    /**
+     * getQuickSearchDefaults
+     *
+     * This is a static function to get an instance of QuickSearchDefaults object
+     *
+     * @param array $lookup Array with custom files and class names for custom QuickSearchDefaults classes, optional
+     * @return QuickSearchDefaults
+     */
+    static public function getQuickSearchDefaults(array $lookup = array())
+    {
+       $lookup['custom/include/QuickSearchDefaults.php'] = 'QuickSearchDefaultsCustom';
+       foreach ($lookup as $file => $class)
+       {
+           if (file_exists($file))
+           {
+               require_once($file);
+               return new $class();
+           }
+       }
+       return new QuickSearchDefaults();
+    }
+
 	function setFormName($name = 'EditView') {
 		$this->form_name = $name;
 	}

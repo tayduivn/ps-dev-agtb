@@ -2792,20 +2792,13 @@ SUGAR.util = function () {
 
 			return el;
 		},
-        paramsToUrl : function (params) {
-            var parts = [], part;
-            for (var i in params)
-            {
-                if (params.hasOwnProperty(i))
-                {
-                    part = encodeURIComponent(i)
-                        + "="
-                        + encodeURIComponent(params[i]);
-                    parts.push(part);
-                }
-            }
-            return parts.join("&");
-        },
+		paramsToUrl : function (params) {
+			url = "";
+			for (i in params) {
+				url += i + "=" + params[i] + "&";
+			}
+			return url;
+		},
 	    evalScript:function(text){
 			if (isSafari) {
 				var waitUntilLoaded = function(){

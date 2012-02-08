@@ -177,4 +177,11 @@
             ),
         );
 
+
+    /**
+     * Check for custom additions to this code
+     */
+    if(file_exists("custom/jssource/JSGroupings.php")) {
+        require("custom/jssource/JSGroupings.php");
+    }
 ?>
