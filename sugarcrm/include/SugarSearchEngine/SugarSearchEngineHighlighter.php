@@ -167,7 +167,7 @@ class SugarSearchEngineHighlighter
         $ret = array();
 
         // it may contain multiple words
-        $searches = preg_split("/[\s,-:]+/", $searchString);
+        $searches = preg_split("/[\s,-]+/", $searchString);
 
         foreach ($resultArray as $field=>$value)
         {
