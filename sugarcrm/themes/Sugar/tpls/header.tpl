@@ -28,6 +28,7 @@
 *}
 {include file="_head.tpl" theme_template=true}
 <body class="yui-skin-sam">
+    <a name="top"></a>
 	{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
 	{$SUGAR_DCMENU}
 	{* //END SUGARCRM flav=pro || flav=sales ONLY *}
