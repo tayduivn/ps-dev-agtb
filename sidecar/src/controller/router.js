@@ -32,13 +32,15 @@
         }
     });
 
-    app.augment("router", {
+    var module = {
         init: function(instance) {
             if (!instance.router && instance.controller) {
-                instance.router = new Router({controller: instance.controller});
+                _.extend(module, new Router({controller: instance.controller}));
             } else {
                 throw "app.controller does not exist yet. Cannot create router instance";
             }
         }
-    });
+    }
+
+    app.augment("router", module);
 })(SUGAR.App);
