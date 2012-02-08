@@ -132,10 +132,6 @@ $searchForm->tabs = array(array('title'  => $app_strings['LNK_BASIC_SEARCH'],
                     //END SUGARCRM flav!=sales ONLY
                     );
 
-// Bug #49815 Set basic search by default
-if (!isset($_REQUEST['searchFormTab'])) {
-    $_REQUEST['searchFormTab'] = 'basic_search';
-}
 $searchForm->populateFromRequest();
 $searchForm->searchFields['module'] = $searchForm->searchFields['report_module'];
 unset($searchForm->searchFields['report_module']);
