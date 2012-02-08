@@ -1,11 +1,15 @@
 describe("DataManager", function() {
 
     var metadata,
+        app = SUGAR.App,
         dm = SUGAR.App.dataManager;
 
     beforeEach(function() {
         dm.reset();
         metadata = SugarTest.loadJson("metadata");
+    });
+
+    afterEach(function() {
     });
 
     it("should be able to create an instance of primary bean and collection", function() {
@@ -54,6 +58,29 @@ describe("DataManager", function() {
         expect(collection.beanType).toEqual(beanType);
         expect(collection.model).toBeDefined();
 
+    });
+
+    it("should be able to fetch a bean by ID", function() {
+        var moduleName = "Teams",
+            beanType = "TeamSet";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var bean = dm.fetchBean(moduleName, "xyz", null, beanType);
+        expect(bean.module).toEqual(moduleName);
+        expect(bean.beanType).toEqual(beanType);
+
+        // TODO: To implement this test, mock REST API
+    });
+
+    it("should be able to fetch beans", function() {
+        var moduleName = "Teams",
+            beanType = "TeamSet";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var collection = dm.fetchBeans(moduleName, null, beanType);
+        expect(collection.module).toEqual(moduleName);
+        expect(collection.beanType).toEqual(beanType);
+        expect(collection.model).toBeDefined();
+
+        // TODO: To implement this test, mock REST API
     });
 
 

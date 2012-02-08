@@ -101,9 +101,28 @@
             return new _models[module].collections[beanType](models, options);
         },
 
+        fetchBean: function(module, id, options, beanType) {
+            var bean = this.createBean(module, null, beanType);
+            bean.fetch(options);
+            return bean;
+        },
+
+        fetchBeans: function(module, options, beanType) {
+            var collection = this.createBeanCollection(module, null, options, beanType);
+            collection.fetch(options);
+            return collection;
+        },
+
+        /**
+         * Custom implementation of Backbone.sync pattern.
+         * @param method
+         * @param model
+         * @param options
+         */
         sync: function(method, model, options) {
             // TODO: Implement
             // This method should sync beans with local storage (if it's enabled) and fall back to the REST API.
+            app.logger.trace('sync called:' + method);
         }
 
     }, false);
