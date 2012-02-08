@@ -22,6 +22,11 @@
         return _metadata[module][type];
     }
 
+    /**
+     *
+     * @param string module name of module to retrieve from
+     * @param string view optional name of view to get
+     */
     var _getView = function(module, view) {
         var views = _get(module, "views");
         if (views != null) {
