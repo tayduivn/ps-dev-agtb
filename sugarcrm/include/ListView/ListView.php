@@ -442,8 +442,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $this->xTemplate->parse($xtemplateSection.".row.cell");
                 } else {
                     // This handles the edit and remove buttons and icon widget
-
-                	if($list_field['widget_class'] == "SubPanelIcon") {
+                	if( isset($list_field['widget_class']) && $list_field['widget_class'] == "SubPanelIcon") {
 		                $count++;
 		                $widget_contents = $layout_manager->widgetDisplay($list_field);
 		                $this->xTemplate->assign('CELL_COUNT', $count);
