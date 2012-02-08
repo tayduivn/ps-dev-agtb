@@ -198,9 +198,7 @@
 									{counter name="oCount"}
 									{sugar_translate label=$params.options select=$item}{if $oCount !=  count($vals)},{/if} 
 								{/foreach}
-						{elseif isset($params.typeOverride)}
-                            {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
-                        {else}
+						{else}	
 							{$rowData.$col}
 						{/if}
 					</td>
