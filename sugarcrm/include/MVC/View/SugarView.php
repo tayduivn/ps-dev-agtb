@@ -1111,8 +1111,61 @@ EOHTML;
             $return .= " misses ({$cacheStats['misses']}/{$cacheStats['requests']}=" . round($cacheStats['misses']*100/$cacheStats['requests'], 0) . "%)<br />";
         }
 
+        $return .= $this->logMemoryStatistics();
+
         return $return;
     }
+
+    /**
+     * logMemoryStatistics
+     *
+     * This function returns a string message containing the memory statistics as well as writes to the memory_usage.log
+     * file the memory statistics for the SugarView invocation.
+     *
+     * @param $newline String of newline character to use (defaults to </ br>)
+     * @return $message String formatted message about memory statistics
+     */
+    protected function logMemoryStatistics($newline='<br>')
+    {
+        $log_message = '';
+
+        if(!empty($GLOBALS['sugar_config']['log_memory_usage']))
+        {
+            if(function_exists('memory_get_usage'))
+            {
+                $memory_usage = memory_get_usage();
+                $bytes = $GLOBALS['app_strings']['LBL_SERVER_MEMORY_BYTES'];
+                $data = array($memory_usage, $bytes);
+                $log_message = string_format($GLOBALS['app_strings']['LBL_SERVER_MEMORY_USAGE'], $data) . $newline;
+            }
+
+            if(function_exists('memory_get_peak_usage'))
+            {
+                $memory_peak_usage = memory_get_peak_usage();
+                $bytes = $GLOBALS['app_strings']['LBL_SERVER_MEMORY_BYTES'];
+                $data = array($memory_peak_usage, $bytes);
+                $log_message .= string_format($GLOBALS['app_strings']['LBL_SERVER_PEAK_MEMORY_USAGE'], $data) . $newline;
+            }
+
+            if(!empty($log_message))
+            {
+                $data = array
+                (
+                   !empty($this->module) ? $this->module : $GLOBALS['app_strings']['LBL_LINK_NONE'],
+                   !empty($this->action) ? $this->action : $GLOBALS['app_strings']['LBL_LINK_NONE'],
+                );
+
+                $output = string_format($GLOBALS['app_strings']['LBL_SERVER_MEMORY_LOG_MESSAGE'], $data) . $newline;
+                $output .= $log_message;
+                $fp = fopen("memory_usage.log", "ab");
+                fwrite($fp, $output);
+                fclose($fp);
+            }
+        }
+
+        return $log_message;
+    }
+
 
     /**
      * Loads the module shortcuts menu
