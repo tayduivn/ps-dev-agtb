@@ -55,7 +55,10 @@ SUGAR.App = (function() {
          * Destroys the instance of the current app
          */
         destroy: function() {
-            Backbone.history.stop();
+            if (Backbone.history) {
+                Backbone.history.stop();
+            }
+
             app = null;
         },
 
