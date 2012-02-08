@@ -1,6 +1,6 @@
 (function(app) {
     //var privateVars;
-    app.sugarAuth = (function() {
+    app.augment('sugarAuth', (function() {
         var instance;
 
         function init(args) {
@@ -17,17 +17,17 @@
 
             function handleLoginFailure(){
                 isAuth = false;
-                console.log("login fail")
+                console.log("login fail");
             }
 
             function handleLogoutSuccess() {
-                isAuth = true;
+                isAuth = false;
                 console.log("loggin success");
             }
 
             function handleLogoutFailure(){
-                isAuth = false;
-                console.log("login fail")
+                isAuth = true;
+                console.log("login fail");
             }
 
 
@@ -36,11 +36,16 @@
                     //TODO add call to API to check
                     return isAuth;
                 },
-                login: function(username, password){
+                login: function(args){
                     //TODO add call to API for login
-                    var result = false;
-                    //result = SUGAR.App.login(username, password, handleSuccess, handleFailure);
-                    return result;
+                    //SUGAR.App.login(username, password, handleSuccess, handleFailure);
+                    if (args.user_name == 'admin' && args.password == 'asdf'){
+                        isAuth = true;
+                    } else {
+                        isAuth = false;
+                    }
+
+                    return isAuth;
                 },
                 logout: function(){
                     //TODO add call to API for logout
@@ -55,7 +60,5 @@
                 return instance || init(args);
             }
         };
-    }())
-
-    return app;
+    }()))
 }(SUGAR.App));
