@@ -32,6 +32,7 @@ class SugarSearchEngineHighlighter
     protected $_preTag;
     protected $_postTag;
     protected $_module;
+    private $_currentCount;
 
     public function __construct($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
@@ -86,8 +87,12 @@ class SugarSearchEngineHighlighter
 
     protected function postProcessHighlights($original) {
 
+        // subtract the tag length when calculating the total length
+        $tagLength = strlen($this->_preTag) + strlen($this->_postTag);
+        $totalTagLen = $this->_currentCount * $tagLength;
+
         // length is ok, no further process needed
-        if (strlen($original) <= $this->_maxLen) {
+        if (strlen($original) - $totalTagLen <= $this->_maxLen) {
             return $original;
         }
 
@@ -107,7 +112,7 @@ class SugarSearchEngineHighlighter
             // the total length of highlighted words
             $len = 0;
             for ($i=1; $i<=count($a)-1; $i=$i+2) {
-                $len += strlen($a[$i][0]);
+                $len += strlen($a[$i][0]) - $tagLength;
             }
 
             // available length for the non-highlighted strings
@@ -162,10 +167,12 @@ class SugarSearchEngineHighlighter
         $ret = array();
 
         // it may contain multiple words
-        $searches = explode(' ', $searchString);
+        $searches = preg_split("/[\s,-]+/", $searchString);
 
         foreach ($resultArray as $field=>$value)
         {
+            $this->_currentCount = 0;
+
             foreach ($searches as $search)
             {
                 if (empty($search))
@@ -177,6 +184,7 @@ class SugarSearchEngineHighlighter
                 $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
                 if ($count > 0)
                 {
+                    $this->_currentCount += $count;
                     $field = $this->translateFieldName($field);
                     $ret[$field] = $this->postProcessHighlights($value);
                 }

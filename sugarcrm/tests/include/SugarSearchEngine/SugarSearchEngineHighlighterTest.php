@@ -47,18 +47,18 @@ class SugarSearchEngineHighlighterTest extends Sugar_PHPUnit_Framework_TestCase
                 'sugarcrm',
                 80, 1, '<b>', '</b>'),
             // string too long, only one hit is returned
-            array(array(0=>'this is a sugarcrm test for sugarcrm abc defgh xyz sugarcrm and more more'),
+            array(array(0=>'this is a sugarcrm test for sugarcrm abc defgh xyz sugarcrm and more more more more'),
                 array(0=>'this is a <b>sugarcrm</b> test for '),
                 'sugarcrm',
                 80, 1, '<b>', '</b>'),
             // string too long, only two hits are returned
-            array(array(0=>'this is a sugarcrm test for sugarcrm abc defgh xyz sugarcrm and more more'),
+            array(array(0=>'this is a sugarcrm test for sugarcrm abc defgh xyz sugarcrm and more more more more'),
                 array(0=>'this is a <b>sugarcrm</b> test for <b>sugarcrm</b> abc defgh xyz '),
                 'sugarcrm',
                 80, 2, '<b>', '</b>'),
             // string too long, string is modified with ...
             array(array(0=>'this is a sugarcrm test for abc defgh xyz and more more 1234567890 1234567890 1234567890'),
-                array(0=>'this is a <b>sugarcrm</b> test for abc ... 90 1234567890'),
+                array(0=>'this is a <b>sugarcrm</b> test for abc d ... 7890 1234567890'),
                 'sugarcrm',
                 80, 1, '<b>', '</b>'),
         );

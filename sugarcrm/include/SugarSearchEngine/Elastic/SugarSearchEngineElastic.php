@@ -99,7 +99,17 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         {
             //All fields have already been formatted to db values at this point so no further processing necessary
             if( !empty($bean->$fieldName) )
-                $keyValues[$fieldName] = $bean->$fieldName;
+            {
+                if (isset($fieldDef['type']) && ($fieldDef['type']=='datetime' || $fieldDef['type']=='date'))
+                {
+                    $elasticDate = str_replace(' ', 'T', $bean->$fieldName);
+                    $keyValues[$fieldName] = $elasticDate;
+                }
+                else
+                {
+                    $keyValues[$fieldName] = $bean->$fieldName;
+                }
+            }
         }
 
         //Always add our module
