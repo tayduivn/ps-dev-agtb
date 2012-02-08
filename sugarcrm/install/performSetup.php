@@ -424,6 +424,8 @@ enableInsideViewConnector();
 // Install the logic hook for FTS
 installLog("Creating FTS logic hook");
 createFTSLogicHook();
+// also write it to Extension directory so it won't be lost when rebuilding extensions
+createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
