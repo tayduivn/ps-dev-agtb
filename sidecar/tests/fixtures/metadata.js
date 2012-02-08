@@ -5,10 +5,10 @@
  * Time: 12:26 PM
  * To change this template use File | Settings | File Templates.
  */
-fixtures = {
+fixtures.metadata = {
     "Contacts" : {
-        "primary_object" : "Contact",
-        "objects" : {
+        "primary_bean" : "Contact",
+        "beans" : {
             "Contact" : {
                 "vardefs" : {
                     "table" : "contacts",
