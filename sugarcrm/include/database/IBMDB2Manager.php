@@ -330,7 +330,7 @@ class IBMDB2Manager  extends DBManager
 				$columns[$name]['auto_increment'] = '1';
 			if($row['nulls'] == 'N')
 				$columns[$name]['required'] = 'true';
-			if($columns[$name]['required'] == '')
+            if(isset($columns[$name]['required']) && $columns[$name]['required'] == '')
 				unset($columns[$name]['required']);
 		}
 		return $columns;
@@ -1097,7 +1097,7 @@ EOQ;
 								break;
 		}
 
-		if(!$fieldDef['isnull']) $fieldDef['isnull'] = 'false';
+        if(empty($fieldDef['isnull'])) $fieldDef['isnull'] = 'false';
 //
 //        if ($fieldDef['type'] == 'int')
 //            $fieldDef['len'] = '4';
@@ -1688,4 +1688,32 @@ EOQ;
 			)
 		);
 	}
+
+    /**
+	 * @see DBManager::massageValue()
+	 */
+    public function massageValue($val, $fieldDef)
+       {
+           $type = $this->getFieldType($fieldDef);
+           $ctype = $this->getColumnType($type);
+
+           // Deal with values that would exceed the 32k constant limit of DB2
+           if(strpos($ctype, 'clob') !== false && strlen($val) > 32000) //Note we assume DB2 counts bytes and not characters
+           {
+               for($pos = 0, $i = 0; $pos < strlen($val) && $i < 5; $pos += strlen($chunk), $i++) // Incrementing with number of bytes of chunk to not loose any characters
+               {
+                   $chunk = mb_strcut($val, $pos, 32000);  //mb_strcut uses bytes and shifts to left character boundary for both start and stop if necessary
+                   if(!isset($massagedValue))
+                   {
+                       $massagedValue = "TO_CLOB('$chunk')";
+                   } else {
+                       $massagedValue = "CONCAT($massagedValue, '$chunk')";
+                   }
+               }
+
+               return $massagedValue;
+           }
+
+           return parent::massageValue($val, $fieldDef);
+       }
 }
