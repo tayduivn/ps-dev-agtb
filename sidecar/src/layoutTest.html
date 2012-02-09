@@ -1,0 +1,74 @@
+<html>
+    <head>
+		<script language="javascript" src="../lib/jquery/jquery.min.js"></script>
+		<script language="javascript" src="../lib/backbone/underscore.min.js"></script>
+		<script language="javascript" src="../lib/backbone/backbone.min.js"></script>
+        <script language="javascript" src="../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+		<!-- App Scripts -->
+		<script language="javascript" src="app.js"></script>
+		<script language="javascript" src="controller/controller.js"></script>
+		<script language="javascript" src="controller/router.js"></script>
+		<script language="javascript" src="data/data-manager.js"></script>
+		<script language="javascript" src="data/bean.js"></script>
+		<script language="javascript" src="data/bean-collection.js"></script>
+		<script language="javascript" src="metadata/metadata-manager.js"></script>
+		<script language="javascript" src="sugarfieldmanager/sugarfieldmanager.js"></script>
+		<script language="javascript" src="layout/layout.js"></script>
+		<!-- Fake data for now -->
+		<script language="javascript" src="../tests/fixtures/metadata.js"></script>
+		<script language="javascript" src="../tests/fixtures/templates.js"></script>
+		<script language="javascript" src="../tests/fixtures/sugarFields.js"></script>
+
+		<link rel="stylesheet" href="../lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
+		<link rel="stylesheet" href="../lib/twitterbootstrap/bootstrap/css/bootstrap-responsive.css"/>
+		<script src="../lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
+
+    </head>
+    <body>
+        <div id="sidecar"></div>
+
+		<script language="javascript">
+			var App = SUGAR.App.init({el: "#sidecar"});
+			//Create a fake cache
+			SUGAR.App.cache = {
+				get:function (key) {
+					if (key == "metadata.Contacts")
+						return fixtures.metadata.Contacts;
+				}
+			};
+			//Fake template manager
+			SUGAR.App.template = {
+				get:function (key) {
+					console.log(fixtures.templates[key]);
+					return Handlebars.compile(fixtures.templates[key]);
+				}
+			};
+			//Fake a field list
+			SUGAR.App.sugarFieldsSync = function () {
+			};
+			SUGAR.App.sugarFieldsSync = function (that, callback){
+				var ajaxResponse = sugarFieldsFixtures;
+				var result= callback(that, ajaxResponse);
+				return result;
+			};
+			var syncResult= SUGAR.App.sugarFieldManager.getInstance().syncFields();
+			var Bean = new App.Bean({
+				first_name: "Foo",
+				last_name: "Bar"
+			});
+			var collection = new App.BeanCollection([Bean]);
+			App.context = {
+				module:"Contacts",
+				model: Bean,
+				collection : collection
+			};
+			var layout = App.layout.get({
+				context : App.context,
+				view:"EditView"
+			});
+			$("#sidecar").append(layout.el);
+			//$("#sidecar").html(layout.render());
+			layout.render();
+        </script>
+    </body>
+</html>

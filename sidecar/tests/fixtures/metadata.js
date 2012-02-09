@@ -32,9 +32,23 @@ fixtures.metadata = {
         },
         "views" : {
             "EditView" : {
+                "panels" : [{
+                    "label" : "LBL_PANEL_1",
+                    "fields" : [
+                        {name:"first_name"},
+                        {name:"last_name"}
+                    ]
+                }]
+
             },
             "DetailView" : {
-
+                "panels" : [{
+                    "label" : "LBL_PANEL_1",
+                    "fields" : [
+                        {name:"first_name"},
+                        {name:"last_name"}
+                    ]
+                }]
             },
             "QuickCreate" : {
 
