@@ -11,17 +11,19 @@
 	<script language="javascript" src="../../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
 
     <!-- app files -->
-    <script type="text/javascript" src='../../../sidecar/src/app.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/sugarfieldmanager/sugarfieldmanager.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/controller/controller.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/controller/router.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/metadata/metadata-manager.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/logger.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/config.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/data/data-manager.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/data/bean.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/data/bean-collection.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/layout/layout.js'></script>
+    <script src='../../../sidecar/src/app.js'></script>
+    <script src='../../../sidecar/src/sugarfieldmanager/sugarfieldmanager.js'></script>
+    <script src="../../../sidecar/src/events/events.js"></script>
+    <script src='../../../sidecar/src/context/context.js'></script>
+    <script src='../../../sidecar/src/controller/controller.js'></script>
+    <script src='../../../sidecar/src/controller/router.js'></script>
+    <script src='../../../sidecar/src/metadata/metadata-manager.js'></script>
+    <script src='../../../sidecar/src/logger.js'></script>
+    <script src='../../../sidecar/src/config.js'></script>
+    <script src='../../../sidecar/src/data/data-manager.js'></script>
+    <script src='../../../sidecar/src/data/bean.js'></script>
+    <script src='../../../sidecar/src/data/bean-collection.js'></script>
+    <script src='../../../sidecar/src/layout/layout.js'></script>
 
 
     <link rel="stylesheet" href="../../../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
@@ -29,11 +31,11 @@
     <script src="../../../sidecar/lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
 
     <!--jasmine and sinon core files--->
-    <script type="text/javascript" src='../../../sidecar/lib/sinon/sinon.min.js'></script>
-    <script type="text/javascript" src='../../../sidecar/lib/jasmine/jasmine.js'></script>
-    <script type="text/javascript" src='../../../sidecar/lib/jasmine/jasmine-html.js'></script>
-    <script type="text/javascript" src='../../../sidecar/lib/jasmine-sinon/jasmine-sinon.js'></script>
-    <script type="text/javascript" src='../../../sidecar/lib/jasmine-jquery/jasmine-jquery.js'></script>
+    <script src='../../../sidecar/lib/sinon/sinon.min.js'></script>
+    <script src='../../../sidecar/lib/jasmine/jasmine.js'></script>
+    <script src='../../../sidecar/lib/jasmine/jasmine-html.js'></script>
+    <script src='../../../sidecar/lib/jasmine-sinon/jasmine-sinon.js'></script>
+    <script src='../../../sidecar/lib/jasmine-jquery/jasmine-jquery.js'></script>
     <link rel="stylesheet" href="../../../sidecar/lib/jasmine/jasmine.css"/>
 
     <!--fixtures--->
@@ -42,16 +44,18 @@
 	<script type="text/javascript" src='../../../sidecar/tests/fixtures/templates.js'></script>
 
     <!--tests suites--->
-    <script type="text/javascript" src='../spec_helper.js'></script>
-    <script type="text/javascript" src='../suites/utils/logger.js'></script>
-    <script type="text/javascript" src='../suites/utils/config.js'></script>
-    <script type="text/javascript" src="../suites/app/app.js"></script>
-    <!-- <script type="text/javascript" src='../suites/sugarfieldmanager/sugarfieldmanager.js'></script>
-    <script type="text/javascript" src="../suites/router/router.js"></script>
-    <script type="text/javascript" src="../suites/controller/controller.js"></script> -->
-    <script type="text/javascript" src="../suites/data/data-manager.js"></script>
-	<script type="text/javascript" src="../suites/metadata/metadata-manager.js"></script>
-	<script type="text/javascript" src="../suites/layout/layout.js"></script>
+    <script src='../spec_helper.js'></script>
+    <script src='../suites/utils/logger.js'></script>
+    <script src='../suites/utils/config.js'></script>
+    <script src="../suites/app/app.js"></script>
+    <script src='../suites/sugarfieldmanager/sugarfieldmanager.js'></script>
+    <script src="../suites/router/router.js"></script>
+    <script src="../suites/controller/controller.js"></script>
+    <script src="../suites/data/data-manager.js"></script>
+    <script src="../suites/metadata/metadata-manager.js"></script>
+    <script src="../suites/layout/layout.js"></script>
+    <script src="../suites/context/context.js"></script>
+    <script src="../suites/events/events.js"></script>
 
     <!--init jasmine and exec suites--->
     <script type="text/javascript">
@@ -63,13 +67,13 @@
 
             jasmineEnv.addReporter(trivialReporter);
 
-            jasmineEnv.specFilter = function (spec) {
+            jasmineEnv.specFilter = function(spec) {
                 return trivialReporter.specFilter(spec);
             };
 
             var currentWindowOnload = window.onload;
 
-            window.onload = function () {
+            window.onload = function() {
                 if (currentWindowOnload) {
                     currentWindowOnload();
                 }
