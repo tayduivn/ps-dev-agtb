@@ -6003,8 +6003,8 @@ margin-left:10px;
     width:70px;
     text-align:right;
     padding-right: 10px;
-      padding-top: 4px;
-      font-size: 11px;
+    padding-top: 4px;
+    font-size: 11px;
 }
 
 
@@ -6035,7 +6035,6 @@ margin-left:10px;
     line-height:20px;
     padding:0 0 25px 10px;
     float:left;
-    border-left: 1px solid #ccc;
 	margin: 0px;
 }
 
@@ -6704,4 +6703,35 @@ p.submsg, p.submsg a{
 
 .SpanQuickView {
     visibility:hidden;
+}
+#showMoreDiv {
+    width:auto;
+    background-color: #EEEEEE;
+    color: #999999;
+    cursor: pointer;
+    text-align: center;
+    height:20px;
+    padding: 10px 0;
+}
+#sugar_full_search_results div.resultTitle{
+    font-weight: bold;
+}
+
+span.unchecked {
+    color:#999999;
+}
+
+.ftsModuleFilterSpan{
+    padding-top: 10px;
+}
+
+td #moduleListTD
+{
+    padding-top: 10px;
+    padding-bottom:10px;
+    padding-left:5px;
+    border-right: 1px solid #ccc;
+}
+#ftsSearchBarContainer {
+    width:30em !important;
 }

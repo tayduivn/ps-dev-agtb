@@ -41,10 +41,7 @@ SUGAR.ajaxUI = {
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
-            if (r.menu)
-            {
-               SUGAR.themes.setCurrentTab(r.menu);
-            }
+
             if (r.title)
             {
                 document.title = html_entity_decode(r.title);
@@ -62,7 +59,18 @@ SUGAR.ajaxUI = {
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
 
+            //BEGIN SUGARCRM flav=com ONLY
+            if (r.moduleList)
+            {
+                SUGAR.themes.setModuleTabs(r.moduleList);
+            }
+            //END SUGARCRM flav=com ONLY
+
             //BEGIN SUGARCRM flav=pro ONLY
+            if (r.menu)
+            {
+               SUGAR.themes.setCurrentTab(r.menu);
+            }
             if (r.record)
             {
                 DCMenu.record = r.record;

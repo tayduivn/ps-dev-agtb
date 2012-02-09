@@ -1,44 +1,19 @@
 {literal}
 <style type="text/css">
-.ftsModuleFilterSpan{
-    padding-top: 10px;
-}
 
-#moduleListTD
-{
-    padding-top: 10px;
-    padding-bottom:10px;
-    padding-left:5px;
-    background-color: #f7f7f7;
-    border-bottom-color:grey;
-    border-right-color:grey;
-    border-right-style: dashed;
-    border-right-width: 1px;
-    border-bottom-style: dashed;
-    border-bottom-width:1px;
-}
-#ftsSearchBarContainer {
-    width:30em !important;
-}
 .yui-ac-content {
 width:70%;
 }
-#showMoreDiv {
-    width:auto;
-    background-color: #EEEEEE;
-    color: #999999;
-    cursor: pointer;
-    text-align: center;
-    height:20px;
-    padding: 10px 0;
-}
+
 </style>
 {/literal}
 <script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
 {if (!$smarty.get.ajax)}
-    <br>
+<h2>{$APP.LBL_SEARCH_RESULTS}</h2>
+<br>
+
 <div id='ftsSearchBarContainer' >
     <div id="ftsAutoCompleteResult" style="width:100%;!important"></div>
     <input type="text" placeholder="{$APP.LBL_SEARCH}" name="ftsSearchField" id="ftsSearchField" value="{$smarty.request.q}"  style="width: 70%!important" >
@@ -92,9 +67,9 @@ width:70%;
 <tr ><td width="15%">&nbsp;</td><td width="90%"></td></tr>
 <tr valign="top" >
     <td id="moduleListTD" style="">
-        <b>Module Filter</b>
+        <b>{$APP.LBL_MODULE_FILTER}</b>
         {foreach from=$filterModules item=entry key=module}
-            <div class="ftsModuleFilterSpan"><input type="checkbox" checked="checked" id="{$entry.module}" name="module_filter" class="ftsModuleFilter">{$entry.label}</div>
+            <div class="ftsModuleFilterSpan"><input type="checkbox" checked="checked" id="{$entry.module}" name="module_filter" class="ftsModuleFilter"><span id="{$entry.module}_label">&nbsp;{$entry.label}</span></div>
         {/foreach}
     </td>
 <td>
@@ -116,8 +91,17 @@ width:70%;
     var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
     var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
     {literal}
-    $('.ftsModuleFilter').bind('click', function() {
+    $('.ftsModuleFilter').bind('click', function(e) {
         SUGAR.FTS.search();
+        var textLabel = this.id + '_label';
+        if(this.checked)
+        {
+            $('#'+textLabel).removeClass('unchecked');
+        }
+        else
+        {
+            $('#'+textLabel).addClass('unchecked');
+        }
     });
 
     $("#ftsSearchField").keypress(function(event) {
