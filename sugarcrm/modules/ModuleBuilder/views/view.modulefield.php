@@ -339,8 +339,22 @@ class ViewModulefield extends SugarView
         }
 
         $fv->ss->assign('help_group', $edit_or_add);
-        $body = $fv->ss->fetch('modules/ModuleBuilder/tpls/MBModule/field.tpl');
+        $body = $this->fetchTemplate($fv, 'modules/ModuleBuilder/tpls/MBModule/field.tpl');
         $ac->addSection('east', translate('LBL_SECTION_FIELDEDITOR','ModuleBuilder'), $body );
         return $ac;
+    }
+
+    /**
+     * fetchTemplate
+     * This function overrides fetchTemplate from SugarView.  For view.modulefield.php we go through the FieldViewer
+     * class to fetch the display contents.
+     *
+     * @param FieldViewer $mixed the FieldViewer instance
+     * @param string $template the file to fetch
+     * @return string contents from calling the fetch method on the FieldViewer Sugar_Smarty instance
+     */
+    protected function fetchTemplate($fv, $template)
+    {
+        return $fv->ss->fetch($this->getCustomFilePathIfExists($template));
     }
 }
