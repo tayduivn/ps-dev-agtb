@@ -4340,10 +4340,8 @@ function save_relationship_changes($is_update, $exclude=array())
         global $fill_in_rel_depth;
         if(empty($fill_in_rel_depth) || $fill_in_rel_depth < 0)
             $fill_in_rel_depth = 0;
-
         if($fill_in_rel_depth > 1)
             return;
-
         $fill_in_rel_depth++;
 
         foreach($this->field_defs as $field)
@@ -4357,28 +4355,22 @@ function save_relationship_changes($is_update, $exclude=array())
                     $related_module = $field['module'];
                     $id_name = $field['id_name'];
                     // fguerra@dri and jmorais@dri - fill in link fields not working
-                    if (empty($this->$id_name) && array_key_exists('link', $field))
-                    {
+                    if (empty($this->$id_name) && array_key_exists('link', $field)){
                         $this->fill_in_link_field($field['link'], $id_name);
                     }
                     // ~ fguerra@dri and jmorais@dri
-                    if(!empty($this->$id_name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id )))
-                    {
-                        if(isset($GLOBALS['beanList'][ $related_module]))
-                        {
-                            if(!empty($this->$id_name) && isset($this->$name))
-                            {
-                                $mod = BeanFactory::getBean($related_module, $this->$id_name);
-                                if($mod)
-                                {
-                                    if (!empty($field['rname']))
-                                    {
-                                        $this->$name = $mod->$field['rname'];
-                                    }
-                                    else if (isset($mod->name))
-                                    {
-                                        $this->$name = $mod->name;
-                                    }
+                    if(!empty($this->$id_name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id ))){
+                        if(isset($GLOBALS['beanList'][ $related_module])){
+                            $class = $GLOBALS['beanList'][$related_module];
+
+                            if(!empty($this->$id_name) && file_exists($GLOBALS['beanFiles'][$class]) && isset($this->$name)){
+                                require_once($GLOBALS['beanFiles'][$class]);
+                                $mod = new $class();
+                                $mod->retrieve($this->$id_name);
+                                if (!empty($field['rname'])) {
+                                    $this->$name = $mod->$field['rname'];
+                                } else if (isset($mod->name)) {
+                                    $this->$name = $mod->name;
                                 }
                             }
                         }

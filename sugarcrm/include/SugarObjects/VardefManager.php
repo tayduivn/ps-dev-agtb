@@ -321,20 +321,12 @@ class VardefManager{
                 $links[$name] = $def;
             }
         }
-
-        self::$linkFields[$object] = $links;
-
         return $links;
     }
 
 
     public static function getLinkFieldForRelationship($module, $object, $relName)
     {
-        $cacheKey = "LFR{$module}{$object}{$relName}";
-        $cacheValue = sugar_cache_retrieve($cacheKey);
-        if(!empty($cacheValue))
-            return $cacheValue;
-
         $relLinkFields = self::getLinkFieldsForModule($module, $object);
         $matches = array();
         if (!empty($relLinkFields))
@@ -350,13 +342,9 @@ class VardefManager{
         if (empty($matches))
             return false;
         if (sizeof($matches) == 1)
-            $results = $matches[0];
-        else
-            //For relationships where both sides are the same module, more than one link will be returned
-            $results = $matches;
-
-        sugar_cache_put($cacheKey, $results);
-        return $results ;
+            return $matches[0];
+        //For relationships where both sides are the same module, more than one link will be returned
+        return $matches;
     }
 
     //BEGIN SUGARCRM flav=pro ONLY

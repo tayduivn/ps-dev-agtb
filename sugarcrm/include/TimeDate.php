@@ -366,6 +366,7 @@ class TimeDate
 
     /**
      * Get user datetime format.
+     * @todo add caching
      *
      * @param User $user user object, current user if not specified
      * @return string
@@ -383,26 +384,7 @@ class TimeDate
                 $user = null;
             }
         }
-
-        $cacheKey = get_class($this) ."dateTimeFormat";
-
-        if($user instanceof User)
-        {
-            $cacheKey .= "_{$user->id}";
-        }
-
-        $cachedValue = sugar_cache_retrieve($cacheKey);
-
-        if(!empty($cachedValue) )
-        {
-            return $cachedValue;
-        }
-        else
-        {
-            $value = $this->merge_date_time($this->get_date_format($user), $this->get_time_format($user));
-            sugar_cache_put($cacheKey,$value,0);
-            return $value;
-        }
+        return $this->merge_date_time($this->get_date_format($user), $this->get_time_format($user));
     }
 
 
@@ -911,7 +893,8 @@ class TimeDate
      */
     function to_display_date_time($date, $meridiem = true, $convert_tz = true, $user = null)
     {
-        return $this->_convert($date, self::DB_DATETIME_FORMAT, self::$gmtTimezone, $this->get_date_time_format($user),
+        return $this->_convert($date,
+            self::DB_DATETIME_FORMAT, self::$gmtTimezone, $this->get_date_time_format($user),
             $convert_tz ? $this->_getUserTZ($user) : self::$gmtTimezone, true);
     }
 
