@@ -5,10 +5,12 @@
  * Time: 12:26 PM
  * To change this template use File | Settings | File Templates.
  */
-fixtures = {
+
+fixtures = typeof(fixtures) == "object" ? fixtures : {};
+fixtures.metadata = {
     "Contacts" : {
-        "primary_object" : "Contact",
-        "objects" : {
+        "primary_bean" : "Contact",
+        "beans" : {
             "Contact" : {
                 "vardefs" : {
                     "table" : "contacts",
@@ -87,6 +89,14 @@ fixtures = {
                         //Name of link to pull the new context from, In this case a single account
                         "context" : "accounts"
                     }
+                ]
+            },
+            //Layout that references another layout
+            "detailplus" : {
+                "type" : "columns",
+                "components" : [
+                    {"view" : "EditView"},
+                    {layout: "detail"}
                 ]
             }
         }

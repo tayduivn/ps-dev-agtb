@@ -1,6 +1,6 @@
 (function(app) {
 
-    app.logger = {
+    app.augment("logger", {
 
         Levels: {
             TRACE: {
@@ -93,6 +93,6 @@
                 console.log("Failed to log message {" + message + "} due to exception: " + e);
             }
         }
-    }
+    }, false);
 
 })(SUGAR.App);
