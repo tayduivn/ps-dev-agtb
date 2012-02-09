@@ -348,7 +348,7 @@ class ListViewData {
         $id_list = '';
 		while($row = $this->db->fetchByAssoc($result)) {
 			if($count < $limit) {
-				if(empty($id_list)) {
+				if(!empty($id_list)) {
 					$id_list = '(';
 				}else{
 					$id_list .= ',';
@@ -364,42 +364,20 @@ class ListViewData {
 
         SugarVCR::store($this->seed->module_dir,  $main_query);
 		if($count != 0) {
-            // Bug #49385 : Multiple listings for same meeting in meeting list
-            // @see SugarBean::create_new_list_query() method for more information
-            //NOW HANDLE MANY-TO-MANY QUERIES
-            if(!empty($ret_array['many_to_many_query'])) {
-                foreach ( $ret_array['many_to_many_query'] as $field_name => $many_to_many_query )
-                {
-                    $query = $many_to_many_query['query'] . ' AND '.$this->seed->table_name.'.id IN ' . $id_list;
-                    if ( isset($many_to_many_query['query_where']) && !empty($many_to_many_query['query_where']) )
-                    {
-                        $query .= ' AND ' . $many_to_many_query['query_where'];
-                    }
-                    $many_to_many_result = $this->db->query($query);
-                    while ( $row = $this->db->fetchByAssoc($many_to_many_result) ) {
-                        foreach ($row as $name => $value) {
-                            //add it to every row with the given id
-                            foreach ($idIndex[$row['ref_id']] as $index){
-                                // assign retrieved values to bean
-                                $rows[$index][$name] = $value;
-                                if ( $name == $field_name )
-                                {
-                                    // assign additional information to create link to related records
-                                    // _M2M_COUNT - count of related items
-                                    // _M2M_ITEMS - related items to display in popup
-                                    $rows[$index][strtoupper($name).'_M2M_COUNT'] = isset($rows[$index][strtoupper($name).'_M2M_COUNT']) ? $rows[$index][strtoupper($name).'_M2M_COUNT'] + 1 : 1;
-                                    $rows[$index][strtoupper($name).'_M2M_ITEMS'][] = array(
-                                        'value' => $value,
-                                        'rel_key' => $row[$many_to_many_query['rel_key']],
-                                        'rel_module' => $many_to_many_query['rel_module']
-                                    );
-                                }
-                            }
+			//NOW HANDLE SECONDARY QUERIES
+			if(!empty($ret_array['secondary_select'])) {
+				$secondary_query = $ret_array['secondary_select'] . $ret_array['secondary_from'] . ' WHERE '.$this->seed->table_name.'.id IN ' .$id_list;
+				$secondary_result = $this->db->query($secondary_query);
+				while($row = $this->db->fetchByAssoc($secondary_result)) {
+					foreach($row as $name=>$value) {
+						//add it to every row with the given id
+						foreach($idIndex[$row['ref_id']] as $index){
+						    $rows[$index][$name]=$value;
+						}
 
-                        }
-                    }
-                }
-            }
+					}
+				}
+			}
 
             // retrieve parent names
             if(!empty($filter_fields['parent_name']) && !empty($filter_fields['parent_id']) && !empty($filter_fields['parent_type'])) {
@@ -464,9 +442,6 @@ class ListViewData {
                     $pageData['additionalDetails'][$dataIndex] = $ar['string'];
                     $pageData['additionalDetails']['fieldToAddTo'] = $ar['fieldToAddTo'];
 				}
-                
-                $pageData['additionalRelationInfo'][$dataIndex] = $this->getAdditionalRelationInfo($data[$dataIndex], $row);
-                
 				next($rows);
 			}
 		}
@@ -648,50 +623,4 @@ class ListViewData {
         return array('fieldToAddTo' => $results['fieldToAddTo'], 'string' => $extra);
     }
 
-    /**
-     * generates the additional list of related objects if bean has many-to-many relationships
-     * @param array $data
-     * @param array $row
-     * @return array to attach to field
-     */
-    function getAdditionalRelationInfo($data, $row)
-    {
-        global $app_strings;
-        global $mod_strings;
-
-        $additionalInfo = array();
-
-        $results['width'] = 300;
-
-        foreach ( $data as $name => $value )
-        {
-            if ( isset($row[$name.'_M2M_COUNT']) && $row[$name.'_M2M_COUNT'] > 1 )
-            {
-                $results['string'] = '';
-                foreach ( $row[$name.'_M2M_ITEMS'] as $_ind => $_value )
-                {
-                    $url = "index.php?action=DetailView&module={$_value['rel_module']}&record={$_value['rel_key']}&offset=1&stamp={$this->stamp}";
-                    //$url = "index.php?action=ajaxui#ajaxUILoc=".urlencode($url);  // uncomment it is it needs to render url as ajax
-                    $results['string'] .= "<div style='padding:2px 0;'><a href='{$url}'>" . $_value['value'] . "</a></div>";
-                }
-                $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
-
-                $extra = "<span onmouseover=\"return overlib('" .
-                    str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string'])
-                    . "', CAPTION, '<div style=\'float:left\'>{$_value['rel_module']}</div><div style=\'float: right\'>";
-
-                $extra .= (!empty($results['viewLink']) ? "<a title=\'".translate('LBL_VIEW_BUTTON')."\' href={$results['viewLink']}><img style=\'margin-left: 2px;\' border=\'0\' src=".SugarThemeRegistry::current()->getImageURL('view_inline.gif')."></a>" : '')
-                    . "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
-                    . (empty($results['width']) ? '300' : $results['width'])
-                    . ", CLOSETEXT, '<img alt=\'".translate('LBL_CLOSEINLINE')."\' style=\'margin-left:2px; margin-right: 2px; border=0;\' src=".SugarThemeRegistry::current()->getImageURL('close.gif')."></div>', "
-                    . "CLOSETITLE, '".translate('LBL_ADDITIONAL_DETAILS_CLOSE_TITLE')."', CLOSECLICK, FGCLASS, 'olFgClass', "
-                    . "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
-                    . "onmouseout=\"return nd(1000);\"><img alt='".translate('LBL_INFOINLINE')."' style='padding: 0px 5px 0px 2px' border='0' src='".SugarThemeRegistry::current()->getImageURL('info_inline.png')."' ></span>";
-
-                $additionalInfo[$name] = $extra;
-
-            }
-        }
-        return $additionalInfo;
-    }
 }

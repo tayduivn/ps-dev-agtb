@@ -434,16 +434,11 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                     // This handles the edit and remove buttons
                 $widget_contents = $layout_manager->widgetDisplay($list_field);
                 }
-                
-                $additionalRelationInfo = $this->getAdditionalRelationInfo($field_name, $aItem);
-                
                 static $count;
                 if(!isset($count))$count = 0; else $count++;
                 $this->xTemplate->assign('CELL_COUNT', $count);
                 if ( empty($widget_contents) ) $widget_contents = '&nbsp;';
                 $this->xTemplate->assign('CELL', $widget_contents);
-                $this->xTemplate->assign('ADDITIONAL_RELATION_INFO', $additionalRelationInfo);
-                
                 $this->xTemplate->parse($xtemplateSection.".row.cell");
             }
         }
@@ -1814,50 +1809,5 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
     $this->_additionalDetails = $value;
  }
 
-
-    /**
-     * generates the additional list of related objects if bean has many-to-many relationships
-     * @param array $field_name name of field
-     * @param array $bean
-     * @return array to attach to field
-     */
-    function getAdditionalRelationInfo($field_name, $bean)
-    {
-        global $app_strings;
-        global $mod_strings;
-
-        $extra = '';
-
-        $results['width'] = 300;
-
-        $count_key = strtoupper($field_name).'_M2M_COUNT';
-        $items_key = strtoupper($field_name).'_M2M_ITEMS';
-        if ( isset($bean->$count_key) && $bean->$count_key > 1 )
-        {
-            $results['string'] = '';
-            foreach ( $bean->$items_key as $_ind => $_value )
-            {
-                $url = "index.php?action=DetailView&module={$_value['rel_module']}&record={$_value['rel_key']}&offset=1"; //&stamp=
-                //$url = "index.php?action=ajaxui#ajaxUILoc=".urlencode($url);  // uncomment it is it needs to render url as ajax
-                $results['string'] .= "<div style='padding:2px 0;'><a href='{$url}'>" . $_value['value'] . "</a></div>";
-            }
-            $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
-
-            $extra = "<span onmouseover=\"return overlib('" .
-                str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string'])
-                . "', CAPTION, '<div style=\'float:left\'>{$_value['rel_module']}</div><div style=\'float: right\'>";
-
-            $extra .= (!empty($results['viewLink']) ? "<a title=\'".translate('LBL_VIEW_BUTTON')."\' href={$results['viewLink']}><img style=\'margin-left: 2px;\' border=\'0\' src=".SugarThemeRegistry::current()->getImageURL('view_inline.gif')."></a>" : '')
-                . "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
-                . (empty($results['width']) ? '300' : $results['width'])
-                . ", CLOSETEXT, '<img alt=\'".translate('LBL_CLOSEINLINE')."\' style=\'margin-left:2px; margin-right: 2px; border=0;\' src=".SugarThemeRegistry::current()->getImageURL('close.gif')."></div>', "
-                . "CLOSETITLE, '".translate('LBL_ADDITIONAL_DETAILS_CLOSE_TITLE')."', CLOSECLICK, FGCLASS, 'olFgClass', "
-                . "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
-                . "onmouseout=\"return nd(1000);\"><img alt='".translate('LBL_INFOINLINE')."' style='padding: 0px 5px 0px 2px' border='0' src='".SugarThemeRegistry::current()->getImageURL('info_inline.png')."' ></span>";
-
-        }
-
-        return $extra;
-    }
 }
 ?>

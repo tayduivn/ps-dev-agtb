@@ -2846,7 +2846,7 @@ function save_relationship_changes($is_update, $exclude=array())
     function get_union_related_list($parentbean, $order_by = "", $sort_order='', $where = "",
     $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $subpanel_def)
     {
-        $many_to_many_queries = array();
+        $secondary_queries = array();
         global $layout_edit_mode, $beanFiles, $beanList;
 
         if(isset($_SESSION['show_deleted']))
@@ -2960,19 +2960,23 @@ function save_relationship_changes($is_update, $exclude=array())
                     //resort to default behavior.
                     $query_rows = "( SELECT count(*)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
                 }
-                
-                // Bug #49385 : Multiple listings for same meeting in meeting list
-                // @see SugarBean::create_new_list_query() method for more information
-                // collect many_to_many queryies and then send it to  SugarBean::process_union_list_query() to retrieve additional data
-                if(!empty($subquery['many_to_many_query']))
+                if(!empty($subquery['secondary_select']))
                 {
-                    foreach ($subquery['many_to_many_query'] as $field_name => $many_to_many_query)
+
+                    $subquerystring= $subquery['secondary_select'] . $subquery['secondary_from'].$query_array['join']. $subquery['where'];
+                    if (!empty($subquery['secondary_where']))
                     {
-                        $many_to_many_queries[$field_name] = isset($many_to_many_queries[$field_name]) ? $many_to_many_queries[$field_name] : array();
-                        $many_to_many_queries[$field_name][] = $many_to_many_query;
+                        if (empty($subquery['where']))
+                        {
+                            $subquerystring.=" WHERE " .$subquery['secondary_where'];
+                        }
+                        else
+                        {
+                            $subquerystring.=" AND " .$subquery['secondary_where'];
+                        }
                     }
+                    $secondary_queries[]=$subquerystring;
                 }
-                
                 $final_query .= $query;
                 $final_query_rows .= $query_rows;
             }
@@ -3023,7 +3027,7 @@ function save_relationship_changes($is_update, $exclude=array())
             return $response;
         }
 
-        return $parentbean->process_union_list_query($parentbean, $final_query, $row_offset, $limit, $max, '',$subpanel_def, $final_query_rows, $many_to_many_queries);
+        return $parentbean->process_union_list_query($parentbean, $final_query, $row_offset, $limit, $max, '',$subpanel_def, $final_query_rows, $secondary_queries);
     }
 
 
@@ -3059,7 +3063,7 @@ function save_relationship_changes($is_update, $exclude=array())
      * @param string $join_type
      * @param boolean $return_array Optional, default false, response as array
      * @param object $parentbean creating a subquery for this bean.
-     * @param boolean $singleSelect Optional, default false. DEPRICATED (Bug #49385 : Multiple listings for same meeting in meeting list) : all many-to-many relationships are loaded as secondary query
+     * @param boolean $singleSelect Optional, default false.
      * @return String select query string, optionally an array value will be returned if $return_array= true.
      */
 	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false, $ifListForExport = false)
@@ -3091,24 +3095,27 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         if(empty($filter))
         {
-            // Bug #49385 : Multiple listings for same meeting in meeting list
-            // don't use select word b/s if there is many-to-many relationship distinct should be added
-            // add SELECT in end of query generation
-            $ret_array['select'] = " $this->table_name.* ";
+            $ret_array['select'] = " SELECT $distinct $this->table_name.* ";
         }
         else
         {
-            // Bug #49385 : Multiple listings for same meeting in meeting list
-            // don't use select word b/s if there is many-to-many relationship distinct should be added
-            // add SELECT in end of query generation
-            $ret_array['select'] = " $this->table_name.id ";
+            $ret_array['select'] = " SELECT $distinct $this->table_name.id ";
         }
         $ret_array['from'] = " FROM $this->table_name ";
         $ret_array['from_min'] = $ret_array['from'];
         $ret_array['secondary_from'] = $ret_array['from'] ;
         $ret_array['where'] = '';
         $ret_array['order_by'] = '';
-
+        //secondary selects are selects that need to be run after the primarty query to retrieve additional info on main
+        if($singleSelect)
+        {
+            $ret_array['secondary_select']=& $ret_array['select'];
+            $ret_array['secondary_from'] = & $ret_array['from'];
+        }
+        else
+        {
+            $ret_array['secondary_select'] = '';
+        }
         $custom_join = false;
         if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
         {
@@ -3124,6 +3131,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $this->add_team_security_where_clause($ret_array['from']);
             $this->add_team_security_where_clause($ret_array['from_min']);
+            if(!$singleSelect)$this->add_team_security_where_clause($ret_array['secondary_from']);
         }
         //END SUGARCRM flav=pro ONLY
         if($custom_join)
@@ -3180,7 +3188,6 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $used_join_key = array();
 
-        if ( !empty($fields) ) {
         foreach($fields as $field=>$value)
         {
             //alias is used to alias field names
@@ -3289,13 +3296,32 @@ function save_relationship_changes($is_update, $exclude=array())
                 $this->load_relationship($data['link']);
                 if(!empty($this->$data['link']))
                 {
-                    // create params to build join
                     $params = array();
-                    $params['join_type'] = empty($join_type) ? ' LEFT JOIN ' : $join_type;
-                    $params['join_table_alias'] = isset($data['join_name']) ? $data['join_name'] : 'jt' . $jtcount;
-                    $params['join_table_link_alias'] = isset($data['join_link_name']) ? $data['join_link_name'] : 'jtl' . $jtcount;
-                    $join_primary = !isset($data['join_primary']) || $data['join_primary'];
-                    // build join
+                    if(empty($join_type))
+                    {
+                        $params['join_type'] = ' LEFT JOIN ';
+                    }
+                    else
+                    {
+                        $params['join_type'] = $join_type;
+                    }
+                    if(isset($data['join_name']))
+                    {
+                        $params['join_table_alias'] = $data['join_name'];
+                    }
+                    else
+                    {
+                        $params['join_table_alias']	= 'jt' . $jtcount;
+
+                    }
+                    if(isset($data['join_link_name']))
+                    {
+                        $params['join_table_link_alias'] = $data['join_link_name'];
+                    }
+                    else
+                    {
+                        $params['join_table_link_alias'] = 'jtl' . $jtcount;
+                    }
                     $join_primary = !isset($data['join_primary']) || $data['join_primary'];
 
                     $join = $this->$data['link']->getJoin($params, true);
@@ -3319,168 +3345,71 @@ function save_relationship_changes($is_update, $exclude=array())
 
     				if($join['type'] == 'many-to-many')
     				{
-                        // Bug #49385 : Multiple listings for same meeting in meeting list
-                        // it happens for all beans that have many-to-many reletionship not meetings only
-                        // Create additional subgueries for all many-to-many relationships and run them after main query
-                        // @see ListViewData::getListViewData() method for more information
-                        // @see SugarBean::get_union_related_list() method for more information
+    					if(empty($ret_array['secondary_select']))
+    					{
+    						$ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
 
-                        $many_to_many_selected_fields = array();
-                        // start create subquery to retrive info from many-to-many relationship
-                        // select bena id as ref_id from main tabel and join relationship table
-                        // field ref_id to assign info to passed row
-                        $many_to_many_query = " SELECT $this->table_name.id ref_id  ";
-                        // additional where
-                        $many_to_many_where = '';
-
-                        if( !empty($beanFiles[$beanList[$rel_module]]) && $join_primary )
-                        {
-                            require_once($beanFiles[$beanList[$rel_module]]);
-                            $rel_mod = new $beanList[$rel_module]();
-                            if( isset($rel_mod->field_defs['assigned_user_id']) )
+                            if(!empty($beanFiles[$beanList[$rel_module]]) && $join_primary)
                             {
-                                $many_to_many_query .= " , ".	$params['join_table_alias'] . ".assigned_user_id {$field}_owner, '$rel_module' {$field}_mod";
-                                // don't attach field to main query to have ability use distinct, field will be retrieved from subquery
-
-                                // if query should be returned add fied to query BUT it can give dublicates results
-                                // used to be compatible with e.g. Sugar::get_list() methos
-                                // TODO: to prevent dublicated rows it must to refactor all SugarBeand::get_list() calls in all modules and controllers
-                                if ( !$return_array )
+                                require_once($beanFiles[$beanList[$rel_module]]);
+                                $rel_mod = new $beanList[$rel_module]();
+                                if(isset($rel_mod->field_defs['assigned_user_id']))
                                 {
-                                    $ret_array['select'] .= " , ".	$params['join_table_alias'] . ".assigned_user_id {$field}_owner, '$rel_module' {$field}_mod";
+                                    $ret_array['secondary_select'].= " , ".	$params['join_table_alias'] . ".assigned_user_id {$field}_owner, '$rel_module' {$field}_mod";
                                 }
-                            }
-                            else
-                            {
-                                if(isset($rel_mod->field_defs['created_by']))
+                                else
                                 {
-                                    $many_to_many_query .= " , ".	$params['join_table_alias'] . ".created_by {$field}_owner , '$rel_module' {$field}_mod";
-                                    // don't attach field to main query to have ability use distinct, field will be retrieved from subquery
-
-                                    // if query should be returned add fied to query BUT it can give dublicates results
-                                    // used to be compatible with e.g. Sugar::get_list() methos
-                                    // TODO: to prevent dublicated rows it must to refactor all SugarBeand::get_list() calls in all modules and controllers
-                                    if ( !$return_array )
+                                    if(isset($rel_mod->field_defs['created_by']))
                                     {
-                                        $ret_array['select'] .= " , ".	$params['join_table_alias'] . ".created_by {$field}_owner , '$rel_module' {$field}_mod";
+                                        $ret_array['secondary_select'].= " , ".	$params['join_table_alias'] . ".created_by {$field}_owner , '$rel_module' {$field}_mod";
                                     }
                                 }
                             }
                         }
 
-                        // add field value to select
-                        $main_field_is_joined = false;
-                        if( isset($data['db_concat_fields']) )
+                        if(isset($data['db_concat_fields']))
                         {
-                            $many_to_many_query .= ' , ' . $this->db->concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
-                            // don't attach field to main query to have ability use distinct, field will be retrieved from subquery
-
-                            // if query should be returned add fied to query BUT it can give dublicates results
-                            // used to be compatible with e.g. Sugar::get_list() methos
-                            // TODO: to prevent dublicated rows it must to refactor all SugarBeand::get_list() calls in all modules and controllers
-                            if ( !$return_array )
-                            {
-                                $ret_array['select'] .= ' , ' . $this->db->concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
-                                $main_field_is_joined = true;
-                            }
+                            $ret_array['secondary_select'] .= ' , ' . $this->db->concat($params['join_table_alias'], $data['db_concat_fields']) . ' ' . $field;
                         }
                         else
                         {
-                            if( !isset($data['relationship_fields']) )
+                            if(!isset($data['relationship_fields']))
                             {
-                                $many_to_many_query .= ' , ' . $params['join_table_alias'] . '.' . $data['rname'] . ' ' . $field;
-                                // don't attach field to main query to have ability use distinct, field will be retrieved from subquery
-
-                                // if query should be returned add fied to query BUT it can give dublicates results
-                                // used to be compatible with e.g. Sugar::get_list() methos
-                                // TODO: to prevent dublicated rows it must to refactor all SugarBeand::get_list() calls in all modules and controllers
-                                if ( !$return_array )
-                                {
-                                    $ret_array['select'] .= ' , ' . $params['join_table_alias'] . '.' . $data['rname'] . ' ' . $field;
-                                    $main_field_is_joined = true;
-                                }
+                                $ret_array['secondary_select'] .= ' , ' . $params['join_table_alias'] . '.' . $data['rname'] . ' ' . $field;
                             }
                         }
-
-                        $ret_array['select'] .= ", '                                                                                                                                                                                                                                                              ' $field ";
-                        $ret_array['select'] .= ", '                                                                                                                                                                                                                                                              ' {$join['rel_key']}";
-
-                        $many_to_many_query .= ', ' . $params['join_table_link_alias'].'.'. $join['rel_key'] .' ' . $join['rel_key'];
-                        // don't attach field to main query to have ability use distinct, field will be retrieved from subquery
-
-                        // if query should be returned add fied to query BUT it can give dublicates results
-                        // used to be compatible with e.g. Sugar::get_list() methos
-                        // TODO: to prevent dublicated rows it must to refactor all SugarBeand::get_list() calls in all modules and controllers
-                        if ( !$return_array )
-                        {
-                            $ret_array['select'] .= ', ' . $params['join_table_link_alias'].'.'. $join['rel_key'] .' ' . $join['rel_key'];
-                            if ( !$main_field_is_joined )
-                            {
-                                $ret_array['select'] .= ", '                                                                                                                                                                                                                                                              ' $field ";
-                            }
-                        }
-                        else
+                        if(!$singleSelect)
                         {
                             $ret_array['select'] .= ", '                                                                                                                                                                                                                                                              ' $field ";
-                            $ret_array['select'] .= ", '                                                                                                                                                                                                                                                              ' {$join['rel_key']}";
                         }
-
-                        if( isset($data['relationship_fields']) )
-                        {
-                            foreach( $data['relationship_fields'] as $r_name => $alias_name )
+                        $count_used =0;
+                        foreach($used_join_key as $used_key) {
+                            if($used_key == $join['rel_key']) $count_used++;
+                        }
+                        if($count_used <= 1) {//27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
+                            // add rel_key only if it was not aready added
+                            if(!$singleSelect)
                             {
-                                if( !empty( $many_to_many_selected_fields[$alias_name]) ) continue;
-                                $many_to_many_query .= ', ' . $params['join_table_link_alias'].'.'. $r_name .' ' . $alias_name;
-                                // don't attach field to main query to have ability use distinct, field will be retrieved from subquery
-                                $many_to_many_selected_fields[$alias_name] = true;
-
-                                // if query should be returned add fied to query BUT it can give dublicates results
-                                // used to be compatible with e.g. Sugar::get_list() methos
-                                // TODO: to prevent dublicated rows it must to refactor all SugarBeand::get_list() calls in all modules and controllers
-                                if ( !$return_array )
-                                {
-                                    $ret_array['select'] .= ', ' . $params['join_table_link_alias'].'.'. $r_name .' ' . $alias_name;
-                                }
+                                $ret_array['select'] .= ", '                                    '  " . $join['rel_key'] . ' ';
+                            }
+                            $ret_array['secondary_select'] .= ', ' . $params['join_table_link_alias'].'.'. $join['rel_key'] .' ' . $join['rel_key'];
+                        }
+                        if(isset($data['relationship_fields']))
+                        {
+                            foreach($data['relationship_fields'] as $r_name=>$alias_name)
+                            {
+                                if(!empty( $secondarySelectedFields[$alias_name]))continue;
+                                $ret_array['secondary_select'] .= ', ' . $params['join_table_link_alias'].'.'. $r_name .' ' . $alias_name;
+                                $secondarySelectedFields[$alias_name] = true;
                             }
                         }
-
-                        if ( isset($data['link_type']) && $data['link_type'] == 'relationship_info' && ($parentbean instanceOf SugarBean) )
-                        {
-                            $many_to_many_where = $params['join_table_link_alias'] . '.' . $join['rel_key']. "='" .$parentbean->id . "'";
-                        }
-
-                        $many_to_many_query .= " FROM $this->table_name ";
-
-                        // add team security to query
-                        if(!$this->disable_row_level_security)
-                        {
-                            $this->add_team_security_where_clause($many_to_many_query);
-                        }
-
-                        $many_to_many_query .= ' ' . $join['join'] . ' WHERE ' . $this->table_name.'.deleted=0';
-
-                        $ret_array['many_to_many_query'][$field]['query'] = $many_to_many_query;            // full query string
-                        $ret_array['many_to_many_query'][$field]['rel_key'] = $join['rel_key'];             // name of field to retrieve id of bean
-                        $ret_array['many_to_many_query'][$field]['rel_module'] = $rel_module;               // module name
-                        $ret_array['many_to_many_query'][$field]['bean_key'] = "$this->table_name.id";      // parent bean field name to retrieve id of parent bean
-                        $ret_array['many_to_many_query'][$field]['bean_module'] = $this->module_name;       // parent module name
-                        $ret_array['many_to_many_query'][$field]['query_where'] = $many_to_many_where;      // additional where (created if relation id relationship_info ans parent bean is defined)
-
-                        // join table to main query to have ability to do search by fields from this table
                         if(!$table_joined)
                         {
-                            $ret_array['from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
-                        }
-
-                        if ( $return_array )
-                        {
-                            // there is at last one many-to-many relationship
-                            // use distinct to prevent dublicated records
-                            $distinct = ' DISTINCT ';
-                        } 
-                        else 
-                        {
-                            unset($ret_array['many_to_many_query']);
+                            $ret_array['secondary_from'] .= ' ' . $join['join']. ' AND ' . $params['join_table_alias'].'.deleted=0';
+                            if (isset($data['link_type']) && $data['link_type'] == 'relationship_info' && ($parentbean instanceOf SugarBean))
+                            {
+                                $ret_array['secondary_where'] = $params['join_table_link_alias'] . '.' . $join['rel_key']. "='" .$parentbean->id . "'";
+                            }
                         }
                     }
                     else
@@ -3570,7 +3499,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
             }
         }
-        }
         if(!empty($filter))
         {
             if(isset($this->field_defs['assigned_user_id']) && empty($selectedFields[$this->table_name.'.assigned_user_id']))
@@ -3630,8 +3558,12 @@ function save_relationship_changes($is_update, $exclude=array())
             //make call to process the order by clause
             $ret_array['order_by'] = " ORDER BY ". $this->process_order_by($order_by);
         }
-        
-        $ret_array['select'] = " SELECT $distinct ".$ret_array['select'];
+        if($singleSelect)
+        {
+            unset($ret_array['secondary_where']);
+            unset($ret_array['secondary_from']);
+            unset($ret_array['secondary_select']);
+        }
 
         if($return_array)
         {
@@ -3914,7 +3846,7 @@ function save_relationship_changes($is_update, $exclude=array())
      * @return array Fetched data.
      */
     function process_union_list_query($parent_bean, $query,
-    $row_offset, $limit= -1, $max_per_page = -1, $where = '', $subpanel_def, $query_row_count='', $many_to_many_queries = array())
+    $row_offset, $limit= -1, $max_per_page = -1, $where = '', $subpanel_def, $query_row_count='', $secondary_queries = array())
 
     {
         $db = DBManagerFactory::getInstance('listviews');
@@ -4114,7 +4046,6 @@ function save_relationship_changes($is_update, $exclude=array())
                             $post_retrieve[$current_bean->parent_type][] = array('child_id'=>$current_bean->id, 'parent_id'=> $current_bean->parent_id, 'parent_type'=>$current_bean->parent_type, 'type'=>'parent');
                         }
                         //$current_bean->fill_in_additional_list_fields();
-                        // TODO: are there cases when bean uses autoincrement ids? In this case old bean well be replaced with new one
                         $list[$current_bean->id] = $current_bean;
                     }
                     // go to the next row
@@ -4124,64 +4055,28 @@ function save_relationship_changes($is_update, $exclude=array())
             //now handle retrieving many-to-many relationships
             if(!empty($list))
             {
-                // Bug #49385 : Multiple listings for same meeting in meeting list
-                // @see SugarBean::create_new_list_query() method for more information
-                //NOW HANDLE MANY-TO-MANY QUERIES
-
-                // in case all beans have unig id regardless of bean class (guid) use global list of ids to retrieve data
-                // TODO: are there cases when bean uses autoincrement ids?
-                $bean_ids = array_keys($list);
-                $used_queries = array();
-                foreach( $many_to_many_queries as $field_name => $queries2 )
+                foreach($secondary_queries as $query2)
                 {
-                    foreach( $queries2 as $query2 )
-                    {
-                        // build query string to execute
-                        $query2_string = $query2['query'];
-                        // apply aditional where is it exsists
-                        $query2_string = isset($query2['query_where']) && !empty($query2['query_where']) ? $query2_string . ' AND ' . $query2['query_where'] : $query2_string;
-                        // fetch for selected bean's ids only
-                        $query2_string .= ' AND '.$query2['bean_key'].' IN (\'' . implode('\',\'', $bean_ids).'\')';
+                    $result2 = $db->query($query2);
 
-                        if ( !in_array($query2_string, $used_queries) )
+                    $row2 = $db->fetchByAssoc($result2);
+                    while($row2)
+                    {
+                        $id_ref = $row2['ref_id'];
+
+                        if(isset($list[$id_ref]))
                         {
-                            $used_queries[] = $query2_string;
-                            $many_to_many_result = $db->query($query2_string);
-                            while ( $row2 = $db->fetchByAssoc($many_to_many_result) )
+                            foreach($row2 as $r2key=>$r2value)
                             {
-                                if( isset ($list[$row2['ref_id']]) )
+                                if($r2key != 'ref_id')
                                 {
-                                    foreach ( $row2 as $r2key => $r2value )
-                                    {
-                                        // ret_id is id of parent bean don't assign it to bean
-                                        if ( $r2key != 'ref_id' )
-                                        {
-                                            // assign retrieved values to bean
-                                            $list[$row2['ref_id']]->$r2key = $r2value;
-                                            if ( $r2key == $field_name )
-                                            {
-                                                // assign additional information to create link to related records
-                                                // _M2M_COUNT - count of related items
-                                                // _M2M_ITEMS - related items to display in popup
-                                                $count_key = strtoupper($r2key).'_M2M_COUNT';
-                                                $items_key = strtoupper($r2key).'_M2M_ITEMS';
-                                                $list[$row2['ref_id']]->$count_key = isset($list[$row2['ref_id']]->$count_key) ? $list[$row2['ref_id']]->$count_key + 1 : 1;
-                                                $list[$row2['ref_id']]->$items_key = isset($list[$row2['ref_id']]->$items_key) ? $list[$row2['ref_id']]->$items_key : array();
-                                                $item_to_add = array(
-                                                    'value' => $r2value,                        // value
-                                                    'rel_key' => $row2[$query2['rel_key']],     // id of related bean
-                                                    'rel_module' => $query2['rel_module']       // mane of module of related bean
-                                                );
-                                                array_push($list[$row2['ref_id']]->$items_key, $item_to_add);
-                                            }
-                                        }
-                                    }
+                                    $list[$id_ref]->$r2key = $r2value;
                                 }
                             }
                         }
+                        $row2 = $db->fetchByAssoc($result2);
                     }
                 }
-                unset($bean_ids, $used_queries);
 
             }
 

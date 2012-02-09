@@ -26,7 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{overlib_includes}
 {{* Add the preForm code if it is defined (used for vcards) *}}
 {{if $preForm}}
 	{{$preForm}}

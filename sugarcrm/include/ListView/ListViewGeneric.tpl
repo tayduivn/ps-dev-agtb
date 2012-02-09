@@ -171,7 +171,6 @@ data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$p
 						</{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
                     {/if}
                     {if $col == 'NAME' || $params.bold}</b>{/if}
-                    {$pageData.additionalRelationInfo.$id.$col}
 				</td>
 				{/strip}
                 {assign var='scope_row' value=false}

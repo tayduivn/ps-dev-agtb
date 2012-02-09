@@ -164,7 +164,6 @@
 						</{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
                     {/if}
                     {if $col == 'NAME' || $params.bold}</b>{/if}
-                    {$pageData.additionalRelationInfo.$id.$col}
 				</td>
 				{/strip}
 				{counter name="colCounter"}
