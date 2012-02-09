@@ -11,7 +11,9 @@ width:70%;
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
 {if (!$smarty.get.ajax)}
-    <br>
+<h2>{$APP.LBL_SEARCH_RESULTS}</h2>
+<br>
+
 <div id='ftsSearchBarContainer' >
     <div id="ftsAutoCompleteResult" style="width:100%;!important"></div>
     <input type="text" placeholder="{$APP.LBL_SEARCH}" name="ftsSearchField" id="ftsSearchField" value="{$smarty.request.q}"  style="width: 70%!important" >
