@@ -1,27 +1,35 @@
 describe("Framework", function() {
-    var app, mock;
+    describe("when an instance is requested", function() {
+        var app;
 
-    beforeEach(function() {
-        app = SUGAR.App.init({el: "body"});
-    });
+        it("should return a new instance if none exists", function() {
+            app = SUGAR.App.init({el: "body"});
+            expect(app).toBeTruthy();
+        });
 
-    afterEach(function() {
+        it("should return an existing instance", function() {
+            var app2 = SUGAR.App.init({el: "body"});
+            expect(app2).toEqual(app);
+        });
+
         SUGAR.App.destroy();
     });
 
-    it("can create a new instance of the App", function() {
-        expect(app).toBeDefined();
-    });
+    describe("when augmented", function() {
+        var app = SUGAR.App.init({el: "body"}),
+            mock;
+        it("should register a module with itself", function() {
+            var module = {
+                init: function() {}
+            }
 
-    it("can augment itself with new modules", function() {
-        var module = {
-            init: function() {}
-        }
+            mock = sinon.mock(module);
+            mock.expects("init").once();
 
-        mock = sinon.mock(module);
-        mock.expects("init").once();
+            app.augment("test", module, true);
+            expect(mock.verify()).toBeTruthy();
+        });
 
-        app.augment("test", module, true);
-        expect(mock.verify()).toBeTruthy();
+        SUGAR.App.destroy();
     });
 });

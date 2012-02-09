@@ -8,11 +8,11 @@ describe("Router", function() {
         SUGAR.App.destroy();
     });
 
-    it("is initialized", function() {
-        expect(SUGAR.App.router).toBeDefined();
+    it("should be set and initialized within the framework", function() {
+        expect(SUGAR.App.router).toBeTruthy();
     });
 
-    it("calls controller to load the default view", function() {
+    it("should call the controller to load the default view", function() {
         var mock = sinon.mock(controller);
         mock.expects("loadView").once();
 

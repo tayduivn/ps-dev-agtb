@@ -53,6 +53,7 @@ SUGAR.App = (function() {
 
         /**
          * Destroys the instance of the current app
+         * TODO: Not properly implemented
          */
         destroy: function() {
             if (Backbone.history) {

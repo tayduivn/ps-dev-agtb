@@ -4,14 +4,22 @@ describe("Controller", function() {
         SUGAR.App.destroy();
     });
 
-    it("exists", function() {
+    it("should exist within the framework", function() {
         expect(SUGAR.App.controller).toBeDefined();
     });
 
-    it("can load a view", function() {
+    it("should be able to load a view based on the given route information", function() {
         SUGAR.App.controller.init({});
         SUGAR.App.controller.loadView();
 
         expect().toBeTruthy();
+    });
+
+    it("should be able to set the context in response to a route", function() {
+
+    });
+
+    it("should be able to fetch the needed data from the data manager", function() {
+
     });
 });
