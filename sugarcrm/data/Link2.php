@@ -111,7 +111,7 @@ class Link2 {
         //Following behavior is tied to a property(ignore_role) value in the vardef. It alters the values of 2 properties, ignore_role_filter and add_distinct.
         //the property values can be altered again before any requests are made.
         if (!empty($this->def) && is_array($this->def)) {
-            if (array_key_exists('ignore_role', $this->def)) {
+            if ( isset($this->def['ignore_role']) ) {
                 if ($this->def['ignore_role']) {
                     $this->ignore_role_filter=true;
                     $this->add_distinct=true;
