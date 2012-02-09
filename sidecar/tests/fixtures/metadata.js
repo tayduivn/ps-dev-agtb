@@ -31,7 +31,7 @@ fixtures.metadata = {
             }
         },
         "views" : {
-            "EditView" : {
+            "editView" : {
                 "panels" : [{
                     "label" : "LBL_PANEL_1",
                     "fields" : [
@@ -41,7 +41,7 @@ fixtures.metadata = {
                 }]
 
             },
-            "DetailView" : {
+            "detailView" : {
                 "panels" : [{
                     "label" : "LBL_PANEL_1",
                     "fields" : [
@@ -50,15 +50,15 @@ fixtures.metadata = {
                     ]
                 }]
             },
-            "QuickCreate" : {
+            "quickCreate" : {
 
             },
             //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
-            "ListView" : {
+            "listView" : {
 
             },
             //Subpanel layout defs
-            "SubpanelView" : {
+            "subpanelView" : {
 
             }
         },

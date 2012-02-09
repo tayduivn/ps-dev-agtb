@@ -9,7 +9,7 @@
 fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
 fixtures.templates = {
-    "DetailView" :
+    "detailView" :
         "<h3>{{name}}</h3>" +
         "{{#each meta.panels}}" +
             "<h4>{{label}}</h4>" +
@@ -17,7 +17,7 @@ fixtures.templates = {
                 "<div>{{sugar_field ../../context ../../name}}</div>" +
             "{{/each}}" +
         "{{/each}}",
-    "EditView" :
+    "editView" :
         "<h3>{{name}}</h3>" +
         "{{#each meta.panels}}" +
             "<h4>{{label}}</h4>" +

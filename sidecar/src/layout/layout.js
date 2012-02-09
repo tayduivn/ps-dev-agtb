@@ -7,14 +7,13 @@
                 Handlebars.registerHelper('sugar_field', function(context, view) {
                     var key = context.module + "_" + view + "_" + this.name;
                     if (!fieldCache[key]){
-                        var ftype = app.metadata.get({type:"vardef",module:context.module}).fields[this.name].type;
-                        var t = app.sugarFieldManager.getInstance().getField(ftype, view);
+                        var ftype = app.metadata.get({type:"vardef",module:context.get("module")}).fields[this.name].type;
+                        var t = app.sugarFieldManager.getField(ftype, view);
                         if (t.error)
                             return t.error;
-
                         fieldCache[key] = Handlebars.compile(t.template);
                     }
-                    this.value = context.model.get(this.name);
+                    this.value = context.get("model").get(this.name);
                     return new Handlebars.SafeString(fieldCache[key](this));
                 });
 
@@ -25,7 +24,7 @@
                 if ((!params.context && !params.module) || (!params.view && !params.layout))
                     return null;
 
-                var module = params.module || params.context.module;
+                var module = params.module || params.context.get("module");
                 if (params.view) {
                     return new app.layout.View({
                         context: params.context,
@@ -56,16 +55,17 @@
             initialize:function (options) {
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
-                this.context = options.context || app.context;
+                this.context = options.context || app.context.getContext();
                 this.name = options.name;
                 //Create a unique ID for this view
                 this.id = options.id || this.getID();
                 this.className = options.className || this.name;
-                this.template = options.template || app.template.get(this.name, this.context.module);
+                this.template = options.template || app.template.get(this.name, this.context.get("module"));
                 this.meta = options.meta;
             },
             render:function () {
-                this.$el.html(this.template(this));
+                if (this.template)
+                    this.$el.html(this.template(this));
             },
             getID : function() {
                 if (this.id)
@@ -78,7 +78,7 @@
             initialize:function () {
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
-                this.context = this.options.context || app.context;
+                this.context = this.options.context || app.context.getContext();
                 this.module = this.context.module;
                 this.components = [];
                 _.each(this.options.meta.components, function (def) {
