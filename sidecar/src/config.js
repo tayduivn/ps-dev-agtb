@@ -3,7 +3,7 @@
   /**
    * SUGAR.App application configuration.
    */
-  app.config = {
+  app.augment("config", {
     // Possible values: 'dev', 'test', 'prod'
     env: 'dev',
 
@@ -12,6 +12,6 @@
     logFormatter: app.logger.SimpleFormatter,
 
     //restApiUrl: 'http://localhost:8888/rest/10/'
-  }
+  }, false);
 
 })(SUGAR.App);
