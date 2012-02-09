@@ -38,18 +38,20 @@ describe("Application context manager", function() {
                 context.reset();
                 expect(context.get()).toEqual({});
             });
-        });
 
-        it("should be able to generate sub-contexts by passing in a parent context", function() {
-            var context = SUGAR.App.context.getContext({module: "my module", url: "this url"}, {collection: {name: "some collection"}}),
-                subcontext = SUGAR.App.context.getContext(context, {model: {name: "Some Model"}}),
-                state = context.get(),
-                state2 = subcontext.get();
+            describe("and when a subcontext is required", function() {
+                it("should be able to generate sub-contexts from a parent context", function() {
+                    var context = SUGAR.App.context.getContext({module: "my module", url: "this url"}, {collection: {name: "some collection"}}),
+                        subcontext = SUGAR.App.context.getContext(context, {model: {name: "Some Model"}}),
+                        state = context.get(),
+                        state2 = subcontext.get();
 
-            expect(state.module).toEqual(state2.module);
-            expect(state.url).toEqual(state2.url);
-            expect(state.model).not.toEqual(state2.model);
-            expect(state.collection).not.toEqual(state2.collection);
+                    expect(state.module).toEqual(state2.module);
+                    expect(state.url).toEqual(state2.url);
+                    expect(state.model).not.toEqual(state2.model);
+                    expect(state.collection).not.toEqual(state2.collection);
+                });
+            });
         });
     });
 });

@@ -1,13 +1,23 @@
 describe("Events Hub", function() {
-    it("should allow a third party to publish an event", function() {
+    describe("when publishing an event", function() {
+        it("should register the event to itself", function() {
 
+        });
     });
 
-    it("should broadcast published events when they are fired", function() {
+    describe("when removing revents", function() {
+        it("should remove event from itself", function() {
 
+        })
     });
 
-    it("should allow a third party to unsubscribe an event", function() {
+    describe("when receiving a published event", function() {
+        it("should broadcast the event to all subscribers of event", function() {
 
+        });
+
+        it("should not broad cast removed events to subscribers", function() {
+
+        });
     });
 });

@@ -8,18 +8,20 @@ describe("Controller", function() {
         expect(SUGAR.App.controller).toBeDefined();
     });
 
-    it("should be able to load a view based on the given route information", function() {
-        SUGAR.App.controller.init({});
-        SUGAR.App.controller.loadView();
+    describe("when a route is matched", function() {
+        it("should be able to load a view based on the given route information", function() {
+            SUGAR.App.controller.init({});
+            SUGAR.App.controller.loadView();
 
-        expect().toBeTruthy();
-    });
+            expect().toBeTruthy();
+        });
 
-    it("should be able to set the context in response to a route", function() {
+        it("should set the context", function() {
 
-    });
+        });
 
-    it("should be able to fetch the needed data from the data manager", function() {
+        it("should fetch the needed data from the data manager", function() {
 
+        });
     });
 });

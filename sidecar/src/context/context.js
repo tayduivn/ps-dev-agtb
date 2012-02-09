@@ -25,6 +25,7 @@
                 }
 
                 _.extend(this.state, data);
+                this.fire();
             },
 
             reset: function(obj) {
@@ -44,7 +45,6 @@
             init: function(obj, data) {
                 this.reset(obj);
                 this.set(obj, data);
-                this.fire();
             }
         }, Backbone.Events);
 
