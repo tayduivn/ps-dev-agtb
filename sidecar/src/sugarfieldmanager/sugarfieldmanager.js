@@ -71,27 +71,31 @@
                     // init results
                     var fresult = {};
                     var result = {};
-                    var fname = "";
+                    var name = "";
+                    var view = "";
 
                     // loop over fields and set them in the result
                     for (field in fields) {
-                        fname=fields[field]['name'];
+
+                        name=fields[field]['name'];
+
                         if (fields[field]['view']) {
-                            hasView = true;
+                            view=fields[field]['view'];
                         }
 
-                        if (!(result[fname])) {
-                            result[fname] = {}; // pre allocate the field in results
+                        if (!(result[name])) {
+                            result[name] = {}; // pre allocate the field in results
                         }
 
-                        fresult = this.getField(fields[field]);
-                        if(hasView) {
-                            result[fname][fields[field]['view']]=fresult;
+                        fresult = this.getField(name, view);
+                        if(view != "") {
+                            result[name][fields[field]['view']]=fresult;
                         } else {
-                            result[fname]=fresult;
+                            result[name]=fresult;
                         }
 
                     }
+
                     //return results
                     return result;
                 },
@@ -104,26 +108,19 @@
                  * @param  object that follows {fname:"xyz", view:"editView"}
                  * @return obj of sugar fields stored by fieldname.viewtype
                  */
-                getField:function (field) {
+                getField:function (name, view) {
                     // init results
                     var result = {};
-                    var fname = "";
-                    var hasView = false;
 
-                    // loop over fields and set them in the result
-                        fname = field.name;
-
-                        if (field.view) {
-                            hasView = true;
-                        }
+                    name = this.fieldTypeMap[name] || name;
 
 
                         // assign fields to results if set
-                        if (hasView && this.fieldsObj[fname] && this.fieldsObj[fname][field.view]) {
-                            result = this.fieldsObj[fname][field.view];
+                        if (view !="" && this.fieldsObj[name] && this.fieldsObj[name][view]) {
+                            result = this.fieldsObj[name][view];
                         // fall back to default if field for this view doesnt exist
-                        } else if (this.fieldsObj[fname] && this.fieldsObj[fname]['default']) {
-                            result = this.fieldsObj[fname]['default'];
+                        } else if (this.fieldsObj[name] && this.fieldsObj[name]['default']) {
+                            result = this.fieldsObj[name]['default'];
                         } else {
                             result = {error:"No such field in field cache."};
                         }

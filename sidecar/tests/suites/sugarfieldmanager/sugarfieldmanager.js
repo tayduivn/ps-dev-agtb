@@ -13,7 +13,7 @@ describe("SugarFieldManager", function () {
         });
 
         afterEach(function () {
-           //this.sugarFieldManager.reset();
+           this.sugarFieldManager.reset();
         });
 
         it("should sync all sugar fields from server", function () {
@@ -38,7 +38,25 @@ describe("SugarFieldManager", function () {
                 expect(result).toBeTruthy();
                 var result = this.sugarFieldManager.reset();
                 expect(this.sugarFieldManager.fieldsObj).toEqual({});
-                expect(this.sugarFieldManager.fieldsHash).toEqual('')
+                expect(this.sugarFieldManager.fieldsHash).toEqual('');
+            }
+        );
+
+        it("should get a sugar fields", function () {
+                SUGAR.App.sugarFieldsSync = function () {
+                };
+                var stub = sinon.stub(SUGAR.App, "sugarFieldsSync", function (that, callback){
+                    var ajaxResponse = sugarFieldsFixtures;
+                    var result= callback(that, ajaxResponse);
+                    return result;
+                });
+                var syncResult=this.sugarFieldManager.syncFields();
+                expect(syncResult).toBeTruthy();
+
+                var result = this.sugarFieldManager.getField('varchar','editView');
+                console.log(JSON.stringify(result.template));
+                expect(result.type).toEqual('basic');
+                expect(result.template).toEqual(' <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input01\">{{label}}</label>\n\n        <div class=\"controls\">\n            <input type=\"text\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n            <p class=\"help-block\">{{help}}</p>\n        </div>\n    </div>\n');
             }
         );
 
@@ -54,6 +72,7 @@ describe("SugarFieldManager", function () {
                 });
                 var syncResult=this.sugarFieldManager.syncFields();
                 expect(syncResult).toBeTruthy();
+
                 var stubbedFieldList = [
                     {name:"text",view:"editView"},
                     {name:"text", view:"detailView"},
