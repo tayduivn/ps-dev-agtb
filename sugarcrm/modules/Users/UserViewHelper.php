@@ -588,7 +588,8 @@ class UserViewHelper {
         
         $chooser->args['left_label'] =  translate('LBL_DISPLAY_TABS','Users');
         $chooser->args['right_label'] =  translate('LBL_HIDE_TABS','Users');
-        $chooser->args['title'] =  translate('LBL_EDIT_TABS','Users').' <!--not_in_theme!--><img border="0" src="themes/default/images/helpInline.gif" onmouseover="return overlib(\'Choose which tabs are displayed.\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\', WIDTH, -1, NOFOLLOW, \'ol_nofollow\' );" onmouseout="return nd();"/>';
+        require_once('include/Smarty/plugins/function.sugar_help.php');
+        $chooser->args['title'] =  translate('LBL_EDIT_TABS','Users').smarty_function_sugar_help(array("text"=>"Choose which tabs are displayed."),$ss);
         
         $this->ss->assign('TAB_CHOOSER', $chooser->display());
         $this->ss->assign('CHOOSER_SCRIPT','set_chooser();');

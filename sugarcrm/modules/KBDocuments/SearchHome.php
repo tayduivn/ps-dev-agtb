@@ -39,10 +39,6 @@ $focus = new KBDocument();
 
 echo getClassicModuleTitle("KBDocuments", array($app_strings['LBL_SEARCH']), true);
 
-$path = getJSPath('cache/include/javascript/sugar_grp_overlib.js');
-echo "
-<script type='text/javascript' src='$path'></script>
-<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000; max-width: 400px;'></div> ";
 
 $ss = new Sugar_Smarty();
 $ss->assign("MOD", $mod_strings);

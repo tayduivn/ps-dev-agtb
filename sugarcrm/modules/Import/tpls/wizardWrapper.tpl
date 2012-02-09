@@ -36,7 +36,6 @@
 {/literal}
 </style>
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
-{overlib_includes}
 <div class="dashletPanelMenu">
     <div class="hd">
         <div class="tl"></div>

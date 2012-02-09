@@ -2063,7 +2063,7 @@ SUGAR.reports = function() {
 				"</td><td class='dataLabel'>&nbsp;</td></tr>" +
 				"<tr id='group_by_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_GROUP_BY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_SELECT_GROUP_BY') + "<span id='group_by_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_SELECT_GROUP_BY') + "<span id='group_by_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'  class='inlineHelpTip' onclick='SUGAR.util.showHelpTips(this,\"" + SUGAR.language.get('Reports','LBL_GROUP_BY_HELP_DESC') +"\");'></span></h3>";
 
 			var groupByModule = new YAHOO.widget.Module("group_by_div", { visible: false });
 			groupByModule.setHeader(title);
@@ -2071,13 +2071,7 @@ SUGAR.reports = function() {
 			groupByModule.render("group_by_panel");
 			groupByModule.show();
 			
-			var toolTip = new YAHOO.widget.Tooltip("tt1", {context:"group_by_help",  
-	                          						   	   text:SUGAR.language.get('Reports','LBL_GROUP_BY_HELP_DESC'),
-														   constraintoviewport : true,
-														   height : "370px",
-														   width : "400px"
-			});
-			//toolTip.show();
+
 			
 		},		
 		showDisplaySummaries: function() {
@@ -2090,7 +2084,7 @@ SUGAR.reports = function() {
 			panelHtml +=	
 				"<tr id='display_summary_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES')  + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES')  + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"' class='inlineHelpTip' onclick='SUGAR.util.showHelpTips(this,\"" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC') +"\");'></span></h3>";
 
 			var displaySummariesModule = new YAHOO.widget.Module("display_summaries_div", { visible: false });
 			displaySummariesModule.setHeader(title);
@@ -2098,14 +2092,6 @@ SUGAR.reports = function() {
 			displaySummariesModule.render("display_summaries_panel");
 		    var ddTarget = new YAHOO.util.DDTarget('displaySummariesTable', 'group_summaries');
 			displaySummariesModule.show();
-			
-			var toolTip = new YAHOO.widget.Tooltip("tt2", {context:"display_summary_help",  
-	                          						   	   text:SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC'),
-														   constraintoviewport : true,
-														   height : "350px",
-														   width : "350px"
-			});
-			//toolTip.show();
 			
 		},
 		
@@ -2117,7 +2103,7 @@ SUGAR.reports = function() {
 				"<th width='30%' scope='col'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</th><th></th></tr>" +
 				"<tr id='display_cols_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=3><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_COLS_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
-			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_CHOOSE_DISPLAY_COLS')  + "<span id='display_cols_help'><img id=\"toolipImageId\" src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_CHOOSE_DISPLAY_COLS')  + "<span id='display_cols_help'><img id=\"toolipImageId\" src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
 
 			var displayColsModule = new YAHOO.widget.Module("display_cols_div", { visible: false });
 			displayColsModule.setHeader(title);
@@ -3108,7 +3094,7 @@ SUGAR.reports = function() {
 			new_input.id="runtime_filter_" + rowId;
 			cell.appendChild(new_input);
 			cell.innerHTML += " <b><label for='runtime_filter_" + rowId+"' />"+ SUGAR.language.get('Reports', 'LBL_RUN_TIME_LABEL') + "</input></b>";
-			cell.innerHTML += '<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib(\'' + SUGAR.language.get('Reports','LBL_RUNTIME_HELP') + '\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\' );">&nbsp;<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=helpInline.gif"  alt="'+SUGAR.language.get("Reports", 'LBL_ALT_INFORMATION')+'"></span>';
+			cell.innerHTML += '&nbsp;<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=helpInline.png"  alt="'+SUGAR.language.get("Reports", 'LBL_ALT_INFORMATION')+'" onclick="SUGAR.util.showHelpTips(this,\''+ SUGAR.language.get('Reports','LBL_RUNTIME_HELP')+'\');" class="inlineHelpTip">';
 			
 			row.appendChild(cell);
 			if (filter.runtime && filter.runtime == 1) {
@@ -3929,14 +3915,9 @@ SUGAR.reports = function() {
 	            fields: ["field_label", "module_name","parents", "field_name", "link_name", "parent_module", "parents_link"]
 	        };
 
-			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel  +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
+			var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel  +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"' class='inlineHelpTip' onclick='SUGAR.util.showHelpTips(this,\"" + SUGAR.language.get('Reports','LBL_FIELDS_PANEL_HELP_DESC') +"\");'></span></h3>";
 			
-			var toolTip = new YAHOO.widget.Tooltip("tt6", {context:"fields_panel_help",  
-						   	   text:SUGAR.language.get('Reports','LBL_FIELDS_PANEL_HELP_DESC'),
-						   constraintoviewport : true,
-						   height : "40px",
-						   width : "350px"
-			});
+
 			//toolTip.show();
 			var oldOffsetHeight = document.getElementById("autocomplete").offsetHeight;
 			//SUGAR.reports.modulefieldspanel.
@@ -4061,7 +4042,7 @@ SUGAR.reports = function() {
             
             var moduleTree = SUGAR.reports.module_tree;
             if (!moduleTree) {
-				var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
+				var title = "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_RELATED_MODULES') + "<span id='related_modules_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png'  alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"' class='inlineHelpTip' onclick='SUGAR.util.showHelpTips(this,\"" + SUGAR.language.get('Reports','LBL_RELATED_MODULES_PANEL_HELP_DESC') +"\");'></span></h3>";
 				var moduleTree = new YAHOO.widget.Module("module_tree_panel", { visible: false });
 				var moduletreePanelHTML = "<div id=\"module_tree\" style=\"height:230px; width:200px; overflow:auto;\"></div>";
 				moduleTree.setHeader(title);
@@ -4082,12 +4063,6 @@ SUGAR.reports = function() {
 				modulefields.render();
 				modulefields.show();
 
-				var toolTip = new YAHOO.widget.Tooltip("tt5", {context:"related_modules_panel_help",  
-  						   	   text:SUGAR.language.get('Reports','LBL_RELATED_MODULES_PANEL_HELP_DESC'),
-							   constraintoviewport : true,
-							   height : "40px",
-							   width : "300px"
-				});
 				//toolTip.show();
 				SUGAR.reports.autocompletemodule = autocompletemodule;
 				

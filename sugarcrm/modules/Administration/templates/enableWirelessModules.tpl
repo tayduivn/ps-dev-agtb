@@ -29,7 +29,6 @@
 *}
 <script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
-{overlib_includes}
 <form name="enableWirelessModules" method="POST">
 	<input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="updateWirelessEnabledModules">
