@@ -6,13 +6,33 @@
         var context = _.extend({
             contextId: contextId,
             state: {},
+            parent: null,
+            children: [],
 
-            get: function() {
+            get: function(prop) {
+                var requested = {};
+
+                if (prop) {
+                    if (_.isString(prop)) {
+                        return this.state[prop];
+                    } else {
+                        _.each(prop, function(key) {
+                            requested[key] = this.state[key];
+                        }, this);
+
+                        return requested;
+                    }
+                }
                 return this.state;
             },
 
             set: function(obj, data) {
                 if (obj && obj.contextId && obj.state) { // If obj is a context
+
+                    // Set the relationships between the two contexts
+                    this.parent = obj;
+                    obj.children.push(this);
+
                     _.each(obj.state, function(state, name) {
                         // Don't copy over model or collection attributes
                         if (name !== "model" && name !== "collection") {

@@ -9,6 +9,29 @@ describe("Application context manager", function() {
     });
 
     describe("Context Object", function() {
+        describe("when requesting state", function() {
+            var context = SUGAR.App.context.getContext({
+                prop1: "Prop1",
+                prop2: "Prop2",
+                prop3: "Prop3"
+            });
+
+            it("should return one property if only one is requested", function() {
+                var result = context.get("prop1");
+                expect(result).toEqual("Prop1");
+            });
+
+            it("should return a subset of properties if so requested", function() {
+                var result = context.get(["prop1", "prop2"]);
+                expect(result).toEqual({prop1: "Prop1", prop2: "Prop2"});
+            });
+
+            it("should return all properties if no parameters are provided", function() {
+                var result = context.get();
+                expect(result).toEqual({prop1: "Prop1", prop2: "Prop2", prop3: "Prop3"});
+            });
+        });
+
         describe("when a new state is required", function() {
             var obj = {
                 url: "someurl",
@@ -40,16 +63,40 @@ describe("Application context manager", function() {
             });
 
             describe("and when a subcontext is required", function() {
-                it("should be able to generate sub-contexts from a parent context", function() {
-                    var context = SUGAR.App.context.getContext({module: "my module", url: "this url"}, {collection: {name: "some collection"}}),
-                        subcontext = SUGAR.App.context.getContext(context, {model: {name: "Some Model"}}),
-                        state = context.get(),
-                        state2 = subcontext.get();
+                var context = SUGAR.App.context.getContext({module: "my module", url: "this url"}, {collection: {name: "some collection"}}),
+                    subcontext = SUGAR.App.context.getContext(context, {model: {name: "Some Model"}}),
+                    state = context.get(),
+                    state2 = subcontext.get();
 
-                    expect(state.module).toEqual(state2.module);
-                    expect(state.url).toEqual(state2.url);
-                    expect(state.model).not.toEqual(state2.model);
-                    expect(state.collection).not.toEqual(state2.collection);
+                it("should generate sub-contexts from a parent context", function() {
+                    expect(subcontext).toBeTruthy();
+                });
+
+                describe("the subcontext", function() {
+                    it("should be inherit parent context properties except data properties", function() {
+                        expect(state.module).toEqual(state2.module);
+                        expect(state.url).toEqual(state2.url);
+                        expect(state.model).not.toEqual(state2.model);
+                        expect(state.collection).not.toEqual(state2.collection);
+                    });
+
+                    it("should set the parent to the parent context", function() {
+                        expect(subcontext.parent).toEqual(context);
+                    });
+
+                    it("should set the children of the parent to the subcontext", function() {
+                        var childContext;
+
+                        expect(context.children).not.toBe([]);
+
+                        _.each(context.children, function(child) {
+                            if (child === subcontext) {
+                                childContext = child;
+                            }
+                        });
+
+                        expect(childContext).toBeTruthy();
+                    });
                 });
             });
         });
