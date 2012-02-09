@@ -9,11 +9,11 @@ describe("SugarFieldManager", function () {
 
         // setup to be run before every test
         beforeEach(function () {
-            this.sugarFieldManager = SUGAR.App.sugarFieldManager.getInstance();
+            this.sugarFieldManager = SUGAR.App.sugarFieldManager;
         });
 
         afterEach(function () {
-           this.sugarFieldManager.reset();
+           //this.sugarFieldManager.reset();
         });
 
         it("should sync all sugar fields from server", function () {

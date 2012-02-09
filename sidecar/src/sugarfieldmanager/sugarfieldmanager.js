@@ -14,7 +14,7 @@
         function init(args) {
             instance = new SugarFieldManager();
             _.bind(instance.handleResponse, instance);
-            return instance
+            return instance;
         };
 
         function SugarFieldManager() {
@@ -22,6 +22,11 @@
                 //TODO move this to global cache
                 fieldsObj:{},
                 fieldsHash:'',
+                fieldTypeMap: {
+                                    varchar : "text",
+                                    name : "text",
+                                    text : "textarea"
+                                },
 
 
                 /**
@@ -62,16 +67,16 @@
                  * @return obj of sugar fields stored by fieldname.viewtype
                  */
                 getFields:function (fields) {
+
                     // init results
+                    var fresult = {};
                     var result = {};
                     var fname = "";
-                    var hasView = false;
 
                     // loop over fields and set them in the result
                     for (field in fields) {
-                        fname = fields[field].name;
-
-                        if (fields[field].view) {
+                        fname=fields[field]['name'];
+                        if (fields[field]['view']) {
                             hasView = true;
                         }
 
@@ -79,19 +84,51 @@
                             result[fname] = {}; // pre allocate the field in results
                         }
 
-                        // assign fields to results if set
-                        if (hasView && this.fieldsObj[fname] && this.fieldsObj[fname][fields[field].view]) {
-                            result[fname][fields[field].view] = this.fieldsObj[fname][fields[field].view];
-
-                        // fall back to default if field for this view doesnt exist
-                        } else if (this.fieldsObj[fname] && this.fieldsObj[fname]['default']) {
-                            result[fname]['default'] = this.fieldsObj[fname]['default'];
+                        fresult = this.getField(fields[field]);
+                        if(hasView) {
+                            result[fname][fields[field]['view']]=fresult;
                         } else {
-                            result[fname] = {error:"No such field in field cache."};
+                            result[fname]=fresult;
                         }
 
                     }
                     //return results
+                    return result;
+                },
+
+
+
+                /**
+                 * Gets sugarField from cache
+                 *
+                 * @param  object that follows {fname:"xyz", view:"editView"}
+                 * @return obj of sugar fields stored by fieldname.viewtype
+                 */
+                getField:function (field) {
+                    // init results
+                    var result = {};
+                    var fname = "";
+                    var hasView = false;
+
+                    // loop over fields and set them in the result
+                        fname = field.name;
+
+                        if (field.view) {
+                            hasView = true;
+                        }
+
+
+                        // assign fields to results if set
+                        if (hasView && this.fieldsObj[fname] && this.fieldsObj[fname][field.view]) {
+                            result = this.fieldsObj[fname][field.view];
+                        // fall back to default if field for this view doesnt exist
+                        } else if (this.fieldsObj[fname] && this.fieldsObj[fname]['default']) {
+                            result = this.fieldsObj[fname]['default'];
+                        } else {
+                            result = {error:"No such field in field cache."};
+                        }
+
+                    //return result
                     return result;
                 },
 
@@ -110,10 +147,6 @@
             };
         };
 
-        return {
-            getInstance:function (args) {
-                return instance || init(args);
-            }
-        };
+        return instance || init();;
     }()))
 }(SUGAR.App));
