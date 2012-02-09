@@ -161,9 +161,9 @@ require_once 'include/SugarOAuthServer.php';
 if(SugarOAuthServer::enabled()) {
     $admin_option_defs['Administration']['oauth']= array('Password','LBL_OAUTH_TITLE','LBL_OAUTH','./index.php?module=OAuthKeys&action=index');
 }
-
+//BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['fts']=array('icon_SearchForm','LBL_FTS_SETTINGS','LBL_FTS_SETTINGS_DESC','./index.php?module=Administration&action=ConfigureFTS');
-
+//END SUGARCRM flav=pro ONLY
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 
 
