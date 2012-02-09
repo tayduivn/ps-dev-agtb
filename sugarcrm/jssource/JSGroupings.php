@@ -64,6 +64,14 @@
 			'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.showLoading.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            //jquery ui
+            'include/javascript/jquery/jqueryui/jquery.ui.core.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.widget.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.mouse.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.draggable.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.position.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.resizable.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.dialog.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			//jquery for moddule menus
 			'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
@@ -130,12 +138,6 @@
             //YUI combination 2
             'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
             'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
-            ),
-
-            $sugar_grp_overlib = array(
-            //overlib combination
-            'include/javascript/overlibmws.js'              => 'include/javascript/sugar_grp_overlib.js',
-            'include/javascript/overlibmws_iframe.js'       => 'include/javascript/sugar_grp_overlib.js',
             ),
 
             //Grouping for emails module.

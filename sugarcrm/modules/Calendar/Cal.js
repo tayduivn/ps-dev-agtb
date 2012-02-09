@@ -109,16 +109,42 @@
 
 			var item_text = "";
 			if(CAL.item_text && (typeof item[CAL.item_text] != "undefined") )
-				item_text = item[CAL.item_text];
-			
-			var contain_style = "";
-			if(duration_coef < 1.75)
-				contain_style = "style='display: none;'";							
+				item_text = item[CAL.item_text];							
 			
 			var elm_id = item.record + id_suffix;			
 			
 			var el = document.createElement("div");
-			el.innerHTML = "<div class='head'><div class='adicon' onmouseover='return CAL.show_additional_details(" + '"' + item.record  + id_suffix + '"'  +  ");' onmouseout='return nd(400);' >&nbsp;&nbsp;</div><div>" + start_text + "</div>" + "" + "</div><div class='contain' "+contain_style+">" + item_text + "</div>"; 
+			var elHead = document.createElement("div");
+			elHead.setAttribute("class","head");
+			
+			var elHeadInfo = document.createElement("div");
+			elHeadInfo.setAttribute("class","adicon");
+			
+			var params = new Object();
+			params.item = item;
+			params.id_suffix = id_suffix;
+			YAHOO.util.Event.on(elHeadInfo,"click",function(e){
+				 YAHOO.util.Event.stopPropagation(e); 
+					CAL.show_additional_details(this,params.item.record  + params.id_suffix);
+			},params);
+			
+			
+			var elHeadStartText = document.createElement("div");
+			elHeadStartText.innerHTML = start_text;
+			
+			var elContain = document.createElement("div");
+			elContain.setAttribute("class","contain");
+			
+			if(duration_coef < 1.75)
+			elContain.setAttribute("style","display: none");
+			elContain.innerHTML = item_text;
+			
+			elHead.appendChild(elHeadInfo);
+			elHead.appendChild(elHeadStartText);
+			
+			el.appendChild(elHead);
+			el.appendChild(elContain);
+			
 			el.className = "act_item" + " " + item.type+"_item";
 			el.setAttribute("id",elm_id);
 			el.setAttribute("module_name",item.module_name);
@@ -974,7 +1000,7 @@
 									CAL.editDialog.cancel();	
 	}
 	
-	CAL.show_additional_details = function (id){
+	CAL.show_additional_details = function (el,id){
 		var obj = CAL.get(id);
 	
 		var record = obj.getAttribute("record");
@@ -1026,11 +1052,36 @@
 		if(detail){
 			caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_VIEW_BUTTON')+"\' href=\'index.php?module="+mod+"&action=DetailView&record="+record+"\'><img border=0  style=\'margin-left:2px;\' src=\'"+CAL.img_view_inline+"\'></a>";
 		}
-		caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE')+"\' href=\'javascript:return cClick();\' onclick=\'javascript:return cClick();\'><img border=0  style=\'margin-left:2px;margin-right:2px;\' src=\'"+CAL.img_close+"\'></a></div>";
+		caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE')+"\' href=\'javascript: SUGAR.util.closeStaticAdditionalDetails();\' onclick=\'javascript: SUGAR.util.closeStaticAdditionalDetails();\'><img border=0  style=\'margin-left:2px;margin-right:2px;\' src=\'"+CAL.img_close+"\'></a></div>";
 
 		
 		var body = '<b>'+CAL.lbl_name+':</b> ' + subj + '<br>' + date_str + '<br>' + duration_text + related + desc;
-		return overlib(body, CAPTION, caption, DELAY, 200, STICKY, MOUSEOFF, 200, WIDTH, 300, CLOSETEXT, '', CLOSETITLE, SUGAR.language.get('app_strings','LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass ecCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');
+		CAL.getStaticAdditionalDetails(el,body,caption);
+		
+	}
+	
+	CAL.getStaticAdditionalDetails = function (el,body,caption) {
+			
+			//close any open dialogs
+			$(".ui-dialog").find(".open").dialog("close");
+
+			var $dialog = $('<div class="open"></div>')
+			.html(body)
+			.dialog({
+				dialogClass: 'calendar',
+				autoOpen: false,
+				title: caption,
+				width: 300,
+				position: { 
+				    my: 'left top',
+				    at: 'right top',
+				    of: $(el)
+			  }
+			});
+			
+			$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+			$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+			$dialog.dialog('open');	
 	}		
 	
 	CAL.toggle_shared_edit = function (id){

@@ -39,7 +39,6 @@
 {$chartResources}
 
 
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
 <form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
 <input type="hidden" name='report_offset' value ="{$report_offset}">
 <input type="hidden" name='sort_by' value ="{$sort_by}">
@@ -272,7 +271,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 <tr>
 <td valign="top" width="90%">
 <div id="filters_tab" style={$filterTabStyle}>
-<div scope="row"><h3>{$mod_strings.LBL_RUNTIME_FILTERS}:<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib('{$mod_strings.LBL_VIEWER_RUNTIME_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">&nbsp;{sugar_getimage name="helpInline" alt=$mod_strings.LBL_HELP ext=".gif" other_attributes=''}</span></h3>
+<div scope="row"><h3>{$mod_strings.LBL_RUNTIME_FILTERS}:<span valign="bottom">&nbsp;{sugar_help text=$mod_strings.LBL_VIEWER_RUNTIME_HELP }</span></h3>
 </div>
 <input type=hidden name='filters_def' value ="">
 <table id='filters_top' border=0 cellpadding="0" cellspacing="0">
@@ -305,7 +304,6 @@ ACLAllowedModules = {$ACLAllowedModules};
 </form>
 </p>
 <script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 

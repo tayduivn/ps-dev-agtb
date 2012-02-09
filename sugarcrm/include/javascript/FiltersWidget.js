@@ -227,7 +227,8 @@ SUGAR.FiltersWidget = function() {
 			} // if
 			var title = "";
 			if (id == SUGAR.language.get('Reports','LBL_FILTER') + ".1") {
-				title =  "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif' alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span></h3>";
+				var HELP_DESC = SUGAR.language.get('Reports','LBL_FILTERS_HELP_DESC').replace(/(\r\n|\n|\r)/gm,"");
+				title =  "<h3 class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.png' alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"' class='inlineHelpTip' onclick='SUGAR.util.showHelpTips(this,\"" + HELP_DESC +"\");'></span></h3>";
 			} else {
 				title =  "<h3 class='spantitle'>" + id + "</h3>";
 			} // else
@@ -238,15 +239,7 @@ SUGAR.FiltersWidget = function() {
 			designerModule.render(renderToId);
 			designerModule.show();
 			
-			if (id == SUGAR.language.get('Reports','LBL_FILTER') + ".1") {
-				var toolTip = new YAHOO.widget.Tooltip("tt1", {context:id+"_help",  
-		                          						   	   text:SUGAR.language.get('Reports','LBL_FILTERS_HELP_DESC'),
-															   constraintoviewport : true,
-															   height : "430px",
-															   width : "400px"
-				});
-				//toolTip.show();						
-			}
+
 			
 		}
 	};

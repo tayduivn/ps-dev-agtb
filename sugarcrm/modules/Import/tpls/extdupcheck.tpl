@@ -44,7 +44,6 @@ textarea { width: 20em }
 </style>
 {/literal}
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
-{overlib_includes}
 <form enctype="multipart/form-data" real_id="importstepdup" id="importstepdup" name="importstepdup" method="POST" action="index.php">
 
 {foreach from=$smarty.request key=k item=v}

@@ -69,14 +69,21 @@
 					
 						//create dropdown handle
 						var dropDownHandle = $(document.createElement("span"));
+						parent.append(dropDownHandle);
+						
+					} else {
+						var dropDownHandle = $(parent.find("span"));
+					}
 						if(menuNode.hasClass("fancymenu")){
 							dropDownHandle.addClass("ab");
+							dropDownHandle.tipTip({maxWidth: "auto", 
+							   edgeOffset: 10, 
+		                       content: "More Actions", 
+		                       defaultPosition: "top"});
+							
 						}
 					
-						dropDownHandle.tipTip({maxWidth: "auto", 
-											   edgeOffset: 10, 
-						                       content: "More Actions", 
-						                       defaultPosition: "top"});
+
 						
 						//add click handler to handle
 						dropDownHandle.click(function(event){
@@ -117,8 +124,8 @@
 							dropDownHandle.removeClass("subhover");
 						});
 					
-						parent.append(dropDownHandle);
-					}
+						
+					
 					
 					//bind click event to submenu items to hide the menu on click
 					jNode.find("li").each(function(index, subnode){

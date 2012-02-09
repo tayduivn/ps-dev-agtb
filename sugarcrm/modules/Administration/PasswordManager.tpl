@@ -29,7 +29,6 @@
 // $Id: PasswordManager.tpl 37436 2009-06-01 01:14:03Z Faissah $
 //FILE SUGARCRM flav!=sales ONLY
 *}
-<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
 <form name="ConfigurePasswordSettings" method="POST" action="index.php" >
 <input type='hidden' name='action' value='PasswordManager'/>
 <input type='hidden' name='module' value='Administration'/>

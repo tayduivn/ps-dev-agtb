@@ -276,7 +276,6 @@ YAHOO.util.Event.onDOMReady(function(){
 	
 <script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
 <script type="text/javascript" src="include/javascript/jsclass_async.js"></script>	
-<script type="text/javascript" src="include/javascript/overlibmws.js"></script>
 	
 <style type="text/css">
 {literal}

@@ -3027,17 +3027,94 @@ SUGAR.util = function () {
 				}
 			}
 		},
+		
+		/**
+		 * Renders Query UI Help Dialog 
+		 */	
+		showHelpTips: function(el,helpText,myPos,atPos) {
+				if(myPos == undefined || myPos == "") {
+					myPos = "left top";
+				}
+				if(atPos == undefined || myPos == "") {
+					atPos = "right top";
+				}
+				
+					var $dialog = $('<div></div>')
+					.html(helpText)
+					.dialog({
+						autoOpen: false,
+						title: SUGAR.language.get('app_strings', 'LBL_HELP'),
+						position: { 
+						    my: myPos,
+						    at: atPos,
+						    of: $(el)
+					 	}
+					});
+					$dialog.dialog('open');
+		
 
+		},
+		getStaticAdditionalDetails: function(el, body, caption, extra) {
+			if(extra == undefined || extra == "") {
+				extra = false;	
+			}
+
+			$(".ui-dialog").find(".open").dialog("close");
+
+			var $dialog = $('<div class="open"></div>')
+			.html(body)
+			.dialog({
+				autoOpen: false,
+				title: caption,
+				width: 300,
+				position: { 
+				    my: 'right top',
+				    at: 'left top',
+				    of: $(el)
+			  }
+			});
+			
+			if(extra) {
+				$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+				$(".ui-dialog").find('.ui-dialog-title').css("width","100%");	
+			}
+			$dialog.dialog('open');
+		
+		},
+		
+		closeStaticAdditionalDetails: function() {
+			$(".ui-dialog").find(".open").dialog("close");
+		},
 		/**
 		 * Retrieves additional details dynamically
 		 */
 		getAdditionalDetails: function(bean, id, spanId) {
+			
 			go = function() {
 				oReturn = function(body, caption, width, theme) {
-					var _refx = 25-width;
-					return overlib(body, CAPTION, caption, STICKY, MOUSEOFF, 1000, WIDTH, width, CLOSETEXT, ('<img border=0 style="margin-left:2px; margin-right: 2px;" src=index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=close.gif>'), CLOSETITLE, SUGAR.language.get('app_strings','LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', REF, spanId, REFC, 'LL', REFX, _refx);
+					
+					$(".ui-dialog").find(".open").dialog("close");
+
+					var $dialog = $('<div class="open"></div>')
+					.html(body)
+					.dialog({
+						autoOpen: false,
+						title: caption,
+						width: 300,
+						position: { 
+						    my: 'right top',
+						    at: 'left top',
+						    of: $('#'+spanId+ ' img')
+					  }
+					});
+					
+					
+					$dialog.dialog('open');
+				
 				}
 
+		
+		
 				success = function(data) {
 					eval(data.responseText);
 
