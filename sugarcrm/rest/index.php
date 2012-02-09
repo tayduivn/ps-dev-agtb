@@ -1,5 +1,6 @@
 <?php
-/*
- * place holder for now..
- */
-    print phpinfo();
+
+    $uri = $_SERVER["REQUEST_URI"];
+    $method = $_SERVER["REQUEST_METHOD"];
+
+    print_r($_SERVER);

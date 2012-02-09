@@ -106,12 +106,27 @@ class MetaDataManager {
      * returned in the case of no metadata.
      */
     private function getDataCollection($moduleName) {
-        $data = array();
-        $data["vardefs"] = $this->getVarDefs($moduleName);
-        $data["detaildefs"] = $this->getDetailDefs($moduleName);
-        $data["editdefs"] = $this->getEditDefs($moduleName);
-        $data["searchdefs"] = $this->getSearchDefs($moduleName);
-        $data["listviewdefs"] = $this->getListDefs($moduleName);
+        $data = array(
+            "views" => array()
+        );
+
+        $tmp = $this->getDetailDefs($moduleName);
+        if (!array_key_exists("DetailView", $tmp)) {
+            $tmp["DetailView"] = array();
+        }
+
+        $data["views"]["detaildefs"] = $tmp['DetailView'];
+
+        $tmp = $this->getEditDefs($moduleName);
+        if (!array_key_exists("EditView", $tmp)) {
+            $tmp["EditView"] = array();
+        }
+
+        $data["views"]["editdefs"] = $tmp['EditView'];
+
+        $data["views"]["vardefs"] = $this->getVarDefs($moduleName);
+        $data["views"]["listviewdefs"] = $this->getListDefs($moduleName);
+        $data["views"]["searchdefs"] = $this->getSearchDefs($moduleName);
 
         $md5 = serialize($data);
         $md5 = md5($md5);
