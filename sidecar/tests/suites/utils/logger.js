@@ -11,77 +11,76 @@ describe("Logger", function() {
 
     afterEach(function() {
         if (clock) clock.restore();
-        if (typeof logger.log.restore === "function") logger.log.restore();
-        if (typeof console.log.restore === "function") console.log.restore();
-        if (typeof console.info.restore === "function") console.info.restore();
-        if (typeof console.warn.restore === "function") console.warn.restore();
-        if (typeof console.error.restore === "function") console.error.restore();
-        config.logLevel = logger.Levels.TRACE;
     });
 
     it("should be able to log a message", function() {
-        var spy = sinon.spy(console, "error");
+        var mock = sinon.mock(console);
 
         var date = new Date(Date.UTC(2012, 2, 3, 6, 15, 32));
         clock = sinon.useFakeTimers(date.getTime());
 
         config.logLevel = logger.Levels.ERROR;
+
+        mock.expects("error").once().withArgs("ERROR[2012-2-3 6:15:32]: Test message");
         logger.error("Test message");
-        expect(spy).toHaveBeenCalledWith("ERROR[2012-2-3 6:15:32]: Test message");
+        mock.verify();
     });
 
     it("should be able to log a closure", function() {
-        var spy = sinon.spy(console, "info");
+        var mock = sinon.mock(console);
+        var e = mock.expects("info").once();
 
         config.logLevel = logger.Levels.INFO;
         var a = "foo";
         logger.info(function() {
             return "Test message " + a;
         });
-        expect(spy.firstCall.args[0]).toMatch(/INFO\[.{14,20}\]: Test message foo/);
+
+        expect(e.args[0]).toMatch(/INFO\[.{15,20}\]: Test message foo/);
+        mock.verify();
     });
 
     it("should be able to log an object", function() {
-        var spy = sinon.spy(console, "info");
+        var mock = sinon.mock(console);
+        var e = mock.expects("info").once();
 
         config.logLevel = logger.Levels.TRACE;
         var foo = { bar: "some bar"};
         logger.trace(foo);
-        expect(spy.firstCall.args[0]).toMatch(/TRACE\[.{14,20}\]: {"bar":"some bar"}/);
+        expect(e.args[0]).toMatch(/TRACE\[.{15,20}\]: {"bar":"some bar"}/);
+        mock.verify();
     });
 
     it("should not log a message if log level is below the configured one", function() {
-        var spy = sinon.spy(console, "info");
+        var mock = sinon.mock(console);
+        mock.expects("info").never();
         config.logLevel = logger.Levels.INFO;
         logger.debug("");
-        expect(spy).not.toHaveBeenCalled();
+        mock.verify();
     });
 
     it("should be able to log a message with a given log level", function() {
         config.logLevel = logger.Levels.TRACE;
 
-        var spy = sinon.spy(logger, "log");
+        var mock = sinon.mock(logger);
 
         // TODO: Perhaps it should be split up into separate specs
 
+        mock.expects("trace").once();
+        mock.expects("debug").once();
+        mock.expects("info").once();
+        mock.expects("warn").once();
+        mock.expects("error").once();
+        mock.expects("fatal").once();
+
         logger.trace("");
-        expect(spy).toHaveBeenCalledWith(logger.Levels.TRACE);
-
         logger.debug("");
-        expect(spy).toHaveBeenCalledWith(logger.Levels.DEBUG);
-
         logger.info("");
-        expect(spy).toHaveBeenCalledWith(logger.Levels.INFO);
-
         logger.warn("");
-        expect(spy).toHaveBeenCalledWith(logger.Levels.WARN);
-
         logger.error("");
-        expect(spy).toHaveBeenCalledWith(logger.Levels.ERROR);
-
         logger.fatal("");
-        expect(spy).toHaveBeenCalledWith(logger.Levels.FATAL);
 
+        mock.verify();
     });
 
 });
