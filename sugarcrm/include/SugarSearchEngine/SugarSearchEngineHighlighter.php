@@ -68,7 +68,8 @@ class SugarSearchEngineHighlighter
     protected function castrate($string, $maxLen) {
 
         // length is ok, no further process needed
-        if (strlen($string) <= $maxLen) {
+        $len = mb_strlen($string, 'UTF-8');
+        if ($len <= $maxLen) {
             return $string;
         }
 
@@ -79,10 +80,51 @@ class SugarSearchEngineHighlighter
 
         // when a string truncate is to happen, this is the length remained on both sides of the string
         // for example, "this is a very long string" becomes
-        // "thi ... ing" if $remainder is 3
-        $remainder = ($maxLen - 5) / 2;
+        // "this ... string" if $remainder is 3 (try not to cut in the middle of a word
+        $remainder = round(($maxLen - 5) / 2);
 
-        return mb_strcut($string, 0, $remainder, 'UTF-8') . ' ... ' . mb_strcut($string, -$remainder, $remainder, 'UTF-8');
+        $front = mb_substr($string, 0, $remainder, 'UTF-8');
+        $middle = mb_substr($string, $remainder, $len-$remainder*2, 'UTF-8');
+        $rear = mb_substr($string, -$remainder, $remainder, 'UTF-8');
+        if ($string[$remainder] != ' ' && $string[$remainder] != ' ')
+        {
+            // search for space between $string[0] and $string[$remainder-1]
+            $pos = mb_strrpos($front, ' ', 0, 'UTF-8');
+            if ($pos) // found a space
+            {
+                $front = mb_substr($front, 0, $pos, 'UTF-8');
+            }
+            else
+            {
+                // search space in $middle
+                $pos = mb_strpos($middle, ' ', 0, 'UTF-8');
+                if ($pos)
+                {
+                    $front .= mb_substr($middle, 0, $pos, 'UTF-8');
+                }
+            }
+        }
+        $toCheck = mb_strlen($string, 'UTF-8') - $remainder;
+        if ($string[$toCheck] != ' ' && $string[$toCheck-1] != ' ')
+        {
+            // search for space in $rear
+            $pos = mb_strpos($rear, ' ', 0, 'UTF-8');
+            if ($pos) // found a space
+            {
+                $i = mb_strlen($rear, 'UTF-8') - $pos - 1;
+                $rear = mb_substr($rear, -$i, $i, 'UTF-8');
+            }
+            else
+            {
+                $pos = mb_strrpos($middle, ' ', 0, 'UTF-8');
+                if ($pos)
+                {
+                    $i = mb_strlen($middle, 'UTF-8') - $pos - 1;
+                    $rear = mb_substr($middle, -$i, $i, 'UTF-8') . $rear;
+                }
+            }
+        }
+        return $front . ' ... ' . $rear;
     }
 
     protected function postProcessHighlights($original) {
