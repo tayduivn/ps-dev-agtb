@@ -109,6 +109,7 @@ class MetaDataManager {
         $data = array(
             "views" => array()
         );
+        $vardefs = null;
 
         $tmp = $this->getDetailDefs($moduleName);
         if (!array_key_exists("DetailView", $tmp)) {
@@ -123,10 +124,34 @@ class MetaDataManager {
         }
 
         $data["views"]["editdefs"] = $tmp['EditView'];
-
-        $data["views"]["vardefs"] = $this->getVarDefs($moduleName);
         $data["views"]["listviewdefs"] = $this->getListDefs($moduleName);
         $data["views"]["searchdefs"] = $this->getSearchDefs($moduleName);
+        $data['bean'] = array(
+            "vardefs" => $this->getVarDefs($moduleName)
+        );
+
+        foreach (array_keys($data["bean"]["vardefs"]) as $key => $val) {
+            if (is_array($data["bean"]["vardefs"][$val])) {
+
+                global $beanList;
+                include_once("{$this->entryPoint}/include/modules.php");
+
+                if (in_array($val, $beanList)) {
+                    $reverse_name = null;
+
+                    foreach ($beanList as $bName => $bValue) {
+                        if ($bValue == $val) {
+                            $reverse_name = $bName;
+                            break;
+                        }
+                    }
+
+                    if ($reverse_name != null) {
+                        $data['bean'][$val] = $this->getBeanInfo($reverse_name);
+                    }
+                }
+            }
+        }
 
         $md5 = serialize($data);
         $md5 = md5($md5);
@@ -383,6 +408,42 @@ class MetaDataManager {
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data['listview_md5'] = $md5;
+
+        return $data;
+    }
+
+    /**
+     * @param $name
+     * @return array
+     */
+    private function getBeanInfo($name) {
+        $data = array();
+
+        global $beanList;
+
+        require_once("{$this->entryPoint}/data/BeanFactory.php");
+
+        $bean = BeanFactory::newBean($name);
+        if ($bean != false) {
+            if (key_exists($name, $beanList)) {
+                $data["bean_name"] = $beanList[$name];
+            }
+
+            if (isset($bean->module_dir)) {
+                $mod_dir = $bean->module_dir;
+            } else {
+                $mod_dir = "";
+            }
+
+            if (isset($bean->module_name)) {
+                $mod_name = $bean->module_name;
+            } else {
+                $mod_name = "";
+            }
+
+            $data["module_dir"] = $mod_dir;
+            $data["module_name"] = $mod_name;
+        }
 
         return $data;
     }
