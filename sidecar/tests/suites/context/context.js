@@ -9,31 +9,28 @@ describe("Application context manager", function() {
     });
 
     describe("Context Object", function() {
-        var context = SUGAR.App.context.getContext({module: "test module"}, {model: {}});
-
         describe("when a new state is required", function() {
             var obj = {
                 url: "someurl",
                 module: "test_module"
             };
 
-
             var data = {
-                model: {},
-                collection: {}
+                model: {name: "sample"},
+                collection: {name: "sample collection"}
             };
 
             var stub = sinon.spy();
-
+            var context = SUGAR.App.context.getContext();
+            context.bind(context.contextId + ":change", stub);
             context.init(obj, data);
-            context.bind("context:change", stub);
 
             it("should take context parameters from another source and set them", function() {
-                expect(context.get()).toEqual({url: "someurl", module: "test_module", model: {}, collection: {}});
+                expect(context.get()).toEqual({url: "someurl", module: "test_module", model: {name: "sample"}, collection: {name: "sample collection"}});
             });
 
             it("should fire off a context event", function() {
-                expect(stub.called()).toBeTruthy();
+                expect(stub.called).toBeTruthy();
             });
 
             it("should reset the state", function() {
@@ -44,7 +41,15 @@ describe("Application context manager", function() {
         });
 
         it("should be able to generate sub-contexts by passing in a parent context", function() {
-            var subcontext = context.getContext(context, {model: {name: "Some Model"}});
+            var context = SUGAR.App.context.getContext({module: "my module", url: "this url"}, {collection: {name: "some collection"}}),
+                subcontext = SUGAR.App.context.getContext(context, {model: {name: "Some Model"}}),
+                state = context.get(),
+                state2 = subcontext.get();
+
+            expect(state.module).toEqual(state2.module);
+            expect(state.url).toEqual(state2.url);
+            expect(state.model).not.toEqual(state2.model);
+            expect(state.collection).not.toEqual(state2.collection);
         });
     });
 });

@@ -1,27 +1,38 @@
 (function(app) {
+    var contextCache = {};
+
     function Context(obj, data) {
-        return {
-            state: {
-                url: null,
-                module: null,
-                collection: null,
-                model: null
-            },
+        var contextId = _.uniqueId("context_");
+        var context = _.extend({
+            contextId: contextId,
+            state: {},
 
             get: function() {
-
+                return this.state;
             },
 
-            set: function() {
+            set: function(obj, data) {
+                if (obj && obj.contextId && obj.state) { // If obj is a context
+                    _.each(obj.state, function(state, name) {
+                        // Don't copy over model or collection attributes
+                        if (name !== "model" && name !== "collection") {
+                            this.state[name] = state;
+                        }
 
+                    }, this);
+                } else {
+                    _.extend(this.state, obj);
+                }
+
+                _.extend(this.state, data);
             },
 
-            reset: function() {
-
+            reset: function(obj) {
+                this.state = {};
             },
 
             fire: function() {
-
+                this.trigger(contextId + ":change", this);
             },
 
             /**
@@ -30,10 +41,15 @@
              * Note: This function should be called everytime a new route routed.
              * @param obj
              */
-            init: function() {
-
+            init: function(obj, data) {
+                this.reset(obj);
+                this.set(obj, data);
+                this.fire();
             }
-        };
+        }, Backbone.Events);
+
+        context.init((obj || {}), (data || {}));
+        return context;
     }
 
     app.augment("context", {
