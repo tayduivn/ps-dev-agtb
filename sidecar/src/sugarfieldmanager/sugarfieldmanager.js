@@ -90,14 +90,13 @@
                             }
 
                             fresult = this.getField(name, view);
-                            if (!view) {
+                            if (view) {
                                 result[name][fields[field]['view']] = fresult;
                             } else {
                                 result[name] = fresult;
                             }
 
                         }
-
                         //return results
                         return result;
                     },
@@ -115,9 +114,8 @@
 
                         name = this.fieldTypeMap[name] || name;
 
-
                         // assign fields to results if set
-                        if (!view && this.fieldsObj[name] && this.fieldsObj[name][view]) {
+                        if (view && this.fieldsObj[name] && this.fieldsObj[name][view]) {
                             result = this.fieldsObj[name][view];
                             // fall back to default if field for this view doesnt exist
                         } else if (this.fieldsObj[name] && this.fieldsObj[name]['default']) {
@@ -125,7 +123,6 @@
                         } else {
                             result = {error:"No such field in field cache."};
                         }
-
                         //return result
                         return result;
                     },

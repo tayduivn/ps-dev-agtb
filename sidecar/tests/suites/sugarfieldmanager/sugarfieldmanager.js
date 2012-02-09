@@ -13,7 +13,7 @@ describe("SugarFieldManager", function () {
         });
 
         afterEach(function () {
-           this.sugarFieldManager.reset();
+           //this.sugarFieldManager.reset();
         });
 
         it("should sync all sugar fields from server", function () {
@@ -30,19 +30,13 @@ describe("SugarFieldManager", function () {
         );
 
         it("should reset if asked", function () {
-                SUGAR.App.sugarFieldsSync = function () {
-                };
-                var stub = sinon.stub(SUGAR.App, "sugarFieldsSync");
-                stub.returns(sugarFieldsFixtures);
-                var result = this.sugarFieldManager.syncFields();
-                expect(result).toBeTruthy();
                 var result = this.sugarFieldManager.reset();
                 expect(this.sugarFieldManager.fieldsObj).toEqual({});
                 expect(this.sugarFieldManager.fieldsHash).toEqual('');
             }
         );
 
-        it("should get a sugar fields", function () {
+        it("should get a sugar field", function () {
                 SUGAR.App.sugarFieldsSync = function () {
                 };
                 var stub = sinon.stub(SUGAR.App, "sugarFieldsSync", function (that, callback){
@@ -70,7 +64,6 @@ describe("SugarFieldManager", function () {
                     return result;
                 });
                 var syncResult=this.sugarFieldManager.syncFields();
-                expect(syncResult).toBeTruthy();
 
                 var stubbedFieldList = [
                     {name:"text",view:"editView"},
