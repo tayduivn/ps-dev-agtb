@@ -54,7 +54,6 @@ describe("SugarFieldManager", function () {
                 expect(syncResult).toBeTruthy();
 
                 var result = this.sugarFieldManager.getField('varchar','editView');
-                console.log(JSON.stringify(result.template));
                 expect(result.type).toEqual('basic');
                 expect(result.template).toEqual(' <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input01\">{{label}}</label>\n\n        <div class=\"controls\">\n            <input type=\"text\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n            <p class=\"help-block\">{{help}}</p>\n        </div>\n    </div>\n');
             }
