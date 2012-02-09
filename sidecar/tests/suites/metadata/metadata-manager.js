@@ -38,8 +38,8 @@ describe('SUGAR.App.metadata', function () {
         expect(SUGAR.App.metadata.get({
             type:"view",
             module:"Contacts",
-            view:"EditView"
-        })).toBe(fixtures.metadata.Contacts.views.EditView);
+            view:"editView"
+        })).toBe(fixtures.metadata.Contacts.views.editView);
     });
 
     it('gets layoutdefs', function () {

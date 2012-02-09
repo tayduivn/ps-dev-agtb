@@ -23,7 +23,7 @@ describe("Layout", function() {
 });
 
 describe("Layout.View", function(){
-    var syncResult, layout, html;
+    var syncResult, view, layout, html;
     //Fake the cache
     SUGAR.App.cache = SUGAR.App.cache || {
         get:function (key) {
@@ -38,7 +38,8 @@ describe("Layout.View", function(){
     //Fake template manager
     SUGAR.App.template = SUGAR.App.template || {
         get:function (key) {
-            return Handlebars.compile(fixtures.templates[key]);
+            if (fixtures.templates[key])
+                return Handlebars.compile(fixtures.templates[key]);
         }
     };
     //Fake a field list
@@ -47,7 +48,7 @@ describe("Layout.View", function(){
         var result= callback(that, ajaxResponse);
         return result;
     };
-    syncResult= SUGAR.App.sugarFieldManager.getInstance().syncFields();
+    syncResult= SUGAR.App.sugarFieldManager.syncFields();
 
     var App = SUGAR.App.init({el: "#sidecar"});
     //Need a sample Bean
@@ -57,32 +58,33 @@ describe("Layout.View", function(){
     });
     this.collection = new App.BeanCollection([this.bean]);
     //Setup a context
-    App.context = {
-        module:"Contacts",
-        model: this.bean,
+    var context = SUGAR.App.context.getContext({
+        url: "someurl",
+        module: "Contacts",
+        model : this.bean,
         collection : this.collection
-    };
-
+    });
 
     it('renders edit views', function(){
-        layout = App.layout.get({
-            context : App.context,
-            view:"EditView"
+        view = App.layout.get({
+            context : context,
+            view:"editView"
         });
-        layout.render();
-        html = layout.$el.html();
-        expect(html).toContain('EditView');
-        expect(layout.$el).toContain('input=[value="Foo"]');
+        expect(view.meta).toBeDefined();
+        view.render();
+        html = view.$el.html();
+        expect(html).toContain('editView');
+        expect(view.$el).toContain('input=[value="Foo"]');
     })
 
     it('renders detail views', function(){
         layout = App.layout.get({
-            context : App.context,
-            view:"DetailView"
+            context : context,
+            view:"detailView"
         });
         layout.render();
         html = layout.$el.html();
-        expect(html).toContain('DetailView');
+        expect(html).toContain('detailView');
     })
 
 })
