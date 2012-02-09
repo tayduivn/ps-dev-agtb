@@ -4,13 +4,15 @@
 
         },
 
-        loadView: function(){}
+        loadView: function() {}
     });
 
-    app.augment("controller", {
+    var module = {
         init: function(instance) {
-            instance.controller = instance.controller || new Controller({el: app.rootEl});
+            instance.controller = instance.controller || _.extend(module, new Controller({el: app.rootEl}));
         }
-    })
+    };
+
+    app.augment("controller", module);
 
 })(SUGAR.App);
