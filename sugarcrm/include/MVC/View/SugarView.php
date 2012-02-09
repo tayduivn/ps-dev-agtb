@@ -1577,4 +1577,18 @@ EOHTML;
     {
         return get_custom_file_if_exists($file);
     }
+
+
+    /**
+     * fetchTemplate
+     *
+     * This function wraps the call to the fetch function of the Smarty variable for the view
+     *
+     * @param $file String path of the file to fetch
+     * @return $content String content from resulting Smarty fetch operation on template
+     */
+    protected function fetchTemplate($file)
+    {
+        return $this->ss->fetch($file);
+    }
 }

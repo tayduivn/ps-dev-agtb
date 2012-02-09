@@ -52,13 +52,20 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetMetaDataFile()
     {
+        // backup custom file if it already exists
+        if(file_exists('custom/modules/Contacts/metadata/listviewdefs.php')){
+            copy('custom/modules/Contacts/metadata/listviewdefs.php', 'custom/modules/Contacts/metadata/listviewdefs.php.bak');
+            unlink('custom/modules/Contacts/metadata/listviewdefs.php');
+        }
         $this->_view->module = 'Contacts';
         $this->_view->type = 'list';
         $metaDataFile = $this->_view->getMetaDataFile();
         $this->assertEquals('modules/Contacts/metadata/listviewdefs.php', $metaDataFile, 'Did not load the correct metadata file');
 
         //test custom file
-        sugar_mkdir('custom/modules/Contacts/metadata/', null, true);
+        if(!file_exists('custom/modules/Contacts/metadata/')){
+            sugar_mkdir('custom/modules/Contacts/metadata/', null, true);
+        }
         $customFile = 'custom/modules/Contacts/metadata/listviewdefs.php';
         if(!file_exists($customFile))
         {
@@ -66,6 +73,10 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
             $customMetaDataFile = $this->_view->getMetaDataFile();
             $this->assertEquals($customFile, $customMetaDataFile, 'Did not load the correct custom metadata file');
             unlink($customFile);
+        }
+        // Restore custom file if we backed it up
+        if(file_exists('custom/modules/Contacts/metadata/listviewdefs.php.bak')){
+            rename('custom/modules/Contacts/metadata/listviewdefs.php.bak', 'custom/modules/Contacts/metadata/listviewdefs.php');
         }
     }
     
