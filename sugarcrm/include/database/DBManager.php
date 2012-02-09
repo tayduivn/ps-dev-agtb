@@ -2245,7 +2245,7 @@ protected function checkQuery($sql, $object_name = false)
 	protected function getFieldNameFromSelect($string)
 	{
 		if(strncasecmp($string, "DISTINCT ", 9) == 0) {
-			$string = substr($string, 9);
+			$string = trim(substr($string, 9));
 		}
 		if (stripos($string, " as ") !== false)
 			//"as" used for an alias
