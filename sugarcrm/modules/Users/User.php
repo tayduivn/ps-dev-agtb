@@ -1052,7 +1052,19 @@ EOQ;
 			$user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',$mod_strings['LBL_CHECKMARK']);
 		else
 			$user_fields['IS_GROUP_IMAGE'] = '';
-		$user_fields['NAME'] = empty ($this->name) ? '' : $this->name;
+
+
+        if ($this->is_admin) {
+      			$user_fields['IS_ADMIN_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',translate('LBL_CHECKMARK', 'Users'));
+        } elseif (!$this->is_admin) {
+              $user_fields['IS_ADMIN'] = '';
+        }
+
+      	if ($this->is_group) {
+      		$user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',translate('LBL_CHECKMARK', 'Users'));
+        } else {
+            $user_fields['NAME'] = empty ($this->name) ? '' : $this->name;
+        }
 
 		$user_fields['REPORTS_TO_NAME'] = $this->reports_to_name;
 
