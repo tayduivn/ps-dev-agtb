@@ -30,7 +30,6 @@
 // $Id: Locale.tpl 35791 2008-05-20 23:06:34Z nsingh $
 
 *}
-<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
 <form name="TrackerSettings" method="POST">
 <input type="hidden" name="action" value="TrackerSettings">
 <input type="hidden" name="module" value="Trackers">

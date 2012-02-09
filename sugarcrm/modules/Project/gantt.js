@@ -463,9 +463,8 @@ SUGAR.gantt = function() {
 		            SUGAR.gantt.setProgress(task_num, progress);
 			    }
 
-		        bar.onmouseover = function() {  SUGAR.gantt.taskOverLib(SUGAR.gantt.popupInfo(task_num),
+		        bar.onclick = function() {  SUGAR.gantt.taskOverLib(this,SUGAR.gantt.popupInfo(task_num),
 						  						document.getElementById("description_"+task_num).value); }
-		        bar.onmouseout = function() { nd(); }
 	        }
 	        else{
 	        	/* remove middle and last cells for an empty row */
@@ -735,8 +734,8 @@ SUGAR.gantt = function() {
 
 		},
 
-		taskOverLib: function(info, description){
-			return overlib(info, CAPTION, description, CAPTIONSIZE, '2', TEXTSIZE, '2', CGCOLOR, '#DDDDDD', TEXTCOLOR, '#000000', FGCOLOR, '#EEEEEE', CAPCOLOR, '#000000', CAPTIONFONTCLASS, 'olCapFontClass', WRAP);
+		taskOverLib: function(el,info, description){
+			SUGAR.util.getStaticAdditionalDetails(el,info,description);
 		},
 
 		/* Calendar stuff */

@@ -741,8 +741,7 @@
 					duration_coef = 1;
 				else
 					duration_coef = (parseInt(item.duration_hours) * 60 + parseInt(item.duration_minutes)) / CAL.t_step;
-			}			
-
+			}
 
 			var item_text = SUGAR.language.languages.app_list_strings[item.type +'_status_dom'][item.status];
 			
@@ -761,7 +760,7 @@
 				id_suffix: id_suffix,
 				item_text: item_text,
 				content_style: content_style
-			});	
+			});
 			
 			YAHOO.util.Event.on(el,"click",function(){
 					if(this.getAttribute('detail') == "1")
@@ -1727,6 +1726,7 @@
 									CAL.editDialog.cancel();	
 	}
 	
+<<<<<<< HEAD
 	CAL.show_additional_details = function (id){
 		var obj = CAL.get(id);	
 		var record = obj.getAttribute("record");
@@ -1755,6 +1755,103 @@
 			});
 			var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.sharedDialog.cancel();} } );
 			CAL.sharedDialog.cfg.queueProperty("keylisteners", listeners);
+=======
+	CAL.show_additional_details = function (el,id){
+		var obj = CAL.get(id);
+	
+		var record = obj.getAttribute("record");
+		mod = obj.getAttribute("module_name");
+		var atype = CAL.act_types[mod];
+	
+		var subj = obj.getAttribute("subj");
+		var date_start = obj.getAttribute("date_start");
+		var duration = obj.getAttribute("dur");	
+		var desc = obj.getAttribute("desc");	
+		var detail = parseInt(obj.getAttribute("detail"));
+		var edit = parseInt(obj.getAttribute("edit"));
+		
+		var date_str = "";
+		if(date_start != "")
+			date_str += '<b>'+CAL.lbl_start+':</b> ' +  date_start;			
+		if(mod == "Tasks"){
+			var date_due = obj.getAttribute("date_due");
+			if(date_due != ""){
+				if(date_str != "")
+					date_str += "<br>";
+				date_str += '<b>'+CAL.lbl_due+':</b> ' +  date_due;
+			}		
+		}				
+		
+		var related = "";
+		if(obj.getAttribute("parent_id") != '' && obj.getAttribute("parent_name") != '')
+			related = "<b>" + CAL.lbl_related + ":</b> <a href='index.php?module="+obj.getAttribute("parent_type")+"&action=DetailView&record="+obj.getAttribute("parent_id")+"'>"+obj.getAttribute("parent_name")+"</a>" + "<br>";
+
+		if(desc != '')
+			desc = '<b>'+ CAL.lbl_desc + ':</b><br> ' + desc +'<br>';			
+		if(subj == '')
+			return "";
+
+		var date_lbl = CAL.lbl_start;		
+		if(duration != ""){
+			var duration_text = '<b>'+CAL.lbl_duration+':</b> ' + duration + '<br>';
+			if(mod == "Tasks"){
+				date_lbl = CAL.lbl_due;
+				duration_text = "";			
+			}
+		}else
+			duration_text = "";
+
+		var caption = "<div style='float: left;'>"+CAL.lbl_title+"</div><div style='float: right;'>";
+		if(edit){
+			caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_EDIT_BUTTON')+"\' href=\'index.php?module="+mod+"&action=EditView&record="+record+"\'><img border=0  src=\'"+CAL.img_edit_inline+"\'></a>";
+		}
+		if(detail){
+			caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_VIEW_BUTTON')+"\' href=\'index.php?module="+mod+"&action=DetailView&record="+record+"\'><img border=0  style=\'margin-left:2px;\' src=\'"+CAL.img_view_inline+"\'></a>";
+		}
+		caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE')+"\' href=\'javascript: SUGAR.util.closeStaticAdditionalDetails();\' onclick=\'javascript: SUGAR.util.closeStaticAdditionalDetails();\'><img border=0  style=\'margin-left:2px;margin-right:2px;\' src=\'"+CAL.img_close+"\'></a></div>";
+
+		
+		var body = '<b>'+CAL.lbl_name+':</b> ' + subj + '<br>' + date_str + '<br>' + duration_text + related + desc;
+		CAL.getStaticAdditionalDetails(el,body,caption);
+		
+	}
+	
+	CAL.getStaticAdditionalDetails = function (el,body,caption) {
+			
+			//close any open dialogs
+			$(".ui-dialog").find(".open").dialog("close");
+
+			var $dialog = $('<div class="open"></div>')
+			.html(body)
+			.dialog({
+				dialogClass: 'calendar',
+				autoOpen: false,
+				title: caption,
+				width: 300,
+				position: { 
+				    my: 'left top',
+				    at: 'right top',
+				    of: $(el)
+			  }
+			});
+			
+			$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+			$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+			$dialog.dialog('open');	
+	}		
+	
+	CAL.toggle_shared_edit = function (id){
+		if(document.getElementById(id).style.display == 'none'){
+			document.getElementById(id).style.display = 'inline'
+			if(document.getElementById(id+"link") != undefined){
+				document.getElementById(id+"link").style.display='none';
+			}
+		}else{
+			document.getElementById(id).style.display = 'none'
+			if(document.getElementById(id+"link") != undefined){
+				document.getElementById(id+"link").style.display = 'inline';
+			}
+>>>>>>> caramel_ui_overlib
 		}
 		CAL.sharedDialog.cancelEvent.subscribe(function(e, a, o){
 			//CAL.get("form_settings").reset();

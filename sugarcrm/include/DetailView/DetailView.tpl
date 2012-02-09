@@ -107,7 +107,6 @@ class="yui-navset detailview_tabs"
                    {{elseif isset($fields[$colData.field.name].popupHelp)}}
                      {capture name="popupText" assign="popupText"}{sugar_translate label="{{$fields[$colData.field.name].popupHelp}}" module='{{$module}}'}{/capture}
                    {{/if}}
-                   {overlib_includes}
                    {sugar_help text=$popupText WIDTH=400}
                 {{/if}}
                 {{if !empty($colData.field.name)}}

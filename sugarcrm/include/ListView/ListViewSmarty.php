@@ -46,7 +46,6 @@ class ListViewSmarty extends ListViewDisplay{
     var $email = true;
     var $targetList = false;
 	var $multiSelect = true;
-	var $overlib = true;
 	var $quickViewLinks = true;
 	var $lvd;
 	var $mergeduplicates = true;
@@ -107,7 +106,6 @@ class ListViewSmarty extends ListViewDisplay{
         //BEGIN SUGARCRM flav=pro ONLY
         $this->ss->assign('favorites',$this->seed->isFavoritesEnabled());
         //END SUGARCRM flav=pro ONLY
-        if($this->overlib) $this->ss->assign('overlib', true);
 
         // Bug 24677 - Correct the page total amount on the last page of listviews
         $pageTotal = $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current'];

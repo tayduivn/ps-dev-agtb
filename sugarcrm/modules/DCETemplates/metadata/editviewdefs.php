@@ -1,6 +1,5 @@
 <?php
 $module_name = 'DCETemplates';
-$overlibJS=getJSPath('include/javascript/overlibmws.js');
 $editviewJS=getJSPath('modules/DCETemplates/EditView.js');
 $viewdefs = array (
 $module_name =>
@@ -39,7 +38,6 @@ array (
         <!--not_in_theme!--><img id="loading_img" alt="{$mod_strings['LBL_LOADING']}" src="{/literal}{sugar_getimagepath file='sqsWait.gif'}{literal}" style="display:none">
     </form> 
 </div>
-<script type='text/javascript' src='$overlibJS'></script>
 <script type="text/javascript" language="Javascript" src="$jsonJS"></script>
 <script type="text/javascript" language="Javascript" src="$editviewJS"></script>
 {/literal}
@@ -98,9 +96,8 @@ EOQ
             'label' => 'LBL_UPGRADE_ACCEPTABLE_VERSION',
             'displayParams'=>array(
                 'image'=>array(
-                    'border'=>"0",
-                    'onmouseout'=>"return nd();", 
-                    'onmouseover'=>"return overlib('".translate('LBL_HELP_ACC_VERSION')."', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow' );",
+                    'border'=>"0", 
+                    'onclick'=>"return SUGAR.util.showHelpTips(this,'".translate('LBL_HELP_ACC_VERSION')."');",
                     'src'=> SugarThemeRegistry::current()->getImageURL("help.gif"),
                   ),
              ),

@@ -37,7 +37,6 @@ class ListViewSmarty extends ListViewDisplay {
     var $displayColumns;
     var $tpl;
     var $moduleString;
-    var $overlib = true;
     var $lvd;
     
     /**
@@ -71,8 +70,6 @@ class ListViewSmarty extends ListViewDisplay {
         $this->ss->assign('moduleString', $this->moduleString);
 
         $this->ss->assign('imagePath', $image_path);
-
-        if($this->overlib) $this->ss->assign('overlib', true);
         
         $this->processArrows($data['pageData']['ordering']);
 

@@ -143,7 +143,7 @@
                                 <div id="comfirm_pwd_match" class="error" style="display: none;">{$MOD.ERR_PASSWORD_MISMATCH}</div>
                                      {*<span id="ext-gen63" class="x-panel-header-text">
                                         Requirements
-                                        <span id="Filter.1_help" onmouseout="return nd();" onmouseover="return overlib(help(), FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">
+                                        <span id="Filter.1_help" onclick="return SUGAR.util.showHelpTips(this,help());">
                                             <img src="themes/default/images/help.gif"/>
                                         </span>
                                     </span>*}

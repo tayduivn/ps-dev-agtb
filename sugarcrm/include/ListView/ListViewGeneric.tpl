@@ -43,10 +43,6 @@
 	});
 {/literal}	
 </script>
-{if $overlib}
-	<script type='text/javascript' src='{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}'></script>
-	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
-{/if}
 {assign var="currentModule" value = $pageData.bean.moduleDir}
 {assign var="singularModule" value = $moduleListSingular.$currentModule}
 {assign var="hideTable" value=false}

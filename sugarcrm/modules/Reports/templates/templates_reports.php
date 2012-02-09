@@ -98,7 +98,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		} // if
 	} // if
 	if ($report_type == 'tabular') {
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'tabular\');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'tabular\');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	}
 	// Summation with Details
@@ -106,12 +106,12 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		$canCovertToMatrix = 0;
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'matrix\');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'matrix\');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 
 
@@ -120,7 +120,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		$canCovertToMatrix = 0;
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation\','.$canCovertToMatrix.');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 	
 
@@ -1090,7 +1090,6 @@ style="display: none"
 // template_module_defs_js($args);
 ?>
 <script type="text/javascript" src="cache/modules/modules_def_<?php echo $current_language; ?>_<?php echo md5($current_user->id) ?>.js"></script>
-<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 

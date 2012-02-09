@@ -26,7 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
 {literal}
 <script type="text/javascript">
     var accountText = document.getElementById('account_name');
