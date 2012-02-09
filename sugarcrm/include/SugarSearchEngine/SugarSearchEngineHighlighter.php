@@ -86,11 +86,17 @@ class SugarSearchEngineHighlighter
         $front = mb_substr($string, 0, $remainder, 'UTF-8');
         $middle = mb_substr($string, $remainder, $len-$remainder*2, 'UTF-8');
         $rear = mb_substr($string, -$remainder, $remainder, 'UTF-8');
+
+        // In order not to cut in the middle of words, we search for space before/after the cutting point,
+        // but if the space is too far from the cutting point, we may still just cut the words.
+        // This is necessary especially for languages like CJK, which do not have space between characters
+        // so the nearest space could be one paragraph away.
+        $maxDistance = 10;
         if ($string[$remainder] != ' ' && $string[$remainder] != ' ')
         {
             // search for space between $string[0] and $string[$remainder-1]
             $pos = mb_strrpos($front, ' ', 0, 'UTF-8');
-            if ($pos) // found a space
+            if ($pos && (mb_strlen($front, 'UTF-8') - $pos < $maxDistance)) // found a space
             {
                 $front = mb_substr($front, 0, $pos, 'UTF-8');
             }
@@ -98,7 +104,7 @@ class SugarSearchEngineHighlighter
             {
                 // search space in $middle
                 $pos = mb_strpos($middle, ' ', 0, 'UTF-8');
-                if ($pos)
+                if ($pos && $pos < $maxDistance)
                 {
                     $front .= mb_substr($middle, 0, $pos, 'UTF-8');
                 }
@@ -109,7 +115,7 @@ class SugarSearchEngineHighlighter
         {
             // search for space in $rear
             $pos = mb_strpos($rear, ' ', 0, 'UTF-8');
-            if ($pos) // found a space
+            if ($pos && $pos < $maxDistance) // found a space
             {
                 $i = mb_strlen($rear, 'UTF-8') - $pos - 1;
                 $rear = mb_substr($rear, -$i, $i, 'UTF-8');
@@ -117,7 +123,7 @@ class SugarSearchEngineHighlighter
             else
             {
                 $pos = mb_strrpos($middle, ' ', 0, 'UTF-8');
-                if ($pos)
+                if ($pos && (mb_strlen($middle, 'UTF-8') - $pos < $maxDistance))
                 {
                     $i = mb_strlen($middle, 'UTF-8') - $pos - 1;
                     $rear = mb_substr($middle, -$i, $i, 'UTF-8') . $rear;

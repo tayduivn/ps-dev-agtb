@@ -64,7 +64,12 @@ class SugarSearchEngineHighlighterTest extends Sugar_PHPUnit_Framework_TestCase
                 80, 1, '<b>', '</b>'),
             // unicode string too long, string is modified with ...
             array(array(0=>'我知道我知道我知道我知道我知道我知道 我知道我知道我知道我知道我知道我知道我知道我知道我知道sugarcrm 我知道我知道我知道我知道我知道我知道我知道我知道我知道我知道我知道我知道'),
-                array(0=>'我知道我知道我知道我知道我知道我知道 ... 我知道我知道我知道我知道我知道我知道我知道我知道我知道<b>sugarcrm</b> 我知道我知道我知道我知道我知道 ... 道我知道我知道我知道我知道我知道'),
+                array(0=>'我知道我知道我知道我知道我知道我知道 ... 道我知道我知道我知道我知道我知道<b>sugarcrm</b> 我知道我知道我知道我知道我知道 ... 道我知道我知道我知道我知道我知道'),
+                'sugarcrm',
+                80, 1, '<b>', '</b>'),
+            // string too long, string is modified with ...
+            array(array(0=>'this is a sugarcrm test for abc defgh xyz and more more 123456789012345678901234567890'),
+                array(0=>'this is a <b>sugarcrm</b> test for abc ... 5678901234567890'),
                 'sugarcrm',
                 80, 1, '<b>', '</b>'),
         );
