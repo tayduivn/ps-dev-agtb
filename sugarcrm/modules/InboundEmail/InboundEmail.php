@@ -3176,7 +3176,9 @@ class InboundEmail extends SugarBean {
 			$msgPart = $text;
 			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader[$upperCaseKeyDecodeHeader['CONTENT-TYPE']]['charset'])) {
 				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
-			}
+			} else {
+                $msgPart = utf8_encode($text);
+            }
 		} // end else clause
 
 		$msgPart = $this->customGetMessageText($msgPart);

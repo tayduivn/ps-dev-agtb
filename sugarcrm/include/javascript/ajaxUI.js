@@ -41,10 +41,7 @@ SUGAR.ajaxUI = {
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
-            if (r.moduleList)
-            {
-                SUGAR.themes.setModuleTabs(r.moduleList);
-            }
+
             if (r.title)
             {
                 document.title = html_entity_decode(r.title);
@@ -62,7 +59,18 @@ SUGAR.ajaxUI = {
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
 
+            //BEGIN SUGARCRM flav=com ONLY
+            if (r.moduleList)
+            {
+                SUGAR.themes.setModuleTabs(r.moduleList);
+            }
+            //END SUGARCRM flav=com ONLY
+
             //BEGIN SUGARCRM flav=pro ONLY
+            if (r.menu)
+            {
+               SUGAR.themes.setCurrentTab(r.menu);
+            }
             if (r.record)
             {
                 DCMenu.record = r.record;
@@ -109,6 +117,11 @@ SUGAR.ajaxUI = {
 					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = errorMessage;
 					window.setTimeout('throw "AjaxUI error parsing response"', 300);
 			});
+
+            //fire off a delayed check to make sure error message was rendered.
+            SUGAR.ajaxUI.errorMessage = errorMessage;
+            window.setTimeout('if((typeof(document.getElementById("ajaxErrorFrame")) == "undefined" || typeof(document.getElementById("ajaxErrorFrame")) == null  || document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML == "")){document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML=SUGAR.ajaxUI.errorMessage;}',3000);
+
             panel.show();
             panel.center();
 

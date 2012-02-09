@@ -51,7 +51,9 @@ function get_layouts() {
     $list = array();
     if(isset($layouts)) {
 	   foreach($layouts as $key=>$value) {
+                   if(array_key_exists($key, $app_list_strings['layouts_dom'])){ //bug 49954 
 		   $list[$key] = $app_list_strings['layouts_dom'][$key];
+		}
 	  }
     }
 	return $list;

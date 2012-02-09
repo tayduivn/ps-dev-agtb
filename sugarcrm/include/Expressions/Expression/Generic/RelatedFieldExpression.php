@@ -82,28 +82,36 @@ class RelatedFieldExpression extends GenericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-		    var params = this.getParameters();
-			var linkField = params[0].evaluate();
-			var relField = params[1].evaluate();
+		    var params = this.getParameters(),
+			    linkField = params[0].evaluate(),
+			    relField = params[1].evaluate(),
+			    AH = SUGAR.forms.AssignmentHandler;
+
+
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
                 //We just have a field name, assume its the name of a link field
                 //and the parent module is the current module.
                 //Try and get the current module and record ID
-                var module = SUGAR.forms.AssignmentHandler.getValue("module");
-                var record = SUGAR.forms.AssignmentHandler.getValue("record");
-                var linkDef = SUGAR.forms.AssignmentHandler.getLink(linkField);
+                var module = AH.getValue("module");
+                var record = AH.getValue("record");
+                var linkDef = AH.getLink(linkField);
                 var linkId = false, url = "index.php?";
                 
                 if (linkDef && linkDef.id_name && linkDef.module) {
                     var idField = document.getElementById(linkDef.id_name);
                     if (idField && idField.tagName == "INPUT")
                     {
-                        linkId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
+                        linkId = AH.getValue(linkDef.id_name, false, true);
                         module = linkDef.module;
                     }
+                    //Clear the cache for this link if the id has changed
+                    if (linkDef.relId && linkDef.relId != linkId)
+                        AH.clearRelatedFieldCache(linkField);
                 }
+
+                return AH.getRelatedField(linkField, 'related', relField);
                 if (!module || (!record && !linkId))
                     return "";
 
@@ -133,7 +141,6 @@ class RelatedFieldExpression extends GenericExpression
 			    //Assume we have a Link object that we can delve into.
 			    //This is mostly used for n level dives through relationships.
 			    //This should probably be avoided on edit views due to performance issues.
-
 			}
 
 			return "";

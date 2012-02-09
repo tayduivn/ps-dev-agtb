@@ -337,7 +337,8 @@ if(true) {
 
 	////    END ATTACHMENTS
 	///////////////////////////////////////
-
+    $templateType = !empty($focus->type) ? $focus->type : '';
+    $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list'],$templateType));
 	// done and parse
 	$xtpl->parse("main.textarea");
 }

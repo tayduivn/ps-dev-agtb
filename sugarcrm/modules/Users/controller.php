@@ -151,5 +151,11 @@ protected function action_resetPreferences(){
 	    $_REQUEST['return_action'] = 'index';
 		require('modules/Users/Save.php');
 	}
+
+    protected function action_saveftsmodules()
+    {
+        $this->view = 'fts';
+        $GLOBALS['current_user']->setPreference('fts_disabled_modules', $_REQUEST['disabled_modules']);
+    }
 }	
 ?>

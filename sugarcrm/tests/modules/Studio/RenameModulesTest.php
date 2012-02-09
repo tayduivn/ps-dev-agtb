@@ -28,9 +28,20 @@ require_once('modules/Studio/wizards/RenameModules.php');
 class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $language;
+    private $language_contents;
 
     public function setup()
     {
+        $mods = array('Accounts', 'Contacts', 'Campaigns');
+        foreach($mods as $mod)
+        {
+            if(file_exists("custom/modules/{$mod}/language/en_us.lang.php"))
+            {
+                $this->language_contents[$mod] = file_get_contents("custom/modules/{$mod}/language/en_us.lang.php");
+                unlink("custom/modules/{$mod}/language/en_us.lang.php");
+            }
+        }
+
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->language = 'en_us';
 
@@ -50,6 +61,14 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
         SugarCache::$isCacheReset = false;
+
+        if(!empty($this->language_contents))
+        {
+            foreach($this->language_contents as $key=>$contents)
+            {
+                sugar_file_put_contents("custom/modules/{$key}/language/en_us.lang.php", $contents);
+            }
+        }
     }
 
 
@@ -89,7 +108,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($newSingular, $app_list_string['parent_type_display'][$module] );
 
         //Test module strings for account
-        $accountStrings = return_module_language('en_us',$module, TRUE);
+        $accountStrings = return_module_language('en_us','Accounts', TRUE);
         $this->assertEquals('Create Company', $accountStrings['LNK_NEW_ACCOUNT'], "Rename module failed for modules modStrings.");
         $this->assertEquals('View Companies', $accountStrings['LNK_ACCOUNT_LIST'], "Rename module failed for modules modStrings.");
         $this->assertEquals('Import Companies', $accountStrings['LNK_IMPORT_ACCOUNTS'], "Rename module failed for modules modStrings.");

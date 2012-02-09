@@ -56,16 +56,16 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
             array(
                 array(
                         'module' => 'Meetings',
-                        'label' => 'View Upcoming LotusLiveª Meetings',
-                        'action' => "DCMenu.hostMeetingUrl=''; DCMenu.loadView('Upcoming LotusLiveª Meetings','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'');",
+                        'label' => 'View Upcoming LotusLiveï¿½ Meetings',
+                        'action' => "DCMenu.hostMeetingUrl=''; DCMenu.loadView('Upcoming LotusLiveï¿½ Meetings','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'');",
                         'icon' => 'icon_LotusMeetings_bar_32.png',
                 ),
             ),
             array(
                 array(
                         'module' => 'Documents',
-                        'label' => 'View LotusLiveª Files',
-                        'action' => "DCMenu.loadView('LotusLiveª Files','index.php?module=Documents&action=extdoc&type=LotusLive');",
+                        'label' => 'View LotusLiveï¿½ Files',
+                        'action' => "DCMenu.loadView('LotusLiveï¿½ Files','index.php?module=Documents&action=extdoc&type=LotusLive');",
                         'icon' => 'icon_LotusDocuments_bar_32.png',
                 ),
             ),
@@ -92,7 +92,7 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
         $mock = new DCMenuMock2();
         $GLOBALS['sugar_config']['use_sprites'] = true;
         $html = $mock->getDynamicMenuItem($def);
-        $this->assertRegExp('/\<span\s+?.*?class[^\>]+?\>/', $html, 'Assert that with sprites on we get link with span tag');
+        $this->assertRegExp('/\<span\s+?.*?class[^\>]+?\>/', $html['image'], 'Assert that with sprites on we get link with span tag');
     }
 
 
@@ -109,7 +109,7 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
         $mock = new DCMenuMock2();
         $GLOBALS['sugar_config']['use_sprites'] = false;
         $html = $mock->getDynamicMenuItem($def);
-        $this->assertRegExp('/\<img\s+?/', $html, 'Assert that with sprites off we get link with img tag');
+        $this->assertRegExp('/\<img\s+?/', $html['image'], 'Assert that with sprites off we get link with img tag');
     }
 
 }

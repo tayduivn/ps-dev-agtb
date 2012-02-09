@@ -162,6 +162,7 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
+        //BEGIN SUGARCRM flav=pro ONLY
         'quotes' => array(
             'order' => 70,
             'module' => 'Quotes',
@@ -179,7 +180,6 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
-        //BEGIN SUGARCRM flav=pro ONLY
         'products' => array(
             'order' => 80,
             'module' => 'Products',

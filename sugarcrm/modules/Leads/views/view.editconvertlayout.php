@@ -70,7 +70,7 @@ class ViewEditConvertLayout extends SugarView {
         if (! $this->fromModuleBuilder) {
             global $current_language;
             $editModStrings = return_module_language($current_language, $this->editModule);
-            $mod_strings = sugarArrayMerge($editModStrings, $mod_strings);
+            $mod_strings = sugarLangArrayMerge($editModStrings, $mod_strings);
         }
         $smarty->assign('mod', $mod_strings);
         $smarty->assign('MOD', $mod_strings);

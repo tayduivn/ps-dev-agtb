@@ -1000,7 +1000,7 @@
 			
 			document.forms['CalendarRepeatForm'].repeat_type.value = data.repeat_type;
 			document.forms['CalendarRepeatForm'].repeat_interval.value = data.repeat_interval;			
-			if(data.repeat_count != ''){
+			if(data.repeat_count != '' && data.repeat_count != 0){
 				document.forms['CalendarRepeatForm'].repeat_count.value = data.repeat_count;
 				CAL.get("repeat_count_radio").checked = true;
 				CAL.get("repeat_until_radio").checked = false;				

@@ -54,7 +54,7 @@ height: 10px;
 
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 {sugar_getscript file='include/javascript/dashlets.js'}
-<link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
+
 {$chartResources}
 {$mySugarChartResources}
 
@@ -316,18 +316,18 @@ mySugarLoader.insert();
 			<table align="center" cellpadding="15">
 				<tr>
 					<td align="center">
-						{capture assign=img_attr}border="0" id="change_layout_1_column"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(1);" 
+						{capture assign=img_attr}border="0"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(1);" attr='id="change_layout_1_column"'
 							title=$app.LBL_ICON_COLUMN_1 img_name="icon_Column_1.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
-					    {capture assign=img_attr}border="0" id="change_layout_2_column"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(2);"
+					    {capture assign=img_attr}border="0"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(2);" attr='id="change_layout_2_column"'
 							title=$app.LBL_ICON_COLUMN_2 img_name="icon_Column_2.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
-					    {capture assign=img_attr}border="0" id="change_layout_3_column"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(3);" 
+					    {capture assign=img_attr}border="0"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(3);" attr='id="change_layout_3_column"'
 							title=$app.LBL_ICON_COLUMN_3 img_name="icon_Column_3.gif" img_attr=$img_attr}
 					</td>
 				</tr>

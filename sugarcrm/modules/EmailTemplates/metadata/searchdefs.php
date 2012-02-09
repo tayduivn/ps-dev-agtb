@@ -39,9 +39,9 @@
                            ),
                     'layout' => array(  					
 						'basic_search' => array(
-						 	'name',
+						 	'name','type'
 							),
-					    'advanced_search' => array('name','subject','description',
+					    'advanced_search' => array('name','type','subject','description',
                                 					    'assigned_user_id' => 
                                 					      array (
                                 					        'name' => 'assigned_user_id',

@@ -442,13 +442,9 @@ function get_sugar_config_defaults() {
 	'use_sprites' => function_exists('imagecreatetruecolor'),
 
 	//END SUGARCRM flav=pro ONLY
-	'use_real_names' => true,
-	//BEGIN SUGARCRM flav=int ONLY
+		'use_real_names' => true,
 
-	// REMOVE BEFORE SHIPPING
-	'new_subpanels' => true,
-	//END SUGARCRM flav=int ONLY
-        'search_wildcard_infront' => false,
+		'search_wildcard_infront' => false,
         'search_wildcard_char' => '%',
 	);
 
@@ -743,33 +739,50 @@ function get_user_name($id) {
 
 
 //TODO Update to use global cache
-function get_user_array($add_blank=true, $status="Active", $assigned_user="", $use_real_name=false, $user_name_begins = null, $is_group=' AND portal_only=0 ', $from_cache = true) {
+/**
+ * get_user_array
+ *
+ * This is a helper function to return an Array of users depending on the parameters passed into the function.
+ * This function uses the get_register_value function by default to use a caching layer where supported.
+ *
+ * @param bool $add_blank Boolean value to add a blank entry to the array results, true by default
+ * @param string $status String value indicating the status to filter users by, "Active" by default
+ * @param string $user_id String value to specify a particular user id value (searches the id column of users table), blank by default
+ * @param bool $use_real_name Boolean value indicating whether or not results should include the full name or just user_name, false by default
+ * @param String $user_name_filter String value indicating the user_name filter (searches the user_name column of users table) to optionally search with, blank by default
+ * @param string $portal_filter String query filter for portal users (defaults to searching non-portal users), change to blank if you wish to search for all users including portal users
+ * @param bool $from_cache Boolean value indicating whether or not to use the get_register_value function for caching, true by default
+ * @return array Array of users matching the filter criteria that may be from cache (if similar search was previously run)
+ */
+function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true) {
 	global $locale;
 	global $sugar_config;
 
 	if(empty($locale)) {
-
 		$locale = new Localization();
 	}
-	if($from_cache)
-		$user_array = get_register_value('user_array', $add_blank. $status . $assigned_user);
+
+	if($from_cache) {
+        $key_name = $add_blank. $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
+		$user_array = get_register_value('user_array', $key_name);
+    }
 
 	if(empty($user_array)) {
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
 		// Including deleted users for now.
 		if (empty($status)) {
-			$query = "SELECT id, first_name, last_name, user_name from users WHERE 1=1".$is_group;
+			$query = "SELECT id, first_name, last_name, user_name from users WHERE 1=1".$portal_filter;
 		}
 		else {
-			$query = "SELECT id, first_name, last_name, user_name from users WHERE status='$status'".$is_group;
+			$query = "SELECT id, first_name, last_name, user_name from users WHERE status='$status'".$portal_filter;
 		}
 
-		if (!empty($user_name_begins)) {
-			$query .= " AND user_name LIKE '$user_name_begins%' ";
+		if (!empty($user_name_filter)) {
+			$query .= " AND user_name LIKE '$user_name_filter%' ";
 		}
-		if (!empty($assigned_user)) {
-			$query .= " OR id='$assigned_user'";
+		if (!empty($user_id)) {
+			$query .= " OR id='{$user_id}'";
 		}
 		$query = $query.' ORDER BY user_name ASC';
 		$GLOBALS['log']->debug("get_user_array query: $query");
@@ -795,7 +808,9 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
 
 		$user_array = $temp_result;
 		if($from_cache)
-			set_register_value('user_array', $add_blank. $status . $assigned_user, $temp_result);
+        {
+			set_register_value('user_array', $key_name, $temp_result);
+        }
 	}
 
 
@@ -956,7 +971,7 @@ function return_app_list_strings_language($language)
 
     $app_list_strings = array();
     foreach ( $app_list_strings_array as $app_list_strings_item ) {
-        $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
+        $app_list_strings = sugarLangArrayMerge($app_list_strings, $app_list_strings_item);
     }
 
     foreach ( $langs as $lang ) {
@@ -1081,7 +1096,7 @@ function return_application_language($language)
 
 	$app_strings = array();
     foreach ( $app_strings_array as $app_strings_item ) {
-        $app_strings = sugarArrayMerge($app_strings, $app_strings_item);
+        $app_strings = sugarLangArrayMerge($app_strings, $app_strings_item);
     }
 
 	if(!isset($app_strings)) {
@@ -1165,14 +1180,14 @@ function return_module_language($language, $module, $refresh=false)
 
 	// cn: bug 6048 - merge en_us with requested language
 	if($language != $sugar_config['default_language'])
-        $loaded_mod_strings = sugarArrayMerge(
+        $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
                 $loaded_mod_strings
             );
 
     // Load in en_us strings by default
     if($language != 'en_us' && $sugar_config['default_language'] != 'en_us')
-        $loaded_mod_strings = sugarArrayMerge(
+        $loaded_mod_strings = sugarLangArrayMerge(
             LanguageManager::loadModuleLanguage($module, 'en_us', $refresh),
                 $loaded_mod_strings
             );
@@ -1245,7 +1260,7 @@ function return_mod_list_strings_language($language,$module) {
 	}
 
 	// cn: bug 6048 - merge en_us with requested language
-	$mod_list_strings = sugarArrayMerge($en_mod_list_strings, $mod_list_strings);
+	$mod_list_strings = sugarLangArrayMerge($en_mod_list_strings, $mod_list_strings);
 
 	// if we still don't have a language pack, then log an error
 	if(!isset($mod_list_strings)) {
@@ -2541,6 +2556,58 @@ function get_unlinked_email_query($type, $bean) {
 	return $return_array['select'] . $return_array['from'] . $return_array['where'] . $return_array['join'] ;
 } // fn
 
+function get_emails_by_assign_or_link($params)
+{
+    $relation = $params['link'];
+	$bean = $GLOBALS['app']->controller->bean;
+    if(empty($bean->$relation)) {
+        $bean->load_relationship($relation);
+    }
+    if(empty($bean->$relation)) {
+        $GLOBALS['log']->error("Bad relation '$relation' for bean '{$bean->object_name}' id '{$bean->id}'");
+        return array();
+    }
+    $rel_module = $bean->$relation->getRelatedModuleName();
+    $rel_join = $bean->$relation->getJoin(array(
+    	'join_table_alias' => 'link_bean',
+    	'join_table_link_alias' => 'linkt',
+    ));
+    $rel_join = str_replace("{$bean->table_name}.id", "'{$bean->id}'", $rel_join);
+    $return_array['select']='SELECT emails.id ';
+    $return_array['from'] = "FROM emails ";
+    $return_array['join'] = " INNER JOIN (".
+        // directly assigned emails
+        	"select eb.email_id FROM emails_beans eb where eb.bean_module = '{$bean->module_dir}' AND eb.bean_id = '{$bean->id}' AND eb.deleted=0 ".
+            " UNION ".
+        // Assigned to contacts
+        	"select DISTINCT eb.email_id FROM emails_beans eb
+                $rel_join AND link_bean.id = eb.bean_id
+        		where eb.bean_module = '$rel_module' AND eb.deleted=0".
+        	" UNION ".
+        // Related by directly by email
+            "select DISTINCT eear.email_id from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            	ON eabr.bean_id ='{$bean->id}' AND eabr.bean_module = '{$bean->module_dir}' AND
+    			eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0".
+            " UNION ".
+        // Related by email to linked contact
+            "select DISTINCT eear.email_id FROM emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            	ON eabr.email_address_id=eear.email_address_id AND eabr.bean_module = '$rel_module' AND eabr.deleted=0
+            	$rel_join AND link_bean.id = eabr.bean_id
+            	where eear.deleted=0".
+            ") email_ids ON emails.id=email_ids.email_id ";
+        $return_array['where']=" WHERE emails.deleted=0 ";
+
+    	//$return_array['join'] = '';
+        $return_array['join_tables'][0] = '';
+
+        if(0 && $bean->object_name == "Case" && !empty($bean->case_number)) {
+            $where = str_replace("%1", $bean->case_number, 	$bean->getEmailSubjectMacro());
+    	    $return_array["where"] .= "\n AND emails.name LIKE '%$where%'";
+        }
+
+        return $return_array;
+}
+
 /**
  * Check to see if the number is empty or non-zero
  * @param $value
@@ -3101,6 +3168,7 @@ function sugar_cleanup($exit = false) {
 	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
 		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
+		&& ($_REQUEST['action']!='favorites' && $_REQUEST['action']!='DynamicAction')
 		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
 		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
 
@@ -3850,6 +3918,53 @@ function setPhpIniSettings() {
 	}
 }
 
+/**
+ * Identical to sugarArrayMerge but with some speed improvements and used specifically to merge
+ * language files.  Language file merges do not need to account for null values so we can get some
+ * performance increases by using this specialized function. Note this merge function does not properly
+ * handle null values.
+ *
+ * @param $gimp
+ * @param $dom
+ * @return array
+ */
+function sugarLangArrayMerge($gimp, $dom)
+{
+	if(is_array($gimp) && is_array($dom))
+    {
+		foreach($dom as $domKey => $domVal)
+        {
+			if(isset($gimp[$domKey]))
+            {
+				if(is_array($domVal))
+                {
+					$tempArr = array();
+                    foreach ( $domVal as $domArrKey => $domArrVal )
+                        $tempArr[$domArrKey] = $domArrVal;
+                    foreach ( $gimp[$domKey] as $gimpArrKey => $gimpArrVal )
+                        if ( !isset($tempArr[$gimpArrKey]) )
+                            $tempArr[$gimpArrKey] = $gimpArrVal;
+                    $gimp[$domKey] = $tempArr;
+				}
+                else
+                {
+					$gimp[$domKey] = $domVal;
+				}
+			}
+            else
+            {
+				$gimp[$domKey] = $domVal;
+			}
+		}
+	}
+    // if the passed value for gimp isn't an array, then return the $dom
+    elseif(is_array($dom))
+    {
+        return $dom;
+    }
+
+	return $gimp;
+}
 /**
  * like array_merge() but will handle array elements that are themselves arrays;
  * PHP's version just overwrites the element with the new one.
@@ -4920,6 +5035,32 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
     return htmlentities($input, $quotes, $charset);
 }
 
+/**
+ * @return string - the full text search engine name
+ */
+function getFTSEngineType()
+{
+    if (isset($GLOBALS['sugar_config']['full_text_engine']) && is_array($GLOBALS['sugar_config']['full_text_engine'])) {
+        foreach ($GLOBALS['sugar_config']['full_text_engine'] as $name => $defs) {
+            return $name;
+        }
+    }
+    return '';
+}
+
+/**
+ * @param string $optionName - name of the option to be retrieved from app_list_strings
+ * @return array - the array to be used in option element
+ */
+function getFTSBoostOptions($optionName)
+{
+    if (isset($GLOBALS['app_list_strings'][$optionName])) {
+        return $GLOBALS['app_list_strings'][$optionName];
+    }
+    else {
+        return array();
+    }
+}
 
 /**
  * utf8_recursive_encode

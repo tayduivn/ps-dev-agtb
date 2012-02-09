@@ -434,7 +434,7 @@ class SugarApplication
         }
 
         // cn: bug 6048 - merge en_us with requested language
-        $app_strings = sugarArrayMerge($en_app_strings, $app_strings);
+        $app_strings = sugarLangArrayMerge($en_app_strings, $app_strings);
 
         // If we are in debug mode for translating, turn on the prefix now!
         if($sugar_config['translation_string_prefix']) {
@@ -517,7 +517,7 @@ class SugarApplication
 
         // cn: bug 6048 - merge en_us with requested language
         if (!empty($en_app_list_strings)) {
-            $app_list_strings = sugarArrayMerge($en_app_list_strings, $app_list_strings);
+            $app_list_strings = sugarLangArrayMerge($en_app_list_strings, $app_list_strings);
         }
 
         if (file_exists("custom/application/Ext/Language/en_us.lang.ext.php")){
@@ -715,6 +715,7 @@ class SugarApplication
 		'Trackers' => array('trackersettings'),
 	    'SugarFavorites' => array('tag'),
 	    'Import' => array('last', 'undo'),
+	    'Users' => array('changepassword', "generatepassword"),
 	);
 
 	protected function isModifyAction()

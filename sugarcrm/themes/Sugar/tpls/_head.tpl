@@ -33,6 +33,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset={$APP.LBL_CHARSET}">
 <title>{$SYSTEM_NAME}</title>
 {$SUGAR_CSS}
+{if $AUTHENTICATED}
+<link rel='stylesheet' href='{sugar_getjspath file="include/ytree/TreeView/css/folders/tree.css"}'/>
+<link rel='stylesheet' href='{sugar_getjspath file="include/SugarCharts/Jit/css/base.css"}'/>
+{/if}
 {$SUGAR_JS}
 {literal}
 <script type="text/javascript">

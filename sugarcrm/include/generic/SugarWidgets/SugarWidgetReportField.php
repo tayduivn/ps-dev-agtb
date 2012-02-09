@@ -127,7 +127,9 @@ class SugarWidgetReportField extends SugarWidgetField
 				return $alias;
     	}
 
-		$alias = sprintf("%s(%s)", $layout_def['group_function'], $this->reporter->db->convert($alias, "IFNULL", array(0)));
+    	// Removed ISNULL check as per bug 49452
+		$alias = "{$layout_def['group_function']}($alias)";
+		//$this->reporter->db->convert($alias, "IFNULL", array(0)));
 	}
 
 	$reportAlias[$alias] = $layout_def;
@@ -217,7 +219,7 @@ class SugarWidgetReportField extends SugarWidgetField
 		            $header_cell .= "</a>";
 					return $header_cell;
 				}
-             
+
 		        return $this->displayHeaderCellPlain($layout_def);
     }
 
