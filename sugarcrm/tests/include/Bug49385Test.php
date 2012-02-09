@@ -144,11 +144,11 @@ class Bug49385Test extends Sugar_PHPUnit_Framework_TestCase
                 $this->assertNotEmpty($result);
 
             } else {
-                //$this->markTestSkipped('There are not many-to-many relationships in the '.$bean);
+                $this->markTestSkipped('There are not many-to-many relationships in the '.$bean);
             }
 
         } else {
-            //$this->markTestSkipped('There are not relationships in the '.$bean);
+            $this->markTestSkipped('There are not relationships in the '.$bean);
         }
     }
 }
