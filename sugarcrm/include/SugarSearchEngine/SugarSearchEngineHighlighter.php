@@ -33,6 +33,10 @@ class SugarSearchEngineHighlighter
     protected $_postTag;
     protected $_module;
     private $_currentCount;
+    protected static $operatorMap = array (
+        'and' => 1,
+        'or' => 1,
+    );
 
     public function __construct($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
     {
@@ -201,6 +205,17 @@ class SugarSearchEngineHighlighter
         return $this->_preTag . htmlspecialchars(trim($matches[0])) . $this->_postTag;
     }
 
+    protected function isOperator($search)
+    {
+        $search = strtolower($search);
+        if (isset(self::$operatorMap[$search]))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      *
      * This function returns an array of highlighted strings.
@@ -223,7 +238,7 @@ class SugarSearchEngineHighlighter
 
             foreach ($searches as $search)
             {
-                if (empty($search))
+                if (empty($search) || $this->isOperator($search))
                 {
                     continue;
                 }
