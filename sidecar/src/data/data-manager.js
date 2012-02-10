@@ -6,6 +6,11 @@
     // _models[module].collections - hash of bean collections
     var _models;
 
+    function _addValidation(validations, attribute, validation) {
+        if (_.isUndefined(validations[attribute])) validations[attribute] = [];
+        validations[attribute].push(validation);
+    }
+
     /**
      * Manages bean models and provides Backbone sync pattern.
      */
@@ -30,7 +35,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans;
+            var defaults, model, beans, vardefs, vardef, validations;
 
             this.reset(moduleName);
 
@@ -42,12 +47,32 @@
             _.each(_.keys(beans), function(beanType) {
                 // TODO: Initialize defaults by processing vardefs
                 defaults = null;
+                vardefs = beans[beanType]["vardefs"];
+                fields = vardefs.fields;
+
+                // Build validations
+                if (fields) {
+                    validations = {};
+                    _.each(_.keys(fields), function(field) {
+                        vardef = fields[field];
+                        if (!_.isUndefined(vardef.required) && (vardef.required === true)) {
+                            _addValidation(validations, field, app.validation.createValidator("required", field, true));
+                        }
+
+                        if (_.isNumber(vardef.maxLength)) {
+                            _addValidation(validations, field, app.validation.createValidator("maxLength", field, vardef.maxLength));
+                        }
+                    });
+
+                    if (_.isEmpty(validations)) validations = null;
+                }
 
                 model = app.Bean.extend({
                     module:   moduleName,
                     beanType: beanType,
-                    vardefs:  beans[beanType]["vardefs"],
-                    defaults: defaults
+                    vardefs:  vardefs,
+                    defaults: defaults,
+                    validations: validations
                 });
 
                 _models[moduleName].collections[beanType] = app.BeanCollection.extend({

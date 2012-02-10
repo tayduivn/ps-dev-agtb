@@ -19,7 +19,8 @@
                     "fields": {
                         "first_name": {
                             "name": "first_name",
-                            "type": "varchar"
+                            "type": "varchar",
+                            "maxLength": 20
                         },
                         "last_name":  {
                             "name": "last_name",
