@@ -140,7 +140,6 @@
 }
 .act_item .head div {
 	overflow: hidden;
-	height: 13px;	
 }
 .act_item .content {
 	padding-top: 1px;
@@ -155,14 +154,15 @@
 .adicon {
 	float: right;	
 	color: black;
-	width: 11px;
+	width: 18px;
 	font-size: 9px;
-	height: 11px;
+	height: 18px;
 	line-height: 11px;
 	text-align: center;
-	background-image: url('../../themes/default/images/MoreDetail.png');
+	background-image: url(../../index.php?entryPoint=getImage&imageName=info_inline.png);
 	background-repeat: no-repeat;
-	margin-left: 2px;
+	margin: 2px;
+	cursor: pointer;
 }
 
 .act_item .head div {

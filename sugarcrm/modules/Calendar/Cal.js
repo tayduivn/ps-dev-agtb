@@ -234,13 +234,55 @@
 		
 		var id = params.id + params.id_suffix;
 		
-		var content = "";
+		//var content = "";
+		//if(params.type == "advanced"){
+			//content = "<div class='content' " + params.content_style + ">" + params.item_text + "</div>";
+		//}
+		
+		//var el = document.createElement("div");	
+		//el.innerHTML = "<div class='head'><div class='adicon' onmouseover='return CAL.show_additional_details(" + '"' + id + '"'  +  ");' onmouseout='nd(400); SUGAR.util.clearAdditionalDetailsCall();' >&nbsp;&nbsp;</div><div>" + params.head_text + "</div>" + "</div>" + content; 
+		
+		var el = document.createElement("div");
+		var elHead = document.createElement("div");
+		elHead.setAttribute("class","head");
+		
+		var elHeadInfo = document.createElement("div");
+		elHeadInfo.setAttribute("class","adicon");
+		elHeadInfo.setAttribute("id","div_"+id);
+		
+		var params_click = new Object();
+		params_click.id = id;
+		YAHOO.util.Event.on(elHeadInfo,"click",function(e){
+			 YAHOO.util.Event.stopPropagation(e); 
+				CAL.show_additional_details(params_click.id);
+		},params_click);
+		
+		
+		
+		var head_text = document.createElement("div");
+		head_text.innerHTML = params.head_text;
+		
+		
+		elHead.appendChild(elHeadInfo);
+		elHead.appendChild(head_text);
+		
+		el.appendChild(elHead);
+		
+		
 		if(params.type == "advanced"){
-			content = "<div class='content' " + params.content_style + ">" + params.item_text + "</div>";
+		var elContent = document.createElement("div");
+			elContent.setAttribute("class","content");
+			if(params.content_style != "") {
+				elContent.setAttribute(params.content_style,params.content_style_value);
+			}
+			elContent.innerHTML = params.item_text;
+			el.appendChild(elContent);
 		}
 		
-		var el = document.createElement("div");	
-		el.innerHTML = "<div class='head'><div class='adicon' onmouseover='return CAL.show_additional_details(" + '"' + id + '"'  +  ");' onmouseout='nd(400); SUGAR.util.clearAdditionalDetailsCall();' >&nbsp;&nbsp;</div><div>" + params.head_text + "</div>" + "</div>" + content; 
+
+		
+			
+			
 		el.setAttribute("id",id);
 		el.className = "act_item" + " " + item.type+"_item";	
 		el.style.backgroundColor = CAL.activity_colors[item.module_name]['body'];
@@ -746,8 +788,11 @@
 			var item_text = SUGAR.language.languages.app_list_strings[item.type +'_status_dom'][item.status];
 			
 			var content_style = "";
-			if(duration_coef < 1.75)
-				content_style = "style='display: none;'";
+			var content_style_value = "";
+			if(duration_coef < 1.75) {
+				content_style = "display";
+				content_style_value = "none";
+			}
 			
 			var elm_id = item.record + id_suffix;
 						
@@ -759,7 +804,8 @@
 				id: item.record,
 				id_suffix: id_suffix,
 				item_text: item_text,
-				content_style: content_style
+				content_style: content_style,
+				content_style_value: content_style_value
 			});
 			
 			YAHOO.util.Event.on(el,"click",function(){
@@ -1726,12 +1772,12 @@
 									CAL.editDialog.cancel();	
 	}
 	
-<<<<<<< HEAD
 	CAL.show_additional_details = function (id){
+		
 		var obj = CAL.get(id);	
 		var record = obj.getAttribute("record");
 		var module_name = obj.getAttribute("module_name");		
-		SUGAR.util.getAdditionalDetails(module_name, record, '', true);
+		SUGAR.util.getAdditionalDetails(module_name, record, 'div_'+id, true);
 		return;
 	}
 	
@@ -1755,103 +1801,6 @@
 			});
 			var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.sharedDialog.cancel();} } );
 			CAL.sharedDialog.cfg.queueProperty("keylisteners", listeners);
-=======
-	CAL.show_additional_details = function (el,id){
-		var obj = CAL.get(id);
-	
-		var record = obj.getAttribute("record");
-		mod = obj.getAttribute("module_name");
-		var atype = CAL.act_types[mod];
-	
-		var subj = obj.getAttribute("subj");
-		var date_start = obj.getAttribute("date_start");
-		var duration = obj.getAttribute("dur");	
-		var desc = obj.getAttribute("desc");	
-		var detail = parseInt(obj.getAttribute("detail"));
-		var edit = parseInt(obj.getAttribute("edit"));
-		
-		var date_str = "";
-		if(date_start != "")
-			date_str += '<b>'+CAL.lbl_start+':</b> ' +  date_start;			
-		if(mod == "Tasks"){
-			var date_due = obj.getAttribute("date_due");
-			if(date_due != ""){
-				if(date_str != "")
-					date_str += "<br>";
-				date_str += '<b>'+CAL.lbl_due+':</b> ' +  date_due;
-			}		
-		}				
-		
-		var related = "";
-		if(obj.getAttribute("parent_id") != '' && obj.getAttribute("parent_name") != '')
-			related = "<b>" + CAL.lbl_related + ":</b> <a href='index.php?module="+obj.getAttribute("parent_type")+"&action=DetailView&record="+obj.getAttribute("parent_id")+"'>"+obj.getAttribute("parent_name")+"</a>" + "<br>";
-
-		if(desc != '')
-			desc = '<b>'+ CAL.lbl_desc + ':</b><br> ' + desc +'<br>';			
-		if(subj == '')
-			return "";
-
-		var date_lbl = CAL.lbl_start;		
-		if(duration != ""){
-			var duration_text = '<b>'+CAL.lbl_duration+':</b> ' + duration + '<br>';
-			if(mod == "Tasks"){
-				date_lbl = CAL.lbl_due;
-				duration_text = "";			
-			}
-		}else
-			duration_text = "";
-
-		var caption = "<div style='float: left;'>"+CAL.lbl_title+"</div><div style='float: right;'>";
-		if(edit){
-			caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_EDIT_BUTTON')+"\' href=\'index.php?module="+mod+"&action=EditView&record="+record+"\'><img border=0  src=\'"+CAL.img_edit_inline+"\'></a>";
-		}
-		if(detail){
-			caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_VIEW_BUTTON')+"\' href=\'index.php?module="+mod+"&action=DetailView&record="+record+"\'><img border=0  style=\'margin-left:2px;\' src=\'"+CAL.img_view_inline+"\'></a>";
-		}
-		caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE')+"\' href=\'javascript: SUGAR.util.closeStaticAdditionalDetails();\' onclick=\'javascript: SUGAR.util.closeStaticAdditionalDetails();\'><img border=0  style=\'margin-left:2px;margin-right:2px;\' src=\'"+CAL.img_close+"\'></a></div>";
-
-		
-		var body = '<b>'+CAL.lbl_name+':</b> ' + subj + '<br>' + date_str + '<br>' + duration_text + related + desc;
-		CAL.getStaticAdditionalDetails(el,body,caption);
-		
-	}
-	
-	CAL.getStaticAdditionalDetails = function (el,body,caption) {
-			
-			//close any open dialogs
-			$(".ui-dialog").find(".open").dialog("close");
-
-			var $dialog = $('<div class="open"></div>')
-			.html(body)
-			.dialog({
-				dialogClass: 'calendar',
-				autoOpen: false,
-				title: caption,
-				width: 300,
-				position: { 
-				    my: 'left top',
-				    at: 'right top',
-				    of: $(el)
-			  }
-			});
-			
-			$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
-			$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
-			$dialog.dialog('open');	
-	}		
-	
-	CAL.toggle_shared_edit = function (id){
-		if(document.getElementById(id).style.display == 'none'){
-			document.getElementById(id).style.display = 'inline'
-			if(document.getElementById(id+"link") != undefined){
-				document.getElementById(id+"link").style.display='none';
-			}
-		}else{
-			document.getElementById(id).style.display = 'none'
-			if(document.getElementById(id+"link") != undefined){
-				document.getElementById(id+"link").style.display = 'inline';
-			}
->>>>>>> caramel_ui_overlib
 		}
 		CAL.sharedDialog.cancelEvent.subscribe(function(e, a, o){
 			//CAL.get("form_settings").reset();

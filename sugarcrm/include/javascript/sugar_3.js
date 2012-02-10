@@ -3055,10 +3055,9 @@ SUGAR.util = function () {
 		
 
 		},
-		getStaticAdditionalDetails: function(el, body, caption, extra) {
-			if(extra == undefined || extra == "") {
-				extra = false;	
-			}
+		getStaticAdditionalDetails: function(el, body, caption, show_buttons) {
+			if(typeof show_buttons == "undefined")
+				show_buttons = false;
 
 			$(".ui-dialog").find(".open").dialog("close");
 
@@ -3106,11 +3105,14 @@ SUGAR.util = function () {
 						position: { 
 						    my: 'right top',
 						    at: 'left top',
-						    of: $('#'+spanId+ ' img')
+						    of: $('#'+spanId)
 					  }
 					});
 					
-					
+				if(show_buttons) {
+					$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");	
+				}
 					$dialog.dialog('open');
 				
 				}
