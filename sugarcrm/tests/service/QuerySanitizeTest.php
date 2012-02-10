@@ -53,6 +53,8 @@ class QuerySanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             array("1=1 AND EXISTS (SELECT * FROM users WHERE is_admin=1 and id=(select id from users where is_admin=1 order by id limit 1) and ((ord(substring(id, 1, 1)) >> 5) & 1))", "", false),
             // OPI email query with evil mods, should not pass
             array("contacts.assigned_user_id = '1' AND (contacts.first_name like '%collin.c.lee@gmail.com%' OR contacts.last_name like '%collin.c.lee@gmail.com%' OR contacts.id IN (SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) JOIN users WHERE users.is_admin='1' AND eabr.deleted=0 AND ea.email_address LIKE 'collin.c.lee@gmail.com%'))", "contacts.last_name asc", false),
+            // bug 50336
+            array('contacts.id IN (SELECT email_addr_bean_rel.bean_id FROM email_addr_bean_rel, email_addresses WHERE email_addresses.id = email_addr_bean_rel.email_address_id AND email_addr_bean_rel.deleted = 0 AND email_addr_bean_rel.bean_module = \'Contacts\' AND email_addresses.email_address IN ("odemendez@starbucks.fr"))', '', true),
             );
     }
 
