@@ -1,4 +1,5 @@
 <?php
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -31,15 +32,8 @@ class Bug48496Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function setUp()
     {
-        global $sugar_config;
-
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-
+        $GLOBALS['module']='Imports';
         $_REQUEST['module']='Imports';
         $_REQUEST['import_module']='Accounts';
         $_REQUEST['action']='last';
@@ -50,12 +44,10 @@ class Bug48496Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function tearDown()
     {
-        global $sugar_config;
         unlink('upload/import/status_'.$GLOBALS['current_user']->id.'.csv');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['module']);
         unset($_REQUEST['module']);
         unset($_REQUEST['import_module']);
         unset($_REQUEST['action']);
@@ -64,7 +56,7 @@ class Bug48496Test extends Sugar_PHPUnit_Framework_OutputTestCase
     }
 
     public function testQueryDoesNotContainDuplicateUsersLastImportClauses() {
-        global $current_user, $listViewDefs;
+        global $current_user;
 
         $params = array(
             'custom_from' => ', users_last_import',
