@@ -126,12 +126,10 @@ class MetaDataManager {
         $data["views"]["editdefs"] = $tmp['EditView'];
         $data["views"]["listviewdefs"] = $this->getListDefs($moduleName);
         $data["views"]["searchdefs"] = $this->getSearchDefs($moduleName);
-        $data['bean'] = array(
-            "vardefs" => $this->getVarDefs($moduleName)
-        );
+        $vardefs = $this->getVarDefs($moduleName);
 
-        foreach (array_keys($data["bean"]["vardefs"]) as $key => $val) {
-            if (is_array($data["bean"]["vardefs"][$val])) {
+        foreach (array_keys($vardefs) as $key => $val) {
+            if (is_array($vardefs[$val])) {
 
                 global $beanList;
                 include_once("{$this->entryPoint}/include/modules.php");
@@ -148,6 +146,7 @@ class MetaDataManager {
 
                     if ($reverse_name != null) {
                         $data['bean'][$val] = $this->getBeanInfo($reverse_name);
+                        $data['bean'][$val]['vardefs'] = $vardefs[$val];
                     }
                 }
             }
@@ -159,7 +158,6 @@ class MetaDataManager {
 
         return $data;
     }
-
 
     /**
      * Reads the directory passed to it, and generates a list of directories contained within
@@ -199,14 +197,21 @@ class MetaDataManager {
         $isCustom = false;
         $stdVdef = "{$this->entryPoint}/modules/{$moduleName}/{$vdefFile}";
         $cusVdef = "{$this->entryPoint}/custom/modules/{$moduleName}/{$vdefFile}";
+        $extVdef = "{$this->entryPoint}/custom/modules/{$moduleName}/Ext/Vardefs/vardefs.ext.php";
 
-        if (file_exists($stdVdef) && !file_exists($cusVdef)) {
-            unset($dictionary);
+        unset($dictionary);
+
+        // check to see if
+        if (file_exists($stdVdef)) {
             include_once($stdVdef);
-        } else if (file_exists($cusVdef)) {
-            $isCustom = true;
-            unset($dictionary);
+        }
+
+        if (file_exists($cusVdef)) {
             include_once($cusVdef);
+        }
+
+        if (file_exists($extVdef)) {
+            include_once($extVdef);
         }
 
         if (!isset($dictionary)) {
