@@ -146,6 +146,7 @@ class MetaDataManager {
 
                     if ($reverse_name != null) {
                         $data['bean'][$val] = $this->getBeanInfo($reverse_name);
+                        //$data['bean'][$val]['real_bean_name'] = $reverse_name;
                         $data['bean'][$val]['vardefs'] = $vardefs[$val];
                     }
                 }
