@@ -145,9 +145,8 @@ class MetaDataManager {
                     }
 
                     if ($reverse_name != null) {
-                        $data['bean'][$val] = $this->getBeanInfo($reverse_name);
-                        //$data['bean'][$val]['real_bean_name'] = $reverse_name;
-                        $data['bean'][$val]['vardefs'] = $vardefs[$val];
+                        $data['beans'][$val] = $this->getBeanInfo($reverse_name);
+                        $data['beans'][$val]['vardefs'] = $vardefs[$val];
                     }
                 }
             }
@@ -450,6 +449,10 @@ class MetaDataManager {
             $data["module_dir"] = $mod_dir;
             $data["module_name"] = $mod_name;
         }
+
+        $md5 = json_encode($data);
+        $md5 = md5($md5);
+        $data["bean_md5"] = $md5;
 
         return $data;
     }
