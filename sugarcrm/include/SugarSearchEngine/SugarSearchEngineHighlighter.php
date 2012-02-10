@@ -34,8 +34,19 @@ class SugarSearchEngineHighlighter
     protected $_module;
     private $_currentCount;
     protected static $operatorMap = array (
-        'and' => 1,
-        'or' => 1,
+        'and', 'or',
+    );
+    // these are English stop words, perhaps we should include stop words of other languages as well
+    protected static $stopWords = array (
+        'a', 'an', 'and', 'as', 'at',
+        'be', 'but', 'by',
+        'for',
+        'if', 'in', 'into', 'is', 'it',
+        'no', 'not',
+        'of', 'on', 'or',
+        'such',
+        'that', 'the', 'their', 'then', 'there', 'these', 'they', 'this', 'to',
+        'was', 'will', 'with',
     );
 
     public function __construct($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
@@ -208,13 +219,17 @@ class SugarSearchEngineHighlighter
     protected function isOperator($search)
     {
         $search = strtolower($search);
-        if (isset(self::$operatorMap[$search]))
-        {
-            return true;
-        }
 
-        return false;
+        return in_array($search, self::$operatorMap);
     }
+
+    protected function isStopWord($search)
+    {
+        $search = strtolower($search);
+
+        return in_array($search, self::$stopWords);
+    }
+
 
     /**
      *
@@ -238,7 +253,7 @@ class SugarSearchEngineHighlighter
 
             foreach ($searches as $search)
             {
-                if (empty($search) || $this->isOperator($search))
+                if (empty($search) || $this->isOperator($search) || $this->isStopWord($search))
                 {
                     continue;
                 }
