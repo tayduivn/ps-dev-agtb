@@ -268,7 +268,7 @@ class Task extends SugarBean {
     }
 
 	function get_list_view_data(){
-		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate;
+		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate, $mod_strings;
 
 		$override_date_for_subpanel = false;
 		if(!empty($_REQUEST['module']) && $_REQUEST['module'] !='Calendar' && $_REQUEST['module'] !='Tasks' && $_REQUEST['module'] !='Home'){
@@ -294,7 +294,8 @@ class Task extends SugarBean {
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
 		if ($this->status != "Completed" && $this->status != "Deferred" )
 		{
-			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
+            $close_label = strtolower($mod_strings['LBL_LIST_CLOSE']);
+			$setCompleteUrl = "<a id='{$close_label}-{$this->id}' name='{$close_label}-{$this->id}'  onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
 		    $task_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Tasks')." border='0'",null,null,'.gif',translate('LBL_LIST_CLOSE','Tasks'))."</a>";
 		}
 

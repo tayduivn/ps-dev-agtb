@@ -410,7 +410,7 @@ class Call extends SugarBean
 
 	function get_list_view_data(){
 		$call_fields = $this->get_list_view_array();
-		global $app_list_strings, $focus, $action, $currentModule;
+		global $app_list_strings, $focus, $action, $currentModule,$mod_strings;
 		if (isset($focus->id)) $id = $focus->id;
 		else $id = '';
 		if (isset($this->parent_type) && $this->parent_type != null)
@@ -419,10 +419,11 @@ class Call extends SugarBean
 		}
 		if ($this->status == "Planned") {
 			//cn: added this if() to deal with sequential Closes in Meetings.  this is a hack to a hack (formbase.php->handleRedirect)
-			if(empty($action))
+			if(empty($action)){
 			    $action = "index";
-
-            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
+            }
+            $close_label = strtolower($mod_strings['LBL_LIST_CLOSE']);
+            $setCompleteUrl = "<a id='{$close_label}-{$this->id}' name='{$close_label}-{$this->id}'  onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title='".translate('LBL_LIST_CLOSE','Calls')."' border='0'", null,null,'.gif', translate('LBL_LIST_CLOSE','Calls')) . "</a>";
 		}
 		global $timedate;
