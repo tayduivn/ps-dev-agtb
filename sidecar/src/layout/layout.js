@@ -21,10 +21,11 @@
 
             //All retreives of metadata should hit this function.
             get:function (params) {
-                if ((!params.context && !params.module) || (!params.view && !params.layout))
+                if (!params.view && !params.layout)
                     return null;
 
-                var module = params.module || params.context.get("module");
+                var context = params.context || app.context.getContext();
+                var module = params.module || context.get("module");
                 if (params.view) {
                     return new app.layout.View({
                         context: params.context,
@@ -59,9 +60,10 @@
                 this.name = options.name;
                 //Create a unique ID for this view
                 this.id = options.id || this.getID();
-                this.className = options.className || this.name;
+                this.$el.addClass("view " + (options.className || this.name));
                 this.template = options.template || app.template.get(this.name, this.context.get("module"));
                 this.meta = options.meta;
+
             },
             render:function () {
                 if (this.template)
@@ -80,30 +82,34 @@
                 // (includes a model, collection, and module)
                 this.context = this.options.context || app.context.getContext();
                 this.module = this.context.module;
+                this.meta = this.options.meta;
                 this.components = [];
-                _.each(this.options.meta.components, function (def) {
+                this.$el.addClass("layout " + (this.options.className || this.name));
+
+                _.each(this.meta.components, function (def) {
                     var context = def.context ? this.context.getRelatedContext(def.context) : this.context;
+                    var module = def.module || context.get("module");
                     if (def.view) {
                         this.components.push(app.layout.get({
                             context:context,
                             view:def.view,
-                            module:context.module
+                            module:module
                         }));
                     }
                     //Layouts can either by referenced by name or defined inline
                     else if (def.layout) {
                         if (typeof def.layout == "string") {
-                            this.components.push(app.layout.get({
+                            this.addComponent(app.layout.get({
                                 context:context,
                                 layout:def.layout,
-                                module:context.module
+                                module:module
                             }));
                         }
                         else if(typeof def.layout == "object") {
                             //Inline definition of a sublayout
-                            this.components.push(app.layout.get({
+                            this.addComponent(app.layout.get({
                                 context:context,
-                                module:context.module,
+                                module:module,
                                 layout:true,
                                 meta: def.layout
                             }));
@@ -111,8 +117,26 @@
                     }
                 }, this);
             },
+            addComponent : function(comp) {
+                this.components.push(comp);
+                this.placeComponent(comp);
+            },
+            //Default layout just appends all the components to itself
+            placeComponent: function(comp) {
+                this.$el.append(comp.el);
+            },
+            removeComponent : function(comp) {
+                //If comp is an index, remove the component at that index. Otherwise see if comp is in the array
+                var i = typeof comp == "number" ? comp : this.components.indexOf(comp);
+                if (i > -1)
+                    this.components.splice(i,1);
+            },
             render:function () {
                 //default layout will pass render container divs and pass down to all its views.
+                _.each(this.components, function(comp){
+                    comp.render();
+                    this.$el.append(comp.el);
+                }, this);
             }
         });
 
