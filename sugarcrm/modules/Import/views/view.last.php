@@ -43,6 +43,8 @@ class ImportViewLast extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_5_TITLE';
 
+    var $lvf;
+
  	/**
      * @see SugarView::display()
      */
@@ -137,7 +139,7 @@ class ImportViewLast extends ImportView
     {
         global $mod_strings, $current_language;
         // build listview to show imported records
-        $lvf = new ListViewFacade($this->bean, $this->bean->module_dir, 0);
+        $lvf = !empty($this->lvf) ? $this->lvf : new ListViewFacade($this->bean, $this->bean->module_dir, 0);
 
         $params = array();
         if(!empty($_REQUEST['orderBy']))
@@ -154,12 +156,6 @@ class ImportViewLast extends ImportView
                 AND users_last_import.bean_id = {$this->bean->table_name}.id
                 AND users_last_import.deleted = 0
                 AND {$this->bean->table_name}.deleted = 0";
-        $where = " {$this->bean->table_name}.id IN (
-                        SELECT users_last_import.bean_id
-                            FROM users_last_import
-                            WHERE users_last_import.assigned_user_id = '{$GLOBALS['current_user']->id}'
-                                AND users_last_import.bean_type = '{$beanname}'
-                                AND users_last_import.deleted = 0 )";
 
         $lvf->lv->mergeduplicates = false;
         $lvf->lv->showMassupdateFields = false;
@@ -167,7 +163,7 @@ class ImportViewLast extends ImportView
             $lvf->template = 'include/ListView/ListViewNoMassUpdate.tpl';
 
         $module_mod_strings = return_module_language($current_language, $this->bean->module_dir);
-        $lvf->setup('', $where, $params, $module_mod_strings, 0, -1, '', strtoupper($beanname), array(), 'id');
+        $lvf->setup('', '', $params, $module_mod_strings, 0, -1, '', strtoupper($beanname), array(), 'id');
         global $app_list_strings;
         return $lvf->display($app_list_strings['moduleList'][$this->bean->module_dir], 'main', TRUE);
 
