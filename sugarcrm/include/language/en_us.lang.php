@@ -4010,18 +4010,7 @@ $app_list_strings['eapm_list_documents']= array(
         3 => 'Invalid',
     );
 
-//note that element 5 is a place holder as there is no error code 5 defined
-$app_strings['upload_errors'] = array(
-    0   => "Upload was Succesful.",
-    1   => "The uploaded file exceeds the upload_max_filesize directive in php.ini.",
-    2   => "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.",
-    3   => "The uploaded file was only partially uploaded.",
-    4   => "No file was uploaded.",
-    5   => 'There is no error code 5, this is a place holder',
-    6   => "Missing a temporary folder.",
-    7   => "Failed to write file to disk.",
-    8   => "A PHP extension stopped the file upload.",
-  );
-$app_strings['upload_error_text'] = "ERROR: There was an error during upload. Error code: ";
+$app_strings['upload_error_text'] = "ERROR: There was an error during upload. Error code: {0} - {1}";
+$app_strings['upload_error_text_sizeinfo'] = "ERROR: There was an error during upload. Error code: {0} - {1}. The upload_maxsize is {2} ";
 $app_strings['upload_error_home_text'] = "ERROR: There was an error during your upload, please contact an administrator for help.";
 ?>
