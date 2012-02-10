@@ -147,6 +147,14 @@ class Document extends SugarBean {
             $createRevision = false;
             //Move file saved during populatefrompost to match the revision id rather than document id
             if (!empty($_FILES['filename_file'])) {
+                //check to see if there are any errors from upload
+                if (!empty($_FILES['filename_file']['error']) && $_FILES['filename_file']['error'] !==0)
+                {
+                    //log error and allow save to continue.  Message will produce text like:
+                    //"ERROR: There was an error during upload: error code 2 - The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form."
+                    $GLOBALS['log']->fatal($GLOBALS['app_strings']['upload_error_text'].$_FILES['filename_file']['error'].' - '.$GLOBALS['app_strings']['upload_errors'][$_FILES['filename_file']['error']]);
+
+                }
                 rename("upload://{$this->id}", "upload://{$Revision->id}");
                 $createRevision = true;
             } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'Sugar' ) ) {
