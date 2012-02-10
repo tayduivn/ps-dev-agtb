@@ -191,11 +191,11 @@ SUGAR.append(SUGAR.themes, {
 			$('ul.sf-menu').children("li").each(
 				function(index) {
 						menuItemsWidth += $(this).width();
-					if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current) {
+					if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
 			    		//console.log($(this).attr("id"));
 			    		$(this).css("display","none");
 			    		$("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
-					}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current) {
+					}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
 						//console.log($(this).attr("id"));
 						$(this).css("display","list-item");
 						$("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
