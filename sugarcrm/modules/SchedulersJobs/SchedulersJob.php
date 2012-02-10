@@ -407,6 +407,7 @@ class SchedulersJob extends Basic
                     $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_NOSUCHUSER', 'SchedulersJobs'), $this->assigned_user_id));
                     return;
                 }
+                $old_user = $GLOBALS['current_user'];
                 $this->sudo($user);
             } else {
                 $this->resolveJob(self::JOB_FAILURE, translate('ERR_NOUSER', 'SchedulersJobs'));
@@ -425,6 +426,9 @@ class SchedulersJob extends Basic
 			}
             $res = call_user_func_array($func, $data);
             restore_error_handler();
+            if(isset($old_user)) {
+                $this->sudo($old_user);
+            }
 			if($this->status == self::JOB_STATUS_RUNNING) {
 			    // nobody updates the status yet - job can do that
     			if($res) {
