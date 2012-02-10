@@ -43,6 +43,8 @@ class ImportViewLast extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_5_TITLE';
 
+    var $lvf;
+
  	/**
      * @see SugarView::display()
      */
@@ -137,7 +139,7 @@ class ImportViewLast extends ImportView
     {
         global $mod_strings, $current_language;
         // build listview to show imported records
-        $lvf = new ListViewFacade($this->bean, $this->bean->module_dir, 0);
+        $lvf = !empty($this->lvf) ? $this->lvf : new ListViewFacade($this->bean, $this->bean->module_dir, 0);
 
         $params = array();
         if(!empty($_REQUEST['orderBy']))
