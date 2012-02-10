@@ -68,8 +68,10 @@
     app.augment("metadata", {
         //All retreives of metadata should hit this function.
         get: function(params) {
-            if (!params || !params.module)
+            if (!params || !params.module) {
+                app.logger.error("No module provided to metadata.get");
                 return null;
+            }
             if (!params.type)
                 return _get(params.modules);
 
