@@ -2,11 +2,12 @@
 
     /**
      * Represents a base class for all bean model classes.
-     * - The default Backbone's sync behavior is overridden by dataManager.sync method.
-     * - Bean's metadata is accessible via "module" property.
+     * Bean has the following properties:
+     * - module: module name
+     * - beanType: bean type
+     * - validations: validation hash where keys are field names and values are arrays of validators
      */
     app.augment("Bean", Backbone.Model.extend({
-        sync: app.dataManager.sync,
 
         /**
         * See Backbone.Model.validate documentation for details.

@@ -16,6 +16,10 @@
      */
     app.augment("dataManager", {
 
+        init: function() {
+            Backbone.sync = this.sync;
+        },
+
         /**
          * Resets class declarations.
          * @param module Optional module name. If not specified, resets models of all modules.
@@ -35,7 +39,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans, vardefs, vardef, validations;
+            var defaults, model, beans, vardefs, vardef, validations, fields;
 
             this.reset(moduleName);
 
@@ -68,10 +72,9 @@
                 }
 
                 model = app.Bean.extend({
-                    module:   moduleName,
-                    beanType: beanType,
-                    vardefs:  vardefs,
-                    defaults: defaults,
+                    module:      moduleName,
+                    beanType:    beanType,
+                    defaults:    defaults,
                     validations: validations
                 });
 
@@ -82,7 +85,7 @@
                 });
 
                 _models[moduleName].beans[beanType] = model;
-            });
+            }, this);
         },
 
         /**
@@ -150,7 +153,7 @@
             app.logger.trace('sync called:' + method);
         }
 
-    }, false);
+    }, true);
 
 })(SUGAR.App);
 

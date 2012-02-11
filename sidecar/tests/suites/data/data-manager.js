@@ -31,7 +31,6 @@ describe("DataManager", function() {
         var bean = dm.createBean(moduleName, { someAttr: "Some attr value"});
         expect(bean.module).toEqual(moduleName);
         expect(bean.beanType).toEqual(beanType);
-        expect(bean.vardefs).toEqual(metadata[moduleName].beans[beanType].vardefs);
         expect(bean.get("someAttr")).toEqual("Some attr value");
 
         var collection = dm.createBeanCollection(moduleName);
@@ -50,7 +49,6 @@ describe("DataManager", function() {
         var bean = dm.createBean(moduleName, { someAttr: "Some attr value"}, beanType);
         expect(bean.module).toEqual(moduleName);
         expect(bean.beanType).toEqual(beanType);
-        expect(bean.vardefs).toEqual(metadata[moduleName].beans[beanType].vardefs);
         expect(bean.get("someAttr")).toEqual("Some attr value");
 
         var collection = dm.createBeanCollection(moduleName, undefined, undefined, beanType);
@@ -63,6 +61,7 @@ describe("DataManager", function() {
     it("should be able to fetch a bean by ID", function() {
         var moduleName = "Teams",
             beanType = "TeamSet";
+
         dm.declareModel(moduleName, metadata[moduleName]);
         var bean = dm.fetchBean(moduleName, "xyz", null, beanType);
         expect(bean.module).toEqual(moduleName);
