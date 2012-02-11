@@ -3,10 +3,10 @@
         "primary_bean": "Team",
         "beans":        {
             "Team":    {
-                "vardefs": {}
+                "vardefs": {"fields":{}}
             },
             "TeamSet": {
-                "vardefs": {}
+                "vardefs": {"fields":{}}
             }
         }
     },
@@ -20,12 +20,13 @@
                         "first_name": {
                             "name": "first_name",
                             "type": "varchar",
-                            "maxLength": 20
+                            "len": 20
                         },
                         "last_name":  {
                             "name": "last_name",
                             "type": "varchar",
-                            "required": true
+                            "required": true,
+                            "len": 20
                         }
                     }
                 },

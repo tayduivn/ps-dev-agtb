@@ -12,20 +12,21 @@ describe("Bean", function() {
         dm.declareModel(moduleName, metadata[moduleName]);
         var bean = dm.createBean(moduleName, { first_name: "Super long first name"});
 
-        var result = bean.validate(bean.attributes);
+        var errors = bean.validate(bean.attributes);
 
-        expect(result).toBeDefined();
-        expect(result.length).toEqual(2);
+        expect(errors).toBeDefined();
 
         var error;
 
-        error = result[0];
-        expect(error.required).toBeDefined();
-        expect(error.attribute).toEqual("last_name");
+        error = errors["first_name"];
+        expect(error).toBeDefined();
+        expect(error.length).toEqual(1);
+        expect(error[0].maxLength).toBeDefined();
 
-        error = result[1];
-        expect(error.maxLength).toBeDefined();
-        expect(error.attribute).toEqual("first_name");
+        error = errors["last_name"];
+        expect(error).toBeDefined();
+        expect(error.length).toEqual(1);
+        expect(error[0].required).toBeDefined();
 
     });
 

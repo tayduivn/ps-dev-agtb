@@ -39,7 +39,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans, vardefs, vardef, validations, fields, required;
+            var defaults, model, beans, vardefs, vardef, fields;
 
             this.reset(moduleName);
 
@@ -49,35 +49,17 @@
             beans = module["beans"];
 
             _.each(_.keys(beans), function(beanType) {
-                // TODO: Initialize defaults by processing vardefs
-                defaults = null;
                 vardefs = beans[beanType]["vardefs"];
                 fields = vardefs.fields;
 
-                // Build validations
-                if (fields) {
-                    validations = {};
-                    _.each(_.keys(fields), function(field) {
-                        vardef = fields[field];
-                        if (!_.isUndefined(vardef.required) && (vardef.required === true)) {
-                            if (required === undefined) required = [];
-                            required.push(field);
-                        }
-
-                        if (_.isNumber(vardef.maxLength)) {
-                            _addValidation(validations, field, app.validation.createValidator("maxLength", field, vardef.maxLength));
-                        }
-                    });
-
-                    if (_.isEmpty(validations)) validations = null;
-                }
+                // TODO: Initialize defaults by processing fields
+                defaults = null;
 
                 model = app.Bean.extend({
-                    module:      moduleName,
-                    beanType:    beanType,
-                    defaults:    defaults,
-                    validations: validations,
-                    required:    required
+                    module:   moduleName,
+                    beanType: beanType,
+                    defaults: defaults,
+                    fields:   fields
                 });
 
                 _models[moduleName].collections[beanType] = app.BeanCollection.extend({

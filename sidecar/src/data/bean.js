@@ -5,43 +5,58 @@
      * Bean has the following properties:
      * - module: module name
      * - beanType: bean type
-     * - validations: validation hash where keys are field names and values are arrays of validators
+     * - fields: fields metadata
      */
     app.augment("Bean", Backbone.Model.extend({
 
         /**
         * See Backbone.Model.validate documentation for details.
         * @param attrs
+        * @returns errors hash if the bean is invalid or nothing otherwise.
         */
         validate: function(attrs) {
-            var errors = [], result, validators, self = this;
+            var errors = {}, self = this;
+            var field, value, result, validator;
 
-            _.each(self.required, function(field) {
-                result = app.validation.requiredValidator(field, self, attrs[field]);
-                _addValidationError(errors, result, field);
+            _.each(_.keys(self.fields), function(fieldName) {
+                field = self.fields[fieldName];
+                value = attrs[fieldName];
+
+                // First, check if the field is required
+                result = app.validation.requiredValidator(field, fieldName, self, value);
+                _addValidationError(errors, !result, fieldName, "required");
+
+                // Next, run all validations for the value only if "required" validation passed
+                if (result && value) {
+                    _.each(_.keys(app.validation.validators), function(validatorName) {
+                        validator = app.validation.validators[validatorName];
+                        result = validator(field, value);
+                        _addValidationError(errors, result, fieldName, validatorName);
+                    });
+                }
             });
 
-            if (!_.isEmpty(self.validations)) {
-                _.each(_.keys(attrs), function(attribute) {
-                    validators = self.validations[attribute];
 
-                    _.each(validators, function(validator) {
-                        result = validator(self, attrs[attribute]);
-                        _addValidationError(errors, result, attribute);
-                    });
-                });
-            }
+            // Errors hash structure:
+            // keys: field names, values: arrays of errors
+            // each element of the array is a hash of error definition which is an error type.
+            // For example:
+            // { first_name: [ { len: 20 } ], last_name: [ { required: true } ]
 
-            // "validate" method should not return anything in case there are not validation errors
-            if (errors.length > 0) return errors;
+            // "validate" method should not return anything in case there are no validation errors
+            if (!_.isEmpty(errors)) return errors;
         }
 
     }), false);
 
-    function _addValidationError(errors, result, attribute) {
+    function _addValidationError(errors, result, fieldName, validatorName) {
         if (result) {
-            result.attribute = attribute;
-            errors.push(result);
+            if (_.isUndefined(errors[fieldName])) {
+                errors[fieldName] = [];
+            }
+            var error = {};
+            error[validatorName] = result;
+            errors[fieldName].push(error);
         }
     }
 
