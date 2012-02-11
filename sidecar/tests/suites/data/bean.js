@@ -30,4 +30,11 @@ describe("Bean", function() {
 
     });
 
+    it("should be populated with defaults", function() {
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var bean = dm.createBean(moduleName);
+        expect(bean.get("field_0")).toEqual(100);
+    });
+
 });

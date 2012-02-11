@@ -47,8 +47,15 @@
                 vardefs = beans[beanType]["vardefs"];
                 fields = vardefs.fields;
 
-                // TODO: Initialize defaults by processing fields
                 defaults = null;
+                _.each(_.values(fields), function(field) {
+                    if (!_.isUndefined(field["default"])) {
+                        if (defaults == null) {
+                            defaults = {};
+                        }
+                        defaults[field.name] = field["default"];
+                    }
+                });
 
                 model = app.Bean.extend({
                     module:   moduleName,

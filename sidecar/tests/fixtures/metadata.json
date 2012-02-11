@@ -27,7 +27,12 @@
                             "type": "varchar",
                             "required": true,
                             "len": 20
+                        },
+                        "field_0":  {
+                            "name": "field_0",
+                            "default": 100
                         }
+
                     }
                 },
                 "relationships": {
