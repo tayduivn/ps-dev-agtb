@@ -3848,6 +3848,8 @@ class InboundEmail extends SugarBean {
 	 * @return string
 	 */
 	function cleanContent($str) {
+	    // Bug 50241: HTML_Safe can't process <?xml:namespace .../> properly. Strip <?xml ...> tag first.
+	    $str = preg_replace("/<\?xml[^>]*>/","",$str);	    
 		// Safe_HTML
 		$this->safe->clear();
 		$this->safe->setUrlCallback(array($this, "urlCleaner"));
