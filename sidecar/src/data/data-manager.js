@@ -39,7 +39,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans, vardefs, vardef, validations, fields;
+            var defaults, model, beans, vardefs, vardef, validations, fields, required;
 
             this.reset(moduleName);
 
@@ -60,7 +60,8 @@
                     _.each(_.keys(fields), function(field) {
                         vardef = fields[field];
                         if (!_.isUndefined(vardef.required) && (vardef.required === true)) {
-                            _addValidation(validations, field, app.validation.createValidator("required", field, true));
+                            if (required === undefined) required = [];
+                            required.push(field);
                         }
 
                         if (_.isNumber(vardef.maxLength)) {
@@ -75,7 +76,8 @@
                     module:      moduleName,
                     beanType:    beanType,
                     defaults:    defaults,
-                    validations: validations
+                    validations: validations,
+                    required:    required
                 });
 
                 _models[moduleName].collections[beanType] = app.BeanCollection.extend({
@@ -150,7 +152,7 @@
         sync: function(method, model, options) {
             // TODO: Implement
             // This method should sync beans with local storage (if it's enabled) and fall back to the REST API.
-            app.logger.trace('sync called:' + method);
+            app.logger.trace('sync:' + method);
         }
 
     }, true);

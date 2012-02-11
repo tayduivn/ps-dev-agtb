@@ -24,7 +24,8 @@
                         },
                         "last_name":  {
                             "name": "last_name",
-                            "type": "varchar"
+                            "type": "varchar",
+                            "required": true
                         }
                     }
                 },

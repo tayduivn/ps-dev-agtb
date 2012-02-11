@@ -14,26 +14,35 @@
         * @param attrs
         */
         validate: function(attrs) {
-          // The model has "validations" property which keeps a hash of validators for each field
-          if (_.isEmpty(this.validations)) return;
+            var errors = [], result, validators, self = this;
 
-          var errors = [], result, validators;
-          _.each(_.keys(attrs), function(attribute) {
-              validators = this.validations[attribute];
+            _.each(self.required, function(field) {
+                result = app.validation.requiredValidator(field, self, attrs[field]);
+                _addValidationError(errors, result, field);
+            });
 
-              _.each(validators, function(validator) {
-                  result = validator(this, attrs[attribute]);
-                  if (result) {
-                      result.attribute = attribute;
-                      errors.push(result);
-                  }
-              }, this);
-          }, this);
+            if (!_.isEmpty(self.validations)) {
+                _.each(_.keys(attrs), function(attribute) {
+                    validators = self.validations[attribute];
 
-          // "validate" method should not return anything in case there are not validation errors
-          if (errors.length > 0) return errors;
+                    _.each(validators, function(validator) {
+                        result = validator(self, attrs[attribute]);
+                        _addValidationError(errors, result, attribute);
+                    });
+                });
+            }
+
+            // "validate" method should not return anything in case there are not validation errors
+            if (errors.length > 0) return errors;
         }
 
     }), false);
+
+    function _addValidationError(errors, result, attribute) {
+        if (result) {
+            result.attribute = attribute;
+            errors.push(result);
+        }
+    }
 
 })(SUGAR.App);

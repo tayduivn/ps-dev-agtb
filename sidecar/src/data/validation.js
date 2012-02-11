@@ -2,14 +2,6 @@
 
     var _validators = {
 
-        required: function(flag, attribute, model, value) {
-            var currentValue = model.get(attribute);
-            if ((_.isEmpty(value) && _.isEmpty(currentValue)) || _.isEmpty(value))
-            return {
-                required: true
-            }
-        },
-
         max: function(maximumValue, attribute, model, value) {
             if (value > maximumValue)
             return {
@@ -32,17 +24,21 @@
     app.augment("validation", {
         createValidator: function(type, attribute, definition) {
             var validator = _validators[type];
-
-            // TODO: Is there more elegant way to deal with this?
-            if (type !== "required") {
-                validator = _.bind(validator, null, definition, attribute);
-            }
-            else {
-                validator = _.bind(validator, null, attribute);
-            }
-
+            validator = _.bind(validator, null, definition, attribute);
             return validator;
+        },
+
+        requiredValidator: function(attribute, model, value) {
+            var currentValue = model.get(attribute);
+            var currentUndefined = _.isUndefined(currentValue);
+            // TODO: How about trimming string value? Check out underscore-string lib.
+            var valueEmpty = _.isNull(value) || value === "";
+            if ((currentUndefined && _.isUndefined(value)) || valueEmpty)
+            return {
+                required: true
+            }
         }
+
 
 //        addCustomValidator: function(type, validator) {
 //            // TODO: Check if validator already exists
