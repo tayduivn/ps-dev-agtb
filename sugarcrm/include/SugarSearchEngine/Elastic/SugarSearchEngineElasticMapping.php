@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
 
 
 class SugarSearchEngineElasticMapping
@@ -29,24 +30,6 @@ class SugarSearchEngineElasticMapping
      * @var \SugarSearchEngineElastic
      */
     private $sse;
-
-
-    /**
-     * non string type map
-     * @var array
-     */
-    private static $typeMap = array(
-        'type' => array(
-            'bool' => 'boolean',
-            'int' => 'long',
-            'currency' => 'double',
-            'date' => 'date',
-            'datetime' => 'date',
-        ),
-        'dbType' => array(
-            'decimal' => 'double',
-        ),
-    );
 
     public function __construct(SugarSearchEngineElastic $sse)
     {
@@ -114,69 +97,25 @@ class SugarSearchEngineElasticMapping
             {
                 $tmpArray = array();
 
+                foreach ($fieldDef['full_text_search'] as $sugarName => $val)
+                {
+                    $mappingName = SugarSearchEngineMappingHelper::getMappingName('Elastic', $sugarName);
+                    if (!empty($mappingName))
+                    {
+                        $tmpArray[$mappingName] = $fieldDef['full_text_search'][$sugarName];
+                    }
+                }
+
                 // field type is required when setting mapping
-                if (isset($fieldDef['full_text_search']['type']))
+                if (empty($tmpArray['type']))
                 {
-                    // if type is defined in vardef, use it
-                    $tmpArray['type'] = $fieldDef['full_text_search']['type'];
-                }
-                else
-                {
-                    $tmpArray['type'] = $this->getElasticTypeFromSugarType($fieldDef);
+                    $tmpArray['type'] = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
                 }
 
-                // boost
-                if (isset($fieldDef['full_text_search']['boost']))
-                {
-                    $tmpArray['boost'] = $fieldDef['full_text_search']['boost'];
-                }
-                $properties[$fieldName] = $tmpArray;
-
-                // analyzer
-                if (!empty($fieldDef['full_text_search']['analyzer']))
-                {
-                    $tmpArray['analyzer'] = $fieldDef['full_text_search']['analyzer'];
-                }
                 $properties[$fieldName] = $tmpArray;
             }
         }
         return $properties;
-    }
-
-    /**
-     *
-     * This function returns elastic field type.
-     *
-     * @param $fieldDefs array of field definitions
-     *
-     * @return string elastic type
-     */
-    protected function getElasticTypeFromSugarType($fieldDef)
-    {
-        $elasticType = '';
-        if (isset($fieldDef['type']))
-        {
-            $sugarType = $fieldDef['type'];
-            if (isset(self::$typeMap['type'][$sugarType]))
-            {
-                $elasticType = self::$typeMap['type'][$sugarType];
-            }
-        }
-
-        if (empty($elasticType) && isset($fieldDef['dbType']))
-        {
-            $sugarType = $fieldDef['dbType'];
-            if (isset(self::$typeMap['dbType'][$sugarType]))
-            {
-                $elasticType = self::$typeMap['dbType'][$sugarType];
-            }
-        }
-
-        if (empty($elasticType))
-        {
-            $elasticType = 'string'; // default
-        }
-        return $elasticType;
     }
 
     /**
