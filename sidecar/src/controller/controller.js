@@ -1,10 +1,14 @@
 (function(app) {
     var Controller = Backbone.View.extend({
         initialize: function() {
-
+            this.context = app.context.getContext();
         },
 
-        loadView: function() {}
+        loadView: function(params) {
+            var data = {};
+
+            this.context.init(params, data);
+        }
     });
 
     var module = {

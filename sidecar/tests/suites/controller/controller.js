@@ -1,26 +1,35 @@
 describe("Controller", function() {
 
+    var controller = SUGAR.App.controller;
+
     afterEach(function() {
         SUGAR.App.destroy();
     });
 
     it("should exist within the framework", function() {
-        expect(SUGAR.App.controller).toBeDefined();
+        expect(controller).toBeDefined();
     });
 
     describe("when a route is matched", function() {
-        it("should be able to load a view based on the given route information", function() {
-            SUGAR.App.controller.init({});
-            SUGAR.App.controller.loadView();
+        var params = {
+            module: "main",
+            url: ""
+        };
 
-            expect().toBeTruthy();
+        it("should fetch the needed data from the data manager", function() {
+            expect(controller.data).not.toBeEqual(_.empty())
+
         });
 
         it("should set the context", function() {
-
+            expect(controller.context).toBeTruthy();
         });
 
-        it("should fetch the needed data from the data manager", function() {
+        it("should load the appropriate layout", function() {
+            expect(controller.currentView.name).toBe("tbd");
+        });
+
+        it("should render the appropriate layout to the specified root div", function() {
 
         });
     });
