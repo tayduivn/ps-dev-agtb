@@ -6,11 +6,6 @@
     // _models[module].collections - hash of bean collections
     var _models;
 
-    function _addValidation(validations, attribute, validation) {
-        if (_.isUndefined(validations[attribute])) validations[attribute] = [];
-        validations[attribute].push(validation);
-    }
-
     /**
      * Manages bean models and provides Backbone sync pattern.
      */
