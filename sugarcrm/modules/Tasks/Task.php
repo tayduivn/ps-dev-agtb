@@ -294,8 +294,8 @@ class Task extends SugarBean {
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
 		if ($this->status != "Completed" && $this->status != "Deferred" )
 		{
-
-			$setCompleteUrl = "<a id='{$this->id}'  onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
+            $close_label = strtolower($mod_strings['LBL_LIST_CLOSE']);
+			$setCompleteUrl = "<a id='{$close_label}-{$this->id}' name='{$close_label}-{$this->id}'  onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
 		    $task_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Tasks')." border='0'",null,null,'.gif',translate('LBL_LIST_CLOSE','Tasks'))."</a>";
 		}
 
