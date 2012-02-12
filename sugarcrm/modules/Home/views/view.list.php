@@ -36,18 +36,12 @@ class HomeViewList extends ViewList{
 
  	function display(){
  		global $mod_strings, $export_module, $current_language, $theme, $current_user, $dashletData, $sugar_flavor;
-        echo $this->isUploadError();
+        if($this->checkPostMaxSizeError()){
+            $this->errors[] = $GLOBALS['app_strings']['upload_error_home_text'];
+            $this->displayErrors();
+        }
  		include('modules/Home/index.php');
  	}
 
-    function isUploadError(){
-         $errMSG = '';
-         if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post'){
-            $errMSG =  '<p><span style="color:red">'.$GLOBALS['app_strings']['upload_error_home_text'].'</span></p>';
-             $GLOBALS['log']->fatal($GLOBALS['app_strings']['upload_error_home_text']);
-        }
-        return $errMSG;
-    }
- 	
 }
 ?>
