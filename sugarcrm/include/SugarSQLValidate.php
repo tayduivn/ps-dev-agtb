@@ -106,6 +106,7 @@ class SugarSQLValidate
 	protected function validateExpression($expr, $allow_some_subqueries = false)
 	{
 	    foreach($expr as $term) {
+	        if(!is_array($term)) continue;
 	        // check subtrees
 	        if(isset($term['expr_type']) &&  $term['expr_type'] == 'subquery') {
 	            if(!$allow_some_subqueries || !$this->allowedSubquery($term)) {
