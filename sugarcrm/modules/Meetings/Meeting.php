@@ -442,8 +442,8 @@ class Meeting extends SugarBean {
 			if(empty($action)){
 			    $action = "index";
             }
-            $close_label = strtolower($mod_strings['LBL_LIST_CLOSE']);
-			$setCompleteUrl = "<a id='{$close_label}-{$this->id}' name='{$close_label}-{$this->id}'  onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
+
+			$setCompleteUrl = "<a id='{$this->id}'  onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',translate('LBL_CLOSEINLINE'))."</a>";
 		}
 		global $timedate;
