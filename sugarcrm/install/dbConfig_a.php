@@ -135,7 +135,7 @@ foreach($config_params as $group => $gdata) {
 FORM;
             //if the type is password, set a hidden field to capture the value.  This is so that we can properly encode special characters, which is a limitation with password fields
             if($type=='password'){
-                $form .= "<input type='$type' name='{$name}_entry' id='{$name}_entry' value='".urldecode($sessval)."' onblur='this.form.{$name}.value=this.value;'><input type='hidden' name='$name' id='$name' value='".urldecode($sessval)."'>";//<<---
+                $form .= "<input type='$type' name='{$name}_entry' id='{$name}_entry' value='".urldecode($sessval)."'><input type='hidden' name='$name' id='$name' value='".urldecode($sessval)."'>";
             }else{
                 $form .= "<input type='$type' name='$name' id='$name' value='$sessval'>";
             }
@@ -199,13 +199,13 @@ $out2 .=<<<EOQ2
 <tr>
     <td>&nbsp;</td>
     <td nowrap><b>{$mod_strings['LBL_DBCONF_DB_PASSWORD']}</b></td>
-    <td nowrap align="left"><input type="password" name="setup_db_sugarsales_password_entry" value="{$setup_db_sugarsales_password}" onblur='this.form.setup_db_sugarsales_password.value = this.value'/><input type="hidden" name="setup_db_sugarsales_password" value="{$setup_db_sugarsales_password}" /></td>
+    <td nowrap align="left"><input type="password" name="setup_db_sugarsales_password_entry" value="{$setup_db_sugarsales_password}" /><input type="hidden" name="setup_db_sugarsales_password" value="{$setup_db_sugarsales_password}" /></td>
     <input type="hidden" name="setup_db_sugarsales_password" value="{$_SESSION['setup_db_sugarsales_password']}" /></td>
 </tr>
 <tr>
     <td>&nbsp;</td>
     <td nowrap><b>{$mod_strings['LBL_DBCONF_DB_PASSWORD2']}</b></td>
-    <td nowrap align="left"><input type="password" name="setup_db_sugarsales_password_retype_entry" value="{$setup_db_sugarsales_password_retype}"  onblur='this.form.setup_db_sugarsales_password.value = this.value'/><input type="hidden" name="setup_db_sugarsales_password_retype" value="{$setup_db_sugarsales_password_retype}" /></td>
+    <td nowrap align="left"><input type="password" name="setup_db_sugarsales_password_retype_entry" value="{$setup_db_sugarsales_password_retype}"  /><input type="hidden" name="setup_db_sugarsales_password_retype" value="{$setup_db_sugarsales_password_retype}" /></td>
 </tr></table>
 </span>
 
@@ -336,8 +336,13 @@ function callDBCheck(){
 
                 }//end success
 
-                //set loading message and create url
 
+                //copy the db values over to the hidden field counterparts
+                document.setConfig.setup_db_admin_password.value = document.setConfig.setup_db_admin_password_entry.value;
+                document.setConfig.setup_db_sugarsales_password.value = document.setConfig.setup_db_sugarsales_password_entry.value;
+                document.setConfig.setup_db_sugarsales_password_retype.value = document.setConfig.setup_db_sugarsales_password_retype_entry.value;
+
+                //set loading message and create url
                 postData = "checkDBSettings=true&to_pdf=1&sugar_body_only=1";
                 postData += "&setup_db_database_name="+document.setConfig.setup_db_database_name.value;
                 if(typeof(document.setConfig.setup_db_host_instance) != 'undefined'){
