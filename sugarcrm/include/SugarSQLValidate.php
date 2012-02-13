@@ -215,6 +215,8 @@ class SugarSQLValidate
 	    if($name == ",") return true; // sometimes , gets as column name
 	    $name = strtolower($name); // case does not matter
 
+        //We added an exception for # symbol (see Bug 50324)
+        //This should be removed when Bug 50360 is resolved
 	    if(preg_match("/[^a-z0-9._#]/", $name)) {
 	        // bad chars in name
 	        return false;

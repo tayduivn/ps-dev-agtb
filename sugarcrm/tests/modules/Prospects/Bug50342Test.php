@@ -40,6 +40,7 @@
 
 require_once('tests/SugarTestProspectUtilities.php');
 require_once('include/SugarSQLValidate.php');
+require_once('modules/Prospects/Prospect.php');
 
 class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -113,10 +114,14 @@ class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
     public function getEntryListQueries()
     {
         return array(
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #contacts# campaignprospects.last_name ASC"),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #users# campaignprospects.last_name ASC"),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #prospects# campaignprospects.last_name ASC"),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #leads# campaignprospects.last_name ASC")
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #contacts# campaignprospects.last_name ASC", 'contacts'),
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #users# campaignprospects.last_name ASC", 'users'),
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #prospects# campaignprospects.last_name ASC", 'prospects'),
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #leads# campaignprospects.last_name ASC", 'leads'),
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'contacts' campaignprospects.last_name ASC", 'contacts'),
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'users' campaignprospects.last_name ASC", 'users'),
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'prospects' campaignprospects.last_name ASC", 'prospects'),
+            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'leads' campaignprospects.last_name ASC", 'leads')
         );
     }
 
@@ -126,13 +131,30 @@ class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
      * This method tests teh SoapSugarUsers.php call to SugarSQLValidate.php's validateQuery method.  The Plugin code
      * we have to perform mail merge searches on the contacts, users, leads or prospects would pass in SQL string with
      * a hash pattern for the object.
+     * @param $sql String of the test SQL to simulate the Word plugin
+     * @param $tableName String of the expected table name of the from query (the Prospect.php code will parse the related_type value)
      *
+     * @outputBuffering disabled
      * @dataProvider getEntryListQueries
      */
-    public function testSoapSugarUsersGetEntryListValidateQuery($sql)
+    public function testSoapSugarUsersGetEntryListValidateQuery($sql, $tableName)
     {
        	$valid = new SugarSQLValidate();
         $this->assertTrue($valid->validateQueryClauses($sql), "SugarSQLValidate found Bad query: {$sql}");
+
+        $mock = new Bug50342ProspectMock();
+        $select = $mock->retrieveTargetList($sql, array('id', 'first_name', 'last_name'));
+        $this->assertRegExp("/from\s+{$tableName}/i", $select, 'Incorrect from SQL clause: ' . $select);
     }
+
+}
+
+
+class Bug50342ProspectMock extends Prospect {
+
+public function process_list_query($select, $offset, $limit, $max, $query)
+{
+    return $select;
+}
 
 }

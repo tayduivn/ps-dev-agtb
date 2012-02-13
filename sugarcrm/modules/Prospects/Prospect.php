@@ -233,9 +233,15 @@ class Prospect extends Person {
         global  $beanList, $beanFiles;
         $module_name = $this->module_dir;
 
-        if(empty($module)){
-            $pattern = '/AND related_type = #(.*)#/i';
-            if(preg_match($pattern, $query, $matches) && count($matches) > 1){
+        if(empty($module))
+        {
+            //The call to retrieveTargetList contains a query that may contain a pound token
+            //BEGIN SUGARCRM flav=int ONLY
+            //See bugs 50342 and 50360
+            //END SUGARCRM flav=int ONLY
+            $pattern = '/AND related_type = [\'#]([a-zA-Z]+)[\'#]/i';
+            if(preg_match($pattern, $query, $matches))
+            {
                 $module_name = $matches[1];
                 $query = preg_replace($pattern, "", $query);
             }
