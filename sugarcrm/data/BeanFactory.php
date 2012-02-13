@@ -84,7 +84,9 @@ class BeanFactory {
     public static function getBeanName($module)
     {
         global $beanList;
-        if (empty($beanList[$module]))  return false;
+        if (empty($beanList[$module]))  {
+            return false;
+        }
 
         return $beanList[$module];
     }
