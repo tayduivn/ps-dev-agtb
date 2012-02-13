@@ -37,7 +37,7 @@ class HomeViewList extends ViewList{
  	function display(){
  		global $mod_strings, $export_module, $current_language, $theme, $current_user, $dashletData, $sugar_flavor;
         if($this->checkPostMaxSizeError()){
-            $this->errors[] = $GLOBALS['app_strings']['upload_error_home_text'];
+            $this->errors[] = $GLOBALS['app_strings']['UPLOAD_ERROR_HOME_TEXT'];
             $this->displayErrors();
         }
  		include('modules/Home/index.php');

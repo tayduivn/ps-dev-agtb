@@ -1605,7 +1605,7 @@ EOHTML;
          //if the referrer is post, and the post array is empty, then an error has occurred, most likely
          //while uploading a file that exceeds the post_max_size.
          if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post'){
-             $GLOBALS['log']->fatal($GLOBALS['app_strings']['upload_error_home_text']);
+             $GLOBALS['log']->fatal($GLOBALS['app_strings']['UPLOAD_ERROR_HOME_TEXT']);
              return true;
         }
         return false;
