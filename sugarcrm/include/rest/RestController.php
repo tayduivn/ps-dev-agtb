@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry'))define('sugarEntry', true);
+if (!defined('sugarEntry')) define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,6 +27,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+include_once("RestData.php");
+include_once("RestFactory.php");
 
 class RestController {
 
@@ -39,6 +41,10 @@ class RestController {
     public function execute() {
         $this->getURI();
 
+        if ($this->uriData[0] != "") {
+            $tmp = RestFactory::newRestObject($this->uriData[0]);
+            $tmp->execute();
+        }
     }
 
     private function handleInternalObject() {
