@@ -48,22 +48,19 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 class MetaDataManager {
 
     private $modules = null;
-    private $entryPoint = null;
     private $mobile = false;
     private $filter = null;
 
     /**
      * The constructor for the class.
      *
-     * @param $entryPoint Sets the base directory for the sugarcrm app.
      * @param null $filter A list of modules to return, if null all modules are returned.
      * @param bool $isMobile Will cause mobile metadata to be returned where it exists.
      */
-    function __construct ($entryPoint, $filter = null, $isMobile = false) {
-        $this->entryPoint = $entryPoint;
+    function __construct ($filter = null, $isMobile = false) {
         $this->mobile = $isMobile;
         $this->filter = $filter;
-        $this->modules = $this->readModuleDir("{$this->entryPoint}/modules");
+        $this->modules = $this->readModuleDir("modules");
     }
 
     /**
@@ -128,8 +125,8 @@ class MetaDataManager {
                 $defFile = "wireless.{$defFile}";
             }
 
-            $stdDef = "{$this->entryPoint}/modules/{$moduleName}/metadata/{$defFile}";
-            $cusDef = "{$this->entryPoint}/custom/modules/{$moduleName}/metadata/{$defFile}";
+            $stdDef = "modules/{$moduleName}/metadata/{$defFile}";
+            $cusDef = "custom/modules/{$moduleName}/metadata/{$defFile}";
 
             unset($$viewAccessor);
 
@@ -181,7 +178,7 @@ class MetaDataManager {
             if (is_array($vardefs[$val])) {
 
                 global $beanList;
-                include_once("{$this->entryPoint}/include/modules.php");
+                include_once("include/modules.php");
 
                 if (in_array($val, $beanList)) {
                     $reverse_name = null;
@@ -244,9 +241,9 @@ class MetaDataManager {
         $data = array();
         $vdefFile = "vardefs.php";
         $isCustom = false;
-        $stdVdef = "{$this->entryPoint}/modules/{$moduleName}/{$vdefFile}";
-        $cusVdef = "{$this->entryPoint}/custom/modules/{$moduleName}/{$vdefFile}";
-        $extVdef = "{$this->entryPoint}/custom/modules/{$moduleName}/Ext/Vardefs/vardefs.ext.php";
+        $stdVdef = "modules/{$moduleName}/{$vdefFile}";
+        $cusVdef = "custom/modules/{$moduleName}/{$vdefFile}";
+        $extVdef = "custom/modules/{$moduleName}/Ext/Vardefs/vardefs.ext.php";
 
         unset($dictionary);
 
@@ -279,194 +276,9 @@ class MetaDataManager {
     }
 
     /**
-     * Gets detailviewdef info for a given module.
+     * Collects information from a bean after trying to create it using the bean factory.
      *
-     * @param $moduleName The name of the module to get detailviewdefs for.
-     * @return array An array of the detailviewdefs info.
-     */
-    private function getDetailDefs($moduleName) {
-        $stdDel = "";
-        $cusDel = "";
-        $defFile = "detailviewdefs.php";
-        $useFile = null;
-        $data = array();
-        $isCustom = false;
-
-        if ($this->mobile) {
-            $defFile = "wireless.{$defFile}";
-        }
-
-        $stdDel = "{$this->entryPoint}/modules/{$moduleName}/metadata/{$defFile}";
-        $cusDel = "{$this->entryPoint}/custom/modules/{$moduleName}/metadata/{$defFile}";
-
-        if (file_exists($cusDel)) {
-            $useFile = $cusDel;
-            $isCustom = true;
-        } else {
-            $useFile = $stdDel;
-        }
-
-        if (file_exists($useFile)) {
-            unset($viewdefs);
-            include_once($useFile);
-            $keys = array_keys($viewdefs);
-            $data = $viewdefs[$keys[0]];
-            unset($viewdefs);
-        } else {
-            return $data;
-        }
-
-        $data['isCustom'] = $isCustom;
-        $data['isMobile'] = $this->mobile;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data['detailview'] = $md5;
-
-        return $data;
-    }
-
-    /**
-     * Gets editviewdef info for a given module.
      *
-     * @param $moduleName The name of the module to collect editviewdefs info about.
-     * @return array An array of editviewdefs info.
-     */
-    private function getEditDefs($moduleName) {
-        $stdDel = "";
-        $cusDel = "";
-        $defFile = "editviewdefs.php";
-        $useFile = null;
-        $data = array();
-        $isCustom = false;
-
-        if ($this->mobile) {
-            $defFile = "wireless.{$defFile}";
-        }
-
-        $stdDel = "{$this->entryPoint}/modules/{$moduleName}/metadata/{$defFile}";
-        $cusDel = "{$this->entryPoint}/custom/modules/{$moduleName}/metadata/{$defFile}";
-
-        if (file_exists($cusDel)) {
-            $useFile = $cusDel;
-            $isCustom = true;
-        } else {
-            $useFile = $stdDel;
-        }
-
-        if (file_exists($useFile)) {
-            unset($viewdefs);
-            include_once($useFile);
-            $keys = array_keys($viewdefs);
-            $data = $viewdefs[$keys[0]];
-            unset($viewdefs);
-        } else {
-            return $data;
-        }
-
-        $data['isCustom'] = $isCustom;
-        $data['isMobile'] = $this->mobile;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data['editdefs_md5'] = $md5;
-
-        return $data;
-    }
-
-    /**
-     * Gets searchviewdefs for a given module.
-     *
-     * @param $moduleName The module to collect searchdefs info about.
-     * @return array An array of searchdefs info.
-     */
-    private function getSearchDefs($moduleName) {
-        $stdDel = "";
-        $cusDel = "";
-        $defFile = "searchdefs.php";
-        $useFile = null;
-        $data = array();
-        $isCustom = false;
-
-        if ($this->mobile) {
-            $defFile = "wireless.{$defFile}";
-        }
-
-        $stdDel = "{$this->entryPoint}/modules/{$moduleName}/metadata/{$defFile}";
-        $cusDel = "{$this->entryPoint}/custom/modules/{$moduleName}/metadata/{$defFile}";
-
-        if (file_exists($cusDel)) {
-            $useFile = $cusDel;
-            $isCustom = true;
-        } else {
-            $useFile = $stdDel;
-        }
-
-        if (file_exists($useFile)) {
-            unset($searchdefs);
-            include_once($useFile);
-            $keys = array_keys($searchdefs);
-            $data = $searchdefs[$keys[0]];
-            unset($searchdefs);
-        } else {
-            return $data;
-        }
-
-        $data['isCustom'] = $isCustom;
-        $data['isMobile'] = $this->mobile;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data['searchdefs_md5'] = $md5;
-
-        return $data;
-    }
-
-    /**
-     * Gets listviewdefs for a given module.
-     *
-     * @param $moduleName The module to collect listviewdefs info on.
-     * @return array An array of listviewdefs info.
-     */
-    private function getListDefs($moduleName) {
-        $stdDel = "";
-        $cusDel = "";
-        $defFile = "listviewdefs.php";
-        $useFile = null;
-        $data = array();
-        $isCustom = false;
-
-        if ($this->mobile) {
-            $defFile = "wireless.{$defFile}";
-        }
-
-        $stdDel = "{$this->entryPoint}/modules/{$moduleName}/metadata/{$defFile}";
-        $cusDel = "{$this->entryPoint}/custom/modules/{$moduleName}/metadata/{$defFile}";
-
-        if (file_exists($cusDel)) {
-            $useFile = $cusDel;
-            $isCustom = true;
-        } else {
-            $useFile = $stdDel;
-        }
-
-        if (file_exists($useFile)) {
-            unset($listViewDefs);
-            include_once($useFile);
-            $keys = array_keys($listViewDefs);
-            $data = $listViewDefs[$keys[0]];
-            unset($listViewDefs);
-        } else {
-            return $data;
-        }
-
-        $data['isCustom'] = $isCustom;
-        $data['isMobile'] = $this->mobile;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data['listview_md5'] = $md5;
-
-        return $data;
-    }
-
-    /**
      * @param $name
      * @return array
      */
@@ -475,7 +287,7 @@ class MetaDataManager {
 
         global $beanList;
 
-        require_once("{$this->entryPoint}/data/BeanFactory.php");
+        require_once("data/BeanFactory.php");
 
         $bean = BeanFactory::newBean($name);
         if ($bean != false) {
