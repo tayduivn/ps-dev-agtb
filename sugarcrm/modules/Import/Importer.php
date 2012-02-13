@@ -122,7 +122,7 @@ class Importer
 
     protected function importRow($row)
     {
-        global $sugar_config, $mod_strings;
+        global $sugar_config, $mod_strings, $current_user;
 
         $focus = clone $this->bean;
         $focus->unPopulateDefaultValues();
@@ -204,17 +204,27 @@ class Importer
             }
 
             // Handle the special case "Sync to Outlook"
-            if ( $focus->object_name == "Contacts" && $field == 'sync_contact' )
+            if ( $focus->object_name == "Contact" && $field == 'sync_contact' )
             {
-                $bad_names = array();
-                $returnValue = $this->ifs->synctooutlook($rowValue,$fieldDef,$bad_names);
-                // try the default value on fail
-                if ( !$returnValue && !empty($defaultRowValue) )
-                    $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
-                if ( !$returnValue )
-                {
-                    $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
-                    $do_save = 0;
+                // if sync is passed as true for a contact, convert to the contact's ID so that it will be processed
+                // for sync properly
+                if ( false == $rowValue || 'false' == strtolower($rowValue) ) {
+                    $focus->sync_contact = '';
+                    $rowValue = '';
+                } elseif ( true == $rowValue || 'true' == strtolower($rowValue)) {
+                    $focus->sync_contact = $focus->id;
+                    $rowValue='all';
+
+                    $bad_names = array();
+                    $returnValue = $this->ifs->synctooutlook($rowValue,$fieldDef,$bad_names);
+                    // try the default value on fail
+                    if ( !$returnValue && !empty($defaultRowValue) )
+                        $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
+                    if ( !$returnValue )
+                    {
+                        $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
+                        $do_save = 0;
+                    }
                 }
             }
 
@@ -505,7 +515,7 @@ class Importer
             $focus->update_date_modified = false;
 
         $focus->optimistic_lock = false;
-        if ( $focus->object_name == "Contacts" && isset($focus->sync_contact) )
+        if ( $focus->object_name == "Contact" && isset($focus->sync_contact) )
         {
             //copy the potential sync list to another varible
             $list_of_users=$focus->sync_contact;
@@ -529,13 +539,13 @@ class Importer
             $focus->set_created_by = false;
         }
 
+        if ( $focus->object_name == "Contact" && isset($list_of_users) )
+            $focus->process_sync_to_outlook($list_of_users);
         $focus->save(false);
 
         // call any logic needed for the module postSave
         $focus->afterImportSave();
 
-        if ( $focus->object_name == "Contacts" && isset($list_of_users) )
-            $focus->process_sync_to_outlook($list_of_users);
 
         // Add ID to User's Last Import records
         if ( $newRecord )
