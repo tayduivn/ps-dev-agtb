@@ -40,7 +40,6 @@
 
 require_once('tests/SugarTestProspectUtilities.php');
 require_once('include/SugarSQLValidate.php');
-require_once('service/core/SugarWebServiceImpl.php');
 
 class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -133,7 +132,6 @@ class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSoapSugarUsersGetEntryListValidateQuery($sql)
     {
        	$valid = new SugarSQLValidate();
-        $service = new SugarWebServiceImpl();
         $this->assertTrue($valid->validateQueryClauses($sql), "SugarSQLValidate found Bad query: {$sql}");
     }
 
