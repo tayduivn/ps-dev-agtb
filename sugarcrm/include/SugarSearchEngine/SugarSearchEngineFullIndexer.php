@@ -77,49 +77,12 @@ class SugarSearchEngineFullIndexer
         $GLOBALS['log']->info("Performing Full System Index");
         $startTime = microtime(true);
         $allModules = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
-        $db = DBManagerFactory::getInstance();
+
         $totalCount = 0;
         foreach($allModules as $module => $fieldDefinitions)
         {
-            $GLOBALS['log']->info("Going to index all records in module {$module} ");
-            $count = 0;
-            $obj = BeanFactory::getBean($module, null);
-            $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0'";
+            $totalCount += $this->indexModule($module, $fieldDefinitions);
 
-            $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
-
-            $docs = array();
-            while ($row = $db->fetchByAssoc($result, FALSE) )
-            {
-                $beanID = $row['id'];
-                $bean = BeanFactory::getBean($module, $beanID);
-                if($bean !== FALSE)
-                {
-                    $docs[] = $this->SSEngine->createIndexDocument($bean, $fieldDefinitions);
-                    $count++;
-                }
-
-                if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
-                {
-                    $this->SSEngine->bulkInsert($docs);
-                    $docs = array();
-                    sugar_cache_reset();
-                    gc_collect_cycles();
-                    $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
-                    $currentMemUsage = memory_get_usage();
-                    $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
-                    $GLOBALS['log']->info("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
-                    $lastMemoryUsage = $currentMemUsage;
-                }
-            }
-
-            if(count($docs) > 0)
-            {
-                $this->SSEngine->bulkInsert($docs);
-            }
-
-            $this->results[$module] = $count;
-            $totalCount += $count;
         }
 
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
@@ -130,6 +93,61 @@ class SugarSearchEngineFullIndexer
 
         return $this;
     }
+
+    /**
+     * Index a single module
+     *
+     * @param $module Name of the module to be indexed
+     * @param $fieldDefinitions A list of field definitions for fields which should be indexed.
+     * @return int The total count of items indexed.
+     */
+    public function indexModule($module, $fieldDefinitions)
+    {
+        $GLOBALS['log']->info("Going to index all records in module {$module} ");
+        $db = DBManagerFactory::getInstance();
+        $count = 0;
+        $obj = BeanFactory::getBean($module, null);
+        $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0'";
+
+        $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
+
+        $docs = array();
+        while ($row = $db->fetchByAssoc($result, FALSE) )
+        {
+            $beanID = $row['id'];
+            $bean = BeanFactory::getBean($module, $beanID);
+            if($bean !== FALSE)
+            {
+                $docs[] = $this->SSEngine->createIndexDocument($bean, $fieldDefinitions);
+                $count++;
+            }
+
+            if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
+            {
+                $this->SSEngine->bulkInsert($docs);
+                $docs = array();
+                sugar_cache_reset();
+                gc_collect_cycles();
+                $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
+                $currentMemUsage = memory_get_usage();
+                $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
+                $GLOBALS['log']->info("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
+                $lastMemoryUsage = $currentMemUsage;
+            }
+        }
+
+        if(count($docs) > 0)
+        {
+            $this->SSEngine->bulkInsert($docs);
+        }
+
+        $this->results[$module] = $count;
+
+        return $count;
+
+    }
+
+
 
     /**
      * Return statistics about how many records per module were indexed.
