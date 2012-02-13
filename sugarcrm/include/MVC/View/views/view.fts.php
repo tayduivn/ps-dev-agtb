@@ -63,7 +63,7 @@ class ViewFts extends SugarView
         {
             $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         }
-        $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter);;
+        $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter, 'append_wildcard' => TRUE);
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $trimmed_query = trim($_REQUEST['q']);

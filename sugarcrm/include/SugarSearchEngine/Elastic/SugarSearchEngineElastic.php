@@ -32,6 +32,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     private $_indexName = "";
 
     const DEFAULT_INDEX_TYPE = 'SugarBean';
+    const WILDCARD_CHAR = '*';
 
     private $_indexType = 'SugarBean';
 
@@ -239,6 +240,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function search($queryString, $offset = 0, $limit = 20, $options = array())
     {
+        if( !empty($options['append_wildcard']) )
+        {
+            if( substr($queryString, 0,-1) !==  self::WILDCARD_CHAR)
+                $queryString .= self::WILDCARD_CHAR;
+        }
         $GLOBALS['log']->info("Going to search with query $queryString");
         $results = null;
         try
