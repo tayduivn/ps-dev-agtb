@@ -38,10 +38,20 @@
 *}
 
 	{if $fields.reminder_time}            	
-            	{assign var="REMINDER_TIME" value=$fields.reminder_time.value}
-            	{assign var="EMAIL_REMINDER_TIME" value=$fields.email_reminder_time.value}
+            	
             	{assign var="REMINDER_TIME_OPTIONS" value=$fields.reminder_time.options}
             	{assign var="EMAIL_REMINDER_TIME_OPTIONS" value=$fields.reminder_time.options}	
+            	
+            	{if !$fields.reminder_checked.value}            		
+            		{assign var="REMINDER_TIME" value=-1}
+            	{else}
+            		{assign var="REMINDER_TIME" value=$fields.reminder_time.value}
+            	{/if}
+            	{if !$fields.email_reminder_checked.value}            		
+            		{assign var="EMAIL_REMINDER_TIME" value=-1}
+            	{else}
+            		{assign var="EMAIL_REMINDER_TIME" value=$fields.email_reminder_time.value}
+            	{/if}
 	{/if}
 	
 	{assign var="REMINDER_TIME_DISPLAY" value="none"}

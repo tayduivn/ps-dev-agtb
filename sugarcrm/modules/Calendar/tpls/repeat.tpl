@@ -137,6 +137,15 @@
 			}
 			addToValidate('CalendarRepeatForm', 'repeat_until', 'date', true,'{/literal}{$MOD.LBL_REPEAT_UNTIL}{literal}');			
 		}
+		
+		// prevent an issue when a calendar date picker is hidden under a dialog
+		var editContainer = document.getElementById('cal-edit_c');
+		if (editContainer) {
+			var pickerContainer = document.getElementById('container_repeat_until_trigger_c');
+			if (pickerContainer) {
+				pickerContainer.style.zIndex = editContainer.style.zIndex + 1;
+			}
+		}		
 	}
 {/literal}
 </script>
