@@ -104,7 +104,7 @@ class SugarSearchEngineFullIndexer
     public function indexModule($module, $fieldDefinitions)
     {
         $GLOBALS['log']->info("Going to index all records in module {$module} ");
-        $db = DBManagerFactory::getInstance();
+        $db = DBManagerFactory::getInstance('fts');
         $count = 0;
         $obj = BeanFactory::getBean($module, null);
         $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0'";
