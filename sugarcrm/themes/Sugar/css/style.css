@@ -6730,11 +6730,64 @@ p.submsg, p.submsg a{
 
 
 /* qjuery ui override */
+.ui-dialog {
+	padding: 0px;
+	box-shadow: 0 5px 10px #999999;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	border: 0px none;	
+	background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#f1f1f1 10%,
+		#efefef 100%
+		);
+	background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.10, #f1f1f1),
+	    color-stop(1, #efefef)
+	   );	
+	   
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
+	padding-bottom: 2px;
+	border-bottom: 1px solid #ccc;
+}
+
+.ui-dialog .ui-widget-content {
+	color: #444;
+	
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-dialog-title div {
+	font-weight: normal;
+	color: #666;	
+	font-size: 13px;
+	text-shadow: 0px 1px #fff;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+	margin-top: -10px;
+	width: 18px;
+	padding: 0px;
+}
+
 .ui-dialog .ui-dialog-titlebar-close span {
-	background: url(../../../../index.php?entryPoint=getImage&imageName=close.png) center !important;
+	background: url(../../../../index.php?entryPoint=getImage&imageName=close.png) no-repeat center !important;
 	height: 18px;
 	width: 18px;
 }
+
+.ui-dialog .ui-dialog-titlebar-close.ui-state-hover {
+	border: 0px none;
+	background: transparent none;	
+}
+.ui-corner-all {
+	border-radius: 1px !important;
+}
+
 
 .SpanQuickView {
     visibility:hidden;

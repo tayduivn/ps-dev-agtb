@@ -3051,13 +3051,23 @@ SUGAR.util = function () {
 						    of: $(el)
 					 	}
 					});
+					
+					
+					var width = $dialog.dialog( "option", "width" );
+					var pos = $(el).offset();
+					var ofWidth = $(el).width();
+					
+					if((pos.left + ofWidth) - 40 < width) {
+						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+					}
 					$dialog.dialog('open');
 		
 
 		},
 		getStaticAdditionalDetails: function(el, body, caption, show_buttons) {
-			if(typeof show_buttons == "undefined")
-				show_buttons = false;
+			if(typeof show_buttons == "undefined") {
+				show_buttons = false;	
+			}
 
 			$(".ui-dialog").find(".open").dialog("close");
 
@@ -3074,10 +3084,20 @@ SUGAR.util = function () {
 			  }
 			});
 			
-			if(extra) {
+			if(show_buttons) {
 				$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
 				$(".ui-dialog").find('.ui-dialog-title').css("width","100%");	
 			}
+			
+								
+			var width = $dialog.dialog( "option", "width" );
+			var pos = $(el).offset();
+			var ofWidth = $(el).width();
+			
+			if((pos.left + ofWidth) - 40 < width) {
+				$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+			}
+
 			$dialog.dialog('open');
 		
 		},
@@ -3091,6 +3111,7 @@ SUGAR.util = function () {
 		getAdditionalDetails: function(bean, id, spanId, show_buttons) {
 			if(typeof show_buttons == "undefined")
 				show_buttons = false;
+				var el = '#'+spanId;
 			go = function() {
 				oReturn = function(body, caption, width, theme) {
 					
@@ -3105,20 +3126,25 @@ SUGAR.util = function () {
 						position: { 
 						    my: 'right top',
 						    at: 'left top',
-						    of: $('#'+spanId)
+						    of: $(el)
 					  }
 					});
-					
 				if(show_buttons) {
 					$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
 					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");	
 				}
-					$dialog.dialog('open');
+
+					var width = $dialog.dialog( "option", "width" );
+					var pos = $(el).offset();
+					var ofWidth = $(el).width();
+
+					if((pos.left + ofWidth) - 40 < width) {
+						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+					}
 				
+					$dialog.dialog('open');
 				}
 
-		
-		
 				success = function(data) {
 					eval(data.responseText);
 
