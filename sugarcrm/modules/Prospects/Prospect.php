@@ -239,18 +239,18 @@ class Prospect extends Person {
                 $module_name = $matches[1];
                 $query = preg_replace($pattern, "", $query);
             }
-             $GLOBALS['log']->debug("PROSPECT QUERY: ".$query);
         }
-        $GLOBALS['log']->debug(var_export($matches, true));
+
         $count = count($fields);
         $index = 1;
         $sel_fields = "";
-        if(!empty($fields)){
+        if(!empty($fields))
+        {
             foreach($fields as $field){
                 if($field == 'id'){
                 	$sel_fields .= 'prospect_lists_prospects.id id';
                 }else{
-                	$sel_fields .= $module_name.".".$field;
+                	$sel_fields .= strtolower($module_name).".".$field;
                 }
                 if($index < $count){
                     $sel_fields .= ",";

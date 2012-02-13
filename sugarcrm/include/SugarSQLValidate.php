@@ -214,7 +214,8 @@ class SugarSQLValidate
 	{
 	    if($name == ",") return true; // sometimes , gets as column name
 	    $name = strtolower($name); // case does not matter
-	    if(preg_match("/[^a-z0-9._]/", $name)) {
+
+	    if(preg_match("/[^a-z0-9._#]/", $name)) {
 	        // bad chars in name
 	        return false;
 	    }
