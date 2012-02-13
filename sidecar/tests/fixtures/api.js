@@ -9,8 +9,11 @@
     }
 
 fixtures.api = {
-
     "rest/v10/contact": {
+        "PUT" : {
+            "status": 200,
+            "response":{"guid":"833adad4-4b4a-4161-be71-ebd7c6dfeae5"}
+            },
         "GET" : {
             "status" :200,
             "response" : [
@@ -471,7 +474,7 @@ fixtures.api = {
 
 fixtures.api.responseErrors = {
     threehundred:{code: 300,body: "The value used for an external ID exists in more than one record. The response body contains the list of matching records."},
-    fourhundred:{code: 400,body: "The request could not be understood, usually because the JSON or XML body has an error.  This error code will also return all SQL errors from the server as well."},
+    fourhundred:{code: 400,body: 'The request could not be understood, usually because the JSON or XML body has an error.  This error code will also return all SQL errors from the server as well.'},
     fouroone:{code: 401,body: "The session ID or OAuth token used has expired or is invalid. The response body contains the message anderrorCode."},
     fourothree:{code: 403,body: "The request has been refused. Verify that the logged-in user has appropriate permissions."},
     fourofour:{code: 404,body: "The requested resource could not be found. Check the URI for errors, and verify that there are no sharing issues."},
