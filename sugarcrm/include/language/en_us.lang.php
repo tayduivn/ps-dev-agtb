@@ -3237,34 +3237,27 @@ $app_strings = array (
 
 
     //508 used Access Keys
-    'LBL_EDIT_BUTTON_KEY' => '1',
+    'LBL_EDIT_BUTTON_KEY' => 'i',
     'LBL_EDIT_BUTTON_LABEL' => 'Edit',
     'LBL_EDIT_BUTTON_TITLE' => 'Edit',
-
-    'LBL_DUPLICATE_BUTTON_KEY' => '2',
+    'LBL_DUPLICATE_BUTTON_KEY' => 'u',
     'LBL_DUPLICATE_BUTTON_LABEL' => 'Duplicate',
     'LBL_DUPLICATE_BUTTON_TITLE' => 'Duplicate',
-
-    'LBL_DELETE_BUTTON_KEY' => '3',
+    'LBL_DELETE_BUTTON_KEY' => 'd',
     'LBL_DELETE_BUTTON_LABEL' => 'Delete',
     'LBL_DELETE_BUTTON_TITLE' => 'Delete',
-
-    'LBL_SAVE_BUTTON_KEY' => '4',
+    'LBL_SAVE_BUTTON_KEY' => 'a',
     'LBL_SAVE_BUTTON_LABEL' => 'Save',
     'LBL_SAVE_BUTTON_TITLE' => 'Save',
-
-
-    'LBL_CANCEL_BUTTON_KEY' => '5',
+    'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
-
-    'LBL_FIRST_INPUT_EDIT_VIEW_KEY' => '6',
-    'LBL_ADV_SEARCH_LNK_KEY' => '7',
-    'LBL_FIRST_INPUT_SEARCH_KEY' => '8',
-    'LBL_GLOBAL_SEARCH_LNK_KEY' => '9',
-    'LBL_ACCESS_MAPS_KEY' => '0',
+    'LBL_FIRST_INPUT_EDIT_VIEW_KEY' => '7',
+    'LBL_ADV_SEARCH_LNK_KEY' => '8',
+    'LBL_FIRST_INPUT_SEARCH_KEY' => '9',
+    'LBL_GLOBAL_SEARCH_LNK_KEY' => '0',
     'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'Keyboard Shortcuts',
-    'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> 1 = Edit (detailview)<br/> 2 = Duplicate (detailview)<br/> 3 = Delete (detailview)<br/> 4 = Save (editview)<br/> 5 = Cancel (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 6 = first input on Edit form<br/> 7 = Advanced Search link<br/> 8 = First Search Form input<br/> 9 = Unified search input<br></p>' ,
+    'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = Edit (detailview)<br/> U = Duplicate (detailview)<br/> D = Delete (detailview)<br/> S = Save (editview)<br/> L = Cancel (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
 
     );
 
