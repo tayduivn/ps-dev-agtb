@@ -234,6 +234,7 @@ width:70%;
     var autoCom = $( "#ftsSearchField" ).autocomplete({
         source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&data='+data,
         select: function(event, ui) {},
+        minLength: 3,
         search: function(event,ui){
             $('#sugar_full_search_results').showLoading();
         }
