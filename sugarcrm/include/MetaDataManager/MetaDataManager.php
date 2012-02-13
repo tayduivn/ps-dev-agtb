@@ -99,6 +99,69 @@ class MetaDataManager {
     }
 
     /**
+     * This method collects all view data for the different types of views supported by
+     * the SugarCRM app.
+     *
+     * @param $moduleName The name of the sugar modulde to collect info about.
+     *
+     * @return Array A hash of all of the view data.
+     */
+    private function getAllViewsData($moduleName) {
+        $data = array();
+
+        $types = array(
+            "detailviewdefs" => "viewdefs",
+            "editviewdefs" => "viewdefs",
+            "searchdefs" => "searchdefs",
+            "listviewdefs" => "listViewDefs"
+        );
+
+        foreach ($types as $viewType => $viewAccessor) {
+            $data[$viewType] = array();
+            $stdDel = "";
+            $cusDel = "";
+            $useFile = null;
+            $isCustom = false;
+            $defFile = "{$viewType}.php";
+
+            if ($this->mobile) {
+                $defFile = "wireless.{$defFile}";
+            }
+
+            $stdDef = "{$this->entryPoint}/modules/{$moduleName}/metadata/{$defFile}";
+            $cusDef = "{$this->entryPoint}/custom/modules/{$moduleName}/metadata/{$defFile}";
+
+            unset($$viewAccessor);
+
+            if (file_exists($stdDef)) {
+                include_once($stdDef);
+            }
+
+            if (file_exists($cusDef)) {
+                include_once($cusDef);
+                $isCustom = true;
+            }
+
+            if (!isset($$viewAccessor)) {
+                $data[$viewType] = array();
+                continue;
+            }
+
+            $tmp = $$viewAccessor;
+            $keys = array_keys($tmp);
+            $data[$viewType] = $tmp[$keys[0]];
+            $data[$viewType]['isCustom'] = $isCustom;
+            $data[$viewType]['isMobile'] = $this->mobile;
+            $md5 = serialize($data[$viewType]);
+            $md5 = md5($md5);
+            $data[$viewType]["{$viewType}_md5"] = $md5;
+            unset($$viewAccessor);
+        }
+
+        return $data;
+    }
+
+    /**
      * The master collector method.  Gets metadata for all of the known types.
      *
      * @param $moduleName The name of the module to collect metadata about.
@@ -111,21 +174,7 @@ class MetaDataManager {
         );
         $vardefs = null;
 
-        $tmp = $this->getDetailDefs($moduleName);
-        if (!array_key_exists("DetailView", $tmp)) {
-            $tmp["DetailView"] = array();
-        }
-
-        $data["views"]["detaildefs"] = $tmp['DetailView'];
-
-        $tmp = $this->getEditDefs($moduleName);
-        if (!array_key_exists("EditView", $tmp)) {
-            $tmp["EditView"] = array();
-        }
-
-        $data["views"]["editdefs"] = $tmp['EditView'];
-        $data["views"]["listviewdefs"] = $this->getListDefs($moduleName);
-        $data["views"]["searchdefs"] = $this->getSearchDefs($moduleName);
+        $data["views"] = $this->getAllViewsData($moduleName);
         $vardefs = $this->getVarDefs($moduleName);
 
         foreach (array_keys($vardefs) as $key => $val) {
@@ -174,7 +223,7 @@ class MetaDataManager {
             return $modules;
         }
 
-        while ( ($file = readdir($dir)) != false) {
+        while (($file = readdir($dir)) != false) {
             if ( $file === "." || $file  === "..") {
                 continue;
             }
