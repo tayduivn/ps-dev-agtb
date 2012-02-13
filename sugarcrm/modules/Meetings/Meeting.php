@@ -610,7 +610,7 @@ class Meeting extends SugarBean {
 	public function create_notification_email($notify_user){
 		$notify_mail = parent::create_notification_email($notify_user);
 						
-		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 
 		require_once("modules/vCals/vCal.php");
 		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
@@ -627,7 +627,7 @@ class Meeting extends SugarBean {
 	public function send_assignment_notifications($notify_user, $admin){
 		parent::send_assignment_notifications($notify_user, $admin);
 		
-		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 		unlink($path);
 	}
 
