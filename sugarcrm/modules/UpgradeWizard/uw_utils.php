@@ -711,6 +711,12 @@ function upgradeUWFiles($file) {
     if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
         $allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
     }
+    if(file_exists("$from_dir/include/utils.php")) {
+        $allFiles[] = "$from_dir/include/utils.php";
+    }
+    if(file_exists("$from_dir/modules/Administration/updater_utils.php")) {
+        $allFiles[] = "$from_dir/modules/Administration/updater_utils.php";
+    }
     // users
     if(file_exists("$from_dir/modules/Users")) {
         $allFiles[] = findAllFiles("$from_dir/modules/Users", $allFiles);

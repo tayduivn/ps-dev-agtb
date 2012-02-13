@@ -88,6 +88,7 @@ function refreshJobs() {
  */
 function pollMonitoredInboxes() {
 
+    $_bck_up = array('team_id' => $GLOBALS['current_user']->team_id, 'team_set_id' => $GLOBALS['current_user']->team_set_id);
 	$GLOBALS['log']->info('----->Scheduler fired job of type pollMonitoredInboxes()');
 	global $dictionary;
 	global $app_strings;
@@ -104,6 +105,8 @@ function pollMonitoredInboxes() {
 		$GLOBALS['log']->debug('In while loop of Inbound Emails');
 		$ieX = new InboundEmail();
 		$ieX->retrieve($a['id']);
+        $GLOBALS['current_user']->team_id = $ieX->team_id;
+        $GLOBALS['current_user']->team_set_id = $ieX->team_set_id;
 		$mailboxes = $ieX->mailboxarray;
 		foreach($mailboxes as $mbox) {
 			$ieX->mailbox = $mbox;
@@ -287,7 +290,8 @@ function pollMonitoredInboxes() {
 		imap_expunge($ieX->conn);
 		imap_close($ieX->conn, CL_EXPUNGE);
 	} // while
-
+    $GLOBALS['current_user']->team_id = $_bck_up['team_id'];
+    $GLOBALS['current_user']->team_set_id = $_bck_up['team_set_id'];
 	return true;
 }
 

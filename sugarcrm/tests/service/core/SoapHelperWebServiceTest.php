@@ -61,11 +61,13 @@ class SoapHelperWebServiceTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function retrieveCheckQueryProvider()
     {
+        global $service_object;
+        $service_object = new ServiceMockObject();
         $error = new SoapError();
         return array(
             array($error, "id = 'abc'", true),
-            array($error, "id ###### 'abc'", false),
-            array($error, "##################################################### ==== 'abc'", false),
+            array($error, "user.id = prospects.id", true),
+            array($error, "id $% 'abc'", false),
         );
     }
 
