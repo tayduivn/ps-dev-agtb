@@ -25,6 +25,7 @@
     var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
     var autoCom = $( "#sugar_spot_search" ).autocomplete({
         source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&data='+data,
+        minLength: 3,
         select: function(event, ui) {},
         search: function(event,ui){
         var el = $("#sugar_spot_search_results");
