@@ -123,7 +123,7 @@ class Bug50342Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * testSoapSugarUsersGetEntryListValidateQuery
-     * 
+     *
      * This method tests teh SoapSugarUsers.php call to SugarSQLValidate.php's validateQuery method.  The Plugin code
      * we have to perform mail merge searches on the contacts, users, leads or prospects would pass in SQL string with
      * a hash pattern for the object.
