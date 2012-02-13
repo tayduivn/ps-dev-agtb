@@ -55,6 +55,7 @@ class SchedulersJob extends Basic
     public $assigned_user_id; // User under which the task is running
     public $client; // Client ID that owns this job
     public $execute_time_db;
+    public $percent_complete; // how much of the job is done
 
 	// standard SugarBean child attrs
 	var $table_name		= "job_queue";
@@ -270,14 +271,18 @@ class SchedulersJob extends Basic
     /**
      * Rerun this job again
      * @param string $message
+     * @param string $delay how long to delay (default is job's delay)
      * @return bool
      */
-    public function postponeJob($message = null)
+    public function postponeJob($message = null, $delay = null)
     {
         $this->status = self::JOB_STATUS_QUEUED;
         $this->addMessages($message);
         $this->resolution = self::JOB_PARTIAL;
-        $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+{$this->job_delay} seconds")->asDb();
+        if(empty($delay)) {
+            $delay = intval($this->job_delay);
+        }
+        $this->execute_time = $GLOBALS['timedate']->getNow()->modify("+$delay seconds")->asDb();
         $GLOBALS['log']->info("Postponing job {$this->id} to {$this->execute_time}: $message");
 
         $this->save();

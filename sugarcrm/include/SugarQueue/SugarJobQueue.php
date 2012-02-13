@@ -117,13 +117,14 @@ class SugarJobQueue
      * Rerun this job again
      * @param string $jobId
      * @param string $message
+     * @param string $delay how long to delay (default is job's delay)
      * @return bool
      */
-    public function postponeJob($jobId, $message = null)
+    public function postponeJob($jobId, $message = null, $delay = null)
     {
         $job = $this->getJob($jobId);
         if(empty($job)) return false;
-        return $job->postponeJob($message);
+        return $job->postponeJob($message, $delay);
     }
 
     /**
