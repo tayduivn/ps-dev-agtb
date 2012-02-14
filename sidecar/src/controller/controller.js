@@ -9,12 +9,15 @@
             this.data = {};
             this.layout = null;
 
-
             this.data = this.getData(params);
             this.layout = this.getLayout(params);
             this.context.init(params, this.data);
 
+            // Render the layout
             this.layout.render();
+
+            // Render the rendered layout to the main element
+            this.$el.html(this.layout.$el);
         },
 
         getData: function(opts) {
