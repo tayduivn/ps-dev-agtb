@@ -9,6 +9,12 @@
     }
 
 fixtures.api = {
+    "rest/v10/login": {
+        "POST" : {
+            "status": 200,
+            "response":{"token": "55000555"}
+            }
+    },
     "rest/v10/contact": {
         "PUT" : {
             "status": 200,
