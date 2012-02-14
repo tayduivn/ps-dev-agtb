@@ -54,6 +54,9 @@ class ViewFts extends SugarView
     public function display($return = false, $encode = false)
     {
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
+        $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
+        $refreshModuleFilter = !empty($_REQUEST['refreshModList']) ? $_REQUEST['refreshModList'] : FALSE;
+
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
         $indexOffset = $offset / $limit;
         $moduleFilter = isset($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
@@ -64,6 +67,11 @@ class ViewFts extends SugarView
             $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         }
         $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter, 'append_wildcard' => TRUE);
+
+        if( $this->fullView || $refreshModuleFilter)
+        {
+            $options['apply_module_facet'] = TRUE;
+        }
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
         $trimmed_query = trim($_REQUEST['q']);
@@ -80,7 +88,7 @@ class ViewFts extends SugarView
         }
         $query_encoded = urlencode($trimmed_query);
 
-        $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
+
 
         $showMoreDivStyle = ($totalHitsFound > $limit) ? '' : "display:none;";
         $this->ss->assign('showMoreDivStyle', $showMoreDivStyle);
@@ -110,7 +118,7 @@ class ViewFts extends SugarView
             if($resultSetOnly)
             {
                 $out = array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime);
-                if(!empty($_REQUEST['refreshModList']) )
+                if( $refreshModuleFilter )
                     $out['mod_filter'] = $this->ss->fetch('include/MVC/View/tpls/fts_modfilter.tpl');
 
                 return $this->sendOutput(json_encode($out));

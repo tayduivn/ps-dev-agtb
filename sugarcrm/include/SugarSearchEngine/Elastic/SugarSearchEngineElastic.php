@@ -276,9 +276,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $query->setParam('from',$offset);
 
             //Add a type facet so we can see how our results are grouped.
-            $typeFacet = new Elastica_Facet_Terms('_type');
-            $typeFacet->setField('_type');
-            $query->addFacet($typeFacet);
+            if( !empty($options['apply_module_facet']) )
+            {
+                $typeFacet = new Elastica_Facet_Terms('_type');
+                $typeFacet->setField('_type');
+                $query->addFacet($typeFacet);
+            }
 
             $s = new Elastica_Search($this->_client);
             //Only search accross our index.

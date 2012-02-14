@@ -68,7 +68,7 @@ width:70%;
 <tr valign="top" >
     <td id="moduleListTD" style="">
         <b>{$APP.LBL_MODULE_FILTER}</b>
-        <div id='moduleListRs'
+        <div id='moduleListRs'>
             {include file='include/MVC/View/tpls/fts_modfilter.tpl'}
         </div>
     </td>
