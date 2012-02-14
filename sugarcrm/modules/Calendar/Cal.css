@@ -137,6 +137,7 @@
 .act_item .head {
 	height: 13px;
 	padding-left: 2px;
+	overflow: hidden;
 }
 .act_item .head div {
 	overflow: hidden;
