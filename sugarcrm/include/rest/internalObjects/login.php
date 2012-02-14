@@ -52,6 +52,7 @@ class Login implements IRestObject {
             exit;
         }
 
+        print_r($result);
         /*
          * Here is where we need to be logging into the app.
          */

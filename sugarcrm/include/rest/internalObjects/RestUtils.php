@@ -38,7 +38,7 @@ class RestUtils {
      *
      */
     public static function isValidJson($src) {
-        $data = json_decode($src);
+        $data = json_decode($src, true);
         $result = array(
             "err" => false,
             "err_str" => "",
