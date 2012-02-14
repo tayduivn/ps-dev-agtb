@@ -148,12 +148,9 @@ class ViewWizard extends SugarView
 			$this->ss->assign("CURRENCY", $selectCurrency);
         }
 
-        $currenciesVars = "";
-        $i=0;
-        foreach($locale->currencies as $id => $arrVal) {
-            $currenciesVars .= "currencies[{$i}] = '{$arrVal['symbol']}';\n";
-            $i++;
-        }
+        $currenciesArray = $locale->currencies;
+        $currenciesVars = $this->correctCurrenciesSymbolsSort($currenciesArray);
+
         $currencySymbolsJs = <<<eoq
 var currencies = new Object;
 {$currenciesVars}
@@ -248,4 +245,42 @@ eoq;
         $this->ss->assign('langHeader', get_language_header());
 		$this->ss->display('modules/Users/tpls/wizard.tpl');
 	}
+
+    /**
+     * Function to sort currencies in array alphabetically, except USD, it must remain on 1st place
+     *
+     * @param $currenciesArray
+     * @return array|string
+     */
+    public function correctCurrenciesSymbolsSort($currenciesArray)
+    {
+        $baseCurrencyId = '-99';
+        $newCurrenciesArray = array ();
+
+        $newCurrenciesArray[] = $currenciesArray[$baseCurrencyId]['symbol'];
+        array_shift($currenciesArray);
+        $currenciesArray = array_csort($currenciesArray);
+        foreach ($currenciesArray as $value)
+        {
+            $newCurrenciesArray[] = $value['symbol'];
+        }
+        return $this->pushCurrencyArrayToString($newCurrenciesArray);
+    }
+
+    /**
+     * Generates javascript array from php array
+     *
+     * @param $array
+     * @return array|string
+     */
+    public function pushCurrencyArrayToString($array)
+    {
+        $return = '';
+        foreach($array as $key => $value)
+        {
+            $return .= "currencies[{$key}] = '{$value}';\n";
+        }
+        return $return;
+    }
 }
+
