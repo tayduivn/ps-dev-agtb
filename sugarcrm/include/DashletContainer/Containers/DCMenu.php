@@ -213,8 +213,6 @@ EOQ;
 if(!is_admin($GLOBALS['current_user'])){
 //END SUGARCRM flav=sales ONLY
 $globalSearchAccKey = $GLOBALS['app_strings']['LBL_GLOBAL_SEARCH_LNK_KEY'];
-$globalShortcutTip = $GLOBALS['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP'];
-$overlibPath = getJSPath('cache/include/javascript/sugar_grp_overlib.js');
 $html .= <<<EOQ
 		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='enter global search term' accesskey='$globalSearchAccKey'></div>
 		<div id="glblSearchBtn">$iconSearch</div>
@@ -225,17 +223,7 @@ EOQ;
 $html .= <<<EOQ
 		</div>
 		</div>
-        <script>
-            //if overlib is not loaded, then add the overlib source
-            if (typeof(overlib) == 'undefined'){
-        		var newScript = document.createElement('script');
-        		newScript.type = 'text/javascript';
-        		newScript.src = '$overlibPath';
-        		document.body.appendChild(newScript);
-            }
-            keyboardhelpText = '$globalShortcutTip'; setTimeout('SUGAR.util.buildAccessKeyLabels()',500);
-        </script>
-		<span id='keyboardhelp' onmouseover="return overlib(keyboardhelpText, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow' );" onmouseout="return nd();"/> KEYBOARD </span>
+
 EOQ;
 		return array('html'=>$html, 'jsfiles'=>array());
 	}
