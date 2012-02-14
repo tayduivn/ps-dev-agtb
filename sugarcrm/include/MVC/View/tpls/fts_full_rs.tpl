@@ -8,12 +8,14 @@
                 <ul>
                     <li>
                         <span class="details">
-                            {foreach from=$result->getHighlightedHitText(100, 2, '<span class="highlight">', '</span>') key=k item=v}
+                            <a href="{sugar_ajax_url url=$url}">
+                            {foreach from=$result->getHighlightedHitText(100, 1, '<span class="highlight">', '</span>') key=k item=v}
                                 {$k}: {$v}
                                 <br>
                             {/foreach}
+                            </a>
                         </span>
-                        <a href="{sugar_ajax_url url=$url}"> {$result->getSummaryText()}</a>
+                        <span>{$result->getSummaryText()}</span>
                     </li>
                 </ul>
             <div class="clear"></div>
