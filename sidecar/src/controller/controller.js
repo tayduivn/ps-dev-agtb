@@ -6,17 +6,15 @@
         },
 
         loadView: function(params) {
-            console.log("LoadView");
-            console.log(this);
-            ten = this;
             this.data = {};
             this.layout = null;
 
 
-            console.log(this.data);
             this.data = this.getData(params);
             this.layout = this.getLayout(params);
             this.context.init(params, this.data);
+
+            this.layout.render();
         },
 
         getData: function(opts) {
