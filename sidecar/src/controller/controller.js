@@ -8,6 +8,22 @@
             var data = {};
 
             this.context.init(params, data);
+        },
+
+        getData: function(opts) {
+            if (opts.id) {
+                SUGAR.App.dataManager.fetchBean();
+            } else if (opts.url) {
+
+            } else {
+                SUGAR.App.dataManager.fetchBeans(opts.module)
+            }
+
+
+        },
+
+        getLayout: function() {
+
         }
     });
 

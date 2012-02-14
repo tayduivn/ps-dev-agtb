@@ -54,6 +54,7 @@
 
             fire: function() {
                 this.trigger(contextId + ":change", this);
+                this.trigger("context:change", this);
             },
 
             /**
