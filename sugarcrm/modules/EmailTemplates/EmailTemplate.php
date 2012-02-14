@@ -576,13 +576,17 @@ class EmailTemplate extends SugarBean {
 		    $repl_arr['contact_alt_address_street'] = nl2br($repl_arr['contact_alt_address_street']);	
 		}
 
-		foreach ($repl_arr as $name=>$value) {
-			if($value != '' && is_string($value)) {
-				$string = str_replace("\$$name", $value, $string);
-			} else {
-				$string = str_replace("\$$name", ' ', $string);
-			}
-		}
+        // bug 48641
+		foreach ($repl_arr as $name=>$value) {			
+            if($value != '' && is_string($value)) {
+                if ( $field_def['type'] == 'multienum' ) {
+                    $value =  implode(',', unencodeMultienum( $value ));
+                }
+                $string = str_replace("\$$name", $value, $string);
+            } else {
+                $string = str_replace("\$$name", ' ', $string);
+            }
+		}			
 
 		return $string;
 	}
