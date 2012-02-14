@@ -456,7 +456,7 @@ class UserViewHelper {
         $oc_status = $this->bean->getPreference('OfflineClientStatus');
         $this->ss->assign('OC_STATUS', get_select_options_with_id($app_list_strings['oc_status_dom'], $oc_status));
 
-        if(!empty($oc_status)) {
+        if(!empty($oc_status) && isset($app_list_strings['oc_status_dom'][$oc_status])) {
             $this->ss->assign('OC_STATUS_DISPLAY', $app_list_strings['oc_status_dom'][$oc_status]);
         } else {
             $this->ss->assign("OC_STATUS_DISPLAY", '');
