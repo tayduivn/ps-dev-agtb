@@ -30,8 +30,8 @@ SUGAR.App = (function() {
 
         // Here we initialize all the modules;
         _.each(modules, function(module) {
-            if (module.init && _.isFunction(module.init)) {
-                module.init.call(this, this);
+            if (_.isFunction(module.init)) {
+                module.init(this);
             }
         }, this);
 
@@ -53,9 +53,13 @@ SUGAR.App = (function() {
 
         /**
          * Destroys the instance of the current app
+         * TODO: Not properly implemented
          */
         destroy: function() {
-            Backbone.history.stop();
+            if (Backbone.history) {
+                Backbone.history.stop();
+            }
+
             app = null;
         },
 

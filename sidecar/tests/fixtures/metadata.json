@@ -1,0 +1,114 @@
+{
+    "Teams":    {
+        "primary_bean": "Team",
+        "beans":        {
+            "Team":    {
+                "vardefs": {"fields":{}}
+            },
+            "TeamSet": {
+                "vardefs": {"fields":{}}
+            }
+        }
+    },
+    "Contacts": {
+        "primary_bean": "Contact",
+        "beans":        {
+            "Contact": {
+                "vardefs":       {
+                    "table":  "contacts",
+                    "fields": {
+                        "first_name": {
+                            "name": "first_name",
+                            "type": "varchar",
+                            "len": 20
+                        },
+                        "last_name":  {
+                            "name": "last_name",
+                            "type": "varchar",
+                            "required": true,
+                            "len": 20
+                        },
+                        "field_0":  {
+                            "name": "field_0",
+                            "default": 100
+                        }
+
+                    }
+                },
+                "relationships": {
+
+                }
+            }
+        },
+        "views":        {
+            "EditView":     {
+            },
+            "DetailView":   {
+
+            },
+            "QuickCreate":  {
+
+            },
+            "ListView":     {
+
+            },
+            "SubpanelView": {
+
+            }
+        },
+        "layouts":      {
+            "edit":          {
+                "type":       "simple",
+                "components": [
+                    {
+                        "view": "EditView"
+                    }
+                ]
+            },
+            "detail":        {
+                "components": "rows",
+                "views":      [
+                    {
+                        "view": "DetailView"
+                    },
+                    {
+                        "view": "SubpanelView"
+                    }
+                ]
+            },
+            "sublayout":     {
+                "type":       "rows",
+                "components": [
+                    {
+                        "layout": {
+                            "type":       "columns",
+                            "components": [
+                                {
+                                    "view": "ListView"
+                                },
+                                {
+                                    "view": "DetailView"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "view": "SubpanelView"
+                    }
+                ]
+            },
+            "complexlayout": {
+                "type":       "columns",
+                "components": [
+                    {
+                        "view": "EditView"
+                    },
+                    {
+                        "view":    "DetailView",
+                        "context": "accounts"
+                    }
+                ]
+            }
+        }
+    }
+}
