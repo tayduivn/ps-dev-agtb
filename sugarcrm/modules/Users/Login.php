@@ -30,16 +30,8 @@ if (isset($_SESSION['authenticated_user_id']))
 {
     ob_clean();
     // fixing bug #46837: Previosly links/URLs to records in Sugar from MSO Excel/Word were referred to the home screen and not the record
-    // It used to appear when default browser was not MS IE 
-    $nav = '';
-    $nav .= (isset($_GET['login_module'])) ? '&module='.$_GET['login_module'] : '';
-    $nav .= (isset($_GET['login_action'])) ? '&action='.$_GET['login_action'] : '';
-    $nav .= (isset($_GET['login_record'])) ? '&record='.$_GET['login_record'] : '';
-    
-    ($nav == '') 
-        ? header("Location: index.php?module=Home&action=index") 
-        : header("Location: index.php?".substr($nav, 1));
-    
+    // It used to appear when default browser was not MS IE
+    header("Location: ".$GLOBALS['app']->getLoginRedirect());
     sugar_cleanup(true);
     return;
 }
@@ -63,14 +55,8 @@ if ( isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == '0' ) {
 elseif (checkForMobile()){
     // set the session variable for mobile device
     $_SESSION['isMobile'] = true;
-    $url = 'index.php?module=Users&action=Login&mobile=1';
-    if ( !empty($_REQUEST['login_module']) )
-        $url .= '&login_module='.$_REQUEST['login_module'];
-    if ( !empty($_REQUEST['login_action']) )
-        $url .= '&login_action='.$_REQUEST['login_action'];
-    if ( !empty($_REQUEST['login_record']) )
-        $url .= '&login_record='.$_REQUEST['login_record'];
-    	header( "Location: ". $url );
+    $url = $GLOBALS['app']->getLoginRedirect()."&mobile=1";
+    header( "Location: ". $url );
 }
 //END SUGARCRM flav=pro || flav=sales ONLY
 global $app_language, $sugar_config;
@@ -166,13 +152,11 @@ if((isset($sugar_flavor) && $sugar_flavor != null) &&
 
 
 	//END SUGARCRM lic=sub ONLY
-
-if (isset($_GET['login_module']))
-	$sugar_smarty->assign('LOGIN_MODULE', $_GET['login_module']);
-if (isset($_GET['login_action']))
-	$sugar_smarty->assign('LOGIN_ACTION', $_GET['login_action']);
-if (isset($_GET['login_record']))
-	$sugar_smarty->assign('LOGIN_RECORD', $_GET['login_record']);
+$lvars = $GLOBALS['app']->getLoginVars();
+$sugar_smarty->assign("LOGIN_VARS", $lvars);
+foreach($lvars as $k => $v) {
+    $sugar_smarty->assign(strtoupper($k), $v);
+}
 
 // Retrieve username from the session if possible.
 if(isset($_SESSION["login_user_name"])) {
