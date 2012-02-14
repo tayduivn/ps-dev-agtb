@@ -42,45 +42,51 @@ class Bug48623Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider dateTestProvider
      */
-    public function testParseDateExpressionWithAndWithoutTimezoneAdjustment($expected, $operator, $dbField, $type) {
+    public function testParseDateExpressionWithAndWithoutTimezoneAdjustment($expected1, $expected2, $operator, $dbField, $type) {
         global $timedate;
 
         $seed = new Opportunity();
         $sf = new SearchForm2Wrap($seed, 'Opportunities', 'index');
 
-        $this->assertRegExp($expected, $sf->publicParseDateExpression($operator, $dbField, $type));
+        $where = $sf->publicParseDateExpression($operator, $dbField, $type);
+        $this->assertRegExp($expected1, $where);
+        $this->assertRegExp($expected2, $where);
     }
 
     public function dateTestProvider() {
+        $noTzRegExp1 = '/\'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\'/';
+        $noTzRegExp2 = '/\'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\'/';
+        $tzRegExp1 = '/\'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\'/';
+        $tzRegExp2 = '/\'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\'/';
         return array(
-            //  $expected, $operator, $dbField, $type
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'this_month', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'last_month', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'next_month', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'this_year', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'last_year', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'next_year', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'yesterday', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'today', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'tomorrow', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'last_7_days', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'next_7_days', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'last_30_days', 'opportunities.date_closed', 'date'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 00:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 23:59:59\')/', 'next_30_days', 'opportunities.date_closed', 'date'),
+            //  $expected1, expected2, $operator, $dbField, $type
+            array($noTzRegExp1, $noTzRegExp2, 'this_month', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_month', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_month', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'this_year', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_year', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_year', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'yesterday', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'today', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'tomorrow', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_7_days', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_7_days', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_30_days', 'opportunities.date_closed', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_30_days', 'opportunities.date_closed', 'date'),
 
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'this_month', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'last_month', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'next_month', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'this_year', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'last_year', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'next_year', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'yesterday', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'today', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'tomorrow', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'last_7_days', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'next_7_days', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'last_30_days', 'opportunities.date_closed', 'datetime'),
-            array('/(opportunities.date_closed >= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\' AND opportunities.date_closed <= \'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\')/', 'next_30_days', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'this_month', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_month', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_month', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'this_year', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_year', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_year', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'yesterday', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'today', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'tomorrow', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_7_days', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_7_days', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_30_days', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_30_days', 'opportunities.date_closed', 'datetime'),
         );
     }
 
