@@ -137,7 +137,7 @@ protected function action_resetPreferences(){
 	    $_POST['record'] = $current_user->id;
 	    $_POST['is_admin'] = ( $current_user->is_admin ? 'on' : '' );
 	    $_POST['use_real_names'] = true;
-	    $_POST['should_remind'] = '1';
+	    $_POST['reminder_checked'] = '1';
 	    $_POST['reminder_time'] = 1800;
         $_POST['mailmerge_on'] = 'on';
         $_POST['receive_notifications'] = $current_user->receive_notifications;
