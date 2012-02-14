@@ -3,6 +3,7 @@
 include_once("../include/rest/RestObjectInterface.php");
 include_once("RestError.php");
 include_once("RestUtils.php");
+include_once("RestObject.php");
 
 
 /**
@@ -25,9 +26,10 @@ include_once("RestUtils.php");
  *
  */
 
-class Login implements IRestObject {
-    function __construct() {
+class Login extends RestObject implements IRestObject {
 
+    function __construct() {
+        parent::__construct();
     }
 
     public function execute() {
@@ -52,7 +54,8 @@ class Login implements IRestObject {
             exit;
         }
 
-        print_r($result);
+
+
         /*
          * Here is where we need to be logging into the app.
          */
