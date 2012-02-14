@@ -50,6 +50,9 @@ class MetaDataManager {
     private $modules = null;
     private $mobile = false;
     private $filter = null;
+    private $typeFilter = null;
+    private $filterVarDefs = false;
+    private $basePath = "modules";
 
     /**
      * The constructor for the class.
@@ -57,10 +60,16 @@ class MetaDataManager {
      * @param null $filter A list of modules to return, if null all modules are returned.
      * @param bool $isMobile Will cause mobile metadata to be returned where it exists.
      */
-    function __construct ($filter = null, $isMobile = false) {
+    function __construct ($filter = null, $type = null, $isMobile = false) {
         $this->mobile = $isMobile;
         $this->filter = $filter;
-        $this->modules = $this->readModuleDir("modules");
+        $this->typeFilter = $type;
+        $this->modules = $this->readModuleDir($this->basePath);
+
+        if ($this->typeFilter != null && in_array("vardefs", $this->typeFilter)) {
+            $this->filterVarDefs = true;
+        }
+
     }
 
     /**
@@ -112,6 +121,25 @@ class MetaDataManager {
             "searchdefs" => "searchdefs",
             "listviewdefs" => "listViewDefs"
         );
+
+        /*
+         * filter out the unwanted views.
+         */
+        if ($this->typeFilter != null) {
+            $tmptypes = array();
+            foreach ($this->typeFilter as $userFilter) {
+                $userFilter = strtolower($userFilter);
+
+                if ($userFilter != "vardefs") {
+                    $tmptypes[$userFilter] = "{$types[$userFilter]}";
+                }
+            }
+
+            $types = $tmptypes;
+            $tmptypes = null;
+        }
+
+        //print_r($types); die;
 
         foreach ($types as $viewType => $viewAccessor) {
             $data[$viewType] = array();
@@ -244,6 +272,10 @@ class MetaDataManager {
         $stdVdef = "modules/{$moduleName}/{$vdefFile}";
         $cusVdef = "custom/modules/{$moduleName}/{$vdefFile}";
         $extVdef = "custom/modules/{$moduleName}/Ext/Vardefs/vardefs.ext.php";
+
+        if ($this->filterVarDefs) {
+            return $data;
+        }
 
         unset($dictionary);
 

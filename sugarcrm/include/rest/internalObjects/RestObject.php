@@ -36,18 +36,16 @@ abstract class RestObject implements IRestObject {
     }
 
     protected function sendJSONResponse($payload) {
-//        print "TYPE:: {$this->requestData["encoding_type"]}"; die;
-
         // see rfc rfc4627 //
         // see http://en.wikipedia.org/wiki/Internet_media_type //
         header("Content-type: application/json");
 
         // should be something like: gzip, compress, etc... //
-        if ($this->requestData["encoding_type"] != null) {
+        if ($this->requestData["encoding_type"] == "gzip") {
             header("Content-Encoding: {$this->requestData["encoding_type"]}");
+            $payload = gzencode($payload, 9);
         }
 
-        $payload = gzencode($payload, 9);
         echo $payload;
     }
 

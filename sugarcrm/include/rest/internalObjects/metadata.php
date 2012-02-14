@@ -41,6 +41,7 @@ class MetaData extends RestObject implements IRestObject {
 
     private function handleGET() {
         $isMobile = false;
+        $typeFiler = null;
         $filter = null;
 
         // hack, should make this better and reuseable later. //
@@ -60,10 +61,18 @@ class MetaData extends RestObject implements IRestObject {
             }
         }
 
-        $meta = new MetaDataManager($filter, $isMobile);
+        if (array_key_exists("type", $_GET)) {
+            $fdata = explode(",", $_GET['type']);
+            if ($fdata != false) {
+                $typeFiler = $fdata;
+            }
+        }
+
+        $meta = new MetaDataManager($filter, $typeFiler, $isMobile);
         $data = $meta->getData();
         $json = json_encode($data);
         $err = json_last_error();
+        //print_r($data); die;
 
         if ($err != JSON_ERROR_NONE) {
             $err = RestUtils::jsonErrorToStr($err);
