@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelCloseButton.php 40493 2008-10-13 21:10:05Z jmertic $
 
-
+require_once('include/generic/SugarWidgets/SugarWidgetField.php');
 //TODO Rename this to close button field
 class SugarWidgetSubPanelCloseButton extends SugarWidgetField
 {

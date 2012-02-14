@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelEditRoleButton.php 40541 2008-10-14 17:42:09Z jmertic $
 
-
+require_once('include/generic/SugarWidgets/SugarWidgetField.php');
 
 class SugarWidgetSubPanelEditRoleButton extends SugarWidgetField
 {

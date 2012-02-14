@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetFieldname.php 56668 2010-05-25 17:10:55Z jenny $
 
-
+require_once('include/generic/SugarWidgets/SugarWidgetFieldvarchar.php');
 
 class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 {
@@ -172,7 +172,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 
 	function queryFilterIs($layout_def)
 	{
-
+		require_once('include/generic/SugarWidgets/SugarWidgetFieldid.php');
 		$layout_def['name'] = 'id';
 		$layout_def['type'] = 'id';
 		$input_name0 = $layout_def['input_name0'];
@@ -192,7 +192,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 
 	function queryFilteris_not($layout_def)
 	{
-
+		require_once('include/generic/SugarWidgets/SugarWidgetFieldid.php');
 		$layout_def['name'] = 'id';
 		$layout_def['type'] = 'id';
 		$input_name0 = $layout_def['input_name0'];
@@ -213,7 +213,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
     // $rename_columns, if true then you're coming from reports
 	function queryFilterone_of($layout_def, $rename_columns = true)
 	{
-
+		require_once('include/generic/SugarWidgets/SugarWidgetFieldid.php');
         if($rename_columns) { // this was a hack to get reports working, sugarwidgets should not be renaming $name!
     		$layout_def['name'] = 'id';
     		$layout_def['type'] = 'id';
@@ -237,7 +237,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
     // $rename_columns, if true then you're coming from reports
 	function queryFilternot_one_of($layout_def, $rename_columns = true)
 	{
-
+		require_once('include/generic/SugarWidgets/SugarWidgetFieldid.php');
         if($rename_columns) { // this was a hack to get reports working, sugarwidgets should not be renaming $name!
     		$layout_def['name'] = 'id';
     		$layout_def['type'] = 'id';
@@ -264,7 +264,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
         if($layout_def['name'] == 'full_name') {
              $layout_def['name'] = 'id';
              $layout_def['type'] = 'id';
-
+             require_once('include/generic/SugarWidgets/SugarWidgetFieldid.php');
              $group_by =  SugarWidgetFieldid::_get_column_select($layout_def)."\n";
         } else {
             // group by clause for user name passes through here.

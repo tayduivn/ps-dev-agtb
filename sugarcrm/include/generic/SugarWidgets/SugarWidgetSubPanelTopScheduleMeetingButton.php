@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id$
 
-
+require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButtonQuickCreate.php');
 
 class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {

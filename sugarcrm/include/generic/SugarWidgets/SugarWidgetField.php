@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry)
 
 // $Id: SugarWidgetField.php 57035 2010-06-19 01:58:47Z kjing $
 
-
+require_once ('include/generic/SugarWidgets/SugarWidget.php');
 
 class SugarWidgetField extends SugarWidget {
 

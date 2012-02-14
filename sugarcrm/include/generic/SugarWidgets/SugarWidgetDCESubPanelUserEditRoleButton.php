@@ -33,7 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=dce ONLY
 
-
+require_once('include/generic/SugarWidgets/SugarWidgetField.php');
 
 class SugarWidgetDCESubPanelUserEditRoleButton extends SugarWidgetField
 {
