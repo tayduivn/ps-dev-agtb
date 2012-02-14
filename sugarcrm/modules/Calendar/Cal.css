@@ -154,14 +154,14 @@
 .adicon {
 	float: right;	
 	color: black;
-	width: 18px;
+	width: 10px;
 	font-size: 9px;
-	height: 18px;
+	height: 12px;
 	line-height: 11px;
 	text-align: center;
-	background-image: url(../../index.php?entryPoint=getImage&imageName=info_inline.png);
+	background-image: url(../../index.php?entryPoint=getImage&imageName=calendar_info.png);
 	background-repeat: no-repeat;
-	margin: 2px;
+	margin-top: 1px;
 	cursor: pointer;
 }
 
