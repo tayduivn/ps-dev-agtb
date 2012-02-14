@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: SugarWidgetSubPanelGetLatestButton.php 40541 2008-10-14 17:42:09Z jmertic $
 //this widget is used only by the contracts module..
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 class SugarWidgetSubPanelGetLatestButton extends SugarWidgetField
 {
 	function displayHeaderCell(&$layout_def)

@@ -63,6 +63,12 @@ class SugarAutoLoader{
             require_once($viewPath);
             return true;
         }
+        $reportWidget = self::getFilenameForSugarWidget($class);
+        if (!empty($reportWidget))
+        {
+            require_once($reportWidget);
+            return true;
+        }
 
   		return false;
 	}
@@ -97,6 +103,30 @@ class SugarAutoLoader{
                 }
             }
         }
+    }
+
+    /**
+     * getFilenameForSugarWidget
+     * This method attempts to autoload classes starting with name "SugarWidget".  It first checks for the file
+     * in custom/include/generic/SugarWidgets directory and if not found defaults to include/generic/SugarWidgets.
+     * This method is used so that we can easily customize and extend these SugarWidget classes.
+     *
+     * @static
+     * @param $class String name of the class to load
+     * @return String file of the SugarWidget class; false if none found
+     */
+    protected static function getFilenameForSugarWidget($class)
+    {
+        //Only bother to check if the class name starts with SugarWidget
+        if(strpos($class, 'SugarWidget') == 0)
+        {
+            $file = get_custom_file_if_exists("include/generic/SugarWidgets/{$class}.php");
+            if(file_exists($file))
+            {
+               return $file;
+            }
+        }
+        return false;
     }
 
 	public static function loadAll(){
