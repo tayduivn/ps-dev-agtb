@@ -31,5 +31,8 @@
 {else}
 	<section class="resultNull">
         <h1>{$APP.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
+        <div style="float:right;">
+        <a href="index.php?module=Home&action=spot&full=true">{$APP.LNK_ADVANCED_SEARCH}</a>
+        </div>
    	</section>
 {/if}
