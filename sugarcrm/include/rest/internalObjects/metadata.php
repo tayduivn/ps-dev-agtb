@@ -54,16 +54,17 @@ class MetaData extends RestObject implements IRestObject {
             }
         }
 
-        if (array_key_exists("filter", $_GET)) {
+        if (array_key_exists("filter", $_GET) && !empty($_GET['filter'])) {
             $fdata = explode(",", $_GET['filter']);
             if ($fdata != false) {
                 $filter = $fdata;
             }
         }
 
-        if (array_key_exists("type", $_GET)) {
+        if (array_key_exists("type", $_GET) && !empty($_GET['type'])) {
             $fdata = explode(",", $_GET['type']);
             if ($fdata != false) {
+
                 $typeFiler = $fdata;
             }
         }
@@ -72,7 +73,6 @@ class MetaData extends RestObject implements IRestObject {
         $data = $meta->getData();
         $json = json_encode($data);
         $err = json_last_error();
-        //print_r($data); die;
 
         if ($err != JSON_ERROR_NONE) {
             $err = RestUtils::jsonErrorToStr($err);
