@@ -1,6 +1,6 @@
 <?php
 
-include_once("../include/rest/RestData.php");
+include_once("include/rest/RestData.php");
 
 abstract class RestObject implements IRestObject {
 
@@ -13,16 +13,24 @@ abstract class RestObject implements IRestObject {
 
         if (array_key_exists("HTTP_ACCEPT_ENCODING", $_SERVER)) {
             $this->requestData["encoding_type"] = explode(",", $_SERVER["HTTP_ACCEPT_ENCODING"]);
+        } else {
+            $this->requestData["encoding_type"] = null;
         }
 
         if (array_key_exists("CONTENT_TYPE", $_SERVER)) {
             $this->requestData["content_type"] = $_SERVER["CONTENT_TYPE"];
+        } else {
+            $this->requestData["content_type"] = null;
         }
 
         $this->verbToId();
     }
 
     public function execute() {
+
+    }
+
+    protected function sendJSONResponse($payload) {
 
     }
 

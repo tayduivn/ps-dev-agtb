@@ -1,5 +1,5 @@
 <?php
-if (!defined('sugarEntry')) define('sugarEntry', true);
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -30,5 +30,6 @@ if (!defined('sugarEntry')) define('sugarEntry', true);
 interface IRestObject {
 
     function execute();
+    function sendResponse();
 }
 

@@ -25,6 +25,34 @@ class RestUtils {
         return true;
     }
 
+
+    public static function jsonErrorToStr($err) {
+        $result = "";
+
+        switch($err) {
+            case JSON_ERROR_NONE:
+                $result = "";
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                $str = "JSON: Invalid or malformed JSON";
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                $result = "JSON: Control character error, possibly incorrectly encoded";
+                break;
+            case JSON_ERROR_SYNTAX:
+                $result = "JSON: Syntax error";
+                break;
+            case JSON_ERROR_DEPTH:
+                $result = "JSON: The maximum stack depth has been exceeded";
+                break;
+            default:
+                $result["err_str"] = 'JSON: Unknown Error';
+                break;
+        }
+
+        return $result;
+    }
+
     /**
      * @static
      *
