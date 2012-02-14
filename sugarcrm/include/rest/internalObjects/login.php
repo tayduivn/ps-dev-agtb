@@ -45,6 +45,8 @@ class Login extends RestObject implements IRestObject {
             exit;
         }
 
+        print_r($_SERVER); die;
+
         $raw_post = file_get_contents("php://input");
         $result = RestUtils::isValidJson($raw_post);
 

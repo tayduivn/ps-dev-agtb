@@ -3,13 +3,14 @@
 include_once("../include/rest/RestObjectInterface.php");
 include_once("RestError.php");
 include_once("RestUtils.php");
+include_once("RestObject.php");
 /**
  *
  */
-class MetaData implements IRestObject {
+class MetaData extends RestObject implements IRestObject {
 
     function __construct() {
-
+        parent::__construct();
     }
 
     public function execute() {
@@ -19,6 +20,7 @@ class MetaData implements IRestObject {
             exit;
         }
 
+        var_dump($_SERVER);
 
     }
 
