@@ -68,7 +68,9 @@ width:70%;
 <tr valign="top" >
     <td id="moduleListTD" style="">
         <b>{$APP.LBL_MODULE_FILTER}</b>
-        {include file='include/MVC/View/tpls/fts_modfilter.tpl'}
+        <div id='moduleListRs'
+            {include file='include/MVC/View/tpls/fts_modfilter.tpl'}
+        </div>
     </td>
 <td>
     <div id="sugar_full_search_results" >
@@ -89,18 +91,6 @@ width:70%;
     var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
     var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
     {literal}
-    $('.ftsModuleFilter').bind('click', function(e) {
-        SUGAR.FTS.search();
-        var textLabel = this.id + '_label';
-        if(this.checked)
-        {
-            $('#'+textLabel).removeClass('unchecked');
-        }
-        else
-        {
-            $('#'+textLabel).addClass('unchecked');
-        }
-    });
 
     $("#ftsSearchField").keypress(function(event) {
         if(event.keyCode == 13)
@@ -112,6 +102,27 @@ width:70%;
         currentOffset: 0,
         limit: 0,
         totalHits: 0,
+        addModuleFilterHandlers: function()
+        {
+            $('.ftsModuleFilter').bind('click', function(e)
+            {
+                SUGAR.FTS.search();
+                var textLabel = this.id + '_label';
+                var countLabel = this.id + '_count';
+
+                if(this.checked)
+                {
+                    $('#'+textLabel).removeClass('unchecked');
+                    $('#'+countLabel).removeClass('unchecked');
+                }
+                else
+                {
+                    $('#'+textLabel).addClass('unchecked');
+                    $('#'+countLabel).addClass('unchecked');
+                }
+            });
+
+        },
         getSelectedModules: function()
         {
             var results = [];
@@ -227,10 +238,12 @@ width:70%;
         }
     }
 
+    SUGAR.FTS.addModuleFilterHandlers();
+
     //Setup autocomplete
     var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
     var autoCom = $( "#ftsSearchField" ).autocomplete({
-        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&data='+data,
+        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&refreshModList=true&data='+data,
         select: function(event, ui) {},
         minLength: 3,
         search: function(event,ui){
@@ -240,11 +253,17 @@ width:70%;
         {
             var el = $("#sugar_full_search_results");
 
-            if(typeof(content.results) != 'undefined'){
+            if(typeof(content.results) != 'undefined')
+            {
                 el.html( content.results);
                 SUGAR.FTS.totalHits = content.totalHits;
                 $("#totalCount").html(SUGAR.FTS.totalHits);
                 $("#totalTime").html(content.totalTime);
+            }
+            if(typeof(content.mod_filter) != 'undefined')
+            {
+                $("#moduleListRs").html(content.mod_filter);
+                SUGAR.FTS.addModuleFilterHandlers();
             }
             this.pending--;
             SUGAR.FTS.toogleShowMore();

@@ -106,13 +106,16 @@ class ViewFts extends SugarView
 
         if( $this->fullView )
         {
+            $this->ss->assign('filterModules',$this->filterModuleListByTypes($filteredModules['enabled'], $rs->getModuleFacet() ));
             if($resultSetOnly)
             {
-                $contents = json_encode(array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime));
-                return $this->sendOutput($contents);
+                $out = array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime);
+                if(!empty($_REQUEST['refreshModList']) )
+                    $out['mod_filter'] = $this->ss->fetch('include/MVC/View/tpls/fts_modfilter.tpl');
+
+                return $this->sendOutput(json_encode($out));
             }
 
-            $this->ss->assign('filterModules',$this->filterModuleListByTypes($filteredModules['enabled'], $rs->getModuleFacet() ));
             $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));
             $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
         }
@@ -125,7 +128,7 @@ class ViewFts extends SugarView
     /**
      * Given the enable module list and a facet result set for the last query, add
      * a count to the filter module list.
-     * 
+     *
      * @param $modulelist
      * @param $facetResults
      * @return mixed
