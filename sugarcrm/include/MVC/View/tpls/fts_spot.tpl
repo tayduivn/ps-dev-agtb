@@ -24,6 +24,10 @@
     {/foreach}
     
     <p class="fullResults"><a href="index.php?module=Home&action=spot&full=true&q={$queryEncoded}">{$APP.LBL_EMAIL_SHOW_READ}</a></p>
+{elseif !isset($resultSet) }
+    <section class="resultNull">
+        <h1>{$APP.LBL_SEARCH_UNAVAILABLE}</h1>
+   	</section>
 {else}
 	<section class="resultNull">
         <h1>{$APP.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>

@@ -296,6 +296,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
+            return null;
         }
 
         return $results;
