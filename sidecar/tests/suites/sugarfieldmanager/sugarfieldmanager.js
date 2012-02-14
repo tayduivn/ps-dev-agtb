@@ -16,7 +16,15 @@ describe("SugarFieldManager", function () {
            //this.sugarFieldManager.reset();
         });
 
+        it("should reset if asked", function () {
+                var result = this.sugarFieldManager.reset();
+                expect(this.sugarFieldManager.fieldsObj).toEqual({});
+                expect(this.sugarFieldManager.fieldsHash).toEqual('');
+            }
+        );
+
         it("should sync all sugar fields from server", function () {
+                this.sugarFieldManager.reset();
                 SUGAR.App.sugarFieldsSync = function () {
                 };
                 var stub = sinon.stub(SUGAR.App, "sugarFieldsSync", function (that, callback){
@@ -25,14 +33,9 @@ describe("SugarFieldManager", function () {
                     return result;
                 });
                 var syncResult=this.sugarFieldManager.syncFields();
-                expect(syncResult).toBeTruthy();
-            }
-        );
 
-        it("should reset if asked", function () {
-                var result = this.sugarFieldManager.reset();
-                expect(this.sugarFieldManager.fieldsObj).toEqual({});
-                expect(this.sugarFieldManager.fieldsHash).toEqual('');
+                expect(syncResult).toBeTruthy();
+                this.sugarFieldManager.reset();
             }
         );
 
@@ -50,6 +53,7 @@ describe("SugarFieldManager", function () {
                 var result = this.sugarFieldManager.getField('varchar','editView');
                 expect(result.type).toEqual('basic');
                 expect(result.template).toEqual(' <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input01\">{{label}}</label>\n\n        <div class=\"controls\">\n            <input type=\"text\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n            <p class=\"help-block\">{{help}}</p>\n        </div>\n    </div>\n');
+
             }
         );
 

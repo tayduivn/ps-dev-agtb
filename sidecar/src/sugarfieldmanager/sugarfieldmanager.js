@@ -40,7 +40,7 @@
                         // call api field sync with current field hash
                         //TODO put real api call
                         var that = this;
-                        result = SUGAR.App.sugarFieldsSync(that, this.handleResponse);
+                        var result = SUGAR.App.sugarFieldsSync(that, this.handleResponse);
                         return result;
                     },
 
