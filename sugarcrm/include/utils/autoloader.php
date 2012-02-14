@@ -120,6 +120,16 @@ class SugarAutoLoader{
         //Only bother to check if the class name starts with SugarWidget
         if(strpos($class, 'SugarWidget') == 0)
         {
+            if(strpos($class, 'SugarWidgetField') == 0)
+            {
+                //We need to lowercase the portion after SugarWidgetField
+                $name = substr($class, 16);
+                if(!empty($name))
+                {
+                    $class = 'SugarWidgetField' . strtolower($name);
+                }
+            }
+
             $file = get_custom_file_if_exists("include/generic/SugarWidgets/{$class}.php");
             if(file_exists($file))
             {
