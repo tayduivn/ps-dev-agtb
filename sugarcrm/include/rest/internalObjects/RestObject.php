@@ -30,12 +30,18 @@ abstract class RestObject implements IRestObject {
 
     }
 
+    /**
+     * Converts the current REQUEST_METHOD into an ID matching the HTTP_{verb} in RestData.php.
+     *
+     * @return mixed|null
+     */
     protected function verbToId() {
+        $id = null;
         $verb = "HTTP_" . $this->requestData["request_method"];
         $verb = strtoupper($verb);
-        print "CRAP: {HTTP_GET}\n";
-        print "FBAR::=>{$$verb}";
-        die;
+
+        $id = constant($verb);
+        return $id;
     }
 
     public function getRequestData() {

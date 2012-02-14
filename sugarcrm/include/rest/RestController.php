@@ -56,7 +56,8 @@ class RestController {
      *
      */
     private function getURI() {
-        $uri_data = explode("/", strtolower($_SERVER["REQUEST_URI"]));
+        $path = parse_url($_SERVER["REQUEST_URI"]);
+        $uri_data = explode("/", strtolower($path['path']));
         $found_rest = false;
         $uri_tmp = array();
 
