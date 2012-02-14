@@ -179,7 +179,7 @@ function checkForDuplicates($prefix='')
     require_once('include/MVC/SugarModule.php');
     $focus = SugarModule::get($this->moduleName)->loadBean();
 
-	$query = $this->getDuplicateQuery($prefix);
+	$query = $this->getDuplicateQuery($focus, $prefix);
 
     if(empty($query))
     {
@@ -241,10 +241,11 @@ function checkForDuplicates($prefix='')
  * check sequence.
  *
  * @see checkForDuplicates (method), ContactFormBase.php, LeadFormBase.php, ProspectFormBase.php
+ * @param $focus sugarbean
  * @param $prefix String value of prefix that may be present in $_POST variables
  * @return SQL String of the query that should be used for the initial duplicate lookup check
  */
-public function getDuplicateQuery($prefix='')
+public function getDuplicateQuery($focus, $prefix='')
 {
     return null;
 }
