@@ -44,12 +44,17 @@ class Login implements IRestObject {
         }
 
         $raw_post = file_get_contents("php://input");
+        $result = RestUtils::isValidJson($raw_post);
 
-        $json = json_decode($raw_post);
-        $err = json_last_error();
+        if ($result["err"] != false) {
+            $err = new RestError();
+            $err->ReportError(415, $result["err_str"]);
+            exit;
+        }
 
-
-        ///print_r($json);
+        /*
+         * Here is where we need to be logging into the app.
+         */
 
     }
 

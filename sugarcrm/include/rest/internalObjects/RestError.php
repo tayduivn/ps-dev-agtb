@@ -25,9 +25,8 @@ class RestError {
         print $this->errorData[$code];
 
         if ($msg != null) {
-            print "\n{$msg}";
+            print "\n\n{$msg}\n";
         }
-
     }
 }
 
