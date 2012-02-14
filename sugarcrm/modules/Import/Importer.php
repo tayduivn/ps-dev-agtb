@@ -206,12 +206,15 @@ class Importer
             // Handle the special case "Sync to Outlook"
             if ( $focus->object_name == "Contact" && $field == 'sync_contact' )
             {
-                /**
-                 * Bug #41194 : if true used as value of sync_contact - add curent user to list to sync
-                 */
-                if ( true === $rowValue || 'true' == strtolower($rowValue) ) {
-                    $focus->sync_contact = $current_user->id;
-                } else {
+                // if sync is passed as true for a contact, convert to the contact's ID so that it will be processed
+                // for sync properly
+                if ( false == $rowValue || 'false' == strtolower($rowValue) ) {
+                    $focus->sync_contact = '';
+                    $rowValue = '';
+                } elseif ( true == $rowValue || 'true' == strtolower($rowValue)) {
+                    $focus->sync_contact = $focus->id;
+                    $rowValue='all';
+
                     $bad_names = array();
                     $returnValue = $this->ifs->synctooutlook($rowValue,$fieldDef,$bad_names);
                     // try the default value on fail
@@ -221,8 +224,6 @@ class Importer
                     {
                         $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
                         $do_save = 0;
-                    } else {
-                        $focus->sync_contact = $returnValue;
                     }
                 }
             }
@@ -540,11 +541,11 @@ class Importer
 
         if ( $focus->object_name == "Contact" && isset($list_of_users) )
             $focus->process_sync_to_outlook($list_of_users);
-
         $focus->save(false);
 
         // call any logic needed for the module postSave
         $focus->afterImportSave();
+
 
         // Add ID to User's Last Import records
         if ( $newRecord )
