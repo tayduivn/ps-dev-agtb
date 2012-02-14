@@ -68,9 +68,7 @@ width:70%;
 <tr valign="top" >
     <td id="moduleListTD" style="">
         <b>{$APP.LBL_MODULE_FILTER}</b>
-        {foreach from=$filterModules item=entry key=module}
-            <div class="ftsModuleFilterSpan"><input type="checkbox" checked="checked" id="{$entry.module}" name="module_filter" class="ftsModuleFilter"><span id="{$entry.module}_label">&nbsp;{$entry.label}</span></div>
-        {/foreach}
+        {include file='include/MVC/View/tpls/fts_modfilter.tpl'}
     </td>
 <td>
     <div id="sugar_full_search_results" >

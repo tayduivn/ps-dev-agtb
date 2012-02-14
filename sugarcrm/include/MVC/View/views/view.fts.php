@@ -112,7 +112,7 @@ class ViewFts extends SugarView
                 return $this->sendOutput($contents);
             }
 
-            $this->ss->assign('filterModules',$filteredModules['enabled']);
+            $this->ss->assign('filterModules',$this->filterModuleListByTypes($filteredModules['enabled'], $rs->getModuleFacet() ));
             $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));
             $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
         }
@@ -121,6 +121,31 @@ class ViewFts extends SugarView
         return $this->sendOutput($contents, $return, $encode);
 
     }
+
+    /**
+     * Given the enable module list and a facet result set for the last query, add
+     * a count to the filter module list.
+     * 
+     * @param $modulelist
+     * @param $facetResults
+     * @return mixed
+     */
+    protected function filterModuleListByTypes($modulelist, $facetResults )
+    {
+        if($facetResults === FALSE)
+            return $modulelist;
+
+        foreach($modulelist as &$moduleEntry)
+        {
+            if( isset($facetResults[$moduleEntry['module']]) )
+                $moduleEntry['count'] = $facetResults[$moduleEntry['module']];
+            else
+                $moduleEntry['count'] = 0;
+        }
+
+        return $modulelist;
+    }
+
 
     protected function sendOutput($contents, $return = false, $encode = false)
     {

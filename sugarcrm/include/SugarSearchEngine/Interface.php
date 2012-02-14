@@ -131,6 +131,13 @@ interface SugarSearchEngineResultSet extends Iterator, Countable
      */
     public function getFacets();
 
+    /**
+     * Return the facet results for the modules used in the search.
+     *
+     * @abstract
+     */
+    public function getModuleFacet();
+
 }
 
 /**
