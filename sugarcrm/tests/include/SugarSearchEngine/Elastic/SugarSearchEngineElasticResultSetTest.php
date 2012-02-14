@@ -70,4 +70,17 @@ class SugarSearchEngineElasticResultSetTest extends Sugar_PHPUnit_Framework_Test
         $this->assertEquals(8, $totalTime, 'Incorrect total time');
     }
 
+    public function testElasticResultSetPosition()
+    {
+        $key = $this->_sugarElsaticResultSet->key();
+        $this->assertEquals(0, $key, 'Incorrect key');
+
+        $this->_sugarElsaticResultSet->next();
+        $key = $this->_sugarElsaticResultSet->key();
+        $this->assertEquals(1, $key, 'Incorrect key after next()');
+
+        $this->_sugarElsaticResultSet->rewind();
+        $key = $this->_sugarElsaticResultSet->key();
+        $this->assertEquals(0, $key, 'Incorrect key after rewind()');
+    }
 }
