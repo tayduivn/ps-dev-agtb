@@ -31,8 +31,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: LayoutManager.php 56115 2010-04-26 17:08:09Z kjing $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
-require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
+
+
 
 /**
  * Form layout manager

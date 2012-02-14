@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,47 +23,43 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
-require_once('include/SubPanel/SubPanel.php');
-require_once('include/SubPanel/SubPanelDefinitions.php');
-
-class Bug44272Test extends PHPUnit_Framework_TestCase
+/**
+ * Bug49982Test.php
+ * This test tests that the error message is returned after an upload that exceeds post_max_size
+ *
+ * @ticket 49982
+ */
+class Bug49982Test extends Sugar_PHPUnit_Framework_TestCase
 {
+	var $doc = null;
+    var $contract = null;
 
-var $account;
+	public function setUp()
+    {
+	}
 
-public function setUp()
-{
-    $beanList = array();
-    $beanFiles = array();
-    require('include/modules.php');
-    $GLOBALS['beanList'] = $beanList;
-    $GLOBALS['beanFiles'] = $beanFiles;
-    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	$this->account = SugarTestAccountUtilities::createAccount();
-}
+    public function tearDown()
+    {
+    }
 
-public function tearDown()
-{
-	SugarTestAccountUtilities::removeAllCreatedAccounts();
-}
+    /**
+     * testUploadSizeError
+     * We want to simulate uploading a file that is bigger than the post max size. However the $_FILES global array cannot be overwritten
+     * without triggering php errors so we can't trigger the error codes directly.
+     * In the scenario we are trying to simulate, the post AND files array are returned empty by php, so let's simulate that
+     * in order to test the error message from home page
+     */
+    function testSaveUploadError() {
+        //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
+        $_POST = array();
+        require_once('include/MVC/View/SugarView.php');
+        $sv = new SugarView();
+        $this->assertFalse($sv->checkPostMaxSizeError(),'Sugar view indicated an upload error when there should be none.');
 
-public function testSugarWidgetSubpanelTopButtonQuickCreate()
-{
-	$defines = array();
-	$defines['focus'] = $this->account;
-	$defines['module'] = 'Accounts';
-	$defines['action'] = 'DetailView';
-
-	$subpanel_definitions = new SubPanelDefinitions(new Contact());
-	$contactSubpanelDef = $subpanel_definitions->load_subpanel('contacts');
-
-	$subpanel = new SubPanel('Accounts', $this->account->id, 'contacts', $contactSubpanelDef, 'Accounts');
-	$defines['subpanel_definition'] = $subpanel->subpanel_defs;
-
-	$button = new SugarWidgetSubPanelTopButtonQuickCreate();
-	$code = $button->_get_form($defines);
-	$this->assertRegExp('/\<input[^\>]*?name=\"return_name\"/', $code, "Assert that the hidden input field return_name was created");
-}
+        //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $this->assertTrue($sv->checkPostMaxSizeError(),'Sugar view list did not return an error, however conditions dictate that an upload with a file exceeding post_max_size has occurred.');
+        unset($_SERVER['REQUEST_METHOD']);
+	}
 
 }

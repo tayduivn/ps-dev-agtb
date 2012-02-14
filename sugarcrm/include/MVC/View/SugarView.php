@@ -1591,4 +1591,25 @@ EOHTML;
     {
         return $this->ss->fetch($file);
     }
+
+    /**
+	 * Determines whether the state of the post global array indicates there was an error uploading a
+     * file that exceeds the post_max_size setting.  Such an error can be detected if:
+     *  1. The Server['REQUEST_METHOD'] will still point to POST
+     *  2. POST and FILES global arrays will be returned empty despite the request method
+     * This also results in a redirect to the home page (due to lack of module and action in POST)
+     *
+	 * @return boolean indicating true or false
+	 */
+    public function checkPostMaxSizeError(){
+         //if the referrer is post, and the post array is empty, then an error has occurred, most likely
+         //while uploading a file that exceeds the post_max_size.
+         if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post'){
+             $GLOBALS['log']->fatal($GLOBALS['app_strings']['UPLOAD_ERROR_HOME_TEXT']);
+             return true;
+        }
+        return false;
+    }
+
+
 }

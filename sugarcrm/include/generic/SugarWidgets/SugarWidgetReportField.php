@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetReportField.php 58357 2010-09-29 23:22:03Z kjing $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 
 $used_aliases = array();
 $alias_map = array();

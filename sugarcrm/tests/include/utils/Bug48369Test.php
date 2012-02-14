@@ -22,47 +22,54 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/utils/LogicHook.php');
 
-require_once('include/SubPanel/SubPanel.php');
-require_once('include/SubPanel/SubPanelDefinitions.php');
-
-class Bug44272Test extends PHPUnit_Framework_TestCase
+class Bu48369Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    var $backupContents;
 
-var $account;
+    public function setUp()
+    {
+        if(!file_exists('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php'))
+        {
+           mkdir_recursive('custom/include/generic/SugarWidgets');
+        } else {
+           $this->backupContents = file_get_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php');
+        }
 
-public function setUp()
+        $contents = <<<EOQ
+<?php
+class SugarWidgetFieldCustomName extends SugarWidgetFieldName
 {
-    $beanList = array();
-    $beanFiles = array();
-    require('include/modules.php');
-    $GLOBALS['beanList'] = $beanList;
-    $GLOBALS['beanFiles'] = $beanFiles;
-    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	$this->account = SugarTestAccountUtilities::createAccount();
+    function SugarWidgetFieldCustomName(\$layout_manager)
+    {
+
+    }
+
+	function queryFilterIs(\$layout_def)
+	{
+        return "Bug48369Test";
+	}
 }
+EOQ;
 
-public function tearDown()
-{
-	SugarTestAccountUtilities::removeAllCreatedAccounts();
-}
+        file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $contents);
+    }
 
-public function testSugarWidgetSubpanelTopButtonQuickCreate()
-{
-	$defines = array();
-	$defines['focus'] = $this->account;
-	$defines['module'] = 'Accounts';
-	$defines['action'] = 'DetailView';
+    public function tearDown()
+    {
+        if(!empty($this->backupContents))
+        {
+            file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $this->backupContents);
+        } else {
+            unlink('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php');
+        }
+    }
 
-	$subpanel_definitions = new SubPanelDefinitions(new Contact());
-	$contactSubpanelDef = $subpanel_definitions->load_subpanel('contacts');
-
-	$subpanel = new SubPanel('Accounts', $this->account->id, 'contacts', $contactSubpanelDef, 'Accounts');
-	$defines['subpanel_definition'] = $subpanel->subpanel_defs;
-
-	$button = new SugarWidgetSubPanelTopButtonQuickCreate();
-	$code = $button->_get_form($defines);
-	$this->assertRegExp('/\<input[^\>]*?name=\"return_name\"/', $code, "Assert that the hidden input field return_name was created");
-}
-
+    public function testCustomSugarWidgetFilesLoaded()
+    {
+        require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
+        $customWidget = new SugarWidgetFieldCustomName(null);
+        $this->assertEquals("Bug48369Test", $customWidget->queryFilterIs(null));
+    }
 }
