@@ -118,9 +118,9 @@ class SugarAutoLoader{
     protected static function getFilenameForSugarWidget($class)
     {
         //Only bother to check if the class name starts with SugarWidget
-        if(strpos($class, 'SugarWidget') == 0)
+        if(strpos($class, 'SugarWidget') !== false)
         {
-            if(strpos($class, 'SugarWidgetField') == 0)
+            if(strpos($class, 'SugarWidgetField') !== false)
             {
                 //We need to lowercase the portion after SugarWidgetField
                 $name = substr($class, 16);
