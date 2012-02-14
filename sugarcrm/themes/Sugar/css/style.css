@@ -6852,3 +6852,13 @@ td #moduleListTD
 #ftsSearchBarContainer {
     width:30em !important;
 }
+
+#sugar_spot_search_div .fts_spot_ul
+{
+    border-left: 1px solid #ccc;
+}
+
+#sugar_spot_search_div .spot_fts_summary
+{
+    color: #444
+}
