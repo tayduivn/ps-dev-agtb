@@ -42,13 +42,13 @@ class Bug48623Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider dateTestProvider
      */
-    public function testParseDateExpressionWithAndWithoutTimezoneAdjustment($expected1, $expected2, $operator, $dbField, $type) {
+    public function testParseDateExpressionWithAndWithoutTimezoneAdjustment($expected1, $expected2, $operator, $type) {
         global $timedate;
 
         $seed = new Opportunity();
         $sf = new SearchForm2Wrap($seed, 'Opportunities', 'index');
 
-        $where = $sf->publicParseDateExpression($operator, $dbField, $type);
+        $where = $sf->publicParseDateExpression($operator, 'opportunities.date_closed', $type);
         $this->assertRegExp($expected1, $where);
         $this->assertRegExp($expected2, $where);
     }
@@ -59,34 +59,34 @@ class Bug48623Test extends Sugar_PHPUnit_Framework_TestCase
         $tzRegExp1 = '/\'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[4,5]:00:00\'/';
         $tzRegExp2 = '/\'[0-9]{4}-[0-9]{2}-[0-9]{2} 0[3,4]:59:59\'/';
         return array(
-            //  $expected1, expected2, $operator, $dbField, $type
-            array($noTzRegExp1, $noTzRegExp2, 'this_month', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'last_month', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'next_month', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'this_year', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'last_year', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'next_year', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'yesterday', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'today', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'tomorrow', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'last_7_days', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'next_7_days', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'last_30_days', 'opportunities.date_closed', 'date'),
-            array($noTzRegExp1, $noTzRegExp2, 'next_30_days', 'opportunities.date_closed', 'date'),
+            //  $expected1, expected2, $operator, $type
+            array($noTzRegExp1, $noTzRegExp2, 'this_month', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_month', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_month', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'this_year', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_year', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_year', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'yesterday', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'today', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'tomorrow', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_7_days', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_7_days', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'last_30_days', 'date'),
+            array($noTzRegExp1, $noTzRegExp2, 'next_30_days', 'date'),
 
-            array($tzRegExp1, $tzRegExp2, 'this_month', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'last_month', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'next_month', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'this_year', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'last_year', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'next_year', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'yesterday', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'today', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'tomorrow', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'last_7_days', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'next_7_days', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'last_30_days', 'opportunities.date_closed', 'datetime'),
-            array($tzRegExp1, $tzRegExp2, 'next_30_days', 'opportunities.date_closed', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'this_month', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_month', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_month', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'this_year', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_year', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_year', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'yesterday', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'today', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'tomorrow', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_7_days', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_7_days', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'last_30_days', 'datetime'),
+            array($tzRegExp1, $tzRegExp2, 'next_30_days', 'datetime'),
         );
     }
 
