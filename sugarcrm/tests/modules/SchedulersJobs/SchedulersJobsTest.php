@@ -336,8 +336,10 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
         	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "client" => "UnitTests",
         	"assigned_user_id" => $GLOBALS['current_user']->id));
         $res = SchedulersJob::runJobId($job->id, "UnitTests2");
-        $job->retrieve($job->id);
-        $this->assertFalse($res, "Bad result from runJobId");
+        $this->assertFalse($res === true, "Bad result from runJobId");
+        // wrong ID
+        $res = SchedulersJob::runJobId("where's waldo?", "UnitTests2");
+        $this->assertFalse($res === true, "Bad result from runJobId");
     }
 
     public function testJobURL()
@@ -453,7 +455,7 @@ class TestSchedulersJob extends SchedulersJob
     public $onFailureCalled;
     public $onFinalFailureCalled;
 
-    public function onFailure()
+    public function onFailureRetry()
     {
         $this->onFailureCalled = true;
     }

@@ -313,6 +313,7 @@ class SchedulersJob extends Basic
      * Run the job by ID
      * @param string $id
      * @param string $client Client that is trying to run the job
+     * @return bool|string true on success, error message on failure
      */
     public static function runJobId($id, $client)
     {
@@ -320,21 +321,21 @@ class SchedulersJob extends Basic
         $job->retrieve($id);
         if(empty($job->id)) {
             $GLOBALS['log']->fatal("Job $id not found.");
-            return false;
+            return "Job $id not found.";
         }
         if($job->status != self::JOB_STATUS_RUNNING) {
             $GLOBALS['log']->fatal("Job $id is not marked as running.");
-            return false;
+            return "Job $id is not marked as running.";
         }
         if($job->client != $client) {
             $GLOBALS['log']->fatal("Job $id belongs to client {$job->client}, can not run as $client.");
-            return false;
+            return "Job $id belongs to another client, can not run as $client.";
         }
         $job->job_done = false;
         register_shutdown_function(array($job, "unexpectedExit"));
-        $job->runJob();
+        $res = $job->runJob();
         $job->job_done = true;
-        return true;
+        return $res;
     }
 
     /**
@@ -398,6 +399,7 @@ class SchedulersJob extends Basic
 
     /**
      * Run this job
+     * @return bool Was the job successful?
      */
     public function runJob()
     {
@@ -433,9 +435,10 @@ class SchedulersJob extends Basic
             restore_error_handler();
             if(isset($old_user)) {
                 $this->sudo($old_user);
+                unset($old_user);
             }
 			if($this->status == self::JOB_STATUS_RUNNING) {
-			    // nobody updates the status yet - job can do that
+			    // nobody updated the status yet - job function could do that
     			if($res) {
     			    $this->resolveJob(self::JOB_SUCCESS);
     				return true;
@@ -443,6 +446,8 @@ class SchedulersJob extends Basic
     			    $this->resolveJob(self::JOB_FAILURE);
     			    return false;
     			}
+			} else {
+			    return $this->resolution != self::JOB_FAILURE;
 			}
 		} elseif($exJob[0] == 'url') {
 			if(function_exists('curl_init')) {

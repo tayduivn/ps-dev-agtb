@@ -843,6 +843,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         } else {
             $jobid = null;
         }
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_next');
         return array("results" => $jobid);
     }
 
@@ -861,8 +862,9 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         }
         require_once 'include/SugarQueue/SugarJobQueue.php';
         $queue = new SugarJobQueue();
-        $queue->runSchedulers();
         $queue->cleanup();
+        $queue->runSchedulers();
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_cycle');
         return array("results" => "ok");
     }
 
@@ -874,7 +876,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      */
     public function job_queue_run($session, $jobid, $clientid)
     {
-        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->job_queue_next');
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->job_queue_run');
         $error = new SoapError();
         if (! self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', 'read', 'no_access',  $error)) {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_run denied.');
@@ -883,7 +885,12 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $GLOBALS['log']->debug('Starting job $jobid execution as $clientid');
         require_once 'modules/SchedulersJobs/SchedulersJob.php';
         $result = SchedulersJob::runJobId($jobid, $clientid);
-        return array("results" => $result);
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_run');
+        if($result === true) {
+            return array("results" => true);
+        } else {
+            return array("results" => false, "message" => $result);
+        }
     }
 }
 
