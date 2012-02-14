@@ -31,34 +31,34 @@ fixtures.metadata = {
             }
         },
         "views" : {
-            "EditView" : {
+            "editView" : {
                 "panels" : [{
                     "label" : "LBL_PANEL_1",
                     "fields" : [
-                        {name:"first_name"},
-                        {name:"last_name"}
+                        {name:"first_name", label:"First Name"},
+						{name:"last_name", label:"Last Name"}
                     ]
                 }]
 
             },
-            "DetailView" : {
+            "detailView" : {
                 "panels" : [{
                     "label" : "LBL_PANEL_1",
                     "fields" : [
-                        {name:"first_name"},
-                        {name:"last_name"}
+                        {name:"first_name", label:"First Name"},
+                        {name:"last_name", label:"Last Name"}
                     ]
                 }]
             },
-            "QuickCreate" : {
+            "quickCreate" : {
 
             },
             //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
-            "ListView" : {
+            "listView" : {
 
             },
             //Subpanel layout defs
-            "SubpanelView" : {
+            "subpanelView" : {
 
             }
         },
@@ -69,14 +69,14 @@ fixtures.metadata = {
                 //Default layout is a single view
                 "type" : "simple",
                 "components" : [
-                    {view : "EditView"}
+                    {view : "editView"}
                 ]
             },
             "detail" : {
-                "components" : "rows",
-                "views" : [
-                    {view : "DetailView"},
-                    {view : "SubpanelView"}
+                "type" : "rows",
+                "components" : [
+                    {view : "detailView"},
+                    {view : "subpanelView"}
                 ]
             },
             //Example of a sublayout. Two columns on the top and one view below that
@@ -86,20 +86,20 @@ fixtures.metadata = {
                     {"layout" : {
                         "type" : "columns",
                         "components" : [
-                            {view : "ListView"},
-                            {view : "DetailView"}
+                            {view : "listView"},
+                            {view : "detailView"}
                         ]
                     }},
-                    {"view" : "SubpanelView"}
+                    {"view" : "subpanelView"}
                 ]
             },
             //Layout with context switch. Edit view with related detail view
             "complexlayout" : {
                 "type" : "columns",
                 "components" : [
-                    {"view" : "EditView"},
+                    {"view" : "editView"},
                     {
-                        "view" : "DetailView",
+                        "view" : "detailView",
                         //Name of link to pull the new context from, In this case a single account
                         "context" : "accounts"
                     }
@@ -109,7 +109,7 @@ fixtures.metadata = {
             "detailplus" : {
                 "type" : "columns",
                 "components" : [
-                    {"view" : "EditView"},
+                    {"view" : "editView"},
                     {layout: "detail"}
                 ]
             }

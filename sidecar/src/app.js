@@ -30,8 +30,8 @@ SUGAR.App = (function() {
 
         // Here we initialize all the modules;
         _.each(modules, function(module) {
-            if (module.init && _.isFunction(module.init)) {
-                module.init.call(this, this);
+            if (_.isFunction(module.init)) {
+                module.init(this);
             }
         }, this);
 

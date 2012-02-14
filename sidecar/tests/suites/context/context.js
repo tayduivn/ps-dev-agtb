@@ -44,7 +44,7 @@ describe("Application context manager", function() {
             };
 
             var stub = sinon.spy();
-            var context = SUGAR.App.context.getContext();
+            var context = SUGAR.App.context.getContext(); // We don't initialize first because we need to attach an event handler first for test.
             context.bind(context.contextId + ":change", stub);
             context.init(obj, data);
 
@@ -56,6 +56,8 @@ describe("Application context manager", function() {
                 expect(stub.called).toBeTruthy();
             });
 
+            // Ideally this function should go first, but don't want to write two different context mocks just to test reset. So we test
+            // at the end.
             it("should reset the state", function() {
                 expect(context.get()).not.toEqual({});
                 context.reset();

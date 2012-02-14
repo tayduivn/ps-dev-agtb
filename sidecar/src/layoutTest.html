@@ -5,15 +5,19 @@
 		<script language="javascript" src="../lib/backbone/backbone.min.js"></script>
         <script language="javascript" src="../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
 		<!-- App Scripts -->
-		<script language="javascript" src="app.js"></script>
-		<script language="javascript" src="controller/controller.js"></script>
-		<script language="javascript" src="controller/router.js"></script>
-		<script language="javascript" src="data/data-manager.js"></script>
-		<script language="javascript" src="data/bean.js"></script>
-		<script language="javascript" src="data/bean-collection.js"></script>
-		<script language="javascript" src="metadata/metadata-manager.js"></script>
-		<script language="javascript" src="sugarfieldmanager/sugarfieldmanager.js"></script>
-		<script language="javascript" src="layout/layout.js"></script>
+		<script src='app.js'></script>
+		<script src='sugarfieldmanager/sugarfieldmanager.js'></script>
+		<script src="events/events.js"></script>
+		<script src='context/context.js'></script>
+		<script src='controller/controller.js'></script>
+		<script src='controller/router.js'></script>
+		<script src='metadata/metadata-manager.js'></script>
+		<script src='logger.js'></script>
+		<script src='config.js'></script>
+		<script src='data/data-manager.js'></script>
+		<script src='data/bean.js'></script>
+		<script src='data/bean-collection.js'></script>
+		<script src='layout/layout.js'></script>
 		<!-- Fake data for now -->
 		<script language="javascript" src="../tests/fixtures/metadata.js"></script>
 		<script language="javascript" src="../tests/fixtures/templates.js"></script>
@@ -22,52 +26,106 @@
 		<link rel="stylesheet" href="../lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
 		<link rel="stylesheet" href="../lib/twitterbootstrap/bootstrap/css/bootstrap-responsive.css"/>
 		<script src="../lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
+		
+		<style>
+			.view {
+				border: 1px solid grey;
+				padding: 5px;
+				margin: 5px;
+			}
+			.layout {
+				border: 2px solid #000000;
+				padding: 5px;
+				margin: 5px;
+			}
+			.control-label {
+				font-weight: bold;
+				float:left;
+				margin-right: 5px;
+				margin-bottom: 0px;
+				color:grey;
+			}
+			.label {
+				font-weight: bold;
+				float:left;
+				margin: 0px;
+			}
+			.panel {
+				padding: 5px;
+				margin: 5px;
+				border: 1px solid grey;
+			}
+			.editView.panel h4 {
+				/* border-bottom: 1px solid black; */
+				margin-bottom: 5px;
+			}
+		</style>
 
     </head>
     <body>
-        <div id="sidecar"></div>
+    	<div style=" width: 400px; margin-left: auto; margin-right: auto">
+			<div id="view" style=""></div>
+			<br/>
+			<br/>
+			<br/>
+			<div id="layout" style=""></div>
+		</div>
 
 		<script language="javascript">
-			var App = SUGAR.App.init({el: "#sidecar"});
-			//Create a fake cache
-			SUGAR.App.cache = {
+			var syncResult, view, layout, html;
+			//Fake the cache
+			SUGAR.App.cache = SUGAR.App.cache || {
 				get:function (key) {
-					if (key == "metadata.Contacts")
-						return fixtures.metadata.Contacts;
+					var parts = key.split(".");
+					if (parts.length == 1){
+						return fixtures[parts[0]]
+					}
+
+					return fixtures[parts[0]][parts[1]];
 				}
 			};
 			//Fake template manager
-			SUGAR.App.template = {
+			SUGAR.App.template = SUGAR.App.template || {
 				get:function (key) {
-					console.log(fixtures.templates[key]);
-					return Handlebars.compile(fixtures.templates[key]);
+					if (fixtures.templates[key])
+						return Handlebars.compile(fixtures.templates[key]);
 				}
 			};
 			//Fake a field list
-			SUGAR.App.sugarFieldsSync = function () {
-			};
 			SUGAR.App.sugarFieldsSync = function (that, callback){
 				var ajaxResponse = sugarFieldsFixtures;
 				var result= callback(that, ajaxResponse);
 				return result;
 			};
-			var syncResult= SUGAR.App.sugarFieldManager.getInstance().syncFields();
-			var Bean = new App.Bean({
+			syncResult= SUGAR.App.sugarFieldManager.syncFields();
+
+			var App = SUGAR.App.init({el: "#sidecar"});
+			//Need a sample Bean
+			this.bean = new App.Bean({
 				first_name: "Foo",
 				last_name: "Bar"
 			});
-			var collection = new App.BeanCollection([Bean]);
-			App.context = {
-				module:"Contacts",
-				model: Bean,
-				collection : collection
-			};
-			var layout = App.layout.get({
-				context : App.context,
-				view:"EditView"
+			this.collection = new App.BeanCollection([this.bean]);
+			//Setup a context
+			var context = SUGAR.App.context.getContext({
+				url: "someurl",
+				module: "Contacts",
+				model : this.bean,
+				collection : this.collection
 			});
-			$("#sidecar").append(layout.el);
-			//$("#sidecar").html(layout.render());
+			var view = App.layout.get({
+				context : context,
+				view:"editView"
+			});
+			$("#view").append(view.el);
+			view.render();
+
+			var layout = App.layout.get({
+				context : context,
+				layout: "detail"
+				//view:"detailView"
+			});
+			$("#layout").append(layout.el);
 			layout.render();
         </script>
     </body>

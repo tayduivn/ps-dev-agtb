@@ -1,29 +1,25 @@
 describe("Layout", function() {
 
-    it('creates views', function () {
+    it('should create views', function () {
         expect(SUGAR.App.layout.get({
             view : "EditView",
             module: "Contacts"
         })).not.toBe(null);
     });
 
-    it('creates layouts', function () {
+    it('should create layouts', function () {
         expect(SUGAR.App.layout.get({
             layout : "edit",
             module: "Contacts"
         })).not.toBe(null);
     });
-
-    it('creates views', function () {
-            expect(SUGAR.App.layout.get({
-                view : "EditView",
-                module: "Contacts"
-            })).not.toBe(null);
-        });
+    it('should register sugar_field Handlebars helper', function () {
+        expect(Handlebars.helpers.sugar_field).not.toBe(null);
+    });
 });
 
 describe("Layout.View", function(){
-    var syncResult, layout, html;
+    var syncResult, view, layout, html;
     //Fake the cache
     SUGAR.App.cache = SUGAR.App.cache || {
         get:function (key) {
@@ -38,7 +34,8 @@ describe("Layout.View", function(){
     //Fake template manager
     SUGAR.App.template = SUGAR.App.template || {
         get:function (key) {
-            return Handlebars.compile(fixtures.templates[key]);
+            if (fixtures.templates[key])
+                return Handlebars.compile(fixtures.templates[key]);
         }
     };
     //Fake a field list
@@ -47,7 +44,7 @@ describe("Layout.View", function(){
         var result= callback(that, ajaxResponse);
         return result;
     };
-    syncResult= SUGAR.App.sugarFieldManager.getInstance().syncFields();
+    syncResult= SUGAR.App.sugarFieldManager.syncFields();
 
     var App = SUGAR.App.init({el: "#sidecar"});
     //Need a sample Bean
@@ -57,32 +54,136 @@ describe("Layout.View", function(){
     });
     this.collection = new App.BeanCollection([this.bean]);
     //Setup a context
-    App.context = {
-        module:"Contacts",
-        model: this.bean,
+    var context = SUGAR.App.context.getContext({
+        url: "someurl",
+        module: "Contacts",
+        model : this.bean,
         collection : this.collection
+    });
+
+    it('should get metadata from the manager', function(){
+        view = App.layout.get({
+            context : context,
+            view:"editView"
+        });
+        expect(view.meta).toEqual(fixtures.metadata.Contacts.views.editView);
+    });
+
+    it('should accept metadata overrides', function(){
+        var testMeta = {
+            "panels" : [{
+                "label" : "TEST",
+                "fields" : []
+            }]
+        }
+        view = App.layout.get({
+            context : context,
+            view:"editView",
+            meta: testMeta
+        });
+        expect(view.meta).toEqual(testMeta);
+    })
+
+    it('should retrieve the default context', function(){
+        view = App.layout.get({
+            view:"editView"
+        });
+        expect(view.context).not.toBe(null);
+        expect(view.context).toEqual(App.controller.context);
+    })
+
+
+    it('should render edit views', function(){
+        view = App.layout.get({
+            context : context,
+            view:"editView"
+        });
+        expect(view.meta).toBeDefined();
+        view.render();
+        html = view.$el.html();
+        expect(html).toContain('editView');
+        expect(view.$el).toContain('input=[value="Foo"]');
+    })
+
+    it('should render detail views', function(){
+        layout = App.layout.get({
+            context : context,
+            view:"detailView"
+        });
+        layout.render();
+        html = layout.$el.html();
+        expect(html).toContain('detailView');
+    })
+
+})
+
+describe("Layout.Layout", function(){
+    var syncResult, view, layout, html;
+    //Fake the cache
+    SUGAR.App.cache = SUGAR.App.cache || {
+        get:function (key) {
+            var parts = key.split(".");
+            if (parts.length == 1){
+                return fixtures[parts[0]]
+            }
+
+            return fixtures[parts[0]][parts[1]];
+        }
     };
+    //Fake template manager
+    SUGAR.App.template = SUGAR.App.template || {
+        get:function (key) {
+            if (fixtures.templates[key])
+                return Handlebars.compile(fixtures.templates[key]);
+        }
+    };
+    //Fake a field list
+    SUGAR.App.sugarFieldsSync = function (that, callback){
+        var ajaxResponse = sugarFieldsFixtures;
+        var result= callback(that, ajaxResponse);
+        return result;
+    };
+    syncResult= SUGAR.App.sugarFieldManager.syncFields();
 
+    var App = SUGAR.App.init({el: "#sidecar"});
+    //Need a sample Bean
+    this.bean = new App.Bean({
+        first_name: "Foo",
+        last_name: "Bar"
+    });
+    this.collection = new App.BeanCollection([this.bean]);
+    //Setup a context
+    var context = SUGAR.App.context.getContext({
+        url: "someurl",
+        module: "Contacts",
+        model : this.bean,
+        collection : this.collection
+    });
 
-    it('renders edit views', function(){
+    it('should get metadata from the manager', function(){
         layout = App.layout.get({
-            context : App.context,
-            view:"EditView"
+            context : context,
+            layout: "edit"
         });
-        layout.render();
-        html = layout.$el.html();
-        expect(html).toContain('EditView');
-        expect(layout.$el).toContain('input=[value="Foo"]');
-    })
+        expect(layout.meta).toEqual(fixtures.metadata.Contacts.layouts.edit);
+    });
 
-    it('renders detail views', function(){
+    it('should accept metadata overrides', function(){
+        var testMeta = {
+            //Default layout is a single view
+            "type" : "simple",
+            "components" : [
+                {view : "testComp"}
+            ]
+        }
         layout = App.layout.get({
-            context : App.context,
-            view:"DetailView"
+            context : context,
+            layout: "edit",
+            meta: testMeta
         });
-        layout.render();
-        html = layout.$el.html();
-        expect(html).toContain('DetailView');
-    })
+        expect(layout.meta).toEqual(testMeta);
+    });
+
+    //TODO: Need to defined tests for sublayout, complex layouts, and inline defined layouts
 
 })

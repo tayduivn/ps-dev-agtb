@@ -11,6 +11,10 @@
      */
     app.augment("dataManager", {
 
+        init: function() {
+            Backbone.sync = this.sync;
+        },
+
         /**
          * Resets class declarations.
          * @param module Optional module name. If not specified, resets models of all modules.
@@ -30,7 +34,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans;
+            var defaults, model, beans, vardefs, vardef, fields;
 
             this.reset(moduleName);
 
@@ -40,14 +44,24 @@
             beans = module["beans"];
 
             _.each(_.keys(beans), function(beanType) {
-                // TODO: Initialize defaults by processing vardefs
+                vardefs = beans[beanType]["vardefs"];
+                fields = vardefs.fields;
+
                 defaults = null;
+                _.each(_.values(fields), function(field) {
+                    if (!_.isUndefined(field["default"])) {
+                        if (defaults == null) {
+                            defaults = {};
+                        }
+                        defaults[field.name] = field["default"];
+                    }
+                });
 
                 model = app.Bean.extend({
                     module:   moduleName,
                     beanType: beanType,
-                    vardefs:  beans[beanType]["vardefs"],
-                    defaults: defaults
+                    defaults: defaults,
+                    fields:   fields
                 });
 
                 _models[moduleName].collections[beanType] = app.BeanCollection.extend({
@@ -57,7 +71,7 @@
                 });
 
                 _models[moduleName].beans[beanType] = model;
-            });
+            }, this);
         },
 
         /**
@@ -122,10 +136,10 @@
         sync: function(method, model, options) {
             // TODO: Implement
             // This method should sync beans with local storage (if it's enabled) and fall back to the REST API.
-            app.logger.trace('sync called:' + method);
+            app.logger.trace('sync:' + method);
         }
 
-    }, false);
+    }, true);
 
 })(SUGAR.App);
 
