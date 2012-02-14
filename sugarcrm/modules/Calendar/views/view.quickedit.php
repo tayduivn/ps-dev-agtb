@@ -34,34 +34,21 @@ class CalendarViewQuickEdit extends SugarView {
 	var $ev;
 	protected $editable;	
 	
-	public function preDisplay(){
-		global $beanFiles,$beanList;
-		$module = $_REQUEST['current_module'];
-		require_once($beanFiles[$beanList[$module]]);
-		$this->bean = new $beanList[$module]();
-		if(!empty($_REQUEST['record']))
-			$this->bean->retrieve($_REQUEST['record']);
-			
-		if(!$this->bean->ACLAccess('DetailView')) {
-			$json_arr = array(
-				'access' => 'no',
-			);
-			echo json_encode($json_arr);
-			die;	
-		}
-
-		if($this->bean->ACLAccess('Save')){
+	public function preDisplay()
+	{	
+		$this->bean = $this->view_object_map['currentBean'];
+		
+		if ($this->bean->ACLAccess('Save')) {
 			$this->editable = 1;
-		}else{
+		} else {
 			$this->editable = 0;
-		}		
-    
+		}
 	}
 	
 	public function display(){
 		require_once("modules/Calendar/CalendarUtils.php");
 		
-		$module = $_REQUEST['current_module'];
+		$module = $this->view_object_map['currentModule'];
 		
 		$_REQUEST['module'] = $module;
 				
