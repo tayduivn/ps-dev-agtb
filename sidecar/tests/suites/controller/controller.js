@@ -1,51 +1,56 @@
 describe("Controller", function() {
-
     var controller = SUGAR.App.controller,
         layoutManager = SUGAR.App.Layout,
         dataManager = SUGAR.App.dataManager;
-
-    afterEach(function() {
-        SUGAR.App.destroy();
-    });
 
     it("should exist within the framework", function() {
         expect(controller).toBeDefined();
     });
 
     describe("when a route is matched", function() {
-        var params = {
+        var params, dataMan, layoutMan, layoutMock, dataMock;
+
+        params = {
             module: "main",
             url: "test/url",
             id: "1234"
         };
 
         // Overload the data manager
-        var dataMan = {
+        dataMan = {
             fetchBean: function() {
+                console.log("Fetchign the bean");
                 return {};
             }
         };
 
         // Overload the layout manager
-        var layoutMan = {
+        layoutMan = {
             get: function() {
+                console.log("Laying hte manager");
                 return {};
             }
         };
-        var layoutMock = sinon.mock(layoutMan);
-        var dataMock = sinon.mock(dataMan);
-        layoutMock.expects("get").once();
-        dataMock.expects("fetchBean").once().withArgs(params.module, params.id);
 
-        SUGAR.App.Layout = layoutMan;
-        SUGAR.App.dataManager = dataMan;
+        beforeEach(function() {
+            layoutMock = sinon.mock(layoutMan);
+            dataMock = sinon.mock(dataMan);
 
-        controller.loadView(params);
+            layoutMock.expects("get").once();
+            dataMock.expects("fetchBean").once().withArgs(params.module, params.id);
+
+            SUGAR.App.Layout = layoutMan;
+            SUGAR.App.dataManager = dataMan;
+
+            controller.loadView(params);
+        });
 
         it("should fetch the needed data from the data manager", function() {
             expect(controller.data).toBeTruthy();
-            expect(controller.data).not.toEqual(_.empty(controller.data));
-            expect(dataMock.verity()).toBeTruthy();
+            expect(controller.data).not.toEqual(_.isEmpty(controller.data));
+            console.log(dataMock);
+            console.log(controller);
+            expect(dataMock.verify()).toBeTruthy();
         });
 
         it("should set the context", function() {
