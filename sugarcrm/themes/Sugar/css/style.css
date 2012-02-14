@@ -3605,102 +3605,94 @@ a:hover
 }
 button, input[type=submit], input[type=reset], input[type=button], .button, .buttons .button, .yui-button button
 {
-	border: 1px solid #ccc;
-	color: #666;
-	background-image: -moz-linear-gradient(center top, 
-	#fefefe 0%,
-	#f7f7f7 50%,
-	#f3f3f3 50%,
-	#e6e6e6 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #fefefe),
-    color-stop(.50, #f7f7f7),
-    color-stop(.50, #f3f3f3),
-    color-stop(1, #e6e6e6)
-   );
-   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fefefe', endColorstr='#e6e6e6');
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	-webkit-border-radius: 2px;
-	padding: 0px 8px 3px 8px;
+	color: #000;
+	-webkit-border-radius: 1px; 
+	-moz-border-radius: 1px; 
+	border-radius: 1px; 
+		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#f1f1f1 10%,
+		#efefef 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.10, #f1f1f1),
+	    color-stop(1, #efefef)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
+	border: 1px solid #aaaaaa;
+	padding: 2px 8px 2px 8px;
 	padding: 2px 8px 1px 8px\9; /* ie hack */
-	text-shadow: 1px 1px #fff;
+	font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	font-size: 14px;
 }
 
 .button.primary,.yui-dialog .ft span.default button  {
-	background-image: -moz-linear-gradient(center top, 
-	#5e91be 0%,
-	#40729f 50%,
-	#255e90 50%,
-	#3d74a5 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #5e91be),
-    color-stop(.50, #40729f),
-    color-stop(.50, #255e90),
-    color-stop(1, #3d74a5)
-   );
-   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5e91be', endColorstr='#3d74a5');
-   
-	border: 1px solid #326a9c;
-	color: #fff;
-	text-shadow: -1px -1px #254f74;
+   		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#255e90 2%,
+		#3d74a5 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.02, #255e90),
+	    color-stop(1, #3d74a5)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
+	   	border-color: #000;
+		color: #fff;
 }
 
 button:hover, input[type=submit]:hover, input[type=reset]:hover, input[type=button]:hover,
 button:focus, input[type=submit]:focus, input[type=reset]:focus, input[type=button]:focus,
 button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]
 {
-	background-image: -moz-linear-gradient(center top, 
-	#5e91be 0%,
-	#40729f 50%,
-	#255e90 50%,
-	#3d74a5 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #5e91be),
-    color-stop(.50, #40729f),
-    color-stop(.50, #255e90),
-    color-stop(1, #3d74a5)
-   );
-   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5e91be', endColorstr='#3d74a5');
-   
-	border-color: #326a9c;
-	color: #fff;
-	text-shadow: 0.1em 0.1em #666;
+   		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#255e90 2%,
+		#3d74a5 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.02, #255e90),
+	    color-stop(1, #3d74a5)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
+		border-color: #000;
+		color: #fff;
+
 }
 
 .button.primary:hover,.button.primary:focus ,button.primary[selected],.yui-dialog .ft span.default button:hover{
-	border: 1px solid #326a9c;
-	text-shadow: -1px -1px #3a79b2;
-	background-image: -moz-linear-gradient(center top, 
-	#5e91be 0%,
-	#40729f 50%,
-	#255e90 50%,
-	#3d74a5 100%
-	);
-	background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0, #5e91be),
-    color-stop(.50, #40729f),
-    color-stop(.50, #255e90),
-    color-stop(1, #3d74a5)
-   );
-   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5e91be', endColorstr='#3d74a5');
-   
-	color: #fff;
+   		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#255e90 2%,
+		#3d74a5 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.02, #255e90),
+	    color-stop(1, #3d74a5)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
+	   	border-color: #000;
+		color: #fff;
 }
 
 button[disabled], input[type=submit][disabled], input[type=reset][disabled], input[type=button][disabled]
@@ -6245,6 +6237,35 @@ ul.clickMenu {
 	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
 	   border: 1px solid #aaaaaa;
 	   display: inline-block;
+	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+}
+
+ul.clickMenu:hover {
+   		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#255e90 2%,
+		#3d74a5 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.02, #255e90),
+	    color-stop(1, #3d74a5)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5');
+		border-color: #000;
+		color: #fff;	
+}
+
+ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
+	color: #fff;	
+}
+
+ul.clickMenu:hover > li > span {
+	background-position: 6px 3px;
 }
 ul.clickMenu li {
 	float: left;
@@ -6274,7 +6295,7 @@ ul.clickMenu li > span { /*--Drop down trigger styles--*/
 	width: 17px;
 	height: 22px;
 	float: left;
-	background: url(../../../../index.php?entryPoint=getImage&imageName=MoreDetail.png) no-repeat center center;
+	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 6px -25px;
 	cursor: pointer;
 }
 
@@ -6283,7 +6304,9 @@ ul.clickMenu li > span.ab { /*--Drop down trigger styles--*/
     margin-left: 10px;
     padding-left: 5px;
 }
-ul.clickMenu li span.subhover {cursor: pointer;} /*--Hover effect for trigger--*/
+ul.clickMenu li span.subhover {
+	cursor: pointer;
+	} /*--Hover effect for trigger--*/
 ul.clickMenu li ul.subnav {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
@@ -6333,9 +6356,13 @@ ul.clickMenu.subpanel.records li ul.subnav li a span {
 
 ul.clickMenu.button li > span {
 	width: auto;
-	background-position: center right;	
+	background-position: right -25px;	
 	padding: 3px 15px 3px 10px !important;
 	height: auto;
+}
+
+ul.clickMenu.button:hover li > span {
+	background-position: right 3px;
 }
 
 ul.clickMenu.button li > span a {
@@ -6416,6 +6443,7 @@ ul#globalLinks.clickMenu {
 	background: none;
 	border: 0px none;
 	padding-right: 0px;
+	font-family: Arial;
 }
 
 ul#globalLinks.clickMenu li > span {
@@ -6485,7 +6513,7 @@ ul#detailViewActions.clickMenu {
 	width: 17px;
 	height: 22px;
 	float: left;
-	background: url(../../../../index.php?entryPoint=getImage&imageName=MoreDetail.png) no-repeat center center;
+	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 6px -25px;
 	opacity: .5;
 	}
 
@@ -6514,6 +6542,7 @@ ul#detailViewActions.clickMenu {
 	background: none;
 	border: 0px none;
 	padding-right: 0px;
+	font-family: Arial;
 }
 
 
@@ -6523,7 +6552,7 @@ ul#detailViewActions.clickMenu {
 
 }
 #quickCreate ul.clickMenu li > span {
-	background-image: url(../../../../index.php?entryPoint=getImage&imageName=quick-create.png);
+	background: url(../../../../index.php?entryPoint=getImage&imageName=quick-create.png) no-repeat center center;
 	height: 43px;
 	width: 40px;
 }
