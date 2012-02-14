@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+ if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,37 +22,41 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+chdir(dirname(__FILE__));
 
+require_once('include/entryPoint.php');
 
-
-require_once('modules/Schedulers/Job.php');
-
-$header_text = '';
-global $mod_strings;
-global $app_list_strings;
-global $app_strings;
-global $current_user;
-
-$focus = new Job();
-$focus->retrieve();
-$focus->get_list_view_data();
-
-//_pp($_REQUEST);
-$where = '';
-$limit = 20;
-$varName = $focus->object_name;
-$allowByOverride = true;
-if(!empty($_REQUEST['Schedulers_'.$varName.'_ORDER_BY'])) {
-	$orderBy = $_REQUEST['Schedulers_'.$varName.'_ORDER_BY'];
-} else {
-	$orderBy = $focus->order_by;
+$sapi_type = php_sapi_name();
+// Allow only CLI invocation
+if (substr($sapi_type, 0, 3) != 'cli') {
+    sugar_die("run_job.php is CLI only.");
 }
 
-$listView = new ListView();
-$listView->initNewXTemplate('modules/Schedulers/Scheduled.html', $mod_strings);
-$listView->setHeaderTitle($mod_strings['LBL_LIST_TITLE']);
-$listView->setQuery($where, $limit, $orderBy, $varName, $allowByOverride);
-$listView->xTemplateAssign("REMOVE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']));
-$listView->processListView($focus, "main", "JOB");
+if($argc < 3 || empty($argv[1]) || empty($argv[2])) {
+    sugar_die("run_job.php requires job ID and client ID as parameters.");
+}
 
-?>
+if(empty($current_language)) {
+	$current_language = $sugar_config['default_language'];
+}
+
+$app_list_strings = return_app_list_strings_language($current_language);
+$app_strings = return_application_language($current_language);
+
+$current_user = new User();
+$current_user->getSystemUser();
+
+$GLOBALS['log']->debug('Starting job {$argv[1]} execution as ${argv[2]}');
+require_once 'modules/SchedulersJobs/SchedulersJob.php';
+$result = SchedulersJob::runJobId($argv[1], $argv[2]);
+
+sugar_cleanup(false);
+// some jobs have annoying habit of calling sugar_cleanup(), and it can be called only once
+// but job results can be written to DB after job is finished, so we have to disconnect here again
+// just in case we couldn't call cleanup
+if(class_exists('DBManagerFactory')) {
+	$db = DBManagerFactory::getInstance();
+	$db->disconnect();
+}
+
+exit($result?0:1);

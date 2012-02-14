@@ -821,6 +821,77 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         return array('results' => $emails, 'count' => count($emails), 'message' => '');
     }
     //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Get next job from the queue
+     * @param string $session
+     * @param string $clientid
+     */
+    public function job_queue_next($session, $clientid)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->job_queue_next');
+        $error = new SoapError();
+        if (! self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', 'read', 'no_access',  $error)) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_next denied.');
+            return;
+        }
+        require_once 'include/SugarQueue/SugarJobQueue.php';
+        $queue = new SugarJobQueue();
+        $job = $queue->nextJob($clientid);
+        if(!empty($job)) {
+            $jobid = $job->id;
+        } else {
+            $jobid = null;
+        }
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_next');
+        return array("results" => $jobid);
+    }
+
+    /**
+     * Run cleanup and schedule
+     * @param string $session
+     * @param string $clientid
+     */
+    public function job_queue_cycle($session, $clientid)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->job_queue_cycle');
+        $error = new SoapError();
+        if (! self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', 'read', 'no_access',  $error)) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_cycle denied.');
+            return;
+        }
+        require_once 'include/SugarQueue/SugarJobQueue.php';
+        $queue = new SugarJobQueue();
+        $queue->cleanup();
+        $queue->runSchedulers();
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_cycle');
+        return array("results" => "ok");
+    }
+
+    /**
+     * Run job from queue
+     * @param string $session
+     * @param string $jobid
+     * @param string $clientid
+     */
+    public function job_queue_run($session, $jobid, $clientid)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->job_queue_run');
+        $error = new SoapError();
+        if (! self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', 'read', 'no_access',  $error)) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_run denied.');
+            return;
+        }
+        $GLOBALS['log']->debug('Starting job $jobid execution as $clientid');
+        require_once 'modules/SchedulersJobs/SchedulersJob.php';
+        $result = SchedulersJob::runJobId($jobid, $clientid);
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->job_queue_run');
+        if($result === true) {
+            return array("results" => true);
+        } else {
+            return array("results" => false, "message" => $result);
+        }
+    }
 }
 
 SugarWebServiceImplv4::$helperObject = new SugarWebServiceUtilv4();

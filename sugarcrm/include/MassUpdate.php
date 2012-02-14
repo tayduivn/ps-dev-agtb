@@ -595,9 +595,9 @@ EOJS;
 			if(!empty($vardef['function']['include'])){
 				require_once($vardef['function']['include']);
 			}
-			return $function($focus, $vardef['name'], '', 'MassUpdate');
+			return call_user_func($function, $focus, $vardef['name'], '', 'MassUpdate');
 		}else{
-			return $function($focus, $vardef['name'], '', 'MassUpdate');
+			return call_user_func($function, $focus, $vardef['name'], '', 'MassUpdate');
 		}
 	}
 
@@ -1286,7 +1286,7 @@ EOQ;
             }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
                 require('modules/'.$module.'/metadata/metafiles.php');
             }
-            
+
             $searchFields = $this->getSearchFields($module);
             $searchdefs = $this->getSearchDefs($module);
 

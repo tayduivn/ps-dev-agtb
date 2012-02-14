@@ -362,11 +362,11 @@ require_once('include/EditView/EditView2.php');
 						if(!empty($this->fieldDefs[$fvName]['function']['include'])){
 								require_once($this->fieldDefs[$fvName]['function']['include']);
 						}
-						$value = $function_name($this->seed, $name, $value, $this->view);
+						$value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						$this->fieldDefs[$fvName]['value'] = $value;
 					}else{
 						if(!isset($function['params']) || !is_array($function['params'])) {
-							$this->fieldDefs[$fvName]['options'] = $function_name($this->seed, $name, $value, $this->view);
+							$this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						} else {
 							$this->fieldDefs[$fvName]['options'] = call_user_func_array($function_name, $function['params']);
 						}
@@ -455,21 +455,21 @@ require_once('include/EditView/EditView2.php');
             	$fromMergeRecords = isset($array['merge_module']);
 
                 foreach($this->searchFields as $name => $params) {
-					$long_name = $name.'_'.$SearchName;           
+					$long_name = $name.'_'.$SearchName;
 					/*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
                 	if(isset($array[$long_name]) && !$this->isEmptyDropdownField($long_name, $array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
-					{ 				
+					{
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$long_name];
                         }
-                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic        	
+                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic
                     	$this->searchFields[$name]['value'] = $array[$name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$name];
                         }
                     }
-                    
+
                     if(!empty($params['enable_range_search']) && isset($this->searchFields[$name]['value']))
 					{
 						if(preg_match('/^range_(.*?)$/', $long_name, $match) && isset($array[$match[1].'_range_choice']))
@@ -484,7 +484,7 @@ require_once('include/EditView/EditView2.php');
                         // FG - bug 45287 - to db conversion is ok, but don't adjust timezone (not now), otherwise you'll jump to the day before (if at GMT-xx)
 						$date_value = $timedate->to_db_date($this->searchFields[$name]['value'], false);
 						$this->searchFields[$name]['value'] = $date_value == '' ? $this->searchFields[$name]['value'] : $date_value;
-					}                    
+					}
                 }
 
                 if((empty($array['massupdate']) || $array['massupdate'] == 'false') && $addAllBeanFields) {
@@ -492,23 +492,23 @@ require_once('include/EditView/EditView2.php');
                     	if($key != 'assigned_user_name' && $key != 'modified_by_name')
                     	{
                     		$long_name = $key.'_'.$SearchName;
-                    		
-	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys) && !$this->isEmptyDropdownField($long_name, $array[$long_name])) 
-	                    	{  	                    		
-	                    		
+
+	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys) && !$this->isEmptyDropdownField($long_name, $array[$long_name]))
+	                    	{
+
 	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
-	                        	
+
                                 if (!empty($params['type']) && $params['type'] == 'parent'
                                     && !empty($params['type_name']) && !empty($this->searchFields[$key]['value']))
                                 {
                                 	    require_once('include/SugarFields/SugarFieldHandler.php');
 										$sfh = new SugarFieldHandler();
                    						$sf = $sfh->getSugarField('Parent');
-                                	
+
                                         $this->searchFields[$params['type_name']] = array('query_type' => 'default',
                                                                                           'value'      => $sf->getSearchInput($params['type_name'], $array));
                                 }
-                                
+
                                 if(empty($this->fieldDefs[$long_name]['value'])) {
                                     $this->fieldDefs[$long_name]['value'] =  $array[$long_name];
                                 }
@@ -539,7 +539,7 @@ require_once('include/EditView/EditView2.php');
                    $this->searchFields[$fieldName]['value'] = trim($field['value']);
                }
            }
-       } 
+       }
 
     }
 
@@ -1126,14 +1126,14 @@ require_once('include/EditView/EditView2.php');
          return $where_clauses;
      }
 
-    
-    
+
+
     /**
      * isEmptyDropdownField
-     * 
+     *
      * This function checks to see if a blank dropdown field was supplied.  This scenario will occur where
      * a dropdown select is in single selection mode
-     * 
+     *
      * @param $value Mixed dropdown value
      */
     private function isEmptyDropdownField($name='', $value=array())
@@ -1141,6 +1141,6 @@ require_once('include/EditView/EditView2.php');
     	$result = is_array($value) && isset($value[0]) && $value[0] == '';
     	$GLOBALS['log']->debug("Found empty value for {$name} dropdown search key");
     	return $result;
-    }    
+    }
  }
 
