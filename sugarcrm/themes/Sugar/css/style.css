@@ -6851,6 +6851,8 @@ span.unchecked {
 
 .ftsModuleFilterSpan{
     padding-top: 10px;
+    padding-right: 10px;
+    min-width: 110px;
 }
 
 td #moduleListTD
