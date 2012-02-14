@@ -34,8 +34,6 @@ global $sugar_config;
 global $app_list_strings;
 global $beanFiles;
 
-require_once('modules/Reports/registered_widgets.php');
-
 $local_mod_strings = return_module_language($sugar_config['default_language'], 'Reports');
 $default_report_type = 'Quotes';
 
