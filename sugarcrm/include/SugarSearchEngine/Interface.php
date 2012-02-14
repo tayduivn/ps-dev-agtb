@@ -124,6 +124,13 @@ interface SugarSearchEngineResultSet extends Iterator, Countable
      */
     public function getTotalTime();
 
+    /**
+     * Return facets associated with this search.
+     *
+     * @return array
+     */
+    public function getFacets();
+
 }
 
 /**

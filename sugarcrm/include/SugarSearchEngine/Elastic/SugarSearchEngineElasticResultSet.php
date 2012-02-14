@@ -54,6 +54,15 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
     }
 
     /**
+     * Return facets associated with this search.
+     *
+     * @return array
+     */
+    public function getFacets()
+    {
+        return $this->elasticaResultSet->getFacets();
+    }
+    /**
      * Get the total amount of time the search took to complete.
      *
      * @return int
