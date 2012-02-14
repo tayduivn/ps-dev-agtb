@@ -12,7 +12,12 @@ abstract class RestObject implements IRestObject {
         $this->requestData["raw_post_data"] = $raw_post = file_get_contents("php://input");
 
         if (array_key_exists("HTTP_ACCEPT_ENCODING", $_SERVER)) {
-            $this->requestData["encoding_type"] = explode(",", $_SERVER["HTTP_ACCEPT_ENCODING"]);
+            $tmp = explode(",", $_SERVER["HTTP_ACCEPT_ENCODING"]);
+            if (count($tmp) > 0 && !empty($tmp[0])) {
+                $this->requestData["encoding_type"] = $tmp[0];
+            } else {
+                $this->requestData["encoding_type"] = null;
+            }
         } else {
             $this->requestData["encoding_type"] = null;
         }
@@ -31,7 +36,19 @@ abstract class RestObject implements IRestObject {
     }
 
     protected function sendJSONResponse($payload) {
+//        print "TYPE:: {$this->requestData["encoding_type"]}"; die;
 
+        // see rfc rfc4627 //
+        // see http://en.wikipedia.org/wiki/Internet_media_type //
+        header("Content-type: application/json");
+
+        // should be something like: gzip, compress, etc... //
+        if ($this->requestData["encoding_type"] != null) {
+            header("Content-Encoding: {$this->requestData["encoding_type"]}");
+        }
+
+        $payload = gzencode($payload, 9);
+        echo $payload;
     }
 
     protected function processResuestData() {

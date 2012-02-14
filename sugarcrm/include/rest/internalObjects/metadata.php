@@ -64,16 +64,15 @@ class MetaData extends RestObject implements IRestObject {
         $data = $meta->getData();
         $json = json_encode($data);
         $err = json_last_error();
+
         if ($err != JSON_ERROR_NONE) {
             $err = RestUtils::jsonErrorToStr($err);
             $e = new RestError();
             $e->ReportError(415, "\n\nJSON ERROR: '{$e}'\n'");
             exit;
         } else {
-            $reqData = $this->getRequestData();
-            $reqData['']
+            $this->sendJSONResponse($json);
         }
     }
-
 
 }

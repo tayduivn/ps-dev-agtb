@@ -30,6 +30,6 @@
 interface IRestObject {
 
     function execute();
-    function sendResponse();
+
 }
 
