@@ -6274,7 +6274,7 @@ ul.clickMenu li {
 	list-style: none;
 	position: relative; /*--Declare X and Y axis base--*/
 }
-ul.clickMenu li a{
+ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
 	display: block;
 	text-decoration: none;
 	float: left;
@@ -6282,6 +6282,9 @@ ul.clickMenu li a{
 	padding: 3px 0px 3px 10px !important;
 	color: #000;
 	font-size: 14px;
+}
+.list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
+	color: #fff;
 }
 
 ul.clickMenu li.single a{ 
@@ -6293,7 +6296,7 @@ text-decoration: none !important;
 }
 ul.clickMenu li > span { /*--Drop down trigger styles--*/
 	width: 17px;
-	height: 22px;
+	height: 23px;
 	float: left;
 	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 6px -25px;
 	cursor: pointer;
@@ -6315,7 +6318,7 @@ ul.clickMenu li ul.subnav {
 	margin: 0;
 	display: none;
 	float: left;
-	/*width: 170px;*/
+	width: 100%;
 	border: 1px solid #ccc;
 	box-shadow: #999 0px 5px 10px;
 	-moz-box-shadow: #999 0px 5px 10px;
@@ -6371,6 +6374,10 @@ ul.clickMenu.button li > span a {
 
 ul.clickMenu.button {
 	padding-right: 5px;	
+}
+
+ul.clickMenu.button li ul.subnav {
+	width: auto;	
 }
 
 
@@ -6568,6 +6575,10 @@ ul#detailViewActions.clickMenu {
 	left: auto;
 	padding: 10px 0px;
 	border: 1px solid #999;
+}
+
+#quickCreate ul.clickMenu li ul.subnav {
+	width: auto;		
 }
 
 #quickCreate ul.clickMenu li ul.subnav li a, #globalLinksModule ul.clickMenu li ul.subnav li a {
