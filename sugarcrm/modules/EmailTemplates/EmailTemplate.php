@@ -422,14 +422,7 @@ class EmailTemplate extends SugarBean {
 		$repl_arr = array();
 
 		// cn: bug 9277 - create a replace array with empty strings to blank-out invalid vars
-		if(!class_exists('Account'))
-		if(!class_exists('Contact'))
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if(!class_exists('Leads'))
-		if(!class_exists('Prospects'))
-		//END SUGARCRM flav!=sales ONLY
 		
-		require_once('modules/Accounts/Account.php');
 		$acct = new Account();
 		$contact = new Contact();
 		//BEGIN SUGARCRM flav!=sales ONLY
