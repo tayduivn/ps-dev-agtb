@@ -11,10 +11,6 @@
      */
     app.augment("dataManager", {
 
-        init: function() {
-            Backbone.sync = this.sync;
-        },
-
         /**
          * Resets class declarations.
          * @param module Optional module name. If not specified, resets models of all modules.
@@ -34,7 +30,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans, vardefs, vardef, fields;
+            var defaults, model, beans, vardefs, vardef, fields, relations;
 
             this.reset(moduleName);
 
@@ -46,6 +42,7 @@
             _.each(_.keys(beans), function(beanType) {
                 vardefs = beans[beanType]["vardefs"];
                 fields = vardefs.fields;
+                relationships = beans[beanType]["relationships"];
 
                 defaults = null;
                 _.each(_.values(fields), function(field) {
@@ -58,10 +55,11 @@
                 });
 
                 model = app.Bean.extend({
-                    module:   moduleName,
-                    beanType: beanType,
-                    defaults: defaults,
-                    fields:   fields
+                    module:        moduleName,
+                    beanType:      beanType,
+                    defaults:      defaults,
+                    fields:        fields,
+                    relationships: relationships
                 });
 
                 _models[moduleName].collections[beanType] = app.BeanCollection.extend({
@@ -136,10 +134,13 @@
         sync: function(method, model, options) {
             // TODO: Implement
             // This method should sync beans with local storage (if it's enabled) and fall back to the REST API.
-            app.logger.trace('sync:' + method);
+
+            app.logger.trace('sync-' + method + ": " + model);
         }
 
-    }, true);
+    }, false);
+
+    Backbone.sync = app.dataManager.sync;
 
 })(SUGAR.App);
 

@@ -10,6 +10,77 @@
             }
         }
     },
+    "Accounts":    {
+        "primary_bean": "Account",
+        "beans":        {
+            "Account":    {
+                "vardefs": {"fields":{}}
+            }
+        }
+    },
+    "Calls":    {
+        "primary_bean": "Call",
+        "beans":        {
+            "Call":    {
+                "vardefs": {"fields":{}}
+            }
+        }
+    },
+    "Opportunities": {
+        "primary_bean": "Opportunity",
+        "beans":        {
+            "Opportunity": {
+                "vardefs":       {
+                    "table":  "opportunities",
+                    "fields": {
+                        "contacts": {
+                            "name": "contacts",
+                            "type": "link",
+                            "relationship": "opportunities_contacts"
+                        },
+                        "accounts":  {
+                            "name": "accounts",
+                            "type": "link",
+                            "relationship": "accounts_opportunities"
+                        },
+                        "calls":  {
+                            "name": "calls",
+                            "type": "link",
+                            "relationship": "opportunity_calls"
+                        }
+
+                    }
+                },
+                "relationships": {
+                    "opportunities_contacts": {
+                        "lhs_module": "Opportunities",
+                        "lhs_link": "contacts",
+                        "rhs_module": "Contacts",
+                        "rhs_link": "opportunities",
+                        "relationship_type": "many-to-many"
+                    },
+                    "accounts_opportunities": {
+                        "lhs_module": "Accounts",
+                        "lhs_table": "accounts",
+                        "lhs_link": "opportunities",
+                        "rhs_module": "Opportunities",
+                        "rhs_table": "opportunities",
+                        "rhs_link": "opportunities",
+                        "relationship_type": "one-to-many"
+                    },
+                    "opportunity_calls": {
+                        "lhs_module": "Opportunities",
+                        "lhs_link": "calls",
+                        "rhs_module": "Calls",
+                        "rhs_link": "opportunities",
+                        "relationship_type": "one-to-many"
+                    }
+
+                }
+            }
+        }
+    },
+
     "Contacts": {
         "primary_bean": "Contact",
         "beans":        {

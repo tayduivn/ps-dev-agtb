@@ -6,13 +6,36 @@
      * - module: module name
      * - beanType: bean type
      * - fields: fields metadata
+     * - relationships: relationships metadata
      */
     app.augment("Bean", Backbone.Model.extend({
+
+        fetchRelated: function(link, options) {
+            var relations = app.Relationships.buildCollection(link, this);
+            relations.fetch(options);
+            return relations;
+        },
+
+        addRelated: function(link, bean, options, data) {
+            var relation = app.Relationships.buildRelation(link, this, bean, data);
+            relation.save(options);
+            return relation;
+        },
+
+        removeRelated: function(link, bean, options) {
+            var relation = app.Relationships.buildRelation(link, this, bean);
+            relation.destroy(options);
+            return relation;
+        },
+
+        setRelated: function(attribute, bean, options) {
+            // TODO: Deal with fields of type relate
+        },
 
         /**
         * See Backbone.Model.validate documentation for details.
         * @param attrs
-        * @returns errors hash if the bean is invalid or nothing otherwise.
+        * @return errors hash if the bean is invalid or nothing otherwise.
         */
         validate: function(attrs) {
             var errors = {}, self = this;
@@ -45,6 +68,10 @@
 
             // "validate" method should not return anything in case there are no validation errors
             if (!_.isEmpty(errors)) return errors;
+        },
+
+        toString: function() {
+            return this.module + "/" + this.beanType + "-" + this.id;
         }
 
     }), false);
