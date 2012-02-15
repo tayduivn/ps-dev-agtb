@@ -449,6 +449,7 @@ $adminOnlyList = array(
                     //END SUGARCRM flav=pro ONLY
                     'UpgradeWizard' => array('all' => 1),
                     'Studio' => array('all' => 1),
+                    'Schedulers' => array('all' => 1),
                     );
 
 //BEGIN SUGARCRM flav=ent ONLY

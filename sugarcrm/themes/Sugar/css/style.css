@@ -6851,6 +6851,8 @@ span.unchecked {
 
 .ftsModuleFilterSpan{
     padding-top: 10px;
+    padding-right: 10px;
+    min-width: 110px;
 }
 
 td #moduleListTD
@@ -6862,4 +6864,14 @@ td #moduleListTD
 }
 #ftsSearchBarContainer {
     width:30em !important;
+}
+
+#sugar_spot_search_div .fts_spot_ul
+{
+    border-left: 1px solid #ccc;
+}
+
+#sugar_spot_search_div .spot_fts_summary
+{
+    color: #444
 }

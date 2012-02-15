@@ -25,7 +25,6 @@
 
 require_once 'include/SugarSearchEngine/SugarSearchEngineFactory.php';
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 
 
 class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
@@ -49,52 +48,6 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
             array('Elastic','SugarSearchEngineElastic'),
             //Fallback to default.
             array('BadClassName','SugarSearchEngine')
-        );
-    }
-
-
-    public function testGetFtsSearchFields()
-    {
-        $instance = new SugarSearchEngineTestStub();
-        $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule('Accounts');
-        $this->assertContains('name', array_keys($ftsFields));
-        $this->assertContains('email_addresses', array_keys($ftsFields));
-
-        //Pass in a sugar bean for the test
-        $account = BeanFactory::getBean('Accounts', null);
-        $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($account);
-        $this->assertContains('name', array_keys($ftsFields));
-        $this->assertContains('email_addresses', array_keys($ftsFields));
-    }
-
-
-    public function testGetFtsSearchFieldsForAllModules()
-    {
-        $instance = new SugarSearchEngineTestStub();
-        $ftsFieldsByModule = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
-        $this->assertContains('Contacts', array_keys($ftsFieldsByModule));
-        $this->assertContains('first_name', array_keys($ftsFieldsByModule['Contacts']));
-    }
-
-
-    /**
-     * @dataProvider isModuleEnabledProvider
-     */
-    public function testIsModuleFtsEnabled($module,$actualResult)
-    {
-        $instance = new SugarSearchEngineTestStub();
-        $expected = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
-        $this->assertEquals($expected, $actualResult);
-    }
-
-    public function isModuleEnabledProvider()
-    {
-        return array(
-            array('Accounts', true),
-            array('Contacts', true),
-            array('BadModule', true),
-            array('Notifications', true),
-            //TODO: Add disabled modules
         );
     }
 
