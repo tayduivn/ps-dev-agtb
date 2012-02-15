@@ -385,7 +385,6 @@ class SchedulersJob extends Basic
         // Reset the session
         if(session_id()) {
             session_write_close();
-            session_destroy();
         }
         if(!headers_sent()) {
     		session_start();
