@@ -63,7 +63,7 @@ class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCas
     {
         $_REQUEST['q'] = 'test';
         $text = $this->_elasticResult->getHighlightedHitText(80, 1, '<b>', '</b>');
-;       $this->assertEquals('<b>test</b>2 account', $text['Name'], 'Incorrect highlighted text');
+;       $this->assertEquals('<b>test</b>2 account', $text['Name'], 'Partial match: Incorrect highlighted text');
 
         $_REQUEST['q'] = 'test2';
         $text = $this->_elasticResult->getHighlightedHitText(80, 1, '<b>', '</b>');
