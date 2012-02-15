@@ -1001,7 +1001,7 @@
 	
 	CAL.fill_repeat_data = function (){
 	
-		if(CAL.enable_repeat && CAL.get("current_module").value == "Meetings"){		
+		if (CAL.enable_repeat && (CAL.get("current_module").value == "Meetings" || CAL.get("current_module").value == "Calls")) {		
 			if(repeat_type = document.forms['CalendarRepeatForm'].repeat_type.value){							
 				document.forms['CalendarEditView'].repeat_type.value = repeat_type;
 				document.forms['CalendarEditView'].repeat_interval.value = document.forms['CalendarRepeatForm'].repeat_interval.value;
@@ -1082,7 +1082,7 @@
 		if(!CAL.enable_repeat)
 			return;		
 		CAL.reset_repeat_form();
-		if(module_name == "Meetings"){
+		if(module_name == "Meetings" || module_name == "Calls"){
 			CAL.get("tab_repeat").style.display = "";
 		}else{
 			CAL.get("tab_repeat").style.display = "none";

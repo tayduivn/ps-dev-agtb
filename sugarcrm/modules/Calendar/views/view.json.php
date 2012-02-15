@@ -27,47 +27,21 @@
  ********************************************************************************/
 require_once('include/MVC/View/SugarView.php');
 
-class CalendarViewRemove extends SugarView {
+class CalendarViewJson extends SugarView 
+{
 
-	function CalendarViewRemove(){
- 		parent::SugarView();
-	}
-	
-	function process(){
-		$this->display();
-	}
-	
-	function display(){
-		require_once("modules/Calendar/CalendarUtils.php");
-
-		global $beanFiles,$beanList;
-		$module = $_REQUEST['current_module'];
-		require_once($beanFiles[$beanList[$module]]);
-		$bean = new $beanList[$module]();
-		$bean->retrieve($_REQUEST['record']);
-
-		if(!$bean->ACLAccess('delete')){
-			die;	
-		}
-		
-		if($module == "Meetings"){
-			if($_REQUEST['remove_all_recurrences']){
-				CalendarUtils::markRepeatDeleted($bean);
-			}else{
-				CalendarUtils::checkAndChangeRepeatChildren($bean);
-			}			
-		}
-
-		$bean->mark_deleted($_REQUEST['record']);
-
-		$json_arr = array(
-			'access' => 'yes',
-		);
-
-		ob_clean();
-		echo json_encode($json_arr);
-	}	
-
+    public function display()
+    {    
+        if (!isset($this->view_object_map['jsonData']) || !is_array($this->view_object_map['jsonData'])) {
+            $GLOBALS['log']->fatal("JSON data has not been passed from Calendar controller");
+            sugar_cleanup(true);
+        }
+        
+        $jsonData = $this->view_object_map['jsonData'];
+        
+        ob_clean();
+        echo json_encode($jsonData);
+    }
 }
 
 ?>
