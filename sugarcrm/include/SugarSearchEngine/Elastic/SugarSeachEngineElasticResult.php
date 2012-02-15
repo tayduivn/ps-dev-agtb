@@ -74,7 +74,7 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
      *
      * @return array of key value pairs
      */
-    public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
+    public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>', $partialMatch = true)
     {
         $ret = array();
         $hit = $this->elasticaResult->getHit();
@@ -90,7 +90,7 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
         if (isset($hit['_source']) && is_array($hit['_source'])) {
             $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
             $highlighter->setModule($this->getModule());
-            $ret = $highlighter->getHighlightedHitText($hit['_source'], $q);
+            $ret = $highlighter->getHighlightedHitText($hit['_source'], $q, $partialMatch);
             $ret = array_slice($ret,0, $maxHits);
         }
 
