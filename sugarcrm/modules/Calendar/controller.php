@@ -101,7 +101,7 @@ class CalendarController extends SugarController
 
         if ($record = $bean->id) {    
                         
-            if ($module == "Meetings") {
+            if ($module == "Meetings" || $module == "Calls") {
                 if (!empty($_REQUEST['edit_all_recurrences'])) {
                     CalendarUtils::markRepeatDeleted($bean);
                 }
@@ -192,7 +192,7 @@ class CalendarController extends SugarController
             return;
         }
                 
-        if ($this->currentBean->module_dir == "Meetings") {
+        if ($this->currentBean->module_dir == "Meetings" || $this->currentBean->module_dir == "Calls") {
             if (!empty($_REQUEST['remove_all_recurrences']) && $_REQUEST['remove_all_recurrences']) {
                 CalendarUtils::markRepeatDeleted($this->currentBean);
             } else {
