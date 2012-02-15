@@ -98,5 +98,25 @@ describe("Relationships", function() {
 
     });
 
+    it("should be able to set an attribute of type 'relate'", function() {
+        dm.declareModels(metadata);
+
+        var opportunity = dm.createBean("Opportunities", {
+            account_name: "Account 1",
+            account_id: "account-1"
+        }, undefined);
+
+        opportunity.id = "opp-1";
+
+        var account = dm.createBean("Accounts", { name: 'Account-2'});
+        account.id = "account-2";
+
+        var mock = sinon.mock(Backbone);
+        mock.expects("sync").once().withArgs("update");
+        opportunity.setRelated("account_name", account);
+        mock.verify();
+
+    });
+
 
 });

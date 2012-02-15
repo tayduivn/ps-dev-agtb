@@ -33,6 +33,31 @@
                 "vardefs":       {
                     "table":  "opportunities",
                     "fields": {
+                        "account_name": {
+                            "name": "account_name",
+                            "rname": "name",
+                            "id_name": "account_id",
+                            "vname": "LBL_ACCOUNT_NAME",
+                            "type": "relate",
+                            "table": "accounts",
+                            "join_name": "accounts",
+                            "isnull": "true",
+                            "module": "Accounts",
+                            "dbType": "varchar",
+                            "link": "accounts",
+                            "len": "255",
+                            "source": "non-db",
+                            "unified_search": true,
+                            "required": true,
+                            "importable": "required"
+                        },
+                        "account_id": {
+                            "name": "account_id",
+                            "vname": "LBL_ACCOUNT_ID",
+                            "type": "id",
+                            "source": "non-db",
+                            "audited": true
+                        },
                         "contacts": {
                             "name": "contacts",
                             "type": "link",
