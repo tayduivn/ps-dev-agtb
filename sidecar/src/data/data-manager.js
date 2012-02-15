@@ -30,7 +30,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans, vardefs, vardef, fields, relations;
+            var defaults, model, beans, vardefs, vardef, fields, relationships;
 
             this.reset(moduleName);
 
