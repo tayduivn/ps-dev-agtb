@@ -2,49 +2,65 @@
     app.augment("layout", function () {
         var Layout = {
             init:function (args) {
-                var fieldCache = {};
+                var compiledTemplates = {};
                 //Register Handlebars helpers
-                Handlebars.registerHelper('sugar_field', function(context, view) {
-                    var key = context.module + "_" + view + "_" + this.name;
-                    if (!fieldCache[key]){
-                        var ftype = app.metadata.get({type:"vardef",module:context.get("module")}).fields[this.name].type;
-                        var t = app.sugarFieldManager.getField(ftype, view);
-                        if (t.error)
-                            return t.error;
-                        fieldCache[key] = Handlebars.compile(t.template);
+                Handlebars.registerHelper('sugar_field', function(context, view, bean) {
+                    var key = context.get("module") + "_" +  view + "_" + this.name,
+                        ftype, sf;
+                    //If bean was not specified, the third parameter will be a hash
+                    if (!bean || !bean.fields)
+                        bean = context.get("model");
+                    if (!compiledTemplates[key]){
+                        ftype = bean.fields[this.name].type;
+                        sf = app.sugarFieldManager.getField(ftype, view);
+                        if (sf.error)
+                            return sf.error;
+                        compiledTemplates[key] = Handlebars.compile(sf.template);
                     }
-                    this.value = context.get("model").get(this.name);
-                    return new Handlebars.SafeString(fieldCache[key](this));
+                    this.value = bean.get(this.name);
+                    return new Handlebars.SafeString(compiledTemplates[key](this));
                 });
-
             },
 
             //All retreives of metadata should hit this function.
             get:function (params) {
+                var meta = params.meta;
+                var layoutClass = "Layout";
+                var viewClass = "View";
+
                 if (!params.view && !params.layout)
                     return null;
 
                 var context = params.context || app.context.getContext();
                 var module = params.module || context.get("module");
                 if (params.view) {
-                    return new app.layout.View({
+                    meta = params.meta || app.metadata.get({
+                        type: "view",
+                        module: module,
+                        view: params.view
+                    });
+                    //Check if the vuew type has its own view subclass
+                    if (app.layout[meta.type + "View"])
+                        viewClass = meta.type + "View";
+
+                    return new app.layout[viewClass]({
                         context: params.context,
                         name : params.view,
-                        meta : params.meta || app.metadata.get({
-                            type: "view",
-                            module: module,
-                            view: params.view
-                        })
+                        meta : meta
                     });
                 } else if (params.layout) {
-                    return new app.layout.Layout({
+                    meta = params.meta || app.metadata.get({
+                        type: "layout",
+                        module: module,
+                        layout: params.layout
+                    });
+                    //Check if the layout type has its own layout subclass
+                    if (app.layout[meta.type + "Layout"])
+                        layoutClass = meta.type + "Layout";
+                    return new app.layout[layoutClass]({
                         context: params.context,
                         name : params.layout,
-                        meta : params.meta || app.metadata.get({
-                            type: "layout",
-                            module: module,
-                            layout: params.layout
-                        })
+                        meta : meta
                     });
                 }
 
@@ -84,13 +100,13 @@
                 this.module = this.context.module;
                 this.meta = this.options.meta;
                 this.components = [];
-                this.$el.addClass("layout " + (this.options.className || this.name));
+                this.$el.addClass("layout " + (this.options.className || this.meta.type));
 
                 _.each(this.meta.components, function (def) {
                     var context = def.context ? this.context.getRelatedContext(def.context) : this.context;
                     var module = def.module || context.get("module");
                     if (def.view) {
-                        this.components.push(app.layout.get({
+                        this.addComponent(app.layout.get({
                             context:context,
                             view:def.view,
                             module:module
@@ -119,10 +135,10 @@
             },
             addComponent : function(comp) {
                 this.components.push(comp);
-                this.placeComponent(comp);
+                this._placeComponent(comp);
             },
             //Default layout just appends all the components to itself
-            placeComponent: function(comp) {
+            _placeComponent: function(comp) {
                 this.$el.append(comp.el);
             },
             removeComponent : function(comp) {
@@ -135,8 +151,20 @@
                 //default layout will pass render container divs and pass down to all its views.
                 _.each(this.components, function(comp){
                     comp.render();
-                    this.$el.append(comp.el);
                 }, this);
+            }
+        });
+
+        Layout.columnsLayout = Layout.Layout.extend({
+            //column layout uses a table for columns and prevent wrapping
+            _placeComponent: function(comp) {
+                if(!this.$el.children()[0]){
+                    console.log("creating the table");
+                    this.$el.append("<table><tbody><tr></tr></tbody></table>");
+                }
+                console.log(this.$el.find("tr")[0]);
+                //Create a new td and add the layout to it
+                $().add("<td></td>").append(comp.el).appendTo(this.$el.find("tr")[0]);
             }
         });
 
