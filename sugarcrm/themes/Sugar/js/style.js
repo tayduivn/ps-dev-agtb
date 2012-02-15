@@ -51,7 +51,7 @@ $(document).ready(function(){
 	SUGAR.themes.globalToolTips();
 
     $('body').click(function(e) {
-        if($(e.target).closest('#SpotResults').length == 0)
+        if($(e.target).closest('#dcmenuSearchDiv').length == 0)
         {
             SUGAR.themes.clearSearch();
         }
