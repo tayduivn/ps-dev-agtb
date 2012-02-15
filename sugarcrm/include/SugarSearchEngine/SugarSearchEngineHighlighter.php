@@ -240,7 +240,7 @@ class SugarSearchEngineHighlighter
      *
      * @return array of key value pairs
      */
-    public function getHighlightedHitText($resultArray, $searchString)
+    public function getHighlightedHitText($resultArray, $searchString, $partialMatch = true)
     {
         $ret = array();
 
@@ -258,7 +258,14 @@ class SugarSearchEngineHighlighter
                     continue;
                 }
 
-                $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
+                if ($partialMatch)
+                {
+                    $pattern = '/\b' . str_replace('*', '.*?', $search) . '/i';
+                }
+                else
+                {
+                    $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
+                }
                 $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
                 if ($count > 0)
                 {

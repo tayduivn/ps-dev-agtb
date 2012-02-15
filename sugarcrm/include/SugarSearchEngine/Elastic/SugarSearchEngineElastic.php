@@ -32,6 +32,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     private $_indexName = "";
 
     const DEFAULT_INDEX_TYPE = 'SugarBean';
+    const WILDCARD_CHAR = '*';
 
     private $_indexType = 'SugarBean';
 
@@ -239,6 +240,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function search($queryString, $offset = 0, $limit = 20, $options = array())
     {
+        if( !empty($options['append_wildcard']) )
+        {
+            if( substr($queryString, 0,-1) !==  self::WILDCARD_CHAR)
+                $queryString .= self::WILDCARD_CHAR;
+        }
         $GLOBALS['log']->info("Going to search with query $queryString");
         $results = null;
         try
@@ -268,6 +274,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $query = new Elastica_Query($queryObj);
             }
             $query->setParam('from',$offset);
+
+            //Add a type facet so we can see how our results are grouped.
+            if( !empty($options['apply_module_facet']) )
+            {
+                $typeFacet = new Elastica_Facet_Terms('_type');
+                $typeFacet->setField('_type');
+                $query->addFacet($typeFacet);
+            }
+
             $s = new Elastica_Search($this->_client);
             //Only search accross our index.
             $index = new Elastica_Index($this->_client, $this->_indexName);
@@ -284,6 +299,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to perform search with error: {$e->getMessage()}");
+            return null;
         }
 
         return $results;

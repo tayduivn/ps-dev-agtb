@@ -54,6 +54,39 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
     }
 
     /**
+     * Return facets associated with this search.
+     *
+     * @return array
+     */
+    public function getFacets()
+    {
+        return $this->elasticaResultSet->getFacets();
+    }
+
+    /**
+     * Return the facet results for the modules used in the search.
+     *
+     * @return array|bool
+     */
+    public function getModuleFacet()
+    {
+        $rs = $this->elasticaResultSet->getFacets();
+        $results = array();
+        if( !isset($rs['_type'] ) || !isset($rs['_type']['terms']) )
+        {
+            return FALSE;
+        }
+        else
+        {
+            foreach( $rs['_type']['terms'] as $entry)
+            {
+                $results[$entry['term']] = $entry['count'];
+            }
+
+            return $results;
+        }
+    }
+    /**
      * Get the total amount of time the search took to complete.
      *
      * @return int

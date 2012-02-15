@@ -125,13 +125,13 @@ $mod_strings = array (
 
 	'LBL_GENERAL_TAB' => 'Details',
 	'LBL_PARTICIPANTS_TAB' => 'Invitees',
-	'LBL_REPEAT_TAB' => 'Repeat',	
+	'LBL_REPEAT_TAB' => 'Recurrence ',	
 	
 	'LBL_REPEAT_TYPE' => 'Repeat',
 	'LBL_REPEAT_INTERVAL' => 'Interval',
 	'LBL_REPEAT_END' => 'End',	
 	'LBL_REPEAT_END_AFTER' => 'After',
-	'LBL_REPEAT_OCCURRENCES' => 'occurrances',
+	'LBL_REPEAT_OCCURRENCES' => 'occurrences',
 	'LBL_REPEAT_END_BY' => 'By',	
 	'LBL_REPEAT_DOW' => 'On',	
 	'LBL_REPEAT_UNTIL' => 'Repeat Until',

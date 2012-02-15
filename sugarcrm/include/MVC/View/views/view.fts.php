@@ -54,6 +54,9 @@ class ViewFts extends SugarView
     public function display($return = false, $encode = false)
     {
         $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
+        $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
+        $refreshModuleFilter = !empty($_REQUEST['refreshModList']) ? $_REQUEST['refreshModList'] : FALSE;
+
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
         $indexOffset = $offset / $limit;
         $moduleFilter = isset($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
@@ -63,10 +66,16 @@ class ViewFts extends SugarView
         {
             $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         }
-        $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter);;
+        $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter, 'append_wildcard' => TRUE);
+
+        if( $this->fullView || $refreshModuleFilter)
+        {
+            $options['apply_module_facet'] = TRUE;
+        }
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
-        $trimmed_query = trim($_REQUEST['q']);
+        $queryString = !empty($_REQUEST['q']) ? $_REQUEST['q'] : '';
+        $trimmed_query = trim($queryString);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
         if($rs == null)
         {
@@ -80,7 +89,7 @@ class ViewFts extends SugarView
         }
         $query_encoded = urlencode($trimmed_query);
 
-        $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
+
 
         $showMoreDivStyle = ($totalHitsFound > $limit) ? '' : "display:none;";
         $this->ss->assign('showMoreDivStyle', $showMoreDivStyle);
@@ -106,13 +115,16 @@ class ViewFts extends SugarView
 
         if( $this->fullView )
         {
+            $this->ss->assign('filterModules',$this->filterModuleListByTypes($filteredModules['enabled'], $rs->getModuleFacet() ));
             if($resultSetOnly)
             {
-                $contents = json_encode(array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime));
-                return $this->sendOutput($contents);
+                $out = array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime);
+                if( $refreshModuleFilter )
+                    $out['mod_filter'] = $this->ss->fetch('include/MVC/View/tpls/fts_modfilter.tpl');
+
+                return $this->sendOutput(json_encode($out));
             }
 
-            $this->ss->assign('filterModules',$filteredModules['enabled']);
             $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));
             $this->ss->assign('disabled_modules', json_encode($filteredModules['disabled']));
         }
@@ -121,6 +133,31 @@ class ViewFts extends SugarView
         return $this->sendOutput($contents, $return, $encode);
 
     }
+
+    /**
+     * Given the enable module list and a facet result set for the last query, add
+     * a count to the filter module list.
+     *
+     * @param $modulelist
+     * @param $facetResults
+     * @return mixed
+     */
+    protected function filterModuleListByTypes($modulelist, $facetResults )
+    {
+        if($facetResults === FALSE)
+            return $modulelist;
+
+        foreach($modulelist as &$moduleEntry)
+        {
+            if( isset($facetResults[$moduleEntry['module']]) )
+                $moduleEntry['count'] = $facetResults[$moduleEntry['module']];
+            else
+                $moduleEntry['count'] = 0;
+        }
+
+        return $modulelist;
+    }
+
 
     protected function sendOutput($contents, $return = false, $encode = false)
     {

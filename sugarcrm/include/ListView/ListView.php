@@ -485,7 +485,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 			if(sizeof($button_contents) == $button_count) {
 				$count++;
                 $this->xTemplate->assign('CELL_COUNT', $count);
-                $pre = '<ul class="clickMenu subpanel records fancymenu">'. "\n";
+                $pre = '<ul class="clickMenu subpanel records fancymenu button">'. "\n";
                 $this->xTemplate->assign('CLASS', "inlineButtons");
                 if(sizeof($button_contents) == 1) {
         			$pre .= '<li class="single">'. "\n";
