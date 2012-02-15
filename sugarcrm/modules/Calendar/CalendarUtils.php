@@ -177,7 +177,7 @@ class CalendarUtils {
 	 * @return array
 	 */	 
 	 static function get_sendback_repeat_data(SugarBean $bean){
-	 	if($bean->module_dir == "Meetings"){
+	 	if ($bean->module_dir == "Meetings" || $bean->module_dir == "Calls") {
 	 		if(!empty($bean->repeat_parent_id) || (!empty($bean->repeat_type) && empty($_REQUEST['edit_all_recurrences']))){
 				if(!empty($bean->repeat_parent_id))
 					$repeat_parent_id = $bean->repeat_parent_id;
