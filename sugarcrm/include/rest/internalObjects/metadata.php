@@ -8,7 +8,8 @@ include_once("include/MetaDataManager/MetaDataManager.php");
 
 
 /**
- *
+ * This is the MetaData Class for the rest API.  It handles all metadata requests and
+ * responses.
  */
 class MetaData extends RestObject implements IRestObject {
 
@@ -39,6 +40,9 @@ class MetaData extends RestObject implements IRestObject {
         }
     }
 
+    /**
+     * This method handles all GET requests for this class.
+     */
     private function handleGET() {
         $isMobile = false;
         $typeFiler = null;
@@ -83,5 +87,4 @@ class MetaData extends RestObject implements IRestObject {
             $this->sendJSONResponse($json);
         }
     }
-
 }

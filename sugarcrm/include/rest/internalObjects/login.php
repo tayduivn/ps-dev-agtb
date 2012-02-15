@@ -28,41 +28,43 @@ include_once("RestObject.php");
 
 class Login extends RestObject implements IRestObject {
 
+    private $verbID = null;
+
     function __construct() {
         parent::__construct();
+
+        $this->verbID = $this->verbToId();
     }
 
     public function execute() {
-        if (strtolower($_SERVER["REQUEST_METHOD"]) != "post") {
-            $err = new RestError();
-            $err->ReportError(404);
-            exit;
+
+        switch($this->verbID) {
+            case HTTP_POST:
+                $this->handlePost();
+                break;
+            default:
+                $err = new RestError();
+                $err->ReportError(404);
+                exit;
+                break;
         }
-
-        if (!RestUtils::isJsonHeader()) {
-            $err = new RestError();
-            $err->ReportError(415);
-            exit;
-        }
-
-        print_r($_SERVER); die;
-
-        $raw_post = file_get_contents("php://input");
-        $result = RestUtils::isValidJson($raw_post);
-
-        if ($result["err"] != false) {
-            $err = new RestError();
-            $err->ReportError(415, $result["err_str"]);
-            exit;
-        }
-
-
 
         /*
          * Here is where we need to be logging into the app.
          */
 
     }
+
+    private function handlePost() {
+        $raw_post = file_get_contents("php://input");
+        $result = RestUtils::isValidJson($raw_post);
+        if ($result["err"] != false) {
+            $err = new RestError();
+            $err->ReportError(415, $result["err_str"]);
+            exit;
+        }
+    }
+
 
     /**
      *
