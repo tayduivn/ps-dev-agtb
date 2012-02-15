@@ -163,6 +163,7 @@ $mod_strings = array (
 'LBL_DCECREATEREPORTDATA' => 'dceCreateReportData',
 'LBL_DCECREATESALESREPORT' => 'dceCreateSalesReport',
 //END SUGARCRM flav=dce ONLY
+'LBL_LBL_SENDEMAILREMINDERS'=> 'Run Email Reminders Sending',
 //BEGIN SUGARCRM flav=int ONLY
 'LBL_TESTEMAIL' => 'testEmail',
 //END SUGARCRM flav=int ONLY
