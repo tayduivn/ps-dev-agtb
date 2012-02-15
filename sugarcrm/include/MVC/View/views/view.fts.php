@@ -81,11 +81,13 @@ class ViewFts extends SugarView
         {
             $totalHitsFound = 0;
             $totalTime = 0;
+            $hitsByModule = array();
         }
         else
         {
             $totalHitsFound = $rs->getTotalHits();
             $totalTime = $rs->getTotalTime();
+            $hitsByModule = $rs->getModuleFacet();
         }
         $query_encoded = urlencode($trimmed_query);
 
@@ -115,7 +117,7 @@ class ViewFts extends SugarView
 
         if( $this->fullView )
         {
-            $this->ss->assign('filterModules',$this->filterModuleListByTypes($filteredModules['enabled'], $rs->getModuleFacet() ));
+            $this->ss->assign('filterModules',$this->filterModuleListByTypes($filteredModules['enabled'], $hitsByModule));
             if($resultSetOnly)
             {
                 $out = array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime);
