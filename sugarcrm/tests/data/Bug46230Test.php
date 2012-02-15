@@ -38,9 +38,6 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $this->markTestSkipped('Test is failing on local and jenkins.  Working with MGuesev and Zlata to fix');
-        return;
-
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->account = SugarTestAccountUtilities::createAccount();
     }
