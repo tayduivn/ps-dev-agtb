@@ -34,18 +34,48 @@ require_once 'include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php';
 class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    public function testretrieveAllModules()
+    public function testGetFtsSearchFields()
     {
-        $all = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
+        $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule('Accounts');
+        $this->assertContains('name', array_keys($ftsFields));
+        $this->assertContains('email_addresses', array_keys($ftsFields));
+        $this->assertArrayHasKey('name', $ftsFields['name'], 'name key not found');
 
-        $this->assertArrayHasKey('name', $all['Accounts']['name'], 'name key not found');
+        //Pass in a sugar bean for the test
+        $account = BeanFactory::getBean('Accounts', null);
+        $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($account);
+        $this->assertContains('name', array_keys($ftsFields));
+        $this->assertContains('email_addresses', array_keys($ftsFields));
     }
 
-    public function testretrieveOneModules()
-    {
-        $accounts = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule('Accounts');
 
-        $this->assertArrayHasKey('name', $accounts['name'], 'name key not found');
+    public function testGetFtsSearchFieldsForAllModules()
+    {
+        $ftsFieldsByModule = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
+        $this->assertContains('Contacts', array_keys($ftsFieldsByModule));
+        $this->assertContains('first_name', array_keys($ftsFieldsByModule['Contacts']));
+        $this->assertArrayHasKey('name', $ftsFieldsByModule['Accounts']['name'], 'name key not found');
+    }
+
+
+    public function isModuleEnabledProvider()
+    {
+        return array(
+            array('Accounts', true),
+            array('Contacts', true),
+            array('BadModule', true),
+            array('Notifications', true),
+            //TODO: Add disabled modules
+        );
+    }
+
+    /**
+     * @dataProvider isModuleEnabledProvider
+     */
+    public function testIsModuleFtsEnabled($module,$actualResult)
+    {
+        $expected = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
+        $this->assertEquals($expected, $actualResult);
     }
 
 }
