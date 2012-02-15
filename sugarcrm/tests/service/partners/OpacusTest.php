@@ -22,47 +22,42 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/SugarSQLValidate.php');
 
-require_once('include/SubPanel/SubPanel.php');
-require_once('include/SubPanel/SubPanelDefinitions.php');
-
-class Bug44272Test extends PHPUnit_Framework_TestCase
+class OpacusTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-var $account;
 
-public function setUp()
+/**
+ * getEntryListQueries
+ *
+ * These are some of the queries that may come in to the get_entry_list method from the Thunderbird plugin
+ */
+public function getEntryListThunderbirdPluginQueries()
 {
-    $beanList = array();
-    $beanFiles = array();
-    require('include/modules.php');
-    $GLOBALS['beanList'] = $beanList;
-    $GLOBALS['beanFiles'] = $beanFiles;
-    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	$this->account = SugarTestAccountUtilities::createAccount();
+    return array(
+        array("(project_task.project_id IN (SELECT project_id FROM projects_contacts pc INNER JOIN email_addr_bean_relÊ
+        eabr ON eabr.bean_id = pc.contact_id AND eabr.bean_module='Contacts' inner join email_addresses ea5 ON
+        eabr.email_address_id = ea5.id WHERE ea5.email_address LIKE 'test%' AND eabr.deleted = '0' AND ea5.deleted = '0'
+        AND pc.deleted = '0'))"),
+    );
 }
 
-public function tearDown()
+/**
+ * testGetEntryListThunderbirdPlugin
+ *
+ * This method tests the SugarSQLValidate.php's validateQuery method.
+ *
+ * @param $sql String of the test SQL to simulate the Word plugin
+ *
+ * @outputBuffering disabled
+ * @dataProvider getEntryListThunderbirdPluginQueries
+ */
+public function testGetEntryListThunderbirdPlugin($sql)
 {
-	SugarTestAccountUtilities::removeAllCreatedAccounts();
-}
-
-public function testSugarWidgetSubpanelTopButtonQuickCreate()
-{
-	$defines = array();
-	$defines['focus'] = $this->account;
-	$defines['module'] = 'Accounts';
-	$defines['action'] = 'DetailView';
-
-	$subpanel_definitions = new SubPanelDefinitions(new Contact());
-	$contactSubpanelDef = $subpanel_definitions->load_subpanel('contacts');
-
-	$subpanel = new SubPanel('Accounts', $this->account->id, 'contacts', $contactSubpanelDef, 'Accounts');
-	$defines['subpanel_definition'] = $subpanel->subpanel_defs;
-
-	$button = new SugarWidgetSubPanelTopButtonQuickCreate();
-	$code = $button->_get_form($defines);
-	$this->assertRegExp('/\<input[^\>]*?name=\"return_name\"/', $code, "Assert that the hidden input field return_name was created");
+    $this->markTestIncomplete('Need to resolve the above query or investigate a workaround for Opacus');
+    $valid = new SugarSQLValidate();
+    $this->assertTrue($valid->validateQueryClauses($sql), "SugarSQLValidate found Bad query: {$sql}");
 }
 
 }

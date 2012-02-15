@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
+
 
 class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopButton
 {

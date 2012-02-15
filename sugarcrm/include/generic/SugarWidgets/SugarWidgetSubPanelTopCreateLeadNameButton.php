@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  
 // $Id: SugarWidgetSubPanelTopCreateLeadNameButton.php 38393 2008-07-29 19:44:00Z Collin Lee $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButtonQuickCreate.php');
+
 
 class SugarWidgetSubPanelTopCreateLeadNameButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {

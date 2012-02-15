@@ -339,8 +339,8 @@ function callDBCheck(){
 
                 //copy the db values over to the hidden field counterparts
                 document.setConfig.setup_db_admin_password.value = document.setConfig.setup_db_admin_password_entry.value;
-                document.setConfig.setup_db_sugarsales_password.value = document.setConfig.setup_db_sugarsales_password_entry.value;
-                document.setConfig.setup_db_sugarsales_password_retype.value = document.setConfig.setup_db_sugarsales_password_retype_entry.value;
+
+
 
                 //set loading message and create url
                 postData = "checkDBSettings=true&to_pdf=1&sugar_body_only=1";
@@ -358,9 +358,11 @@ function callDBCheck(){
                     postData += "&setup_db_sugarsales_user="+document.setConfig.setup_db_sugarsales_user.value;
                 }
                 if(typeof(document.setConfig.setup_db_sugarsales_password) != 'undefined'){
+                document.setConfig.setup_db_sugarsales_password.value = document.setConfig.setup_db_sugarsales_password_entry.value;
                     postData += "&setup_db_sugarsales_password="+encodeURIComponent(document.setConfig.setup_db_sugarsales_password.value);
                 }
                 if(typeof(document.setConfig.setup_db_sugarsales_password_retype) != 'undefined'){
+                    document.setConfig.setup_db_sugarsales_password_retype.value = document.setConfig.setup_db_sugarsales_password_retype_entry.value;
                     postData += "&setup_db_sugarsales_password_retype="+encodeURIComponent(document.setConfig.setup_db_sugarsales_password_retype.value);
                 }
                 if(typeof(document.setConfig.dbUSRData) != 'undefined'){
