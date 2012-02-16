@@ -5,10 +5,10 @@
     <title>Global Runner</title>
 
     <!--required classes for tests--->
-    <script type="text/javascript" src='../../lib/backbone/underscore.js'></script>
-    <script type="text/javascript" src='../../lib/jquery/jquery.min.js'></script>
-    <script type="text/javascript" src='../../lib/backbone/backbone.js'></script>
-	<script language="javascript" src="../../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+    <script src='../../lib/backbone/underscore.js'></script>
+    <script src='../../lib/jquery/jquery.min.js'></script>
+    <script src='../../lib/backbone/backbone.js'></script>
+	<script src="../../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
 
     <!-- app files -->
     <script src='../../../sidecar/src/app.js'></script>
@@ -26,6 +26,7 @@
     <script src='../../../sidecar/src/data/bean-collection.js'></script>
     <script src='../../../sidecar/src/data/relationships.js'></script>
     <script src='../../../sidecar/src/layout/layout.js'></script>
+    <script src="../../../sidecar/src/lang/language.js"></script>
     <script type="text/javascript" src='../../../sidecar/src/sugarauth/sugarauth.js'></script>
 
     <link rel="stylesheet" href="../../../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
@@ -45,9 +46,10 @@
     <script type="text/javascript" src='../../../sidecar/tests/fixtures/sugarFields.js'></script>
 	<script type="text/javascript" src='../../../sidecar/tests/fixtures/metadata.js'></script>
 	<script type="text/javascript" src='../../../sidecar/tests/fixtures/templates.js'></script>
+	<script type="text/javascript" src='../../../sidecar/tests/fixtures/language.js'></script>
 
     <!--tests suites--->
-    <script type="text/javascript" src='../../../sidecar/tests/suites/sugarauth/sugarauth.js'></script>
+    <script src='../suites/sugarauth/sugarauth.js'></script>
     <script src='../spec_helper.js'></script>
     <script src='../suites/utils/logger.js'></script>
     <script src='../suites/utils/config.js'></script>
@@ -63,6 +65,7 @@
     <script src="../suites/layout/layout.js"></script>
     <script src="../suites/context/context.js"></script>
     <script src="../suites/events/events.js"></script>
+    <script src="../suites/lang/language.js"></script>
 
     <!--init jasmine and exec suites--->
     <script type="text/javascript">
