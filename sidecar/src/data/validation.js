@@ -32,7 +32,7 @@
          * @param fieldName Bean's field name
          * @param model Bean instance
          * @param value A value to be set
-         * @returns true if the validation passes
+         * @return true if the validation passes
          */
         requiredValidator: function(field, fieldName, model, value) {
             if (!_.isUndefined(field.required) && (field.required === true)) {

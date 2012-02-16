@@ -65,23 +65,31 @@ describe("DataManager", function() {
             beanType = "TeamSet";
 
         dm.declareModel(moduleName, metadata[moduleName]);
+
+        var mock = sinon.mock(Backbone);
+        mock.expects("sync").once().withArgs("read");
+
         var bean = dm.fetchBean(moduleName, "xyz", null, beanType);
+
         expect(bean.module).toEqual(moduleName);
         expect(bean.beanType).toEqual(beanType);
-
-        // TODO: To implement this test, mock REST API
+        mock.verify();
     });
 
     it("should be able to fetch beans", function() {
         var moduleName = "Teams",
             beanType = "TeamSet";
         dm.declareModel(moduleName, metadata[moduleName]);
+
+        var mock = sinon.mock(Backbone);
+        mock.expects("sync").once().withArgs("read");
+
         var collection = dm.fetchBeans(moduleName, null, beanType);
+
         expect(collection.module).toEqual(moduleName);
         expect(collection.beanType).toEqual(beanType);
         expect(collection.model).toBeDefined();
-
-        // TODO: To implement this test, mock REST API
+        mock.verify();
     });
 
 
