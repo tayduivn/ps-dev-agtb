@@ -242,8 +242,7 @@
 				</ul>
         
 	 		{/if}
-	 		
-	 		<li><a href="javascript: SUGAR.themes.editMenuMode();">Edit Menu</a>
+
 		</ul>
 		
 		</li>
