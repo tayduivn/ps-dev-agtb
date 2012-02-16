@@ -9,7 +9,7 @@ include_once("soap/SoapError.php");
 
 class logout extends RestObject implements IRestObject {
 
-    private $helper = null;
+    public $helper = null;
 
     function __construct() {
         parent::__construct();

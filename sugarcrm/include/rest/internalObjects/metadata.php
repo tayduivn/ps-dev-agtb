@@ -5,6 +5,7 @@ include_once("RestError.php");
 include_once("RestUtils.php");
 include_once("RestObject.php");
 include_once("include/MetaDataManager/MetaDataManager.php");
+include_once("service/core/SoapHelperWebService.php");
 
 
 /**
@@ -15,6 +16,7 @@ class MetaData extends RestObject implements IRestObject {
 
     private $requestData = null;
     private $verbID = null;
+    public $helper = null;
 
     function __construct() {
         parent::__construct();
@@ -44,9 +46,14 @@ class MetaData extends RestObject implements IRestObject {
      * This method handles all GET requests for this class.
      */
     private function handleGET() {
+        global $current_user;
         $isMobile = false;
         $typeFiler = null;
         $filter = null;
+        $auth = $this->getAuth();
+        $this->isValidToken($auth);
+        $userModList = $this->helper->get_user_module_list($current_user);
+        $userModList = array_keys($userModList);
 
         // hack, should make this better and reuseable later. //
         if (array_key_exists("mobile", $_GET)) {
@@ -68,9 +75,20 @@ class MetaData extends RestObject implements IRestObject {
         if (array_key_exists("type", $_GET) && !empty($_GET['type'])) {
             $fdata = explode(",", $_GET['type']);
             if ($fdata != false) {
-
                 $typeFiler = $fdata;
             }
+        }
+
+        if ($filter != null) {
+            $tmpFilter = array();
+            foreach ($filter as $modName) {
+                if (in_array($modName, $userModList)) {
+                    array_push($tmpFilter, $modName);
+                }
+            }
+            $filter = $tmpFilter;
+        } else {
+            $filter = $userModList;
         }
 
         $meta = new MetaDataManager($filter, $typeFiler, $isMobile);

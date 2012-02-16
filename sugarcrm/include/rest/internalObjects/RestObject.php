@@ -1,12 +1,18 @@
 <?php
 
 include_once("include/rest/RestData.php");
+include_once("RestError.php");
+include_once("service/core/SoapHelperWebService.php");
+include_once("soap/SoapError.php");
 
 abstract class RestObject implements IRestObject {
 
     private $requestData = array();
     private $httpVerb = null;
     private $uriData = null;
+    private $auth = null;
+    public $helper = null;
+
 
     function __construct() {
         $this->requestData["request_method"] = strtolower($_SERVER["REQUEST_METHOD"]);
@@ -30,6 +36,8 @@ abstract class RestObject implements IRestObject {
         }
 
         $this->verbToId();
+        $this->setAuth();
+        $this->helper = new SoapHelperWebServices();
     }
 
     public function execute() {
@@ -66,6 +74,48 @@ abstract class RestObject implements IRestObject {
 
         $id = constant($verb);
         return $id;
+    }
+
+    private function setAuth() {
+
+    }
+
+    /**
+     * Checks to see if the OAUTH TOKEN exists in the header info.
+     *
+     * Returns null when the token doesn't exist else the token is returned.
+     *
+     * @return null
+     */
+    protected function getAuth() {
+        $auth = null;
+
+        if (!array_key_exists("HTTP_OAUTH_TOKEN", $_SERVER)) {
+            $auth = null;
+        } else {
+            $auth = $_SERVER["HTTP_OAUTH_TOKEN"];
+        }
+
+        return $auth;
+    }
+
+    /**
+     *
+     * returns true if the token is valid else throws an http error.
+     *
+     * @param $token
+     * @return bool
+     */
+    protected function isValidToken($token) {
+        $isValid = $this->helper->validate_authenticated($token);
+
+        if (!$isValid) {
+            $err = new RestError();
+            $err->ReportError(410);
+            exit;
+        } else {
+            return true;
+        }
     }
 
     public function getRequestData() {
