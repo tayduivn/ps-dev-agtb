@@ -45,6 +45,10 @@ class RestController {
             $tmp = RestFactory::newRestObject($this->uriData[0]);
             $tmp->setURIData($this->uriData);
             $tmp->execute();
+        } else {
+            $tmp = RestFactory::newRestObject("objects");
+            $tmp->setURIData($this->uriData);
+            $tmp->execute();
         }
     }
 

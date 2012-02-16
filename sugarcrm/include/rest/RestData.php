@@ -6,9 +6,9 @@
 $restObjectList = array(
     "login" => array(),
     "logout" => array(),
-    "metadata" => array()
+    "metadata" => array(),
+    "objects" => array()
 );
-
 
 /*
  * Setup the objects source file.
@@ -16,6 +16,7 @@ $restObjectList = array(
 $restObjectList["login"] = "internalObjects/login.php";
 $restObjectList["logout"] = "internalObjects/logout.php";
 $restObjectList["metadata"] = "internalObjects/metadata.php";
+$restObjectList["objects"] = "internalObjects/objects.php";
 
 /*
  * setup some defines that we will use later in life.
@@ -29,5 +30,4 @@ define("HTTP_DELETE", 1006);
 define("HTTP_TRACE",1007);
 define("HTTP_CONNECT", 1008);
 define("HTTP_PATCH", 1009);
-
 
