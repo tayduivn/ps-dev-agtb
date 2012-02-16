@@ -16,7 +16,7 @@ fixtures.api = {
             }
     },
     "rest/v10/contact": {
-        "PUT" : {
+        "POST" : {
             "status": 200,
             "response":{"guid":"833adad4-4b4a-4161-be71-ebd7c6dfeae5"}
             },
