@@ -65,6 +65,7 @@
         return null;
     }
 
+
     app.augment("metadata", {
         /**
          * The Metadata Manager get method should be the be the only accessor for metadata.
@@ -84,26 +85,31 @@
          * @return Object metadata
          */
         get: function(params) {
-            if (!params || !params.module) {
-                app.logger.error("No module provided to metadata.get");
+            if (!params) {
+                app.logger.error("No paramters provided to metadata.get");
                 return null;
             }
-            if (!params.type)
-                return _get(params.modules);
 
-            if(params.type == "view")
+            if(params.view && params.module)
                 return _getView(params.module, params.view);
 
-            if(params.type == "layout")
+            else if(params.layout && params.module)
                 return _getLayout(params.module, params.layout);
 
-            if(params.type == "vardef")
+            else if(params.vardef && params.module)
                 return _getVardef(params.module, params.bean);
+
+            else if (params.module)
+                return _get(params.module);
+
         },
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
         set: function(data) {
-
+            _.each(data, function(entry, module) {
+                _metadata[module] = entry;
+                app.cache.set("metadata." + module, entry);
+            });
         }
     })
 })(SUGAR.App);

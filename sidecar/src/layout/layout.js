@@ -2,23 +2,18 @@
     app.augment("layout", function () {
         var Layout = {
             init:function (args) {
-                var compiledTemplates = {};
                 //Register Handlebars helpers
                 Handlebars.registerHelper('sugar_field', function(context, view, bean) {
-                    var key = context.get("module") + "_" +  view + "_" + this.name,
-                        ftype, sf;
+                    var ftype, sf;
                     //If bean was not specified, the third parameter will be a hash
                     if (!bean || !bean.fields)
                         bean = context.get("model");
-                    if (!compiledTemplates[key]){
-                        ftype = bean.fields[this.name].type;
-                        sf = app.sugarFieldManager.getField(ftype, view);
-                        if (sf.error)
-                            return sf.error;
-                        compiledTemplates[key] = Handlebars.compile(sf.template);
-                    }
+                    ftype = bean.fields[this.name].type;
+                    sf = app.sugarFieldManager.getField(ftype, view);
+                    if (sf.error)
+                        return sf.error;
                     this.value = bean.get(this.name);
-                    return new Handlebars.SafeString(compiledTemplates[key](this));
+                    return new Handlebars.SafeString(sf.templateC(this));
                 });
             },
 
@@ -42,6 +37,9 @@
                     //Check if the vuew type has its own view subclass
                     if (app.layout[meta.type + "View"])
                         viewClass = meta.type + "View";
+
+                    if (app.layout[meta.type])
+                        viewClass = meta.type;
 
                     return new app.layout[viewClass]({
                         context: params.context,
@@ -92,6 +90,15 @@
                 return this.context.module + "_" + this.options.name;
             }
         });
+        Layout.editView = Layout.View.extend({
+            render:function () {
+                if (this.template)
+                    this.$el.html(
+                        this.template(this) +
+                        "<br/>This is a custom view"
+                    );
+            }
+        });
         Layout.Layout = Layout.View.extend({
             initialize:function () {
                 //The context is used to determine what the current focus is
@@ -110,7 +117,7 @@
                             context:context,
                             view:def.view,
                             module:module
-                        }));
+                        }), def);
                     }
                     //Layouts can either by referenced by name or defined inline
                     else if (def.layout) {
@@ -119,7 +126,7 @@
                                 context:context,
                                 layout:def.layout,
                                 module:module
-                            }));
+                            }), def);
                         }
                         else if(typeof def.layout == "object") {
                             //Inline definition of a sublayout
@@ -128,14 +135,14 @@
                                 module:module,
                                 layout:true,
                                 meta: def.layout
-                            }));
+                            }), def);
                         }
                     }
                 }, this);
             },
-            addComponent : function(comp) {
+            addComponent : function(comp, def) {
                 this.components.push(comp);
-                this._placeComponent(comp);
+                this._placeComponent(comp, def);
             },
             //Default layout just appends all the components to itself
             _placeComponent: function(comp) {
@@ -159,12 +166,25 @@
             //column layout uses a table for columns and prevent wrapping
             _placeComponent: function(comp) {
                 if(!this.$el.children()[0]){
-                    console.log("creating the table");
                     this.$el.append("<table><tbody><tr></tr></tbody></table>");
                 }
                 console.log(this.$el.find("tr")[0]);
                 //Create a new td and add the layout to it
                 $().add("<td></td>").append(comp.el).appendTo(this.$el.find("tr")[0]);
+            }
+        });
+
+        Layout.fluidLayout = Layout.Layout.extend({
+            //column layout uses a table for columns and prevent wrapping
+            _placeComponent: function(comp, def) {
+                var size = def.size || 4;
+                if(!this.$el.children()[0]){
+                    this.$el.addClass("container-fluid").append('<div class="row-fluid"></div>');
+                }
+
+                //debugger;
+                //Create a new td and add the layout to it
+                $().add("<div></div>").addClass("span" + size).append(comp.el).appendTo(this.$el.find("div.row-fluid")[0]);
             }
         });
 
