@@ -85,6 +85,8 @@ class ViewConfigureFts extends SugarView
         $this->ss->assign("scheduleDisableButton", $scheduleDisableButton);
         $this->ss->assign("fts_scheduled", !empty($schedulerID) && !$schedulerCompleted);
         $this->ss->assign('title',$this->getModuleTitle(false));
+        $disableEdit = !empty($GLOBALS['sugar_config']['full_text_engine_disable_edit']) ? TRUE : FALSE;
+        $this->ss->assign('disableEdit',$disableEdit);
         $this->ss->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
 
         $filteredModules = $this->getFilterModules();
