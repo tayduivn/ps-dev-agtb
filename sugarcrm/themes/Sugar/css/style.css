@@ -3628,7 +3628,7 @@ button, input[type=submit], input[type=reset], input[type=button], .button, .but
 	padding: 2px 8px 2px 8px;
 	padding: 2px 8px 1px 8px\9; /* ie hack */
 	font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .button.primary,.yui-dialog .ft span.default button  {
@@ -6281,7 +6281,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	font-weight: normal !important;
 	padding: 3px 0px 3px 10px !important;
 	color: #000;
-	font-size: 14px;
+	font-size: 12px;
 }
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
 	color: #fff;
@@ -6296,7 +6296,7 @@ text-decoration: none !important;
 }
 ul.clickMenu li > span { /*--Drop down trigger styles--*/
 	width: 17px;
-	height: 23px;
+	height: 21px;
 	float: left;
 	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 6px -25px;
 	cursor: pointer;
