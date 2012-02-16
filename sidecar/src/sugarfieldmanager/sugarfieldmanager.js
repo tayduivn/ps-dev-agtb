@@ -13,7 +13,7 @@
 
             function init(args) {
                 instance = new SugarFieldManager();
-                _.bind(instance.handleResponse, instance);
+                _.bindAll(instance);
                 return instance;
             }
 
@@ -40,8 +40,8 @@
                         // call api field sync with current field hash
                         //TODO put real api call
                         var that = this;
-                        var result = SUGAR.App.sugarFieldsSync(that, this.handleResponse);
-                        return result;
+                        var callbacks = {success: this.handleResponse, error: this.handleResponse};
+                        return SUGAR.Api.getInstance().getSugarFields(this.fieldsHash, callbacks);
                     },
 
                     /**
@@ -51,11 +51,11 @@
                      * @param  obj response response from sugarFields
                      * @return bool
                      */
-                    handleResponse:function (that, response) {
+                    handleResponse:function (response) {
                         // if we got something set fields and list
-                        if (response.fieldsHash != that.fieldsHash) {
-                            that.fieldsObj = response.fieldsData;
-                            that.fieldsHash = response.fieldsHash;
+                        if (instance && response.fieldsHash != instance.fieldsHash) {
+                            instance.fieldsObj = response.fieldsData;
+                            instance.fieldsHash = response.fieldsHash;
                             return true;
                         } else {
                             return false;
