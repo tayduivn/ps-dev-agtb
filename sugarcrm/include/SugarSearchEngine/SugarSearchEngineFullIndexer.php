@@ -188,8 +188,8 @@ class SugarSearchEngineFullIndexer
         $sched->job_interval = $td->min."::".$td->hour."::".$td->day."::".$td->month."::".$td->day_of_week;
         $sched->date_time_start = TimeDate::getInstance()->asUser($before, $GLOBALS['current_user']);
         $sched->date_time_end = TimeDate::getInstance()->asUser($future, $GLOBALS['current_user']);
-        $sched->catch_up = 0;
-        $sched->save(); //die($sched->job_interval);
+        $sched->catch_up = 1;
+        $sched->save(); 
     }
 
     /**
