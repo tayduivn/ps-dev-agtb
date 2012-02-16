@@ -267,7 +267,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     $termFilter->setTerm('team_set_id',$teamID);
                     $teamFilter->addFilter($termFilter);
                 }
-                $query = new Elastica_Query_Filtered($queryObj, $teamFilter);
+                $query = new Elastica_Query($queryObj);
+                $query->setFilter($teamFilter);
             }
             else
             {
