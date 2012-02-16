@@ -6747,7 +6747,7 @@ p.submsg, p.submsg a{
 .loading-indicator-ui {
     height: 100px;
     width: 100px;
-    background: url(../../../../index.php?entryPoint=getImage&imageName=loading.gif);
+    background: url(../../../../index.php?entryPoint=getImage&imageName=img_loading_54.gif);
     background-repeat: no-repeat;
     background-position: center center;
 }
