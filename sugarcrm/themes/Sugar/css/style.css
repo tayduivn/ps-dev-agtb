@@ -1414,11 +1414,16 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img.logo {
-    margin: 0px 0px 0px 5px;
+    margin: 3px 10px;
 }
+
+#footer #partner a {
+	float: left;
+}
+
 #footer #partner img {
 	width: 25px;
-	height: 25px;
+	height: 24px;
 }
 #footer #partner {
     float:right;

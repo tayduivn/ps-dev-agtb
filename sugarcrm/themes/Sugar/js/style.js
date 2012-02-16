@@ -207,11 +207,15 @@ SUGAR.append(SUGAR.themes, {
     	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#boxnet").tipTip({maxWidth: "auto", edgeOffset: 10});
-		$("#linkedin").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
 		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});	
+		//setup tool tips for partner integrations
+		$("#partner").children("a").each(
+		function (index) {
+				$(this).tipTip({maxWidth: "auto", edgeOffset: 10});
+			}
+		); 
     },
     toggleFooter: function () {
 	    $("#arrow").click(function(){

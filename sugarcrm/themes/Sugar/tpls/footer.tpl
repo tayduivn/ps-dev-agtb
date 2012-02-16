@@ -46,7 +46,7 @@
         title="&#169; 2004-2011 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/>
     <div id="partner">
     {foreach from=$DYNAMICDCACTIONS item=action}
-       <span> {$action.script} {$action.image} </span>
+        {$action.script} {$action.image} 
     {/foreach}
      </div>
 
