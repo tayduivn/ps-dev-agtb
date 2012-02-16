@@ -1897,9 +1897,17 @@ function save_relationship_changes($is_update, $exclude=array())
         $new_rel_link = false;
 
         //this allows us to dynamically relate modules without adding it to the relationship_fields array
-        if(!empty($_REQUEST['relate_id']) && !empty($_REQUEST['relate_to']) && !in_array($_REQUEST['relate_to'], $exclude) && $_REQUEST['relate_id'] != $this->id){
-            $new_rel_id = $_REQUEST['relate_id'];
-            $new_rel_relname = $_REQUEST['relate_to'];
+        if((!empty($_REQUEST['relate_id']) && !empty($_REQUEST['relate_to']) && !in_array($_REQUEST['relate_to'], $exclude) && $_REQUEST['relate_id'] != $this->id)
+            || ($this->in_import && !empty($this->parent_type) && !empty($this->parent_id))
+        ){
+            //lets populate the new rel info with either info from request or from the parent object if bean is being imported
+            if($this->in_import){
+                $new_rel_id = $this->parent_id;
+                $new_rel_relname = $this->parent_type;
+            }else{
+                $new_rel_id = $_REQUEST['relate_id'];
+                $new_rel_relname = $_REQUEST['relate_to'];
+            }
             if(!empty($this->in_workflow) && !empty($this->not_use_rel_in_req)) {
                 $new_rel_id = !empty($this->new_rel_id) ? $this->new_rel_id : '';
                 $new_rel_relname = !empty($this->new_rel_relname) ? $this->new_rel_relname : '';
