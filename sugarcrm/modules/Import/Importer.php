@@ -209,8 +209,10 @@ class Importer
                 /**
                  * Bug #41194 : if true used as value of sync_contact - add curent user to list to sync
                  */
-                if ( true === $rowValue || 'true' == strtolower($rowValue) ) {
-                    $focus->sync_contact = $current_user->id;
+                if ( true == $rowValue || 'true' == strtolower($rowValue)) {
+                    $focus->sync_contact = $focus->id;
+                } elseif (false == $rowValue || 'false' == strtolower($rowValue)) {
+                    $focus->sync_contact = '';
                 } else {
                     $bad_names = array();
                     $returnValue = $this->ifs->synctooutlook($rowValue,$fieldDef,$bad_names);
