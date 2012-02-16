@@ -27,7 +27,8 @@
         },
         /**
          * load is used to compile a set of templates sources
-         * @param templates
+         * @param Object templates a key => source set of templates to load into memory. Templates that were not previously loaded will be precompiled
+         * @param Boolean force if true, the cache is ignored and the templates are all recompiled
          */
         load : function(templates, force) {
             _.each(templates, function(src, key){
