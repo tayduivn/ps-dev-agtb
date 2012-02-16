@@ -28,7 +28,9 @@
 
 
 /*
- * 
+ * This tests whether a relationship with parent bean is saved during import.  We simulate a call being imported with
+ * parent_id and parent_type columns filled out, which should save the relationship even during import
+ * @ticket 50438
  */
 
 class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
@@ -72,9 +74,7 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    /**
-     * @ticket 45907
-     */
+
     public function testParentsAreRelatedDuringImport()
     {
 
