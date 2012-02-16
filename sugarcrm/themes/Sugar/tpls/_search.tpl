@@ -9,7 +9,7 @@
             <div id="sugar_spot_search_results" style="display:none;">
                 {if $FTS_AUTOCOMPLETE_ENABLE}
                 <div align="right">
-                    <a href="index.php?module=Home&action=spot&full=true">{$APP.LNK_ADVANCED_SEARCH}</a>
+                    <p class="fullResults"><a href="index.php?module=Home&action=spot&full=true">{$APP.LNK_ADVANCED_SEARCH}</a></p>
                 </div>
                 {/if}
             </div>

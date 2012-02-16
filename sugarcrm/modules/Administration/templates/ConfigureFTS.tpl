@@ -61,11 +61,11 @@
         </tr>
         <tr>
             <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}&nbsp;</td>
-            <td width="85%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}"></td>
+            <td width="85%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
         </tr>
         <tr>
             <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}&nbsp;</td>
-            <td width="85%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}"></td>
+            <td width="85%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
         </tr>
         <tr>
             <td colspan="2">&nbsp;</td>

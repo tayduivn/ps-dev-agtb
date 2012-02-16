@@ -1,9 +1,9 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -28,7 +28,53 @@
  ********************************************************************************/
 
 
-$action_view_map['getgr'] = 'getgr';
-$action_view_map['getgrusers'] = 'getgrusers';
-$action_view_map['savesettings'] = 'savesettings';
-$action_view_map['createinvitee'] = 'createinvitee';
+
+require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php';
+
+class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCase
+{
+
+    public function setUp()
+    {
+    }
+
+    public function testConstructMappingProperties()
+    {
+        $fieldDefs = array (
+            'field1' => array (
+                'name'=>'first_name',
+                'full_text_search' => array (
+                    'boost' => 3,
+                    'type' => 'string',
+                ),
+            ),
+        );
+        $expected = array(
+            'first_name' => array (
+                'boost' => 3,
+                'type' => 'string',
+            ),
+        );
+        $stub = new SugarSearchEngineElasticMappingTestStub();
+        $result = $stub->constructMappingProperties($fieldDefs);
+
+        $diff = array_diff($expected, $result);
+        $this->assertEmpty($diff, 'result is different from expected array');
+    }
+
+}
+
+
+class SugarSearchEngineElasticMappingTestStub extends SugarSearchEngineElasticMapping
+{
+    // to override the parent constructor so we don't need to pass in search engine object
+    public function __construct()
+    {
+    }
+
+    // to test protected function
+    public function constructMappingProperties($fieldDefs)
+    {
+        return parent::constructMappingProperties($fieldDefs);
+    }
+}

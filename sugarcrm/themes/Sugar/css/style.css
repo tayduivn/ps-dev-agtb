@@ -1414,11 +1414,16 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img.logo {
-    margin: 0px 0px 0px 5px;
+    margin: 3px 10px;
 }
+
+#footer #partner a {
+	float: left;
+}
+
 #footer #partner img {
 	width: 25px;
-	height: 25px;
+	height: 24px;
 }
 #footer #partner {
     float:right;
@@ -3628,7 +3633,7 @@ button, input[type=submit], input[type=reset], input[type=button], .button, .but
 	padding: 2px 8px 2px 8px;
 	padding: 2px 8px 1px 8px\9; /* ie hack */
 	font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .button.primary,.yui-dialog .ft span.default button  {
@@ -6281,7 +6286,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	font-weight: normal !important;
 	padding: 3px 0px 3px 10px !important;
 	color: #000;
-	font-size: 14px;
+	font-size: 12px;
 }
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
 	color: #fff;
@@ -6296,7 +6301,7 @@ text-decoration: none !important;
 }
 ul.clickMenu li > span { /*--Drop down trigger styles--*/
 	width: 17px;
-	height: 23px;
+	height: 21px;
 	float: left;
 	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 6px -25px;
 	cursor: pointer;
@@ -6747,7 +6752,7 @@ p.submsg, p.submsg a{
 .loading-indicator-ui {
     height: 100px;
     width: 100px;
-    background: url(../../../../index.php?entryPoint=getImage&imageName=loading.gif);
+    background: url(../../../../index.php?entryPoint=getImage&imageName=img_loading_54.gif);
     background-repeat: no-repeat;
     background-position: center center;
 }

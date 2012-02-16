@@ -213,6 +213,9 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 		$_POST['email_reminder_time'] = $current_user->getPreference('email_reminder_time');
 		$_POST['email_reminder_checked'] = 1;
 	}
+	
+	// don't allow to create not-editable meetings substituding a post request
+	$_POST['recurring_source'] = false;
 
 	$time_format = $timedate->get_user_time_format();
     $time_separator = ":";
