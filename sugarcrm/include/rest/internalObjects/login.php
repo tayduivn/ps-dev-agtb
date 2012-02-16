@@ -1,6 +1,6 @@
 <?php
 
-include_once("../include/rest/RestObjectInterface.php");
+include_once("include/rest/RestObjectInterface.php");
 include_once("RestError.php");
 include_once("RestUtils.php");
 include_once("RestObject.php");
@@ -29,6 +29,20 @@ include_once("RestObject.php");
 class Login extends RestObject implements IRestObject {
 
     private $verbID = null;
+    private $requiredParams = array(
+        "username",
+        "password",
+        "type");
+    private $optionalParams = array(
+        "client-info" => array (
+            "uuid",
+            "model",
+            "osversion",
+            "carrier",
+            "appversion",
+            "ismobile"
+        )
+    );
 
     function __construct() {
         parent::__construct();
@@ -48,23 +62,88 @@ class Login extends RestObject implements IRestObject {
                 exit;
                 break;
         }
-
-        /*
-         * Here is where we need to be logging into the app.
-         */
-
     }
 
     private function handlePost() {
+        $isvalid = false;
         $raw_post = file_get_contents("php://input");
         $result = RestUtils::isValidJson($raw_post);
+        $d = $this->getURIData();
+
         if ($result["err"] != false) {
             $err = new RestError();
             $err->ReportError(415, $result["err_str"]);
             exit;
         }
+
+        if ($d[0] == "login") {
+            $this->login();
+        } else if ($d[0] == "logout") {
+
+        } else {
+            $err = new RestError();
+            $err->ReportError(404);
+            exit;
+        }
     }
 
+    private function login() {
+        global $sugar_config;
+        $auth = new AuthenticationController();
+        $err = $auth->login("admin", "admin");
+        $user = null;
+        $result = array();
+
+        if ($err) {
+            print "SUCESS...";
+            $user = new User();
+            session_start();
+            global $current_user;
+            $current_user = $user;
+            $current_user->loadPreferences();
+            $_SESSION['is_valid_session']= true;
+            $_SESSION['ip_address'] = query_client_ip();
+            $_SESSION['user_id'] = $current_user->id;
+            $_SESSION['type'] = 'user';
+            //$_SESSION['avail_modules']= self::$helperObject->get_user_module_list($current_user);
+            $_SESSION['authenticated_user_id'] = $current_user->id;
+            $_SESSION['unique_key'] = $sugar_config['unique_key'];
+            $current_user->call_custom_logic('after_login');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->login - succesful login');
+            $nameValueArray = array();
+            global $current_language;
+            $cur_id = $current_user->getPreference('currency');
+            $currencyObject = new Currency();
+            $currencyObject->retrieve($cur_id);
+            $_SESSION['user_language'] = $current_language;
+            $result = array('token' => session_id());
+            $json = json_encode($result);
+            $this->sendJSONResponse($json);
+        } else {
+            $err = new RestError();
+            $err->ReportError();
+            exit;
+        }
+
+        exit;
+    }
+
+
+    /**
+     * This method checks to make sure that all params passed to Login are valid.
+     * Any missing params will cause a REST error to be raised and this scrtip will
+     * exit.
+     *
+     * @param $data
+     * @return bool
+     */
+    private function checkLoginParams($data) {
+        $valid = false;
+
+        print_r($data); die;
+
+        return $valid;
+    }
 
     /**
      *

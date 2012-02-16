@@ -6,6 +6,7 @@ abstract class RestObject implements IRestObject {
 
     private $requestData = array();
     private $httpVerb = null;
+    private $uriData = null;
 
     function __construct() {
         $this->requestData["request_method"] = strtolower($_SERVER["REQUEST_METHOD"]);
@@ -69,6 +70,14 @@ abstract class RestObject implements IRestObject {
 
     public function getRequestData() {
         return $this->requestData;
+    }
+
+    public function setURIData($data) {
+        $this->uriData = $data;
+    }
+
+    public function getURIData() {
+        return $this->uriData;
     }
 
 }

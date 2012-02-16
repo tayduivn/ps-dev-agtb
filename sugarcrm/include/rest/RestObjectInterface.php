@@ -30,6 +30,8 @@
 interface IRestObject {
 
     function execute();
+    function setURIData($data);
+    function getURIData();
 
 }
 
