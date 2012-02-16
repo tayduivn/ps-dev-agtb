@@ -8,6 +8,8 @@ class RestError {
     function __construct() {
 
         $this->errorData = array(
+            401 => "",
+            403 => "The request has been refused. Verify that the logged-in user has appropriate permissions.",
             404 => "The requested resource could not be found. Check the URI for errors, and" .
                 " verify that there are no sharing issues.",
             415 => "The server is refusing to service the request because the entity of the ".

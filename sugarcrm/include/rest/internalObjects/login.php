@@ -68,7 +68,6 @@ class Login extends RestObject implements IRestObject {
         $isvalid = false;
         $raw_post = file_get_contents("php://input");
         $result = RestUtils::isValidJson($raw_post);
-        $d = $this->getURIData();
 
         if ($result["err"] != false) {
             $err = new RestError();
@@ -76,26 +75,17 @@ class Login extends RestObject implements IRestObject {
             exit;
         }
 
-        if ($d[0] == "login") {
-            $this->login();
-        } else if ($d[0] == "logout") {
-
-        } else {
-            $err = new RestError();
-            $err->ReportError(404);
-            exit;
-        }
+        $this->login($result['data']['username'], $result['data']['password']);
     }
 
-    private function login() {
+    private function login($user, $pass) {
         global $sugar_config;
         $auth = new AuthenticationController();
-        $err = $auth->login("admin", "admin");
+        $err = $auth->login($user, $pass);
         $user = null;
         $result = array();
 
         if ($err) {
-            print "SUCESS...";
             $user = new User();
             session_start();
             global $current_user;
@@ -119,15 +109,14 @@ class Login extends RestObject implements IRestObject {
             $result = array('token' => session_id());
             $json = json_encode($result);
             $this->sendJSONResponse($json);
+
+            exit;
         } else {
             $err = new RestError();
-            $err->ReportError();
+            $err->ReportError(401, "\nLogin Failed\n");
             exit;
         }
-
-        exit;
     }
-
 
     /**
      * This method checks to make sure that all params passed to Login are valid.

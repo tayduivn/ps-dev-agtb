@@ -5,6 +5,7 @@
  */
 $restObjectList = array(
     "login" => array(),
+    "logout" => array(),
     "metadata" => array()
 );
 
@@ -13,6 +14,7 @@ $restObjectList = array(
  * Setup the objects source file.
  */
 $restObjectList["login"] = "internalObjects/login.php";
+$restObjectList["logout"] = "internalObjects/logout.php";
 $restObjectList["metadata"] = "internalObjects/metadata.php";
 
 /*
