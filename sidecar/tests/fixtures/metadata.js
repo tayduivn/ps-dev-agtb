@@ -86,7 +86,7 @@ fixtures.metadata = {
                     {"layout" : {
                         "type" : "columns",
                         "components" : [
-                            {view : "listView"},
+                            {view : "editView"},
                             {view : "detailView"}
                         ]
                     }},
@@ -109,7 +109,8 @@ fixtures.metadata = {
             "detailplus" : {
                 "type" : "columns",
                 "components" : [
-                    {"view" : "editView"},
+                    {view : "subpanelView"},
+                    {layout : "edit"},
                     {layout: "detail"}
                 ]
             }
