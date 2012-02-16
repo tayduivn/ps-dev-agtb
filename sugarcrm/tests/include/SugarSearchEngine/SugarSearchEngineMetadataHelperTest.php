@@ -34,6 +34,41 @@ require_once 'include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php';
 class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    private $_cacheRenamed;
+    private $_cacheFile;
+    private $_backupCacheFile;
+
+    public function setUp()
+    {
+        $this->_cacheFile = sugar_cached('modules/ftsModulesCache.php');
+        $this->_backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
+
+        if (file_exists($this->_cacheFile))
+        {
+            $this->_cacheRenamed = true;
+            rename($this->_cacheFile, $this->_backupCacheFile);
+        }
+        else
+        {
+            $this->_cacheRenamed = false;
+        }
+    }
+
+    public function tearDown()
+    {
+        if ($this->_cacheRenamed)
+        {
+            if (file_exists($this->_backupCacheFile))
+            {
+                rename($this->_backupCacheFile, $this->_cacheFile);
+            }
+        }
+        else if (file_exists($this->_cacheFile))
+        {
+            unlink($this->_cacheFile);
+        }
+    }
+
     public function testGetFtsSearchFields()
     {
         $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule('Accounts');
@@ -65,7 +100,6 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
             array('Contacts', true),
             array('BadModule', true),
             array('Notifications', true),
-            //TODO: Add disabled modules
         );
     }
 
@@ -76,6 +110,22 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
     {
         $expected = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
         $this->assertEquals($expected, $actualResult);
+    }
+
+    public function testIsModuleFtsDisabled()
+    {
+        $disabledModules = array('Contacts', 'Cases');
+        write_array_to_file(SugarSearchEngineMetadataHelper::DISABLED_MODULE_CACHE_KEY,
+            $disabledModules, sugar_cached('modules/ftsModulesCache.php'));
+
+        $ret = SugarSearchEngineMetadataHelper::isModuleFtsEnabled('Accounts');
+        $this->assertTrue($ret, 'Accounts should be enabled');
+
+        $ret = SugarSearchEngineMetadataHelper::isModuleFtsEnabled('Cases');
+        $this->assertFalse($ret, 'Cases should be disabled');
+
+        $ret = SugarSearchEngineMetadataHelper::isModuleFtsEnabled('Contacts');
+        $this->assertFalse($ret, 'Contacts should be disabled');
     }
 
 }
