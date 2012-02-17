@@ -150,7 +150,7 @@ class ViewModulefields extends SugarView
                     {
                 	   unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
                     } else {
-                       $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($this->mbModule->mblanguage->strings[$current_language][$def['vname']]) ? $this->mbModule->mblanguage->strings[$current_language][$def['vname']] : $field;
+                       $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($this->mbModule->mblanguage->strings[$current_language.'.lang.php'][$def['vname']]) ? $this->mbModule->mblanguage->strings[$current_language.'.lang.php'][$def['vname']] : $field;
                        $customFieldsData[$field] = ($k == $this->mbModule->name) ? true : false;
                        $loadedFields[$field] = true;
                         
