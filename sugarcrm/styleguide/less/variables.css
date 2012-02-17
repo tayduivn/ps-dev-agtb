@@ -1,0 +1,109 @@
+.black {
+  background: #000000;
+}
+.grayDarker {
+  background: #222222;
+}
+.grayDark {
+  background: #333333;
+}
+.gray {
+  background: #595a5c;
+}
+.grayLight {
+  background: #b7b7b7;
+}
+.grayLighter {
+  background: #e7e7e7;
+}
+.white {
+  background: #ffffff;
+}
+.blueLight {
+  background: #75c4f7;
+}
+.blue {
+  background: #0c7ec7;
+}
+.blueDark {
+  background: #096097;
+}
+.green {
+  background: #0cc763;
+}
+.red {
+  background: #c60c30;
+}
+.yellow {
+  background: #e0d20d;
+}
+.orange {
+  background: #c67e0c;
+}
+.pink {
+  background: #c70ca2;
+}
+.purple {
+  background: #830cc7;
+}
+.linkColor {
+  background: #0c7ec7;
+}
+.linkColorHover {
+  background: #096097;
+}
+.textColor {
+  background: #595a5c;
+}
+.primaryButtonBackground {
+  background: #0c7ec7;
+}
+body.login {
+  background: #333333 url(/img/hixs_pattern_evolution.png);
+}
+.login-footer {
+  margin-bottom: 26px;
+}
+.sub-brand {
+  color: #595a5c;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+date {
+  font-size: 11px;
+}
+footer p, footer p a {
+  color: #595a5c;
+}
+.navbarBackground {
+  background: #1a1a1a;
+}
+.navbarBackgroundHighlight {
+  background: #333333;
+}
+.navbarText {
+  background: #ffffff;
+}
+.navbarLinkColor {
+  background: #ffffff;
+}
+.navbarLinkColorHover {
+  background: #e7e7e7;
+}
+.warningBackground {
+  background: #f8f18e;
+  border: 2px solid #f3e22d;
+}
+.errorBackground {
+  background: #feedf0;
+  border: 2px solid #fbbdca;
+}
+.successBackground {
+  background: #d6fce8;
+  border: 2px solid #75f7af;
+}
+.infoBackground {
+  background: #a5d9fa;
+  border: 2px solid #45b3f4;
+}
