@@ -1,16 +1,24 @@
 (function(app) {
     app.augment("lang", {
+        langmap: {},
         baseUrl: "cache/jsLanguage",
 
-        setLabel: function(module, data) {
+        setLabel: function(module, data, bulk) {
             this.langmap[module] = data || {};
+
+            if (!bulk) {
+                app.cache.set("language:labels", this.langmap);
+            }
         },
 
         // Takes multiple modules and sets individually
         setLabels: function(data) {
             _.each(data, function(label, module) {
-                this.setLabel(module, label);
+                this.setLabel(module, label, true);
             }, this);
+
+            app.cache.set("language:labels", this.langmap);
+            console.log(app)
         },
 
         get: function(str, module) {

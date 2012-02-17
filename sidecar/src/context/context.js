@@ -1,6 +1,13 @@
 (function(app) {
     var contextCache = {};
 
+    /**
+     * A state variable to hold the states of the current context.
+     * @class Context
+     * @constructor
+     * @param {Ojbect} obj Any parameters and state properties to attach to the context
+     * @param {Object} data Hash of collection and or models to save to the context
+     */
     function Context(obj, data) {
         var contextId = _.uniqueId("context_");
         var context = _.extend({
@@ -9,6 +16,11 @@
             parent: null,
             children: [],
 
+            /**
+             * @method
+             * @param prop
+             * @return {Object} val Value of retrieved key
+             */
             get: function(prop) {
                 var requested = {};
 
@@ -26,6 +38,11 @@
                 return this.state;
             },
 
+            /**
+             * @method
+             * @param {Ojbect} obj Any parameters and state properties to attach to the context
+             * @param {Object} data Hash of collection and or models to save to the context
+             */
             set: function(obj, data) {
                 if (obj && obj.contextId && obj.state) { // If obj is a context
 
@@ -48,10 +65,19 @@
                 this.fire();
             },
 
-            reset: function(obj) {
+            /**
+             * Resets the context state to empty.
+             * @method
+             */
+            reset: function() {
                 this.state = {};
             },
 
+            /**
+             * Triggers two events. The first event is a plain "context:change" event, the second
+             * event is the context's id concatenated with change.
+             * @method
+             */
             fire: function() {
                 this.trigger(contextId + ":change", this);
                 this.trigger("context:change", this);
@@ -61,7 +87,8 @@
              * Takes parameters from another source and stores their state.
              *
              * Note: This function should be called everytime a new route routed.
-             * @param obj
+             * @param {Ojbect} obj Any parameters and state properties to attach to the context
+             * @param {Object} data Hash of collection and or models to save to the context
              */
             init: function(obj, data) {
                 this.reset(obj);
@@ -74,6 +101,11 @@
     }
 
     app.augment("context", {
+        /**
+         * Returns a new instance of the context object
+         * @param {Ojbect} obj Any parameters and state properties to attach to the context
+         * @param {Object} data Hash of collection and or models to save to the context
+         */
         getContext: function(obj, data) {
             return new Context(obj, data);
         }

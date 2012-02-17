@@ -3,12 +3,15 @@
     /**
      * Controller extends from a BackboneView
      * It requires the app to be initialized for the controller init to work
+     *
+     * @class Controller
+     * @singleton
      */
     var Controller = Backbone.View.extend({
         /**
          * Initialize our controller with a context object
          * @private
-         * @function
+         * @method
          */
         initialize: function() {
             _.bindAll(this);
@@ -19,12 +22,11 @@
          * This is the main entry point from which the router tells the controller
          * what layout to load.
          *
-         * @public
-         * @function
-         * @param params Options to set the global context and the current layout
-         *  @option id Current Id of the global context
-         *  @option module Current module
-         *  @option layout Name of the current layout
+         * @method
+         * @param {Object} params Options to set the global context and the current layout
+         *  @option {String} id Current Id of the global context
+         *  @option {String} module Current module
+         *  @option {String} layout Name of the current layout
          */
         loadView: function(params) {
             this.data = {};
@@ -46,11 +48,11 @@
          * then a model is returned, else a collection is returned.
          *
          * @private
-         * @function
-         * @param opts
+         * @method
+         * @param {Object} opts
          *  @option id Id of model (if model)
          *  @option module Module type for data
-         * @return obj Data model / collection
+         * @return {Object} obj Data model / collection
          */
         getData: function(opts) {
             var data;
@@ -71,11 +73,11 @@
          * Returns a layout from the layout manager
          *
          * @private
-         * @function
-         * @param opts
+         * @method
+         * @param {Object} opts
          *  @option layout Layout to load
          *  @option module Current module
-         * @return obj Layout obj
+         * @return {Object} obj Layout obj
          */
         getLayout: function(opts) {
             return SUGAR.App.Layout.get({
@@ -87,8 +89,15 @@
 
     /**
      * Should be auto initialized by the app.
+     * @private
      */
     var module = {
+        /**
+         * Initializes this module when a new instance of App is created.
+         *
+         * @param {Object} instance The instance of the App
+         * @method
+         */
         init: function(instance) {
             instance.controller = instance.controller || _.extend(new Controller({el: app.rootEl}), module);
         }

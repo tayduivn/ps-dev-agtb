@@ -1,10 +1,14 @@
 /**
  SideCar Platform
- *
+ * @ignore
  */
-
 var SUGAR = SUGAR || {};
 
+/**
+ * @class App
+ * @singleton
+ *
+ */
 SUGAR.App = (function() {
     var app,
         modules = {};
@@ -12,8 +16,9 @@ SUGAR.App = (function() {
     /**
      * Constructor class for the main framework app
      *
-     * @param opts Configuration options
-     *  @property el Root node of where the application will be rendered to
+     * @constructor
+     * @param {Object} opts Configuration options
+     *  @option el Root node of where the application will be rendered to
      */
     function App(opts) {
         var appId = _.uniqueId("SugarApp_"),
@@ -36,7 +41,14 @@ SUGAR.App = (function() {
         }, this);
 
         return _.extend({
+            /**
+             * @property {String}
+             */
             appId: appId,
+
+            /**
+             * @property {jQuery Node}
+             */
             rootEl: rootEl
         }, this);
     }
@@ -44,7 +56,9 @@ SUGAR.App = (function() {
     return {
         /**
          * Returns an instance of the app
-         * @param opts Pass through configuration options
+         * @param {Object} opts Pass through configuration options
+         * @return {Object} Application instance
+         * @method
          */
         init: function(opts) {
             app = app || _.extend(this, new App(opts));
@@ -65,9 +79,10 @@ SUGAR.App = (function() {
 
         /**
          * Augment the application with a module
-         * @param name Name of the module
-         * @param obj Module to agument
-         * @param init Flag if module should be initialized immediately
+         * @param {String} name Name of the module
+         * @param {Object} obj Module to agument
+         * @param {Boolean} init Flag if module should be initialized immediately
+         * @method
          *
          * Module should be an object with an init function.
          * the init function is passed the current instance of
