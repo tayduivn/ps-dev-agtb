@@ -49,6 +49,13 @@
         {$action.script} {$action.image} 
     {/foreach}
      </div>
+{literal}
+<script type="text/javascript">
+  var uvOptions = {};  (function() {    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;    uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/7ELWWFFNbO7uhYDvVnFZcA.js';    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);  })();</script>
+
+
+<script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script><style type="text/css" media="screen, projection">  @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);</style><script type="text/javascript">  if (typeof(Zenbox) !== "undefined") {    Zenbox.init({      dropboxID:   "20042811",      url:         "https://suga.zendesk.com",      tabID:       "feedback",      tabColor:    "#343433",      tabPosition: "Left"    });  }</script>
+{/literal}
 
     <div class="clear"></div>
 </div>
