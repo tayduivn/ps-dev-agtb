@@ -1,5 +1,12 @@
 (function(app) {
+    /**
+     * @class Router
+     * @singleton
+     */
     var Router = Backbone.Router.extend({
+        /**
+         * @property {Object}
+         */
         routes: {
             "": "index",
             "test": "test"
@@ -32,7 +39,15 @@
         }
     });
 
+    /**
+     * @private
+     */
     var module = {
+        /**
+         * Initializes the router when an instance is created
+         * @method
+         * @param {Object} instance
+         */
         init: function(instance) {
             if (!instance.router && instance.controller) {
                 _.extend(module, new Router({controller: instance.controller}));
