@@ -4,8 +4,8 @@ describe('template', function () {
     afterEach(function () {
         //Reset the cache after every test
         app.cache.cutAll()
-        app.template.initialize();
         delete Handlebars.templates;
+        app.template.initialize();
     });
 
     it('should compile templates', function () {
