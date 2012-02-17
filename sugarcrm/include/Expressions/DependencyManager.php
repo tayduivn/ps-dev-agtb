@@ -314,7 +314,7 @@ require_once("include/Expressions/Actions/ActionFactory.php");
         /* //Disable caching for now
         $cacheLoc = create_cache_directory("modules/$module/dependencies.php");
         //If the cache file exists, use it.
-        if(empty($GLOBALS['sugar_config']['developerMode']) && empty($_SESSION['developerMode']) && is_file($cacheLoc)) {
+        if(inDeveloperMode() && empty($_SESSION['developerMode']) && is_file($cacheLoc)) {
             include($cacheLoc);
         }
         //Otherwise load all the def locations and create the cache file.
