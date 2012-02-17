@@ -221,7 +221,7 @@ class Importer
                         $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
                     if ( !$returnValue )
                     {
-                        $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
+                        $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, $bad_names);
                         $do_save = 0;
                     } else {
                         $focus->sync_contact = $returnValue;
