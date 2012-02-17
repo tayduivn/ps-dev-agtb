@@ -76,7 +76,11 @@ if(isset($_SESSION['authenticated_user_id'])) {
     }
 } else {
 	// Login has failed
-	$url ="index.php?module=Users&action=Login&".http_build_query($login_vars);
+	$url ="index.php?module=Users&action=Login";
+    if(!empty($login_vars))
+    {
+        $url .= http_build_query($login_vars);
+    }
 }
 
 // construct redirect url
