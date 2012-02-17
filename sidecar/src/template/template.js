@@ -7,7 +7,7 @@
     app.augment("template", {
         //Initialize will pull the compiled templates from local storage and populate Handlebars.templates
         initialize : function(){
-            templates = app.cache.get("templates");
+            templates = app.cache.get("templates") || {};
             var src = "";
             _.each(templates, function(t){
                 src += t;
