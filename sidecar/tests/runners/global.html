@@ -9,6 +9,7 @@
     <script type="text/javascript" src='../../lib/jquery/jquery.min.js'></script>
     <script type="text/javascript" src='../../lib/backbone/backbone.js'></script>
 	<script language="javascript" src="../../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+    <script type="text/javascript" src='../../lib/sugarapi/sugarapi.js'></script>
 
     <!-- app files -->
     <script src='../../../sidecar/src/app.js'></script>
@@ -42,12 +43,15 @@
     <link rel="stylesheet" href="../../../sidecar/lib/jasmine/jasmine.css"/>
 
     <!--fixtures--->
+    <script type="text/javascript" src='../fixtures/api.js'></script>
     <script type="text/javascript" src='../../../sidecar/tests/fixtures/sugarFields.js'></script>
 	<script type="text/javascript" src='../../../sidecar/tests/fixtures/metadata.js'></script>
 	<script type="text/javascript" src='../../../sidecar/tests/fixtures/templates.js'></script>
 
+
     <!--tests suites--->
-    <script type="text/javascript" src='../../../sidecar/tests/suites/sugarauth/sugarauth.js'></script>
+    <script type="text/javascript" src='../suites/sugarapi/sugarapi.js'></script>
+    <script type="text/javascript" src='../suites/sugarauth/sugarauth.js'></script>
     <script src='../spec_helper.js'></script>
     <script src='../suites/utils/logger.js'></script>
     <script src='../suites/utils/config.js'></script>

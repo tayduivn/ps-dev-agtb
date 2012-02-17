@@ -38,13 +38,15 @@ describe("Layout.View", function(){
                 return Handlebars.compile(fixtures.templates[key]);
         }
     };
-    //Fake a field list
-    SUGAR.App.sugarFieldsSync = function (that, callback){
-        var ajaxResponse = sugarFieldsFixtures;
-        var result= callback(that, ajaxResponse);
-        return result;
-    };
-    syncResult= SUGAR.App.sugarFieldManager.syncFields();
+    this.server = sinon.fakeServer.create();
+    this.server.respondWith("GET", "/rest/v10/sugarFields/?md5=",
+                    [200, {  "Content-Type":"application/json"},
+                        JSON.stringify(sugarFieldsFixtures)]);
+
+    var syncResult=SUGAR.App.sugarFieldManager.syncFields();
+
+    this.server.respond(); //tell server to respond to pending async call
+
 
     var App = SUGAR.App.init({el: "#sidecar"});
     //Need a sample Bean
