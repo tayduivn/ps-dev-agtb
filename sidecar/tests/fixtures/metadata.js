@@ -107,11 +107,14 @@ fixtures.metadata = {
             },
             //Layout that references another layout
             "detailplus" : {
-                "type" : "columns",
+                "type" : "fluid",
                 "components" : [
-                    {view : "subpanelView"},
-                    {layout : "edit"},
-                    {layout: "detail"}
+                    {view : "subpanelView",
+                     size: 2},
+                    {layout : "edit",
+                    size: 6},
+                    {layout: "detail",
+                    size: 3}
                 ]
             }
         }
