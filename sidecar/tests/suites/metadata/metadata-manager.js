@@ -1,16 +1,10 @@
-describe('SUGAR.App.metadata', function () {
-    //Temp hack until cache is defined
-    var cache = SUGAR.App.cache = {
-        get:function (key) {
-        }
-    };
-    //end hack
-
-    var getCache = sinon.stub(cache, "get");
-    getCache.withArgs("metadata.Contacts").returns(fixtures.metadata.Contacts)
-
+describe('metadata', function () {
+    //Preload the templates
+    SUGAR.App.template.load(fixtures.templates);
 
     beforeEach(function () {
+        //Load the metadata
+        SUGAR.App.metadata.set(fixtures.metadata);
     });
 
     afterEach(function () {

@@ -14,20 +14,22 @@ fixtures.templates = {
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
+            "<form name='{{name}}' class='well'>" +
             "{{#each fields}}" +
                 "<div>{{sugar_field ../../context ../../name}}</div>" +
             "{{/each}}" +
-            "</div>" +
+            "</form></div>" +
         "{{/each}}",
     "editView" :
         "<h3>{{name}}</h3>" +
-        "{{#each meta.panels}}" +
+            "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
+            "<form name='{{name}}' class='well'>" +
             "{{#each fields}}" +
                 "<div>{{sugar_field ../../context ../../name}}</div>" +
             "{{/each}}" +
-            "</div>" +
+            "</form></div>" +
         "{{/each}}",
     "subpanelView" :
         "SUBPANEL VIEW!!!!"

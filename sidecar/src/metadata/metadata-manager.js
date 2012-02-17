@@ -40,18 +40,6 @@
         return null;
     }
 
-    var _getVardef = function(module, bean) {
-        var beans = _get(module, "beans");
-        if (!bean)
-            bean = _get(module, "primary_bean");
-
-        if (bean && beans[bean] && beans[bean].vardefs) {
-            return beans[bean].vardefs
-        }
-
-        return null;
-    }
-
     var _getLayout = function(module, layout) {
         var layouts = _get(module, "layouts");
         if (layouts != null) {
@@ -64,6 +52,28 @@
         }
         return null;
     }
+
+    var _getVardef = function(module, bean) {
+        var beans = _get(module, "beans");
+        if (!bean)
+            bean = _get(module, "primary_bean");
+
+        if (bean && beans[bean] && beans[bean].vardefs) {
+            return beans[bean].vardefs
+        }
+
+        return null;
+    }
+
+    var _getFieldDef = function(module, bean, field) {
+        var vardef = _getVardef(module, bean);
+        if (vardef && vardef.fields)
+            return vardef.fields[field];
+
+        return null;
+    }
+
+
 
     app.augment("metadata", {
         /**
@@ -99,11 +109,17 @@
 
             if(params.type == "vardef")
                 return _getVardef(params.module, params.bean);
+
+            if(params.type == "fieldDef")
+                return _getFieldDef(params.module, params.bean, params.field);
         },
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
         set: function(data) {
-
+            _.each(data, function(entry, module) {
+                _metadata[module] = entry;
+                app.cache.set("metadata." + module, entry);
+            });
         }
     })
 })(SUGAR.App);
