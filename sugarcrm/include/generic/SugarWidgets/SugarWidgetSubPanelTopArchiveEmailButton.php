@@ -46,7 +46,7 @@ class SugarWidgetSubPanelTopArchiveEmailButton extends SugarWidgetSubPanelTopBut
 		global $currentModule;
 
 		$title = $app_strings['LBL_TRACK_EMAIL_BUTTON_TITLE'];
-		$accesskey = $app_strings['LBL_TRACK_EMAIL_BUTTON_KEY'];
+		//$accesskey = $app_strings['LBL_TRACK_EMAIL_BUTTON_KEY'];
 		$value = $app_strings['LBL_TRACK_EMAIL_BUTTON_LABEL'];
 		$this->module = 'Emails';
 
@@ -66,7 +66,7 @@ class SugarWidgetSubPanelTopArchiveEmailButton extends SugarWidgetSubPanelTopBut
 			return $button;
 		}
 		$button = $this->_get_form($defines, $additionalFormFields);
-		$button .= "<input id='".preg_replace('[ ]', '', $value)."_button' title='$title' accesskey='$accesskey' class='button' type='submit' name='".preg_replace('[ ]', '', strtolower($value))."_button' value='  $value  '/>\n";
+		$button .= "<input id='".preg_replace('[ ]', '', $value)."_button' title='$title'  class='button' type='submit' name='".preg_replace('[ ]', '', strtolower($value))."_button' value='  $value  '/>\n";
 		$button .= "</form>";
 		return $button;
 	}

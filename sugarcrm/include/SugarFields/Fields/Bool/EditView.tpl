@@ -34,4 +34,5 @@
 <input type="hidden" name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" value="0"> 
 <input type="checkbox" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" 
 name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" 
-value="1" title='{{$vardef.help}}' tabindex="{{$tabindex}}" {$checked} {{$displayParams.field}}>
+value="1" title='{{$vardef.help}}' tabindex="{{$tabindex}}" {{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}}
+{$checked} {{$displayParams.field}}>

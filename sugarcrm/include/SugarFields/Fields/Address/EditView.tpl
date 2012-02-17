@@ -45,9 +45,9 @@
 </td>
 <td width="*">
 {{if $displayParams.maxlength}}
-<textarea id="{{$street}}" name="{{$street}}" maxlength="{{$displayParams.maxlength}}" rows="{{$displayParams.rows|default:4}}" cols="{{$displayParams.cols|default:60}}" {{if !empty($tabindex)}} tabindex="{{$tabindex}}" {{/if}} >{$fields.{{$street}}.value}</textarea>
+<textarea id="{{$street}}" name="{{$street}}" maxlength="{{$displayParams.maxlength}}" rows="{{$displayParams.rows|default:4}}" cols="{{$displayParams.cols|default:60}}" {{if !empty($tabindex)}} tabindex="{{$tabindex}}" {{/if}} {{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}}  >{$fields.{{$street}}.value}</textarea>
 {{else}}
-<textarea id="{{$street}}" name="{{$street}}" rows="{{$displayParams.rows|default:4}}" cols="{{$displayParams.cols|default:60}}"  {{if !empty($tabindex)}} tabindex="{{$tabindex}}" {{/if}}>{$fields.{{$street}}.value}</textarea>
+<textarea id="{{$street}}" name="{{$street}}" rows="{{$displayParams.rows|default:4}}" cols="{{$displayParams.cols|default:60}}"  {{if !empty($tabindex)}} tabindex="{{$tabindex}}" {{/if}} {{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}}  >{$fields.{{$street}}.value}</textarea>
 {{/if}}
 </td>
 </tr>

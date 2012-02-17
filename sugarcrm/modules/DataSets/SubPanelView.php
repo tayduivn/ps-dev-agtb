@@ -68,8 +68,8 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='record' value=''>\n";
 $button .= "<input type='hidden' name='action'>\n";
-$button .= "<input title='".$mod_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_NEW_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$mod_strings['LBL_NEW_BUTTON_LABEL']."  '>\n";
-$button .= "<input title='".$mod_strings['LBL_ADD_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_ADD_BUTTON_KEY']."' class='button' onclick='return window.open(\"index.php?module=DataSets&action=Popup&form=AddDataSetEditView&form_submit=true\",\"test\",\"width=600,height=400,resizable=1,scrollbars=1\");' type='button' name='button' value='  ".$mod_strings['LBL_ADD_BUTTON_LABEL']."  '>\n";
+$button .= "<input title='".$mod_strings['LBL_NEW_BUTTON_TITLE']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$mod_strings['LBL_NEW_BUTTON_LABEL']."  '>\n";
+$button .= "<input title='".$mod_strings['LBL_ADD_BUTTON_TITLE']."' class='button' onclick='return window.open(\"index.php?module=DataSets&action=Popup&form=AddDataSetEditView&form_submit=true\",\"test\",\"width=600,height=400,resizable=1,scrollbars=1\");' type='button' name='button' value='  ".$mod_strings['LBL_ADD_BUTTON_LABEL']."  '>\n";
 $button .= "</td></tr></form></table>\n";
 
 
