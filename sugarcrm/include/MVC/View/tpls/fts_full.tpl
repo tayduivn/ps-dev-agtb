@@ -90,6 +90,7 @@ width:70%;
     var disabled_modules = {$disabled_modules};
     var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
     var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
+    var noModules = '{sugar_translate label="LBL_FTS_NO_MODULES" module="Administration"}';
     {literal}
 
     $("#ftsSearchField").keypress(function(event) {
@@ -106,6 +107,14 @@ width:70%;
         {
             $('.ftsModuleFilter').bind('click', function(e)
             {
+                // need at least one module selected to search
+                var m = SUGAR.FTS.getSelectedModules();
+                if (m.length <= 0)
+                {
+                    alert(noModules);
+                    this.checked = !this.checked;
+                    return;
+                }
                 SUGAR.FTS.search();
                 var textLabel = this.id + '_label';
                 var countLabel = this.id + '_count';

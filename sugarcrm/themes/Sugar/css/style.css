@@ -1384,7 +1384,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* IE10+ */
     background: linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
-    padding:5px 0px;
     position:fixed;
     bottom:0;
     width:100%;
@@ -1392,7 +1391,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img {
-	margin: 0px 5px;
     float:left;
 }
 
@@ -1414,7 +1412,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img.logo {
-    margin: 3px 10px;
+    margin: 6px 10px;
 }
 
 #footer #partner a {
@@ -1424,10 +1422,12 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #footer #partner img {
 	width: 25px;
 	height: 24px;
+	margin: 4px 10px 4px 0px;
 }
 #footer #partner {
     float:right;
-    margin-right:50px;
+    margin-right:25px;
+     border-right: 1px solid #CCCCCC;
 }
 
 #footer p {
@@ -4028,7 +4028,7 @@ border-top: 0px;
 }
 
 #moduleList .sf-menu > li.current > a {
-	background:		#276499;
+	background:		#193f61;
 }
 #moduleList .sf-menu li.home a {
 	height: 28px;
@@ -4036,7 +4036,6 @@ border-top: 0px;
 }
 /*** arrows **/
 #moduleList .sf-menu a.sf-with-ul {
-	padding-right:  2.25em;
 	min-width: 1px; /* trigger IE7 hasLayout so spans position accurately */
 }
 
@@ -6839,12 +6838,32 @@ p.submsg, p.submsg a{
 }
 #showMoreDiv {
     width:auto;
-    background-color: #EEEEEE;
-    color: #999999;
+	color: #000;
+	-webkit-border-radius: 1px; 
+	-moz-border-radius: 1px; 
+	border-radius: 1px; 
+		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#f1f1f1 10%,
+		#efefef 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.10, #f1f1f1),
+	    color-stop(1, #efefef)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
+	border: 1px solid #aaaaaa;
+	font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	font-size: 14px;
     cursor: pointer;
     text-align: center;
-    height:20px;
     padding: 10px 0;
+    text-shadow: 0px 1px #fff;
 }
 #sugar_full_search_results div.resultTitle{
     font-weight: bold;

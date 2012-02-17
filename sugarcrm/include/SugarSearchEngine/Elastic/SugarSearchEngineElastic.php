@@ -267,7 +267,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     $termFilter->setTerm('team_set_id',$teamID);
                     $teamFilter->addFilter($termFilter);
                 }
-                $query = new Elastica_Query_Filtered($queryObj, $teamFilter);
+                $query = new Elastica_Query($queryObj);
+                $query->setFilter($teamFilter);
             }
             else
             {
@@ -280,6 +281,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $typeFacet = new Elastica_Facet_Terms('_type');
                 $typeFacet->setField('_type');
+                // need to add filter for facet too
+                if (isset($teamFilter))
+                {
+                    $typeFacet->setFilter($teamFilter);
+                }
                 $query->addFacet($typeFacet);
             }
 

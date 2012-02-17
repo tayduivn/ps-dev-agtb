@@ -54,9 +54,9 @@
 	{/if}
 	
 	{if $name == $MODULE_TAB}
-		<li class="current {$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$title}
+		<li class="current {$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$title class="sf-with-ul"}
 	{else}
-		<li class="{$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$title}
+		<li class="{$homeClass}">{sugar_link id="moduleTab_$tabGroupName$name" module=$name data=$module label=$homeImageLabel title=$title class="sf-with-ul"}
 	{/if}
 		{if $shortcutTopMenu.$name && $name != "Home"}
 		<ul class="megamenu">
@@ -117,7 +117,7 @@
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
 				{if $shortcutTopMenu.$module && $module != "Home"}
-					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name"}
+					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name" class="sf-with-ul"}
 					<ul class="megamenu">
 					<li>
 						<div class="megawrapper">
@@ -168,7 +168,7 @@
 			{* visible overflow menu items *}
 			{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
-			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name"}
+			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name" class="sf-with-ul"}
 				{if $shortcutTopMenu.$module}
 				<ul class="megamenu">
 				<li>
@@ -232,7 +232,7 @@
 	 		<li class="menuHR"></li>
 	 		{/if}
 	 	
-	 		<li><a href="#" class="more group" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
+	 		<li><a href="#" class="more group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
 	
 				<ul>
 		          {foreach from=$groupTabs item=module key=group name=groupList}
