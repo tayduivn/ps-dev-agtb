@@ -2,7 +2,7 @@ describe("Layout", function() {
 
     it('should create views', function () {
         expect(SUGAR.App.layout.get({
-            view : "EditView",
+            view : "editView",
             module: "Contacts"
         })).not.toBe(null);
     });
@@ -20,45 +20,30 @@ describe("Layout", function() {
 
 describe("Layout.View", function(){
     var syncResult, view, layout, html;
-    //Fake the cache
-    SUGAR.App.cache = SUGAR.App.cache || {
-        get:function (key) {
-            var parts = key.split(".");
-            if (parts.length == 1){
-                return fixtures[parts[0]]
-            }
+    this.server = sinon.fakeServer.create();
+	this.server.respondWith("GET", "/rest/v10/sugarFields/?md5=",
+					[200, {  "Content-Type":"application/json"},
+						JSON.stringify(sugarFieldsFixtures)]);
 
-            return fixtures[parts[0]][parts[1]];
-        }
-    };
-    //Fake template manager
-    SUGAR.App.template = SUGAR.App.template || {
-        get:function (key) {
-            if (fixtures.templates[key])
-                return Handlebars.compile(fixtures.templates[key]);
-        }
-    };
-    //Fake a field list
-    SUGAR.App.sugarFieldsSync = function (that, callback){
-        var ajaxResponse = sugarFieldsFixtures;
-        var result= callback(that, ajaxResponse);
-        return result;
-    };
-    syncResult= SUGAR.App.sugarFieldManager.syncFields();
+	var syncResult=SUGAR.App.sugarFieldManager.syncFields();
+
+	this.server.respond(); //tell server to respond to pending async call
 
     var App = SUGAR.App.init({el: "#sidecar"});
+
+    App.dataManager.declareModels(fixtures.metadata);
     //Need a sample Bean
-    this.bean = new App.Bean({
+    var bean = App.dataManager.createBean("Contacts", {
         first_name: "Foo",
         last_name: "Bar"
     });
-    this.collection = new App.BeanCollection([this.bean]);
+    var collection = new App.BeanCollection([bean]);
     //Setup a context
     var context = SUGAR.App.context.getContext({
         url: "someurl",
         module: "Contacts",
-        model : this.bean,
-        collection : this.collection
+        model : bean,
+        collection : collection
     });
 
     it('should get metadata from the manager', function(){
@@ -85,6 +70,7 @@ describe("Layout.View", function(){
     })
 
     it('should retrieve the default context', function(){
+        App.controller.context = context;
         view = App.layout.get({
             view:"editView"
         });
@@ -146,18 +132,19 @@ describe("Layout.Layout", function(){
     syncResult= SUGAR.App.sugarFieldManager.syncFields();
 
     var App = SUGAR.App.init({el: "#sidecar"});
+    App.dataManager.declareModels(fixtures.metadata);
     //Need a sample Bean
-    this.bean = new App.Bean({
+    var bean = App.dataManager.createBean("Contacts", {
         first_name: "Foo",
         last_name: "Bar"
     });
-    this.collection = new App.BeanCollection([this.bean]);
+    var collection = new App.BeanCollection([bean]);
     //Setup a context
     var context = SUGAR.App.context.getContext({
         url: "someurl",
         module: "Contacts",
-        model : this.bean,
-        collection : this.collection
+        model : bean,
+        collection : collection
     });
 
     it('should get metadata from the manager', function(){

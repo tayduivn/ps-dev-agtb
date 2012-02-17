@@ -40,18 +40,6 @@
         return null;
     }
 
-    var _getVardef = function(module, bean) {
-        var beans = _get(module, "beans");
-        if (!bean)
-            bean = _get(module, "primary_bean");
-
-        if (bean && beans[bean] && beans[bean].vardefs) {
-            return beans[bean].vardefs
-        }
-
-        return null;
-    }
-
     var _getLayout = function(module, layout) {
         var layouts = _get(module, "layouts");
         if (layouts != null) {
@@ -64,6 +52,27 @@
         }
         return null;
     }
+
+    var _getVardef = function(module, bean) {
+        var beans = _get(module, "beans");
+        if (!bean)
+            bean = _get(module, "primary_bean");
+
+        if (bean && beans[bean] && beans[bean].vardefs) {
+            return beans[bean].vardefs
+        }
+
+        return null;
+    }
+
+    var _getFieldDef = function(module, bean, field) {
+        var vardef = _getVardef(module, bean);
+        if (vardef && vardef.fields)
+            return vardef.fields[field];
+
+        return null;
+    }
+
 
 
     app.augment("metadata", {
@@ -85,23 +94,24 @@
          * @return Object metadata
          */
         get: function(params) {
-            if (!params) {
-                app.logger.error("No paramters provided to metadata.get");
+            if (!params || !params.module) {
+                app.logger.error("No module provided to metadata.get");
                 return null;
             }
+            if (!params.type)
+                return _get(params.modules);
 
-            if(params.view && params.module)
+            if(params.type == "view")
                 return _getView(params.module, params.view);
 
-            else if(params.layout && params.module)
+            if(params.type == "layout")
                 return _getLayout(params.module, params.layout);
 
-            else if(params.vardef && params.module)
+            if(params.type == "vardef")
                 return _getVardef(params.module, params.bean);
 
-            else if (params.module)
-                return _get(params.module);
-
+            if(params.type == "fieldDef")
+                return _getFieldDef(params.module, params.bean, params.field);
         },
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata

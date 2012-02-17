@@ -26,19 +26,23 @@
                 if (!params.view && !params.layout)
                     return null;
 
-                var context = params.context || app.context.getContext();
+                var context = params.context || app.controller.context;
                 var module = params.module || context.get("module");
+                //Ensure we have a module for the layout
+                if (meta && !meta.module){
+                    meta.module = module;
+                }
                 if (params.view) {
-                    meta = params.meta || app.metadata.get({
+                    meta = meta || app.metadata.get({
                         type: "view",
                         module: module,
                         view: params.view
                     });
-                    //Check if the vuew type has its own view subclass
-                    if (app.layout[meta.type + "View"])
+                    //Check if the view type has its own view subclass
+                    if (meta && app.layout[meta.type + "View"])
                         viewClass = meta.type + "View";
 
-                    if (app.layout[meta.type])
+                    if (meta && app.layout[meta.type])
                         viewClass = meta.type;
 
                     return new app.layout[viewClass]({
@@ -53,11 +57,12 @@
                         layout: params.layout
                     });
                     //Check if the layout type has its own layout subclass
-                    if (app.layout[meta.type + "Layout"])
+                    if (meta && app.layout[meta.type + "Layout"])
                         layoutClass = meta.type + "Layout";
                     return new app.layout[layoutClass]({
                         context: params.context,
                         name : params.layout,
+                        module: module,
                         meta : meta
                     });
                 }
@@ -70,7 +75,7 @@
             initialize:function (options) {
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
-                this.context = options.context || app.context.getContext();
+                this.context = options.context || app.controller.context;
                 this.name = options.name;
                 //Create a unique ID for this view
                 this.id = options.id || this.getID();
@@ -104,14 +109,14 @@
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
                 this.context = this.options.context || app.context.getContext();
-                this.module = this.context.module;
+                this.module = this.options.module || this.context.module;
                 this.meta = this.options.meta;
                 this.components = [];
                 this.$el.addClass("layout " + (this.options.className || this.meta.type));
 
                 _.each(this.meta.components, function (def) {
                     var context = def.context ? this.context.getRelatedContext(def.context) : this.context;
-                    var module = def.module || context.get("module");
+                    var module = def.module || context.get("module") || this.module;
                     if (def.view) {
                         this.addComponent(app.layout.get({
                             context:context,
@@ -182,7 +187,6 @@
                     this.$el.addClass("container-fluid").append('<div class="row-fluid"></div>');
                 }
 
-                //debugger;
                 //Create a new td and add the layout to it
                 $().add("<div></div>").addClass("span" + size).append(comp.el).appendTo(this.$el.find("div.row-fluid")[0]);
             }
