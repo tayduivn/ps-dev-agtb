@@ -412,9 +412,9 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign('required_fields',implode(', ',$required));
         $this->ss->assign('CSS', $this->_getCSS());
 
-        $content = $this->ss->fetch('modules/Import/tpls/step3.tpl');
+        $content = $this->ss->fetch($this->getCustomFilePathIfExists('modules/Import/tpls/step3.tpl'));
         $this->ss->assign("CONTENT",$content);
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+        $this->ss->display($this->getCustomFilePathIfExists('modules/Import/tpls/wizardWrapper.tpl'));
 
     }
 

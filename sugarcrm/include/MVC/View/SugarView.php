@@ -615,7 +615,7 @@ class SugarView
 		/******************END DC MENU*********************/
         //END SUGARCRM flav=sales || flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
-        if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )
+        if (inDeveloperMode() )
             $ss->clear_compiled_tpl($headerTpl);
 
         if ($retModTabs)

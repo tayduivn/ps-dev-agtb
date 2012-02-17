@@ -53,8 +53,10 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_themeObjectChild = SugarThemeRegistry::get($this->_themeDefChild['dirName']);
 
         // test assumes developerMode is off, so css minifying happens
-        if ( isset($GLOBALS['sugar_config']['developerMode']) )
+        if (inDeveloperMode())
+        {
             $this->_olddeveloperMode = $GLOBALS['sugar_config']['developerMode'];
+        }
         $GLOBALS['sugar_config']['developerMode'] = false;
     }
 
