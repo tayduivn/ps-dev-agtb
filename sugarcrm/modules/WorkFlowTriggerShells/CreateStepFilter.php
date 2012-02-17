@@ -185,31 +185,14 @@ $form->out("embeded");
 				$filter1_id = $filter_list[0]->id;
 			}
 
-            if(isset($filter1_id) && $filter1_id!="") {
-                $filter1_object->retrieve($filter1_id);
-
-                $rel_seed = null;
-                if ($filter1_object->exp_type == 'relate')
-                {
-                	$wfseed = get_module_info($filter1_object->lhs_module);
-                	$field_def = $wfseed->field_defs[$filter1_object->lhs_field];
-                	$rel_seed = get_module_info($field_def['module']);
-                	$rel_seed->retrieve($filter1_object->rhs_value);
-                }
-                
-                $display_array = $filter1_object->get_display_array_using_name();
-                
-                if ($rel_seed instanceof SugarBean)
-                {
-                    $filter1_expression_text = $display_array['lhs_field'] . " " . $display_array['operator'] . " " . $rel_seed->name;
-                }
-                else
-                {
-                    $filter1_expression_text = $display_array['lhs_field'] . " " . $display_array['operator'] . " " . $display_array['rhs_value'];
-                }
-            } else {
-                $filter1_expression_text = $mod_strings['LBL_SPECIFIC_FIELD_LNK'];
-            }
+			if(isset($filter1_id) && $filter1_id!="") {
+  		  		$filter1_object->retrieve($filter1_id);
+  		  		//$target_module = $focus->target_module;
+				$display_array = $filter1_object->get_display_array_using_name();
+				$filter1_expression_text = $display_array['lhs_field']." ".$display_array['operator']." ".$display_array['rhs_value'];
+			} else {
+				$filter1_expression_text = $mod_strings['LBL_SPECIFIC_FIELD_LNK'];
+			}
 		//end if base_id is there
 		} else {
 			$filter1_expression_text = $mod_strings['LBL_SPECIFIC_FIELD_LNK'];
