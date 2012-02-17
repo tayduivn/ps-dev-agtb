@@ -1,4 +1,3 @@
-
 /*
  * Superfish v1.4.8 - jQuery menu widget
  * Copyright (c) 2008 Joel Birch
@@ -17,17 +16,17 @@
 			c = sf.c,
 			$arrow = $(['<span class="',c.arrowClass,'"> &#187;</span>'].join('')),
 			over = function(){
-				var $$ = $(this), menu = getMenu($$);
+				var $this = $(this), menu = getMenu($this);
 				clearTimeout(menu.sfTimer);
-				$$.showSuperfishUl().siblings().hideSuperfishUl();
+				$this.showSuperfishUl().siblings().hideSuperfishUl();
 			},
 			out = function(){
-				var $$ = $(this), menu = getMenu($$), o = sf.op;
+				var $this = $(this), menu = getMenu($this), o = sf.op;
 				clearTimeout(menu.sfTimer);
 				menu.sfTimer=setTimeout(function(){
-					o.retainPath=($.inArray($$[0],o.$path)>-1);
-					$$.hideSuperfishUl();
-					if (o.$path.length && $$.parents(['li.',o.hoverClass].join('')).length<1){over.call(o.$path);}
+					o.retainPath=($.inArray($this[0],o.$path)>-1);
+					$this.hideSuperfishUl();
+					if (o.$path.length && $this.parents(['li.',o.hoverClass].join('')).length<1){over.call(o.$path);}
 				},o.delay);	
 			},
 			getMenu = function($menu){
@@ -38,6 +37,7 @@
 			addArrow = function($a){ $a.addClass(c.anchorClass).append($arrow.clone()); };
 			
 		return this.each(function() {
+		  var $this = $(this);
 			var s = this.serial = sf.o.length;
 			var o = $.extend({},sf.defaults,op);
 			o.$path = $('li.'+o.pathClass,this).slice(0,o.pathLevels).each(function(){
@@ -45,23 +45,41 @@
 					.filter('li:has(ul)').removeClass(o.pathClass);
 			});
 			sf.o[s] = sf.op = o;
-			
-			$('li:has(ul)',this)[($.fn.hoverIntent && !o.disableHI) ? 'hoverIntent' : 'hover'](over,out).each(function() {
-				if (o.autoArrows) addArrow( $('>a:first-child',this) );
+      // CHANGED: by KARL SWEDBERG
+			if ( (o.eventType === 'hoverIntent' && !$.fn.hoverIntent) || !(/^(?:hover|hoverIntent|toggle)$/).test(o.eventType) ) {
+			  o.eventType = 'hover';
+			}
+			$this.find('li:has(ul)')[o.eventType](over,out).each(function() {
+				if (o.autoArrows) {
+				  addArrow( $('>a:first-child',this) );
+				 // this.addClass("yourClass");
+				}
 			})
 			.not('.'+c.bcClass)
 				.hideSuperfishUl();
 			
-			var $a = $('a',this);
-			$a.each(function(i){
-				var $li = $a.eq(i).parents('li');
-				$a.eq(i).focus(function(){over.call($li);}).blur(function(){out.call($li);});
+
+			$this.find('a').each(function(i){
+				var $a = $(this), $li = $a.parents('li');
+				$a.focus(function(){over.call($li);}).blur(function(){out.call($li);});
+				$a.click(function(event) {
+				  event.preventDefault();
+				  if ( !$a.hasClass("sf-with-ul") ) {
+				    location.href = this.href;
+				  }
+				});
+				$a.dblclick(function(event){
+					location.href = this.href;
+				});
+				
 			});
 			o.onInit.call(this);
 			
 		}).each(function() {
 			var menuClasses = [c.menuClass];
-			if (sf.op.dropShadows  && !($.browser.msie && $.browser.version < 7)) menuClasses.push(c.shadowClass);
+			if (sf.op.dropShadows  && !($.browser.msie && $.browser.version < 7)) {
+			  menuClasses.push(c.shadowClass);
+			}
 			$(this).addClass(menuClasses.join(' '));
 		});
 	};
@@ -71,8 +89,9 @@
 	sf.op = {};
 	sf.IE7fix = function(){
 		var o = sf.op;
-		if ($.browser.msie && $.browser.version > 6 && o.dropShadows && o.animation.opacity!=undefined)
+		if ($.browser.msie && $.browser.version > 6 && o.dropShadows && o.animation.opacity!=undefined) {
 			this.toggleClass(sf.c.shadowClass+'-off');
+		}
 		};
 	sf.c = {
 		bcClass     : 'sf-breadcrumb',
@@ -86,11 +105,15 @@
 		pathClass	: 'overideThisToUse',
 		pathLevels	: 1,
 		delay		: 800,
-		animation	: {opacity:'show'},
+		animation	: {opacity:'show'},		
 		speed		: 'normal',
+		closeAnimation: {opacity: 'hide'},
+		closeSpeed: 0,
 		autoArrows	: true,
 		dropShadows : true,
-		disableHI	: false,		// true disables hoverIntent detection
+    // CHANGED: by KARL SWEDBERG
+		eventType   : 'toggle', // one of 'toggle', 'hover', or 'hoverIntent'
+    // disableHI  : false,    // true disables hoverIntent detection
 		onInit		: function(){}, // callback functions
 		onBeforeShow: function(){},
 		onShow		: function(){},
@@ -101,8 +124,13 @@
 			var o = sf.op,
 				not = (o.retainPath===true) ? o.$path : '';
 			o.retainPath = false;
-			var $ul = $(['li.',o.hoverClass].join(''),this).add(this).not(not).removeClass(o.hoverClass)
-					.find('>ul').hide().css('visibility','hidden');
+			var $closingLi = $(['li.',o.hoverClass].join(''),this).add(this).not(not);
+			var $ul = $closingLi
+					.find('>ul');
+			$ul.animate(o.closeAnimation, o.closeSpeed, function() {
+			  $closingLi.removeClass(o.hoverClass);
+        $ul.css('visibility','hidden');
+      });
 			o.onHide.call($ul);
 			return this;
 		},
