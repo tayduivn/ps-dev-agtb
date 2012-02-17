@@ -1028,7 +1028,7 @@ class SugarApplication
 	{
         $vars = array();
         foreach($this->redirectVars as $var) {
-            if(!empty($_REQUEST['login_'.$var])) $vars[$var] .= $_REQUEST['login_'.$var];
+            if(!empty($_REQUEST['login_'.$var])) $vars[$var] = $_REQUEST['login_'.$var];
         }
 
         if(empty($vars)) {

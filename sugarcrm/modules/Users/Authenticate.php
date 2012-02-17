@@ -33,7 +33,6 @@ global $mod_strings;
 //BEGIN SUGARCRM flav=pro ONLY
 $res = $GLOBALS['sugar_config']['passwordsetting'];
 //END SUGARCRM flav=pro ONLY
-
 $login_vars = $GLOBALS['app']->getLoginVars(false);
 $authController->login($_REQUEST['user_name'], $_REQUEST['user_password']);
 // authController will set the authenticated_user_id session variable
@@ -56,21 +55,25 @@ if(isset($_SESSION['authenticated_user_id'])) {
             && ( empty($_REQUEST['login_action']) || $_REQUEST['login_action'] == 'wirelessmain' ) ) {
         $last_module = $current_user->getPreference('wireless_last_module');
         if ( !empty($last_module) ) {
-            $_REQUEST['login_module'] = $last_module;
-            $_REQUEST['login_action'] = 'wirelessmodule';
+            $login_vars['login_module'] = $_REQUEST['login_module'] = $last_module;
+            $login_vars['login_action'] = $_REQUEST['login_action'] = 'wirelessmodule';
         }
     }
     //END SUGARCRM flav=pro ONLY
     global $current_user;
 
     if(isset($current_user)  && empty($login_vars)) {
-	    $modListHeader = query_module_access_list($current_user);
-	    //try to get the user's tabs
-	    $tempList = $modListHeader;
-	    $idx = array_shift($tempList);
-	    if(!empty($modListHeader[$idx])){
-	    	$url = "index.php?module={$modListHeader[$idx]}&action=index";
-	    }
+        if(!empty($GLOBALS['sugar_config']['default_module']) && !empty($GLOBALS['sugar_config']['default_action'])) {
+            $url = "index.php?module={$GLOBALS['sugar_config']['default_module']}&action={$GLOBALS['sugar_config']['default_action']}";
+        } else {
+    	    $modListHeader = query_module_access_list($current_user);
+    	    //try to get the user's tabs
+    	    $tempList = $modListHeader;
+    	    $idx = array_shift($tempList);
+    	    if(!empty($modListHeader[$idx])){
+    	    	$url = "index.php?module={$modListHeader[$idx]}&action=index";
+    	    }
+        }
     } else {
         $url = $GLOBALS['app']->getLoginRedirect();
     }
