@@ -1,4 +1,4 @@
-describe('SUGAR.App.metadata', function () {
+describe('metadata', function () {
     //Preload the templates
     SUGAR.App.template.load(fixtures.templates);
 
