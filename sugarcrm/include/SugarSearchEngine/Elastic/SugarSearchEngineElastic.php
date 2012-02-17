@@ -281,6 +281,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $typeFacet = new Elastica_Facet_Terms('_type');
                 $typeFacet->setField('_type');
+                // need to add filter for facet too
+                if (isset($teamFilter))
+                {
+                    $typeFacet->setFilter($teamFilter);
+                }
                 $query->addFacet($typeFacet);
             }
 
