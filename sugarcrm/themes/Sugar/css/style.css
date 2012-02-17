@@ -6839,12 +6839,32 @@ p.submsg, p.submsg a{
 }
 #showMoreDiv {
     width:auto;
-    background-color: #EEEEEE;
-    color: #999999;
+	color: #000;
+	-webkit-border-radius: 1px; 
+	-moz-border-radius: 1px; 
+	border-radius: 1px; 
+		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#f1f1f1 10%,
+		#efefef 100%
+		);
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.10, #f1f1f1),
+	    color-stop(1, #efefef)
+	   );	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dfdfdf');
+	border: 1px solid #aaaaaa;
+	font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	font-size: 14px;
     cursor: pointer;
     text-align: center;
-    height:20px;
     padding: 10px 0;
+    text-shadow: 0px 1px #fff;
 }
 #sugar_full_search_results div.resultTitle{
     font-weight: bold;
