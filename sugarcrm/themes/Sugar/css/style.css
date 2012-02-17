@@ -4036,7 +4036,6 @@ border-top: 0px;
 }
 /*** arrows **/
 #moduleList .sf-menu a.sf-with-ul {
-	padding-right:  2.25em;
 	min-width: 1px; /* trigger IE7 hasLayout so spans position accurately */
 }
 
