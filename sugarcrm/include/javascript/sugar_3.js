@@ -3036,7 +3036,7 @@ SUGAR.util = function () {
 				if(myPos == undefined || myPos == "") {
 					myPos = "left top";
 				}
-				if(atPos == undefined || myPos == "") {
+				if(atPos == undefined || atPos == "") {
 					atPos = "right top";
 				}
 				
