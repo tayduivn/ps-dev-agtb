@@ -290,11 +290,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
 
             $s = new Elastica_Search($this->_client);
-            //Only search accross our index.
+            //Only search across our index.
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $s->addIndex($index);
 
-            //Search accross specific types (modules)
+            //Search across specific types (modules)
             if(!empty($options['moduleFilter']))
                 $s->addTypes($options['moduleFilter']);
 
