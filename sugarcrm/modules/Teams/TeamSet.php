@@ -55,7 +55,7 @@ class TeamSet extends SugarBean{
     */
     var $primary_team_id;
     /*
-    * The number of teams assoicated with a team set.
+    * The number of teams associated with a team set.
     */
     var $team_count = 0;
 

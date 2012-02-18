@@ -140,7 +140,7 @@ class DetailView extends ListView {
         //indicate that this is not the first time anymore
         $this->setLocalSessionVariable($html_varName, "IS_FIRST_VIEW",  false);
 
-        // All 3 databases require this because the limit query does a > db_offset comparision.
+        // All 3 databases require this because the limit query does a > db_offset comparison.
 		$db_offset=$offset-1;
 
 		$this->populateQueryWhere($isFirstView, $html_varName);
@@ -187,7 +187,7 @@ class DetailView extends ListView {
 		}
 
 		//update the request with correct value for the record attribute.
-		//need only when using the VCR buttuoms. This is a workaround need to fix the values
+		//need only when using the VCR buttons. This is a workaround need to fix the values
 		//set in the VCR links.
 		$_REQUEST['record'] = $object->id;
 		$_GET['record'] = $object->id;

@@ -6,9 +6,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -57,7 +57,7 @@ class CMISRepositoryWrapper
     // Only Handles Basic Auth
     // Very Little Error Checking
     // Does not work against pre CMIS 1.0 Repos
-    
+
     var $url;
     var $username;
     var $password;
@@ -66,13 +66,13 @@ class CMISRepositoryWrapper
     var $last_request;
     var $do_not_urlencode;
     protected $_addlCurlOptions = array();
-    
+
     static $namespaces = array (
         "cmis" => "http://docs.oasis-open.org/ns/cmis/core/200908/",
         "cmisra" => "http://docs.oasis-open.org/ns/cmis/restatom/200908/",
         "atom" => "http://www.w3.org/2005/Atom",
         "app" => "http://www.w3.org/2007/app",
-        
+
     );
 
     function __construct($url, $username = null, $password = null, $options = null, array $addlCurlOptions = array())
@@ -81,7 +81,7 @@ class CMISRepositoryWrapper
             $this->do_not_urlencode=true;
         }
         $this->_addlCurlOptions = $addlCurlOptions; // additional cURL options
-        
+
         $this->connect($url, $username, $password, $options);
     }
 
@@ -96,7 +96,7 @@ class CMISRepositoryWrapper
             return $url;
         }
     }
-    
+
     function convertStatusCode($code, $message)
     {
         switch ($code) {
@@ -202,7 +202,7 @@ class CMISRepositoryWrapper
         {
             curl_setopt($session, CURLOPT_POST, true);
         }
-        
+
         // apply addl. cURL options
         // WARNING: this may override previously set options
         if (count($this->_addlCurlOptions)) {
@@ -210,8 +210,8 @@ class CMISRepositoryWrapper
                 curl_setopt($session, $key, $value);
             }
         }
-        
-        
+
+
         //TODO: Make this storage optional
         $retval = new stdClass();
         $retval->url = $url;
@@ -275,7 +275,7 @@ class CMISRepositoryWrapper
     // Static Utility Functions
     static function processTemplate($template, $values = array ())
     {
-        // Fill in the blanks -- 
+        // Fill in the blanks --
         $retval = $template;
         if (is_array($values))
         {
@@ -323,7 +323,7 @@ class CMISRepositoryWrapper
         // Distinguishes between the two "down" links
         //  -- the children link is put into the associative array with the "down" index
         //  -- the descendants link is put into the associative array with the "down-tree" index
-        //  These links are distinquished by the mime type attribute, but these are probably the only two links that share the same rel ..
+        //  These links are distinguished by the mime type attribute, but these are probably the only two links that share the same rel ..
         //    so this was done as a one off
         $links = array ();
         $link_nodes = $xmlnode->getElementsByTagName("link");
@@ -331,7 +331,7 @@ class CMISRepositoryWrapper
         {
             if ($ln->attributes->getNamedItem("rel")->nodeValue == "down" && $ln->attributes->getNamedItem("type")->nodeValue == "application/cmistree+xml")
             {
-                //Descendents and Childredn share same "rel" but different document type
+                //Descendents and children share same "rel" but different document type.
                 $links["down-tree"] = $ln->attributes->getNamedItem("href")->nodeValue;
             } else
             {
@@ -417,7 +417,7 @@ class CMISRepositoryWrapper
 		$retval->allowableActions = CMISRepositoryWrapper :: extractAllowableActionsFromNode($xmlnode);
         return $retval;
     }
-    
+
     function handleSpaces($path)
     {
         return $this->do_not_urlencode ? $path : rawurlencode($path);
@@ -453,7 +453,7 @@ class CMISRepositoryWrapper
                 $retval->properties[$id] = array (
                     "cmis:propertyType" => $propertyType,
                     "cmis:cardinality" => $cardinality,
-                    
+
                 );
             } else
             {
@@ -478,10 +478,10 @@ class CMISRepositoryWrapper
         }
 
         /*
-         * 
-        
-        
-        
+         *
+
+
+
         		$prop_nodes = $xmlnode->getElementsByTagName("object")->item(0)->getElementsByTagName("properties")->item(0)->childNodes;
         		foreach ($prop_nodes as $pn) {
         			if ($pn->attributes) {
@@ -505,7 +505,7 @@ class CMISRepositoryWrapper
     {
         // Process a feed and extract the objects
         //   Does not handle hierarchy
-        //   Provides two arrays 
+        //   Provides two arrays
         //   -- one sequential array (a list)
         //   -- one hash table indexed by objectID
         //   and a property "numItems" that holds the total number of items available.
@@ -513,7 +513,7 @@ class CMISRepositoryWrapper
         // extract total number of items
         $numItemsNode = CMISRepositoryWrapper::doXQueryFromNode($xmlnode, "/atom:feed/cmisra:numItems");
         $retval->numItems = $numItemsNode->length ? (int) $numItemsNode->item(0)->nodeValue : -1; // set to negative value if info is not available
-                
+
         $retval->objectList = array ();
         $retval->objectsById = array ();
         $result = CMISRepositoryWrapper :: doXQueryFromNode($xmlnode, "/atom:feed/atom:entry");
@@ -537,7 +537,7 @@ class CMISRepositoryWrapper
     {
         // Process a feed and extract the objects
         //   Does not handle hierarchy
-        //   Provides two arrays 
+        //   Provides two arrays
         //   -- one sequential array (a list)
         //   -- one hash table indexed by objectID
         $retval = new stdClass();
@@ -664,7 +664,7 @@ class CMISService extends CMISRepositoryWrapper
     }
 
     // Utility Methods -- Added Titles
-    // Should refactor to allow for single object	
+    // Should refactor to allow for single object
     function cacheObjectInfo($obj)
     {
         $this->_link_cache[$obj->id] = $obj->links;
@@ -765,7 +765,7 @@ class CMISService extends CMISRepositoryWrapper
 	        $myURL = $this->getTypeLink($typeId, "down-tree");
 	        $myURL = CMISRepositoryWrapper :: getOpUrl ($myURL, $hash_values);
         } else {
-        	$myURL = $this->processTemplate($this->workspace->collections['http://docs.oasis-open.org/ns/cmis/link/200908/typedescendants'], $varmap);       	
+        	$myURL = $this->processTemplate($this->workspace->collections['http://docs.oasis-open.org/ns/cmis/link/200908/typedescendants'], $varmap);
         }
         $ret = $this->doGet($myURL);
         $typs = $this->extractTypeFeed($ret->body);
@@ -782,7 +782,7 @@ class CMISService extends CMISRepositoryWrapper
 	        //TODO: Need GenURLQueryString Utility
         } else {
             //TODO: Need right URL
-        	$myURL = $this->processTemplate($this->workspace->collections['types'], $varmap);       	
+        	$myURL = $this->processTemplate($this->workspace->collections['types'], $varmap);
         }
         $ret = $this->doGet($myURL);
         $typs = $this->extractTypeFeed($ret->body);
@@ -971,7 +971,7 @@ xmlns:cmisra="http://docs.oasis-open.org/ns/cmis/restatom/200908/">
                 "string" => "String",
                 "url" => "Url",
                 "xml" => "Xml",
-                
+
             );
         }
         $propertyContent = "";
@@ -1079,7 +1079,7 @@ xmlns:cmisra="http://docs.oasis-open.org/ns/cmis/restatom/200908/">
 
     function getProperties($objectId, $options = array ())
     {
-        // May need to set the options array default -- 
+        // May need to set the options array default --
         return $this->getObject($objectId, $options);
     }
 
@@ -1276,8 +1276,8 @@ xmlns:cmisra="http://docs.oasis-open.org/ns/cmis/restatom/200908/">
         return $this->getObject($objectId, $options); // Won't be able to handle major/minor distinction
         // Need to add this -- "current-version"
         /*
-         * Headers: CMIS-filter, CMIS-returnVersion (enumReturnVersion) 
-         * HTTP Arguments: filter, returnVersion 
+         * Headers: CMIS-filter, CMIS-returnVersion (enumReturnVersion)
+         * HTTP Arguments: filter, returnVersion
          * Enum returnVersion: This, Latest, Major
          */
     }
