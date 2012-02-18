@@ -764,7 +764,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	protected function alterOneColumnSQL($tablename, $def, $ignoreRequired = false) {
 		// Column attributes can only be modified one sql statement at a time
 		// http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/c0023297.htm
-		// Some rework maybe needed when targetting other versions than LUW 9.7
+		// Some rework maybe needed when targeting other versions than LUW 9.7
 		// http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.wn.doc/doc/c0053726.html
 		$sql = array();
 		$req = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
@@ -865,7 +865,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	public function getAutoIncrement($table, $field_name)
 	{
 		$seqName = $this->_getSequenceName($table, $field_name, true);
-		// NOTE that we are not changing the sequence nor can we garantuee that this will be the next value
+		// NOTE that we are not changing the sequence nor can we guarantee that this will be the next value
 		$currval = $this->getOne("SELECT PREVVAL FOR $seqName from SYSIBM.SYSDUMMY1");
 		if (!empty($currval))
 			return $currval + 1 ;
@@ -960,7 +960,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	/**+
 	* @see DBManager::get_indices()
 	*
-	* NOTE normally the db2_statistics should produce the indices in an implementation indepent manner.
+	* NOTE normally the db2_statistics should produce the indices in an implementation independent manner.
 	* However it wasn't producing any results for the LUW Express-C edition running on Vista.
 	* Furthermore using a permanent connections resulted in unexplainable PHP errors.
 	* Falling back to system views to retrieve this data:
