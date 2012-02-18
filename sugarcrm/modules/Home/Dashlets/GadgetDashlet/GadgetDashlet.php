@@ -18,9 +18,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * 
+ *
  * $Id: JotPadDashlet.php 28381 2007-10-18 21:40:33Z bsoufflet $
- * Description: Handles the User Preferences and stores them in a seperate table. 
+ * Description: Handles the User Preferences and stores them in a separate table.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
@@ -30,10 +30,10 @@ require_once('include/Dashlets/Dashlet.php');
 
 
 class GadgetDashlet extends Dashlet {
-	
+
     /**
-     * Constructor 
-     * 
+     * Constructor
+     *
      * @global string current language
      * @param guid $id id for the current dashlet (assigned from Home module)
      * @param array $def options saved for this dashlet
@@ -44,27 +44,27 @@ class GadgetDashlet extends Dashlet {
 		$this->gadgets = $googleGadgets;
         if(!empty($def['gadget']))  // load default text is none is defined
             $this->gadget = $def['gadget'];
-        else 
+        else
             $this->gadget = '';
         if(!empty($def['category']))  // load default text is none is defined
             $this->category = $def['category'];
-        else 
+        else
             $this->category = '';
         parent::Dashlet($id); // call parent constructor
-         
+
         $this->isConfigurable = true; // dashlet is configurable
         $this->hasScript = true;  // dashlet has javascript attached to it
-                
+
         // if no custom title, use default
         if(empty($def['title'])) $this->title = $this->dashletStrings['LBL_TITLE'];
-        else $this->title = $def['title'];   
-        
+        else $this->title = $def['title'];
+
         if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
     }
 
     /**
      * Displays the dashlet
-     * 
+     *
      * @return string html to display dashlet
      */
     function display() {
@@ -74,13 +74,13 @@ class GadgetDashlet extends Dashlet {
         if(!empty($this->gadgets[$this->category][$this->gadget])){
          	$ss->assign('gadget',$this->gadgets[$this->category][$this->gadget]);
         }
-        $str = $ss->fetch('modules/Home/Dashlets/GadgetDashlet/GadgetDashlet.tpl');     
+        $str = $ss->fetch('modules/Home/Dashlets/GadgetDashlet/GadgetDashlet.tpl');
         return parent::display($this->category . ' ' . $this->gadget) . $str . '<br />'; // return parent::display for title and such
     }
-    
+
     /**
      * Displays the javascript for the dashlet
-     * 
+     *
      * @return string javascript to use with this dashlet
      */
     function displayScript() {
@@ -89,18 +89,18 @@ class GadgetDashlet extends Dashlet {
         $ss->assign('id', $this->id);
                 $json = getJSONobj();
          $ss->assign('gadgets', $json->encode($this->gadgets));
-        $str = $ss->fetch('modules/Home/Dashlets/GadgetDashlet/GadgetDashletScript.tpl');     
+        $str = $ss->fetch('modules/Home/Dashlets/GadgetDashlet/GadgetDashletScript.tpl');
         return $str; // return parent::display for title and such
     }
-        
+
     /**
      * Displays the configuration form for the dashlet
-     * 
+     *
      * @return string html to display form
      */
     function displayOptions() {
         global $app_strings;
-        
+
         $ss = new Sugar_Smarty();
         $this->dashletStrings['LBL_SAVE'] = $app_strings['LBL_SAVE_BUTTON_LABEL'];
         $this->dashletStrings['LBL_CLEAR'] = $app_strings['LBL_CLEAR_BUTTON_LABEL'];
@@ -115,17 +115,17 @@ class GadgetDashlet extends Dashlet {
 			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
 			$ss->assign('autoRefreshSelect', $this->autoRefresh);
 		}
-       
-        $str = $ss->fetch('modules/Home/Dashlets/GadgetDashlet/GadgetDashletOptions.tpl');  
+
+        $str = $ss->fetch('modules/Home/Dashlets/GadgetDashlet/GadgetDashletOptions.tpl');
         return parent::displayOptions() . $str;
-    }  
+    }
 
     /**
      * called to filter out $_REQUEST object when the user submits the configure dropdown
-     * 
+     *
      * @param array $req $_REQUEST
      * @return array filtered options to save
-     */  
+     */
     function saveOptions($req) {
         global $sugar_config, $timedate, $current_user, $theme;
         $options = array();
@@ -137,7 +137,7 @@ class GadgetDashlet extends Dashlet {
     }
 
 
-    
+
 }
 
 ?>
