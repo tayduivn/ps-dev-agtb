@@ -2377,6 +2377,11 @@ $app_strings = array (
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    //Lotus Live specific error messages
+    'ERR_EXTERNAL_API__LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system',
+    //END SUGARCRM flav=pro ONLY
+
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
     'LBL_ACCOUNTS'=>'Accounts',

@@ -19,6 +19,16 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+/**
+ * ExtAPILotusLive.php
+ *
+ * This class handles the implementation of the External API access to create and retrieve meetings and
+ * documents to the LotusLive cloud service.  It also handles the authentication of the OAuth session
+ * to connect to the service.
+ *
+ */
+
 require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 require_once('include/externalAPI/Base/WebDocument.php');
@@ -94,7 +104,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $this->oauthReq = $this->url.'manage/oauth/getRequestToken';
         $this->oauthAuth = $this->url.'manage/oauth/authorizeToken';
         $this->oauthAccess = $this->url.'manage/oauth/getAccessToken';
-
+        $this->_appStringErrorPrefix = $_appStringErrorPrefix = self::APP_STRING_ERROR_PREFIX . '_LOTUS_LIVE';
         parent::__construct();
     }
 
@@ -284,7 +294,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
     {
         // Let's see if this is not on the whitelist of mimeTypes
-        if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhiteList) ) {
+        if ( empty($mimeType) || ! in_array($mimeType,self::$llMimeWhitelist)) {
             // It's not whitelisted
             $mimeType = 'application/octet-stream';
         }
@@ -300,13 +310,14 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
             ->setHeaders("slug", $docName)
             ->request("POST");
         $reply = array('rawResponse' => $rawResponse->getBody());
-//        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
-//        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
+
+        //$GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
+        //$GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
+
         if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
-            return;
+            $reply['errorMessage'] = $this->getErrorStringFromCode($rawResponse->getMessage());
+            return $reply;
         }
 
         $xml = new DOMDocument();
@@ -315,9 +326,8 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $xml->loadXML($reply['rawResponse']);
         if ( !is_object($xml) ) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
-            return;
+            $reply['errorMessage'] = $this->getErrorStringFromCode(libxml_get_errors());
+            return $reply;
         }
 
         $xp = new DOMXPath($xml);
@@ -327,9 +337,8 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 
         if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
             $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server';
-            return;
+            $reply['errorMessage'] = $this->getErrorStringFromCode();
+            return $reply;
         }
         $bean->doc_url = $url->item(0)->getAttribute("href");
         $bean->doc_direct_url = $directUrl->item(0)->getAttribute("href");
@@ -534,4 +543,31 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     }
 
 
+    /**
+   	 * getErrorStringFromCode
+     *
+     * This method overrides the getErrorStringFromCode method from the ExternalAPIBase class and provides
+     * for custom error messages specific to the Lotus Live web service.
+   	 *
+   	 * @param $error Mixed variable of the error message, number or object returned from Lotus Live web service
+     * @return String Translated string label for the error message
+   	 */
+   	protected function getErrorStringFromCode($error='')
+   	{
+        //For non-string or empty error number/message, just return a generic message for now
+        if(empty($error) || !is_string($error))
+        {
+            return $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];
+        }
+
+        //Create the error key to match against from the language files
+   	    $language_key = $this->_appStringErrorPrefix . '_' . strtoupper($error);
+
+   	    if(isset($GLOBALS['app_strings'][$language_key]))
+        {
+   	       return $GLOBALS['app_strings'][$language_key];
+        }
+
+        return $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];
+   	}
 }
