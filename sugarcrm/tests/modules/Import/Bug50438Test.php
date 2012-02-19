@@ -33,16 +33,22 @@
  * @ticket 50438
  */
 
+require_once('modules/Import/Importer.php');
+require_once('modules/Import/sources/ImportFile.php');
+
 class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $call;
-    var $contact;
 
+    var $contact;
+    var $fileArr;
+    var $call_id;
     public function setUp()
     {
         global $currentModule ;
+        $this->call_id = create_guid();
 		$mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+
         //create a contact
         $this->contact = new Contact();
         $this->contact->first_name = 'Joe UT ';
@@ -50,25 +56,21 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
         $this->contact->disable_custom_fields = true;
         $this->contact->save();
 
-
-
-        //create a call
-        $this->call = new Call();
-        $this->call->name = 'Call for Unit Test 50438';
-        $this->call->status = 'Planned';
-        $this->call->disable_custom_fields = true;
-        $this->call->save();
-
+        //create array to output as import file using the new contact as the related parent
+        $this->fileArr = array(
+            0=> "\"{$this->call_id}\",\"Call for Unit Test 50438\",\"Planned\", \"{$this->contact->module_dir}\",\"{$this->contact->id}\""
+        );
     }
 
     public function tearDown()
     {
 
-        $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->call->id}'");
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE user_id='{$this->contact->id}'");
+        $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->call_id}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id='{$this->contact->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($this->call);
+        unset($this->call_id);
         unset($this->contact);
+        unset($this->fileArr);
         unset( $GLOBALS['current_user']);
         unset( $GLOBALS['mod_strings']);
     }
@@ -78,23 +80,46 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
     public function testParentsAreRelatedDuringImport()
     {
 
-        //set the call parent information
-        $this->call->parent_type = 'Contacts';
-        $this->call->parent_id = $this->contact->id;
+        $file = $GLOBALS['sugar_config']['upload_dir'].'test50438.csv';
+        $ret = file_put_contents($file, $this->fileArr);
+        $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.var_export($this->fileArr,true));
 
-        //set the call bean to simulate import in progress
-        $this->call->in_import = true;
+        $importSource = new ImportFile($file, ',', '"');
 
-        //save the bean
-        $this->call->save();
+        $bean = loadBean('Calls');
 
-        //refetch the bean, and get related contacts
-        $this->call->retrieve($this->call->id);
-        $this->call->load_relationship('contacts');
-        $related_contacts = $this->call->contacts->get();
+        $_REQUEST['columncount'] = 5;
+        $_REQUEST['colnum_0'] = 'id';
+        $_REQUEST['colnum_1'] = 'subject';
+        $_REQUEST['colnum_2'] = 'status';
+        $_REQUEST['colnum_3'] = 'parent_type';
+        $_REQUEST['colnum_4'] = 'parent_id';
+        $_REQUEST['import_module'] = 'Contacts';
+        $_REQUEST['importlocale_charset'] = 'UTF-8';
+        $_REQUEST['importlocale_timezone'] = 'GMT';
+        $_REQUEST['importlocale_default_currency_significant_digits'] = '2';
+        $_REQUEST['importlocale_currency'] = '-99';
+        $_REQUEST['importlocale_dec_sep'] = '.';
+        $_REQUEST['importlocale_currency'] = '-99';
+        $_REQUEST['importlocale_default_locale_name_format'] = 's f l';
+        $_REQUEST['importlocale_num_grp_sep'] = ',';
+        $_REQUEST['importlocale_dateformat'] = 'm/d/y';
+        $_REQUEST['importlocale_timeformat'] = 'h:i:s';
+
+        $importer = new Importer($importSource, $bean);
+        $importer->import();
+
+        //fetch the bean using the passed in id and get related contacts
+        require_once('modules/Calls/Call.php');
+        $call = new Call();
+        $call->retrieve($this->call_id);
+        $call->load_relationship('contacts');
+        $related_contacts = $call->contacts->get();
 
         //test that the contact id is in the array of related contacts.
         $this->assertContains($this->contact->id, $related_contacts,' Contact was not related during simulated import despite being set in related parent id');
+        unset($call);
+        unlink($file);
     }
 
 }
