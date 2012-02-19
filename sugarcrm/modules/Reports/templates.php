@@ -626,8 +626,7 @@ function addFilterInputRelate(row,module_name,default0)
 
         var cell = document.createElement('td');
 	var new_input = document.createElement("input");
-	new_input.title="Change [Alt+G]";
-	new_input.accessKey="G";
+	new_input.title="Change";
 	new_input.type="button";
 	new_input.value='Change'; 
 	new_input.name=module_name;
@@ -911,8 +910,8 @@ function clear_form(form)
 </td>
 </tr>
 </table>
-<input title="Filter [Alt+Q]" accessKey="Q" class="button" type="submit" name="button" value="   Filter   "/>
-<input title="Clear [Alt+C]" accessKey="C" onclick="clear_form(this.form);" class="button" type="button" name="clear" value=" Clear All "/>
+<input title="Filter" class="button" type="submit" name="button" value="   Filter   "/>
+<input title="Clear" onclick="clear_form(this.form);" class="button" type="button" name="clear" value=" Clear All "/>
 		
 </form>
 
@@ -1282,8 +1281,8 @@ function clear_form_names(form,name0,name1)
 }
 //  End -->
 </script>
-<input readonly name='<?php echo $field['name']; ?>' type="text" value="<?php echo $name; ?>"><input name='<?php echo $field['id_name']; ?>' type="hidden" value='<?php echo $id_name; ?>'>&nbsp;<input title="Change [Alt+G]" accessKey="G" type="button" tabindex='1' class="button" value='Change' name=btn1 LANGUAGE=javascript onclick='return window.open("index.php?module=<?php echo $field['module']; ?>&action=Popup&form=EditView&form_submit=false","test","width=600,height=400,resizable=1,scrollbars=1");'>
-<input title="Clear [Alt+C]" accessKey="C" onclick="clear_form_names(this.form,'<?php echo $field['id_name']; ?>','<?php echo $field['name']; ?>');" class="button" type="button" name="clear" value=" Clear "/>
+<input readonly name='<?php echo $field['name']; ?>' type="text" value="<?php echo $name; ?>"><input name='<?php echo $field['id_name']; ?>' type="hidden" value='<?php echo $id_name; ?>'>&nbsp;<input title="Change"  type="button" tabindex='1' class="button" value='Change' name=btn1 LANGUAGE=javascript onclick='return window.open("index.php?module=<?php echo $field['module']; ?>&action=Popup&form=EditView&form_submit=false","test","width=600,height=400,resizable=1,scrollbars=1");'>
+<input title="Clear" onclick="clear_form_names(this.form,'<?php echo $field['id_name']; ?>','<?php echo $field['name']; ?>');" class="button" type="button" name="clear" value=" Clear "/>
 
 <?php
 }

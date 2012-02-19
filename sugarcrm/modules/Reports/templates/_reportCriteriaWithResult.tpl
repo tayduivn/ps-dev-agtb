@@ -68,7 +68,7 @@
 <tr>
 <td>
 
-<input type="submit" class="button" name="runReportButton" id="runReportButton" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+<input type="submit" class="button" name="runReportButton" id="runReportButton" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
 	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='';">
 {* //BEGIN SUGARCRM flav=sales ONLY*}
 <input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
@@ -76,7 +76,7 @@
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings.LBL_EDIT_BUTTON_KEY}" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
+<input type="submit" class="button" name="editReportButton" id="editReportButton" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
 	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';">
 {/if}
 {$duplicateButtons}
@@ -86,7 +86,7 @@
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
 {if ($report_export_access)}
-<input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
+<input type="submit" class="button" name="printPDFButton" id="printPDFButton"  value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
 	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 
 {/if}

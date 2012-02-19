@@ -311,7 +311,6 @@ EOJAVASCRIPT;
 <script type="text/javascript" src="include/SubPanel/SubPanelTiles.js?s={$sugar_version}&c={$sugar_config['js_custom_version']}"></script>
 <input align=right" type="button" name="select_button" id="select_button" class="button"
      title="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
-     accesskey="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_KEY']}"
      value="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      onclick='open_popup("ProspectLists",600,400,"",true,true,$encoded_popup_request_data,"Single","true");' />
 EOHTML;
