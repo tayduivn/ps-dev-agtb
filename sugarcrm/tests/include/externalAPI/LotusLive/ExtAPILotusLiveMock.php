@@ -55,7 +55,7 @@ class ExtAPILotusLiveMock extends ExtAPILotusLive
      *
      *
      */
-    public function getErrorStringFromCode($error)
+    public function getErrorStringFromCode($error='')
     {
         return parent::getErrorStringFromCode($error);
     }

@@ -2379,7 +2379,7 @@ $app_strings = array (
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
-    'ERR_EXTERNAL_API__LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system',
+    'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
     //END SUGARCRM flav=pro ONLY
 
     'LBL_ACCOUNT'=>'Account',

@@ -104,7 +104,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $this->oauthReq = $this->url.'manage/oauth/getRequestToken';
         $this->oauthAuth = $this->url.'manage/oauth/authorizeToken';
         $this->oauthAccess = $this->url.'manage/oauth/getAccessToken';
-        $this->_appStringErrorPrefix = $_appStringErrorPrefix = self::APP_STRING_ERROR_PREFIX . '_LOTUS_LIVE';
+        $this->_appStringErrorPrefix = $_appStringErrorPrefix = self::APP_STRING_ERROR_PREFIX . 'LOTUS_LIVE';
         parent::__construct();
     }
 

@@ -102,7 +102,13 @@ class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
 
         $externalAPILotusLiveMock = new ExtAPILotusLiveMock();
         $msg = $externalAPILotusLiveMock->getErrorStringFromCode('Conflict');
-        $this->assertEquals('A file with the same name already exists in the system', $msg);
+        $this->assertEquals('A file with the same name already exists in the system.', $msg);
+
+        $msg = $externalAPILotusLiveMock->getErrorStringFromCode();
+        $this->assertEquals('An error occurred when trying to save to the external account.', $msg);
+
+        $msg = $externalAPILotusLiveMock->getErrorStringFromCode(array());
+        $this->assertEquals('An error occurred when trying to save to the external account.', $msg);
     }
 
 }
