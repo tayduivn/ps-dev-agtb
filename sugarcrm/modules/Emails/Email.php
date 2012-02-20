@@ -2702,7 +2702,7 @@ class Email extends SugarBean {
         $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
-        //Hanlde date from and to seperately
+        //Hanlde date from and to separately
         if($bothDateRangesSet)
         {
             $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);

@@ -709,7 +709,7 @@ class SugarSNIP
     }
 
     /**
-    * Save a snip email attachment and assoicated it to a parent email.  Content is base64 encoded.
+    * Save a snip email attachment and associated it to a parent email.  Content is base64 encoded.
     *
     */
     protected function processEmailAttachment($data, $email)

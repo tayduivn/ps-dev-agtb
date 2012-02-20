@@ -39,7 +39,7 @@ class Sugarpdf extends TCPDF
     const STRETCH_SCALE = 1;
     const STRETCH_SCALE_FORCED = 2;
     const STRETCH_SPACING = 3;
-    const STRETCH_SPACING_FORCED = 4; 
+    const STRETCH_SPACING_FORCED = 4;
 
     /**
      * This array is meant to hold an objects/data that we would like to pass between
@@ -384,7 +384,7 @@ class Sugarpdf extends TCPDF
                         $this->MultiCell($options["width"][$kk],$h,$value,$cellOptions['border'],$cellOptions['align'],$cellOptions['fillstate'],0,'','',true,0,$cellOptions['ishtml'], true, 0, false);
                     }
                 }
-                
+
                 $this->SetFillColorArray($this->convertHTMLColorToDec($options['fill']));
             }
             $this->Ln();
@@ -609,7 +609,7 @@ class Sugarpdf extends TCPDF
                 $lines++;
             // If the block is in more than one line
             }else if(ceil($this->GetStringWidth($block) / $wmax)>1){
-                //devide in words
+                //divide into words
                 $words = explode(" ", $block);
                 //TODO explode with space is not the best things to do...
                 $wordBlock = "";

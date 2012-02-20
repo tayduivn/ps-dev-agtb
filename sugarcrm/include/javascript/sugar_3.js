@@ -2285,7 +2285,7 @@ sugarListView.prototype.save_checks = function(offset, moduleString) {
 sugarListView.prototype.check_item = function(cb, form) {
 	if(cb.checked) {
 		sugarListView.update_count(1, true);
-		
+
 	}else{
 		sugarListView.update_count(-1, true);
 		if(typeof form != 'undefined' && form != null) {
@@ -2309,7 +2309,7 @@ sugarListView.prototype.toggleSelected = function() {
 		selectActions.style.display = "none";
 		selectActionsDisabled.style.display = "inline-block";
 	}
-		
+
 }
 
 /**#28000, remove the  unselect record id from MassUpdate.uid **/
@@ -2372,7 +2372,7 @@ sugarListView.prototype.check_all = function(form, field, value, pageTotal) {
 		sugarListView.update_count(count, true);
 	else
 		sugarListView.update_count(-1 * count, true);
-		
+
 	sugarListView.prototype.toggleSelected();
 }
 sugarListView.check_all = sugarListView.prototype.check_all;
@@ -3028,45 +3028,45 @@ SUGAR.util = function () {
 				}
 			}
 		},
-		
+
 		/**
-		 * Renders Query UI Help Dialog 
-		 */	
+		 * Renders Query UI Help Dialog
+		 */
 		showHelpTips: function(el,helpText,myPos,atPos) {
 				if(myPos == undefined || myPos == "") {
 					myPos = "left top";
 				}
-				if(atPos == undefined || myPos == "") {
+				if(atPos == undefined || atPos == "") {
 					atPos = "right top";
 				}
-				
+
 					var $dialog = $('<div></div>')
 					.html(helpText)
 					.dialog({
 						autoOpen: false,
 						title: SUGAR.language.get('app_strings', 'LBL_HELP'),
-						position: { 
+						position: {
 						    my: myPos,
 						    at: atPos,
 						    of: $(el)
 					 	}
 					});
-					
-					
+
+
 					var width = $dialog.dialog( "option", "width" );
 					var pos = $(el).offset();
 					var ofWidth = $(el).width();
-					
+
 					if((pos.left + ofWidth) - 40 < width) {
 						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
 					}
 					$dialog.dialog('open');
-		
+
 
 		},
 		getStaticAdditionalDetails: function(el, body, caption, show_buttons) {
 			if(typeof show_buttons == "undefined") {
-				show_buttons = false;	
+				show_buttons = false;
 			}
 
 			$(".ui-dialog").find(".open").dialog("close");
@@ -3077,31 +3077,31 @@ SUGAR.util = function () {
 				autoOpen: false,
 				title: caption,
 				width: 300,
-				position: { 
+				position: {
 				    my: 'right top',
 				    at: 'left top',
 				    of: $(el)
 			  }
 			});
-			
+
 			if(show_buttons) {
 				$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
-				$(".ui-dialog").find('.ui-dialog-title').css("width","100%");	
+				$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
 			}
-			
-								
+
+
 			var width = $dialog.dialog( "option", "width" );
 			var pos = $(el).offset();
 			var ofWidth = $(el).width();
-			
+
 			if((pos.left + ofWidth) - 40 < width) {
 				$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
 			}
 
 			$dialog.dialog('open');
-		
+
 		},
-		
+
 		closeStaticAdditionalDetails: function() {
 			$(".ui-dialog").find(".open").dialog("close");
 		},
@@ -3114,7 +3114,7 @@ SUGAR.util = function () {
 				var el = '#'+spanId;
 			go = function() {
 				oReturn = function(body, caption, width, theme) {
-					
+
 					$(".ui-dialog").find(".open").dialog("close");
 
 					var $dialog = $('<div class="open"></div>')
@@ -3123,7 +3123,7 @@ SUGAR.util = function () {
 						autoOpen: false,
 						title: caption,
 						width: 300,
-						position: { 
+						position: {
 						    my: 'right top',
 						    at: 'left top',
 						    of: $(el)
@@ -3131,7 +3131,7 @@ SUGAR.util = function () {
 					});
 				if(show_buttons) {
 					$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
-					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");	
+					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
 				}
 
 					var width = $dialog.dialog( "option", "width" );
@@ -3141,7 +3141,7 @@ SUGAR.util = function () {
 					if((pos.left + ofWidth) - 40 < width) {
 						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
 					}
-				
+
 					$dialog.dialog('open');
 				}
 
@@ -3561,7 +3561,7 @@ SUGAR.searchForm = function() {
                 if ( typeof(elem.type) == 'undefined' ) {
                     continue;
                 }
-                
+
                 if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined'
                         && SUGAR.util.arrayIndexOf(skipElementNames, elem.name) != -1 )
                 {
@@ -4191,7 +4191,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
  */
 var from_popup_return  = false;
 
-//Function replaces special HTML chars for usage in text boxes 
+//Function replaces special HTML chars for usage in text boxes
 function replaceHTMLChars(value) {
 	return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 }
@@ -4260,14 +4260,14 @@ function set_return(popup_reply_data)
 				}
 			}
 		}
-		
+
         if(label_data_str != label_str && current_label_data_str != label_str){
         	// Bug 48726 Start
         	if (typeof popupConfirm != 'undefined')
         	{
         		if (popupConfirm > -1) {
         			set_return_basic(popup_reply_data,/\S/);
-        		} 
+        		}
         	}
         	// Bug 48726 End
         	else if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))

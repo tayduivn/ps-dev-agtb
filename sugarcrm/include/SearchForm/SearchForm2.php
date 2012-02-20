@@ -100,7 +100,7 @@ require_once('include/EditView/EditView2.php');
 
         $this->searchFields = $searchFields[$this->module];
 
-        // Setub the tab array
+        // Setup the tab array.
         $this->tabs = array();
         if($this->showBasic){
             $this->nbTabs++;

@@ -425,7 +425,7 @@ class SugarView
             $moduleTopMenu = array();
 
             $max_tabs = $current_user->getPreference('max_tabs');
-            // Attempt to correct if max tabs count is waaay too high.
+            // Attempt to correct if max tabs count is extremely high.
             if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10 ) {
                 $max_tabs = $GLOBALS['sugar_config']['default_max_tabs'];
                 $current_user->setPreference('max_tabs', $max_tabs, 0, 'global');
@@ -601,7 +601,7 @@ class SugarView
             // This is here for backwards compatibility, someday, somewhere, it will be able to be removed
             $ss->assign("moduleTopMenu",$groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules']);
             $ss->assign("moduleExtraMenu",$groupTabs[$app_strings['LBL_TABGROUP_ALL']]['extra']);
-            
+
 
         }
         $imageURL = SugarThemeRegistry::current()->getImageURL("dashboard.png");
@@ -1013,11 +1013,11 @@ EOHTML;
             );
         }
         $ss->assign("COMPANY_LOGO_URL",getJSPath($companyLogoURL)."&logo_md5=".$ss->get_template_vars("COMPANY_LOGO_MD5"));
-        
+
         // Bug 38594 - Add in Trademark wording
         $copyright .= 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.<br />';
 
-        //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displaye regardless, so no need
+        //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displayed regardless, so no need
         //to display an empty image here.
         if(file_exists('include/images/poweredby_sugarcrm.png')){
             $copyright .= $attribLinkImg;
@@ -1159,7 +1159,7 @@ EOHTML;
         $return = $response_time_string;
        // $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY
-        // Output the DB instances only ifthere is more than one actually created(the error case)
+        // Output the DB instances only if there is more than one actually created(the error case)
         $checkDB = DBManagerFactory::getInstance();
         if ($checkDB->count_id > 1) {
             $return .= ' (Internal Only)DB Instances: ' . $checkDB->count_id . ' references:' . $checkDB->references . '';
@@ -1167,7 +1167,7 @@ EOHTML;
 
         //END SUGARCRM flav=int ONLY
         //BEGIN SUGARCRM flav=int ONLY
-        // Internally, ifthey have not turned off page rosources set them to true
+        // Internally, if they have not turned off page resources, set them to true.
         if (!isset($GLOBALS['sugar_config']['show_page_resources'])) {
             $GLOBALS['sugar_config']['show_page_resources'] = true;
         }

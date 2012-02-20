@@ -50,7 +50,7 @@ class One2MRelationship extends M2MRelationship
                 $GLOBALS['log']->fatal("No Links found for relationship {$this->name}");
             }
             else {
-                if (!is_array($links)) //Only one link for a self referencing relationship, this is BAAAD
+                if (!is_array($links)) //Only one link for a self referencing relationship, this is very bad.
                 {
                     $this->lhsLinkDef = $this->rhsLinkDef = $links;
                 }
@@ -93,7 +93,7 @@ class One2MRelationship extends M2MRelationship
 
     public function getQuery($link, $params = array())
     {
-        //Self referenceing one to many relationships use one link for subpanels and normal views.
+        //Self referencing one to many relationships use one link for subpanels and normal views.
         //This mean we have to reverse it for normal views
         if (($link->getSide() == REL_LHS && !$this->selfReferencing)
             || $link->getSide() == REL_RHS && $this->selfReferencing
@@ -148,7 +148,7 @@ class One2MRelationship extends M2MRelationship
      */
     protected function addSelfReferencing($lhs, $rhs, $additionalFields = array())
     {
-        //No opp on One2M.
+        //No-op on One2M.
     }
 
     /**
@@ -156,6 +156,6 @@ class One2MRelationship extends M2MRelationship
      */
     protected function removeSelfReferencing($lhs, $rhs, $additionalFields = array())
     {
-        //No opp on One2M.
+        //No-op on One2M.
     }
 }
