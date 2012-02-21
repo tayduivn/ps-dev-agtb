@@ -110,7 +110,9 @@ SUGAR.append(SUGAR.themes, {
     },
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
-			delay:     800,
+			delay:     0,
+			speed: 'fast',
+			firstOnClick: true,
 			autoArrows: false,
 			dropShadows: false,
 			onBeforeShow: function() {
