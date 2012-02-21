@@ -34,7 +34,7 @@ var uploads_count_map=new Object();
 var uploads_count = -1;
 var current_uploads_id = -1;
 var append = false; // Ed has method InsertHTML which inserts at cursor point - plain does not
-//following varaibles store references to input fields grouped with the clicked email selection button (select).
+//following variables store references to input fields grouped with the clicked email selection button (select).
 var current_contact = '';
 var current_contact_id = '';
 var current_contact_email = '';
@@ -913,7 +913,7 @@ function clear_email_addresses() {
 }
 
 function quick_create_overlib(id, theme, el) {
-	
+
 		var $dialog = $('<div></div>')
 		.html('<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,"yes");\' onmouseout=\'unhiliteItem(this);\' href=\'index.php?module=Cases&action=EditView&inbound_email_id=' + id + '\'>' +
             "<img border='0' src='index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=Cases.gif' style='margin-right:5px'>" + SUGAR.language.get('Emails', 'LBL_LIST_CASE') + '</a>' +
@@ -934,14 +934,14 @@ function quick_create_overlib(id, theme, el) {
 			autoOpen: false,
 			title:  SUGAR.language.get('Emails', 'LBL_QUICK_CREATE'),
 			width: 150,
-			position: { 
+			position: {
 				    my: 'right top',
 				    at: 'left top',
 				    of: $(el)
 			  }
 		});
-		$dialog.dialog('open');   
-            
+		$dialog.dialog('open');
+
 }
 
 

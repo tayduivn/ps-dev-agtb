@@ -70,7 +70,7 @@ class DCEInstance extends DCEInstance_sugar {
         $this->load_relationship('contacts');
         $query_array=$this->contacts->getQuery(true);
 
-        //update the select clause in the retruned query.
+        //update the select clause in the returned query.
         $query_array['select']="SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title, contacts.phone_work, dceinstances_contacts.contact_role as dceinstance_role, dceinstances_contacts.id as dceinstance_rel_id ";
 
         $query='';
@@ -90,7 +90,7 @@ class DCEInstance extends DCEInstance_sugar {
         $this->load_relationship('users');
         $query_array=$this->users->getQuery(true);
 
-        //update the select clause in the retruned query.
+        //update the select clause in the returned query.
         $query_array['select']="SELECT users.id, users.first_name, users.last_name, users.title users.phone_work, dceinstances_users.user_role as dceinstance_role, dceinstances_users.id as dceinstance_rel_id ";
 
         $query='';
@@ -123,7 +123,7 @@ class DCEInstance extends DCEInstance_sugar {
         global $timedate;
         if( (isset($record) && !empty($record))
         && (isset($actionType) && !empty($actionType) )){
-            //retieve Instance
+            // Retrieve Instance.
 
             $inst = new DCEInstance();
             $inst->retrieve($record);

@@ -2758,7 +2758,7 @@ eoq;
 			$myAccountString = " - {$app_strings['LBL_MY_ACCOUNT']}";
 		} // if
 
-		//Check to make sure that the user has set the associated inbound email acount -> outbound acount is active.
+		//Check to make sure that the user has set the associated inbound email account -> outbound account is active.
 		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
         $sf = new SugarFolder();
         $groupSubs = $sf->getSubscriptions($current_user);

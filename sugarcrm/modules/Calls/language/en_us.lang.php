@@ -120,8 +120,8 @@ $mod_strings = array (
     'LBL_EXPORT_DATE_START' => 'Start Date and Time',
     'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
     'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
-    
-    // create invitee functionallity
+
+    // create invitee functionality
     'LBL_CREATE_INVITEE' => 'Create an invitee',
     'LBL_CREATE_CONTACT' => 'As Contact',
     'LBL_CREATE_LEAD' => 'As Lead',

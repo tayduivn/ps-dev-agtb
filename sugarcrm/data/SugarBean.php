@@ -1419,7 +1419,7 @@ class SugarBean
         }
         //BEGIN SUGARCRM flav=pro ONLY
         //rrs new functionality to check if the team_id is set and the team_set_id is not set,
-        //then see what we can do about savign to team_set_id. It is important for this code block to be below
+        //then see what we can do about saving to team_set_id. It is important for this code block to be below
         //the 'before_save' custom logic hook as that is where workflow is called.
         if (isset($this->field_defs['team_id'])){
             if(empty($this->teams)){
@@ -2341,8 +2341,8 @@ function save_relationship_changes($is_update, $exclude=array())
 
         $this->fill_in_additional_detail_fields();
         $this->fill_in_relationship_fields();
-        //make a copy of fields in the relatiosnhip_fields array. these field values will be used to
-        //clear relatioship.
+        //make a copy of fields in the relationship_fields array. These field values will be used to
+        //clear relationship.
         foreach ( $this->field_defs as $key => $def )
         {
             if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset ( $def[ 'save' ])) {
@@ -5298,7 +5298,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $is_owner = $this->isOwner($current_user->id);
         }
 
-        //if we don't implent acls return true
+        // If we don't implement ACLs, return true.
         if(!$this->bean_implements('ACL'))
         return true;
         $view = strtolower($view);

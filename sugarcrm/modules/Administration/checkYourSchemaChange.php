@@ -773,7 +773,7 @@ function getTablesWithRelations(){
 	}
     $dictionary = array ( ) ;
     require ('modules/TableDictionary.php') ;
-    //for module installer incase we alredy loaded the table dictionary
+    //for module installer incase we already loaded the table dictionary
     if (file_exists ( 'custom/application/Ext/TableDictionary/tabledictionary.ext.php' ))
     {
         include ('custom/application/Ext/TableDictionary/tabledictionary.ext.php') ;

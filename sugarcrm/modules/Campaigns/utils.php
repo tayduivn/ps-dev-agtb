@@ -363,7 +363,7 @@ function get_subscription_lists_query($focus, $additional_fields = null) {
     return array('current_plp_arr' => $current_plp_arr, 'news_type_list_arr' => $news_type_list_arr);
 }
 /*
- * This function takes in a bean from a lead, propsect, or contact and returns an array containing
+ * This function takes in a bean from a lead, prospect, or contact and returns an array containing
  * all subscription lists that the bean is a part of, and all the subscriptions that the bean is not
  * a part of.  The array elements have the key names of "subscribed" and "unsusbscribed".  These elements contain an array
  * of the corresponding list.  In other words, the "subscribed" element holds another array that holds the subscription information.

@@ -341,7 +341,7 @@ class RepairAndClear
             {
                 LanguageManager::clearLanguageCache();
             }
-            else { //use the modules selected thrut the select list.
+            else { //use the modules selected through the select list.
                 foreach($this->module_list as $module_name)
                     LanguageManager::clearLanguageCache($module_name);
             }
