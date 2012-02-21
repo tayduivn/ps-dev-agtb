@@ -2,7 +2,8 @@ describe("DataManager", function() {
 
     var metadata,
         app = SUGAR.App,
-        dm = SUGAR.App.dataManager;
+        dm = SUGAR.App.dataManager,
+        server;
 
     beforeEach(function() {
         dm.reset();
@@ -10,6 +11,7 @@ describe("DataManager", function() {
     });
 
     afterEach(function() {
+        if (server && server.restore) server.restore();
     });
 
     it("should be able to create an instance of primary bean and collection", function() {
@@ -65,23 +67,120 @@ describe("DataManager", function() {
             beanType = "TeamSet";
 
         dm.declareModel(moduleName, metadata[moduleName]);
+
+        var mock = sinon.mock(Backbone);
+        mock.expects("sync").once().withArgs("read");
+
         var bean = dm.fetchBean(moduleName, "xyz", null, beanType);
+
         expect(bean.module).toEqual(moduleName);
         expect(bean.beanType).toEqual(beanType);
-
-        // TODO: To implement this test, mock REST API
+        mock.verify();
     });
 
     it("should be able to fetch beans", function() {
         var moduleName = "Teams",
             beanType = "TeamSet";
         dm.declareModel(moduleName, metadata[moduleName]);
+
+        var mock = sinon.mock(Backbone);
+        mock.expects("sync").once().withArgs("read");
+
         var collection = dm.fetchBeans(moduleName, null, beanType);
+
         expect(collection.module).toEqual(moduleName);
         expect(collection.beanType).toEqual(beanType);
         expect(collection.model).toBeDefined();
+        mock.verify();
+    });
 
-        // TODO: To implement this test, mock REST API
+    it("should be able to sync (read) a bean", function() {
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var bean = dm.createBean(moduleName, { id: "1234" });
+
+        var contact = SugarTest.loadJson("contact");
+
+        server = sinon.fakeServer.create();
+
+        server.respondWith("GET", "/rest/v10/Contacts/1234/",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify(contact)]);
+
+        bean.fetch();
+        server.respond();
+
+        expect(bean.get("primary_address_city")).toEqual("Cupertino");
+    });
+
+    it("should be able to sync (create) a bean", function() {
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var contact = dm.createBean(moduleName, { first_name: "Clara", last_name: "Tsetkin" });
+
+        server = sinon.fakeServer.create();
+
+        server.respondWith("POST", "/rest/v10/Contacts/",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify({ id: "xyz" })]);
+
+        contact.save();
+        server.respond();
+
+        expect(contact.id).toEqual("xyz");
+    });
+
+    it("should be able to sync (update) a bean", function() {
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var contact = dm.createBean(moduleName, { id: "xyz", first_name: "Clara", last_name: "Tsetkin", dateModified: "1" });
+
+        server = sinon.fakeServer.create();
+
+        server.respondWith("PUT", "/rest/v10/Contacts/xyz/",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify({ dateModified: "2" })]);
+
+        contact.save();
+        server.respond();
+
+        expect(contact.get("dateModified")).toEqual("2");
+    });
+
+    it("should be able to sync (delete) a bean", function() {
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var contact = dm.createBean(moduleName, { id: "xyz" });
+
+        server = sinon.fakeServer.create();
+
+        server.respondWith("DELETE", "/rest/v10/Contacts/xyz/",
+            [200, {  "Content-Type": "application/json"}, ""]);
+
+        contact.destroy();
+        server.respond();
+    });
+
+    it("should be able to sync (read) beans", function() {
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var beans = dm.createBeanCollection(moduleName);
+
+        var contacts = SugarTest.loadJson("contacts");
+
+        server = sinon.fakeServer.create();
+
+        server.respondWith("GET", "/rest/v10/Contacts/",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify(contacts)]);
+
+        beans.fetch();
+        server.respond();
+
+        expect(beans.length).toEqual(2);
+        expect(beans.at(0).get("name")).toEqual("Vladimir Vladimirov");
+        expect(beans.at(1).get("name")).toEqual("Petr Petrov");
+
     });
 
 

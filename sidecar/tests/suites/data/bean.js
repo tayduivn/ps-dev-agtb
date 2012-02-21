@@ -30,7 +30,7 @@ describe("Bean", function() {
 
     });
 
-    it("should be populated with defaults", function() {
+    it("should be populated with defaults upon instantiation", function() {
         var moduleName = "Contacts";
         dm.declareModel(moduleName, metadata[moduleName]);
         var bean = dm.createBean(moduleName);

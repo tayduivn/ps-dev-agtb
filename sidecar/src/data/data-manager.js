@@ -5,15 +5,16 @@
     // _models[module].beans - hash of bean models
     // _models[module].collections - hash of bean collections
     var _models;
+    var _serverProxy = SUGAR.Api.getInstance();
+    // Backbone.js sync methods correspond to Sugar API functions except "read/get" :)
+    _serverProxy.read = function(model, attributes, params, callbacks) {
+        return this.get(model, attributes, params, callbacks);
+    }
 
     /**
      * Manages bean models and provides Backbone sync pattern.
      */
     app.augment("dataManager", {
-
-        init: function() {
-            Backbone.sync = this.sync;
-        },
 
         /**
          * Resets class declarations.
@@ -34,7 +35,7 @@
          * @param module Module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans, vardefs, vardef, fields;
+            var defaults, model, beans, vardefs, vardef, fields, relationships;
 
             this.reset(moduleName);
 
@@ -46,6 +47,7 @@
             _.each(_.keys(beans), function(beanType) {
                 vardefs = beans[beanType]["vardefs"];
                 fields = vardefs.fields;
+                relationships = beans[beanType]["relationships"];
 
                 defaults = null;
                 _.each(_.values(fields), function(field) {
@@ -58,10 +60,11 @@
                 });
 
                 model = app.Bean.extend({
-                    module:   moduleName,
-                    beanType: beanType,
-                    defaults: defaults,
-                    fields:   fields
+                    module:        moduleName,
+                    beanType:      beanType,
+                    defaults:      defaults,
+                    fields:        fields,
+                    relationships: relationships
                 });
 
                 _models[moduleName].collections[beanType] = app.BeanCollection.extend({
@@ -134,12 +137,38 @@
          * @param options
          */
         sync: function(method, model, options) {
-            // TODO: Implement
-            // This method should sync beans with local storage (if it's enabled) and fall back to the REST API.
-            app.logger.trace('sync:' + method);
+            // TODO: This method should sync beans with local storage (if it's enabled) and fall back to the REST API.
+            app.logger.trace('sync-' + method + ": " + model);
+
+            var oldSuccess = options ? options.success : null;
+            var oldError = options ? options.error : null;
+
+            var callbacks = {
+                // Passing callbacks through for now. If offline storage is enabled we should update it
+                success: function(data) {
+                    if (oldSuccess) oldSuccess(data);
+                },
+
+                error: function(data) {
+                    if (oldError) oldError(data);
+                }
+            };
+
+            var params = options ? options.params : null;
+
+            if (model instanceof app.Bean || model instanceof app.BeanCollection) {
+                _serverProxy[method](model.module, model.attributes, params, callbacks);
+            }
+            else {
+                // TODO: Deal with relationships
+            }
+
         }
 
-    }, true);
+    }, false);
+
+
+    Backbone.sync = app.dataManager.sync;
 
 })(SUGAR.App);
 

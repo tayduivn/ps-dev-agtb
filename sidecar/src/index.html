@@ -3,11 +3,24 @@
         <script language="javascript" src="../lib/jquery/jquery.min.js"></script>
         <script language="javascript" src="../lib/backbone/underscore.min.js"></script>
         <script language="javascript" src="../lib/backbone/backbone.min.js"></script>
+        <script src="../lib/stash/stash.min.js"></script>
         <script language="javascript" src="app.js"></script>
         <script language="javascript" src="events/events.js"></script>
         <script language="javascript" src="context/context.js"></script>
         <script language="javascript" src="controller/controller.js"></script>
         <script language="javascript" src="controller/router.js"></script>
+        <script language="javascript" src="lang/language.js"></script>
+        <script language="javascript" src="../lib/sugarapi/sugarapi.js"></script>
+        <script src='cache/cache.js'></script>
+
+        <!--SUGAR REST interface fakeserver + data-->
+        <script language="javascript" src="../tests/fixtures/sugarFields.js"></script>
+        <script language="javascript" src="../tests/fixtures/metadata.js"></script>
+        <script language="javascript" src="../lib/sinon/sinon.min.js"></script>
+        <script language="javascript" src="../lib/sugarapi/demoServerData.js"></script>
+        <script language="javascript" src="../lib/sugarapi/demoRestServer.js"></script>
+
+
         <script language="javascript">
             var App = SUGAR.App.init({el: "#sidecar"});
         </script>
