@@ -35,7 +35,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
 class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopButton
 {
 
-	//widget_data is the collection of attributes assoicated with the button in the layout_defs file.
+	//widget_data is the collection of attributes associated with the button in the layout_defs file.
 	function display(&$widget_data)
 	{
 		global $mod_strings;
@@ -53,7 +53,7 @@ class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopBu
 			. '<input type="hidden" name="project_id" value="' .$id . '" /> '
 			. '<input type="hidden" name="return_id" value="' .$id . '" /> '
 			. '<input type="hidden" name="record" value="' . $id .'" /> '
-			. '<input type="submit" name="EditProjectTasks" ' 
+			. '<input type="submit" name="EditProjectTasks" '
 			. ' class="button"'
 			. ' title="' . $title . '"'
 			. ' value="' . $value . '" />'

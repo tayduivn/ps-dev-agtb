@@ -123,7 +123,7 @@ function from_html($string, $encode=true) {
 
 /*
  * Return a version of $proposed that can be used as a column name in any of our supported databases
- * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
+ * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indices for example)
  * @param string $name Proposed name for the column
  * @param string $ensureUnique
  * @param int $maxlen Deprecated and ignored
@@ -137,7 +137,7 @@ function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
 
 /**
  * isValidDBName
- * 
+ *
  * Utility to perform the check during install to ensure a database name entered by the user
  * is valid based on the type of database server
  * @param string $name Proposed name for the DB

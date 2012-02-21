@@ -408,7 +408,7 @@ class M2MRelationship extends SugarRelationship
 
         $where = "$startingTable.$startingKey=$joinTable.$startingJoinKey AND $joinTable.$joinKey='{$link->getFocus()->$targetKey}'";
 
-        //Check if we should ignore the role fileter;
+        //Check if we should ignore the role filter.
         $ignoreRole = !empty($params['ignore_role']);
 
         //First join the relationship table

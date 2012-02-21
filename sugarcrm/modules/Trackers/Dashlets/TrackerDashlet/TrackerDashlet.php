@@ -18,9 +18,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * 
+ *
  * $Id: JotPadDashlet.php 28381 2007-10-18 21:40:33Z bsoufflet $
- * Description: Handles the User Preferences and stores them in a seperate table. 
+ * Description: Handles the User Preferences and stores them in a separate table.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
@@ -37,34 +37,34 @@ class TrackerDashlet extends Dashlet {
 	var $column_widths = array('item_id'=>210,
 	                           'module_name'=>125);
     /**
-     * Constructor 
-     * 
+     * Constructor
+     *
      * @global string current language
      * @param guid $id id for the current dashlet (assigned from Home module)
      * @param array $def options saved for this dashlet
      */
     function TrackerDashlet($id, $def) {
         $this->loadLanguage('TrackerDashlet', 'modules/Trackers/Dashlets/'); // load the language strings here
-            
+
         if(!empty($def['height'])) // set a default height if none is set
             $this->height = $def['height'];
 
         parent::Dashlet($id); // call parent constructor
-         
+
         $this->isConfigurable = true; // dashlet is configurable
         $this->hasScript = true;  // dashlet has javascript attached to it
-                
+
         // if no custom title, use default
         if(empty($def['title'])) $this->title = $this->dashletStrings['LBL_TITLE'];
-        else $this->title = $def['title'];   
+        else $this->title = $def['title'];
         if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
-        
+
         $this->tReporter = new TrackerReporter();
     }
 
     /**
      * Displays the dashlet
-     * 
+     *
      * @return string html to display dashlet
      */
     function display() {
@@ -74,21 +74,21 @@ class TrackerDashlet extends Dashlet {
         $ss->assign('saved', $this->dashletStrings['LBL_SAVED']);
         $ss->assign('id', $this->id);
         $ss->assign('height', $this->height);
-        $str = $ss->fetch('modules/Trackers/Dashlets/TrackerDashlet/TrackerDashlet.tpl'); 
+        $str = $ss->fetch('modules/Trackers/Dashlets/TrackerDashlet/TrackerDashlet.tpl');
         return parent::display() . $str . '<br />'; // return parent::display for title and such
     }
-    
+
     /**
      * Displays the javascript for the dashlet
-     * 
+     *
      * @return string javascript to use with this dashlet
      */
     function displayScript() {
-        $ss = new Sugar_Smarty();     
+        $ss = new Sugar_Smarty();
         $ss->assign('saving', $this->dashletStrings['LBL_SAVING']);
         $ss->assign('saved', $this->dashletStrings['LBL_SAVED']);
         $ss->assign('id', $this->id);
-        $ss->assign('height', $this->height);           
+        $ss->assign('height', $this->height);
         $ss->assign('clearLbl', $this->dashletStrings['LBL_CLEAR']);
         $ss->assign('clearToolTipLbl', $this->dashletStrings['LBL_CLEAR_TOOLTIP']);
         $ss->assign('runLbl', $this->dashletStrings['LBL_FILTER']);
@@ -98,21 +98,21 @@ class TrackerDashlet extends Dashlet {
         $ss->assign('chooseDateTooltip', $this->dashletStrings['LBL_CHOOSE_DATE_TOOLTIP']);
         $comboData = $this->tReporter->getComboData();
         $dateDependentQueries =  $this->tReporter->getDateDependentQueries();
-        $json = getJSONobj();        
+        $json = getJSONobj();
         $ss->assign('comboData',  $json->encode($comboData));
         $ss->assign('dateDependentQueries',  $json->encode($dateDependentQueries));
-        $str = $ss->fetch('modules/Trackers/Dashlets/TrackerDashlet/TrackerDashletScript.tpl');     
+        $str = $ss->fetch('modules/Trackers/Dashlets/TrackerDashlet/TrackerDashletScript.tpl');
         return $str; // return parent::display for title and such
     }
-        
+
     /**
      * Displays the configuration form for the dashlet
-     * 
+     *
      * @return string html to display form
      */
     function displayOptions() {
         global $app_strings;
-        
+
         $ss = new Sugar_Smarty();
         $ss->assign('titleLbl', $this->dashletStrings['LBL_CONFIGURE_TITLE']);
         $ss->assign('heightLbl', $this->dashletStrings['LBL_CONFIGURE_HEIGHT']);
@@ -129,14 +129,14 @@ class TrackerDashlet extends Dashlet {
 		}
 
         return parent::displayOptions() . $ss->fetch('modules/Trackers/Dashlets/TrackerDashlet/TrackerDashletOptions.tpl');
-    }  
+    }
 
     /**
      * called to filter out $_REQUEST object when the user submits the configure dropdown
-     * 
+     *
      * @param array $req $_REQUEST
      * @return array filtered options to save
-     */  
+     */
     function saveOptions($req) {
         global $sugar_config, $timedate, $current_user, $theme;
         $options = array();
@@ -144,28 +144,28 @@ class TrackerDashlet extends Dashlet {
         if(is_numeric($_REQUEST['height'])) {
             if($_REQUEST['height'] > 0 && $_REQUEST['height'] <= 300) $options['height'] = $_REQUEST['height'];
             elseif($_REQUEST['height'] > 300) $options['height'] = '300';
-            else $options['height'] = '100';            
+            else $options['height'] = '100';
         }
-        
+
 //        $options['savedText'] = br2nl($this->savedText);
         $options['savedText'] = $this->savedText;
         $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
-        
+
         return $options;
     }
-    
+
     public function hasAccess(){
     	return ACLController::checkAccess('Trackers', 'view', false, 'Tracker');
     }
-	
+
 	public function __call($method, $args){
 		$json = getJSONobj();
 		if(!empty($_REQUEST['date_selected'])){
 			$args = $_REQUEST['date_selected'];
 		}
-        
+
 		$result = $this->tReporter->$method($args);
-        
+
 		//get the headers
 		$col_headers = array();
 		$column_labels = array();
