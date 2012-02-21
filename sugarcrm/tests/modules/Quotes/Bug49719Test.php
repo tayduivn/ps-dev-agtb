@@ -36,7 +36,10 @@ class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
     private $contact2;
     
     public function setup()
-    {        
+    {
+        $this->markTestSkipped('This test breaks on Oracle due to line 74.  Working with Asuharev and MGusev to fix');
+        return;
+
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
