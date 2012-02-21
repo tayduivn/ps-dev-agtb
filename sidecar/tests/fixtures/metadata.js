@@ -22,6 +22,10 @@ fixtures.metadata = {
                         "last_name" : {
                             "name" : "last_name",
                             "type" : "varchar"
+                        },
+                        "phone_work" : {
+                            "name" : "phone_work",
+                            "type" : "varchar"
                         }
                     }
                 },
@@ -55,7 +59,14 @@ fixtures.metadata = {
             },
             //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
             "listView" : {
-
+                "panels" : [{
+                    "label" : "LBL_PANEL_1",
+                    "fields" : [
+                        {name:"first_name", label:"First Name"},
+                        {name:"last_name", label:"Last Name"},
+                        {name:"phone_work", label:"Phone"}
+                    ]
+                }]
             },
             //Subpanel layout defs
             "subpanelView" : {

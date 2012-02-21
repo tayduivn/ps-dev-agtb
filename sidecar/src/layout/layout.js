@@ -1,5 +1,8 @@
 (function (app) {
     app.augment("layout", function () {
+        /**
+         * App.Layout
+         */
         var Layout = {
             init:function (args) {
                 //Register Handlebars helpers
@@ -8,16 +11,34 @@
                     //If bean was not specified, the third parameter will be a hash
                     if (!bean || !bean.fields)
                         bean = context.get("model");
+                    if (!bean.fields[this.name] || !bean.fields[this.name].type)
+                    {
+                        //If the field doesn't exist for this bean type, skip it
+                        app.logger.error("Sugar Field: Unknown field " + this.name + " for " + context.get("module") + ".");
+                        return "";
+                    }
                     ftype = bean.fields[this.name].type;
                     sf = app.sugarFieldManager.getField(ftype, view);
                     if (sf.error)
                         return sf.error;
                     this.value = bean.get(this.name);
-                    return new Handlebars.SafeString(sf.templateC(this));
+                    this.view = view;
+                    this.context = context;
+                    try {
+                        return new Handlebars.SafeString(sf.templateC(this));
+                    } catch(e) {
+                        app.logger.error("Sugar Field: Unable to execute template for field " + ftype + " on view " + this.name + ".\n" + e.message);
+                    }
+
                 });
             },
 
             //All retreives of metadata should hit this function.
+            /**
+             *
+             * @param Object params should contain either view or layout to specify which type of
+             * component you are retreiving.
+             */
             get:function (params) {
                 var meta = params.meta;
                 var layoutClass = "Layout";
@@ -85,8 +106,14 @@
 
             },
             render:function () {
-                if (this.template)
-                    this.$el.html(this.template(this));
+                //Bad templates can cause a JS error that we want to catch here
+                try {
+                    if (this.template)
+                        this.$el.html(this.template(this));
+                } catch(e) {
+                    app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
+                }
+
             },
             getID : function() {
                 if (this.id)
@@ -173,7 +200,6 @@
                 if(!this.$el.children()[0]){
                     this.$el.append("<table><tbody><tr></tr></tbody></table>");
                 }
-                console.log(this.$el.find("tr")[0]);
                 //Create a new td and add the layout to it
                 $().add("<td></td>").append(comp.el).appendTo(this.$el.find("tr")[0]);
             }
