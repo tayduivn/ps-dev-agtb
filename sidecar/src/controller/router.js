@@ -1,17 +1,27 @@
 (function(app) {
     /**
+     * This manages the watching of the address hash and routes to the correct handler.
      * @class Router
      * @singleton
      */
     var Router = Backbone.Router.extend({
         /**
+         * Routes hash
          * @property {Object}
          */
         routes: {
             "": "index",
-            "test": "test"
+            "login": "login",
+            ":module/:id/:action": "record",
+            ":module/:id": "record"
         },
 
+        /**
+         * Initializes the router. Starts the history watcher if it hasn't been started yet.
+         * @method
+         * @private
+         * @param options
+         */
         initialize: function(options) {
             _.bindAll(this);
 
@@ -29,13 +39,26 @@
             } catch (e) {}
         },
 
-        // Route functions
+        // Routes
+
         index: function() {
             this.controller.loadView();
         },
 
-        test: function() {
-            this.controller.loadView();
+        login: function() {
+            this.controller.loadView({
+                module: "home",
+                layout: "login"
+            });
+        },
+
+        record: function(module, id, action) {
+            this.controller.loadView({
+                module: module,
+                id: id,
+                action: action,
+                layout: "LAYOUT NAME"
+            });
         }
     });
 

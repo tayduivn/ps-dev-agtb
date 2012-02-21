@@ -4,21 +4,40 @@
     /**
      * A state variable to hold the states of the current context.
      * @class Context
-     * @constructor
-     * @param {Ojbect} obj Any parameters and state properties to attach to the context
+     * @param {Object} obj Any parameters and state properties to attach to the context
      * @param {Object} data Hash of collection and or models to save to the context
      */
     function Context(obj, data) {
         var contextId = _.uniqueId("context_");
         var context = _.extend({
+            /**
+             * Unique ID of the context
+             * @property {String}
+             */
             contextId: contextId,
+
+            /**
+             * State variables
+             * @property {Object}
+             */
             state: {},
+
+            /**
+             * Reference to the parent context (null the context is the global context)
+             * @property {Object}
+             */
             parent: null,
+
+            /**
+             * List of child contexts.
+             * @property {Object[]}
+             */
             children: [],
 
             /**
+             * Returns a state on the context
              * @method
-             * @param prop
+             * @param {String} prop Requested state variable
              * @return {Object} val Value of retrieved key
              */
             get: function(prop) {
@@ -39,8 +58,9 @@
             },
 
             /**
+             * Sets a state on the context
              * @method
-             * @param {Ojbect} obj Any parameters and state properties to attach to the context
+             * @param {Object} obj Any parameters and state properties to attach to the context
              * @param {Object} data Hash of collection and or models to save to the context
              */
             set: function(obj, data) {
@@ -87,7 +107,7 @@
              * Takes parameters from another source and stores their state.
              *
              * Note: This function should be called everytime a new route routed.
-             * @param {Ojbect} obj Any parameters and state properties to attach to the context
+             * @param {Object} obj Any parameters and state properties to attach to the context
              * @param {Object} data Hash of collection and or models to save to the context
              */
             init: function(obj, data) {
@@ -103,7 +123,7 @@
     app.augment("context", {
         /**
          * Returns a new instance of the context object
-         * @param {Ojbect} obj Any parameters and state properties to attach to the context
+         * @param {Object} obj Any parameters and state properties to attach to the context
          * @param {Object} data Hash of collection and or models to save to the context
          */
         getContext: function(obj, data) {

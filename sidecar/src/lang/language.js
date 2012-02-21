@@ -1,5 +1,4 @@
 (function(app) {
-
     /**
      * Language Helper. Provides interface to pull language strings out of a language
      * label cache.
@@ -8,8 +7,11 @@
      * @singleton
      */
     app.augment("lang", {
+        /**
+         * Language hash for labels
+         * @property {Object}
+         */
         langmap: {},
-        baseUrl: "cache/jsLanguage",
 
         /**
          * Saves a set of labels to its internal cache.
