@@ -30,12 +30,12 @@ static $requireFunctions = array(
 	T_REQUIRE=>1,
 	T_INCLUDE=>1,
 	T_INCLUDE_ONCE=>1,
-	
+
 );
 
 static  $functionList = array(
 	'chgrp',
-	'chmod', 
+	'chmod',
 	'chown',
 	'file_exists',
 	'file_get_contents',
@@ -51,7 +51,7 @@ static  $functionList = array(
 	'filesize',
 	'filetype',
 	'fopen',
-	'is_dir', 
+	'is_dir',
 	'is_executable',
 	'is_file',
 	'is_link',
@@ -66,7 +66,7 @@ static  $functionList = array(
 	'mkdir',
 	'parse_ini_file',
 	'readfile',
-	'readlink', 
+	'readlink',
 	'rmdir',
 	'stat',
 	'tempnam',
@@ -74,30 +74,30 @@ static  $functionList = array(
 	'unlink',
 	'getimagesize',
 
-	//mutliple files per function call
+	//multiple files per function call
 	'copy',
 	'link',
 	'rename',
 	'symlink',
-	
-	//Second param 
+
+	//Second param
 	'move_uploaded_file',
-	
+
 
 //directory functions
 	//should only use relative paths
 	'chdir',
 	//should not be used
-	//	'chroot', 
+	//	'chroot',
 	'dir',
-	'opendir',	
+	'opendir',
 
 	//NOT NEEDED HAVE RESOURCES
 	//'feof',
 	//'fclose',
 	//'fflush',
 	//'fgetc',
-	//'fgetscsv', 
+	//'fgetscsv',
 	//'fgets',
 	//'fgetss',
 	//'flock',
@@ -116,12 +116,12 @@ static  $functionList = array(
 	'readdir',
 	'rewinddir',
 	'scandir',
-	
+
 
 	//SHOULD NOT BE USED
 	//'fnmatch',
-	
-	
+
+
 	//Maybe
 	//'basename',
 	//'glob',
@@ -192,7 +192,7 @@ function convertDir($path, $to=true){
 			}
 		}
 	}
-	
+
 	if($path == $startPath)echo 'DONE';
     return true;
 }
@@ -233,7 +233,7 @@ if(strpos(strtolower($path), 'silentupgrade')!==false) return;
 						$newContents .= $token;
 						if($statusDepth == 0){
 							for($j = $index + 1;!is_string($tokens[$j]) && $tokens[$j][0] ==T_WHITESPACE;$j++){
-								
+
 							}
 							if(is_string($tokens[$j]) || $tokens[$j][1] != 'SugarTemplateUtilities'){
 								$newContents .= 'SugarTemplateUtilities::getFilePath(';
@@ -254,18 +254,18 @@ if(strpos(strtolower($path), 'silentupgrade')!==false) return;
 			}
 		}else{
 			if($status == 'require' && $token[0] != T_WHITESPACE && $statusDepth == 0){
-				
+
 				if($token[1] == 'SugarTemplateUtilities'){
 					$status = '';
 					$statusDepth = 0;
 				}else{
 					for($j = $index + 1;!is_string($tokens[$j]) && $tokens[$j][0] ==T_WHITESPACE;$j++){
-									
+
 					}
-					
+
 					if(is_string($tokens[$j]) || $tokens[$j][1] != 'SugarTemplateUtilities'){
 						$statusDepth = 1;
-						
+
 						$newContents .= 'SugarTemplateUtilities::getFilePath(';
 					}else{
 						$status = '';
@@ -287,17 +287,17 @@ if(strpos(strtolower($path), 'silentupgrade')!==false) return;
 					$isFunction = false;
 				}
 			}
-			
+
 			if($token[0] == T_FUNCTION){
 				$isFunction = true;
 			}
 			if($token[0] == T_OBJECT_OPERATOR || $token[0] == T_PAAMAYIM_NEKUDOTAYIM){
 				$isMember = true;
 			}
-		
-			
+
+
 			$newContents .= $token[1];
-			
+
 		}
 	}
 
@@ -353,14 +353,14 @@ function revertFile($path){
 			}else{
 				$newContents .= $token[1];
 			}
-			
-		
+
+
 		}
 	}
 	file_put_contents($path, $newContents);
 }
 
-	
+
 }
 
 //echo '<div style="font-family: courier, monospace">';
@@ -386,7 +386,7 @@ if(empty($_GET['TEMPLATE_PATH'])){
 	unset($paths[count($paths) - 1]);
 	$TEMPLATE_PATH = implode('/', $paths);
     $_GET['TEMPLATE_PATH'] = $TEMPLATE_PATH;
-    echo " 
+    echo "
             Template Path was not provided, using following path instead: $TEMPLATE_PATH
           ";
 }else{
@@ -395,7 +395,7 @@ if(empty($_GET['TEMPLATE_PATH'])){
 
 /*
 echo <<<EOQ
-<form> 
+<form>
 	<input type='text' name='TEMPLATE_PATH' size='60' value='$TEMPLATE_PATH'><input type='submit' value='Convert'>
 </form>
 EOQ;

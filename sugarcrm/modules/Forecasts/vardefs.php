@@ -19,11 +19,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
- 
+
 $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
 'acl_fields' =>false,
 'fields' => array (
-  'id' => 
+  'id' =>
   array (
     'name' => 'id',
     'vname' => 'LB_FS_KEY',
@@ -31,50 +31,50 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
 	'source'=>'non-db',
     'reportable'=>true,
   ),
-  'name' => 
+  'name' =>
   array (
     'name' => 'name',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'revenue' => 
+  'revenue' =>
   array (
     'name' => 'revenue',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'date_entered' => 
+  'date_entered' =>
   array (
     'name' => 'date_entered',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'weighted_value' => 
+  'weighted_value' =>
   array (
     'name' => 'weighted_value',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  
-  'account_name' => 
+
+  'account_name' =>
   array (
     'name' => 'account_name',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'probability' => 
+  'probability' =>
   array (
     'name' => 'probability',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'worksheet_id' => 
+  'worksheet_id' =>
   array (
     'name' => 'worksheet_id',
     'vname' => 'LB_FS_KEY',
@@ -82,7 +82,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
 	'source'=>'non-db',
   ),
   //used to store worksheet values.
- 'wk_likely_case' => 
+ 'wk_likely_case' =>
   array (
     'name' => 'wk_likely_case',
     'vname' => 'LB_FS_LIKELY_CASE',
@@ -90,149 +90,149 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
 	'source'=>'non-db',
   ),
   //used to store worksheet values.
-  'wk_worst_case' => 
+  'wk_worst_case' =>
   array (
     'name' => 'wk_worst_case',
     'vname' => 'LB_FS_WORST_CASE',
     'type' => 'int',
-	'source'=>'non-db',    
-    ) ,  
+	'source'=>'non-db',
+    ) ,
    //used to store worksheet values.
-  'wk_best_case' => 
+  'wk_best_case' =>
   array (
     'name' => 'wk_best_case',
     'vname' => 'LB_FS_BEST_CASE',
     'type' => 'int',
-	'source'=>'non-db',    
+	'source'=>'non-db',
     ),
-  'next_step' => 
+  'next_step' =>
   array (
     'name' => 'next_step',
     'vname' => 'LB_FS_KEY',
     'type' => 'varchar',
     'source'=>'non-db',
   ),
-  'opportunity_type' => 
+  'opportunity_type' =>
   array (
     'name' => 'opportunity_type',
     'vname' => 'LB_FS_KEY',
     'type' => 'varchar',
     'source'=>'non-db',
   ),
-  'description' => 
+  'description' =>
   array (
     'name' => 'descrfiption',
     'vname' => 'LB_FS_KEY',
     'type' => 'varchar',
     'source'=>'non-db',
   ),
-  //represent's a value commited by forecast user.
-  'best_case' => 
+  //represent's a value committed by forecast user.
+  'best_case' =>
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
     'type' => 'long',
-	'source'=>'non-db',    
+	'source'=>'non-db',
   ),
-  //represent's a value commited by forecast user.
-  'likely_case' => 
+  //represent's a value committed by forecast user.
+  'likely_case' =>
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
     'type' => 'long',
     'source'=>'non-db',
-  ), 
-  //represent's a value commited by forecast user.  
-  'worst_case' => 
+  ),
+  //represent's a value committed by forecast user.
+  'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
     'type' => 'long',
     'source'=>'non-db',
-  ),    
+  ),
 
-  ),  
+  ),
 );
- 
+
 $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
 'acl_fields' =>false,
 'fields' => array (
-  'id' => 
+  'id' =>
   array (
     'name' => 'id',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'user_id' => 
+  'user_id' =>
   array (
     'name' => 'user_id',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'user_name' => 
+  'user_name' =>
   array (
     'name' => 'user_name',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'first_name' => 
+  'first_name' =>
   array (
     'name' => 'first_name',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'last_name' => 
+  'last_name' =>
   array (
     'name' => 'last_name',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  
-  'opp_count' => 
+
+  'opp_count' =>
   array (
     'name' => 'opp_count',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  'opp_weigh_value' => 
+  'opp_weigh_value' =>
   array (
     'name' => 'opp_weigh_value',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-  //represent's a value commited by forecast user.
-  'best_case' => 
+  //represent's a value committed by forecast user.
+  'best_case' =>
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
     'type' => 'long',
-	'source'=>'non-db',    
+	'source'=>'non-db',
   ),
-  //represent's a value commited by forecast user.
-  'likely_case' => 
+  //represent's a value committed by forecast user.
+  'likely_case' =>
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
     'type' => 'long',
     'source'=>'non-db',
-  ), 
-  //represent's a value commited by forecast user.  
-  'worst_case' => 
+  ),
+  //represent's a value committed by forecast user.
+  'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
     'type' => 'long',
     'source'=>'non-db',
-  ),    
+  ),
   //used to store worksheet values.
- 'wk_likely_case' => 
+ 'wk_likely_case' =>
   array (
     'name' => 'wk_likely_case',
     'vname' => 'LB_FS_LIKELY_CASE',
@@ -240,50 +240,50 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
 	'source'=>'non-db',
   ),
   //used to store worksheet values.
-  'wk_worst_case' => 
+  'wk_worst_case' =>
   array (
     'name' => 'wk_worst_case',
     'vname' => 'LB_FS_WORST_CASE',
     'type' => 'int',
-	'source'=>'non-db',    
-    ) ,  
+	'source'=>'non-db',
+    ) ,
    //used to store worksheet values.
-  'wk_best_case' => 
+  'wk_best_case' =>
   array (
     'name' => 'wk_worst_case',
     'vname' => 'LB_FS_BEST_CASE',
     'type' => 'int',
-	'source'=>'non-db',    
+	'source'=>'non-db',
     ) ,
-  'ref_timeperiod_id' => 
+  'ref_timeperiod_id' =>
   array (
     'name' => 'ref_timeperiod_id',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-   'ref_user_id' => 
+   'ref_user_id' =>
   array (
     'name' => 'ref_user_id',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
-  ), 
-   'forecast_type' => 
+  ),
+   'forecast_type' =>
   array (
     'name' => 'forecast_type',
     'vname' => 'LB_FS_KEY',
     'type' => 'id',
 	'source'=>'non-db',
   ),
-   'date_entered' => 
+   'date_entered' =>
   array (
     'name' => 'date_entered',
     'vname' => 'LBL_FDR_DATE_COMMIT',
     'type' => 'datetime',
     'source'=>'non-db',
   ),
-   'date_comitted' => 
+   'date_comitted' =>
   array (
     'name' => 'date_comitted',
     'vname' => 'LBL_FDR_DATE_COMMIT',
@@ -291,12 +291,12 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
     'source'=>'non-db',
   ),
 
-  ),  
+  ),
 );
 $dictionary['Forecast'] = array('table' => 'forecasts'
-,'acl_fields' =>false,                            
+,'acl_fields' =>false,
    'fields' => array (
-  'id' => 
+  'id' =>
   array (
     'name' => 'id',
     'vname' => 'LBL_FORECAST_ID',
@@ -305,17 +305,17 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'reportable'=>true,
     'comment' => 'Unique identifier',
   ),
- 
- 'timeperiod_id' => 
+
+ 'timeperiod_id' =>
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_FORECAST_TIME_ID',
     'type' => 'id',
     'reportable'=>false,
-	'comment' => 'ID of the associated time period for this forecast',     	
+	'comment' => 'ID of the associated time period for this forecast',
    ),
-  
-  'forecast_type' => 
+
+  'forecast_type' =>
   array (
     'name' => 'forecast_type',
     'vname' => 'LBL_FORECAST_TYPE',
@@ -323,9 +323,9 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'len' => 100,
     'massupdate' => false,
     'options' => 'forecast_type_dom',
-	'comment' => 'Indicator of whether forecast is direct or rollup',    
+	'comment' => 'Indicator of whether forecast is direct or rollup',
   ),
-  'opp_count' => 
+  'opp_count' =>
   array (
     'name' => 'opp_count',
     'vname' => 'LBL_FORECAST_OPP_COUNT',
@@ -333,14 +333,14 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'len' => '5',
     'comment' => 'Number of opportunities represented by this forecast',
   ),
-  'opp_weigh_value' => 
+  'opp_weigh_value' =>
   array (
     'name' => 'opp_weigh_value',
     'vname' => 'LBL_FORECAST_OPP_WEIGH',
     'type' => 'int',
     'comment' => 'Weighted amount of all opportunities represented by this forecast',
   ),
-  'best_case' => 
+  'best_case' =>
   array (
     'name' => 'best_case',
     'vname' => 'LBL_FORECAST_OPP_BEST_CASE',
@@ -348,29 +348,29 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'comment' => 'Best case forecast amount',
   ),
   //renamed commit_value to likely_case
-  'likely_case' => 
+  'likely_case' =>
   array (
     'name' => 'likely_case',
     'vname' => 'LBL_FORECAST_OPP_COMMIT',
     'type' => 'long',
     'comment' => 'Likely case forecast amount',
   ),
-  'worst_case' => 
+  'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LBL_FORECAST_OPP_WORST',
     'type' => 'long',
     'comment' => 'Worst case likely amount',
-  ),  
-'user_id' => 
+  ),
+'user_id' =>
   array (
     'name' => 'user_id',
     'vname' => 'LBL_FORECAST_USER',
     'type' => 'id',
     'reportable'=>false,
     'comment' => 'User to which this forecast pertains',
-  ),  
-'date_entered' => 
+  ),
+'date_entered' =>
   array (
     'name' => 'date_entered',
     'vname' => 'LBL_DATE_ENTERED',
@@ -378,7 +378,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'required'=>true,
     'comment' => 'Date record created',
   ),
-'date_modified' => 
+'date_modified' =>
   array (
     'name' => 'date_modified',
     'vname' => 'LBL_DATE_MODIFIED',
@@ -386,7 +386,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'required'=>true,
     'comment' => 'Date record modified',
   ),
- 'deleted' => 
+ 'deleted' =>
   array (
     'name' => 'deleted',
     'vname' => 'LBL_DELETED',
@@ -395,8 +395,8 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'reportable'=>false,
     'comment' => 'Record deletion indicator',
   ),
-  
- 'timeperiod_name'=> 
+
+ 'timeperiod_name'=>
    array(
 		'name'=>'timeperiod_name',
 		'rname'=>'name',
@@ -405,11 +405,11 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 		'type'=>'relate',
 		'table'=>'timeperiods',
 		'isnull'=>'true',
-		'module'=>'TimePeriods', 
+		'module'=>'TimePeriods',
 		'massupdate'=>false,
 		'source'=>'non-db'
 		),
- 'user_name'=> 
+ 'user_name'=>
    array(
 		'name'=>'user_name',
 		'rname'=>'user_name',
@@ -418,11 +418,11 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 		'type'=>'relate',
 		'table'=>'users',
 		'isnull'=>'true',
-		'module'=>'Users', 
+		'module'=>'Users',
 		'massupdate'=>false,
 		'source'=>'non-db'
 		),
- 'reports_to_user_name'=> 
+ 'reports_to_user_name'=>
    array(
 		'name'=>'reports_to_user_name',
 		'rname'=>'user_name',
@@ -431,33 +431,33 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 		'type'=>'relate',
 		'table'=>'reports_to',
 		'isnull'=>'true',
-		'module'=>'Users', 
+		'module'=>'Users',
 		'massupdate'=>false,
 		'source'=>'non-db'
 		),
 //timeperiod's start date
- 'start_date' => 
+ 'start_date' =>
 	array (
 		'name' => 'start_date',
     	'type' => 'date',
 		'source'=>'non-db',
 		'table' => 'timeperiods',
-  	),  
+  	),
 //timeperiod's end date
- 'end_date' => 
+ 'end_date' =>
 	array (
 		'name' => 'end_date',
     	'type' => 'date',
 		'source'=>'non-db',
 		'table' => 'timeperiods',
-  	),  
-//timeperiod's name  	
- 'name' => 
+  	),
+//timeperiod's name
+ 'name' =>
 	array (
 		'name' => 'name',
     	'type' => 'varchar',
 		'source'=>'non-db'
-  	),  
+  	),
   'created_by_link' =>
   array (
         'name' => 'created_by_link',
@@ -469,7 +469,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'bean_name'=>'User',
     'source'=>'non-db',
   ),
- 
+
   ),
 
  'relationships' => array (
@@ -482,11 +482,11 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 ),
  'indices' => array (
        array('name' =>'forecastspk', 'type' =>'primary', 'fields'=>array('id'))
-       ) 
+       )
 );
 
 $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
-  'id' => 
+  'id' =>
   array (
     'name' => 'id',
     'vname' => 'LBL_WK_ID',
@@ -495,7 +495,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'comment' => 'Unique identifier',
   ),
 //worsheet owner/creator's id
-  'user_id' => 
+  'user_id' =>
   array (
     'name' => 'user_id',
     'vname' => 'LBL_WK_USER_ID',
@@ -504,7 +504,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'comment' => 'User to which this worksheet pertains',
   ),
   //worsheet is for this timeperiod.
-  'timeperiod_id' => 
+  'timeperiod_id' =>
   array (
     'name' => 'timeperiod_id',
     'vname' => 'LBL_WK_TIMEPERIOD_ID',
@@ -524,7 +524,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
   ),
   //Worsheet entry
   //can be userid or opportunity it
-  'related_id' => 
+  'related_id' =>
   array (
     'name' => 'related_id',
     'vname' => 'LBL_WK_RELATED_ID',
@@ -541,35 +541,35 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
   	'len' => 100,
   	'comment' => 'Direct or rollup, or null if related_id is an Opportunity',
   ),
-  'best_case' => 
+  'best_case' =>
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
     'type' => 'long',
     'comment' => 'Best case worksheet amount',
   ),
-  'likely_case' => 
+  'likely_case' =>
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
     'type' => 'long',
     'comment' => 'Likely case worksheet amount',
-  ),   
-  'worst_case' => 
+  ),
+  'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
     'type' => 'long',
     'comment' => 'Worst case worksheet amount',
-  ),  
-  'date_modified' => 
+  ),
+  'date_modified' =>
   array (
     'name' => 'date_modified',
     'vname' => 'LBL_DATE_MODIFIED',
     'type' => 'datetime',
     'comment' => 'Date record modified',
   ),
-  'modified_user_id' => 
+  'modified_user_id' =>
   array (
     'name' => 'modified_user_id',
     'vname' => 'LBL_MODIFIED_USER_ID',
@@ -577,11 +577,11 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'len' => 36,
     'comment' => 'User ID that last modified record',
   ),
-  
+
  ),
  'indices' => array (
        array('name' =>'worksheetpk', 'type' =>'primary', 'fields'=>array('id'))
-      ) 
- 
+      )
+
 );
 ?>
