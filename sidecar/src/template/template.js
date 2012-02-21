@@ -16,9 +16,14 @@
         },
         //Compile will put the precompiled version of the template in cache and return the compiled template
         compile : function(src, key) {
-            templates[key] = "templates['" + key + "'] = template(" + Handlebars.precompile(src) + ");\n";
-            app.cache.set("templates", templates);
-            eval(header + templates[key] + footer);
+            try {
+                templates[key] = "templates['" + key + "'] = template(" + Handlebars.precompile(src) + ");\n";
+                app.cache.set("templates", templates);
+                eval(header + templates[key] + footer);
+            }catch(e) {
+                //Bad templates will cause a JS error when they either pre-compile or compile.
+                app.logger.error("Template compilation error; unable to compile " + key + ".\n" + e.message);
+            }
             return this.get(key);
         },
         get : function(key) {
