@@ -1,8 +1,4 @@
 describe("Application context manager", function() {
-    it("should exist within the framework", function() {
-        expect(SUGAR.App.context).toBeTruthy();
-    });
-
     it("should return a new context object", function() {
         var context = SUGAR.App.context.getContext({}, {});
         expect(context).toBeTruthy();
