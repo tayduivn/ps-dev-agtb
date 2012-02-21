@@ -2387,13 +2387,13 @@ SE.folders = {
 
         if(node != null && node.data) {
             SUGAR.showMessageBox(app_strings.LBL_EMAIL_FOLDERS_ADD_DIALOG_TITLE,
-                    app_strings.LBL_EMAIL_SETTINGS_NAME,
+                    app_strings.LBL_EMAIL_FOLDERS_NEW_FOLDER,
                     'prompt', {fn:SE.folders.folderAddXmlCall, beforeShow: SE.folders.folderAddRegisterEnter, beforeHide: SE.folders.folderRemoveRegisterEnter});
         } else {
             alert(app_strings.LBL_EMAIL_FOLDERS_NO_VALID_NODE);
         }
     },
-
+    
     folderAddRegisterEnter : function() {
     	this.enterKeyListener = new YAHOO.util.KeyListener(YAHOO.util.Dom.get("sugar-message-prompt"),
     															{keys: YAHOO.util.KeyListener.KEY.ENTER},
