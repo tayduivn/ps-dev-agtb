@@ -1,6 +1,5 @@
 describe("Sugar App Language Manager", function() {
     var lang = SUGAR.App.lang,
-        langfile = fixtures.language,
         appCache,
         setSpy,
         getSpy,
@@ -9,71 +8,61 @@ describe("Sugar App Language Manager", function() {
     appCache = {
         cache: {},
         get: function(key) {
-
             return this.cache[key];
         },
 
         set: function(key, val) {
-            console.log("Setting le cache");
             this.cache[key] = val;
         }
     };
 
-    lecache = appCache;
+    beforeEach(function() {
+        // Save instance of app cache
+        appCacheInstance = SUGAR.App.cache;
+        SUGAR.App.cache = appCache;
+    });
 
-    // Save instance of app cache
-    appCacheInstance = SUGAR.App.cache;
-    SUGAR.App.cache = appCache;
+    afterEach(function() {
+        // Restore cache
+        SUGAR.App.cache = appCacheInstance;
+    });
+
+    lecache = appCache;
 
     it("exist in sugar App Instance", function() {
         expect(lang).toBeDefined();
     });
 
     it("should save a hash of language strings to the language cache", function() {
-        var setData = {
-            LBL_MONEY: "Money"
-        };
+        var setData = fixtures.language.Accounts;
+        lang.setLabel("Accounts", setData);
 
-        console.log(lang);
-        lang.setLabel("SampleSet", setData);
-
-        expect(lang.langmap.SampleSet).toEqual(setData);
+        expect(lang.langmap.Accounts).toEqual(setData);
     });
 
     it("should save a set of hashes to the language cache", function() {
         var setData = {
-            TestSet: {
-                LBL_TEST: "Test String"
-            },
-            NextTestSet: {
-                LBL_NEXTTEST: "Next String"
-            }
+            Contacts: fixtures.language.Contacts,
+            Opportunities: fixtures.language.Opportunities
         };
 
         lang.setLabels(setData);
 
-        expect(lang.langmap.TestSet).toEqual(setData.TestSet);
-        expect(lang.langmap.NextTestSet).toEqual(setData.NextTestSet);
+        expect(lang.langmap.Contacts).toEqual(setData.Contacts);
+        expect(lang.langmap.Opportunities).toEqual(setData.Opportunities);
     });
 
     it("should have saved the changed language cache to app cache", function() {
-        expect(appCache.cache).toEqual({
-            TestSet: {
-                LBL_TEST: "Test String"
-            },
-            NextTestSet: {
-                LBL_NEXTTEST: "Next String"
-            },
-            SampleSet: {
-                LBL_MONEY: "Money"
-            }
-        });
+        expect(appCache.cache["language:labels"]).toEqual(fixtures.language);
     });
 
     it("should retreive the label from the language string store according to the module and label name", function() {
-        var string = lang.get("LBL_MONEY", "SampleSet");
-        expect(string).toEqual("Money");
-    });
+        var setData = fixtures.language.Accounts,
+            string;
 
-    SUGAR.App.cache = appCacheInstance;
+        lang.setLabel("Accounts", setData);
+        string = lang.get("LBL_ANNUAL_REVENUE", "Accounts");
+
+        expect(string).toEqual("Annual Revenue");
+    });
 });

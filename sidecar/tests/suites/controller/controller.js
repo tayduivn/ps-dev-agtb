@@ -3,10 +3,6 @@ describe("Controller", function() {
         layoutManager = SUGAR.App.Layout,
         dataManager = SUGAR.App.dataManager;
 
-    it("should exist within the framework", function() {
-        expect(controller).toBeDefined();
-    });
-
     describe("when a route is matched", function() {
         var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, renderSpy;
 

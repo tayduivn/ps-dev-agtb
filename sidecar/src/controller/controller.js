@@ -58,11 +58,11 @@
             var data;
 
             if (opts.id) {
-                data = SUGAR.App.dataManager.fetchBean(opts.module, opts.id);
+                data = app.dataManager.fetchBean(opts.module, opts.id);
             } else if (opts.url) {
                 // TODO: Make this hit a custom url
             } else {
-                data = SUGAR.App.dataManager.fetchBeans(opts.module)
+                data = app.dataManager.fetchBeans(opts.module)
             }
 
             return data;
