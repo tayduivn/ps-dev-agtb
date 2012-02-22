@@ -107,7 +107,7 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
 
         //create new instance of popupmetadata parser
         $parserFactory = new ParserFactory();
-        $parser = $parserFactory->getParser(MB_POPUPLIST, 'UsersAAAAAAA');
+        $parser = $parserFactory->getParser(MB_POPUPLIST, 'Users');
 
         //run save to write out the file using the new array elements.
         $parser->handleSave(false);
