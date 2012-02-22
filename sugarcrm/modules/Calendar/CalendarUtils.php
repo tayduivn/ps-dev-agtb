@@ -226,8 +226,13 @@ class CalendarUtils {
 			}
 		}
 
-		// TODO CHECK DATETIME VARIABLE
+		/** 
+		 * @var SugarDateTime $start Recurrence start date.
+		 */
 		$start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
+		/** 
+		 * @var SugarDateTime $end Recurrence end date. Used if recurrence ends by date.
+		 */
 		$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(),$until);
 		$end->modify("+1 Day");
 		$current = clone $start;
