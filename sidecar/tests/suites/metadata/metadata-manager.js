@@ -5,6 +5,7 @@ describe('metadata', function () {
     beforeEach(function () {
         //Load the metadata
         SUGAR.App.metadata.set(fixtures.metadata);
+        SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
     });
 
     afterEach(function () {
@@ -49,5 +50,23 @@ describe('metadata', function () {
             module:"Contacts",
             layout:'detail'
         })).toBe(fixtures.metadata.Contacts.layouts.detail);
+    });
+
+    it('gets a specific sugarfield', function () {
+        expect(SUGAR.App.metadata.get({
+            sugarField:{
+                name:'varchar',
+                view:'editView'
+            }
+        })).toBe(sugarFieldsFixtures.fieldsData.text.editView);
+    });
+
+    it('gets a specific sugarfield defaulted to detailview if the view does not exist', function () {
+        expect(SUGAR.App.metadata.get({
+            sugarField:{
+                name:'varchar',
+                view:'thisViewDoesntExist'
+            }
+        })).toBe(sugarFieldsFixtures.fieldsData.text.detailView);
     });
 });
