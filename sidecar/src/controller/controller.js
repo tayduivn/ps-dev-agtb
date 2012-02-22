@@ -16,6 +16,20 @@
         initialize: function() {
             _.bindAll(this);
             this.context = app.context.getContext();
+
+            // Subscribe and publish events
+
+            /**
+             * Fully qualified event name "app:start". Start event. Fired when the application has
+             * finished loading its dependencies and should initialize
+             * everything.
+             *
+             * <pre><code>
+             * obj.bind("app:start", callback);
+             * </pre></code>
+             * @event start
+             */
+            app.events.publish("app:start", this);
         },
 
         /**
@@ -84,6 +98,19 @@
                 layout: opts.layout,
                 module: opts.module
             });
+        },
+
+        /**
+         * Starts the application. Call this function when all the dependencies have been loaded.
+         * @method
+         */
+        start: function() {
+            // Check if we have an authenticated session
+            if (app.sugarAuth.isAuthenticated()) {
+                app.router.navigate("login", {trigger: true});
+            } else {
+                app.router.navigate("", {trigger: true});
+            }
         }
     });
 

@@ -4,13 +4,7 @@ describe("Router", function() {
             loadView: function(args) {}
         };
 
-    afterEach(function() {
-        SUGAR.App.destroy();
-    });
-
-    it("should be set and initialized within the framework", function() {
-        expect(SUGAR.App.router).toBeTruthy();
-    });
+    SUGAR.App.router.start();
 
     it("should call the controller to load the default view", function() {
         var mock = sinon.mock(controller);

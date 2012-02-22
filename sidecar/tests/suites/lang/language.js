@@ -1,8 +1,6 @@
 describe("Sugar App Language Manager", function() {
     var lang = SUGAR.App.lang,
         appCache,
-        setSpy,
-        getSpy,
         appCacheInstance;
 
     appCache = {

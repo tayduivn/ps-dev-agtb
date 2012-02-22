@@ -1,10 +1,3 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: dtam
- * Date: 2/2/12
- * Time: 5:20 PM
- * To change this template use File | Settings | File Templates.
- */
 (function (app) {
     //var privateVars;
     app.augment('sugarFieldManager',
