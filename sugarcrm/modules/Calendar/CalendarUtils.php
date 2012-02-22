@@ -124,18 +124,6 @@ class CalendarUtils {
 			$field_arr = array();
 			foreach($field_list[$bean->module_dir] as $field){
 				$field_arr[$field] = $bean->$field;
-				if($bean->field_defs[$field]['type'] == 'text'){
-					$t = $field_arr[$field];
-					if(strlen($t) > 300){
-						$t = substr($t, 0, 300);
-						$t .= "...";
-					}
-					$t = str_replace("\r\n","<br>",$t);
-					$t = str_replace("\r","<br>",$t);
-					$t = str_replace("\n","<br>",$t);
-					$t = html_entity_decode($t,ENT_QUOTES);
-					$field_arr[$field] = $t;
-				}
 			}
 
 			$date_field = "date_start";
@@ -238,9 +226,15 @@ class CalendarUtils {
 			}
 		}
 
-		// TODO CHECK DATETIME VARIABLE
+		/** 
+		 * @var SugarDateTime $start Recurrence start date.
+		 */
 		$start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
+		/** 
+		 * @var SugarDateTime $end Recurrence end date. Used if recurrence ends by date.
+		 */
 		$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(),$until);
+		$end->modify("+1 Day");
 		$current = clone $start;
 
 		$i = 1; // skip the first iteration
@@ -432,12 +426,13 @@ class CalendarUtils {
 	/**
 	 * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
 	 * @param SugarBean $bean
+	 * @param string $beanId
 	 */
-	static function checkAndChangeRepeatChildren(SugarBean $bean)
+	static function correctRecurrences(SugarBean $bean, $beanId)
 	{
 		global $db;
-
-		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$bean->id}' AND deleted = 0 ORDER BY date_start";
+		
+		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$beanId}' AND deleted = 0 ORDER BY date_start";
 		$re = $db->query($qu);
 
 		$i = 0;

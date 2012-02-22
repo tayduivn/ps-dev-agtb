@@ -749,4 +749,12 @@ class Call extends SugarBean
         }
         return '';
     }
+    
+    public function mark_deleted($id)
+    {
+        require_once("modules/Calendar/CalendarUtils.php");
+        CalendarUtils::correctRecurrences($this, $id);
+                
+        parent::mark_deleted($id);
+    }
 }

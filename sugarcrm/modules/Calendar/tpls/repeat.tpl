@@ -126,7 +126,7 @@
 			if(typeof validate != "undefined" && typeof validate['CalendarRepeatForm'] != "undefined"){
 				removeFromValidate('CalendarRepeatForm', 'repeat_until');
 			}
-			addToValidateMoreThan('CalendarRepeatForm', 'repeat_count', 'int', true,'{/literal}{$MOD.LBL_REPEAT_COUNT}{literal}');			
+			addToValidateMoreThan('CalendarRepeatForm', 'repeat_count', 'int', true,'{/literal}{$MOD.LBL_REPEAT_COUNT}{literal}', 1);			
 		}else{
 			document.forms['CalendarRepeatForm'].repeat_count.setAttribute("disabled","disabled");			
 			document.forms['CalendarRepeatForm'].repeat_until.removeAttribute("disabled");

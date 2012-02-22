@@ -195,9 +195,7 @@ class CalendarController extends SugarController
         if ($this->currentBean->module_dir == "Meetings" || $this->currentBean->module_dir == "Calls") {
             if (!empty($_REQUEST['remove_all_recurrences']) && $_REQUEST['remove_all_recurrences']) {
                 CalendarUtils::markRepeatDeleted($this->currentBean);
-            } else {
-                CalendarUtils::checkAndChangeRepeatChildren($this->currentBean);
-            }            
+            }         
         }
 
         $this->currentBean->mark_deleted($_REQUEST['record']);
