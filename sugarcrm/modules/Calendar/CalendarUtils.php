@@ -433,12 +433,13 @@ class CalendarUtils {
 	/**
 	 * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
 	 * @param SugarBean $bean
+	 * @param string $beanId
 	 */
-	static function checkAndChangeRepeatChildren(SugarBean $bean)
+	static function correctRecurrences(SugarBean $bean, $beanId)
 	{
 		global $db;
-
-		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$bean->id}' AND deleted = 0 ORDER BY date_start";
+		
+		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$beanId}' AND deleted = 0 ORDER BY date_start";
 		$re = $db->query($qu);
 
 		$i = 0;

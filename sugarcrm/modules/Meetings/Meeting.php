@@ -262,6 +262,9 @@ class Meeting extends SugarBean {
 	// this is for calendar
 	function mark_deleted($id) {
 
+		require_once("modules/Calendar/CalendarUtils.php");
+		CalendarUtils::correctRecurrences($this, $id);		
+		
 		global $current_user;
 
 		parent::mark_deleted($id);
