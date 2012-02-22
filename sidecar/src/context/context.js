@@ -125,6 +125,8 @@
          * Returns a new instance of the context object
          * @param {Object} obj Any parameters and state properties to attach to the context
          * @param {Object} data Hash of collection and or models to save to the context
+         *
+         * <
          */
         getContext: function(obj, data) {
             return new Context(obj, data);

@@ -105,7 +105,12 @@
          * @method
          */
         start: function() {
-
+            // Check if we have an authenticated session
+            if (app.sugarAuth.isAuthenticated()) {
+                app.router.navigate("login", {trigger: true});
+            } else {
+                app.router.navigate("", {trigger: true});
+            }
         }
     });
 

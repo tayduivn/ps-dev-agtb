@@ -30,7 +30,13 @@
             if (!this.controller) {
                 throw "No Controller Specified";
             }
+        },
 
+        /**
+         * Starts the backbone history which in turns starts routing the hashtag
+         * @method
+         */
+        start: function() {
             // Start monitoring hash changes
             // Right now backbone doesn't support checking to see
             // if the history has been started.
