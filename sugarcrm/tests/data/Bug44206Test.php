@@ -65,7 +65,9 @@ class Bug44206Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        $this->opportunity->mark_deleted($this->opportunity->id);
+        if (!empty($this->opportunity)) {
+            $this->opportunity->mark_deleted($this->opportunity->id);
+        }
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
