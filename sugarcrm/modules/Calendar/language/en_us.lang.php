@@ -135,7 +135,7 @@ $mod_strings = array (
 	'LBL_REPEAT_END_BY' => 'By',	
 	'LBL_REPEAT_DOW' => 'On',	
 	'LBL_REPEAT_UNTIL' => 'Repeat Until',
-	'LBL_REPEAT_COUNT' => 'Number of Occurrences',
+	'LBL_REPEAT_COUNT' => 'Number of occurrences',
 	'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
 	
 	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
