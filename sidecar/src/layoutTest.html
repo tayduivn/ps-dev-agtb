@@ -85,12 +85,7 @@
 			//Fake template manager
 			SUGAR.App.template.load(fixtures.templates);
 			//Fake a field list
-			SUGAR.App.sugarFieldsSync = function (that, callback){
-				var ajaxResponse = sugarFieldsFixtures;
-				var result= callback(that, ajaxResponse);
-				return result;
-			};
-			syncResult= SUGAR.App.sugarFieldManager.syncFields();
+            SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
 
 			var App = SUGAR.App.init({el: "#sidecar"});
 			//Initialize the data model
