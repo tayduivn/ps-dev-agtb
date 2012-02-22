@@ -1,5 +1,9 @@
 (function (app) {
     app.augment("layout", function () {
+        var ucfirst = function(str) {
+            if (typeof(str) == "string")
+                return str.charAt(0).toUpperCase() + str.substr(1);
+        }
         /**
          * App.Layout
          */
@@ -43,6 +47,7 @@
                 var meta = params.meta;
                 var layoutClass = "Layout";
                 var viewClass = "View";
+                var ucType;
 
                 if (!params.view && !params.layout)
                     return null;
@@ -59,12 +64,13 @@
                         module: module,
                         view: params.view
                     });
+                    ucType = ucfirst(meta.view || params.type || params.view);
                     //Check if the view type has its own view subclass
-                    if (meta && app.layout[meta.type + "View"])
-                        viewClass = meta.type + "View";
+                    if (meta && app.layout[ucType + "View"])
+                        viewClass = ucType+ "View";
 
-                    if (meta && app.layout[meta.type])
-                        viewClass = meta.type;
+                    if (meta && app.layout[ucType])
+                        viewClass = ucType;
 
                     return new app.layout[viewClass]({
                         context: params.context,
@@ -77,9 +83,10 @@
                         module: module,
                         layout: params.layout
                     });
+                    ucType = ucfirst(meta.type);
                     //Check if the layout type has its own layout subclass
-                    if (meta && app.layout[meta.type + "Layout"])
-                        layoutClass = meta.type + "Layout";
+                    if (meta && app.layout[ucType + "Layout"])
+                        layoutClass = ucType + "Layout";
                     return new app.layout[layoutClass]({
                         context: params.context,
                         name : params.layout,
@@ -103,27 +110,57 @@
                 this.$el.addClass("view " + (options.className || this.name));
                 this.template = options.template || app.template.get(this.name, this.context.get("module"));
                 this.meta = options.meta;
+                //Bind will cause the view to automatically try to link form elements to attributes on the model
+                this.autoBind = options.bind || true;
 
+            },
+            _render: function() {
+                if (this.template)
+                    this.$el.html(this.template(this));
             },
             render:function () {
                 //Bad templates can cause a JS error that we want to catch here
                 try {
-                    if (this.template)
-                        this.$el.html(this.template(this));
+                    this._render();
+                    if (this.autoBind && this.context && this.context.get("model"))
+                    {
+                        this.bind(this.context);
+                    } else {
+                        console.log("not binding");
+                    }
                 } catch(e) {
                     app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
                 }
 
             },
+            bind : function(context) {
+                var model = context.get("model");
+                _.each(model.attributes, function(value, field) {
+                    var el = this.$el.find('input[name="' + field + '"],span[name="' + field + '"]');
+                    if (el.length > 0){
+                        //Bind input to the model
+                        el.on("change", function(ev){
+                            model.set(field, el.val());
+                        });
+                        //And bind the model to the input
+                        model.on("change:" + field, function(model, value){
+                            if (el[0].tagName.toLowerCase() == "input")
+                                el.val(value);
+                            else
+                                el.html(value);
+                        });
+                    }
+                }, this)
+            },
             getID : function() {
                 if (this.id)
                     return this.id;
 
-                return this.context.module + "_" + this.options.name;
+                return this.context.get("module") + "_" + this.options.name;
             }
         });
-        Layout.editView = Layout.View.extend({
-            render:function () {
+        Layout.EditView = Layout.View.extend({
+            _render:function () {
                 if (this.template)
                     this.$el.html(
                         this.template(this) +
@@ -131,6 +168,31 @@
                     );
             }
         });
+        Layout.ListView = Layout.View.extend({
+            bind : function(context) {
+                var collection = context.get("collection");
+                _.each(collection.models, function(model) {
+                    var tr = this.$el.find('tr[name="' + model.beanType + '_' + model.get("id") + '"]');
+                    _.each(model.attributes, function(value, field) {
+                        var el = tr.find('input[name="' + field + '"],span[name="' + field + '"]');
+                        if (el.length > 0){
+                            //Bind input to the model
+                            el.on("change", function(ev){
+                                model.set(field, el.val());
+                            });
+                            //And bind the model to the input
+                            model.on("change:" + field, function(model, value){
+                                console.log(el);
+                                if (el[0].tagName.toLowerCase() == "input")
+                                    el.val(value);
+                                else
+                                    el.html(value);
+                            });
+                        }
+                    }, this)
+                }, this)
+            }
+        })
         Layout.Layout = Layout.View.extend({
             initialize:function () {
                 //The context is used to determine what the current focus is
@@ -194,7 +256,7 @@
             }
         });
 
-        Layout.columnsLayout = Layout.Layout.extend({
+        Layout.ColumnsLayout = Layout.Layout.extend({
             //column layout uses a table for columns and prevent wrapping
             _placeComponent: function(comp) {
                 if(!this.$el.children()[0]){
@@ -205,8 +267,11 @@
             }
         });
 
-        Layout.fluidLayout = Layout.Layout.extend({
-            //column layout uses a table for columns and prevent wrapping
+        /**
+         * @class FluidLayout Layout that places components using bootstrap fluid layout divs
+         * @extend App.Layout.Layout
+         */
+        Layout.FluidLayout = Layout.Layout.extend({
             _placeComponent: function(comp, def) {
                 var size = def.size || 4;
                 if(!this.$el.children()[0]){

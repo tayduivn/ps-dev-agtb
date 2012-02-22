@@ -43,7 +43,7 @@ fixtures.templates = {
             '{{/each}}' +
             '</tr></thead><tbody>' +
             '{{#each ../context.state.collection.models}}' +
-                '<tr>' +
+                '<tr name="{{beanType}}_{{attributes.id}}">' +
                 '{{#each ../fields}}' +
                     // SugarField requires the current context, field name, and the current bean in the context
                     // since we are pulling from the collection rather than the default bean in the context
