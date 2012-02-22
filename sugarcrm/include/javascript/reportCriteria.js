@@ -616,7 +616,7 @@ function addFilterInput(cell,filter) {
 			addFilterInputDatetimecombo(row,filter);
 		}
 	} 
-	else if (field_type == 'id' || field_type == 'name' ) {
+	else if (field_type == 'id' || field_type == 'name'  || field_type == 'fullname' ) {
 		if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 			addFilterInputRelate(row,field,filter,false);
 		} 
