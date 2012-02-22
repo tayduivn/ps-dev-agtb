@@ -79,36 +79,18 @@ class Login extends RestObject implements IRestObject {
     }
 
     private function login($user, $pass) {
-        global $sugar_config;
-        $auth = new AuthenticationController();
-        $err = $auth->login($user, $pass);
-        $user = null;
+        include_once("include/rest/SugarWebServiceImpl.php");
+        //$user = null;
         $result = array();
+        global $current_user;
+
+        $webser = new SugarWebServiceImpl();
+        $result = $webser->login(array("user_name" => $user, "password" => $pass, "encryption" => "PLAIN"), "none", array());
+        print_r($result);
+        print "RESULT: {$result}"; die;
+
 
         if ($err) {
-            $user = new User();
-            session_start();
-            global $current_user;
-            $current_user = $user;
-            $current_user->loadPreferences();
-            $_SESSION['is_valid_session']= true;
-            $_SESSION['ip_address'] = query_client_ip();
-            $_SESSION['user_id'] = $current_user->id;
-            $_SESSION['type'] = 'user';
-            //$_SESSION['avail_modules']= self::$helperObject->get_user_module_list($current_user);
-            $_SESSION['authenticated_user_id'] = $current_user->id;
-            $_SESSION['unique_key'] = $sugar_config['unique_key'];
-            $current_user->call_custom_logic('after_login');
-            $GLOBALS['log']->info('End: SugarWebServiceImpl->login - succesful login');
-            $nameValueArray = array();
-            global $current_language;
-            $cur_id = $current_user->getPreference('currency');
-            $currencyObject = new Currency();
-            $currencyObject->retrieve($cur_id);
-            $_SESSION['user_language'] = $current_language;
-            $result = array('token' => session_id());
-            $json = json_encode($result);
-            $this->sendJSONResponse($json);
 
             exit;
         } else {

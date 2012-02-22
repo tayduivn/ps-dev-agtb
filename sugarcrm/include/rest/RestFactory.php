@@ -27,15 +27,58 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+include_once("internalObjects/RestError.php");
+
 class RestFactory {
 
     public static function newRestObject($objName) {
         global $restObjectList;
 
         include_once("RestData.php");
-        include_once($restObjectList[$objName]);
 
-        return new $objName();
+        try {
+            if (array_key_exists($objName, $restObjectList)) {
+                include_once($restObjectList[$objName]);
+                return new $objName();
+            }
+
+            if (RestFactory::isValidSugarModule($objName)) {
+                $objName = ucfirst($objName);
+                include_once("internalObjects/restsugarobject.php");
+                return new RestSugarObject($objName);
+            } else {
+                $err = new RestError();
+                $err->ReportError(404, "\nUnknown Object: '{$objName}'\n\n");
+            }
+        } catch (Exception $e) {
+            $err = new RestError();
+            $err->ReportError(404, "\nUnknown request!\n\n");
+        }
+    }
+
+    public static function uriToBeanName($modName) {
+        $result = $modName;
+        $result = ucfirst($result);
+        return $result;
+    }
+
+    /**
+     * Checks to see if the requested module/object exists in the sugar modules.php
+     *
+     * @return bool
+     */
+    public static function isValidSugarModule($modName) {
+        global $moduleList;
+        $valid = false;
+
+        include_once("include/modules.php");
+
+        $modName = ucfirst($modName);
+        if (in_array($modName, $moduleList)) {
+            $valid = true;
+        }
+
+        return $valid;
     }
 
 }

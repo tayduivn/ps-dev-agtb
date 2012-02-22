@@ -24,7 +24,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 /**
  * This class is an implemenatation class for all the web services
  */
-require_once('service/core/SoapHelperWebService.php');
+require_once('include/rest/SoapHelperWebService.php');
 SugarWebServiceImpl::$helperObject = new SoapHelperWebServices();
 
 class SugarWebServiceImpl{
@@ -153,6 +153,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
         $module_name = 'Prospects';
         $using_cp = true;
     }
+
     //END SUGARCRM flav!=sales ONLY
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
@@ -513,6 +514,7 @@ public function login($user_auth, $application, $name_value_list){
 	$error = new SoapError();
 	$user = new User();
 	$success = false;
+
 	if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN'){
 		$user_auth['password'] = md5($user_auth['password']);
 	}
@@ -526,6 +528,7 @@ public function login($user_auth, $application, $name_value_list){
 	if($usr_id) {
 		$user->retrieve($usr_id);
 	}
+
 	if ($isLoginSuccess) {
 		if ($_SESSION['hasExpiredPassword'] =='1') {
 			$error->set_error('password_expired');

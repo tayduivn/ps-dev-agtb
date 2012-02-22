@@ -135,7 +135,8 @@ class SoapHelperWebServices {
 			$GLOBALS['log']->debug('SoapHelperWebServices->setFaultObject - ' . var_export($errorObject, true));
 		}
 		global $service_object;
-		$service_object->error($errorObject);
+        // this needs to be fixed !!! //
+		//$service_object->error($errorObject);
 	} // fn
 
 /**
