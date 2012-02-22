@@ -1874,6 +1874,10 @@
 	
 	CAL.fit_grid = function(control_call){
 		
+		if (CAL.view == 'year') {
+			return;
+		}
+		
 		var day_width;
 		var cal_width = document.getElementById("cal-width-helper").offsetWidth;
 			
