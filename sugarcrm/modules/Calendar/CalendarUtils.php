@@ -251,6 +251,7 @@ class CalendarUtils {
 		// TODO CHECK DATETIME VARIABLE
 		$start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);		
 		$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(),$until);
+		$end->modify("+1 Day");
 		$current = clone $start;
 		
 		$i = 1; // skip the first iteration
