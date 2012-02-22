@@ -1554,7 +1554,6 @@ class Email extends SugarBean {
 		global $theme;
 		global $mod_strings;
 		$out = '<div><input	title="'.$mod_strings['LBL_BUTTON_GRAB_TITLE'].'"
-						accessKey="'.$mod_strings['LBL_BUTTON_GRAB_KEY'].'"
 						class="button"
 						type="button" name="button"
 						onClick="window.location=\'index.php?module=Emails&action=Grab\';"
@@ -2932,7 +2931,6 @@ eoq;
 								<td scope="col" width="50%" scope="row" NOWRAP align="right" colspan="2">
 								<input title="'.$mod_strings['LBL_BUTTON_DISTRIBUTE_TITLE'].'"
 									id="dist_button"
-									accessKey="'.$mod_strings['LBL_BUTTON_DISTRIBUTE_KEY'].'"
 									class="button" onClick="AjaxObject.detailView.handleAssignmentDialogAssignAction();"
 									type="button" name="button"
 									value="  '.$mod_strings['LBL_BUTTON_DISTRIBUTE'].'  ">';
@@ -3088,7 +3086,6 @@ eoq;
 		global $theme;
 		global $mod_strings;
 		$out = '<div><input	title="'.$mod_strings['LBL_BUTTON_CHECK_TITLE'].'"
-						accessKey="'.$mod_strings['LBL_BUTTON_CHECK_KEY'].'"
 						class="button"
 						type="button" name="button"
 						onClick="window.location=\'index.php?module=Emails&action=Check&type='.$type.'\';"

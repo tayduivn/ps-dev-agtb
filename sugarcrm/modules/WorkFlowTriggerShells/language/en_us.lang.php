@@ -116,11 +116,11 @@ $mod_strings = array (
 
 
  	'LBL_NEW_FILTER_BUTTON_KEY' => 'F',
- 	'LBL_NEW_FILTER_BUTTON_TITLE' => 'Create Filter [Alt+F]',
+ 	'LBL_NEW_FILTER_BUTTON_TITLE' => 'Create Filter',
  	'LBL_NEW_FILTER_BUTTON_LABEL' => 'Create Filter',
 
   	'LBL_NEW_TRIGGER_BUTTON_KEY' => 'T',
- 	'LBL_NEW_TRIGGER_BUTTON_TITLE' => 'Create Trigger [Alt+T]',
+ 	'LBL_NEW_TRIGGER_BUTTON_TITLE' => 'Create Trigger',
  	'LBL_NEW_TRIGGER_BUTTON_LABEL' => 'Create Trigger',
 
  	'LBL_LIST_FRAME_SEC' => 'Filter: ',

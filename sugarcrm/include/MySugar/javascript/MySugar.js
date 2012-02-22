@@ -733,6 +733,9 @@ SUGAR.mySugar = function() {
 					dashletEntire = document.getElementById('dashlet_entire_' + data.responseText);
 					dd = new ygDDList('dashlet_' + data.responseText); // make it draggable
 					dd.setHandleElId('dashlet_header_' + data.responseText);
+                    // Bug #47097 : Dashlets not displayed after moving them
+                    // add new property to save real id of dashlet, it needs to have ability reload dashlet by id
+                    dd.dashletID = data.responseText;
 					dd.onMouseDown = SUGAR.mySugar.onDrag;  
 					dd.onDragDrop = SUGAR.mySugar.onDrop;
 

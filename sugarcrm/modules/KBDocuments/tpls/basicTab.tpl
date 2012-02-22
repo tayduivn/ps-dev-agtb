@@ -86,13 +86,13 @@
 						<td  ><span sugar='slot19b'>
 							<input class="sqsEnabled" tabindex="1" autocomplete="off" id="assigned_user_name" name='assigned_user_name' type="text" value="{$assigned_user_name}">
 							<input id='assigned_user_id' name='assigned_user_id' type="hidden" value="{$assigned_user_id}" />
-							<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button" tabindex='1' class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn_user
+							<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" type="button" tabindex='1' class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn_user
 									onclick='open_popup("Users", 600, 400, "", true, false, {$encoded_users_popup_request_data});' />
 							</span sugar='slot'>
 						</td>
 						<td valign="top" scope="row"><span sugar='slot10'>{$APP.LBL_TEAM} </span sugar='slot'></td>
 						<td ><span sugar='slot10b'><input class="sqsEnabled" tabindex="2" autocomplete="off" id="team_name" name='team_name' type="text" value="{$team_name}"><input id='team_id' name='team_id' type="hidden" value="{$team_id}" />
-						<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button" tabindex='2' class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn_team
+						<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" type="button" tabindex='2' class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn_team
 								onclick='open_popup("Teams", 600, 400, "", true, false, {$encoded_team_popup_request_data});' /></span sugar='slot'>
 						</td>
 					</tr>

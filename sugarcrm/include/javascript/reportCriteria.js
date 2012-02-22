@@ -1205,8 +1205,8 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 
 	var cell = document.createElement('td');
 	var new_input = document.createElement("input");
-	new_input.title= lbl_select+"[Alt+G]";
-	new_input.accessKey="G";
+	new_input.title= lbl_select;
+//	new_input.accessKey="G";
 	new_input.type="button";
 	new_input.value=lbl_select; 
 	new_input.name=field.module;
@@ -1274,7 +1274,7 @@ function addFilterInputRelateType(row,field,filter) {
 
 	var cell = document.createElement('td');
 	var new_input = document.createElement("input");
-	new_input.title= lbl_select+"[Alt+G]";
+	new_input.title= lbl_select;
 	new_input.accessKey="G";
 	new_input.type="button";
 	new_input.value=lbl_select; 

@@ -105,11 +105,11 @@ if ($is_edit) {
 	$edit_button .="<input type='hidden' name='return_id' value=''>\n";
     //BEGIN SUGARCRM flav=pro ONLY
 	$edit_button .='<input title="'.$app_strings['LBL_SAVE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_BUTTON_KEY'].'" class="button primary" onclick="this.form.action.value=\'Save\'; return check_form(\'EditCat\');" type="submit" name="button" value="'.$app_strings['LBL_SAVE_BUTTON_LABEL'].'" >';
-	$edit_button .=' <input title="'.$app_strings['LBL_SAVE_NEW_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_NEW_BUTTON_KEY'].'" class="button" onclick="this.form.action.value=\'Save\'; this.form.isDuplicate.value=\'true\'; this.form.edit.value=\'true\'; this.form.return_action.value=\'EditView\'; return check_form(\'EditCat\')" type="submit" name="button" value="'.$app_strings['LBL_SAVE_NEW_BUTTON_LABEL'].'" >';
+	$edit_button .=' <input title="'.$app_strings['LBL_SAVE_NEW_BUTTON_TITLE'].'" class="button" onclick="this.form.action.value=\'Save\'; this.form.isDuplicate.value=\'true\'; this.form.edit.value=\'true\'; this.form.return_action.value=\'EditView\'; return check_form(\'EditCat\')" type="submit" name="button" value="'.$app_strings['LBL_SAVE_NEW_BUTTON_LABEL'].'" >';
     /*
     //END SUGARCRM flav=pro ONLY
     $edit_button .='<input title="'.$app_strings['LBL_SAVE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_BUTTON_KEY'].'" class="button" onclick="this.form.action.value=\'Save\'; return check_form(\'EditView\');" type="submit" name="button" value="  '.$app_strings['LBL_SAVE_BUTTON_LABEL'].'  " >';
-	$edit_button .=' <input title="'.$app_strings['LBL_SAVE_NEW_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_NEW_BUTTON_KEY'].'" class="button" onclick="this.form.action.value=\'Save\'; this.form.isDuplicate.value=\'true\'; this.form.edit.value=\'true\'; this.form.return_action.value=\'EditView\'; return check_form(\'EditView\')" type="submit" name="button" value="  '.$app_strings['LBL_SAVE_NEW_BUTTON_LABEL'].'  " >';
+	$edit_button .=' <input title="'.$app_strings['LBL_SAVE_NEW_BUTTON_TITLE'].'"  class="button" onclick="this.form.action.value=\'Save\'; this.form.isDuplicate.value=\'true\'; this.form.edit.value=\'true\'; this.form.return_action.value=\'EditView\'; return check_form(\'EditView\')" type="submit" name="button" value="  '.$app_strings['LBL_SAVE_NEW_BUTTON_LABEL'].'  " >';
     //BEGIN SUGARCRM flav=pro ONLY
     */
     //END SUGARCRM flav=pro ONLY
@@ -156,8 +156,8 @@ if ($is_edit) {
 	$xtpl->assign("JAVA_SCRIPT_POPUP", $javascript);
     $xtpl->parse("main.proPopup");
 
-	$clear_parent_button = "<input title='".$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_CLEAR_BUTTON_KEY']."' class='button' LANGUAGE=javascript onclick=\"this.form.parent_name.value = '';\" type='button' name='button' value='  ".$app_strings['LBL_CLEAR_BUTTON_LABEL']."  '>\n";
-	$change_parent_button = "<input tabindex='2'  title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."' tabindex='2' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' LANGUAGE=javascript onclick='return get_popup();'>";
+	$clear_parent_button = "<input title='".$app_strings['LBL_CLEAR_BUTTON_TITLE']."'  class='button' LANGUAGE=javascript onclick=\"this.form.parent_name.value = '';\" type='button' name='button' value='  ".$app_strings['LBL_CLEAR_BUTTON_LABEL']."  '>\n";
+	$change_parent_button = "<input tabindex='2'  title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."'  tabindex='2' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' LANGUAGE=javascript onclick='return get_popup();'>";
 	$xtpl->assign("CHANGE_PARENT_BUTTON", $change_parent_button);
 	
 	$xtpl->assign("CLEAR_PARENT_BUTTON", $clear_parent_button);

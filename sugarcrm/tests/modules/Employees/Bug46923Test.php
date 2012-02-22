@@ -49,6 +49,7 @@ class Bug46923Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function testUserListView()
     {
+        global $mod_strings;
         // new employee
         $last_name = 'Test_46923_'.time();
         $user = new User();

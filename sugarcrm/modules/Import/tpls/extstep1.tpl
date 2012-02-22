@@ -57,7 +57,7 @@
 <br>
 {if $MOD.LBL_EXTERNAL_MAP_NOTE != ''}
     <p>
-        <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleNotes" class="button" type="button"
+        <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}"  id="toggleNotes" class="button" type="button"
                        name="button" value="  {$MOD.LBL_SHOW_NOTES}  ">
         <div id="importNotes" style="display: none;">
             <ul>
@@ -112,7 +112,7 @@
 {/foreach}
     <tr>
     <td align="left" colspan="4" style="display: none;">
-        <input title="{$MOD.LBL_ADD_ROW}" accessKey="" id="addrow" class="button" type="button"
+        <input title="{$MOD.LBL_ADD_ROW}"  id="addrow" class="button" type="button"
             name="button" value="  {$MOD.LBL_ADD_ROW}  ">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </td>
@@ -121,8 +121,8 @@
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
 <tr>
     <td align="left">
-        <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
-        <input title="{$MOD.LBL_IMPORT_NOW}" accessKey="" id="importnow" class="button" type="button" name="button" value="  {$MOD.LBL_IMPORT_NOW}  ">
+        <input title="{$MOD.LBL_BACK}"  id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
+        <input title="{$MOD.LBL_IMPORT_NOW}"  id="importnow" class="button" type="button" name="button" value="  {$MOD.LBL_IMPORT_NOW}  ">
     </td>
 </tr>
 </table>

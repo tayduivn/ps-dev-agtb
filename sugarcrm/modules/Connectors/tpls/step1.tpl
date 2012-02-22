@@ -297,7 +297,7 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 				<tr>
 					<td nowrap>
 						
-<input id="connectors_next_top" title="{$mod.LBL_MERGE}" accessKey="{$APP.LBL_NEXT_BUTTON_KEY}" class="button" type="submit" value="{$mod.LBL_MERGE}">
+<input id="connectors_next_top" title="{$mod.LBL_MERGE}" class="button" type="submit" value="{$mod.LBL_MERGE}">
 <input id="connectors_cancel_top" title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.ConnectorStep1.action.value='DetailView'; document.ConnectorStep1.module.value='{$module}';" type="submit" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
 					
 					</td>
@@ -341,8 +341,8 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 				<tr>
 					<td nowrap>
 						
-<input id="connectors_next_bottom" title="{$mod.LBL_MERGE}" accessKey="{$APP.LBL_NEXT_BUTTON_KEY}" class="button" type="submit" value="{$mod.LBL_MERGE}">
-<input id="connectors_cancel_bottom" title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.ConnectorStep1.action.value='DetailView'; document.ConnectorStep1.module.value='{$module}';" type="submit" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+<input id="connectors_next_bottom" title="{$mod.LBL_MERGE}" class="button" type="submit" value="{$mod.LBL_MERGE}">
+<input id="connectors_cancel_bottom" title="{$APP.LBL_CANCEL_BUTTON_LABEL}" class="button" onclick="document.ConnectorStep1.action.value='DetailView'; document.ConnectorStep1.module.value='{$module}';" type="submit" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
 					
 					</td>
 				</tr>

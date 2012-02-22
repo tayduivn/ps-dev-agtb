@@ -678,6 +678,11 @@ logThis("Rebuilding language cache");
 sugar_cache_reset_full();
 LanguageManager::clearLanguageCache();
 
+//pause tracking again so as to not call newly copied tracker code which may contain calls to new methods not currently loaded
+$trackerManager = TrackerManager::getInstance();
+$trackerManager->pause();
+$trackerManager->unsetMonitors();
+
 // re-minify the JS source files
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';

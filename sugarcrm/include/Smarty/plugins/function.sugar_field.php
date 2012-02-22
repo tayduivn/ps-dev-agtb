@@ -96,6 +96,10 @@ function smarty_function_sugar_field($params, &$smarty)
     if(isset($params['idName'])) {
         $displayParams['idName'] = $params['idName'];
     }
+    
+    if(isset($params['accesskey'])) {
+        $displayParams['accesskey'] = $params['accesskey'];
+    }
 
     $_contents = $sfh->displaySmarty($params['parentFieldArray'], $params['vardef'], $params['displayType'], $displayParams, $params['tabindex']);
     

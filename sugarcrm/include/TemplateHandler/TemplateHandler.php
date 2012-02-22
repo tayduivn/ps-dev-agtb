@@ -242,7 +242,7 @@ class TemplateHandler {
      * @param view string view need (eg DetailView, EditView, etc)
      */
     function checkTemplate($module, $view, $checkFormName = false, $formName='') {
-        if(!empty($GLOBALS['sugar_config']['developerMode']) || !empty($_SESSION['developerMode'])){
+        if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
             return false;
         }
         $view = $checkFormName ? $formName : $view;
