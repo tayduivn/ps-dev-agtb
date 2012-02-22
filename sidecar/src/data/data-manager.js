@@ -119,7 +119,7 @@
         },
 
         fetchBean: function(module, id, options, beanType) {
-            var bean = this.createBean(module, null, beanType);
+            var bean = this.createBean(module, { id: id }, beanType);
             bean.fetch(options);
             return bean;
         },
