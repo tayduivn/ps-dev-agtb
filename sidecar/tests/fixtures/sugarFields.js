@@ -4,17 +4,17 @@ var sugarFieldsFixtures = {
         "text":{
             "detailView":{
                 "type":"basic",
-                "template":"<label class=\"control-label\">{{label}}<\/label>{{value}}\n"},
+                "template":"<label class=\"control-label\">{{label}}<\/label><span name=\"{{name}}\">{{value}}</span>\n"},
             "editView":{
                 "type":"basic",
                 "template":" <div class=\"control-group\">\n" +
                     "        <label class=\"control-label\" for=\"input01\">{{label}}<\/label>\n\n" +
-                    "        <div class=\"controls\">\n            <input type=\"text\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                    "        <div class=\"controls\">\n            <input type=\"text\" class=\"input-xlarge\" name=\"{{name}}\" value=\"{{value}}\">\n\n" +
                     "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>\n"
             },
             "default":{
                 "type":"basic",
-                "template":"{{value}}"
+                "template":"<span name=\"{{name}}\">{{value}}</span>"
             }},
         "password":{
             "editView":{

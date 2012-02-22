@@ -99,20 +99,25 @@
 
 			//Need a sample Bean
 			this.bean = App.dataManager.createBean("Contacts", {
+				id:"4352352345",
 				first_name: "Foo",
-				last_name: "Bar"
+				last_name: "Bar",
+				phone_work: null
 			});
 			this.collection = new App.BeanCollection([
 				this.bean,
 				App.dataManager.createBean("Contacts", {
+					id:"435234523452345",
 					first_name:"Majed",
 					last_name:"Itani",
 					phone_work: "408-555-5555"
 				}), App.dataManager.createBean("Contacts", {
+					id:"7654325",
 					first_name:"Clint",
 					last_name:"Oram",
 					phone_work: "408-555-1234"
 				}), App.dataManager.createBean("Contacts", {
+					id:"985432345",
 					first_name:"Lila",
 					last_name:"Tretikov",
 					phone_work: "408-555-5678"

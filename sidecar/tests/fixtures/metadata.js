@@ -15,6 +15,10 @@ fixtures.metadata = {
                 "vardefs" : {
                     "table" : "contacts",
                     "fields" : {
+                        "id" : {
+                            "name" : "id",
+                            "type" : "id"
+                        },
                         "first_name" : {
                             "name" : "first_name",
                             "type" : "varchar"
