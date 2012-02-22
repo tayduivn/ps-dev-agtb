@@ -1,3 +1,5 @@
+//TODO DEPRICATED SEE METADATAMANAGER FOR NEW CALL
+
 (function (app) {
     //var privateVars;
     app.augment('sugarFieldManager',

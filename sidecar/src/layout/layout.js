@@ -22,7 +22,7 @@
                         return "";
                     }
                     ftype = bean.fields[this.name].type;
-                    sf = app.sugarFieldManager.getField(ftype, view);
+                    sf = app.metadata.get({"sugarField":{"name": ftype, "view":view}});
                     if (sf.error)
                         return sf.error;
                     this.value = bean.get(this.name);
