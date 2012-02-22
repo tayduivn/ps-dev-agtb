@@ -560,7 +560,7 @@ class Link2 {
         }
     }
 
-    //Below are functions not used directly and exist for backwards compatiblity with customizations, will be removed in a later version
+    //Below are functions not used directly and exist for backwards compatibility with customizations, will be removed in a later version
 
     /* returns array of keys for duplicate checking, first check for an index of type alternate_key, if not found searches for
      * primary key.

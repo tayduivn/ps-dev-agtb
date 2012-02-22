@@ -222,7 +222,7 @@ function updateDCEAction($inst, $action_id, $db, $filenames='', $parms='', $repo
         }
 
 
-        //  add unique key to config.php.  This prepends teh DCE key to the crated instance key
+        //  add unique key to config.php.  This prepends the DCE key to the created instance key
         if(!empty($uniqueKey)){
             file_replace("'unique_key' => '", "'unique_key' => '".trim($uniqueKey).".", $instanceDir .'/config.php');
         }else{
@@ -617,7 +617,7 @@ function getUpgradeVars($db, $action, $inst){
         global $timedate;
          //change time into timestamp
         $now = $timedate->nowDb();
-        
+
         //convert back into date format
         $yesterday = $timedate->getNow()->get('-1 day')->asDb();
 

@@ -19,10 +19,17 @@
  * 
  * 		init: initializes things (called by default)... currently no options are passed
  * 		
+ * 		Adds item to the menu at position index
  * 		addItem: (item, index)
  * 			item - created dom element or string that represents one
  * 			index(optional) - the position you want your new menuitem. If you leave this off,
  * 				the item is appended to the end of the list.
+ *      	returns: nothing
+ *      
+ *      Finds an item in the menu (including the root node "outside" the ul structure).
+ * 		findItem: (item)
+ * 			item - string of the menu item you are looking for.
+ * 			returns: index of element, or -1 if not found.
  */
 (function($){
 	var methods = {
@@ -37,21 +44,26 @@
 				this.find("input[type='submit'], input[type='button']").each(function(idx, node){
 					var jNode = $(node);
 					var parent = jNode.parent();
-				
-					//if(parent.is("ul") && parent.hasClass("subnav") && jNode.css("display") != "none"){
-						var newItem = $(document.createElement("li"));
-						var newItemA = $(document.createElement("a"));
-						newItemA.html(jNode.val());
-						newItemA.click(function(event){
-							jNode.click();
-						});
-						newItemA.attr("id", jNode.attr("id"));
-						jNode.attr("id", jNode.attr("id") + "_old");
-							
+			
+					var newItem = $(document.createElement("li"));
+					var newItemA = $(document.createElement("a"));
+					newItemA.html(jNode.val());
+					newItemA.click(function(event){
+						jNode.click();
+					});
+					
+					newItemA.attr("id", jNode.attr("id"));
+					jNode.attr("id", jNode.attr("id") + "_old");
+					
+					//make sure the node we found isn't the main item of the list -- we don't want 
+					//to show it then.
+					if(menuNode.sugarActionMenu("findItem", newItemA.html()) == -1){
 						newItem.append(newItemA);
-						menuNode.sugarActionMenu("addItem", {item: newItem, index:idx});
-						jNode.css("display", "none");
-					//}
+					}
+				
+					menuNode.sugarActionMenu("addItem", {item: newItem, index:idx+1});
+					jNode.css("display", "none");
+					
 				});
 				
 				
@@ -159,6 +171,16 @@
 				});
 			}
 			return this;
+		},
+		findItem: function(item){
+			var index = -1;
+			this.find("a").each(function(idx, node){
+				var jNode = $(node);
+				if(jNode.html() == item){
+					index = idx;
+				}
+			});
+			return index;
 		}
 	}
 		
@@ -173,4 +195,4 @@
 			$.error('Method ' + method + ' does not exist on jQuery.tooltip');
 		}
 	}
-})(jQuery);  	
+})(jQuery);

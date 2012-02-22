@@ -42,7 +42,7 @@ class One2OneBeanRelationship extends One2MBeanRelationship
     public function add($lhs, $rhs, $additionalFields = array())
     {
         $lhsLinkName = $this->lhsLink;
-        //In a one to one, any existing links from boths sides must be removed first.
+        //In a one to one, any existing links from both sides must be removed first.
         //one2Many will take care of the right side, so we'll do the left.
         $lhs->load_relationship($lhsLinkName);
         $this->removeAll($lhs->$lhsLinkName);
