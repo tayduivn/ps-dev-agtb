@@ -45,20 +45,27 @@ fixtures.metadata = {
         "views" : {
             "editView" : {
                 "panels" : [{
-                    "label" : "LBL_PANEL_1",
+                    "label" : "",
                     "fields" : [
                         {name:"first_name", label:"First Name"},
-						{name:"last_name", label:"Last Name"}
+						{name:"last_name", label:"Last Name"},
+                        {name:"phone_work", label:"Phone"},
+                        {name:"email1", label:"Email"},
+                        {type:"sugarField_buttonSave", label:"Save"},
+                        {type:"sugarField_buttonCancelSave", label:"Cancel"}
                     ]
                 }]
 
             },
             "detailView" : {
                 "panels" : [{
-                    "label" : "LBL_PANEL_1",
+                    "label" : "",
                     "fields" : [
-                        {name:"first_name", label:"First Name"},
-                        {name:"last_name", label:"Last Name"}
+                        {type:"sugarField_actionsLink", label:""},
+                        {type:"sugarField_fullName", label:"Name"},
+                        {name:"phone_work", label:"Phone"},
+                        {name:"email1", label:"Email"},
+                        {type:"sugarField_primaryAddress", label:"Address"}
                     ]
                 }]
             },

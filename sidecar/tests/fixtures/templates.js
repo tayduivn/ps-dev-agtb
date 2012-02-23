@@ -10,7 +10,7 @@ fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
 fixtures.templates = {
     "detailView" :
-        "<h3 class=\"view_title\">{{name}}</h3>" +
+        "<h3 class=\"view_title\">&nbsp;</h3>" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
@@ -21,7 +21,7 @@ fixtures.templates = {
             "</form></div>" +
         "{{/each}}",
     "editView" :
-        "<h3 class=\"view_title\">{{name}}</h3>" +
+        "<h3 class=\"view_title\">&nbsp;</h3>" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
@@ -32,7 +32,7 @@ fixtures.templates = {
             "</form></div>" +
         "{{/each}}",
     "subpanelView" :
-        "SUBPANEL VIEW!!!!",
+        "",
     "listView" :
         '<h3 class="view_title">{{context.state.module}}</h3>' +
         "{{#each meta.panels}}" +

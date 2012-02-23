@@ -168,8 +168,7 @@
             _render:function () {
                 if (this.template)
                     this.$el.html(
-                        this.template(this) +
-                        "<br/>This is a custom view"
+                        this.template(this)
                     );
             }
         });

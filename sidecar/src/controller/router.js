@@ -12,6 +12,7 @@
         routes: {
             "": "index",
             "login": "login",
+            ":module/create": "record",
             ":module/:id/:action": "record",
             ":module/:id": "record"
         },
@@ -64,13 +65,21 @@
         },
 
         record: function(module, id, action) {
+            console.log("====Routing record====");
+            console.log("Module: "+ module);
+            console.log("Action: "+ action);
+            console.log("Id: "+ id);
+            if (!id){
+                action = 'edit';
+            }
             this.controller.loadView({
                 module: module,
                 id: id,
                 action: action,
-                layout: "LAYOUT NAME"
+                layout: action || 'detail'
             });
         }
+
     });
 
     /**
