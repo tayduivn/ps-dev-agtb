@@ -110,13 +110,13 @@
                 $a.eq(i).click(function(event) {
 				  event.preventDefault();
 				  if ( !$a.eq(i).hasClass("sf-with-ul") ) {
-				    location.href = this.href;
+                      SUGAR.ajaxUI.loadContent(this.href);
 				  }
 				});
 				
 				
 				$a.eq(i).dblclick(function(event){
-					location.href = this.href;
+                    SUGAR.ajaxUI.loadContent(this.href);
 				});
 				
             });
