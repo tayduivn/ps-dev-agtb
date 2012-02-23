@@ -36,7 +36,14 @@ class RestSugarObject extends RestObject implements IRestObject {
     }
 
     /**
-     * This method gets all of the modules
+     * This method handles reading data from a Sugar object.
+     *
+     * URL params supported:
+     * "deleted": true or false, tells sugar to either get deleted reocrds or non-deleted records.
+     * "fields": a list od fields to return data for.
+     * "maxresult": the max number of results to return.
+     * "offset": the offset into the result set for this object.
+     *
      */
     private function handleGet() {
         global $current_user;
