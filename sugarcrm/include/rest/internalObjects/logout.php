@@ -4,7 +4,7 @@ include_once("include/rest/RestObjectInterface.php");
 include_once("RestError.php");
 include_once("RestUtils.php");
 include_once("RestObject.php");
-include_once("service/core/SoapHelperWebService.php");
+include_once("include/rest/SoapHelperWebService.php");
 include_once("soap/SoapError.php");
 
 class logout extends RestObject implements IRestObject {
@@ -67,6 +67,4 @@ class logout extends RestObject implements IRestObject {
 
         $this->logout($result['data']['token']);
     }
-
-
 }

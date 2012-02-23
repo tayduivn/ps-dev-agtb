@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This file is much like the modules.php file where it is used to loaded known
+ * objects by the RestFactory.
+ */
+
+
 /*
  * Setup the objects by name first.
  */
@@ -7,6 +13,7 @@ $restObjectList = array(
     "login" => array(),
     "logout" => array(),
     "metadata" => array(),
+    "serverinfo" => array(),
     "objects" => array()
 );
 
@@ -16,6 +23,7 @@ $restObjectList = array(
 $restObjectList["login"] = "internalObjects/login.php";
 $restObjectList["logout"] = "internalObjects/logout.php";
 $restObjectList["metadata"] = "internalObjects/metadata.php";
+$restObjectList["serverinfo"] = "internalObjects/serverinfo.php";
 $restObjectList["objects"] = "internalObjects/objects.php";
 
 /*
