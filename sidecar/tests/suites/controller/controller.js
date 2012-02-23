@@ -1,6 +1,6 @@
 describe("Controller", function() {
     var controller = SUGAR.App.controller,
-        layoutManager = SUGAR.App.Layout,
+        layoutManager = SUGAR.App.layout,
         dataManager = SUGAR.App.dataManager;
 
     SUGAR.App.init({el: "body"});
@@ -20,7 +20,9 @@ describe("Controller", function() {
                 fetchBean: function() {
                     return {};
                 },
-                createBeanCollection: function(){return {}}
+                createBeanCollection: function() {
+                    return {};
+                }
             };
 
             // Overload the layout manager
@@ -38,17 +40,17 @@ describe("Controller", function() {
             dataSpy = sinon.spy(dataMan, "fetchBean");
             collectionSpy = sinon.spy(dataMan, "createBeanCollection");
 
-            SUGAR.App.Layout = layoutMan;
+            SUGAR.App.layout = layoutMan;
             SUGAR.App.dataManager = dataMan;
-
-            controller.$el = $().html("<div></div>");
+            controller.setElement("body");
             controller.loadView(params);
         });
 
         it("should fetch the needed data from the data manager", function() {
+            expect(dataSpy.called).toBeTruthy();
+            expect(collectionSpy.called).toBeTruthy();
             expect(controller.data).toBeTruthy();
             expect(controller.data).not.toEqual(_.isEmpty(controller.data));
-            expect(dataSpy.called).toBeTruthy();
         });
 
         it("should set the context", function() {
@@ -67,6 +69,6 @@ describe("Controller", function() {
         });
     });
 
-    SUGAR.App.Layout = layoutManager;
+    SUGAR.App.layout = layoutManager;
     SUGAR.App.dataManager = dataManager;
 });

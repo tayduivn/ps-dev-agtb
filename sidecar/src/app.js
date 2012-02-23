@@ -64,13 +64,14 @@ SUGAR.App = (function() {
          */
         init: function(opts) {
             app = app || _.extend(this, new App(opts));
+
             // Here we initialize all the modules;
             _.each(modules, function(module, key) {
-                console.log(key);
                 if (_.isFunction(module.init)) {
                     module.init(this);
                 }
             }, this);
+
             return app;
         },
 
