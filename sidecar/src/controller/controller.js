@@ -14,7 +14,6 @@
          * @method
          */
         initialize: function() {
-            _.bindAll(this);
             this.context = app.context.getContext();
 
             // Subscribe and publish events
@@ -30,6 +29,7 @@
              * @event start
              */
             app.events.publish("app:start", this);
+            this.poop = "100";
         },
 
         /**
@@ -55,7 +55,6 @@
 
             // Render the layout
             this.layout.render();
-
         },
 
         /**
