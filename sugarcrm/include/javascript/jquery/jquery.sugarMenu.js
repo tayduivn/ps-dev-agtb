@@ -44,14 +44,19 @@
 				this.find("input[type='submit'], input[type='button']").each(function(idx, node){
 					var jNode = $(node);
 					var parent = jNode.parent();
-			
+                    var disabled = $(this).prop('disabled');
 					var newItem = $(document.createElement("li"));
 					var newItemA = $(document.createElement("a"));
+
 					newItemA.html(jNode.val());
-					newItemA.click(function(event){
-						jNode.click();
-					});
-					
+                    if(!disabled )
+                    {
+                        newItemA.click(function(event){ jNode.click(); });
+                    }
+                    else
+                    {
+                        newItemA.addClass("disabled");
+                    }
 					newItemA.attr("id", jNode.attr("id"));
 					jNode.attr("id", jNode.attr("id") + "_old");
 					

@@ -166,6 +166,24 @@
             <td><a href="./index.php?module=Administration&action=ConfigureAjaxUI" id="configure_ajax">{$MOD.LBL_CONFIG_AJAX}</a>&nbsp;{sugar_help text=$MOD.LBL_CONFIG_AJAX_DESC}</td>
 <!-- //END SUGARCRM flav!=sales ONLY -->
     </tr>
+
+    <tr>
+        <td  scope="row" nowrap>{$MOD.LBL_DISALBE_CONVERT_LEAD}: &nbsp;{sugar_help text=$MOD.LBL_DISALBE_CONVERT_LEAD_DESC}</td>
+        {if !empty($config.disable_convert_lead)}
+            {assign var='disable_convert_lead' value='CHECKED'}
+        {else}
+            {assign var='disable_convert_lead' value=''}
+        {/if}
+        <td>
+            <input type='hidden' name='disable_convert_lead' value='false'>
+            <input name='disable_convert_lead'  type="checkbox" value="true" {$disable_convert_lead}>
+        </td>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+
+
+
+
 </table>
 
 {* //BEGIN SUGARCRM flav!=sales ONLY*}

@@ -728,6 +728,7 @@ function handleSugarConfig() {
     $sugar_config['host_name']                      = $setup_site_host_name;
     $sugar_config['js_custom_version']              = '';
     $sugar_config['use_real_names']                 = true;
+    $sugar_config['disable_convert_lead']                 = true;
     $sugar_config['log_dir']                        = $setup_site_log_dir;
     $sugar_config['log_file']                       = $setup_site_log_file;
 

@@ -6287,6 +6287,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	color: #000;
 	font-size: 12px;
 }
+
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
 	color: #fff;
 }
@@ -6384,6 +6385,10 @@ ul.clickMenu.button li ul.subnav {
 	width: auto;	
 }
 
+ul.clickMenu li a.disabled {
+    color:gray !important;
+    cursor:default !important;
+}
 
 .oddListRowS1:hover td ul.clickMenu.subpanel.records , .evenListRowS1:hover td ul.clickMenu.subpanel.records {
 		background-image: -moz-linear-gradient(center top, 
