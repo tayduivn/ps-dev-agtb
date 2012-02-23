@@ -54,9 +54,6 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
 
 	public function setUp()
     {
-        global $beanList, $beanFiles;
-        require('include/modules.php');
-
         global $current_user;
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
 
@@ -138,8 +135,9 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $this->assertEquals('867-5309', $existingContact->phone_mobile, 'Assert that we have not changed the phone_mobile field from first sync');
         $this->assertEquals('Jenny - I Got Your Number', $existingContact->title, 'Assert that we have not changed the title field from first sync');
 
-        $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
-        $this->assertEquals(1, $result['total'], 'Assert we only have one Contact with the first and last name');
+        $result = $GLOBALS['db']->query("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertEquals(1, $row['total'], 'Assert we only have one Contact with the first and last name');
 
         //Now sync a second time
         $this->_login();
@@ -168,7 +166,8 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $this->assertEquals('1-800-SUGARCRM', $existingContact->phone_mobile, 'Assert that we have changed the phone_mobile field from second sync');
         $this->assertEquals('', $existingContact->title, 'Assert that we have changed the title field to be (blank) from second sync');
         $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
-        $this->assertEquals(1, $result['total'], 'Assert we only have one Contact with the first and last name');
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertEquals(1, $row['total'], 'Assert we only have one Contact with the first and last name');
     }
     
 
@@ -203,7 +202,8 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $this->assertEquals('Jenny - I Got Your Number', $existingContact->title, 'Assert that we have not changed the title field from first sync');
 
         $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
-        $this->assertEquals(1, $result['total'], 'Assert we only have one Contact with the first and last name');
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertEquals(1, $row['total'], 'Assert we only have one Contact with the first and last name');
 
         //Now sync a second time
         $this->_login();
@@ -231,7 +231,8 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $this->assertEquals('1-800-SUGARCRM', $existingContact->phone_mobile, 'Assert that we have changed the phone_mobile field from second sync');
         $this->assertEquals('', $existingContact->title, 'Assert that we have changed the title field to be (blank) from second sync');
         $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
-        $this->assertEquals(1, $result['total'], 'Assert we only have one Contact with the first and last name');
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertEquals(1, $row['total'], 'Assert we only have one Contact with the first and last name');
     }
 
 }
