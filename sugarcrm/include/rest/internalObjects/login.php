@@ -80,18 +80,15 @@ class Login extends RestObject implements IRestObject {
 
     private function login($user, $pass) {
         include_once("include/rest/SugarWebServiceImpl.php");
-        //$user = null;
         $result = array();
         global $current_user;
 
         $webser = new SugarWebServiceImpl();
         $result = $webser->login(array("user_name" => $user, "password" => $pass, "encryption" => "PLAIN"), "none", array());
-        print_r($result);
-        print "RESULT: {$result}"; die;
-
-
-        if ($err) {
-
+        if (array_key_exists("id", $result)) {
+            $data = array("token" => $result["id"]);
+            $data = json_encode($data);
+            $this->sendJSONResponse($data);
             exit;
         } else {
             $err = new RestError();

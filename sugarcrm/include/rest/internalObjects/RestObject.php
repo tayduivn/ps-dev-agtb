@@ -131,34 +131,4 @@ abstract class RestObject implements IRestObject {
         return $this->uriData;
     }
 
-    protected function validate_authenticated($session_id){
-        $GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_authenticated');
-        if(!empty($session_id)){
-            session_id($session_id);
-            if(empty($_SESSION)) {
-                session_start();
-            }
-            if(!empty($_SESSION['is_valid_session']) && $_SESSION['type'] == 'user'){
-
-                global $current_user;
-                require_once('modules/Users/User.php');
-                $current_user = new User();
-                $current_user->retrieve($_SESSION['user_id']);
-                $this->userLoggedin = $current_user;
-                print "FUCK: {$current_user->id}";
-                print_r($current_user);
-                die;
-                return true;
-            }
-
-            $GLOBALS['log']->debug("calling destroy");
-            //session_destroy();
-        }
-        LogicHook::initialize();
-        $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
-        $GLOBALS['log']->info('End: SoapHelperWebServices->validate_authenticated - validation failed');
-        return false;
-    }
-
-
 }
