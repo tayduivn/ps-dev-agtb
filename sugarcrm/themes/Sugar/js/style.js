@@ -182,8 +182,8 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeSearch: function() {
-    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54); 
-		$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));
+    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.16) + 54); 
+		$('#sugar_spot_search').css("width",Math.round($(window).width()*.16));
     },
     resizeMenu: function () {
 	    var maxMenuWidth = Math.round($(window).width()*.45);
@@ -210,7 +210,7 @@ SUGAR.append(SUGAR.themes, {
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
-		$("#dcmenuSugarCube a").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#notifCount").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});	
 		//setup tool tips for partner integrations
 		$("#partner").children("a").each(
