@@ -42,20 +42,8 @@ class logout extends RestObject implements IRestObject {
         $result = $this->helper->validate_authenticated($id);
         if ($result) {
             global $current_user;
-
-            $GLOBALS['log']->info('Begin: SugarWebServiceImpl->logout');
-            $error = new SoapError();
-            LogicHook::initialize();
-            if (!$this->helper->checkSessionAndModuleAccess($id, 'invalid_session', '', '', '', $error)) {
-                $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
-                $GLOBALS['log']->info('End: SugarWebServiceImpl->logout');
-                exit;
-            }
-
-            $current_user->call_custom_logic('before_logout');
-            session_destroy();
-            $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
-            $GLOBALS['log']->info('End: SugarWebServiceImpl->logout');
+            $webser = new SugarWebServiceImpl();
+            $webser->logout($id);
         } else {
             $err = new RestError();
             $err->ReportError(403);
