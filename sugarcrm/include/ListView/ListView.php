@@ -470,26 +470,39 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 		$widget_contents = "";
         $first = true;
         // this is for inline buttons on listviews
-		foreach ($button_contents as $actions => $action) {
-            if ($first) {
+		foreach ($button_contents as $actions => $action)
+        {
+
+            if ($first && count($button_contents) > 1)
+            {
                 $hide = " style:'display: none'";
                 $firstaction = $action;
-                			$button_count++;
-                            $first = false;
+                $button_count++;
+                $first = false;
                 continue;
-            } else {
-                $hide = "";
-
             }
-			$widget_contents .= "<li$hide>".$action."</li>";
-			if(sizeof($button_contents) == $button_count) {
+            else if ($first && count($button_contents) == 1)
+            {
+                $firstaction = $action;
+                $widget_contents .= "<li>&nbsp;</li>";
+            }
+            else
+            {
+                $widget_contents .= "<li>".$action."</li>";
+            }
+
+
+			if(sizeof($button_contents) == $button_count)
+            {
 				$count++;
                 $this->xTemplate->assign('CELL_COUNT', $count);
                 $pre = '<ul class="clickMenu subpanel records fancymenu button">'. "\n";
                 $this->xTemplate->assign('CLASS', "inlineButtons");
-                if(sizeof($button_contents) == 1) {
+                if(sizeof($button_contents) == 1)
+                {
         			$pre .= '<li class="single">'. "\n";
-                } else {
+                }
+                else {
                 	$pre .= '<li>'. "\n";
                 }
 
@@ -500,7 +513,8 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $pre .= "<div style='display: inline' id='$tempid'>".$firstaction."</div>";
 
         		$pre .= '<ul class="subnav';
-        		if(sizeof($button_contents) > 1){
+        		if(sizeof($button_contents) > 1)
+                {
         			$pre .= " multi";
         		}
 
@@ -508,7 +522,10 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         		$post = ' </ul>' . "\n";
 		        $post .= '</li>' . "\n";
 		        $post .= '</ul>' . "\n";
-                if ( empty($widget_contents) ) $widget_contents = '&nbsp;';
+
+                if ( empty($widget_contents) )
+                    $widget_contents = '&nbsp;';
+
                 $this->xTemplate->assign('CELL', $pre.$widget_contents.$post);
                 $this->xTemplate->parse($xtemplateSection.".row.cell");
 			}
