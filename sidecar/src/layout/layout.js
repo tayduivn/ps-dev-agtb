@@ -211,10 +211,6 @@
                 var collection = context.get("collection");
                 _.each(collection.models, function(model) {
                     var tr = this.$el.find('tr[name="' + model.beanType + '_' + model.get("id") + '"]');
-                    //Row clicks should open the detail view
-                    tr.on("click", function(){
-                        app.router.navigate(model.module + "/" + model.get("id"), {trigger: true});
-                    });
                     _.each(model.attributes, function(value, field) {
                         var el = tr.find('input[name="' + field + '"],span[name="' + field + '"]');
                         if (el.length > 0){
