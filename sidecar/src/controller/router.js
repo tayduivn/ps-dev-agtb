@@ -42,13 +42,18 @@
             // if the history has been started.
             try {
                 Backbone.history.start();
-            } catch (e) {}
+            } catch (e) {
+                app.logger.error(e.message);
+            }
         },
 
         // Routes
 
         index: function() {
-            this.controller.loadView();
+            this.controller.loadView({
+                module: "Contacts", //TODO: This shoudl probably not be Contacts
+                layout: "list"
+            });
         },
 
         login: function() {
@@ -78,11 +83,11 @@
          * @param {Object} instance
          */
         init: function(instance) {
-            if (!instance.router && instance.controller) {
-                _.extend(module, new Router({controller: instance.controller}));
-            } else {
+            if (!instance.controller)
                 throw "app.controller does not exist yet. Cannot create router instance";
-            }
+
+            _.extend(module, new Router({controller: instance.controller}));
+
         }
     }
 

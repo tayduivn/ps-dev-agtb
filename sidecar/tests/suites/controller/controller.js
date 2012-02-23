@@ -3,8 +3,10 @@ describe("Controller", function() {
         layoutManager = SUGAR.App.Layout,
         dataManager = SUGAR.App.dataManager;
 
+    SUGAR.App.init({el: "body"});
+
     describe("when a route is matched", function() {
-        var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, renderSpy;
+        var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, renderSpy, collectionSpy;
 
         beforeEach(function() {
             params = {
@@ -17,7 +19,8 @@ describe("Controller", function() {
             dataMan = {
                 fetchBean: function() {
                     return {};
-                }
+                },
+                createBeanCollection: function(){return {}}
             };
 
             // Overload the layout manager
@@ -33,10 +36,12 @@ describe("Controller", function() {
             layoutSpy = sinon.spy(layoutMan, "get");
             renderSpy = sinon.spy(layout, "render");
             dataSpy = sinon.spy(dataMan, "fetchBean");
+            collectionSpy = sinon.spy(dataMan, "createBeanCollection");
 
             SUGAR.App.Layout = layoutMan;
             SUGAR.App.dataManager = dataMan;
 
+            controller.$el = $().html("<div></div>");
             controller.loadView(params);
         });
 

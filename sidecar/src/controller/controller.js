@@ -47,14 +47,15 @@
             this.layout = null;
 
             this.data = this.getData(params);
-            this.layout = this.getLayout(params);
             this.context.init(params, this.data);
+            this.layout = this.getLayout(params);
+
+            // Render the rendered layout to the main element
+            this.$el.html(this.layout.$el);
 
             // Render the layout
             this.layout.render();
 
-            // Render the rendered layout to the main element
-            this.$el.html(this.layout.$el);
         },
 
         /**
@@ -69,17 +70,22 @@
          * @return {Object} obj Data model / collection
          */
         getData: function(opts) {
-            var data;
+            var data, bean, collection;
 
             if (opts.id) {
-                data = app.dataManager.fetchBean(opts.module, opts.id);
+                bean = app.dataManager.fetchBean(opts.module, opts.id);
+                collection = app.dataManager.createBeanCollection(opts.module, [bean]);
             } else if (opts.url) {
                 // TODO: Make this hit a custom url
             } else {
-                data = app.dataManager.fetchBeans(opts.module)
+                collection = app.dataManager.fetchBeans(opts.module);
+                bean = collection.models[0] || {};
             }
 
-            return data;
+            return {
+                model : bean,
+                collection: collection
+            };
         },
 
 
@@ -94,7 +100,7 @@
          * @return {Object} obj Layout obj
          */
         getLayout: function(opts) {
-            return SUGAR.App.Layout.get({
+            return SUGAR.App.layout.get({
                 layout: opts.layout,
                 module: opts.module
             });
@@ -105,12 +111,15 @@
          * @method
          */
         start: function() {
+            app.router.start();
+            /*
             // Check if we have an authenticated session
             if (app.sugarAuth.isAuthenticated()) {
                 app.router.navigate("login", {trigger: true});
             } else {
                 app.router.navigate("", {trigger: true});
             }
+            */
         }
     });
 
@@ -126,7 +135,7 @@
          * @method
          */
         init: function(instance) {
-            instance.controller = instance.controller || _.extend(new Controller({el: app.rootEl}), module);
+            instance.controller = _.extend(module, instance.controller, new Controller({el: app.rootEl}));
         }
     };
 

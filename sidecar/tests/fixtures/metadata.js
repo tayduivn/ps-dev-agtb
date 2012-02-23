@@ -94,6 +94,13 @@ fixtures.metadata = {
                     {view : "subpanelView"}
                 ]
             },
+            "list" : {
+                //Default layout is a single view
+                "type" : "simple",
+                "components" : [
+                    {view : "listView"}
+                ]
+            },
             //Example of a sublayout. Two columns on the top and one view below that
             "sublayout" : {
                 "type" : "rows",

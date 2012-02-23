@@ -197,7 +197,7 @@
             initialize:function () {
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
-                this.context = this.options.context || app.context.getContext();
+                this.context = this.options.context || app.controller.context;
                 this.module = this.options.module || this.context.module;
                 this.meta = this.options.meta;
                 this.components = [];

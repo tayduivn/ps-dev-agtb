@@ -77,6 +77,7 @@
     <body>
     	<div>
 			<div id="view" style=""></div>
+			<div id="sidecar" style=""></div>
 			<div id="layout" style=""></div>
 		</div>
 
@@ -86,6 +87,8 @@
 			SUGAR.App.template.load(fixtures.templates);
 			//Fake a field list
             SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
+			var i = SUGAR.Api.getInstance();
+			i.debug = true;
 
 			var App = SUGAR.App.init({el: "#sidecar"});
 			//Initialize the data model
@@ -93,47 +96,21 @@
 			App.metadata.set(fixtures.metadata);
 
 			//Need a sample Bean
-			this.bean = App.dataManager.createBean("Contacts", {
-				id:"4352352345",
-				first_name: "Foo",
-				last_name: "Bar",
-				phone_work: null
-			});
-			this.collection = new App.BeanCollection([
-				this.bean,
-				App.dataManager.createBean("Contacts", {
-					id:"435234523452345",
-					first_name:"Majed",
-					last_name:"Itani",
-					phone_work: "408-555-5555"
-				}), App.dataManager.createBean("Contacts", {
-					id:"7654325",
-					first_name:"Clint",
-					last_name:"Oram",
-					phone_work: "408-555-1234"
-				}), App.dataManager.createBean("Contacts", {
-					id:"985432345",
-					first_name:"Lila",
-					last_name:"Tretikov",
-					phone_work: "408-555-5678"
-				})
-			]);
-			//Setup a context
-			var context = SUGAR.App.context.getContext({
-				url: "someurl",
-				module: "Contacts",
-				model : this.bean,
-				collection : this.collection
-			});
+			this.collection = App.dataManager.fetchBeans('Contacts',{});
+			this.bean = this.collection.models[0];
+
+			App.controller.data = {"collection" : this.collection, "model" : this.bean};
+
+			App.controller.start();
+
+			/*
 			var view = App.layout.get({
-				context : context,
 				view:"listView"
 			});
 			$("#view").append(view.el);
 			view.render();
 
 			var layout = App.layout.get({
-				context : context,
 				layout: "detailplus"
 				//view:"detailView"
 			});
@@ -142,7 +119,7 @@
 
 
 
-			/*
+
 			var sublayout = App.layout.get({
 				context : context,
 				layout: "sublayout"
