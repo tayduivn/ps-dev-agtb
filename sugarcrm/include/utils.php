@@ -1779,7 +1779,7 @@ function get_set_focus_js () {
 	//TODO Clint 5/20 - Make this function more generic so that it can take in the target form and field names as variables
 	$the_script = <<<EOQ
 <script type="text/javascript" language="JavaScript">
-<!-- Begin
+<!--
 function set_focus() {
 	if (document.forms.length > 0) {
 		for (i = 0; i < document.forms.length; i++) {
@@ -1797,7 +1797,7 @@ function set_focus() {
       	}
    	}
 }
-//  End -->
+-->
 </script>
 EOQ;
 
