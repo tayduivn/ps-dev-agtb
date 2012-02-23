@@ -191,8 +191,13 @@ class InboundEmail extends SugarBean {
 	 */
 	function retrieve($id) {
 		$ret = parent::retrieve($id);
-		$this->email_password = blowfishDecode(blowfishGetKey('InboundEmail'), $this->email_password);
-		$this->retrieveMailBoxFolders();
+		
+		// if I-E bean exist
+		if (!is_null($ret)) {
+		    $this->email_password = blowfishDecode(blowfishGetKey('InboundEmail'), $this->email_password);
+		    $this->retrieveMailBoxFolders();
+		}
+		
 		return $ret;
 	}
 
