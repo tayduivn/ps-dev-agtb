@@ -20,8 +20,8 @@
             var $$ = $(this),
             menu = getMenu($$),
             o = sf.op;
-            if (o.firstOnClick && !menuActive &&
-            $$.parent()[0] == menu) {
+            if (o.firstOnClick && !menuActive && $$.parent()[0] == menu)
+            {
                 menuActive = true;
                 clearTimeout(menu.sfTimer);
 
@@ -34,10 +34,9 @@
             var $$ = $(this),
             menu = getMenu($$),
             o = sf.op;
-            if (!o.firstOnClick || menuActive ||
-            $$.parent()[0] != menu) {
+            if (!o.firstOnClick || menuActive || $$.parent()[0] != menu)
+            {
                 clearTimeout(menu.sfTimer);
-
                 $$.showSuperfishUl().siblings().hideSuperfishUl();
             }
         },
@@ -50,27 +49,24 @@
 
                 o.retainPath = ($.inArray($$[0], o.$path) > -1);
                 $$.hideSuperfishUl();
-                if (o.$path.length &&
-                $$.parents(['li.', o.hoverClass].join
-                ('')).length < 1) {
+                if (o.$path.length && $$.parents(['li.', o.hoverClass].join('')).length < 1)
+                {
                     over.call(o.$path);
                 }
-                else {
+                else
+                {
                     menuActive = false;
                 }
             },
             o.delay);
         },
         getMenu = function($menu) {
-            var menu =
-            $menu.parents(['ul.', c.menuClass, ':first'].join(''))
-            [0];
+            var menu = $menu.parents(['ul.', c.menuClass, ':first'].join(''))[0];
             sf.op = sf.o[menu.serial];
             return menu;
         },
         addArrow = function($a) {
-            $a.addClass(c.anchorClass).append
-            ($arrow.clone());
+            $a.addClass(c.anchorClass).append($arrow.clone());
         };
 
         return this.each(function() {
@@ -107,15 +103,18 @@
                     out.call($li);
                 });
                 
-                $a.eq(i).click(function(event) {
+                $a.eq(i).click(function(event)
+                {
 				  event.preventDefault();
-				  if ( !$a.eq(i).hasClass("sf-with-ul") ) {
+				  if ( !$a.eq(i).hasClass("sf-with-ul") )
+                  {
                       SUGAR.ajaxUI.loadContent(this.href);
 				  }
 				});
 				
 				
-				$a.eq(i).dblclick(function(event){
+				$a.eq(i).dblclick(function(event)
+                {
                     SUGAR.ajaxUI.loadContent(this.href);
 				});
 				
@@ -174,20 +173,15 @@
             var o = sf.op,
             not = (o.retainPath === true) ? o.$path: '';
             o.retainPath = false;
-            var $ul =
-            $(['li.', o.hoverClass].join(''), this).add(this).not
-            (not).removeClass(o.hoverClass)
-
-            .find('>ul').hide().css('visibility', 'hidden');
+            var $ul = $(['li.', o.hoverClass].join(''), this).add(this).not
+                (not).removeClass(o.hoverClass).find('>ul').hide().css('visibility', 'hidden');
             o.onHide.call($ul);
             return this;
         },
         showSuperfishUl: function() {
             var o = sf.op,
             sh = sf.c.shadowClass + '-off',
-            $ul = this.addClass(o.hoverClass)
-
-            .find('>ul:hidden').css('visibility', 'visible');
+            $ul = this.addClass(o.hoverClass).find('>ul:hidden').css('visibility', 'visible');
             sf.IE7fix.call($ul);
             o.onBeforeShow.call($ul);
             $ul.animate(o.animation, o.speed,
