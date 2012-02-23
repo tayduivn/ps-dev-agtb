@@ -52,11 +52,11 @@
         if (field.view && _metadata.sugarFields[name] && _metadata.sugarFields[name][field.view]) {
             result = _metadata.sugarFields[name][field.view];
             // fall back to detailview if field for this view doesnt exist
-        } else if (_metadata.sugarFields[name] && _metadata.sugarFields[name]['detailView']) {
-            result = _metadata.sugarFields[name]['detailView'];
+        } else if (_metadata.sugarFields[name] && _metadata.sugarFields[name]['default']) {
+            result = _metadata.sugarFields[name]['default'];
             //fall back to base field detailview if none of the above exist
-        } else if (_metadata.sugarFields['base'] && _metadata.sugarFields['base']['detailView']) {
-            result = _metadata.sugarFields['base']['detailView'];
+        } else if (_metadata.sugarFields['base'] && _metadata.sugarFields['base']['default']) {
+            result = _metadata.sugarFields['base']['default'];
         } else {
             app.Sync();
             return null;

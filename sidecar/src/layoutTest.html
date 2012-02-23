@@ -71,10 +71,47 @@
 				border : 1px solid red;
 				vertical-align:top;
 			}
+            body {
+                    padding-top: 60px;
+                    padding-bottom: 40px;
+                  }
+            .brand:hover{
+                color: #FFCB36;
+            }
+            .navbar .nav > li > a:hover {
+              color: #FFCB36;
+              text-decoration: none;
+              background-color: #222222;
+              background-color: rgba(0, 0, 0, 0.5);
+            }
 		</style>
 
     </head>
     <body>
+    <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container">
+              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </a>
+              <a class="brand" href="#">Sidecar</a>
+              <div class="nav-collapse">
+                <ul class="nav">
+                  <li><a href="#Contacts/list">Browse</a></li>
+                    <li><a href="#Contacts/create">Create</a></li>
+                </ul>
+                  <p class="navbar-text pull-right"></p>
+              </div><!--/.nav-collapse -->
+            </div>
+          </div>
+        </div>
+    	<div>
+			<div id="view" style=""></div>
+			<div id="sidecar" style=""></div>
+			<div id="layout" style=""></div>
+		</div>
     	<div>
 			<div id="view" style=""></div>
 			<div id="sidecar" style=""></div>
