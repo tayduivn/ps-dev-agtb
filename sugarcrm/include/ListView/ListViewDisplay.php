@@ -305,9 +305,7 @@ class ListViewDisplay {
 	 * @param  string $id link id attribute, defaults to 'actions_link'
 	 * @return string HTML source
 	 */
-	protected function buildActionsLink(
-	    $id = 'actions_link'
-	    )
+	protected function buildActionsLink($id = 'actions_link')
 	{
 	    global $app_strings;
 		$closeText = SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $app_strings['LBL_CLOSEINLINE']);
@@ -351,9 +349,6 @@ class ListViewDisplay {
 
 		foreach ( $this->actionsMenuExtraItems as $item )
 		    $menuItems .= $item;
-
-		if ( empty($menuItems) )
-		    return '';
         
             return <<<EOHTML
           <script type="text/javascript">
