@@ -1419,7 +1419,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 	float: left;
 }
 
-#footer #partner img {
+#footer #partner a span {
 	width: 25px;
 	height: 24px;
 	margin: 4px 10px 4px 0px;
@@ -1428,6 +1428,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     float:right;
     margin-right:25px;
      border-right: 1px solid #CCCCCC;
+     height: 31px;
 }
 
 #footer p {
@@ -4996,9 +4997,15 @@ border-radius: 0px 6px 0px 0px;
 #dashletCtrls a {
 font-size: 13px;
 }
-#add_dashlets {
+#change_layout {
 margin-left: 5px;
 *margin-left: 0px;
+}
+
+#dashletCtrls a span.title {
+	margin-left: 5px;
+	position: relative;
+	top: -7px;	
 }
 /* sitemap */
 #sitemap .edit.view
@@ -6897,5 +6904,30 @@ td #moduleListTD
 
 #sugar_spot_search_div .spot_fts_summary
 {
-    color: #444
+    color: #444;
+}
+
+#zenbox_tab, #uvTab {
+border: 0px none !important;
+left: auto !important;
+top: auto !important;
+right: 20px;
+bottom: 0px;	
+position: inherit !important;
+text-indent: 0px !important;
+width: 100px !important;
+height: 24px !important;
+background-image: none !important;
+display: inline-block !important;
+height: 31px !important;
+background-color: transparent !important;
+border-left: 1px solid #CCCCCC !important;
+text-align: center;
+font-family: tahoma;
+font-size: 15px;
+text-shadow: 0px 1px #fff;
+padding-top: 6px;
+font-weight: bold;
+color: #444;
+text-decoration: none;
 }
