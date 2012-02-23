@@ -180,7 +180,7 @@ if(empty($GLOBALS['installing'])){
 $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 $error_notice = '';
 $use_current_user_login = false;
-    
+
 // Allow for the session information to be passed via the URL for printing.
 if(isset($_GET['PHPSESSID'])){
     if(!empty($_COOKIE['PHPSESSID']) && strcmp($_GET['PHPSESSID'],$_COOKIE['PHPSESSID']) == 0) {
