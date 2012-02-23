@@ -30,6 +30,10 @@ fixtures.metadata = {
                         "phone_work" : {
                             "name" : "phone_work",
                             "type" : "varchar"
+                        },
+                        "email1" : {
+                            "name" : "email1",
+                            "type" : "varchar"
                         }
                     }
                 },
@@ -64,11 +68,12 @@ fixtures.metadata = {
             //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
             "listView" : {
                 "panels" : [{
-                    "label" : "LBL_PANEL_1",
+                    "label" : "",
                     "fields" : [
-                        {name:"first_name", label:"First Name"},
-                        {name:"last_name", label:"Last Name"},
-                        {name:"phone_work", label:"Phone"}
+                        {type:"sugarField_fullName", label:"Name"},
+                        {name:"phone_work", label:"Phone"},
+                        {name:"email1", label:"Email"},
+                        {type:"sugarField_actionsLink", label:""}
                     ]
                 }]
             },

@@ -34,9 +34,9 @@ fixtures.templates = {
     "subpanelView" :
         "SUBPANEL VIEW!!!!",
     "listView" :
-        '<h3 class="view_title">{{context.state.module}} {{name}}</h3>' +
+        '<h3 class="view_title">{{context.state.module}}</h3>' +
         "{{#each meta.panels}}" +
-            '<div class="{{../name}} panel">' +
+            '<div class="{{../name}} panel hero-unit">' +
             '<table class="table table-bordered table-striped"><thead><tr>' +
             '{{#each fields}}' +
                 '<th width="{{width}}%">{{label}}</th>' +

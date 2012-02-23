@@ -15,17 +15,18 @@
                     //If bean was not specified, the third parameter will be a hash
                     if (!bean || !bean.fields)
                         bean = context.get("model");
-                    if (!bean.fields[this.name] || !bean.fields[this.name].type)
+                    if (!this.type && (!bean.fields[this.name] || !bean.fields[this.name].type))
                     {
                         //If the field doesn't exist for this bean type, skip it
                         app.logger.error("Sugar Field: Unknown field " + this.name + " for " + context.get("module") + ".");
                         return "";
                     }
-                    ftype = bean.fields[this.name].type;
+                    ftype = this.type || bean.fields[this.name].type;
                     sf = app.metadata.get({"sugarField":{"name": ftype, "view":view}});
                     if (sf.error)
                         return sf.error;
                     this.value = bean.get(this.name);
+                    this.model = bean;
                     this.view = view;
                     this.context = context;
                     try {
@@ -34,6 +35,10 @@
                         app.logger.error("Sugar Field: Unable to execute template for field " + ftype + " on view " + this.name + ".\n" + e.message);
                     }
 
+                });
+
+                Handlebars.registerHelper('getfieldvalue', function(bean, field) {
+                return bean.get(field);
                 });
             },
 
