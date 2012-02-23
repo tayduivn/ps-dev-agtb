@@ -57,6 +57,7 @@ testing_module = "{$smarty.request.module}";
 <input type="hidden" name="isDuplicate" value="false">
 <input type="hidden" name="offset" value="{$offset}">
 <input type="hidden" name="action" value="EditView">
+<input type="hidden" name="sugar_body_only">
 {{if isset($form.hidden)}}
 {{foreach from=$form.hidden item=field}}
 {{$field}}
@@ -67,15 +68,15 @@ testing_module = "{$smarty.request.module}";
         	{{sugar_actions_link module="$module" id="EDIT2" view="$view"}}  
        			<ul class="subnav multi">       
 {{if !isset($form.buttons)}} 
-{{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}
-{{sugar_actions_link module="$module" id="DELETE" view="$view"}}
+<li>{{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}</li>
+<li>{{sugar_actions_link module="$module" id="DELETE" view="$view"}}</li>
 {{else}}
 	{{counter assign="num_buttons" start=0 print=false}}
 	{{foreach from=$form.buttons key=val item=button}}
 	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
 	     {{counter print=false}}
 	     	{{if $button != "EDIT"}}
-	        	{{sugar_actions_link module="$module" id="$button" view="EditView"}}
+	        	<li>{{sugar_actions_link module="$module" id="$button" view="EditView"}}</li>
             {{/if}}
 	  {{/if}}
 	{{/foreach}}
@@ -83,8 +84,8 @@ testing_module = "{$smarty.request.module}";
 	{{if count($form.buttons) > $num_buttons}}
 			{{foreach from=$form.buttons key=val item=button}}
 			  {{if is_array($button) && $button.customCode}}
-	
-			  {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+
+			    <li>{{sugar_actions_link module="$module" id="$button" view="EditView"}}</li>
 
 			  {{/if}}
 			{{/foreach}}
@@ -92,7 +93,7 @@ testing_module = "{$smarty.request.module}";
 {{/if}}
 
 {{if empty($form.hideAudit) || !$form.hideAudit}}
-{{sugar_actions_link module="$module" id="Audit" view="EditView"}}
+<li>{{sugar_actions_link module="$module" id="Audit" view="EditView"}}</li>
 {{/if}}
 
 
