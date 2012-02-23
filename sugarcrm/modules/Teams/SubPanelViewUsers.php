@@ -90,7 +90,6 @@ class SubPanelViewUsers {
 			//
 			///////////////////////////////////////
 			$button .= "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']
-				."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']
 				."' type='button' class='button' value='  ".$app_strings['LBL_SELECT_BUTTON_LABEL']
 				."  ' name='button' onclick='open_popup(\"Teams\", 600, 400, \"\", true, true, {$encoded_popup_request_data}, \"MultiSelect\");'>\n";
 //				."  ' name='button' onclick='window.open(\"index.php?module=Teams&action=Popup&html=Popup_picker&form=UsersDetailView&form_submit=true\",\"new\",\"width=600,height=400,resizable=1,scrollbars=1\");'>\n";

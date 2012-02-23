@@ -143,7 +143,7 @@ class RepairAndClear
 			{
 				$repair_related_modules = array_keys($dictionary);
 				//repair DB
-				$dm = !empty($GLOBALS['sugar_config']['developerMode']);
+				$dm = inDeveloperMode();
 				$GLOBALS['sugar_config']['developerMode'] = true;
 				foreach($this->module_list as $bean_name)
 				{

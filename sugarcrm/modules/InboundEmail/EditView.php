@@ -225,7 +225,7 @@ $xtpl->assign('RETURN_ACTION', $return_action);
 // module specific
 //$xtpl->assign('ROLLOVER', $email->rolloverStyle);
 $xtpl->assign("EMAIL_OPTIONS", $mod_strings['LBL_EMAIL_OPTIONS']);
-$xtpl->assign('MODULE_TITLE', getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true));
+$xtpl->assign('MODULE_TITLE', getClassicModuleTitle('InboundEmail', array($mod_strings['LBL_MODULE_NAME'],$focus->name), true));
 $xtpl->assign('ID', $focus->id);
 $xtpl->assign('NAME', $focus->name);
 $xtpl->assign('STATUS', $status);
@@ -405,7 +405,7 @@ $xtpl->assign('JAVASCRIPT', get_set_focus_js(). $javascript->getScript() . $quic
 //Overrides for bounce mailbox accounts
 if ($focus->mailbox_type == 'bounce')
 {
-    $xtpl->assign('MODULE_TITLE', getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_BOUNCE_MODULE_NAME'],$focus->name), true));
+    $xtpl->assign('MODULE_TITLE', getClassicModuleTitle('InboundEmail', array($mod_strings['LBL_BOUNCE_MODULE_NAME'],$focus->name), true));
     $xtpl->assign("EMAIL_OPTIONS", $mod_strings['LBL_EMAIL_BOUNCE_OPTIONS']);
     $xtpl->assign('MAILBOX_TYPE_STYLE', "display:none");
     $xtpl->assign('AUTO_IMPORT_STYLE', "display:none");
@@ -414,7 +414,7 @@ elseif ($focus->mailbox_type == 'createcase')
     $xtpl->assign("IS_CREATE_CASE", 'checked');
 
 else if( $focus->is_personal == '1')
-     $xtpl->assign('MODULE_TITLE', getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_PERSONAL_MODULE_NAME'],$focus->name), true));
+     $xtpl->assign('MODULE_TITLE', getClassicModuleTitle('InboundEmail', array($mod_strings['LBL_PERSONAL_MODULE_NAME'],$focus->name), true));
 
 //else
 

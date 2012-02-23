@@ -217,7 +217,7 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 
 }
 if(isset($focus->parent_type) && $focus->parent_type != "") {
-    $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."'
+    $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' 
 tabindex='3' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' LANGUAGE=javascript onclick='return
 window.open(\"index.php?module=\"+ document.EditView.parent_type.value +
 \"&action=Popup&html=Popup_picker&form=TasksEditView\",\"test\",\"width=600,height=400,resizable=1,scrollbars=1\");'>";

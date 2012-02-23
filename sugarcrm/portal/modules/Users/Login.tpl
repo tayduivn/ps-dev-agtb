@@ -85,7 +85,7 @@ function set_focus() {
 			<tr>
 				<td id="loginBottom">&nbsp;</td>
 				<td id="loginBottom">
-					<input title="{$current_module_strings.LBL_LOGIN_BUTTON_TITLE}" accessKey="{$current_module_strings.LBL_LOGIN_BUTTON_TITLE}" class="button" type="submit" id="login_button" name="Login" value="  {$current_module_strings.LBL_LOGIN_BUTTON_LABEL}  ">
+					<input title="{$current_module_strings.LBL_LOGIN_BUTTON_TITLE}"  class="button" type="submit" id="login_button" name="Login" value="  {$current_module_strings.LBL_LOGIN_BUTTON_LABEL}  ">
 					<p class="loginRegister"><a href="registration.php">{$current_module_strings.LBL_REGISTER}</a></p>
 				</td>
 

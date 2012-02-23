@@ -344,7 +344,7 @@ FRA;
      * return a bool
      */
     function checkTemplate($cacheRowFile){
-        if(!empty($GLOBALS['sugar_config']['developerMode']) || !empty($_SESSION['developerMode'])){
+        if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
             return false;
         }
         return file_exists($cacheRowFile);

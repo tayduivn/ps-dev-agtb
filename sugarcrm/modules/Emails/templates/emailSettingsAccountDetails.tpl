@@ -47,7 +47,6 @@
 			<tr>
 				<td> <input title="{$mod_strings.LBL_ADD_INBOUND_ACCOUNT}"
 	                        type='button' 
-	                        accessKey="n" 
 	                        class="button"
 	                        onClick='SUGAR.email2.accounts.showEditInboundAccountDialogue();'
 	                        name="button" id="addButton" value="{$mod_strings.LBL_ADD_INBOUND_ACCOUNT}">

@@ -59,3 +59,10 @@ button, input[type="submit"], input[type="reset"], input[type="button"], .button
     position: absolute;
     text-indent: -9999px;	
 }
+
+
+.accessKeyHelp{
+    cursor:pointer;
+    cursor:hand;
+    text-decoration:underline;
+}

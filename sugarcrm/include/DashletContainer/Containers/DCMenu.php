@@ -212,8 +212,9 @@ EOQ;
 //BEGIN SUGARCRM flav=sales ONLY
 if(!is_admin($GLOBALS['current_user'])){
 //END SUGARCRM flav=sales ONLY
+$globalSearchAccKey = $GLOBALS['app_strings']['LBL_GLOBAL_SEARCH_LNK_KEY'];
 $html .= <<<EOQ
-		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='enter global search term'></div>
+		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='enter global search term' accesskey='$globalSearchAccKey'></div>
 		<div id="glblSearchBtn">$iconSearch</div>
 EOQ;
 //BEGIN SUGARCRM flav=sales ONLY

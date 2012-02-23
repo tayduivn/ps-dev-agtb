@@ -77,13 +77,13 @@ $viewdefs['Project']['DetailView'] = array(
 				//BEGIN SUGARCRM flav=pro ONLY
 				array( 'customCode' => 
 					'{if $EDIT_RIGHTS_ONLY}<input title="{$MOD.LBL_VIEW_GANTT_TITLE}" '.
-					'accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" type="submit" '.
-					'name="EditProjectTasks"  id="view_gantt_button" value="  {$MOD.LBL_VIEW_GANTT_TITLE}  " '.
+					'class="button" type="submit" '.
+					'name="EditProjectTasks" id="view_gantt_button" value="  {$MOD.LBL_VIEW_GANTT_TITLE}  " '.
 					'onclick="prep_edit_project_tasks(this.form);" />{/if}',
 				),
 				array( 'customCode' =>
 					'<input title="{$SAVE_AS}" ' .
-					'accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" type="submit" ' .
+					'class="button" type="submit" ' .
 					'name="SaveAsTemplate" value="{$SAVE_AS}"'.
 					'{if $IS_TEMPLATE}'.
 						'onclick="prep_save_as_project(this.form)"'.

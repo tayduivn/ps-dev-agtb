@@ -62,7 +62,7 @@ class SubPanelViewTeams {
 		$button .= "<input type='hidden' name='return_module' value='Teams'>\n";
 		$button .= "<input type='hidden' name='return_action' value='DetailView'>\n";
 		$button .= "<input type='hidden' name='return_id' value='{$this->focus->id}'>\n";
-		$button .= "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."' type='button' class='button' value='  ".$app_strings['LBL_SELECT_BUTTON_LABEL']."  ' name='button' LANGUAGE='javascript' onclick='window.open(\"index.php?module=Users&action=Popup&html=Popup_picker&form=TeamsDetailView&form_submit=true\",\"new\",\"width=600,height=400,resizable=1,scrollbars=1\");'>\n";
+		$button .= "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."'  type='button' class='button' value='  ".$app_strings['LBL_SELECT_BUTTON_LABEL']."  ' name='button' LANGUAGE='javascript' onclick='window.open(\"index.php?module=Users&action=Popup&html=Popup_picker&form=TeamsDetailView&form_submit=true\",\"new\",\"width=600,height=400,resizable=1,scrollbars=1\");'>\n";
 		$button .= "</form>\n";
 		return $button;
 	}

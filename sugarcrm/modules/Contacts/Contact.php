@@ -636,10 +636,10 @@ class Contact extends Person {
         else {
             $theList = explode(",",$list_of_users);
             foreach ($theList as $eachItem) {
-                if ( $focus_user->retrieve_user_id($eachItem)
+                if ( ($user_id = $focus_user->retrieve_user_id($eachItem))
                         || $focus_user->retrieve($eachItem)) {
                     // it is a user, add user
-                    $this->user_sync->add($this->id);
+                    $this->user_sync->add($user_id ? $user_id : $focus_user->id);
                     return;
                 }
                 //BEGIN SUGARCRM flav=pro ONLY
