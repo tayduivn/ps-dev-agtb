@@ -12,7 +12,9 @@
         routes: {
             "": "index",
             "login": "login",
-            ":module/create": "record",
+            ":module": "index",
+            ":module/list": "index",
+            ":module/create": "create",
             ":module/:id/:action": "record",
             ":module/:id": "record"
         },
@@ -55,6 +57,21 @@
             });
         },
 
+        list: function(module) {
+            this.controller.loadView({
+                module: module,
+                layout: "list"
+            });
+        },
+
+        create: function(module) {
+            this.controller.loadView({
+                module: module,
+                create:true,
+                layout: "edit"
+            });
+        },
+
         login: function() {
             this.controller.loadView({
                 module: "home",
@@ -63,18 +80,20 @@
         },
 
         record: function(module, id, action) {
+
             console.log("====Routing record====");
             console.log("Module: "+ module);
             console.log("Action: "+ action);
             console.log("Id: "+ id);
-            if (!id){
-                action = 'edit';
-            }
+
+            action = action || "detail";
+
             this.controller.loadView({
                 module: module,
                 id: id,
                 action: action,
-                layout: action || 'detail'
+                layout: action
+
             });
         }
 

@@ -74,7 +74,12 @@
             if (opts.id) {
                 bean = app.dataManager.fetchBean(opts.module, opts.id);
                 collection = app.dataManager.createBeanCollection(opts.module, [bean]);
-            } else if (opts.url) {
+            }
+            else if (opts.create) {
+                bean = app.dataManager.createBean(opts.module);
+                collection = app.dataManager.createBeanCollection(opts.module, [bean]);
+            }
+            else if (opts.url) {
                 // TODO: Make this hit a custom url
             } else {
                 collection = app.dataManager.fetchBeans(opts.module);

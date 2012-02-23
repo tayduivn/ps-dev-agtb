@@ -28,13 +28,47 @@
                     this.value = bean.get(this.name);
                     this.model = bean;
                     this.view = view;
+                    this.model = bean;
                     this.context = context;
                     try {
                         return new Handlebars.SafeString(sf.templateC(this));
                     } catch(e) {
                         app.logger.error("Sugar Field: Unable to execute template for field " + ftype + " on view " + this.name + ".\n" + e.message);
                     }
+                });
 
+                Handlebars.registerHelper('get_field_value', function(bean, field) {
+                    return bean.get(field);
+                });
+
+                Handlebars.registerHelper('buildRoute', function(context, action, model, options) {
+                    var module = options.module || model.module || context.module;
+                    action = options.action || action;
+                    var id =  model.get ? model.get("id") : model;
+                    var route = "";
+                    if (id && module) {
+                        route = module + "/" + id;
+                        if (action) {
+                            route += "/" + action;
+                        }
+                    } else if (module && action){
+                        route = module + "/" + action;
+                    } else if (action) {
+                        route = action;
+                    } else if (module) {
+                        route = module;
+                    }
+
+                    console.log(module);
+                    console.log(id);
+                    console.log(action);
+                    console.log(route);
+
+                    if (options.params) {
+                        route += "?" + $.param(options.params);
+                    }
+
+                    return new Handlebars.SafeString(route);
                 });
 
                 Handlebars.registerHelper('getfieldvalue', function(bean, field) {
@@ -177,6 +211,10 @@
                 var collection = context.get("collection");
                 _.each(collection.models, function(model) {
                     var tr = this.$el.find('tr[name="' + model.beanType + '_' + model.get("id") + '"]');
+                    //Row clicks should open the detail view
+                    tr.on("click", function(){
+                        app.router.navigate(model.module + "/" + model.get("id"), {trigger: true});
+                    });
                     _.each(model.attributes, function(value, field) {
                         var el = tr.find('input[name="' + field + '"],span[name="' + field + '"]');
                         if (el.length > 0){
@@ -186,7 +224,6 @@
                             });
                             //And bind the model to the input
                             model.on("change:" + field, function(model, value){
-                                console.log(el);
                                 if (el[0].tagName.toLowerCase() == "input")
                                     el.val(value);
                                 else

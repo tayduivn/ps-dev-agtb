@@ -10,27 +10,33 @@ fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
 fixtures.templates = {
     "detailView" :
-        "<h3 class=\"view_title\">&nbsp;</h3>" +
+        "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "<form name='{{name}}' class='well'>" +
+            "{{#each meta.buttons}}" +
+                "{{sugar_field ../context ../name ../model}}" +
+            "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
-            "<form name='{{name}}' class='well'>" +
             "{{#each fields}}" +
                 "<div>{{sugar_field ../../context ../../name}}</div>" +
             "{{/each}}" +
-            "</form></div>" +
-        "{{/each}}",
+            "</div>" +
+        "{{/each}}</form>",
     "editView" :
-        "<h3 class=\"view_title\">&nbsp;</h3>" +
-            "{{#each meta.panels}}" +
+        "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "<form name='{{name}}' class='well'>" +
+        "{{#each meta.buttons}}" +
+            "{{sugar_field ../context ../name ../model}}" +
+        "{{/each}}" +
+        "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
-            "<form name='{{name}}' class='well'>" +
             "{{#each fields}}" +
                 "<div>{{sugar_field ../../context ../../name}}</div>" +
             "{{/each}}" +
-            "</form></div>" +
-        "{{/each}}",
+            "</div>" +
+        "{{/each}}</form>",
     "subpanelView" :
         "",
     "listView" :
