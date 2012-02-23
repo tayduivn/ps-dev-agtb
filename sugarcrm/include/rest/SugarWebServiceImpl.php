@@ -23,8 +23,12 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 
 /**
  * This class is an implemenatation class for all the web services
+ *
+ * This class has been modified to work with the new REST API.
+ *
  */
 require_once('include/rest/SoapHelperWebService.php');
+
 SugarWebServiceImpl::$helperObject = new SoapHelperWebServices();
 
 class SugarWebServiceImpl{

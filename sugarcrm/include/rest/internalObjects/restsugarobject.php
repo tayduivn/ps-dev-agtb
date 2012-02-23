@@ -9,6 +9,9 @@ include_once("include/MetaDataManager/MetaDataManager.php");
 include_once("include/rest/SoapHelperWebService.php");
 include_once("include/rest/SugarWebServiceImpl.php");
 
+/**
+ * This is a generic class for handeling opperations for all sugar objects.
+ */
 class RestSugarObject extends RestObject implements IRestObject {
 
     //public $helper = null;
@@ -43,6 +46,9 @@ class RestSugarObject extends RestObject implements IRestObject {
      * "fields": a list od fields to return data for.
      * "maxresult": the max number of results to return.
      * "offset": the offset into the result set for this object.
+     *
+     * Notes:
+     * HTTP errors will be thrown if
      *
      */
     private function handleGet() {

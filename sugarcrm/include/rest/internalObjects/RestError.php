@@ -1,9 +1,12 @@
 <?php
 
+/**
+ * This is a class for creating HTTP error responses.
+ *
+ */
 class RestError {
 
     private $errorData = null;
-
 
     function __construct() {
 

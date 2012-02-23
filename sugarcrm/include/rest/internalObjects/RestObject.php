@@ -5,6 +5,9 @@ include_once("RestError.php");
 include_once("include/rest/SoapHelperWebService.php");
 include_once("soap/SoapError.php");
 
+/**
+ * This class is os a base for all RestObjects.
+ */
 abstract class RestObject implements IRestObject {
 
     private $requestData = array();
