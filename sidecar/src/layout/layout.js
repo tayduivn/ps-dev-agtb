@@ -63,7 +63,7 @@
                         type: "view",
                         module: module,
                         view: params.view
-                    });
+                    }) || {};
                     ucType = ucfirst(meta.view || params.type || params.view);
                     //Check if the view type has its own view subclass
                     if (meta && app.layout[ucType + "View"])
