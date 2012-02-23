@@ -80,14 +80,23 @@
         },
 
         record: function(module, id, action) {
+
+            console.log("====Routing record====");
+            console.log("Module: "+ module);
+            console.log("Action: "+ action);
+            console.log("Id: "+ id);
+
             action = action || "detail";
+
             this.controller.loadView({
                 module: module,
                 id: id,
                 action: action,
                 layout: action
+
             });
         }
+
     });
 
     /**

@@ -26,6 +26,7 @@
                     if (sf.error)
                         return sf.error;
                     this.value = bean.get(this.name);
+                    this.model = bean;
                     this.view = view;
                     this.model = bean;
                     this.context = context;
@@ -68,6 +69,10 @@
                     }
 
                     return new Handlebars.SafeString(route);
+                });
+
+                Handlebars.registerHelper('getfieldvalue', function(bean, field) {
+                return bean.get(field);
                 });
             },
 
@@ -197,8 +202,7 @@
             _render:function () {
                 if (this.template)
                     this.$el.html(
-                        this.template(this) +
-                        "<br/>This is a custom view"
+                        this.template(this)
                     );
             }
         });

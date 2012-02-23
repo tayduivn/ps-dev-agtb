@@ -30,6 +30,14 @@ fixtures.metadata = {
                         "phone_work":{
                             "name":"phone_work",
                             "type":"varchar"
+                        },
+                        "email1":{
+                            "name":"email1",
+                            "type":"varchar"
+                        },
+                        "full_name":{
+                            "name":"full_name",
+                            "type":"varchar"
                         }
                     }
                 },
@@ -61,10 +69,12 @@ fixtures.metadata = {
                 ],
                 "panels":[
                     {
-                        "label":"LBL_PANEL_1",
+                        "label":"Details",
                         "fields":[
                             {name:"first_name", label:"First Name"},
-                            {name:"last_name", label:"Last Name"}
+                            {name:"last_name", label:"Last Name"},
+                            {name:"phone_work", label:"Phone"},
+                            {name:"email1", label:"Email"},
                         ]
                     }
                 ]
@@ -85,10 +95,12 @@ fixtures.metadata = {
                 ],
                 "panels":[
                     {
-                        "label":"LBL_PANEL_1",
+                        "label":"Details",
                         "fields":[
-                            {name:"first_name", label:"First Name"},
-                            {name:"last_name", label:"Last Name"}
+                            {name:"full_name", label:"Name"},
+                            {name:"phone_work", label:"Phone"},
+                            {name:"email1", label:"Email"},
+                            {type:"sugarField_primaryAddress", label:"Address"}
                         ]
                     }
                 ]
@@ -104,7 +116,8 @@ fixtures.metadata = {
                         "fields":[
                             {name:"first_name", label:"First Name"},
                             {name:"last_name", label:"Last Name"},
-                            {name:"phone_work", label:"Phone"}
+                            {name:"phone_work", label:"Phone"},
+                            {type:"sugarField_actionsLink", label:"Actions"}
                         ]
                     }
                 ]
