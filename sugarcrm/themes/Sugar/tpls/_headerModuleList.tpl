@@ -110,7 +110,7 @@
 	{* more menu items overlfow *}
 	
 		<li class="moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
-		<a href="#" class="more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
+		<a href="javascript: void(0);" class="more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
 		
 		<ul id="moduleTabMore{$tabGroupName}">
 			{* hidden menu items that become visible in overflow menu when browser size reaches a certain width*}
@@ -232,7 +232,7 @@
 	 		<li class="menuHR"></li>
 	 		{/if}
 	 	
-	 		<li><a href="#" class="more group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
+	 		<li><a href="javascript: void(0);" class="more group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
 	
 				<ul>
 		          {foreach from=$groupTabs item=module key=group name=groupList}
