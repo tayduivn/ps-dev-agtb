@@ -24,7 +24,17 @@ var sugarFieldsFixtures = {
                     "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}},
         "button_save":{
             "default":{
-                "type":"basic", "template":"<button type=\"submit\" class=\"btn btn-primary\" value={{value}}>{{label}}<\/button>\n"}},
+                "type":"basic",
+                "template":"<button type=\"submit\" class=\"btn btn-primary\" value={{value}}>{{label}}<\/button>\n"}},
+        "button":{
+            "default":{
+                "type":"basic",
+                "template":"<button {{#if primary}}class=\"btn btn-primary\"{{/if}} value=\"{{value}}\" " +
+                    "{{#if route}}onclick=\"" +
+                        "SUGAR.App.router.navigate('{{buildRoute context route.action model route}}', {trigger: true}); return false;\"" +
+                    "{{/if}}>{{label}}<\/button>\n"
+            }
+        },
         "textarea":{
             "detailView":{
                 "type":"basic",
