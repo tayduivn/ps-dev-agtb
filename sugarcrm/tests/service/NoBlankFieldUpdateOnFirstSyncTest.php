@@ -54,8 +54,8 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
 
 	public function setUp()
     {
-        $this->markTestIncomplete('This test breaks on IIS.  Working with Collin to fix');
-        return;
+        global $beanList, $beanFiles;
+        require('include/modules.php');
 
         global $current_user;
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
