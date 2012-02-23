@@ -96,7 +96,7 @@
             $a.each(function(i) {
                 var $li = $a.eq(i).parents('li');
 
-                $a.eq(i).focus(function() {
+                $a.eq(i).attr("tabindex",-1).focus(function() {
                     over.call($li);
                 }).blur(function()
                 {
