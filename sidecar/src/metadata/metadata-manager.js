@@ -15,7 +15,12 @@
     var _get = function (module, type) {
         if (typeof(_metadata[module]) == "undefined") {
             _metadata[module] = app.cache.get("metadata." + module);
+            if (typeof(_metadata[module]) == "undefined") {
+                app.Sync();
+                return null;
+            }
         }
+
         if (!type)
             return _metadata[module];
 
