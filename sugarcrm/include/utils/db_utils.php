@@ -60,7 +60,7 @@ $toHTML = array(
 );
 $GLOBALS['toHTML_keys'] = array_keys($toHTML);
 $GLOBALS['toHTML_values'] = array_values($toHTML);
-
+$GLOBALS['toHTML_keys_set'] = implode("", $GLOBALS['toHTML_keys']);
 /**
  * Replaces specific characters with their HTML entity values
  * @param string $string String to check/replace
@@ -85,12 +85,14 @@ function to_html($string, $encode=true){
 
 		if(is_array($toHTML))
         { // cn: causing errors in i18n test suite ($toHTML is non-array)
-			$string = str_replace($GLOBALS['toHTML_keys'],$GLOBALS['toHTML_values'],$string);
+            if( strpbrk($string, $GLOBALS['toHTML_keys_set']) )
+			    $string = str_replace($GLOBALS['toHTML_keys'],$GLOBALS['toHTML_values'],$string);
 		}
 	}
 
     return $string;
 }
+
 
 /**
  * Replaces specific HTML entity values with the true characters

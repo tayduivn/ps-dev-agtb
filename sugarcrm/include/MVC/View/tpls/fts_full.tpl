@@ -17,14 +17,9 @@ width:70%;
 <div id='ftsSearchBarContainer' >
     <div id="ftsAutoCompleteResult" style="width:100%;!important"></div>
     <input type="text" placeholder="{$APP.LBL_SEARCH}" name="ftsSearchField" id="ftsSearchField" value="{$smarty.request.q}"  style="width: 70%!important" >
-    <input type="button" class="button primary"value="{$APP.LBL_SEARCH}" onclick="SUGAR.FTS.search();">
-    <a class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();'>
-        <span id='advanced_search_img_span'>
-            {sugar_getimage alt=$alt_show_hide name="advanced_search" ext=".gif" other_attributes='border="0" id="advanced_search_img" '}
-        </span>
-        <span id='basic_search_img_span' style="display:none;">
-            {sugar_getimage alt=$alt_show_hide name="basic_search" ext=".gif" other_attributes='border="0" id="basic_search_img" '}
-        </span>
+    <input type="button" class="button primary"value="{$APP.LBL_SEARCH}" onclick="SUGAR.FTS.search();" style="vertical-align: bottom;">
+    <a id='advanced_search_ahref' class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();' style="font-size: 10px;vertical-align: bottom; height: inherit;">
+        {$APP.LBL_ADVANCED}
     </a>
 </div>
 <div><span id='totalCount'>{$totalHits}</span> {$APP.LBL_SEARCH_RESULTS_FOUND} (<span id='totalTime' style="font-style: italic;">{$totalTime}</span>{$APP.LBL_SEARCH_RESULTS_TIME})</div>
@@ -64,7 +59,7 @@ width:70%;
 
 
 <table width="50%">
-<tr ><td width="15%">&nbsp;</td><td width="90%"></td></tr>
+<tr ><td width="20%">&nbsp;</td><td width="90%"></td></tr>
 <tr valign="top" >
     <td id="moduleListTD" style="">
         <b>{$APP.LBL_MODULE_FILTER}</b>
@@ -200,14 +195,12 @@ width:70%;
                 SUGAR.FTS.globalSearchEnabledTable.render();
                 SUGAR.FTS.globalSearchDisabledTable.render();
                 document.getElementById('inlineGlobalSearch').style.display = '';
-                document.getElementById('basic_search_img_span').style.display = '';
-                document.getElementById('advanced_search_img_span').style.display = 'none';
+                document.getElementById('advanced_search_ahref').innerHTML = SUGAR.language.get('app_strings', 'LBL_BASIC');
             }
             else
             {
                 document.getElementById('inlineGlobalSearch').style.display = 'none';
-                document.getElementById('basic_search_img_span').style.display = 'none';
-                document.getElementById('advanced_search_img_span').style.display = '';
+                document.getElementById('advanced_search_ahref').innerHTML = SUGAR.language.get('app_strings', 'LBL_ADVANCED');
             }
         },
         globalSearchEnabledTable : new YAHOO.SUGAR.DragDropTable(

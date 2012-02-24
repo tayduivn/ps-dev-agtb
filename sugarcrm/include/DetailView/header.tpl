@@ -81,6 +81,10 @@ testing_module = "{$smarty.request.module}";
 	  {{/if}}
 	{{/foreach}}
 
+    {{if isset($closeFormBeforeCustomButtons)}}
+        </form>
+    {{/if}}
+
 	{{if count($form.buttons) > $num_buttons}}
 			{{foreach from=$form.buttons key=val item=button}}
 			  {{if is_array($button) && $button.customCode}}

@@ -70,7 +70,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * @from_path root directory where processing should take place
      */
     function ConcatenateFiles($from_path){
-
+        require_once('include/dir_inc.php');
         $js_groupings = array();
         if(isset($_REQUEST['root_directory'])){
             require('jssource/JSGroupings.php');

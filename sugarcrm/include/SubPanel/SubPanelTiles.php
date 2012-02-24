@@ -474,7 +474,7 @@ EOQ;
 			else
 			{
                 if ($count == 0) {
-                    $hide = " style='display:none' class='noooo'";
+                    $hide = " style='display:none' ";
                 } else {
                     $hide = '';
                 }

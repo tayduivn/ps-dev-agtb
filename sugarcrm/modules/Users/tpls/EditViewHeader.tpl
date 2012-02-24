@@ -96,6 +96,12 @@ EditView_tabs.on('contentReady', function(e){
     {/literal}{if !$SHOW_THEMES}{literal}eapmTabIndex = 3;{/literal}{/if}{literal}
     EditView_tabs.getTab(eapmTabIndex).set('dataSrc','index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true');
     EditView_tabs.getTab(eapmTabIndex).set('cacheData',true);
+    EditView_tabs.getTab(eapmTabIndex).on('dataLoadedChange',function(){
+        //reinit action menus
+        $("ul.clickMenu").each(function(index, node){
+            $(node).sugarActionMenu();
+        });
+    });
 
     if ( document.location.hash == '#tab5' ) {
         EditView_tabs.selectTab(eapmTabIndex);
