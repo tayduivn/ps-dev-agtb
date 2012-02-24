@@ -661,7 +661,7 @@ EOQ;
         $config = null;
 
         require_once('modules/UpgradeWizard/uw_utils.php');
-        upgrade_connectors('sugarcrm.log');
+        upgrade_connectors();
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
 
 

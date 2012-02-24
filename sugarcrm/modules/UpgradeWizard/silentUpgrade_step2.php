@@ -508,14 +508,12 @@ merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
 
 //Upgrade connectors
-/*
-//BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '610' && function_exists('upgrade_connectors'))
+if($ce_to_pro_ent)
 {
-   upgrade_connectors($path);
+    logThis('Begin upgrade_connectors', $path);
+    upgrade_connectors();
+    logThis('End upgrade_connectors', $path);
 }
-//END SUGARCRM flav=int ONLY
-*/
 
 // Enable the InsideView connector by default
 if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
