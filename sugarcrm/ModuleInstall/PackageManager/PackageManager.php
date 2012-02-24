@@ -653,20 +653,22 @@ class PackageManager{
             if(empty($md5_matches))
             {
                 $target_manifest = remove_file_extension( $upgrade_content ) . '-manifest.php';
-                require_once($target_manifest);
-
-                $name = empty($manifest['name']) ? $upgrade_content : $manifest['name'];
-                $version = empty($manifest['version']) ? '' : $manifest['version'];
-                $published_date = empty($manifest['published_date']) ? '' : $manifest['published_date'];
-                $icon = '';
-                $description = empty($manifest['description']) ? 'None' : $manifest['description'];
-                $uninstallable = empty($manifest['is_uninstallable']) ? 'No' : 'Yes';
-                $type = $this->getUITextForType( $manifest['type'] );
-                $manifest_type = $manifest['type'];
-                $dependencies = array();
-                if( isset( $manifest['dependencies']) ){
-    				$dependencies    = $manifest['dependencies'];
-				}
+                if(file_exists($target_manifest)) {
+	                require_once($target_manifest);
+	
+	                $name = empty($manifest['name']) ? $upgrade_content : $manifest['name'];
+	                $version = empty($manifest['version']) ? '' : $manifest['version'];
+	                $published_date = empty($manifest['published_date']) ? '' : $manifest['published_date'];
+	                $icon = '';
+	                $description = empty($manifest['description']) ? 'None' : $manifest['description'];
+	                $uninstallable = empty($manifest['is_uninstallable']) ? 'No' : 'Yes';
+	                $type = $this->getUITextForType( $manifest['type'] );
+	                $manifest_type = $manifest['type'];
+	                $dependencies = array();
+	                if( isset( $manifest['dependencies']) ){
+	    				$dependencies    = $manifest['dependencies'];
+					}
+                }
 
 				//check dependencies first
 				if(!empty($dependencies)) {
