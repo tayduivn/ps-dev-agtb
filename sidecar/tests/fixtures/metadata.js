@@ -74,7 +74,7 @@ fixtures.metadata = {
                             {name:"first_name", label:"First Name"},
                             {name:"last_name", label:"Last Name"},
                             {name:"phone_work", label:"Phone"},
-                            {name:"email1", label:"Email"},
+                            {name:"email1", label:"Email"}
                         ]
                     }
                 ]

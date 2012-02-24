@@ -59,9 +59,6 @@ var sugarFieldsFixtures = {
             }
         },
         "sugarField_primaryAddress":{
-            "default":{
-                "template":"{{{getfieldvalue model \"first_name\"}}} {{{getfieldvalue model \"last_name\"}}}"
-            },
             "detailView":{
                 "template":"<h3>{{label}}<\/h3>{{{getfieldvalue model \"primary_address_street\"}}}<br> {{{getfieldvalue model \"primary_address_city\"}}},"+
                     " {{{getfieldvalue model \"primary_address_postalcode\"}}} {{{getfieldvalue model \"primary_address_country\"}}}"
@@ -74,7 +71,7 @@ var sugarFieldsFixtures = {
         },
         "sugarField_buttonCancelSave":{
             "default":{
-                "template":"<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\/cancel\">{{label}}<\/a>"
+                "template":"<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\">Save<\/a><a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\">Cancel<\/a>"
             }
         }
 
