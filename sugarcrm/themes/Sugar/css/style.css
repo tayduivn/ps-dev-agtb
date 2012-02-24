@@ -6354,6 +6354,7 @@ ul.clickMenu.subpanel.records li a{
 
 ul.clickMenu.subpanel.records li > span{ 
 	opacity: .5;
+    height: 15px;
 }
 
 ul.clickMenu.subpanel.records li ul.subnav li a span {
@@ -6378,7 +6379,7 @@ ul.clickMenu.button li > span a {
 }
 
 ul.clickMenu.button {
-	padding-right: 5px;	
+	padding-right: 5px;
 }
 
 ul.clickMenu.button li ul.subnav {
