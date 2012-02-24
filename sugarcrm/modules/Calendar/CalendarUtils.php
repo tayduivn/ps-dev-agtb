@@ -388,9 +388,17 @@ class CalendarUtils {
 				$i++;
 			}
 		}
-		$db->query($qu_users);
-		$db->query($qu_contacts);
-		$db->query($qu_leads);
+		
+		if ($users_filled) {
+			$db->query($qu_users);
+		}
+		if ($contacts_filled) {
+			$db->query($qu_contacts);
+		}		
+		if ($leads_filled) {
+			$db->query($qu_leads);
+		}
+		
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;
 	}
