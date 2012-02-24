@@ -6265,7 +6265,7 @@ ul.clickMenu:hover {
 }
 
 ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
-	color: #fff;	
+	color: #fff !important;	
 }
 
 ul.clickMenu:hover > li > span {
@@ -6323,7 +6323,7 @@ ul.clickMenu li ul.subnav {
 	margin: 0;
 	display: none;
 	float: left;
-	width: 100%;
+	width: auto;
 	border: 1px solid #ccc;
 	box-shadow: #999 0px 5px 10px;
 	-moz-box-shadow: #999 0px 5px 10px;
@@ -6585,6 +6585,7 @@ ul#detailViewActions.clickMenu {
 	left: auto;
 	padding: 10px 0px;
 	border: 1px solid #999;
+	width: 100%;
 }
 
 #quickCreate ul.clickMenu li ul.subnav {
