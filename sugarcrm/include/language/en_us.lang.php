@@ -4075,4 +4075,9 @@ $app_list_strings ['emailTemplates_type_list'] = array (
     'workflow' => 'Workflow',
   );
 
+$app_list_strings ['emailTemplates_type_list_campaigns'] = array (
+    '' => '' ,
+    'campaign' => 'Campaign' ,
+  );
+
 ?>
