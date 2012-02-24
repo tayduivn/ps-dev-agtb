@@ -126,10 +126,6 @@ EOQ;
 			return null;
 		}
 		$focus = populateFromPost($prefix, $focus);
-        if (empty($_POST['type']))
-        {
-            unset($focus->type); // if type is not set, when saving to db, use whatever default is
-        }
         //process the text only flag
         if(isset($_POST['text_only']) && ($_POST['text_only'] == '1')){
             $focus->text_only = 1;
