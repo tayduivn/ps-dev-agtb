@@ -5,7 +5,7 @@
  * Time: 5:15 PM
  * To change this template use File | Settings | File Templates.
  */
-describe("SugarFieldManager", function () {
+xdescribe("SugarFieldManager", function () {
 
         // setup to be run before every test
         beforeEach(function () {

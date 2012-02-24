@@ -61,12 +61,12 @@ describe('metadata', function () {
         })).toBe(sugarFieldsFixtures.fieldsData.text.editView);
     });
 
-    it('gets a specific sugarfield defaulted to detailview if the view does not exist', function () {
+    it('gets a specific sugarfield defaulted to default if the view does not exist', function () {
         expect(SUGAR.App.metadata.get({
             sugarField:{
                 name:'varchar',
                 view:'thisViewDoesntExist'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.detailView);
+        })).toBe(sugarFieldsFixtures.fieldsData.text.default);
     });
 });
