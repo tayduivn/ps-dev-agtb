@@ -508,12 +508,9 @@ merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
 
 //Upgrade connectors
-if($ce_to_pro_ent)
-{
-    logThis('Begin upgrade_connectors', $path);
-    upgrade_connectors();
-    logThis('End upgrade_connectors', $path);
-}
+logThis('Begin upgrade_connectors', $path);
+upgrade_connectors();
+logThis('End upgrade_connectors', $path);
 
 // Enable the InsideView connector by default
 if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
