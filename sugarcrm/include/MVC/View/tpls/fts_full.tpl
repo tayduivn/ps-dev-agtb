@@ -17,8 +17,8 @@ width:70%;
 <div id='ftsSearchBarContainer' >
     <div id="ftsAutoCompleteResult" style="width:100%;!important"></div>
     <input type="text" placeholder="{$APP.LBL_SEARCH}" name="ftsSearchField" id="ftsSearchField" value="{$smarty.request.q}"  style="width: 70%!important" >
-    <input type="button" class="button primary"value="{$APP.LBL_SEARCH}" onclick="SUGAR.FTS.search();">
-    <a id='advanced_search_ahref' class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();' style="font-size: 10px;vertical-align: bottom;">
+    <input type="button" class="button primary"value="{$APP.LBL_SEARCH}" onclick="SUGAR.FTS.search();" style="vertical-align: bottom;">
+    <a id='advanced_search_ahref' class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();' style="font-size: 10px;vertical-align: bottom; height: inherit;">
         {$APP.LBL_ADVANCED}
     </a>
 </div>
@@ -59,7 +59,7 @@ width:70%;
 
 
 <table width="50%">
-<tr ><td width="15%">&nbsp;</td><td width="90%"></td></tr>
+<tr ><td width="20%">&nbsp;</td><td width="90%"></td></tr>
 <tr valign="top" >
     <td id="moduleListTD" style="">
         <b>{$APP.LBL_MODULE_FILTER}</b>

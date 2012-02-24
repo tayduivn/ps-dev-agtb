@@ -9,13 +9,19 @@
                     <li>
                         <span class="details">
                             <a href="{sugar_ajax_url url=$url}">
-                            {foreach from=$result->getHighlightedHitText(100, 1, '<span class="highlight">', '</span>') key=k item=v}
+                                {assign var="resultHits" value=$result->getHighlightedHitText(100, 1, '<span class="highlight">', '</span>')}
+                                {foreach from=$resultHits key=k item=v}
                                 {$k}: {$v}
                                 <br>
                             {/foreach}
                             </a>
                         </span>
-                        <span>{$result->getSummaryText()}</span>
+                        {if empty($resultHits)}
+                            <a href="{sugar_ajax_url url=$url}"> <span>{$result->getSummaryText()}</span></a>
+                        {else}
+                            <span>{$result->getSummaryText()}</span>
+                        {/if}
+
                     </li>
                 </ul>
             <div class="clear"></div>
