@@ -80,7 +80,7 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
     public function testParentsAreRelatedDuringImport()
     {
 
-        $file = $GLOBALS['sugar_config']['upload_dir'].'test50438.csv';
+        $file = 'upload://test50438.csv';
         $ret = file_put_contents($file, $this->fileArr);
         $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.var_export($this->fileArr,true));
 
