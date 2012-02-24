@@ -125,7 +125,18 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
                 }
                 //include the button class and see if it extends quick create
                 $className = 'SugarWidget'.$buttonClass;
-                if (file_exists('include/generic/SugarWidgets/'.$className.'.php')){
+                if (file_exists('custom/include/generic/SugarWidgets/'.$className.'.php')){
+                    include_once('custom/include/generic/SugarWidgets/'.$className.'.php');
+                    if (class_exists($className,true)){
+                        $button = new $className();
+                        //set valid flag to true if this class extends quickcreate button
+                        if($button instanceof SugarWidgetSubPanelTopButtonQuickCreate){
+                            $isValid = true;
+                        }
+                    }
+                }
+                elseif (file_exists('include/generic/SugarWidgets/'.$className.'.php'))
+                {
                     include_once('include/generic/SugarWidgets/'.$className.'.php');
                     if (class_exists($className,true)){
                         $button = new $className();
