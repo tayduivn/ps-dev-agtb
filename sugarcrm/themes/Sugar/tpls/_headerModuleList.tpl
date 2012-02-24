@@ -231,8 +231,8 @@
 	 		{if count($tabGroup.extra) > 0}
 	 		<li class="menuHR"></li>
 	 		{/if}
-	 	
-	 		<li><a href="javascript: void(0);" class="more group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
+
+	 		<li><a href="#" class="group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
 	
 				<ul>
 		          {foreach from=$groupTabs item=module key=group name=groupList}
