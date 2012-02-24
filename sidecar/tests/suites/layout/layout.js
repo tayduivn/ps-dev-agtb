@@ -22,8 +22,6 @@ describe("Layout.View", function(){
     var syncResult, view, layout, html;
     SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
 
-	this.server.respond(); //tell server to respond to pending async call
-
     var App = SUGAR.App.init({el: "#sidecar"});
 
     App.dataManager.declareModels(fixtures.metadata);
