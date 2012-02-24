@@ -339,7 +339,15 @@ if(true) {
 	///////////////////////////////////////
     $templateType = !empty($focus->type) ? $focus->type : '';
     if($has_campaign) {
-        $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list_campaigns'],$templateType));
+        if (empty($_REQUEST['record']))
+        {
+            // new record, default to campaign
+            $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list_campaigns'],'campaign'));
+        }
+        else
+        {
+            $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list_campaigns'],$templateType));
+        }
     }
     else
     {
