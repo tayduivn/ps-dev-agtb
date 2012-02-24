@@ -233,8 +233,13 @@ class CalendarUtils {
 		/** 
 		 * @var SugarDateTime $end Recurrence end date. Used if recurrence ends by date.
 		 */
-		$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(),$until);
-		$end->modify("+1 Day");
+		 
+		if (!empty($params['until'])) {
+			$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(), $until);
+			$end->modify("+1 Day");
+		} else {
+			$end = $start;
+		}
 		$current = clone $start;
 
 		$i = 1; // skip the first iteration
