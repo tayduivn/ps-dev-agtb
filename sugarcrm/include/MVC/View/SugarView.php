@@ -1302,7 +1302,7 @@ EOHTML;
             $index++;
             $paramString .= $parm;
             if($index < $count){
-               // $paramString .= $this->getBreadCrumbSymbol();
+                $paramString .= $this->getBreadCrumbSymbol();
             }
         }
 
@@ -1475,10 +1475,10 @@ EOHTML;
     public function getBreadCrumbSymbol()
     {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='pointer'>&nbsp;</span>";
+        	return "<span class='pointer'>&nbsp;&nbsp;</span>";
         }
         else {
-        	return "<span class='pointer'>&nbsp;</span>";
+        	return "<span class='pointer'>&nbsp;&nbsp;</span>";
         }
     }
 
