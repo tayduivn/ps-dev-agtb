@@ -233,8 +233,13 @@ class CalendarUtils {
 		/** 
 		 * @var SugarDateTime $end Recurrence end date. Used if recurrence ends by date.
 		 */
-		$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(),$until);
-		$end->modify("+1 Day");
+		 
+		if (!empty($params['until'])) {
+			$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(), $until);
+			$end->modify("+1 Day");
+		} else {
+			$end = $start;
+		}
 		$current = clone $start;
 
 		$i = 1; // skip the first iteration
@@ -388,9 +393,17 @@ class CalendarUtils {
 				$i++;
 			}
 		}
-		$db->query($qu_users);
-		$db->query($qu_contacts);
-		$db->query($qu_leads);
+		
+		if ($users_filled) {
+			$db->query($qu_users);
+		}
+		if ($contacts_filled) {
+			$db->query($qu_contacts);
+		}		
+		if ($leads_filled) {
+			$db->query($qu_leads);
+		}
+		
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;
 	}
