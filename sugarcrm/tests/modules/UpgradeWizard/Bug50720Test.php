@@ -52,7 +52,7 @@ class Bug50720Test extends Sugar_PHPUnit_Framework_TestCase
         if(!empty($this->customConnectors))
         {
             file_put_contents($this->file, $this->customConnectors);
-        } else {
+        } else if(file_exists($this->file)) {
             unlink($this->file);
         }
     }
