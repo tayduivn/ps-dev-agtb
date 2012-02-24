@@ -120,10 +120,6 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 		if(is_array($module->field_defs)) {
 			//BEGIN SUGARCRM flav!=sales ONLY
 			ACLField::listFilter($module->field_defs, $module->module_dir, $GLOBALS['current_user']->id, true);
-		    
-			if($module->object_name == 'Team' && ACLField::hasAccess('team_set_id', $module->module_dir, $GLOBALS['current_user']->id, true)) {
-		       $module->field_defs['team_set_id'] = array('name'=>'team_set_id', 'type'=>'team_set_id', 'vname' => 'LBL_TEAMS', 'rname'=>'id', 'dbType'=>'id', 'id_name'=>'team_set_id');	
-			}
 			//END SUGARCRM flav!=sales ONLY
 			ksort($module->field_defs);
 		    
@@ -144,6 +140,8 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 			       continue;
 			    }
 			
+                //Allowed fields array with non-db-source
+                $allowed_fields_array = array('full_name', 'default_primary_team');
 			    if(isset($field_def['source']) &&
 			           ($field_def['source'] == 'non-db' && empty($field_def['ext2'])) && $field_def['name'] != 'full_name')
 			    {

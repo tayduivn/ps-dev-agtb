@@ -33,6 +33,7 @@ $mod_strings = array (
 	'LBL_ASSIGN_TEAM'					=> 'Assign To Team',
 	'LBL_DEFAULT_TEAM_TEXT'				=> 'Teams available to appear by default in records are those of which you are a member.',
 	'LBL_DEFAULT_TEAM'					=> 'Default Teams',
+    'LBL_DEFAULT_PRIMARY_TEAM'          => 'Default Primary Team',
 	'LBL_LIST_DESCRIPTION'				=> 'Description',
 	'LBL_MY_TEAMS'						=> 'My Teams',
 	'LBL_PRIVATE_TEAM_FOR'				=> 'Private team for',
@@ -41,6 +42,8 @@ $mod_strings = array (
 	'LBL_TEAMS'							=> 'Teams',
 	'LBL_TEAM_UPLINE'					=> 'Member Reports-to',
 	'LBL_TEAM_UPLINE_EXPLICIT'			=> 'Member',
+    'LBL_TEAM_MEMBERSHIP'               => 'Team Membership',
+    'LBL_TEAM_SET'                      => 'Team Set',
 
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
