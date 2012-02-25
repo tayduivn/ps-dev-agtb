@@ -12,6 +12,9 @@
         routes: {
             "": "index",
             "login": "login",
+            ":module": "index",
+            ":module/list": "index",
+            ":module/create": "create",
             ":module/:id/:action": "record",
             ":module/:id": "record"
         },
@@ -23,8 +26,6 @@
          * @param options
          */
         initialize: function(options) {
-            _.bindAll(this);
-
             this.controller = options.controller || null;
 
             if (!this.controller) {
@@ -42,13 +43,33 @@
             // if the history has been started.
             try {
                 Backbone.history.start();
-            } catch (e) {}
+            } catch (e) {
+                app.logger.error(e.message);
+            }
         },
 
         // Routes
 
         index: function() {
-            this.controller.loadView();
+            this.controller.loadView({
+                module: "Contacts", //TODO: This shoudl probably not be Contacts
+                layout: "list"
+            });
+        },
+
+        list: function(module) {
+            this.controller.loadView({
+                module: module,
+                layout: "list"
+            });
+        },
+
+        create: function(module) {
+            this.controller.loadView({
+                module: module,
+                create:true,
+                layout: "edit"
+            });
         },
 
         login: function() {
@@ -59,13 +80,23 @@
         },
 
         record: function(module, id, action) {
+
+            console.log("====Routing record====");
+            console.log("Module: "+ module);
+            console.log("Action: "+ action);
+            console.log("Id: "+ id);
+
+            action = action || "detail";
+
             this.controller.loadView({
                 module: module,
                 id: id,
                 action: action,
-                layout: "LAYOUT NAME"
+                layout: action
+
             });
         }
+
     });
 
     /**
@@ -78,11 +109,11 @@
          * @param {Object} instance
          */
         init: function(instance) {
-            if (!instance.router && instance.controller) {
-                _.extend(module, new Router({controller: instance.controller}));
-            } else {
+            if (!instance.controller) {
                 throw "app.controller does not exist yet. Cannot create router instance";
             }
+
+            _.extend(module, new Router({controller: instance.controller}));
         }
     }
 

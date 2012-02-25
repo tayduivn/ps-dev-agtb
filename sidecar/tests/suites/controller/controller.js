@@ -1,10 +1,12 @@
 describe("Controller", function() {
     var controller = SUGAR.App.controller,
-        layoutManager = SUGAR.App.Layout,
+        layoutManager = SUGAR.App.layout,
         dataManager = SUGAR.App.dataManager;
 
+    SUGAR.App.init({el: "body"});
+
     describe("when a route is matched", function() {
-        var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, renderSpy;
+        var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, renderSpy, collectionSpy;
 
         beforeEach(function() {
             params = {
@@ -16,6 +18,9 @@ describe("Controller", function() {
             // Overload the data manager
             dataMan = {
                 fetchBean: function() {
+                    return {};
+                },
+                createBeanCollection: function() {
                     return {};
                 }
             };
@@ -33,17 +38,19 @@ describe("Controller", function() {
             layoutSpy = sinon.spy(layoutMan, "get");
             renderSpy = sinon.spy(layout, "render");
             dataSpy = sinon.spy(dataMan, "fetchBean");
+            collectionSpy = sinon.spy(dataMan, "createBeanCollection");
 
-            SUGAR.App.Layout = layoutMan;
+            SUGAR.App.layout = layoutMan;
             SUGAR.App.dataManager = dataMan;
-
+            controller.setElement("body");
             controller.loadView(params);
         });
 
         it("should fetch the needed data from the data manager", function() {
+            expect(dataSpy.called).toBeTruthy();
+            expect(collectionSpy.called).toBeTruthy();
             expect(controller.data).toBeTruthy();
             expect(controller.data).not.toEqual(_.isEmpty(controller.data));
-            expect(dataSpy.called).toBeTruthy();
         });
 
         it("should set the context", function() {
@@ -62,6 +69,6 @@ describe("Controller", function() {
         });
     });
 
-    SUGAR.App.Layout = layoutManager;
+    SUGAR.App.layout = layoutManager;
     SUGAR.App.dataManager = dataManager;
 });

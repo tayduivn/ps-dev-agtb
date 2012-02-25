@@ -15,25 +15,64 @@
                     //If bean was not specified, the third parameter will be a hash
                     if (!bean || !bean.fields)
                         bean = context.get("model");
-                    if (!bean.fields[this.name] || !bean.fields[this.name].type)
+                    if (!this.type && (!bean.fields[this.name] || !bean.fields[this.name].type))
                     {
                         //If the field doesn't exist for this bean type, skip it
                         app.logger.error("Sugar Field: Unknown field " + this.name + " for " + context.get("module") + ".");
                         return "";
                     }
-                    ftype = bean.fields[this.name].type;
+                    ftype = this.type || bean.fields[this.name].type;
                     sf = app.metadata.get({"sugarField":{"name": ftype, "view":view}});
                     if (sf.error)
                         return sf.error;
                     this.value = bean.get(this.name);
+                    this.model = bean;
                     this.view = view;
+                    this.model = bean;
                     this.context = context;
                     try {
                         return new Handlebars.SafeString(sf.templateC(this));
                     } catch(e) {
                         app.logger.error("Sugar Field: Unable to execute template for field " + ftype + " on view " + this.name + ".\n" + e.message);
                     }
+                });
 
+                Handlebars.registerHelper('get_field_value', function(bean, field) {
+                    return bean.get(field);
+                });
+
+                Handlebars.registerHelper('buildRoute', function(context, action, model, options) {
+                    var module = options.module || model.module || context.module;
+                    action = options.action || action;
+                    var id =  model.get ? model.get("id") : model;
+                    var route = "";
+                    if (id && module) {
+                        route = module + "/" + id;
+                        if (action) {
+                            route += "/" + action;
+                        }
+                    } else if (module && action){
+                        route = module + "/" + action;
+                    } else if (action) {
+                        route = action;
+                    } else if (module) {
+                        route = module;
+                    }
+
+                    console.log(module);
+                    console.log(id);
+                    console.log(action);
+                    console.log(route);
+
+                    if (options.params) {
+                        route += "?" + $.param(options.params);
+                    }
+
+                    return new Handlebars.SafeString(route);
+                });
+
+                Handlebars.registerHelper('getfieldvalue', function(bean, field) {
+                return bean.get(field);
                 });
             },
 
@@ -63,7 +102,7 @@
                         type: "view",
                         module: module,
                         view: params.view
-                    });
+                    }) || {};
                     ucType = ucfirst(meta.view || params.type || params.view);
                     //Check if the view type has its own view subclass
                     if (meta && app.layout[ucType + "View"])
@@ -163,8 +202,7 @@
             _render:function () {
                 if (this.template)
                     this.$el.html(
-                        this.template(this) +
-                        "<br/>This is a custom view"
+                        this.template(this)
                     );
             }
         });
@@ -182,7 +220,6 @@
                             });
                             //And bind the model to the input
                             model.on("change:" + field, function(model, value){
-                                console.log(el);
                                 if (el[0].tagName.toLowerCase() == "input")
                                     el.val(value);
                                 else
@@ -197,7 +234,7 @@
             initialize:function () {
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
-                this.context = this.options.context || app.context.getContext();
+                this.context = this.options.context || app.controller.context;
                 this.module = this.options.module || this.context.module;
                 this.meta = this.options.meta;
                 this.components = [];
