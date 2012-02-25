@@ -38,4 +38,5 @@ define("HTTP_DELETE", 1006);
 define("HTTP_TRACE",1007);
 define("HTTP_CONNECT", 1008);
 define("HTTP_PATCH", 1009);
-
+define("REST_OBJECT_INDEX", 0);
+define("REST_OBJECT_RESOURCE_INDEX", 1);

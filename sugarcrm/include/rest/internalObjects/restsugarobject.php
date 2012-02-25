@@ -37,9 +37,21 @@ class RestSugarObject extends RestObject implements IRestObject {
             case HTTP_PUT:
                 $this->handlePut();
                 break;
+            case HTTP_POST:
+                $this->handlePost();
             default:
                 break;
         }
+    }
+
+    /**
+     *
+     */
+    private function handlePost() {
+        global $current_user;
+        $auth = $this->getAuth();
+        $this->isValidToken($auth);
+
     }
 
     /**
@@ -259,7 +271,14 @@ class RestSugarObject extends RestObject implements IRestObject {
 
         $websrv = new SugarWebServiceImpl();
         $result = $websrv->set_entry($auth, $this->objName, $tmpdata);
-        print_r($result); die;
+        if ($result["error"] != 0) {
+            $err = new RestError();
+            $err->ReportError($result["error"], $result["err_msg"]);
+            exit;
+        }
+
+        $json = json_encode($result);
+        $this->sendJSONResponse($json);
     }
 
     /**
@@ -277,7 +296,9 @@ class RestSugarObject extends RestObject implements IRestObject {
                 $this->handleObject($uridata[1]);
                 break;
             default:
-
+                $err = new RestError();
+                $err->ReportError(404);
+                exit;
                 break;
         }
 

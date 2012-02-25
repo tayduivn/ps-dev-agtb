@@ -49,7 +49,9 @@ class SugarWebServiceImpl{
 * @exception 'SoapFault' -- The SOAP error, if any
 */
 function get_entry($session, $module_name, $id,$select_fields, $link_name_to_fields_array){
+
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry');
+
 	return self::get_entries($session, $module_name, array($id), $select_fields, $link_name_to_fields_array);
 	$GLOBALS['log']->info('end: SugarWebServiceImpl->get_entry');
 }
@@ -447,16 +449,23 @@ function get_relationships($session, $module_name, $module_id, $link_field_name,
 */
 function set_entry($session, $module_name, $name_value_list){
 	global  $beanList, $beanFiles, $current_user;
+    $result = array(
+        "error" => 0,
+        "err_msg" => "");
 
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->set_entry');
     if (self::$helperObject->isLogLevelDebug()) {
 		$GLOBALS['log']->debug('SoapHelperWebServices->set_entry - input data is ' . var_export($name_value_list, true));
     } // if
+
 	$error = new SoapError();
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'write', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-		return;
+        $result["error"] = 403;
+        $result["msg_err"] = "User does not have access to module '{$module_name}'!";
+		return $result;
 	} // if
+
 	$class_name = $beanList[$module_name];
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
@@ -470,27 +479,34 @@ function set_entry($session, $module_name, $name_value_list){
 		}
 	}
 
-	foreach($name_value_list as $name=>$value){
-		if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash'){
+	foreach ($name_value_list as $name=>$value) {
+		if ($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash') {
 			continue;
 		}
-		if(!is_array($value)){
+
+		if (!is_array($value)) {
 			$seed->$name = $value;
-		}else{
+		} else {
 			$seed->$value['name'] = $value['value'];
 		}
 	}
+
     if (!self::$helperObject->checkACLAccess($seed, 'Save', $error, 'no_access') || ($seed->deleted == 1  && !self::$helperObject->checkACLAccess($seed, 'Delete', $error, 'no_access'))) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-    	return;
+        $result["error"] = 403;
+        $result["err_msg"] = "User does not have access to module '{$module_name}'!";
+    	return $result;
     } // if
 
 	$seed->save(self::$helperObject->checkSaveOnNotify());
-	if($seed->deleted == 1){
+	if ($seed->deleted == 1) {
 		$seed->mark_deleted($seed->id);
 	}
+
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-	return array('id'=>$seed->id);
+
+    $result["id"] = $seed->id;
+    return $result;
 } // fn
 
 /**
