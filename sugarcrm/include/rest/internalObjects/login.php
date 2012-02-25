@@ -108,8 +108,6 @@ class Login extends RestObject implements IRestObject {
     private function checkLoginParams($data) {
         $valid = false;
 
-        print_r($data); die;
-
         return $valid;
     }
 

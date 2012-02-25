@@ -14,7 +14,6 @@ include_once("include/rest/SugarWebServiceImpl.php");
  */
 class RestSugarObject extends RestObject implements IRestObject {
 
-    //public $helper = null;
     private $verbID = null;
     private $objName = null;
     private $user = null;
@@ -27,13 +26,18 @@ class RestSugarObject extends RestObject implements IRestObject {
         $this->getAuth();
     }
 
+    /**
+     *
+     */
     public function execute() {
         switch ($this->verbID) {
             case HTTP_GET:
                 $this->handleGet();
                 break;
+            case HTTP_PUT:
+                $this->handlePut();
+                break;
             default:
-
                 break;
         }
     }
@@ -51,7 +55,7 @@ class RestSugarObject extends RestObject implements IRestObject {
      * HTTP errors will be thrown if
      *
      */
-    private function handleGet() {
+    private function getRecordIds() {
         global $current_user;
         $deleted = -1;
         $offset = 0;
@@ -123,6 +127,7 @@ class RestSugarObject extends RestObject implements IRestObject {
         $obj = new SugarWebServiceImpl();
         $fields = $obj->get_module_fields($auth, $this->objName, array());
         $modFieldNames = array_keys($fields["module_fields"]);
+
         // check to make sure all requested fields by the user are valid for this object //
         foreach ($userFields as $ufield) {
             if (!in_array($ufield, $modFieldNames)) {
@@ -138,6 +143,7 @@ class RestSugarObject extends RestObject implements IRestObject {
             array(), $maxresult, $deleted);
 
         $ids = array();
+        $ids["ids"] = array();
         foreach ($entryList["entry_list"] as $dhash) {
             if (array_key_exists("name_value_list", $dhash)) {
                 $fieldsData = array();
@@ -149,9 +155,10 @@ class RestSugarObject extends RestObject implements IRestObject {
 
                     $fieldsData[$dkey] = $dhash["name_value_list"][$dkey]["value"];
                 }
-                $ids["{$dhash["id"]}"] = $fieldsData;
+
+                $ids["ids"]["{$dhash["id"]}"] = $fieldsData;
             } else {
-                $ids["{$dhash["id"]}"] = "{$this->objName}/\{{$dhash["id"]}\}";
+                $ids["ids"]["{$dhash["id"]}"] = "{$this->objName}/\{{$dhash["id"]}\}";
             }
         }
 
@@ -162,6 +169,118 @@ class RestSugarObject extends RestObject implements IRestObject {
         $ids["result_count"] = $entryList["result_count"];
         $t = json_encode($ids);
         $this->sendJSONResponse($t);
+    }
+
+    /**
+     * @param $objId
+     */
+    private function handleObject($objId) {
+        global $current_user;
+        $userFields = array();
+        $auth = $this->getAuth();
+        $this->isValidToken($auth);
+        $uridata = $this->getURIData();
+        $result = array();
+        $obj = null;
+
+        if (array_key_exists("fields", $_GET)) {
+            $tmpfields = explode(",", $_GET["fields"]);
+            foreach ($tmpfields as $f) {
+                array_push($userFields, $f);
+            }
+        }
+
+        $obj = new SugarWebServiceImpl();
+        $data = $obj->get_entry($auth, $this->objName, $uridata[1], $userFields, array());
+        if ($data["error"] != 0) {
+            $err = new RestError();
+            $err->ReportError(404, "\n{$data["err_msg"]}\n");
+            exit;
+        }
+
+        foreach (array_keys($data["entry_list"][0]["name_value_list"]) as $key) {
+            $result[$key] = $data["entry_list"][0]["name_value_list"][$key]["value"];
+        }
+
+        $md5 = serialize($result);
+        $md5 = md5($md5);
+        $result["md5"] = $md5;
+        $res = json_encode($result);
+        $this->sendJSONResponse($res);
+    }
+
+    /**
+     * This function handles record updates.
+     */
+    private function handlePut() {
+        $uridata = $this->getURIData();
+        $count = count($uridata);
+
+        if ($count > 1) {
+            $this->updateRecord($uridata[1]);
+        } else {
+            $err = new RestError();
+            $err->ReportError(404);
+            exit;
+        }
+    }
+
+    /**
+     * @param $objId
+     */
+    private function updateRecord($objId) {
+        global $current_user;
+        $userFields = array();
+        $auth = $this->getAuth();
+        $this->isValidToken($auth);
+        $uridata = $this->getURIData();
+
+        $result = $this->getRequestData();
+        $data = json_decode($result["raw_post_data"], true);
+
+        if ($result["err"] != false) {
+            $err = new RestError();
+            $err->ReportError(415, $result["err_str"]);
+            exit;
+        }
+
+        $tmpdata = array();
+        array_push($tmpdata, array(
+            "name" => "id",
+            "value" => $objId
+        ));
+        foreach ($data as $key => $value) {
+            $t = array (
+                "name" => "{$key}",
+                "value" => "{$value}"
+            );
+            array_push($tmpdata, $t);
+        }
+
+        $websrv = new SugarWebServiceImpl();
+        $result = $websrv->set_entry($auth, $this->objName, $tmpdata);
+        print_r($result); die;
+    }
+
+    /**
+     *
+     */
+    private function handleGet() {
+        $uridata = $this->getURIData();
+        $count = count($uridata);
+
+        switch ($count) {
+            case 1:
+                $this->getRecordIds();
+                break;
+            case 2:
+                $this->handleObject($uridata[1]);
+                break;
+            default:
+
+                break;
+        }
+
     }
 
 }
