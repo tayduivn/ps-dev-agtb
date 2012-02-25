@@ -128,7 +128,7 @@
         },
 
         toString: function() {
-            return this.module + "/" + this.beanType + "-" + this.id;
+            return "bean:" + this.module + "/" + this.beanType + "-" + (this.id ? this.id : "<no-id>");
         }
 
     }), false);
