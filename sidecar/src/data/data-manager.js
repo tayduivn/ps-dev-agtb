@@ -11,10 +11,16 @@
         return this.get(model, attributes, params, callbacks);
     }
 
-    /**
-     * Manages bean models and provides Backbone sync pattern.
-     */
-    app.augment("dataManager", {
+    var _dataManager = {
+
+        beanModel: app.Bean,
+        beanCollection: app.BeanCollection,
+
+        init: function() {
+            Backbone.sync = this.sync;
+            app.events.publish("dataManager:ready", this);
+            app.logger.trace("DataManager initialized");
+        },
 
         /**
          * Resets class declarations.
@@ -59,17 +65,17 @@
                     }
                 });
 
-                model = app.Bean.extend({
-                    module:        moduleName,
-                    beanType:      beanType,
-                    defaults:      defaults,
-                    fields:        fields,
+                model = this.beanModel.extend({
+                    module: moduleName,
+                    beanType: beanType,
+                    defaults: defaults,
+                    fields: fields,
                     relationships: relationships
                 });
 
-                _models[moduleName].collections[beanType] = app.BeanCollection.extend({
-                    model:    model,
-                    module:   moduleName,
+                _models[moduleName].collections[beanType] = this.beanCollection.extend({
+                    model: model,
+                    module: moduleName,
                     beanType: beanType
                 });
 
@@ -90,7 +96,7 @@
             _.each(_.keys(metadata), function(moduleName) {
                 this.declareModel(moduleName, metadata[moduleName]);
             }, this);
-
+            this.trigger("dataManager:ready");
         },
 
         /**
@@ -119,7 +125,7 @@
         },
 
         fetchBean: function(module, id, options, beanType) {
-            var bean = this.createBean(module, null, beanType);
+            var bean = this.createBean(module, { id: id }, beanType);
             bean.fetch(options);
             return bean;
         },
@@ -137,21 +143,11 @@
          * @param options
          */
         sync: function(method, model, options) {
-            // TODO: This method should sync beans with local storage (if it's enabled) and fall back to the REST API.
-            app.logger.trace('sync-' + method + ": " + model);
-
-            var oldSuccess = options ? options.success : null;
-            var oldError = options ? options.error : null;
+            app.logger.trace('remote-sync-' + method + ": " + model);
 
             var callbacks = {
-                // Passing callbacks through for now. If offline storage is enabled we should update it
-                success: function(data) {
-                    if (oldSuccess) oldSuccess(data);
-                },
-
-                error: function(data) {
-                    if (oldError) oldError(data);
-                }
+                success: options ? options.success : null,
+                error: options ? options.error : null
             };
 
             var params = options ? options.params : null;
@@ -165,10 +161,15 @@
 
         }
 
-    }, false);
+    };
+
+    /**
+     * Manages bean models and provides Backbone sync pattern.
+     */
+    app.augment("dataManager", _.extend(_dataManager, Backbone.Events), false);
 
 
-    Backbone.sync = app.dataManager.sync;
+    //Backbone.sync = app.dataManager.sync;
 
 })(SUGAR.App);
 

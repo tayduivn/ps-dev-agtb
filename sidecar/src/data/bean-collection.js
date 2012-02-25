@@ -7,6 +7,10 @@
 
         // Nothing here so far...
 
+        toString: function() {
+            return "coll:" + this.module + "/" + this.beanType;
+        }
+
     }), false);
 
 })(SUGAR.App);

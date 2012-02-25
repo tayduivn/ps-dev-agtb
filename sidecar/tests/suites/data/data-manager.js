@@ -73,6 +73,7 @@ describe("DataManager", function() {
 
         var bean = dm.fetchBean(moduleName, "xyz", null, beanType);
 
+        expect(bean.id).toEqual("xyz");
         expect(bean.module).toEqual(moduleName);
         expect(bean.beanType).toEqual(beanType);
         mock.verify();
