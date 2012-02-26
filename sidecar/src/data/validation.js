@@ -1,10 +1,10 @@
 /**
  * Validation module.
  *
- * The validation module is used by {@link Bean.validate} method.
+ * The validation module is used by {@link Bean#validate} method.
  * Each bean field is validated by each of the validators specified in the {@link validation.validators} hash.
  *
- * The bean is also checked for required fields by {@link validation.requiredValidator} method.
+ * The bean is also checked for required fields by {@link validation#requiredValidator} method.
  *
  * @class validation
  * @singleton

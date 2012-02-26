@@ -9,13 +9,15 @@
 
     app.augment("Bean", Backbone.Model.extend({
 
+        // TODO: Move fetch/add/removeRelated to dataManager singleton
+
         /*
          * Fetches relationships.
          * @param link Link name
          * @param options Options hash (see Backbone.Collection.fetch method documentation for details).
          */
         fetchRelated: function(link, options) {
-            var relations = app.Relationships.buildCollection(link, this);
+            var relations = app.dataManager.createRelationCollection(link, this);
             relations.fetch(options);
             return relations;
         },
@@ -28,7 +30,7 @@
          * @param data Additional data to attach to the new relationship.
          */
         addRelated: function(link, beanOrId, options, data) {
-            var relation = app.Relationships.buildRelation(link, this, beanOrId, data);
+            var relation = app.dataManager.createRelation(link, this, beanOrId, data);
             relation.save(options);
             return relation;
         },
@@ -40,7 +42,7 @@
          * @param options Options hash (success and error callbacks, etc.)
          */
         removeRelated: function(link, beanOrId, options) {
-            var relation = app.Relationships.buildRelation(link, this, beanOrId);
+            var relation = app.dataManager.createRelation(link, this, beanOrId);
             relation.destroy(options);
             return relation;
         },

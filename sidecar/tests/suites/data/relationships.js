@@ -7,7 +7,7 @@ describe("Relationships", function() {
         metadata = SugarTest.loadJson("metadata");
     });
 
-    it("should be able to build a relation instance (one-to-many)", function() {
+    it("should be able to create a relation instance (one-to-many)", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities");
@@ -16,7 +16,7 @@ describe("Relationships", function() {
         call.id = "call-1";
 
         var data = { prop1: "custom prop1" };
-        var relation = SUGAR.App.Relationships.buildRelation("calls", opportunity, call, data);
+        var relation = dm.createRelation("calls", opportunity, call, data);
 
         expect(relation.get("name")).toEqual("opportunity_calls");
         expect(relation.get("relationship")).toEqual(opportunity.relationships["opportunity_calls"]);
@@ -27,7 +27,7 @@ describe("Relationships", function() {
         expect(relation.get("data")).toEqual(data);
     });
 
-    it("should be able to build a relation instance (one-to-many reversed)", function() {
+    it("should be able to create a relation instance (one-to-many reversed)", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities");
@@ -35,7 +35,7 @@ describe("Relationships", function() {
         var account = dm.createBean("Accounts");
         account.id = "account-1";
 
-        var relation = SUGAR.App.Relationships.buildRelation("accounts", opportunity, account);
+        var relation = dm.createRelation("accounts", opportunity, account);
 
         expect(relation.get("name")).toEqual("accounts_opportunities");
         expect(relation.get("relationship")).toEqual(opportunity.relationships["accounts_opportunities"]);
@@ -46,13 +46,13 @@ describe("Relationships", function() {
         expect(relation.get("data")).toBeUndefined();
     });
 
-    it("should be able to build a relation collection", function() {
+    it("should be able to create a relation collection", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities");
         opportunity.id = "opp-1";
 
-        var relations = SUGAR.App.Relationships.buildCollection("contacts", opportunity);
+        var relations = dm.createRelationCollection("contacts", opportunity);
 
         expect(relations.name).toEqual("opportunities_contacts");
         expect(relations.relationship).toEqual(opportunity.relationships["opportunities_contacts"]);
