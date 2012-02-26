@@ -127,6 +127,23 @@ class Bug49385Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
             array(
                  array(
+                    'select' =>  "SELECT DISTINCT meetings.id , meetings.status , meetings.join_url , meetings.host_url , meetings.name  , LTRIM(RTRIM(CONCAT(IFNULL(contacts.first_name,''),' ',IFNULL(contacts.last_name,'')))) contact_name, jtl0.contact_id contact_id, meetings.parent_id , meetings.parent_type , meetings.date_start  , LTRIM(RTRIM(CONCAT(IFNULL(jt1.first_name,''),' ',IFNULL(jt1.last_name,'')))) assigned_user_name , jt1.created_by assigned_user_name_owner  , 'Users' assigned_user_name_mod, meetings.date_entered , meetings.assigned_user_id  , sfav.id is_favorite ",
+                    'from' =>  "FROM meetings   LEFT JOIN  meetings_contacts jtl0 ON meetings.id=jtl0.meeting_id AND jtl0.deleted=0
+
+                          LEFT JOIN  contacts contacts ON contacts.id=jtl0.contact_id AND contacts.deleted=0
+                          AND contacts.deleted=0  LEFT JOIN  users jt1 ON meetings.assigned_user_id=jt1.id AND jt1.deleted=0
+
+                          AND jt1.deleted=0 LEFT JOIN  sugarfavorites sfav ON sfav.module ='Meetings' AND sfav.record_id=meetings.id AND sfav.created_by='1' AND sfav.deleted=0 ",
+                     'from_min' =>  "FROM meetings ",
+                     'where' =>  "where ((meetings.name like 'Bug49385Test%')) AND meetings.deleted=0 ",
+                     'order_by' =>  "ORDER BY meetings.name ASC ",
+                 ),
+                 'Meetings',
+                 true
+            ),
+
+            array(
+                 array(
                     'select' =>  "SELECT  meetings.*,  LTRIM(RTRIM(CONCAT(IFNULL(contacts.first_name,''),' ',IFNULL(contacts.last_name,'')))) contact_name, jtl0.contact_id contact_id, meetings.parent_id , meetings.parent_type , meetings.date_start  , LTRIM(RTRIM(CONCAT(IFNULL(jt1.first_name,''),' ',IFNULL(jt1.last_name,'')))) assigned_user_name , jt1.created_by assigned_user_name_owner  , 'Users' assigned_user_name_mod, meetings.date_entered , meetings.assigned_user_id  , sfav.id is_favorite ",
                     'from' =>  "FROM meetings   LEFT JOIN  meetings_contacts jtl0 ON meetings.id=jtl0.meeting_id AND jtl0.deleted=0
 
@@ -198,6 +215,21 @@ class Bug49385Test extends Sugar_PHPUnit_Framework_OutputTestCase
             array(
                 array(
                     'select' =>  "SELECT  calls.id , calls.status , calls.direction , calls.name  , LTRIM(RTRIM(CONCAT(IFNULL(contacts.first_name,''),' ',IFNULL(contacts.last_name,'')))) contact_name, jtl0.contact_id contact_id, calls.parent_id , calls.parent_type , calls.date_start  , LTRIM(RTRIM(CONCAT(IFNULL(jt1.first_name,''),' ',IFNULL(jt1.last_name,'')))) assigned_user_name , jt1.created_by assigned_user_name_owner  , 'Users' assigned_user_name_mod, calls.date_entered , calls.assigned_user_id  , sfav.id is_favorite ",
+                    'from' =>  "FROM calls   LEFT JOIN  calls_contacts jtl0 ON calls.id=jtl0.call_id AND jtl0.deleted=0
+                    LEFT JOIN  contacts contacts ON contacts.id=jtl0.contact_id AND contacts.deleted=0
+                    AND contacts.deleted=0  LEFT JOIN  users jt1 ON calls.assigned_user_id=jt1.id AND jt1.deleted=0
+                    AND jt1.deleted=0 LEFT JOIN  sugarfavorites sfav ON sfav.module ='Calls' AND sfav.record_id=calls.id AND sfav.created_by='1' AND sfav.deleted=0  ",
+                    'from_min' =>  "FROM calls ",
+                    'where' =>  "where ((calls.name like 'Bug49385Test%')) AND calls.deleted=0 ",
+                    'order_by' => "ORDER BY calls.date_entered DESC ",
+                ),
+                'Calls',
+                true
+            ),
+
+            array(
+                array(
+                    'select' =>  "SELECT DISTINCT calls.id , calls.status , calls.direction , calls.name  , LTRIM(RTRIM(CONCAT(IFNULL(contacts.first_name,''),' ',IFNULL(contacts.last_name,'')))) contact_name, jtl0.contact_id contact_id, calls.parent_id , calls.parent_type , calls.date_start  , LTRIM(RTRIM(CONCAT(IFNULL(jt1.first_name,''),' ',IFNULL(jt1.last_name,'')))) assigned_user_name , jt1.created_by assigned_user_name_owner  , 'Users' assigned_user_name_mod, calls.date_entered , calls.assigned_user_id  , sfav.id is_favorite ",
                     'from' =>  "FROM calls   LEFT JOIN  calls_contacts jtl0 ON calls.id=jtl0.call_id AND jtl0.deleted=0
                     LEFT JOIN  contacts contacts ON contacts.id=jtl0.contact_id AND contacts.deleted=0
                     AND contacts.deleted=0  LEFT JOIN  users jt1 ON calls.assigned_user_id=jt1.id AND jt1.deleted=0
