@@ -55,7 +55,7 @@ describe("DataManager", function() {
         expect(bean.fields).toEqual(metadata[moduleName].beans[beanType].vardefs.fields);
         expect(bean.get("someAttr")).toEqual("Some attr value");
 
-        var collection = dm.createBeanCollection(moduleName, undefined, undefined, beanType);
+        var collection = dm.createBeanCollection(moduleName, undefined, beanType);
         expect(collection.module).toEqual(moduleName);
         expect(collection.beanType).toEqual(beanType);
         expect(collection.model).toBeDefined();

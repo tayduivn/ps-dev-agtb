@@ -1,14 +1,15 @@
+/*
+ * Manages relationships between beans.
+ * Variable naming convention:
+ * "relationship" - relationship metadata object
+ * "relation(s)" - instance of Relation class or RelationCollection class
+ *
+ */
 (function(app) {
 
-    /**
-     * Manages relationships between beans.
-     * Variable naming convention:
-     * "relationship" - relationship metadata object
-     * "relation(s)" - instance of Relation class or RelationCollection class
-     */
     app.augment("Relationships",  {
 
-        /**
+        /*
          * Relation factory method.
          * @param link
          * @param bean1
@@ -50,7 +51,7 @@
             return relation;
         },
 
-        /**
+        /*
          * Relation collection factory method.
          * @param link
          * @param bean Owner
@@ -58,16 +59,15 @@
         buildCollection: function(link, bean) {
             var name = bean.fields[link]["relationship"];
             var relationship = bean.relationships[name];
-            var relations = new app.Relationships.RelationCollection(undefined, {
+            return new app.Relationships.RelationCollection(undefined, {
                 name:         name,
                 relationship: relationship,
                 bean:         bean
             });
 
-            return relations;
         },
 
-        /**
+        /*
          * Represents instance of a relationship between two beans.
          */
         Relation: Backbone.Model.extend({
@@ -78,7 +78,7 @@
 
         }),
 
-        /**
+        /*
          *
          */
         RelationCollection: Backbone.Collection.extend({

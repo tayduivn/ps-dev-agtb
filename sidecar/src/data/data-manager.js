@@ -1,5 +1,58 @@
+/**
+ * Manages bean model and collection classes.
+ *
+ * **DataManager provides:**
+ *
+ * - Interface to declare bean model and collection classes from metadata.
+ * - Factory methods for creating instances of beans and bean collections.
+ * - Custom implementation of <code>Backbone.sync</code> pattern.
+ *
+ * <pre>
+ * // From the following sample metadata, data manager would declare two classes: Team and TeamSet.
+ * var metadata =
+ * {
+ *   "Teams": {
+ *      "primary_bean": "Team",
+ *      "beans": {
+ *        "Team": {
+ *          "vardefs": {
+ *            "fields": {}
+ *          }
+ *        },
+ *        "TeamSet": {
+ *          "vardefs": {
+ *            "fields": {}
+ *          }
+ *        }
+ *      }
+ *    }
+ * }
+ *
+ * // Declare bean classes from metadata payload.
+ * // This method should be called at application start-up and whenever the metadata changes.
+ * SUGAR.App.dataManager.declareModels(metadata);
+ *
+ * // You may now create bean instances using factory methods.
+ * // Create an instance of primary bean.
+ * var team = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" });
+ * // Create an instance of specific bean type.
+ * var teamSet = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" }, "TeamSet");
+ * // Create an empty collection of team sets.
+ * var teamSets = SUGAR.App.dataManager.createBeanCollection("Teams", null, "TeamSet");
+ *
+ * // You can save a bean using standard Backbone.Model.save method.
+ * // The save method will use dataManager's sync method to communicate chages to the remote server.
+ * team.save();
+ *
+ * </pre>
+ *
+ * @class dataManager
+ * @alias SUGAR.App.dataManager
+ * @singleton
+ */
 (function(app) {
 
+    //
     // Class cache:
     // _models[module].primaryBean - primary bean class name
     // _models[module].beans - hash of bean models
@@ -13,9 +66,20 @@
 
     var _dataManager = {
 
+        /**
+         * Reference to the base bean model class. Defaults to {@link Bean}.
+         * @type {Bean} [beanModel=
+         */
         beanModel: app.Bean,
+        /**
+         * Reference to the base bean collection class. Defaults to {@link BeanCollection}.
+         * @type {BeanCollection}
+         */
         beanCollection: app.BeanCollection,
 
+        /**
+         * Initializes data manager.
+         */
         init: function() {
             Backbone.sync = this.sync;
             app.events.publish("dataManager:ready", this);
@@ -24,7 +88,7 @@
 
         /**
          * Resets class declarations.
-         * @param module Optional module name. If not specified, resets models of all modules.
+         * @param {String} module(optional) module name. If not specified, resets models of all modules.
          */
         reset: function(module) {
             if (module) {
@@ -36,26 +100,24 @@
         },
 
         /**
-         * Declares models for a given module.
-         * @param moduleName Module name.
-         * @param module Module metadata object.
+         * Declares bean model and collection classes for a given module.
+         * @param {String} moduleName module name.
+         * @param module module metadata object.
          */
         declareModel: function(moduleName, module) {
-            var defaults, model, beans, vardefs, vardef, fields, relationships;
-
             this.reset(moduleName);
 
             _models[moduleName].primaryBean = module["primary_bean"];
             _models[moduleName].beans = {};
             _models[moduleName].collections = {};
-            beans = module["beans"];
+            var beans = module["beans"];
 
             _.each(_.keys(beans), function(beanType) {
-                vardefs = beans[beanType]["vardefs"];
-                fields = vardefs.fields;
-                relationships = beans[beanType]["relationships"];
+                var vardefs = beans[beanType]["vardefs"];
+                var fields = vardefs.fields;
+                var relationships = beans[beanType]["relationships"];
 
-                defaults = null;
+                var defaults = null;
                 _.each(_.values(fields), function(field) {
                     if (!_.isUndefined(field["default"])) {
                         if (defaults == null) {
@@ -65,17 +127,45 @@
                     }
                 });
 
-                model = this.beanModel.extend({
-                    module: moduleName,
-                    beanType: beanType,
+                var model = this.beanModel.extend({
                     defaults: defaults,
+                    /**
+                     * Module name.
+                     * @member Bean
+                     * @type {String}
+                     */
+                    module: moduleName,
+                    /**
+                     * Bean type.
+                     * @member Bean
+                     * @type {String}
+                     */
+                    beanType: beanType,
+                    /**
+                     * Vardefs metadata.
+                     * @member Bean
+                     */
                     fields: fields,
+                    /**
+                     * Relationships metadata.
+                     * @member Bean
+                     */
                     relationships: relationships
                 });
 
                 _models[moduleName].collections[beanType] = this.beanCollection.extend({
                     model: model,
+                    /**
+                     * Module name.
+                     * @member BeanCollection
+                     * @type {String}
+                     */
                     module: moduleName,
+                    /**
+                     * Bean type.
+                     * @member BeanCollection
+                     * @type {String}
+                     */
                     beanType: beanType
                 });
 
@@ -84,12 +174,33 @@
         },
 
         /**
-         * Declares bean models for each module definition.
-         * @param metadata Metadata hash in which keys are module names and values are module definitions.
+         * Declares bean models and collections classes for each module definition.
          *
-         * IMPORTANT:
+         * **IMPORTANT:**
+         *
          * Each module may have multiple bean types.
-         * We declare a class for each of the bean type.
+         * We declare a class for each bean type.
+         * <pre>
+         * {
+         *   "Teams": {
+         *      "primary_bean": "Team",
+         *      "beans": {
+         *        "Team": {
+         *          "vardefs": {
+         *            "fields": {}
+         *          }
+         *        },
+         *        "TeamSet": {
+         *          "vardefs": {
+         *            "fields": {}
+         *          }
+         *        }
+         *      }
+         *    }
+         * }
+         * </pre>
+         *
+         * @param metadata metadata hash in which keys are module names and values are module definitions.
          */
         declareModels: function(metadata) {
             this.reset();
@@ -100,11 +211,18 @@
         },
 
         /**
-         * Creates a new instance of a bean.
-         * @param module Sugar module name.
-         * @param attrs Bean attributes. See Backbone.Model documentation for details.
-         * @param beanType Optional bean type. If not specified, an instance of primary bean type is returned.
-         * @return A new instance of bean model.
+         * Creates instance of a bean.
+         * <pre>
+         * // Create an account bean. The account's name property will be set to "Acme".
+         * var account = SUGAR.App.dataManager.createBean("Accounts", { name: "Acme" });
+         *
+         * // Create a team set bean with a given ID
+         * var teamSet = SUGAR.App.dataManager.createBean("Teams", { id: "xyz" }, "TeamSet");
+         * </pre>
+         * @param {String} module Sugar module name.
+         * @param attrs(optional) initial values of bean attributes, which will be set on the model.
+         * @param {String} beanType(optional) bean type. If not specified, an instance of primary bean type is returned.
+         * @return {Bean} A new instance of bean model.
          */
         createBean: function(module, attrs, beanType) {
             beanType = beanType || _models[module].primaryBean;
@@ -112,16 +230,22 @@
         },
 
         /**
-         * Creates a new instance of bean collection.
-         * @param module Sugar module name.
-         * @param models See Backbone.Collection documentation for details.
-         * @param options See Backbone.Collection documentation for details.
-         * @param beanType Optional bean type. If not specified, a collection of primary bean types is returned.
-         * @return A new instance of the bean collection.
+         * Creates instance of a bean collection.
+         * <pre>
+         * // Create an empty collection of account beans.
+         * var accounts = SUGAR.App.dataManager.createBeanCollection("Accounts");
+         *
+         * // Create an empty collection of team set beans.
+         * var teamSets = SUGAR.App.dataManager.createBeanCollection("Teams", null, "TeamSet");
+         * </pre>
+         * @param {String} module Sugar module name.
+         * @param {Bean[]} models(optional) initial array of models.
+         * @param {String} beanType(optional) bean type. If not specified, a collection of primary bean types is returned.
+         * @return {BeanCollection} A new instance of bean collection.
          */
-        createBeanCollection: function(module, models, options, beanType) {
+        createBeanCollection: function(module, models, beanType) {
             beanType = beanType || _models[module].primaryBean;
-            return new _models[module].collections[beanType](models, options);
+            return new _models[module].collections[beanType](models);
         },
 
         fetchBean: function(module, id, options, beanType) {
@@ -131,16 +255,16 @@
         },
 
         fetchBeans: function(module, options, beanType) {
-            var collection = this.createBeanCollection(module, null, options, beanType);
+            var collection = this.createBeanCollection(module, null, beanType);
             collection.fetch(options);
             return collection;
         },
 
         /**
-         * Custom implementation of Backbone.sync pattern.
-         * @param method
-         * @param model
-         * @param options
+         * Custom implementation of <code>Backbone.sync</code> pattern. Syncs models with remote server using Sugar.Api lib.
+         * @param {String} method the CRUD method (<code>"create", "read", "update", or "delete"</code>)
+         * @param {Bean/BeanCollection/Relation} model the model to be saved (or collection to be read)
+         * @param options(optional) success and error callbacks, and all other Sugar.Api request options
          */
         sync: function(method, model, options) {
             app.logger.trace('remote-sync-' + method + ": " + model);
@@ -163,13 +287,7 @@
 
     };
 
-    /**
-     * Manages bean models and provides Backbone sync pattern.
-     */
     app.augment("dataManager", _.extend(_dataManager, Backbone.Events), false);
-
-
-    //Backbone.sync = app.dataManager.sync;
 
 })(SUGAR.App);
 

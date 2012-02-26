@@ -1,16 +1,15 @@
+/**
+ * Base bean class. Use {@link dataManager} to create instances of beans.
+ *
+ * @class Bean
+ * @extends Backbone.Model
+ * @alias SUGAR.App.Bean
+ */
 (function(app) {
 
-    /**
-     * Represents a base class for all bean model classes.
-     * Bean has the following properties:
-     * - module: module name
-     * - beanType: bean type
-     * - fields: fields metadata
-     * - relationships: relationships metadata
-     */
     app.augment("Bean", Backbone.Model.extend({
 
-        /**
+        /*
          * Fetches relationships.
          * @param link Link name
          * @param options Options hash (see Backbone.Collection.fetch method documentation for details).
@@ -21,7 +20,7 @@
             return relations;
         },
 
-        /**
+        /*
          * Adds a relationship.
          * @param link Link name
          * @param beanOrId related bean instance or its ID.
@@ -34,7 +33,7 @@
             return relation;
         },
 
-        /**
+        /*
          * Removes relationship.
          * @param link Link name
          * @param beanOrId Related bean instance or its ID.
@@ -46,7 +45,7 @@
             return relation;
         },
 
-        /**
+        /*
          * Updates a property of type 'relate'.
          * @param attribute Property name
          * @param bean Related bean
@@ -90,10 +89,30 @@
         },
 
         /**
-        * See Backbone.Model.validate documentation for details.
-        * @param attrs
-        * @return errors hash if the bean is invalid or nothing otherwise.
-        */
+         * Validates a bean.
+         *
+         * <code>validate</code> is called before <code>set</code> and <code>save</code>,
+         * and is passed the attributes that are about to be updated.
+         * <code>set</code> and <code>save</code> will not continue if validate returns an error.
+         * Failed validations trigger an <code>"error"</code> event.
+         *
+         * <code>validate</code> returns an errors hash of the following structure:
+         *
+         * - keys: field names, values: errors hash
+         * - errors hash is a collection of error definitions
+         * - error definition can be a primitive type or an object. It depends on validator.
+         *
+         *  Example:
+         *  <pre>
+         *  {
+         *    first_name: { maxLength: 20, someOtherValidator: { some complex error definition... } },
+         *    last_name: { required: true }
+         *  }
+         *  </pre>
+         *
+         * @param attrs attributes hash that is about to be set on this bean
+         * @return {Object} errors hash if the bean is invalid or nothing otherwise.
+         */
         validate: function(attrs) {
             var errors = {}, self = this;
             var field, value, result, validator;
@@ -116,17 +135,20 @@
                 }
             });
 
-
-            // Errors hash structure:
-            // keys: field names, values: arrays of errors
-            // each element of the array is a hash of error definition which is an error type.
-            // For example:
-            // { first_name: [ { len: 20 } ], last_name: [ { required: true } ]
+            //{
+            // first_name: { maxLength: 20 },
+            // last_name: { required: true }
+            // }
 
             // "validate" method should not return anything in case there are no validation errors
             if (!_.isEmpty(errors)) return errors;
         },
 
+        /**
+         * Returns string representation useful for debugging:
+         * <code>bean:[module-name]/[bean-type]-[id]</code>
+         * @return {String} string representation of this bean
+         */
         toString: function() {
             return "bean:" + this.module + "/" + this.beanType + "-" + (this.id ? this.id : "<no-id>");
         }
@@ -136,11 +158,9 @@
     function _addValidationError(errors, result, fieldName, validatorName) {
         if (result) {
             if (_.isUndefined(errors[fieldName])) {
-                errors[fieldName] = [];
+                errors[fieldName] = {};
             }
-            var error = {};
-            error[validatorName] = result;
-            errors[fieldName].push(error);
+            errors[fieldName][validatorName] = result;
         }
     }
 
