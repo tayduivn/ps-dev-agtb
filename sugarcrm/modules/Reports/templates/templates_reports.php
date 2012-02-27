@@ -108,7 +108,9 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-	} 
+        $duplicateButtons = '<input type=button class="button" onclick="showDuplicateOverlib(this,\'summation_with_details\','.$canCovertToMatrix.');" type="button" ' .
+            'value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'"/>';
+    }
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'matrix\');" type="button">' .
