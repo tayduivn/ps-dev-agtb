@@ -107,9 +107,8 @@
                 $a.eq(i).click(function(event)
                 {
 				  event.preventDefault();
-				  if ( !$a.eq(i).hasClass("sf-with-ul") )
-                  {
-                      SUGAR.ajaxUI.loadContent(this.href);
+				  if ( !$a.eq(i).hasClass("sf-with-ul") || $li.children('ul').size() == 0) {
+				    location.href = this.href;
 				  }
 				});
 				

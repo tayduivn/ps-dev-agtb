@@ -57,7 +57,7 @@ class ViewFts extends SugarView
         $resultSetOnly = !empty($_REQUEST['rs_only']) ? $_REQUEST['rs_only'] : FALSE;
         $refreshModuleFilter = !empty($_REQUEST['refreshModList']) ? $_REQUEST['refreshModList'] : FALSE;
 
-        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
+        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 10 );
         $indexOffset = $offset / $limit;
         $moduleFilter = isset($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
         $filteredModules =  $this->getFilterModules();

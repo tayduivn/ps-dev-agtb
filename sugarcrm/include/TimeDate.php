@@ -384,13 +384,7 @@ class TimeDate
             }
         }
 
-        $cacheKey = get_class($this) ."dateTimeFormat";
-
-        if($user instanceof User)
-        {
-            $cacheKey .= "_{$user->id}";
-        }
-
+        $cacheKey= $this->get_date_time_format_cache_key($user);
         $cachedValue = sugar_cache_retrieve($cacheKey);
 
         if(!empty($cachedValue) )
@@ -405,6 +399,23 @@ class TimeDate
         }
     }
 
+    /**
+     * Retrieve the cache key used for user date/time formats
+     *
+     * @param $user
+     * @return string
+     */
+    public function get_date_time_format_cache_key($user)
+    {
+        $cacheKey = get_class($this) ."dateTimeFormat";
+
+        if($user instanceof User)
+        {
+           $cacheKey .= "_{$user->id}";
+        }
+
+        return $cacheKey;
+    }
 
     /**
      * Get user's first day of week setting.

@@ -4082,4 +4082,9 @@ $app_list_strings ['emailTemplates_type_list_campaigns'] = array (
     'campaign' => 'Campaign' ,
   );
 
+$app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
+    '' => '' ,
+    'campaign' => 'Campaign' ,
+    'email' => 'Email',
+  );
 ?>
