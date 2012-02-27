@@ -127,6 +127,12 @@ abstract class RestObject implements IRestObject {
     }
 
     public function setURIData($data) {
+        $count = count($data) -1;
+
+        if (empty($data[$count])) {
+            $data = array_pop($data);
+        }
+
         $this->uriData = $data;
     }
 
