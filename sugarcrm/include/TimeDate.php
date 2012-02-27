@@ -384,7 +384,8 @@ class TimeDate
             }
         }
 
-        $cachedValue = sugar_cache_retrieve( $this->get_date_time_format_cache_key($user) );
+        $cacheKey= $this->get_date_time_format_cache_key($user);
+        $cachedValue = sugar_cache_retrieve($cacheKey);
 
         if(!empty($cachedValue) )
         {
