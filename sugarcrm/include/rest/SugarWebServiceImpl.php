@@ -31,7 +31,7 @@ require_once('include/rest/SoapHelperWebService.php');
 
 SugarWebServiceImpl::$helperObject = new SoapHelperWebServices();
 
-class SugarWebServiceImpl{
+class SugarWebServiceImpl {
 
 	public static $helperObject = null;
 

@@ -11,6 +11,7 @@ class RestError {
     function __construct() {
 
         $this->errorData = array(
+            400 => "",
             401 => "The session ID or OAuth token used has expired or is invalid.",
             403 => "The request has been refused. Verify that the logged-in user has appropriate permissions.",
             404 => "The requested resource could not be found. Check the URI for errors, and" .

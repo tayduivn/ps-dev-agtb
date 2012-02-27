@@ -39,19 +39,88 @@ class RestSugarObject extends RestObject implements IRestObject {
                 break;
             case HTTP_POST:
                 $this->handlePost();
+                break;
+            case HTTP_DELETE:
+                $this->handleDelete();
+                break;
             default:
                 break;
         }
     }
 
+
     /**
      *
+     */
+    private function handleDelete() {
+        global $current_user;
+        $auth = $this->getAuth();
+        $this->isValidToken($auth);
+        $data = $this->getRequestData();
+
+        $result = $this->getRequestData();
+        $userData = RestUtils::isValidJson($result["raw_post_data"]);
+        if ($userData["err"]) {
+            $err = new RestError();
+            $err->ReportError(400, $userData["err_str"]);
+            exit;
+        }
+
+        $id = $userData["data"]["id"];
+        $data = array(
+            array(
+                "name" => "id",
+                "value" => "{$id}"
+            ),
+            array(
+                "name" => "deleted",
+                "value" => 1
+            )
+        );
+
+        $webser = new SugarWebServiceImpl();
+        $result = $webser->set_entry($auth, $this->objName, $data);
+        print_r($result); die;
+        
+    }
+
+    /**
+     * This method handles posts to a sugar object.
      */
     private function handlePost() {
         global $current_user;
         $auth = $this->getAuth();
         $this->isValidToken($auth);
+        $data = $this->getRequestData();
 
+        $result = $this->getRequestData();
+        $userData = RestUtils::isValidJson($result["raw_post_data"]);
+        if ($userData["err"]) {
+            $err = new RestError();
+            $err->ReportError(400, $userData["err_str"]);
+            exit;
+        }
+
+        $postData = array();
+        foreach ($userData["data"] as $key => $value) {
+            $tmp = array(
+                "name" => $key,
+                "value" => $value
+            );
+
+            array_push($postData, $tmp);
+        }
+
+        $websrv = new SugarWebServiceImpl();
+        $result = $websrv->set_entry($auth, $this->objName, $postData);
+        if ($result["error"] != 0) {
+            $err = new RestError();
+            $err->ReportError($result["error"], $result["err_msg"]);
+            exit;
+        }
+
+        $resData = json_encode(array("id" => $result["id"]), true);
+        print $resData;
     }
 
     /**
