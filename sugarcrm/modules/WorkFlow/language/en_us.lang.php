@@ -105,6 +105,8 @@ $mod_strings = array (
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
 	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+    'LBL_EMAILTEMPLATES_TYPE_LIST_WORKFLOW' => array('workflow'=>'Workflow'),
+    'LBL_EMAILTEMPLATES_TYPE'=>'Type',
 );
 
 
