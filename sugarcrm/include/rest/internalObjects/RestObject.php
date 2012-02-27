@@ -129,6 +129,7 @@ abstract class RestObject implements IRestObject {
     public function setURIData($data) {
         $count = count($data) -1;
 
+        // this case handles if there is a trailing "/" on the end of the request //
         if (empty($data[$count])) {
             $data = array_pop($data);
         }
