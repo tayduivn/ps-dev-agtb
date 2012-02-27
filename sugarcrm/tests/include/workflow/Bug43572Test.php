@@ -27,9 +27,6 @@ class Bug43572Test extends Sugar_PHPUnit_Framework_TestCase
 {
     function testGlueDate()
     {
-        $this->markTestIncomplete('This test breaks the build due to recent changes in glue.php, working with Robert to fix');
-        return;
-
         $condition = new Expression();
         $condition->lhs_field = 'date_closed';
         $condition->exp_type = 'date';
@@ -37,7 +34,8 @@ class Bug43572Test extends Sugar_PHPUnit_Framework_TestCase
         $condition->ext1 = 172800;
         $glueWorkflow = new WorkFlowGlue();
         $actualCondition = $glueWorkflow->glue_date('future', $condition, true);
-        $expectedConditionChunk = preg_quote('strtotime($focus->date_closed) < (time() + 172800)', '~');
+        // Bug 50258 - fixed date logic
+        $expectedConditionChunk = preg_quote('strtotime($focus->date_closed) > (time() - 172800)', '~');
         $matched = preg_match("~$expectedConditionChunk~i", $actualCondition);
         $this->assertEquals(1, $matched);
 
