@@ -3334,7 +3334,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         //Collin Lee - For many-to-many queries here, we should switch alter_many_to_many_query on, but for now, let's make it bean specific
                         /*
                         //$params['collection_list'] is set when run from get_union_related_list, so we do not want to alter the query in that case
-                        /*(!isset($params['collection_list']))
+                        /*if(!isset($params['collection_list']))
                         {
                             $this->alter_many_to_many_query = true;
                         }
