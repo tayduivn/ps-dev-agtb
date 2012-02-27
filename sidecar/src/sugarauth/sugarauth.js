@@ -2,32 +2,43 @@
     //var privateVars;
     app.augment('sugarAuth', (function() {
         var instance;
-
+        var api;
+        var _userLoginCallbacks;
+        var _userLogoutCallbacks;
         function init(args) {
+            api = SUGAR.Api.getInstance();
             instance = new AuthManager();
             return instance
         }
 
         function AuthManager() {
             var isAuth = false;
-            function handleLoginSuccess() {
+            function handleLoginSuccess(data) {
                 isAuth = true;
-                console.log("Login success");
+                if (_userLoginCallbacks && _userLoginCallbacks.success) {
+                    _userLoginCallbacks.success(data);
+                }
             }
 
-            function handleLoginFailure(){
+            function handleLoginFailure(data){
                 isAuth = false;
-                console.log("Login fail");
+                if (_userLoginCallbacks && _userLoginCallbacks.error) {
+                    _userLoginCallbacks.error(data);
+                }
             }
 
-            function handleLogoutSuccess() {
+            function handleLogoutSuccess(data) {
                 isAuth = false;
-                console.log("logout success");
+                if (_userLogoutCallbacks && _userLogoutCallbacks.success) {
+                    _userLogoutCallbacks.success(data);
+                }
             }
 
-            function handleLogoutFailure(){
+            function handleLogoutFailure(data){
                 isAuth = true;
-                console.log("logout fail");
+                if (_userLogoutCallbacks && _userLogoutCallbacks.error) {
+                    _userLogoutCallbacks.error(data);
+                }
             }
 
 
@@ -38,8 +49,7 @@
                  * @return bool true if auth, false otherwise
                  */
                 isAuthenticated: function(){
-                    //TODO add call to API to check
-                    return isAuth;
+                    return api.isAuthenticated();
                 },
 
                 /**
@@ -48,11 +58,14 @@
                  * @param  obj of obj.user_name and obj.password
                  * @return bool true if auth, false otherwise
                  */
-                login: function(args){
-                    //TODO add call to API for login
-                    SUGAR.App.login(args, handleLoginSuccess, handleLoginFailure);
-
-                    return isAuth;
+                login: function(args, callbacks){
+                    if(callbacks){
+                        _userLoginCallbacks = callbacks;
+                    }
+                    var options = args.options || {};
+                    var myCallbacks = {success: handleLoginSuccess, error: handleLoginFailure};
+                    api.login(args.user_name, args.password, options, myCallbacks);
+                    return null;
                 },
 
                 /**
@@ -60,10 +73,11 @@
                  *
                  * @return bool true if logout successful, else false
                  */
-                logout: function(){
-                    //TODO add call to API for logout
-                    isAuth = false;
-                    return true;
+                logout: function(callbacks){
+                    _userLogoutCallbacks = callbacks;
+                    var myCallbacks = {success: handleLogoutSuccess, error: handleLogoutFailure};
+                    api.logout(myCallbacks);
+                    return null;
                 }
             };
         }
