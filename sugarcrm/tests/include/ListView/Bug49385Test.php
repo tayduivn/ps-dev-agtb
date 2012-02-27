@@ -312,7 +312,7 @@ class Bug49385Test extends Sugar_PHPUnit_Framework_OutputTestCase
         //The alter_many_to_many_array is the key method we are testing that handles modifying the SQL
         $result = $mock->alter_many_to_many_array($ret_array);
 
-        $regex = "/^\s*?SELECT\s+?DISTINCT\s+?{$mod}\.id\,\s+?count\s*?\(\s*?{$mod}\.id\s*?\)\s+?AS\s+?total_m_to_m_count/";
+        $regex = "/^\s*?SELECT\s+?DISTINCT\s+?{$mod}\.id\,\s+?count\s*?\(\s*?{$mod}\.id\s*?\)\s+?AS\s+?total\_m\_to\_m\_count/";
 
         if($altered)
         {
@@ -366,6 +366,116 @@ class Bug49385Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $controller->action_DisplayInline();
         $this->expectOutputRegex('/SugarContact/');
     }
+
+
+    /**
+     * testMeetingsCreateNewListQuery
+     *
+     */
+    public function testMeetingsCreateNewListQuery()
+    {
+        $meeting = new Meeting();
+        $order_by = 'name ASC';
+        $where = "(meetings.name like 'M%')";
+        $filter = array
+        (
+            'set_complete' => 1,
+            'status' => 1,
+            'join_meeting' => 1,
+            'join_url' => 1,
+            'host_url' => 1,
+            'name' => 1,
+            'contact_name' => 1,
+            'first_name' => 1,
+            'last_name' => 1,
+            'parent_name' => 1,
+            'parent_id' => 1,
+            'parent_type' => 1,
+            'date_start' => 1,
+            'time_start' => 1,
+            'assigned_user_name' => 1,
+            'date_entered' => 1,
+            'favorites_only' => 1
+        );
+
+        $params = array(
+            'massupdate' => 1,
+            'favorties' => 1
+        );
+
+        $result = $meeting->create_new_list_query($order_by, $where, $filter, $params, 0, '', true, $meeting);
+        $mod = strtolower($meeting->module_name);
+        $regex = "/^\s*?SELECT\s+?DISTINCT\s+?{$mod}\.id\,\s+?count\s*?\(\s*?{$mod}\.id\s*?\)\s+?AS\s+?total\_m\_to\_m\_count/";
+
+        $this->assertRegExp($regex, $result['select'], 'Failed to create DISTINCT SQL: ' . $result['select']);
+        $this->assertRegExp("/GROUP BY meetings\.id/", $result['group_by'], 'Failed to create GROUP BY SQL: ' . $result['group_by']);
+
+        $params = array(
+            'massupdate' => 1,
+            'favorties' => 1,
+            'collection_list' => array()
+        );
+
+        $meeting = new Meeting();
+        $result = $meeting->create_new_list_query($order_by, $where, $filter, $params, 0, '', true, $meeting);
+        $this->assertNotRegExp($regex, $result['select'], 'Failed to not create DISTINCT query: ' . $result['select']);
+        $this->assertArrayNotHasKey('group_by', $result);
+    }
+
+
+    /**
+      * testCallsCreateNewListQuery
+      *
+      */
+     public function testCallsCreateNewListQuery()
+     {
+         $call = new Call();
+         $order_by = 'name ASC';
+         $where = "(calls.name like 'M%')";
+         $filter = array
+         (
+             'set_complete' => 1,
+             'status' => 1,
+             'join_call' => 1,
+             'join_url' => 1,
+             'host_url' => 1,
+             'name' => 1,
+             'contact_name' => 1,
+             'first_name' => 1,
+             'last_name' => 1,
+             'parent_name' => 1,
+             'parent_id' => 1,
+             'parent_type' => 1,
+             'date_start' => 1,
+             'time_start' => 1,
+             'assigned_user_name' => 1,
+             'date_entered' => 1,
+             'favorites_only' => 1
+         );
+
+         $params = array(
+             'massupdate' => 1,
+             'favorties' => 1
+         );
+
+         $result = $call->create_new_list_query($order_by, $where, $filter, $params, 0, '', true, $call);
+         $mod = strtolower($call->module_name);
+         $regex = "/^\s*?SELECT\s+?DISTINCT\s+?{$mod}\.id\,\s+?count\s*?\(\s*?{$mod}\.id\s*?\)\s+?AS\s+?total\_m\_to\_m\_count/";
+
+         $this->assertRegExp($regex, $result['select'], 'Failed to create DISTINCT SQL: ' . $result['select']);
+         $this->assertRegExp("/GROUP BY calls\.id/", $result['group_by'], 'Failed to create GROUP BY SQL: ' . $result['group_by']);
+
+         $params = array(
+             'massupdate' => 1,
+             'favorties' => 1,
+             'collection_list' => array()
+         );
+
+         $call = new Call();
+         $result = $call->create_new_list_query($order_by, $where, $filter, $params, 0, '', true, $call);
+         $this->assertNotRegExp($regex, $result['select'], 'Failed to not create DISTINCT query: ' . $result['select']);
+         $this->assertArrayNotHasKey('group_by', $result);
+     }
 
 }
 
