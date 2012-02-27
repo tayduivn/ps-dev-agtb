@@ -25,14 +25,14 @@ $disable_date_format = true;
 
 class SoapHelperWebServices {
 
-	function get_field_list($value, $fields, $translate=true)
-	{
+	function get_field_list($value, $fields, $translate=true) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list('.print_r($value, true).', '.print_r($fields, true).", $translate");
 		$module_fields = array();
 		$link_fields = array();
-		if(!empty($value->field_defs)){
 
-			foreach($value->field_defs as $var){
+		if (!empty($value->field_defs)) {
+
+			foreach ($value->field_defs as $var) {
 				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
 				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
 				if ($var['source'] == 'non_db' && (isset($var['type']) && $var['type'] != 'link')) {
@@ -135,7 +135,8 @@ class SoapHelperWebServices {
 			$GLOBALS['log']->debug('SoapHelperWebServices->setFaultObject - ' . var_export($errorObject, true));
 		}
 		global $service_object;
-		$service_object->error($errorObject);
+        // this needs to be fixed !!! //
+		//$service_object->error($errorObject);
 	} // fn
 
 /**
