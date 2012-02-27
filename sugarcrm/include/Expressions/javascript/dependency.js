@@ -26,9 +26,6 @@
  ********************************************************************************/
 
 (function() {
-    
-
-(function() {
 /**
  * This JavaScript file provides an entire framework for the new
  * SUGAR Calculated Fields/Dependent Dropdowns implementation.
