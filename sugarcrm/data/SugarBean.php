@@ -3646,9 +3646,9 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     public function createManyToManyDetailHoverLink($displayText, $exclude_id)
     {
-        return "<span id='span_{$this->id}_{$this->table_name}'><a href='#' style='text-decoration:none;'
+        return "<span id='span_{$this->id}_{$this->table_name}'>{$displayText}<a href='#' style='text-decoration:none;'
         onMouseOver=\"javascript:toggleMore('span_{$this->id}_{$this->table_name}','','{$this->module_dir}','DisplayInline','bean_id={$this->id}&related_id={$exclude_id}');\"
-        onFocus=\"javascript:toggleMore('span_{$this->id}_{$this->table_name}','','{$this->module_dir}','DisplayInline','bean_id={$this->id}&related_id={$exclude_id}');\">{$displayText} +</a></span>";
+        onFocus=\"javascript:toggleMore('span_{$this->id}_{$this->table_name}','','{$this->module_dir}','DisplayInline','bean_id={$this->id}&related_id={$exclude_id}');\"> +</a></span>";
     }
 
 
