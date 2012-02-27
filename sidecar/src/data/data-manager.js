@@ -248,6 +248,115 @@
             return new _models[module].collections[beanType](models);
         },
 
+        /**
+         * Creates an instance of {@link Relation} class.
+         *
+         * @param {String} link relationship link name
+         * @param {Bean} bean1 instance of the first bean
+         * @param {Bean/String} beanOrId2 instance or ID of the second bean
+         * @param data custom data fields
+         * @return {Relation} a new instance of the relationship
+         */
+        createRelation: function(link, bean1, beanOrId2, data) {
+            var name = bean1.fields[link]["relationship"];
+            var relationship = bean1.relationships[name];
+
+            var id2;
+            if (beanOrId2 instanceof app.Bean) {
+                id2 = beanOrId2.id;
+            }
+            else {
+                id2 = beanOrId2;
+                beanOrId2 = null;
+            }
+
+            var ids = [bean1.id, id2];
+            var beans = [bean1, beanOrId2];
+
+            if (relationship["rhs_module"] == bean1.module) {
+                ids.reverse();
+                beans.reverse();
+            }
+
+            var relation = new app.Relation({
+                /**
+                 * Relationship name.
+                 * @type {String}
+                 * @member Relation
+                 */
+                name: name,
+                /**
+                 * Relationship metadata.
+                 * @member Relation
+                 */
+                relationship: relationship,
+                /**
+                 * ID of the left bean.
+                 * @type {String}
+                 * @member Relation
+                 */
+                id1: ids[0],
+                /**
+                 * ID of the right bean.
+                 * @type {String}
+                 * @member Relation
+                 */
+                id2: ids[1],
+                /**
+                 * Reference to the left bean.
+                 * @type {Bean}
+                 * @member Relation
+                 */
+                bean1: beans[0],
+                /**
+                 * Reference to the right bean.
+                 * @type {Bean}
+                 * @member Relation
+                 */
+                bean2: beans[1],
+                /**
+                 * Custom data.
+                 * @member Relation
+                 */
+                data: data
+            });
+
+            relation.id = name + "-" + ids[0] + "-" + ids[1];
+            return relation;
+        },
+
+        /**
+         * Creates an instance of {@link RelationCollection} class.
+         *
+         * @param {String} link relationship link name
+         * @param {Bean} bean the collection will reference the specified bean
+         * @return {RelationCollection} a new instance of the relationship collection
+         */
+        createRelationCollection: function(link, bean) {
+            var name = bean.fields[link]["relationship"];
+            var relationship = bean.relationships[name];
+            return new app.RelationCollection(undefined, {
+                /**
+                 * Relationship name.
+                 * @type {String}
+                 * @member RelationCollection
+                 */
+                name: name,
+                /**
+                 * Relationship metadata.
+                 * @member RelationCollection
+                 */
+                relationship: relationship,
+                /**
+                 * Reference to the owner bean.
+                 * @type {Bean}
+                 * @member RelationCollection
+                 */
+                bean: bean
+            });
+
+        },
+
         fetchBean: function(module, id, options, beanType) {
             var bean = this.createBean(module, { id: id }, beanType);
             bean.fetch(options);
