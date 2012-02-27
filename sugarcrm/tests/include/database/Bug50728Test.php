@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,52 +21,45 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-class TrackerMonitorTest extends Sugar_PHPUnit_Framework_TestCase {
 
-    function setUp() {
-    	$trackerManager = TrackerManager::getInstance();
-        $trackerManager->unsetMonitors();
+class Bug50728Test extends Sugar_PHPUnit_Framework_TestCase
+{
+
+    public function setUp()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-    }    
-    
-    function tearDown() {
-        unset($GLOBALS['app_strings']);
-    }
-    
-    function testValidMonitors() {
-        $trackerManager = TrackerManager::getInstance();
-        $exceptionThrown = false;
-        try {
-	        $monitor = $trackerManager->getMonitor('tracker');
-	        $monitor2 = $trackerManager->getMonitor('tracker_queries');
-	        $monitor3 = $trackerManager->getMonitor('tracker_perf');
-	        $monitor4 = $trackerManager->getMonitor('tracker_sessions');
-	        $monitor5 = $trackerManager->getMonitor('tracker_tracker_queries');	
-        } catch (Exception $ex) {
-        	$exceptionThrown = true;
-        }
-        $this->assertFalse($exceptionThrown);
     }
 
-    function testInvalidMonitors() {
-        $trackerManager = TrackerManager::getInstance();
-        $exceptionThrown = false;
-	    $monitor = $trackerManager->getMonitor('invalid_tracker');
-	    $this->assertTrue(get_class($monitor) == 'BlankMonitor');
+    public function tearDown()
+    {
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
-            
-    function testInvalidValue() {        
-        $trackerManager = TrackerManager::getInstance();
-        $monitor = $trackerManager->getMonitor('tracker');
-        $exceptionThrown = false;
-        try {
-          $monitor->setValue('invalid_column', 'foo');
-        } catch (Exception $exception) {
-          $exceptionThrown = true;
-        }
-        $this->assertTrue($exceptionThrown);
-    } 
-     
-}  
+
+    /**
+     * @dataProvider fulltextQueryProvider
+     */
+    public function testParseFulltextQuery($expected, $query) {
+        $this->assertSame($expected, $GLOBALS['db']->parseFulltextQuery($query));
+    }
+
+    public function fulltextQueryProvider() {
+        return array(
+            // $expected[$query_terms, $must_terms, $not_terms], $query
+            array(array(array('aa', '\-', 'bb'), array(), array()), 'aa - bb'),
+            array(array(array('aa', '\+', 'bb'), array(), array()), 'aa + bb'),
+            array(array(array('aa - bb'), array(), array()), '"aa - bb"'),
+            array(array(array('aa-bb'), array(), array()), 'aa-bb'),
+            array(array(array('aa', 'bb'), array(), array('c')), 'aa -c bb'),
+            array(array(array('bb'), array('aa'), array('c')), '+aa -c bb'),
+        );
+    }
+
+}
+
 ?>
+ 
