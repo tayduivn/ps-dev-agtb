@@ -1,17 +1,41 @@
+/**
+ * Application configuration.
+ * @class config
+ * @alias SUGAR.App.config
+ * @singleton
+ */
 (function(app) {
 
-  /**
-   * SUGAR.App application configuration.
-   */
-  app.augment("config", {
-    // Possible values: 'dev', 'test', 'prod'
-    env: 'dev',
+    app.augment("config", {
+        /**
+         * Application environment. Possible values: 'dev', 'test', 'prod'
+         * @type {String}
+         */
+        env: 'dev',
 
-    logLevel: app.logger.Levels.DEBUG,
-    logWriter: app.logger.ConsoleWriter,
-    logFormatter: app.logger.SimpleFormatter,
+        /**
+         * Logging level.
+         * @property {logger.Levels} [logLevel=logger.Levels.DEBUG]
+         */
+        logLevel: app.logger.Levels.DEBUG,
 
-    //restApiUrl: 'http://localhost:8888/rest/10/'
-  }, false);
+        /**
+         * Logging writer.
+         * @property [logWrtiter=logger.ConsoleWriter]
+         */
+        logWriter: app.logger.ConsoleWriter,
+
+        /**
+         * Logging formatter.
+         * @property [logFormatter=logger.SimpleFormatter]
+         */
+        logFormatter: app.logger.SimpleFormatter,
+
+        /**
+         * Sugar REST server URL.
+         */
+        restApiUrl: 'http://localhost:8888/rest/10/'
+
+    }, false);
 
 })(SUGAR.App);

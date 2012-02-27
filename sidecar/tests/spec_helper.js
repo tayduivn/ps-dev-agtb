@@ -4,6 +4,7 @@ var SugarTest = {};
 (function(test) {
 
     SUGAR.App.config.logLevel = SUGAR.App.logger.Levels.TRACE;
+    SUGAR.App.config.env = "test";
 
     test.loadJson = function(jsonFile) {
       var json = null;
@@ -22,5 +23,10 @@ var SugarTest = {};
 
       return json;
     };
+
+    test.waitFlag = false;
+    test.wait = function() { waitsFor(function() { return test.waitFlag; }); };
+    test.resetWaitFlag = function() { this.waitFlag = false; };
+    test.setWaitFlag = function() { this.waitFlag = true; };
 
 })(SugarTest);
