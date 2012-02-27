@@ -35,7 +35,7 @@ describe("sugarAuth", function () {
         //TODO add spy to check api call
         var apiCallSpy = sinon.spy(this.api, 'call');
         var callbacksSpy = sinon.spy(this.callbacks, 'success');
-        this.server.respondWith("POST", "/rest/v10/login/",
+        this.server.respondWith("POST", "/rest/v10/login",
             [200, {  "Content-Type":"application/json"},
                 JSON.stringify(fixtures.api['rest/v10/login']['POST'])]);
 
@@ -58,7 +58,7 @@ describe("sugarAuth", function () {
     it("should not login successfully with incorrect passwords", function () {
         var apiCallSpy = sinon.spy(this.api, 'call');
         var callbacksSpy = sinon.spy(this.callbacks, 'error');
-        this.server.respondWith("POST", "/rest/v10/login/",
+        this.server.respondWith("POST", "/rest/v10/login",
             [404, {  "Content-Type":"application/json"},
             ""]);
 
@@ -82,7 +82,7 @@ describe("sugarAuth", function () {
         var apiCallSpy = sinon.spy(this.api, 'call');
         //make expectations (then)
 
-        this.server.respondWith("POST", "/rest/v10/logout/",
+        this.server.respondWith("POST", "/rest/v10/logout",
             [200, {  "Content-Type":"application/json"},
                 ""]);
         var result = this.auth.logout(this.callbacks);
