@@ -28,10 +28,14 @@ class Bug50728Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     public function tearDown()
     {
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
