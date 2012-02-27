@@ -28,8 +28,8 @@
 *}
 
 <div id="edit_all_recurrences_block" style="display: none;">
-	<button type="button" onclick="CAL.edit_all_recurrences();"> {$MOD.LBL_EDIT_ALL_RECURRENCES} </button>
-	<button type="button" onclick="CAL.remove_all_recurrences();"> {$MOD.LBL_REMOVE_ALL_RECURRENCES} </button>
+	<button type="button" id="btn-edit-all-recurrences" onclick="CAL.edit_all_recurrences();"> {$MOD.LBL_EDIT_ALL_RECURRENCES} </button>
+	<button type="button" id="btn-remove-all-recurrences" onclick="CAL.remove_all_recurrences();"> {$MOD.LBL_REMOVE_ALL_RECURRENCES} </button>
 </div>
 
 <div id="cal-repeat-block" style="dispaly: none;">
