@@ -73,6 +73,11 @@ SUGAR.ajaxUI = {
             if(r.menu && r.menu.module)
             {
                 DCMenu.module = r.menu.module;
+
+                // Fix the help link
+                // Bug50676 - This can only be run when we have the module around
+                var hl = document.getElementById("help_link");
+                hl.href = hl.href.replace('help_action=ajaxui', 'help_action=' + action_sugar_grp1).replace('help_module=Home', 'help_module=' + r.menu.module);
             }
             //END SUGARCRM flav=pro ONLY
 
