@@ -456,7 +456,7 @@ function set_entry($session, $module_name, $name_value_list){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->set_entry');
     if (self::$helperObject->isLogLevelDebug()) {
 		$GLOBALS['log']->debug('SoapHelperWebServices->set_entry - input data is ' . var_export($name_value_list, true));
-    } // if
+    }
 
 	$error = new SoapError();
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'write', 'no_access', $error)) {
@@ -464,7 +464,7 @@ function set_entry($session, $module_name, $name_value_list){
         $result["error"] = 403;
         $result["msg_err"] = "User does not have access to module '{$module_name}'!";
 		return $result;
-	} // if
+	}
 
 	$class_name = $beanList[$module_name];
 	require_once($beanFiles[$class_name]);
@@ -496,7 +496,7 @@ function set_entry($session, $module_name, $name_value_list){
         $result["error"] = 403;
         $result["err_msg"] = "User does not have access to module '{$module_name}'!";
     	return $result;
-    } // if
+    }
 
 	$seed->save(self::$helperObject->checkSaveOnNotify());
 	if ($seed->deleted == 1) {

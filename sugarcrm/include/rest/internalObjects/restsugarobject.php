@@ -56,32 +56,26 @@ class RestSugarObject extends RestObject implements IRestObject {
         global $current_user;
         $auth = $this->getAuth();
         $this->isValidToken($auth);
-        $data = $this->getRequestData();
+        $data = $this->getURIData();
+        $id = $data[1];
 
-        $result = $this->getRequestData();
-        $userData = RestUtils::isValidJson($result["raw_post_data"]);
-        if ($userData["err"]) {
-            $err = new RestError();
-            $err->ReportError(400, $userData["err_str"]);
-            exit;
-        }
-
-        $id = $userData["data"]["id"];
-        $data = array(
+        $tmpdata = array(
             array(
                 "name" => "id",
                 "value" => "{$id}"
             ),
             array(
                 "name" => "deleted",
-                "value" => 1
+                "value" => true
             )
         );
 
         $webser = new SugarWebServiceImpl();
-        $result = $webser->set_entry($auth, $this->objName, $data);
-        print_r($result); die;
-        
+        $result = $webser->set_entry($auth, $this->objName, $tmpdata);
+        if ($result["error"] != 0) {
+            $err = new RestError();
+            $err->ReportError($result["error"], $result["err_msg"]);
+        }
     }
 
     /**
