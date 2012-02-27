@@ -221,7 +221,11 @@ class Call extends SugarBean
       */
  	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false, $ifListForExport = false)
     {
-        $this->alter_many_to_many_query = true;
+        //$params['collection_list'] is set when run from get_union_related_list, so we do not want to alter the query in that case
+        if(!isset($params['collection_list']))
+        {
+            $this->alter_many_to_many_query = true;
+        }
         return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect, $ifListForExport);
     }
 
