@@ -40,6 +40,7 @@ $GLOBALS['ignore_files'] = array(
                         'RelateExpression.php',
 						'AbstractAction.php',
 						'ActionFactory.php',
+                        'DefineRelateExpression.php'
 					);
 
 

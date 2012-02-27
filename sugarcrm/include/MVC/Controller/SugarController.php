@@ -265,6 +265,10 @@ class SugarController{
 	 * Display the appropriate view.
 	 */
 	private function processView(){
+		if(!isset($this->view_object_map['remap_action']) && isset($this->action_view_map[strtolower($this->action)]))
+		{
+		  $this->view_object_map['remap_action'] = $this->action_view_map[strtolower($this->action)];
+		}
 		$view = ViewFactory::loadView($this->view, $this->module, $this->bean, $this->view_object_map, $this->target_module);
 		$GLOBALS['current_view'] = $view;
 		if(!empty($this->bean) && !$this->bean->ACLAccess($view->type) && $view->type != 'list'){

@@ -259,7 +259,7 @@ class Quote extends SugarBean {
 	function set_contact() {
 		global $locale;
 
-		$query = "SELECT con.first_name, con.last_name, con.assigned_user_id contact_name_owner, con.id, c_q.contact_role from $this->contact_table  con, $this->rel_contact_table  c_q where con.id = c_q.contact_id and c_q.quote_id = '$this->id' and c_q.deleted=0 and con.deleted=0";
+		$query = "SELECT con.salutation, con.first_name, con.last_name, con.assigned_user_id contact_name_owner, con.id, c_q.contact_role from $this->contact_table  con, $this->rel_contact_table  c_q where con.id = c_q.contact_id and c_q.quote_id = '$this->id' and c_q.deleted=0 and con.deleted=0";
 		$result = $this->db->query($query, true,"Error filling in additional detail fields: ");
 
 		// Get the id and the name.
@@ -274,12 +274,12 @@ class Quote extends SugarBean {
 
 		while($row = $this->db->fetchByAssoc($result))	{
 			if($row != null && $row['contact_role'] == 'Ship To') {
-				$this->shipping_contact_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']));
+				$this->shipping_contact_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']), stripslashes($row['salutation']));
 				$this->shipping_contact_id = stripslashes($row['id']);
 				$this->shipping_contact_name_owner = stripslashes($row['contact_name_owner']);
 				$this->shipping_contact_name_mod = 'Contacts';
 			} elseif($row != null && $row['contact_role'] == 'Bill To') {
-				$this->billing_contact_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']));
+				$this->billing_contact_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']), stripslashes($row['salutation']));
 				$this->billing_contact_id = stripslashes($row['id']);
 				$this->billing_contact_name_owner = stripslashes($row['contact_name_owner']);
 				$this->billing_contact_name_mod = 'Contacts';

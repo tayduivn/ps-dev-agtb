@@ -26,6 +26,7 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
 	die("Not a Valid Entry Point");
 }
 else {
+    require_once("data/BeanFactory.php");
     $file_type=''; // bug 45896
     require_once("data/BeanFactory.php");
     ini_set('zlib.output_compression','Off');//bug 27089, if use gzip here, the Content-Length in header may be incorrect.

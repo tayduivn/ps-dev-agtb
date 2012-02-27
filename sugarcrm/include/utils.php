@@ -5116,3 +5116,20 @@ function get_language_header()
 {
     return isset($GLOBALS['current_language']) ? "lang='{$GLOBALS['current_language']}'" : "lang='en'";
 }
+
+
+/**
+ * get_custom_file_if_exists
+ *
+ * This function handles the repetitive code we have where we first check if a file exists in the
+ * custom directory to determine whether we should load it, require it, include it, etc.  This function returns the
+ * path of the custom file if it exists.  It basically checks if custom/{$file} exists and returns this path if so;
+ * otherwise it return $file
+ *
+ * @param $file String of filename to check
+ * @return $file String of filename including custom directory if found
+ */
+function get_custom_file_if_exists($file)
+{
+    return file_exists("custom/{$file}") ? "custom/{$file}" : $file;
+}

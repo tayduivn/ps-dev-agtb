@@ -260,7 +260,9 @@ $admin_group_header[]= array('LBL_FORECAST_TITLE','',false,$admin_option_defs, '
 //Contracts
 $admin_option_defs=array();
 $admin_option_defs['Contracts']['contract_type_management']= array('Contracts','LBL_MANAGE_CONTRACTEMPLATES_TITLE','LBL_CONTRACT_TYPES','./index.php?module=ContractTypes&action=index');
-$admin_group_header[]= array('LBL_CONTRACT_TITLE','',false,$admin_option_defs, 'LBL_CONTRACT_DESC');
+
+// fetch "Contracts" module name from localization data (bug #46740)
+$admin_group_header[]= array($app_list_strings['moduleList']['Contracts'],'',false,$admin_option_defs, 'LBL_CONTRACT_DESC');
 
 //END SUGARCRM flav=pro ONLY
 

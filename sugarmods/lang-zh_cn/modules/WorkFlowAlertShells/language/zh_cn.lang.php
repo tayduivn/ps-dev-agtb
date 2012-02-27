@@ -85,10 +85,10 @@ $mod_strings = array (
   
 	'LBL_NEW_BUTTON_LABEL_ALERT' => '新增警告',
 	'LBL_NEW_BUTTON_KEY_ALERT' => 'A',
-	'LBL_NEW_BUTTON_TITLE_ALERT' => '新增警告[Alt+A]',
+	'LBL_NEW_BUTTON_TITLE_ALERT' => '新增警告',
 	'LBL_NEW_BUTTON_LABEL_ACTION' => '新增行动',
 	'LBL_NEW_BUTTON_KEY_ACTION' => 'C',
-	'LBL_NEW_BUTTON_TITLE_ACTION' => '新增行动[Alt+C]',
+	'LBL_NEW_BUTTON_TITLE_ACTION' => '新增行动',
 	'LBL_MODULE_NAME_COMBO' => '警告',
 	
 	'LNK_ALERT_TEMPLATES' => '警告模板',

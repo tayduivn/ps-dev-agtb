@@ -237,7 +237,7 @@ class ConnectorUtils
         $refresh = false
         )
     {
-        if ( isset($GLOBALS['sugar_config']['developerMode']) ) {
+        if (inDeveloperMode()) {
             $refresh = true;
         }
 
@@ -292,6 +292,11 @@ class ConnectorUtils
             if(defined('TEMPLATE_URL')) {
                 $toFile = SugarTemplateUtilities::getFilePath($toFile);
             }
+        }
+
+        if(!is_array($connectors))
+        {
+            $connectors = array();
         }
 
         if(!write_array_to_file('connectors', $connectors, $toFile)) {

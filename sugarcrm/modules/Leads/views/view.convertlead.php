@@ -412,7 +412,6 @@ class ViewConvertLead extends SugarView
         //Handle non-contacts relationships
         foreach ($beans as $bean)
         {
-
             if (!empty($lead))
             {
                 //BEGIN SUGARCRM flav=pro ONLY

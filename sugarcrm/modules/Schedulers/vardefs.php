@@ -84,8 +84,8 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'len' => '36',
 			'reportable' => true,
 		),
-		'modified_user_id_link' => array (
-			'name' => 'modified_user_id_link',
+		'modified_user_link' => array (
+			'name' => 'modified_user_link',
 			'type' => 'link',
 			'relationship' => 'schedulers_modified_user_id_rel',
 			'vname' => 'LBL_MODIFIED_BY_USER',
@@ -93,34 +93,8 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'module' => 'Users',
 			'bean_name' => 'User',
 			'source' => 'non-db',
-		),
-		'modified_by_name' =>  array (
-		    'name' => 'modified_by_name',
-		    'vname' => 'LBL_MODIFIED_NAME',
-		    'type' => 'relate',
-		    'reportable'=>false,
-		    'source'=>'non-db',
-		    'rname'=>'user_name',
-		    'table' => 'users',
-		    'id_name' => 'modified_user_id',
-		    'module'=>'Users',
-		    'link'=>'schedulers_modified_user_id_rel',
-		    'duplicate_merge'=>'disabled'
-		  ),
-		'created_by_name' =>  array (
-		    'name' => 'created_by_name',
-		    'vname' => 'LBL_MODIFIED_NAME',
-		    'type' => 'relate',
-		    'reportable'=>false,
-		    'source'=>'non-db',
-		    'rname'=>'user_name',
-		    'table' => 'users',
-		    'id_name' => 'created_by',
-		    'module'=>'Users',
-		    'link'=>'schedulers_created_by_rel',
-		    'duplicate_merge'=>'disabled'
-		  ),
-		  'name' => array (
+		),        
+		'name' => array (
 			'name' => 'name',
 			'vname' => 'LBL_NAME',
 			'type' => 'varchar',
@@ -272,7 +246,7 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'rhs_module'		=> 'Schedulers',
 			'rhs_table'			=> 'schedulers',
 			'rhs_key'			=> 'modified_user_id',
-			'relationship_type'	=> 'one-to-one'
+			'relationship_type'	=> 'one-to-many'
 		),
 		'schedulers_jobs_rel' => array(
 			'lhs_module'					=> 'Schedulers',

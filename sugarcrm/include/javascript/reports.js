@@ -955,9 +955,10 @@ SUGAR.reports = function() {
 				document.getElementById("resultsDiv").style.display="none";
 			
 			currEditorDiv="module_select";
-			currWizardStep++;
 
-			if (currWizardStep <= 2) {
+            if (currWizardStep < 2)
+            {
+                currWizardStep++;
 				if (report_type == 'tabular') {
 					document.getElementById('wizard_outline_div').innerHTML = 
 						SUGAR.language.get('Reports','LBL_ROWS_AND_COLUMNS_REPORT') + ' : ' +
@@ -1015,8 +1016,10 @@ SUGAR.reports = function() {
 				document.getElementById("resultsDiv").style.display="none";
 			
 			currEditorDiv="filters";	
-			currWizardStep++;
-			if (currWizardStep <= 3) {
+			
+            if (currWizardStep < 3)
+            {
+                currWizardStep++;
 				if (report_type == 'tabular') {
 					document.getElementById('wizard_outline_div').innerHTML = 
 						SUGAR.language.get('Reports','LBL_ROWS_AND_COLUMNS_REPORT') + ' : ' +
@@ -2488,8 +2491,8 @@ SUGAR.reports = function() {
 		
 			var cell = document.createElement('td');
 			var new_input = document.createElement("input");
-			new_input.title= lbl_select+"[Alt+G]";
-			new_input.accessKey="G";
+			new_input.title= lbl_select;
+			//new_input.accessKey="G";
 			new_input.type="button";
 			new_input.value=lbl_select; 
 			new_input.name=field.module;
@@ -2558,7 +2561,7 @@ SUGAR.reports = function() {
 		
 			var cell = document.createElement('td');
 			var new_input = document.createElement("input");
-			new_input.title= lbl_select+"[Alt+G]";
+			new_input.title= lbl_select;
 			new_input.accessKey="G";
 			new_input.type="button";
 			new_input.value=lbl_select; 

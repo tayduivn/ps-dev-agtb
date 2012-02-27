@@ -1033,7 +1033,6 @@ function QuotesEditManager(Y){
         var buttonEl = this.createElement('button', {
             'type': 'button',
             'title': this.selectButtonTitle,
-            'accessKey': this.selectButtonKey,
             'name': "btn_product_name[" + this.count + "]",
             'id': itemName,
             'value': this.selectButtonValue

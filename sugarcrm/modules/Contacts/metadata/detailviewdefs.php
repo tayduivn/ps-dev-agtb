@@ -95,7 +95,10 @@ $viewdefs['Contacts']['DetailView'] = array(
         ),
 
         array (
-          'department',
+          array (
+                'name' => 'department',
+                'label' => 'LBL_DEPARTMENT',
+          ),
           array (
             'name' => 'phone_mobile',
             'label' => 'LBL_MOBILE_PHONE',

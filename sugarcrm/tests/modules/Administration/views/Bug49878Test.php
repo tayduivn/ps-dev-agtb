@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+//File SUGARCRM flav=pro ONLY
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -19,13 +19,37 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-// require some crucial classes so that the dynamically loaded ones
-// won't break
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
-require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldvarchar.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldint.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFielddatetime.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFielddatetimecombo.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldname.php');
+
+require_once('modules/Administration/views/view.configureshortcutbar.php');
+/**
+ * Bug #49878
+ * XSS - Administration, Configure Shortcut Bar, enabled_modules
+ * @ticket 49878
+ */
+class Bug49878Test extends Sugar_PHPUnit_Framework_OutputTestCase
+{
+    /**
+    * @group 49878
+    */
+    public function testCheckEnabledModules()
+    {
+        $testModuleName = "\"TestName\"";
+        $_REQUEST['enabled_modules'] = htmlentities("[\"Accounts\", " . $testModuleName . "]");
+        
+        $vcscb = new ViewConfigureshortcutbar();
+        $vcscb->display();
+        
+        $cDir = "include/DashletContainer/Containers/";
+        $cFile = "custom/" . $cDir . "DCActions.php";
+        if (file_exists($cFile))
+        {
+            include($cFile);
+        }
+        unlink($cFile);
+        rmdir("custom/" . $cDir);
+        
+        $this->assertNotContains($testModuleName, $DCActions);
+        
+    }
+}
 ?>

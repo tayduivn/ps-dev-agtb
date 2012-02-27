@@ -87,7 +87,8 @@ else if(isset($_REQUEST['entire']) && $_REQUEST['entire'] == 'true') {
     $beginWhere = substr(trim($where), 0, 5);
     if ($beginWhere == "where")
         $where = substr(trim($where), 5, strlen($where));
-	$query = $focus->create_export_query('',$where);
+    $orderBy = '';
+	$query = $focus->create_export_query($orderBy,$where);
 
 	$result = $db->query($query,true,"Error mail merging {$_SESSION['MAILMERGE_MODULE']}: "."<BR>$query");
 

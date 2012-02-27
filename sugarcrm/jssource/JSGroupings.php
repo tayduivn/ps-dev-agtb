@@ -194,3 +194,10 @@
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
         );
+
+    /**
+     * Check for custom additions to this code
+     */
+    if(file_exists("custom/jssource/JSGroupings.php")) {
+        require("custom/jssource/JSGroupings.php");
+    }

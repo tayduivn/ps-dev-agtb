@@ -33,7 +33,7 @@ $viewdefs['ProjectTask']['DetailView'] = array(
 										'buttons' => array( 'EDIT',
 				                            				//BEGIN SUGARCRM flav=pro ONLY
 				                            				array( 'customCode' => '{if $bean->aclAccess("edit")}<input type="submit" name="EditTaskInGrid" value=" {$MOD.LBL_EDIT_TASK_IN_GRID_TITLE} " '.
-																					'title="{$MOD.LBL_EDIT_TASK_IN_GRID_TITLE}" accessKey="{$MOD.LBL_EDIT_TASK_IN_GRID_TITLE}" '.
+																					'title="{$MOD.LBL_EDIT_TASK_IN_GRID_TITLE}"  '.
 																					'class="button" onclick="this.form.record.value=\'{$fields.project_id.value}\';prep_edit_task_in_grid(this.form);" />{/if}',
 															),
 															//END SUGARCRM flav=pro ONLY
