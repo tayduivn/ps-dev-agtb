@@ -256,12 +256,6 @@ class SugarBean
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
     var $in_import = false;
-
-    /**
-     * Set to true for Meetings and Calls to handle many-to-many queries for create_new_list_query
-     */
-    var $alter_many_to_many_query = false;
-
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -3303,10 +3297,31 @@ function save_relationship_changes($is_update, $exclude=array())
                 if(!empty($this->$data['link']))
                 {
                     $params = array();
-                    $params['join_type'] = empty($join_type) ? ' LEFT JOIN ' : $join_type;
-                    $params['join_table_alias'] = isset($data['join_name']) ? $data['join_name'] : 'jt' . $jtcount;
-                    $params['join_table_link_alias'] = isset($data['join_link_name']) ? $data['join_link_name'] : 'jtl' . $jtcount;
+                    if(empty($join_type))
+                    {
+                        $params['join_type'] = ' LEFT JOIN ';
+                    }
+                    else
+                    {
+                        $params['join_type'] = $join_type;
+                    }
+                    if(isset($data['join_name']))
+                    {
+                        $params['join_table_alias'] = $data['join_name'];
+                    }
+                    else
+                    {
+                        $params['join_table_alias']	= 'jt' . $jtcount;
 
+                    }
+                    if(isset($data['join_link_name']))
+                    {
+                        $params['join_table_link_alias'] = $data['join_link_name'];
+                    }
+                    else
+                    {
+                        $params['join_table_link_alias'] = 'jtl' . $jtcount;
+                    }
                     $join_primary = !isset($data['join_primary']) || $data['join_primary'];
 
                     $join = $this->$data['link']->getJoin($params, true);
@@ -3330,6 +3345,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     				if($join['type'] == 'many-to-many')
     				{
+
                         //BEGIN SUGARCRM flav=int ONLY
                         //Collin Lee - For many-to-many queries here, we should switch alter_many_to_many_query on, but for now, let's make it bean specific
                         /*
@@ -3340,6 +3356,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         }
                         */
                         //END SUGARCRM flav=int ONLY
+
 
     					if(empty($ret_array['secondary_select']))
     					{
@@ -3561,103 +3578,13 @@ function save_relationship_changes($is_update, $exclude=array())
             unset($ret_array['secondary_select']);
         }
 
-        //If alter_many_to_many_query is set, we attempt to alter the SQL to use DISTINCT and GROUP BY
-        if($this->alter_many_to_many_query)
-        {
-            $ret_array = $this->alter_many_to_many_array($ret_array);
-        }
-
         if($return_array)
         {
             return $ret_array;
         }
 
-        return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. (isset($ret_array['group_by']) ? $ret_array['group_by'] : '') . $ret_array['order_by'];
+        return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
     }
-
-
-    /**
-     * alter_many_to_many_array
-     *
-     * This function handles processing the array of query parameters to create a SQL statement/array that will
-     * include a DISTINCT and GROUP BY clause on the bean's id column.  In addition, a total_m_to_m_count
-     * count is run to track the number of many-to-many records for the entry's id.
-     *
-     * @param array $sql_array The array of SQL parameters to process
-     * @return array The array of SQL parameters processed that includes DISTINCT and GROUP BY clause
-     */
-    protected function alter_many_to_many_array($sql_array=array())
-    {
-        //If we don't have a select delta, just return
-        if(!isset($sql_array['select']) || !preg_match('/^\s*?SELECT\s+?([^\s]+?)([\,\s])/i', $sql_array['select'], $first_argument))
-        {
-            return $sql_array;
-        }
-
-        $select = $sql_array['select'];
-        $first_argument = $first_argument[1];
-
-        //Flag if we have a SELECT DISTINCT clause
-        $has_distinct = (strtoupper($first_argument) == 'DISTINCT');
-
-        if(!$has_distinct)
-        {
-            //If we don't have SELECT DISTINCT, check if we have the table id as first column
-            $has_id_column = ($first_argument == "{$this->table_name}.id");
-        } else {
-            //We have SELECT DISTINCT to start, now find out what the column/first select parameter is
-            if(!preg_match('/^\s*?SELECT\s+?DISTINCT\s+?([^\s]+?)[\,\s]/i', $select, $first_argument))
-            {
-               //Somehow we don't have anything after DISTINCT, just return at this point
-               return $sql_array;
-            }
-            $first_argument = $first_argument[1];
-            $has_id_column = ($first_argument == "{$this->table_name}.id");
-        }
-
-        //Now let's alter the select portion to include DISTINCT if there is no DISTINCT statement
-        if(!$has_distinct)
-        {
-            $select = preg_replace('/^\s*?SELECT\s+?/i', 'SELECT DISTINCT ', $select);
-        }
-
-        //Now make sure we sanitize the regular expression of the first argument (ex: "." becomes "\.")
-        $first_argument_regex = preg_replace('/([^a-zA-Z0-9_])/', '\\\\${1}', $first_argument);
-
-        if(!$has_id_column)
-        {
-            //If the id column is not the first parameter, we add this and then include count function
-            $sql_array['select'] = preg_replace("/SELECT DISTINCT\s+?{$first_argument_regex}/i", "SELECT DISTINCT {$this->table_name}.id, count({$this->table_name}.id) AS total_m_to_m_count, {$first_argument}", $select);
-        } else {
-            //If the id column is already there as the first argument, then just add the count
-            $sql_array['select'] = preg_replace("/SELECT DISTINCT\s+?{$first_argument_regex}/i", "SELECT DISTINCT {$this->table_name}.id, count({$this->table_name}.id) AS total_m_to_m_count", $select);
-        }
-
-        //Add the GROUP BY clause
-        $sql_array['group_by'] = " GROUP BY {$this->table_name}.id ";
-        return $sql_array;
-    }
-
-
-    /**
-     * createManyToManyDetailHoverLink
-     *
-     * This is a function to encapsulate creating a hover link for additional data.  It is called from subclasses that set alter_many_to_many_query
-     * to true and wish to display a popup window listing the additional data from the many-to-many relationship.
-     *
-     * @param string $displayText String value to display in the link portion
-     * @param string $exclude_id String id of the displayed related record so as to exclude it from the popup window
-     * @return String HTML formatted contents to display a link with a + sign to generate a call to render a popup window
-     *
-     */
-    public function createManyToManyDetailHoverLink($displayText, $exclude_id)
-    {
-        return "<span id='span_{$this->id}_{$this->table_name}'>{$displayText}<a href='#' style='text-decoration:none;'
-        onMouseOver=\"javascript:toggleMore('span_{$this->id}_{$this->table_name}','','{$this->module_dir}','DisplayInline','bean_id={$this->id}&related_id={$exclude_id}');\"
-        onFocus=\"javascript:toggleMore('span_{$this->id}_{$this->table_name}','','{$this->module_dir}','DisplayInline','bean_id={$this->id}&related_id={$exclude_id}');\"> +</a></span>";
-    }
-
-
     /**
      * Returns parent record data for objects that store relationship information
      *
@@ -5626,16 +5553,6 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     function loadFromRow($arr)
     {
-        //BEGIN SUGARCRM flav=int ONLY
-        //Collin Lee - If we were to really make handling the many to many queries to be generic then we can uncomment this
-        /*
-        if($this->alter_many_to_many_query && isset($arr['total_m_to_m_count']))
-        {
-            $this->total_m_to_m_count = $arr['total_m_to_m_count'];
-        }
-        */
-        //END SUGARCRM flav=int ONLY
-
         $this->populateFromRow($arr);
         $this->processed_dates_times = array();
         $this->check_date_relationships_load();

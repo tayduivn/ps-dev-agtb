@@ -433,9 +433,7 @@ class Meeting extends SugarBean {
 	}
 
 	function get_list_view_data() {
-
 		$meeting_fields = $this->get_list_view_array();
-
 		global $app_list_strings, $focus, $action, $currentModule;
 		if(isset($this->parent_type))
 			$meeting_fields['PARENT_MODULE'] = $this->parent_type;
@@ -471,14 +469,7 @@ class Meeting extends SugarBean {
 		}
 
         $meeting_fields['CONTACT_ID'] = $this->contact_id;
-
-        //If we have a contact id and there are more than one contacts found for this meeting then let's create a hover link
-        if($this->alter_many_to_many_query && !empty($this->contact_id) && isset($this->total_m_to_m_count) && $this->total_m_to_m_count > 1)
-        {
-            $meeting_fields['CONTACT_NAME'] = $this->createManyToManyDetailHoverLink($this->contact_name, $this->contact_id);
-        } else {
-            $meeting_fields['CONTACT_NAME'] = $this->contact_name;
-        }
+        $meeting_fields['CONTACT_NAME'] = $this->contact_name;
 
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
@@ -577,7 +568,7 @@ class Meeting extends SugarBean {
 	function get_invite_meetings(&$user) {
 		$template = $this;
 		// First, get the list of IDs.
-		$GLOBALS['log']->debug("Finding linked records $this->object_name");
+		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
 		$query = "SELECT meetings_users.required, meetings_users.accept_status, meetings_users.meeting_id from meetings_users where meetings_users.user_id='$user->id' AND( meetings_users.accept_status IS NULL OR	meetings_users.accept_status='none') AND meetings_users.deleted=0";
 		$result = $this->db->query($query, true);
 		$list = Array();
