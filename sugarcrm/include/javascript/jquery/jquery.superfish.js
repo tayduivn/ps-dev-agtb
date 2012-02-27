@@ -17,6 +17,7 @@
         menuActive = false,
         $arrow = $(['<span class="', c.arrowClass, '"> &#187;</span>'].join('')),
         click = function() {
+        	$(".subnav.ddopen").hide();
             var $$ = $(this),
             menu = getMenu($$),
             o = sf.op;
