@@ -205,49 +205,6 @@ class Call extends SugarBean
 		return "$this->name";
 	}
 
-    /**
-      * create_new_list_query
-      *
-      * @param string $order_by custom order by clause
-      * @param string $where custom where clause
-      * @param array $filter Optioanal
-      * @param array $params Optional     *
-      * @param int $show_deleted Optional, default 0, show deleted records is set to 1.
-      * @param string $join_type
-      * @param boolean $return_array Optional, default false, response as array
-      * @param object $parentbean creating a subquery for this bean.
-      * @param boolean $singleSelect Optional, default false.
-      * @return String select query string, optionally an array value will be returned if $return_array= true.
-      */
- 	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false, $ifListForExport = false)
-    {
-        //$params['collection_list'] is set when run from get_union_related_list, so we do not want to alter the query in that case
-        if(!isset($params['collection_list']))
-        {
-            $this->alter_many_to_many_query = true;
-        }
-        return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect, $ifListForExport);
-    }
-
-    /**
-     * loadFromRow
-     *
-     * Loads a row of data into instance of a bean. The data is passed as an array to this function
-     * We override this instead of populateFromRow since this function is called from list view displays whereas
-     * populateFromRow could be called in many other views.
-     *
-     * @param array $arr Array of data fetched from the database
-     *
-     */
-    function loadFromRow($arr)
-    {
-        parent::loadFromRow($arr);
-        if($this->alter_many_to_many_query && isset($arr['total_m_to_m_count']))
-        {
-           $this->total_m_to_m_count = $arr['total_m_to_m_count'];
-        }
-    }
-
 	function create_list_query($order_by, $where, $show_deleted=0)
 	{
 		$custom_join = $this->custom_fields->getJOIN();
@@ -494,13 +451,6 @@ class Call extends SugarBean
 
         $call_fields['CONTACT_ID'] = $this->contact_id;
         $call_fields['CONTACT_NAME'] = $this->contact_name;
-        //If we have a contact id and there are more than one contacts found for this meeting then let's create a hover link
-        if($this->alter_many_to_many_query && !empty($this->contact_id) && isset($this->total_m_to_m_count) && $this->total_m_to_m_count > 1)
-        {
-            $call_fields['CONTACT_NAME'] = $this->createManyToManyDetailHoverLink($this->contact_name, $this->contact_id);
-        } else {
-            $call_fields['CONTACT_NAME'] = $this->contact_name;
-        }
 
 		$call_fields['PARENT_NAME'] = $this->parent_name;
 
