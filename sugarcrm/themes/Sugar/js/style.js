@@ -182,8 +182,9 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeSearch: function() {
-    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.16) + 54); 
-		$('#sugar_spot_search').css("width",Math.round($(window).width()*.16));
+    	searchWidth = .16;
+    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54); 
+		$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
     },
     resizeMenu: function () {
 	    var maxMenuWidth = Math.round($(window).width()*.45);
@@ -210,7 +211,7 @@ SUGAR.append(SUGAR.themes, {
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
-		$("#notifCount").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#dcmenuSugarCube").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});	
 		//setup tool tips for partner integrations
 		$("#partner").children("a").each(
@@ -259,8 +260,8 @@ SUGAR.append(SUGAR.themes, {
 		$("#sugar_spot_search").val("");
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
-		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
-	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));	
+		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
+	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));	
 	  	firstHit = false;
    	},
    	actionMenu: function() {
