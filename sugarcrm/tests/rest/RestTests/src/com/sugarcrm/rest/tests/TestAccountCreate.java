@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.http.HttpEntity;
@@ -24,6 +25,7 @@ public class TestAccountCreate {
 
 	@Test
 	public void test() {
+		String tmp = "";
 		int status = -1;
 		String uri = "";
 		HttpPost post = null;
@@ -33,20 +35,30 @@ public class TestAccountCreate {
 		DefaultHttpClient client = null;
 		StringEntity entity;
 		HashMap<String, Object> data = new HashMap<String, Object>();
-		data.put("username", "admin");
-		data.put("password", "admin");
+		TestData testData = new TestData();
+		String account_name = "New Rest Account Name";
+		
+		data.put("username", testData.getValue("sugaruser"));
+		data.put("password", testData.getValue("sugarpass"));
 		data.put("type", "text");
 		
 		try {
+			Date date = new Date();
+			String time = String.valueOf(date.getTime());
+			account_name = String.format("%s-%s", account_name, time);
+			
 			context = new BasicHttpContext();
 			client = new DefaultHttpClient();
 			Gson json = new Gson();
 			String jsonString = json.toJson(data);
 			entity = new StringEntity(jsonString);
+			
 			System.out.printf("Sending login info:\n");
 			System.out.printf("JSON:\n%s\n", jsonString);
+			
 			entity = new StringEntity(jsonString, "application/json", "UTF-8");
-			uri = String.format("%s/login", TestData.BaseURL);
+			uri = String.format("%s/login", testData.getValue("sugarinst"));
+			System.out.printf("URI: '%s'\n", uri);
 			post = new HttpPost(uri);
 			post.setEntity(entity);
 			response = client.execute(post, context);
@@ -54,19 +66,11 @@ public class TestAccountCreate {
 			
 			status = response.getStatusLine().getStatusCode();
 			if (status != 200) {
-				String tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
+				tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
 				fail(tmp);
 			}
 			
-			InputStreamReader in = new InputStreamReader(responseData.getContent());
-			BufferedReader reader = new BufferedReader(in);
-			
-			String buffer = "";
-			String tmp = "";
-			while ((tmp = reader.readLine()) != null) {
-				buffer = buffer + tmp;
-			}
-			
+			String buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: %s\n", buffer);
 			UserId id = (UserId)json.fromJson(buffer, UserId.class);
 			System.out.printf("(*)TOKEN: %s\n", id.token);
@@ -74,38 +78,59 @@ public class TestAccountCreate {
 			
 			// try to use Accounts object/module //
 			System.out.printf("(*)Getting Accounts Object...\n");
-			uri = String.format("%s/Accounts", TestData.BaseURL);
+			uri = String.format("%s/Accounts", testData.getValue("sugarinst"));
 
 			System.out.printf("(*)URI: %s\n\n", uri);
 			HashMap<String, String> postData = new HashMap<String, String>();
-			postData.put("name", "New Rest Account Name");
+			
+			postData.put("name", account_name);
 			postData.put("description", "Testing\n1\n2\n3...\nDONE>...");
 			postData.put("phone_office", "7078314197771");
 			postData.put("email1", "foo@bar.com");
 			String postJson = json.toJson(postData);
 			
+			// create new account //
 			post = new HttpPost(uri);
-			
 			entity = new StringEntity(postJson, "application/json", "UTF-8");
 			post.setEntity(entity);
 			post.addHeader("OAuth Token", id.token.toString());
 			post.addHeader("User-Agent", "evilkook");
 			
 			response = client.execute(post);
-			responseData = response.getEntity();
-			in = new InputStreamReader(responseData.getContent());
-			reader = new BufferedReader(in);
-			
-			buffer = "";
-			tmp = "";
-			while ((tmp = reader.readLine()) != null) {
-				buffer = buffer + tmp;
+			status = response.getStatusLine().getStatusCode();
+			if (status != 200) {
+				tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
+				fail(tmp);
 			}
 			
+			responseData = response.getEntity();
+			buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: '%s'\n\n", buffer);
-			System.out.printf("(*)Finished getting Accounts Object...\n");
+			AccountId accID = json.fromJson(buffer, AccountId.class);
+			System.out.printf("New Account ID: '%s'\n", accID.id);
+			// finished account create //
 			
+			// get account from server and check some data //
+			uri = String.format("%s/Accounts/%s", testData.getValue("sugarinst"), accID.id);
+			get = new HttpGet(uri);
+			System.out.printf("URI: '%s'\n", uri);
+			get.addHeader("OAuth-Token", id.token.toString());
+			get.addHeader("User-Agent", "evilkook");
+			response = client.execute(get);
+			status = response.getStatusLine().getStatusCode();
+			if (status != 200) {
+				tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
+				fail(tmp);
+			}
 			
+			responseData = response.getEntity();
+			buffer = TestUtils.bufferToString(responseData);
+			System.out.printf("RESPONSE: '%s'\n\n", buffer);
+			HashMap<String, Object> accountInfo = json.fromJson(buffer, HashMap.class);
+			assertEquals(account_name, accountInfo.get("name"));
+			
+			// finished checking account data //
+			System.out.printf("(*)Finished getting Accounts Object...\n");			
 		} catch (Exception exp) {
 			exp.printStackTrace();
 			fail(exp.getMessage());
@@ -115,4 +140,9 @@ public class TestAccountCreate {
 	public class UserId {
 		private String token;
 	}
+	
+	public class AccountId {
+		private String id;
+	}
+	
 }
