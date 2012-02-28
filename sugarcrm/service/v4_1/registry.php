@@ -21,12 +21,14 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  ********************************************************************************/
 
-require_once('service/v3_1/registry.php');
+require_once('service/v4/registry.php');
 
-class registry_v4_1 extends registry_v3_1 {
+class registry_v4_1 extends registry_v4 {
 
 	/**
-	 * This method registers all the functions on the service class
+	 * registerFunction
+     *
+     * Registers all the functions on the service class
 	 *
 	 */
 	protected function registerFunction()
@@ -39,14 +41,5 @@ class registry_v4_1 extends registry_v3_1 {
             array('session'=>'xsd:string', 'module_name'=>'xsd:string', 'module_id'=>'xsd:string', 'link_field_name'=>'xsd:string', 'related_module_query'=>'xsd:string', 'related_fields'=>'tns:select_fields', 'related_module_link_name_to_fields_array'=>'tns:link_names_to_fields_array', 'deleted'=>'xsd:int', 'order_by'=>'xsd:string', 'offset'=>'xsd:int' , 'limit'=>'xsd:int'),
             array('return'=>'tns:get_entry_result_version2'));
 
-	}
-
-	/**
-	 * This method registers all the complex types
-	 *
-	 */
-	protected function registerTypes()
-	{
-	    parent::registerTypes();
 	}
 }

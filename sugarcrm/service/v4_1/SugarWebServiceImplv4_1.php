@@ -31,6 +31,10 @@ require_once('service/v4/SugarWebServiceUtilv4.php');
 class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
 {
 
+    /**
+     * Class Constructor Object
+     *
+     */
     public function __construct()
     {
         self::$helperObject = new SugarWebServiceUtilv4();
@@ -66,7 +70,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
                 $limit = null;
             }
             $entry_list = array_slice($entry_list, $offset, $limit, true);
-            if(!empty($rel_list)) {
+            if (!empty($rel_list)) {
                 $rel_list = array_slice($entry_list, $offset, $limit, true);
             }
 
@@ -77,5 +81,4 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
         return $return;
 
     } // fn
-
 }
