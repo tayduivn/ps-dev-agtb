@@ -8,7 +8,6 @@ describe("sugarAuth", function () {
         this.invalidPassword = 'invalid';
         this.api = SUGAR.Api.getInstance();
         this.auth = SUGAR.App.sugarAuth.getInstance();
-
         this.callbacks = {
             success: function(data){
                 //console.log(data);
@@ -41,7 +40,7 @@ describe("sugarAuth", function () {
 
         //make expectations (then)
         var result = this.auth.login({
-            user_name: this.user_name,
+            username: this.user_name,
             password: this.validPassword
         },this.callbacks);
 
@@ -64,7 +63,7 @@ describe("sugarAuth", function () {
 
         //make expectations (then)
         var result = this.auth.login({
-            user_name: this.user_name,
+            username: this.user_name,
             password: this.invalidPassword
         }, this.callbacks);
         this.server.respond(); //tell server to respond to pending async call
