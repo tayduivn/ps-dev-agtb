@@ -154,7 +154,16 @@ class ViewFts extends SugarView
             if( isset($facetResults[$moduleEntry['module']]) )
                 $moduleEntry['count'] = $facetResults[$moduleEntry['module']];
             else
-                $moduleEntry['count'] = 0;
+            {
+                if (empty($_REQUEST['m']) || in_array($moduleEntry['module'], $_REQUEST['m']))
+                {
+                    $moduleEntry['count'] = 0;
+                }
+                else
+                {
+                    $moduleEntry['count'] = 'N/A';
+                }
+            }
         }
 
         return $modulelist;
