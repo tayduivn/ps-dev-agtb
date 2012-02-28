@@ -1,5 +1,6 @@
 <?php
-/************************************
+//FILE SUGARCRM flav=pro ONLY
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -18,45 +19,21 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once("include/Expressions/Expression/String/StringExpression.php");
-/**
- * <b>strToLower(String s)</b><br/>
- * Returns <i>s</i> converted to lower case.<br/>
- * ex: <em>strToLower("Hello World")</em> = "hello world"
- */
-class StrToLowerExpression extends StringExpression {
-	/**
-	 * Returns itself when evaluating.
-	 */
-	function evaluate() {
-		$param =$this->getParameters();
-		if (is_array($param))
-			$param = $param[0];
-		return mb_strtolower($param->evaluate(), 'UTF-8');
-	}
+require_once("include/Expressions/Expression/Parser/Parser.php");
 
-	/**
-	 * Returns the JS Equivalent of the evaluate function.
-	 */
-	static function getJSEvaluate() {
-		return <<<EOQ
-			var string = this.getParameters().evaluate() + "";
-			return string.toLowerCase();
-EOQ;
-	}
+class Bug50807Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function testStrToLower()
+    {
+        $expr = 'strToLower("SAUTÉES")';
+        $result = Parser::evaluate($expr)->evaluate();
+        $this->assertEquals("sautées", $result);
+    }
 
-	/**
-	 * Returns the opreation name that this Expression should be
-	 * called by.
-	 */
-	static function getOperationName() {
-		return "strToLower";
-	}
-
-	/**
-	 * Returns the String representation of this Expression.
-	 */
-	function toString() {
-	}
+    public function testStrToUpper()
+    {
+        $expr = 'strToUpper("sautées")';
+        $result = Parser::evaluate($expr)->evaluate();
+        $this->assertEquals("SAUTÉES", $result);
+    }
 }
-?>
