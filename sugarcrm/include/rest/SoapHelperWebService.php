@@ -34,8 +34,11 @@ class SoapHelperWebServices {
 
 			foreach ($value->field_defs as $var) {
 				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
-				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
-				if ($var['source'] == 'non_db' && (isset($var['type']) && $var['type'] != 'link')) {
+				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' &&
+                    $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
+				if (array_key_exists("source", $var) && $var['source'] == 'non_db' && (isset($var['type']) &&
+                    $var['type'] != 'link')) {
+
 					continue;
 				}
 				$required = 0;
@@ -44,10 +47,12 @@ class SoapHelperWebServices {
 				// Apparently the only purpose of this check is to make sure we only return fields
 				//   when we've read a record.  Otherwise this function is identical to get_module_field_list
 
-				if( isset($var['required']) && $var['required'] && $var['required'] !== 'false' ){
+				if(array_key_exists("required", $var) && isset($var['required']) && $var['required'] &&
+                    $var['required'] !== 'false' ) {
+
 					$required = 1;
 				}
-				if(isset($var['options'])){
+				if(isset($var['options'])) {
 					$options_dom = translate($var['options'], $value->module_dir);
 					if(!is_array($options_dom)) $options_dom = array();
 					foreach($options_dom as $key=>$oneOption)
@@ -954,7 +959,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_return_module_fields');
 		global $module_name;
 		$module_name = $module;
-		$result = $this->get_field_list($value,$fields,  $translate);
+		$result = $this->get_field_list($value, $fields,  $translate);
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_return_module_fields');
 		return Array('module_name'=>$module,
 					'module_fields'=> $result['module_fields'],
