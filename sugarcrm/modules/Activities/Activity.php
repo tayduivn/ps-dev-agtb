@@ -32,8 +32,12 @@ require_once('data/SugarBean.php');
 abstract class Activity extends SugarBean
 {
 
-    var $secondary_select_count;
-    var $alter_many_to_many_query;
+    //Member variable to store value of related records when secondary selects are made via create_new_list_query
+    protected $secondary_select_count;
+
+    //Member variable to indicate whether or not this create_new_list_query is called from list view display
+    //If so, we set this to true so we may allow for the bean subclasses to appropriately format
+    protected $alter_many_to_many_query;
 
     /**
      * createManyToManyDetailHoverLink
