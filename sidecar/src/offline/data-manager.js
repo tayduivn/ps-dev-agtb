@@ -15,24 +15,26 @@
 
         SYNC_STATES: SYNC_STATES,
 
-        declareModels: function(metadata, oldMetadata) {
+        declareModels: function(metadata, options) {
+            options || (options = {});
+
             if (!app.Offline.storageAdapter.open()) {
-                // TODO: Raise error event
+                if (options.error) options.error(); // TODO: Pass something meaningful in the callback
                 return;
             }
 
             app.dataManager.beanModel = app.Offline.Bean;
             //app.dataManager.beanCollection = app.Offline.BeanCollection;
 
-            app.Offline.storageAdapter.migrate(metadata, oldMetadata,
+            app.Offline.storageAdapter.migrate(metadata, options.oldMetadata,
                 function() {
-                    app.dataManager.declareModels(metadata);
+                    app.dataManager.declareModels(metadata, options);
                 },
                 function(error) {
                     // TODO: Adjust error logging
                     app.logger.error("Failed to migrate offline storage");
                     app.logger.error(error);
-                    // TODO: Fire error event
+                    if (options.error) options.error(error);
                 }
             );
         },
