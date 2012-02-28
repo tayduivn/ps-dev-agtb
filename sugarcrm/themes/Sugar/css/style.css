@@ -1333,7 +1333,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #bottomLinks {
 	padding: 0 25px;
 	float: right;
-    margin-bottom:20px;
+    margin-bottom:45px;
 }
 
 #bottomLinks a {
@@ -5721,9 +5721,18 @@ span.dcmenuitem:hover{
 
 
 #dcmenuSugarCube {
-float: left;
-margin: 0px 0px 0 0px;
+float: right;
+margin: 0px 0px 0 2px;
 height: 43px;
+}
+
+#dcmenuSugarCube:hover {
+	background-color: #276499;	
+}
+
+#notifDivider {
+float: right;
+margin-right: 0px;	
 }
 
 #dcmenuSugarCube a{

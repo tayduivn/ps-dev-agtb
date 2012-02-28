@@ -87,7 +87,7 @@ class DCMenu extends DashletContainer
         $otherAttributes = "onclick=\"DCMenu.notificationsList(); return false;\" class=\"notice\"";
 		if($unreadNotifications > 0) {
 			$iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1";
-			$code = '<div id="notifCount" class="notifCount" onclick="DCMenu.notificationsList();">'.$unreadNotifications.'</div>';
+			$code = '<div id="notifCount" class="notifCount">'.$unreadNotifications.'</div>';
 			$class = "";
 		} else {
 			$iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1";
@@ -95,7 +95,7 @@ class DCMenu extends DashletContainer
 			$class = ' class="none"';
 		}
 		//$image = SugarThemeRegistry::current()->getLink($url, '', $attr, $iconImage, 'class="dc_notif_icon" border="0" alt="'.$unreadNotifications.' '.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'"');
-		$image = '<a href="'.$url.'" title="'.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'" ><span class="dc_notif_icon" border="0" alt="'.$unreadNotifications.'" style="background-image: url('.$iconImage.');  "></span></a>';
+		$image = '<a href="'.$url.'" ><span class="dc_notif_icon" border="0" alt="'.$unreadNotifications.'" style="background-image: url('.$iconImage.');  "></span></a>';
 
 		} else {
 			$image = SugarThemeRegistry::current()->getImage("index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1", 'class="dc_notif_icon" border="0"');

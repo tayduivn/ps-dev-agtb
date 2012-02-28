@@ -28,16 +28,6 @@
 *}
 <div class="dcmenuDivider" id="globalLinksDivider"></div>
 <div id="globalLinksModule">
-
-
-
-<div id="dcmenuSugarCube" {$NOTIFCLASS}>
-  {$NOTIFICON}
-  {$NOTIFCODE}
-</div>
-
-
-
             <ul class="clickMenu" id="globalLinks">
             <li>
                
@@ -61,4 +51,9 @@
         
         
 
+</div>
+<div class="dcmenuDivider" id="notifDivider"></div>
+<div id="dcmenuSugarCube" {$NOTIFCLASS} onclick="DCMenu.notificationsList();" title="{$APP.LBL_PENDING_NOTIFICATIONS}">
+  {$NOTIFICON}
+  {$NOTIFCODE}
 </div>
