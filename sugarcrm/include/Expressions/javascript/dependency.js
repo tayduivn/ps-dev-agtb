@@ -315,6 +315,34 @@ AH.assign = function(variable, value, flash)
         }
     }
 	else {
+        // See if this is a numeric field that needs formatting
+        var fieldForm = field.form.name;
+        var fieldType = 'text';
+        if ( typeof(validate[fieldForm]) == "object" ) {
+            for ( var idx in validate[fieldForm] ) {
+                if (validate[fieldForm][idx][0] == field.name) {
+                    // We found our field
+                    fieldType = validate[fieldForm][idx][1];
+                    break;
+                }
+            }
+        }
+        if ( fieldType == 'decimal' || fieldType == 'currency' || fieldType == 'int' ) {
+            // It's numeric, let's format it
+            var localPrecision = 2;
+            if ( fieldType == 'int' ) {
+                localPrecision = 0;
+            } else {
+                // Some pages actually populate the precision, most do not however.
+                if ( typeof(precision) != 'undefined' ) {
+                    localPrecision = precision;
+                }
+            }
+            
+            if ( value != '' ) {
+                value = formatNumber(value,num_grp_sep,dec_sep,localPrecision,localPrecision);
+            }
+        }
 		field.value = value;
 	}
 
