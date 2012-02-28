@@ -104,7 +104,7 @@ describe("DataManager", function() {
 
         server = sinon.fakeServer.create();
 
-        server.respondWith("GET", "/rest/v10/Contacts/1234/",
+        server.respondWith("GET", "/rest/v10/Contacts/1234",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contact)]);
 
@@ -121,7 +121,7 @@ describe("DataManager", function() {
 
         server = sinon.fakeServer.create();
 
-        server.respondWith("POST", "/rest/v10/Contacts/",
+        server.respondWith("POST", "/rest/v10/Contacts",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify({ id: "xyz" })]);
 
@@ -138,7 +138,7 @@ describe("DataManager", function() {
 
         server = sinon.fakeServer.create();
 
-        server.respondWith("PUT", "/rest/v10/Contacts/xyz/",
+        server.respondWith("PUT", "/rest/v10/Contacts/xyz",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify({ dateModified: "2" })]);
 
@@ -155,7 +155,7 @@ describe("DataManager", function() {
 
         server = sinon.fakeServer.create();
 
-        server.respondWith("DELETE", "/rest/v10/Contacts/xyz/",
+        server.respondWith("DELETE", "/rest/v10/Contacts/xyz",
             [200, {  "Content-Type": "application/json"}, ""]);
 
         contact.destroy();
@@ -171,7 +171,7 @@ describe("DataManager", function() {
 
         server = sinon.fakeServer.create();
 
-        server.respondWith("GET", "/rest/v10/Contacts/",
+        server.respondWith("GET", "/rest/v10/Contacts",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
