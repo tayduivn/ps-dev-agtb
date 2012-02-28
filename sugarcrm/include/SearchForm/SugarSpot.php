@@ -317,11 +317,14 @@ class SugarSpot
             {
                 $keep = false;
                 $searchFields[$moduleName][$k]['value'] = $query;
-
-                if(!empty($GLOBALS['dictionary'][$class]['unified_search']))
+                if(!empty($searchFields[$moduleName][$k]['force_unifiedsearch']))
                 {
-                    if(empty($GLOBALS['dictionary'][$class]['fields'][$k]['unified_search']))
-                    {
+                    continue;
+                }
+
+				if(!empty($GLOBALS['dictionary'][$class]['unified_search'])){
+
+					if(empty($GLOBALS['dictionary'][$class]['fields'][$k]['unified_search'])){
 
                         if(isset($searchFields[$moduleName][$k]['db_field']))
                         {
@@ -329,48 +332,44 @@ class SugarSpot
                             {
                                 if(!empty($GLOBALS['dictionary'][$class]['fields'][$field]['unified_search']))
                                 {
+                                    if(isset($GLOBALS['dictionary'][$class]['fields'][$field]['type']))
+                                    {
+                                        if(!$this->filterSearchType($GLOBALS['dictionary'][$class]['fields'][$field]['type'], $query))
+                                        {
+                                            unset($searchFields[$moduleName][$k]);
+                                            continue;
+                                        }
+                                    }
+
                                     $keep = true;
-                                }
-                            }
-                        }
-                        if(!$keep)
-                        {
-                            if(strpos($k,'email') === false || !$searchEmail)
-                            {
-                                unset($searchFields[$moduleName][$k]);
-                            }
-                        }
-                    }else
-                    {
-                        if($GLOBALS['dictionary'][$class]['fields'][$k]['type'] == 'int' && !is_numeric($query))
-                        {
-                            unset($searchFields[$moduleName][$k]);
-                        }
-                    }
-                }else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) )
-                {
-                    //If module did not have unified_search defined, then check the exception for an email search before we unset
-                    if(strpos($k,'email') === false || !$searchEmail)
-                    {
-                        unset($searchFields[$moduleName][$k]);
-                    }
-                }else{
-                    switch($GLOBALS['dictionary'][$class]['fields'][$k]['type'])
-                    {
-                        case 'id':
-                        case 'date':
-                        case 'datetime':
-                        case 'bool':
-                            unset($searchFields[$moduleName][$k]);
-                            break;
-                        case 'int':
-                            if(!is_numeric($query))
-                            {
-                                unset($searchFields[$moduleName][$k]);
-                                break;
-                            }
-                    }
-                }
+								}
+							} //foreach
+						}
+						if(!$keep){
+							if(strpos($k,'email') === false || !$searchEmail) {
+								unset($searchFields[$moduleName][$k]);
+							}
+						}
+					}else{
+					    if($GLOBALS['dictionary'][$class]['fields'][$k]['type'] == 'int' && !is_numeric($query)) {
+					        unset($searchFields[$moduleName][$k]);
+					    }
+					}
+				}else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) ){
+					//If module did not have unified_search defined, then check the exception for an email search before we unset
+					if(strpos($k,'email') === false || !$searchEmail)
+					{
+					   unset($searchFields[$moduleName][$k]);
+					}
+				}else if(!$this->filterSearchType($GLOBALS['dictionary'][$class]['fields'][$k]['type'], $query)){
+                    unset($searchFields[$moduleName][$k]);
+				}
+			} //foreach
+
+            //If no search field criteria matched then continue to next module
+			if (empty($searchFields[$moduleName]))
+            {
+                continue;
             }
 
             if (empty($searchFields[$moduleName])) continue;
@@ -695,6 +694,11 @@ class SugarSpot
                 }
                 break;
             case 'phone':
+                //For a phone search we require at least three digits
+                if(!preg_match('/[0-9]{3,}/', $query))
+                {
+                    return false;
+                }
             case 'decimal':
             case 'float':
                 if(!preg_match('/[0-9]/', $query))

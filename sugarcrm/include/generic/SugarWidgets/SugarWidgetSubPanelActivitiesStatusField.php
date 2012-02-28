@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelActivitiesStatusField.php 45763 2009-04-01 19:16:18Z majed $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 
 
 class SugarWidgetSubPanelActivitiesStatusField extends SugarWidgetField

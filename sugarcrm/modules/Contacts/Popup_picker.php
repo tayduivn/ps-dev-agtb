@@ -111,7 +111,7 @@ class Popup_Picker
 			. '</td></tr></table>'
 			. '<input type="hidden" name="action" value="Popup" />';
 		$formSave = <<<EOQ
-		<input type="submit" name="button" class="button" title="$lbl_save_button_title" accesskey="$lbl_save_button_key" value="  $lbl_save_button_label  " />
+		<input type="submit" name="button" class="button" title="$lbl_save_button_title" value="  $lbl_save_button_label  " />
 		<input type="button" name="button" class="button" title="{$app_strings['LBL_CANCEL_BUTTON_TITLE']}" accesskey="{$app_strings['LBL_CANCEL_BUTTON_KEY']}" value="{$app_strings['LBL_CANCEL_BUTTON_LABEL']}" onclick="toggleDisplay('addform');" />
 EOQ;
 		$createContact = <<<EOQ
@@ -122,8 +122,7 @@ EOQ;
 		if(!$hide_clear_button)
 		{
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back('','');\" title='"
-				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accesskey='"
-				.$app_strings['LBL_CLEAR_BUTTON_KEY']."' value='  "
+				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' value='  "
 				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' />\n";
 		}
 		$button .= "<input type='submit' name='button' class='button' onclick=\"window.close();\" title='"
@@ -280,8 +279,7 @@ EOJS;
 		if(!$hide_clear_button)
 		{
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back('','');\" title='"
-				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accesskey='"
-				.$app_strings['LBL_CLEAR_BUTTON_KEY']."' value='  "
+				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' value='  "
 				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' />\n";
 		}
 		$button .= "<input type='submit' name='button' class='button' onclick=\"window.close();\" title='"

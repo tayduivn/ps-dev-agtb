@@ -4902,7 +4902,9 @@ eoq;
 		$this->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
 
-		$q = "SELECT inbound_email.id FROM inbound_email {$teamJoin} WHERE is_personal = 0 AND groupfolder_id is null AND mailbox_type not like 'bounce' AND inbound_email.deleted = 0 AND status = 'Active' ";
+        // bug 50536: groupfolder_id cannot be updated to NULL from sugarbean's nullable check ('type' set to ID in the vardef)
+        // hence the awkward or check -- rbacon
+		$q = "SELECT inbound_email.id FROM inbound_email {$teamJoin} WHERE is_personal = 0 AND (groupfolder_id is null OR groupfolder_id = '') AND mailbox_type not like 'bounce' AND inbound_email.deleted = 0 AND status = 'Active' ";
 
 
 

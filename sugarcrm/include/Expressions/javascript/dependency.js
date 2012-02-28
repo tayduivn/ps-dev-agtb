@@ -25,7 +25,6 @@
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
 (function() {
 /**
  * This JavaScript file provides an entire framework for the new
@@ -42,6 +41,8 @@
 // namespace
 if ( typeof(SUGAR.forms) == 'undefined' )	SUGAR.forms = {};
 if ( typeof(SUGAR.forms.animation) == 'undefined') SUGAR.forms.animation = {};
+
+var Dom = YAHOO.util.Dom;
 
 /**
  * @STATIC
@@ -69,6 +70,12 @@ AH.VARIABLE_MAP = {};
 
 /**
  * @STATIC
+ * This array maps variables to a set of listeners
+ */
+AH.LISTENERS = {};
+
+/**
+ * @STATIC
  * This array contains a list of valid relationship links for this module
  */
 AH.LINKS = {};
@@ -92,7 +99,7 @@ AH.register = function(variable, view) {
 
 	if (typeof(AH.VARIABLE_MAP[view]) == "undefined")
 		AH.VARIABLE_MAP[view] = {};
-	
+
 	if ( variable instanceof Array ) {
 		for ( var i = 0; i < variable.length; i++ ) {
 			AH.VARIABLE_MAP[view][variable[i]] = document.getElementById(variable[i]);
@@ -116,7 +123,10 @@ AH.registerFields = function(flds) {
 	if ( typeof(form) == 'undefined' ) return;
 	for ( var i = 0; i < names.length; i++ ) {
 		var el = form[names[i]];
-		if ( el != null )	AH.VARIABLE_MAP[flds.form][el.id] = el;
+		if ( el != null ){
+            AH.VARIABLE_MAP[flds.form][el.id] = el;
+            AH.updateListeners(el.id, flds.form, el);
+        }
 	}
 }
 
@@ -132,9 +142,26 @@ AH.registerForm = function(f, formEl) {
 	for ( var i = 0; i < form.length; i++ ) {
 		var el = form[i];
 		if ( el != null && el.value != null && el.id != null && el.id != "")
+        {
+            //Check for collections
+            if (el.type && el.type == "text" && Dom.getAncestorByClassName(el, "emailaddresses"))
+            {
+                //Find the parent span to get the field name
+                var span = Dom.getAncestorByTagName(el, "span");
+                sId = span.id; //Will be in the format fieldName_span
+                fieldName = sId.substring(0, sId.length - 5);
+
+                if (!AH.VARIABLE_MAP[f][fieldName] || !Dom.isAncestor(span, AH.VARIABLE_MAP[f][fieldName])) {
+                    AH.VARIABLE_MAP[f][fieldName] = el;
+                    AH.updateListeners(fieldName, f, el);
+                }
+            }
 			AH.VARIABLE_MAP[f][el.id] = el;
+            AH.updateListeners(el.id, f, el);
+        }
 		else if ( el != null && el.value && el.type=="hidden")
 			AH.VARIABLE_MAP[f][el.name] = el;
+            AH.updateListeners(el.name, f, el);
 	}
 }
 
@@ -155,6 +182,7 @@ AH.registerView = function(view, startEl) {
 	for (var i in nodes) {
 		if (nodes[i].id != "")
 			AH.VARIABLE_MAP[view][nodes[i].id] = nodes[i];
+            AH.updateListeners(nodes[i].id, view, nodes[i]);
 	}
 }
 
@@ -358,6 +386,79 @@ AH.assign = function(variable, value, flash)
 	AH.LOCKS[variable] = null;
 }
 
+/**
+ * @private
+ *  Private function used to attach a listener to an element
+ *
+ * @param varname
+ * @param callback
+ * @param scope
+ */
+var attachListener = function(el, callback, scope, view)
+{
+    scope = scope || this;
+    if (el.type && el.type.toUpperCase() == "CHECKBOX")
+    {
+        return YAHOO.util.Event.addListener(el, "click", callback, scope, true);
+    }
+    else {
+        return YAHOO.util.Event.addListener(el, "change", callback, scope, true);
+    }
+}
+
+/**
+ *  Registers a callback to fire when a variable/field changes in the current view
+ * @param varname
+ * @param callback
+ * @param scope
+ * @param view
+ */
+AH.addListener = function(varname, callback, scope, view)
+{
+    if (!view) view = AH.lastView;
+    if (!AH.LISTENERS[view]) AH.LISTENERS[view] = {};
+    if (!AH.LISTENERS[view][varname]) AH.LISTENERS[view][varname] = [];
+    var el = AH.getElement(varname, view);
+    AH.LISTENERS[view][varname].push({el:el, callback:callback, scope:scope});
+    if (!el) return false;
+    attachListener(el, callback, scope, view);
+}
+
+/**
+ *  re-attach any listeners orhpaned for a given variable on a given view (such as a field being removed and then re-added
+ * @param varname
+ * @param view
+ */
+AH.updateListeners = function(varname, view, el)
+{
+    if (!view) view = AH.lastView;
+    if (!AH.LISTENERS[view] || !AH.LISTENERS[view][varname] ) {
+        return;
+    }
+    var l = AH.LISTENERS[view][varname],
+        el = el || AH.getElement(varname, view);
+
+    for(var i =0; i < l.length; i++)
+    {
+        var oldEl = l[i].el;
+        //If the element attached to this event is no longer the current
+        // element for this variable on this view, update it
+        if (oldEl != el)
+        {
+            if (oldEl.type && oldEl.type.toUpperCase() == "CHECKBOX")
+            {
+                YAHOO.util.Event.removeListener(oldEl, "click", l[i].callback);
+            }
+            else {
+                YAHOO.util.Event.removeListener(oldEl, "change", l[i].callback);
+            }
+            attachListener(el, l[i].callback, l[i].scope, view);
+            AH.LISTENERS[view][varname][i] = {el:el, callback:l[i].callback, scope:l[i].scope};
+        }
+    }
+
+}
+
 AH.setDateTimeField = function(field, value)
 {
 	var Dom = YAHOO.util.Dom,
@@ -413,7 +514,6 @@ AH.showError = function(variable, error)
 }
 
 AH.clearError = function(variable)
-
 {
 	// retrieve the variable
 	var field = AH.getElement(variable);
@@ -603,6 +703,16 @@ AH.setStyle = function(variable, styles)
 	}
 }
 
+/**
+ * Resets all of the SugarLogic Form Handler variables and registers to clean any cruft from previously loaded views.
+ */
+AH.reset = function() {
+    AH.VARIABLE_MAP = {};
+    AH.LISTENERS = {};
+    AH.LINKS = {};
+    AH.LOCKS = {};
+}
+
 SUGAR.forms.FormExpressionContext = function(formName)
 {
 	this.formName = formName;
@@ -658,6 +768,10 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
         if(AH.LINKS[this.formName][varname])
             return AH.LINKS[this.formName][varname];
         return false;
+    },
+    addListener : function(varname, callback, scope)
+    {
+    	AH.addListener(varname, callback, scope, this.formName);
     }
 });
 
@@ -687,7 +801,7 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap, view)
 	if ( typeof(varmap) == 'undefined' )
 	{
 		varmap = new Array();
-		for ( v in handler.VARIABLE_MAP[view]) {
+		for ( v in AH.VARIABLE_MAP[view]) {
 			if (v != "") {
 				varmap[varmap.length] = v;
 			}
@@ -701,7 +815,7 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap, view)
 	for (var i in vars)
 	{
 		var v = vars[i];
-		var value = handler.getValue(v);
+		var value = AH.getValue(v);
 		if (value == null) {
 			continue;
 			//throw "Unable to find field: " + v;
@@ -853,12 +967,14 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, fo
 	this.actions = actions;
 	this.falseActions = falseActions;
 	this.context = new SUGAR.forms.FormExpressionContext(form);
-	trigger.setDependency(this);
-	trigger.setContext(this.context);
-	this.trigger = trigger;
+    trigger.setContext(this.context);
+    trigger.setDependency(this);
+	SUGAR.lastDep = this;
+    this.trigger = trigger;
 	if (testOnLoad) {
 			AH.fireOnLoad(this);
 	}
+
 }
 
 
@@ -1086,4 +1202,4 @@ SUGAR.forms.Dependency.prototype.getRelatedFields = function () {
 
         oButtonAnim.animate();
     }
-})()
+})();

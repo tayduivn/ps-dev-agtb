@@ -59,7 +59,7 @@ function getControl(
     $file = create_cache_directory('modules/Import/') . $module . $fieldname . '.tpl';
 
     if ( !is_file($file)
-            || !empty($GLOBALS['sugar_config']['developerMode'])
+            || inDeveloperMode()
             || !empty($_SESSION['developerMode']) ) {
         
         if ( !isset($vardef) ) {

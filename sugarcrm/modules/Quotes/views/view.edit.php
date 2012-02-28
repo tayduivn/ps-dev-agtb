@@ -330,4 +330,5 @@ class QuotesViewEdit extends ViewEdit
  		parent::display();
  		echo '<script>sqs_must_match = false;</script>';
  	}
+
 }

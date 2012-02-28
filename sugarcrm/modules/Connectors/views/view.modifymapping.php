@@ -69,6 +69,6 @@ class ViewModifyMapping extends SugarView
 
 		$this->ss->assign('SOURCES', $connectors);
 	    echo $this->getModuleTitle(false);
-		$this->ss->display('modules/Connectors/tpls/modify_mapping.tpl');	
+		$this->ss->display($this->getCustomFilePathIfExists('modules/Connectors/tpls/modify_mapping.tpl'));
     }
 }

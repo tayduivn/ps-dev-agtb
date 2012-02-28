@@ -116,11 +116,11 @@ $mod_strings = array (
 
 
  	'LBL_NEW_FILTER_BUTTON_KEY' => 'F',
-	'LBL_NEW_FILTER_BUTTON_TITLE' => '新增过滤器[Alt+F]',
+	'LBL_NEW_FILTER_BUTTON_TITLE' => '新增过滤器',
 	'LBL_NEW_FILTER_BUTTON_LABEL' => '新增过滤器',
 
   	'LBL_NEW_TRIGGER_BUTTON_KEY' => 'T',
-	'LBL_NEW_TRIGGER_BUTTON_TITLE' => '新增触发器[Alt+T]',
+	'LBL_NEW_TRIGGER_BUTTON_TITLE' => '新增触发器',
 	'LBL_NEW_TRIGGER_BUTTON_LABEL' => '新增触发器',
 
 	'LBL_LIST_FRAME_SEC' => '过滤器:',

@@ -110,6 +110,29 @@ width:70%;
                     this.checked = !this.checked;
                     return;
                 }
+                if (this.id == 'all')
+                {
+                    if (this.checked)
+                    {
+                        // uncheck all others
+                        $('#moduleListTD').find('.ftsModuleFilter:checked').each(function(i) {
+                            //results.push($(this).attr('id'));
+                            if (this.id != 'all')
+                            {
+                                $('#'+this.id).removeAttr("checked");
+                                var textLabel = this.id + '_label';
+                                var countLabel = this.id + '_count';
+                                $('#'+textLabel).addClass('unchecked');
+                                $('#'+countLabel).addClass('unchecked');
+                            }
+                        });
+                    }
+                }
+                else {
+                    // uncheck all
+                    $('#all').removeAttr("checked");
+                    $('#all_label').addClass('unchecked');
+                }
                 SUGAR.FTS.search();
                 var textLabel = this.id + '_label';
                 var countLabel = this.id + '_count';
@@ -146,13 +169,18 @@ width:70%;
             $('#sugar_full_search_results').showLoading();
             //TODO: Check if all modules are selected, then don't send anything down.
             var m = this.getSelectedModules();
+            var rml = 1; // refresh module list
+            if (m == 'all')
+            {
+                m = ''; // do not send anything if search all modules
+            }
             var q = $("#ftsSearchField").val();
 
             $.ajax({
                 type: "POST",
                 url: "index.php",
                 dataType: 'json',
-                data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true, 'offset': SUGAR.FTS.currentOffset},
+                data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true, 'offset': SUGAR.FTS.currentOffset, 'refreshModList': rml},
                 success: function(o)
                 {
                     if(typeof(append) != 'undefined' && append)
@@ -168,6 +196,11 @@ width:70%;
                     $("#totalTime").html(o.totalTime);
                     $("#totalCount").html(o.totalHits);
                     $('#sugar_full_search_results').hideLoading();
+                    if(typeof(o.mod_filter) != 'undefined')
+                    {
+                        $("#moduleListRs").html(o.mod_filter);
+                        SUGAR.FTS.addModuleFilterHandlers();
+                    }
                     SUGAR.FTS.toogleShowMore();
 
                 },
@@ -245,7 +278,7 @@ width:70%;
     //Setup autocomplete
     var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
     var autoCom = $( "#ftsSearchField" ).autocomplete({
-        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&refreshModList=true&data='+data,
+        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&data='+data,
         select: function(event, ui) {},
         minLength: 3,
         search: function(event,ui){
@@ -279,7 +312,12 @@ width:70%;
                 var self = this;
                 self.pending++;
                 var m = SUGAR.FTS.getSelectedModules();
-                var data = { term: value, m: m };
+                var rml = 1; // refresh module list
+                if (m == 'all')
+                {
+                    m = ''; // do not send anything if search all modules
+                }
+                var data = { term: value, m: m, refreshModList: rml };
                 SUGAR.FTS.currentOffset = 0;
                 self.source(data, self.response );
             }

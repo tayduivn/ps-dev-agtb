@@ -1826,9 +1826,9 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 
         list($orderBy,$desc) = $this->getOrderByInfo($html_varName);
 
-		$imgArrow = "_down";
+		$imgArrow = "_up";
 		if($desc) {
-			$imgArrow = "_up";
+			$imgArrow = "_down";
 		}
 		/**
 		 * @deprecated only used by legacy opportunites listview, nothing current. Leaving for BC

@@ -246,6 +246,6 @@ eoq;
 
         $this->ss->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default);
         $this->ss->assign('langHeader', get_language_header());
-		$this->ss->display('modules/Users/tpls/wizard.tpl');
+		$this->ss->display($this->getCustomFilePathIfExists('modules/Users/tpls/wizard.tpl'));
 	}
 }

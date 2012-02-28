@@ -452,6 +452,32 @@ SUGAR.subpanelUtils = function() {
          * @param loadingStr
          */
 		sendAndRetrieve: function(theForm, theDiv, loadingStr) {
+            // look whether a quick create form is currently opened
+            var quickCreateDiv = YAHOO.util.Selector.query("div.quickcreate", null, true);
+            if (quickCreateDiv)
+            {
+                var form = YAHOO.util.Selector.query("form", quickCreateDiv, true);
+                if (form)
+                {
+                    // discover cancelCreate function parameters needed
+                    var moduleName = form.id.replace(/.*?_([^_]+)$/, "$1");
+                    var buttonName = moduleName + "_subpanel_cancel_button";
+                    var cancelled  = false;
+
+                    // try to cancel form submission
+                    SUGAR.subpanelUtils.cancelCreate(buttonName, function()
+                    {
+                        cancelled = true;
+                    });
+
+                    // if submission cancellation was cancelled, do nothing
+                    if (cancelled)
+                    {
+                        return false;
+                    }
+                }
+            }
+
 			function success(data) {
 				var theDivObj = document.getElementById(theDiv),
                     divName = theDiv + '_newDiv',
@@ -502,7 +528,13 @@ SUGAR.subpanelUtils = function() {
 			return false;
 		},
 
-		cancelCreate: function(buttonName) {
+        // as long as formerly the function used to be always returning false,
+        // there was no possibility to determine, was the creation cancelled or not.
+        // we couldn't modify function return value in case of user cancels the
+        // cancellation as long as it (false) is used in multiple places to
+        // prevent DOM event propagation. thus, cancelCallback optional
+        // parameter is added to be able to track this case
+		cancelCreate: function(buttonName, cancelCallback) {
 			var element = document.getElementById(buttonName),
                 theForm = element.form,
                 confirmMsg = onUnloadEditView(theForm);
@@ -518,6 +550,10 @@ SUGAR.subpanelUtils = function() {
 
             if ( confirmMsg != null ) {
                 if ( !confirm(confirmMsg) ) {
+                    if ("function" === typeof cancelCallback)
+                    {
+                        cancelCallback();
+                    }
                     return false;
                 } else {
                     disableOnUnloadEditView(theForm);

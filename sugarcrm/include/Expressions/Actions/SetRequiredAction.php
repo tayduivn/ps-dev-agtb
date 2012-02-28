@@ -41,6 +41,7 @@ SUGAR.forms.SetRequiredAction = function(variable, expr, label) {
     this.expr = expr;
     this.label    = label;
     this._el_lbl  = document.getElementById(this.label);
+    this.msg = this._el_lbl.innerText;
 }
 
 /**
@@ -62,10 +63,12 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
             SUGAR.forms.FormValidator.setRequired(el.form.name, el.name, this.required);
 
 
-        if (this._el_lbl != null) {
-            var p = this._el_lbl;
-            var els = YAHOO.util.Dom.getElementsBy( function(e) { return e.className == 'req'; }, \"span\", p)
-            var reqSpan = false;
+        if (this._el_lbl != null && el != null) {
+            var p = this._el_lbl,
+                els = YAHOO.util.Dom.getElementsBy( function(e) { return e.className == 'req'; }, \"span\", p),
+                reqSpan = false,
+                fName = el.name;
+
             if ( els != null && els[0] != null)
                 reqSpan = els[0];
 
@@ -75,17 +78,18 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
                     node.innerHTML = \"<font color='red'>*</font>\";
                     node.className = \"req\";
                     this._el_lbl.appendChild(node);
-                    var i = this.findInValidate(this.context.formName, this.variable)
+
+                    var i = this.findInValidate(this.context.formName, fName)
                     if (i > -1)
                         validate[this.context.formName][i][2] = true;
                     else
-                        addToValidate(this.context.formName, this.variable, 'text', true, this.variable);
+                        addToValidate(this.context.formName, fName, 'text', true, this.msg);
                 }
             } else {
                 if ( p != null  && reqSpan != false) {
                     p.removeChild(reqSpan);
                 }
-                var i = this.findInValidate(this.context.formName, this.variable)
+                var i = this.findInValidate(this.context.formName, fName)
                 if (i > -1)
                     validate[this.context.formName][i][2] = false;
             }

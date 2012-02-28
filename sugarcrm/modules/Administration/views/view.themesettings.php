@@ -52,6 +52,11 @@ class AdministrationViewThemesettings extends SugarView
     {
         global $current_user;
         if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
+
+        // Check if default_theme is valid
+        if (isset($_REQUEST['default_theme']) && !in_array($_REQUEST['default_theme'], array_keys(SugarThemeRegistry::allThemes()))) {
+            sugar_die("Default theme is invalid.");          
+        }
         
         if (isset($_REQUEST['disabled_themes']) ) {
             $toDecode = html_entity_decode  ($_REQUEST['disabled_themes'], ENT_QUOTES);

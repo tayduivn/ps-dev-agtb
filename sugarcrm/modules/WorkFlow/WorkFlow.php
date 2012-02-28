@@ -127,6 +127,9 @@ class WorkFlow extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array("name"=>1, 'base_module'=>1, 'type'=>1);
 
+    // This is a member variable to flag whether or not we really call mark_deleted on the cascade_delete call
+    var $delete_workflow_on_cascade = true;
+
 	function WorkFlow() {
 		parent::SugarBean();
 
@@ -1346,6 +1349,16 @@ function repair_workflow(){
 	}
 
 
+    /**
+     * cascade_delete
+     * This function handles the management of related workflow components when a workflow is deleted.  The
+     * cascade_delete call is also run when the target module of an existing workflow is modified so that the
+     * workflow may invalidate the related workflow alerts, actions, etc.
+     *
+     * @param Mixed $focus variable of the Workflow instance to run cascading deletes against
+     * @param bool $check_controller boolean flag indicating whether or not to readjust the ordering of workflow;
+     * defaults to true
+     */
 	function cascade_delete(& $focus, $check_controller=true){
 
 
@@ -1433,8 +1446,11 @@ function repair_workflow(){
 
 		}
 
-		//mark deleted the workflow object
-		$focus->mark_deleted($focus->id);
+		//mark deleted the workflow object if delete_workflow_on_cascade is set to true
+        if($focus->delete_workflow_on_cascade)
+        {
+		    $focus->mark_deleted($focus->id);
+        }
 		$focus->write_workflow();
 
 	//end function cascade_delete

@@ -59,8 +59,7 @@ $button  = "<form action='index.php' method='post' name='form' id='form'>\n";
 if(!$hide_clear_button)
 {
 	$button .= "<input type='button' name='button' class='button' onclick=\"send_back('','');\" title='"
-		.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accesskey='"
-		.$app_strings['LBL_CLEAR_BUTTON_KEY']."' value='  "
+		.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' value='  "
 		.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' />\n";
 }
 $button .= "<input type='submit' name='button' class='button' onclick=\"window.close();\" title='"

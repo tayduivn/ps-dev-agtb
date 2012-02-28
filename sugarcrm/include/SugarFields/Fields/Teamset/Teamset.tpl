@@ -26,4 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{sugarvar_teamset parentFieldArray={{$parentFieldArray}} vardef=$fields.team_name tabindex='{{$tabindex}}' display='{{$displayParams.display}}' labelSpan='{{$displayParams.labelSpan}}' fieldSpan='{{$displayParams.fieldSpan}}' formName='{{$displayParams.formName}}' tabindex=1 displayType='{{$renderView}}' {{if !empty($displayParams.idName)}} idName='{{$displayParams.idName}}'{{/if}} }
+{sugarvar_teamset parentFieldArray={{$parentFieldArray}} vardef=$fields.team_name tabindex='{{$tabindex}}' display='{{$displayParams.display}}' labelSpan='{{$displayParams.labelSpan}}' fieldSpan='{{$displayParams.fieldSpan}}' formName='{{$displayParams.formName}}' tabindex=1 displayType='{{$renderView}}' {{if !empty($displayParams.idName)}} idName='{{$displayParams.idName}}'{{/if}} 	{{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}} }

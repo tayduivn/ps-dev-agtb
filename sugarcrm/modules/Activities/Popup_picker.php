@@ -111,6 +111,11 @@ class Popup_Picker
 			}
 
 			if ($task->status != "Not Started" && $task->status != "In Progress" && $task->status != "Pending Input") {
+                $ts = '';
+                if(!empty($task->fetched_row['date_due'])) {
+                    //tasks can have an empty date due field
+                    $ts = $timedate->fromDb($task->fetched_row['date_due'])->ts;
+                }
 				$history_list[] = array('name' => $task->name,
 									 'id' => $task->id,
 									 'type' => "Task",
@@ -125,7 +130,7 @@ class Popup_Picker
 									 'date_modified' => $date_due,
 									 'description' => $this->getTaskDetails($task),
 									 'date_type' => $app_strings['DATA_TYPE_DUE'],
-									 'sort_value' =>$task->fetched_row['date_due'],
+									 'sort_value' => $ts,
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $task->name,
@@ -170,7 +175,7 @@ class Popup_Picker
 									 'date_modified' => $meeting->date_start,
 									 'description' => $this->formatDescription($meeting->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $meeting->fetched_row['date_start'],
+									 'sort_value' => $timedate->fromDb($meeting->fetched_row['date_start'])->ts,
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $meeting->name,
@@ -216,7 +221,7 @@ class Popup_Picker
 									 'date_modified' => $call->date_start,
 									 'description' => $this->formatDescription($call->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $call->fetched_row['date_start'],
+									 'sort_value' => $timedate->fromDb($call->fetched_row['date_start'])->ts,
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $call->name,
@@ -260,7 +265,7 @@ class Popup_Picker
 									 'date_modified' => $email->date_start." ".$email->time_start,
 									 'description' => $this->getEmailDetails($email),
 									 'date_type' => $app_strings['DATA_TYPE_SENT'],
-									 'sort_value' => $email->fetched_row['date_sent'],
+									 'sort_value' => $timedate->fromDb($email->fetched_row['date_sent'])->ts,
 									 );
 		} //end Emails
 
