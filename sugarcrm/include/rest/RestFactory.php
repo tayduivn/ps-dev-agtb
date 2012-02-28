@@ -1,9 +1,9 @@
 <?php
-if(!defined('sugarEntry'))define('sugarEntry', true);
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -27,12 +27,58 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-    ob_start();
-    chdir(dirname(__FILE__).'/../');
+include_once("internalObjects/RestError.php");
 
-    require('include/entryPoint.php');
-    include_once("include/rest/RestController.php");
+class RestFactory {
 
-    $controller = new RestController();
-    $controller->execute();
+    public static function newRestObject($objName) {
+        global $restObjectList;
 
+        include_once("RestData.php");
+
+        try {
+            if (array_key_exists($objName, $restObjectList)) {
+                include_once($restObjectList[$objName]);
+                return new $objName();
+            }
+
+            if (RestFactory::isValidSugarModule($objName)) {
+                $objName = ucfirst($objName);
+                include_once("internalObjects/restsugarobject.php");
+                return new RestSugarObject($objName);
+            } else {
+                $err = new RestError();
+                $err->ReportError(404, "\nUnknown Object: '{$objName}'\n\n");
+            }
+        } catch (Exception $e) {
+            $err = new RestError();
+            $err->ReportError(404, "\nUnknown request!\n\n");
+        }
+    }
+
+    public static function uriToBeanName($modName) {
+        $result = $modName;
+        $result = ucfirst($result);
+        return $result;
+    }
+
+    /**
+     * Checks to see if the requested module/object exists in the sugar modules.php
+     *
+     * @return bool
+     */
+    public static function isValidSugarModule($modName) {
+        global $moduleList;
+        $valid = false;
+
+        include_once("include/modules.php");
+
+        $modName = ucfirst($modName);
+        if (in_array($modName, $moduleList)) {
+            $valid = true;
+        }
+
+        return $valid;
+    }
+
+}

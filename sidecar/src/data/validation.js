@@ -1,12 +1,34 @@
+/**
+ * Validation module.
+ *
+ * The validation module is used by {@link Bean#validate} method.
+ * Each bean field is validated by each of the validators specified in the {@link validation.validators} hash.
+ *
+ * The bean is also checked for required fields by {@link validation#requiredValidator} method.
+ *
+ * @class validation
+ * @singleton
+ */
 (function(app) {
 
     app.augment("validation", {
 
-        // A hash of validators. Each validator function must return an error definition for invalid values or nothing otherwise.
-        // Error definition could be a primitive value such as max length or an array, e.g. range's lower and upper limits.
-        // Validator function accepts field metadata and the value to be validated.
+        /**
+         * A hash of validators. Each validator function must return error definition or nothing otherwise.
+         * Error definition could be a primitive value such as max length or an array, e.g. range's lower and upper limits.
+         * Validator function accepts field metadata and the value to be validated.
+         *
+         * @class validation.validators
+         * @singleton
+         */
         validators: {
 
+            /**
+             * Validates the max length of a given value.
+             * @param field bean field metadata
+             * @param {String} value bean field value
+             * @return {Number} max length or noting if the field is valid.
+             */
             maxLength: function(field, value) {
                 if (_.isNumber(field.len)) {
                     var maxLength = field.len;
@@ -28,17 +50,18 @@
 
         /**
          * Validates if the required field is set on a bean or about to be set.
-         * @param field Field metadata
-         * @param fieldName Bean's field name
-         * @param model Bean instance
-         * @param value A value to be set
-         * @return true if the validation passes
+         *
+         * @member validation
+         * @param field field metadata
+         * @param {String} fieldName bean field name
+         * @param {Bean} model bean instance
+         * @param {String} value value to be set
+         * @return {Boolean} <code>true</code> if the validation passes, <code>false</code> otherwise
          */
         requiredValidator: function(field, fieldName, model, value) {
             if (!_.isUndefined(field.required) && (field.required === true)) {
                 var currentValue = model.get(fieldName);
                 var currentUndefined = _.isUndefined(currentValue);
-                // TODO: How about trimming string value? Check out underscore.string lib. Or is it done by form binding component?
                 var valueEmpty = _.isNull(value) || value === "";
                 if ((currentUndefined && _.isUndefined(value)) || valueEmpty) {
                     return false;

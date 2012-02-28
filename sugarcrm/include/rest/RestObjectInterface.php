@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry'))define('sugarEntry', true);
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,12 +27,11 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-    ob_start();
-    chdir(dirname(__FILE__).'/../');
+interface IRestObject {
 
-    require('include/entryPoint.php');
-    include_once("include/rest/RestController.php");
+    function execute();
+    function setURIData($data);
+    function getURIData();
 
-    $controller = new RestController();
-    $controller->execute();
+}
 

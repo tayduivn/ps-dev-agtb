@@ -23,11 +23,15 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 
 /**
  * This class is an implemenatation class for all the web services
+ *
+ * This class has been modified to work with the new REST API.
+ *
  */
-require_once('service/core/SoapHelperWebService.php');
+require_once('include/rest/SoapHelperWebService.php');
+
 SugarWebServiceImpl::$helperObject = new SoapHelperWebServices();
 
-class SugarWebServiceImpl{
+class SugarWebServiceImpl {
 
 	public static $helperObject = null;
 
@@ -45,7 +49,9 @@ class SugarWebServiceImpl{
 * @exception 'SoapFault' -- The SOAP error, if any
 */
 function get_entry($session, $module_name, $id,$select_fields, $link_name_to_fields_array){
+
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry');
+
 	return self::get_entries($session, $module_name, array($id), $select_fields, $link_name_to_fields_array);
 	$GLOBALS['log']->info('end: SugarWebServiceImpl->get_entry');
 }
@@ -66,7 +72,13 @@ function get_entry($session, $module_name, $id,$select_fields, $link_name_to_fie
 function get_entries($session, $module_name, $ids, $select_fields, $link_name_to_fields_array){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entries');
 	global  $beanList, $beanFiles;
+    $err = 0;
+    $errMsg = "";
 	$error = new SoapError();
+    $result = array(
+        "error" => 0,
+        "err_msg" => ""
+    );
 
 	$linkoutput_list = array();
 	$output_list = array();
@@ -76,6 +88,7 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
         $module_name = 'Prospects';
         $using_cp = true;
     }
+
     //END SUGARCRM flav!=sales ONLY
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
@@ -86,7 +99,9 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 		$error->set_error('invalid_call_error');
 		self::$helperObject->setFaultObject($error);
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
-		return;
+        $result["error"] = -1;
+        $result["err_msg"] = "This API call does not support the 'Reports' Module!";
+		return $result;
 	}
 
 	$class_name = $beanList[$module_name];
@@ -95,11 +110,14 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 	$temp = new $class_name();
 	foreach($ids as $id) {
 		$seed = @clone($temp);
-	    if($using_cp){
+	    if ($using_cp) {
 	        $seed = $seed->retrieveTarget($id);
-	    }else{
-			if ($seed->retrieve($id) == null)
+	    } else {
+			if ($seed->retrieve($id) == null) {
 				$seed->deleted = 1;
+                $result["error"] = -1;
+                $result["err_msg"] = "Record does not exist!";
+            }
 		}
 
 		if ($seed->deleted == 1) {
@@ -113,15 +131,21 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 			continue;
     }
 	    if (!self::$helperObject->checkACLAccess($seed, 'DetailView', $error, 'no_access')) {
-	    	return;
+            $result["error"] = -1;
+            $result["err_msg"] = "User does not have access.";
+	    	return $result;
 	    }
+
 		$output_list[] = self::$helperObject->get_return_value_for_fields($seed, $module_name, $select_fields);
 		if (!empty($link_name_to_fields_array)) {
 			$linkoutput_list[] = self::$helperObject->get_return_value_for_link_fields($seed, $module_name, $link_name_to_fields_array);
 		}
 	}
+
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
-	return array('entry_list'=>$output_list, 'relationship_list' => $linkoutput_list);
+    $result["entry_list"] = $output_list;
+    $result["relationship_list"] = $linkoutput_list;
+    return $result;
 }
 
 
@@ -153,6 +177,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
         $module_name = 'Prospects';
         $using_cp = true;
     }
+
     //END SUGARCRM flav!=sales ONLY
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
@@ -422,52 +447,66 @@ function get_relationships($session, $module_name, $module_id, $link_field_name,
  * @return Array    'id' -- the ID of the bean that was written to (-1 on error)
  * @exception 'SoapFault' -- The SOAP error, if any
 */
-function set_entry($session,$module_name, $name_value_list){
+function set_entry($session, $module_name, $name_value_list){
 	global  $beanList, $beanFiles, $current_user;
+    $result = array(
+        "error" => 0,
+        "err_msg" => "");
 
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->set_entry');
     if (self::$helperObject->isLogLevelDebug()) {
 		$GLOBALS['log']->debug('SoapHelperWebServices->set_entry - input data is ' . var_export($name_value_list, true));
-    } // if
+    }
+
 	$error = new SoapError();
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'write', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-		return;
-	} // if
+        $result["error"] = 403;
+        $result["msg_err"] = "User does not have access to module '{$module_name}'!";
+		return $result;
+	}
+
 	$class_name = $beanList[$module_name];
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
-	foreach($name_value_list as $name=>$value){
-		if(is_array($value) &&  $value['name'] == 'id'){
+
+	foreach ($name_value_list as $name=>$value) {
+		if (is_array($value) &&  $value['name'] == 'id') {
 			$seed->retrieve($value['value']);
 			break;
-		}else if($name === 'id' ){
-
+		} else if ($name === 'id' ) {
 			$seed->retrieve($value);
 		}
 	}
 
-	foreach($name_value_list as $name=>$value){
-		if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash'){
+	foreach ($name_value_list as $name=>$value) {
+		if ($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash') {
 			continue;
 		}
-		if(!is_array($value)){
+
+		if (!is_array($value)) {
 			$seed->$name = $value;
-		}else{
+		} else {
 			$seed->$value['name'] = $value['value'];
 		}
 	}
+
     if (!self::$helperObject->checkACLAccess($seed, 'Save', $error, 'no_access') || ($seed->deleted == 1  && !self::$helperObject->checkACLAccess($seed, 'Delete', $error, 'no_access'))) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-    	return;
-    } // if
+        $result["error"] = 403;
+        $result["err_msg"] = "User does not have access to module '{$module_name}'!";
+    	return $result;
+    }
 
 	$seed->save(self::$helperObject->checkSaveOnNotify());
-	if($seed->deleted == 1){
+	if ($seed->deleted == 1) {
 		$seed->mark_deleted($seed->id);
 	}
+
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-	return array('id'=>$seed->id);
+
+    $result["id"] = $seed->id;
+    return $result;
 } // fn
 
 /**
@@ -513,6 +552,7 @@ public function login($user_auth, $application, $name_value_list){
 	$error = new SoapError();
 	$user = new User();
 	$success = false;
+
 	if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN'){
 		$user_auth['password'] = md5($user_auth['password']);
 	}
@@ -526,6 +566,7 @@ public function login($user_auth, $application, $name_value_list){
 	if($usr_id) {
 		$user->retrieve($usr_id);
 	}
+
 	if ($isLoginSuccess) {
 		if ($_SESSION['hasExpiredPassword'] =='1') {
 			$error->set_error('password_expired');

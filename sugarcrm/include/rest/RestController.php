@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry'))define('sugarEntry', true);
+if (!defined('sugarEntry')) define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,12 +27,61 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-    ob_start();
-    chdir(dirname(__FILE__).'/../');
+include_once("RestData.php");
+include_once("RestFactory.php");
 
-    require('include/entryPoint.php');
-    include_once("include/rest/RestController.php");
+class RestController {
 
-    $controller = new RestController();
-    $controller->execute();
+    private $uriData = null;
 
+    function __construct() {
+
+    }
+
+    public function execute() {
+        $this->getURI();
+
+        if ($this->uriData[0] != "") {
+            $tmp = RestFactory::newRestObject($this->uriData[0]);
+            $tmp->setURIData($this->uriData);
+            $tmp->execute();
+        } else {
+            $tmp = RestFactory::newRestObject("objects");
+            $tmp->setURIData($this->uriData);
+            $tmp->execute();
+        }
+    }
+
+    private function handleInternalObject() {
+
+    }
+
+    /**
+     * Parses the REQUEST_URI into an array starting with everything after the "/rest" path.
+     *
+     */
+    private function getURI() {
+        $path = parse_url($_SERVER["REQUEST_URI"]);
+        $uri_data = explode("/", strtolower($path['path']));
+        $found_rest = false;
+        $uri_tmp = array();
+
+        foreach ($uri_data as $d) {
+            if ($found_rest != true && $d == "rest") {
+                $found_rest = true;
+                continue;
+            }
+
+            if ($found_rest) {
+                array_push($uri_tmp, $d);
+            }
+        }
+
+        $this->uriData = $uri_tmp;
+    }
+
+
+    private function reportError() {
+
+    }
+}
