@@ -30,11 +30,20 @@
 require_once('include/MVC/View/views/view.detail.php');
 require_once('include/MVC/View/ViewFactory.php');
 
+/**
+ * @group bug47572
+ */
 class Bug47572Test extends Sugar_PHPUnit_Framework_TestCase
-{   
-    /*
-     * @group bug47572
-     */
+{
+    public function setUp() {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    }
+
+    public function tearDown(){
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
+
     public function testShowSubpanelsSettingForPrint()
     {
         $viewClass = 'ViewDetail';

@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelRemoveButton.php 14149 2006-06-19 23:11:32 +0000 (Mon, 19 Jun 2006) awu $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 
 class SugarWidgetSubPanelRemoveButtonProjects extends SugarWidgetField
 {

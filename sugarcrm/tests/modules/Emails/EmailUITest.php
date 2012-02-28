@@ -145,7 +145,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
     {
         $qArray = $this->eui->_loadQuickCreateModules();
 
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Leads', 'Tasks'), $qArray);
+        $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'), $qArray);
     }
 
     /**
@@ -172,7 +172,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
         
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Leads', 'Tasks', 'Users'), $qArray);
+        $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities','Leads', 'Tasks', 'Users'), $qArray);
     }
 
     /**
@@ -199,7 +199,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
         
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Leads', 'Tasks'), $qArray);
+        $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'), $qArray);
     }
 
     /**

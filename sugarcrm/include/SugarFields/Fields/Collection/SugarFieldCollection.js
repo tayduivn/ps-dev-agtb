@@ -617,10 +617,13 @@ if(typeof(SUGAR.collection) == "undefined") {
 		{
 			if (e[properties[i]])
 			{
-				if ((properties[i] != 'style' || !SUGAR.isIE) && 
-					//Only <a> and <iframe> tags can have hrefs
-					(properties[i] != 'href'  || e.tagName == 'a' || e.tagName == 'iframe'))
-					newNode[properties[i]] = e[properties[i]];
+                //There are two groups of conditional checks here:
+                //The first group is to ignore the style and type attributes for IE browsers
+                //The second group is to ensure that only <a> and <iframe> tags have href attribute
+				if (((properties[i] != 'style' && properties[i] != 'type') || !SUGAR.isIE) && (properties[i] != 'href' || e.tagName == 'a' || e.tagName == 'iframe'))
+                {
+                    newNode[properties[i]] = e[properties[i]];
+                }
 			}
 		}
 		if(recursive)

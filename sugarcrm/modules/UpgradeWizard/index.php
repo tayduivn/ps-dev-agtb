@@ -50,6 +50,11 @@ if(!isset($locale) || empty($locale)) {
 global $sugar_config;
 global $sugar_flavor;
 
+require_once('modules/Trackers/TrackerManager.php');
+$trackerManager = TrackerManager::getInstance();
+$trackerManager->pause();
+$trackerManager->unsetMonitors();
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	SYSTEM PREP
 list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();

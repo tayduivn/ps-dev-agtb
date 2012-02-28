@@ -75,6 +75,8 @@
 				 {rdelim});
 		    else if (ModuleBuilder.cfToolTip)
 			    ModuleBuilder.cfToolTip.cfg.setProperty("context", "depToolTipIcon");
+		    else
+			    ModuleBuilder.dfToolTip.cfg.setProperty("context", "depToolTipIcon");
 			ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})
 		</script>
     </td>

@@ -49,8 +49,12 @@ class Person extends Basic
 		return $ret_val;
 	}
 
+
 	/**
-	 * Generate the name field from the first_name and last_name fields.
+     * _create_proper_name_field
+     *
+	 * This function helps generate the name and full_name member field variables from the salutation, title, first_name and last_name fields.
+     * It takes into account the locale format settings as well as ACL settings if supported.
 	 */
 	function _create_proper_name_field()
 	{
@@ -63,7 +67,7 @@ class Person extends Basic
         $globalUserSet = isset($GLOBALS['current_user']);
         if ($globalUserSet && (ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
-                // first name has at least read access
+           // first name has at least read access
            $first_name = $this->first_name;
         //BEGIN SUGARCRM flav=pro ONLY
         }
@@ -72,7 +76,7 @@ class Person extends Basic
         //BEGIN SUGARCRM flav=pro ONLY
         if ($globalUserSet && (ACLField::hasAccess('last_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
-                // last name has at least read access
+            // last name has at least read access
             $last_name = $this->last_name;
         //BEGIN SUGARCRM flav=pro ONLY
         }
@@ -82,13 +86,13 @@ class Person extends Basic
         if ($globalUserSet && (ACLField::hasAccess('salutation', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
 
-                // salutation has at least read access
+            // salutation has at least read access
             if(isset($this->field_defs['salutation']['options'])
 			  && isset($app_list_strings[$this->field_defs['salutation']['options']])
 			  && isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
 
 			        $salutation = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
-			    }   // if
+			} // if
         //BEGIN SUGARCRM flav=pro ONLY
         }
         //END SUGARCRM flav=pro ONLY
@@ -96,7 +100,7 @@ class Person extends Basic
         //BEGIN SUGARCRM flav=pro ONLY
         if ($globalUserSet && (ACLField::hasAccess('title', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
-                // last name has at least read access
+            // last name has at least read access
             $title = $this->title;
         //BEGIN SUGARCRM flav=pro ONLY
         }

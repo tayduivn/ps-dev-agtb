@@ -44,6 +44,11 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        // test to see if the relationship exist if the relationship between the two beans
+        // exist then we just fail out with false as we don't want to re-trigger this
+        // the save and such as it causes problems with the related() in sugarlogic
+        if($this->relationship_exists($lhs, $rhs)) return false;
+
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
@@ -277,14 +282,20 @@ class One2MBeanRelationship extends One2MRelationship
     }
 
     /**
-     * @param  $lhs
-     * @param  $rhs
-     * @return bool
+     * Check to see if the relationship already exist.
+     *
+     * If it does return true otherwise return false
+     *
+     * @param SugarBean $lhs        Left hand side of the relationship
+     * @param SugarBean $rhs        Right hand side of the relationship
+     * @return boolean
      */
     public function relationship_exists($lhs, $rhs)
     {
+        // we need the key that is stored on the rhs to compare tok
+        $lhsIDName = $this->def['rhs_key'];
 
-        return false;
+        return (isset($rhs->fetched_row[$lhsIDName]) && $rhs->$lhsIDName == $rhs->fetched_row[$lhsIDName] && $rhs->$lhsIDName == $lhs->id);
     }
 
     public function getRelationshipTable()

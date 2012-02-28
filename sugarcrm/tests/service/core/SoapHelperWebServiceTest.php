@@ -66,8 +66,8 @@ public function retrieveCheckQueryProvider()
     $error = new SoapError();
     return array(
         array($error, "id = 'abc'", true),
-        array($error, "id ###### 'abc'", false),
-        array($error, "##################################################### ==== 'abc'", false),
+        array($error, "user.id = prospects.id", true),
+        array($error, "id $% 'abc'", false),
     );
 }
 

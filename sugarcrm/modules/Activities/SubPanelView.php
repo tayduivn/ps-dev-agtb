@@ -250,15 +250,15 @@ $button .= "<input type='hidden' name='action'>\n";
 //BEGIN SUGARCRM flav!=sales ONLY
 if($currentModule != 'Project' && $currentModule != 'ProjectTask')
 {
-	$button .= "<input title='".$current_module_strings['LBL_NEW_TASK_BUTTON_TITLE']."' accessKey='".$current_module_strings['LBL_NEW_TASK_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Tasks'\" type='submit' name='button' value='".$current_module_strings['LBL_NEW_TASK_BUTTON_LABEL']."'>\n";
+	$button .= "<input title='".$current_module_strings['LBL_NEW_TASK_BUTTON_TITLE']."'  class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Tasks'\" type='submit' name='button' value='".$current_module_strings['LBL_NEW_TASK_BUTTON_LABEL']."'>\n";
 }
 //END SUGARCRM flav!=sales ONLY
 
-$button .= "<input title='".$current_module_strings['LBL_SCHEDULE_MEETING_BUTTON_TITLE']."' accessKey='".$current_module_strings['LBL_SCHEDULE_MEETING_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Meetings'\" type='submit' name='button' value='".$current_module_strings['LBL_SCHEDULE_MEETING_BUTTON_LABEL']."'>\n";
+$button .= "<input title='".$current_module_strings['LBL_SCHEDULE_MEETING_BUTTON_TITLE']."'  class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Meetings'\" type='submit' name='button' value='".$current_module_strings['LBL_SCHEDULE_MEETING_BUTTON_LABEL']."'>\n";
 
-$button .= "<input title='".$current_module_strings['LBL_SCHEDULE_CALL_BUTTON_LABEL']."' accessKey='".$current_module_strings['LBL_SCHEDULE_CALL_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Calls'\" type='submit' name='button' value='".$current_module_strings['LBL_SCHEDULE_CALL_BUTTON_LABEL']."'>\n";
+$button .= "<input title='".$current_module_strings['LBL_SCHEDULE_CALL_BUTTON_LABEL']."'  class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Calls'\" type='submit' name='button' value='".$current_module_strings['LBL_SCHEDULE_CALL_BUTTON_LABEL']."'>\n";
 
-$button .= "<input title='".$app_strings['LBL_COMPOSE_EMAIL_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_COMPOSE_EMAIL_BUTTON_KEY']."' class='button' onclick=\"this.form.type.value='out';this.form.action.value='EditView';this.form.module.value='Emails';\" type='submit' name='button' value='".$app_strings['LBL_COMPOSE_EMAIL_BUTTON_LABEL']."'>\n";
+$button .= "<input title='".$app_strings['LBL_COMPOSE_EMAIL_BUTTON_TITLE']."'  class='button' onclick=\"this.form.type.value='out';this.form.action.value='EditView';this.form.module.value='Emails';\" type='submit' name='button' value='".$app_strings['LBL_COMPOSE_EMAIL_BUTTON_LABEL']."'>\n";
 
 $button .= "</form>\n";
 
@@ -364,9 +364,9 @@ $button .= "<input type='hidden' name='return_module' value='".$currentModule."'
 $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='action'>\n";
-$button .= "<input title='".$current_module_strings['LBL_NEW_NOTE_BUTTON_TITLE']."' accessKey='".$current_module_strings['LBL_NEW_NOTE_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Notes'\" type='submit' name='button' value='".$current_module_strings['LBL_NEW_NOTE_BUTTON_LABEL']."'>\n";
-$button .= "<input title='".$current_module_strings['LBL_TRACK_EMAIL_BUTTON_TITLE']."' accessKey='".$current_module_strings['LBL_TRACK_EMAIL_BUTTON_KEY']."' class='button' onclick=\"this.form.type.value='archived';this.form.action.value='EditView';this.form.module.value='Emails'\" type='submit' name='button' value='".$current_module_strings['LBL_TRACK_EMAIL_BUTTON_LABEL']."'>\n";
-$button .= "<input title='".$current_module_strings['LBL_ACCUMULATED_HISTORY_BUTTON_TITLE']."' accessKey='".$current_module_strings['LBL_ACCUMULATED_HISTORY_BUTTON_KEY']."' class='button' type='button' onclick='open_popup(\"Activities\", \"600\", \"400\", \"&record=$focus->id&module_name=$currentModule\", true, false, $encoded_popup_request_data);' name='button' value='".$current_module_strings['LBL_ACCUMULATED_HISTORY_BUTTON_LABEL']."'>\n";
+$button .= "<input title='".$current_module_strings['LBL_NEW_NOTE_BUTTON_TITLE']."'  class='button' onclick=\"this.form.action.value='EditView';this.form.module.value='Notes'\" type='submit' name='button' value='".$current_module_strings['LBL_NEW_NOTE_BUTTON_LABEL']."'>\n";
+$button .= "<input title='".$current_module_strings['LBL_TRACK_EMAIL_BUTTON_TITLE']."'  class='button' onclick=\"this.form.type.value='archived';this.form.action.value='EditView';this.form.module.value='Emails'\" type='submit' name='button' value='".$current_module_strings['LBL_TRACK_EMAIL_BUTTON_LABEL']."'>\n";
+$button .= "<input title='".$current_module_strings['LBL_ACCUMULATED_HISTORY_BUTTON_TITLE']."'  class='button' type='button' onclick='open_popup(\"Activities\", \"600\", \"400\", \"&record=$focus->id&module_name=$currentModule\", true, false, $encoded_popup_request_data);' name='button' value='".$current_module_strings['LBL_ACCUMULATED_HISTORY_BUTTON_LABEL']."'>\n";
 $button .= "</form>\n";
 
 // Stick the form header out there.

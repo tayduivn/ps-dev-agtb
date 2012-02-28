@@ -90,19 +90,26 @@ class MeetingsViewListbytype extends ViewList {
         $_REQUEST = $oldRequest;
     }
 
- 	function processSearchForm(){
- 		// $type = 'LotusLiveDirect';
- 		$type = 'LotusLive';
- 		$where =  " meetings.type = '$type' AND meetings.status != 'Held' AND meetings.status != 'Not Held' AND meetings.date_start > UTC_TIMESTAMP() - 7200 AND ( meetings.assigned_user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' OR exists ( SELECT id FROM meetings_users WHERE meeting_id = meetings.id AND user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' AND deleted = 0 ) ) ";
+    function processSearchForm(){
+   		// $type = 'LotusLiveDirect';
+   		$type = 'LotusLive';
+          global $timedate;
 
-        if ( isset($_REQUEST['name_basic']) ) {
-            $name_search = trim($_REQUEST['name_basic']);
-            if ( ! empty($name_search) ) {
-                $where .= " AND meetings.name LIKE '".$GLOBALS['db']->quote($name_search)."%' ";
-            }
-        }
+          //BEGIN SUGARCRM flav=int ONLY
+          //Collin Lee - Not sure why we choose two hours, but the previous code Rob A. put in was UTC_TIMESTAMP() - 7200
+          //END SUGARCRM flav=int ONLY
+          $two_days_ago = $timedate->asDb($timedate->getNow()->get("-2 hours"));
 
-        $this->where = $where;
- 	}
+   		$where =  " meetings.type = '$type' AND meetings.status != 'Held' AND meetings.status != 'Not Held' AND meetings.date_start > {$two_days_ago} AND ( meetings.assigned_user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' OR exists ( SELECT id FROM meetings_users WHERE meeting_id = meetings.id AND user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' AND deleted = 0 ) ) ";
+
+          if ( isset($_REQUEST['name_basic']) ) {
+              $name_search = trim($_REQUEST['name_basic']);
+              if ( ! empty($name_search) ) {
+                  $where .= " AND meetings.name LIKE '".$GLOBALS['db']->quote($name_search)."%' ";
+              }
+          }
+
+          $this->where = $where;
+   	}
 
 }

@@ -491,17 +491,6 @@ class Contact extends Person {
 		$temp_array['NAME'] = $this->name;
 		$temp_array['ENCODED_NAME'] = $this->name;
 
-		if(isset($system_config->settings['system_skypeout_on'])
-			&& $system_config->settings['system_skypeout_on'] == 1)
-		{
-			if(!empty($temp_array['PHONE_WORK'])
-				&& skype_formatted($temp_array['PHONE_WORK']))
-			{
-				$temp_array['PHONE_WORK'] = '<a href="callto://'
-					. $temp_array['PHONE_WORK']. '">'
-					. $temp_array['PHONE_WORK']. '</a>' ;
-			}
-		}
 		if($filter_fields && !empty($filter_fields['sync_contact'])){
 			$this->load_contacts_users_relationship();
 			$temp_array['SYNC_CONTACT'] = !empty($this->contacts_users_id) ? 1 : 0;
@@ -649,10 +638,10 @@ class Contact extends Person {
         else {
             $theList = explode(",",$list_of_users);
             foreach ($theList as $eachItem) {
-                if ( $focus_user->retrieve_user_id($eachItem)
+                if ( ($user_id = $focus_user->retrieve_user_id($eachItem))
                         || $focus_user->retrieve($eachItem)) {
                     // it is a user, add user
-                    $this->user_sync->add($this->id);
+                    $this->user_sync->add($user_id ? $user_id : $focus_user->id);
                     return;
                 }
                 //BEGIN SUGARCRM flav=pro ONLY

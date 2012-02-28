@@ -742,6 +742,12 @@ class SugarApplication
         return false;
 	}
 
+    /**
+     * The list of the actions excepted from referer checks by default
+     * @var array
+     */
+	protected $whiteListActions = array('index', 'ListView', 'DetailView', 'EditView', 'oauth', 'Authenticate', 'Login', 'SupportPortal');
+
 	/**
 	 *
 	 * Checks a request to ensure the request is coming from a valid source or it is for one of the white listed actions
@@ -749,7 +755,9 @@ class SugarApplication
 	protected function checkHTTPReferer($dieIfInvalid = true)
 	{
 		global $sugar_config;
-		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView','oauth', 'Authenticate', 'Login', 'SupportPortal');
+		if(!empty($sugar_config['http_referer']['actions'])) {
+		    $this->whiteListActions = array_merge($sugar_config['http_referer']['actions'], $this->whiteListActions);
+		}
 
 		$strong = empty($sugar_config['http_referer']['weak']);
 
@@ -760,9 +768,9 @@ class SugarApplication
 			$whiteListReferers = array_merge($whiteListReferers,$sugar_config['http_referer']['list']);
 		}
 
-		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $whiteListActions) && $this->isModifyAction()) {
+		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $this->whiteListActions ) && $this->isModifyAction()) {
 		    $http_host = explode(':', $_SERVER['HTTP_HOST']);
-
+            $whiteListActions = $this->whiteListActions;
 			$whiteListActions[] = $this->controller->action;
 			$whiteListString = "'" . implode("', '", $whiteListActions) . "'";
             if ( $dieIfInvalid ) {
@@ -778,11 +786,12 @@ class SugarApplication
 		} else
 		if(!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])){
 			$http_ref = parse_url($_SERVER['HTTP_REFERER']);
-			if($http_ref['host'] !== $_SERVER['SERVER_NAME']  && !in_array($this->controller->action, $whiteListActions) &&
+			if($http_ref['host'] !== $_SERVER['SERVER_NAME']  && !in_array($this->controller->action, $this->whiteListActions) &&
 
 				(empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))){
                 if ( $dieIfInvalid ) {
                     header("Cache-Control: no-cache, must-revalidate");
+                    $whiteListActions = $this->whiteListActions;
                     $whiteListActions[] = $this->controller->action;
                     $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
 
@@ -827,40 +836,55 @@ class SugarApplication
             }
         }
 
-		//BEGIN SUGARCRM flav=pro ONLY
-
-	    $trackerManager = TrackerManager::getInstance();
-	    if($monitor = $trackerManager->getMonitor('tracker_sessions')){
-		    $db = DBManagerFactory::getInstance();
-		    $session_id = $monitor->getValue('session_id');
-	        $query = "SELECT date_start, round_trips, active FROM $monitor->name WHERE session_id = '".$db->quote($session_id)."'";
-	        $result = $db->query($query);
-
-			if(isset($_SERVER['REMOTE_ADDR'])) {
-	           $monitor->setValue('client_ip', $_SERVER['REMOTE_ADDR']);
-			}
-
-		    if(($row = $db->fetchByAssoc($result))) {
-                if ( $row['active'] != 1 && !empty($_SESSION['authenticated_user_id']) ) {
-                    $GLOBALS['log']->error('User ID: ('.$_SESSION['authenticated_user_id'].') has too many active sessions. Calling session_destroy() and sending user to Login page.');
-                    session_destroy();
-                    $msg_name = 'TO'.'O_MANY_'.'CONCUR'.'RENT';
-                    SugarApplication::redirect('index.php?action=Login&module=Users&loginErrorMessage=LBL_'.$msg_name);
-                    die();
-                }
-		    	$monitor->setValue('date_start', $row['date_start']);
-		    	$monitor->setValue('round_trips', $row['round_trips'] + 1);
-                $monitor->setValue('active', 1);
-		    } else {
-                // We are creating a new session
-                // Don't set the session as active until we have made sure it checks out.
-                $monitor->setValue('active', 0);
-				$monitor->setValue('date_start', TimeDate::getInstance()->nowDb());
-		        $monitor->setValue('round_trips', 1);
-		    }
-        }
-	    //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->trackLogin();
+        //END SUGARCRM flav=pro ONLY
 	}
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * trackLogin
+     *
+     * This is a protected function used to separate tracking the login information.  This allows us to better cleanly
+     * separate a PRO feature as well as unit test this block.  This function writes log entries to the tracker_sessions
+     * table to record a login session.
+     *
+     */
+    protected function trackLogin() {
+        $trackerManager = TrackerManager::getInstance();
+        if($monitor = $trackerManager->getMonitor('tracker_sessions')){
+            $db = DBManagerFactory::getInstance();
+            $session_id = $monitor->getValue('session_id');
+            $query = "SELECT date_start, round_trips, active FROM $monitor->name WHERE session_id = '".$db->quote($session_id)."'";
+            $result = $db->query($query);
+
+            if(isset($_SERVER['REMOTE_ADDR'])) {
+               $monitor->setValue('client_ip', $_SERVER['REMOTE_ADDR']);
+            }
+
+            if(($row = $db->fetchByAssoc($result))) {
+                  if ( $row['active'] != 1 && !empty($_SESSION['authenticated_user_id']) ) {
+                      $GLOBALS['log']->error('User ID: ('.$_SESSION['authenticated_user_id'].') has too many active sessions. Calling session_destroy() and sending user to Login page.');
+                      session_destroy();
+                      $msg_name = 'TO'.'O_MANY_'.'CONCUR'.'RENT';
+                      SugarApplication::redirect('index.php?action=Login&module=Users&loginErrorMessage=LBL_'.$msg_name);
+                      die();
+                  }
+                  $monitor->setValue('date_start', $db->fromConvert($row['date_start'], 'datetime'));
+                  $monitor->setValue('round_trips', $row['round_trips'] + 1);
+                  $monitor->setValue('active', 1);
+            } else {
+                  // We are creating a new session
+                  // Don't set the session as active until we have made sure it checks out.
+                  $monitor->setValue('active', 0);
+                  $monitor->setValue('date_start', TimeDate::getInstance()->nowDb());
+                  $monitor->setValue('round_trips', 1);
+            }
+          }
+    }
+    //END SUGARCRM flav=pro ONLY
+
 
 	function endSession(){
 		//BEGIN SUGARCRM flav=pro ONLY
