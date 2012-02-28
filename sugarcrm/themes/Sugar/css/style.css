@@ -5779,8 +5779,8 @@ cursor: default;
 	background-color: #CC0000;
     border-radius: 2px;
     width: 16px;
-    border: 2px solid #fff;
     cursor: pointer;
+    padding: 1px;
 }
 
 
