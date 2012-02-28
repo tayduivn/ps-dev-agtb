@@ -124,7 +124,10 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-	} 	
+        $duplicateButtons = '<input onclick="showDuplicateOverlib(this,\'summation\','.$canCovertToMatrix.');" type="button" ' .
+            ' value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'"><ul><li>list1</li><li>list2</li></ul>';
+
+    }
 
     $smarty->assign('duplicateButtons', $duplicateButtons);
 	$smarty->assign('mod_strings', $mod_strings);

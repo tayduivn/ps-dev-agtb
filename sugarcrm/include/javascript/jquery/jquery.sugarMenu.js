@@ -59,7 +59,11 @@
                     }
 					newItemA.attr("id", jNode.attr("id"));
 					jNode.attr("id", jNode.attr("id") + "_old");
-					
+
+                    jNode.siblings().each(function(idx, node) {
+                        console.log($(node));
+                    });
+
 					//make sure the node we found isn't the main item of the list -- we don't want 
 					//to show it then.
 					if(menuNode.sugarActionMenu("findItem", newItemA.html()) == -1){
@@ -67,7 +71,7 @@
 					}
 				
 					menuNode.sugarActionMenu("addItem", {item: newItem, index:idx+1});
-					jNode.css("display", "none");
+                    parent.css("display", "none");
 					
 				});
 				
@@ -129,7 +133,8 @@
 							jBody.data("sugarActionMenu", true);
 							jBody.bind("click", function(){
 								$("ul.SugarActionMenu ul.subnav").each(function(subIndex, node){
-									$(node).slideUp(slideUpSpeed);	
+									$(node).slideUp(slideUpSpeed);
+                                    $(node).removeClass("ddopen");
 								});
 							});
 						}
