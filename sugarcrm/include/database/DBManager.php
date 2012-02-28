@@ -3218,18 +3218,14 @@ protected function checkQuery($sql, $object_name = false)
 			if($item[0] == '+') {
                 if (strlen($item) > 1) {
                     $must_terms[] = substr($item, 1);
-                    continue;
-                } else {
-                    $item = '\\'.$item;
                 }
+                continue;
 			}
 			if($item[0] == '-') {
                 if (strlen($item) > 1) {
 				    $not_terms[] = substr($item, 1);
-				    continue;
-                } else {
-                    $item = '\\'.$item;
                 }
+                continue;
 			}
 			$terms[] = $item;
 		}
