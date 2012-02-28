@@ -73,7 +73,7 @@ user_detailview_tabs.on('contentReady', function(e){
 
     <tr><td colspan='2' width="100%" nowrap>
         <ul class="clickMenu">
-            <li style="cursor:pointer;">
+            <li>
                 {php}
                     $ACTION_BUTTONS = $this->get_template_vars('EDITBUTTONS').$this->get_template_vars('BUTTONS');
                     if(substr($ACTION_BUTTONS, -4) != "</li>")

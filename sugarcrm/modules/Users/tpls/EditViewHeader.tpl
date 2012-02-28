@@ -128,7 +128,7 @@ EditView_tabs.on('contentReady', function(e){
     <tr>
         <td>
             <ul class="clickMenu" id="userEditActions">
-                <li style="cursor:pointer;">
+                <li>
                     <a	id="Save" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
                     onclick="var _form = $('#EditView')[0]; if (!set_password(_form,newrules('{$PWDSETTINGS.minpwdlength}','{$PWDSETTINGS.maxpwdlength}','{$REGEX}'))) return false; if (!Admin_check()) return false; _form.action.value='Save'; {$CHOOSER_SCRIPT} {$REASSIGN_JS} if(verify_data(EditView)) _form.submit();"
                     name="button">{$APP.LBL_SAVE_BUTTON_LABEL}</a>
