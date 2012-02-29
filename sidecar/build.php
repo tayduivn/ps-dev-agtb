@@ -1,18 +1,31 @@
 <?php
 
-require('../build/Rome.php');
-
-$rome = new Rome();
+// require('../build/rome/Rome.php');
+require('src/include-manifest.php');
 
 // Set Build directory
-$rome->setBuildDir("build");
+$outputDir = "build";
+
+if (!file_exists($outputDir)) {
+    mkdir($outputDir, 0777, true);
+}
 
 // "Build" the javascript file
 $output = fopen("build/sidecar.js", "w");
 
-// Load the manifest file
-$manifest = fopen("include.php", "r");
+// Start the output
+if ($includeFiles) {
+    foreach ($includeFiles as $file) {
+        $buffer .= file_get_contents($file);
+    }
+}
 
 // Write output to file
-fwrite($buffer, $output);
+fwrite($output, $buffer);
 fclose($output);
+
+// Minify if possible.
+if (function_exists('exec')) {
+    exec('uglifyjs ' . $outputDir . "/sidecar.js");
+    exec('jshint ' . $outputDir . "/sidecar.js");
+}
