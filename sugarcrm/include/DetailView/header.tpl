@@ -111,7 +111,7 @@ testing_module = "{$smarty.request.module}";
 </td>
 
 
-<td align="right" width="100%">{$ADMIN_EDIT}
+<td align="right" width="80%">{$ADMIN_EDIT}
 	{{if $panelCount == 0}}
 	    {{* Render tag for VCR control if SHOW_VCR_CONTROL is true *}}
 		{{if $SHOW_VCR_CONTROL}}
