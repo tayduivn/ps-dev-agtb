@@ -47,6 +47,8 @@ class Bug50780Test extends SOAPTestCase
             $mid = SugarTestMeetingUtilities::createMeeting();
             SugarTestMeetingUtilities::addMeetingUserRelation($mid->id, self::$_user->id);
         }
+
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()
