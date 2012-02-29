@@ -30,11 +30,12 @@ describe("Offline+DB+server", function() {
         metadata = SugarTest.loadJson("things-metadata");
 
         SugarTest.resetWaitFlag();
-        app.events.on("dataManager:ready", function() {
-            SugarTest.setWaitFlag();
-        });
 
-        odm.declareModels(metadata);
+        odm.declareModels(metadata, {
+            success: function() {
+                SugarTest.setWaitFlag();
+            }
+        });
 
         SugarTest.wait();
 
@@ -60,7 +61,7 @@ describe("Offline+DB+server", function() {
         });
 
         // Fake server responds with pre-cooked response: { id: "xyz" }
-        server.respondWith("POST", "/rest/v10/Things/",
+        server.respondWith("POST", "/rest/v10/Things",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify({ id: "xyz" })]);
 
@@ -84,7 +85,7 @@ describe("Offline+DB+server", function() {
 
     it("should be able to fetch a bean", function() {
 
-        server.respondWith("GET", "/rest/v10/Things/xyz/",
+        server.respondWith("GET", "/rest/v10/Things/xyz",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(
                     {

@@ -259,10 +259,11 @@ describe("Offline", function() {
 
         it("should be able to create db schema and declare models", function() {
             runs(function() {
-                app.events.on("dataManager:ready", function() {
-                    SugarTest.setWaitFlag();
+                odm.declareModels(metadata, {
+                    success: function() {
+                        SugarTest.setWaitFlag();
+                    }
                 });
-                odm.declareModels(metadata);
             });
 
             SugarTest.wait();
