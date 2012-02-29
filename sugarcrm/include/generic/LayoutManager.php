@@ -343,10 +343,10 @@ class LayoutManager
 		//end
 
         if ($grabName) {
-            return $theclass->form_value;
+            return $theclass->getDisplayName();
         }
         if ($grabId) {
-            return $theclass->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($theclass->form_value)).'_button';
+            return $theclass->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($theclass->getDisplayName())).'_button';
         }
         
 		return $theclass->display($widget_def, null, null);
