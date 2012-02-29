@@ -6024,11 +6024,12 @@ margin-left:10px;
 #sugar_spot_search_results section .resultTitle, #sugar_full_search_results section .resultTitle{
     float:left;
     color:#666;
-    width:70px;
+    width:90px;
     text-align:right;
     padding-right: 10px;
     padding-top: 4px;
     font-size: 11px;
+    word-wrap: break-word;
 }
 
 
