@@ -37,14 +37,17 @@ class registry_v4_1 extends registry_v4 {
 		$GLOBALS['log']->info('Begin: registry->registerFunction');
 		parent::registerFunction();
 
+        //Add get_relationships with "pagination" support
         $this->serviceClass->registerFunction(
             'get_relationships',
             array('session'=>'xsd:string', 'module_name'=>'xsd:string', 'module_id'=>'xsd:string', 'link_field_name'=>'xsd:string', 'related_module_query'=>'xsd:string', 'related_fields'=>'tns:select_fields', 'related_module_link_name_to_fields_array'=>'tns:link_names_to_fields_array', 'deleted'=>'xsd:int', 'order_by'=>'xsd:string', 'offset'=>'xsd:int' , 'limit'=>'xsd:int'),
             array('return'=>'tns:get_entry_result_version2'));
 
+
+        //Add get_modified_relationship function
         $this->serviceClass->registerFunction(
             'get_modified_relationships',
-            array('session'=>'xsd:string', 'module_name'=>'xsd:string','related_module'=>'xsd:string', 'from_date'=>'xsd:string', 'to_date'=>'xsd:string','offset'=>'xsd:int', 'max_results'=>'xsd:int','deleted'=>'xsd:int', 'module_user_id'=>'xsd:string', 'select_fields'=>'tns:select_fields', 'ids'=>'tns:select_fields', 'relationship_name'=>'xsd:string', 'deletion_date'=>'xsd:string'),
+            array('session'=>'xsd:string', 'module_name'=>'xsd:string','related_module'=>'xsd:string', 'from_date'=>'xsd:string', 'to_date'=>'xsd:string','offset'=>'xsd:int', 'max_results'=>'xsd:int','deleted'=>'xsd:int', 'module_user_id'=>'xsd:string', 'select_fields'=>'tns:select_fields', 'relationship_name'=>'xsd:string', 'deletion_date'=>'xsd:string'),
             array('return'=>'tns:modified_relationship_result'));
 
 	}
@@ -58,6 +61,8 @@ class registry_v4_1 extends registry_v4 {
 
         parent::registerTypes();
 
+        //modified_relationship_entry
+        //This type consists of id, module_name and name_value_list type
         $this->serviceClass->registerType
         (
             'modified_relationship_entry',
@@ -72,6 +77,8 @@ class registry_v4_1 extends registry_v4 {
             )
         );
 
+        //modified_relationship_entry_list
+        //This type holds the array of modified_relationship_entry types
         $this->serviceClass->registerType(
             'modified_relationship_entry_list',
             'complexType',
@@ -85,6 +92,8 @@ class registry_v4_1 extends registry_v4 {
             'modified_relationship_entry'
         );
 
+        //modified_relationship_result
+        //the top level result array
         $this->serviceClass->registerType
         (
             'modified_relationship_result',
@@ -95,7 +104,7 @@ class registry_v4_1 extends registry_v4 {
             array(
            		'result_count' => array('name'=>'result_count', 'type'=>'xsd:int'),
            		'next_offset' => array('name'=>'next_offset', 'type'=>'xsd:int'),
-           		'entry_list' => array('name'=>'entry_list', 'type'=>'tns:modified_relationship_list'),
+           		'entry_list' => array('name'=>'entry_list', 'type'=>'tns:modified_relationship_entry_list'),
            		'error' => array('name' =>'error', 'type'=>'tns:error_value'),
            	)
         );

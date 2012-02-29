@@ -27,7 +27,12 @@ require_once('include/nusoap/nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
 require_once('tests/service/APIv3Helper.php');
 
-
+/***
+ * SOAPAPI4_1Test.php
+ * @author Collin Lee
+ *
+ * Unit test to test the get_modified_relationships function in SugarWebServiceImplv4_1.php
+ */
 class SOAPAPI4_1Test extends SOAPTestCase
 {
     protected $contact1;
@@ -36,6 +41,8 @@ class SOAPAPI4_1Test extends SOAPTestCase
     protected $meeting1;
     protected $meeting2;
     protected $meeting3;
+    protected $call1;
+    protected $call2;
 
     /**
      * setUp
@@ -47,7 +54,6 @@ class SOAPAPI4_1Test extends SOAPTestCase
         parent::setUp();
         $this->_login();
         global $current_user;
-
         $this->another_user = SugarTestUserUtilities::createAnonymousUser();
 
         $this->contact1 = SugarTestContactUtilities::createContact();
@@ -69,6 +75,18 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $this->contact2->user_sync->add($this->another_user);
         $this->contact2->sync_contact = 1;
         $this->contact2->save();
+
+        $this->call1 = SugarTestCallUtilities::createCall();
+        $this->call1->name = 'SOAPAPI4_1Test1';
+        $this->call1->load_relationship('users');
+        $this->call1->users->add($current_user);
+        $this->call1->save();
+
+        $this->call2 = SugarTestCallUtilities::createCall();
+        $this->call2->name = 'SOAPAPI4_1Test2';
+        $this->call2->load_relationship('users');
+        $this->call2->users->add($current_user);
+        $this->call2->save();
 
         $this->meeting1 = SugarTestMeetingUtilities::createMeeting();
         $this->meeting1->name = 'SOAPAPI4_1Test1';
@@ -101,6 +119,7 @@ class SOAPAPI4_1Test extends SOAPTestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestMeetingUtilities::removeMeetingContacts();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestCallUtilities::removeAllCreatedCalls();
     }
 
     /**
@@ -115,30 +134,17 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $callsAndMeetingsFields = array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced');
         $contactsSelectFields = array('id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced');
 
-       	$result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'ids'=>array(), 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
-        $GLOBALS['log']->fatal(var_export($result, true));
+       	$result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
         $this->assertNotEmpty($result[2]['item']);
-        $this->assertTrue(count($result[2]['item']) == 2);
+        $this->assertEquals(2, $result[0]);
 
-        //Now say we wanted the other user's meetings
-        /*
-        $ids = array($this->another_user->id, $current_user->id);
-        $ids[] = $this->meeting1;
-        $ids[] = $this->meeting2;
-        $ids[] = $this->meeting3;
-        *
-       	$result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'module_user_id' => $this->another_user->id, 'select_fields'=> $callsAndMeetingsSelectFields, 'ids' => $ids, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
-        $GLOBALS['log']->fatal(var_export($result, true));
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Calls', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'calls_users', 'deletion_date' => ''));
         $this->assertNotEmpty($result[2]['item']);
-        $this->assertTrue(count($result[2]['item']) == 2);
-        */
+        $this->assertEquals(2, $result[0]);
 
-        //$ids = array($this->contact2);
-        //$current_user = $this->another_user;
-        //$this->_login();
-        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Contacts', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $contactsSelectFields, 'ids'=>array($this->another_user->id), 'relationship_name' => 'contacts_users', 'deletion_date' => ''));
-        $GLOBALS['log']->fatal(var_export($result, true));
-
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Contacts', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $contactsSelectFields, 'relationship_name' => 'contacts_users', 'deletion_date' => ''));
+        $this->assertNotEmpty($result[2]['item']);
+        $this->assertEquals(1, $result[0]);
     }
 
 

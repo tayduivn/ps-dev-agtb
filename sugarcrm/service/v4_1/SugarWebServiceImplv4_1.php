@@ -102,14 +102,13 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
      * @param xsd:int $deleted Integer value indicating deleted column value search (defaults to 0).  Set to 1 to find deleted records
      * @param xsd:string $module_user_id String value of the user id to filter by (optional, no filtering by default)
      * @param tns:select_fields $select_fields Array value of fields to select and return as name/value pairs
-     * @param tns:ids $ids Array of relationship entry ids to filter search with (optional, no filtering by default)
      * @param xsd:string $relationship_name String value of the relationship name to search on
      * @param xsd:string $deletion_date String value in YYYY-MM-DD HH:MM:SS format for filtering on deleted records
      * this allows deleted records to be returned as well
      *
      * @return Array records that match search criteria
      */
-    function get_modified_relationships($session, $module_name, $related_module, $from_date, $to_date, $offset, $max_results, $deleted, $module_user_id = '', $select_fields = array(), $ids = array(), $relationship_name = '', $deletion_date = ''){
+    function get_modified_relationships($session, $module_name, $related_module, $from_date, $to_date, $offset, $max_results, $deleted, $module_user_id = '', $select_fields = array(), $relationship_name = '', $deletion_date = ''){
         global  $beanList, $beanFiles;
         $error = new SoapError();
         $output_list = array();
@@ -142,6 +141,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
         }
 
         $in = '';
+        $ids = array(); //we do not support this right now
         if(isset($ids) && !empty($ids))
         {
             foreach($ids as $value)
@@ -163,7 +163,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
             $query .= " m2.id = '".$GLOBALS['db']->quote($module_user_id)."'";
         }
 
-        if($related_module == 'Meetings' || $related_module == 'Calls'){
+        if($related_module == 'Meetings' || $related_module == 'Calls' || $related_module = 'Contacts'){
             $query = string_format($query, array('m1'));
         }
 
