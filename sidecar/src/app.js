@@ -5,20 +5,27 @@
 var SUGAR = SUGAR || {};
 
 /**
+ * SUGAR.App contains the core instance of the app. All related modules can be found within the SUGAR namespace.
+ * An uninitialized instance will exist on page load but you will need to call {@link App#init} to initialize your instance.
+ * <pre><code>
+ * var App = SUGAR.App.init({el: "#root"});
+ * </pre></code>
  * @class App
  * @singleton
- *
  */
 SUGAR.App = (function() {
     var app,
         modules = {};
 
     /**
-     * Constructor class for the main framework app
+     * @constructor Constructor class for the main framework app
      *
-     * @constructor
      * @param {Object} opts Configuration options
-     *  @option el Root node of where the application will be rendered to
+     *
+     * <ul>
+     *     <li>el: Root node of where the application will be rendered to. Could be a jQuery node or selector</li>
+     * </ul>
+     *
      */
     function App(opts) {
         var appId = _.uniqueId("SugarApp_"),
@@ -33,20 +40,15 @@ SUGAR.App = (function() {
             throw "SugarApp needs a root node.";
         }
 
-        // Here we initialize all the modules;
-        _.each(modules, function(module) {
-            if (_.isFunction(module.init)) {
-                module.init(this);
-            }
-        }, this);
-
         return _.extend({
             /**
+             * Unique Application ID
              * @property {String}
              */
             appId: appId,
 
             /**
+             * Base element to use as the root of the App
              * @property {jQuery Node}
              */
             rootEl: rootEl
@@ -62,6 +64,14 @@ SUGAR.App = (function() {
          */
         init: function(opts) {
             app = app || _.extend(this, new App(opts));
+
+            // Here we initialize all the modules;
+            _.each(modules, function(module, key) {
+                if (_.isFunction(module.init)) {
+                    module.init(this);
+                }
+            }, this);
+
             return app;
         },
 

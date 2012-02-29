@@ -1,14 +1,12 @@
 describe("Controller", function() {
     var controller = SUGAR.App.controller,
-        layoutManager = SUGAR.App.Layout,
+        layoutManager = SUGAR.App.layout,
         dataManager = SUGAR.App.dataManager;
 
-    it("should exist within the framework", function() {
-        expect(controller).toBeDefined();
-    });
+    SUGAR.App.init({el: "body"});
 
     describe("when a route is matched", function() {
-        var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, renderSpy;
+        var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, renderSpy, collectionSpy;
 
         beforeEach(function() {
             params = {
@@ -21,6 +19,9 @@ describe("Controller", function() {
             dataMan = {
                 fetchBean: function() {
                     return {};
+                },
+                createBeanCollection: function() {
+                    return {};
                 }
             };
 
@@ -29,43 +30,47 @@ describe("Controller", function() {
                 get: function() {
                     return layout;
                 },
-                render: function() {}
+                render: function() {
+                }
             };
 
-            layout = { render: function() {} };
+            layout = { render: function() {
+            } };
 
             layoutSpy = sinon.spy(layoutMan, "get");
             renderSpy = sinon.spy(layout, "render");
             dataSpy = sinon.spy(dataMan, "fetchBean");
+            collectionSpy = sinon.spy(dataMan, "createBeanCollection");
 
-            SUGAR.App.Layout = layoutMan;
+            SUGAR.App.layout = layoutMan;
             SUGAR.App.dataManager = dataMan;
+            controller.setElement("body");
+        });
 
+        afterEach(function() {
+            SUGAR.App.layout = layoutManager;
+            SUGAR.App.dataManager = dataManager;
+        });
+
+        it("should load the view properly", function() {
             controller.loadView(params);
-        });
 
-        it("should fetch the needed data from the data manager", function() {
-            expect(controller.data).toBeTruthy();
-            expect(controller.data).not.toEqual(_.isEmpty(controller.data));
+            // Check to make sure it loads the proper data
             expect(dataSpy.called).toBeTruthy();
-        });
+            expect(collectionSpy.called).toBeTruthy();
+            expect(_.isEmpty(controller.data)).toBeFalsy();
 
-        it("should set the context", function() {
-            expect(controller.context).toBeTruthy();
+            // Check to make sure we have set the context
+            expect(controller.context).toBeDefined();
             expect(controller.context.get("module")).toEqual("main");
             expect(controller.context.get("url")).toEqual("test/url");
-        });
 
-        it("should load the appropriate layout", function() {
-            expect(controller.layout).toBeTruthy();
+            // Check to make sure we have loaded a layout
+            expect(controller.layout).toBeDefined();
             expect(layoutSpy.called).toBeTruthy();
-        });
 
-        it("should render the appropriate layout to the specified root div", function() {
+            // Check to make sure layout's render function is called
             expect(renderSpy.called).toBeTruthy();
         });
     });
-
-    SUGAR.App.Layout = layoutManager;
-    SUGAR.App.dataManager = dataManager;
 });

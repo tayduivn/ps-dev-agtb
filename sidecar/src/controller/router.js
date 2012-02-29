@@ -1,42 +1,102 @@
 (function(app) {
     /**
+     * This manages the watching of the address hash and routes to the correct handler.
      * @class Router
      * @singleton
      */
     var Router = Backbone.Router.extend({
         /**
+         * Routes hash
          * @property {Object}
          */
         routes: {
             "": "index",
-            "test": "test"
+            "login": "login",
+            ":module": "index",
+            ":module/list": "index",
+            ":module/create": "create",
+            ":module/:id/:action": "record",
+            ":module/:id": "record"
         },
 
+        /**
+         * Initializes the router. Starts the history watcher if it hasn't been started yet.
+         * @method
+         * @private
+         * @param options
+         */
         initialize: function(options) {
-            _.bindAll(this);
-
             this.controller = options.controller || null;
 
             if (!this.controller) {
                 throw "No Controller Specified";
             }
+        },
 
+        /**
+         * Starts the backbone history which in turns starts routing the hashtag
+         * @method
+         */
+        start: function() {
             // Start monitoring hash changes
             // Right now backbone doesn't support checking to see
             // if the history has been started.
             try {
                 Backbone.history.start();
-            } catch (e) {}
+            } catch (e) {
+                app.logger.error(e.message);
+            }
         },
 
-        // Route functions
+        // Routes
+
         index: function() {
-            this.controller.loadView();
+            this.controller.loadView({
+                module: "Contacts", //TODO: This shoudl probably not be Contacts
+                layout: "list"
+            });
         },
 
-        test: function() {
-            this.controller.loadView();
+        list: function(module) {
+            this.controller.loadView({
+                module: module,
+                layout: "list"
+            });
+        },
+
+        create: function(module) {
+            this.controller.loadView({
+                module: module,
+                create:true,
+                layout: "edit"
+            });
+        },
+
+        login: function() {
+            this.controller.loadView({
+                module: "home",
+                layout: "login"
+            });
+        },
+
+        record: function(module, id, action) {
+
+            console.log("====Routing record====");
+            console.log("Module: "+ module);
+            console.log("Action: "+ action);
+            console.log("Id: "+ id);
+
+            action = action || "detail";
+
+            this.controller.loadView({
+                module: module,
+                id: id,
+                action: action,
+                layout: action
+
+            });
         }
+
     });
 
     /**
@@ -49,11 +109,11 @@
          * @param {Object} instance
          */
         init: function(instance) {
-            if (!instance.router && instance.controller) {
-                _.extend(module, new Router({controller: instance.controller}));
-            } else {
+            if (!instance.controller) {
                 throw "app.controller does not exist yet. Cannot create router instance";
             }
+
+            _.extend(module, new Router({controller: instance.controller}));
         }
     }
 

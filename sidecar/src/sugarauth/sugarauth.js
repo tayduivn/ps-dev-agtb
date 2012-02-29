@@ -1,33 +1,73 @@
+/**
+ SugarAuth
+ * @ignore
+ */
 (function(app) {
-    //var privateVars;
+    /**
+     * @class SugarAuth
+     * @singleton
+     * SugarAuth provides the ability to login and authentication status
+     */
     app.augment('sugarAuth', (function() {
         var instance;
+        var api;
+        var _userLoginCallbacks;
+        var _userLogoutCallbacks;
 
+        /**
+         * init
+         * @private
+         * @param args
+         */
         function init(args) {
+            api = SUGAR.Api.getInstance();
             instance = new AuthManager();
             return instance
         }
 
         function AuthManager() {
-            var isAuth = false;
-            function handleLoginSuccess() {
-                isAuth = true;
-                console.log("Login success");
+            /**
+             * handle login success
+             * @private
+             * @param {Object} data contains token for current session
+             */
+            function handleLoginSuccess(data) {
+                if (_userLoginCallbacks && _userLoginCallbacks.success) {
+                    _userLoginCallbacks.success(data);
+                }
             }
 
-            function handleLoginFailure(){
-                isAuth = false;
-                console.log("Login fail");
+            /**
+             * handle login error function
+             * @private
+             * @param {Object} data jquery ajax object from failure with codes
+             */
+            function handleLoginFailure(data){
+                if (_userLoginCallbacks && _userLoginCallbacks.error) {
+                    _userLoginCallbacks.error(data);
+                }
             }
 
-            function handleLogoutSuccess() {
-                isAuth = false;
-                console.log("logout success");
+            /**
+             * handles logout success
+             * @private
+             * @param {Object} handles logout success currently data is null
+             */
+            function handleLogoutSuccess(data) {
+                if (_userLogoutCallbacks && _userLogoutCallbacks.success) {
+                    _userLogoutCallbacks.success(data);
+                }
             }
 
-            function handleLogoutFailure(){
-                isAuth = true;
-                console.log("logout fail");
+            /**
+             * handle logout error function
+             * @private
+             * @param {Object} data jquery ajax object from failure with codes
+             */
+            function handleLogoutFailure(data){
+                if (_userLogoutCallbacks && _userLogoutCallbacks.error) {
+                    _userLogoutCallbacks.error(data);
+                }
             }
 
 
@@ -35,40 +75,48 @@
                 /**
                  * checks if currently authenticated
                  *
-                 * @return bool true if auth, false otherwise
+                 * @return {Boolean} true if auth, false otherwise
                  */
                 isAuthenticated: function(){
-                    //TODO add call to API to check
-                    return isAuth;
+                    return api.isAuthenticated();
                 },
 
                 /**
-                 * logs users in
+                 * logs users in, on success the user token will be given as the only arg to the succcess callback
                  *
-                 * @param  obj of obj.user_name and obj.password
-                 * @return bool true if auth, false otherwise
+                 * @param  {Object} args arguments with args.username and password args.options contains client info in a hash
+                 * @param  {Object} {success: function(data){}, error: function(data){}}
+                 * @return
                  */
-                login: function(args){
-                    //TODO add call to API for login
-                    SUGAR.App.login(args, handleLoginSuccess, handleLoginFailure);
-
-                    return isAuth;
+                login: function(args, callbacks){
+                    if(callbacks){
+                        _userLoginCallbacks = callbacks;
+                    }
+                    var options = args.options || {};
+                    var myCallbacks = {success: handleLoginSuccess, error: handleLoginFailure};
+                    api.login(args.username, args.password, options, myCallbacks);
+                    return null;
                 },
 
                 /**
                  * logs current user out
-                 *
-                 * @return bool true if logout successful, else false
+                 * @param {Object} callbacks {success: function(data){}, error: function(data){}}
+                 * @return
                  */
-                logout: function(){
-                    //TODO add call to API for logout
-                    isAuth = false;
-                    return true;
+                logout: function(callbacks){
+                    _userLogoutCallbacks = callbacks;
+                    var myCallbacks = {success: handleLogoutSuccess, error: handleLogoutFailure};
+                    api.logout(myCallbacks);
+                    return null;
                 }
             };
         }
 
         return {
+            /**
+             * returns instance of sugarAuth
+             * @param {Object} args
+             */
             getInstance: function(args) {
                 return instance || init(args);
             }

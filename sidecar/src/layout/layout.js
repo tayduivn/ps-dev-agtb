@@ -1,5 +1,12 @@
 (function (app) {
     app.augment("layout", function () {
+        var ucfirst = function(str) {
+            if (typeof(str) == "string")
+                return str.charAt(0).toUpperCase() + str.substr(1);
+        }
+        /**
+         * App.Layout
+         */
         var Layout = {
             init:function (args) {
                 //Register Handlebars helpers
@@ -8,20 +15,78 @@
                     //If bean was not specified, the third parameter will be a hash
                     if (!bean || !bean.fields)
                         bean = context.get("model");
-                    ftype = bean.fields[this.name].type;
-                    sf = app.sugarFieldManager.getField(ftype, view);
+                    if (!this.type && (!bean.fields[this.name] || !bean.fields[this.name].type))
+                    {
+                        //If the field doesn't exist for this bean type, skip it
+                        app.logger.error("Sugar Field: Unknown field " + this.name + " for " + context.get("module") + ".");
+                        return "";
+                    }
+                    ftype = this.type || bean.fields[this.name].type;
+                    sf = app.metadata.get({"sugarField":{"name": ftype, "view":view}});
                     if (sf.error)
                         return sf.error;
                     this.value = bean.get(this.name);
-                    return new Handlebars.SafeString(sf.templateC(this));
+                    this.model = bean;
+                    this.view = view;
+                    this.model = bean;
+                    this.context = context;
+                    try {
+                        return new Handlebars.SafeString(sf.templateC(this));
+                    } catch(e) {
+                        app.logger.error("Sugar Field: Unable to execute template for field " + ftype + " on view " + this.name + ".\n" + e.message);
+                    }
+                });
+
+                Handlebars.registerHelper('get_field_value', function(bean, field) {
+                    return bean.get(field);
+                });
+
+                Handlebars.registerHelper('buildRoute', function(context, action, model, options) {
+                    var module = options.module || model.module || context.module;
+                    action = options.action || action;
+                    var id =  model.get ? model.get("id") : model;
+                    var route = "";
+                    if (id && module) {
+                        route = module + "/" + id;
+                        if (action) {
+                            route += "/" + action;
+                        }
+                    } else if (module && action){
+                        route = module + "/" + action;
+                    } else if (action) {
+                        route = action;
+                    } else if (module) {
+                        route = module;
+                    }
+
+                    console.log(module);
+                    console.log(id);
+                    console.log(action);
+                    console.log(route);
+
+                    if (options.params) {
+                        route += "?" + $.param(options.params);
+                    }
+
+                    return new Handlebars.SafeString(route);
+                });
+
+                Handlebars.registerHelper('getfieldvalue', function(bean, field) {
+                return bean.get(field);
                 });
             },
 
             //All retreives of metadata should hit this function.
+            /**
+             *
+             * @param Object params should contain either view or layout to specify which type of
+             * component you are retreiving.
+             */
             get:function (params) {
                 var meta = params.meta;
                 var layoutClass = "Layout";
                 var viewClass = "View";
+                var ucType;
 
                 if (!params.view && !params.layout)
                     return null;
@@ -37,13 +102,14 @@
                         type: "view",
                         module: module,
                         view: params.view
-                    });
+                    }) || {};
+                    ucType = ucfirst(meta.view || params.type || params.view);
                     //Check if the view type has its own view subclass
-                    if (meta && app.layout[meta.type + "View"])
-                        viewClass = meta.type + "View";
+                    if (meta && app.layout[ucType + "View"])
+                        viewClass = ucType+ "View";
 
-                    if (meta && app.layout[meta.type])
-                        viewClass = meta.type;
+                    if (meta && app.layout[ucType])
+                        viewClass = ucType;
 
                     return new app.layout[viewClass]({
                         context: params.context,
@@ -56,9 +122,10 @@
                         module: module,
                         layout: params.layout
                     });
+                    ucType = ucfirst(meta.type);
                     //Check if the layout type has its own layout subclass
-                    if (meta && app.layout[meta.type + "Layout"])
-                        layoutClass = meta.type + "Layout";
+                    if (meta && app.layout[ucType + "Layout"])
+                        layoutClass = ucType + "Layout";
                     return new app.layout[layoutClass]({
                         context: params.context,
                         name : params.layout,
@@ -82,33 +149,92 @@
                 this.$el.addClass("view " + (options.className || this.name));
                 this.template = options.template || app.template.get(this.name, this.context.get("module"));
                 this.meta = options.meta;
+                //Bind will cause the view to automatically try to link form elements to attributes on the model
+                this.autoBind = options.bind || true;
 
             },
-            render:function () {
+            _render: function() {
                 if (this.template)
                     this.$el.html(this.template(this));
+            },
+            render:function () {
+                //Bad templates can cause a JS error that we want to catch here
+                try {
+                    this._render();
+                    if (this.autoBind && this.context && this.context.get("model"))
+                    {
+                        this.bind(this.context);
+                    } else {
+                        console.log("not binding");
+                    }
+                } catch(e) {
+                    app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
+                }
+
+            },
+            bind : function(context) {
+                var model = context.get("model");
+                _.each(model.attributes, function(value, field) {
+                    var el = this.$el.find('input[name="' + field + '"],span[name="' + field + '"]');
+                    if (el.length > 0){
+                        //Bind input to the model
+                        el.on("change", function(ev){
+                            model.set(field, el.val());
+                        });
+                        //And bind the model to the input
+                        model.on("change:" + field, function(model, value){
+                            if (el[0].tagName.toLowerCase() == "input")
+                                el.val(value);
+                            else
+                                el.html(value);
+                        });
+                    }
+                }, this)
             },
             getID : function() {
                 if (this.id)
                     return this.id;
 
-                return this.context.module + "_" + this.options.name;
+                return this.context.get("module") + "_" + this.options.name;
             }
         });
-        Layout.editView = Layout.View.extend({
-            render:function () {
+        Layout.EditView = Layout.View.extend({
+            _render:function () {
                 if (this.template)
                     this.$el.html(
-                        this.template(this) +
-                        "<br/>This is a custom view"
+                        this.template(this)
                     );
             }
         });
+        Layout.ListView = Layout.View.extend({
+            bind : function(context) {
+                var collection = context.get("collection");
+                _.each(collection.models, function(model) {
+                    var tr = this.$el.find('tr[name="' + model.beanType + '_' + model.get("id") + '"]');
+                    _.each(model.attributes, function(value, field) {
+                        var el = tr.find('input[name="' + field + '"],span[name="' + field + '"]');
+                        if (el.length > 0){
+                            //Bind input to the model
+                            el.on("change", function(ev){
+                                model.set(field, el.val());
+                            });
+                            //And bind the model to the input
+                            model.on("change:" + field, function(model, value){
+                                if (el[0].tagName.toLowerCase() == "input")
+                                    el.val(value);
+                                else
+                                    el.html(value);
+                            });
+                        }
+                    }, this)
+                }, this)
+            }
+        })
         Layout.Layout = Layout.View.extend({
             initialize:function () {
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
-                this.context = this.options.context || app.context.getContext();
+                this.context = this.options.context || app.controller.context;
                 this.module = this.options.module || this.context.module;
                 this.meta = this.options.meta;
                 this.components = [];
@@ -167,20 +293,22 @@
             }
         });
 
-        Layout.columnsLayout = Layout.Layout.extend({
+        Layout.ColumnsLayout = Layout.Layout.extend({
             //column layout uses a table for columns and prevent wrapping
             _placeComponent: function(comp) {
                 if(!this.$el.children()[0]){
                     this.$el.append("<table><tbody><tr></tr></tbody></table>");
                 }
-                console.log(this.$el.find("tr")[0]);
                 //Create a new td and add the layout to it
                 $().add("<td></td>").append(comp.el).appendTo(this.$el.find("tr")[0]);
             }
         });
 
-        Layout.fluidLayout = Layout.Layout.extend({
-            //column layout uses a table for columns and prevent wrapping
+        /**
+         * @class FluidLayout Layout that places components using bootstrap fluid layout divs
+         * @extend App.Layout.Layout
+         */
+        Layout.FluidLayout = Layout.Layout.extend({
             _placeComponent: function(comp, def) {
                 var size = def.size || 4;
                 if(!this.$el.children()[0]){

@@ -1,10 +1,5 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: dtam
- * Date: 2/2/12
- * Time: 5:20 PM
- * To change this template use File | Settings | File Templates.
- */
+//TODO DEPRICATED SEE METADATAMANAGER FOR NEW CALL
+
 (function (app) {
     //var privateVars;
     app.augment('sugarFieldManager',
@@ -117,16 +112,16 @@
                         // assign fields to results if set
                         if (view && this.fieldsObj[name] && this.fieldsObj[name][view]) {
                             result = this.fieldsObj[name][view];
-                            if (result.template && !result.templateC) {
-                                result.templateC = app.template.get(name + ":" + view);
-                                if (!result.templateC)
-                                    result.templateC = app.template.compile(result.template, name + ":" + view);
-                            }
                             // fall back to default if field for this view doesnt exist
                         } else if (this.fieldsObj[name] && this.fieldsObj[name]['default']) {
                             result = this.fieldsObj[name]['default'];
                         } else {
-                            result = {error:"No such field in field cache."};
+                            result = {error:name + ": No such field in field cache."};
+                        }
+                        if (result.template && !result.templateC) {
+                            result.templateC = app.template.get(name + ":" + view);
+                            if (!result.templateC)
+                                result.templateC = app.template.compile(result.template, name + ":" + view);
                         }
                         //return result
                         return result;

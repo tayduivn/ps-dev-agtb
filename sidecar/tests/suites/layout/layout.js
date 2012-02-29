@@ -20,14 +20,7 @@ describe("Layout", function() {
 
 describe("Layout.View", function(){
     var syncResult, view, layout, html;
-    this.server = sinon.fakeServer.create();
-	this.server.respondWith("GET", "/rest/v10/sugarFields/?md5=",
-					[200, {  "Content-Type":"application/json"},
-						JSON.stringify(sugarFieldsFixtures)]);
-
-	var syncResult=SUGAR.App.sugarFieldManager.syncFields();
-
-	this.server.respond(); //tell server to respond to pending async call
+    SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
 
     var App = SUGAR.App.init({el: "#sidecar"});
 
@@ -124,12 +117,7 @@ describe("Layout.Layout", function(){
         }
     };
     //Fake a field list
-    SUGAR.App.sugarFieldsSync = function (that, callback){
-        var ajaxResponse = sugarFieldsFixtures;
-        var result= callback(that, ajaxResponse);
-        return result;
-    };
-    syncResult= SUGAR.App.sugarFieldManager.syncFields();
+    SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
 
     var App = SUGAR.App.init({el: "#sidecar"});
     App.dataManager.declareModels(fixtures.metadata);

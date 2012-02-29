@@ -20,13 +20,11 @@ describe("Bean", function() {
 
         error = errors["first_name"];
         expect(error).toBeDefined();
-        expect(error.length).toEqual(1);
-        expect(error[0].maxLength).toBeDefined();
+        expect(error.maxLength).toEqual(20);
 
         error = errors["last_name"];
         expect(error).toBeDefined();
-        expect(error.length).toEqual(1);
-        expect(error[0].required).toBeDefined();
+        expect(error.required).toBeTruthy();
 
     });
 

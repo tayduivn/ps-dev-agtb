@@ -10,28 +10,53 @@ fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
 fixtures.templates = {
     "detailView" :
-        "<h3>{{name}}</h3>" +
+        "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "<form name='{{name}}' class='well'>" +
+            "{{#each meta.buttons}}" +
+                "{{sugar_field ../context ../name ../model}}" +
+            "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
-            "<form name='{{name}}' class='well'>" +
             "{{#each fields}}" +
                 "<div>{{sugar_field ../../context ../../name}}</div>" +
             "{{/each}}" +
-            "</form></div>" +
-        "{{/each}}",
+            "</div>" +
+        "{{/each}}</form>",
     "editView" :
-        "<h3>{{name}}</h3>" +
-            "{{#each meta.panels}}" +
+        "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "<form name='{{name}}' class='well'>" +
+        "{{#each meta.buttons}}" +
+            "{{sugar_field ../context ../name ../model}}" +
+        "{{/each}}" +
+        "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
-            "<form name='{{name}}' class='well'>" +
             "{{#each fields}}" +
                 "<div>{{sugar_field ../../context ../../name}}</div>" +
             "{{/each}}" +
-            "</form></div>" +
-        "{{/each}}",
+            "</div>" +
+        "{{/each}}</form>",
     "subpanelView" :
-        "SUBPANEL VIEW!!!!"
-
+        "",
+    "listView" :
+        '<h3 class="view_title">{{context.state.module}}</h3>' +
+        "{{#each meta.panels}}" +
+            '<div class="{{../name}} panel hero-unit">' +
+            '<table class="table table-bordered table-striped"><thead><tr>' +
+            '{{#each fields}}' +
+                '<th width="{{width}}%">{{label}}</th>' +
+            '{{/each}}' +
+            '</tr></thead><tbody>' +
+            '{{#each ../context.state.collection.models}}' +
+                '<tr name="{{beanType}}_{{attributes.id}}">' +
+                '{{#each ../fields}}' +
+                    // SugarField requires the current context, field name, and the current bean in the context
+                    // since we are pulling from the collection rather than the default bean in the context
+                    '<td>{{sugar_field ../../../context ../../../name ../this}}</td>' +
+                '{{/each}}' +
+                '</tr>' +
+            '{{/each}}' +
+            '</tbody></table>' +
+        '{{/each}}'
 };
