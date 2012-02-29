@@ -47,9 +47,12 @@ class Bug50728Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $GLOBALS['db']->parseFulltextQuery($query));
     }
 
+    /**
+     * data provider for testParseFulltextQuery
+     * @return array - [$expected[$query_terms, $must_terms, $not_terms], $query]
+     */
     public function fulltextQueryProvider() {
         return array(
-            // $expected[$query_terms, $must_terms, $not_terms], $query
             array(array(array('aa', 'bb'), array(), array()), 'aa - bb'),
             array(array(array('aa', 'bb'), array(), array()), 'aa + bb'),
             array(array(array('aa', 'bb'), array(), array()), 'aa - bb +'),
@@ -62,7 +65,6 @@ class Bug50728Test extends Sugar_PHPUnit_Framework_TestCase
             array(array(array('bb'), array('aa'), array('c')), '+aa -c bb'),
         );
     }
-
 }
 
 ?>
