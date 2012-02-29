@@ -317,4 +317,95 @@ class MetaDataManager {
 
         return $data;
     }
+
+
+    /**
+     * gets sugar fields
+     *
+     * @return array array of sugarfields with
+     */
+    public function getSugarFields()
+    {
+        $fieldFileTypes2meta = array('hbt'=>'template','js'=>'js');
+        $result = array();
+        chdir("include/SugarFields");
+        $fieldsDirectory = "PortalFields/";
+        // get list of portal fields
+        $portalFiles = $this->getFiles($fieldsDirectory);
+        foreach ($portalFiles as $fname) {
+            $build = false;
+            $fieldMeta = '';
+
+            // get file info
+            $namePieces = explode('/', $fname);
+            $fieldName = "";
+            if ($namePieces[1]) {
+                $fieldName = $namePieces[1];
+            }
+
+            $action = "";
+            $fileExtension = "";
+            if ($namePieces[2]) {
+                $filePieces = explode(".", $namePieces[2]);
+                if ($filePieces[0]) {
+                    $action = $filePieces[0];
+                }
+                if ($filePieces[1]) {
+                    $fileExtension = $filePieces[1];
+                }
+            }
+            // check if we want this file
+            if (in_array($fileExtension, array_keys($fieldFileTypes2meta))) {
+                $build = true;
+                $fieldMeta = $fieldFileTypes2meta[$fileExtension];
+            }
+            // add it to result if we want it
+            if ($build) {
+                if (!isset($result[$fieldName])) {
+                    $result[$fieldName] = array();
+                }
+                if (!isset($result[$fieldName][$action])) {
+                    $result[$fieldName][$action] = array();
+                }
+                $fieldFragmentArray = array($fieldMeta=>file_get_contents($fname));
+                $result[$fieldName][$action] = array_merge($result[$fieldName][$action], $fieldFragmentArray) ;
+            }
+
+            $result['md5'] = md5(serialize($result));
+        }
+        return $result;
+    }
+
+
+    /**
+     * return files from a directory recursively
+     *
+     * @param $directory
+     * @param array $exempt full file names to ignore
+     * @param array $files
+     * @param array $exempt_extensions file extensions to ignore
+     * @return array
+     */
+    private function getFiles($directory, $exempt = array('.', '..', '.ds_store', '.svn'), &$files = array(), $exempt_extensions = array('tpl', 'php'))
+    {
+        $handle = opendir($directory);
+        while (false !== ($resource = readdir($handle))) {
+            if (!in_array(strtolower($resource), $exempt)) {
+                if (is_dir($directory . $resource . '/')) {
+                    array_merge($files,
+                        $this->getFiles($directory . $resource . '/', $exempt, $files));
+                }
+                else {
+                    $resourceParts = explode('.', $resource);
+                    $extension = end($resourceParts);
+                    if ($extension && !in_array($extension, $exempt_extensions)) {
+                        $files[] = $directory . $resource;
+                    }
+                }
+            }
+        }
+        closedir($handle);
+        return $files;
+    }
+
 }

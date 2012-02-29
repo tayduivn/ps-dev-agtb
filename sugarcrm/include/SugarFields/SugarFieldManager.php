@@ -7,15 +7,17 @@
  * To change this template use File | Settings | File Templates.
  */
 ini_set('display_errors', '1');
+/*
 class SugarFieldManager
 {
 
     function buildFields()
     {
+        $fieldFileTypes2meta = array('hbt'=>'template','js'=>'js');
         $result = array();
         $fieldsDirectory = "PortalFields/";
         $portalFiles = getFiles($fieldsDirectory);
-        var_dump($portalFiles);
+        //var_dump($portalFiles);
         foreach ($portalFiles as $fname) {
             $build = false;
             $fieldMeta = '';
@@ -39,15 +41,9 @@ class SugarFieldManager
                 }
             }
 
-            // take it if its a template
-            if ($fileExtension == 'hbt') {
-                $fieldMeta = 'template';
+            if (in_array($fileExtension, array_keys($fieldFileTypes2meta))) {
                 $build = true;
-            }
-
-            if ($fileExtension == 'js') {
-                $fieldMeta = 'js';
-                $build = true;
+                $fieldMeta = $fieldFileTypes2meta[$fileExtension];
             }
 
             if ($build) {
@@ -60,7 +56,8 @@ class SugarFieldManager
                 $fieldFragmentArray = array($fieldMeta=>file_get_contents($fname));
                 $result[$fieldName][$action] = array_merge($result[$fieldName][$action], $fieldFragmentArray) ;
             }
-;
+
+            $result['md5'] = md5(serialize($result));
         }
         //var_dump($result);
         return $result;
@@ -89,9 +86,13 @@ function getFiles($directory, $exempt = array('.', '..', '.ds_store', '.svn'), &
     closedir($handle);
     return $files;
 }
-
+**/
 //var_dump(json_decode($target)->fieldsData);
-$s = new SugarFieldManager();
-$fields = $s->buildFields();
+echo getcwd() . PHP_EOL;
+chdir('../../');
+echo getcwd();
+include('include/MetaDataManager/MetaDataManager.php');
+$s = new MetaDataManager();
+$fields = $s->getSugarFields();
 var_dump($fields);
 //echo json_encode($fields);
