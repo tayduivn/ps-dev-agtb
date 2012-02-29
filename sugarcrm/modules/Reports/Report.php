@@ -2069,6 +2069,7 @@ return str_replace(' > ','_',
         if ($this->has_summary_columns()) {
             $this->run_total_query();
         }
+        $this->get_summary_total_row();
     }
 
     // static function to return the modules associated to a report definition
