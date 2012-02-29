@@ -11,7 +11,7 @@ if (!file_exists($outputDir)) {
 }
 
 // "Build" the javascript file
-$output = fopen("build/sidecar.js", "w");
+$output = fopen($outputDir . "/sidecar.js", "w");
 
 // Start the output
 if ($includeFiles) {
@@ -24,8 +24,26 @@ if ($includeFiles) {
 fwrite($output, $buffer);
 fclose($output);
 
-// Minify if possible.
 if (function_exists('exec')) {
-    exec('uglifyjs ' . $outputDir . "/sidecar.js");
-    exec('jshint ' . $outputDir . "/sidecar.js");
+    // Minification
+    try {
+        echo "\nUglifying\n";
+        $minified = shell_exec('uglifyjs ' . $outputDir . "/sidecar.js");
+        $minFile = fopen($outputDir . "/sidecar.min.js", "w");
+        fwrite($minFile, $minified);
+        fclose($minFile);
+    } catch (Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+        echo 'uglifyjs not installed';
+    }
+
+    // JSHint
+    try {
+        echo "\nJSHint\n";
+        $errors = shell_exec('jshint ' . $outputDir . "/sidecar.js");
+        print_r($errors);
+    } catch (Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+        echo 'jshint not installed';
+    }
 }
