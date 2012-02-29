@@ -93,7 +93,7 @@
           <a class="btn active" href="dashboard.html" rel="tooltip" title="3 Column Layout"><b class="icon-layout-3"></b></a>
         </div> 
         <div class="btn-group"> 
-          <a class="btn" href="#adminManage" rel="tooltip" title="Admin options"><b class="icon-cog"></b></a>
+          <a  data-toggle="modal" class="btn" href="#adminManage" rel="tooltip" title="Admin options"><b class="icon-cog"></b></a>
         </div>           
       </div>
     </div>    
@@ -146,7 +146,10 @@
            <ul class="nav nav-pills actions">
              <li>  
                <a data-toggle="modal" href="#accountAdd"rel="tooltip" title="Add an Account"><b class="icon-plus"></b></a>
-             </li>             
+             </li>
+             <li>  
+               <a data-toggle="modal" href="#share" rel="tooltip" title="Embed this Widget"><b class="icon-share"></b></a>
+             </li>                     
              <li>  
               <a data-toggle="modal" href="#adminAccounts" rel="tooltip" title="Account options"><b class="icon-cog"></b></a>
              </li>
@@ -161,42 +164,42 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Language</th>
+                  <th></th>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Priority</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>1</td>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>CSS</td>
+                  <td><b class="icon-star-empty"></b></td>
+                  <td>20543</td>
+                  <td>Bad links in Pitch</td>
+                  <td>High</td>
                 </tr>
                 <tr>
-                  <td>2</td>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>Javascript</td>
+                  <td><b class="icon-star"></b></td>
+                  <td>20546</td>
+                  <td>Broken images in pdf</td>
+                  <td>High</td>
                 </tr>
                 <tr>
-                  <td>3</td>
-                  <td>Stu</td>
-                  <td>Dent</td>
-                  <td>HTML</td>
+                  <td><b class="icon-star-empty"></b></td>
+                  <td>20550</td>
+                  <td>Misspellings everywhere</td>
+                  <td>Medium</td>
                 </tr>
                 <tr>
-                  <td>4</td>
-                  <td>Brosef</td>
-                  <td>Stalin</td>
-                  <td>HTML</td>
+                  <td><b class="icon-star-empty"></b></td>
+                  <td>20554</td>
+                  <td>404 on faq</td>
+                  <td>Medium</td>
                 </tr>
                 <tr>
-                  <td>5</td>
-                  <td>Brosef</td>
-                  <td>Stalin</td>
-                  <td>HTML</td>
+                  <td><b class="icon-star-empty"></b></td>
+                  <td>20555</td>
+                  <td>Nothing happens when ...</td>
+                  <td>Low</td>
                 </tr>               
               </tbody>
             </table>
@@ -207,7 +210,10 @@
             <ul class="nav nav-pills actions">
               <li>  
                 <a href="#adminAdd" rel="tooltip" title="Add an Account"><b class="icon-plus"></b></a>
-              </li>             
+              </li>   
+              <li>  
+                <a data-toggle="modal" href="#share" rel="tooltip" title="Embed this Widget"><b class="icon-share"></b></a>
+              </li>                        
               <li>  
                <a data-toggle="modal" href="#adminActivity" rel="tooltip" title="Account options"><b class="icon-cog"></b></a>
               </li>
@@ -272,152 +278,181 @@
 
     </div>
     <footer>
-          <footer>
-              <div class="row-fluid">
-                <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
-                <div class="span6">
-                  <div class="btn-toolbar pull-right">
-                    <div class="btn-group">
-                      <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><b class="icon-road"></b> Tour</a>
-                      <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><b class="icon-comment"></b> Feedback</a> 
-                      <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><b class="icon-question-sign"></b> Support</a>
-                    </div>
-                    <div class="btn-group">
-                      <a href="#" class="btn"><b class="icon-print"></b> Print</a> <a href="#" class="btn"><b class="icon-arrow-up"></b> Top</a>
-                    </div>
-                  </div>
-                </div>
+        <div class="row-fluid">
+          <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
+          <div class="span6">
+            <div class="btn-toolbar pull-right">
+              <div class="btn-group">
+                <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><b class="icon-road"></b> Tour</a>
+                <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><b class="icon-comment"></b> Feedback</a> 
+                <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><b class="icon-question-sign"></b> Support</a>
               </div>
-          </footer>
-          <div class="modal hide" id="systemTour">
+              <div class="btn-group">
+                <a href="#" class="btn"><b class="icon-print"></b> Print</a> <a href="#" class="btn"><b class="icon-arrow-up"></b> Top</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
 
-                  </div>    
-                  <div class="modal hide" id="accountAdd">
-                    <div class="modal-header">
-                      <a class="close" data-dismiss="modal">×</a>
-                      <h3>Add an Account</h3>
-                    </div>
-                    <div class="modal-body">
-                        <form class="form-horizontal">
-                          <fieldset>
-                            <div class="control-group">
-                              <label for="input01" class="control-label">Name</label>
-                              <div class="controls">
-                                <input type="text" id="input01" class="input-xlarge">
-                              </div>
-                            </div>
-                            <div class="control-group">
-                              <label for="input01" class="control-label">Label</label>
-                              <div class="controls">
-                                <input type="text" id="input01" class="input-xlarge">
-                              </div>
-                            </div>                    
-                            <div class="control-group">
-                              <label for="textarea" class="control-label">Label</label>
-                              <div class="controls">
-                                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-                              </div>
-                            </div>
-                          </fieldset>
-                        </form>
-                      </div>
-                      <div class="modal-footer">
-                        <button data-loading-text="Saving..." class="btn loading btn-primary">
-                          Save
-                        </button>
-                        <button class="btn cancel" data-dismiss="modal">Cancel</button>
-                      </div>
-                    </div>
-                <div class="modal hide" id="adminAccounts">
-                <div class="modal-header">
-                <a class="close" data-dismiss="modal">×</a>
-                <h3>Manage Accounts View</h3>
-                </div>
-                <div class="modal-body">
-                  <form class="form-horizontal">
-                      <fieldset>               
-                        <div class="control-group">
-                          <label for="select01" class="control-label">Rows</label>
-                          <div class="controls">
-                            <select id="select01" class="span1">
-                              <option>1</option>
-                              <option>3</option>
-                              <option selected="selected">5</option>
-                              <option>10</option>
-                            </select>
-                          </div>
-                        </div>
-                      </fieldset>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button data-loading-text="Saving..." class="btn loading btn-primary">
-                      Save
-                    </button>
-                    <button class="btn cancel" data-dismiss="modal">Cancel</button>
-                  </div>
-                </div>
+    <!-- Tour Guide -->
+    <div class="modal hide" id="systemTour">
+    </div>
 
-              <div class="modal hide" id="adminFilter">
-              <div class="modal-header">
-              <a class="close" data-dismiss="modal">×</a>
-              <h3>Manage Filters</h3>
+    <!-- dynamic generation -->
+    <div class="modal hide" id="accountAdd">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Add an Account</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>
+            <div class="control-group">
+              <label for="input01" class="control-label">Name</label>
+              <div class="controls">
+                <input type="text" id="input01" class="input-xlarge">
               </div>
-              <div class="modal-body">
-                <form class="form-horizontal">
-                        <fieldset>
-                          <div class="control-group">
-                            <label for="input01" class="control-label">Filter Name</label>
-                            <div class="controls">
-                              <input type="text" id="input01" class="input-xlarge">
-                            </div>
-                          </div>
-                          <div class="control-group">
-                            <label for="input01" class="control-label">Account</label>
-                            <div class="controls">
-                              <input type="text" id="input01" class="input-xlarge">
-                            </div>
-                          </div>                    
-                          <div class="control-group">
-                            <label for="select01" class="control-label">Result Amount</label>
-                            <div class="controls">
-                              <select id="select01">
-                                <option>something</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div class="control-group">
-                            <label for="textarea" class="control-label">Keywords</label>
-                            <div class="controls">
-                              <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-                            </div>
-                          </div>
-                        </fieldset>
-                      </form>
-                </div>
-                <div class="modal-footer">
-                  <a href="#" class="btn btn-primary">Save</a>
-                  <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-                </div>
+            </div>
+            <div class="control-group">
+              <label for="input01" class="control-label">Label</label>
+              <div class="controls">
+                <input type="text" id="input01" class="input-xlarge">
               </div>
-              <script src="/js/jquery.js"></script>
-          		<script src="/js/jquery-1.7.1.min.js"></script>
-          		<script src="/js/jquery-ui-1.8.18.custom.min.js"></script>
-              <script src="/js/bootstrap-transition.js"></script>
-              <script src="/js/bootstrap-alert.js"></script>
-              <script src="/js/bootstrap-modal.js"></script>
-              <script src="/js/bootstrap-collapse.js"></script>
-              <script src="/js/bootstrap-dropdown.js"></script>
-              <script src="/js/bootstrap-scrollspy.js"></script>
-              <script src="/js/bootstrap-tab.js"></script>
-              <script src="/js/bootstrap-tooltip.js"></script>
-              <script src="/js/bootstrap-popover.js"></script>
-              <script src="/js/bootstrap-button.js"></script>
-              <script src="/js/bootstrap-typeahead.js"></script>
-              <script src="/js/application.js"></script>
-        </body>
-      </html>
+            </div>                    
+            <div class="control-group">
+              <label for="textarea" class="control-label">Label</label>
+              <div class="controls">
+                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button data-loading-text="Saving..." class="btn loading btn-primary">
+          Save
+        </button>
+        <button class="btn cancel" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+    <!-- dynamic generation -->
+    <div class="modal hide" id="adminAccounts">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Manage Accounts View</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>               
+            <div class="control-group">
+              <label for="select01" class="control-label">Rows</label>
+              <div class="controls">
+                <select id="select01" class="span1">
+                  <option>1</option>
+                  <option>3</option>
+                  <option selected="selected">5</option>
+                  <option>10</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button data-loading-text="Saving..." class="btn loading btn-primary">
+          Save
+        </button>
+        <button class="btn cancel" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+
+    <!-- dynamic generation -->
+    <div class="modal hide" id="adminManage">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Manage Dashboard</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>
+            <div class="control-group">
+              <label for="input01" class="control-label">Filter Name</label>
+              <div class="controls">
+                <input type="text" id="input01" class="input-xlarge">
+              </div>
+            </div>
+            <div class="control-group">
+              <label for="input01" class="control-label">Account</label>
+              <div class="controls">
+                <input type="text" id="input01" class="input-xlarge">
+              </div>
+            </div>                    
+            <div class="control-group">
+              <label for="select01" class="control-label">Result Amount</label>
+              <div class="controls">
+                <select id="select01">
+                  <option>something</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </div>
+            </div>
+            <div class="control-group">
+              <label for="textarea" class="control-label">Keywords</label>
+              <div class="controls">
+                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-primary">Save</a>
+        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+      </div>
+    </div>
+ 
+    <!-- this needs to get dynamically generated -->
+    <div class="modal hide" id="share">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Share</h3>
+      </div>
+      <div class="modal-body">
+        <form class="">
+          <fieldset>
+            <div class="control-group">
+              <label for="textarea" class="control-label">Embed with Javascript</label>
+              <div class="controls">
+                <textarea rows="3" id="textarea" class="span5 input-xlarge"><script>whatever we do</script></textarea>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer tleft">
+        <a href="#" class="btn"><b class="icon-share-alt"></b> Save to Clipboard</a>
+      </div>
+    </div>
+              
+    <script src="/js/jquery.js"></script>
+		<script src="/js/jquery-1.7.1.min.js"></script>
+		<script src="/js/jquery-ui-1.8.18.custom.min.js"></script>
+    <script src="/js/bootstrap-transition.js"></script>
+    <script src="/js/bootstrap-alert.js"></script>
+    <script src="/js/bootstrap-modal.js"></script>
+    <script src="/js/bootstrap-collapse.js"></script>
+    <script src="/js/bootstrap-dropdown.js"></script>
+    <script src="/js/bootstrap-scrollspy.js"></script>
+    <script src="/js/bootstrap-tab.js"></script>
+    <script src="/js/bootstrap-tooltip.js"></script>
+    <script src="/js/bootstrap-popover.js"></script>
+    <script src="/js/bootstrap-button.js"></script>
+    <script src="/js/bootstrap-typeahead.js"></script>
+    <script src="/js/application.js"></script>
+  </body>
+</html>

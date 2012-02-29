@@ -39,14 +39,6 @@
         $nav.removeClass('subnav-fixed')
       }
     }
-
-		// editable demo
-		  $(".dblclick").editable({ 
-		      indicator : "",
-		      tooltip   : "Doubleclick to edit...",
-		      event     : "dblclick",
-		      style  : "inherit"
-		})
 		
     // tooltip demo
     $('section').tooltip({
@@ -162,5 +154,13 @@ $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
     }
   }
 })
+
+	// editable demo
+  $(".dblclick").editable({ 
+      indicator : "",
+      tooltip   : "Doubleclick to edit...",
+      event     : "dblclick",
+      style  : "inherit"
+		})
 
 }(window.jQuery)

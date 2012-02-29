@@ -453,7 +453,7 @@ padding-bottom: 15px;
   background-color: @grayLight;
   border-right-color: #ddd;
   border-left: 0;
-  @shadow: 0 3px 5px rgba(0,0,0,.05);
+  @shadow: inset 0 3px 5px rgba(0,0,0,.05);
   .box-shadow(@shadow);
 }
 .subnav .nav > .active > a .caret,
@@ -634,13 +634,21 @@ tr .dropdown.hide {
 tr:hover .dropdown.hide {
   display: inline-block;
   position: absolute;
-  top: 3px;
+  top: 4px;
+  left: 0px;
   white-space: nowrap;
 }
 
 
 /* Misc
 -------------------------------------------------- */
+.modal-body .tab-content {
+  overflow: auto;
+  height: 310px;
+}
+
+.drag:hover {cursor: move;}
+
 img.pull-right {margin: 0 0 10px 10px;}
 img.pull-left {margin: 0 10px 10px 0;}
 
