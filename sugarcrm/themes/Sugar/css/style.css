@@ -6301,6 +6301,7 @@ ul.clickMenu li {
 	padding: 0 0 0 0;
 	list-style: none;
 	position: relative; /*--Declare X and Y axis base--*/
+    cursor: pointer;
 }
 ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
 	display: block;
