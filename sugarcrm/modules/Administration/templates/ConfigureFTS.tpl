@@ -59,24 +59,24 @@
             <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}&nbsp;</td>
             <td width="85%" align="left" valign="middle"><select name="fts_type" id="fts_type">{$fts_type}</select></td>
         </tr>
-        <tr>
+        <tr class="shouldToggle">
             <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}&nbsp;</td>
             <td width="85%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
         </tr>
-        <tr>
+        <tr class="shouldToggle">
             <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}&nbsp;</td>
             <td width="85%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
         </tr>
-        <tr>
+        <tr class="shouldToggle">
             <td colspan="2">&nbsp;</td>
         </tr>
-        <tr>
+        <tr class="shouldToggle">
             <td>&nbsp;</td>
             <td>
                 <input type="button" title="{$MOD.LBL_FTS_TEST}" accessKey="{$MOD.LBL_FTS_TEST}" class="button" onclick="SUGAR.FTS.testSettings();" value="{$MOD.LBL_FTS_TEST}"/>
             </td>
         </tr>
-        <tr>
+        <tr class="shouldToggle">
             <td colspan='2'>
                 <a class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();'>
                     <span id='advanced_search_img_span'>
@@ -89,7 +89,7 @@
                 </a>
             </td>
         </tr>
-        <tr>
+        <tr class="shouldToggle">
             <td colspan='2'>
                 <div id='moduleConfig' class='add_table' style='margin-bottom:5px;display:none;'>
                     <table class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
@@ -122,7 +122,16 @@
     var disabled_modules = {$disabled_modules};
     var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
     var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
+    var shouldHide = '{$scheduleDisableButton}';
     {literal}
+    $(document).ready(function()
+    {
+        if (shouldHide)
+        {
+            $('.shouldToggle').toggle(false);
+        }
+    });
+
     SUGAR.FTS = {
         confirmSchedule : function()
         {
@@ -247,6 +256,8 @@
 
     $('#fts_type').change(function(e)
     {
+        $('.shouldToggle').toggle();
+
         if($(this).val() == '')
         {
             $('.sched_button').attr('disabled', 'disabled');
