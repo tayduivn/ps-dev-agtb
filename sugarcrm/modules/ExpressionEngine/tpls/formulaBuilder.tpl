@@ -19,8 +19,8 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<link rel="stylesheet" type="text/css" href="include/javascript/markitup/skins/simple/style.css" />
-<link rel="stylesheet" type="text/css" href="include/javascript/markitup/sets/default/style.css" />
+<link rel="stylesheet" type="text/css" href="include/javascript/jquery/markitup/skins/simple/style.css" />
+<link rel="stylesheet" type="text/css" href="include/javascript/jquery/markitup/sets/default/style.css" />
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ExpressionEngine/tpls/formulaBuilder.css'}" />
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
@@ -53,8 +53,8 @@
 <input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}'
 	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'));SUGAR.expressions.closeFormulaBuilder()">
 </div>
-<script src="{sugar_getjspath file='include/javascript/markitup/jquery.markitup.js'}"></script>
-<script src="{sugar_getjspath file='include/javascript/markitup/sets/default/set.js'}"></script>
+<script src="{sugar_getjspath file='include/javascript/jquery/markitup/jquery.markitup.js'}"></script>
+<script src="{sugar_getjspath file='include/javascript/jquery/markitup/sets/default/set.js'}"></script>
 <script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
 <script type="text/javascript">
 {literal}
