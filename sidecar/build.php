@@ -17,6 +17,11 @@ $output = fopen($outputDir . "/sidecar.js", "w");
 if ($includeFiles) {
     foreach ($includeFiles as $file) {
         $buffer .= file_get_contents($file);
+
+        // JSHint
+        echo "\nRunning JSHint on ". $file . "\n";
+        $errors = shell_exec('jshint ' . $file);
+        print_r($errors);
     }
 }
 
@@ -26,24 +31,13 @@ fclose($output);
 
 if (function_exists('exec')) {
     // Minification
-    try {
-        echo "\nUglifying\n";
-        $minified = shell_exec('uglifyjs ' . $outputDir . "/sidecar.js");
-        $minFile = fopen($outputDir . "/sidecar.min.js", "w");
-        fwrite($minFile, $minified);
-        fclose($minFile);
-    } catch (Exception $e) {
-        echo 'Caught exception: ',  $e->getMessage(), "\n";
-        echo 'uglifyjs not installed';
-    }
+    echo "\nUglifying\n";
+    $minified = shell_exec('uglifyjs ' . $outputDir . "/sidecar.js");
+    $minFile = fopen($outputDir . "/sidecar.min.js", "w");
+    fwrite($minFile, $minified);
+    fclose($minFile);
 
-    // JSHint
-    try {
-        echo "\nJSHint\n";
-        $errors = shell_exec('jshint ' . $outputDir . "/sidecar.js");
-        print_r($errors);
-    } catch (Exception $e) {
-        echo 'Caught exception: ',  $e->getMessage(), "\n";
-        echo 'jshint not installed';
-    }
+    // Generate Docs
+    echo "\nGenerating Documentation\n";
+    $docs = shell_exec('jsduck src --output docs');
 }
