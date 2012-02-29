@@ -22,11 +22,15 @@ if (!defined('sugarEntry')) define('sugarEntry', true);
  ********************************************************************************/
 
 /**
- * This class is an implemenatation class for all the rest services
+ * SugarWebServiceImplv4_1.php
+ *
+ * This class is an implementation class for all the web services.  Version 4_1 adds limit/off support to the
+ * get_relationships function.  We also added the sync_get_modified_relationships function call from version
+ * one to facilitate querying for related meetings/calls contacts/users records.
+ *
  */
 require_once('service/v4/SugarWebServiceImplv4.php');
-require_once('service/v4/SugarWebServiceUtilv4.php');
-
+require_once('service/v4_1/SugarWebServiceUtilv4_1.php');
 
 class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
 {
@@ -37,7 +41,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
      */
     public function __construct()
     {
-        self::$helperObject = new SugarWebServiceUtilv4();
+        self::$helperObject = new SugarWebServiceUtilv4_1();
     }
 
     /**
@@ -79,6 +83,108 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
         }
 
         return $return;
+    }
 
-    } // fn
+
+    /**
+     * get_modified_relationships
+     *
+     * Get a list of the relationship records that have been modified within a specified date range.  This is used to
+     * help facilitate sync operations.
+     *
+     * @param xsd:string $session String of the session id
+     * @param xsd:string $module_name String value of the primary module to retrieve relationship against
+     * @param xsd:string $related_module String value of the related module to retrieve records off of
+     * @param xsd:string $from_date String value in YYYY-MM-DD HH:MM:SS format of starting date modified range
+     * @param xsd:string $to_date String value in YYYY-MM-DD HH:MM:SS format of ending date modified range
+     * @param xsd:int $offset Integer value of the offset to begin returning records from
+     * @param xsd:int $max_results Integer value of the max_results to return; -99 for unlimited
+     * @param xsd:int $deleted Integer value indicating deleted column value search (defaults to 0).  Set to 1 to find deleted records
+     * @param xsd:string $module_user_id String value of the user id to filter by (optional, no filtering by default)
+     * @param tns:select_fields $select_fields Array value of fields to select and return as name/value pairs
+     * @param tns:ids $ids Array of relationship entry ids to filter search with (optional, no filtering by default)
+     * @param xsd:string $relationship_name String value of the relationship name to search on
+     * @param xsd:string $deletion_date String value in YYYY-MM-DD HH:MM:SS format for filtering on deleted records
+     * this allows deleted records to be returned as well
+     *
+     * @return Array records that match search criteria
+     */
+    function get_modified_relationships($session, $module_name, $related_module, $from_date, $to_date, $offset, $max_results, $deleted, $module_user_id = '', $select_fields = array(), $ids = array(), $relationship_name = '', $deletion_date = ''){
+        global  $beanList, $beanFiles;
+        $error = new SoapError();
+        $output_list = array();
+
+        if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
+       		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_modified_relationships');
+       		return;
+       	} // if
+
+        if(empty($beanList[$module_name]) || empty($beanList[$related_module])){
+            $error->set_error('no_module');
+            return array('result_count'=>0, 'next_offset'=>0, 'field_list'=>$select_fields, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
+        }
+        global $current_user;
+        if(!self::$helperObject->check_modules_access($current_user, $module_name, 'read') || !self::$helperObject->check_modules_access($current_user, $related_module, 'read')){
+            $error->set_error('no_access');
+            return array('result_count'=>0, 'next_offset'=>0, 'field_list'=>$select_fields, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
+        }
+
+        if($max_results > 0 || $max_results == '-99'){
+            global $sugar_config;
+            $sugar_config['list_max_entries_per_page'] = $max_results;
+        }
+
+        // Cast to integer
+        $deleted = (int)$deleted;
+        $date_query = "(m1.date_modified > " . db_convert("'".$GLOBALS['db']->quote($from_date)."'", 'datetime'). " AND m1.date_modified <= ". db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime')." AND {0}.deleted = $deleted)";
+        if(isset($deletion_date) && !empty($deletion_date)){
+            $date_query .= " OR ({0}.date_modified > " . db_convert("'".$GLOBALS['db']->quote($deletion_date)."'", 'datetime'). " AND {0}.date_modified <= ". db_convert("'".$GLOBALS['db']->quote($to_date)."'", 'datetime')." AND {0}.deleted = 1)";
+        }
+
+        $in = '';
+        if(isset($ids) && !empty($ids))
+        {
+            foreach($ids as $value)
+            {
+               $in .= ",'" . $GLOBALS['db']->quote($value) . "'";
+            }
+            $in = '('. substr($in, 1) . ')';
+        }
+        $query = '';
+        if(isset($in) && !empty($in)){
+            $query .= "( $date_query AND m1.id IN $in) OR (m1.id NOT IN $in AND {0}.deleted = 0)";
+        } else {
+            $query .= "( {0}.deleted = 0)";
+        }
+
+        if(!empty($module_user_id))
+        {
+            $query .= " AND";
+            $query .= " m2.id = '".$GLOBALS['db']->quote($module_user_id)."'";
+        }
+
+        if($related_module == 'Meetings' || $related_module == 'Calls'){
+            $query = string_format($query, array('m1'));
+        }
+
+        require_once('soap/SoapRelationshipHelper.php');
+        $results = retrieve_modified_relationships($module_name, $related_module, $query, $deleted, $offset, $max_results, $select_fields, $relationship_name);
+
+        $list = $results['result'];
+
+        foreach($list as $value)
+        {
+             $output_list[] = self::$helperObject->array_get_return_value($value, $results['table_name']);
+        }
+
+        $next_offset = $offset + count($output_list);
+
+        return array(
+            'result_count'=> count($output_list),
+            'next_offset' => $next_offset,
+            'entry_list' => $output_list,
+            'error' => $error->get_soap_array()
+        );
+    }
+
 }
