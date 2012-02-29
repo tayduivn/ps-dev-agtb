@@ -12,11 +12,11 @@
         {if is_array($smarty.request.m) && in_array($entry.module, $smarty.request.m)}
             <input type="checkbox" checked="checked" id="{$entry.module}" name="module_filter" class="ftsModuleFilter">
             <span id="{$entry.module}_label" class="checked">&nbsp;{$entry.label}</span>
-            <span id="{$entry.module}_count" class="checked">({$entry.count})</span>
+            <span id="{$entry.module}_count" class="checked">{if is_int($entry.count)}({$entry.count}){/if}</span>
         {else}
             <input type="checkbox" id="{$entry.module}" name="module_filter" class="ftsModuleFilter">
             <span id="{$entry.module}_label" class="unchecked">&nbsp;{$entry.label}</span>
-            <span id="{$entry.module}_count" class="unchecked">({$entry.count})</span>
+            <span id="{$entry.module}_count" class="unchecked">{if is_int($entry.count) }({$entry.count}){/if}</span>
         {/if}
     </div>
 {/foreach}

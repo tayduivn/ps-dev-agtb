@@ -161,7 +161,7 @@ class ViewFts extends SugarView
                 }
                 else
                 {
-                    $moduleEntry['count'] = 'N/A';
+                    $moduleEntry['count'] = '';
                 }
             }
         }
