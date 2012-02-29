@@ -1,30 +1,23 @@
 package com.sugarcrm.rest.tests;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.HashMap;
-
+import junit.framework.TestCase;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
-
 import com.google.gson.Gson;
-import com.sugarcrm.rest.tests.TestAccountUpdate.UserId;
 
-public class TestAccountCreate {
+public class TestAccountCreate extends TestCase {
 
 	@Test
-	public void test() {
+	public void test_TestAccountCreate() {
 		String tmp = "";
 		int status = -1;
 		String uri = "";
@@ -126,6 +119,7 @@ public class TestAccountCreate {
 			responseData = response.getEntity();
 			buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: '%s'\n\n", buffer);
+			@SuppressWarnings("unchecked")
 			HashMap<String, Object> accountInfo = json.fromJson(buffer, HashMap.class);
 			assertEquals(account_name, accountInfo.get("name"));
 			

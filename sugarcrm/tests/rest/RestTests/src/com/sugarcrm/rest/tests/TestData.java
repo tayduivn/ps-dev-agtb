@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 public class TestData {
 
-	public static String BaseURL = "http://localhost:8888/sugar/ent/sugarcrm/rest";
-	public static String UserName = "admin";
-	public static String UserPass = "admin";
+	public String BaseURL = "http://localhost:8888/sugar/ent/sugarcrm/rest";
+	public String UserName = "admin";
+	public String UserPass = "admin";
 	public HashMap<String, String> data = null;
 	
 	public TestData() {

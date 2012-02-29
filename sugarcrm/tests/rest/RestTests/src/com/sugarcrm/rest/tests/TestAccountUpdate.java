@@ -1,12 +1,8 @@
 package com.sugarcrm.rest.tests;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.HashMap;
-
+import junit.framework.TestCase;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,15 +13,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
-
 import com.google.gson.Gson;
-import com.sugarcrm.rest.tests.TestAccountCreate.AccountId;
-import com.sugarcrm.rest.tests.TestAccountObjects.UserId;
 
-public class TestAccountUpdate {
+public class TestAccountUpdate extends TestCase {
 
 	@Test
-	public void test() {
+	public void test_TestAccountUpdate() {
 		TestData testData = new TestData();
 		String buffer = null;
 		int status = -1;
@@ -155,6 +148,7 @@ public class TestAccountUpdate {
 			responseData = response.getEntity();
 			buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: '%s'\n\n", buffer);
+			@SuppressWarnings("unchecked")
 			HashMap<String, Object> accountInfo = json.fromJson(buffer, HashMap.class);
 			assertEquals(account_newName, accountInfo.get("name"));
 			//finished reading account //
