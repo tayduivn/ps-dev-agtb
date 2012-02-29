@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Opportunities - Activity - SugarCRM</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- styles -->
+    <link href="/css/bootstrap.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container" style="width: auto;">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>              
+          <a class="brand" href="index.html" rel="tooltip" title="Dashboard"></a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="">
+                <a href="#">Accounts</a>
+              </li>
+              <li class="">
+                <a href="#">Contacts</a>
+              </li>              
+              <li class="active">
+                <a href="opportunities_a.html">Opportunities</a>
+              </li>              
+              <li class="">
+                <a href="#">Leads</a>
+              </li>
+              <li class="">
+                <a href="#">Reports</a>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">More</a>
+                <ul class="dropdown-menu">
+        					<li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+        					<li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+        					<li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+        					<li id="gen20"><a href="#ajaxUILoc=index.php%3Fmodule%3DOpportunities%26action%3Dindex" id="moduleTab_Opportunities">Opportunities</a></li>
+        					<li id="gen21"><a href="index.php?module=Forecasts&amp;action=index" id="moduleTab_Forecasts">Forecasts</a></li>
+        					<li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Reports</a></li>
+        					<li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
+        					<li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
+        					<li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
+        					<li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
+        					<li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#"><b class="icon-plus"></b> Filter Menu By</a></li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="nav pull-right">
+              <li class="divider-vertical"></li>
+              <li class="dropdown">
+                <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
+                <ul class="dropdown-menu">
+                  <li><a href="">System-wide maintenance &hellip;</a></li>
+                  <li class="divider"></li>
+                  <li><a href="">Upgrade to 7.0!</a></li>
+                  <li class="divider"></li>                       
+                  <li><a href="">Please take our survey.</a></li>
+                </ul>
+              </li>
+              <li class="divider-vertical"></li>
+              <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src=" https://lh5.googleusercontent.com/-tYj7_rm5E1w/AAAAAAAAAAI/AAAAAAAAAdM/DO9e_nVVDPw/s26-c-k/photo.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
+                 <ul class="dropdown-menu">
+                   <li><a href="#">Profile</a></li>
+                   <li><a href="#">Password</a></li>
+                   <li><a href="#">Advanced</a></li>
+                   <li><a href="#">External Accounts</a></li>
+                   <li class="divider"></li>
+                   <li><a href="#">Log Out</a></li>
+                 </ul>
+               </li>
+              <li class="divider-vertical"></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="icon-plus icon-white"></b> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Account</a></li>
+                  <li><a href="#">Contact</a></li>
+                  <li><a href="#">Opportunity</a></li>
+                  <li><a href="#">Lead</a></li>
+                  <li><a href="#">Case</a></li>
+                  <li><a href="#">Report</a></li>
+                </ul>
+              </li>              
+            </ul>
+            <form class="navbar-search pull-right" action="">
+              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+            </form>
+          </div><!-- /.nav-collapse -->
+        </div>
+      </div><!-- /navbar-inner -->
+    </div>
+    <div class="subnav">
+      <div class="btn-toolbar pull-left">
+        <div class="btn-group"> 
+          <a class="btn" data-toggle="collapse" data-toggle="button" data-parent="#accordion2" href="#collapseOne"><b class="icon-search"></b> Filter</a>
+        </div>        
+      </div>
+      <div class="btn-toolbar pull-right">
+        <div class="btn-group"> 
+          <a class="btn" href="opportunities_a.html" rel="tooltip" title="List view"><b class="icon-align-justify"></b></a>
+          <a class="btn active" href="activity_a.html" rel="tooltip" title="Activity view"><b class="icon-th-list"></b></a>
+          <a class="btn" href="#"><b class="icon-th-large"></b></a>
+        </div>
+      </div>  
+      <div id="accordion2">
+        <div class="accordion-group">
+          <div id="collapseOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form class="" action="">
+                <button class="btn disabled"><b class="icon-minus"></b></button> <button class="btn"><b class="icon-plus"></b></button>
+                <select>
+                    <option>Relevance</option>
+                    <option>Last Updated</option>
+                    <option>Recently Added</option>
+                </select>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>          
+    </div>    
+    <div class="container-fluid subhead" id="stream">       
+          <table class="table">
+            <thead class="hidden">
+              <tr>
+                <th style="min-width: 0 !important; width: 0%">                 
+                </th>
+                <th style="width: 94.5%">Opportunity</th>
+                <th style="width: 5%">Sales Stage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <b class="icon-star-empty"></b>
+                </td>
+                <td>
+                  <a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b>
+                  <span class="actions">
+                    <a href=""><b class="icon-email"></b> Email</a> <a href=""><b class="icon-print"></b> Email</a> <a href="">Email</a> <a href="">Email</a> 
+                  </span>
+                </td>
+                <td rel="tooltip" title="75% complete">
+                  <div class="progress progress-near">
+                    <div class="bar" style="width: 75%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star"></b></td>
+                <td>Perkin Kleiners is an	                                    $50,000         24 days         Call Chris Lottery to ask how to import his...
+                </td>
+                <td rel="tooltip" title="50% complete">
+                  <div class="progress progress-mid">
+                    <div class="bar" style="width: 50%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="20% complete">
+                  <div class="progress progress-min">
+                    <div class="bar" style="width: 20%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="60% complete">
+                  <div class="progress progress-mid">
+                    <div class="bar" style="width: 60%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that was closed <b>24 days ago</b></td>
+                <td rel="tooltip" title="100% complete">
+                  <div class="progress progress-closed">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that was halted <b>4 days ago</b></td>
+                <td rel="tooltip" title="HALTED - 60% complete">
+                  <div class="progress progress-halt">
+                    <div class="bar" style="width: 60%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="100% complete">
+                  <div class="progress progress-closed">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="100% complete">
+                  <div class="progress progress-closed">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="100% complete">
+                  <div class="progress progress-closed">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="100% complete">
+                  <div class="progress progress-closed">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b></td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="100% complete">
+                  <div class="progress progress-closed">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b class="icon-star-empty"></b> </td>
+                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
+                <td rel="tooltip" title="100% complete">
+                  <div class="progress progress-closed">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </td>
+              </tr>                                                                                                                                                                                                                                                                                                                                        
+            </tbody>
+          </table>
+          <button id="fat-btn" data-loading-text="loading..." class="btn wide">
+            Load 20 more
+          </button>
+    </div>  
+    <footer>
+        <div class="row-fluid">
+          <div class="span9"><a href="" class="logo">SugarCRM</a></div>        
+          <div class="span3">
+            <div class="btn-toolbar pull-right">
+              <div class="btn-group">
+                <a href="#" class="btn"><b class="icon-comment"></b> Feedback</a> <a href="#" class="btn"><b class="icon-arrow-up"></b> Top</a> &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
+
+        <div class="modal hide" id="adminFilter">
+        <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Manage Filters</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+                  <fieldset>
+                    <div class="control-group">
+                      <label for="input01" class="control-label">Filter Name</label>
+                      <div class="controls">
+                        <input type="text" id="input01" class="input-xlarge">
+                      </div>
+                    </div>
+                    <div class="control-group">
+                      <label for="input01" class="control-label">Account</label>
+                      <div class="controls">
+                        <input type="text" id="input01" class="input-xlarge">
+                      </div>
+                    </div>                    
+                    <div class="control-group">
+                      <label for="select01" class="control-label">Result Amount</label>
+                      <div class="controls">
+                        <select id="select01">
+                          <option>something</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                          <option>5</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="control-group">
+                      <label for="textarea" class="control-label">Keywords</label>
+                      <div class="controls">
+                        <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
+        </div>
+        <div class="modal-footer">
+        <a href="#" class="btn btn-primary">Save</a>
+        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+        </div>
+        </div>
+
+        <div class="modal hide" id="adminActivity">
+        <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Manage Activity</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+                  <fieldset>
+                    <div class="control-group">
+                      <label for="input01" class="control-label">Filter Name</label>
+                      <div class="controls">
+                        <input type="text" id="input01" class="input-xlarge">
+                      </div>
+                    </div>
+                    <div class="control-group">
+                      <label for="input01" class="control-label">Account</label>
+                      <div class="controls">
+                        <input type="text" id="input01" class="input-xlarge">
+                      </div>
+                    </div>                    
+                    <div class="control-group">
+                      <label for="select01" class="control-label">Result Amount</label>
+                      <div class="controls">
+                        <select id="select01">
+                          <option>something</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                          <option>5</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="control-group">
+                      <label for="textarea" class="control-label">Keywords</label>
+                      <div class="controls">
+                        <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
+        </div>
+        <div class="modal-footer">
+        <a href="#" class="btn btn-primary">Save</a>
+        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+        </div>
+        </div>
+
+        
+    <script src="/js/jquery.js"></script>
+    <script src="/js/bootstrap-transition.js"></script>
+    <script src="/js/bootstrap-alert.js"></script>
+    <script src="/js/bootstrap-modal.js"></script>
+    <script src="/js/bootstrap-collapse.js"></script>
+    <script src="/js/bootstrap-dropdown.js"></script>
+    <script src="/js/bootstrap-scrollspy.js"></script>
+    <script src="/js/bootstrap-tab.js"></script>
+    <script src="/js/bootstrap-tooltip.js"></script>
+    <script src="/js/bootstrap-popover.js"></script>
+    <script src="/js/bootstrap-button.js"></script>
+    <script src="/js/bootstrap-typeahead.js"></script>
+    <script src="/js/application.js"></script>
+  </body>
+</html>
