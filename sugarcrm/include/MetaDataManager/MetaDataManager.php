@@ -97,6 +97,8 @@ class MetaDataManager {
             $data[$modName] = $this->getDataCollection($modName);
         }
 
+        $data['SugarFields'] = $this->getSugarFields();
+
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["md5"] = $md5;
@@ -360,32 +362,19 @@ class MetaDataManager {
     {
         $fieldFileTypes2meta = array('hbt'=>'template','js'=>'js');
         $result = array();
-        chdir("include/SugarFields");
-        $fieldsDirectory = "PortalFields/";
+        $fieldsDirectory = "include/SugarFields/PortalFields/";
         // get list of portal fields
         $portalFiles = $this->getFiles($fieldsDirectory);
-        foreach ($portalFiles as $fname) {
+
+        foreach ($portalFiles as $finfo) {
             $build = false;
             $fieldMeta = '';
 
             // get file info
-            $namePieces = explode('/', $fname);
-            $fieldName = "";
-            if ($namePieces[1]) {
-                $fieldName = $namePieces[1];
-            }
+            $fieldName = array_pop(explode('/', $finfo['dirname']));
+            $fileExtension = $finfo['extension'];
+            $action=$finfo["filename"];
 
-            $action = "";
-            $fileExtension = "";
-            if ($namePieces[2]) {
-                $filePieces = explode(".", $namePieces[2]);
-                if ($filePieces[0]) {
-                    $action = $filePieces[0];
-                }
-                if ($filePieces[1]) {
-                    $fileExtension = $filePieces[1];
-                }
-            }
             // check if we want this file
             if (in_array($fileExtension, array_keys($fieldFileTypes2meta))) {
                 $build = true;
@@ -399,7 +388,7 @@ class MetaDataManager {
                 if (!isset($result[$fieldName][$action])) {
                     $result[$fieldName][$action] = array();
                 }
-                $fieldFragmentArray = array($fieldMeta=>file_get_contents($fname));
+                $fieldFragmentArray = array($fieldMeta=>file_get_contents($finfo["dirname"]."/".$finfo["basename"]));
                 $result[$fieldName][$action] = array_merge($result[$fieldName][$action], $fieldFragmentArray) ;
             }
 
@@ -431,7 +420,7 @@ class MetaDataManager {
                     $resourceParts = explode('.', $resource);
                     $extension = end($resourceParts);
                     if ($extension && !in_array($extension, $exempt_extensions)) {
-                        $files[] = $directory . $resource;
+                        $files[] = pathinfo($directory . $resource);
                     }
                 }
             }
