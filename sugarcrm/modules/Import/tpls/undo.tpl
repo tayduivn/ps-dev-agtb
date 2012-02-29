@@ -44,10 +44,10 @@
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
 <tr>
     <td align="left">
-       <input title="{$MOD.LBL_MODULE_NAME}&nbsp;{$MODULENAME}" accessKey="" class="button" type="submit" name="button"
+       <input title="{$MOD.LBL_MODULE_NAME}&nbsp;{$MODULENAME}"  class="button" type="submit" name="button"
             value="{$MOD.LBL_MODULE_NAME}&nbsp;{$MODULENAME}">
 
-        <input title="{$MOD.LBL_FINISHED}{$MODULENAME}" accessKey="" class="button" type="submit"
+        <input title="{$MOD.LBL_FINISHED}{$MODULENAME}"  class="button" type="submit"
             name="finished" id="finished" value="{$MOD.LBL_IMPORT_COMPLETE}">
     </td>
 </tr>

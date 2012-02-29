@@ -27,7 +27,10 @@
  ********************************************************************************/
 *}
 
-<button type="button" onclick="CAL.edit_all_recurrences();" id="edit_all_recurrences_btn" style="display: none; margin: 10px;"> {$MOD.LBL_EDIT_ALL_RECURRENCES} </button>
+<div id="edit_all_recurrences_block" style="display: none;">
+	<button type="button" id="btn-edit-all-recurrences" onclick="CAL.edit_all_recurrences();"> {$MOD.LBL_EDIT_ALL_RECURRENCES} </button>
+	<button type="button" id="btn-remove-all-recurrences" onclick="CAL.remove_all_recurrences();"> {$MOD.LBL_REMOVE_ALL_RECURRENCES} </button>
+</div>
 
 <div id="cal-repeat-block" style="dispaly: none;">
 <form name="CalendarRepeatForm" id="CalendarRepeatForm" onsubmit="return false;">
@@ -37,7 +40,7 @@
 	<tr>
 		<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
 		<td width="37.5%" valign="top">
-			<select name="repeat_type" onclick="toggle_repeat_type();">{html_options options=$APPLIST.repeat_type_dom}</select>
+			<select name="repeat_type" onchange="toggle_repeat_type();">{html_options options=$APPLIST.repeat_type_dom}</select>
 		</td>
 	</tr>
 	
@@ -123,7 +126,7 @@
 			if(typeof validate != "undefined" && typeof validate['CalendarRepeatForm'] != "undefined"){
 				removeFromValidate('CalendarRepeatForm', 'repeat_until');
 			}
-			addToValidateMoreThan('CalendarRepeatForm', 'repeat_count', 'int', true,'{/literal}{$MOD.LBL_REPEAT_COUNT}{literal}');			
+			addToValidateMoreThan('CalendarRepeatForm', 'repeat_count', 'int', true,'{/literal}{$MOD.LBL_REPEAT_COUNT}{literal}', 1);			
 		}else{
 			document.forms['CalendarRepeatForm'].repeat_count.setAttribute("disabled","disabled");			
 			document.forms['CalendarRepeatForm'].repeat_until.removeAttribute("disabled");
@@ -134,6 +137,15 @@
 			}
 			addToValidate('CalendarRepeatForm', 'repeat_until', 'date', true,'{/literal}{$MOD.LBL_REPEAT_UNTIL}{literal}');			
 		}
+		
+		// prevent an issue when a calendar date picker is hidden under a dialog
+		var editContainer = document.getElementById('cal-edit_c');
+		if (editContainer) {
+			var pickerContainer = document.getElementById('container_repeat_until_trigger_c');
+			if (pickerContainer) {
+				pickerContainer.style.zIndex = editContainer.style.zIndex + 1;
+			}
+		}		
 	}
 {/literal}
 </script>

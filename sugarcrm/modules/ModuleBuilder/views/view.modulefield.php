@@ -295,6 +295,15 @@ class ViewModulefield extends SugarView
         $fv->ss->assign('field_name_exceptions', $json->encode($field_name_exceptions));
         ksort($field_types);
         $fv->ss->assign('field_types',$field_types);
+        $ftsEngineType = getFTSEngineType();
+        $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');
+        $fv->ss->assign('fts_options', $ftsBoostOptions);
+        // TODO: should probably add a check here to not show this for some data types, like boolean, etc?
+        if (!empty($ftsEngineType)) {
+            $fv->ss->assign('show_fts', true);
+        } else {
+            $fv->ss->assign('show_fts', false);
+        }
         $fv->ss->assign('importable_options', $GLOBALS['app_list_strings']['custom_fields_importable_dom']);
         $fv->ss->assign('duplicate_merge_options', $GLOBALS['app_list_strings']['custom_fields_merge_dup_dom']);
 
@@ -359,8 +368,22 @@ class ViewModulefield extends SugarView
         }
 
         $fv->ss->assign('help_group', $edit_or_add);
-        $body = $fv->ss->fetch('modules/ModuleBuilder/tpls/MBModule/field.tpl');
+        $body = $this->fetchTemplate($fv, 'modules/ModuleBuilder/tpls/MBModule/field.tpl');
         $ac->addSection('east', translate('LBL_SECTION_FIELDEDITOR','ModuleBuilder'), $body );
         return $ac;
+    }
+
+    /**
+     * fetchTemplate
+     * This function overrides fetchTemplate from SugarView.  For view.modulefield.php we go through the FieldViewer
+     * class to fetch the display contents.
+     *
+     * @param FieldViewer $mixed the FieldViewer instance
+     * @param string $template the file to fetch
+     * @return string contents from calling the fetch method on the FieldViewer Sugar_Smarty instance
+     */
+    protected function fetchTemplate($fv, $template)
+    {
+        return $fv->ss->fetch($this->getCustomFilePathIfExists($template));
     }
 }

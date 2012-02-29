@@ -53,8 +53,10 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_themeObjectChild = SugarThemeRegistry::get($this->_themeDefChild['dirName']);
 
         // test assumes developerMode is off, so css minifying happens
-        if ( isset($GLOBALS['sugar_config']['developerMode']) )
+        if (inDeveloperMode())
+        {
             $this->_olddeveloperMode = $GLOBALS['sugar_config']['developerMode'];
+        }
         $GLOBALS['sugar_config']['developerMode'] = false;
     }
 
@@ -141,8 +143,8 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $matches = array();
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS(),$matches);
         $i = 0;
-
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/jqueryui\/themes\/base\/jquery.ui.all.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
 
@@ -155,8 +157,8 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $matches = array();
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS('blue','small'),$matches);
         $i = 0;
-
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/jqueryui\/themes\/base\/jquery.ui.all.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
 
@@ -174,6 +176,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $i = 0;
 
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/yui.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/jqueryui\/themes\/base\/jquery.ui.all.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObject->__toString().'\/css\/style.css/',$matches[1][$i++]);
 
@@ -188,6 +191,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $i = 0;
 
         $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/yui.css/',$matches[1][$i++]);
+        $this->assertRegExp('/include\/javascript\/jquery\/jqueryui\/themes\/base\/jquery.ui.all.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/deprecated.css/',$matches[1][$i++]);
         $this->assertRegExp('/themes\/'.$this->_themeObjectChild->__toString().'\/css\/style.css/',$matches[1][$i++]);
 

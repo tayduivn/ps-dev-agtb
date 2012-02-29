@@ -95,6 +95,8 @@ class Call extends SugarBean
 	var $object_name = "Call";
 	var $new_schema = true;
 	var $importable = true;
+	var $syncing = false;
+	var $recurring_source;
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array('assigned_user_name', 'assigned_user_id', 'contact_id', 'user_id', 'contact_name');
@@ -135,7 +137,28 @@ class Call extends SugarBean
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))
         	$this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
 	}
-
+	
+	/**
+	 * Disable edit if call is recurring and source is not Sugar. It should be edited only from Outlook.
+	 * @param $view string
+	 * @param $is_owner bool
+	 */
+	function ACLAccess($view,$is_owner = 'not_set'){
+		// don't check if call is being synced from Outlook
+		if($this->syncing == false){
+			$view = strtolower($view);
+			switch($view){
+				case 'edit':
+				case 'save':
+				case 'editview':
+				case 'delete':
+					if(!empty($this->recurring_source) && $this->recurring_source != "Sugar"){
+						return false;
+					}
+			}
+		}
+		return parent::ACLAccess($view,$is_owner);
+	}
     // save date_end by calculating user input
     // this is for calendar
 	function save($check_notify = FALSE) {
@@ -172,6 +195,11 @@ class Call extends SugarBean
         if (empty($this->status) ) {
             $this->status = $this->getDefaultStatus();
         }
+        
+		// prevent a mass mailing for recurring meetings created in Calendar module
+		if (empty($this->id) && !empty($_REQUEST['module']) && $_REQUEST['module'] == "Calendar" && !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id)) {
+			$check_notify = false;
+		}       
 		/*nsingh 7/3/08  commenting out as bug #20814 is invalid
 		if($current_user->getPreference('reminder_time')!= -1 &&  isset($_POST['reminder_checked']) && isset($_POST['reminder_time']) && $_POST['reminder_checked']==0  && $_POST['reminder_time']==-1){
 			$this->reminder_checked = '1';
@@ -434,7 +462,7 @@ class Call extends SugarBean
 			if(empty($action))
 			    $action = "index";
 
-            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
+            $setCompleteUrl = "<a id='{$this->id}' onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title='".translate('LBL_LIST_CLOSE','Calls')."' border='0'", null,null,'.gif', translate('LBL_LIST_CLOSE','Calls')) . "</a>";
 		}
 		global $timedate;
@@ -720,5 +748,13 @@ class Call extends SugarBean
             }
         }
         return '';
+    }
+    
+    public function mark_deleted($id)
+    {
+        require_once("modules/Calendar/CalendarUtils.php");
+        CalendarUtils::correctRecurrences($this, $id);
+                
+        parent::mark_deleted($id);
     }
 }

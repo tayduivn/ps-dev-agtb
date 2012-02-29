@@ -362,6 +362,11 @@ if(function_exists('deleteCache'))
 	@deleteCache();
 }
 
+// creating full text search logic hooks
+// this will be merged into application/Ext/LogicHooks/logichooks.ext.php
+// when rebuild_extensions is called
+logThis(' Writing FTS hooks');
+createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
 
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
 logThis('About to repair the database.', $path);
@@ -508,14 +513,9 @@ merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
 
 //Upgrade connectors
-/*
-//BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '610' && function_exists('upgrade_connectors'))
-{
-   upgrade_connectors($path);
-}
-//END SUGARCRM flav=int ONLY
-*/
+logThis('Begin upgrade_connectors', $path);
+upgrade_connectors();
+logThis('End upgrade_connectors', $path);
 
 // Enable the InsideView connector by default
 if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
@@ -550,6 +550,12 @@ if(function_exists('unlinkUpgradeFiles'))
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
+}
+
+//Run RepairSearchFields.php file
+if($origVersion < '620' && function_exists('repairSearchFields'))
+{
+    repairSearchFields($path);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

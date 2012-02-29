@@ -83,7 +83,9 @@ $mod_strings = array (
 	'LBL_CREATE_NEW_RECORD' => 'Create Activity',
 	'LBL_LOADING' => 'Loading ......',
 	'LBL_SAVING' => 'Saving ......',
+	'LBL_SENDING_INVITES' => 'Sending Invites .....',
 	'LBL_CONFIRM_REMOVE' => 'Are you sure you want to remove the record?',
+	'LBL_CONFIRM_REMOVE_ALL_RECURRING' => 'Are you sure you want to remove all recurring records?',
 	'LBL_EDIT_RECORD' => 'Edit Activity',
 	'LBL_ERROR_SAVING' => 'Error while saving',
 	'LBL_ERROR_LOADING' => 'Error while loading',
@@ -123,13 +125,13 @@ $mod_strings = array (
 
 	'LBL_GENERAL_TAB' => 'Details',
 	'LBL_PARTICIPANTS_TAB' => 'Invitees',
-	'LBL_REPEAT_TAB' => 'Repeat',	
+	'LBL_REPEAT_TAB' => 'Recurrence ',	
 	
 	'LBL_REPEAT_TYPE' => 'Repeat',
 	'LBL_REPEAT_INTERVAL' => 'Interval',
 	'LBL_REPEAT_END' => 'End',	
 	'LBL_REPEAT_END_AFTER' => 'After',
-	'LBL_REPEAT_OCCURRENCES' => 'occurrances',
+	'LBL_REPEAT_OCCURRENCES' => 'occurrences',
 	'LBL_REPEAT_END_BY' => 'By',	
 	'LBL_REPEAT_DOW' => 'On',	
 	'LBL_REPEAT_UNTIL' => 'Repeat Until',
@@ -137,6 +139,7 @@ $mod_strings = array (
 	'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
 	
 	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
+	'LBL_REMOVE_ALL_RECURRENCES' => 'Remove All Recurrences',
 
 );
 

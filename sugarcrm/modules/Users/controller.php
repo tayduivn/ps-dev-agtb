@@ -51,26 +51,26 @@ class UsersController extends SugarController
 			$this->view = 'classic';
 		}
 	}
-/**
- * bug 48170
- * Action resetPreferences gets fired when user clicks on  'Reset User Preferences' button
- * This action is set in UserViewHelper.php
- */
-protected function action_resetPreferences(){
-    if($_REQUEST['record'] == $GLOBALS['current_user']->id || ($GLOBALS['current_user']->isAdminForModule('Users'))){
-        $u = new User();
-        $u->retrieve($_REQUEST['record']);
-        $u->resetPreferences();
-        if($u->id == $GLOBALS['current_user']->id) {
-                SugarApplication::redirect('index.php');
-            }
-            else{
-                SugarApplication::redirect("index.php?module=Users&record=".$_REQUEST['record']."&action=DetailView"); //bug 48170]
-
-            }
-    }
-}
     //END SUGARCRM flav=pro || flav=sales ONLY	
+	/**
+	 * bug 48170
+	 * Action resetPreferences gets fired when user clicks on  'Reset User Preferences' button
+	 * This action is set in UserViewHelper.php
+	 */
+	protected function action_resetPreferences(){
+	    if($_REQUEST['record'] == $GLOBALS['current_user']->id || ($GLOBALS['current_user']->isAdminForModule('Users'))){
+	        $u = new User();
+	        $u->retrieve($_REQUEST['record']);
+	        $u->resetPreferences();
+	        if($u->id == $GLOBALS['current_user']->id) {
+	            SugarApplication::redirect('index.php');
+	        }
+	        else{
+	            SugarApplication::redirect("index.php?module=Users&record=".$_REQUEST['record']."&action=DetailView"); //bug 48170]
+	
+	        }
+	    }
+	}  
 	protected function action_delete()
 	{
 	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && ($GLOBALS['current_user']->isAdminForModule('Users')
@@ -137,7 +137,7 @@ protected function action_resetPreferences(){
 	    $_POST['record'] = $current_user->id;
 	    $_POST['is_admin'] = ( $current_user->is_admin ? 'on' : '' );
 	    $_POST['use_real_names'] = true;
-	    $_POST['should_remind'] = '1';
+	    $_POST['reminder_checked'] = '1';
 	    $_POST['reminder_time'] = 1800;
         $_POST['mailmerge_on'] = 'on';
         $_POST['receive_notifications'] = $current_user->receive_notifications;
@@ -151,5 +151,11 @@ protected function action_resetPreferences(){
 	    $_REQUEST['return_action'] = 'index';
 		require('modules/Users/Save.php');
 	}
+
+    protected function action_saveftsmodules()
+    {
+        $this->view = 'fts';
+        $GLOBALS['current_user']->setPreference('fts_disabled_modules', $_REQUEST['disabled_modules']);
+    }
 }	
 ?>

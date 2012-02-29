@@ -99,7 +99,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			var viewHeight = document.documentElement ? document.documentElement.clientHeight : self.innerHeight;
 			var mp = ModuleBuilder.mainPanel = new YAHOO.widget.Layout('mblayout', {
 				border: false,
-				height: viewHeight - (document.getElementById('header').clientHeight ) - 40,
+				height: viewHeight - (document.getElementById('dcmenu').clientHeight ) - 40,
 				//autoHeight: true
 				//frame: true,
 				units: [//ModuleBuilder.tree, ModuleBuilder.tabPanel,
@@ -1129,7 +1129,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                     ]
                 });
             var win = ModuleBuilder.visGridWindow;
-            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
+            win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_VISIBILITY_EDITOR"));
             win.setBody("loading...");
             win.render(document.body);
             win.params = {

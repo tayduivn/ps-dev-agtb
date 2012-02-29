@@ -30,7 +30,6 @@
 // $Id: Locale.tpl 35791 2008-05-20 23:06:34Z nsingh $
 
 *}
-<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
 <form name="TrackerSettings" method="POST">
 <input type="hidden" name="action" value="TrackerSettings">
 <input type="hidden" name="module" value="Trackers">
@@ -81,8 +80,8 @@
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 <td scope="row" width="100%" colspan="2">
-<input type="button" onclick="document.TrackerSettings.process.value='true'; if(check_form('TrackerSettings')) {ldelim} document.TrackerSettings.submit(); {rdelim}" class="button primary" title="{$app.LBL_SAVE_BUTTON_TITLE}" accessKey="{$app.LBL_SAVE_BUTTON_KEY}" value="{$app.LBL_SAVE_BUTTON_LABEL}">
-<input type="button" onclick="document.TrackerSettings.process.value='false'; document.TrackerSettings.submit();" class="button" title="{$app.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$app.LBL_CANCEL_BUTTON_KEY}" value="{$app.LBL_CANCEL_BUTTON_LABEL}">
+<input type="button" onclick="document.TrackerSettings.process.value='true'; if(check_form('TrackerSettings')) {ldelim} document.TrackerSettings.submit(); {rdelim}" class="button primary" title="{$app.LBL_SAVE_BUTTON_TITLE}" value="{$app.LBL_SAVE_BUTTON_LABEL}">
+<input type="button" onclick="document.TrackerSettings.process.value='false'; document.TrackerSettings.submit();" class="button" title="{$app.LBL_CANCEL_BUTTON_TITLE}"  value="{$app.LBL_CANCEL_BUTTON_LABEL}">
 </td>
 </tr>
 </table>

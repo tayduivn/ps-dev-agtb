@@ -246,7 +246,7 @@ class EmailTemplate extends SugarBean {
 	//function all string that match the pattern {.} , also catches the list of found strings.
 	//the cache will get refreshed when the template bean instance changes.
 	//The found url key patterns are replaced with name value pairs provided as function parameter. $tracked_urls.
-	//$url_template is used to construct the url for the email message. the template should have place holder for 1 varaible parameter, represented by %1
+	//$url_template is used to construct the url for the email message. the template should have place holder for 1 variable parameter, represented by %1
 	//$template_text_array is a list of text strings that need to be searched. usually the subject, html body and text body of the email message.
 	//$removeme_url_template, if the url has is_optout property checked then use this template.
 	function parse_tracker_urls($template_text_array,$url_template,$tracked_urls,$removeme_url_template) {
@@ -382,6 +382,18 @@ class EmailTemplate extends SugarBean {
 		return $return_array;
 	}
 
+    /**
+     * Convenience method to convert raw value into appropriate type format
+     * @param string $type
+     * @param string $value
+     * @return string
+     */
+    function _convertToType($type,$value) {
+        switch($type) {
+            case 'currency' : return currency_format_number($value);
+            default: return $value;
+        }
+    }
 
 	/**
 	 * Convenience method to parse for user's values in a template
@@ -405,7 +417,8 @@ class EmailTemplate extends SugarBean {
 				}
 			} else {
 				if(isset($user->$field_def['name'])) {
-					$repl_arr["contact_user_".$field_def['name']] = $user->$field_def['name'];
+                    // bug 47647 - allow for fields to translate before adding to template
+					$repl_arr["contact_user_".$field_def['name']] = self::_convertToType($field_def['type'],$user->$field_def['name']);
 				} else {
 					$repl_arr["contact_user_".$field_def['name']] = "";
 				}
@@ -428,7 +441,7 @@ class EmailTemplate extends SugarBean {
 		if(!class_exists('Leads'))
 		if(!class_exists('Prospects'))
 		//END SUGARCRM flav!=sales ONLY
-		
+
 		require_once('modules/Accounts/Account.php');
 		$acct = new Account();
 		$contact = new Contact();
@@ -436,7 +449,7 @@ class EmailTemplate extends SugarBean {
 		$lead = new Lead();
 		$prospect = new Prospect();
 		//END SUGARCRM flav!=sales ONLY
-		
+
 		//BEGIN SUGARCRM flav!=sales ONLY
 		foreach($lead->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
@@ -494,8 +507,10 @@ class EmailTemplate extends SugarBean {
 							$repl_arr["contact_account_".$field_def['name']] = '';
 						}
 					} else {
-						$repl_arr["account_".$field_def['name']] = $acct->$field_def['name'];
-						$repl_arr["contact_account_".$field_def['name']] = $acct->$field_def['name'];
+                        // bug 47647 - allow for fields to translate before adding to template
+                        $translated = self::_convertToType($field_def['type'],$acct->$field_def['name']);
+						$repl_arr["account_".$field_def['name']] = $translated;
+						$repl_arr["contact_account_".$field_def['name']] = $translated;
 					}
 				}
 			}
@@ -531,8 +546,10 @@ class EmailTemplate extends SugarBean {
 					}
 				} else {
 					if (isset($contact->$field_def['name'])) {
-						$repl_arr["contact_".$field_def['name']] = $contact->$field_def['name'];
-						$repl_arr["contact_account_".$field_def['name']] = $contact->$field_def['name'];
+                        // bug 47647 - allow for fields to translate before adding to template
+                        $translated = self::_convertToType($field_def['type'],$contact->$field_def['name']);
+						$repl_arr["contact_".$field_def['name']] = $translated;
+						$repl_arr["contact_account_".$field_def['name']] = $translated;
 					} // if
 				}
 			}
@@ -555,7 +572,8 @@ class EmailTemplate extends SugarBean {
 						$repl_arr[strtolower($beanList[$bean_name])."_".$field_def['name']] = '';
 					}
 				} else {
-					$repl_arr[strtolower($beanList[$bean_name])."_".$field_def['name']] = $focus->$field_def['name'];
+                    // bug 47647 - translate currencies to appropriate values
+					$repl_arr[strtolower($beanList[$bean_name])."_".$field_def['name']] = self::_convertToType($field_def['type'],$focus->$field_def['name']);
 				}
 			} else {
 				if($field_def['name'] == 'full_name') {
@@ -573,7 +591,7 @@ class EmailTemplate extends SugarBean {
 		    $repl_arr['contact_primary_address_street'] = nl2br($repl_arr['contact_primary_address_street']);
 		}
 		if(isset($repl_arr['contact_alt_address_street'])){
-		    $repl_arr['contact_alt_address_street'] = nl2br($repl_arr['contact_alt_address_street']);	
+		    $repl_arr['contact_alt_address_street'] = nl2br($repl_arr['contact_alt_address_street']);
 		}
 
 		foreach ($repl_arr as $name=>$value) {

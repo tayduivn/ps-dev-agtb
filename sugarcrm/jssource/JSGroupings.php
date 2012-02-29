@@ -59,9 +59,28 @@
             ),
 			//jquery libraries
 			$sugar_grp_jquery = array(
-			'include/javascript/jquery/jquery-min.js'             => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery-min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
+            //jqueryui
+			'include/javascript/jquery/jqueryui/jquery.ui.core.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jqueryui/jquery.ui.widget.min.js'            => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.position.min.js'          => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.menu.min.js'          => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.autocomplete.min.js'      => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jqueryui/jquery.ui.mouse.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
+			'include/javascript/jquery/jqueryui/jquery.ui.sortable.min.js'          => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.draggable.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.resizable.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jqueryui/jquery.ui.dialog.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            //jquery for moddule menus
+            'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.sftouchscreen.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.tipTip.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.showLoading.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
@@ -131,12 +150,6 @@
             'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
             ),
 
-            $sugar_grp_overlib = array(
-            //overlib combination
-            'include/javascript/overlibmws.js'              => 'include/javascript/sugar_grp_overlib.js',
-            'include/javascript/overlibmws_iframe.js'       => 'include/javascript/sugar_grp_overlib.js',
-            ),
-
             //Grouping for emails module.
             $sugar_grp_emails = array(
             'include/javascript/yui/ygDDList.js' => 'include/javascript/sugar_grp_emails.js',
@@ -182,4 +195,9 @@
             ),
         );
 
-?>
+    /**
+     * Check for custom additions to this code
+     */
+    if(file_exists("custom/jssource/JSGroupings.php")) {
+        require("custom/jssource/JSGroupings.php");
+    }

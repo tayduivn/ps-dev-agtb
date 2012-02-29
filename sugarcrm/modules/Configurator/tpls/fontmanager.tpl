@@ -53,8 +53,8 @@
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
         <td align="left">
-            <input title="{$MOD.LBL_BACK}" accessKey="" class="button" type="button" name="gobackbutton" value="  {$MOD.LBL_BACK}  " id="gobackbutton">&nbsp;
-            <input title="{$MOD.LBL_ADD_FONT}" accessKey="" class="button" type="button" name="addFontbutton" value="  {$MOD.LBL_ADD_FONT}  " id="addFontbutton">
+            <input title="{$MOD.LBL_BACK}"  class="button" type="button" name="gobackbutton" value="  {$MOD.LBL_BACK}  " id="gobackbutton">&nbsp;
+            <input title="{$MOD.LBL_ADD_FONT}" class="button" type="button" name="addFontbutton" value="  {$MOD.LBL_ADD_FONT}  " id="addFontbutton">
         </td>
     </tr>
 </table>

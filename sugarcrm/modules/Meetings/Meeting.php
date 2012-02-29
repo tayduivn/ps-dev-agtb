@@ -262,6 +262,9 @@ class Meeting extends SugarBean {
 	// this is for calendar
 	function mark_deleted($id) {
 
+		require_once("modules/Calendar/CalendarUtils.php");
+		CalendarUtils::correctRecurrences($this, $id);		
+		
 		global $current_user;
 
 		parent::mark_deleted($id);
@@ -427,9 +430,11 @@ class Meeting extends SugarBean {
 		}
 		if(!empty($this->date_start)) {
 		    $start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
-		    if(!empty($start)) {
-		        $this->date_end = $start->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")
+		    if (!empty($start)) {
+		        if (!empty($this->duration_hours) || !empty($this->duration_minutes)) {
+		            $this->date_end = $start->modify("+{$this->duration_hours} Hours +{$this->duration_minutes} Minutes")
 		            ->format($GLOBALS['timedate']->get_date_time_format());
+		        }
 		    } else {
 		        $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
 		    }
@@ -499,7 +504,7 @@ class Meeting extends SugarBean {
 			//cn: added this if() to deal with sequential Closes in Meetings.	this is a hack to a hack(formbase.php->handleRedirect)
 			if(empty($action))
 			     $action = "index";
-            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
+            $setCompleteUrl = "<a id='{$this->id}' onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',translate('LBL_CLOSEINLINE'))."</a>";
 		}
 		global $timedate;
@@ -591,6 +596,8 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TYPE", isset($meeting->type)? $typestring:"");
 		$startdate = $timedate->fromDb($meeting->date_start);
 		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($startdate, $notifyUser)." ".TimeDate::userTimezoneSuffix($startdate, $notifyUser));
+		$enddate = $timedate->fromDb($meeting->date_end);
+		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($enddate, $notifyUser)." ".TimeDate::userTimezoneSuffix($enddate, $notifyUser));		
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
 		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
@@ -608,7 +615,7 @@ class Meeting extends SugarBean {
 	public function create_notification_email($notify_user){
 		$notify_mail = parent::create_notification_email($notify_user);
 						
-		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 
 		require_once("modules/vCals/vCal.php");
 		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
@@ -625,7 +632,7 @@ class Meeting extends SugarBean {
 	public function send_assignment_notifications($notify_user, $admin){
 		parent::send_assignment_notifications($notify_user, $admin);
 		
-		$path = SugarConfig::getInstance()->get('cache_dir','cache/') . SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
+		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 		unlink($path);
 	}
 

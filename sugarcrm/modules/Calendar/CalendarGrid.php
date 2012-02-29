@@ -37,12 +37,12 @@ class CalendarGrid {
 	protected $today_ts; // timestamp of today
 	protected $weekdays; // string array of names of week days
 	protected $startday; // first day of week
-	protected $scrollable; // srolling in calendar
+	protected $scrollable; // scrolling in calendar
 	protected $time_step = 30; // time step
 	protected $time_format; // user time format
 	protected $date_time_format; // user date time format
 	protected $scroll_height; // height of scrollable div
-	
+
 	/**
 	 * constructor
 	 * @param Calendar $cal
@@ -53,17 +53,17 @@ class CalendarGrid {
 		$today = $GLOBALS['timedate']->getNow(true)->get_day_begin();
 		$this->today_ts = $today->format('U') + $today->getOffset();
 		$this->startday = $current_user->get_first_day_of_week();
-		
+
 		$weekdays = array();
 		for($i = 0; $i < 7; $i++){
 			$j = $i + $this->startday;
 			if($j >= 7)
 				$j = $j - 7;
 			$weekdays[$i] = $GLOBALS['app_list_strings']['dom_cal_day_short'][$j+1];
-		}		
-			
+		}
+
 		$this->weekdays = $weekdays;
-		
+
 		$this->scrollable = false;
 		if(in_array($this->cal->view,array('day','week'))){
 			$this->scrollable = true;
@@ -72,14 +72,14 @@ class CalendarGrid {
 			else
 				$this->scroll_height = $this->cal->celcount * 15 + 1;
 		}
-		
+
 		$this->time_step = $this->cal->time_step;
 		$this->time_format = $GLOBALS['timedate']->get_time_format();
 		$this->date_time_format = $GLOBALS['timedate']->get_date_time_format();
-		
+
 		$this->style = $this->cal->style;
 	}
-	
+
 
 	/** Get html of calendar grid
 	 * @return string
@@ -88,7 +88,7 @@ class CalendarGrid {
 		$action = "display_".strtolower($this->cal->view);
 		return $this->$action();
 	}
-	
+
 	/** Get html of time column
 	 * @param integer $start timestamp
 	 * @return string
@@ -102,13 +102,13 @@ class CalendarGrid {
 			else
 				$wf = 0;
 			$head_content = "<a href='".ajaxLink("index.php?module=Calendar&action=index&view=week&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$GLOBALS['timedate']->fromTimestamp($start + $wf*3600*24)->format('W')."</a>";
-		}			
+		}
 		$str .= "<div class='left_col'>";
 			//if(!$this->scrollable)
 			//	$str .= "<div class='col_head'>".$head_content."</div>";
 			for($i = 0; $i < 24; $i++){
 				for($j = 0; $j < 60; $j += $this->time_step){
-					if($j == 0){ 
+					if($j == 0){
 						$innerText = $GLOBALS['timedate']->fromTimestamp($start + $i * 3600)->format($this->time_format);
 					}else{
 						$innerText = "&nbsp;";
@@ -120,12 +120,12 @@ class CalendarGrid {
 					}
 					$str .= "<div class='left_slot".$class."'>".$innerText."</div>";
 				}
-			}	
+			}
 		$str .= "</div>";
 		return $str;
 	}
-	
-	/** 
+
+	/**
 	 * Get html of day slots column
 	 * @param integer $start timestamp
 	 * @param integer $day number of day in week
@@ -151,9 +151,9 @@ class CalendarGrid {
 		}
 		$str .= "</div>";
 		return $str;
-	}	
-	
-	/** 
+	}
+
+	/**
 	 * Get html of basic cell
 	 * @param integer $start timestamp
 	 * @param integer $height slot height
@@ -164,12 +164,12 @@ class CalendarGrid {
 		$str = "";
 		$dt = $GLOBALS['timedate']->fromTimestamp($start)->get("+8 hours");
 		$str .= "<div class='col'>";
-			$str .= "<div class='basic_slot' id='b_".$start.$suffix."' style='height: ".$height."px;' time='' datetime='".$dt->format($this->date_time_format)."'></div>";				
+			$str .= "<div class='basic_slot' id='b_".$start.$suffix."' style='height: ".$height."px;' time='' datetime='".$dt->format($this->date_time_format)."'></div>";
 		$str .= "</div>";
 		return $str;
-	}	
-	
-	/** 
+	}
+
+	/**
 	 * Get html of basic week grid
 	 * @param integer $start timestamp
 	 * @param string $prefix prefix for id of slot used in shared view
@@ -188,11 +188,11 @@ class CalendarGrid {
 			$head_content = "<a href='".ajaxLink("index.php?module=Calendar&action=index&view=week&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$head_content."</a>";
 		}
 		$left_col = ($this->style != 'basic' || $this->cal->view == 'month');
-		
+
 		$attr = "";
 		if($this->cal->style != "basic")
 			$attr = " id='cal-multiday-bar'";
-		
+
 		$str .= "<div>";
 		if($cols > 1){
 			$str .= "<div>";
@@ -201,7 +201,7 @@ class CalendarGrid {
 						$str .= "<div class='col_head'>".$head_content."</div>";
 					$str .= "</div>";
 				}
-			
+
 				$str .= "<div class='week'>";
 				for($d = 0; $d < $cols; $d++){
 					$curr_time = $start + $d * 86400;
@@ -228,37 +228,37 @@ class CalendarGrid {
 			$str .= "<div style='clear: left;'></div>";
 		$str .= "</div>";
 		$str .= "</div>";
-		
+
 		return $str;
 	}
-	
-	/** 
+
+	/**
 	 * Get html of day head
 	 * @param integer $start timestamp
-	 * @param integer $day number of day in week 
-	 * @param bulean $force force display header 
+	 * @param integer $day number of day in week
+	 * @param bulean $force force display header
 	 * @return string
-	 */	
+	 */
 	protected function get_day_head($start,$day = 0,$force = false){
 		$str = "";
 		if($force){
-			$headstyle = ""; 
+			$headstyle = "";
 			if($this->today_ts == $start)
 				$headstyle = " today";
 			$str .= "<div class='col_head".$headstyle."'><a href='".ajaxLink("index.php?module=Calendar&action=index&view=day&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$this->weekdays[$day]." ".$GLOBALS['timedate']->fromTimestamp($start)->format('d')."</a></div>";
 		}
 		return $str;
-	}	
-	
-	/** 
+	}
+
+	/**
 	 * Get html of week calendar grid
-	 * @return string	
-	 */	
+	 * @return string
+	 */
 	protected function display_week(){
-	
+
 		$basic = $this->style == "basic";
 		$week_start_ts = $this->cal->grid_start_ts;
-	
+
 		$str = "";
 		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
 			$str .= $this->get_basic_row($week_start_ts);
@@ -269,21 +269,21 @@ class CalendarGrid {
 					for($d = 0; $d < 7; $d++){
 						$curr_time = $week_start_ts + $d*86400;
 						$str .= $this->get_day_column($curr_time);
-					}	
+					}
 					$str .= "</div>";
 					$str .= "<div style='clear: left;'></div>";
 				$str .= "</div>";
-			}	
+			}
 		$str .= "</div>";
-		
+
 		return $str;
-	}		
-	
-	/** 
+	}
+
+	/**
 	 * Get html of day calendar grid
-	 * @return string	
+	 * @return string
 	 */
-	protected function display_day(){	
+	protected function display_day(){
 
 		$basic = $this->style == "basic";
 		$day_start_ts = $this->cal->grid_start_ts;
@@ -303,16 +303,16 @@ class CalendarGrid {
 				$str .= "</div>";
 			}
 		$str .= "</div>";
-		
+
 		return $str;
-	}	
-	
-	/** 
+	}
+
+	/**
 	 * Get html of month calendar grid
 	 * @return string
 	 */
 	protected function display_month(){
-		
+
 		$basic = $this->style == "basic";
 		$week_start_ts = $this->cal->grid_start_ts;
 		$current_date = $this->cal->date_time;
@@ -328,7 +328,7 @@ class CalendarGrid {
 			while($curr_time_global < $month_end_ts){
 				if($basic){
 					$str .= $this->get_basic_row($curr_time_global);
-				}else{			
+				}else{
 					$str .= $this->get_time_column($curr_time_global);
 					$str .= "<div class='week'>";
 					for($d = 0; $d < 7; $d++){
@@ -342,33 +342,33 @@ class CalendarGrid {
 				$w++;
 			}
 		$str .= "</div>";
-		
+
 		return $str;
 	}
-	
-	/** 
+
+	/**
 	 * Get html of week shared grid
 	 * @return string
 	 */
 	protected function display_shared(){
-	
+
 		$basic = $this->style == "basic";
 		$week_start_ts = $this->cal->grid_start_ts;
 
 		$str = "";
 		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
 		$user_number = 0;
-		
+
 		$shared_user = new User();
 		foreach($this->cal->shared_ids as $member_id){
 
 			$user_number_str = "_".$user_number;
-		
+
 			$shared_user->retrieve($member_id);
 			$str .= "<div style='clear: both;'></div>";
 			$str .= "<div class='monthCalBody'><h5 class='calSharedUser'>".$shared_user->full_name."</h5></div>";
 			$str .= "<div user_id='".$member_id."' user_name='".$shared_user->user_name."'>";
-			
+
 			$str .= $this->get_basic_row($week_start_ts,7,$user_number_str);
 			if(!$basic){
 				$str .= $this->get_time_column($week_start_ts);
@@ -383,18 +383,18 @@ class CalendarGrid {
 			$user_number++;
 		}
 		$str .= "</div>";
-		
+
 		return $str;
-	}	
-	
-	/** 
+	}
+
+	/**
 	 * Get html of year calendar
 	 * @return string
 	 */
 	protected function display_year(){
 
-		$weekEnd1 = 0 - $this->startday; 
-		$weekEnd2 = -1 - $this->startday; 
+		$weekEnd1 = 0 - $this->startday;
+		$weekEnd2 = -1 - $this->startday;
 		if($weekEnd1 < 0)
 			$weekEnd1 += 7;
 		if($weekEnd2 < 0)
@@ -406,17 +406,17 @@ class CalendarGrid {
 		$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';
 
 		for($m = 0; $m < 12; $m++){
-	
+
 			$month_start = $year_start->get("+".$m." months");
 			$month_start_ts = $month_start->format('U') + $month_start->getOffset();
 			$month_end = $month_start->get("+".$month_start->format('t')." days");
 			$week_start = CalendarUtils::get_first_day_of_week($month_start);
 			$week_start_ts = $week_start->format('U') + $week_start->getOffset(); // convert to timestamp, ignore tz
 			$month_end_ts = $month_end->format('U') + $month_end->getOffset();
-			$table_id = "daily_cal_table".$m; //bug 47471  
-						
+			$table_id = "daily_cal_table".$m; //bug 47471
+
 			if($m % 3 == 0)
-				$str .= "<tr>";		
+				$str .= "<tr>";
 					$str .= '<td class="yearCalBodyMonth" align="center" valign="top" scope="row">';
 						$str .= '<a class="yearCalBodyMonthLink" href="'.ajaxLink('index.php?module=Calendar&action=index&view=month&&hour=0&day=1&month='.($m+1).'&year='.$GLOBALS['timedate']->fromTimestamp($month_start_ts)->format('Y')).'">'.$GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1].'</a>';
 						$str .= '<table id="'. $table_id. '" cellspacing="1" cellpadding="0" border="0" width="100%">';
@@ -435,12 +435,12 @@ class CalendarGrid {
 											$monC = "";
 										else
 											$monC = '<a href="'.ajaxLink('index.php?module=Calendar&action=index&view=day&hour=0&day='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('j').'&month='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('n').'&year='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('Y')) .'">'.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('j').'</a>';
-								
+
 										if($d == $weekEnd1 || $d == $weekEnd2)
 											$str .= "<td class='weekEnd monthCalBodyWeekEnd'>";
 										else
 											$str .= "<td class='monthCalBodyWeekDay'>";
-								
+
 												$str .= $monC;
 											$str .= "</td>";
 									}
@@ -454,7 +454,7 @@ class CalendarGrid {
 				$str .= "</tr>";
 		}
 		$str .= "</table>";
-		
+
 		return $str;
 	}
 }

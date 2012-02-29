@@ -34,34 +34,21 @@ class CalendarViewQuickEdit extends SugarView {
 	var $ev;
 	protected $editable;	
 	
-	public function preDisplay(){
-		global $beanFiles,$beanList;
-		$module = $_REQUEST['current_module'];
-		require_once($beanFiles[$beanList[$module]]);
-		$this->bean = new $beanList[$module]();
-		if(!empty($_REQUEST['record']))
-			$this->bean->retrieve($_REQUEST['record']);
-			
-		if(!$this->bean->ACLAccess('DetailView')) {
-			$json_arr = array(
-				'access' => 'no',
-			);
-			echo json_encode($json_arr);
-			die;	
-		}
-
-		if($this->bean->ACLAccess('Save')){
+	public function preDisplay()
+	{	
+		$this->bean = $this->view_object_map['currentBean'];
+		
+		if ($this->bean->ACLAccess('Save')) {
 			$this->editable = 1;
-		}else{
+		} else {
 			$this->editable = 0;
-		}		
-    
+		}
 	}
 	
 	public function display(){
 		require_once("modules/Calendar/CalendarUtils.php");
 		
-		$module = $_REQUEST['current_module'];
+		$module = $this->view_object_map['currentModule'];
 		
 		$_REQUEST['module'] = $module;
 				
@@ -75,11 +62,11 @@ class CalendarViewQuickEdit extends SugarView {
 					$source = $base . 'editviewdefs.php';
 				}
 			}
-		}		
+		}
 		
-		$tpl = "custom/include/EditView/EditView.tpl";	
-		if(!file_exists($tpl))
-			$tpl = "include/EditView/EditView.tpl";	
+		$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $module);
+        $tpl = $this->getCustomFilePathIfExists('include/EditView/EditView.tpl');
+
 		$this->ev = new EditView();
 		$this->ev->view = "QuickCreate";
 		$this->ev->ss = new Sugar_Smarty();

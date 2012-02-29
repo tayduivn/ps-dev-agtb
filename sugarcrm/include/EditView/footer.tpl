@@ -53,3 +53,6 @@
 {{$scriptBlocks}}
 <!-- End Meta-Data Javascript -->
 {{/if}}
+<script>SUGAR.util.doWhen("document.getElementById('EditView') != null",
+        function(){ldelim}SUGAR.util.buildAccessKeyLabels();{rdelim});
+</script>

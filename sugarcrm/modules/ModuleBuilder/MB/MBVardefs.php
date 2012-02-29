@@ -112,10 +112,14 @@ class MBVardefs{
 		return $this->vardef;
 	}
 		
-	function addFieldVardef($vardef){
-		if(empty($vardef['default']))unset($vardef['default']);
-		$this->vardef['fields'][$vardef['name']] = $vardef;
-	}
+    function addFieldVardef($vardef)
+    {
+        if(!isset($vardef['default']) || strlen($vardef['default']) == 0)
+        {
+            unset($vardef['default']);
+        }
+        $this->vardef['fields'][$vardef['name']] = $vardef;
+    }
 
 	function deleteField($field){
 		unset($this->vardef['fields'][$field->name]);

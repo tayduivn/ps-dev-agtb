@@ -57,7 +57,7 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='action'>\n";
 
-$button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_NEW_BUTTON_KEY']."' class='button' type='button' name='New' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."'";
+$button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."'  class='button' type='button' name='New' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."'";
 $button .= "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowAlerts&action=CreateStep1&sugar_body_only=true&form=ComponentView&parent_id=$focus->id&base_module=$workflow_object->base_module\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'";
 $button .= ">\n";
 $button .= "</form>\n";

@@ -149,6 +149,10 @@ class Configurator {
 		return $sugar_config;
 	}
 	function saveOverride($override) {
+        require_once('install/install_utils.php');
+	    if ( !file_exists('config_override.php') ) {
+	    	touch('config_override.php');
+	    }
 	    if ( !(make_writable('config_override.php')) ||  !(is_writable('config_override.php')) ) {
 	        $GLOBALS['log']->fatal("Unable to write to the config_override.php file. Check the file permissions");
 	        return;

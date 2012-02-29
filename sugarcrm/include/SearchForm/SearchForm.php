@@ -259,7 +259,7 @@ class SearchForm {
                 if(is_array($parms['value'])) {
                     $field_value = '';
 
-                    // If it is a custom field of mutliselect we have to do some special processing
+                    // If it is a custom field of multiselect we have to do some special processing
                     if($customField && !empty($this->bean->field_name_map[$field]['isMultiSelect']) && $this->bean->field_name_map[$field]['isMultiSelect']) {
 	                    $operator = 'custom_enum';
 	                    $db_field = $this->bean->table_name .  "_cstm." . $field;
@@ -645,8 +645,8 @@ class SearchForm {
         $SAVED_SEARCHES_OPTIONS = '';
         $savedSearch = new SavedSearch();
         $SAVED_SEARCHES_OPTIONS = $savedSearch->getSelect($this->module);
-        $str = "<input tabindex='2' title='{$app_strings['LBL_SEARCH_BUTTON_TITLE']}' accessKey='{$app_strings['LBL_SEARCH_BUTTON_KEY']}' onclick='SUGAR.savedViews.setChooser()' class='button' type='submit' name='button' value='{$app_strings['LBL_SEARCH_BUTTON_LABEL']}' id='search_form_submit'/>&nbsp;";
-        $str .= "<input tabindex='2' title='{$app_strings['LBL_CLEAR_BUTTON_TITLE']}' accessKey='{$app_strings['LBL_CLEAR_BUTTON_KEY']}' onclick='SUGAR.searchForm.clear_form(this.form); return false;' class='button' type='button' name='clear' value=' {$app_strings['LBL_CLEAR_BUTTON_LABEL']} ' id='search_form_clear'/>";
+        $str = "<input tabindex='2' title='{$app_strings['LBL_SEARCH_BUTTON_TITLE']}' onclick='SUGAR.savedViews.setChooser()' class='button' type='submit' name='button' value='{$app_strings['LBL_SEARCH_BUTTON_LABEL']}' id='search_form_submit'/>&nbsp;";
+        $str .= "<input tabindex='2' title='{$app_strings['LBL_CLEAR_BUTTON_TITLE']}' onclick='SUGAR.searchForm.clear_form(this.form); return false;' class='button' type='button' name='clear' value=' {$app_strings['LBL_CLEAR_BUTTON_LABEL']} ' id='search_form_clear'/>";
 
         if(!empty($SAVED_SEARCHES_OPTIONS) && $this->showSavedSearchOptions){
             $str .= "   <span class='white-space'>

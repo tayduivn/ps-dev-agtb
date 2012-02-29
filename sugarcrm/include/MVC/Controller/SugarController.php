@@ -265,6 +265,10 @@ class SugarController{
 	 * Display the appropriate view.
 	 */
 	private function processView(){
+		if(!isset($this->view_object_map['remap_action']) && isset($this->action_view_map[strtolower($this->action)]))
+		{
+		  $this->view_object_map['remap_action'] = $this->action_view_map[strtolower($this->action)];
+		}
 		$view = ViewFactory::loadView($this->view, $this->module, $this->bean, $this->view_object_map, $this->target_module);
 		$GLOBALS['current_view'] = $view;
 		if(!empty($this->bean) && !$this->bean->ACLAccess($view->type) && $view->type != 'list'){
@@ -477,6 +481,24 @@ class SugarController{
 		$this->bean->save(!empty($this->bean->notify_on_save));
 	}
 
+
+    public function action_spot()
+    {
+
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        //Default db search will be handled by the spot view, everything else by fts.
+        if($searchEngine instanceOf SugarSearchEngine)
+        {
+            $this->view = 'spot';
+        }
+        else
+        {
+            $this->view = 'fts';
+        }
+    }
+
+
 	/**
 	 * Specify what happens after the save has occurred.
 	 */
@@ -505,6 +527,9 @@ class SugarController{
 				sugar_cleanup(true);
 			}
 			$this->bean->mark_deleted($_REQUEST['record']);
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance();
+            $searchEngine->delete($this->bean);
 		}else{
 			sugar_die("A record number must be specified to delete");
 		}
@@ -559,7 +584,7 @@ class SugarController{
             $temp_req = array('current_query_by_page' => $_REQUEST['current_query_by_page'], 'return_module' => $_REQUEST['return_module'], 'return_action' => $_REQUEST['return_action']);
             if($_REQUEST['return_module'] == 'Emails') {
                 if(!empty($_REQUEST['type']) && !empty($_REQUEST['ie_assigned_user_id'])) {
-                    $this->req_for_email = array('type' => $_REQUEST['type'], 'ie_assigned_user_id' => $_REQUEST['ie_assigned_user_id']); //specificly for My Achieves
+                    $this->req_for_email = array('type' => $_REQUEST['type'], 'ie_assigned_user_id' => $_REQUEST['ie_assigned_user_id']); // Specifically for My Achieves
                 }
             }
             $_REQUEST = array();

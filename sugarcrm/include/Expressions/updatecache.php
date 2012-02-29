@@ -40,6 +40,7 @@ $GLOBALS['ignore_files'] = array(
                         'RelateExpression.php',
 						'AbstractAction.php',
 						'ActionFactory.php',
+                        'DefineRelateExpression.php'
 					);
 
 
@@ -76,7 +77,7 @@ function recursiveParse($dir, $silent = false)
 			$js_contents .= $cont["javascript"];
 		}
 
-		// check for extentions
+		// Check for extensions.
 		if ( ! preg_match('/^[0-9a-zA-Z-_]+Expression.php$/', $entry) )	continue;
 
 		// ignore files
@@ -262,7 +263,7 @@ $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 create_cache_directory("Expressions/functions_cache_debug.js");
-sugar_file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
+file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
 
 
 require_once("jssource/minify_utils.php");

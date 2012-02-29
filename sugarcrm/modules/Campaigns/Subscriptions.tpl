@@ -28,10 +28,6 @@
 *}
 
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
-<!-- begin includes for overlib -->
-<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000"></div>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
-<!-- end includes for overlib -->
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr><td colspan='100'><h2>{$title}</h2></td></tr>
@@ -68,9 +64,7 @@
 		<table id="ConfigureSubs" class="themeSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
 			<tr>
 				<td><span><b>{$MOD.LBL_ALREADY_SUBSCRIBED_HEADER}</b></span></td>
-				<td><span><b>{$MOD.LBL_UNSUBSCRIBED_HEADER}</b>
-<img alt="Help" border="0" src="{sugar_getimagepath file='helpInline.gif'}"
-onmouseover="return overlib('{$MOD.LBL_UNSUBSCRIBED_HEADER_EXPL}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();" >
+				<td><span><b>{$MOD.LBL_UNSUBSCRIBED_HEADER}</b>{sugar_help text=$MOD.LBL_UNSUBSCRIBED_HEADER_EXPL }
 				
 				</span></td>
 			</tr>
@@ -100,8 +94,8 @@ onmouseover="return overlib('{$MOD.LBL_UNSUBSCRIBED_HEADER_EXPL}', FGCLASS, 'olF
 	<table border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>
-				<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="save();this.form.action.value='Subscriptions'; " type="submit" name="button" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " > 
-				<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}';" type="submit" name="button" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  ">
+				<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button" onclick="save();this.form.action.value='Subscriptions'; " type="submit" name="button" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " >
+				<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}';" type="submit" name="button" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  ">
 
 			</td>
 		</tr>

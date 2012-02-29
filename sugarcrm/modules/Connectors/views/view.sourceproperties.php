@@ -57,7 +57,8 @@ class ViewSourceProperties extends ViewList {
     	$this->ss->assign('app', $GLOBALS['app_strings']);
     	$this->ss->assign('connector_language', $connector_language);
     	$this->ss->assign('hasTestingEnabled', $source->hasTestingEnabled());
-    	echo $this->ss->fetch('modules/Connectors/tpls/source_properties.tpl');
+
+        echo $this->ss->fetch($this->getCustomFilePathIfExists('modules/Connectors/tpls/source_properties.tpl'));
     }
 }
 

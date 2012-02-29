@@ -39,7 +39,6 @@
 {$chartResources}
 
 
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
 <form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
 <input type="hidden" name='report_offset' value ="{$report_offset}">
 <input type="hidden" name='sort_by' value ="{$sort_by}">
@@ -68,7 +67,7 @@
 <tr>
 <td>
 
-<input type="submit" class="button" name="runReportButton" id="runReportButton" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+<input type="submit" class="button" name="runReportButton" id="runReportButton" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
 	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='';">
 {* //BEGIN SUGARCRM flav=sales ONLY*}
 <input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
@@ -76,7 +75,7 @@
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings.LBL_EDIT_BUTTON_KEY}" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
+<input type="submit" class="button" name="editReportButton" id="editReportButton" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
 	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';">
 {/if}
 {$duplicateButtons}
@@ -86,7 +85,7 @@
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
 {if ($report_export_access)}
-<input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
+<input type="submit" class="button" name="printPDFButton" id="printPDFButton"  value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
 	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 
 {/if}
@@ -272,7 +271,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 <tr>
 <td valign="top" width="90%">
 <div id="filters_tab" style={$filterTabStyle}>
-<div scope="row"><h3>{$mod_strings.LBL_RUNTIME_FILTERS}:<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib('{$mod_strings.LBL_VIEWER_RUNTIME_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">&nbsp;{sugar_getimage name="helpInline" alt=$mod_strings.LBL_HELP ext=".gif" other_attributes=''}</span></h3>
+<div scope="row"><h3>{$mod_strings.LBL_RUNTIME_FILTERS}:<span valign="bottom">&nbsp;{sugar_help text=$mod_strings.LBL_VIEWER_RUNTIME_HELP }</span></h3>
 </div>
 <input type=hidden name='filters_def' value ="">
 <table id='filters_top' border=0 cellpadding="0" cellspacing="0">
@@ -305,7 +304,6 @@ ACLAllowedModules = {$ACLAllowedModules};
 </form>
 </p>
 <script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 

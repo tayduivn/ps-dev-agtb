@@ -178,7 +178,8 @@ class SugarRelationshipFactory {
         }
         //Save it out
         sugar_mkdir(dirname($this->getCacheFile()), null, true);
-        write_array_to_file('relationships', $relationships, $this->getCacheFile());
+        $out="<?php \n \$relationships=" . var_export($relationships, true) .";";
+        sugar_file_put_contents($this->getCacheFile(), $out);
 
         $this->relationships = $relationships;
         $buildingRelCache = false;

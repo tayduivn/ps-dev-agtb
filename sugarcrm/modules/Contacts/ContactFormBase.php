@@ -40,12 +40,24 @@ var $objectName = 'Contact';
  * This function returns the SQL String used for initial duplicate Contacts check
  *
  * @see checkForDuplicates (method), ContactFormBase.php, LeadFormBase.php, ProspectFormBase.php
+ * @param $focus sugarbean
  * @param $prefix String value of prefix that may be present in $_POST variables
  * @return SQL String of the query that should be used for the initial duplicate lookup check
  */
-public function getDuplicateQuery($prefix='')
+public function getDuplicateQuery($focus, $prefix='')
 {
-	$query = 'SELECT id, first_name, last_name, title FROM contacts where deleted = 0 AND ';
+	$query = 'SELECT id, first_name, last_name, title FROM contacts ';
+    
+    // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
+    // add team security
+    //BEGIN SUGARCRM flav=pro ONLY
+    if( !empty($focus) && !$focus->disable_row_level_security )
+    {
+        $focus->add_team_security_where_clause($query);
+    }
+    //END SUGARCRM flav=pro ONLY
+    
+    $query .= ' where deleted = 0 AND ';
 	if(isset($_POST[$prefix.'first_name']) && strlen($_POST[$prefix.'first_name']) != 0 && isset($_POST[$prefix.'last_name']) && strlen($_POST[$prefix.'last_name']) != 0){
 		$query .= " first_name LIKE '". $_POST[$prefix.'first_name'] . "%' AND last_name = '". $_POST[$prefix.'last_name'] ."'";
 	} else {
@@ -445,7 +457,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	if($_REQUEST['action'] != 'BusinessCard' && $_REQUEST['action'] != 'ConvertLead' && $_REQUEST['action'] != 'ConvertProspect')
 	{
 		
-		if (!empty($_POST[$prefix.'sync_contact'])){
+		if (!empty($_POST[$prefix.'sync_contact']) || !empty($focus->sync_contact)){
 			 $focus->contacts_users_id = $current_user->id;
 		}
 		else{

@@ -1,4 +1,24 @@
 <?php
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 
 require_once 'include/php-sql-parser.php';
 
@@ -58,7 +78,7 @@ class SugarSQLValidate
             return false;
         }
         // check WHERE
-        if(!$this->validateExpression($parsed["WHERE"])) {
+        if(!$this->validateExpression($parsed["WHERE"], true)) {
             $GLOBALS['log']->debug("validation failed WHERE");
             return false;
         }
@@ -83,12 +103,21 @@ class SugarSQLValidate
 	 * @param array $expr Parsed expression
 	 * @return bool
 	 */
-	protected function validateExpression($expr)
+	protected function validateExpression($expr, $allow_some_subqueries = false)
 	{
 	    foreach($expr as $term) {
+	        if(!is_array($term)) continue;
 	        // check subtrees
-	        if(!empty($term['sub_tree']) && !$this->validateExpression($term['sub_tree'])) {
-	            return false;
+	        if(isset($term['expr_type']) &&  $term['expr_type'] == 'subquery') {
+	            if(!$allow_some_subqueries || !$this->allowedSubquery($term)) {
+    	            // subqueries are verboten, except for some very special ones
+    	            $GLOBALS['log']->debug("validation failed subquery");
+    	            return false;
+    	        }
+	        } else {
+        	    if(!empty($term['sub_tree']) && !$this->validateExpression($term['sub_tree'], $allow_some_subqueries)) {
+                    return false;
+        	    }
 	        }
 	        if(isset($term['type']) && $term['type'] == 'expression') {
 	            continue;
@@ -96,11 +125,6 @@ class SugarSQLValidate
 	        if($term['expr_type'] == 'const' || $term['expr_type'] == 'expression') {
 	            // constants are OK, expressions checked above
 	            continue;
-	        }
-	        if($term['expr_type'] == 'subquery') {
-	            // subqueries are verboten
-	            $GLOBALS['log']->debug("validation failed subquery");
-	            return false;
 	        }
 	        if($term['expr_type'] == 'function') {
 	            // prohibit some functions
@@ -123,27 +147,106 @@ class SugarSQLValidate
 	}
 
 	/**
-	 * Validate column name
-	 * @param string $name
-	 * @return bool
+	 * Tables allowed in subqueries
+	 * @var array
+	 */
+	protected $subquery_allowed_tables = array(
+		'email_addr_bean_rel' => true,
+		'email_addresses' => true,
+		'emails' => true,
+		'emails_beans' => true,
+		'emails_text' => true,
+		'teams' => true,
+		'team_sets_teams' => true);
+
+	/**
+	 * Allow some subqueries to pass
+	 * Needed since OPI uses subqueries for email searches... sigh
+	 * @param array $term term structure of the subquery
+	 */
+	protected function allowedSubquery($term)
+	{
+	    // Must be SELECT ... FROM ... WHERE ...
+	    if(empty($term['sub_tree']) || empty($term['sub_tree']['SELECT']) || empty($term['sub_tree']['FROM']) || empty($term['sub_tree']['WHERE'])) {
+	        $GLOBALS['log']->debug("subquery validation failed: missing item");
+	        return false;
+	    }
+
+	    foreach($term['sub_tree']['SELECT'] as $select) {
+	        if($select['expr_type'] == 'operator' && $select['base_expr'] == '*') {
+	            continue;
+	        }
+	        if($select['expr_type'] != 'colref') {
+	            $GLOBALS['log']->debug("subquery validation failed: column: {$select['expr_type']}");
+	            // allow only columns in select
+	            return false;
+	        }
+	    }
+
+	    foreach($term['sub_tree']['FROM'] as $from) {
+	        if(empty($this->subquery_allowed_tables[$from['table']])) {
+	            $GLOBALS['log']->debug("subquery validation failed: table: {$from['table']}");
+	            // only specific tables are allowed
+	            return false;
+	        }
+	        if(!empty($from['ref_clause']) && !$this->validateQueryClauses($from['ref_clause'])) {
+                // validate join condition, if bad, bail out
+                $GLOBALS['log']->debug("subquery validation failed: join: {$from['ref_clause']}");
+                return false;
+	        }
+	    }
+
+	    if(!$this->validateExpression($term['sub_tree']['WHERE'])) {
+	        // validate where clause, no sub-subqueries allowed here
+	        $GLOBALS['log']->debug("subquery validation failed: where clause");
+	        return false;
+	    }
+
+	    return true;
+	}
+
+	/**
+	 * validateColumnName
+     * This method validates the column name portion of the SQL statement and returns true if it is deemed safe.
+     * We check against querying for the user_hash column.
+     *
+	 * @param $name String portion of the column name from SQL
+	 * @return boolean True if column name is deemed safe, false otherwise
 	 */
 	protected function validateColumnName($name)
 	{
 	    if($name == ",") return true; // sometimes , gets as column name
 	    $name = strtolower($name); // case does not matter
-	    if(preg_match("/[^a-z0-9._]/", $name)) {
-	        // bad chars in name
-	        return false;
-	    }
+
 	    $parts = explode(".", $name);
 	    if(count($parts) > 2) {
 	        // too many dots
 	        return false;
 	    }
-	    if($parts[0] == "user_hash" || (!empty($parts[1]) && $parts[1] == "user_hash")) {
-	        // this column is verboten
-	        return false;
-	    }
+
+        foreach($parts AS $part)
+        {
+            //the user_hash column is forbidden in passed in SQL
+            if($part == "user_hash")
+            {
+                return false;
+            }
+
+            //Remove leading and trailing ` characters for the part
+            if(preg_match('/^[\`](.+?)[\`]$/', $part, $matches))
+            {
+               $part = $matches[1];
+            }
+
+            //We added an exception for # symbol (see Bug 50324)
+            //This should be removed when Bug 50360 is resolved
+            if(preg_match('/[^a-z0-9._#]/', $part)) {
+                // bad chars in name
+                return false;
+            }
+
+        }
+
 	    return true;
 	}
 }

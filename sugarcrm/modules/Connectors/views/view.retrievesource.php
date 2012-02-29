@@ -99,7 +99,7 @@ class ViewRetrieveSource extends ViewList {
 			$this->ss->assign('bgColor', array($odd_bg, $even_bg));			
 			
 			$this->ss->assign('module', $merge_module);    
-			echo $this->ss->fetch('modules/Connectors/tpls/listview.tpl');
+			echo $this->ss->fetch($this->getCustomFilePathIfExists('modules/Connectors/tpls/listview.tpl'));
 		}
     }
     

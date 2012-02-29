@@ -66,7 +66,7 @@ class ExternalAPIFactory
      * @return array
      */
     public static function loadFullAPIList($forceRebuild=false, $ignoreDisabled = false) {
-        if ( isset($GLOBALS['sugar_config']['developer_mode']) && $GLOBALS['sugar_config']['developer_mode'] ) {
+        if (inDeveloperMode()) {
             static $beenHereBefore = false;
             if ( !$beenHereBefore ) {
                 $forceRebuild = true;

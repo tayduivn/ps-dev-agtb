@@ -237,13 +237,10 @@ class TeamSetManager {
         if ( ! file_exists($cachefile) ) {
             mkdir_recursive(dirname($cachefile));
         }
-        $fd = @fopen($cachefile,'w');
-        if ($fd) {
-            fwrite($fd,"<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>");
-            fclose($fd);
-        }
-        else {
-            $GLOBALS['log']->error("File '$cachefile' could not be written");
+
+        if(file_put_contents($cachefile, "<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>") === false)
+        {
+            $GLOBALS['log']->error("File $cachefile could not be written");
         }
 	}
 
@@ -264,6 +261,7 @@ class TeamSetManager {
         // Already stored in a file
         if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetCache.php')) ) {
             require_once($cachefile);
+
             if(!empty($teamSets[$team_set_id])){
             	sugar_cache_put(TEAM_SET_CACHE_KEY,$teamSets);
             	return $teamSets[$team_set_id];
@@ -292,12 +290,8 @@ class TeamSetManager {
             mkdir_recursive(dirname($cachefile));
         }
 
-        $fd = @fopen($cachefile,'w');
-        if ( $fd ) {
-            fwrite($fd,"<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>");
-            fclose($fd);
-        }
-        else {
+        if(file_put_contents($cachefile, "<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>") === false)
+        {
             $GLOBALS['log']->error("File $cachefile could not be written");
         }
 

@@ -81,7 +81,7 @@ function buildTableForm($rows)
             $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='ListView';\" type='submit' type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
         }
     } else {
-		$form .= "<input type='submit' class='button' name='Continue{$this->moduleName}' value='{$newLinkLabel}'>";
+		$form .= "<input type='submit' class='button' name='Continue{$this->objectName}' value='{$mod_strings[$newLinkLabel]}'>";
 	}
 
 	$form .= "</td></tr></table></td></tr><tr>";
@@ -119,7 +119,7 @@ function buildTableForm($rows)
 		$form .= "<tr class='$rowColor'>";
 		if ($action != 'ShowDuplicates')
 		{
-			$form .= "<td width='1%' nowrap='nowrap'><a href='#' onClick=\"document.forms['dup{$this->moduleName}'].selected{$this->objectName}.value='${row['id']}';document.forms['dup{$this->moduleName}'].submit() \">[${app_strings['LBL_SELECT_BUTTON_LABEL']}]</a>&nbsp;&nbsp;</td>\n";
+			$form .= "<td width='1%' nowrap='nowrap'><a href='#' onClick=\"document.forms['dup{$this->moduleName}'].selected{$this->objectName}.value='${row['id']}';document.forms['dup{$this->moduleName}'].submit() \">[{$app_strings['LBL_SELECT_BUTTON_LABEL']}]</a>&nbsp;&nbsp;</td>\n";
 		}
 		$wasSet = false;
 
@@ -157,7 +157,7 @@ function buildTableForm($rows)
     }
 	else
 	{
-		$form .= "<input type='submit' class='button' name='Continue{$this->objectName}' value='{$newLinkLabel}'></form>";
+		$form .= "<input type='submit' class='button' name='Continue{$this->objectName}' value='{$mod_strings[$newLinkLabel]}'></form>";
 	}
     $form .= "</td></tr></table></td></tr></table>";
 	return $form;
@@ -179,7 +179,7 @@ function checkForDuplicates($prefix='')
     require_once('include/MVC/SugarModule.php');
     $focus = SugarModule::get($this->moduleName)->loadBean();
 
-	$query = $this->getDuplicateQuery($prefix);
+	$query = $this->getDuplicateQuery($focus, $prefix);
 
     if(empty($query))
     {
@@ -241,10 +241,11 @@ function checkForDuplicates($prefix='')
  * check sequence.
  *
  * @see checkForDuplicates (method), ContactFormBase.php, LeadFormBase.php, ProspectFormBase.php
+ * @param $focus sugarbean
  * @param $prefix String value of prefix that may be present in $_POST variables
  * @return SQL String of the query that should be used for the initial duplicate lookup check
  */
-public function getDuplicateQuery($prefix='')
+public function getDuplicateQuery($focus, $prefix='')
 {
     return null;
 }

@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelTopSummaryButton.php 38033 2008-07-21 14:03:34Z jmertic $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
+
 
 class SugarWidgetSubPanelTopSummaryButton extends SugarWidgetSubPanelTopButton
 {
@@ -50,7 +50,7 @@ class SugarWidgetSubPanelTopSummaryButton extends SugarWidgetSubPanelTopButton
 
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
 		$title = $app_strings['LBL_ACCUMULATED_HISTORY_BUTTON_TITLE'];
-		$accesskey = $app_strings['LBL_ACCUMULATED_HISTORY_BUTTON_KEY'];
+		//$accesskey = $app_strings['LBL_ACCUMULATED_HISTORY_BUTTON_KEY'];
 		$value = $app_strings['LBL_ACCUMULATED_HISTORY_BUTTON_LABEL'];
 		$module_name = 'Activities';
 		$id = $widget_data['focus']->id;
@@ -65,7 +65,6 @@ class SugarWidgetSubPanelTopSummaryButton extends SugarWidgetSubPanelTopButton
 		return '<input type="button" name="summary_button" id="summary_button"'
 			. ' class="button"'
 			. ' title="' . $title . '"'
-			. ' accesskey="' . $accesskey . '"'
 			. ' value="' . $value . '"'
 			. " onclick='open_popup(\"$module_name\",600,400,\"$initial_filter\",false,false,$json_encoded_php_array);' />\n";
 	}

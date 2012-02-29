@@ -217,7 +217,7 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 
 }
 if(isset($focus->parent_type) && $focus->parent_type != "") {
-    $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."'
+    $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' 
 tabindex='3' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' LANGUAGE=javascript onclick='return
 window.open(\"index.php?module=\"+ document.EditView.parent_type.value +
 \"&action=Popup&html=Popup_picker&form=TasksEditView\",\"test\",\"width=600,height=400,resizable=1,scrollbars=1\");'>";
@@ -338,7 +338,31 @@ if(true) {
 	////    END ATTACHMENTS
 	///////////////////////////////////////
     $templateType = !empty($focus->type) ? $focus->type : '';
-    $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list'],$templateType));
+    if($has_campaign) {
+        if (empty($_REQUEST['record']))
+        {
+            // new record, default to campaign
+            $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list_campaigns'],'campaign'));
+        }
+        else
+        {
+            $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list_campaigns'],$templateType));
+        }
+    }
+    else
+    {
+        // if the type is workflow, we will show it
+        // otherwise we don't allow user to select workflow type because workflow type email template
+        // should be created from within workflow module because it requires more fields (such as base module, etc)
+        if ($templateType == 'workflow')
+        {
+            $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list'],$templateType));
+        }
+        else
+        {
+            $xtpl->assign("TYPEDROPDOWN", get_select_options_with_id($app_list_strings['emailTemplates_type_list_no_workflow'],$templateType));
+        }
+    }
 	// done and parse
 	$xtpl->parse("main.textarea");
 }

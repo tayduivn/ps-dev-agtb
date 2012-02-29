@@ -85,10 +85,10 @@ $mod_strings = array (
   
 	'LBL_NEW_BUTTON_LABEL_ALERT' => 'Create Alert',
 	'LBL_NEW_BUTTON_KEY_ALERT' => 'A',
-	'LBL_NEW_BUTTON_TITLE_ALERT' => 'Create Alert [Alt+A]',
+	'LBL_NEW_BUTTON_TITLE_ALERT' => 'Create Alert',
 	'LBL_NEW_BUTTON_LABEL_ACTION' => 'Create Action',
 	'LBL_NEW_BUTTON_KEY_ACTION' => 'C',
-	'LBL_NEW_BUTTON_TITLE_ACTION' => 'Create Action [Alt+C]', 
+	'LBL_NEW_BUTTON_TITLE_ACTION' => 'Create Action',
 	'LBL_MODULE_NAME_COMBO' => 'Alerts',
 	
  	'LNK_ALERT_TEMPLATES' => 'Alert Templates',

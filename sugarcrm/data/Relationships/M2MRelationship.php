@@ -281,7 +281,7 @@ class M2MRelationship extends SugarRelationship
         $result = $db->query($query);
         $rows = Array();
         $idField = $link->getSide() == REL_LHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
-        while ($row = $db->fetchByAssoc($result))
+        while ($row = $db->fetchByAssoc($result, FALSE))
         {
             if (empty($row['id']) && empty($row[$idField]))
                 continue;
@@ -408,7 +408,7 @@ class M2MRelationship extends SugarRelationship
 
         $where = "$startingTable.$startingKey=$joinTable.$startingJoinKey AND $joinTable.$joinKey='{$link->getFocus()->$targetKey}'";
 
-        //Check if we should ignore the role fileter;
+        //Check if we should ignore the role filter.
         $ignoreRole = !empty($params['ignore_role']);
 
         //First join the relationship table

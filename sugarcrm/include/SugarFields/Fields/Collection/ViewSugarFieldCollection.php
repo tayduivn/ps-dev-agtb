@@ -334,7 +334,7 @@ FRA;
                mkdir_recursive($dir, null, true);
             }
             $cacheRow = $this->ss->fetch($this->findTemplate('CollectionEditViewRow'));
-            sugar_file_put_contents($cacheRowFile, $cacheRow);
+            file_put_contents($cacheRowFile, $cacheRow);
         }
         $this->ss->assign('cacheRowFile', $cacheRowFile);
         return $this->ss->fetch($this->tpl_path);
@@ -344,7 +344,7 @@ FRA;
      * return a bool
      */
     function checkTemplate($cacheRowFile){
-        if(!empty($GLOBALS['sugar_config']['developerMode']) || !empty($_SESSION['developerMode'])){
+        if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
             return false;
         }
         return file_exists($cacheRowFile);

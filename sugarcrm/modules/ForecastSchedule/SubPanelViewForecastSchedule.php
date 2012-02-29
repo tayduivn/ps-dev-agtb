@@ -60,7 +60,7 @@ $button .= "<input type='hidden' name='return_action' value='DetailView'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='action'>\n";
 $button .= "<tr>";
-$button .= "<td><input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_NEW_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' id='btn_save' name='button' value='".$app_strings['LBL_NEW_BUTTON_LABEL']."'></td>\n";
+$button .= "<td><input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."'  class='button' onclick=\"this.form.action.value='EditView'\" type='submit' id='btn_save' name='button' value='".$app_strings['LBL_NEW_BUTTON_LABEL']."'></td>\n";
 $button .= "</tr></form></table>\n";
 
 // Stick the form header out there.

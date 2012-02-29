@@ -29,67 +29,32 @@
  * $Id: style.js 23344 2007-06-05 20:32:59Z eddy $
  */
 
-/**
- * Handles the global links slide
- */
-YAHOO.util.Event.onContentReady("globalLinksModule", function() 
-{
-    if ( !Get_Cookie('globalLinksOpen') ) {
-        Set_Cookie('globalLinksOpen','true',30,'/','','');
-    }
-    if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-        document.getElementById('globalLinks').style.width = "auto";
-    }
-    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("node", "anim", function(Y) {
-        var module = Y.one('#globalLinksModule');
-    
-        if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-            var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 0
-                     
-            },
-            to: {
-                width: 
-                function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    }
-            },
-            easing: Y.Easing.easeOut,
-            duration: 0.5
-        });
-            module.toggleClass('yui-closed');
-            
-        } else {
-        var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
-            from: { width: 
-                    function(node) { // dynamic in case of change
-                        return node.get('scrollWidth'); 
-                    } 
-            },
-            to: {
-                width: 0
-            },
-            easing: Y.Easing.backIn,
-            duration: 0.5
-        });
+
+ //window resize event handers
+$(window).resize(function() {
+	SUGAR.themes.resizeSearch();
+	SUGAR.themes.resizeMenu();
+});
+
+
+
+$(document).ready(function(){
+	SUGAR.themes.resizeSearch();
+	SUGAR.themes.resizeMenu();
+	//setup for action menus
+	SUGAR.themes.actionMenu();
+	//setup event handler for search results
+	SUGAR.themes.searchResults();
+    //setup footer for toggling
+    SUGAR.themes.toggleFooter();
+    //initialize global tooltips
+	SUGAR.themes.globalToolTips();
+
+    $('body').click(function(e) {
+        if($(e.target).closest('#dcmenuSearchDiv').length == 0)
+        {
+            SUGAR.themes.clearSearch();
         }
-        
-        var onClick = function(e) {
-            module.toggleClass('yui-closed');
-            content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
-            content.fx.run();
-            if ( document.getElementById('globalLinksModule').className == 'yui-closed' )
-                Set_Cookie('globalLinksOpen','true',30,'/','','');
-            else
-                Set_Cookie('globalLinksOpen','false',30,'/','','');
-        };
-    
-        // use dynamic control for dynamic behavior
-        var control = Y.Node.create(
-        '<a title="show/hide content" class="yui-toggle"><em>toggle</em></a>'
-        );
-        module.one('#globalLinksCtrl').appendChild(control);
-        control.on('click', onClick);
     });
 });
 
@@ -97,230 +62,244 @@ SUGAR.themes = SUGAR.namespace("themes");
 
 SUGAR.append(SUGAR.themes, {
     setRightMenuTab: function(el, params) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var extraMenu = Dom.get("moduleTabExtraMenuAll");
-        //Check if the menu we want to show is in the more menu
-        if (Dom.isAncestor("MoreAll", el)) {
-            var currRight = Dom.getPreviousSibling(extraMenu);
-            if (currRight.id == "moduleTab_")
-                currRight = Dom.getPreviousSibling(extraMenu);
-            //Insert the el to the menu
-            Dom.insertAfter(el, currRight);
-            //Move the curr right back into the more menu
-            Dom.insertBefore(currRight, Sel.query("ul>li", "MoreAll", true));
-            Dom.removeClass(currRight, "yuimenubaritem");
-            Dom.removeClass(currRight, "yuimenubaritem-hassubmenu");
-            Dom.removeClass(currRight, "current");
-        }
+
+        var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+        
+		//Check if the menu we want to show is in the more menu
+		if($(el+"Overflow").parents().is(extraMenu)) {
+			//get the previous sibling of extraMenu
+			var $currRight = $(extraMenu).prev();
+			//add menu after prev sib
+
+			 $(el+"Overflow").parent().insertAfter($currRight);
+			 var newId = el.replace("#","");
+			 var currRightId = $currRight.children("a:first-child").attr("id") + "OverflowHidden";
+			 $(el+"Overflow").attr("id",newId);
+			 $(el).parent().addClass("current");
+			 //remove prev sib
+			 
+			 $(el).parent().prev().remove();
+			 $("#"+currRightId).parent().css("display","list-item");
+			 
+			 
+		}
     },
     setCurrentTab: function(params) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleTab_' + params.module);
-        if (el && el.parentNode) {
-            el = el.parentNode;
+        var el = '#moduleTab_'+ sugar_theme_gm_current + params.module;
+        if ($(el) && $(el).parent()) {
             SUGAR.themes.setRightMenuTab(el, params);
-            var currActiveTab = Sel.query("li.yuimenubaritem.current", "themeTabGroupMenu_All", true);
-            if (currActiveTab) {
-                if (currActiveTab == el) return;
-                Dom.removeClass(currActiveTab, "current");
+            var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";   
+            if ($(currActiveTab)) {
+                if ($(currActiveTab) == $(el).parent()) return;
+                $(currActiveTab).removeClass("current");
             }
-            Dom.addClass(el, "yuimenubaritem  yuimenubaritem-hassubmenu current");
-            var right = Sel.query("li.yuimenubaritem.currentTabRight", "themeTabGroupMenu_All", true);
-            Dom.insertAfter(right, el);
+            $(el).parent().addClass("current");
         }
+        makeCall = true;
     },
-    setModuleTabs: function(html) {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleList');
-        if (el && el.parentNode) {
-            var parent = el.parentNode;
-
-            try {
-                //This can fail hard if multiple events fired at the same time
-                YAHOO.util.Event.purgeElement(el, true);
-                for (var i in allMenuBars) {
-                    if (allMenuBars[i].destroy)
-                        allMenuBars[i].destroy();
-                }
-            } catch (e) {
-                //If the menu fails to load, we can get leave the user stranded, reload the page instead.
-                window.location.reload();
-            }
-            parent.removeChild(el);
-            parent.innerHTML += html;
-            el = document.getElementById('moduleList');
-            this.loadModuleList();
-        }
+    toggleMenuOverFlow: function(menuName,maction) {
+    	
+    	var menuName = "#"+menuName;
+	    if(maction == "more") {
+			$(menuName).addClass("showMore");
+			$(menuName).removeClass("showLess");
+		} else {
+			$(menuName).addClass("showLess");
+			$(menuName).removeClass("showMore");
+		}
     },
-
     loadModuleList: function() {
-
-    // Indentation not changed to preserve history.
-    function onSubmenuBeforeShow(p_sType, p_sArgs)
-    {
-		var oElement,
-			oBd,
-			oShadow,
-			oShadowBody,
-			oShadowBodyCenter,
-			oVR,
-		    oLastViewContainer,
-			parentIndex,
-			oItem,
-			oSubmenu,
-			data,
-			aItems;
-
-
-			parentIndex = this.parent.index;
-
-
-		if (this.parent) {
-
-			oElement = this.element;
-			oBd = oElement.firstChild;
-			oShadow = oElement.lastChild;
-			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
-
-            // We need to figure out the module name from the ID. Sometimes it will have the group name in it
-            // But sometimes it will just use the module name (in the case of the All group which don't have the
-            // group prefixes due to the automated testing suite.
-            var moduleName = oElement.id;
-            var groupName = oElement.parentNode.parentNode.parentNode.id.replace('themeTabGroup_','');
-            moduleName = moduleName.replace(groupName+'_','');
-
-			var handleSuccess = function(o){
-				if(o.responseText !== undefined){
-				data = YAHOO.lang.JSON.parse(o.responseText);
-				aItems = oMenuBar.getItems();
-				oItem = aItems[parentIndex];
-				if(!oItem) return;
-
-                oSubmenu = oItem.cfg.getProperty("submenu");
-				if (!oSubmenu) return;
-                oSubmenu.removeItem(1,1);
-				oSubmenu.addItems(data,1);
-
-				//update shadow height to accomodate new items
-
-				oVR = oShadow.previousSibling;
-				oVR.style.height = (oShadow.offsetHeight - 15)+"px";
-
-
-
+    	$('#moduleList ul.sf-menu').superfish({
+			delay:     0,
+			speed: 'fast',
+			firstOnClick: true,
+			autoArrows: false,
+			dropShadows: false,
+			onBeforeShow: function() {
+				if($(this).attr("class") == "megamenu") {
+					var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+					var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
+					//Check if the menu we want to show is in the more menu		
+					if($(this).parents().is(extraMenu)) {
+						var moduleName = moduleName.replace("Overflow","");
+						var moduleName = moduleName.replace("Hidden","");
+					}
+					that = $(this);
+					//ajax call for favorites
+					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;" || makeCall == true) {
+						
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=favorites",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json);				    
+						    $(that).find("ul.MMFavorites").children().not(':eq(0)').remove();
+						    $.each(lastViewed, function(k,v) {
+						    	if(v.text == "none") {
+						    		v.url = "javascript: void(0);";
+						    	}
+						    	$(that).find("ul.MMFavorites").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
+						    //update column heights so dividers are even
+							$(that).find("ul.MMFavorites li:nth("+lastViewed.length+")").children().ready(function() {
+								wrapperHeight = $(that).find("li div.megawrapper").height();
+								$(that).find("div.megacolumn-content").css("min-height",wrapperHeight);
+							});
+						  }
+						});
+					}					
+					//ajax call for last viewed
+					if($(this).find("ul.MMLastViewed li:last a").html() == "&nbsp;" || makeCall == true) {
+						$.ajax({
+						  url: "index.php?module="+moduleName+"&action=modulelistmenu",
+						  success: function(json){
+						    var lastViewed = $.parseJSON(json);
+						    $(that).find("ul.MMLastViewed").children().not(':eq(0)').remove();
+						    $.each(lastViewed, function(k,v) {
+						    	if(v.text == "none") {
+						    		v.url = "javascript: void(0);";
+						    	}
+						    	$(that).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
+						    });
+						    
+						    //update column heights so dividers are even
+							$(that).find("ul.MMLastViewed li:nth("+lastViewed.length+")").children().ready(function() {
+								wrapperHeight = $(that).find("li div.megawrapper").height();
+								$(that).find("div.megacolumn-content").css("min-height",wrapperHeight);
+							});
+						  }
+						});
+					}
+				makeCall = false;
 				}
+			},
+			onShow: function() {
 			}
+		});	
+    },
+    editMenuMode: function() {
 
-			var handleFailure = function(o){
-				if(o.responseText !== undefined){
-					oLastViewContainer.innerHTML = "Failed to load menu";
+
+
+    },
+    resizeSearch: function() {
+    	searchWidth = .16;
+    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54); 
+		$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
+    },
+    resizeMenu: function () {
+	    var maxMenuWidth = Math.round($(window).width()*.45);
+		var menuWidth = $('#moduleList').width();
+		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
+
+			$('ul.sf-menu').children("li").each(
+				function(index) {
+						menuItemsWidth += $(this).width();
+					if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
+			    		//console.log($(this).attr("id"));
+			    		$(this).css("display","none");
+			    		$("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
+					}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
+						//console.log($(this).attr("id"));
+						$(this).css("display","list-item");
+						$("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
+					}
 				}
+			);
+    },
+    globalToolTips: function () {
+    	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
+		$("#dcmenuSugarCube").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});	
+		//setup tool tips for partner integrations
+		$("#partner").children("a").each(
+		function (index) {
+				$(this).tipTip({maxWidth: "auto", edgeOffset: 10});
 			}
+		); 
+    },
+    toggleFooter: function () {
+	    $("#arrow").click(function(){
+	        $(this).toggleClass("up");
+	        if ($(this).hasClass('up')) {
+	        	$(this).attr("title","Hide");
+	        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+	            $(this).animate({bottom:'5px'},200);
+	        } else {
+	        	$(this).attr("title","Show");
+	        	$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
+	            $(this).animate({bottom:'0'},200);
+	        }
+	        $("#footer").slideToggle("fast");
+	        
+	    });	
+    },
+    searchResults: function () {
+    	firstHit = false;
+    	$("#sugar_spot_search").keypress(function(event) {
+			DCMenu.startSearch(event);
+			$('#close_spot_search').css("display","inline-block");
+			
+			 if(event.charCode == 0 && !firstHit) {
+			$('#sugar_spot_search_div').css("left",110);
+			$('#sugar_spot_search_div').css("width",344);
+			$('#sugar_spot_search').css("width",290);
+			firstHit = true;
+			 	}
+			$('#close_spot_search').click(function() {
+				SUGAR.themes.clearSearch();
+			});
 
-			var callback =
-			{
-			  success:handleSuccess,
-			  failure:handleFailure
-			};
-
-			var sUrl = "index.php?module="+moduleName+"&action=modulelistmenu";
-
-			if(oLastViewContainer && oLastViewContainer.lastChild.firstChild.innerHTML == "&nbsp;") {
-				var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback);
-			}
-
-
-		}
-
-	}
-
-
-	function onSubmenuShow(p_sType, p_sArgs) {
-
-	var oElement,
-		oShadow,
-		oShadowBody,
-		oShadowBodyCenter,
-		oBd,
-		oVR;
-
-	if (this.parent) {
-
-		oElement = this.element;
-		var newLeft = oElement.offsetLeft + offsetPadding;
-		oElement.style.left = newLeft + "px";
-		oBd = oElement.firstChild;
-		oShadow = oElement.lastChild;
-		oElement.style.top = oElement.offsetTop + "px";
-		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
-			if(oShadow.previousSibling.className != "vr") {
-
-			oVR = document.createElement("div");
-			oVR.setAttribute("class", "vr");
-			oVR.setAttribute("className", "vr");
-			oElement.insertBefore(oVR,oShadow);
-			oVR.style.height = (oBd.offsetHeight - 15)+"px";
-			oVR.style.top = (oBd.offsetTop+8) +"px";
-			oVR.style.left = ((oBd.offsetWidth/2)-10) +"px";
-
-			}
-		}
-
-		}
-
-	}
-
-    var nodes = YAHOO.util.Selector.query('#moduleList>div');
-    allMenuBars = {};
-
-    for ( var i = 0 ; i < nodes.length ; i++ ) {
-	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
-		    autosubmenudisplay: true,
-            visible: false,
-		    hidedelay: 750,
-		    lazyload: true });
-	    /*
-	      Subscribe to the "beforeShow" and "show" events for
-	      each submenu of the MenuBar instance.
-	    */
-
-	    currMenuBar.subscribe("beforeShow", onSubmenuBeforeShow);
-	    currMenuBar.subscribe("show", onSubmenuShow);
-
-	    /*
-	      Call the "render" method with no arguments since the
-	      markup for this MenuBar already exists in the page.
-	    */
-
-	    currMenuBar.render();
-        allMenuBars[nodes[i].id.substr(nodes[i].id.indexOf('_')+1)] = currMenuBar;
-
-
-
-        if (typeof YAHOO.util.Dom.getChildren(nodes[i]) == 'object' && YAHOO.util.Dom.getChildren(nodes[i]).shift().style.display != 'none')
-        {
-            // This is the currently displayed menu bar
-            oMenuBar = currMenuBar;
-        }
-    }
-
-
-	// Remove the href attribute if we are on an touch device ( like an iPad )
-	if ( SUGAR.util.isTouchScreen() ) {
-	    var nodes = YAHOO.util.Selector.query('#moduleList a.yuimenubaritemlabel-hassubmenu');
-	    YAHOO.util.Dom.batch(nodes, function(el,o) {
-	        el.href = '#';
+		});	
+    },
+    clearSearch: function() {
+   		$("div#sugar_spot_search_results").hide();
+		$('#close_spot_search').css("display","none");
+		$("#sugar_spot_search").val("");
+		$("#sugar_spot_search").removeClass("searching");
+		$('#sugar_spot_search_div').css("left",0);
+		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
+	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));	
+	  	firstHit = false;
+   	},
+   	actionMenu: function() {
+	   	//set up any action style menus
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
+		
+		//Fix show more/show less buttons in top action menus
+		$("[class^='moduleMenuOverFlow']").each(function(index,node){
+		    var jNode = $(node);
+		    jNode.unbind("click");
+			jNode.click(function(event){
+				event.stopPropagation();
+			});
+		    
+		});	
+   	},
+   	sugar_theme_gm_switch: function(groupName) {
+	   	$('#themeTabGroupMenu_'+sugar_theme_gm_current).css("display","none");
+	    sugar_theme_gm_current = groupName;
+	    $.ajax({
+	    	type: "POST",
+	    	url: "index.php?module=Users&action=ChangeGroupTab&to_pdf=true",
+	    	data: 'newGroup='+groupName
 	    });
-	}
-
-    } // loadModuleList()
+	    $('#themeTabGroupMenu_'+groupName).css("display","block");
+   	}
+    
 });
 
 /**
  * For the module list menu
  */
-YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
 
+$("#moduleList").ready(function(){
+	SUGAR.themes.loadModuleList();
+});
 /**
  * For the module list menu scrolling functionality
  */
@@ -390,23 +369,8 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
     
         Y.all('#tabListContainer .yui-hd a').on('click', onClick);
     });
+
+
 });
 
-function sugar_theme_gm_switch( groupName ) {
-    document.getElementById('themeTabGroup_'+sugar_theme_gm_current).style.display='none';
-    sugar_theme_gm_current = groupName;
-    YAHOO.util.Connect.asyncRequest('POST','index.php?module=Users&action=ChangeGroupTab&to_pdf=true',false,'newGroup='+groupName);
-    document.getElementById('themeTabGroup_'+groupName).style.display='block';
-    
-    oMenuBar = allMenuBars[groupName];
-}
 
-offsetPadding = 0;
-
-function resizeHeader() {
-	var e = document.getElementById("contentTable");
-	document.getElementById("moduleList").style.width = e.offsetWidth + "px";
-	document.getElementById("header").style.width = e.offsetWidth + 20 + "px";
-	document.getElementById("dcmenu").style.width = e.offsetWidth + 20 + "px";
-
-}

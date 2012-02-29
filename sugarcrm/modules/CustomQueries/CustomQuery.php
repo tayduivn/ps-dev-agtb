@@ -591,7 +591,7 @@ in use by a data set, especially if the data set has the custom layout enabled.
 		//end if rows exist
 		//}
 
-	//end funciton add_column_to_layouts
+	//end function add_column_to_layouts
 	}
 
 

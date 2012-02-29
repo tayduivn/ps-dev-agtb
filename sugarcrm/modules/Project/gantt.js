@@ -463,9 +463,8 @@ SUGAR.gantt = function() {
 		            SUGAR.gantt.setProgress(task_num, progress);
 			    }
 
-		        bar.onmouseover = function() {  SUGAR.gantt.taskOverLib(SUGAR.gantt.popupInfo(task_num),
+		        bar.onclick = function() {  SUGAR.gantt.taskOverLib(this,SUGAR.gantt.popupInfo(task_num),
 						  						document.getElementById("description_"+task_num).value); }
-		        bar.onmouseout = function() { nd(); }
 	        }
 	        else{
 	        	/* remove middle and last cells for an empty row */
@@ -479,12 +478,18 @@ SUGAR.gantt = function() {
 
 	    hideGanttRow: function(row)
 	    {
-	    	document.getElementById("gantt_row_"+row).style.display = "none";
+	    	if(document.getElementById("gantt_row_"+row))
+            {
+                document.getElementById("gantt_row_"+row).style.display = "none";
+            }
 	    },
 
 	    showGanttRow: function(row)
 	    {
-	    	document.getElementById("gantt_row_"+row).style.display = "";
+            if(document.getElementById("gantt_row_"+row))
+            {
+	    	    document.getElementById("gantt_row_"+row).style.display = "";
+            }
 	    },
 
 	    setProgress: function(task_num, progress){
@@ -534,7 +539,7 @@ SUGAR.gantt = function() {
             var mappedRowId = SUGAR.grid.getMappedRow(task_num);
 	        var mappedRow = document.getElementById('project_task_row_' + task_num);
             var row_id = 'gantt_row_'+mappedRowId;
-            row.setAttribute('id', 'gantt_row_'+ row_id);
+            row.setAttribute('id', row_id);
         	row.setAttribute('height', mappedRow ? mappedRow.offsetHeight : 28);
 
 	        //row.setAttribute('onMouseOver', 'SUGAR.gantt.focusRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
@@ -729,8 +734,8 @@ SUGAR.gantt = function() {
 
 		},
 
-		taskOverLib: function(info, description){
-			return overlib(info, CAPTION, description, CAPTIONSIZE, '2', TEXTSIZE, '2', CGCOLOR, '#DDDDDD', TEXTCOLOR, '#000000', FGCOLOR, '#EEEEEE', CAPCOLOR, '#000000', CAPTIONFONTCLASS, 'olCapFontClass', WRAP);
+		taskOverLib: function(el,info, description){
+			SUGAR.util.getStaticAdditionalDetails(el,info,description);
 		},
 
 		/* Calendar stuff */

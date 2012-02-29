@@ -466,7 +466,25 @@ function buildExportLink($forecast_type) {
     //id='$id'
     //SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_COPY'])."&nbsp;
     //$script = "<a onclick=\"return copyvalue_overlib('{$forecast_type}');\" href=\"#\" >".$mod_strings['LBL_COPY']."</a>";
-    $script = "<input type=button onclick=\"return copyvalue_overlib('{$forecast_type}');\" class='button' value='".$mod_strings['LBL_COPY']."'>";
+    $script = "
+    <ul class=\"clickMenu button\">
+    <li>
+     <ul class=\"subnav\">
+     
+    ";
+    if($forecast_type =="direct") {
+    	$script .= "<li><a onclick='copy_amount(\"direct\",\"amount\")' href='#'>".$mod_strings['LBL_COPY_AMOUNT']."</a></li>";	
+    	$script .= "<li><a onclick='copy_amount(\"direct\",\"weigh\")' href='#'>".$mod_strings['LBL_COPY_WEIGH_AMOUNT']."</a></li>";	
+    	$script .= "<li><a onclick='copy_amount(\"direct\",\"worksheet\")' href='#'>".$mod_strings['LBL_WORKSHEET_AMOUNT']."</a></li>";	
+    } else {
+    	$script .= "<li><a onclick='copy_amount(\"rollup\",\"amount\")' href='#'>".$mod_strings['LBL_COPY_WEIGH_AMOUNT']."</a></li>";	
+    	$script .= "<li><a onclick='copy_amount(\"rollup\",\"worksheet\")' href='#'>".$mod_strings['LBL_WORKSHEET_AMOUNT']."</a></li>";
+    }
+    
+    $script .= "</ul>";
+        $script .= "<span><a href='javascript: void(0);'>".$mod_strings['LBL_COPY']."</a></span>";
+    $script .= "</li>";
+    $script .= "</ul>";
     return $script;
 }
 
