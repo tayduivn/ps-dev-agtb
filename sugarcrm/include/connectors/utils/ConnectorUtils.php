@@ -294,6 +294,11 @@ class ConnectorUtils
             }
         }
 
+        if(!is_array($connectors))
+        {
+            $connectors = array();
+        }
+
         if(!write_array_to_file('connectors', $connectors, $toFile)) {
            //Log error and return empty array
            $GLOBALS['log']->fatal("Cannot write sources to file");

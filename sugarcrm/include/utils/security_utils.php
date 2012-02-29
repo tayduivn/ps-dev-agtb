@@ -33,14 +33,7 @@ $modules_exempt_from_availability_check['History']='History';
 $modules_exempt_from_availability_check['Calls']='Calls';
 $modules_exempt_from_availability_check['Meetings']='Meetings';
 $modules_exempt_from_availability_check['Tasks']='Tasks';
-
-//BEGIN SUGARCRM flav=int ONLY
-//clee
-//Bug 49439: Commented out Notes from modules_exempt_availability check.  This was added way back on 06/08/2006 from an SVN
-//commit by Sadek.  I don't think this exemption is warranted anymore.  Probably could apply to other modules, but for this particular
-//bug the Notes module was the module in question and I wanted to minimize impact.
-//$modules_exempt_from_availability_check['Notes']='Notes';
-//END SUGARCRM flav=int ONLY
+$modules_exempt_from_availability_check['Notes']='Notes';
 
 //BEGIN SUGARCRM flav!=sales ONLY
 $modules_exempt_from_availability_check['CampaignLog']='CampaignLog';

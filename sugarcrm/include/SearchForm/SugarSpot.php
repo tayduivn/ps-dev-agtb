@@ -287,6 +287,7 @@ EOHTML;
                 }
 
 				if(!empty($GLOBALS['dictionary'][$class]['unified_search'])){
+
 					if(empty($GLOBALS['dictionary'][$class]['fields'][$k]['unified_search'])){
 
 						if(isset($searchFields[$moduleName][$k]['db_field'])){
@@ -301,9 +302,9 @@ EOHTML;
                                             unset($searchFields[$moduleName][$k]);
                                             continue;
                                         }
-                                    } else {
-									    $keep = true;
                                     }
+
+                                    $keep = true;
 								}
 							} //foreach
 						}
@@ -655,6 +656,11 @@ EOHTML;
                 }
                 break;
             case 'phone':
+                //For a phone search we require at least three digits
+                if(!preg_match('/[0-9]{3,}/', $query))
+                {
+                    return false;
+                }
             case 'decimal':
             case 'float':
                 if(!preg_match('/[0-9]/', $query))
