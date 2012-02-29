@@ -94,6 +94,7 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
             'fields' => array(),
         );
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ACL');
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     /**
@@ -118,5 +119,6 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
         unset($GLOBALS['current_user']);
         unset($_SESSION['ACL']);
         unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_strings']);
     }
 }
