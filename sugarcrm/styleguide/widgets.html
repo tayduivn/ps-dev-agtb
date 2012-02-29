@@ -13,10 +13,9 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    
+    <link href="/css/bootstrap.css" rel="stylesheet">
 
-    <link href="/less/bootstrap.css" rel="stylesheet">
-    <link href="/less/responsive.css" rel="stylesheet">
-    <link href="/css/docs.css" rel="stylesheet">
     <link href="/js/google-code-prettify/prettify.css" rel="stylesheet">
   </head>
 
@@ -224,7 +223,7 @@
               <p>This <a href="#" class="btn popover-test" title="A Title" data-content="And here's some amazing content. It's very engaging. right?">button</a> should trigger a popover on hover.</p>
 
               <h4>Tooltips in a modal</h4>
-              <p><a href="#" class="tooltip-test" title="Tooltip">This link</a> and <a href="#" class="tooltip-test" title="Tooltip">that link</a> should have tooltips on hover.</p>
+              <p><a href="#" rel="tooltip" title="Tooltip">This link</a> and <a href="#" rel="tooltip" title="Tooltip">that link</a> should have tooltips on hover.</p>
             </div>
             <div class="modal-footer">
               <a href="#" class="btn btn-primary">Save changes</a>
@@ -1414,24 +1413,7 @@ $('.myCarousel').carousel({
         </div>
       </div>
     </section>
-
-     <!-- Footer
-      ================================================== -->
-      <footer class="footer">
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>Designed and built with all the love in the world <a href="http://twitter.com/twitter" target="_blank">@twitter</a> by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
-        <p>Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-        <p>Icons from <a href="http://glyphicons.com">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-      </footer>
-
-    </div><!-- /container -->
-
-
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    </div>
     <script src="/js/jquery.js"></script>
     <script src="/js/google-code-prettify/prettify.js"></script>
     <script src="/js/bootstrap-transition.js"></script>
@@ -1447,7 +1429,5 @@ $('.myCarousel').carousel({
     <script src="/js/bootstrap-carousel.js"></script>
     <script src="/js/bootstrap-typeahead.js"></script>
     <script src="/js/application.js"></script>
-
-
   </body>
 </html>

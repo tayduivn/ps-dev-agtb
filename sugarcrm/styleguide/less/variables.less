@@ -2,79 +2,43 @@
 // Variables to customize the look and feel of Bootstrap
 // -----------------------------------------------------
 
-
 // GLOBAL VALUES
 // --------------------------------------------------
 
 // Grays
 @black:                 #000;
-.black {background: @black;}
-
-@grayDarker:            #222;
-.grayDarker {background: @grayDarker;}
-
-@grayDark:              #333;
-.grayDark {background: @grayDark;}
-
-@gray:                  #595A5C;
-.gray {background: @gray;}
-
-@grayLight:             #b7b7b7;
-.grayLight {background: @grayLight;}
-
-@grayLighter:           #e7e7e7;
-.grayLighter {background: @grayLighter;}
-
+@grayDarker:            #333;
+@grayDark:              #444;
+@gray:                  #555;
+@grayLight:             #e7e7e7;
+@grayLighter:           #f5f5f5;
 @white:                 #fff;
-.white {background: @white;}
+@transparent            rgba(0,0,0,0);
 
 // Accent colors (hue is roughly 20%)
-@blueLight:             lighten(@blue, 30%);
-.blueLight {background: @blueLight;}
-
+@bluelight:             lighten(@blue, 30%);
 @blue:                  #0c7ec7;
-.blue {background: @blue;}
-
 @blueDark:              darken(@blue, 10%);
-.blueDark {background: @blueDark;}
-
 @green:                 #0cc763;
-.green {background: @green;}
-
 @red:                   #C60C30;
-.red {background: @red;}
-
 @yellow:                #e0d20d;
-.yellow {background: @yellow;}
-
 @orange:                #c67e0c;
-.orange {background: @orange;}
-
 @pink:                  #c70ca2;
-.pink {background: @pink;}
-
 @purple:                #830cc7;
-.purple {background: @purple;}
 
 // Links
 @linkColor:             @blue;
-.linkColor {background: @linkColor;}
-
 @linkColorHover:        darken(@linkColor, 10%);
-.linkColorHover {background: @linkColorHover;}
-
-
 
 // Typography
 @baseFontSize:          13px;
-@baseFontFamily:        Arial, sans-serif;
+@baseFontFamily:        "Open Sans", Arial, sans-serif;
 @baseLineHeight:        18px;
 @textColor:             @gray;
-.textColor {background: @textColor;}
 
 // Buttons
 @primaryButtonBackground:    @linkColor;
-.primaryButtonBackground {background: @primaryButtonBackground;}
+
 
 // COMPONENT VARIABLES
 // --------------------------------------------------
@@ -82,73 +46,50 @@
 // Z-index master list
 // Used for a bird's eye view of components dependent on the z-axis
 // Try to avoid customizing these :)
-@zindexDropdown:        1000;
-@zindexPopover:         1010;
-@zindexTooltip:         1020;
-@zindexFixedNavbar:     1030;
-@zindexModalBackdrop:   1040;
-@zindexModal:           1050;
+@zindexDropdown:          1000;
+@zindexPopover:           1010;
+@zindexTooltip:           1020;
+@zindexFixedNavbar:       1030;
+@zindexModalBackdrop:     1040;
+@zindexModal:             1050;
+
+// Sprite icons path
+@iconSpritePath:          "/img/glyphicons-halflings.png";
+@iconWhiteSpritePath:     "/img/glyphicons-halflings-white.png";
 
 // Input placeholder text color
-@placeholderText:       @grayLight;
+@placeholderText:         @grayLight;
 
-// Backgrounds
-body.login {
-background: #333 url(/img/hixs_pattern_evolution.png);
-}
-.login-footer {margin-bottom: 26px;}
-
-.sub-brand {
-  color: @gray;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-}
-
-date {font-size: 11px;}
-
-// Footer
-footer p, footer p a {
-color: @gray;
-}
+// Hr border color
+@hrBorder:                @grayLighter;
 
 // Navbar
-@navbarHeight:                    40px;
-@navbarBackground:                darken(@grayDark, 10%);
-.navbarBackground {background: @navbarBackground;}
-
-@navbarBackgroundHighlight:       @grayDark;
-.navbarBackgroundHighlight {background: @navbarBackgroundHighlight;}
+@navbarHeight:                    44px;
+@navbarBackground:                @grayDarker;
+@navbarBackgroundHighlight:       @gray;
+@navbarLinkBackgroundHover:       @gray;
 
 @navbarText:                      @white;
-.navbarText {background: @navbarText;}
-
 @navbarLinkColor:                 @white;
-.navbarLinkColor {background: @navbarLinkColor;}
-
-@navbarLinkColorHover:            @grayLighter;
-.navbarLinkColorHover {background: @navbarLinkColorHover;}
+@navbarLinkColorHover:            @grayLight;
 
 // Form states and alerts
-@warningText:             darken(@yellow, 25%);
-@warningBackground:       lighten(@yellow, 30%);
-@warningBorder:           darken(spin(@warningBackground, -1), 20%);
-.warningBackground {background: @warningBackground; border: 2px solid @warningBorder;}
+@warningText:             #c09853;
+@warningBackground:       #fcf8e3;
+@warningBorder:           darken(spin(@warningBackground, -10), 3%);
 
-@errorText:               darken(@red, 25%);
-@errorBackground:         lighten(@red, 55%);
-@errorBorder:             darken(spin(@errorBackground, -1), 10%);
-.errorBackground {background: @errorBackground; border: 2px solid @errorBorder;}
+@errorText:               #b94a48;
+@errorBackground:         #f2dede;
+@errorBorder:             darken(spin(@errorBackground, -10), 3%);
 
-@successText:             darken(@green, 20%);
-@successBackground:       lighten(@green, 50%);
-@successBorder:           darken(spin(@successBackground, -1), 20%);
-.successBackground {background: @successBackground; border: 2px solid @successBorder;}
+@successText:             #468847;
+@successBackground:       #dff0d8;
+@successBorder:           darken(spin(@successBackground, -10), 5%);
 
-@infoText:                darken(@blue, 20%);
-@infoBackground:          lighten(@blueLight, 10%);
-@infoBorder:              darken(spin(@infoBackground, -1), 20%);
-.infoBackground {background: @infoBackground; border: 2px solid @infoBorder;}
+@infoText:                #3a87ad;
+@infoBackground:          #d9edf7;
+@infoBorder:              darken(spin(@infoBackground, -10), 7%);
+
 
 
 // GRID
