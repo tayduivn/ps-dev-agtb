@@ -52,6 +52,7 @@
   .transition(width .6s ease);
 }
 
+
 // Striped bars
 .progress-striped .bar {
   #gradient > .striped(#62c462);
@@ -93,3 +94,35 @@
 .progress-info.progress-striped .bar {
   #gradient > .striped(#5bc0de);
 }
+
+.progress-files .bar {
+  #gradient > .vertical(@orange, darken(@orange, 10%));
+}
+.progress-leads .bar {
+  #gradient > .vertical(@green, darken(@green, 10%));
+}
+.progress-notes .bar {
+  #gradient > .vertical(@yellow, darken(@yellow, 10%));
+}
+.progress-contacts .bar {
+  #gradient > .vertical(@blue, darken(@blue, 10%));
+}
+.progress-documents .bar {
+  #gradient > .vertical(@purple, darken(@purple, 10%));
+}
+.progress-min .bar {
+  #gradient > .vertical(@red, darken(@red, 10%));
+}
+.progress-mid .bar {
+  #gradient > .vertical(@orange, darken(@orange, 10%));
+}
+.progress-near .bar {
+  #gradient > .vertical(@yellow, darken(@yellow, 10%));
+}
+.progress-closed .bar {
+  #gradient > .vertical(@green, darken(@green, 10%));
+}
+.progress-halt .bar {
+  #gradient > .vertical(@gray, darken(@gray, 10%));
+}
+

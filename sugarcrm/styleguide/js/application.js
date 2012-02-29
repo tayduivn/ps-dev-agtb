@@ -2,36 +2,16 @@
 
   $(function(){
 
-    // Disable certain links in docs
-    $('section [href^=#]').click(function (e) {
+    // Disable certain links in demo
+    $('[href^=#]').click(function (e) {
       e.preventDefault()
     })
 
     // make code pretty
     window.prettyPrint && prettyPrint()
 
-    // add-ons
-    $('.add-on :checkbox').on('click', function () {
-      var $this = $(this)
-        , method = $this.attr('checked') ? 'addClass' : 'removeClass'
-      $(this).parents('.add-on')[method]('active')
-    })
 
-    // position static twipsies for components page
-    if ($(".twipsies a").length) {
-      $(window).on('load resize', function () {
-        $(".twipsies a").each(function () {
-          $(this)
-            .tooltip({
-              placement: $(this).attr('title')
-            , trigger: 'manual'
-            })
-            .tooltip('show')
-          })
-      })
-    }
-
-    // add tipsies to grid for scaffolding
+    // add tipsies to grid for scaffolding REMOVE
     if ($('#grid-system').length) {
       $('#grid-system').tooltip({
           selector: '.show-grid > div'
@@ -60,11 +40,30 @@
       }
     }
 
+		// editable demo
+		  $(".dblclick").editable({ 
+		      indicator : "",
+		      tooltip   : "Doubleclick to edit...",
+		      event     : "dblclick",
+		      style  : "inherit"
+		})
+		
     // tooltip demo
-    $('.tooltip-demo').tooltip({
+    $('section').tooltip({
       selector: "a[rel=tooltip]"
     })
-
+    $('table').tooltip({
+			delay: { show: 500, hide: 10 },
+      selector: "[rel=tooltip]"
+    })
+    $('.btn-group, .block').tooltip({
+      selector: "a[rel=tooltip]",
+			placement: "bottom"
+    })
+    $('.navbar').tooltip({
+      selector: "a[rel=tooltip]",
+			placement: "bottom"
+    })
     $('.tooltip-test').tooltip()
     $('.popover-test').popover()
 
@@ -76,37 +75,28 @@
       })
 
     // button state demo
-    $('#fat-btn')
+    $('.loading')
       .click(function () {
         var btn = $(this)
         btn.button('loading')
         setTimeout(function () {
-          btn.button('reset')
-        }, 3000)
+          btn.button('reset');
+					$('.modal').modal('hide')
+        }, 2000)
       })
 
-    // carousel demo
-    $('#myCarousel').carousel()
+			//  sortable
+    	$(function() {
+    		$( ".row-fluid" ).sortable({handle : '.drag', connectWith: '.row-fluid'});
+    		$( ".row-fluid" ).disableSelection();
+    	});
 
     // javascript build logic
-    var inputsComponent = $("#components.download input")
-      , inputsPlugin = $("#plugins.download input")
-      , inputsVariables = $("#variables.download input")
+    var inputsComponent = $("#listed input");
 
-    // toggle all plugin checkboxes
-    $('#components.download .toggle-all').on('click', function (e) {
-      e.preventDefault()
+    // toggle all checkboxes
+    $('.toggle-all').on('click', function (e) {
       inputsComponent.attr('checked', !inputsComponent.is(':checked'))
-    })
-
-    $('#plugins.download .toggle-all').on('click', function (e) {
-      e.preventDefault()
-      inputsPlugin.attr('checked', !inputsPlugin.is(':checked'))
-    })
-
-    $('#variables.download .toggle-all').on('click', function (e) {
-      e.preventDefault()
-      inputsVariables.val('')
     })
 
     // request built javascript

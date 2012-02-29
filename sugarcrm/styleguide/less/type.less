@@ -18,13 +18,9 @@ p {
 }
 .lead {
   margin-bottom: @baseLineHeight;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 200;
   line-height: @baseLineHeight * 1.5;
-}
-
-td {
-  font-size: @baseFontSize;
 }
 
 // HEADINGS
@@ -32,28 +28,26 @@ td {
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-family: "helvetica neue", helvetica, arial, sans-serif;
-  font-weight: 300;
+  font-weight: bold;
   color: @grayDark;
   text-rendering: optimizelegibility; // Fix the character spacing for headings
   small {
     font-weight: normal;
-    color: @grayLight;
+    color: darken(@grayLight, 10%);
   }
 }
-
 h1 {
-  font-size: 26px;
+  font-size: 30px;
   line-height: @baseLineHeight * 2;
   small {
-    font-size: 16px;
+    font-size: 18px;
   }
 }
 h2 {
   font-size: 24px;
   line-height: @baseLineHeight * 2;
   small {
-    font-size: 16px;
+    font-size: 18px;
   }
 }
 h3 {
@@ -116,7 +110,8 @@ ol {
 li {
   line-height: @baseLineHeight;
 }
-ul.unstyled {
+ul.unstyled,
+ol.unstyled {
   margin-left: 0;
   list-style: none;
 }
@@ -143,7 +138,7 @@ dd {
 hr {
   margin: @baseLineHeight 0;
   border: 0;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid @hrBorder;
   border-bottom: 1px solid @white;
 }
 
@@ -155,7 +150,7 @@ em {
   font-style: italic;
 }
 .muted {
-  color: @grayLight;
+  color: lighten(@gray, 20%);
 }
 
 // Abbreviations and acronyms

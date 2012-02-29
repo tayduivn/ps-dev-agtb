@@ -1,18 +1,36 @@
 // LABELS
 // ------
 
+// Base
 .label {
-  padding: 4px;
-  font-size: @baseFontSize * .75;
+  padding: 2px 4px 3px;
+  font-size: @baseFontSize * .85;
   font-weight: bold;
   color: @white;
-  text-transform: uppercase;
-  background-color: @blue;
-  .border-radius(3px);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  background-color: @grayLight;
+  .border-radius;
 }
-.label-important, .label-alert  { background-color: @red; }
-.label-warning, .label-note     { background-color: @yellow; }
-.label-success, .label-lead     { background-color: @green; }
-.label-info, .label-contact     { background-color: @blueLight; }
-.label-file                     { background-color: @orange; }
-.label-document                 { background-color: @purple; }
+
+// Hover state
+.label:hover {
+  color: @white;
+  text-decoration: none;
+}
+
+// Colors
+
+.label-file             { background-color: @orange; }
+.label-file:hover       { background-color: darken(@orange, 10%); }
+
+.label-note             { background-color: darken(@yellow, 10%); }
+.label-note:hover       { background-color: darken(@yellow, 20%); }
+
+.label-lead             { background-color: darken(@green, 10%); }
+.label-lead:hover       { background-color: darken(@green, 20%); }
+
+.label-contact          { background-color: @blue; }
+.label-contact:hover    { background-color: darken(@blue, 10%); }
+
+.label-document         { background-color: @purple; }
+.label-document:hover   { background-color: darken(@purple, 10%); }

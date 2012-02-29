@@ -3,7 +3,7 @@
 
 .tooltip {
   position: absolute;
-  z-index: @zindexTooltip;
+  z-index: @zindexDropdown;
   display: block;
   visibility: visible;
   padding: 5px;
@@ -12,7 +12,7 @@
   &.in     { .opacity(80); }
   &.top    { margin-top:  -2px; }
   &.right  { margin-left:  2px; }
-  &.bottom { margin-top:   2px; }
+  &.bottom { margin-top:   12px; }
   &.left   { margin-left: -2px; }
   &.top .tooltip-arrow    { #popoverArrow > .top(); }
   &.left .tooltip-arrow   { #popoverArrow > .left(); }

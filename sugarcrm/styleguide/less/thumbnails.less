@@ -2,21 +2,21 @@
 // ----------
 
 .thumbnails {
-  margin-left: -20px;
+  margin-left: -@gridGutterWidth;
   list-style: none;
   .clearfix();
 }
-.thumbnails > li {
-  float: left;
-  margin: 0 0 @baseLineHeight 20px;
-}
+
 .thumbnail {
   display: block;
-  padding: 4px;
+  padding: 0;
   line-height: 1;
-  border: 1px solid #ddd;
   .border-radius(4px);
-  .box-shadow(0 1px 1px rgba(0,0,0,.075));
+  @shadow: 0 2px 1px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+  .box-shadow(@shadow);
+  margin: 0 0 @baseLineHeight @gridGutterWidth;
+  float: left;
+  overflow: hidden;
 }
 // Add a hover state for linked versions only
 a.thumbnail:hover {
