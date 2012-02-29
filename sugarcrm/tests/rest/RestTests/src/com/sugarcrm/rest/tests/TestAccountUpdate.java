@@ -105,7 +105,7 @@ public class TestAccountUpdate extends TestCase {
 			// try to use Accounts object/module //
 			date = new Date();
 			time = String.valueOf(date.getTime());
-			account_newName = String.format("%s-%s", account_name, time);
+			account_newName = String.format("%s", time);
 			
 			System.out.printf("(*)Getting Accounts Object...\n");
 			uri = String.format("%s/Accounts/%s", testData.getValue("sugarinst"), accID.id);
@@ -114,6 +114,7 @@ public class TestAccountUpdate extends TestCase {
 			HashMap<String, String> putData = new HashMap<String, String>();
 			putData.put("name", account_newName);
 			String putJson = json.toJson(putData);
+			System.out.printf("PUT DATA: %s\n", putJson);
 			HttpPut put = new HttpPut(uri);
 			entity = new StringEntity(putJson, "application/json", "UTF-8");
 			put.setEntity(entity);
@@ -150,6 +151,9 @@ public class TestAccountUpdate extends TestCase {
 			System.out.printf("RESPONSE: '%s'\n\n", buffer);
 			@SuppressWarnings("unchecked")
 			HashMap<String, Object> accountInfo = json.fromJson(buffer, HashMap.class);
+			System.out.printf("RES-NAME: %s\n", accountInfo.get("name"));
+			System.out.printf("OTH-NAME: %s\n", account_newName);
+			
 			assertEquals(account_newName, accountInfo.get("name"));
 			//finished reading account //
 			

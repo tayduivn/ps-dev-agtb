@@ -52,14 +52,14 @@
    </path>
 
    <target name="default-build" depends="build-tests">
-   <junit printsummary="yes" haltonfailure="no" fork="no">
-      <sysproperty key="sugar-inst" value="${sugarinst}" />
+      <junit printsummary="yes" haltonfailure="no" fork="no">
+         <sysproperty key="sugar-inst" value="${sugarinst}" />
          <sysproperty key="sugar-username" value="${sugaruser}" />
          <sysproperty key="sugar-password" value="${sugarpass}" />
-         <formatter type="plain" usefile="false" />
          <classpath refid="classpath.libs"/>
          <classpath refid="classpath.tests"/>
-         <test name="com.sugarcrm.rest.tests.TestAccountUpdate" haltonfailure="no" />      
+         <test name="com.sugarcrm.rest.tests.AllTests" haltonfailure="no" />      
       </junit> 
    </target>
+   
 </project>
