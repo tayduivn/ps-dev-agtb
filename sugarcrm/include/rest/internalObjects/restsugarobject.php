@@ -85,7 +85,7 @@ class RestSugarObject extends RestObject implements IRestObject {
         global $current_user;
         $auth = $this->getAuth();
         $this->isValidToken($auth);
-        $data = $this->getRequestData();
+        //$data = $this->getRequestData();
 
         $result = $this->getRequestData();
         $userData = RestUtils::isValidJson($result["raw_post_data"]);
@@ -311,9 +311,8 @@ class RestSugarObject extends RestObject implements IRestObject {
         $uridata = $this->getURIData();
 
         $result = $this->getRequestData();
-        $data = json_decode($result["raw_post_data"], true);
-
-        if ($result["err"] != false) {
+        $data = RestUtils::isValidJson($result["raw_post_data"]);
+        if ($data["err"] != false) {
             $err = new RestError();
             $err->ReportError(415, $result["err_str"]);
             exit;
@@ -324,7 +323,7 @@ class RestSugarObject extends RestObject implements IRestObject {
             "name" => "id",
             "value" => $objId
         ));
-        foreach ($data as $key => $value) {
+        foreach ($data["data"] as $key => $value) {
             $t = array (
                 "name" => "{$key}",
                 "value" => "{$value}"
