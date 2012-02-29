@@ -1,10 +1,24 @@
+/**
+ SugarAuth
+ * @ignore
+ */
 (function(app) {
-    //var privateVars;
+    /**
+     * @class SugarAuth
+     * @singleton
+     * SugarAuth provides the ability to login and authentication status
+     */
     app.augment('sugarAuth', (function() {
         var instance;
         var api;
         var _userLoginCallbacks;
         var _userLogoutCallbacks;
+
+        /**
+         * init
+         * @private
+         * @param args
+         */
         function init(args) {
             api = SUGAR.Api.getInstance();
             instance = new AuthManager();
@@ -12,30 +26,45 @@
         }
 
         function AuthManager() {
-            var isAuth = false;
+            /**
+             * handle login success
+             * @private
+             * @param {Object} data contains token for current session
+             */
             function handleLoginSuccess(data) {
-                isAuth = true;
                 if (_userLoginCallbacks && _userLoginCallbacks.success) {
                     _userLoginCallbacks.success(data);
                 }
             }
 
+            /**
+             * handle login error function
+             * @private
+             * @param {Object} data jquery ajax object from failure with codes
+             */
             function handleLoginFailure(data){
-                isAuth = false;
                 if (_userLoginCallbacks && _userLoginCallbacks.error) {
                     _userLoginCallbacks.error(data);
                 }
             }
 
+            /**
+             * handles logout success
+             * @private
+             * @param {Object} handles logout success currently data is null
+             */
             function handleLogoutSuccess(data) {
-                isAuth = false;
                 if (_userLogoutCallbacks && _userLogoutCallbacks.success) {
                     _userLogoutCallbacks.success(data);
                 }
             }
 
+            /**
+             * handle logout error function
+             * @private
+             * @param {Object} data jquery ajax object from failure with codes
+             */
             function handleLogoutFailure(data){
-                isAuth = true;
                 if (_userLogoutCallbacks && _userLogoutCallbacks.error) {
                     _userLogoutCallbacks.error(data);
                 }
@@ -46,17 +75,18 @@
                 /**
                  * checks if currently authenticated
                  *
-                 * @return bool true if auth, false otherwise
+                 * @return {Boolean} true if auth, false otherwise
                  */
                 isAuthenticated: function(){
                     return api.isAuthenticated();
                 },
 
                 /**
-                 * logs users in
+                 * logs users in, on success the user token will be given as the only arg to the succcess callback
                  *
-                 * @param  obj of obj.user_name and obj.password
-                 * @return bool true if auth, false otherwise
+                 * @param  {Object} args arguments with args.username and password args.options contains client info in a hash
+                 * @param  {Object} {success: function(data){}, error: function(data){}}
+                 * @return
                  */
                 login: function(args, callbacks){
                     if(callbacks){
@@ -64,14 +94,14 @@
                     }
                     var options = args.options || {};
                     var myCallbacks = {success: handleLoginSuccess, error: handleLoginFailure};
-                    api.login(args.user_name, args.password, options, myCallbacks);
+                    api.login(args.username, args.password, options, myCallbacks);
                     return null;
                 },
 
                 /**
                  * logs current user out
-                 *
-                 * @return bool true if logout successful, else false
+                 * @param {Object} callbacks {success: function(data){}, error: function(data){}}
+                 * @return
                  */
                 logout: function(callbacks){
                     _userLogoutCallbacks = callbacks;
@@ -83,6 +113,10 @@
         }
 
         return {
+            /**
+             * returns instance of sugarAuth
+             * @param {Object} args
+             */
             getInstance: function(args) {
                 return instance || init(args);
             }

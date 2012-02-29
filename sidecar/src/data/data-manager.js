@@ -30,19 +30,27 @@
  *
  * // Declare bean classes from metadata payload.
  * // This method should be called at application start-up and whenever the metadata changes.
- * SUGAR.App.dataManager.declareModels(metadata);
+ * // You should pass a hash of success and error callbacks
+ * SUGAR.App.dataManager.declareModels(metadata, {
+ *     success: function() {
+ *        // You may now create bean instances using factory methods.
+ *        // Create an instance of primary bean.
+ *        var team = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" });
+ *        // Create an instance of specific bean type.
+ *        var teamSet = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" }, "TeamSet");
+ *        // Create an empty collection of team sets.
+ *        var teamSets = SUGAR.App.dataManager.createBeanCollection("Teams", null, "TeamSet");
  *
- * // You may now create bean instances using factory methods.
- * // Create an instance of primary bean.
- * var team = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" });
- * // Create an instance of specific bean type.
- * var teamSet = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" }, "TeamSet");
- * // Create an empty collection of team sets.
- * var teamSets = SUGAR.App.dataManager.createBeanCollection("Teams", null, "TeamSet");
+ *        // You can save a bean using standard Backbone.Model.save method.
+ *        // The save method will use dataManager's sync method to communicate chages to the remote server.
+ *        team.save();
+ *     },
+ *     error: function(error) {
+ *        // The error must be considered as fatal.
+ *        // Essentially, the application is not functional at this point.
+ *     }
+ * });
  *
- * // You can save a bean using standard Backbone.Model.save method.
- * // The save method will use dataManager's sync method to communicate chages to the remote server.
- * team.save();
  *
  * </pre>
  *
@@ -82,8 +90,6 @@
          */
         init: function() {
             Backbone.sync = this.sync;
-            app.events.publish("dataManager:ready", this);
-            app.logger.trace("DataManager initialized");
         },
 
         /**
@@ -201,13 +207,16 @@
          * </pre>
          *
          * @param metadata metadata hash in which keys are module names and values are module definitions.
+         * @param options hash of <code>success</code> and <code>error</code> callbacks.
          */
-        declareModels: function(metadata) {
+        declareModels: function(metadata, options) {
+            options || (options = {});
             this.reset();
             _.each(_.keys(metadata), function(moduleName) {
                 this.declareModel(moduleName, metadata[moduleName]);
             }, this);
-            this.trigger("dataManager:ready");
+
+            if (options.success) options.success();
         },
 
         /**
