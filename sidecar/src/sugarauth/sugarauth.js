@@ -8,7 +8,9 @@
      * @singleton
      * SugarAuth provides the ability to login and authentication status
      */
-    app.augment('sugarAuth', (function() {
+
+    app.augment('sugarAuth', (function(app) {
+
         var instance;
         var api;
         var _userLoginCallbacks;
@@ -19,8 +21,8 @@
          * @private
          * @param args
          */
-        function init(args) {
-            api = SUGAR.Api.getInstance();
+        function init() {
+
             instance = new AuthManager();
             return instance
         }
@@ -78,7 +80,7 @@
                  * @return {Boolean} true if auth, false otherwise
                  */
                 isAuthenticated: function(){
-                    return api.isAuthenticated();
+                    return app.api.isAuthenticated();
                 },
 
                 /**
@@ -94,7 +96,7 @@
                     }
                     var options = args.options || {};
                     var myCallbacks = {success: handleLoginSuccess, error: handleLoginFailure};
-                    api.login(args.username, args.password, options, myCallbacks);
+                    app.api.login(args.username, args.password, options, myCallbacks);
                     return null;
                 },
 
@@ -106,20 +108,12 @@
                 logout: function(callbacks){
                     _userLogoutCallbacks = callbacks;
                     var myCallbacks = {success: handleLogoutSuccess, error: handleLogoutFailure};
-                    api.logout(myCallbacks);
+                    app.api.logout(myCallbacks);
                     return null;
                 }
             };
         }
 
-        return {
-            /**
-             * returns instance of sugarAuth
-             * @param {Object} args
-             */
-            getInstance: function(args) {
-                return instance || init(args);
-            }
-        };
-    }()))
+        return instance || init();
+    }(app)))
 }(SUGAR.App));

@@ -104,7 +104,8 @@ fixtures.metadata = {
                     {
                         "label":"Details",
                         "fields":[
-                            {name:"full_name", label:"Name"},
+                            {name:"first_name", label:"First Name"},
+                            {name:"last_name", label:"Last Name"},
                             {name:"phone_work", label:"Phone"},
                             {name:"email1", label:"Email"},
                             {type:"sugarField_primaryAddress", label:"Address"}
