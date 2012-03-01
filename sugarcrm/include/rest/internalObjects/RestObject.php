@@ -17,7 +17,6 @@ abstract class RestObject implements IRestObject {
     public $helper = null;
     public $userLoggedin = null;
 
-
     function __construct() {
         $this->requestData["request_method"] = strtolower($_SERVER["REQUEST_METHOD"]);
         $this->requestData["raw_post_data"] = $raw_post = file_get_contents("php://input");
