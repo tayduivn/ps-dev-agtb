@@ -108,7 +108,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
      *
      * @return Array records that match search criteria
      */
-    function get_modified_relationships($session, $module_name, $related_module, $from_date, $to_date, $offset, $max_results, $deleted, $module_user_id = '', $select_fields = array(), $relationship_name = '', $deletion_date = ''){
+    function get_modified_relationships($session, $module_name, $related_module, $from_date, $to_date, $offset, $max_results, $deleted=0, $module_user_id = '', $select_fields = array(), $relationship_name = '', $deletion_date = ''){
         global  $beanList, $beanFiles;
         $error = new SoapError();
         $output_list = array();
@@ -152,9 +152,9 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
         }
         $query = '';
         if(isset($in) && !empty($in)){
-            $query .= "( $date_query AND m1.id IN $in) OR (m1.id NOT IN $in AND {0}.deleted = 0)";
+            $query .= "( $date_query AND m1.id IN $in) OR (m1.id NOT IN $in AND {0}.deleted = {$deleted})";
         } else {
-            $query .= "( {0}.deleted = 0)";
+            $query .= "( {0}.deleted = {$deleted})";
         }
 
         if(!empty($module_user_id))
