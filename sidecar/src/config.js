@@ -34,7 +34,7 @@
         /**
          * Sugar REST server URL.
          */
-        restApiUrl: 'http://localhost:8888/rest/10/'
+        baseUrl: '/builds/ent/sugarcrm/rest'
 
     }, false);
 

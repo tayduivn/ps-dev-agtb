@@ -115,15 +115,14 @@
          * @method
          */
         start: function() {
-            app.router.start();
-            /*
+
             // Check if we have an authenticated session
-            if (app.sugarAuth.isAuthenticated()) {
-                app.router.navigate("login", {trigger: true});
+            if (!(app.sugarAuth.isAuthenticated())) {
+                app.sugarAuth.login({"username":"sally","password":"sally"},{success:function(data){console.log("login success"); app.router.start(); app.router.navigate("", {trigger: true});},error:function(data){console.log("login error"); console.log(data);}})
             } else {
                 app.router.navigate("", {trigger: true});
             }
-            */
+
         }
     });
 

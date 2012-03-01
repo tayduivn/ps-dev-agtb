@@ -26,6 +26,8 @@
         <script src='data/data-manager.js'></script>
 		<script src='data/validation.js'></script>
 		<script src='layout/layout.js'></script>
+
+        <script src='sugarauth/sugarauth.js'></script>
 		<!--SUGAR REST interface fakeserver + data-->
 		<script language="javascript" src="../tests/fixtures/sugarFields.js"></script>
 		<script language="javascript" src="../tests/fixtures/metadata.js"></script>
@@ -116,7 +118,7 @@
 //			var i = SUGAR.Api.getInstance();
 //			i.debug = true;
 
-			var App = SUGAR.App.init({el: "#sidecar"});
+			var App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl});
 			//Initialize the data model
 //			App.dataManager.declareModels(fixtures.metadata);
 //			App.metadata.set(fixtures.metadata);
