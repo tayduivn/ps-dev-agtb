@@ -604,6 +604,28 @@ class SugarView
 
 
         }
+        
+        if ( isset($extraTabs) && is_array($extraTabs) ) {
+            // Adding shortcuts array to extra menu array for displaying shortcuts associated with each module
+            $shortcutExtraMenu = array();
+            foreach($extraTabs as $module_key => $label) {
+                global $mod_strings;
+                $mod_strings = return_module_language($current_language, $module_key);
+                foreach ( $this->getMenu($module_key) as $key => $menu_item ) {
+                    $shortcutExtraMenu[$module_key][$key] = array(
+                        "URL"         => $menu_item[0],
+                        "LABEL"       => $menu_item[1],
+                        "MODULE_NAME" => $menu_item[2],
+                        "IMAGE"       => $themeObject
+                        ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                        "ID"          => $menu_item[2]."_link",
+                        );
+                }
+            }
+            $ss->assign("shortcutExtraMenu",$shortcutExtraMenu);
+        }
+        
+        
         $imageURL = SugarThemeRegistry::current()->getImageURL("dashboard.png");
         $homeImage = "<img src='$imageURL'>";
 		$ss->assign("homeImage",$homeImage);
@@ -1343,13 +1365,15 @@ EOHTML;
         $module = preg_replace("/ /","",$this->module);
 
         $params = $this->_getModuleTitleParams();
-        $count = count($params);
         $index = 0;
 
 		if(SugarThemeRegistry::current()->directionality == "rtl") {
 			$params = array_reverse($params);
 		}
-
+		if(count($params) > 1) {
+			array_shift($params);
+		}
+		$count = count($params);
         $paramString = '';
         foreach($params as $parm){
             $index++;
@@ -1468,12 +1492,12 @@ EOHTML;
     	if($this->action == "ListView" || $this->action == "index") {
     	    if (!empty($iconPath) && !$browserTitle) {
     	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
-    	    		return $app_strings['LBL_SEARCH'].$this->getBreadCrumbSymbol()
+    	    		return $app_strings['LBL_SEARCH']."&nbsp;"
     	    			 . "$firstParam";
 
     	    	} else {
 					return "$firstParam"
-					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
+					     . "&nbsp;".$app_strings['LBL_SEARCH'];
     	    	}
 			} else {
 				return $firstParam;
@@ -1528,10 +1552,10 @@ EOHTML;
     public function getBreadCrumbSymbol()
     {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='pointer'>&nbsp;&nbsp;</span>";
+        	return "<span class='pointer'>&raquo;</span>";
         }
         else {
-        	return "<span class='pointer'>&nbsp;&nbsp;</span>";
+        	return "<span class='pointer'>&laquo;</span>";
         }
     }
 

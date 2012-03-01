@@ -169,7 +169,7 @@
 			{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
 			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name" class="sf-with-ul"}
-				{if $shortcutTopMenu.$module}
+				{if $shortcutExtraMenu.$module}
 				<ul class="megamenu">
 				<li>
 					<div class="megawrapper">
@@ -177,7 +177,7 @@
 							<div class="megacolumn-content divider">
 							<ul class="MMShortcuts">
 							<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
-							{foreach from=$shortcutTopMenu.$module item=shortcut_item}
+							{foreach from=$shortcutExtraMenu.$module item=shortcut_item}
 							  {if $shortcut_item.URL == "-"}
 				              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 							  {else}

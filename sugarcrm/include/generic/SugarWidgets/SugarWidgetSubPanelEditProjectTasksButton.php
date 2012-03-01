@@ -34,6 +34,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopButton
 {
+    public function getDisplayName()
+    {
+        return $GLOBALS['mod_strings']['LBL_VIEW_GANTT_TITLE'];
+    }
 
 	//widget_data is the collection of attributes associated with the button in the layout_defs file.
 	function display(&$widget_data)
@@ -41,7 +45,7 @@ class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopBu
 		global $mod_strings;
 
 		$title = $mod_strings['LBL_VIEW_GANTT_TITLE'];
-		$value = $mod_strings['LBL_VIEW_GANTT_TITLE'];
+		$value = $this->getDisplayName();
 		$module_name = 'Project';
 		$id = $widget_data['focus']->id;
 
