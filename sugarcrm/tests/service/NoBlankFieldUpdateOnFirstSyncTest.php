@@ -91,7 +91,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         //DELETE contact_users entries that may have remained
         $GLOBALS['db']->query("DELETE FROM contacts_users WHERE user_id = '{$current_user->id}'");
         parent::setUp();
-        $this->useOutputBuffering = false;
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()
@@ -100,6 +100,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id in ('{$this->_resultId}', '{$this->_resultId2}')");
         $GLOBALS['db']->query("DELETE FROM contacts_users WHERE user_id = '{$current_user->id}'");
+        $GLOBALS['db']->commit();
         unset($this->c);
         unset($this->c2);
         parent::tearDown();
