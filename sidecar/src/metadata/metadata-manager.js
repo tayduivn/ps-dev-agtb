@@ -50,7 +50,7 @@
 
         // get sugarfield from app cache if we dont have it in memory
         if (typeof(_metadata.sugarFields[name]) == "undefined") {
-            _metadata.sugarFields[name] = app.cache.get("metadata.sugarFields." + field.name);
+            _metadata.sugarFields[name] = app.cache.get("sugarFields." + field.name);
         }
 
         if (_metadata.sugarFields[name]) {
@@ -180,10 +180,11 @@
         },
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
-        set:function (data) {
+        set:function (data, key) {
+            key = key || "metadata";
             _.each(data, function (entry, module) {
                 _metadata[module] = entry;
-                app.cache.set("metadata." + module, entry);
+                app.cache.set(key + "." + module, entry);
             });
         },
 
@@ -198,7 +199,7 @@
 
             app.api.getMetadata([],[], {
                 success: function(metadata) {
-                    self.set({sugarFields: sugarFieldsFixtures.fieldsData}); // TODO: Right now metadata is hardcoded, replace with actual from api later
+                    self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
                     self.set(metadata);
                 },
                 error: function(o) {
