@@ -10,6 +10,8 @@ if (!file_exists($outputDir)) {
     mkdir($outputDir, 0777, true);
 }
 
+$libBuffer = '';
+
 // "Build" the javascript file
 $output = fopen($outputDir . "/sidecar.js", "w");
 
@@ -40,7 +42,7 @@ fclose($tempFile);
 if (function_exists('exec')) {
     // Minification
     echo "\nUglifying\n";
-    $minified = shell_exec('uglifyjs ' . $outputDir . "/sidecar.js");
+    $minified = shell_exec('uglifyjs temp');
     $minFile = fopen("temp.min", "w");
     fwrite($minFile, $minified);
     fclose($minFile);
@@ -59,6 +61,7 @@ fclose($output);
 $minified = file_get_contents("temp.min");
 $outputMin = fopen($outputDir . "/sidecar.min.js", "w");
 fwrite($outputMin, $libBuffer . "\n" . $minified);
+fclose($outputMin);
 
 // Clean up
 unlink("temp");

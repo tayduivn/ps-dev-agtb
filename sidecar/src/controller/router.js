@@ -38,6 +38,8 @@
          * @method
          */
         start: function() {
+            console.log("Router Started");
+            
             // Start monitoring hash changes
             // Right now backbone doesn't support checking to see
             // if the history has been started.
