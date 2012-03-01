@@ -49,7 +49,7 @@
 			if(!this.hasClass("SugarActionMenu")){
 				//tag this element as a sugarmenu
 				this.addClass("SugarActionMenu");
-				
+
 				//Fix custom code buttons programatically to prevent metadata edits
 				this.find("input[type='submit'], input[type='button']").each(function(idx, node){
 					var jNode = $(node);
@@ -63,7 +63,7 @@
 					newItemA.html(jNode.val());
                     if(!disabled )
                     {
-                        newItemA.click(function(event){ jNode.click(); });
+                        newItemA.click(function(event){ if($(this).hasClass("void") === false )jNode.click(); });
                     }
                     else
                     {
@@ -124,7 +124,7 @@
                             }).click(function(evt){
                                 if(_timer_for_subnav)
                                     clearTimeout(_timer_for_subnav);
-                            });
+                            }).addClass("void");
                         menuNode.append(_menu);
                     });
                     jNode.css("display", "none");

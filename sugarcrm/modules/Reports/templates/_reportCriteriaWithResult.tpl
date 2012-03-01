@@ -68,8 +68,8 @@
 <td>
 <ul class="clickMenu fancymenu" id="detailViewActions">
     <li>
-        <a name="runReportButton" id="runReportButton" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
-        onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();">{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}</a>
+        <input name="runReportButton" id="runReportButton" type="button" class="button" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+        onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}">
         <ul class="subnav multi">
     {* //BEGIN SUGARCRM flav=sales ONLY*}
 <li><input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();"></li>
