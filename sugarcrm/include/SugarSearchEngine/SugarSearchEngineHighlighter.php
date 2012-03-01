@@ -258,6 +258,9 @@ class SugarSearchEngineHighlighter
                     continue;
                 }
 
+                // escape slashes
+                $search = str_replace('/', '\/', $search);
+
                 if ($partialMatch)
                 {
                     $pattern = '/\b' . str_replace('*', '.*?', $search) . '/i';
