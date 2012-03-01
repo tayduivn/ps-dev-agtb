@@ -1,0 +1,7 @@
+<ul>
+{{#each selected}}
+    <li>
+    {{this.label}}
+    </li>
+{{/each}}
+</ul>
