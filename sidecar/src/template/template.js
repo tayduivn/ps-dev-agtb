@@ -4,6 +4,7 @@
     var footer = '})();';
     var templates = {};
     var sources;
+
     app.augment("template", {
         //Initialize will pull the compiled templates from local storage and populate Handlebars.templates
         initialize : function(){
@@ -14,7 +15,11 @@
             });
             eval(header + src + footer);
         },
-        //Compile will put the precompiled version of the template in cache and return the compiled template
+
+        /**
+         * Compile will put the precompiled version of the template in cache and return the compiled template
+         * @method
+         */
         compile : function(src, key) {
             try {
                 templates[key] = "templates['" + key + "'] = template(" + Handlebars.precompile(src) + ");\n";
@@ -26,6 +31,7 @@
             }
             return this.get(key);
         },
+
         get : function(key) {
             if (Handlebars.templates && Handlebars.templates[key])
                 return Handlebars.templates[key];
@@ -40,6 +46,15 @@
                 if (!this.get(key) || force);
                     this.compile(src, key);
             }, this);
+        },
+
+        /**
+         * This function is called during the app's initialization phase.
+         * TODO: Right now metadata is hard coded but will need to be pulled from metadata eventually
+         * @method
+         */
+        init: function() {
+            this.load(fixtures.templates);
         }
     })
 })(SUGAR.App);

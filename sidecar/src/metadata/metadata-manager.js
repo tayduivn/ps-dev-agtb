@@ -177,6 +177,28 @@
                 _metadata[module] = entry;
                 app.cache.set("metadata." + module, entry);
             });
+        },
+
+        /**
+         * Called during initialization phase
+         * TODO: Right now metadata is hardcoded, replace with actual from api later
+         * @method
+         * @private
+         */
+        init: function() {
+            app.api.debug = true;
+            var self = this;
+
+            app.api.getMetadata([],[], {
+                success: function(metadata) {
+                    this.set({sugarFields:sugarFieldsFixtures.fieldsData});
+                    this.set(metadata);
+                },
+                error: function() {
+                    console.log("Error");
+                }
+            });
+
         }
     })
 })(SUGAR.App);

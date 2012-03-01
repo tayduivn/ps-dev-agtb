@@ -11,11 +11,11 @@ $includeFiles = array(
     //
     'lib/handlebars/handlebars-1.0.0.beta.6.js',
 
+    'lib/sugarapi/sugarapi.js',
     'src/app.js',
     'src/cache/cache.js',
     'src/template/template.js',
     'src/sugarfieldmanager/sugarfieldmanager.js',
-    'lib/sugarapi/sugarapi.js',
     'src/events/events.js',
     'src/context/context.js',
     'src/controller/controller.js',

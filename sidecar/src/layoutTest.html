@@ -6,11 +6,11 @@
         <script language="javascript" src="../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
         <script language="javascript" src="../lib/stash/stash.min.js"></script>
 		<!-- App Scripts -->
+        <script src='../lib/sugarapi/sugarapi.js'></script>
 		<script src='app.js'></script>
 		<script src='cache/cache.js'></script>
 		<script src='template/template.js'></script>
 		<script src='sugarfieldmanager/sugarfieldmanager.js'></script>
-		<script src='../lib/sugarapi/sugarapi.js'></script>
 		<script src="events/events.js"></script>
 		<script src='context/context.js'></script>
 		<script src='controller/controller.js'></script>
@@ -108,17 +108,15 @@
 
 		<script language="javascript">
 			var syncResult, view, layout, html;
-			//Fake template manager
-			SUGAR.App.template.load(fixtures.templates);
 			//Fake a field list
             SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
-			var i = SUGAR.Api.getInstance();
-			i.debug = true;
+//			var i = SUGAR.Api.getInstance();
+//			i.debug = true;
 
 			var App = SUGAR.App.init({el: "#sidecar"});
 			//Initialize the data model
-			App.dataManager.declareModels(fixtures.metadata);
-			App.metadata.set(fixtures.metadata);
+//			App.dataManager.declareModels(fixtures.metadata);
+//			App.metadata.set(fixtures.metadata);
 
 			//Need a sample Bean
 			this.collection = App.dataManager.fetchBeans('Contacts',{});
@@ -126,7 +124,7 @@
 
 			App.controller.data = {"collection" : this.collection, "model" : this.bean};
 
-			App.controller.start();
+//			App.controller.start();
 
 			/*
 			var view = App.layout.get({

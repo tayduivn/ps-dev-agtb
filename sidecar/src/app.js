@@ -51,7 +51,15 @@ SUGAR.App = (function() {
              * Base element to use as the root of the App
              * @property {jQuery Node}
              */
-            rootEl: rootEl
+            rootEl: rootEl,
+
+            /**
+             * Alias to SUGAR.Api
+             * @property {Object}
+             */
+            api: SUGAR.Api.getInstance({
+                baseUrl: opts.rest || "rest"
+            })
         }, this);
     }
 
@@ -71,6 +79,9 @@ SUGAR.App = (function() {
                     module.init(this);
                 }
             }, this);
+
+            // Start the app
+            app.controller.start();
 
             return app;
         },
@@ -108,5 +119,5 @@ SUGAR.App = (function() {
         },
 
         modules: modules
-    }
+    };
 })();
