@@ -39,18 +39,13 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $beanList, $beanFiles;
-        $beanList = array();
-		$beanFiles = array();
+        global $beanList, $beanFiles, $current_user;
 		require('include/modules.php');
 
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
-        $this->_login();
-        global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $this->another_user = SugarTestUserUtilities::createAnonymousUser();
-
         $this->contact1 = SugarTestContactUtilities::createContact();
         $this->contact1->contacts_users_id = $current_user->id;
         $this->contact1->first_name = 'First1';
