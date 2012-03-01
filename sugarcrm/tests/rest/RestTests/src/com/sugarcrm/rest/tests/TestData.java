@@ -14,21 +14,21 @@ public class TestData {
 		
 		this.data = new HashMap<String, String>();
 		
-		tmp = System.getProperty("sugarinst");
+		tmp = System.getProperty("sugar-inst");
 		if (tmp != null) {
 			data.put("sugarinst", tmp);
 		} else {
 			data.put("sugarinst", this.BaseURL);
 		}
 		
-		tmp = System.getProperty("sugaruser");
+		tmp = System.getProperty("sugar-username");
 		if (tmp != null) {
 			data.put("sugaruser", tmp);
 		} else {
 			data.put("sugaruser", this.UserName);
 		}
 		
-		tmp = System.getProperty("sugarpass");
+		tmp = System.getProperty("sugar-password");
 		if (tmp != null) {
 			data.put("sugarpass", tmp);
 		} else {

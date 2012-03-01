@@ -1,5 +1,5 @@
 <?php
-
+if (!defined('sugarEntry')) define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -29,8 +29,21 @@
 
 include_once("internalObjects/RestError.php");
 
+/**
+ * This is a class factory class for all rest api entry points.  This class works much like
+ * the sugar bean factory does in that it reads information from the "RestData.php" file which
+ * is also much like "modules.php" where it finds classes by name and then returns the proper
+ * php source file containing the class code to implement.
+ */
 class RestFactory {
 
+    /**
+     * Create a new object by based on the $objName.
+     *
+     * @static
+     * @param $objName, the name of the object to create a new class for.
+     * @return RestSugarObject, the newly created class instance.
+     */
     public static function newRestObject($objName) {
         global $restObjectList;
 
@@ -56,6 +69,14 @@ class RestFactory {
         }
     }
 
+    /**
+     * Just a simple method for changing the name of the module to a sugar brean name,
+     * really this just means making the first char in the string an uppercase.
+     *
+     * @static
+     * @param $modName, the name of the object or sugar bean.
+     * @return string, the modified name.
+     */
     public static function uriToBeanName($modName) {
         $result = $modName;
         $result = ucfirst($result);
@@ -63,7 +84,8 @@ class RestFactory {
     }
 
     /**
-     * Checks to see if the requested module/object exists in the sugar modules.php
+     * Checks to see if the requested module/object exists in the sugar modules.php, and
+     * also checks for a custom modules.php file as well.
      *
      * @return bool
      */
@@ -73,6 +95,10 @@ class RestFactory {
 
         include_once("include/modules.php");
 
+        if (file_exists("custom/include/modules.php")) {
+            include_once("custom/include/modules.php");
+        }
+
         $modName = ucfirst($modName);
         if (in_array($modName, $moduleList)) {
             $valid = true;
@@ -80,5 +106,4 @@ class RestFactory {
 
         return $valid;
     }
-
 }

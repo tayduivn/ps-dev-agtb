@@ -34,14 +34,24 @@ class RestController {
 
     private $uriData = null;
 
+    /**
+     * class constructor, current doesn't do anything.  Might want it to perform some
+     * task later in life.
+     */
     function __construct() {
 
     }
 
+    /**
+     * This method creates a new RestObject using the RestFactory based on the uri passed
+     * to the method.  Once the factory creates a new object the execute method for the new
+     * object is then executed.
+     *
+     */
     public function execute() {
         $this->getURI();
 
-        if ($this->uriData[0] != "") {
+        if (!empty($this->uriData[0])) {
             $tmp = RestFactory::newRestObject($this->uriData[0]);
             $tmp->setURIData($this->uriData);
             $tmp->execute();
@@ -50,10 +60,6 @@ class RestController {
             $tmp->setURIData($this->uriData);
             $tmp->execute();
         }
-    }
-
-    private function handleInternalObject() {
-
     }
 
     /**
@@ -78,10 +84,5 @@ class RestController {
         }
 
         $this->uriData = $uri_tmp;
-    }
-
-
-    private function reportError() {
-
     }
 }
