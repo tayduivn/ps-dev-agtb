@@ -380,16 +380,23 @@ class MetaDataManager {
                 $build = true;
                 $fieldMeta = $fieldFileTypes2meta[$fileExtension];
             }
+
             // add it to result if we want it
             if ($build) {
+                $fcontents = file_get_contents($finfo["dirname"]."/".$finfo["basename"]);
                 if (!isset($result[$fieldName])) {
-                    $result[$fieldName] = array();
+                    $result[$fieldName] = array('views'=>array());
                 }
-                if (!isset($result[$fieldName][$action])) {
-                    $result[$fieldName][$action] = array();
+                if (!isset($result[$fieldName]['views'][$action]) && strtolower($action) != strtolower($fieldName)) {
+                    $result[$fieldName]['views'][$action] = array();
                 }
-                $fieldFragmentArray = array($fieldMeta=>file_get_contents($finfo["dirname"]."/".$finfo["basename"]));
-                $result[$fieldName][$action] = array_merge($result[$fieldName][$action], $fieldFragmentArray) ;
+
+                if (strtolower($action) != strtolower($fieldName)){
+                    $result[$fieldName]['views'][$action] = array_merge($result[$fieldName]['views'][$action], array($fieldMeta=>$fcontents)) ;
+                } else {
+                    $result[$fieldName]['handler'] = $fcontents ;
+                }
+
             }
 
             $result['md5'] = md5(serialize($result));
