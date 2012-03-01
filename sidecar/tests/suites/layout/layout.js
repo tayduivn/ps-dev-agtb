@@ -20,6 +20,7 @@ describe("Layout", function() {
 
 describe("Layout.View", function(){
     var syncResult, view, layout, html;
+    SUGAR.App.metadata.set(fixtures.metadata);
     SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
 
     var App = SUGAR.App.init({el: "#sidecar"});

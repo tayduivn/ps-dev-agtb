@@ -1,0 +1,11 @@
+<div class="control-group">
+    <label class="control-label">{{label}}</label>
+
+    <div class="controls">
+        <select {{#if this.multiselect}}multiple="multiple"{{/if}} id="select">
+        {{#each option}}
+            <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+        </select>
+    </div>
+</div>
