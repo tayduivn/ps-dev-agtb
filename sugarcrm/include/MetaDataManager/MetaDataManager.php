@@ -139,8 +139,6 @@ class MetaDataManager {
             $tmptypes = null;
         }
 
-        //print_r($types); die;
-
         foreach ($types as $viewType => $viewAccessor) {
             $data[$viewType] = array();
             $stdDel = "";
@@ -224,6 +222,11 @@ class MetaDataManager {
                     }
                 }
             }
+        }
+
+        $keys = array_keys($vardefs);
+        if (count($keys) > 0) {
+            $data["beans"]["primary_bean"] = $keys[0];
         }
 
         $md5 = serialize($data);
