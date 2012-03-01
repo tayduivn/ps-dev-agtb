@@ -46,9 +46,11 @@
             this.data = {};
             this.layout = null;
 
-            this.data = this.getData(params);
-            this.context.init(params, this.data);
+            this.context.init(params);
             this.layout = this.getLayout(params);
+
+            this.data = this.getData(params);
+            this.context.set(null, this.data);
 
             // Render the rendered layout to the main element
             this.$el.html(this.layout.$el);
@@ -92,7 +94,6 @@
             };
         },
 
-
         /**
          * Returns a layout from the layout manager
          *
@@ -115,14 +116,28 @@
          * @method
          */
         start: function() {
+            // TODO: Right now the metadata is hardcoded, but should be changed to pull from metadata manager
+            app.dataManager.declareModels(app.metadata.get());
+            // this.declareModels(fixtures.metadata.modules);
 
             // Check if we have an authenticated session
             if (!(app.sugarAuth.isAuthenticated())) {
-                app.sugarAuth.login({"username":"sally","password":"sally"},{success:function(data){console.log("login success"); app.router.start(); app.router.navigate("", {trigger: true});},error:function(data){console.log("login error"); console.log(data);}})
+                app.sugarAuth.login({
+                    "username": "sally",
+                    "password": "sally"
+                }, {
+                    success: function(data) {
+                        console.log("login success");
+                        app.router.start();
+                        app.router.navigate("", {trigger: true});
+                    }, error: function(data) {
+                        console.log("login error");
+                        console.log(data);
+                    }
+                });
             } else {
                 app.router.navigate("", {trigger: true});
             }
-
         }
     });
 

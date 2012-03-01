@@ -178,6 +178,7 @@
             if (params.type == "fieldDef")
                 return _getFieldDef(params.module, params.bean, params.field);
         },
+
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
         set:function (data, key) {
