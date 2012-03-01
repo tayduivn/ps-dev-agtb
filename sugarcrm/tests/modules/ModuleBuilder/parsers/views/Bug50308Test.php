@@ -41,9 +41,6 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
 
     public function setUp()
     {
-        $this->markTestIncomplete('This test breaking the build when ran as entire suite.  Working with Eddy to fix.');
-        return;
-
         //back up users popup if it exists
         if(is_file($this->customFilePath)){
             include($this->customFilePath);

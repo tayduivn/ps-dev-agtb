@@ -4410,56 +4410,21 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 
 /**
  * upgrade_connectors
- * This function handles support for upgrading connectors, in particular the Hoovers connector
- * that needs the wsdl and endpoint modifications in the config.php file as well as the search
- * term change (from bal.specialtyCriteria.companyKeyword to bal.specialtyCriteria.companyName).
- * @param $path String variable for the log path
+ *
+ * This function handles support for upgrading connectors it is invoked from both end.php and silentUpgrade_step2.php
+ *
  */
-function upgrade_connectors($path='') {
-    logThis('Begin upgrade_connectors', $path);
-
-    $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
-    if(file_exists($filePath))
-    {
-       logThis("{$filePath} file", $path);
-       require($filePath);
-       if(!is_null($config))
-       {
-          $modified = false;
-          if(isset($config['properties']['hoovers_endpoint']))
-          {
-             $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
-             $modified = true;
-          }
-
-          if(isset($config['properties']['hoovers_wsdl']))
-          {
-             $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
-             $modified = true;
-          }
-
-          if($modified)
-          {
-              if(!write_array_to_file('config', $config, $filePath)) {
-                 logThis("Could not write new configuration to {$filePath} file", $path);
-              } else {
-                 logThis('Modified file successfully with new configuration entries', $path);
-              }
-          }
-       }
+function upgrade_connectors() {
+    require_once('include/connectors/utils/ConnectorUtils.php');
+    if(!ConnectorUtils::updateMetaDataFiles()) {
+       $GLOBALS['log']->fatal('Cannot update metadata files for connectors');
     }
 
-    $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
-    if(file_exists($filePath))
+    //Delete the custom connectors.php file if it exists so that it may be properly rebuilt
+    if(file_exists('custom/modules/Connectors/metadata/connectors.php'))
     {
-       logThis("Modifying {$filePath} file", $path);
-       require($filePath);
-       $fileContents = file_get_contents($filePath);
-       $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
-       file_put_contents($filePath, $out);
+        unlink('custom/modules/Connectors/metadata/connectors.php');
     }
-
-    logThis('End upgrade_connectors', $path);
 }
 
 /**

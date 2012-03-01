@@ -47,9 +47,6 @@ class Bug44206Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->markTestIncomplete('This test breaks on Oracle.  Working with Sergei and MGusev to fix');
-        return;
-
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         $this->opportunity = new Opportunity();
@@ -82,7 +79,7 @@ class Bug44206Test extends Sugar_PHPUnit_Framework_TestCase
 
         // disable row level security just to simplify the test
         $opportunity->disable_row_level_security = true;
-        $list = $opportunity->get_list('', $where = 'opportunities.id = "' . $this->opportunity->id . '"');
+        $list = $opportunity->get_list('', $where = 'opportunities.id = ' . $GLOBALS['db']->quoted($this->opportunity->id));
 
         $this->assertTrue(is_array($list));
         $this->assertArrayHasKey('list', $list);

@@ -4958,3 +4958,40 @@ function get_custom_file_if_exists($file)
 {
     return file_exists("custom/{$file}") ? "custom/{$file}" : $file;
 }
+
+
+/**
+ * get_help_url
+ *
+ * This will return the URL used to redirect the user to the help documentation.
+ * It can be overriden completely by setting the custom_help_url or partially by setting the custom_help_base_url
+ * in config.php or config_override.php.
+ *
+ * @param string $send_edition
+ * @param string $send_version
+ * @param string $send_lang
+ * @param string $send_module
+ * @param string $send_action
+ * @param string $dev_status
+ * @param string $send_key
+ * @param string $send_anchor
+ * @return string the completed help URL
+ */
+function get_help_url($send_edition = '', $send_version = '', $send_lang = '', $send_module = '', $send_action = '', $dev_status = '', $send_key = '', $send_anchor = '') {
+    global $sugar_config;
+
+    if (!empty($sugar_config['custom_help_url'])) {
+        $sendUrl = $sugar_config['custom_help_url'];
+    } else {
+        if (!empty($sugar_config['custom_help_base_url'])) {
+            $baseUrl= $sugar_config['custom_help_base_url'];
+        } else {
+            $baseUrl = "http://www.sugarcrm.com/crm/product_doc.php";
+        }
+        $sendUrl = $baseUrl . "?edition={$send_edition}&version={$send_version}&lang={$send_lang}&module={$send_module}&help_action={$send_action}&status={$dev_status}&key={$send_key}";
+        if(!empty($send_anchor)) {
+            $sendUrl .= "&anchor=".$send_anchor;
+        }
+    }
+    return $sendUrl;
+}
