@@ -98,34 +98,82 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		} // if
 	} // if
 	if ($report_type == 'tabular') {
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'tabular\');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
+		$duplicateButtons = '<input class="button" onclick="showDuplicateOverlib(this,\'tabular\');" type="button" ' .
+				' value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'">';
+        $duplicateOverLibs = "<ul class=subnav-sub>";
+        $duplicateOverLibs .= '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_ORIGINAL'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="summation";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_SUMMATON'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="summation_with_details";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_SUMMATION_DETAILS'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="matrix";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_MATRIX'] . '</a></li>';
+        $duplicateOverLibs .= "</ul>";
+        $duplicateButtons .= $duplicateOverLibs;
 	}
 	// Summation with Details
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['display_columns']) && count($reporter->report_def['display_columns']) > 0 )) {
 		$canCovertToMatrix = 0;
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-        $duplicateButtons = '<input type=button class="button" onclick="showDuplicateOverlib(this,\'summation_with_details\','.$canCovertToMatrix.');" type="button" ' .
+		$duplicateButtons = '<input type=button class="button" onclick="showDuplicateOverlib(this,\'summation_with_details\','.$canCovertToMatrix.');" type="button" ' .
             'value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'"/>';
+
+        $duplicateOverLibs = "<ul class=subnav-sub>";
+        $duplicateOverLibs .= '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_ORIGINAL'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="summation";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_SUMMATON'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="tabular";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_ROWS_AND_COLS'] . '</a></li>';
+        if (canCovertToMatrix) {
+            $duplicateOverLibs .= '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+                'document.EditView.save_as_report_type.value="matrix";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_MATRIX'] . '</a></li>';
+        }
+        $duplicateOverLibs .= "</ul>";
+        $duplicateButtons .= $duplicateOverLibs;
     }
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'matrix\');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-	} 
+        $duplicateButtons = '<input class="button" onclick="void(0);" type="button" ' .
+				' value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'">';
+        $duplicateOverLibs = "<ul class=subnav-sub>";
+        $duplicateOverLibs .= '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_ORIGINAL'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="summation";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_SUMMATON'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="summation_with_details";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_SUMMATION_DETAILS'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="tabular";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_ROWS_AND_COLS'] . '</a></li>';
+        $duplicateOverLibs .= "</ul>";
+        $duplicateButtons .= $duplicateOverLibs;
+
+    }
 
 	// Summation
 	else if ($report_type == 'summary') {
 		$canCovertToMatrix = 0;
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation\','.$canCovertToMatrix.');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-        $duplicateButtons = '<input onclick="showDuplicateOverlib(this,\'summation\','.$canCovertToMatrix.');" type="button" ' .
-            ' value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'"><ul><li>list1</li><li>list2</li></ul>';
+		$duplicateButtons = '<input class="button" onclick="void(0);" type="button" ' .
+				'value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'" >';
+        $duplicateOverLibs = "<ul class=subnav-sub>";
+        $duplicateOverLibs .= '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_ORIGINAL'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="summation_with_details";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_SUMMATION_DETAILS'] . '</a></li>' .
+            '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+            'document.EditView.save_as_report_type.value="tabular";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_ROWS_AND_COLS'] . '</a></li>';
+        
+
+        if ($canCovertToMatrix) {
+            $duplicateOverLibs .= '<li><a onclick=\'document.EditView.to_pdf.value="";document.EditView.to_csv.value="";document.EditView.action.value="ReportsWizard";document.EditView.save_as.value="true";' .
+                'document.EditView.save_as_report_type.value="matrix";document.EditView.submit();\' href=\'#\'>' . $mod_strings['LBL_DUPLICATE_AS_MATRIX'] . '</a></li>';
+        }
+        $duplicateOverLibs .= "</ul>";
+        $duplicateButtons .= $duplicateOverLibs;
 
     }
 

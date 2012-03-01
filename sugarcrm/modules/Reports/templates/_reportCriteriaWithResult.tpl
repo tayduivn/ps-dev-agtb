@@ -67,7 +67,7 @@
 <tr>
 <td>
 <ul class="clickMenu fancymenu" id="detailViewActions">
-    <li style="cursor:pointer;">
+    <li>
         <a name="runReportButton" id="runReportButton" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
         onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();">{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}</a>
         <ul class="subnav multi">
@@ -98,7 +98,8 @@
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
 <li><input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings.LBL_DELETE_BUTTON_KEY}" value="{$app_strings.LBL_DELETE_BUTTON_LABEL}" title="{$app_strings.LBL_DELETE_BUTTON_TITLE}"
-	onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){literal}{{/literal}this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();{literal}}{/literal}"></li>
+	onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){literal}{{/literal}this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();{literal}}{/literal}">
+</li>
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
         </ul>

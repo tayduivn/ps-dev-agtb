@@ -6281,13 +6281,14 @@ ul.clickMenu li {
 	padding: 0 0 0 0;
 	list-style: none;
 	position: relative; /*--Declare X and Y axis base--*/
+    cursor: pointer;
 }
 ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
 	display: block;
 	text-decoration: none;
 	float: left;
 	font-weight: normal !important;
-	padding: 3px 0px 3px 10px !important;
+	padding: 3px 10px 3px 10px !important;
 	color: #000;
 	font-size: 12px;
 }
@@ -6319,7 +6320,7 @@ ul.clickMenu li > span.ab { /*--Drop down trigger styles--*/
 ul.clickMenu li span.subhover {
 	cursor: pointer;
 	} /*--Hover effect for trigger--*/
-ul.clickMenu li ul.subnav {
+ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
 	left: 0; top: 23px;
@@ -6337,7 +6338,7 @@ ul.clickMenu li ul.subnav {
 	overflow:hidden;
 }
 
-ul.clickMenu li ul.subnav li{
+ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li{
 	margin: 0; 
 	padding: 0px;
 	clear: both;
@@ -6420,7 +6421,7 @@ ul.clickMenu li a.disabled {
 	opacity: 1;
 }
 
-ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input {
+ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input, ul.subnav-sub li a {
 	float: left;
 	background: #fff;
 	padding: 3px 10px !important;
@@ -6438,7 +6439,7 @@ ul.clickMenu li ul.subnav li input {
 	/*width: 170px;*/
 	width:100%	
 }
-ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
 background-color: #355b7e;
 color: #fff;
 font-weight: normal !important;

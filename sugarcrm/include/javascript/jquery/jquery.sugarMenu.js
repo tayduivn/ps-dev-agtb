@@ -1,15 +1,25 @@
 /* This is a simple plugin to render action dropdown menus from html.
  * John Barlow - SugarCRM
+ * add secondary popup implementation by Justin Park - SugarCRM
  * 
  * The html structure it expects is as follows:
  * 
- * <ul> 						- Menu root
- * 		<li></li> 				- First element in menu (visible)
- * 		<ul class="subnav">		- Popout menu (should start hidden)
- * 			<li></li>			- \
- * 			...					-  Elements in popout menu 
- * 			<li></li>			- /
- * 		</ul>
+ * <ul>                                     - Menu root
+ *      <li>                                - First element in menu (visible)
+ *      <ul class="subnav">		            - Popout menu (should start hidden)
+ *          <li></li>                       - \
+ *          ...                             -  Elements in popout menu
+ *          <li></li>                       - /
+ *          <li>
+ *              <a></a> or <input></input>  - element contains submenu
+ *              <ul class="subnav-sub">     - sub-popout menu (shown when mouseover on the above element)
+ *                  <li></li>               - \
+ *                  ...                     -  Elements in sub-popout menu
+ *                  <li></li>               - /
+ *              </ul>
+ *          </li>
+ *      </ul>
+ *      </li>
  * </ul>
  * 
  * By adding a class of "fancymenu" to the menu root, the plugin adds an additional "ab" class to the
@@ -44,6 +54,8 @@
 				this.find("input[type='submit'], input[type='button']").each(function(idx, node){
 					var jNode = $(node);
 					var parent = jNode.parent();
+                    var _subnav = menuNode.find("ul.subnav");
+                    var _timer_for_subnav = null;
                     var disabled = $(this).prop('disabled');
 					var newItem = $(document.createElement("li"));
 					var newItemA = $(document.createElement("a"));
@@ -60,19 +72,62 @@
 					newItemA.attr("id", jNode.attr("id"));
 					jNode.attr("id", jNode.attr("id") + "_old");
 
-                    jNode.siblings().each(function(idx, node) {
-                        console.log($(node));
-                    });
-
 					//make sure the node we found isn't the main item of the list -- we don't want 
 					//to show it then.
 					if(menuNode.sugarActionMenu("findItem", newItemA.html()) == -1){
-						newItem.append(newItemA);
-					}
-				
-					menuNode.sugarActionMenu("addItem", {item: newItem, index:idx+1});
-                    parent.css("display", "none");
-					
+						//newItem.append(newItemA);
+                        parent.prepend(newItemA);
+                    }
+
+                    //make sub sliding menu
+                    jNode.siblings(".subnav-sub").each(function(idx, node) {
+                        var _menu = $(node);
+                        var _hide_menu = function() {
+                            if( _menu.hasClass("hover") === false )
+                                _menu.hide();
+                        };
+                        var _hide_timer = null;
+                        var _delay = 300;
+                        _menu.mouseover(function(evt){
+                                if( $(this).hasClass("hover") === false )
+                                    $(this).addClass("hover");
+                            }).mouseout(function(evt){
+                                if( $(this).hasClass("hover") )
+                                    $(this).removeClass("hover");
+                                if(_hide_timer)
+                                    clearTimeout(_hide_timer);
+                                _hide_timer = setTimeout(_hide_menu, _delay);
+                            });
+
+                        newItemA.mouseover(function(evt) {
+                                $("ul.SugarActionMenu ul.subnav-sub").each(function(index, node){
+                                    $(node).removeClass("hover");
+                                    $(node).hide();
+                                });
+                                var _left = parent.offset().left + parent.width() - newItemA.css("paddingRight").replace("px", "");
+                                var _top = parent.offset().top - _menu.css("paddingTop").replace("px", "");
+                                _menu.css({
+                                    left: _left,
+                                    top: _top
+                                    });
+                                if( _menu.hasClass("hover") === false )
+                                    _menu.addClass("hover");
+                                if( _subnav.hasClass("subnav-sub-handler") === false )
+                                    _subnav.addClass("subnav-sub-handler");
+                                _menu.show();
+                            }).mouseout(function(evt) {
+                                _menu.removeClass("hover");
+                                _subnav.removeClass("subnav-sub-handler")
+                                if(_hide_timer)
+                                    clearTimeout(_hide_timer);
+                                _hide_timer = setTimeout(_hide_menu, _delay);
+                            }).click(function(evt){
+                                if(_timer_for_subnav)
+                                    clearTimeout(_timer_for_subnav);
+                            });
+                        menuNode.append(_menu);
+                    });
+                    jNode.css("display", "none");
 				});
 				
 				
@@ -108,6 +163,7 @@
 						
 						//add click handler to handle
 						dropDownHandle.click(function(event){
+
 							//close all other open menus
 							$("ul.SugarActionMenu ul.subnav").each(function(subIndex, node){
 								var subjNode = $(node);
@@ -129,13 +185,33 @@
 						
 						//add submenu click off to body
 						var jBody = $("body");
+                        var _hide_subnav_delay = 30;
+                        var _hide_subnav = function(subnav) {
+                            if( subnav.hasClass("subnav-sub-handler") === false ) {
+                                subnav.slideUp(slideUpSpeed);
+                                subnav.removeClass("ddopen");
+                            }
+                        }
 						if(jBody.data("sugarActionMenu") != true){
 							jBody.data("sugarActionMenu", true);
 							jBody.bind("click", function(){
+
 								$("ul.SugarActionMenu ul.subnav").each(function(subIndex, node){
-									$(node).slideUp(slideUpSpeed);
-                                    $(node).removeClass("ddopen");
+                                    //prevent hiding the submenu when user click the submenu which contains one more depth submenu
+                                    var _hide = function() {
+                                        _hide_subnav($(node));
+                                    }
+                                    setTimeout(_hide, _hide_subnav_delay);
 								});
+                                //Hide second depth submenu
+                                $("ul.SugarActionMenu ul.subnav-sub").each(function(subIndex, node){
+                                    var _hide = function() {
+                                        $(this).removeClass("hover");
+                                        $(this).hide();
+                                    }
+                                    _timer_for_subnav = setTimeout(_hide, _hide_subnav_delay);
+                                });
+
 							});
 						}
 					
@@ -151,9 +227,12 @@
 					
 					//bind click event to submenu items to hide the menu on click
 					jNode.find("li").each(function(index, subnode){
-						$(subnode).bind("click", function(){
-							jNode.slideUp(slideUpSpeed);
-							jNode.removeClass("ddopen");
+                        //prevent hiding the submenu when user click the submenu which contains one more depth submenu
+						$(subnode).bind("click", function(evt){
+							var _hide = function() {
+                                _hide_subnav(jNode);
+                            }
+                            setTimeout(_hide, _hide_subnav_delay);
 						});
 					});
 					
