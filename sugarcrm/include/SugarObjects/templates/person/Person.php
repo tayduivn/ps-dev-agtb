@@ -42,8 +42,8 @@ class Person extends Basic
 	}
 
 	// need to override to have a name field created for this class
-	function retrieve($id = -1, $encode=true) {
-		$ret_val = parent::retrieve($id, $encode);
+	function retrieve($id = -1, $encode=true, $deleted=true) {
+		$ret_val = parent::retrieve($id, $encode,$deleted);
 		$this->_create_proper_name_field();
 		$this->emailAddress->handleLegacyRetrieve($this);
 		return $ret_val;

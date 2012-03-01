@@ -54,8 +54,8 @@ require_once('include/SugarObjects/templates/basic/Basic.php');
 		return $this;
 	}
 	
- 	function retrieve($id = -1, $encode=true) {
-		$ret_val = parent::retrieve($id, $encode);
+ 	function retrieve($id = -1, $encode=true, $deleted=true) {
+		$ret_val = parent::retrieve($id, $encode, $deleted);
 		$this->emailAddress->handleLegacyRetrieve($this);
 		return $ret_val;
 	}
