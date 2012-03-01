@@ -32,7 +32,8 @@ class StrToUpperExpression extends StringExpression {
 		$param =$this->getParameters();
 		if (is_array($param))
 			$param = $param[0];
-		return strtoupper($param->evaluate());
+    $strtoupper = function_exists('mb_strtoupper') ? mb_strtoupper($param->evaluate(), 'UTF-8') : strtoupper($param->evaluate());
+		return $strtoupper;
 	}
 
 	/**
