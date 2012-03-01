@@ -39,7 +39,7 @@
          */
         start: function() {
             console.log("Router Started");
-            
+
             // Start monitoring hash changes
             // Right now backbone doesn't support checking to see
             // if the history has been started.
@@ -106,7 +106,7 @@
      */
     var module = {
         /**
-         * Initializes the router when an instance is created
+         * Initializes the router however does not start routing. To start routing, call Router.start();
          * @method
          * @param {Object} instance
          */
