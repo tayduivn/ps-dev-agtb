@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelTopSelectButton.php 54093 2010-01-28 05:12:24Z dwheeler $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
+
 
 class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 {
@@ -48,7 +48,7 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 		$initial_filter = '';
 	
 		$this->title = $app_strings['LBL_SELECT_BUTTON_TITLE'];
-		$this->accesskey = $app_strings['LBL_SELECT_BUTTON_KEY'];
+		//$this->accesskey = $app_strings['LBL_SELECT_BUTTON_KEY'];
 		$this->value = $app_strings['LBL_SELECT_BUTTON_LABEL'];		
 
 		if (is_array($this->button_properties)) {
@@ -56,7 +56,7 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 				$this->title = $app_strings[$this->button_properties['title']];
 			}
 			if( isset($this->button_properties['accesskey'])) {
-				$this->accesskey = $app_strings[$this->button_properties['accesskey']];
+				//$this->accesskey = $app_strings[$this->button_properties['accesskey']];
 			}
 			if( isset($this->button_properties['form_value'])) {
 				$this->value = $app_strings[$this->button_properties['form_value']];
@@ -150,20 +150,8 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 			//END SUGARCRM flav!=sales ONLY
 		}
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
-
-        // #49164 changing the id/name of the widget to differentiate between "Select" and "Select from Report" button
-        $customWidgetId = $this->getWidgetId();
-        if( strpos( $customWidgetId , "prospect_list_" ) === 0)
-        {
-            // add the button title in to the id/name of the button,
-            // lowercased, and with spaces replaced with underscores
-            $customWidgetId .= '_' . str_replace( ' ' , '_' , strtolower( $this->title ) );
-        }
-        $customWidgetId .= '_select_button';
-
-        return ' <input type="button" name="' . $customWidgetId . '" id="' . $customWidgetId . '" class="button"' . "\n"
-            . ' title="' . $this->title . '"'
-			. ' accesskey="' . $this->accesskey . '"'
+		return ' <input type="button" name="' . $this->getWidgetId() . '_select_button" id="' . $this->getWidgetId() . '_select_button" class="button"' . "\n"
+				. ' title="' . $this->title . '"'
 			. ' value="' . $this->value . "\"\n"
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' />\n";
 	}

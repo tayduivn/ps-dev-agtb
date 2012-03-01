@@ -437,7 +437,6 @@ require_once('include/EditView/EditView2.php');
                         }
                     }
                 }
-
                 //BEGIN SUGARCRM flav=pro ONLY
                 if(isset($array['team_name_advanced_new_on_update'])){
                    	require_once('include/SugarFields/SugarFieldHandler.php');
@@ -457,13 +456,15 @@ require_once('include/EditView/EditView2.php');
                 foreach($this->searchFields as $name => $params) {
 					$long_name = $name.'_'.$SearchName;           
 					/*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
-                	if(isset($array[$long_name]) && !$this->isEmptyDropdownField($long_name, $array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
+                    if (isset($array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
 					{ 				
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$long_name];
                         }
-                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic        	
+                    }
+                    else if(!empty($array[$name]) && !$fromMergeRecords) // basic
+                    {
                     	$this->searchFields[$name]['value'] = $array[$name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$name];
@@ -493,7 +494,7 @@ require_once('include/EditView/EditView2.php');
                     	{
                     		$long_name = $key.'_'.$SearchName;
                     		
-	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys) && !$this->isEmptyDropdownField($long_name, $array[$long_name])) 
+	                        if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys))
 	                    	{  	                    		
 	                    		
 	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
@@ -516,7 +517,6 @@ require_once('include/EditView/EditView2.php');
                         }
                     }
                 }
-
                 //BEGIN SUGARCRM flav=pro ONLY
                 if(isset($array['team_name_advanced_new_on_update'])){
                    	require_once('include/SugarFields/SugarFieldHandler.php');
@@ -558,14 +558,21 @@ require_once('include/EditView/EditView2.php');
      * Parse date expression and return WHERE clause
      * @param string $operator Date expression operator
      * @param string DB field name
+      * @param string DB field type
      */
-    protected function parseDateExpression($operator, $db_field)
+    protected function parseDateExpression($operator, $db_field, $field_type = '')
     {
-        $dates = TimeDate::getInstance()->parseDateRange($operator);
+        if ($field_type == "date") {
+            $type = "date";
+            $adjForTZ = false;
+        } else {
+            $type = "datetime";
+            $adjForTZ = true;
+        }
+        $dates = TimeDate::getInstance()->parseDateRange($operator, null, $adjForTZ);
         if(empty($dates)) return '';
-
-        $start = $this->seed->db->convert($this->seed->db->quoted($dates[0]->asDb()), "datetime");
-        $end = $this->seed->db->convert($this->seed->db->quoted($dates[1]->asDb()), "datetime");
+        $start = $this->seed->db->convert($this->seed->db->quoted($dates[0]->asDb()), $type);
+        $end = $this->seed->db->convert($this->seed->db->quoted($dates[1]->asDb()), $type);
         return "($db_field >= $start AND $db_field <= $end)";
     }
 
@@ -1100,7 +1107,11 @@ require_once('include/EditView/EditView2.php');
                              case 'this_year':
                              case 'last_year':
                              case 'next_year':
-                                 $where .= $this->parseDateExpression(strtolower($operator), $db_field);
+                                 if (!empty($field) && !empty($this->seed->field_name_map[$field]['type'])) {
+                                     $where .= $this->parseDateExpression(strtolower($operator), $db_field, $this->seed->field_name_map[$field]['type']);
+                                 } else {
+                                     $where .= $this->parseDateExpression(strtolower($operator), $db_field);
+                                 }
                                  break;
                              case 'isnull':
                                  $where .=  "($db_field IS NULL OR $db_field = '')";

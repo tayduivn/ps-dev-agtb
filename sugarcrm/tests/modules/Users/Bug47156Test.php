@@ -37,7 +37,7 @@ class Bug47156Test extends Sugar_PHPUnit_Framework_TestCase
 {
     private $user1;
     private $user2;
-    
+
     private function createUser($id = '', $status = '')
     {
         $time = mt_rand();
@@ -82,10 +82,11 @@ class Bug47156Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($this->user1->id, $allUsers);
         $this->assertArrayHasKey($this->user2->id, $allUsers);
         
-        $GLOBALS['db']->query('DELETE FROM users WHERE id IN (' . $this->user1->id . ', ' . $this->user2->id . ')');
-        $GLOBALS['db']->query('DELETE FROM user_preferences WHERE assigned_user_id IN (' . $this->user1->id . ', ' . $this->user2->id . ')');
-        $GLOBALS['db']->query('DELETE FROM teams WHERE associated_user_id IN (' . $this->user1->id . ', ' . $this->user2->id . ')');
-        $GLOBALS['db']->query('DELETE FROM team_memberships WHERE user_id IN (' . $this->user1->id . ', ' . $this->user2->id . ')');
+        $dbManager = $GLOBALS['db'];
+        $dbManager->query('DELETE FROM users WHERE id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
+        $dbManager->query('DELETE FROM user_preferences WHERE assigned_user_id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
+        $dbManager->query('DELETE FROM teams WHERE associated_user_id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
+        $dbManager->query('DELETE FROM team_memberships WHERE user_id IN (' . $dbManager->quoted($this->user1->id) . ', ' . $dbManager->quoted($this->user2->id) . ')');
     }
 }
 ?>

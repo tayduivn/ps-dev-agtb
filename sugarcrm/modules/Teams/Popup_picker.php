@@ -169,11 +169,11 @@ EOQ;
 			if(!empty($_REQUEST['user_id'])) {
 				$formSave .= '<input type="hidden" name="user_id" value="' . $_REQUEST['user_id'] . ">\n'";
 			}				
-			
+			$createButtonTranslation = translate($this->_popupMeta['create']['createButton']);
 			$createButton = <<<EOQ
-			<input type="button" id="showAdd" name="showAdd" class="button" value="{$this->_popupMeta['create']['createButton']}" onclick="toggleDisplay('addform');" />
+			<input type="button" id="showAdd" name="showAdd" class="button" value="{$createButtonTranslation}" onclick="toggleDisplay('addform');" />
 EOQ;
-			$addformheader = get_form_header($this->_popupMeta['create']['createButton'], $formSave, false);
+			$addformheader = get_form_header($createButtonTranslation, $formSave, false);
 		}
 		// END CREATE STUFF
 		
@@ -213,8 +213,7 @@ EOQ;
 		if(!$hide_clear_button)
 		{
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back('','');\" title='"
-				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accesskey='"
-				.$app_strings['LBL_CLEAR_BUTTON_KEY']."' value='  "
+				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' value='  "
 				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' id='search_form_clear' />\n";
 		}
 		$button .= "<input type='submit' name='button' class='button' onclick=\"window.close();\" title='"

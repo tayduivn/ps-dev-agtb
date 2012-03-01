@@ -27,7 +27,7 @@
  ********************************************************************************/
 $viewdefs['ProductCategories']['EditView'] = array(
     'templateMeta' => array('form' => array('buttons'=>array('SAVE', 
-                                            array('customCode' => '<input class="button" type="submit" value="{$APP.LBL_SAVE_NEW_BUTTON_LABEL}" onclick="this.form.action.value=\'Save\'; this.form.isDuplicate.value=\'true\'; this.form.return_action.value=\'EditView\'; return check_form(\'EditView\');" accesskey="{$APP.LBL_SAVE_NEW_BUTTON_KEY}" title="{$APP.LBL_SAVE_NEW_BUTTON_TITLE}"/>')
+                                            array('customCode' => '<input class="button" type="submit" value="{$APP.LBL_SAVE_NEW_BUTTON_LABEL}" onclick="this.form.action.value=\'Save\'; this.form.isDuplicate.value=\'true\'; this.form.return_action.value=\'EditView\'; return check_form(\'EditView\');" title="{$APP.LBL_SAVE_NEW_BUTTON_TITLE}"/>')
                                             )),
                             'maxColumns' => '2', 
                             'widths' => array(
@@ -56,8 +56,8 @@ $viewdefs['ProductCategories']['EditView'] = array(
              'customCode'=>'<input name="type" type="hidden" value="{$fields.type.value}">' .
              		       '<input name="parent_name" readonly type="text" value="{$fields.parent_name.value}">' .
              		       '<input name="parent_id" type="hidden" value="{$fields.parent_id.value}">' .
-             		       '<input class="button" type="button" onclick="return get_popup();" language="javascript" name="button" value="{$APP.LBL_SELECT_BUTTON_LABEL}" tabindex="2" accesskey="{$APP.LBL_SELECT_BUTTON_KEY}" title="{$APP.LBL_SELECT_BUTTON_TITLE}"/>' .
-             		       '<input class="button" type="button" value="{$APP.LBL_CLEAR_BUTTON_LABEL}" name="button" onclick="this.form.parent_name.value = \'\';" language="javascript" accesskey="{$APP.LBL_CLEAR_BUTTON_KEY}" title="{$APP.LBL_CLEAR_BUTTON_TITLE}"/>'
+             		       '<input class="button" type="button" onclick="return get_popup();" language="javascript" name="button" value="{$APP.LBL_SELECT_BUTTON_LABEL}" tabindex="2" title="{$APP.LBL_SELECT_BUTTON_TITLE}"/>' .
+             		       '<input class="button" type="button" value="{$APP.LBL_CLEAR_BUTTON_LABEL}" name="button" onclick="this.form.parent_name.value = \'\';" language="javascript" title="{$APP.LBL_CLEAR_BUTTON_TITLE}"/>'
              ),
     ),
     

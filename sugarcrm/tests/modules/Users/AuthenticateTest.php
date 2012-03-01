@@ -29,6 +29,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp() 
     {
+        $GLOBALS['app'] = new SugarApplication();
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     	$this->sugar_config_old = $GLOBALS['sugar_config'];
     	$_REQUEST['user_name'] = 'foo';
@@ -114,7 +115,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_REQUEST['login_record']);
         
         $authController = $this->getMock('AuthenticationController');
-        
+
         $url = '';
         require('modules/Users/Authenticate.php');
         

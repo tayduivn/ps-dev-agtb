@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelLoadSignedButton.php 40541 2008-10-14 17:42:09Z jmertic $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 //this widget is used only by the document subpanel under contracts.
 class SugarWidgetSubPanelLoadSignedButton extends SugarWidgetField
 {

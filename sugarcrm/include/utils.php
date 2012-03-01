@@ -2314,7 +2314,7 @@ function convert_id($string)
 /**
  * @deprecated use SugarTheme::getImage()
  */
-function get_image($image,$other_attributes,$width="",$height="",$ext='.gif',$alt)
+function get_image($image,$other_attributes,$width="",$height="",$ext='.gif',$alt="")
 {
     return SugarThemeRegistry::current()->getImage(basename($image), $other_attributes, empty($width) ? null : $width, empty($height) ? null : $height, $ext, $alt );
 }
@@ -3989,7 +3989,7 @@ function getTrackerSubstring($name) {
 	}
 
 	if($strlen > $max_tracker_item_length) {
-		$chopped = function_exists('mb_substr') ? mb_substr($name, 0, $max_tracker_item_length, "UTF-8") : substr($name, 0, $max_tracker_item_length, "UTF-8");
+		$chopped = function_exists('mb_substr') ? mb_substr($name, 0, $max_tracker_item_length, "UTF-8") : substr($name, 0, $max_tracker_item_length);
 	} else {
 		$chopped = $name;
 	}
@@ -4849,7 +4849,7 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	$img_size = getimagesize($path);
 	$filetype = $img_size['mime'];
 	$ext = end(explode(".", $path));
-	if(substr_count('..', $path) > 0 || $ext === $path || !in_array(strtolower($ext), array_keys($supportedExtensions)) ||
+	if(substr_count('..', $path) > 0 || ($ext !== $path && !in_array(strtolower($ext), array_keys($supportedExtensions))) ||
 	    !in_array($filetype, array_values($supportedExtensions))) {
 	        return false;
 	}
@@ -4909,7 +4909,7 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
 
 /**
  * utf8_recursive_encode
- * 
+ *
  * This function walks through an Array and recursively calls utf8_encode on the
  * values of each of the elements.
  *
@@ -4940,4 +4940,58 @@ function utf8_recursive_encode($data)
 function get_language_header()
 {
     return isset($GLOBALS['current_language']) ? "lang='{$GLOBALS['current_language']}'" : "lang='en'";
+}
+
+
+/**
+ * get_custom_file_if_exists
+ *
+ * This function handles the repetitive code we have where we first check if a file exists in the
+ * custom directory to determine whether we should load it, require it, include it, etc.  This function returns the
+ * path of the custom file if it exists.  It basically checks if custom/{$file} exists and returns this path if so;
+ * otherwise it return $file
+ *
+ * @param $file String of filename to check
+ * @return $file String of filename including custom directory if found
+ */
+function get_custom_file_if_exists($file)
+{
+    return file_exists("custom/{$file}") ? "custom/{$file}" : $file;
+}
+
+
+/**
+ * get_help_url
+ *
+ * This will return the URL used to redirect the user to the help documentation.
+ * It can be overriden completely by setting the custom_help_url or partially by setting the custom_help_base_url
+ * in config.php or config_override.php.
+ *
+ * @param string $send_edition
+ * @param string $send_version
+ * @param string $send_lang
+ * @param string $send_module
+ * @param string $send_action
+ * @param string $dev_status
+ * @param string $send_key
+ * @param string $send_anchor
+ * @return string the completed help URL
+ */
+function get_help_url($send_edition = '', $send_version = '', $send_lang = '', $send_module = '', $send_action = '', $dev_status = '', $send_key = '', $send_anchor = '') {
+    global $sugar_config;
+
+    if (!empty($sugar_config['custom_help_url'])) {
+        $sendUrl = $sugar_config['custom_help_url'];
+    } else {
+        if (!empty($sugar_config['custom_help_base_url'])) {
+            $baseUrl= $sugar_config['custom_help_base_url'];
+        } else {
+            $baseUrl = "http://www.sugarcrm.com/crm/product_doc.php";
+        }
+        $sendUrl = $baseUrl . "?edition={$send_edition}&version={$send_version}&lang={$send_lang}&module={$send_module}&help_action={$send_action}&status={$dev_status}&key={$send_key}";
+        if(!empty($send_anchor)) {
+            $sendUrl .= "&anchor=".$send_anchor;
+        }
+    }
+    return $sendUrl;
 }

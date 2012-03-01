@@ -85,21 +85,15 @@ class ImportViewStep3 extends ImportView
         }
         else
         {
-            // Try to see if we have a custom mapping we can use
-            // based upon the where the records are coming from
-            // and what module we are importing into
-            $classname = 'ImportMap' . ucfirst($_REQUEST['source']);
-            if ( file_exists("modules/Import/maps/{$classname}.php") )
-                require_once("modules/Import/maps/{$classname}.php");
-            elseif ( file_exists("custom/modules/Import/maps/{$classname}.php") )
-                require_once("custom/modules/Import/maps/{$classname}.php");
-            else {
-                require_once("custom/modules/Import/maps/ImportMapOther.php");
-                $classname = 'ImportMapOther';
+            $classname = $this->getMappingClassName(ucfirst($_REQUEST['source']));
+
+            //Set the $_REQUEST['source'] to be 'other' for ImportMapOther special case
+            if($classname == 'ImportMapOther')
+            {
                 $_REQUEST['source'] = 'other';
             }
 
-            if ( class_exists($classname) )
+            if (class_exists($classname))
             {
                 $mapping_file = new $classname;
                 $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
@@ -108,9 +102,9 @@ class ImportViewStep3 extends ImportView
             }
         }
 
-        $delimeter = $this->getRequestDelimiter();
+        $delimiter = $this->getRequestDelimiter();
         
-        $this->ss->assign("CUSTOM_DELIMITER", $delimeter);
+        $this->ss->assign("CUSTOM_DELIMITER", $delimiter);
         $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
@@ -118,7 +112,7 @@ class ImportViewStep3 extends ImportView
         $uploadFileName = $_REQUEST['file_name'];
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile( $uploadFileName, $delimeter, html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
+        $importFile = new ImportFile( $uploadFileName, $delimiter, html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
@@ -415,11 +409,55 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign('required_fields',implode(', ',$required));
         $this->ss->assign('CSS', $this->_getCSS());
 
-        $content = $this->ss->fetch('modules/Import/tpls/step3.tpl');
+        $content = $this->ss->fetch($this->getCustomFilePathIfExists('modules/Import/tpls/step3.tpl'));
         $this->ss->assign("CONTENT",$content);
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+        $this->ss->display($this->getCustomFilePathIfExists('modules/Import/tpls/wizardWrapper.tpl'));
 
     }
+
+
+    /**
+     * getMappingClassName
+     *
+     * This function returns the name of a mapping class used to generate the mapping of an import source.
+     * It first checks to see if an equivalent custom source map exists in custom/modules/Imports/maps directory
+     * and returns this class name if found.  Searches are made for sources with a ImportMapCustom suffix first
+     * and then ImportMap suffix.
+     *
+     * If no such custom file is found, the method then checks the modules/Imports/maps directory for a source
+     * mapping file.
+     *
+     * Lastly, if a source mapping file is still not located, it checks in
+     * custom/modules/Import/maps/ImportMapOther.php file exists, it uses the ImportMapOther class.
+     *
+     * @see display()
+     * @param string $source String name of the source mapping prefix
+     * @return string name of the mapping class name
+     */
+    protected function getMappingClassName($source)
+    {
+       // Try to see if we have a custom mapping we can use
+       // based upon the where the records are coming from
+       // and what module we are importing into
+       $name = 'ImportMap' . $source;
+       $customName = 'ImportMapCustom' . $source;
+
+       if (file_exists("custom/modules/Import/maps/{$customName}.php"))
+       {
+           require_once("custom/modules/Import/maps/{$customName}.php");
+           return $customName;
+       } else if (file_exists("custom/modules/Import/maps/{$name}.php")) {
+           require_once("custom/modules/Import/maps/{$name}.php");
+       } else if (file_exists("modules/Import/maps/{$name}.php")) {
+           require_once("modules/Import/maps/{$name}.php");
+       } else if (file_exists('custom/modules/Import/maps/ImportMapOther.php')) {
+           require_once('custom/modules/Import/maps/ImportMapOther.php');
+           return 'ImportMapOther';
+       }
+
+       return $name;
+    }
+
 
     protected function getRequestDelimiter()
     {
@@ -504,7 +542,7 @@ EOCSS;
 
         $print_required_array = "";
         foreach ($required as $name=>$display) {
-            $print_required_array .= "required['$name'] = '". $display . "';\n";
+            $print_required_array .= "required['$name'] = '". sanitize($display) . "';\n";
         }
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 

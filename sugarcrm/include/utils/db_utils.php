@@ -69,36 +69,31 @@ $GLOBALS['toHTML_values'] = array_values($toHTML);
  *
  * @todo Make this utilize the external caching mechanism after re-testing (see
  *       log on r25320).
+ *
+ * Bug 49489 - removed caching of to_html strings as it was consuming memory and
+ * never releasing it
  */
 function to_html($string, $encode=true){
 	if (empty($string)) {
 		return $string;
 	}
-	static $cache = array();
+
 	global $toHTML;
-	if (isset($cache['c'.$string])) {
-	    return $cache['c'.$string];
-	}
 
-	$cache_key = 'c'.$string;
-
-	if($encode && is_string($string)){//$string = htmlentities($string, ENT_QUOTES);
+	if($encode && is_string($string)){
 		/*
 		 * cn: bug 13376 - handle ampersands separately
 		 * credit: ashimamura via bug portal
 		 */
 		//$string = str_replace("&", "&amp;", $string);
 
-		if(is_array($toHTML)) { // cn: causing errors in i18n test suite ($toHTML is non-array)
-			$string = str_replace(
-				$GLOBALS['toHTML_keys'],
-				$GLOBALS['toHTML_values'],
-				$string
-			);
+        if(is_array($toHTML))
+        { // cn: causing errors in i18n test suite ($toHTML is non-array)
+            $string = str_replace($GLOBALS['toHTML_keys'],$GLOBALS['toHTML_values'],$string);
 		}
 	}
-	$cache[$cache_key] = $string;
-	return $cache[$cache_key];
+
+    return $string;
 }
 
 /**

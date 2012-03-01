@@ -107,6 +107,9 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 			for(i in dashletIds) {ldelim}
 				SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
 				SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
+                // Bug #47097 : Dashlets not displayed after moving them
+                // add new property to save real id of dashlet, it needs to have ability reload dashlet by id
+                SUGAR.mySugar.homepage_dd[j].dashletID = dashletIds[i];
 				SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;
 				SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
 				j++;
@@ -316,18 +319,18 @@ mySugarLoader.insert();
 			<table align="center" cellpadding="15">
 				<tr>
 					<td align="center">
-						{capture assign=img_attr}border="0" id="change_layout_1_column"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(1);" 
+						{capture assign=img_attr}border="0"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(1);" attr='id="change_layout_1_column"'
 							title=$app.LBL_ICON_COLUMN_1 img_name="icon_Column_1.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
-					    {capture assign=img_attr}border="0" id="change_layout_2_column"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(2);"
+					    {capture assign=img_attr}border="0"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(2);" attr='id="change_layout_2_column"'
 							title=$app.LBL_ICON_COLUMN_2 img_name="icon_Column_2.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
-					    {capture assign=img_attr}border="0" id="change_layout_3_column"{/capture}
-						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(3);" 
+					    {capture assign=img_attr}border="0"{/capture}
+						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(3);" attr='id="change_layout_3_column"'
 							title=$app.LBL_ICON_COLUMN_3 img_name="icon_Column_3.gif" img_attr=$img_attr}
 					</td>
 				</tr>

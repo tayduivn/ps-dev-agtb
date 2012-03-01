@@ -31,6 +31,9 @@ require_once('include/Localization/Localization.php');
 /**
  * Bug #35413
  * Other character sets not displayed properly
+ *
+ * Bug #45059
+ * Non UTF-8 Emails sent without Character Encoding are not translated properly
  */
 class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -53,6 +56,11 @@ class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
                 '7cjT7cjU0+3IwcbExNE=',
                 'يبسيبشسيبءئؤؤر',
                 'windows-1256'
+            ),
+            array( // params related to 45059 ticket
+                'GyRCJWYhPCU2TD4bKEI=',
+                'ユーザ名',
+                'ISO-2022-JP'
             )
         );
     }
@@ -61,7 +69,7 @@ class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
      * Test convert base64 $source to string and convert string from $encoding to utf8. It has to return $utf8string.
      *
      * @dataProvider stringsProvider
-     * @ticket 35413
+     * @ticket 35413, 45059
      * @param string $source base64 encoded string in native charset
      * @param string $utf8string previous string in utf8
      * @param string $encoding encoding of native string

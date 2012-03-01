@@ -244,15 +244,6 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'source'=>'non-db',
   ),
 
-	'projects' =>
-	array (
-	    'name' => 'projects',
-	    'type' => 'link',
-	    'relationship' => 'projects_bugs',
-	    'source'=>'non-db',
-	    'vname'=>'LBL_PROJECTS',
-	),
-
 )
                                                       , 'indices' => array (
               //BEGIN SUGARCRM flav=pro ONLY

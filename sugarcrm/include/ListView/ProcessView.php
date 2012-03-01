@@ -965,14 +965,7 @@ class ProcessView {
                 if($trigger_shell->type != "compare_count")
                 {
                     $display_array = $filter1_object->get_display_array_using_name();
-                    if ($rel_seed instanceof SugarBean)
-                    {
-                        $filter_expression_text = $display_array['lhs_field'] . " " . $display_array['operator'] . " " . $rel_seed->name;
-                    }
-                    else
-                    {
-                        $filter_expression_text = $display_array['lhs_field'] . " " . $display_array['operator'] . " " . $display_array['rhs_value'];
-                    }
+                    $filter_expression_text = $display_array['lhs_field']." ".$display_array['operator']." ".$display_array['rhs_value'];
                 }
                 else
                 {

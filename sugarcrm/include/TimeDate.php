@@ -1572,11 +1572,13 @@ class TimeDate
      * @param string $template Date expression
      * @param bool $daystart Do we want start or end of the day?
      * @param User $user
+     * @param bool $adjustForTimezone
      * @return SugarDateTime
      */
-    protected function parseFromTemplate($template, $daystart, User $user = null)
+    protected function parseFromTemplate($template, $daystart, User $user = null, $adjustForTimezone = true)
 	{
-        $now = $this->tzUser($this->getNow(), $user);
+        $rawTime = $this->getNow();
+        $now = $adjustForTimezone?$this->tzUser($rawTime, $user):$rawTime;
         if(!empty($template)) {
             $now->modify($template);
         }
@@ -1592,11 +1594,13 @@ class TimeDate
      * @internal
      * @param int $mdiff
      * @param User $user
+     * @param bool $adjustForTimezone
      * @return array
      */
-	protected function diffMon($mdiff, User $user = null)
+	protected function diffMon($mdiff, User $user = null, $adjustForTimezone = true)
 	{
-        $now = $this->tzUser($this->getNow(), $user);
+        $rawTime = $this->getNow();
+        $now = $adjustForTimezone?$this->tzUser($rawTime, $user):$rawTime;
 	    $now->setDate($now->year, $now->month+$mdiff, 1);
 	    $start = $now->get_day_begin();
 	    $end = $now->setDate($now->year, $now->month, $now->days_in_month)->setTime(23, 59, 59);
@@ -1608,11 +1612,13 @@ class TimeDate
      * @internal
      * @param int $ydiff
      * @param User $user
+     * @param bool $adjustForTimezone
      * @return array
      */
-	protected function diffYear($ydiff, User $user = null)
+	protected function diffYear($ydiff, User $user = null, $adjustForTimezone = true)
 	{
-        $now = $this->tzUser($this->getNow(), $user);
+        $rawTime = $this->getNow();
+        $now = $adjustForTimezone?$this->tzUser($rawTime, $user):$rawTime;
         $now->setDate($now->year+$ydiff, 1, 1);
 	    $start = $now->get_day_begin();
 	    $end = $now->setDate($now->year, 12, 31)->setTime(23, 59, 59);
@@ -1624,28 +1630,29 @@ class TimeDate
 	 * Returns beginning and end of the range as a date
 	 * @param string $range
 	 * @param User $user
+     * @param bool $adjustForTimezone Do we need to adjust for timezone?
 	 * @return array of two Date objects, start & end
 	 */
-	public function parseDateRange($range, User $user = null)
+	public function parseDateRange($range, User $user = null, $adjustForTimezone = true)
 	{
         if(isset($this->date_expressions[$range])) {
-            return array($this->parseFromTemplate($this->date_expressions[$range][0], true, $user),
-                $this->parseFromTemplate($this->date_expressions[$range][1], false, $user)
+            return array($this->parseFromTemplate($this->date_expressions[$range][0], true, $user, $adjustForTimezone),
+                $this->parseFromTemplate($this->date_expressions[$range][1], false, $user, $adjustForTimezone)
             );
         }
 	    switch($range) {
 			case 'next_month':
-			    return $this->diffMon(1,  $user);
+			    return $this->diffMon(1,  $user, $adjustForTimezone);
 		    case 'last_month':
-			    return $this->diffMon(-1,  $user);
+			    return $this->diffMon(-1,  $user, $adjustForTimezone);
 		    case 'this_month':
-			    return $this->diffMon(0,  $user);
+			    return $this->diffMon(0,  $user, $adjustForTimezone);
 	        case 'last_year':
-			    return $this->diffYear(-1,  $user);
+			    return $this->diffYear(-1,  $user, $adjustForTimezone);
 	        case 'this_year':
-			    return $this->diffYear(0,  $user);
+			    return $this->diffYear(0,  $user, $adjustForTimezone);
 	        case 'next_year':
-			    return $this->diffYear(1,  $user);
+			    return $this->diffYear(1,  $user, $adjustForTimezone);
 	        default:
 			    return null;
 	    }
@@ -1853,7 +1860,7 @@ class TimeDate
 
     /**
      * AMPMMenu
-     * This method renders a <select> HTML form element based on the
+     * This method renders a SELECT HTML form element based on the
      * user's time format preferences, with give date's value highlighted.
      *
      * If user's prefs have no AM/PM string, returns empty string.

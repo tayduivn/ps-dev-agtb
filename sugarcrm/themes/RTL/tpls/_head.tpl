@@ -47,4 +47,3 @@ if ( YAHOO.env.ua )
 </script>
 {/literal}
 </head>
-<a name="top"></a>

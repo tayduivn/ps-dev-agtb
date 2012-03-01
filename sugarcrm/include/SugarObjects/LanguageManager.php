@@ -39,7 +39,7 @@ class LanguageManager
 	 */
 	function createLanguageFile($module , $templates=array('default'), $refresh = false){
 		global $mod_strings, $current_language;
-		if(!empty($GLOBALS['sugar_config']['developerMode']) || !empty($_SESSION['developerMode'])){
+		if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
         	$refresh = true;
     	}
 		$temp_mod_strings = $mod_strings;

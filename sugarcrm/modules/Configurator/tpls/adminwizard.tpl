@@ -329,7 +329,7 @@ function disableReturnSubmission(e) {
                                 </td>
                                 <td width="30%">
                                      <slot>
-                                     <input type='hidden' name='notify_allow_default_outbound' value='0'>
+                                     <input type="hidden" name="notify_allow_default_outbound" id="notify_allow_default_outbound_hidden_input" value="0">
                                      <input id='notify_allow_default_outbound' name='notify_allow_default_outbound' value="2" tabindex='1' class="checkbox" type="checkbox" {$notify_allow_default_outbound_on}>
                                      </slot>
                                 </td>                

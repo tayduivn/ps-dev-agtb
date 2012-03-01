@@ -106,6 +106,11 @@ class SugarFieldBase {
         {
             $parentFieldArray = $this->setupFieldArray($parentFieldArray, $vardef);
         }
+		else
+        {
+        	$vardef['name'] = strtoupper($vardef['name']);
+        }
+        
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
 
         $this->ss->left_delimiter = '{';

@@ -47,7 +47,7 @@
 				        	<input type='hidden' name='modal_close_search'  id='modal_close_search'>
 							<input class="sqsEnabled"  autocomplete="off" id="tag_name" name='tag_name' type="text" value="{$tag_name}">
 							<input id='tag_id' name='tag_id' type="hidden" value="{$tag_id}" />
-					        <input  title="{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button" tabindex='1' class="button" value='{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}' name='btn_tagss' onclick="javascript:SUGAR.kb.modalInit(); return false;" />
+					        <input  title="{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}"  type="button" tabindex='1' class="button" value='{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}' name='btn_tagss' onclick="javascript:SUGAR.kb.modalInit(); return false;" />
 
 					</td>	  
 					</tr>

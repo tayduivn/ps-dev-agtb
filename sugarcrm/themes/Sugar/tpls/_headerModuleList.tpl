@@ -30,7 +30,7 @@
 <div class="yuimenubar yuimenubarnav" id="moduleList">
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
   {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
-  {if $tabGroupName == 'All'}
+  {if $tabGroupName == $APP.LBL_TABGROUP_ALL}
   {assign var='groupTabId' value=''}
   {else}
   {assign var='groupTabId' value=$tabGroupName$underscore}

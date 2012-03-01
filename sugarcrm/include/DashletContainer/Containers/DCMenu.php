@@ -40,7 +40,7 @@ class DCMenu extends DashletContainer
 
 	    $image = SugarThemeRegistry::current()->getImage($imageName, "class='icon' alt='{$createRecordTitle}' title='{$createRecordTitle}' id='dcMenu_{$module}_quick_create_icon'");
 	    return <<<EOQ
-		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle', true);">{$image}</a></li>
+		<li><a href="#" onclick="if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle', true); return false;">{$image}</a></li>
 EOQ;
 	}
 
@@ -56,10 +56,11 @@ EOQ;
 	    $module = !empty($def['module']) ? $def['module'] : "";
 	    $label = isset($def['label']) ? translate($def['label'], $module) : "";
         $modal = isset($def['modal']) ? $def['modal'] : true;
-	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label', $modal);";
+	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label', $modal); return false;";
 	    $script = isset($def['script_url']) ? '<script type="text/javascript" src="' . $def['script_url'] . '"></script>' : "";
-		$url = "javascript: {$action}";
-        $image = SugarThemeRegistry::current()->getLink($url, $label, 'class="icon"', $imageName, 'border="0"', null, null, $label);
+        $url = "#";
+        $otherAttributes = "onclick=\"{$action}\"";
+        $image = SugarThemeRegistry::current()->getLink($url, $label, $otherAttributes, $imageName, 'class="icon" border="0"', null, null, $label);
 	    return "<li>$script $image</li>";
 	}
 
@@ -81,8 +82,8 @@ EOQ;
                     sugar_cache_put('dcmenu_check_notifications','1');
             }
 
-		$url = "javascript: DCMenu.notificationsList();";
-		$attr = 'class="notice"';
+        $url = "#";
+        $otherAttributes = "onclick=\"DCMenu.notificationsList(); return false;\" class=\"notice\"";
 		if($unreadNotifications > 0) {
 			$iconImage = "dcMenuSugarCube_alert.png";
 			$code = '<div id="notifCount" class="notifCount">'.$unreadNotifications.'</div>';
@@ -93,7 +94,7 @@ EOQ;
 			$class = ' class="none"';
 		}
 
-		$image = SugarThemeRegistry::current()->getLink($url, '', $attr, $iconImage, 'class="dc_notif_icon" border="0" alt="'.$unreadNotifications.' '.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'"');
+		$image = SugarThemeRegistry::current()->getLink($url, '', $otherAttributes, $iconImage, 'class="dc_notif_icon" border="0" alt="'.$unreadNotifications.' '.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'"');
 
 		$notificationsHTML = <<<EOQ
 
@@ -201,8 +202,9 @@ EOQ;
 			$html .= $this->getDynamicMenuItem($def);
 		}
 
-		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
-		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"',null,null,$GLOBALS['app_strings']['LBL_ALT_SPOT_SEARCH']);
+        $url = "#";
+        $otherAttributes = "onclick=\"DCMenu.spot(document.getElementById('sugar_spot_search').value); return false;\"";
+		$iconSearch = SugarThemeRegistry::current()->getLink($url, '', $otherAttributes, "dcMenuSearchBtn.png", 'class="icon" align="top"',null,null,$GLOBALS['app_strings']['LBL_ALT_SPOT_SEARCH']);
 		$html .= <<<EOQ
 		</ul>
 		</div>
@@ -210,8 +212,9 @@ EOQ;
 //BEGIN SUGARCRM flav=sales ONLY
 if(!is_admin($GLOBALS['current_user'])){
 //END SUGARCRM flav=sales ONLY
+$globalSearchAccKey = $GLOBALS['app_strings']['LBL_GLOBAL_SEARCH_LNK_KEY'];
 $html .= <<<EOQ
-		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='enter global search term'></div>
+		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'  title='enter global search term' accesskey='$globalSearchAccKey'></div>
 		<div id="glblSearchBtn">$iconSearch</div>
 EOQ;
 //BEGIN SUGARCRM flav=sales ONLY

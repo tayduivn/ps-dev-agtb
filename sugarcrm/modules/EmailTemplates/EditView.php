@@ -217,7 +217,7 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 
 }
 if(isset($focus->parent_type) && $focus->parent_type != "") {
-    $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."'
+    $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' 
 tabindex='3' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' LANGUAGE=javascript onclick='return
 window.open(\"index.php?module=\"+ document.EditView.parent_type.value +
 \"&action=Popup&html=Popup_picker&form=TasksEditView\",\"test\",\"width=600,height=400,resizable=1,scrollbars=1\");'>";
@@ -273,12 +273,25 @@ if(true) {
 	    //END SUGARCRM flav!=sales ONLY
 	}
 
+    //BEGIN SUGARCRM flav!=sales ONLY
+    // create option of "Contact/Lead/Task" from corresponding module
+    // translations
+    $lblContactAndOthers = implode('/', array(
+        $app_list_strings['moduleListSingular']['Contacts'],
+        $app_list_strings['moduleListSingular']['Leads'],
+        $app_list_strings['moduleListSingular']['Tasks'],
+    ));
+    //END SUGARCRM flav!=sales ONLY
+    //BEGIN SUGARCRM flav=sales ONLY
+    $lblContactAndOthers = $app_list_strings['moduleListSingular']['Contacts'];
+    //END SUGARCRM flav=sales ONLY
+
 	// The insert variable drodown should be conditionally displayed.
 	//BEGIN SUGARCRM flav!=sales ONLY
 	// If it's campaign then hide the Account.
 	if($has_campaign) {
 	    $dropdown="<option value='Contacts'>
-						".$mod_strings['LBL_CONTACT_AND_OTHERS']."
+						".$lblContactAndOthers."
 			       </option>";
 	     $xtpl->assign("DROPDOWN",$dropdown);
 	     $xtpl->assign("DEFAULT_MODULE",'Contacts');
@@ -286,13 +299,13 @@ if(true) {
 	} else {
     //END SUGARCRM flav!=sales ONLY
 	     $dropdown="<option value='Accounts'>
-						".$mod_strings['LBL_ACCOUNT']."
+						".$app_list_strings['moduleListSingular']['Accounts']."
 		  	       </option>
 			       <option value='Contacts'>
-						".$mod_strings['LBL_CONTACT_AND_OTHERS']."
+						".$lblContactAndOthers."
 			       </option>
 			       <option value='Users'>
-						".$mod_strings['LBL_USERS']."
+						".$app_list_strings['moduleListSingular']['Users']."
 			       </option>";
 		$xtpl->assign("DROPDOWN",$dropdown);
 		$xtpl->assign("DEFAULT_MODULE",'Accounts');

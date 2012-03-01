@@ -38,37 +38,37 @@ class Importer
     /**
      * @var ImportFieldSanitizer
      */
-    private $ifs;
+    protected $ifs;
 
     /**
      * @var Currency
      */
-    private $defaultUserCurrency;
+    protected $defaultUserCurrency;
 
     /**
      * @var importColumns
      */
-    private $importColumns;
+    protected $importColumns;
 
     /**
      * @var importSource
      */
-    private $importSource;
+    protected $importSource;
 
     /**
      * @var $isUpdateOnly
      */
-    private $isUpdateOnly;
+    protected $isUpdateOnly;
 
     /**
      * @var  $bean
      */
-    private $bean;
+    protected $bean;
 
     /**
      * @var sugarToExternalSourceFieldMap
      */
-    private $sugarToExternalSourceFieldMap = array();
+    protected $sugarToExternalSourceFieldMap = array();
 
 
     public function __construct($importSource, $bean)
@@ -209,8 +209,10 @@ class Importer
                 /**
                  * Bug #41194 : if true used as value of sync_contact - add curent user to list to sync
                  */
-                if ( true === $rowValue || 'true' == strtolower($rowValue) ) {
-                    $focus->sync_contact = $current_user->id;
+                if ( true == $rowValue || 'true' == strtolower($rowValue)) {
+                    $focus->sync_contact = $focus->id;
+                } elseif (false == $rowValue || 'false' == strtolower($rowValue)) {
+                    $focus->sync_contact = '';
                 } else {
                     $bad_names = array();
                     $returnValue = $this->ifs->synctooutlook($rowValue,$fieldDef,$bad_names);
@@ -219,7 +221,7 @@ class Importer
                         $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
                     if ( !$returnValue )
                     {
-                        $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
+                        $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, $bad_names);
                         $do_save = 0;
                     } else {
                         $focus->sync_contact = $returnValue;
@@ -543,6 +545,10 @@ class Importer
 
         $focus->save(false);
 
+        //now that save is done, let's make sure that parent and related id's were saved as relationships
+        //this takes place before the afterImportSave()
+        $this->checkRelatedIDsAfterSave($focus);
+
         // call any logic needed for the module postSave
         $focus->afterImportSave();
 
@@ -860,4 +866,60 @@ class Importer
             exit(1);
         }
     }
+
+
+    /**
+	 * upon bean save, the relationships are saved by SugarBean->save_relationship_changes() method, but those values depend on
+     * the request object and is not reliable during import.  This function makes sure any defined related or parent id's are processed
+	 * and their relationship saved.
+	 */
+    public function checkRelatedIDsAfterSave($focus)
+    {
+        if(empty($focus)){
+            return false;
+        }
+
+        //check relationship fields first
+        if(!empty($focus->parent_id) && !empty($focus->parent_type)){
+            $relParentName = strtolower($focus->parent_type);
+            $relParentID = strtolower($focus->parent_id);
+        }
+        if(!empty($focus->related_id) && !empty($focus->related_type)){
+            $relName = strtolower($focus->related_type);
+            $relID = strtolower($focus->related_id);
+        }
+
+        //now refresh the bean and process for parent relationship
+        $focus->retrieve($focus->id);
+        if(!empty($relParentName) && !empty($relParentID)){
+
+            //grab the relationship and any available ids
+            if(!empty($focus->$relParentName)){
+                $rel_ids=array();
+                $focus->load_relationship($relParentName);
+                $rel_ids = $focus->$relParentName->get();
+
+                //if the current parent_id is not part of the stored rels, then add it
+                if(!in_array($relParentID, $rel_ids)){
+                    $focus->$relParentName->add($relParentID);
+                }
+            }
+        }
+
+        //now lets process any related fields
+        if(!empty($relName) && !empty($relID)){
+            if(!empty($focus->$relName)){
+                $rel_ids=array();
+                $focus->load_relationship($relName);
+                $rel_ids = $focus->$relName->get();
+
+                //if the related_id is not part of the stored rels, then add it
+                if(!in_array($relID, $rel_ids)){
+                    $focus->$relName->add($relID);
+                }
+            }
+        }
+    }
+
+
 }

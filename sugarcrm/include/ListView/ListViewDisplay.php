@@ -112,7 +112,7 @@ class ListViewDisplay {
         }
 		if(!empty($params['massupdate']) && $params['massupdate'] != false) {
 			$this->show_mass_update_form = true;
-			$this->mass = new MassUpdate();
+			$this->mass = $this->getMassUpdate();
 			$this->mass->setSugarBean($seed);
 			if(!empty($params['handleMassupdate']) || !isset($params['handleMassupdate'])) {
                 $this->mass->handleMassUpdate();
@@ -325,7 +325,7 @@ EOHTML;
         if ( $this->email )
 			$menuItems .= $this->buildComposeEmailLink($this->data['pageData']['offsets']['total']);
 		// mass update
-		$mass = new MassUpdate();
+		$mass = $this->getMassUpdate();
 		$mass->setSugarBean($this->seed);
 		if ( ( ACLController::checkAccess($this->seed->module_dir,'edit',true) && ACLController::checkAccess($this->seed->module_dir,'massupdate',true) ) && $this->showMassupdateFields && $mass->doMassUpdateFieldsExistForFocus() )
             $menuItems .= $this->buildMassUpdateLink();
@@ -681,5 +681,12 @@ EOF;
 		return $str;
 	}
 
+     /**
+     * @return MassUpdate instance
+     */
+    protected function getMassUpdate()
+    {
+        return new MassUpdate();
+    }
 }
 ?>

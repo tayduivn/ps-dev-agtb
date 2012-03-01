@@ -1,4 +1,24 @@
 <?php
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 
 require_once 'include/php-sql-parser.php';
 
@@ -86,6 +106,7 @@ class SugarSQLValidate
 	protected function validateExpression($expr, $allow_some_subqueries = false)
 	{
 	    foreach($expr as $term) {
+	        if(!is_array($term)) continue;
 	        // check subtrees
 	        if(isset($term['expr_type']) &&  $term['expr_type'] == 'subquery') {
 	            if(!$allow_some_subqueries || !$this->allowedSubquery($term)) {
@@ -185,27 +206,47 @@ class SugarSQLValidate
 	}
 
 	/**
-	 * Validate column name
-	 * @param string $name
-	 * @return bool
+	 * validateColumnName
+     * This method validates the column name portion of the SQL statement and returns true if it is deemed safe.
+     * We check against querying for the user_hash column.
+     *
+	 * @param $name String portion of the column name from SQL
+	 * @return boolean True if column name is deemed safe, false otherwise
 	 */
 	protected function validateColumnName($name)
 	{
 	    if($name == ",") return true; // sometimes , gets as column name
 	    $name = strtolower($name); // case does not matter
-	    if(preg_match("/[^a-z0-9._]/", $name)) {
-	        // bad chars in name
-	        return false;
-	    }
+
 	    $parts = explode(".", $name);
 	    if(count($parts) > 2) {
 	        // too many dots
 	        return false;
 	    }
-	    if($parts[0] == "user_hash" || (!empty($parts[1]) && $parts[1] == "user_hash")) {
-	        // this column is verboten
-	        return false;
-	    }
+
+        foreach($parts AS $part)
+        {
+            //the user_hash column is forbidden in passed in SQL
+            if($part == "user_hash")
+            {
+                return false;
+            }
+
+            //Remove leading and trailing ` characters for the part
+            if(preg_match('/^[\`](.+?)[\`]$/', $part, $matches))
+            {
+               $part = $matches[1];
+            }
+
+            //We added an exception for # symbol (see Bug 50324)
+            //This should be removed when Bug 50360 is resolved
+            if(preg_match('/[^a-z0-9._#]/', $part)) {
+                // bad chars in name
+                return false;
+            }
+
+        }
+
 	    return true;
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+ if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -18,14 +18,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *
  ********************************************************************************/
-// require some crucial classes so that the dynamically loaded ones
-// won't break
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
-require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldvarchar.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldint.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFielddatetime.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFielddatetimecombo.php');
-require_once('include/generic/SugarWidgets/SugarWidgetFieldname.php');
-?>
+
+/**
+ * This is a rest entry point for rest version 4
+ */
+chdir('../..');
+require_once('SugarWebServiceImplv4_1.php');
+$webservice_class = 'SugarRestService';
+$webservice_path = 'service/core/SugarRestService.php';
+$webservice_impl_class = 'SugarWebServiceImplv4_1';
+$registry_class = 'registry';
+$location = '/service/v4_1/rest.php';
+$registry_path = 'service/v4_1/registry.php';
+require_once('service/core/webservice.php');

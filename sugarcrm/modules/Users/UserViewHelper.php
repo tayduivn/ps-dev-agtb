@@ -456,7 +456,7 @@ class UserViewHelper {
         $oc_status = $this->bean->getPreference('OfflineClientStatus');
         $this->ss->assign('OC_STATUS', get_select_options_with_id($app_list_strings['oc_status_dom'], $oc_status));
 
-        if(!empty($oc_status)) {
+        if(!empty($oc_status) && isset($app_list_strings['oc_status_dom'][$oc_status])) {
             $this->ss->assign('OC_STATUS_DISPLAY', $app_list_strings['oc_status_dom'][$oc_status]);
         } else {
             $this->ss->assign("OC_STATUS_DISPLAY", '');
@@ -774,7 +774,7 @@ class UserViewHelper {
         if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = false;
         }
-        $this->ss->assign("NEW_EMAIL", getEmailAddressWidget($this->bean, "email1", $this->bean->email1, $this->viewType));
+        $this->ss->assign("NEW_EMAIL",  '<span id="email_span">' . getEmailAddressWidget($this->bean, "email1", $this->bean->email1, $this->viewType) . '</span>');
         // hack to undo that previous hack
         if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = true;

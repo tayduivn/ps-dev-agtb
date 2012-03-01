@@ -266,6 +266,10 @@ class AbstractRelationship
 			$subpanelDefinition [ 'title_key' ] = 'LBL_' . strtoupper ( $relationshipName . '_FROM_' . $sourceModule ) . '_TITLE' ;
 		}
         $subpanelDefinition [ 'get_subpanel_data' ] = $source ;
+        $subpanelDefinition [ 'top_buttons' ] = array(
+		    array('widget_class' => "SubPanelTopButtonQuickCreate"),
+		    array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
+		);
         
         return array ( $subpanelDefinition );
     }
@@ -568,7 +572,7 @@ class AbstractRelationship
      * @param string $ensureUnique 
      * @return string Valid column name trimmed to right length and with invalid characters removed
      */
-    static function getValidDBName ($name, $ensureUnique = false)
+    static function getValidDBName ($name, $ensureUnique = true)
     {
 
         require_once 'modules/ModuleBuilder/parsers/constants.php' ;

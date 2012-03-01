@@ -1786,7 +1786,7 @@ class SugarBean
                 if(!$notify_mail->Send()) {
                     $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
                 }else{
-                    $GLOBALS['log']->fatal("Notifications: e-mail successfully sent");
+                    $GLOBALS['log']->info("Notifications: e-mail successfully sent");
                 }
             }
 
@@ -1834,7 +1834,7 @@ class SugarBean
         if(in_array('set_notification_body', get_class_methods($this))) {
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
-            $xtpl->assign("OBJECT", $this->object_name);
+            $xtpl->assign("OBJECT", translate('LBL_MODULE_NAME'));
             $template_name = "Default";
         }
         if(!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
@@ -3147,6 +3147,11 @@ function save_relationship_changes($is_update, $exclude=array())
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
         require('include/VarDefHandler/listvardefoverride.php');
+        if (file_exists('custom/include/VarDefHandler/listvardefoverride.php'))
+        {
+            require('custom/include/VarDefHandler/listvardefoverride.php');
+        }
+
         $joined_tables = array();
         if(!empty($params['joined_tables']))
         {
@@ -3775,6 +3780,31 @@ function save_relationship_changes($is_update, $exclude=array())
                 if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
                 $temp->call_custom_logic("process_record");
 
+                // fix defect #44206. implement the same logic as sugar_currency_format
+                // Smarty modifier does.
+                if (property_exists($temp, 'currency_id') && -99 == $temp->currency_id)
+                {
+                    // manually retrieve default currency object as long as it's
+                    // not stored in database and thus cannot be joined in query
+                    require_once 'modules/Currencies/Currency.php';
+                    $currency = new Currency();
+                    $currency->retrieve($temp->currency_id);
+
+                    // walk through all currency-related fields
+                    foreach ($temp->field_defs as $temp_field)
+                    {
+                        if (isset($temp_field['type']) && 'relate' == $temp_field['type']
+                            && isset($temp_field['module'])  && 'Currencies' == $temp_field['module']
+                            && isset($temp_field['id_name']) && 'currency_id' == $temp_field['id_name'])
+                        {
+                            // populate related properties manually
+                            $temp_property     = $temp_field['name'];
+                            $currency_property = $temp_field['rname'];
+                            $temp->$temp_property = $currency->$currency_property;
+                        }
+                    }
+                }
+
                 $list[] = $temp;
 
                 $index++;
@@ -4347,15 +4377,20 @@ function save_relationship_changes($is_update, $exclude=array())
      * Fill in a link field
      */
 
-    // fguerra@dri and jmorais@dri - fill in link fields not working
-    function fill_in_link_field( $linkFieldName, $fieldName )
+    function fill_in_link_field( $linkFieldName , $def)
     {
+        $idField = $linkFieldName;
+        //If the id_name provided really was an ID, don't try to load it as a link. Use the normal link
+        if (!empty($this->field_defs[$linkFieldName]['type']) && $this->field_defs[$linkFieldName]['type'] == "id" && !empty($def['link']))
+        {
+            $linkFieldName = $def['link'];
+        }
         if ($this->load_relationship($linkFieldName))
         {
             $list=$this->$linkFieldName->get();
-            $this->$fieldName = '' ; // match up with null value in $this->populateFromRow()
+            $this->$idField = '' ; // match up with null value in $this->populateFromRow()
             if (!empty($list))
-                $this->$fieldName = $list[0];
+                $this->$idField = $list[0];
         }
     }
 
@@ -4380,11 +4415,9 @@ function save_relationship_changes($is_update, $exclude=array())
                     // set the value of this relate field in this bean ($this->$field['name']) to the value of the 'name' field in the related module for the record identified by the value of $this->$field['id_name']
                     $related_module = $field['module'];
                     $id_name = $field['id_name'];
-                    // fguerra@dri and jmorais@dri - fill in link fields not working
-                    if (empty($this->$id_name) && array_key_exists('link', $field)){
-                        $this->fill_in_link_field($field['link'], $id_name);
+                    if (empty($this->$id_name)){
+                       $this->fill_in_link_field($id_name, $field);
                     }
-                    // ~ fguerra@dri and jmorais@dri
                     if(!empty($this->$id_name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id ))){
                         if(isset($GLOBALS['beanList'][ $related_module])){
                             $class = $GLOBALS['beanList'][$related_module];
@@ -4782,11 +4815,11 @@ function save_relationship_changes($is_update, $exclude=array())
                 //cn: if $field is a _dom, detect and return VALUE not KEY
                 //cl: empty function check for meta-data enum types that have values loaded from a function
                 else if (((!empty($value['type']) && ($value['type'] == 'enum' || $value['type'] == 'radioenum') ))  && empty($value['function'])){
-                    if(!empty($app_list_strings[$value['options']][$this->$field])){
+                    if(!empty($value['options']) && !empty($app_list_strings[$value['options']][$this->$field])){
                         $return_array[$cache[$field]] = $app_list_strings[$value['options']][$this->$field];
                     }
                     //nsingh- bug 21672. some modules such as manufacturers, Releases do not have a listing for select fields in the $app_list_strings. Must also check $mod_strings to localize.
-                    elseif(!empty($mod_strings[$value['options']][$this->$field]))
+                    elseif(!empty($value['options']) && !empty($mod_strings[$value['options']][$this->$field]))
                     {
                         $return_array[$cache[$field]] = $mod_strings[$value['options']][$this->$field];
                     }

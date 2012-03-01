@@ -894,6 +894,13 @@ function validate_form(formname, startsWith){
 								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
 							}
 							break;
+                        // Bug #49614 : Check value without trimming before
+						case 'DBNameRaw':
+							if(!isDBName(form[validate[formname][i][nameIndex]].value)){
+								isError = true;
+								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
+							}
+							break;
 						case 'alphanumeric':
 							break;
 						case 'file':
@@ -2785,20 +2792,13 @@ SUGAR.util = function () {
 
 			return el;
 		},
-        paramsToUrl : function (params) {
-            var parts = [], part;
-            for (var i in params)
-            {
-                if (params.hasOwnProperty(i))
-                {
-                    part = encodeURIComponent(i)
-                        + "="
-                        + encodeURIComponent(params[i]);
-                    parts.push(part);
-                }
-            }
-            return parts.join("&");
-        },
+		paramsToUrl : function (params) {
+			url = "";
+			for (i in params) {
+				url += i + "=" + params[i] + "&";
+			}
+			return url;
+		},
 	    evalScript:function(text){
 			if (isSafari) {
 				var waitUntilLoaded = function(){
@@ -2861,7 +2861,7 @@ SUGAR.util = function () {
 					var script = document.createElement('script');
                   	script.type= 'text/javascript';
                   	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:-]*)['"].*/igm;
+						var srcRegex = /.*src=['"]([a-zA-Z0-9_\-\&\/\.\?=:-]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
 						script.src = srcResult;
                   	}else{
@@ -3216,7 +3216,65 @@ SUGAR.util = function () {
                     }
                 }
                 this._doWhenLocked = false;
-            }
+            },
+        buildAccessKeyLabels : function()
+                {
+                    if (typeof(Y.env.ua) !== 'undefined'){
+                        envStr = '';
+                        browserOS = Y.env.ua['os'];
+                        isIE = Y.env.ua['ie'];
+                        isCR = Y.env.ua['chrome'];
+                        isFF = Y.env.ua['gecko'];
+                        isWK = Y.env.ua['webkit'];
+                        isOP = Y.env.ua['opera'];
+                        controlKey = '';
+
+                        //first determine the OS
+                        if(browserOS=='macintosh'){
+                            //we got a mac, lets use the mac specific commands while we check the browser
+                            if(isIE){
+                                //IE on a Mac? Not possible, but let's assign alt anyways for completions sake
+                                controlKey = 'Alt+';
+                            }else if(isWK){
+                                //Chrome or safari on a mac
+                                controlKey = 'Ctrl+Opt+';
+                            }else if(isOP){
+                                //Opera on a mac
+                                controlKey = 'Shift+Esc: ';
+                            }else{
+                                //default FF and everything else on a mac
+                                controlKey = 'Ctrl+';
+                            }
+                        }else{
+                            //this is not a mac so let's use the windows/unix commands while we check the browser
+                            if(isFF){
+                                //FF on windows/unix
+                                controlKey = 'Alt+Shift+';
+                            }else if(isOP){
+                                //Opera on windows/unix
+                                controlKey = 'Shift+Esc: ';
+                            }else {
+                                //this is the default for safari, IE and Chrome
+                                //if this is webkit and is NOT google, then we are most likely looking at Safari
+                                controlKey = 'Alt+';
+                            }
+
+                        }
+
+                        //now lets retrieve all elements of type input
+                        allButtons = document.getElementsByTagName('input');
+                        //iterate through list and modify title if the accesskey is not empty
+                        for(i=0;i<allButtons.length;i++){
+                            if(allButtons[i].getAttribute('accesskey') && allButtons[i].getAttribute('type') && allButtons[i].getAttribute('type')=='button'){
+                                allButtons[i].setAttribute('title',allButtons[i].getAttribute('title')+' ['+controlKey+allButtons[i].getAttribute('accesskey')+']');
+                            }
+                        }
+                        //now change the text in the help div
+			if(typeof(keyboardhelpText) =='string'){
+                                keyboardhelpText = keyboardhelpText.replace(/Alt\+/g,controlKey);
+                        }
+                    }// end if (typeof(Y.env.ua) !== 'undefined')
+                }//end buildAccessKeyLabels()
 	};
 }(); // end util
 SUGAR.util.additionalDetailsCache = new Array();
@@ -4150,16 +4208,10 @@ function set_return(popup_reply_data)
 		var label_str = '';
 		var label_data_str = '';
 		var current_label_data_str = '';
-		var popupConfirm = '';
+		var popupConfirm = popup_reply_data.popupConfirm;
 		for (var the_key in name_to_value_array)
 		{
-			// Bug 48726 Start
-			if (the_key == 'popupConfirm') 
-			{
-				popupConfirm = name_to_value_array[the_key];
-			}
-			// Bug 48726 End
-			else if(the_key == 'toJSON')
+			if(the_key == 'toJSON')
 			{
 				/* just ignore */
 			}
@@ -4179,16 +4231,13 @@ function set_return(popup_reply_data)
 		
         if(label_data_str != label_str && current_label_data_str != label_str){
         	// Bug 48726 Start
-        	if (popupConfirm == 1)
-        	{ 
-        		set_return_basic(popup_reply_data,/\S/);
-        	}
-        	else if (popupConfirm == 0)
+        	if (typeof popupConfirm != 'undefined')
         	{
-
         		if (popupConfirm > -1) {
         			set_return_basic(popup_reply_data,/\S/);
-        		} 
+        		} else {
+        			set_return_basic(popup_reply_data,/account/);
+        		}
         	}
         	// Bug 48726 End
         	else if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
@@ -4478,7 +4527,10 @@ closeActivityPanel: {
                             {
                                 // Bug 45792: Firefox seems to believe reloading a page after an ajax request means you are re-submitting a form and gives you the warning for it.
                                 // So instead, we reload from a timeout
-								window.setTimeout("window.location.reload(true);",0);
+								// window.setTimeout("window.location.reload(true);",0);
+								
+                                // Bug 47068;
+                                window.location.href = 'index.php?return_action=&return_module=&module=' + module + '&action=index&lvso=&select_entire_list=0&' + SUGAR.currentmoduleString + '=' + SUGAR.currentOffset;								
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };

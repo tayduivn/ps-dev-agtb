@@ -57,22 +57,32 @@ class ViewPlugins extends ViewAjax
 
 		$str .= "<tr><td colspan='2' style='padding-left: 10px;'>{$app_strings['LBL_PLUGINS_DESC']}</td></tr>";
 
-		foreach($pluginsCat as $key => $value ){
-		    $pluginImage = SugarThemeRegistry::current()->getImageURL("plug-in_{$key}.gif");
-			$str .= "<tr><td valign='top' width='80' style='padding-right: 10px; padding-left: 10px;'><img src='$pluginImage' alt='$pluginImage'></td>";
-			$str .= "<td><b>{$value['name']}</b><br>";
-			$str .= $value['desc'];
-			$str .= '<ul id="pluginList">';
+        foreach($pluginsCat as $key => $value )
+        {
+      			$pluginImage = SugarThemeRegistry::current()->getImageURL("plug-in_{$key}.gif");
+                $pluginContents = '';
 
-			foreach($plugins as $plugin){
-				$raw_name = urlencode($plugin['raw_name']);
-				$display_name = str_replace('_', ' ' , $plugin['formatted_name']);
-				if(strpos($display_name,$key)!==false) {
-					$str .= "<li><a href='index.php?module=Home&action=DownloadPlugin&plugin=$raw_name'>$display_name</a></li>";
-				}
-			}
-			$str .= '</ul></td></tr>';
-		}
+      			foreach($plugins as $plugin)
+                {
+      				$raw_name = urlencode($plugin['raw_name']);
+      				$display_name = str_replace('_', ' ' , $plugin['formatted_name']);
+      				if(strpos($display_name,$key)!==false)
+                    {
+      					$pluginContents .= "<li><a href='index.php?module=Home&action=DownloadPlugin&plugin={$raw_name}'>{$display_name}</a></li>";
+      				}
+      			}
+
+                //If we have pluginContents value, combine together
+      			if(!empty($pluginContents))
+                {
+                    $str .= "<tr><td valign='top' width='80' style='padding-right: 10px; padding-left: 10px;'><img src='{$pluginImage}' alt='{$pluginImage}'></td>";
+                    $str .= "<td><b>{$value['name']}</b><br>";
+                    $str .= $value['desc'];
+                    $str .= '<ul id="pluginList">';
+                    $str .= $pluginContents;
+                    $str .= '</ul></td></tr>';
+                }
+      	}
 
 		$str .= "</table>";
 

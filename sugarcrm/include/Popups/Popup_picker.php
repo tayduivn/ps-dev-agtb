@@ -141,7 +141,7 @@ class Popup_Picker
 			<input type="hidden" name="to_pdf" value="true">
 			<input type="hidden" name="return_module" value="$currentModule">
 			<input type="hidden" name="return_action" value="Popup">
-			<input type="submit" name="button" class="button" title="$lbl_save_button_title" accesskey="$lbl_save_button_key" value="  $lbl_save_button_label  " />
+			<input type="submit" name="button" class="button" title="$lbl_save_button_title" value="  $lbl_save_button_label  " />
 			<input type="button" name="button" class="button" title="{$app_strings['LBL_CANCEL_BUTTON_TITLE']}" accesskey="{$app_strings['LBL_CANCEL_BUTTON_KEY']}" value="{$app_strings['LBL_CANCEL_BUTTON_LABEL']}" onclick="toggleDisplay('addform');" />
 EOQ;
 			// if metadata contains custom inputs for the quickcreate 
@@ -149,11 +149,11 @@ EOQ;
 				foreach($this->_popupMeta['customInput'] as $key => $value)
 					$formSave .= '<input type="hidden" name="' . $key . '" value="'. $value .'">\n';				
 			}
-
+            $createButtonTranslation = translate($this->_popupMeta['create']['createButton']);
 			$createButton = <<<EOQ
-			<input type="button" id="showAdd" name="showAdd" class="button" value="{$this->_popupMeta['create']['createButton']}" onclick="toggleDisplay('addform');" />
+			<input type="button" id="showAdd" name="showAdd" class="button" value="{$createButtonTranslation}" onclick="toggleDisplay('addform');" />
 EOQ;
-			$addformheader = get_form_header($this->_popupMeta['create']['createButton'], $formSave, false);
+			$addformheader = get_form_header($createButtonTranslation, $formSave, false);
 		}
 		// END CREATE STUFF
 		
@@ -179,8 +179,7 @@ EOQ;
 			$multi_select = true;
 			$button .= "<input type='hidden' name='mode' value='MultiSelect'>";
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back_selected('$currentModule',document.MassUpdate,'mass[]','" .$app_strings['ERR_NOTHING_SELECTED']."', request_data.field_to_name_array);\" title='"
-				.$app_strings['LBL_SELECT_BUTTON_TITLE']."' accesskey='"
-				.$app_strings['LBL_SELECT_BUTTON_KEY']."' value='  "
+				.$app_strings['LBL_SELECT_BUTTON_TITLE']."' value='  "
 				.$app_strings['LBL_SELECT_BUTTON_LABEL']."  ' />\n";
 		}
 
@@ -188,13 +187,11 @@ EOQ;
 		if(!$hide_clear_button)
 		{
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back('','');\" title='"
-				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accesskey='"
-				.$app_strings['LBL_CLEAR_BUTTON_KEY']."' value='  "
+				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' value='  "
 				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' />\n";
 		}
 		$button .= "<input type='submit' name='button' class='button' onclick=\"window.close();\" title='"
-			.$app_strings['LBL_CANCEL_BUTTON_TITLE']."' accesskey='"
-			.$app_strings['LBL_CANCEL_BUTTON_KEY']."' value='  "
+			.$app_strings['LBL_CANCEL_BUTTON_TITLE']."' value='  "
 			.$app_strings['LBL_CANCEL_BUTTON_LABEL']."  ' />\n";
 
 		if(isset($this->_popupMeta['templateForm'])) { 

@@ -83,9 +83,16 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
 		        require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
             	$labelParser = new ParserLabel ( $_REQUEST['view_module'] , isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
             	$labelParser->addLabels($selected_lang, array($_REQUEST['subpanel_title_key'] =>  remove_xss(from_html($_REQUEST['subpanel_title']))), $_REQUEST['view_module']);
-            }
-        }
-        
+            }            
+        } 
+        // Bug 46291 - Missing widget_class for edit_button and remove_button
+        foreach ( $this->_viewdefs as $key => $def )
+        {        
+            if (isset ( $this->_fielddefs [ $key ] [ 'widget_class' ]))
+            {
+                $this->_viewdefs [ $key ] [ 'widget_class' ] = $this->_fielddefs [ $key ] [ 'widget_class' ];
+            } 
+        }         
         $defs = $this->restoreInvisibleFields($this->_invisibleFields,$this->_viewdefs); // unlike our parent, do not force the field names back to upper case
         $defs = $this->makeRelateFieldsAsLink($defs);
         $this->implementation->deploy ($defs);         

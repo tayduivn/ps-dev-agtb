@@ -76,7 +76,7 @@ function getHeaderText($action, $currentModule){
 			$button .= "<input type='hidden' name='contact_name' value='".urlencode($locale->getLocaleFormattedName($this->focus->first_name, $this->focus->last_name))."'>\n";
 			$button .= "<input type='hidden' name='contact_id' value='".$this->focus->id."'>\n";
 		}
-		$button .= "<td><input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_NEW_BUTTON_KEY']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '></td>\n";
+		$button .= "<td><input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' onclick=\"this.form.action.value='EditView'\" type='submit' name='button' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '></td>\n";
 	}
 	if(!$this->hideSelectButton){
 		if ($currentModule == 'Accounts')

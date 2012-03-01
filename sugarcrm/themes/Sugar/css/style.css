@@ -3873,7 +3873,16 @@ span.id-ff.multiple button.button.lastChild{
 }
 
 .id-ff-remove {
-	margin-top: 1px;
+    margin-top: 1px;
+}
+
+button.id-ff-remove {
+    padding: 4px 2px 0;
+}
+
+.button.id-ff-remove img {
+    width: 14px;
+    height: 14px;
 }
 
 /* for the main screen navigation tabs */
@@ -3941,7 +3950,7 @@ border: none;
 }
 
 #moduleList .yuimenu > div.hd{
-background: none transparent;
+background:url(../../../../index.php?entryPoint=getImage&imageName=advanced_search_up.gif) center no-repeat;
 border: 0px none;
 height: 0px;
 }
@@ -4205,6 +4214,7 @@ color: #999;
 }
 
 #moduleList 	.dashletPanelMenu  .ft {
+background:url(../../../../index.php?entryPoint=getImage&imageName=advanced_search.gif) center no-repeat;
 height:22px;
 padding-left: 22px;
 padding-right: 22px;
@@ -6144,4 +6154,8 @@ li.active a img.deletePageImg, li.active a span.deletePageImg {
 .edit508 tr td[scope="col"]
 {
     background-color: #eee;
+}
+
+td.teamset-row {
+    /* */
 }

@@ -733,6 +733,9 @@ SUGAR.mySugar = function() {
 					dashletEntire = document.getElementById('dashlet_entire_' + data.responseText);
 					dd = new ygDDList('dashlet_' + data.responseText); // make it draggable
 					dd.setHandleElId('dashlet_header_' + data.responseText);
+                    // Bug #47097 : Dashlets not displayed after moving them
+                    // add new property to save real id of dashlet, it needs to have ability reload dashlet by id
+                    dd.dashletID = data.responseText;
 					dd.onMouseDown = SUGAR.mySugar.onDrag;  
 					dd.onDragDrop = SUGAR.mySugar.onDrop;
 
@@ -772,11 +775,7 @@ SUGAR.mySugar = function() {
 				SUGAR.mySugar.retrieveDashlet(data.responseText, url, finishRetrieve, true); // retrieve it from the server
 			}
 
-            // Need encoding for web dashlet when address comes with querystring
-            if (type=='web')
-              type_module = encodeURIComponent(type_module);
-
-			var cObj = YAHOO.util.Connect.asyncRequest('GET','index.php?to_pdf=1&module='+module+'&action=DynamicAction&DynamicAction=addDashlet&activeTab=' + activeTab + '&id=' + id+'&type=' + type + '&type_module=' + escape(type_module), 
+			var cObj = YAHOO.util.Connect.asyncRequest('GET','index.php?to_pdf=1&module='+module+'&action=DynamicAction&DynamicAction=addDashlet&activeTab=' + activeTab + '&id=' + id+'&type=' + type + '&type_module=' + encodeURIComponent(type_module), 
 													  {success: success, failure: success}, null);						  
 
 			return false;

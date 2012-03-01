@@ -199,7 +199,7 @@ class Currency extends SugarBean
      		$this->hide = '<!--';
      		$this->unhide = '-->';
      	}
-
+        return $this;
      }
      
     /**

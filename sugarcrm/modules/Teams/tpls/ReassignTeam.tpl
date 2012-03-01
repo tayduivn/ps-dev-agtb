@@ -40,14 +40,14 @@
 <td width="90%">
 <input autocomplete='off' class='sqsEnabled' type='text' name='team_name' id='team_name' size='30' maxlength='' value=''> 
 <input type="hidden"  name='team_id' id='team_id' value=''>
-<input type="button" name="btn_team_name" tabindex="" title="{$APP_STRINGS.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP_STRINGS.LBL_SELECT_BUTTON_KEY}" class="button" value="{$APP_STRINGS.LBL_SELECT_BUTTON_LABEL}" onclick='open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return","form_name":"reassign_team","field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "single", true);'>
-<input type="button" name="btn_clr_team_name" tabindex="" title="{$APP_STRINGS.LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP_STRINGS.LBL_CLEAR_BUTTON_KEY}" class="button" onclick="this.form.team_name.value = ''; this.form.id_team_name.value = '';" value="{$APP_STRINGS.LBL_CLEAR_BUTTON_LABEL}">
+<input type="button" name="btn_team_name" tabindex="" title="{$APP_STRINGS.LBL_SELECT_BUTTON_TITLE}" class="button" value="{$APP_STRINGS.LBL_SELECT_BUTTON_LABEL}" onclick='open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return","form_name":"reassign_team","field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "single", true);'>
+<input type="button" name="btn_clr_team_name" tabindex="" title="{$APP_STRINGS.LBL_CLEAR_BUTTON_TITLE}" class="button" onclick="this.form.team_name.value = ''; this.form.id_team_name.value = '';" value="{$APP_STRINGS.LBL_CLEAR_BUTTON_LABEL}">
 </td>
 </tr>
 </table>
 <br>
 <br>
-<input type="submit" class="button" accesskey="{$MOD_STRINGS.LBL_REASSIGN_TEAM_BUTTON_KEY}" title="{$MOD_STRINGS.LBL_REASSIGN_TEAM_BUTTON_TITLE}" value="{$MOD_STRINGS.LBL_REASSIGN_TEAM_BUTTON_LABEL}" onclick="if(check_form('reassign_team')) {ldelim} return confirm('{$MOD_STRINGS.LBL_CONFIRM_REASSIGN_TEAM_LABEL}'); {rdelim} else {ldelim} return false; {rdelim}">
+<input type="submit" class="button"  title="{$MOD_STRINGS.LBL_REASSIGN_TEAM_BUTTON_TITLE}" value="{$MOD_STRINGS.LBL_REASSIGN_TEAM_BUTTON_LABEL}" onclick="if(check_form('reassign_team')) {ldelim} return confirm('{$MOD_STRINGS.LBL_CONFIRM_REASSIGN_TEAM_LABEL}'); {rdelim} else {ldelim} return false; {rdelim}">
 <input type="submit" class="button" accesskey="{$APP_STRINGS.LBL_CANCEL_BUTTON_KEY}" title="{$APP_STRINGS.LBL_CANCEL_BUTTON_TITLE}" value="{$APP_STRINGS.LBL_CANCEL_BUTTON_LABEL}" onclick="this.form.action.value='index';">
 </form>
 

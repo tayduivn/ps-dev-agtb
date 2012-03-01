@@ -52,10 +52,10 @@ $button .= "<input type='hidden' name='return_module' value='".$currentModule."'
 $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='action'>\n";
-$button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_NEW_BUTTON_KEY']."' class='button' type='button' name='NewWorkFlowActionShells' id='NewWorkFlowActionShells' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."'";
+$button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."'  class='button' type='button' name='NewWorkFlowActionShells' id='NewWorkFlowActionShells' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."'";
 $button .= "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowActionShells&action=CreateStep1&html=CreateStep1&form=ComponentView&form_submit=false&query=true&sugar_body_only=true&workflow_id=$focus->id\",\"new\",\"width=525,height=500,resizable=1,scrollbars=1\");'";
 $button .= ">\n";
-$button .= "<input type='button' name='SelectWorkFlowActionShells' id='SelectWorkFlowActionShells' class='button' title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' onclick='window.open(\"index.php?module=WorkFlowActionShells&action=Popup&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'/>";
+$button .= "<input type='button' name='SelectWorkFlowActionShells' id='SelectWorkFlowActionShells' class='button' title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."'  value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' onclick='window.open(\"index.php?module=WorkFlowActionShells&action=Popup&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'/>";
 $button .= "</form>\n";
 $ListView = new ListView();
 $header_text = '';

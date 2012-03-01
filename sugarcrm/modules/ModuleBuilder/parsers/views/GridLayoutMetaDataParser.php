@@ -555,28 +555,19 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                     //Use the previous viewdef if this field was on it.
 					else if (isset($previousViewDef[$fieldname]))
                 	{
-                		 $newRow [ $colID - $offset ] = $previousViewDef[$fieldname];
-                        //We should copy over the tabindex if it is set.
-                        if (isset ($fielddefs [ $fieldname ]) && !empty($fielddefs [ $fieldname ]['tabindex']))
-                            $newRow [ $colID - $offset ]['tabindex'] = $fielddefs [ $fieldname ]['tabindex'];
+                        $newRow[$colID - $offset] = $this->getNewRowItem($previousViewDef[$fieldname], $fielddefs[$fieldname]);
                 	}
                     //next see if the field was on the original layout.
                     else if (isset ($this->_originalViewDef [ $fieldname ]))
                     {
-                        $newRow [ $colID - $offset ] = $this->_originalViewDef [ $fieldname ] ;  
-                        //We should copy over the tabindex if it is set.
-                        if (isset ($fielddefs [ $fieldname ]) && !empty($fielddefs [ $fieldname ]['tabindex']))
-                            $newRow [ $colID - $offset ]['tabindex'] = $fielddefs [ $fieldname ]['tabindex']; 
+                        $newRow[$colID - $offset] = $this->getNewRowItem($this->_originalViewDef[$fieldname], $fielddefs[$fieldname]);  
                     }
                     //if no matches found for quickcreate view on the previos steps see in editview vardefs
                     else if ($this->_view == MB_QUICKCREATE)
                     { 
                         if (isset($this->_editViewDefs[$fieldname]))
                         {
-                            $newRow [$colID - $offset] = $this->_editViewDefs[$fieldname];
-                            //We should copy over the tabindex if it is set.
-                            if (isset($fielddefs[$fieldname]) && !empty($fielddefs[$fieldname]['tabindex']))
-                            $newRow[$colID - $offset]['tabindex'] = $fielddefs[$fieldname]['tabindex'];
+                            $newRow[$colID - $offset] = $this->getNewRowItem($this->_editViewDefs[$fieldname], $fielddefs[$fieldname]);
                         }
                     }
                 	//Otherwise make up a viewdef for it from field_defs
@@ -608,6 +599,36 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         }
         
         return $panels ;
+    }
+
+    /*
+     * fixing bug #44428: Studio | Tab Order causes layout errors
+     * @param string|array $source it can be a string which contain just a name of field 
+     *                                  or an array with field attributes including name
+     * @param array $fielddef stores field defs from request
+     * @return string|array definition of new row item
+     */
+    function getNewRowItem($source, $fielddef)
+    {
+        //We should copy over the tabindex if it is set.
+        $newRow = array();
+        if (isset ($fielddef) && !empty($fielddef['tabindex']))
+        {
+            if (is_array($source))
+            {
+                $newRow = $source;
+            }
+            else
+            {
+                $newRow['name'] = $source;
+            }
+            $newRow['tabindex'] = $fielddef['tabindex'];
+        }
+        else
+        {
+            $newRow = $source;
+        }
+        return $newRow;
     }
 
     /*

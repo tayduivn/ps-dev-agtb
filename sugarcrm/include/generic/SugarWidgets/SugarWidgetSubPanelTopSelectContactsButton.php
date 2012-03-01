@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelTopSelectButton.php 13782 2006-06-06 17:58:55 +0000 (Tue, 06 Jun 2006) majed $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopSelectButton.php');
+
 
 class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopSelectButton
 {
@@ -48,7 +48,7 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 		$initial_filter = '';
 		
 		$this->title = $app_strings['LBL_SELECT_CONTACT_BUTTON_TITLE'];
-		$this->accesskey = $app_strings['LBL_SELECT_CONTACT_BUTTON_KEY'];
+		//$this->accesskey = $app_strings['LBL_SELECT_CONTACT_BUTTON_KEY'];
 		$this->value = $app_strings['LBL_SELECT_CONTACT_BUTTON_LABEL'];
 		
 		$this->module_name = 'Contacts';		
@@ -58,7 +58,7 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 				$this->title = $app_strings[$this->button_properties['title']];
 			}
 			if( isset($this->button_properties['accesskey'])) {
-				$this->accesskey = $app_strings[$this->button_properties['accesskey']];
+				//$this->accesskey = $app_strings[$this->button_properties['accesskey']];
 			}
 			if( isset($this->button_properties['form_value'])) {
 				$this->value = $app_strings[$this->button_properties['form_value']];
@@ -166,7 +166,6 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 		return '<form action="index.php">' . "\n"
 			. ' <input type="button" name="' .$this->getWidgetId() . '_select_button" id="' .$this->getWidgetId() . '_select_button" class="button"' . "\"\n"
 				. ' title="' . $this->title . '"'
-			. ' accesskey="' . $this->accesskey . '"'
 			. ' value="' . $this->value . "\"\n"
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' /></form>\n";
 	}

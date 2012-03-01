@@ -66,7 +66,6 @@
 		<input type="hidden" name='contact_id' value='{CONTACT.ID}'>
 		<input type="button" name="btn1" class="button"
 			title="{APP.LBL_SELECT_BUTTON_TITLE}"
-			accesskey="{APP.LBL_SELECT_BUTTON_KEY}"
 			value='{APP.LBL_SELECT_BUTTON_LABEL}'
 			onclick='open_popup("Contacts",600,400,"",true,false,{"call_back_function":"set_return","form_name":"EditView","field_to_name_array":{"id":"contact_id","name":"contact_name"}});' />
 	</slot></td>
@@ -76,7 +75,6 @@
 		<input id='instance_id' name='instance_id' type="hidden" value='{DCEINSTANCE.ID}'>
 		<input type="button" name="btn1" class="button"
 			title="{APP.LBL_SELECT_BUTTON_TITLE}"
-			accesskey="{APP.LBL_SELECT_BUTTON_KEY}"
 			value='{APP.LBL_SELECT_BUTTON_LABEL}'
 			onclick='open_popup("DCEInstances",600,400,"",true,false,{"call_back_function":"set_return","form_name":"EditView","field_to_name_array":{"id":"instance_id","name":"dceinstance_name"}});' />
 	</slot></td>
