@@ -45,7 +45,7 @@ testing_module = "{$smarty.request.module}";
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%" id="">
 <tr>
-<td class="buttons" align="left" NOWRAP width="20%">
+<td class="buttons" align="left" NOWRAP>
 <div class="actionsContainer">
 <form action="index.php" method="post" name="DetailView" id="form">
 <input type="hidden" name="module" value="{$module}">
