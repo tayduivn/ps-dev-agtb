@@ -122,6 +122,8 @@
                 var vardefs = beans[beanType]["vardefs"];
                 var fields = vardefs.fields;
                 var relationships = beans[beanType]["relationships"];
+                var sf = {};
+                var handler = null;
 
                 var defaults = null;
                 _.each(_.values(fields), function(field) {
@@ -131,9 +133,15 @@
                         }
                         defaults[field.name] = field["default"];
                     }
+                    if(!_.isUndefined(field["type"])) {
+                        handler = app.sugarFieldManager.getFieldHandler(field["type"]);
+                        if (handler != null)
+                            sf[field.name] = handler;
+                    }
                 });
 
                 var model = this.beanModel.extend({
+                    sugarFields : sf,
                     defaults: defaults,
                     /**
                      * Module name.

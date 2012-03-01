@@ -24,6 +24,7 @@
                         name:"text",
                         text:"textarea"
                     },
+                    fieldHandlers: {},
 
 
                     /**
@@ -99,32 +100,59 @@
 
                     /**
                      * Gets sugarField from cache
-                     *
-                     * @param  object that follows {fname:"xyz", view:"editView"}
+                     * @param name string name of field to retrieve
+                     * @param view string optional name of view the field widget is going to be used on
                      * @return obj of sugar fields stored by fieldname.viewtype
                      */
                     getField:function (name, view) {
                         // init results
-                        var result = {};
+                        var result = {}, field;
 
                         name = this.fieldTypeMap[name] || name;
 
-                        // assign fields to results if set
-                        if (view && this.fieldsObj[name] && this.fieldsObj[name][view]) {
-                            result = this.fieldsObj[name][view];
-                            // fall back to default if field for this view doesnt exist
-                        } else if (this.fieldsObj[name] && this.fieldsObj[name]['default']) {
-                            result = this.fieldsObj[name]['default'];
-                        } else {
+                        if (this.fieldsObj[name])
+                        {
+                            field = this.fieldsObj[name].views || this.fieldsObj[name] ;
+
+                            // assign fields to results if set
+                            if (view && field[view]) {
+                                result = field[view];
+                                // fall back to default if field for this view doesnt exist
+                            } else if (field['default']) {
+                                result = field['default'];
+                            } else {
+                                result = {error:name + ": No such field in field cache."};
+                            }
+                            if (result.template && !result.templateC) {
+                                result.templateC = app.template.get(name + ":" + view);
+                                if (!result.templateC)
+                                    result.templateC = app.template.compile(result.template, name + ":" + view);
+                            }
+                        } else
                             result = {error:name + ": No such field in field cache."};
-                        }
-                        if (result.template && !result.templateC) {
-                            result.templateC = app.template.get(name + ":" + view);
-                            if (!result.templateC)
-                                result.templateC = app.template.compile(result.template, name + ":" + view);
-                        }
                         //return result
                         return result;
+                    },
+
+                    /**
+                     * Get an object that contains the setter and getter functions for this type of it exists
+                     * @param name
+                     */
+                    getFieldHandler:function(name) {
+                        name = this.fieldTypeMap[name] || name;
+                        if (this.fieldsObj[name] && this.fieldsObj[name].handler){
+                            if (typeof(this.fieldsObj[name].handler) == "string") {
+                                try {
+                                    this.fieldsObj[name].handler = eval(this.fieldsObj[name].handler);
+                                }catch(e){
+                                    app.logger.error(e);
+                                }
+                            }
+
+                            return this.fieldsObj[name].handler;
+                        }
+
+                        return null;
                     },
 
                     /**
@@ -138,11 +166,35 @@
                         this.fieldsHash = '';
 
                         return true;
+                    },
+
+                    getFieldClass : {
+
                     }
                 };
             };
 
             return instance || init();
             ;
-        }()))
+        }()));
+
+    //SugarFields are obects that will listen to models and massage the data and handle events on the field
+    app.augment("sugarFields", (function(){
+        function Base(def, model){
+            model.on("change:" + def.name, function(model, value) {
+                console.log(value);
+            });
+        }
+
+        function Name(def, model){
+            var newValue = "";
+            model.on("change:" + def.name, function(model, value) {
+                if (value != newValue) {
+                    newValue = model.first_name + " " + model.last_name;
+                    model.set(def.name, newValue);
+                }
+            });
+        }
+
+    }));
 }(SUGAR.App));

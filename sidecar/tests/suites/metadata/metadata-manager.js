@@ -58,7 +58,7 @@ describe('metadata', function () {
                 name:'varchar',
                 view:'editView'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.editView);
+        })).toBe(sugarFieldsFixtures.fieldsData.text.views.editView);
     });
 
     it('gets a specific sugarfield defaulted to default if the view does not exist', function () {
@@ -67,6 +67,6 @@ describe('metadata', function () {
                 name:'varchar',
                 view:'thisViewDoesntExist'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.default);
+        })).toBe(sugarFieldsFixtures.fieldsData.text.views["default"]);
     });
 });
