@@ -66,12 +66,7 @@
     // _models[module].beans - hash of bean models
     // _models[module].collections - hash of bean collections
     var _models;
-    var _serverProxy = SUGAR.Api.getInstance();
-    // Backbone.js sync methods correspond to Sugar API functions except "read/get" :)
-    _serverProxy.read = function(model, attributes, params, callbacks) {
-        return this.get(model, attributes, params, callbacks);
-    }
-
+    var _serverProxy;
     var _dataManager = {
 
         /**
@@ -89,7 +84,16 @@
          * Initializes data manager.
          */
         init: function() {
+            _serverProxy = app.api;
+            // Backbone.js sync methods correspond to Sugar API functions except "read/get" :)
+            _serverProxy.read = function(model, attributes, params, callbacks) {
+                return this.get(model, attributes, params, callbacks);
+            }
+
             Backbone.sync = this.sync;
+
+            // TODO: Right now the metadata is hardcoded, but should be changed to pull from metadata manager
+            this.declareModels(fixtures.metadata);
         },
 
         /**
@@ -122,6 +126,8 @@
                 var vardefs = beans[beanType]["vardefs"];
                 var fields = vardefs.fields;
                 var relationships = beans[beanType]["relationships"];
+                var sf = {};
+                var handler = null;
 
                 var defaults = null;
                 _.each(_.values(fields), function(field) {
@@ -131,9 +137,15 @@
                         }
                         defaults[field.name] = field["default"];
                     }
+                    if(!_.isUndefined(field["type"])) {
+                        handler = app.sugarFieldManager.getFieldHandler(field["type"]);
+                        if (handler != null)
+                            sf[field.name] = handler;
+                    }
                 });
 
                 var model = this.beanModel.extend({
+                    sugarFields : sf,
                     defaults: defaults,
                     /**
                      * Module name.
@@ -400,9 +412,7 @@
             else {
                 // TODO: Deal with relationships
             }
-
         }
-
     };
 
     app.augment("dataManager", _.extend(_dataManager, Backbone.Events), false);

@@ -97,6 +97,8 @@ class MetaDataManager {
             $data[$modName] = $this->getDataCollection($modName);
         }
 
+        $data['SugarFields'] = $this->getSugarFields();
+
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["md5"] = $md5;
@@ -138,8 +140,6 @@ class MetaDataManager {
             $types = $tmptypes;
             $tmptypes = null;
         }
-
-        //print_r($types); die;
 
         foreach ($types as $viewType => $viewAccessor) {
             $data[$viewType] = array();
@@ -224,6 +224,11 @@ class MetaDataManager {
                     }
                 }
             }
+        }
+
+        $keys = array_keys($vardefs);
+        if (count($keys) > 0) {
+            $data["beans"]["primary_bean"] = $keys[0];
         }
 
         $md5 = serialize($data);
@@ -349,4 +354,89 @@ class MetaDataManager {
 
         return $data;
     }
+
+
+    /**
+     * gets sugar fields
+     *
+     * @return array array of sugarfields with
+     */
+    public function getSugarFields()
+    {
+        $fieldFileTypes2meta = array('hbt'=>'template','js'=>'js');
+        $result = array();
+        $fieldsDirectory = "include/SugarFields/PortalFields/";
+        // get list of portal fields
+        $portalFiles = $this->getFiles($fieldsDirectory);
+
+        foreach ($portalFiles as $finfo) {
+            $build = false;
+            $fieldMeta = '';
+
+            // get file info
+            $fieldName = array_pop(explode('/', $finfo['dirname']));
+            $fileExtension = $finfo['extension'];
+            $action=$finfo["filename"];
+
+            // check if we want this file
+            if (in_array($fileExtension, array_keys($fieldFileTypes2meta))) {
+                $build = true;
+                $fieldMeta = $fieldFileTypes2meta[$fileExtension];
+            }
+
+            // add it to result if we want it
+            if ($build) {
+                $fcontents = file_get_contents($finfo["dirname"]."/".$finfo["basename"]);
+                if (!isset($result[$fieldName])) {
+                    $result[$fieldName] = array('views'=>array());
+                }
+                if (!isset($result[$fieldName]['views'][$action]) && strtolower($action) != strtolower($fieldName)) {
+                    $result[$fieldName]['views'][$action] = array();
+                }
+
+                if (strtolower($action) != strtolower($fieldName)){
+                    $result[$fieldName]['views'][$action] = array_merge($result[$fieldName]['views'][$action], array($fieldMeta=>$fcontents)) ;
+                } else {
+                    $result[$fieldName]['handler'] = $fcontents ;
+                }
+
+            }
+
+            $result['md5'] = md5(serialize($result));
+        }
+        return $result;
+    }
+
+
+    /**
+     * return files from a directory recursively
+     *
+     * @param $directory
+     * @param array $exempt full file names to ignore
+     * @param array $files
+     * @param array $exempt_extensions file extensions to ignore
+     * @return array
+     */
+    private function getFiles($directory, $exempt = array('.', '..', '.ds_store', '.svn'), &$files = array(), $exempt_extensions = array('tpl', 'php'))
+    {
+        $handle = opendir($directory);
+        while (false !== ($resource = readdir($handle))) {
+            if (!in_array(strtolower($resource), $exempt)) {
+                if (is_dir($directory . $resource . '/')) {
+                    array_merge($files,
+                        $this->getFiles($directory . $resource . '/', $exempt, $files));
+                }
+                else {
+                    $resourceParts = explode('.', $resource);
+                    $extension = end($resourceParts);
+                    if ($extension && !in_array($extension, $exempt_extensions)) {
+                        $files[] = pathinfo($directory . $resource);
+                    }
+                }
+            }
+        }
+        closedir($handle);
+        return $files;
+    }
+
 }

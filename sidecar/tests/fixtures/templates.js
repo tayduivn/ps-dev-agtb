@@ -13,13 +13,13 @@ fixtures.templates = {
         "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
         "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-                "{{sugar_field ../context ../name ../model}}" +
+                "{{sugar_field ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-                "<div>{{sugar_field ../../context ../../name}}</div>" +
+                "<div>{{sugar_field ../../context ../../this}}</div>" +
             "{{/each}}" +
             "</div>" +
         "{{/each}}</form>",
@@ -27,13 +27,13 @@ fixtures.templates = {
         "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
         "<form name='{{name}}' class='well'>" +
         "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../name ../model}}" +
+            "{{sugar_field ../context ../this ../model}}" +
         "{{/each}}" +
         "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-                "<div>{{sugar_field ../../context ../../name}}</div>" +
+                "<div>{{sugar_field ../../context ../../this}}</div>" +
             "{{/each}}" +
             "</div>" +
         "{{/each}}</form>",
@@ -53,7 +53,7 @@ fixtures.templates = {
                 '{{#each ../fields}}' +
                     // SugarField requires the current context, field name, and the current bean in the context
                     // since we are pulling from the collection rather than the default bean in the context
-                    '<td>{{sugar_field ../../../context ../../../name ../this}}</td>' +
+                    '<td>{{sugar_field ../../../context ../../../this ../this}}</td>' +
                 '{{/each}}' +
                 '</tr>' +
             '{{/each}}' +

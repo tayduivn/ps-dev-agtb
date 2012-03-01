@@ -9,9 +9,10 @@
          */
         var Layout = {
             init:function (args) {
+                var sfid = 0;
                 //Register Handlebars helpers
                 Handlebars.registerHelper('sugar_field', function(context, view, bean) {
-                    var ftype, sf;
+                    var ftype, sf, ret, viewName = view.name;
                     //If bean was not specified, the third parameter will be a hash
                     if (!bean || !bean.fields)
                         bean = context.get("model");
@@ -22,16 +23,23 @@
                         return "";
                     }
                     ftype = this.type || bean.fields[this.name].type;
-                    sf = app.metadata.get({"sugarField":{"name": ftype, "view":view}});
+                    sf = app.metadata.get({"sugarField":{"name": ftype, "view":viewName}});
                     if (sf.error)
                         return sf.error;
                     this.value = bean.get(this.name);
                     this.model = bean;
-                    this.view = view;
+                    this.view = viewName;
                     this.model = bean;
                     this.context = context;
+
+                    ret = sf.templateC(this);
+                    //Event binding will require wrapping the field
+                    if (this.events) {
+                        ret = '<span sfuuid="' + (++sfid) + '">' + ret + '</span>';
+                        view.fieldIDs[this.name] = sfid;
+                    }
                     try {
-                        return new Handlebars.SafeString(sf.templateC(this));
+                        return new Handlebars.SafeString(ret);
                     } catch(e) {
                         app.logger.error("Sugar Field: Unable to execute template for field " + ftype + " on view " + this.name + ".\n" + e.message);
                     }
@@ -59,12 +67,7 @@
                         route = module;
                     }
 
-                    console.log(module);
-                    console.log(id);
-                    console.log(action);
-                    console.log(route);
-
-                    if (options.params) {
+                   	if (options.params) {
                         route += "?" + $.param(options.params);
                     }
 
@@ -149,6 +152,7 @@
                 this.$el.addClass("view " + (options.className || this.name));
                 this.template = options.template || app.template.get(this.name, this.context.get("module"));
                 this.meta = options.meta;
+                this.fieldIDs = {};
                 //Bind will cause the view to automatically try to link form elements to attributes on the model
                 this.autoBind = options.bind || true;
 
@@ -164,8 +168,6 @@
                     if (this.autoBind && this.context && this.context.get("model"))
                     {
                         this.bind(this.context);
-                    } else {
-                        console.log("not binding");
                     }
                 } catch(e) {
                     app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
@@ -174,8 +176,10 @@
             },
             bind : function(context) {
                 var model = context.get("model");
-                _.each(model.attributes, function(value, field) {
+                _.each(model.fields, function(def, field) {
                     var el = this.$el.find('input[name="' + field + '"],span[name="' + field + '"]');
+                    if (!el[0] && this.fieldIDs[field])
+                        el = this.$el.find('span[sfuuid="' + this.fieldIDs[field] + '"]');
                     if (el.length > 0){
                         //Bind input to the model
                         el.on("change", function(ev){
@@ -188,6 +192,11 @@
                             else
                                 el.html(value);
                         });
+                        _.each(def.events, function(event, fn){
+                            if (typeof(fn) == "string")
+                                fn = eval(fn);
+                            el.on(event, null, this, fn);
+                        }, this);
                     }
                 }, this)
             },
@@ -242,7 +251,12 @@
 
                 _.each(this.meta.components, function (def) {
                     var context = def.context ? this.context.getRelatedContext(def.context) : this.context;
-                    var module = def.module || context.get("module") || this.module;
+                    var module = def.module || context.get("module");
+                    //If the context wasn't specified in the def, use the parent layouts module
+                    // (even if that isn't the module of the current context)
+                    if (!def.context)
+                        module = this.module;
+
                     if (def.view) {
                         this.addComponent(app.layout.get({
                             context:context,

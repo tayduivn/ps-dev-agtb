@@ -1,5 +1,5 @@
 <?php
-
+if (!defined('sugarEntry')) define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,10 +27,37 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ *  This is a simple interface for all Rest objects to impelment.  Using this will
+ *  allow your objects to be used by the RestFactory.  This is a requirement for any
+ *  new rest object along with extending the RestObject class.
+ *
+ */
 interface IRestObject {
 
+    /**
+     * This method is called to execute the functionality for any class that impls this
+     * interface.
+     *
+     * @abstract
+     *
+     */
     function execute();
+
+    /**
+     * This method sets the classes ref to the processed URI data.
+     *
+     * @abstract
+     * @param $data, this is the URI data from the HTTP request.
+     */
     function setURIData($data);
+
+    /**
+     * This method returns the classes URI data which was already processed.
+     *
+     * @abstract
+     *
+     */
     function getURIData();
 
 }

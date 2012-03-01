@@ -39,7 +39,7 @@
     var _getSugarField = function (field) {
 
         // init results
-        var result = {};
+        var result, views;
 
         var name = fieldTypeMap[field.name] || field.name;
 
@@ -53,16 +53,23 @@
             _metadata.sugarFields[name] = app.cache.get("metadata.sugarFields." + field.name);
         }
 
-        // assign fields to results if set
-        if (field.view && _metadata.sugarFields[name] && _metadata.sugarFields[name][field.view]) {
-            result = _metadata.sugarFields[name][field.view];
-            // fall back to detailview if field for this view doesnt exist
-        } else if (_metadata.sugarFields[name] && _metadata.sugarFields[name]['default']) {
-            result = _metadata.sugarFields[name]['default'];
-            //fall back to base field detailview if none of the above exist
-        } else if (_metadata.sugarFields['base'] && _metadata.sugarFields['base']['default']) {
+        if (_metadata.sugarFields[name]) {
+            views = _metadata.sugarFields[name].views || _metadata.sugarFields[name];
+            // assign fields to results if set
+            if (field.view && views[field.view]) {
+                result = views[field.view];
+                // fall back to detailview if field for this view doesnt exist
+            } else if (views && views['default']) {
+                result = views['default'];
+                //fall back to base field detailview if none of the above exist
+            }
+        }
+
+        if (!result && _metadata.sugarFields['base'] && _metadata.sugarFields['base']['default']) {
             result = _metadata.sugarFields['base']['default'];
-        } else {
+        }
+        //Could not get valid view data for this field
+        else if (!result){
             app.Sync();
             return null;
         }
@@ -177,6 +184,30 @@
                 _metadata[module] = entry;
                 app.cache.set("metadata." + module, entry);
             });
+        },
+
+        /**
+         * Called during initialization phase
+         * TODO: Right now metadata is hardcoded, replace with actual from api later
+         * @method
+         * @private
+         */
+        init: function() {
+            app.api.debug = true;
+            var self = this;
+
+//            app.api.getMetadata([],[], {
+//                success: function(metadata) {
+//                    self.set({sugarFields:sugarFieldsFixtures.fieldsData});
+//                    self.set(metadata);
+//                },
+//                error: function() {
+//                    console.log("Error");
+//                }
+//            });
+
+            this.set({sugarFields:sugarFieldsFixtures.fieldsData});
+            this.set(fixtures.metadata);
         }
     })
 })(SUGAR.App);

@@ -68,39 +68,39 @@ class RestUtils {
     public static function isValidJson($src) {
         $data = json_decode($src, true);
         $result = array(
-            "err" => false,
+            "err" => 0,
             "err_str" => "",
             "data" => null
         );
 
         switch(json_last_error()) {
             case JSON_ERROR_NONE:
-                $result["err"] = false;
+                $result["err"] = 0;
                 $result["data"] = $data;
             break;
 
             case JSON_ERROR_STATE_MISMATCH:
-                $result["err"] = true;
+                $result["err"] = 1;
                 $result["err_str"] = "JSON: Invalid or malformed JSON";
             break;
 
             case JSON_ERROR_CTRL_CHAR:
-                $result["err"] = true;
+                $result["err"] = 1;
                 $result["err_str"] = "JSON: Control character error, possibly incorrectly encoded";
             break;
 
             case JSON_ERROR_SYNTAX:
-                $result["err"] = true;
+                $result["err"] = 1;
                 $result["err_str"] = "JSON: Syntax error";
             break;
 
             case JSON_ERROR_DEPTH:
-                $result["err"] = true;
+                $result["err"] = 1;
                 $result["err_str"] = "JSON: The maximum stack depth has been exceeded";
             break;
 
             default:
-                $result["err"] = true;
+                $result["err"] = 1;
                 $result["err_str"] = 'JSON: Unknown Error';
             break;
         }
