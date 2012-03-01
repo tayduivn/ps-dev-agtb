@@ -158,9 +158,10 @@
             if (params && params.sugarField) {
                 return _getSugarField(params.sugarField);
             }
+
+            // If no parameters are passed in, we return the whole metadata
             if (!params || !params.module) {
-                app.logger.error("No module provided to metadata.get");
-                return null;
+                return _metadata;
             }
             if (!params.type)
                 return _get(params.modules);
@@ -188,26 +189,23 @@
 
         /**
          * Called during initialization phase
-         * TODO: Right now metadata is hardcoded, replace with actual from api later
          * @method
          * @private
          */
         init: function() {
-            app.api.debug = true;
             var self = this;
+            app.api.debug = true;
 
-//            app.api.getMetadata([],[], {
-//                success: function(metadata) {
-//                    self.set({sugarFields:sugarFieldsFixtures.fieldsData});
-//                    self.set(metadata);
-//                },
-//                error: function() {
-//                    console.log("Error");
-//                }
-//            });
-
-            this.set({sugarFields:sugarFieldsFixtures.fieldsData});
-            this.set(fixtures.metadata);
+            app.api.getMetadata([],[], {
+                success: function(metadata) {
+                    self.set({sugarFields: sugarFieldsFixtures.fieldsData}); // TODO: Right now metadata is hardcoded, replace with actual from api later
+                    self.set(metadata);
+                },
+                error: function(o) {
+                    console.log("Error");
+                    console.log(o);
+                }
+            });
         }
     })
 })(SUGAR.App);

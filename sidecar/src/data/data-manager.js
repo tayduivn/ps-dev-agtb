@@ -93,6 +93,7 @@
             Backbone.sync = this.sync;
 
             // TODO: Right now the metadata is hardcoded, but should be changed to pull from metadata manager
+//            this.declareModels(app.metadata.get());
             this.declareModels(fixtures.metadata);
         },
 
