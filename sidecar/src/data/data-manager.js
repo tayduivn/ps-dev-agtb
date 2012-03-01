@@ -71,7 +71,7 @@
 
         /**
          * Reference to the base bean model class. Defaults to {@link Bean}.
-         * @type {Bean} [beanModel=
+         * @type {Bean}
          */
         beanModel: app.Bean,
         /**
@@ -91,10 +91,6 @@
             }
 
             Backbone.sync = this.sync;
-
-            // TODO: Right now the metadata is hardcoded, but should be changed to pull from metadata manager
-//            this.declareModels(app.metadata.get());
-            this.declareModels(fixtures.metadata);
         },
 
         /**
@@ -400,15 +396,25 @@
         sync: function(method, model, options) {
             app.logger.trace('remote-sync-' + method + ": " + model);
 
-            var callbacks = {
-                success: options ? options.success : null,
-                error: options ? options.error : null
+            options || (options = {});
+
+            var success = function(data) {
+                if (options.success) {
+                    if ((method == "read") && (model instanceof app.BeanCollection)) {
+                        data = data.records;
+                        // TODO: Set pagination properties on the collection
+                    }
+                    options.success(data);
+                }
             };
 
-            var params = options ? options.params : null;
+            var callbacks = {
+                success: success,
+                error: options.error
+            };
 
             if (model instanceof app.Bean || model instanceof app.BeanCollection) {
-                _serverProxy[method](model.module, model.attributes, params, callbacks);
+                _serverProxy[method](model.module, model.attributes, options.params, callbacks);
             }
             else {
                 // TODO: Deal with relationships
