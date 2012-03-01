@@ -37,7 +37,8 @@ fixtures.metadata = {
                         },
                         "full_name":{
                             "name":"full_name",
-                            "type":"varchar"
+                            "type":"varchar",
+                            "concat" : ["first_name", "last_name"]
                         }
                     }
                 },
@@ -62,7 +63,13 @@ fixtures.metadata = {
                         label:"Cancel",
                         value:"cancel",
                         route:{
-                            action:"detail"
+                            action:"detail",
+                            module: "Contacts"
+                        },
+                        events : {
+                            click : "SUGAR.App.myExtension.callback",
+                            drag: "",
+                            foo : 'function(e){console.log(this)}'
                         },
                         primary:false
                     }
@@ -71,7 +78,7 @@ fixtures.metadata = {
                     {
                         "label":"Details",
                         "fields":[
-                            {name:"first_name", label:"First Name"},
+                            {name:"first_name", label:"First Name", "class":"foo"},
                             {name:"last_name", label:"Last Name"},
                             {name:"phone_work", label:"Phone"},
                             {name:"email1", label:"Email"}

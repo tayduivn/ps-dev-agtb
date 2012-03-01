@@ -185,4 +185,33 @@ describe("DataManager", function() {
     });
 
 
+    it("should use getters and setters for sugar fields", function() {
+        var moduleName = "Contacts";
+        //Declare the SugarField text type handler
+        var handler = {
+            get : function(model, field) {
+                return model.attributes[field];
+            },
+            set : function(model, field, value) {
+                return value;
+            }
+        };
+        var getSpy = sinon.spy(handler, "get");
+        var setSpy = sinon.spy(handler, "set");
+        var stubGFH = sinon.stub(app.sugarFieldManager, "getFieldHandler");
+        stubGFH.withArgs("varchar").returns(handler);
+
+        dm.declareModel(moduleName, metadata[moduleName]);
+
+        var bean = dm.createBean(moduleName, { first_name: "test", last_name: "more"});
+        bean.set("first_name", "bar");
+        expect(bean.get("first_name")).toBe("bar");
+        expect(getSpy.called).toBeTruthy();
+        expect(setSpy.called).toBeTruthy();
+
+        stubGFH.restore();
+    });
+
+
+
 });
