@@ -196,16 +196,18 @@
             app.api.debug = true;
             var self = this;
 
-            app.api.getMetadata([],[], {
-                success: function(metadata) {
-                    this.set({sugarFields:sugarFieldsFixtures.fieldsData});
-                    this.set(metadata);
-                },
-                error: function() {
-                    console.log("Error");
-                }
-            });
+//            app.api.getMetadata([],[], {
+//                success: function(metadata) {
+//                    self.set({sugarFields:sugarFieldsFixtures.fieldsData});
+//                    self.set(metadata);
+//                },
+//                error: function() {
+//                    console.log("Error");
+//                }
+//            });
 
+            this.set({sugarFields:sugarFieldsFixtures.fieldsData});
+            this.set(fixtures.metadata);
         }
     })
 })(SUGAR.App);

@@ -110,8 +110,9 @@
 
 		<script language="javascript">
 			var syncResult, view, layout, html;
+
 			//Fake a field list
-            SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
+//            SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
 //			var i = SUGAR.Api.getInstance();
 //			i.debug = true;
 
@@ -121,10 +122,10 @@
 //			App.metadata.set(fixtures.metadata);
 
 			//Need a sample Bean
-			this.collection = App.dataManager.fetchBeans('Contacts',{});
-			this.bean = this.collection.models[0];
+//			this.collection = App.dataManager.fetchBeans('Contacts',{});
+//			this.bean = this.collection.models[0];
 
-			App.controller.data = {"collection" : this.collection, "model" : this.bean};
+//			App.controller.data = {"collection" : this.collection, "model" : this.bean};
 
 //			App.controller.start();
 
