@@ -525,7 +525,6 @@ div.moduleTitle
     float: left;
 	color: #666;
 	font-size: 18px;
-	padding-left: 4px;
 	padding-top: 7px;
 	font-weight: normal;
 	
@@ -538,7 +537,7 @@ text-decoration: none;
 }
 
 .moduleTitle h2 span.pointer {
-padding: 0px 0px;
+padding: 0px 10px;
 font-size: 18px;
 line-height: 16px;
 
