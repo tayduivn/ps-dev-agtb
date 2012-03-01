@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -24,8 +23,9 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 require_once 'modules/Quotes/Quote.php';
 
@@ -37,9 +37,6 @@ class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setup()
     {
-        $this->markTestIncomplete('This test breaks on Oracle due to line 74.  Working with Asuharev and MGusev to fix');
-        return;
-
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
@@ -72,13 +69,13 @@ class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
         $this->quote->billing_contact_id = $this->contact1->id;
         $this->quote->save();
         
-        $query = "SELECT count(*) as CNT FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Ship To'";
+        $query = "SELECT count(*) as cnt FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Ship To'";
         $result = $GLOBALS['db']->fetchOne($query);
-        $this->assertEquals(1, $result['CNT']);
+        $this->assertEquals(1, $result['cnt']);
         
-        $query = "SELECT count(*) as CNT FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Bill To'";
+        $query = "SELECT count(*) as cnt FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Bill To'";
         $result = $GLOBALS['db']->fetchOne($query);
-        $this->assertEquals(1, $result['CNT']);
+        $this->assertEquals(1, $result['cnt']);
         
         $this->quote->shipping_contact_name = $this->contact2->name;
         $this->quote->shipping_contact_id = $this->contact2->id;
@@ -86,13 +83,13 @@ class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
         $this->quote->billing_contact_id = $this->contact2->id;
         $this->quote->save();
 
-        $query = "SELECT count(*) as CNT FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Ship To'";
+        $query = "SELECT count(*) as cnt FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Ship To'";
         $result = $GLOBALS['db']->fetchOne($query);
-        $this->assertEquals(1, $result['CNT']);
+        $this->assertEquals(1, $result['cnt']);
         
-        $query = "SELECT count(*) as CNT FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Bill To'";
+        $query = "SELECT count(*) as cnt FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Bill To'";
         $result = $GLOBALS['db']->fetchOne($query);
-        $this->assertEquals(1, $result['CNT']);
+        $this->assertEquals(1, $result['cnt']);
         
         $this->quote->shipping_contact_name = $this->contact1->name;
         $this->quote->shipping_contact_id = $this->contact1->id;
@@ -100,12 +97,12 @@ class Bug49719Test extends Sugar_PHPUnit_Framework_TestCase
         $this->quote->billing_contact_id = $this->contact1->id;
         $this->quote->save();
         
-        $query = "SELECT count(*) as CNT FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Ship To'";
+        $query = "SELECT count(*) as cnt FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Ship To'";
         $result = $GLOBALS['db']->fetchOne($query);
-        $this->assertEquals(1, $result['CNT']);
+        $this->assertEquals(1, $result['cnt']);
         
-        $query = "SELECT count(*) as CNT FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Bill To'";
+        $query = "SELECT count(*) as cnt FROM quotes_contacts WHERE quote_id = '{$this->quote->id}' AND deleted = 0 AND contact_role = 'Bill To'";
         $result = $GLOBALS['db']->fetchOne($query);
-        $this->assertEquals(1, $result['CNT']);
+        $this->assertEquals(1, $result['cnt']);
     }
 }
