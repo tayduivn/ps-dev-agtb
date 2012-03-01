@@ -216,43 +216,9 @@ function got_data(args, inline)
 		var child_field = request_map[args.request_id].toLowerCase();
 		if(inline){
 
-			//CCL - 21752
-			//if this is an inline operation, get the original buttons in the td element
-			//so that we may replace them later
-			buttonHTML = '';
-			trEls = list_subpanel.getElementsByTagName('tr');
-			if(trEls && trEls.length > 0) {
-				for(x in trEls) {
-					if(trEls[x] && trEls[x].className == 'pagination') {
-					   tableEls = trEls[x].getElementsByTagName('table');
-					   tdEls = tableEls[0].getElementsByTagName('td');
-					   span = tdEls[0].getElementsByTagName('span');
-					   if(span) {
-					      buttonHTML = span[0].innerHTML;
-					   }
-					   break;
-					}
-				}
-			}
-
 			child_field_loaded[child_field] = 2;
 			list_subpanel.innerHTML='';
-			list_subpanel.innerHTML=args.responseText;
-
-			//now if the trPagination element is set then let's replace the new tr element with this
-			if(buttonHTML != '') {
-				list_subpanel = document.getElementById('list_subpanel_'+request_map[args.request_id].toLowerCase());
-				trEls = list_subpanel.getElementsByTagName('tr');
-				for(x in trEls) {
-					if(trEls[x] && trEls[x].className == 'pagination') {
-					   tableEls = trEls[x].getElementsByTagName('table');
-					   tdEls = tableEls[0].getElementsByTagName('td');
-					   span = tdEls[0].getElementsByTagName('span');
-					   span[0].innerHTML = buttonHTML;
-					   break;
-					}
-				}
-			}
+			list_subpanel.innerHTML=args.responseText;			
 
 		} else {
 			child_field_loaded[child_field] = 1;
@@ -277,6 +243,10 @@ function got_data(args, inline)
 			//hideSubPanel(current_child_field);
 		}
 		current_child_field = child_field;
+		//reinit action menus
+		$("ul.clickMenu").each(function(index, node){
+	  		$(node).sugarActionMenu();
+	  	});
 	}
 }
 
@@ -482,6 +452,32 @@ SUGAR.subpanelUtils = function() {
          * @param loadingStr
          */
 		sendAndRetrieve: function(theForm, theDiv, loadingStr) {
+            // look whether a quick create form is currently opened
+            var quickCreateDiv = YAHOO.util.Selector.query("div.quickcreate", null, true);
+            if (quickCreateDiv)
+            {
+                var form = YAHOO.util.Selector.query("form", quickCreateDiv, true);
+                if (form)
+                {
+                    // discover cancelCreate function parameters needed
+                    var moduleName = form.id.replace(/.*?_([^_]+)$/, "$1");
+                    var buttonName = moduleName + "_subpanel_cancel_button";
+                    var cancelled  = false;
+
+                    // try to cancel form submission
+                    SUGAR.subpanelUtils.cancelCreate(buttonName, function()
+                    {
+                        cancelled = true;
+                    });
+
+                    // if submission cancellation was cancelled, do nothing
+                    if (cancelled)
+                    {
+                        return false;
+                    }
+                }
+            }
+
 			function success(data) {
 				var theDivObj = document.getElementById(theDiv),
                     divName = theDiv + '_newDiv',
@@ -532,7 +528,13 @@ SUGAR.subpanelUtils = function() {
 			return false;
 		},
 
-		cancelCreate: function(buttonName) {
+        // as long as formerly the function used to be always returning false,
+        // there was no possibility to determine, was the creation cancelled or not.
+        // we couldn't modify function return value in case of user cancels the
+        // cancellation as long as it (false) is used in multiple places to
+        // prevent DOM event propagation. thus, cancelCallback optional
+        // parameter is added to be able to track this case
+		cancelCreate: function(buttonName, cancelCallback) {
 			var element = document.getElementById(buttonName),
                 theForm = element.form,
                 confirmMsg = onUnloadEditView(theForm);
@@ -548,6 +550,10 @@ SUGAR.subpanelUtils = function() {
 
             if ( confirmMsg != null ) {
                 if ( !confirm(confirmMsg) ) {
+                    if ("function" === typeof cancelCallback)
+                    {
+                        cancelCallback();
+                    }
                     return false;
                 } else {
                     disableOnUnloadEditView(theForm);

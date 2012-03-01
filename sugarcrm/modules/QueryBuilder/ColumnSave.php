@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 /*********************************************************************************
  * $Id: ColumnSave.php 13782 2006-06-06 17:58:55Z majed $
- * Description:  
+ * Description:
  ********************************************************************************/
 
 require_once('modules/QueryBuilder/QueryColumn.php');
@@ -61,7 +61,7 @@ foreach($focus->additional_column_fields as $field)
 	{
 		$value = $_POST[$field];
 		$focus->$field = $value;
-		
+
 	}
 }
 
@@ -79,22 +79,22 @@ $controller = new Controller();
 //run through change order if needed
 if(!empty($_REQUEST['change_order']) && $_REQUEST['change_order']=="Y"){
 
-	
-///This is a hack, fix this. Maybe create a seperate save file for when you change order
-	$focus->retrieve($_POST['column_record']);	
-	
+
+///This is a hack, fix this. Maybe create a separate save file for when you change order
+	$focus->retrieve($_POST['column_record']);
+
 	$magnitude = 1;
 	$direction = $_REQUEST['direction'];
 
 	$controller->init($focus, "Save");
 	$controller->change_component_order($magnitude, $direction, $focus->parent_id);
 
-}	
+}
 
 //run the order graber if this is new
 if(empty($focus->id)){
 	$controller->init($focus, "New");
-	$controller->change_component_order("", "", $focus->parent_id);	
+	$controller->change_component_order("", "", $focus->parent_id);
 }
 
 
@@ -104,17 +104,17 @@ if(empty($focus->id)){
 		//echo "CALC_NAME:".$_POST['name']."<BR>";
 		//echo "CALC_FIELD:".$_POST['calc_field']."<BR>";
 		//echo "CALC_MODULE:".$_POST['calc_module']."<BR>";
-	
+
 		//Clean out column information
 		$focus->column_module = "";
 		$focus->column_name = "";
-	
+
 		//Save the calculation information
 		$calc_object = new QueryCalc();
 		if(!empty($_REQUEST['calc_id'])){
 			$calc_object->retrieve($_REQUEST['calc_id']);
 		}
-	
+
 		foreach($calc_object->column_fields as $field)
 		{
 			if(isset($_POST[$field]))
@@ -122,15 +122,15 @@ if(empty($focus->id)){
 				$calc_object->$field = $_POST[$field];
 			}
 		}
-		
+
 		if(!empty($calc_object->type) && $calc_object->type=="Math"){
-			
+
 			$calc_object->calc_module = "";
 			$calc_object->calc_field = "";
-		}	
+		}
 
-	
-	//end if a calculation exists	
+
+	//end if a calculation exists
 	}
 
 $focus->save();

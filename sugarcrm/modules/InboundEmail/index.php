@@ -27,7 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 global $mod_strings;
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_MODULE_TITLE'],$mod_strings['LBL_HOME']), true); 
+echo getClassicModuleTitle('InboundEmail', array($mod_strings['LBL_MODULE_TITLE'], $mod_strings['LBL_HOME']), true);
+
+//echo getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_MODULE_TITLE'],$mod_strings['LBL_HOME']), true);
 require_once('modules/InboundEmail/ListView.php');
 
 ?>

@@ -55,6 +55,6 @@ function validate_vcard()
 
 <input size="60" name="vcard" id="vcard_file" type="file" />&nbsp;
 <input class='button' type="button" onclick='validate_vcard()' value="{$APP.LBL_IMPORT_VCARD_BUTTON_LABEL}" 
-    title="{$APP.LBL_IMPORT_VCARD_BUTTON_TITLE}" accesskey="{$APP.LBL_IMPORT_VCARD_BUTTON_KEY}"/>
+    title="{$APP.LBL_IMPORT_VCARD_BUTTON_TITLE}" />
 </form>
 

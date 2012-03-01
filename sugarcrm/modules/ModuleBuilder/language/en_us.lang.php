@@ -462,6 +462,11 @@ $mod_strings = array(
 'LBL_SEARCH_FIELDS' => 'Search Fields...',
 'LBL_FORMULA' => 'Formula',
 'LBL_DYNAMIC_VALUES_CHECKBOX' => 'Dependent',
+'LBL_DEPENDENT_DROPDOWN_HELP' => 'Drag items from the list of available options on the left to one of the lists on the right to make that option available when the given parent option is selected.',
+'LBL_AVAILABLE_OPTIONS' => 'Available Options',
+'LBL_PARENT_DROPDOWN' => 'Parent Dropdown',
+'LBL_VISIBILITY_EDITOR' => 'Visibility Editor',
+
 
 //END SUGARCRM flav=pro ONLY
 
@@ -734,6 +739,7 @@ $mod_strings = array(
 
 //POPUP HELP
 'LBL_POPHELP_FIELD_DATA_TYPE'=>'Select the appropriate data type based on the type of data that will be entered into the field.',
+'LBL_POPHELP_SEARCHABLE'=>'You have to perform a full system index after you change boost level.',
 'LBL_POPHELP_IMPORTABLE'=>'<b>Yes</b>: The field will be included in an import operation.<br><b>No</b>: The field will not be included in an import.<br><b>Required</b>: A value for the field must be provided in any import.',
 'LBL_POPHELP_IMAGE_WIDTH'=>'Enter a number for Width, as measured in pixels.<br> The uploaded image will be scaled to this Width.',
 'LBL_POPHELP_IMAGE_HEIGHT'=>'Enter a number for the Height, as measured in pixels.<br> The uploaded image will be scaled to this Height.',

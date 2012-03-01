@@ -32,6 +32,7 @@ if(!empty($_REQUEST['record'])) {
 } elseif(!empty($_REQUEST['origin_id'])) {
     $focus->retrieve($_REQUEST['origin_id']);
     unset($focus->id);
+    unset($focus->groupfolder_id);
 }
 foreach($focus->column_fields as $field) {
     if($field == 'email_password' && empty($_REQUEST['email_password']) && !empty($_REQUEST['email_user'])) {

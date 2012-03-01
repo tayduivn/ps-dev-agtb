@@ -73,11 +73,11 @@ div.resultsTable {
     <tr>
         <td align="left" style="padding-bottom: 2px;">
         {if $showUndoButton}
-            <input title="{$MOD.LBL_UNDO_LAST_IMPORT}" accessKey="" class="button"
+            <input title="{$MOD.LBL_UNDO_LAST_IMPORT}"  class="button"
                 type="submit" name="undo" id="undo" value="  {$MOD.LBL_UNDO_LAST_IMPORT}  ">
         {/if}
-        <input title="{$MOD.LBL_IMPORT_MORE}" accessKey="" class="button" type="submit" name="importmore" id="importmore" value="  {$MOD.LBL_IMPORT_MORE}  ">
-        <input title="{$MOD.LBL_FINISHED}{$MODULENAME}" accessKey="" class="button" type="submit" name="finished" id="finished" value="  {$MOD.LBL_IMPORT_COMPLETE}  ">
+        <input title="{$MOD.LBL_IMPORT_MORE}"  class="button" type="submit" name="importmore" id="importmore" value="  {$MOD.LBL_IMPORT_MORE}  ">
+        <input title="{$MOD.LBL_FINISHED}{$MODULENAME}"  class="button" type="submit" name="finished" id="finished" value="  {$MOD.LBL_IMPORT_COMPLETE}  ">
             <!--//BEGIN SUGARCRM flav!=sales ONLY -->
             {$PROSPECTLISTBUTTON}
             <!--//END SUGARCRM flav!=sales ONLY -->

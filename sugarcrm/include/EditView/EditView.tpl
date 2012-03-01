@@ -47,6 +47,8 @@ class="yui-navset"
     </ul>
     {{/if}}
     <div {{if $useTabs}}class="yui-content"{{/if}}>
+
+{{assign var='tabIndexVal' value=0}}
 {{* Loop through all top level panels first *}}
 {{counter name="panelCount" start=-1 print=false assign="panelCount"}}
 
@@ -78,7 +80,7 @@ class="yui-navset"
 {{/if}}
 
 {{assign var='rowCount' value=0}}
-{{assign var='tabIndexVal' value=0}}
+{{assign var='ACCKEY' value=''}}
 {{foreach name=rowIteration from=$panel key=row item=rowData}}
 {counter name="fieldsUsed" start=0 print=false assign="fieldsUsed"}
 {capture name="tr" assign="tableRow"}
@@ -133,7 +135,6 @@ class="yui-navset"
               {{elseif isset($fields[$colData.field.name].popupHelp)}}
                 {capture name="popupText" assign="popupText"}{sugar_translate label="{{$fields[$colData.field.name].popupHelp}}" module='{{$module}}'}{/capture}
               {{/if}}
-              {capture name="overlibStuff" assign="overlibStuff"}{overlib_includes}{/capture}
               {sugar_help text=$popupText WIDTH=-1}
             {{/if}}
 
@@ -141,17 +142,18 @@ class="yui-navset"
 		{{/if}}
 		{counter name="fieldsUsed"}
 		{{math assign="tabIndexVal" equation="$tabIndexVal + 1"}}
+		{{if $tabIndexVal==1}} {{assign var='ACCKEY' value=$APP.LBL_FIRST_INPUT_EDIT_VIEW_KEY}}{{else}}{{assign var='ACCKEY' value=''}}{{/if}}
 		{{if !empty($colData.field.tabindex)  && $colData.field.tabindex !=0}}
 		    {{assign var='tabindex' value=$colData.field.tabindex}}
+            {{** instead of tracking tabindex values for all fields, just track for email as email does not get created directly from
+                a tpl that has access to smarty values.  Email gets created through addEmailAddress() function in SugarEmailAddress.js
+                which will use the value in tabFields array
+             **}}
+            {{if $colData.field.name == 'email1'}}<script>SUGAR.TabFields['{{$colData.field.name}}'] = '{{$tabindex}}';</script>{{/if}}
 		{{else}}
 		    {** if not explicitly assigned, we will default to 0 for 508 compliance reasons, instead of the calculated tabIndexVal value **}
 		    {{assign var='tabindex' value=0}}
 		{{/if}}
-		{** instead of tracking tabindex values for all fields, just track for email as email does not get created directly from
-		    a tpl that has access to smarty values.  Email gets created through addEmailAddress() function in SugarEmailAddress.js
-		    which will use the value in tabFields array
-		 **}
-		<script>SUGAR.TabFields['{{$colData.field.name}}'] = '{{$tabindex}}';//set field and tabindex in array</script>
 		<td valign="top" width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}}>
 			{{if !empty($def.templateMeta.labelsOnTop)}}
 				{{if isset($colData.field.label)}}
@@ -172,6 +174,7 @@ class="yui-navset"
 				{{/if}}
 			{{/if}}
 
+		{{$colData.field.prefix}}
 		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{if $fields.{{$colData.field.name}}.acl > 1}
@@ -182,16 +185,16 @@ class="yui-navset"
 			    {{foreach from=$colData.field.fields item=subField}}
 			        {{if $fields[$subField.name]}}
 			        	{counter name="panelFieldCount"}
-			            {{sugar_field parentFieldArray='fields' tabindex=$tabindex vardef=$fields[$subField.name] displayType='EditView' displayParams=$subField.displayParams formName=$form_name}}&nbsp;
+			            {{sugar_field parentFieldArray='fields'  accesskey=$ACCKEY tabindex=$tabindex vardef=$fields[$subField.name] displayType='EditView' displayParams=$subField.displayParams formName=$form_name}}&nbsp;
 			        {{/if}}
 			    {{/foreach}}
 			{{elseif !empty($colData.field.customCode) && empty($colData.field.customCodeRenderField)}}
 				{counter name="panelFieldCount"}
-				{{sugar_evalcolumn var=$colData.field.customCode colData=$colData tabindex=$tabindex}}
+				{{sugar_evalcolumn var=$colData.field.customCode colData=$colData  accesskey=$ACCKEY tabindex=$tabindex}}
 			{{elseif $fields[$colData.field.name]}}
 				{counter name="panelFieldCount"}
 			    {{$colData.displayParams}}
-				{{sugar_field parentFieldArray='fields' tabindex=$tabindex vardef=$fields[$colData.field.name] displayType='EditView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
+				{{sugar_field parentFieldArray='fields'  accesskey=$ACCKEY tabindex=$tabindex vardef=$fields[$colData.field.name] displayType='EditView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
 			{{/if}}
 		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
@@ -211,6 +214,7 @@ class="yui-navset"
 			    {counter name="panelFieldCount"}
 				{{sugar_field parentFieldArray='fields' tabindex=$tabindex vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
 			{{/if}}
+	    {{$colData.field.suffix}}
 		</td>
 		{{/if}}
 
@@ -256,7 +260,6 @@ class="yui-navset"
 {{/foreach}}
 </div></div>
 {{include file=$footerTpl}}
-{$overlibStuff}
 {{if $useTabs}}
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 <script type="text/javascript">

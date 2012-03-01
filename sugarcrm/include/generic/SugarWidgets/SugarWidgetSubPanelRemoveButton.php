@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelRemoveButton.php 51922 2009-10-27 20:56:24Z jmertic $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 
 class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 {
@@ -93,7 +93,7 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 		$return_url = "index.php?module=$return_module&action=$return_action&subpanel=$subpanel&record=$return_id&sugar_body_only=1&inline=1";
 
 		$icon_remove_text = strtolower($app_strings['LBL_ID_FF_REMOVE']);
-		$icon_remove_html = SugarThemeRegistry::current()->getImage( 'delete_inline','align="absmiddle" border="0"',null,null,'.gif','');//setting alt to blank on purpose on subpanels for 508
+		
 		//BEGIN SUGARCRM flav!=sales ONLY
 		if($linked_field == 'get_products_query')
 			$linked_field = 'products';
@@ -104,7 +104,7 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
                     .", '$record', $refresh_page);\"" 
 			. ' class="listViewTdToolsS1"'
 			. " onclick=\"return sp_rem_conf();\""
-			. ">$icon_remove_html&nbsp;$icon_remove_text</a>";
+			. ">$icon_remove_text</a>";
         return $retStr;
             
 		}else{

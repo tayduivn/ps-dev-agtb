@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelTopButton.php 51841 2009-10-26 20:33:15Z jmertic $
 
-require_once('include/generic/SugarWidgets/SugarWidget.php');
+
 
 class SugarWidgetSubPanelTopButton extends SugarWidget
 {
@@ -252,7 +252,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
     }
 
 	/** This default function is used to create the HTML for a simple button */
-	function display($defines, $additionalFormFields = null)
+	function display($defines, $additionalFormFields = null, $nonbutton = false)
 	{
 		$temp='';
 		$inputID = $this->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($this->form_value)).'_button';
@@ -268,10 +268,14 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         if ( isset($_REQUEST['layout_def_key']) && $_REQUEST['layout_def_key'] == 'UserEAPM' ) {
             // Subpanels generally don't go on the editview, so we have to handle this special
             $megaLink = $this->_get_form($defines, $additionalFormFields,true);
-            $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='  $this->form_value  ' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";
+            $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";
         } else {
             $button = $this->_get_form($defines, $additionalFormFields);
-            $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='  $this->form_value  ' />\n</form>";
+            $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n</form>";
+        }
+
+        if ($nonbutton) {
+            $button = "<a onclick=''>$this->form_value";
         }
         return $button;
 	}

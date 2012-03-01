@@ -49,7 +49,7 @@
 	class="imageUploader"
 	{if !empty({{sugarvar key='value' string=true}}) {{if !empty($vardef.calculated)}}|| true{{/if}} }
 	style="display:none"
-	{/if}
+	{/if}  {{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}}
 />
 
 {if empty({{sugarvar key='value' string=true}}) {{if !empty($vardef.calculated)}}&& false{{/if}}}

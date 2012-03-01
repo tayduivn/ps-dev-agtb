@@ -156,11 +156,7 @@ class ViewStep2 extends SugarView
 			$this->ss->assign('mod', $GLOBALS['mod_strings']);
 			
 			echo $this->getModuleTitle(false);
-            $tplFile = 'modules/Connectors/tpls/step2.tpl';
-            if ( file_exists('custom/'.$tplFile) ) {
-                $tplFile = 'custom/'.$tplFile;
-            }
-	        $this->ss->display($tplFile);
+	        $this->ss->display($this->getCustomFilePathIfExists('modules/Connectors/tpls/step2.tpl'));
         } 
     }
     

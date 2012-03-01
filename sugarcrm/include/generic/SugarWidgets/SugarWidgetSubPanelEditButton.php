@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelEditButton.php 54581 2010-02-18 00:01:21Z dwheeler $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 //TODO Rename this to edit link
 class SugarWidgetSubPanelEditButton extends SugarWidgetField
 {
@@ -46,11 +46,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 	function displayList($layout_def)
 	{
 		global $app_strings;
-
-		if(empty(self::$edit_icon_html)) {
-		    self::$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif','');//setting alt to blank on purpose on subpanels for 508
-		}
-
+		
         $onclick ='';
 //BEGIN SUGARCRM flav=pro ONLY
 		$formname = $this->getFormName($layout_def);
@@ -65,7 +61,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 		if($layout_def['EditView'] && $this->isQuickCreateValid($layout_def['module'],$layout_def['subpanel_id'])){
 			return '<a href="#" class="listViewTdToolsS1" onclick="' . $onclick . '">' .
-                    self::$edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
+                      $app_strings['LNK_EDIT'] .'</a>';
 		}else
 //END SUGARCRM flav=pro ONLY
         if($layout_def['EditView']) {
@@ -73,7 +69,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
 			. " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
-			. ' class="listViewTdToolsS1">' . self::$edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
+			. ' class="listViewTdToolsS1">'. $app_strings['LNK_EDIT'] .'</a>';
 		}
 
         return '';

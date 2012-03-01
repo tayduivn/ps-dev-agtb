@@ -47,7 +47,7 @@
 				        	<input type='hidden' name='modal_close_search'  id='modal_close_search'>
 							<input class="sqsEnabled"  autocomplete="off" id="tag_name" name='tag_name' type="text" value="{$tag_name}">
 							<input id='tag_id' name='tag_id' type="hidden" value="{$tag_id}" />
-					        <input  title="{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button" tabindex='1' class="button" value='{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}' name='btn_tagss' onclick="javascript:SUGAR.kb.modalInit(); return false;" />
+					        <input  title="{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}"  type="button" tabindex='1' class="button" value='{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}' name='btn_tagss' onclick="javascript:SUGAR.kb.modalInit(); return false;" />
 
 					</td>	  
 					</tr>
@@ -164,7 +164,7 @@
 					</tr>
 					<tr>
 						<td class='dataLabel' nowrap width='1%'>
-							{$MOD.LBL_SAVE_SEARCH_AS} <img alt="Help" border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_SAVE_SEARCH_AS_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
+							{$MOD.LBL_SAVE_SEARCH_AS} {sugar_help text=$MOD.LBL_SAVE_SEARCH_AS_HELP }
 						</td>
 						<td class='dataField'>
 							<input type='text' id='saved_search_name' value='' name='saved_search_name'>
@@ -172,7 +172,7 @@
 							<input value='{$APP.LBL_SAVE_BUTTON_LABEL}' class='button' type='button' name='saved_search_submit' onclick="document.getElementById('saved_search_action').value='saveSearch'; this.form.submit();">
 						</td>
 						<td nowrap class='dataLabel'>
-							{$MOD.LBL_PREVIOUS_SAVED_SEARCH} <img alt="Help" border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_PREVIOUS_SAVED_SEARCH_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
+							{$MOD.LBL_PREVIOUS_SAVED_SEARCH} {sugar_help text=$MOD.LBL_PREVIOUS_SAVED_SEARCH_HELP }
 						</td>
 						<td class='dataField'>
 							<select name='saved_search_select' id='saved_search_select' onChange="setSelectSearchInputs('loadSearch');this.form.submit();">

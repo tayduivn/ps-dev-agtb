@@ -31,9 +31,6 @@
 
 *}
 
-{if $overlib}
-	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
-{/if}
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
 	{include file='modules/KBDocuments/tpls/ListViewPagination.tpl'}

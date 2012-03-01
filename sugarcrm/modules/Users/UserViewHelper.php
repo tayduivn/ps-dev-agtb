@@ -170,8 +170,8 @@ class UserViewHelper {
             if(isset($_REQUEST['record'])){
                 $user_preference_url .= "&record=".$_REQUEST['record'];
             }
-            $buttons .="<input type='button' class='button' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$user_preference_url."&reset_preferences=true\";' value='".translate('LBL_RESET_PREFERENCES','Users')."' />";
-            $buttons .="&nbsp;<input type='button' class='button' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".translate('LBL_RESET_HOMEPAGE','Users')."' />";
+            $buttons .="<li><input type='button' class='button' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$user_preference_url."&reset_preferences=true\";' value='".translate('LBL_RESET_PREFERENCES','Users')."' /></li>";
+            $buttons .="\n<li><input type='button' class='button' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".translate('LBL_RESET_HOMEPAGE','Users')."' /></li>";
         }
         if (isset($buttons)) $this->ss->assign("BUTTONS", $buttons);
         
@@ -457,7 +457,7 @@ class UserViewHelper {
         $oc_status = $this->bean->getPreference('OfflineClientStatus');
         $this->ss->assign('OC_STATUS', get_select_options_with_id($app_list_strings['oc_status_dom'], $oc_status));
 
-        if(!empty($oc_status)) {
+        if(!empty($oc_status) && isset($app_list_strings['oc_status_dom'][$oc_status])) {
             $this->ss->assign('OC_STATUS_DISPLAY', $app_list_strings['oc_status_dom'][$oc_status]);
         } else {
             $this->ss->assign("OC_STATUS_DISPLAY", '');
@@ -588,7 +588,8 @@ class UserViewHelper {
         
         $chooser->args['left_label'] =  translate('LBL_DISPLAY_TABS','Users');
         $chooser->args['right_label'] =  translate('LBL_HIDE_TABS','Users');
-        $chooser->args['title'] =  translate('LBL_EDIT_TABS','Users').' <!--not_in_theme!--><img border="0" src="themes/default/images/helpInline.gif" onmouseover="return overlib(\'Choose which tabs are displayed.\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\', WIDTH, -1, NOFOLLOW, \'ol_nofollow\' );" onmouseout="return nd();"/>';
+        require_once('include/Smarty/plugins/function.sugar_help.php');
+        $chooser->args['title'] =  translate('LBL_EDIT_TABS','Users').smarty_function_sugar_help(array("text"=>"Choose which tabs are displayed."),$ss);
         
         $this->ss->assign('TAB_CHOOSER', $chooser->display());
         $this->ss->assign('CHOOSER_SCRIPT','set_chooser();');
@@ -775,7 +776,7 @@ class UserViewHelper {
         if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = false;
         }
-        $this->ss->assign("NEW_EMAIL", getEmailAddressWidget($this->bean, "email1", $this->bean->email1, $this->viewType));
+        $this->ss->assign("NEW_EMAIL",  '<span id="email_span">' . getEmailAddressWidget($this->bean, "email1", $this->bean->email1, $this->viewType) . '</span>');
         // hack to undo that previous hack
         if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = true;

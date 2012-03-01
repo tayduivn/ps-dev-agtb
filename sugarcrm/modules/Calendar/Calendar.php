@@ -203,18 +203,7 @@ class Calendar {
 								if(!isset($item[$field])){
 									$item[$field] = $act->sugar_bean->$field;
 									if(empty($item[$field]))
-										$item[$field] = "";									
-									if($act->sugar_bean->field_defs[$field]['type'] == 'text'){									
-										$t = $item[$field];	
-										if(strlen($t) > 300){
-											$t = substr($t, 0, 300);
-											$t .= "...";
-										}			
-										$t = str_replace("\r\n","<br>",$t);
-										$t = str_replace("\r","<br>",$t);
-										$t = str_replace("\n","<br>",$t);
-										$item[$field] = $t;
-									}										
+										$item[$field] = "";
 								}
 							}					
 						}				

@@ -37,38 +37,38 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
 	function _testCreateScheduleProvider()
 	{
 	    global $timedate;
-	    $start_date = gmdate($timedate->get_db_date_time_format(), mktime());
+
+	    $today = gmdate($timedate->get_db_date_time_format(), mktime());
 	    $tomm = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24);
+        $next_week = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24 * 7);
+        $yesterday = gmdate($timedate->get_db_date_time_format(), mktime() - 3600 * 24);
+
 	    return array(
-	       array($start_date, 3600),
-	       array($start_date, 21600),
-	       array($start_date, 43200),
-	       array($start_date, 86400),
-	       array($start_date, 2419200),
-	       array($tomm, 3600),
-	       array($tomm, 21600),
-	       array($tomm, 43200),
-	       array($tomm, 86400),
-	       array($tomm, 2419200),
+           array($yesterday, 3600 * 24, $tomm),
+           array($yesterday, 3600 * 24 * 8, $next_week),
+           array($today, 3600 * 24, $tomm),
+           array($today, 3600 * 24 * 7, $next_week),
 	    );
 	}
 	/**
      * @dataProvider _testCreateScheduleProvider
      */
-	public function testCreateSchedule($start_date, $interval)
+	public function testCreateSchedule($start_date, $interval, $expected_date)
 	{
         global $timedate;
         $reportID = uniqid();
 	    $id = $this->rs->save_schedule("","1",$reportID,$start_date, $interval,1,'pro');
-	    
-	    $expectedRunDateTs = strtotime($start_date . " GMT") + $interval; 
-	    $expectedRunDate = gmdate($timedate->get_db_date_time_format(),$expectedRunDateTs);
 	    $results = $this->rs->get_report_schedule($reportID);
         $next_run = '';
         foreach($results as $ur){
             $next_run = $ur['next_run'];
         }
-	    $this->assertEquals($expectedRunDate, $next_run, "Unable to schedule report.");
+
+        $next_run_ts = strtotime($next_run);
+        $expected_date_ts = strtotime($expected_date);
+
+        //Assert that the timestamps are within a minute of each other
+        $this->assertTrue(($next_run_ts + 60) > $expected_date_ts && $expected_date_ts > ($next_run_ts - 60), "Unable to schedule report");
 	}
 	
 	public function testUpdateNextRun()

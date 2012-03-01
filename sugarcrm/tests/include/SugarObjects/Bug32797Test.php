@@ -49,16 +49,24 @@ class Bug32797Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                array('fields' => array('account_name' => array('required' => true))),
-                array('fields' => array('account_name' => array('required' => false)))
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true))),
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
             ),
             array(
-                array('fields' => array('account_name' => array('required' => false))),
-                array('fields' => array('account_name' => array('required' => false)))
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false))),
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
             ),
             array(
-                array('fields' => array('account_name' => array('required' => null))),
-                array('fields' => array('account_name' => array('required' => false)))
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => null))),
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
+            ),
+            array(
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true))),
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true)))
+            ),
+            array(
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false))),
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false)))
             ),
             array(
                 array('fields' => array('account_name' => array())),
@@ -83,12 +91,20 @@ class Bug32797Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                array('fields' => array('account_name' => array('required' => true))),
-                array('fields' => array('account_name' => array('required' => true)))
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true))),
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true)))
             ),
             array(
-                array('fields' => array('account_name' => array('required' => false))),
-                array('fields' => array('account_name' => array('required' => true)))
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false))),
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true)))
+            ),
+            array(
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true))),
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true)))
+            ),
+            array(
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false))),
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false)))
             )
         );
     }
@@ -106,12 +122,20 @@ class Bug32797Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                array('fields' => array('account_name' => array('required' => true))),
-                array('fields' => array('account_name' => array('required' => true)))
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true))),
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true)))
             ),
             array(
-                array('fields' => array('account_name' => array('required' => false))),
-                array('fields' => array('account_name' => array('required' => false)))
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false))),
+                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
+            ),
+            array(
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false))),
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false)))
+            ),
+            array(
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true))),
+                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true)))
             )
         );
     }

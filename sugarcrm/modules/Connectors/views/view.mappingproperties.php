@@ -144,6 +144,6 @@ class ViewMappingProperties extends ViewList
     	$this->ss->assign('source_name', $sources[$source_id]['name']);
     	$this->ss->assign('theme', $GLOBALS['theme']);
 		
-    	echo $this->ss->fetch('modules/Connectors/tpls/mapping_properties.tpl');
+    	echo $this->ss->fetch($this->getCustomFilePathIfExists('modules/Connectors/tpls/mapping_properties.tpl'));
     }
 }

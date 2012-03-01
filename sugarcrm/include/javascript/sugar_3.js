@@ -2285,12 +2285,31 @@ sugarListView.prototype.save_checks = function(offset, moduleString) {
 sugarListView.prototype.check_item = function(cb, form) {
 	if(cb.checked) {
 		sugarListView.update_count(1, true);
+
 	}else{
 		sugarListView.update_count(-1, true);
 		if(typeof form != 'undefined' && form != null) {
 			sugarListView.prototype.updateUid(cb, form);
 		}
 	}
+	sugarListView.prototype.toggleSelected();
+}
+
+sugarListView.prototype.toggleSelected = function() {
+	var numSelected = sugarListView.get_num_selected();
+	var selectedRecords = document.getElementById("selectedRecordsTop");
+	var selectActions = document.getElementById("selectActions");
+	var selectActionsDisabled = document.getElementById("selectActionsDisabled");
+	if(numSelected > 0) {
+		selectedRecords.style.display = "inline-block";
+		selectActions.style.display = "inline-block";
+		selectActionsDisabled.style.display = "none";
+	} else {
+		selectedRecords.style.display = "none";
+		selectActions.style.display = "none";
+		selectActionsDisabled.style.display = "inline-block";
+	}
+
 }
 
 /**#28000, remove the  unselect record id from MassUpdate.uid **/
@@ -2353,6 +2372,8 @@ sugarListView.prototype.check_all = function(form, field, value, pageTotal) {
 		sugarListView.update_count(count, true);
 	else
 		sugarListView.update_count(-1 * count, true);
+
+	sugarListView.prototype.toggleSelected();
 }
 sugarListView.check_all = sugarListView.prototype.check_all;
 sugarListView.confirm_action = sugarListView.prototype.confirm_action;
@@ -2517,6 +2538,7 @@ sugarListView.prototype.clear_all = function() {
 	document.MassUpdate.massall.checked = false;
 	document.MassUpdate.massall.disabled = false;
 	sugarListView.update_count(0);
+	sugarListView.prototype.toggleSelected();
 }
 
 sListView = new sugarListView();
@@ -3008,15 +3030,119 @@ SUGAR.util = function () {
 		},
 
 		/**
+		 * Renders Query UI Help Dialog
+		 */
+		showHelpTips: function(el,helpText,myPos,atPos) {
+				if(myPos == undefined || myPos == "") {
+					myPos = "left top";
+				}
+				if(atPos == undefined || atPos == "") {
+					atPos = "right top";
+				}
+
+					var $dialog = $('<div></div>')
+					.html(helpText)
+					.dialog({
+						autoOpen: false,
+						title: SUGAR.language.get('app_strings', 'LBL_HELP'),
+						position: {
+						    my: myPos,
+						    at: atPos,
+						    of: $(el)
+					 	}
+					});
+
+
+					var width = $dialog.dialog( "option", "width" );
+					var pos = $(el).offset();
+					var ofWidth = $(el).width();
+
+					if((pos.left + ofWidth) - 40 < width) {
+						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+					}
+					$dialog.dialog('open');
+
+
+		},
+		getStaticAdditionalDetails: function(el, body, caption, show_buttons) {
+			if(typeof show_buttons == "undefined") {
+				show_buttons = false;
+			}
+
+			$(".ui-dialog").find(".open").dialog("close");
+
+			var $dialog = $('<div class="open"></div>')
+			.html(body)
+			.dialog({
+				autoOpen: false,
+				title: caption,
+				width: 300,
+				position: {
+				    my: 'right top',
+				    at: 'left top',
+				    of: $(el)
+			  }
+			});
+
+			if(show_buttons) {
+				$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+				$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+			}
+
+
+			var width = $dialog.dialog( "option", "width" );
+			var pos = $(el).offset();
+			var ofWidth = $(el).width();
+
+			if((pos.left + ofWidth) - 40 < width) {
+				$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+			}
+
+			$dialog.dialog('open');
+
+		},
+
+		closeStaticAdditionalDetails: function() {
+			$(".ui-dialog").find(".open").dialog("close");
+		},
+		/**
 		 * Retrieves additional details dynamically
 		 */
 		getAdditionalDetails: function(bean, id, spanId, show_buttons) {
 			if(typeof show_buttons == "undefined")
-				show_buttons = false;				
+				show_buttons = false;
+				var el = '#'+spanId;
 			go = function() {
 				oReturn = function(body, caption, width, theme) {
-					var _refx = 25-width;
-					return overlib(body, CAPTION, caption, STICKY, MOUSEOFF, 1000, WIDTH, width, CLOSETEXT, ('<img border=0 style="margin-left:2px; margin-right: 2px;" src=index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=close.gif>'), CLOSETITLE, SUGAR.language.get('app_strings','LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', REF, spanId, REFC, 'LL', REFX, _refx);
+
+					$(".ui-dialog").find(".open").dialog("close");
+
+					var $dialog = $('<div class="open"></div>')
+					.html(body)
+					.dialog({
+						autoOpen: false,
+						title: caption,
+						width: 300,
+						position: {
+						    my: 'right top',
+						    at: 'left top',
+						    of: $(el)
+					  }
+					});
+				if(show_buttons) {
+					$(".ui-dialog").find('.ui-dialog-titlebar-close').css("display","none");
+					$(".ui-dialog").find('.ui-dialog-title').css("width","100%");
+				}
+
+					var width = $dialog.dialog( "option", "width" );
+					var pos = $(el).offset();
+					var ofWidth = $(el).width();
+
+					if((pos.left + ofWidth) - 40 < width) {
+						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
+					}
+
+					$dialog.dialog('open');
 				}
 
 				success = function(data) {
@@ -3199,7 +3325,65 @@ SUGAR.util = function () {
                     }
                 }
                 this._doWhenLocked = false;
-            }
+            },
+        buildAccessKeyLabels : function()
+                {
+                    if (typeof(Y.env.ua) !== 'undefined'){
+                        envStr = '';
+                        browserOS = Y.env.ua['os'];
+                        isIE = Y.env.ua['ie'];
+                        isCR = Y.env.ua['chrome'];
+                        isFF = Y.env.ua['gecko'];
+                        isWK = Y.env.ua['webkit'];
+                        isOP = Y.env.ua['opera'];
+                        controlKey = '';
+
+                        //first determine the OS
+                        if(browserOS=='macintosh'){
+                            //we got a mac, lets use the mac specific commands while we check the browser
+                            if(isIE){
+                                //IE on a Mac? Not possible, but let's assign alt anyways for completions sake
+                                controlKey = 'Alt+';
+                            }else if(isWK){
+                                //Chrome or safari on a mac
+                                controlKey = 'Ctrl+Opt+';
+                            }else if(isOP){
+                                //Opera on a mac
+                                controlKey = 'Shift+Esc: ';
+                            }else{
+                                //default FF and everything else on a mac
+                                controlKey = 'Ctrl+';
+                            }
+                        }else{
+                            //this is not a mac so let's use the windows/unix commands while we check the browser
+                            if(isFF){
+                                //FF on windows/unix
+                                controlKey = 'Alt+Shift+';
+                            }else if(isOP){
+                                //Opera on windows/unix
+                                controlKey = 'Shift+Esc: ';
+                            }else {
+                                //this is the default for safari, IE and Chrome
+                                //if this is webkit and is NOT google, then we are most likely looking at Safari
+                                controlKey = 'Alt+';
+                            }
+
+                        }
+
+                        //now lets retrieve all elements of type input
+                        allButtons = document.getElementsByTagName('input');
+                        //iterate through list and modify title if the accesskey is not empty
+                        for(i=0;i<allButtons.length;i++){
+                            if(allButtons[i].getAttribute('accesskey') && allButtons[i].getAttribute('type') && allButtons[i].getAttribute('type')=='button'){
+                                allButtons[i].setAttribute('title',allButtons[i].getAttribute('title')+' ['+controlKey+allButtons[i].getAttribute('accesskey')+']');
+                            }
+                        }
+                        //now change the text in the help div
+			if(typeof(keyboardhelpText) =='string'){
+                                keyboardhelpText = keyboardhelpText.replace(/Alt\+/g,controlKey);
+                        }
+                    }// end if (typeof(Y.env.ua) !== 'undefined')
+                }//end buildAccessKeyLabels()
 	};
 }(); // end util
 SUGAR.util.additionalDetailsCache = new Array();
@@ -3435,7 +3619,7 @@ SUGAR.searchForm = function() {
                 if ( typeof(elem.type) == 'undefined' ) {
                     continue;
                 }
-                
+
                 if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined'
                         && SUGAR.util.arrayIndexOf(skipElementNames, elem.name) != -1 )
                 {
@@ -4065,7 +4249,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
  */
 var from_popup_return  = false;
 
-//Function replaces special HTML chars for usage in text boxes 
+//Function replaces special HTML chars for usage in text boxes
 function replaceHTMLChars(value) {
 	return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 }
@@ -4134,15 +4318,13 @@ function set_return(popup_reply_data)
 				}
 			}
 		}
-		
+
         if(label_data_str != label_str && current_label_data_str != label_str){
         	// Bug 48726 Start
         	if (typeof popupConfirm != 'undefined')
         	{
         		if (popupConfirm > -1) {
         			set_return_basic(popup_reply_data,/\S/);
-        		} else {
-        			set_return_basic(popup_reply_data,/account/);
         		}
         	}
         	// Bug 48726 End
@@ -4450,13 +4632,15 @@ closeActivityPanel: {
     }
 },
 
-setEmailPasswordDisplay: function(id, exists) {
+setEmailPasswordDisplay: function(id, exists, formName) {
 	link = document.getElementById(id+'_link');
 	pwd = document.getElementById(id);
 	if(!pwd || !link) return;
 	if(exists) {
     	pwd.style.display = 'none';
     	link.style.display = '';
+        if(typeof(formName) != 'undefined')
+            removeFromValidate(formName, id);
 	} else {
     	pwd.style.display = '';
     	link.style.display = 'none';

@@ -29,12 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: Popup_picker.php 46666 2009-04-29 19:34:54Z jmertic $
-
-
-
 require_once("include/upload_file.php");
-
 require_once('include/utils/db_utils.php');
 
 global $currentModule;
@@ -116,6 +111,11 @@ class Popup_Picker
 			}
 
 			if ($task->status != "Not Started" && $task->status != "In Progress" && $task->status != "Pending Input") {
+                $ts = '';
+                if(!empty($task->fetched_row['date_due'])) {
+                    //tasks can have an empty date due field
+                    $ts = $timedate->fromDb($task->fetched_row['date_due'])->ts;
+                }
 				$history_list[] = array('name' => $task->name,
 									 'id' => $task->id,
 									 'type' => "Task",
@@ -130,7 +130,7 @@ class Popup_Picker
 									 'date_modified' => $date_due,
 									 'description' => $this->getTaskDetails($task),
 									 'date_type' => $app_strings['DATA_TYPE_DUE'],
-									 'sort_value' => $timedate->fromDb($task->fetched_row['date_due'])->ts,
+									 'sort_value' => $ts,
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $task->name,
@@ -175,7 +175,7 @@ class Popup_Picker
 									 'date_modified' => $meeting->date_start,
 									 'description' => $this->formatDescription($meeting->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $timedate->fromDb($task->fetched_row['date_start'])->ts,
+									 'sort_value' => $timedate->fromDb($meeting->fetched_row['date_start'])->ts,
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $meeting->name,
@@ -221,7 +221,7 @@ class Popup_Picker
 									 'date_modified' => $call->date_start,
 									 'description' => $this->formatDescription($call->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $timedate->fromDb($task->fetched_row['date_start'])->ts,
+									 'sort_value' => $timedate->fromDb($call->fetched_row['date_start'])->ts,
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $call->name,
@@ -265,7 +265,7 @@ class Popup_Picker
 									 'date_modified' => $email->date_start." ".$email->time_start,
 									 'description' => $this->getEmailDetails($email),
 									 'date_type' => $app_strings['DATA_TYPE_SENT'],
-									 'sort_value' => $timedate->fromDb($task->fetched_row['date_sent'])->ts,
+									 'sort_value' => $timedate->fromDb($email->fetched_row['date_sent'])->ts,
 									 );
 		} //end Emails
 

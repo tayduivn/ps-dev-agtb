@@ -29,7 +29,6 @@
 *}
 
 {literal}
-<script type='text/javascript' src='include/javascript/overlibmws.js'></script>
 <style>
 #snip_title {
 	float:left;

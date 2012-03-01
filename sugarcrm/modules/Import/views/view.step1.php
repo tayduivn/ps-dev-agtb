@@ -117,8 +117,8 @@ class ImportViewStep1 extends ImportView
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
         
         $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
-        $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
-        $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \"  id=\"gonext\"></td></tr></table>";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \"  id=\"gonext\"></td></tr></table>";
 
         $this->ss->assign("JAVASCRIPT",$this->_getJS() );
         $this->ss->assign("CONTENT",$content);

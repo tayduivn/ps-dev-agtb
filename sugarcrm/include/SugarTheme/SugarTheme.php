@@ -548,6 +548,7 @@ class SugarTheme
     {
         // include style.css file
         $html = '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('yui.css').'" />';
+        $html .= '<link rel="stylesheet" type="text/css" href="include/javascript/jquery/jqueryui/themes/base/jquery.ui.all.css" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('deprecated.css').'" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('style.css').'" />';
 
@@ -650,7 +651,7 @@ EOHTML;
      * @param  string $other_attributes optional, other attributes to add to the image tag, not cached
 	 * @param  string $width optional, defaults to the actual image's width
 	 * @param  string $height optional, defaults to the actual image's height
-	 * @param  string $ext optional, image extension (TODO can we depricate this one ?)
+	 * @param  string $ext optional, image extension (TODO can we deprecate this one ?)
      * @param  string $alt optional, only used when image contains something useful, i.e. "Sally's profile pic"
      * @return string HTML image tag or sprite
      */
@@ -666,7 +667,7 @@ EOHTML;
 
         static $cached_results = array();
 
-		// trap depricated use of image extension
+		// trap deprecated use of image extension
 		if(is_null($ext)) {
 			$imageNameExp = explode('.',$imageName);
 			if(count($imageNameExp) == 1)

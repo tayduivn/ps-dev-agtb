@@ -23,6 +23,7 @@ $dictionary['Campaign'] = array ('audited'=>true,
 	'comment' => 'Campaigns are a series of operations undertaken to accomplish a purpose, usually acquiring leads',
 	'table' => 'campaigns',
 	'unified_search' => true,
+	'full_text_search' => true,
 	'fields' => array (
 		'tracker_key' => array (
 			'name' => 'tracker_key',
@@ -52,6 +53,7 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'importable' => 'required',
             'required' => true,
 			'unified_search' => true,
+			'full_text_search' => array('boost' => 3),
 			),
 		'refer_url' => array (
 			'name' => 'refer_url',

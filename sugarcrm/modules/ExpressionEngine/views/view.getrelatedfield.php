@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/MVC/View/views/view.ajax.php');
-require_once("data/BeanFactory.php");
+require_once("/modules/ExpressionEngine/formulaHelper.php");
 
 class ViewGetRelatedField extends ViewAjax
 {
@@ -38,21 +38,6 @@ class ViewGetRelatedField extends ViewAjax
     }
 
     function display() {
-        $focus = BeanFactory::getBean($this->tmodule, $this->record_id);
-        $field = $this->field;
-        //First check if the field exists
-        if(!isset($focus->field_defs[$field]) || !isset($focus->$field))
-        {
-            echo(json_encode("unknown field"));
-        }
-        else if ($focus->field_defs[$field]['type'] == "bool")
-        {
-            echo json_encode($focus->$field ? "true" : "false");
-        }
-        //Otherwise, send it to the formula builder to evaluate further
-        else
-        {
-            echo json_encode($focus->$field);
-        }
+        echo json_encode(FormulaHelper::getFieldValue($this->tmodule, $this->record_id, $this->field));
     }
 }

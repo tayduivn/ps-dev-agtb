@@ -46,6 +46,11 @@ class SugarTab
 
         $max_tabs = $current_user->getPreference('max_tabs');
         if(!isset($max_tabs) || $max_tabs <= 0) $max_tabs = $GLOBALS['sugar_config']['default_max_tabs'];
+				
+				$key_all = translate('LBL_TABGROUP_ALL');
+				if ($selected_group == 'All') {
+						$selected_group = $key_all;
+				}
 
         $moreTabs = array_slice($mainTabs,$max_tabs);
         /* If the current tab is in the 'More' menu, move it into the visible menu. */
@@ -57,7 +62,7 @@ class SugarTab
         }
 
         $subpanelTitles = array();
-        foreach($otherTabs['All']['tabs'] as $subtab)
+        foreach($otherTabs[$key_all]['tabs'] as $subtab)
         {
             $subpanelTitles[$subtab['key']] = $subtab['label'];
         }

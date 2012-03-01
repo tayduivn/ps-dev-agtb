@@ -47,8 +47,6 @@ array (
             'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" accessKey="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_KEY}" class="button" onclick="SUGAR.meetings.fill_invitees(); this.form.status.value=\'Held\'; this.form.action.value=\'Save\'; this.form.return_module.value=\'Meetings\'; this.form.isDuplicate.value=true; this.form.isSaveAndNew.value=true; this.form.return_action.value=\'EditView\'; this.form.return_id.value=\'{$fields.id.value}\'; return check_form(\'EditView\');" type="submit" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
           ),
         ),
-        'headerTpl' => 'modules/Meetings/tpls/header.tpl',
-        'footerTpl' => 'modules/Meetings/tpls/footer.tpl',
       ),
       'widths' =>
       array (
@@ -139,22 +137,20 @@ array (
           array (
             'name' => 'duration',
             'customCode' => '
-            	@@FIELD@@
-            	<span id="duration_text"></span>
-            	<input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
-            	<input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
-            	{sugar_getscript file="modules/Meetings/duration_dependency.js"}
-            	<script type="text/javascript">
-            		var date_time_format = "{$CALENDAR_FORMAT}";
-            		{literal} 
-			SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){			
-				var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);	
-			});
-			{/literal}
-            	</script>            	
+                @@FIELD@@
+                <input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
+                <input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
+                {sugar_getscript file="modules/Meetings/duration_dependency.js"}
+                <script type="text/javascript">
+                    var date_time_format = "{$CALENDAR_FORMAT}";
+                    {literal}
+                    SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){
+                        var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);
+                    });
+                    {/literal}
+                </script>            
             ',
-          ),
-          
+          ),          
           array (
             'name' => 'reminder_time',
             'customCode' => '{include file="modules/Meetings/tpls/reminders.tpl"}',

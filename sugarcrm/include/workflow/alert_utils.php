@@ -780,7 +780,7 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
                 if(isset($focus->field_defs[$module_name])) {
                     $rel_handler->rel1_relationship_name = $focus->field_defs[$module_name]['relationship'];
                     $rel_module = get_rel_module_name($focus->module_dir, $rel_handler->rel1_relationship_name, $focus->db);
-                    $rel_module->rel1_module = $rel_module;
+                    $rel_handler->rel1_module = $rel_module;
                     $rel_handler->rel1_bean = get_module_info($rel_module);
                 }
                 else {

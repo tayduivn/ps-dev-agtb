@@ -260,11 +260,11 @@ $mod_strings = array (
   'LBL_DISPLAY_SUMMARIES'=>'Choose Display Summaries',
   'LBL_HIDE_SUMMARIES'=>'Hide Summaries',
   //BEGIN SUGARCRM flav!=sales ONLY
-  'LBL_RUN_BUTTON_TITLE'=>'Run Report [Alt+R]',
+  'LBL_RUN_BUTTON_TITLE'=>'Run Report',
   'LBL_RUN_REPORT_BUTTON_LABEL' => 'Run Report',
   //END SUGARCRM flav!=sales ONLY
   //BEGIN SUGARCRM flav=sales ONLY
-  'LBL_RUN_BUTTON_TITLE'=>'Refresh Report [Alt+R]',
+  'LBL_RUN_BUTTON_TITLE'=>'Refresh Report',
   'LBL_RUN_REPORT_BUTTON_LABEL' => 'Refresh Report',
   //END SUGARCRM flav=sales ONLY
   'LBL_RUN_REPORT_BUTTON_KEY' => 'R',
@@ -587,5 +587,6 @@ $mod_strings = array (
 	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
     'LBL_ALT_INFORMATION' => 'Information',
+    'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
 );
 ?>

@@ -321,12 +321,20 @@ class VardefManager{
                 $links[$name] = $def;
             }
         }
+
+        self::$linkFields[$object] = $links;
+
         return $links;
     }
 
 
     public static function getLinkFieldForRelationship($module, $object, $relName)
     {
+        $cacheKey = "LFR{$module}{$object}{$relName}";
+        $cacheValue = sugar_cache_retrieve($cacheKey);
+        if(!empty($cacheValue))
+            return $cacheValue;
+
         $relLinkFields = self::getLinkFieldsForModule($module, $object);
         $matches = array();
         if (!empty($relLinkFields))
@@ -342,9 +350,13 @@ class VardefManager{
         if (empty($matches))
             return false;
         if (sizeof($matches) == 1)
-            return $matches[0];
-        //For relationships where both sides are the same module, more than one link will be returned
-        return $matches;
+            $results = $matches[0];
+        else
+            //For relationships where both sides are the same module, more than one link will be returned
+            $results = $matches;
+
+        sugar_cache_put($cacheKey, $results);
+        return $results ;
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -485,23 +497,31 @@ class VardefManager{
 
     //END SUGARCRM flav=pro ONLY
 
+
     /**
-     * apply global "account_required" setting if possible
-     * @param array    $vardef
-     * @return array   updated $vardef
+     * applyGlobalAccountRequirements
+     *
+     * This method ensures that the account_name relationships are set to always be required if the configuration file specifies
+     * so.  For more information on this require_accounts parameter, please see the administrators guide or go to the
+     * developers.sugarcrm.com website to find articles relating to the use of this field.
+     *
+     * @param Array $vardef The vardefs of the module to apply the account_name field requirement to
+     * @return Array $vardef The vardefs of the module with the updated required setting based on the system configuration
      */
     static function applyGlobalAccountRequirements($vardef)
     {
-        if (isset($GLOBALS['sugar_config']['require_accounts'])) {
-            if (isset($vardef['fields']) &&
-                isset($vardef['fields']['account_name']) &&
-                isset($vardef['fields']['account_name']['required']))
+        if (isset($GLOBALS['sugar_config']['require_accounts']))
+        {
+            if (isset($vardef['fields'])
+                && isset($vardef['fields']['account_name'])
+                && isset($vardef['fields']['account_name']['type'])
+                && $vardef['fields']['account_name']['type'] == 'relate'
+                && isset($vardef['fields']['account_name']['required']))
             {
                 $vardef['fields']['account_name']['required'] = $GLOBALS['sugar_config']['require_accounts'];
             }
 
         }
-
         return $vardef;
     }
 
@@ -516,7 +536,7 @@ class VardefManager{
         //here check if the cache file exists, if it does then load it, if it doesn't
         //then call refreshVardef
         //if either our session or the system is set to developerMode then refresh is set to true
-        if(!empty($GLOBALS['sugar_config']['developerMode']) || !empty($_SESSION['developerMode'])){
+        if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
             $refresh = true;
         }
         // Retrieve the vardefs from cache.

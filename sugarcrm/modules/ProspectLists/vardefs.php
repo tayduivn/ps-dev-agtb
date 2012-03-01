@@ -28,6 +28,7 @@ $dictionary['ProspectList'] = array (
     //END SUGARCRM flav=following ONLY
 	'table' => 'prospect_lists',
 	'unified_search' => true,
+	'full_text_search' => true,
 	'fields' => array (
 		'id' => array (
 			'name' => 'id',
@@ -43,6 +44,7 @@ $dictionary['ProspectList'] = array (
 			'len' => '50',
 			'importable' => 'required',
 			'unified_search' => true,
+			'full_text_search' => array('boost' => 3),
 		),
 		'list_type' => array (
 		    'name' => 'list_type',

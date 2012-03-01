@@ -49,24 +49,9 @@ class CountRelatedExpression extends NumericExpression
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
-                //We just have a field name, assume its the name of a link field
-                //and the parent module is the current module.
-                //Try and get the current module and record ID
-                var module = SUGAR.forms.AssignmentHandler.getValue("module");
-                var record = SUGAR.forms.AssignmentHandler.getValue("record");
-                if (!module || !record)
-                    return "";
-                var url = "index.php?" + SUGAR.util.paramsToUrl({
-                    module:"ExpressionEngine",
-                    action:"execFunction",
-                    id: record,
-                    tmodule:module,
-                    "function":"count",
-                    params: YAHOO.lang.JSON.stringify(['\$' + linkField])
-                });
-                //The response should the be the JSON encoded value of the related field
-                return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);
-			} else if (typeof(rel) == "object") {
+                return SUGAR.forms.AssignmentHandler.getRelatedField(linkField, 'count');
+			}
+			else if (typeof(rel) == "object") {
 			    //Assume we have a Link object that we can delve into.
 			    //This is mostly used for n level dives through relationships.
 			    //This should probably be avoided on edit views due to performance issues.

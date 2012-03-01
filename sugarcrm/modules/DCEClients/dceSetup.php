@@ -88,7 +88,7 @@
     //write or rewrite new cron file
     $cronPath = checkSlash($config_options['client_dir_path']).'sugarclient/dcecron';
     $cronStr = "* * * * * php -f ".checkSlash($config_options['client_dir_path'])."sugarclient/processAction.php ";
-        $done = sugar_file_put_contents($cronPath,$cronStr);
+        $done = file_put_contents($cronPath,$cronStr);
     if(!$done) {
         // was 'Done'
         echo('ERROR::  failed writing Cron!, you will need to create cron with following entry ');
@@ -128,7 +128,7 @@
         $dce_config = 
         '.var_export($dce_config, true) .';
         ?>';
-        $done = sugar_file_put_contents($filePath,$config_string);
+        $done = file_put_contents($filePath,$config_string);
 
     if(!$done) {
         // was 'Done'

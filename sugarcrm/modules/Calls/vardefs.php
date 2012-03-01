@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activity representing a phone call',
-                               'unified_search' => true, 'unified_search_default_enabled' => true, 'fields' => array (
+                               'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'fields' => array (
 
   'name' =>
   array (
@@ -31,6 +31,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '50',
     'comment' => 'Brief description of the call',
     'unified_search' => true,
+    'full_text_search' => array('boost' => 3),
 	'required'=>true,
     'importable' => 'required',
   ),
@@ -153,6 +154,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'dbType' => 'int',
     'options' => 'reminder_time_options',
     'reportable' => false,
+    'massupdate' => false,
     'default'=> -1,
     'comment' => 'Specifies when a reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'
   ),
@@ -172,6 +174,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'dbType' => 'int',
     'options' => 'reminder_time_options',
     'reportable' => false,
+    'massupdate' => false,
     'default'=> -1,
     'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'
   ),
@@ -332,6 +335,91 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 		'type' => 'id',
 		'source' => 'non-db',
 	),
+  'repeat_type' =>
+  array(
+    'name' => 'repeat_type',
+    'vname' => 'LBL_REPEAT_TYPE',
+    'type' => 'enum',
+    'len' => 36,
+    'options' => 'repeat_type_dom',
+    'comment' => 'Type of recurrence',
+    'importable' => 'false',
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'false',
+  ),  
+  'repeat_interval' =>
+  array(
+    'name' => 'repeat_interval',
+    'vname' => 'LBL_REPEAT_INTERVAL',
+    'type' => 'int',
+    'len' => 3,
+    'default' => 1,
+    'comment' => 'Interval of recurrence',
+    'importable' => 'false',
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'false',
+  ),  
+  'repeat_dow' =>
+  array(
+    'name' => 'repeat_dow',
+    'vname' => 'LBL_REPEAT_DOW',
+    'type' => 'varchar',
+    'len' => 7,
+    'comment' => 'Days of week in recurrence',
+    'importable' => 'false',
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'false',
+  ),  
+  'repeat_until' =>
+  array(
+    'name' => 'repeat_until',
+    'vname' => 'LBL_REPEAT_UNTIL',
+    'type' => 'date',
+    'comment' => 'Repeat until specified date',
+    'importable' => 'false',
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'false',
+  ),  
+  'repeat_count' =>
+  array(
+    'name' => 'repeat_count',
+    'vname' => 'LBL_REPEAT_COUNT',
+    'type' => 'int',
+    'len' => 7,
+    'comment' => 'Number of recurrence',
+    'importable' => 'false',
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'false',
+  ),
+  'repeat_parent_id' =>
+  array(
+    'name' => 'repeat_parent_id',
+    'vname' => 'LBL_REPEAT_PARENT_ID',
+    'type' => 'id',
+    'len' => 36,
+    'comment' => 'Id of the first element of recurring records',
+    'importable' => 'false',
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => 'false',
+  ),
+  'recurring_source' =>
+  array(
+    'name' => 'recurring_source',
+    'vname' => 'LBL_RECURRING_SOURCE',
+    'type' => 'varchar',
+    'len' => 36,
+    'comment' => 'Source of recurring call',
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => false,
+  ),
 ),
 'indices' => array (
 	array(

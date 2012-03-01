@@ -18,7 +18,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM arec Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: utils.php 56927 2010-06-11 23:19:26Z smalyshev $

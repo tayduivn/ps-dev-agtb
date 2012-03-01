@@ -111,9 +111,9 @@ $modules = $modules_array;
 
 
 $xtpl->assign("MAILMERGE_MODULE_OPTIONS", get_select_options_with_id($modules, '0'));
-$change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' tabindex='2' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' onclick='open_popup(document.EditView.rel_type.value, 600, 400, \"&request_data=$encoded_popup_request_data\", true, false, {});' />";
+$change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' tabindex='2' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' onclick='open_popup(document.EditView.rel_type.value, 600, 400, \"&request_data=$encoded_popup_request_data\", true, false, {});' />";
 
-$change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' tabindex='2' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' onclick='open_popup(document.EditView.parent_type.value, 600, 400, \"&request_data=$encoded_popup_request_data\", true, false, {});' />";
+$change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' tabindex='2' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' onclick='open_popup(document.EditView.parent_type.value, 600, 400, \"&request_data=$encoded_popup_request_data\", true, false, {});' />";
 $xtpl->assign("CHANGE_PARENT_BUTTON", $change_parent_button);
 
 $relModule = $_SESSION['MAILMERGE_CONTAINS_CONTACT_INFO'];
@@ -211,7 +211,7 @@ foreach($sel_obj as $key => $value)
 			}
 			$contact_id = $row['id'];
 	}
-	$change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' tabindex='2' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."' type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' onclick='open_popup(document.EditView.rel_type_".$code.".value, 600, 400, \"&html=mail_merge&select=$select&where=$where&id=$key&request_data=$encoded_popup_request_data\", true, false, {});' $disabled/>";
+	$change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' tabindex='2'  type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' name='button' onclick='open_popup(document.EditView.rel_type_".$code.".value, 600, 400, \"&html=mail_merge&select=$select&where=$where&id=$key&request_data=$encoded_popup_request_data\", true, false, {});' $disabled/>";
 	$items = array(
 	'ID' => $key,
 	'NAME' => $value,

@@ -1495,12 +1495,15 @@ return str_replace(' > ','_',
 
         // if we are doing the details part of a summary query.. we need the details
         // to be sorted by the group by
+
         if (!empty($this->group_by_arr) && is_array($this->group_by_arr) && $query_name != 'total_query') {
             $groups = array();
             // FIXME: see if we need to handle NULLs on GROUP BY
             //        foreach ( $this->group_by_arr as $group_by ) {
             //            $groups[] = $this->db->convert($group_by, "IFNULL", array("''"));
             //        }
+   			// to be sorted by the group by
+
             $query .= " GROUP BY " . join(",", $this->group_by_arr);
         }
 
@@ -2032,7 +2035,7 @@ return str_replace(' > ','_',
 
             $contents = ob_get_clean();
             if (is_writable(sugar_cached('modules/'))) {
-                sugar_file_put_contents($cache, $contents);
+                file_put_contents($cache, $contents);
             }
             // Only set this if we're not being called from the home page.
             // Charts on the home page go through this code as well and
@@ -2066,8 +2069,6 @@ return str_replace(' > ','_',
         if ($this->has_summary_columns()) {
             $this->run_total_query();
         }
-        $this->get_summary_total_row();
-
     }
 
     // static function to return the modules associated to a report definition

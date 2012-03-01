@@ -455,4 +455,22 @@ class TestViewConvertLead extends ViewConvertLead
     public function copyActivityWrapper($activity, $bean) {
         parent::copyActivityAndRelateToBean($activity, $bean);
     }
+
+    public function testMeetingsUsersRelationships()
+    {
+        global $current_user;
+        
+        $bean = SugarTestMeetingUtilities::createMeeting();
+        $convert_lead = SugarTestViewConvertLeadUtilities::createViewConvertLead();
+        
+        if ($bean->object_name == "Meeting")
+        {
+            $convert_lead->setMeetingsUsersRelationship($bean);
+        }
+        
+        $this->assertTrue(is_object($bean->users), "Relationship wasn't set.");
+        
+        SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+    }
 }

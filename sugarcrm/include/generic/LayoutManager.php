@@ -31,8 +31,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: LayoutManager.php 56115 2010-04-26 17:08:09Z kjing $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
-require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
+
+
 
 /**
  * Form layout manager
@@ -86,6 +86,13 @@ class LayoutManager
 			),
             'SugarWidgetSubPanelTopButtonQuickCreate' => array(
                 'widget_class'=>'SugarWidgetSubPanelTopButtonQuickCreate',
+                'title'=>'LBL_NEW_BUTTON_TITLE',
+                'access_key'=>'LBL_NEW_BUTTON_KEY',
+                'form_value'=>'LBL_NEW_BUTTON_LABEL',
+                'ACL'=>'edit',
+            ),
+            'SugarWidgetSubPanelTopCreateLeadNameButton' => array(
+                'widget_class'=>'SugarWidgetSubPanelTopCreateLeadNameButton',
                 'title'=>'LBL_NEW_BUTTON_TITLE',
                 'access_key'=>'LBL_NEW_BUTTON_KEY',
                 'form_value'=>'LBL_NEW_BUTTON_LABEL',
@@ -190,6 +197,14 @@ class LayoutManager
 					'return_type'=>'report',
 				)
 			),
+			 'SugarWidgetSubPanelTopCreateAccountNameButton' => array(
+                'widget_class'=>'SugarWidgetSubPanelTopCreateAccountNameButton',
+                'module'=>'Contacts',
+                'title'=>'LBL_NEW_BUTTON_TITLE',
+                'access_key'=>'LBL_NEW_BUTTON_KEY',
+                'form_value'=>'LBL_NEW_BUTTON_LABEL',
+                'ACL'=>'edit',
+            ),
 			//BEGIN SUGARCRM flav!=sales ONLY
 			'SugarWidgetSubPanelAddToProspectListButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopSelectButton',
@@ -310,7 +325,7 @@ class LayoutManager
 		return null;
 	}
 
-	function widgetDisplay($widget_def, $use_default = false)
+	function widgetDisplay($widget_def, $use_default = false, $grabName = false, $grabId = false)
 	{
 		$theclass = $this->getClassFromWidgetDef($widget_def, $use_default);
  		$label = isset($widget_def['module']) ? $widget_def['module'] : '';
@@ -327,7 +342,14 @@ class LayoutManager
 		}
 		//end
 
-		return $theclass->display($widget_def);
+        if ($grabName) {
+            return $theclass->getDisplayName();
+        }
+        if ($grabId) {
+            return $theclass->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($theclass->getDisplayName())).'_button';
+        }
+        
+		return $theclass->display($widget_def, null, null);
 	}
 
 	function widgetQuery($widget_def, $use_default = false)

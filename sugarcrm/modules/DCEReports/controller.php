@@ -143,7 +143,7 @@ class DCEReportsController extends SugarController{
             $content .= $line;
         }
         $TmpFile=sugar_cached("xml/LicensingReport.tmp");
-        sugar_file_put_contents($TmpFile, $content);
+        file_put_contents($TmpFile, $content);
 // ListView
         $where='';
 

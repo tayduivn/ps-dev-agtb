@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  
 // $Id: SugarWidgetSubPanelTopCreateAccountNameButton.php 38393 2008-07-29 19:44:00Z Collin Lee $
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButtonQuickCreate.php');
+
 
 class SugarWidgetSubPanelTopCreateAccountNameButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {
@@ -43,7 +43,7 @@ class SugarWidgetSubPanelTopCreateAccountNameButton extends SugarWidgetSubPanelT
 		global $currentModule;
 
 		$title = $app_strings['LBL_NEW_BUTTON_TITLE'];
-		$accesskey = $app_strings['LBL_NEW_BUTTON_KEY'];
+		//$accesskey = $app_strings['LBL_NEW_BUTTON_KEY'];
 		$value = $app_strings['LBL_NEW_BUTTON_LABEL'];
 		$this->module = 'Contacts';
 		if( ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'edit', true)){
@@ -67,7 +67,7 @@ class SugarWidgetSubPanelTopCreateAccountNameButton extends SugarWidgetSubPanelT
 		
 		
 		$button = $this->_get_form($defines, $additionalFormFields);
-		$button .= "<input title='$title' accesskey='$accesskey' class='button' type='submit' name='{$this->getWidgetId()}_create_button' id='{$this->getWidgetId()}_create_button' value='  $value  '/>\n";
+		$button .= "<input title='$title' class='button' type='submit' name='{$this->getWidgetId()}_create_button' id='{$this->getWidgetId()}_create_button' value='  $value  '/>\n";
 		$button .= "</form>";
 		return $button;
 	}

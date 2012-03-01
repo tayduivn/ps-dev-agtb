@@ -2721,7 +2721,7 @@ eoq;
 
 		if(ACLController::checkAccess('EmailTemplates', 'list', true) && ACLController::checkAccess('EmailTemplates', 'view', true)) {
 			$et = new EmailTemplate();
-            $etResult = $et->db->query($et->create_new_list_query('',"(type IS NULL OR type='email')",array(),array(),''));
+            $etResult = $et->db->query($et->create_new_list_query('',"(type IS NULL OR type='' OR type='email')",array(),array(),''));
 			$email_templates_arr = array('' => $app_strings['LBL_NONE']);
 			while($etA = $et->db->fetchByAssoc($etResult)) {
 				$email_templates_arr[$etA['id']] = $etA['name'];
@@ -2758,7 +2758,7 @@ eoq;
 			$myAccountString = " - {$app_strings['LBL_MY_ACCOUNT']}";
 		} // if
 
-		//Check to make sure that the user has set the associated inbound email acount -> outbound acount is active.
+		//Check to make sure that the user has set the associated inbound email account -> outbound account is active.
 		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
         $sf = new SugarFolder();
         $groupSubs = $sf->getSubscriptions($current_user);

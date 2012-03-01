@@ -143,7 +143,7 @@
                                 <div id="comfirm_pwd_match" class="error" style="display: none;">{$MOD.ERR_PASSWORD_MISMATCH}</div>
                                      {*<span id="ext-gen63" class="x-panel-header-text">
                                         Requirements
-                                        <span id="Filter.1_help" onmouseout="return nd();" onmouseover="return overlib(help(), FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">
+                                        <span id="Filter.1_help" onclick="return SUGAR.util.showHelpTips(this,help());">
                                             <img src="themes/default/images/help.gif"/>
                                         </span>
                                     </span>*}
@@ -532,16 +532,25 @@ onUserEditView();
 		</form>
 	</div>
 </div>
-
+{literal}
+<style>
+    .actionsContainer ul, .actionsContainer li {
+        list-style:none;
+    }
+    .actionsContainer li {
+        float:left;
+    }
+</style>
+{/literal}
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
     <tr>
         <td>
-            <input	id="Save" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
+            <li><input	id="Save" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
                     class="button primary" onclick="if (!set_password(document.forms['EditView'],newrules('{$PWDSETTINGS.minpwdlength}','{$PWDSETTINGS.maxpwdlength}','{$REGEX}'))) return false; if (!Admin_check()) return false; document.forms['EditView'].action.value='Save'; {$CHOOSER_SCRIPT} {$REASSIGN_JS} if(verify_data(EditView)) document.forms['EditView'].submit();"
-                    type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}" >
-            <input	title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}"
+                    type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}" ></li>
+            <li><input	title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}"
                     class="button" onclick="document.forms['EditView'].action.value='{$RETURN_ACTION}'; document.forms['EditView'].module.value='{$RETURN_MODULE}'; document.forms['EditView'].record.value='{$RETURN_ID}'; document.forms['EditView'].submit()"
-                    type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+                    type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"></li>
             {$BUTTONS}
         </td>
         <td align="right" nowrap>

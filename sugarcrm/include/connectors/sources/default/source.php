@@ -135,7 +135,7 @@ abstract class source{
 	    if(!file_exists("custom/modules/Connectors/connectors/sources/{$dir}")) {
 	       mkdir_recursive("custom/modules/Connectors/connectors/sources/{$dir}");
 	    }
-	    sugar_file_put_contents("custom/modules/Connectors/connectors/sources/{$dir}/config.php", $config_str);
+	    file_put_contents("custom/modules/Connectors/connectors/sources/{$dir}/config.php", $config_str);
  	}
 
  	/**

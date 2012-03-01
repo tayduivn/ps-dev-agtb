@@ -35,7 +35,6 @@
 {$SUGAR_JS}
 {$SUGAR_CSS}
 {$CSS}
-{overlib_includes}
 </head>
 {literal}
 <script type='text/javascript'>
@@ -324,7 +323,7 @@ function disableReturnSubmission(e) {
                                 <td width="20%" scope="row">
                                     <span id="notify_allow_default_outbound_label">
                                     {$MOD.LBL_ALLOW_DEFAULT_SELECTION}&nbsp;
-                                    <img border="0" onmouseout="return nd();" onmouseover="return overlib('{$MOD.LBL_ALLOW_DEFAULT_SELECTION_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
+                                   {sugar_help text=$MOD.LBL_ALLOW_DEFAULT_SELECTION_HELP }
                                     </span>
                                 </td>
                                 <td width="30%">

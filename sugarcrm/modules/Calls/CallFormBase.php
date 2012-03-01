@@ -158,9 +158,8 @@ function getFormFooter($prefic, $mod=''){
 global $app_strings;
 global $app_list_strings;
 $lbl_save_button_title = $app_strings['LBL_SAVE_BUTTON_TITLE'];
-$lbl_save_button_key = $app_strings['LBL_SAVE_BUTTON_KEY'];
 $lbl_save_button_label = $app_strings['LBL_SAVE_BUTTON_LABEL'];
-$the_form = "	<p><input title='$lbl_save_button_title' accessKey='$lbl_save_button_key' class='button' type='submit' name='button' value=' $lbl_save_button_label ' ></p></form>";
+$the_form = "	<p><input title='$lbl_save_button_title' class='button' type='submit' name='button' value=' $lbl_save_button_label ' ></p></form>";
 $the_form .= get_left_form_footer();
 $the_form .= get_validate_record_js();
 return $the_form;
@@ -205,7 +204,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
         $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Getting the users default reminder time');
 		$_POST[$prefix.'reminder_time'] = $current_user->getPreference('reminder_time');
 	}
-	
+
 	if(!isset($_POST['email_reminder_checked']) || (isset($_POST['email_reminder_checked']) && $_POST['email_reminder_checked'] == '0')) {
 		$_POST['email_reminder_time'] = -1;
 	}
@@ -213,6 +212,9 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 		$_POST['email_reminder_time'] = $current_user->getPreference('email_reminder_time');
 		$_POST['email_reminder_checked'] = 1;
 	}
+
+	// don't allow to create not-editable meetings substituting a POST request
+	$_POST['recurring_source'] = false;
 
 	$time_format = $timedate->get_user_time_format();
     $time_separator = ":";
@@ -257,7 +259,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	  		$_POST['user_invitees'] .= ','.$current_user->id.', ';
 	  	}
 
-	  	//remove any double comma's introduced during appending
+	  	//remove any double commas introduced during appending
 	    $_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
   	}
 

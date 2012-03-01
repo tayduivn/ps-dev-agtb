@@ -30,18 +30,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
+
 
 class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopButton
 {
+    public function getDisplayName()
+    {
+        return $GLOBALS['mod_strings']['LBL_VIEW_GANTT_TITLE'];
+    }
 
-	//widget_data is the collection of attributes assoicated with the button in the layout_defs file.
+	//widget_data is the collection of attributes associated with the button in the layout_defs file.
 	function display(&$widget_data)
 	{
 		global $mod_strings;
 
 		$title = $mod_strings['LBL_VIEW_GANTT_TITLE'];
-		$value = $mod_strings['LBL_VIEW_GANTT_TITLE'];
+		$value = $this->getDisplayName();
 		$module_name = 'Project';
 		$id = $widget_data['focus']->id;
 
@@ -53,7 +57,7 @@ class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopBu
 			. '<input type="hidden" name="project_id" value="' .$id . '" /> '
 			. '<input type="hidden" name="return_id" value="' .$id . '" /> '
 			. '<input type="hidden" name="record" value="' . $id .'" /> '
-			. '<input type="submit" name="EditProjectTasks" ' 
+			. '<input type="submit" name="EditProjectTasks" '
 			. ' class="button"'
 			. ' title="' . $title . '"'
 			. ' value="' . $value . '" />'
