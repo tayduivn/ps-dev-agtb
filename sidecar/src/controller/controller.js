@@ -50,7 +50,7 @@
             this.layout = this.getLayout(params);
 
             this.context.getData();
-            //this.context.set({layoutObj:this.layout}, this.data);
+            this.context.set({layoutObj:this.layout});
 
             // Render the rendered layout to the main element
             this.$el.html(this.layout.$el);

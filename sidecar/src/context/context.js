@@ -119,20 +119,29 @@
             },
 
             getData: function() {
-                var data, bean, collection;
+                var data, fields, bean, collection, options, state=this.get();
+                if(state.view){
+                    fields = state.view.getFields();
+                    this.set({fields:fields});
 
-                if (this.get('id')) {
-                    bean = app.dataManager.fetchBean(this.get('module'), this.get('id'));
-                    collection = app.dataManager.createBeanCollection(this.get('module'), [bean]);
                 }
-                else if (this.get('create')) {
-                    bean = app.dataManager.createBean(this.get('module'));
-                    collection = app.dataManager.createBeanCollection(this.get('module'), [bean]);
+                options = {};
+                if(fields){
+                    var fieldString = fields.join(",");
+                    options.params = [{key:"fields",value:fieldString}];
                 }
-                else if (this.get('url')) {
+                if (state.id) {
+                    bean = app.dataManager.fetchBean(state.module, state.id, options);
+                    collection = app.dataManager.createBeanCollection(state.module, [bean]);
+                }
+                else if (state.create) {
+                    bean = app.dataManager.createBean(state.module);
+                    collection = app.dataManager.createBeanCollection(state.module, [bean]);
+                }
+                else if (state.url) {
                     // TODO: Make this hit a custom url
                 } else {
-                    collection = app.dataManager.fetchBeans(this.get('module'));
+                    collection = app.dataManager.fetchBeans(state.module, options);
                     bean = collection.models[0] || {};
                 }
 
