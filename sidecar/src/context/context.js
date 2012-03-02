@@ -91,6 +91,9 @@
              */
             reset: function() {
                 this.state = {};
+                _.each(this.children, function(child) {
+                    child.reset();
+                });
             },
 
             /**
@@ -113,7 +116,32 @@
             init: function(obj, data) {
                 this.reset(obj);
                 this.set(obj, data);
+            },
+
+            getData: function() {
+                var data, bean, collection;
+
+                if (this.get('id')) {
+                    bean = app.dataManager.fetchBean(this.get('module'), this.get('id'));
+                    collection = app.dataManager.createBeanCollection(this.get('module'), [bean]);
+                }
+                else if (this.get('create')) {
+                    bean = app.dataManager.createBean(this.get('module'));
+                    collection = app.dataManager.createBeanCollection(this.get('module'), [bean]);
+                }
+                else if (this.get('url')) {
+                    // TODO: Make this hit a custom url
+                } else {
+                    collection = app.dataManager.fetchBeans(this.get('module'));
+                    bean = collection.models[0] || {};
+                }
+
+                this.set({collection: collection, model: bean});
+                _.each(this.children, function(child) { //TODO optimize for batch
+                    child.getData();
+                });
             }
+
         }, Backbone.Events);
 
         context.init((obj || {}), (data || {}));

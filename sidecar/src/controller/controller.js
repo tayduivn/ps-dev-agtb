@@ -49,8 +49,8 @@
             this.context.init(params);
             this.layout = this.getLayout(params);
 
-            this.data = this.getData(params);
-            this.context.set(null, this.data);
+            this.context.getData();
+            //this.context.set({layoutObj:this.layout}, this.data);
 
             // Render the rendered layout to the main element
             this.$el.html(this.layout.$el);
@@ -89,7 +89,7 @@
             }
 
             return {
-                model : bean,
+                model: bean,
                 collection: collection
             };
         },
