@@ -450,11 +450,6 @@ class ListViewDisplay {
 	protected function buildDeleteLink()
 	{
 		global $app_strings;
-        if ($_REQUEST["module"] == "Contacts")
-        {
-            return "";
-        }
-
         return "<a href='javascript:void(0)' onclick=\"return sListView.send_mass_update('selected', '{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
 	}
 	/**
