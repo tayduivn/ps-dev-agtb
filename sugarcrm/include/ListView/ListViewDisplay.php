@@ -432,11 +432,11 @@ class ListViewDisplay {
 			$client = $defaultPref;
 
 		if($client == 'sugar')
-			$script = "<a href='javascript:void(0)' style='width: 150px' " .
+			$script = "<a href='javascript:void(0)' " .
 					'onclick="return sListView.send_form_for_emails(true, \''."Emails".'\', \'index.php?module=Emails&action=Compose&ListView=true\',\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\', \''.$this->seed->module_dir.'\', \''.$totalCount.'\', \''.$app_strings['LBL_LISTVIEW_LESS_THAN_TEN_SELECT'].'\')">' .
 					$app_strings['LBL_EMAIL_COMPOSE'] . '</a>';
 		else
-			$script = "<a href='javascript:void(0)' style='width: 150px' " .
+			$script = "<a href='javascript:void(0)' " .
 					"onclick=\"return sListView.use_external_mail_client('{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', '{$_REQUEST['module']}');\">" .
 					$app_strings['LBL_EMAIL_COMPOSE'] . '</a>';
 
@@ -490,7 +490,7 @@ class ListViewDisplay {
 		}
 
         if (isset($dictionary[$this->seed->object_name]['duplicate_merge']) && $dictionary[$this->seed->object_name]['duplicate_merge']==true ) {
-            return "<a href='javascript:void(0)' style='width: 150px' ".
+            return "<a href='javascript:void(0)' ".
                             "onclick='if (sugarListView.get_checks_count()> 1) {sListView.send_form(true, \"MergeRecords\", \"index.php\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\", \"{$this->seed->module_dir}\",\"$return_string\");} else {alert(\"{$app_strings['LBL_LISTVIEW_TWO_REQUIRED']}\");return false;}'>".
                             $app_strings['LBL_MERGE_DUPLICATES'].'</a>';
         }
@@ -517,7 +517,7 @@ class ListViewDisplay {
         $str = '';
         
         if ($user_merge == 'on' && isset($admin->settings['system_mailmerge_on']) && $admin->settings['system_mailmerge_on'] && !empty($modules_array[$module_dir])) {
-            return "<a href='javascript:void(0)' style='width: 150px' " .
+            return "<a href='javascript:void(0)'  " .
 					'onclick="if (document.MassUpdate.select_entire_list.value==1){document.location.href=\'index.php?action=index&module=MailMerge&entire=true\'} else {return sListView.send_form(true, \'MailMerge\',\'index.php\',\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\');}">' .
 					$app_strings['LBL_MAILMERGE'].'</a>';
         }
@@ -603,7 +603,7 @@ class ListViewDisplay {
 			open_popup('ProspectLists','600','400','',true,false,{ 'call_back_function':'set_return_and_save_targetlist','form_name':'targetlist_form','field_to_name_array':{'id':'prospect_list'} } );
 EOF;
         $js = str_replace(array("\r","\n"),'',$js);
-        return "<a href='javascript:void(0)' style='width: 150px' onclick=\"$js\">{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}</a>";
+        return "<a href='javascript:void(0)' onclick=\"$js\">{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}</a>";
 	}
 	//END SUGARCRM flav!=sales ONLY
 	/**
