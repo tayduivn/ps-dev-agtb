@@ -61,7 +61,7 @@ public class TestAccountObjects extends TestCase {
 				fail(tmp);
 			}
 			
-			buffer = TestUtils.bufferToString(responseData, null);
+			buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: %s\n", buffer);
 			UserId id = (UserId)json.fromJson(buffer, UserId.class);
 			System.out.printf("(*)TOKEN: %s\n", id.token);
@@ -99,7 +99,7 @@ public class TestAccountObjects extends TestCase {
 			}
 			
 			responseData = response.getEntity();
-			buffer = TestUtils.bufferToString(responseData, null);
+			buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: '%s'\n\n", buffer);
 			AccountId accID = json.fromJson(buffer, AccountId.class);
 			System.out.printf("New Account ID: '%s'\n", accID.id);
@@ -125,7 +125,7 @@ public class TestAccountObjects extends TestCase {
 			}
 			
 			responseData = response.getEntity();
-			buffer = TestUtils.bufferToString(responseData, null);
+			buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: '%s'\n\n", buffer);
 			
 			@SuppressWarnings("unchecked")
