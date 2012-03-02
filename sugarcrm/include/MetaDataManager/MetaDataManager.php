@@ -275,12 +275,11 @@ class MetaDataManager {
         $stdVdef = "modules/{$moduleName}/{$vdefFile}";
         $cusVdef = "custom/modules/{$moduleName}/{$vdefFile}";
         $extVdef = "custom/modules/{$moduleName}/Ext/Vardefs/vardefs.ext.php";
+        $keys = null;
 
         if ($this->filterVarDefs) {
             return $data;
         }
-
-        unset($dictionary);
 
         // check to see if
         if (file_exists($stdVdef)) {
@@ -299,8 +298,32 @@ class MetaDataManager {
             return $data;
         }
 
-        $data = $dictionary;
-        unset($dictionary);
+        // this is a hack, but for some reason php will choke and die on $dictionary unless this is all done
+        // before going and then setting up the global version.  Lame and needs debugging!
+        $keys = array_keys($dictionary);
+
+        global $dictionary;
+        if (file_exists($stdVdef)) {
+            include_once($stdVdef);
+        }
+
+        if (file_exists($cusVdef)) {
+            include_once($cusVdef);
+        }
+
+        if (file_exists($extVdef)) {
+            include_once($extVdef);
+        }
+
+        if (!isset($dictionary)) {
+            return $data;
+        }
+
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $dictionary)) {
+                $data[$key] = $dictionary[$key];
+            }
+        }
 
         $data['isCustom'] = $isCustom;
         $md5 = serialize($data);
