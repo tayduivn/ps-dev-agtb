@@ -155,7 +155,7 @@ Datetimecombo.prototype.jsscript = function(callback) {
 Datetimecombo.prototype.html = function(callback) {
 	
 	//Now render the items
-	var text = '<select class="datetimecombo_time" size="1" id="' + this.fieldname + '_hours" tabindex="' + this.tabindex + '" onchange="combo_' + this.fieldname + '.update(); ' + callback + '">';
+	var text = '<span style="position:relative; top:6px;"><select class="datetimecombo_time" size="1" id="' + this.fieldname + '_hours" tabindex="' + this.tabindex + '" onchange="combo_' + this.fieldname + '.update(); ' + callback + '">';
 	var h1 = this.has12Hours ? 1 : 0;
 	var h2 = this.has12Hours ? 12 : 23;
 	if(this.allowEmptyHM){
@@ -194,6 +194,7 @@ Datetimecombo.prototype.html = function(callback) {
 	    //text += '&nbsp;' + SUGAR.language.get("app_strings", "LBL_LINK_NONE");	
 	}
 
+    text += '</span>';
 	return text;
 };
 

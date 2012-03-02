@@ -223,6 +223,18 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'comment' => 'Currency used'
   ),
 
+    'products' =>
+      array (
+        'name' => 'products',
+        'type' => 'link',
+        'relationship' => 'product_bundle_product',
+        'module'=>'Products',
+        'bean_name'=>'Product',
+        'source'=>'non-db',
+        'rel_fields'=>array('product_index'=>array('type'=>'integer')),
+        'vname'=>'LBL_PRODUCTS',
+      ),
+
 )
                                                       , 'indices' => array (
        array('name' =>'procuct_bundlespk', 'type' =>'primary', 'fields'=>array('id')),

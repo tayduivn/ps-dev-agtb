@@ -104,6 +104,9 @@ class Link2 {
         //Instantiate the relationship for this link.
         $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship($this->def['relationship']);
 
+        // Fix to restore functionality from Link.php that needs to be rewritten but for now this will do.
+        $this->relationship_fields = (!empty($this->def['rel_fields']))?$this->def['rel_fields']: array();
+
         if (!$this->loadedSuccesfully())
         {
             $GLOBALS['log']->fatal("{$this->name} for {$this->def['relationship']} failed to load\n");
@@ -430,12 +433,6 @@ class Link2 {
             }
             else {
                 $this->relationship->remove($related_id, $this->focus);
-            }
-            //fixing bug #45851: unset calls' flex-related fields
-            if (isset($related_id->parent_id) and !empty($related_id->parent_id))
-            {
-                $related_id->parent_id = '';
-                $related_id->save();
             }
         }
         else
