@@ -1,13 +1,14 @@
 package com.sugarcrm.rest.tests;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpEntity;
 
 public class TestUtils {
 
-	public static String bufferToString(HttpEntity entity) {
+	public static String bufferToString(HttpEntity entity, FileWriter fd) {
 		String buffer = "";
 		String tmp = "";
 		InputStreamReader in = null;
@@ -19,7 +20,11 @@ public class TestUtils {
 			
 			
 			while ((tmp = reader.readLine()) != null) {
-				buffer = buffer + tmp;
+				if (fd != null) {
+					fd.write(tmp);
+				} else {
+					buffer = buffer + tmp;
+				}
 			}
 		} catch (Exception exp) {
 			exp.printStackTrace();
