@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -57,8 +58,9 @@ class Bug56077Test extends SOAPTestCase
    		parent::setUp();
         $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
-        $this->_product = SugarTestProductUtilities::createProduct('test_product');
-        $this->_product_bundle = SugarTestProductBundleUtilities::createProductBundle('test_product_bundle');
+        $this->_product = SugarTestProductUtilities::createProduct();
+        $this->_product_bundle = SugarTestProductBundleUtilities::createProductBundle();
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()
