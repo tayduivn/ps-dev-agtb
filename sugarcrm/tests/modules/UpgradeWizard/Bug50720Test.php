@@ -22,47 +22,48 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Meetings/views/view.listbytype.php');
+require_once('modules/UpgradeWizard/uw_utils.php');
 
 /**
- * Bug50697Test.php
- * This test checks the alterations made to modules/Meetings/views/view.listbytype.php to remove the hard-coded
- * UTC_TIMESTAMP function that was used which appears to be MYSQL specific.  Changed to use timedate code instead
+ * Bug50720Test.php
+ * 
+ * This test checks the upgrade_connectors method in modules/UpgradeWizard/uw_utils.php file.  In particular,
+ * we want to ensure that upgrade_connectors will delete the custom connectors.php file.
  *
  */
-class Bug50697Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50720Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    var $customConnectors;
+    var $file = 'custom/modules/Connectors/metadata/connectors.php';
+    
+    public function setUp() 
+    {
+        if(file_exists($this->file))
+        {
+            $this->customConnectors = file_get_contents($this->file);
+        } else {
+            mkdir_recursive('custom/modules/Connectors/metadata');
+            file_put_contents($this->file, '<?php ');
+        }
+    }
 
-public function setUp()
-{
-    global $current_user;
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
-}
+    public function tearDown() 
+    {
+        if(!empty($this->customConnectors))
+        {
+            file_put_contents($this->file, $this->customConnectors);
+        } else if(file_exists($this->file)) {
+            unlink($this->file);
+        }
+    }
 
-public function tearDown()
-{
-    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    unset($GLOBALS['current_user']);
-}
-
-/**
- * testProcessSearchForm
- *
- * Test the processSearchForm function which contained the offensive SQL
- */
-public function testProcessSearchForm()
-{
-    global $timedate;
-    $_REQUEST = array();
-    $mlv = new MeetingsViewListbytype();
-    $mlv->processSearchForm();
-    $this->assertRegExp('/meetings\.date_start.*?\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}/', $mlv->where, 'Failed to create datetime query for meetings.date_start');
-
-    $_REQUEST['name_basic'] = 'Bug50697Test';
-    $mlv->processSearchForm();
-    $this->assertRegExp('/meetings\.date_start.*?\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}/', $mlv->where, 'Failed to create datetime query for meetings.date_start');
-    $this->assertRegExp('/meetings\.name LIKE \'Bug50697Test%\'/', $mlv->where, 'Failed to generate meetings.name search parameter');
-}
-
-
+    /**
+     * testUpgradeConnectors
+     *
+     * This method calls upgrade_connectors and checks to make sure we have deleted the custom connectors.php file
+     */
+    public function testUpgradeConnectors() {
+        upgrade_connectors();
+        $this->assertTrue(!file_exists($this->file), 'upgrade_connectors did not remove file ' . $this->file);
+    }
 }

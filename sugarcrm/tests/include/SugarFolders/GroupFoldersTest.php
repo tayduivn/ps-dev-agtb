@@ -45,10 +45,12 @@ class GroupFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         	$this->_setupTestUser();
     	} // IF
     	$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
     
     public function tearDown()
     {
+        unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['mod_strings']);
     }
 

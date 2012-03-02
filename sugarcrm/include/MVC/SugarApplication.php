@@ -718,7 +718,7 @@ class SugarApplication
 	        return true;
 	    }
 	    if(isset($this->modifyModules[$this->controller->module])) {
-	        if($this->modifyModules[$this->controller->module] == true) {
+	        if($this->modifyModules[$this->controller->module] === true) {
 	            return true;
 	        }
 	        if(in_array($this->controller->action, $this->modifyModules[$this->controller->module])) {

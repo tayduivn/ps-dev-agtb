@@ -41,9 +41,6 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
 
     public function setUp()
     {
-        $this->markTestIncomplete('This test breaking the build when ran as entire suite.  Working with Eddy to fix.');
-        return;
-
         //back up users popup if it exists
         if(is_file($this->customFilePath)){
             include($this->customFilePath);
@@ -91,6 +88,11 @@ class Bug50308Test extends Sugar_PHPUnit_Framework_TestCase {
      * the tests assert that the custom elements are preserved by the parser
      */
     public function testUsingCustomPopUpElements() {
+        
+	//declare the vars global and then include the modules file to make sure they are available during testing
+        global $moduleList, $beanList, $beanFiles;
+        include('include/modules.php');
+
         if (empty($GLOBALS['app_list_strings'])){
             $language = $GLOBALS['current_language'];
             $GLOBALS['app_list_strings'] = return_app_list_strings_language($language);

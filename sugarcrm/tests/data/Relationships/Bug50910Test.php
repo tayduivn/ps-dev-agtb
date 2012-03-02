@@ -22,47 +22,41 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Meetings/views/view.listbytype.php');
-
-/**
- * Bug50697Test.php
- * This test checks the alterations made to modules/Meetings/views/view.listbytype.php to remove the hard-coded
- * UTC_TIMESTAMP function that was used which appears to be MYSQL specific.  Changed to use timedate code instead
- *
- */
-class Bug50697Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug59010Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $emailAddress;
 
-public function setUp()
-{
-    global $current_user;
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
-}
+    public function setUp()
+    {
+        global $beanFiles, $beanList, $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['db']->commit();
+    }
 
-public function tearDown()
-{
-    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    unset($GLOBALS['current_user']);
-}
+    public function tearDown()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        if(!empty($this->emailAddress))
+        {
+            $GLOBALS['db']->query("DELETE FROM emails WHERE id='{$this->emailAddress->id}'");
+            $GLOBALS['db']->query("DELETE FROM emails_beans WHERE email_id='{$this->emailAddress->id}'");
+            $GLOBALS['db']->query("DELETE FROM emails_email_addr_rel WHERE email_id='{$this->emailAddress->id}'");
+        }
+    }
 
-/**
- * testProcessSearchForm
- *
- * Test the processSearchForm function which contained the offensive SQL
- */
-public function testProcessSearchForm()
-{
-    global $timedate;
-    $_REQUEST = array();
-    $mlv = new MeetingsViewListbytype();
-    $mlv->processSearchForm();
-    $this->assertRegExp('/meetings\.date_start.*?\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}/', $mlv->where, 'Failed to create datetime query for meetings.date_start');
+    public function testSugarRelationshipsAddRow()
+    {
+        global $current_user;
+        // create email address instance
+        $this->emailAddress = new EmailAddress();
+        $this->emailAddress->email_address = 'Bug59010Test@test.com';
+        $this->emailAddress->save();
 
-    $_REQUEST['name_basic'] = 'Bug50697Test';
-    $mlv->processSearchForm();
-    $this->assertRegExp('/meetings\.date_start.*?\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}/', $mlv->where, 'Failed to create datetime query for meetings.date_start');
-    $this->assertRegExp('/meetings\.name LIKE \'Bug50697Test%\'/', $mlv->where, 'Failed to generate meetings.name search parameter');
-}
+        // create relation between user and email address with empty additional data to test if the addRow function
+        // properly handles empty values with not generating incorrect SQL
+        $current_user->load_relationship('email_addresses');
+        $current_user->email_addresses->add(array($this->emailAddress), array());
+        $this->assertNotEmpty($current_user->email_addresses);
 
-
+    }
 }
