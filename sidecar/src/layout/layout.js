@@ -146,6 +146,7 @@
 
         Layout.View = Backbone.View.extend({
             initialize: function(options) {
+                _.bindAll(this, 'render', 'bindData');
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
                 this.context = options.context || app.controller.context;
@@ -158,7 +159,10 @@
                 this.fieldIDs = {};
                 //Bind will cause the view to automatically try to link form elements to attributes on the model
                 this.autoBind = options.bind || true;
-
+            },
+            bindData: function(data){
+                data.on('reset',this.render);
+                data.on('reset',function(e){console.log(e);console.log("data changing")});
             },
             _render: function() {
                 if (this.template)
@@ -257,6 +261,7 @@
         })
         Layout.Layout = Layout.View.extend({
             initialize: function() {
+                _.bindAll(this, 'render', 'bindData');
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
                 this.context = this.options.context || app.controller.context;

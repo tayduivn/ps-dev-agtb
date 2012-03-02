@@ -141,11 +141,15 @@
                 else if (state.url) {
                     // TODO: Make this hit a custom url
                 } else {
-                    collection = app.dataManager.fetchBeans(state.module, options);
+                    collection = app.dataManager.createBeanCollection(state.module);
+                    state.view.bindData(collection);
+                    collection.fetch(options);
                     bean = collection.models[0] || {};
                 }
 
                 this.set({collection: collection, model: bean});
+
+                //bean.change();
                 _.each(this.children, function(child) { //TODO optimize for batch
                     child.getData();
                 });
