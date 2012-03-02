@@ -60,6 +60,7 @@ class Bug56077Test extends SOAPTestCase
 
         $this->_product = SugarTestProductUtilities::createProduct();
         $this->_product_bundle = SugarTestProductBundleUtilities::createProductBundle();
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()
