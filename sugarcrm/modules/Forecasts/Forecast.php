@@ -89,8 +89,8 @@ class Forecast extends SugarBean {
 		return "$this->name";
 	}
 
-	function retrieve($id, $encode=false){
-		$ret = parent::retrieve($id, $encode);	
+	function retrieve($id, $encode=false, $deleted=true){
+		$ret = parent::retrieve($id, $encode, $deleted);	
 		
 		return $ret;
 	}

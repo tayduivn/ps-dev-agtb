@@ -82,9 +82,9 @@ class File extends Basic
 	/**
 	 * @see SugarBean::retrieve()
 	 */
-	public function retrieve($id = -1, $encode=true)
+	public function retrieve($id = -1, $encode=true, $deleted=true)
 	{
-		$ret_val = parent::retrieve($id, $encode);
+		$ret_val = parent::retrieve($id, $encode, $deleted);
 
 		$this->name = $this->document_name;
 

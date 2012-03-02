@@ -47,8 +47,8 @@ class Person extends Basic
 	 *
  	 * @see parent::retrieve()
  	 */
-	public function retrieve($id = -1, $encode=true) {
-		$ret_val = parent::retrieve($id, $encode);
+    public function retrieve($id = -1, $encode=true, $deleted=true) {
+		$ret_val = parent::retrieve($id, $encode, $deleted);
 		$this->_create_proper_name_field();
 		return $ret_val;
 	}
