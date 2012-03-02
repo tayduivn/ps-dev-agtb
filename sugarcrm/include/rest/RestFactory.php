@@ -46,6 +46,7 @@ class RestFactory {
      */
     public static function newRestObject($objName) {
         global $restObjectList;
+        $obj = null;
 
         include_once("RestData.php");
 
@@ -62,10 +63,12 @@ class RestFactory {
             } else {
                 $err = new RestError();
                 $err->ReportError(404, "\nUnknown Object: '{$objName}'\n\n");
+                exit;
             }
         } catch (Exception $e) {
             $err = new RestError();
             $err->ReportError(404, "\nUnknown request!\n\n");
+            exit;
         }
     }
 
