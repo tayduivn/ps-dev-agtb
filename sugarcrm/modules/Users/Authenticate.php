@@ -82,7 +82,7 @@ if(isset($_SESSION['authenticated_user_id'])) {
 	$url ="index.php?module=Users&action=Login";
     if(!empty($login_vars))
     {
-        $url .= http_build_query($login_vars);
+        $url .= '&' . http_build_query($login_vars);
     }
 }
 
