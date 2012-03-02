@@ -247,10 +247,11 @@ eoq;
 	}
 
     /**
-     * Function to sort currencies in array alphabetically, except USD, it must remain on 1st place
+     * Function to sort currencies in array alphabetically, except for US Dollar which must remain as first element
+     * in the array.
      *
-     * @param $currenciesArray
-     * @return array|string
+     * @param array $currenciesArray Array of currencies to sort
+     * @return array|string Array of sorted currencies with the US Dollar as the first
      */
     public function correctCurrenciesSymbolsSort($currenciesArray)
     {
@@ -268,10 +269,11 @@ eoq;
     }
 
     /**
-     * Generates javascript array from php array
+     * Generates javascript array from a php array
      *
+     * @see correctCurrenciesSymbolsSort
      * @param $array
-     * @return array|string
+     * @return array|string Javascript code snippet of currencies array
      */
     public function pushCurrencyArrayToString($array)
     {
