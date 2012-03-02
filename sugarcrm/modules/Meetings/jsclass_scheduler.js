@@ -253,9 +253,12 @@ SugarWidgetSchedulerSearch.showCreateForm = function(module){
 	
 	document.getElementById('empty-search-message').style.display = 'none';
 	
-	document.createInviteeForm.first_name.value = document.schedulerwidget.search_first_name.value;
-	document.createInviteeForm.last_name.value = document.schedulerwidget.search_last_name.value;
-	document.createInviteeForm.email1.value = document.schedulerwidget.search_email.value;
+	if (typeof document.createInviteeForm.first_name != 'undefined' && typeof document.schedulerwidget.search_first_name != 'undefined')
+		document.createInviteeForm.first_name.value = document.schedulerwidget.search_first_name.value;
+	if (typeof document.createInviteeForm.last_name != 'undefined' && typeof document.schedulerwidget.search_last_name != 'undefined')
+		document.createInviteeForm.last_name.value = document.schedulerwidget.search_last_name.value;
+	if (typeof document.createInviteeForm.email1 != 'undefined' && typeof document.schedulerwidget.search_email != 'undefined')
+		document.createInviteeForm.email1.value = document.schedulerwidget.search_email.value;
 	
 }
 
