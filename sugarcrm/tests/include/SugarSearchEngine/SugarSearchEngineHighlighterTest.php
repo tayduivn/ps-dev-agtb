@@ -89,4 +89,22 @@ class SugarSearchEngineHighlighterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($diff, 'arrays not the same');
     }
 
+    /**
+    * @group bug50860
+    */
+    public function testSlashSearchPattern()
+    {
+        $searchPattern = '24/7';
+        $resultArray = array(0 => 'We are open 24/7 year round.');
+        $expectedArray = array(0 => 'We are open <b>24/7</b> year round.');
+
+        $highlighter = new SugarSearchEngineHighlighter(100, 1, '<b>', '</b>');
+
+        $ret = $highlighter->getHighlightedHitText($resultArray, $searchPattern);
+
+        $diff = array_diff($ret, $expectedArray); // they should be the same
+
+        $this->assertEmpty($diff, 'arrays not the same');
+    }
+
 }
