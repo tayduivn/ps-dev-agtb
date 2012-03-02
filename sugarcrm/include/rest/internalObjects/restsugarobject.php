@@ -188,10 +188,6 @@ class RestSugarObject extends RestObject implements IRestObject {
             }
         }
 
-        if (!in_array("id", $userFields)) {
-            array_push($userFields, "id");
-        }
-
         $userModList = $this->helper->get_user_module_list($current_user);
         $tmp = $this->helper->get_user_module_list($current_user);
         $UserModulList = array_keys($tmp);

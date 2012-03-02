@@ -371,13 +371,18 @@ function set_relationships($session, $module_names, $module_ids, $link_field_nam
 * @exception 'SoapFault' -- The SOAP error, if any
 */
 function get_relationships($session, $module_name, $module_id, $link_field_name, $related_module_query, $related_fields, $related_module_link_name_to_fields_array, $deleted){
+    $ret = array(
+        "error" => 0,
+        "err_msg" => "");
 
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_relationships');
 	global  $beanList, $beanFiles;
 	$error = new SoapError();
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
-		return;
+        $ret["error"] = 403;
+        $ret["msg_err"] = "User does not have access to module '{$module_name}'!";
+		return $ret;
 	} // if
 
 	$class_name = $beanList[$module_name];
@@ -387,12 +392,16 @@ function get_relationships($session, $module_name, $module_id, $link_field_name,
 
     if (!self::$helperObject->checkQuery($error, $related_module_query)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
-    	return;
+        $ret["error"] = 400;
+        $ret["err_msg"] = "Query Check Failed!";
+    	return $ret;
     } // if
 
 	if (!self::$helperObject->checkACLAccess($mod, 'DetailView', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
-    	return;
+        $ret["error"] = 400;
+        $ret["err_msg"] = "User does not have access to module '{$module_name}'!";
+    	return $ret;
     } // if
 
     $output_list = array();
