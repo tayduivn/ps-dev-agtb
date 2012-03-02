@@ -1,6 +1,7 @@
 (function (app) {
     //Metadata that has been loaded from offline storage
     var _metadata = {};
+    var _sugarFields = {};
     var fieldTypeMap = {
         varchar:"text",
         name:"text",
@@ -49,12 +50,12 @@
         }
 
         // get sugarfield from app cache if we dont have it in memory
-        if (typeof(_metadata.sugarFields[name]) == "undefined") {
-            _metadata.sugarFields[name] = app.cache.get("sugarFields." + field.name);
+        if (typeof(_sugarFields[name]) == "undefined") {
+            _sugarFields[name] = app.cache.get("sugarFields." + field.name);
         }
 
-        if (_metadata.sugarFields[name]) {
-            views = _metadata.sugarFields[name].views || _metadata.sugarFields[name];
+        if (_sugarFields[name]) {
+            views = _sugarFields[name].views || _sugarFields[name];
             // assign fields to results if set
             if (field.view && views[field.view]) {
                 result = views[field.view];
@@ -65,8 +66,8 @@
             }
         }
 
-        if (!result && _metadata.sugarFields['base'] && _metadata.sugarFields['base']['default']) {
-            result = _metadata.sugarFields['base']['default'];
+        if (!result && _sugarFields['text'] && _sugarFields['text']['default']) {
+            result = _sugarFields['text']['default'];
         }
         //Could not get valid view data for this field
         else if (!result){
@@ -184,7 +185,12 @@
         set:function (data, key) {
             key = key || "metadata";
             _.each(data, function (entry, module) {
-                _metadata[module] = entry;
+                if (key=="sugarFields") {
+                    _sugarFields[module] = entry;
+                } else{
+                    _metadata[module] = entry;
+                }
+
                 app.cache.set(key + "." + module, entry);
             });
         },

@@ -34,7 +34,7 @@
         /**
          * Sugar REST server URL.
          */
-        baseUrl: '/mango_build/Pineapple/ent/sugarcrm/rest'
+        baseUrl: '/builds/ent/sugarcrm/rest'
 
     }, false);
 

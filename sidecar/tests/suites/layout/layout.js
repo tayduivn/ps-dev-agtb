@@ -21,7 +21,7 @@ describe("Layout", function() {
 describe("Layout.View", function(){
     var syncResult, view, layout, html;
     SUGAR.App.metadata.set(fixtures.metadata);
-    SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
+    SUGAR.App.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
 
     var App = SUGAR.App.init({el: "#sidecar"});
 
@@ -118,7 +118,7 @@ describe("Layout.Layout", function(){
         }
     };
     //Fake a field list
-    SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
+    SUGAR.App.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
 
     var App = SUGAR.App.init({el: "#sidecar"});
     App.dataManager.declareModels(fixtures.metadata);
