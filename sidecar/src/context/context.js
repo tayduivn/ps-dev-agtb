@@ -91,6 +91,9 @@
              */
             reset: function() {
                 this.state = {};
+                _.each(this.children, function(child) {
+                    child.reset();
+                });
             },
 
             /**
@@ -113,7 +116,45 @@
             init: function(obj, data) {
                 this.reset(obj);
                 this.set(obj, data);
+            },
+
+            getData: function() {
+                var data, fields, bean, collection, options, state=this.get();
+                if(state.view){
+                    fields = state.view.getFields();
+                    this.set({fields:fields});
+
+                }
+                options = {};
+                if(fields){
+                    var fieldString = fields.join(",");
+                    options.params = [{key:"fields",value:fieldString}];
+                }
+                if (state.id) {
+                    bean = app.dataManager.fetchBean(state.module, state.id, options);
+                    collection = app.dataManager.createBeanCollection(state.module, [bean]);
+                }
+                else if (state.create) {
+                    bean = app.dataManager.createBean(state.module);
+                    collection = app.dataManager.createBeanCollection(state.module, [bean]);
+                }
+                else if (state.url) {
+                    // TODO: Make this hit a custom url
+                } else {
+                    collection = app.dataManager.createBeanCollection(state.module);
+                    state.view.bindData(collection);
+                    collection.fetch(options);
+                    bean = collection.models[0] || {};
+                }
+
+                this.set({collection: collection, model: bean});
+
+                //bean.change();
+                _.each(this.children, function(child) { //TODO optimize for batch
+                    child.getData();
+                });
             }
+
         }, Backbone.Events);
 
         context.init((obj || {}), (data || {}));
