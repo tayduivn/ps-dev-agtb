@@ -8,7 +8,7 @@ import org.apache.http.HttpEntity;
 
 public class TestUtils {
 
-	public static String bufferToString(HttpEntity entity, FileWriter fd) {
+	public static String bufferToString(HttpEntity entity) {
 		String buffer = "";
 		String tmp = "";
 		InputStreamReader in = null;
@@ -20,11 +20,7 @@ public class TestUtils {
 			
 			
 			while ((tmp = reader.readLine()) != null) {
-				if (fd != null) {
-					fd.write(tmp);
-				} else {
-					buffer = buffer + tmp;
-				}
+				buffer = buffer + tmp;
 			}
 		} catch (Exception exp) {
 			exp.printStackTrace();
