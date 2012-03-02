@@ -5,7 +5,7 @@ include_once("RestError.php");
 include_once("RestUtils.php");
 include_once("RestObject.php");
 include_once("include/MetaDataManager/MetaDataManager.php");
-include_once("service/core/SoapHelperWebService.php");
+include_once("include/rest/SoapHelperWebService.php");
 
 
 /**
@@ -82,8 +82,8 @@ class MetaData extends RestObject implements IRestObject {
         if ($filter != null) {
             $tmpFilter = array();
             foreach ($filter as $modName) {
-                if (in_array($modName, $userModList)) {
-                    array_push($tmpFilter, $modName);
+                if (in_array(ucfirst($modName), $userModList)) {
+                    array_push($tmpFilter, ucfirst($modName));
                 }
             }
             $filter = $tmpFilter;

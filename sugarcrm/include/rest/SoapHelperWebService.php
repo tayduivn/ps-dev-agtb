@@ -213,6 +213,7 @@ function validate_user($user_name, $password){
 			$GLOBALS['log']->debug("calling destroy");
 			session_destroy();
 		}
+
 		LogicHook::initialize();
 		$GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 		$GLOBALS['log']->info('End: SoapHelperWebServices->validate_authenticated - validation failed');
@@ -580,12 +581,19 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
 		require_once('include/TimeDate.php');
 		global $current_user, $disable_date_format,  $timedate;
+        global  $beanList, $beanFiles;
 
 		$bean->load_relationship($link_field_name);
 		if (isset($bean->$link_field_name)) {
 			//First get all the related beans
             $related_beans = $bean->$link_field_name->getBeans();
+
+            $submodulename = $bean->$link_field_name->getRelatedModuleName();
+            $submoduleclass = $beanList[$submodulename];
+            require_once($beanFiles[$submoduleclass]);
+            $submodule = new $submoduleclass();
 			$filterFields = $this->filter_fields($submodule, $link_module_fields);
+
             //Create a list of field/value rows based on $link_module_fields
 			$list = array();
             foreach($related_beans as $id => $bean)
@@ -608,6 +616,7 @@ function validate_user($user_name, $password){
                 if(is_a($bean, 'User') && $current_user->id != $bean->id && isset($row['user_hash'])) {
                     $row['user_hash'] = "";
                 }
+                $row["id"] = $id;
                 $list[] = $row;
             }
 			$GLOBALS['log']->info('End: SoapHelperWebServices->getRelationshipResults');

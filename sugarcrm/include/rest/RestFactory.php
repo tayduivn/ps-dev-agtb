@@ -91,7 +91,8 @@ class RestFactory {
      */
     public static function isValidSugarModule($modName) {
         global $moduleList;
-        $valid = false;
+        global $beanList;
+        $valid = 0;
 
         include_once("include/modules.php");
 
@@ -101,7 +102,9 @@ class RestFactory {
 
         $modName = ucfirst($modName);
         if (in_array($modName, $moduleList)) {
-            $valid = true;
+            $valid = 1;
+        } else if ($valid != 1 && array_key_exists($modName, $beanList)) {
+            $valid = 1;
         }
 
         return $valid;

@@ -114,7 +114,7 @@ abstract class RestObject implements IRestObject {
 
         if (!$isValid) {
             $err = new RestError();
-            $err->ReportError(410);
+            $err->ReportError(401);
             exit;
         } else {
             return true;
