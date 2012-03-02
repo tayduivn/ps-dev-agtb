@@ -476,16 +476,31 @@ class ListViewData {
         }
         
         $queryString = '';
-        
-        if(isset($_REQUEST["search_name_basic"])){
-        	$queryString = htmlentities($_REQUEST["search_name_basic"]);
+
+        if( isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search")
+        {
+                	$queryString = "-advanced_search";
         }
-       
-       	if(isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search"){
-        	$queryString = "-advanced_search";
+        else if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "basic_search")
+        {
+            $searchMetaData = SearchForm::retrieveSearchDefs($seed->module_dir);
+            $basicSearchFields = array();
+
+            if( isset($searchMetaData['searchdefs']) && isset($searchMetaData['searchdefs'][$seed->module_dir]['layout']['basic_search']) )
+                $basicSearchFields = $searchMetaData['searchdefs'][$seed->module_dir]['layout']['basic_search'];
+
+            foreach( $basicSearchFields as $basicSearchField)
+            {
+                $field_name = $basicSearchField['name'] . "_basic";
+                if( isset($_REQUEST[$field_name]) )
+                {
+                    $queryString = htmlentities($_REQUEST[$field_name]);
+                    break;
+                }
+            }
         }
-        
-  
+
+
 		return array('data'=>$data , 'pageData'=>$pageData, 'query' => $queryString);
 	}
 
