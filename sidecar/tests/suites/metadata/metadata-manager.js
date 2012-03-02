@@ -5,7 +5,7 @@ describe('metadata', function () {
     beforeEach(function () {
         //Load the metadata
         SUGAR.App.metadata.set(fixtures.metadata);
-        SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
+        SUGAR.App.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
     });
 
     afterEach(function () {
@@ -58,7 +58,7 @@ describe('metadata', function () {
                 name:'varchar',
                 view:'editView'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.views.editView);
+        })).toBe(sugarFieldsFixtures.fieldsData.text.editView);
     });
 
     it('gets a specific sugarfield defaulted to default if the view does not exist', function () {
@@ -67,6 +67,6 @@ describe('metadata', function () {
                 name:'varchar',
                 view:'thisViewDoesntExist'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.views["default"]);
+        })).toBe(sugarFieldsFixtures.fieldsData.text["default"]);
     });
 });
