@@ -35,7 +35,7 @@ class ViewConfigureFts extends SugarView
     {
         return array(
             "<a href='index.php?module=Administration&action=index'>" . translate('LBL_MODULE_NAME') . "</a>",
-            translate('LBL_CONFIG_AJAX')
+            translate('LBL_CONFIG_FTS')
         );
     }
 

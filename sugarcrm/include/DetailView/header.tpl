@@ -45,7 +45,7 @@ testing_module = "{$smarty.request.module}";
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%" id="">
 <tr>
-<td class="buttons" align="left" NOWRAP>
+<td class="buttons" align="left" NOWRAP width="20%">
 <div class="actionsContainer">
 <form action="index.php" method="post" name="DetailView" id="form">
 <input type="hidden" name="module" value="{$module}">
@@ -111,7 +111,7 @@ testing_module = "{$smarty.request.module}";
 </td>
 
 
-<td align="right" width="100%">{$ADMIN_EDIT}
+<td align="right" width="80%">{$ADMIN_EDIT}
 	{{if $panelCount == 0}}
 	    {{* Render tag for VCR control if SHOW_VCR_CONTROL is true *}}
 		{{if $SHOW_VCR_CONTROL}}

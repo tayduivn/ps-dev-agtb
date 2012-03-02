@@ -28,6 +28,7 @@ class ViewSelectRelatedField extends SugarView
 
     function __construct()
     {
+
         parent::__construct();
         foreach($this->vars as $var)
         {

@@ -310,66 +310,67 @@ class ListViewDisplay {
 	    global $app_strings;
 		$closeText = SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $app_strings['LBL_CLOSEINLINE']);
 		$moreDetailImage = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
-		$menuItems = '';
+		$menuItems = array();
 
 		// delete
 		if ( ACLController::checkAccess($this->seed->module_dir,'delete',true) && $this->delete )
-			$menuItems .= $this->buildDeleteLink();
+			$menuItems[] = $this->buildDeleteLink();
 		// compose email
         if ( $this->email )
-			$menuItems .= $this->buildComposeEmailLink($this->data['pageData']['offsets']['total']);
+			$menuItems[] = $this->buildComposeEmailLink($this->data['pageData']['offsets']['total']);
 		// mass update
 		$mass = $this->getMassUpdate();
 		$mass->setSugarBean($this->seed);
 		if ( ( ACLController::checkAccess($this->seed->module_dir,'edit',true) && ACLController::checkAccess($this->seed->module_dir,'massupdate',true) ) && $this->showMassupdateFields && $mass->doMassUpdateFieldsExistForFocus() )
-            $menuItems .= $this->buildMassUpdateLink();
+            $menuItems[] = $this->buildMassUpdateLink();
 		//BEGIN SUGARCRM flav=sales ONLY
 		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
-			$menuItems .= $this->buildMassUpdateLink();
+			$menuItems[] = $this->buildMassUpdateLink();
 		//END SUGARCRM flav=sales ONLY
 		//BEGIN SUGARCRM flav!=sales ONLY
 		// merge
 		if ( $this->mailMerge )
-		    $menuItems .= $this->buildMergeLink();
+		    $menuItems[] = $this->buildMergeLink();
 		//END SUGARCRM flav!=sales ONLY
 		if ( $this->mergeduplicates )
-		    $menuItems .= $this->buildMergeDuplicatesLink();
+		    $menuItems[] = $this->buildMergeDuplicatesLink();
 		//BEGIN SUGARCRM flav!=sales ONLY
 		// add to target list
 		if ( $this->targetList && ACLController::checkAccess('ProspectLists','edit',true) )
-		    $menuItems .= $this->buildTargetList();
+		    $menuItems[] = $this->buildTargetList();
 		//END SUGARCRM flav!=sales ONLY
 		// export
 		if ( ACLController::checkAccess($this->seed->module_dir,'export',true) && $this->export )
-			$menuItems .= $this->buildExportLink();
+			$menuItems[] = $this->buildExportLink();
 		//BEGIN SUGARCRM flav=sales ONLY
 		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
-			$menuItems .= $this->buildExportLink();
+			$menuItems[] = $this->buildExportLink();
 		//END SUGARCRM flav=sales ONLY
 
 		foreach ( $this->actionsMenuExtraItems as $item )
-		    $menuItems .= $item;
-        
-            return <<<EOHTML
-          <script type="text/javascript">
-          <!--
+		    $menuItems[] = $item;
 
-          -->
-          </script>
-                  <ul class="clickMenu fancymenu" id="selectActions">
-                      <li>
-                      <a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a>
-                          <ul class="subnav">
-                              {$menuItems}
+        $output = "<ul class='clickMenu fancymenu' id='selectActions' name='selectActions'>";
+        $i = 0;
+        foreach($menuItems as $item)
+        {
+            if($i == 0)
+            {
+                $output .= "<li>$item<ul class='subnav'>";
+            }
+            else
+            {
+                $output .= "<li>$item</li>";
+            }
+            $i++;
+        }
 
-                          </ul>
-                      </li>
-                  </ul>
-          		<div id="selectActionsDisabled">
-          			<a href="javascript:void(0)" onclick="return sListView.send_mass_update('selected', 'Please select at least 1 record to proceed.', 1)">Delete</a><span class="ab"></span>
-          		</div>
-EOHTML;
-        
+        $output .= "</ul></li></ul>";
+        $output .= "<div id='selectActionsDisabled' class='selectActionsDisabled'>{$menuItems[0]}<span class='ab'></span></div>";
+
+
+        return $output;
+
 }
 	/**
 	 * Builds the export link
@@ -379,8 +380,8 @@ EOHTML;
 	protected function buildExportLink()
 	{
 		global $app_strings;
-		return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_form(true, '{$this->seed->module_dir}', 'index.php?entryPoint=export','{$app_strings['LBL_LISTVIEW_NO_SELECTED']}')\">{$app_strings['LBL_EXPORT']}</a>";
-	}
+		return "<a href='javascript:void(0)' onclick=\"return sListView.send_form(true, '{$this->seed->module_dir}', 'index.php?entryPoint=export','{$app_strings['LBL_LISTVIEW_NO_SELECTED']}')\">{$app_strings['LBL_EXPORT']}</a>";
+    }
 
 	/**
 	 * Builds the massupdate link
@@ -392,7 +393,7 @@ EOHTML;
 		global $app_strings;
 
         $onClick = "document.getElementById('massupdate_form').style.display = ''; var yLoc = YAHOO.util.Dom.getY('massupdate_form'); scroll(0,yLoc);";
-		return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"$onClick\">{$app_strings['LBL_MASS_UPDATE']}</a></li>";
+		return "<a href='javascript:void(0)' onclick=\"$onClick\">{$app_strings['LBL_MASS_UPDATE']}</a>";
 
 	}
 
@@ -401,9 +402,7 @@ EOHTML;
 	 *
 	 * @return string HTML
 	 */
-	protected function buildComposeEmailLink(
-	    $totalCount
-	    )
+	protected function buildComposeEmailLink($totalCount)
 	{
 		global $app_strings,$dictionary;
 
@@ -433,15 +432,15 @@ EOHTML;
 			$client = $defaultPref;
 
 		if($client == 'sugar')
-			$script = "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' " .
+			$script = "<a href='javascript:void(0)' " .
 					'onclick="return sListView.send_form_for_emails(true, \''."Emails".'\', \'index.php?module=Emails&action=Compose&ListView=true\',\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\', \''.$this->seed->module_dir.'\', \''.$totalCount.'\', \''.$app_strings['LBL_LISTVIEW_LESS_THAN_TEN_SELECT'].'\')">' .
 					$app_strings['LBL_EMAIL_COMPOSE'] . '</a>';
 		else
-			$script = "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' " .
+			$script = "<a href='javascript:void(0)' " .
 					"onclick=\"return sListView.use_external_mail_client('{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', '{$_REQUEST['module']}');\">" .
 					$app_strings['LBL_EMAIL_COMPOSE'] . '</a>';
 
-		return $script;
+        return $script;
 	} // fn
 	/**
 	 * Builds the delete link
@@ -451,9 +450,12 @@ EOHTML;
 	protected function buildDeleteLink()
 	{
 		global $app_strings;
+        if ($_REQUEST["module"] == "Contacts")
+        {
             return "";
-        
-		//return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_mass_update('selected', '{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
+        }
+
+        return "<a href='javascript:void(0)' onclick=\"return sListView.send_mass_update('selected', '{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
 	}
 	/**
 	 * Display the selected object span object
@@ -484,16 +486,16 @@ EOHTML;
         $return_string.= isset($_REQUEST['record']) ? "&return_id={$_REQUEST['record']}" : "";
         //need delete and edit access.
 		if (!(ACLController::checkAccess($this->seed->module_dir, 'edit', true)) or !(ACLController::checkAccess($this->seed->module_dir, 'delete', true))) {
-			return '';
+			return "";
 		}
 
         if (isset($dictionary[$this->seed->object_name]['duplicate_merge']) && $dictionary[$this->seed->object_name]['duplicate_merge']==true ) {
-            return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' ".
-                "onclick='if (sugarListView.get_checks_count()> 1) {sListView.send_form(true, \"MergeRecords\", \"index.php\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\", \"{$this->seed->module_dir}\",\"$return_string\");} else {alert(\"{$app_strings['LBL_LISTVIEW_TWO_REQUIRED']}\");return false;}'>".
-                $app_strings['LBL_MERGE_DUPLICATES'].'</a>';
+            return "<a href='javascript:void(0)' ".
+                            "onclick='if (sugarListView.get_checks_count()> 1) {sListView.send_form(true, \"MergeRecords\", \"index.php\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\", \"{$this->seed->module_dir}\",\"$return_string\");} else {alert(\"{$app_strings['LBL_LISTVIEW_TWO_REQUIRED']}\");return false;}'>".
+                            $app_strings['LBL_MERGE_DUPLICATES'].'</a>';
         }
 
-        return '';
+        return "";
      }
 	//BEGIN SUGARCRM flav!=sales ONLY
     /**
@@ -515,7 +517,7 @@ EOHTML;
         $str = '';
         
         if ($user_merge == 'on' && isset($admin->settings['system_mailmerge_on']) && $admin->settings['system_mailmerge_on'] && !empty($modules_array[$module_dir])) {
-            $str = "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' " .
+            return "<a href='javascript:void(0)'  " .
 					'onclick="if (document.MassUpdate.select_entire_list.value==1){document.location.href=\'index.php?action=index&module=MailMerge&entire=true\'} else {return sListView.send_form(true, \'MailMerge\',\'index.php\',\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\');}">' .
 					$app_strings['LBL_MAILMERGE'].'</a>';
         }
@@ -601,7 +603,7 @@ EOHTML;
 			open_popup('ProspectLists','600','400','',true,false,{ 'call_back_function':'set_return_and_save_targetlist','form_name':'targetlist_form','field_to_name_array':{'id':'prospect_list'} } );
 EOF;
         $js = str_replace(array("\r","\n"),'',$js);
-        return "<li><a href='javascript:void(0)' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"$js\">{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}</a>";
+        return "<a href='javascript:void(0)' onclick=\"$js\">{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}</a>";
 	}
 	//END SUGARCRM flav!=sales ONLY
 	/**
@@ -646,4 +648,3 @@ EOF;
         return new MassUpdate();
     }
 }
-?>

@@ -34,7 +34,7 @@
 (function($){
 	var methods = {
 		init: function(options){
-			
+
 			menuNode = this;
 			if(!this.hasClass("SugarActionMenu")){
 				//tag this element as a sugarmenu
@@ -65,7 +65,7 @@
 					if(menuNode.sugarActionMenu("findItem", newItemA.html()) == -1){
 						newItem.append(newItemA);
 					}
-				
+
 					menuNode.sugarActionMenu("addItem", {item: newItem, index:idx+1});
 					jNode.css("display", "none");
 					
@@ -181,7 +181,7 @@
 			var index = -1;
 			this.find("a").each(function(idx, node){
 				var jNode = $(node);
-				if(jNode.html() == item){
+				if($.trim(jNode.html()) == $.trim(item)){
 					index = idx;
 				}
 			});

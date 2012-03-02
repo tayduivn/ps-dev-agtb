@@ -443,25 +443,29 @@ EOQ;
             $widget_data['focus'] = $this->focus;
             $widget_data['subpanel_definition'] = $thisPanel;
 
-            if ($count == 0) {
+            if ($count == 0)
+            {
                 $layout_manager = $this->getLayoutManager();
                 $widget_contents = '<span><table cellpadding="0" cellspacing="0"><tr>' . "\n";
                 $widget_contents .= '<td class="buttons">' . "\n";
                 $widget_contents .= '<ul class="clickMenu fancymenu">' . "\n";
-                if(count($subpanel_def) == 1) {
+                if(count($subpanel_def) == 1)
+                {
                 	$widget_contents .= '<li class="single">' . "\n";
-                } else {
+                }
+                else
+                {
                 	$widget_contents .= '<li>' . "\n";
                 }
-                if ($count == 0) {
                 	//referencing <id>_old because of the sanatizing that happens in jquery.sugarMenu.js
-                    $widget_contents .= "<a id='". $layout_manager->widgetDisplay($widget_data, false, false, true) ."' onclick='$(\"#".$layout_manager->widgetDisplay($widget_data, false, false, true)."_old\").click();' href='javascript: void(0);'>" . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
-                } else {
-                    $widget_contents .= '<a id=""  href="javascript: void(0);">Actions</a>' . "\n";
-                }
+                    $widget_contents .= "<a id='". $layout_manager->widgetDisplay($widget_data, false, false, true)
+                                        ."' onclick='$(\"#".$layout_manager->widgetDisplay($widget_data, false, false, true)."_old\").click();' href='javascript: void(0);'>"
+                                        . $layout_manager->widgetDisplay($widget_data, false, true) . "</a>";
+
 
                 $widget_contents .= '<ul class="subnav' . "\n";
-                if(count($subpanel_def) > 1) {
+                if( count($subpanel_def) > 1)
+                {
                 	$widget_contents .= " multi";	
                 }
                 $widget_contents .= '">';
@@ -473,9 +477,12 @@ EOQ;
 			}
 			else
 			{
-                if ($count == 0) {
+                if ($count == 0)
+                {
                     $hide = " style='display:none' ";
-                } else {
+                }
+                else
+                {
                     $hide = '';
                 }
 				$widget_contents .= "<li".$hide.">".$layout_manager->widgetDisplay($widget_data)."</li>";

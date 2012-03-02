@@ -41,6 +41,10 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 		$this->button_properties=$button_properties;
 	}
 
+    public function getDisplayName()
+    {
+        return $GLOBALS['app_strings']['LBL_SELECT_BUTTON_LABEL'];
+    }
 	//widget_data is the collection of attributes associated with the button in the layout_defs file.
 	function display(&$widget_data)
 	{
@@ -49,7 +53,7 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 
 		$this->title = $app_strings['LBL_SELECT_BUTTON_TITLE'];
 		$this->accesskey = $app_strings['LBL_SELECT_BUTTON_KEY'];
-		$this->value = $app_strings['LBL_SELECT_BUTTON_LABEL'];
+		$this->value = $this->getDisplayName();
 
 		if (is_array($this->button_properties)) {
 			if( isset($this->button_properties['title'])) {

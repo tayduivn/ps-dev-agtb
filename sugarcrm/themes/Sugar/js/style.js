@@ -49,7 +49,8 @@ $(document).ready(function(){
     SUGAR.themes.toggleFooter();
     //initialize global tooltips
 	SUGAR.themes.globalToolTips();
-
+	
+	
     $('body').click(function(e) {
         if($(e.target).closest('#dcmenuSearchDiv').length == 0)
         {
@@ -108,11 +109,33 @@ SUGAR.append(SUGAR.themes, {
 			$(menuName).removeClass("showMore");
 		}
     },
+    switchMenuMode: function() {
+    	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
+    		Set_Cookie('sugar_theme_menu_mode','hover',30,'/','','');
+    	} else {
+    		Set_Cookie('sugar_theme_menu_mode','click',30,'/','','');
+    	}
+    	location.reload();
+    	//console.log(Get_Cookie("sugar_theme_menu_mode"));
+    },
+    getMenuMode: function() {
+    	
+    	if(Get_Cookie("sugar_theme_menu_mode") == null) {
+    		Set_Cookie('sugar_theme_menu_mode','hover',30,'/','','');
+    	}
+    	
+    	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
+	    	return true;
+    	} else {
+    		return false;
+    	}	
+    },
+    
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
 			delay:     0,
 			speed: 'fast',
-			firstOnClick: true,
+			firstOnClick: SUGAR.themes.getMenuMode(),
 			autoArrows: false,
 			dropShadows: false,
 			onBeforeShow: function() {
@@ -182,8 +205,9 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeSearch: function() {
-    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.16) + 54); 
-		$('#sugar_spot_search').css("width",Math.round($(window).width()*.16));
+    	searchWidth = .16;
+    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54); 
+		$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
     },
     resizeMenu: function () {
 	    var maxMenuWidth = Math.round($(window).width()*.45);
@@ -210,7 +234,7 @@ SUGAR.append(SUGAR.themes, {
 		$("#arrow").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#logo").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#quickCreateUL span").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Quick Create"});
-		$("#notifCount").tipTip({maxWidth: "auto", edgeOffset: 10});
+		$("#dcmenuSugarCube").tipTip({maxWidth: "auto", edgeOffset: 10});
 		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});	
 		//setup tool tips for partner integrations
 		$("#partner").children("a").each(
@@ -259,8 +283,8 @@ SUGAR.append(SUGAR.themes, {
 		$("#sugar_spot_search").val("");
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
-		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*.10) + 54);
-	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*.10));	
+		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
+	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));	
 	  	firstHit = false;
    	},
    	actionMenu: function() {
@@ -298,6 +322,10 @@ SUGAR.append(SUGAR.themes, {
 
 $("#moduleList").ready(function(){
 	SUGAR.themes.loadModuleList();
+});
+
+$(document).bind('keydown', 'Ctrl+b',function() { 
+	SUGAR.themes.switchMenuMode()
 });
 /**
  * For the module list menu scrolling functionality

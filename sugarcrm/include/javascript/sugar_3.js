@@ -2296,18 +2296,24 @@ sugarListView.prototype.check_item = function(cb, form) {
 }
 
 sugarListView.prototype.toggleSelected = function() {
+
 	var numSelected = sugarListView.get_num_selected();
 	var selectedRecords = document.getElementById("selectedRecordsTop");
 	var selectActions = document.getElementById("selectActions");
 	var selectActionsDisabled = document.getElementById("selectActionsDisabled");
 	if(numSelected > 0) {
 		selectedRecords.style.display = "inline-block";
-		selectActions.style.display = "inline-block";
-		selectActionsDisabled.style.display = "none";
+        $(".selectActionsDisabled").css("display", "none");
+        jQuery('ul[name=selectActions]').each(function () {
+            jQuery(this).css("display", "inline-block");
+        });
+
 	} else {
 		selectedRecords.style.display = "none";
-		selectActions.style.display = "none";
-		selectActionsDisabled.style.display = "inline-block";
+        $(".selectActionsDisabled").css("display", "inline-block");
+        jQuery('ul[name=selectActions]').each(function () {
+                    jQuery(this).css("display", "none");
+        });
 	}
 
 }
@@ -4632,13 +4638,15 @@ closeActivityPanel: {
     }
 },
 
-setEmailPasswordDisplay: function(id, exists) {
+setEmailPasswordDisplay: function(id, exists, formName) {
 	link = document.getElementById(id+'_link');
 	pwd = document.getElementById(id);
 	if(!pwd || !link) return;
 	if(exists) {
     	pwd.style.display = 'none';
     	link.style.display = '';
+        if(typeof(formName) != 'undefined')
+            removeFromValidate(formName, id);
 	} else {
     	pwd.style.display = '';
     	link.style.display = 'none';

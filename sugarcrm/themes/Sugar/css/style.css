@@ -525,7 +525,6 @@ div.moduleTitle
     float: left;
 	color: #666;
 	font-size: 18px;
-	padding-left: 4px;
 	padding-top: 7px;
 	font-weight: normal;
 	
@@ -538,7 +537,7 @@ text-decoration: none;
 }
 
 .moduleTitle h2 span.pointer {
-padding: 0px 0px;
+padding: 0px 10px;
 font-size: 18px;
 line-height: 16px;
 
@@ -1333,7 +1332,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 #bottomLinks {
 	padding: 0 25px;
 	float: right;
-    margin-bottom:20px;
+    margin-bottom:45px;
 }
 
 #bottomLinks a {
@@ -5730,9 +5729,18 @@ span.dcmenuitem:hover{
 
 
 #dcmenuSugarCube {
-float: left;
-margin: 0px 0px 0 0px;
+float: right;
+margin: 0px 0px 0 2px;
 height: 43px;
+}
+
+#dcmenuSugarCube:hover {
+	background-color: #276499;	
+}
+
+#notifDivider {
+float: right;
+margin-right: 0px;	
 }
 
 #dcmenuSugarCube a{
@@ -5751,14 +5759,16 @@ text-align: center;
 cursor: default;
 }
 #dcmenuSugarCube .dc_notif_icon{
-	width:36px;
-	height:43px;
+	width:24px;
+	height:24px;
 	border:0px;
 	padding:0px;
 	background-position: center center; 
 	display: inline-block;
 	background-repeat: no-repeat;
 	background-size: 24px 24px;
+    margin-top: 9px;
+    border-radius: 2px;
 }
 
 #dcmenuSugarCube .notifCount{
@@ -5770,8 +5780,8 @@ cursor: default;
 	background-color: #CC0000;
     border-radius: 2px;
     width: 16px;
-    border: 2px solid #fff;
     cursor: pointer;
+    padding: 1px;
 }
 
 
@@ -6013,11 +6023,12 @@ margin-left:10px;
 #sugar_spot_search_results section .resultTitle, #sugar_full_search_results section .resultTitle{
     float:left;
     color:#666;
-    width:70px;
+    width:90px;
     text-align:right;
     padding-right: 10px;
     padding-top: 4px;
     font-size: 11px;
+    word-wrap: break-word;
 }
 
 
@@ -6290,6 +6301,7 @@ ul.clickMenu li {
 	padding: 0 0 0 0;
 	list-style: none;
 	position: relative; /*--Declare X and Y axis base--*/
+    cursor: pointer;
 }
 ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
 	display: block;

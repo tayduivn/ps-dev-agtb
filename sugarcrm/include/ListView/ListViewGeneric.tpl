@@ -40,6 +40,10 @@
 	    $("ul.clickMenu").each(function(index, node){
 	  		$(node).sugarActionMenu();
 	  	});
+
+        $('.selectActionsDisabled').children().each(function(index) {
+            $(this).attr('onclick','').unbind('click');
+        });
 	});
 {/literal}	
 </script>
