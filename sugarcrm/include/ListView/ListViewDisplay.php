@@ -350,7 +350,7 @@ class ListViewDisplay {
 		foreach ( $this->actionsMenuExtraItems as $item )
 		    $menuItems[] = $item;
 
-        $output = "<ul class='clickMenu fancymenu' id='selectActions'>";
+        $output = "<ul class='clickMenu fancymenu' id='selectActions' name='selectActions'>";
         $i = 0;
         foreach($menuItems as $item)
         {
