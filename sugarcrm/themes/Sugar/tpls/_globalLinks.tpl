@@ -46,7 +46,7 @@
     </ul>
 </div>
 <div class="dcmenuDivider" id="notifDivider"></div>
-<div id="dcmenuSugarCube" {$NOTIFCLASS} onclick="DCMenu.notificationsList();" title="{$APP.LBL_PENDING_NOTIFICATIONS}">
+<div id="dcmenuSugarCube" {$NOTIFCLASS} {if $ISADMIN}onclick="DCMenu.notificationsList();" title="{$APP.LBL_PENDING_NOTIFICATIONS}"{/if}>
   {$NOTIFICON}
   {$NOTIFCODE}
 </div>
