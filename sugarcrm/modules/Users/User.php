@@ -480,10 +480,9 @@ class User extends Person {
 							    $sv->init('Users');
 							    $sv->renderJavascript();
 							    $sv->displayHeader();
-		        				//$sv->includeClassicFile('themes/' . $GLOBALS['theme'] . '/header.php');
-		        				//$sv->includeClassicFile('modules/Administration/DisplayWarnings.php');
-							    displayAdminError(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
-							    $sv->displayFooter();
+		        				$sv->errors[] = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
+                                $sv->displayErrors();
+                                $sv->displayFooter();
 							    die();
 						  	}
 				        }
