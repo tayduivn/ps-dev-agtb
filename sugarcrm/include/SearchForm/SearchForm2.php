@@ -595,6 +595,7 @@ require_once('include/EditView/EditView2.php');
          $values = $this->searchFields;
 
          $where_clauses = array();
+         $like_char = '%';
          $table_name = $this->seed->object_name;
          $this->seed->fill_in_additional_detail_fields();
 
@@ -1010,7 +1011,7 @@ require_once('include/EditView/EditView2.php');
                                              $where .= ' OR ' . $this->seed->db->concat($column_name[0],array('last_name','first_name')) . " LIKE ".$this->seed->db->quoted($field_value.'%');
                                          }else{
                                              //no space was found, add normal where clause
-                                             $where .=  $db_field . " like ".$this->seed->db->quoted($field_value.'%');
+                                             $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));
                                          }
 
                                      }else {
@@ -1036,7 +1037,7 @@ require_once('include/EditView/EditView2.php');
                                          }
 
                                          //field is not last name or this is not from global unified search, so do normal where clause
-                                         $where .=  $db_field . " like ".$this->seed->db->quoted($field_value.'%');
+                                         $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));
                                      }
                                  }
                                  break;
