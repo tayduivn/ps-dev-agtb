@@ -68,7 +68,10 @@ $('#zenbox_tab').ready(function(){
 }).click(function(){
 	if($('.zenbox_support_links').length == 0) {
 		var links = $('<div class="zenbox_support_links"><a href="http://www.sugarcrm.com/crm/support/bugs.html" target="_blank">Submit a bug</a> or visit our <a href="http://www.sugarcrm.com/forums/f5/" target="_blank">Feature Request Forum.</a></div>');
-		$('#zenbox_container').append(links);
+		
+		setTimeout(function(){
+			$('#zenbox_container').append(links);
+		}, 1000);
 	}
 		
 });  
