@@ -56,8 +56,8 @@ function pre_install() {
         _logThis("Begin Upgrade passwords in table config", $path);
         upgrade_config_pwd();
         _logThis("End Upgrade passwords in table config", $path);
-    
-// BEGIN SUGARCRM flav=com ONLY 
+
+// BEGIN SUGARCRM flav=com ONLY
         _logThis("Begin remove ACL actions for Trackers", $path);
         include('include/modules.php');
         if(isset($beanFiles['Tracker']) && file_exists($beanFiles['Tracker']))
@@ -67,42 +67,8 @@ function pre_install() {
         }
         _logThis("End remove ACL actions for Trackers", $path);
 // END SUGARCRM flav=com ONLY
-    }
-
-
-    if($sugar_version < '6.1.0') {
-        _logThis("Inside 6.1.0 pre_install check", $path);
-	    global $sugar_config;
-        //call status field got it's length changed to 100 from 25, so idx_parenttype_parentid_status_del will throw
-        // max key length sql error message in MYSQL DB during upgrade.  We need to check for
-        //and remove the index if it exists
-
-        if($sugar_config['dbconfig']['db_type'] ==  'mysql' ) {
-            //start by checking for the index
-             $qry = "SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE
-                     TABLE_CATALOG IS NULL AND TABLE_SCHEMA = '".$sugar_config['dbconfig']['db_name']."' AND
-                     TABLE_NAME = 'calls' AND INDEX_NAME = 'idx_parenttype_parentid_status_del'";
-            _logThis("seek index query is ".$qry, $path);
-
-            //run the query to see if the index exists
-            $result = $GLOBALS['db']->query($qry);
-            $row = $GLOBALS['db']->fetchByAssoc($result);
-            _logThis("row returned is ".var_export($row,true), $path);
-
-            //if the index exists, lets drop it
-            if(!empty($row)){
-               //create the appropriate query based on db type
-               $qry = "alter table calls drop index idx_parenttype_parentid_status_del";
-               _logThis("drop query is ".$qry, $path);
-               $GLOBALS['db']->query($qry);
-            }
-        }
-
-        _logThis("Leaving 6.1.0 pre_install check", $path);
 
     }
-
-
 	return true;
 }
 ?>
