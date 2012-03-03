@@ -48,25 +48,16 @@
     {foreach from=$DYNAMICDCACTIONS item=action}
         {$action.script} {$action.image} 
     {/foreach}
-    
-    <a href="javascript:UserVoice.showPopupWidget();" title="Open feedback & support dialog (powered by UserVoice)" id="uvTab">Feedback</a>
+
      </div>
 {literal}
 
-<script type="text/javascript">
-  var uvOptions = {};
-  (function() {
-    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-    uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/7ELWWFFNbO7uhYDvVnFZcA.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-  })();
-</script>
 
 <script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script><style type="text/css" media="screen, projection">  @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);</style><script type="text/javascript">  if (typeof(Zenbox) !== "undefined") {
     Zenbox.init({
-      dropboxID:   "20043722",
+      dropboxID:   "20045491",
       url:         "https://suga.zendesk.com",
-      tabID:       "feedback",
+      tabID:       "support",
       tabColor:    "black",
       tabPosition: "Left"
     });
@@ -74,6 +65,12 @@
 $('#zenbox_tab').ready(function(){
 	$('#partner').append($('#zenbox_tab'));	
 	$('#zenbox_tab').html("Feedback").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Feedback"});
+}).click(function(){
+	if($('.zenbox_support_links').length == 0) {
+		var links = $('<div class="zenbox_support_links"><a href="http://www.sugarcrm.com/crm/support/bugs.html" target="_blank">Submit a bug</a> or visit our <a href="http://www.sugarcrm.com/forums/f5/" target="_blank">Feature Request Forum.</a></div>');
+		$('#zenbox_container').append(links);
+	}
+		
 });  
 </script>
 {/literal}
