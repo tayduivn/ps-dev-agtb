@@ -54,7 +54,7 @@
 
         index: function() {
             this.controller.loadView({
-                module: "Contacts", //TODO: This shoudl probably not be Contacts
+                module: "Cases", //TODO: This shoudl probably not be Casess
                 layout: "list"
             });
         },
