@@ -34,11 +34,6 @@ require_once('modules/InboundEmail/InboundEmail.php');
  */
 class Bug49543Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-            $this->markTestIncomplete('This test breaking build on Oracle, working with Zlata to fix');
-    }
-
     private function createMail($subj, $from, $to, $imap_uid, $date, $uid)
     {
         $mail = new stdClass();

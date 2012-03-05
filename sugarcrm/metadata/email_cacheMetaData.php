@@ -19,7 +19,6 @@ $dictionary['email_cache'] = array(
 		'ie_id' => array(
 			'name'		=> 'ie_id',
 			'type'		=> 'id',
-			'required'	=> 'true',
 		),
 		'mbox' => array(
 			'name'		=> 'mbox',

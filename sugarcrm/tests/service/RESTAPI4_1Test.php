@@ -39,18 +39,13 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $beanList, $beanFiles;
-        $beanList = array();
-		$beanFiles = array();
+        global $beanList, $beanFiles, $current_user;
 		require('include/modules.php');
 
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
-        $this->_login();
-        global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $this->another_user = SugarTestUserUtilities::createAnonymousUser();
-
         $this->contact1 = SugarTestContactUtilities::createContact();
         $this->contact1->contacts_users_id = $current_user->id;
         $this->contact1->first_name = 'First1';
@@ -100,6 +95,14 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->meeting3->load_relationship('users');
         $this->meeting3->users->add($current_user);
         $this->meeting3->save();
+
+        $this->meeting4 = SugarTestMeetingUtilities::createMeeting();
+        $this->meeting4->name = 'SOAPAPI4_1Test4';
+        $this->meeting4->load_relationship('users');
+        $this->meeting4->users->add($current_user);
+        $this->meeting4->mark_deleted($this->meeting4->id);
+        $this->meeting4->deleted = 1;
+        $this->meeting4->save();
         $GLOBALS['db']->commit();
     }
 
@@ -218,6 +221,26 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
                 'select_fields' => $callsAndMeetingsFields,
                 'relationship_name' => 'meetings_users',
                 'deletion_date' => '',
+            )
+        );
+
+        $this->assertNotEmpty($result['entry_list'], 'Failed to return $result[\'entry_list\']');
+        $this->assertEquals($result['entry_list'][0]['module_name'], 'meetings_users');
+
+        $result = $this->_makeRESTCall('get_modified_relationships',
+            array(
+                'session' => $session,
+                'module_name' => 'Users',
+                'related_module' => 'Meetings',
+                'from_date' => $one_hour_ago,
+                'to_date' => $one_hour_later,
+                'offset' => 0,
+                'max_results' => 10,
+                'deleted' => 1,
+                'user_id' => $current_user->id,
+                'select_fields' => $callsAndMeetingsFields,
+                'relationship_name' => 'meetings_users',
+                'deletion_date' => $one_hour_ago,
             )
         );
 

@@ -26,10 +26,8 @@ require_once("modules/ModuleBuilder/Module/StudioModule.php");
 
 class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	public function setUp()
+	public static function setUpBeforeClass()
     {
-        $this->markTestSkipped('skipping');
-
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
@@ -40,7 +38,7 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
     
-    public function tearDown() 
+    public static function tearDownAfterClass()
     {
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);
@@ -50,6 +48,7 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @ticket 39407
+     *
      */
     public function testRemoveFieldFromLayoutsDocumentsException()
     {
@@ -61,5 +60,27 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
         {
             $this->assertTrue(false, "Studio module threw exception :" . $e->getMessage());
         }
+    }
+
+    public function providerGetType()
+    {
+        return array(
+            array('Meetings', 'basic'),
+            array('Calls', 'basic'),
+            array('Accounts', 'company'),
+            array('Contacts', 'person'),
+            array('Leads', 'person'),
+            array('Cases', 'basic'),
+        );
+    }
+
+    /**
+     * @ticket 50977
+     *
+     * @dataProvider providerGetType
+     */
+    public function testGetTypeFunction($module, $type) {
+        $SM = new StudioModule($module);
+        $this->assertEquals($type, $SM->getType(), 'Failed asserting that module:' . $module . ' is of type:' . $type);
     }
 }

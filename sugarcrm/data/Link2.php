@@ -434,12 +434,6 @@ class Link2 {
             else {
                 $this->relationship->remove($related_id, $this->focus);
             }
-            //fixing bug #45851: unset calls' flex-related fields
-            if (isset($related_id->parent_id) and !empty($related_id->parent_id))
-            {
-                $related_id->parent_id = '';
-                $related_id->save();
-            }
         }
         else
         {

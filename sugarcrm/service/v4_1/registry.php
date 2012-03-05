@@ -61,6 +61,20 @@ class registry_v4_1 extends registry_v4 {
 
         parent::registerTypes();
 
+
+        $this->serviceClass->registerType(
+            'error_value',
+            'complexType',
+            'struct',
+            'all',
+            '',
+            array(
+                'number'=>array('name'=>'number', 'type'=>'xsd:string'),
+                'name'=>array('name'=>'name', 'type'=>'xsd:string'),
+                'description'=>array('name'=>'description', 'type'=>'xsd:string'),
+            )
+        );
+
         //modified_relationship_entry
         //This type consists of id, module_name and name_value_list type
         $this->serviceClass->registerType
@@ -87,7 +101,7 @@ class registry_v4_1 extends registry_v4 {
             'SOAP-ENC:Array',
             array(),
             array(
-                array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:modified_relationship_entry')
+                array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:modified_relationship_entry[]')
             ),
             'modified_relationship_entry'
         );

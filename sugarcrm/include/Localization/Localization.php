@@ -425,7 +425,8 @@ class Localization {
 	///////////////////////////////////////////////////////////////////////////
 	////	NUMBER DISPLAY FORMATTING CODE
 	function getDecimalSeparator($user=null) {
-		$dec = $this->getPrecedentPreference('default_decimal_separator', $user);
+        // Bug50887 this is purposefully misspelled as ..._seperator to match the way it's defined throughout the app.
+		$dec = $this->getPrecedentPreference('default_decimal_seperator', $user);
 		return $dec;
 	}
 
