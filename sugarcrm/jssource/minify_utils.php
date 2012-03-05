@@ -433,10 +433,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 // Also, check if there's a min counterpart, in which case, don't use this file.
                 $path_parts = pathinfo($from_path);
                 if(is_file("$from_path") && isset($path_parts['extension']) && $path_parts['extension'] =='js'){
-                    $min_file_path = $path_parts['dirname'].'/'.$path_parts['filename'].'-min.'.$path_parts['extension'];
+                    /*$min_file_path = $path_parts['dirname'].'/'.$path_parts['filename'].'-min.'.$path_parts['extension'];
                     if(is_file($min_file_path)) {
                         $from_path = $min_file_path;
-                    }
+                    }*/
                     if($backup){
                         $bu_dir = dirname($bu_path);
                         if(!file_exists($bu_dir)){
