@@ -94,7 +94,7 @@ class Tokenizer {
         $this->PUNC_CHARS = str_split("[]{}(),;:");
         $this->PUNC_BEFORE_EXPRESSION = str_split("[{(,.;:");
         $this->OPERATOR_CHARS = str_split("+-*&%=<>!?|~^");
-    } 
+    }
 
     function charAt($pos) {
         return substr($this->text, $pos, 1);
@@ -134,7 +134,7 @@ class Tokenizer {
     function start_token() {
         $this->tokline = $this->line;
         $this->tokcol = $this->col;
-        $this->tokpos = $this->pos; 
+        $this->tokpos = $this->pos;
     }
 
     function token($type, $value = null, $is_comment = FALSE) {
@@ -211,7 +211,7 @@ class Tokenizer {
                 $has_e = $after_e = TRUE;
                 return $has_e;
             }
-            
+
             if($ch == '-') {
                 if($after_e || ($i == 0 && !$prefix)) {
                     // Only allow a negative sign after an exp, or as the first character.
@@ -399,7 +399,7 @@ class Tokenizer {
             $prev_backslash = false;
             $ch = null;
             $in_class = false;
-            
+
             while(($ch = $ref->nextChar(TRUE)) !== FALSE) {
                 if ($prev_backslash) {
                     $regexp .= "\\" . $ch;
@@ -506,27 +506,27 @@ class Tokenizer {
         if(!is_null($force_regexp)) {
             return $this->read_regexp($force_regexp);
         }
-        
+
         $this->skip_whitespace();
         $this->start_token();
         $ch = $this->peek();
-        
+
         if($ch === FALSE) {
             return $this->token("eof");
         }
-        
+
         if(is_digit($ch)) {
             return $this->read_num();
         }
-        
+
         if($ch == '"' || $ch == "'") {
             return $this->read_string($this->quote_string);
         }
-        
+
         if(in_array($ch, $this->PUNC_CHARS)) {
             return $this->token("punc", $this->nextChar());
         }
-        
+
         if($ch == ".") {
             return $this->handle_dot();
         }
@@ -538,7 +538,7 @@ class Tokenizer {
         if (in_array($ch, $this->OPERATOR_CHARS)) {
             return $this->read_operator();
         }
-                
+
         if($ch == "\\" || is_identifier_start($ch)) {
             return $this->read_word();
         }
@@ -619,7 +619,7 @@ class SugarMin {
             $substr .= $token["value"];
             $substr .= $this->postprocess($token);
             $substr = str_replace('  ', ' ', $substr);
-            $str .= str_replace(') ;', ');', $substr);
+            $substr .= str_replace(') ;', ');', $substr);
             $str .= str_replace(') .', ').', $substr);
 
             $token = $tokenizer->get_token();
