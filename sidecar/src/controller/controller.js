@@ -128,15 +128,18 @@
                 }, {
                     success: function(data) {
                         console.log("login success");
-                        app.router.start();
-                        app.router.navigate("", {trigger: true});
+                        //the router will return true if a route was matched in the starting url
+                        if (!app.router.start())
+                            app.router.navigate("", {trigger: true});
                     }, error: function(data) {
                         console.log("login error");
                         console.log(data);
                     }
                 });
             } else {
-                app.router.navigate("", {trigger: true});
+                //the router will return true if a route was matched in the starting url
+                if (!app.router.start())
+                    app.router.navigate("", {trigger: true});
             }
         }
     });
