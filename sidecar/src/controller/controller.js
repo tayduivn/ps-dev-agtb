@@ -49,7 +49,7 @@
             this.context.init(params);
             this.layout = this.getLayout(params);
 
-            this.context.getData();
+            this.context.getData(this);
             this.context.set({layoutObj:this.layout});
 
             // Render the rendered layout to the main element
