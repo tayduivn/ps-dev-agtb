@@ -83,16 +83,24 @@ function TrackerDashlet() {
         func = _comboQuery.options[_comboQuery.selectedIndex].value;
         var dateDependentQueries = {/literal}{$dateDependentQueries}{literal};
         setDisabled = true;
+        var setDisplayed = 'none';
         for(j = 0; j < dateDependentQueries.length; j++){
         	if(func == dateDependentQueries[j]){
         		setDisabled = false;
+                setDisplayed= 'inline';
         		break;
         	}
         }
         _dateButton.disabled = setDisabled;
         _dateTextField.disabled = setDisabled;
         _clearButton.disabled = setDisabled;
-        _runButton.disabled = setDisabled;    
+        _runButton.disabled = setDisabled;
+
+        _sinceLabel.style.display = setDisplayed;
+        _dateButton.style.display = setDisplayed;
+        _dateTextField.style.display = setDisplayed;
+        _clearButton.style.display = setDisplayed;
+        _runButton.style.display = setDisplayed;
         runClicked();
    } //comboChanged
 
@@ -142,7 +150,7 @@ function TrackerDashlet() {
 		    	options = options + "<option value='" + entry[1] + "'>" + entry[0] + "</option>";
 		    }
 		    var trackerContentHeader = "<select onchange='tracker_dashlet.comboChanged();' id=\"" + "combo_" + _id + "\">" + options + "</select>";
-		    trackerContentHeader = trackerContentHeader + sincelabel;
+		    trackerContentHeader = trackerContentHeader + '<span id="sinceLabel_'+_id+'">'+sincelabel+'</span>';
 		    trackerContentHeader = trackerContentHeader + " <input type='text' name='text_" + _id + "' id='text_" + _id + "'>";
 		    trackerContentHeader = trackerContentHeader + "&nbsp;<input class='button' id='calbutton_" +  _id + "' type='button' style='width:20px;height:18px;background-image:url(" + calenderImagepath + ")'>";
 		    trackerContentHeader = trackerContentHeader + "&nbsp;<input id='runbutton_" +  _id + "' class='button' type='button' onclick='tracker_dashlet.runClicked();' name='" + runButtonLabel + "'" +  " value='" + runButtonLabel + "'>";
@@ -175,13 +183,18 @@ function TrackerDashlet() {
 		    });
 		    
 		    _comboQuery = document.getElementById("combo_" + _id);
+            _sinceLabel = document.getElementById("sinceLabel_" + _id);
+            _sinceLabel.style.display = 'none';
 		    _dateButton = document.getElementById("calbutton_" + _id);
 		    _dateButton.disabled = true;
+            _dateButton.style.display = 'none';
 		    _dateTextField = document.getElementById("text_" + _id);
 		    _dateTextField.disabled = true;
+            _dateTextField.style.display = 'none';
 		    _runButton = document.getElementById("runbutton_" + _id);
 		    _clearButton = document.getElementById("clearbutton_" + _id);
 		    _clearButton.disabled = true;
+            _clearButton.style.display = 'none';
 			_grid.render();
    } //init
 
