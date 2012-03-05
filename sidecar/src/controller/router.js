@@ -39,15 +39,18 @@
          */
         start: function() {
             console.log("Router Started");
+            var ret = false;
 
             // Start monitoring hash changes
             // Right now backbone doesn't support checking to see
             // if the history has been started.
             try {
-                Backbone.history.start();
+                ret =  Backbone.history.start();
             } catch (e) {
                 app.logger.error(e.message);
             }
+
+            return ret;
         },
 
         // Routes
