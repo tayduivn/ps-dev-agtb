@@ -54,17 +54,19 @@ public class TestAccountCreate extends TestCase {
 			System.out.printf("URI: '%s'\n", uri);
 			post = new HttpPost(uri);
 			post.setEntity(entity);
-			response = client.execute(post, context);
-			HttpEntity responseData = response.getEntity();
+			response = client.execute(post, context);			
 			
 			status = response.getStatusLine().getStatusCode();
 			if (status != 200) {
 				tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
+				System.out.printf("%s\n", tmp);
 				fail(tmp);
 			}
 			
+			HttpEntity responseData = response.getEntity();
 			String buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: %s\n", buffer);
+			
 			UserId id = (UserId)json.fromJson(buffer, UserId.class);
 			System.out.printf("(*)TOKEN: %s\n", id.token);
 			// end login //

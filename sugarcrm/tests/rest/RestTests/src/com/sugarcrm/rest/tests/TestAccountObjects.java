@@ -1,5 +1,6 @@
 package com.sugarcrm.rest.tests;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import junit.framework.TestCase;
@@ -132,19 +133,21 @@ public class TestAccountObjects extends TestCase {
 			HashMap<String, Object> accdata = json.fromJson(buffer, HashMap.class);
 			@SuppressWarnings("unchecked")
 			
-			String[] keys = accdata.keySet().toArray(new String[0]);
+			ArrayList<HashMap<String, String>> ids = (ArrayList<HashMap<String, String>>)accdata.get("records");
 			
-			for (int i = 0; i <= keys.length -1; i ++) {
-				System.out.printf("(KEY): %s\n", keys[i]);
+			int found = -1;
+			for (int i = 0; i <= ids.size() -1; i ++) {
+				HashMap<String, String> d1 = ids.get(i);
+				String value = d1.get("id").toString();
+				
+				if (accID.id.contains(value)) {
+					found = i;
+					break;
+				}
 			}
-			
-			
-			System.out.printf("");
-			//System.out.printf("FOUND:: %s => %s\n", accID.id, keys[found]);
-			//assertFalse(-1 == found);
-			
-			//assertEquals(accID.id, keys[found]);
-			System.out.printf("(*)Finished getting Accounts Object...\n");
+
+			System.out.printf("(*)Finished getting Accounts Object: %d...\n", found);
+			assertFalse(-1 == found);
 		} catch (Exception exp) {
 			exp.printStackTrace();
 			fail(exp.getMessage());
