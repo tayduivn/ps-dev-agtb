@@ -194,10 +194,13 @@ function validate_user($user_name, $password){
 	function validate_authenticated($session_id){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->validate_authenticated');
 		if(!empty($session_id)){
-			session_id($session_id);
-			if(empty($_SESSION)) {
-                           session_start();
-                        }
+
+			// only initialize session once in case this method is called multiple times
+			if(!session_id()) {
+			   session_id($session_id);
+			   session_start();
+			}
+
 			if(!empty($_SESSION['is_valid_session']) && $this->is_valid_ip_address('ip_address') && $_SESSION['type'] == 'user'){
 
 				global $current_user;
@@ -316,7 +319,7 @@ function validate_user($user_name, $password){
     	if(!$valid->validateQueryClauses($query, $order_by)) {
     		$GLOBALS['log']->error("SoapHelperWebServices->checkQuery - bad query: $query $order_by");
     	    $errorObject->set_error('no_access');
-    		setFaultObject($errorObject);
+    		$this->setFaultObject($errorObject);
     		return false;
     	}
         return true;

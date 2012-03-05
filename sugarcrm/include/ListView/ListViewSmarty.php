@@ -46,7 +46,6 @@ class ListViewSmarty extends ListViewDisplay{
     var $email = true;
     var $targetList = false;
 	var $multiSelect = true;
-	var $overlib = true;
 	var $quickViewLinks = true;
 	var $lvd;
 	var $mergeduplicates = true;
@@ -107,7 +106,6 @@ class ListViewSmarty extends ListViewDisplay{
         //BEGIN SUGARCRM flav=pro ONLY
         $this->ss->assign('favorites',$this->seed->isFavoritesEnabled());
         //END SUGARCRM flav=pro ONLY
-        if($this->overlib) $this->ss->assign('overlib', true);
 
         // Bug 24677 - Correct the page total amount on the last page of listviews
         $pageTotal = $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current'];
@@ -190,8 +188,13 @@ class ListViewSmarty extends ListViewDisplay{
 	function display($end = true) {
 
 		if(!$this->should_process) return $GLOBALS['app_strings']['LBL_SEARCH_POPULATE_ONLY'];
-        global $app_strings;
+        global $app_strings, $sugar_version, $sugar_flavor, $server_unique_key, $current_module, $app_list_strings;  
+        $this->ss->assign('moduleListSingular', $app_list_strings["moduleListSingular"]);
         $this->ss->assign('data', $this->data['data']);
+        $this->ss->assign('query', $this->data['query']);
+        $this->ss->assign('sugar_info', array("sugar_version" => $sugar_version, 
+											  "sugar_flavor" => $sugar_flavor));
+      
 		$this->data['pageData']['offsets']['lastOffsetOnPage'] = $this->data['pageData']['offsets']['current'] + count($this->data['data']);
 		$this->ss->assign('pageData', $this->data['pageData']);
 

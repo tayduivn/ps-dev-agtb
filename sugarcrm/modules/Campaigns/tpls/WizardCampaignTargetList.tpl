@@ -33,7 +33,7 @@
 	<td colspan="4">&nbsp;</td>
 	</tr>
 	<tr>
-	<td scope='row'><span sugar='slot26'><img alt="Help" border="0" src="{sugar_getimagepath file='helpInline.gif'}"  onmouseover="return overlib('{$MOD.LBL_SUBSCRIPTION_TARGET_WIZARD_DESC}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();" >
+	<td scope='row'><span sugar='slot26'>{sugar_help text=$MOD.LBL_SUBSCRIPTION_TARGET_WIZARD_DESC }
 	{$MOD.LBL_SUBSCRIPTION_LIST_NAME}</span sugar='slot'>
 	</td>
 	<td><input type='radio' onclick="change_target_list(this,'subs');" name='wiz_subscriptions_def_type' id='wiz_subscriptions_def_type' title="{$MOD.LBL_DEFAULT_LOCATION}" value="1" >{$MOD.LBL_DEFAULT_LOCATION}<br>
@@ -43,14 +43,14 @@
 	<input class="sqsEnabled" autocomplete="off" id="subscription_name" name="wiz_step3_subscription_name" title='{$MOD.LBL_SUBSCRIPTION_LIST_NAME}' type="text" size='35' value="{$SUBSCRIPTION_NAME}">
 	<input id='prospect_list_type_default' name='prospect_list_type_default' type="hidden" value="default" />	
 	<input id='wiz_step3_subscription_name_id' name='wiz_step3_subscription_list_id' title='Subscription List ID' type="hidden" value='{$SUBSCRIPTION_ID}'>
-	<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button"  class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn1 id='wiz_step3_subscription_name_button'
+	<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" type="button"  class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn1 id='wiz_step3_subscription_name_button'
  	onclick='open_popup("ProspectLists", 600, 400, "&list_type=default", true, false,  {$encoded_subscription_popup_request_data}, "single", true);'>
 	</span sugar='slot'></td>
 	</tr>
 	<tr><td colspan='4'>&nbsp;</td></tr>
 
 	<tr>
-	<td scope='row'><span sugar='slot27'><img border="0" alt="Help" src="{sugar_getimagepath file='helpInline.gif'}" onmouseover="return overlib('{$MOD.LBL_UNSUBSCRIPTION_TARGET_WIZARD_DESC}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();" >
+	<td scope='row'><span sugar='slot27'>{sugar_help text=$MOD.LBL_UNSUBSCRIPTION_TARGET_WIZARD_DESC }
 	{$MOD.LBL_UNSUBSCRIPTION_LIST_NAME}</span sugar='slot'>
 	</td>
 	<td><input type='radio' onclick="change_target_list(this,'unsubs');" name='wiz_unsubscriptions_def_type' id='wiz_unsubscriptions_def_type' title="{$MOD.LBL_DEFAULT_LOCATION}" value="1">{$MOD.LBL_DEFAULT_LOCATION}<br>
@@ -60,14 +60,14 @@
 	<input  class="sqsEnabled" autocomplete="off" id="unsubscription_name" name="wiz_step3_unsubscription_name" title='{$MOD.LBL_UNSUBSCRIPTION_LIST_NAME}' type="text" size='35' value="{$UNSUBSCRIPTION_NAME}" >
 	<input id='prospect_list_type_exempt' name='prospect_list_type_exempt' type="hidden" value="exempt" />	
 	<iput id='wiz_step3_unsubscription_name_id' name='wiz_step3_unsubscription_list_id' title='UnSubscription List ID' type="hidden" value='{$UNSUBSCRIPTION_ID}'>
-	<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button"  class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn2 id='wiz_step3_unsubscription_name_button'
+	<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" type="button"  class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn2 id='wiz_step3_unsubscription_name_button'
  	onclick='open_popup("ProspectLists", 600, 400, "&list_type=exempt", true, false,  {$encoded_unsubscription_popup_request_data}, "single", true);'>
 	</span sugar='slot'></td>
 	</tr>
 	<tr><td colspan='4'>&nbsp;</td></tr>
 	<tr>
 	<td scope='row'>
-	<span sugar='slot28'><img alt="Help" border="0" src="{sugar_getimagepath file='helpInline.gif'}"  onmouseover="return overlib('{$MOD.LBL_TEST_TARGET_WIZARD_DESC}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
+	<span sugar='slot28'>{sugar_help text=$MOD.LBL_TEST_TARGET_WIZARD_DESC }
 	{$MOD.LBL_TEST_LIST_NAME}</span sugar='slot'>
 	</td>
 	<td><input type='radio' onclick="change_target_list(this,'test');" name='wiz_test_def_type' id='wiz_test_def_type' title="{$MOD.LBL_DEFAULT_LOCATION}" value="1" >{$MOD.LBL_DEFAULT_LOCATION}<br>
@@ -77,7 +77,7 @@
 	<input  class="sqsEnabled" autocomplete="off" id="test_name" name="wiz_step3_test_name" title='{$MOD.LBL_TEST_LIST_NAME}' type="text" size='35' value="{$TEST_NAME}">
 	<input id='prospect_list_type_test' name='prospect_list_type_test' type="hidden" value="test" />	
 	<input id='wiz_step3_test_name_id' name='wiz_step3_test_list_id' title='Test List ID' type="hidden" value='{$TEST_ID}'>
-	<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button"  class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn3 id='wiz_step3_test_name_button'
+	<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" type="button"  class="button" value='{$APP.LBL_SELECT_BUTTON_LABEL}' name=btn3 id='wiz_step3_test_name_button'
  	onclick='open_popup("ProspectLists", 600, 400, "&list_type=test", true, false,  {$encoded_test_popup_request_data}, "single", true);'>	
 	</span sugar='slot'></td>
 	</tr>

@@ -41,6 +41,12 @@ if($unzip_dir == null ) {
 	$unzip_dir = $_SESSION['unzip_dir'];
 }
 
+// creating full text search logic hooks
+// this will be merged into application/Ext/LogicHooks/logichooks.ext.php
+// when rebuild_extensions is called
+logThis(' Writing FTS hooks');
+createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
+
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
 logThis('About to repair the database.', $path);
 //Use Repair and rebuild to update the database.
@@ -258,12 +264,10 @@ if(!$ce_to_pro_ent) {
 //END SUGARCRM flav=pro ONLY
 
 //Upgrade connectors
-/*
-if($_SESSION['current_db_version'] < '610' && function_exists('upgrade_connectors'))
-{
-   upgrade_connectors($path);
-}
-*/
+logThis('Begin upgrade_connectors', $path);
+upgrade_connectors();
+logThis('End upgrade_connectors', $path);
+
 
 // Enable the InsideView connector by default
 if($_SESSION['current_db_version'] < '621' && function_exists('upgradeEnableInsideViewConnector')) {
@@ -303,6 +307,12 @@ if(function_exists('unlinkUpgradeFiles'))
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
+}
+
+//Run RepairSearchFields.php file
+if($_SESSION['current_db_version'] < '620' && function_exists('repairSearchFields'))
+{
+    repairSearchFields($path);
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');

@@ -1212,7 +1212,7 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	// build WHERE clauses, if any
 	$where_clauses = array();
 	if (!empty($query)) {
-		$where_clauses[] = $query;
+	    $where_clauses[] = $query;
 	}
 	if ($deleted == 0) {
 		$where_clauses[] = $seed->table_name . '.deleted = 0';

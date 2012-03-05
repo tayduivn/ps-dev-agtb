@@ -92,6 +92,7 @@ class TemplateField{
 	    'ext3'=>'ext3',
 		'label_value'=>'label_value',
 		'unified_search'=>'unified_search',
+        'full_text_search'=>'full_text_search',
 	//BEGIN SUGARCRM flav=pro ONLY
 		'calculated' => 'calculated',
         'formula' => 'formula',
@@ -337,6 +338,9 @@ class TemplateField{
 			'reportable'=>$this->convertBooleanValue($this->reportable),
             'unified_search'=>$this->convertBooleanValue($this->unified_search)
 		);
+        if (isset($this->full_text_search)) {
+            $array['full_text_search'] = $this->full_text_search;
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
             $array['calculated'] = $this->calculated;
@@ -433,9 +437,22 @@ class TemplateField{
 
 	function populateFromPost(){
 		foreach($this->vardef_map as $vardef=>$field){
-			if(isset($_REQUEST[$vardef])){
-				_ppl("$vardef was set to {$_REQUEST[$vardef]}, saving it to this->$field");
-                $this->$vardef = $_REQUEST[$vardef];
+			if(isset($_REQUEST[$vardef])){		    
+				$this->$vardef = $_REQUEST[$vardef];
+
+				// Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'. 
+				// Add to the list below if we need to do the same for other fields.
+				if (!empty($this->$vardef) && in_array($vardef, array('formula', 'dependency'))){
+				    $this->$vardef = to_html(strip_tags(from_html($this->$vardef)));
+				}
+
+                //Remove potential xss code from help field
+                if($field == 'help' && !empty($this->$vardef))
+                {
+                    $help = htmlspecialchars_decode($this->$vardef, ENT_QUOTES);
+                    $this->$vardef = htmlentities(remove_xss($help));
+                }
+
 				if($vardef != $field){
 					$this->$field = $this->$vardef;
 				}

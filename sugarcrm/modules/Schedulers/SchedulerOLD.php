@@ -232,7 +232,7 @@ class Scheduler extends SugarBean {
 			$this->datesArray[$i] = $i;
 		}
 		
-		$this->dayInt = array('*',1,2,3,4,5,6,7);
+		$this->dayInt = array('*',1,2,3,4,5,6,0);
 		$this->dayLabel = array('*',$mod_strings['LBL_MON'],$mod_strings['LBL_TUE'],$mod_strings['LBL_WED'],$mod_strings['LBL_THU'],$mod_strings['LBL_FRI'],$mod_strings['LBL_SAT'],$mod_strings['LBL_SUN']);
 		$this->monthsInt = array(0,1,2,3,4,5,6,7,8,9,10,11,12);
 		$this->monthsLabel = $app_list_strings['dom_cal_month_long'];

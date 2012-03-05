@@ -98,7 +98,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		} // if
 	} // if
 	if ($report_type == 'tabular') {
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'tabular\');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'tabular\');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	}
 	// Summation with Details
@@ -106,12 +106,12 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		$canCovertToMatrix = 0;
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'matrix\');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'matrix\');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 
 
@@ -120,7 +120,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		$canCovertToMatrix = 0;
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
-		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation\','.$canCovertToMatrix.');" type="button">' .
+		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(this,\'summation\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 	
 
@@ -913,15 +913,12 @@ if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->a
 if(ACLController::checkAccess('Reports', 'edit', $is_owner))
 {?>
 <input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_KEY']?>"
     value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
 <input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $app_strings['LBL_SAVE_BUTTON_KEY']?>"
     value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
 <input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_KEY']?>"
     value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 <?php }?>
@@ -930,7 +927,6 @@ if(ACLController::checkAccess('Reports', 'export', $is_owner))
 {
 ?>
 <input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_KEY']?>"
     value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 <?php }?>
@@ -1061,22 +1057,18 @@ style="display: none"
 <?if(ACLController::checkAccess('Reports', 'edit', $is_owner))
 {?>
 <input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_KEY']?>"
     value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
 <input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $app_strings['LBL_SAVE_BUTTON_KEY']?>"
     value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
 <input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_KEY']?>"
     value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 <?}?>
 <?if(ACLController::checkAccess('Reports', 'export', $is_owner))
 {?>
 <input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>"
-    accessKey="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_KEY']?>"
     value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 <?}?>
@@ -1090,7 +1082,6 @@ style="display: none"
 // template_module_defs_js($args);
 ?>
 <script type="text/javascript" src="cache/modules/modules_def_<?php echo $current_language; ?>_<?php echo md5($current_user->id) ?>.js"></script>
-<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 
@@ -1413,7 +1404,7 @@ function get_select_related_html(&$args)
 
 
   $content = "<input class='sqsEnabled' autocomplete='off' id='{$args['parent_name']}' name='{$args['parent_name']}' type='text' value='{$args['parent_name_value']}'>&nbsp;<input id='{$args['parent_id']}' name='{$args['parent_id']}' type='hidden' value='{$args['parent_id_value']}'/></slot>";
-  $content .= "<input title='{$app_strings['LBL_SELECT_BUTTON_TITLE']}' accessKey='{$app_strings['LBL_SELECT_BUTTON_KEY']}' type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name=btn1 ";
+  $content .= "<input title='{$app_strings['LBL_SELECT_BUTTON_TITLE']}' type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name=btn1 ";
 
   if ( isset($args['tabindex']))
   {

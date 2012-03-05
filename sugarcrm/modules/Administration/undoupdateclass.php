@@ -38,7 +38,7 @@ foreach ($beanFiles as $Classname => $filename){
 		$handle = file_get_contents($Newfilename);
 		$data = preg_replace("/class SugarCore".$Classname."/", 'class '.$Classname, $handle);
 		$data1 = preg_replace("/function SugarCore".$Classname."/", 'function '.$Classname, $data);
-		sugar_file_put_contents($Newfilename,$data1);
+		file_put_contents($Newfilename,$data1);
 		rename($Newfilename,$filename);
 	}
 }

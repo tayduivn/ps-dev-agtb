@@ -197,7 +197,7 @@ class ParserLabel extends ModuleBuilderParser
 	        {
             if (! isset ( $mod_strings [ $key ] ) || strcmp ( $value, $mod_strings [ $key ] ) != 0)
 	            {
-                $mod_strings [$key] = html_entity_decode_utf8($value, ENT_QUOTES ); // must match encoding used in view.labels.php
+                    $mod_strings [$key] = htmlentities(html_entity_decode_utf8($value, ENT_QUOTES ), ENT_QUOTES ); // must match encoding used in view.labels.php
 	                $changed = true ;
 	            }
 	        }

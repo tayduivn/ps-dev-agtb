@@ -44,7 +44,7 @@ array (
 		  ),
           3 => 
           array (
-            'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" accessKey="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_KEY}" class="button" onclick="SUGAR.meetings.fill_invitees(); document.EditView.status.value=\'Held\'; document.EditView.action.value=\'Save\'; document.EditView.return_module.value=\'Meetings\'; document.EditView.isDuplicate.value=true; document.EditView.isSaveAndNew.value=true; document.EditView.return_action.value=\'EditView\'; document.EditView.return_id.value=\'{$fields.id.value}\'; formSubmitCheck();"type="button" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
+            'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}"  class="button" onclick="SUGAR.meetings.fill_invitees(); document.EditView.status.value=\'Held\'; document.EditView.action.value=\'Save\'; document.EditView.return_module.value=\'Meetings\'; document.EditView.isDuplicate.value=true; document.EditView.isSaveAndNew.value=true; document.EditView.return_action.value=\'EditView\'; document.EditView.return_id.value=\'{$fields.id.value}\'; formSubmitCheck();"type="button" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
            ),
         ),
         'headerTpl' => 'modules/Meetings/tpls/header.tpl',
@@ -132,27 +132,24 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
           ),
         ),      
         
-        array(
-        
+        array(        
           array (
             'name' => 'duration',
             'customCode' => '
-            	@@FIELD@@
-            	<span id="duration_text"></span>
-            	<input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
-            	<input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
-            	{sugar_getscript file="modules/Meetings/duration_dependency.js"}
-            	<script type="text/javascript">
-            		var date_time_format = "{$CALENDAR_FORMAT}";
-            		{literal}
-			SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){			
-				var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);	
-			});
-			{/literal}
-            	</script>            	
+                @@FIELD@@
+                <input id="duration_hours" name="duration_hours" type="hidden" value="{$fields.duration_hours.value}">
+                <input id="duration_minutes" name="duration_minutes" type="hidden" value="{$fields.duration_minutes.value}">
+                {sugar_getscript file="modules/Meetings/duration_dependency.js"}
+                <script type="text/javascript">
+                    var date_time_format = "{$CALENDAR_FORMAT}";
+                    {literal}
+                    SUGAR.util.doWhen(function(){return typeof DurationDependency != "undefined" && typeof document.getElementById("duration") != "undefined"}, function(){
+                        var duration_dependency = new DurationDependency("date_start","date_end","duration",date_time_format);
+                    });
+                    {/literal}
+                </script>            
             ',
           ),
-
         ),
         array (
           array (

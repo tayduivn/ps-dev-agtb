@@ -293,6 +293,22 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['sugar_config']['http_referer']['actions'][] = 'poo';
         $this->assertTrue($this->_app->checkHTTPReferer());
     }
+
+    /**
+     * @bug 50302
+     */
+    public function testWhitelistDefaults()
+    {
+        $_SERVER['HTTP_REFERER'] = 'http://dog';
+        $_SERVER['SERVER_NAME'] = 'cat';
+        $GLOBALS['sugar_config']['http_referer']['actions'] = array('poo');
+        $this->_app->controller->action = 'oauth';
+        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->_app->controller->action = 'index';
+        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->_app->controller->action = 'save';
+        $this->assertFalse($this->_app->checkHTTPReferer());
+    }
 }
 
 class SugarApplicationMock extends SugarApplication

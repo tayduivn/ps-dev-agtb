@@ -61,7 +61,7 @@ class ViewExportcustomizations extends SugarView
  		$smarty->assign('moduleList',$GLOBALS['app_list_strings']['moduleList']);  
 		$ajax = new AjaxCompose();
 		$ajax->addCrumb($mod_strings['LBL_STUDIO'], 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
-		$ajax->addSection('center', $mod_strings['LBL_EC_TITLE'],$smarty->fetch('modules/ModuleBuilder/tpls/exportcustomizations.tpl'));
+		$ajax->addSection('center', $mod_strings['LBL_EC_TITLE'],$smarty->fetch($this->getCustomFilePathIfExists('modules/ModuleBuilder/tpls/exportcustomizations.tpl')));
 		echo $ajax->getJavascript();
  	}
 }

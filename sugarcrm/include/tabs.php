@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  
 // $Id: tabs.php 42346 2008-12-04 16:09:08Z jmertic $
 
-require_once('include/generic/SugarWidgets/SugarWidget.php');
+
 
 class SugarWidgetTabs extends SugarWidget
 {

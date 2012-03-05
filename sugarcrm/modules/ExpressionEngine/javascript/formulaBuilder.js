@@ -579,7 +579,7 @@ SUGAR.expressions.GridToolTip = {
     	onCtrlEnter:  	{keepDefault:true},
     	onTab:    		{keepDefault:false, replaceWith:'    '},
     	markupSet:  [
-            {name:'Related Field', className:'rel_field',  beforeInsert:function(){
+            {name:'Related Field', className:'rel_field button',  beforeInsert:function(){
                 if (!SUGAR.formulaRelFieldWin)
                     SUGAR.formulaRelFieldWin = new YAHOO.SUGAR.AsyncPanel('relatedFieldWindow', {
                         width: 400,
@@ -598,7 +598,7 @@ SUGAR.expressions.GridToolTip = {
                 win.show();
                 win.center();
             }},
-            {name:'Rollup', className:'rollup',  beforeInsert:function(){
+            {name:'Rollup', className:'rollup button',  beforeInsert:function(){
                 if (!SUGAR.rollupWindow)
                     SUGAR.rollupWindow = new YAHOO.SUGAR.AsyncPanel('rollupWindow', {
                         width: 400,
@@ -912,6 +912,7 @@ SUGAR.expressions.GridToolTip = {
     };
 
 
+    var acMode = "functions";
     //Initialize the Autocomplete. It will used a hidden input that is updated by a listener on the formula input
     $( "#fb_ac_input" ).autocomplete({
         source: function(e, fn){
@@ -919,9 +920,11 @@ SUGAR.expressions.GridToolTip = {
             if(e.term[0] == "$")
             {
                 fn(getFieldsByType(getExpectedComponentType(), e.term.substr(1), 10));
+                acMode = "fields";
             }
             else {
                 fn(getFunctionsByType(getExpectedComponentType(), e.term, 10));
+                acMode = "functions";
             }
         },
         appendTo: "#fb_ac_wrapper",
@@ -937,7 +940,7 @@ SUGAR.expressions.GridToolTip = {
             hideACHelp();
         },
         select: function(event, ui) {
-            //On selection, relpace the currrent element in the forumla with the selection
+            //On selection, replace the current element in the formula with the selection
             var target = $("#formulaInput"),
                 el = target[0],
                 val = target.val(),
@@ -977,7 +980,7 @@ SUGAR.expressions.GridToolTip = {
         },
         focus: function(event, ui) {
             hideACHelp();
-            if (ui.item)
+            if (ui.item && acMode == "functions")
                 showACHelp(ui.item.value);
         }
     });

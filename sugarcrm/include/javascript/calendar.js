@@ -84,7 +84,8 @@ Calendar.setup = function (params) {
                     buttons:[],
                     draggable:false,
                     close:true,
-                    zIndex: Calendar.getHighestZIndex(document.body)
+                    zIndex: Calendar.getHighestZIndex(document.body),
+                    constraintoviewport:true
                 });
                 
                 dialog.setHeader(SUGAR.language.get('app_strings', 'LBL_MASSUPDATE_DATE'));

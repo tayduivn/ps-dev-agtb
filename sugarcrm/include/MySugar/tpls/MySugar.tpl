@@ -46,15 +46,11 @@ height: 10px;
 </style>
 {/literal}
 
-<!-- begin includes for overlib -->
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
-<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000"></div>
-<!-- end includes for overlib -->
 
 
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 {sugar_getscript file='include/javascript/dashlets.js'}
-<link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
+
 {$chartResources}
 {$mySugarChartResources}
 
@@ -107,6 +103,9 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 			for(i in dashletIds) {ldelim}
 				SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
 				SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
+                // Bug #47097 : Dashlets not displayed after moving them
+                // add new property to save real id of dashlet, it needs to have ability reload dashlet by id
+                SUGAR.mySugar.homepage_dd[j].dashletID = dashletIds[i];
 				SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;
 				SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
 				j++;

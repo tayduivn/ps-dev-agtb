@@ -78,7 +78,7 @@ function print_currency_symbol($report_defs) {
 
 function get_row_remap(& $row, & $reporter) {
     $row_remap = array ();
-    $row_remap['numerical_value'] = $numerical_value = unformat_number($row['cells'][$reporter->chart_numerical_position]['val']);
+    $row_remap['numerical_value'] = $numerical_value = unformat_number(strip_tags($row['cells'][$reporter->chart_numerical_position]['val']));
     global $do_thousands;
     if ($do_thousands) {
         // MRF - Bug # 13501, 47148 - added floor() below:

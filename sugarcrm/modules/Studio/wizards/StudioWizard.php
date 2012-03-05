@@ -123,7 +123,7 @@ class StudioWizard{
     
     function fetch($error = ''){
     	 global $mod_strings;
-        echo getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_MODULE_TITLE']), false); 
+        echo getClassicModuleTitle('StudioWizard', array($mod_strings['LBL_MODULE_TITLE']), false);
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('welcome', $this->welcome());
         $sugar_smarty->assign('options', $this->options());

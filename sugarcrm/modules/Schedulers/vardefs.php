@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['schedulers'] = array('table' => 'schedulers',
+$dictionary['Scheduler'] = array('table' => 'schedulers',
 	'fields' => array (
 		'id' => array (
 			'name' => 'id',
@@ -84,8 +84,8 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'len' => '36',
 			'reportable' => true,
 		),
-		'modified_user_id_link' => array (
-			'name' => 'modified_user_id_link',
+		'modified_user_link' => array (
+			'name' => 'modified_user_link',
 			'type' => 'link',
 			'relationship' => 'schedulers_modified_user_id_rel',
 			'vname' => 'LBL_MODIFIED_BY_USER',
@@ -93,7 +93,7 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'module' => 'Users',
 			'bean_name' => 'User',
 			'source' => 'non-db',
-		),
+		),        
 		'name' => array (
 			'name' => 'name',
 			'vname' => 'LBL_NAME',
@@ -111,17 +111,37 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'required' => true,
 			'reportable' => false,
 		),
+		'job_url' => array (
+			'name' => 'job_url',
+			'vname' => 'LBL_JOB_URL',
+			'type' => 'varchar',
+			'len' => '255',
+			'required' => false,
+			'reportable' => false,
+			'source' => 'non-db',
+			'dependency' => 'equal($job_function, "url::")'
+		),
+		'job_function' => array (
+			'name' => 'job_function',
+			'vname' => 'LBL_JOB',
+			'type' => 'enum',
+			'function' => array('name' => array('Scheduler', 'getJobsList'), 'params' => array()),
+			'len' => '255',
+			'required' => false,
+			'reportable' => false,
+			'source' => 'non-db',
+		),
 		'date_time_start' => array (
 			'name' => 'date_time_start',
-			'vname' => 'LBL_SCHEDULER_DATE_TIME_START',
-			'type' => 'datetime',
+			'vname' => 'LBL_DATE_TIME_START',
+			'type' => 'datetimecombo',
 			'required' => true,
 			'reportable' => false,
 		),
 		'date_time_end' => array (
 			'name' => 'date_time_end',
-			'vname' => 'LBL_SCHEDULER_DATE_TIME_END',
-			'type' => 'datetime',
+			'vname' => 'LBL_DATE_TIME_END',
+			'type' => 'datetimecombo',
 			'reportable' => false,
 		),
 		'job_interval' => array (
@@ -132,6 +152,15 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'required' => true,
 			'reportable' => false,
 		),
+		'adv_interval' => array (
+			'name' => 'adv_interval',
+			'vname' => 'LBL_ADV_OPTIONS',
+			'type' => 'bool',
+			'required' => false,
+			'reportable' => false,
+			'source' => 'non-db',
+		),
+
 		'time_from' => array (
 			'name' => 'time_from',
 			'vname' => 'LBL_TIME_FROM',
@@ -217,19 +246,18 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 			'rhs_module'		=> 'Schedulers',
 			'rhs_table'			=> 'schedulers',
 			'rhs_key'			=> 'modified_user_id',
-			'relationship_type'	=> 'one-to-one'
+			'relationship_type'	=> 'one-to-many'
 		),
 		'schedulers_jobs_rel' => array(
 			'lhs_module'					=> 'Schedulers',
 			'lhs_table'						=> 'schedulers',
 			'lhs_key' 						=> 'id',
 			'rhs_module'					=> 'SchedulersJobs',
-			'rhs_table'						=> 'schedulers_times',
+			'rhs_table'						=> 'job_queue',
 			'rhs_key' 						=> 'scheduler_id',
-			//'join_table'					=> 'schedulers_times',
 			'relationship_type' 			=> 'one-to-many',
 		),
 	)
 );
 
-?>
+//VardefManager::createVardef('Schedulers','Scheduler', array('default'));

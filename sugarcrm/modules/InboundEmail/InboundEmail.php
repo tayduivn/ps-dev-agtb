@@ -3176,7 +3176,9 @@ class InboundEmail extends SugarBean {
 			$msgPart = $text;
 			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader[$upperCaseKeyDecodeHeader['CONTENT-TYPE']]['charset'])) {
 				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
-			}
+			} else {
+                $msgPart = utf8_encode($text);
+            }
 		} // end else clause
 
 		$msgPart = $this->customGetMessageText($msgPart);
@@ -3609,7 +3611,7 @@ class InboundEmail extends SugarBean {
     		// deal with attachment encoding and decode the text string
 			$msgPart = $this->handleTranserEncoding($msgPartRaw, $part->encoding);
 
-			if(sugar_file_put_contents($uploadDir.$fileName, $msgPart)) {
+			if(file_put_contents($uploadDir.$fileName, $msgPart)) {
 				$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$attach->filename);
 			} else {
                 $GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$attach->filename ." - temp file target: [ {$uploadDir}{$fileName} ]");
@@ -4341,7 +4343,7 @@ class InboundEmail extends SugarBean {
 
 		$bin = convert_uudecode($UUEncode);
 		$filename = "upload://{$attach->id}";
-		if(sugar_file_put_contents($filename, $bin)) {
+		if(file_put_contents($filename, $bin)) {
     		$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$filename);
 		} else {
     		$GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$filename);
@@ -4900,7 +4902,9 @@ eoq;
 		$this->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
 
-		$q = "SELECT inbound_email.id FROM inbound_email {$teamJoin} WHERE is_personal = 0 AND groupfolder_id is null AND mailbox_type not like 'bounce' AND inbound_email.deleted = 0 AND status = 'Active' ";
+        // bug 50536: groupfolder_id cannot be updated to NULL from sugarbean's nullable check ('type' set to ID in the vardef)
+        // hence the awkward or check -- rbacon
+		$q = "SELECT inbound_email.id FROM inbound_email {$teamJoin} WHERE is_personal = 0 AND (groupfolder_id is null OR groupfolder_id = '') AND mailbox_type not like 'bounce' AND inbound_email.deleted = 0 AND status = 'Active' ";
 
 
 

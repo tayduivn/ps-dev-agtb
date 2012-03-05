@@ -40,6 +40,7 @@ require_once('install/install_utils.php');
 
 require_once('modules/TableDictionary.php');
 
+
 $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 
@@ -419,6 +420,12 @@ require_once ('install/createSnipUser.php');
 // Enable the InsideView connector and add all modules
 installLog("Enable InsideView Connector");
 enableInsideViewConnector();
+
+// Install the logic hook for FTS
+installLog("Creating FTS logic hook");
+createFTSLogicHook();
+// also write it to Extension directory so it won't be lost when rebuilding extensions
+createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA

@@ -33,7 +33,7 @@
     {foreach from=$recentRecords item=item name=lastViewed}
     <span>
         
-        <a title="{$item.item_summary} [{$APP.LBL_ALT_HOT_KEY}{$smarty.foreach.lastViewed.iteration}]" 
+        <a title="{$item.item_summary}"
             accessKey="{$smarty.foreach.lastViewed.iteration}" 
             href="{sugar_link module=$item.module_name action='DetailView' record=$item.item_id link_only=1}">
             {$item.image}&nbsp;<span>{$item.item_summary_short}</span>

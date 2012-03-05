@@ -58,7 +58,6 @@
 {if ($report_edit_access)}
 
 <input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
-    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}"
     value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
 <input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}"
@@ -66,13 +65,11 @@
     value="{$app_strings.LBL_SAVE_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
 <input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}"
-    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}"
     value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 {/if}
 {if ($report_export_access)}
 <input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
-    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}"
     value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 {/if}
@@ -134,21 +131,17 @@ ACLAllowedModules = {$ACLAllowedModules};
 {if ($report_edit_access)}
 
 <input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
-    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}"
     value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
 <input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}"
-    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}"
     value="{$app_strings.LBL_SAVE_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
 <input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}"
-    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}"
     value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 {/if}
 {if ($report_export_access)}
 <input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
-    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}"
     value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 {/if}
@@ -158,7 +151,6 @@ ACLAllowedModules = {$ACLAllowedModules};
 </form>
 </p>
 <script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 

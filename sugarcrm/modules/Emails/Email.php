@@ -1520,7 +1520,6 @@ class Email extends SugarBean {
 		global $theme;
 		global $mod_strings;
 		$out = '<div><input	title="'.$mod_strings['LBL_BUTTON_GRAB_TITLE'].'"
-						accessKey="'.$mod_strings['LBL_BUTTON_GRAB_KEY'].'"
 						class="button"
 						type="button" name="button"
 						onClick="window.location=\'index.php?module=Emails&action=Grab\';"
@@ -2498,7 +2497,7 @@ class Email extends SugarBean {
         // Coming from the home page via Dashlets
         if($currentModule != 'Email')
         	$mod_strings = return_module_language($current_language, 'Emails');
-        return $mod_strings['LBL_QUICK_CREATE']."&nbsp;<a id='$this->id' onclick='return quick_create_overlib(\"{$this->id}\", \"".SugarThemeRegistry::current()->__toString()."\");' href=\"#\" >".SugarThemeRegistry::current()->getImage("advanced_search","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_QUICK_CREATE'])."</a>";
+        return $mod_strings['LBL_QUICK_CREATE']."&nbsp;<a id='$this->id' onclick='return quick_create_overlib(\"{$this->id}\", \"".SugarThemeRegistry::current()->__toString()."\", this);' href=\"#\" >".SugarThemeRegistry::current()->getImage("advanced_search","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_QUICK_CREATE'])."</a>";
     }
 
     /**
@@ -2702,7 +2701,7 @@ class Email extends SugarBean {
         $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
-        //Hanlde date from and to seperately
+        //Hanlde date from and to separately
         if($bothDateRangesSet)
         {
             $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
@@ -2896,7 +2895,6 @@ eoq;
 								<td scope="col" width="50%" scope="row" NOWRAP align="right" colspan="2">
 								<input title="'.$mod_strings['LBL_BUTTON_DISTRIBUTE_TITLE'].'"
 									id="dist_button"
-									accessKey="'.$mod_strings['LBL_BUTTON_DISTRIBUTE_KEY'].'"
 									class="button" onClick="AjaxObject.detailView.handleAssignmentDialogAssignAction();"
 									type="button" name="button"
 									value="  '.$mod_strings['LBL_BUTTON_DISTRIBUTE'].'  ">';
@@ -3052,7 +3050,6 @@ eoq;
 		global $theme;
 		global $mod_strings;
 		$out = '<div><input	title="'.$mod_strings['LBL_BUTTON_CHECK_TITLE'].'"
-						accessKey="'.$mod_strings['LBL_BUTTON_CHECK_KEY'].'"
 						class="button"
 						type="button" name="button"
 						onClick="window.location=\'index.php?module=Emails&action=Check&type='.$type.'\';"

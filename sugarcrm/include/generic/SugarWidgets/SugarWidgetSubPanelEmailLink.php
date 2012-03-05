@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelEmailLink.php 56851 2010-06-07 22:17:02Z jenny $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 
 class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 
@@ -110,5 +110,3 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 
 	}
 } // end class def
-
-?>

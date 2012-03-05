@@ -46,7 +46,20 @@ class AbstractRelationships
     
     protected $relationships = array ( ) ; // array containing all the AbstractRelationship objects that are in this set of relationships
     protected $moduleName ;
-    
+
+    // bug33522 - the following relationship names that you would find in $dictionary[ <relationshipName> ]
+    // have different actual relationship names other than <relationshipName>
+    // e.g $dictionary[ 'quotes_accounts' ] has two relationships: quotes_billto_accounts, quotes_shipto_accounts
+    protected $specialCaseBaseNames = array( 'quotes_accounts',
+                                             'quotes_contacts',
+                                             'emails_beans',
+                                             'linked_documents',
+                                             'project_relation',
+                                             'prospect_lists_prospects',
+                                             'queues_beans',
+                                             'queues_queue',
+                                             'tracker_sessions'
+                                          );
     /*
      * Find all deployed modules that can participate in a relationship
      * Return a list of modules with associated subpanels
@@ -270,6 +283,18 @@ class AbstractRelationships
         {
             $name = $basename . "_" . ( string ) ($suffix ++) ;
         }
+
+        // bug33522 - if our relationship basename is in the special cases
+        if( in_array( $name , $this->specialCaseBaseNames ) )  {
+            //add a _1 (or _suffix#) and check to see if it already exists
+            $name = $name . "_" . ( string ) ($suffix ++);
+            while ( isset ( $allRelationships [ $name ] ) )
+            {
+                // if it does exist, strip off the _1 previously added and try again
+                $name = substr( $name , 0 , -2 ) . "_" . ( string ) ($suffix ++);
+            }
+        }
+
         return $name ;
     }
     
@@ -527,7 +552,7 @@ class AbstractRelationships
                	$out .= '$dictionary["' . $object . '"]["fields"]["' . $definition [ 'name' ] . '"] = '
                		  . var_export_helper($definition) . ";\n";
             }
-            sugar_file_put_contents($filename, $out);
+            file_put_contents($filename, $out);
             
             $installDefs [ $moduleName ] = array ( 
             	'from' => "{$installDefPrefix}/relationships/vardefs/{$relName}_{$moduleName}.php" , 

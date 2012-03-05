@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SugarWidgetSubPanelCloseButton.php 40493 2008-10-13 21:10:05Z jmertic $
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
+
 class SugarWidgetSubPanelDeleteButton extends SugarWidgetField
 {
 	function displayList($layout_def)
@@ -53,7 +53,7 @@ class SugarWidgetSubPanelDeleteButton extends SugarWidgetField
 			$refresh_page = 1;
 		}
 
-		$html = "<a onclick='return sp_del_conf();' href=\"javascript:sub_p_del('$subpanel', '$module_name', '$record_id', $refresh_page);\">".SugarThemeRegistry::current()->getImage("delete_inline","alt=".translate('LBL_DELETE_INLINE',$module_name)." border='0'")."</a>";
+		$html = "<a onclick='return sp_del_conf();' href=\"javascript:sub_p_del('$subpanel', '$module_name', '$record_id', $refresh_page);\">".$app_strings['LNK_DELETE']."</a>";
 		return $html;
 
 	}

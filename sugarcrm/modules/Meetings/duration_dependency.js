@@ -138,36 +138,86 @@ DurationDependency.prototype.update_duration_fields = function(){
 	
 	hours_elm.value = parseInt(minutes / 60);
 	minutes_elm.value = parseInt(minutes % 60);
+}
+
+DurationDependency.prototype.get_duration_text = function(){
+	var minutes = this.duration / 60;
 	
-	var text_elm = document.getElementById(this.duration_field + "_text");
-	if(text_elm){
-		var d = parseInt(minutes / 60 / 24);	
-		var h = parseInt((minutes / 60) % 24);
-		var m = parseInt(minutes % 60);	
-		d = format_part(d,SUGAR.language.get('app_strings', (d > 1)?'LBL_DURATION_DAYS':'LBL_DURATION_DAY'));
-		h = format_part(h,SUGAR.language.get('app_strings', (h > 1)?'LBL_DURATION_HOURS':'LBL_DURATION_HOUR'));
-		m = format_part(m,SUGAR.language.get('app_strings', (m > 1)?'LBL_DURATION_MINUTES':'LBL_DURATION_MINUTE'));	
-		function format_part(v,s){	
-			if(v == 0)
-				v = "";		
-			else{
-				v = v.toString();
-				v = v + " " + s + " ";
-			}
-			return v;
-		}			
-		text_elm.innerHTML = d + h + m;	
-	}
+
+	var d = parseInt(minutes / 60 / 24);	
+	var h = parseInt((minutes / 60) % 24);
+	var m = parseInt(minutes % 60);	
+	d = format_part(d,SUGAR.language.get('app_strings', (d > 1)?'LBL_DURATION_DAYS':'LBL_DURATION_DAY'));
+	h = format_part(h,SUGAR.language.get('app_strings', (h > 1)?'LBL_DURATION_HOURS':'LBL_DURATION_HOUR'));
+	m = format_part(m,SUGAR.language.get('app_strings', (m > 1)?'LBL_DURATION_MINUTES':'LBL_DURATION_MINUTE'));	
+		
+	function format_part(v,s){	
+		if(v == 0)
+			v = "";		
+		else{
+			v = v.toString();
+			v = v + " " + s + " ";
+		}
+		return v;
+	}	
+				
+	return d + h + m;	
 }
 
 DurationDependency.prototype.set_duration_handler = function(){
 	if(this.duration_field == null)
 		return;
 	var dur_elm = document.getElementById(this.duration_field);
-	if(dur_elm){
+	
+	if(dur_elm){	
+		if(this.duration >= 0){
+			this.add_custom_duration(dur_elm);
+		}	
 		dur_elm.value = "";
 		dur_elm.value = this.duration;
 	}
+}
+
+DurationDependency.prototype.add_custom_duration = function(dur_elm){
+			for(var i = 0; i < dur_elm.length; i++){
+				if(dur_elm.options[i].className == 'custom'){
+					var el = dur_elm.options[i];
+					el.parentNode.removeChild(el);
+				}		
+			}
+		
+			var option_exists = false;
+			var pos_index = 0;
+			var pos_found = false;
+			for(var i = 0; i < dur_elm.length; i++){
+				var v = dur_elm.options[i].value;
+				if(v == this.duration){
+					var option_exists = true;
+					break;
+				}
+				if(!pos_found && v > this.duration){
+					pos_index = i;
+					pos_found = true;
+				}
+				if(!pos_found && i == (dur_elm.length - 1)){
+					pos_index = i + 1;
+					pos_found = true;
+				}			
+			}
+		
+	
+			if(!option_exists){
+				var option = document.createElement('option');
+				option.value = this.duration;
+				option.className = 'custom';
+				option.innerHTML = this.get_duration_text();
+				var ref = dur_elm.options[pos_index];
+				if(pos_index == dur_elm.length){
+					dur_elm.appendChild(option);
+				}else{
+					dur_elm.insertBefore(option, ref);
+				}
+			}
 }
 
 DurationDependency.prototype.parse_date = function(d){

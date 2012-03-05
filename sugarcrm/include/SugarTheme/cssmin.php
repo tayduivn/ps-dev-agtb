@@ -7,7 +7,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * 
  * <code>
  * include("cssmin.php");
- * sugar_file_put_contents("path/to/target.css", cssmin::minify(file_get_contents("path/to/source.css")));
+ * file_put_contents("path/to/target.css", cssmin::minify(file_get_contents("path/to/source.css")));
  * </code>
  * --
  * 

@@ -41,8 +41,9 @@ $QCModules = array(
     'Cases',
     //END SUGARCRM flav!=sales ONLY
     'Contacts',
+    'Opportunities',
     //BEGIN SUGARCRM flav!=sales ONLY
     'Leads',
     //END SUGARCRM flav!=sales ONLY
-    'Tasks'
+    'Tasks',
 );
