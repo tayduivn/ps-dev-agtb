@@ -2296,18 +2296,24 @@ sugarListView.prototype.check_item = function(cb, form) {
 }
 
 sugarListView.prototype.toggleSelected = function() {
+
 	var numSelected = sugarListView.get_num_selected();
 	var selectedRecords = document.getElementById("selectedRecordsTop");
 	var selectActions = document.getElementById("selectActions");
 	var selectActionsDisabled = document.getElementById("selectActionsDisabled");
 	if(numSelected > 0) {
 		selectedRecords.style.display = "inline-block";
-		selectActions.style.display = "inline-block";
-		selectActionsDisabled.style.display = "none";
+        $(".selectActionsDisabled").css("display", "none");
+        jQuery('ul[name=selectActions]').each(function () {
+            jQuery(this).css("display", "inline-block");
+        });
+
 	} else {
 		selectedRecords.style.display = "none";
-		selectActions.style.display = "none";
-		selectActionsDisabled.style.display = "inline-block";
+        $(".selectActionsDisabled").css("display", "inline-block");
+        jQuery('ul[name=selectActions]').each(function () {
+                    jQuery(this).css("display", "none");
+        });
 	}
 
 }

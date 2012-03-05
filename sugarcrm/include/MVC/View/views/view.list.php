@@ -146,20 +146,26 @@ class ViewList extends SugarView{
             echo $this->lv->display();
         }
     }
-    function prepareSearchForm(){
-    $this->searchForm = null;
+    function prepareSearchForm()
+    {
+        $this->searchForm = null;
 
         //search
         $view = 'basic_search';
         if(!empty($_REQUEST['search_form_view']) && $_REQUEST['search_form_view'] == 'advanced_search')
             $view = $_REQUEST['search_form_view'];
         $this->headers = true;
+
         if(!empty($_REQUEST['search_form_only']) && $_REQUEST['search_form_only'])
             $this->headers = false;
-        elseif(!isset($_REQUEST['search_form']) || $_REQUEST['search_form'] != 'false') {
-            if(isset($_REQUEST['searchFormTab']) && $_REQUEST['searchFormTab'] == 'advanced_search') {
+        elseif(!isset($_REQUEST['search_form']) || $_REQUEST['search_form'] != 'false')
+        {
+            if(isset($_REQUEST['searchFormTab']) && $_REQUEST['searchFormTab'] == 'advanced_search')
+            {
                 $view = 'advanced_search';
-            }else {
+            }
+            else
+            {
                 $view = 'basic_search';
             }
         }
@@ -168,54 +174,24 @@ class ViewList extends SugarView{
         if ((file_exists('modules/' . $this->module . '/SearchForm.html')
                 && !file_exists('modules/' . $this->module . '/metadata/searchdefs.php'))
             || (file_exists('custom/modules/' . $this->module . '/SearchForm.html')
-                && !file_exists('custom/modules/' . $this->module . '/metadata/searchdefs.php'))){
+                && !file_exists('custom/modules/' . $this->module . '/metadata/searchdefs.php')))
+        {
             require_once('include/SearchForm/SearchForm.php');
             $this->searchForm = new SearchForm($this->module, $this->seed);
-        }else{
+        }
+        else
+        {
             $this->use_old_search = false;
             require_once('include/SearchForm/SearchForm2.php');
 
-            if(file_exists('custom/modules/'.$this->module.'/metadata/metafiles.php')){
-                require('custom/modules/'.$this->module.'/metadata/metafiles.php');
-            }elseif(file_exists('modules/'.$this->module.'/metadata/metafiles.php')){
-                require('modules/'.$this->module.'/metadata/metafiles.php');
-            }
-
-/*          if(!empty($metafiles[$this->module]['searchdefs']))
-                require_once($metafiles[$this->module]['searchdefs']);
-            elseif(file_exists('modules/'.$this->module.'/metadata/searchdefs.php'))
-                require_once('modules/'.$this->module.'/metadata/searchdefs.php');
-*/
-
-            if (file_exists('custom/modules/'.$this->module.'/metadata/searchdefs.php'))
-            {
-                require('custom/modules/'.$this->module.'/metadata/searchdefs.php');
-            }
-            elseif (!empty($metafiles[$this->module]['searchdefs']))
-            {
-                require($metafiles[$this->module]['searchdefs']);
-            }
-            elseif (file_exists('modules/'.$this->module.'/metadata/searchdefs.php'))
-            {
-                require('modules/'.$this->module.'/metadata/searchdefs.php');
-            }
-
-
-            if(!empty($metafiles[$this->module]['searchfields']))
-                require($metafiles[$this->module]['searchfields']);
-            elseif(file_exists('modules/'.$this->module.'/metadata/SearchFields.php'))
-                require('modules/'.$this->module.'/metadata/SearchFields.php');
-
-            if(file_exists('custom/modules/'.$this->module.'/metadata/SearchFields.php')){
-                require('custom/modules/'.$this->module.'/metadata/SearchFields.php');
-            }
-
+            $searchMetaData = SearchForm::retrieveSearchDefs($this->module);
 
             $this->searchForm = new SearchForm($this->seed, $this->module, $this->action);
-            $this->searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl', $view, $this->listViewDefs);
+            $this->searchForm->setup($searchMetaData['searchdefs'], $searchMetaData['searchFields'], 'include/SearchForm/tpls/SearchFormGeneric.tpl', $view, $this->listViewDefs);
             $this->searchForm->lv = $this->lv;
         }
     }
+
     function processSearchForm(){
         if(isset($_REQUEST['query']))
         {
