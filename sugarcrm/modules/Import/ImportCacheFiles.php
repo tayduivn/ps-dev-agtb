@@ -73,16 +73,23 @@ class ImportCacheFiles
         return "upload://import";
     }
 
+
     /**
-     * return name of file to be used as url in e.g. href
-     * @return string
+     * convertFileName
+     *
+     * This function returns the name of an upload file link converted as a url in e.g. href
+     *
+     * @param string $file_name String value of the upload file name
+     * @return string The converted URL of the file name
      */
-    public static function convertFileNameToUrl( $file_name )
+    public static function convertFileNameToUrl($file_name)
     {
-        $file_name = str_replace('upload://import', 'upload/import', $file_name);
+        require_once('include/upload_file.php');
+        $file_name = str_replace('upload://import', UploadStream::getDir() . '/import', $file_name);
         return $file_name;
     }
-    
+
+
     /**
      * Returns the filename for a temporary file
      *
