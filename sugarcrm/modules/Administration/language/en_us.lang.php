@@ -1064,9 +1064,10 @@ $mod_strings = array (
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
 
 //BEGIN SUGARCRM flav=pro ONLY
-	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Shortcut Bar',
-	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the Shortcut Bar',
+	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Navigation Bar Quick Create',
+	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the navigation bar quick create',
 	'LBL_ERROR_PROD_BAR_NUM_MODULES' => 'Error: There can be at most 10 modules on the Sugar Shortcut Bar at a time.',
+    'LBL_CONFIGURE_SHORTCUT_BAR_HELP' => 'Choose which modules for which users can quickly create records using the Plus icon in the top navigation bar. Drag & drop modules between the Enabled Modules and Disabled Modules boxes.',
 //END SUGARCRM flav=pro ONLY
 	'LBL_ACTIVE_MODULES' => 'Enabled Modules',
 	'LBL_DISABLED_MODULES' => 'Disabled Modules',
