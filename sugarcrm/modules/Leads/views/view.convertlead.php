@@ -132,8 +132,17 @@ class ViewConvertLead extends SugarView
             {
                 continue;
             }
+
+
             $bean = $beanList[$module];
             $focus = new $bean();
+
+            // skip if we aren't allowed to save this bean
+            if (!$focus->ACLAccess('save'))
+            {
+                continue;
+            }
+
             $focus->fill_in_additional_detail_fields();
             foreach($focus->field_defs as $field => $def)
             {
