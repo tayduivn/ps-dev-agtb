@@ -209,10 +209,10 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         // set up a connection w/o a db_name
         $configOptions = array(
-            'db_host_name' => $GLOBALS['db']['connectOptions']['db_host_name'],
-            'db_host_instance' => $GLOBALS['db']['connectOptions']['db_host_instance'],
-            'db_user_name' => $GLOBALS['db']['connectOptions']['db_user_name'],
-            'db_password' => $GLOBALS['db']['connectOptions']['db_password'],
+            'db_host_name' => $GLOBALS['db']->connectOptions['db_host_name'],
+            'db_host_instance' => $GLOBALS['db']->connectOptions['db_host_instance'],
+            'db_user_name' => $GLOBALS['db']->connectOptions['db_user_name'],
+            'db_password' => $GLOBALS['db']->connectOptions['db_password'],
         );
 
         $this->assertTrue($this->_db->connect($configOptions));
