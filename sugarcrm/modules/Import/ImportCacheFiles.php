@@ -74,6 +74,16 @@ class ImportCacheFiles
     }
 
     /**
+     * return name of file to be used as url in e.g. href
+     * @return string
+     */
+    public static function convertFileNameToUrl( $file_name )
+    {
+        $file_name = str_replace('upload://import', 'upload/import', $file_name);
+        return $file_name;
+    }
+    
+    /**
      * Returns the filename for a temporary file
      *
      * @param  string $type string to prepend to the filename, typically to indicate the file's use
