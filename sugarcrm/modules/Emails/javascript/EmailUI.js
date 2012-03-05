@@ -3557,7 +3557,7 @@ function setSigEditButtonVisibility() {
 //this function is used by emailUI.js and grid.js to create an encoded url from param values
 //basically same as SUGAR.util.paramsToUrl plus the encoding
 function encodeParamsToUrl(params) {
-    var parts = [], part;
+    var parts = [];
     for (var i in params)
     {
         if (params.hasOwnProperty(i))
