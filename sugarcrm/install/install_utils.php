@@ -2055,7 +2055,7 @@ function create_past_date()
     global $timedate;
     $now = $timedate->getNow(true);
     $day=$now->day-mt_rand(1, 365);
-    return $timedate->asUserDate($now->get_day_begin($day));
+    return $timedate->asDbDate($now->get_day_begin($day));
 }
 
 /**
