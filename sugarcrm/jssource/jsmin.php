@@ -542,7 +542,7 @@ class Tokenizer {
         if($ch == "\\" || is_identifier_start($ch)) {
             return $this->read_word();
         }
-        $this->parse_error("Unexpected character '" . $ch . "'");
+        $this->parse_error("Unexpected character '" . $ch . "' (". ord($ch) . ")");
 
     }
 
