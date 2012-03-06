@@ -35,6 +35,6 @@ beforeEach(function(){
 
 });
 
-afterEach(function(){
-    Backbone.history.stop();
+afterEach(function() {
+    if (Backbone.history) Backbone.history.stop();
 });
