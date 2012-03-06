@@ -67,21 +67,22 @@ function toggleGettingStartedButton(){ldelim}
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="formHeader h3Row">
         <tbody>
             <tr>
-                <td nowrap="" style="padding: 0px;">
+                <td nowrap="">
                     <h3>
-                        <span>
-                            <a name="insideview"> </a>
-                            <span id="show_link_insideview" style="display: none">
-                                <a href="#" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="{$logo_collapsed}" border="0"></a>
-                            </span>
-                            <span id="hide_link_insideview" style="display: ">
-                                <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$logo_expanded}" border="0"></a>
-                            </span>
-                        </span>
+                        <span>InsideView</span>
                     </h3>
                 </td>
-                <td width="100%">
-                    <img height="1" width="1" src="{sugar_getimagepath file='blank.gif'}" alt="">
+                <td width="20">
+                    <img height="1" width="20" src="{sugar_getimagepath file='blank.gif'}" alt="">
+                </td>
+                <td width="100%" valign="middle" nowrap="">
+                    <a name="insideview"> </a>
+                    <span id="show_link_insideview" style="display: none">
+                        <a class="utilsLink" href="#" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;">{sugar_getimage name='advanced_search' attr='border="0 align="absmiddle""' ext='.gif' alt=$APP.LBL_SHOW }</a>
+                    </span>
+                    <span id="hide_link_insideview" style="display: ">
+                        <a class="utilsLink" href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;">{sugar_getimage name='basic_search' attr='border="0 align="absmiddle""' ext='.gif' alt=$APP.LBL_HIDE }</a>
+                    </span>
                 </td>
             </tr>
         </tbody>
