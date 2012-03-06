@@ -26,6 +26,8 @@
          * @param options
          */
         initialize: function(options) {
+            _.bindAll(this);
+
             this.controller = options.controller || null;
 
             if (!this.controller) {
@@ -44,11 +46,14 @@
             // Start monitoring hash changes
             // Right now backbone doesn't support checking to see
             // if the history has been started.
-            try {
+            /**try {
                 ret =  Backbone.history.start();
             } catch (e) {
                 app.logger.error(e.message);
-            }
+            }**/
+
+            ret = Backbone.history.stop();
+            ret = Backbone.history.start();
 
             return ret;
         },
@@ -113,7 +118,7 @@
          * @method
          * @param {Object} instance
          */
-        init: function(instance) {
+        initialize: function(instance) {
             if (!instance.controller) {
                 throw "app.controller does not exist yet. Cannot create router instance";
             }
@@ -121,6 +126,6 @@
             _.extend(module, new Router({controller: instance.controller}));
         }
     }
-
+    app.events.on("app:init", module.initialize);
     app.augment("router", module);
 })(SUGAR.App);

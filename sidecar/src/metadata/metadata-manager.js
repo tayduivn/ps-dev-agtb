@@ -1,11 +1,11 @@
-(function (app) {
+(function(app) {
     //Metadata that has been loaded from offline storage
     var _metadata = {};
     var _sugarFields = {};
     var fieldTypeMap = {
-        varchar:"text",
-        name:"text",
-        text:"textarea"
+        varchar: "text",
+        name: "text",
+        text: "textarea"
     };
 
 
@@ -13,7 +13,7 @@
     //If its not there, it will make a server call to start a sync
     //The sync will block the app
     //TODO add infinite loop prevetion in sync
-    var _get = function (module, type) {
+    var _get = function(module, type) {
         if (typeof(_metadata[module]) == "undefined") {
             _metadata[module] = app.cache.get("metadata." + module);
             if (typeof(_metadata[module]) == "undefined") {
@@ -37,7 +37,7 @@
     //If its not there, it will make a server call to start a sync
     //The sync will block the app
     //TODO add infinite loop prevetion in sync
-    var _getSugarField = function (field) {
+    var _getSugarField = function(field) {
 
         // init results
         var result, views;
@@ -70,7 +70,7 @@
             result = _sugarFields['text']['default'];
         }
         //Could not get valid view data for this field
-        else if (!result){
+        else if (!result) {
             app.Sync();
             return null;
         }
@@ -90,7 +90,7 @@
      * @param string module name of module to retrieve from
      * @param string view optional name of view to get
      */
-    var _getView = function (module, view) {
+    var _getView = function(module, view) {
         var views = _get(module, "views");
         if (views != null) {
             if (view) {
@@ -103,7 +103,7 @@
         return null;
     }
 
-    var _getLayout = function (module, layout) {
+    var _getLayout = function(module, layout) {
         var layouts = _get(module, "layouts");
         if (layouts != null) {
             if (layout) {
@@ -116,7 +116,7 @@
         return null;
     }
 
-    var _getVardef = function (module, bean) {
+    var _getVardef = function(module, bean) {
         var beans = _get(module, "beans");
         if (!bean)
             bean = _get(module, "primary_bean");
@@ -128,7 +128,7 @@
         return null;
     }
 
-    var _getFieldDef = function (module, bean, field) {
+    var _getFieldDef = function(module, bean, field) {
         var vardef = _getVardef(module, bean);
         if (vardef && vardef.fields)
             return vardef.fields[field];
@@ -155,7 +155,7 @@
          *
          * @return Object metadata
          */
-        get:function (params) {
+        get: function(params) {
             if (params && params.sugarField) {
                 return _getSugarField(params.sugarField);
             }
@@ -182,12 +182,12 @@
 
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
-        set:function (data, key) {
+        set: function(data, key) {
             key = key || "metadata";
-            _.each(data, function (entry, module) {
-                if (key=="sugarFields") {
+            _.each(data, function(entry, module) {
+                if (key == "sugarFields") {
                     _sugarFields[module] = entry;
-                } else{
+                } else {
                     _metadata[module] = entry;
                 }
 
@@ -202,9 +202,8 @@
          */
         init: function() {
             var self = this;
-            app.api.debug = true;
 
-            app.api.getMetadata([],[], {
+            app.api.getMetadata([], [], {
                 success: function(metadata) {
                     self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
                     self.set(metadata);
