@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
