@@ -125,7 +125,7 @@ $mod_strings = array (
 
 	'LBL_GENERAL_TAB' => 'Details',
 	'LBL_PARTICIPANTS_TAB' => 'Invitees',
-	'LBL_REPEAT_TAB' => 'Recurrence ',	
+	'LBL_REPEAT_TAB' => 'Occurrence',	
 	
 	'LBL_REPEAT_TYPE' => 'Repeat',
 	'LBL_REPEAT_INTERVAL' => 'Interval',
@@ -138,8 +138,8 @@ $mod_strings = array (
 	'LBL_REPEAT_COUNT' => 'Number of occurrences',
 	'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
 	
-	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
-	'LBL_REMOVE_ALL_RECURRENCES' => 'Remove All Recurrences',
+	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Occurrences',
+	'LBL_REMOVE_ALL_RECURRENCES' => 'Remove All Occurrences',
 
 );
 
