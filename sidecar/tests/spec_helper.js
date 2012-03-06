@@ -30,3 +30,11 @@ var SugarTest = {};
     test.setWaitFlag = function() { this.waitFlag = true; };
 
 })(SugarTest);
+
+beforeEach(function(){
+
+});
+
+afterEach(function(){
+    Backbone.history.stop();
+});
