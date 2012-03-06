@@ -9,7 +9,7 @@
      * SugarAuth provides the ability to login and authentication status
      */
 
-    app.augment('sugarAuth', (function(app) {
+    app.augment('sugarAuth', (function() {
 
         var instance;
         var api;
@@ -115,5 +115,5 @@
         }
 
         return instance || init();
-    }(app)))
+    }()))
 }(SUGAR.App));
