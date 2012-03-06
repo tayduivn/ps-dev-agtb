@@ -52,7 +52,7 @@
                 app.logger.error(e.message);
             }**/
 
-            ret = Backbone.history.stop();
+            Backbone.history.stop();
             ret = Backbone.history.start();
 
             return ret;

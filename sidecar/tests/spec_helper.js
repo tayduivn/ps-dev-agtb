@@ -32,7 +32,7 @@ var SugarTest = {};
 })(SugarTest);
 
 beforeEach(function(){
-
+    SugarTest.resetWaitFlag();
 });
 
 afterEach(function() {

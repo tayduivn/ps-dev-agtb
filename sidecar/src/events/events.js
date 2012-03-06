@@ -1,13 +1,13 @@
 (function(app) {
     /**
-     * Events proxy object. For inter-component communications, please publish your events and please subscribe
+     * Events proxy object. For inter-component communications, please register your events and please subscribe
      * your events from the events hub. This allows components to not depend on each other in a tightly coupled capacity.
      *
      * <pre><code>
      * var foo = {
      *     initialize: function() {
      *         // Register the event with the events hub.
-     *         SUGAR.App.events.publish("mynamespaced:event", this);
+     *         SUGAR.App.events.register("mynamespaced:event", this);
      *     },
      *     action: function() {
      *         // Broadcast you revent to the events hub.
@@ -35,7 +35,7 @@
          * @param context
          * @method
          */
-        publish: function(event, context) {
+        register: function(event, context) {
             context.on(event, function(args) {
                 this.trigger(event, args);
             }, this);

@@ -74,7 +74,9 @@ SUGAR.App = (function() {
             opts.modules = opts.modules || {};
             app = app || _.extend(this, new App(opts));
 
-            app.events.publish("app:init", this);
+            // Register app specific events
+            app.events.register("app:init", this);
+            app.events.register("app:sync:complete", this);
 
             if (!opts.silent) {
                 app.trigger("app:init", this, opts.modules);
@@ -94,7 +96,7 @@ SUGAR.App = (function() {
          * Starts the application. A shortcut method to {@link Controller#start}.
          */
         start: function() {
-            this.controller.start();
+            this.sync();
         },
 
         /**
@@ -127,6 +129,25 @@ SUGAR.App = (function() {
             if (init && obj.init && _.isFunction(obj.init)) {
                 obj.init.call(app);
             }
+        },
+
+        /**
+         * Calls a global sync for the app. An app:sync:complete event will be fired when
+         * the series of sync operations have finished.
+         * @method
+         */
+        sync: function() {
+            var self = this;
+
+            async.waterfall([function(callback) {
+                app.metadata.sync(callback);
+            }, function(metadata, callback) {
+                app.dataManager.declareModels(metadata);
+                callback(null, metadata);
+            }], function(err, result) {
+                // Result should be metadata
+                self.trigger("app:sync:complete", result);
+            });
         },
 
         modules: modules

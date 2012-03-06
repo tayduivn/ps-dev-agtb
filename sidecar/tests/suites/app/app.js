@@ -1,9 +1,28 @@
 describe("Framework", function() {
+    var authStub, metaStub;
+
+    beforeEach(function() {
+        // Replace sugarauth isAuthenticated method with fake
+        authStub = sinon.stub(SUGAR.App.sugarAuth, "isAuthenticated", function() {
+            return true;
+        });
+
+        metaStub = sinon.stub(SUGAR.App.api, "getMetadata", function(modules, filters, callbacks) {
+            var metadata = fixtures.metadata
+            callbacks.success(metadata);
+        });
+    });
+
+    afterEach(function() {
+        authStub.restore();
+        metaStub.restore();
+    });
+
     describe("when an instance is requested", function() {
         var app;
 
         it("should return a new instance if none exists", function() {
-            app = SUGAR.App.init({el: "body"});
+            app = SUGAR.App.init({el: "body", silent: true});
             expect(app).toBeTruthy();
         });
 
@@ -16,11 +35,12 @@ describe("Framework", function() {
     });
 
     describe("when augmented", function() {
-        var app = SUGAR.App.init({el: "body"}),
-            mock;
+        var app = SUGAR.App.init({el: "body", silent: true}),
+                mock;
         it("should register a module with itself", function() {
             var module = {
-                init: function() {}
+                init: function() {
+                }
             }
 
             mock = sinon.mock(module);
@@ -31,5 +51,24 @@ describe("Framework", function() {
         });
 
         SUGAR.App.destroy();
+    });
+
+    describe("when a data sync is required", function() {
+        it("should fire a syncComplete event when all of the sync jobs have finished", function() {
+            var cbSpy = sinon.spy(function() {
+                SugarTest.setWaitFlag();
+            });
+            var app = SUGAR.App.init({el: "body"});
+
+            // Add listener onto app for the syncComplete event
+            app.on("app:sync:complete", cbSpy);
+            app.sync();
+
+            SugarTest.wait();
+
+            runs(function() {
+                expect(cbSpy).toHaveBeenCalled();
+            });
+        });
     });
 });
