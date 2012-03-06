@@ -194,6 +194,22 @@
                 app.cache.set(key + "." + module, entry);
             });
         },
+        /**
+         * syncs metadata from server and sets
+         */
+       sync: function(){
+           var self = this;
+           app.api.getMetadata([], [], {
+               success: function(metadata) {
+                   self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
+                   self.set(metadata);
+               },
+               error: function(o) {
+                   console.log("Error fetching metadata");
+                   console.log(o);
+               }
+           });
+       },
 
         /**
          * Called during initialization phase
@@ -201,18 +217,6 @@
          * @private
          */
         init: function() {
-            var self = this;
-
-            app.api.getMetadata([], [], {
-                success: function(metadata) {
-                    self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
-                    self.set(metadata);
-                },
-                error: function(o) {
-                    console.log("Error");
-                    console.log(o);
-                }
-            });
         }
     })
 })(SUGAR.App);

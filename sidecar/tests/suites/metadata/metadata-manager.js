@@ -69,4 +69,24 @@ describe('metadata', function () {
             }
         })).toBe(sugarFieldsFixtures.fieldsData.text["default"]);
     });
+
+    it ('should sync metadata', function (){
+        //Spy on API
+        SUGAR.App.api = {
+            getMetadata:function(modules, filters, callbacks){
+                var metadata = fixtures.metadata
+                callbacks.success(metadata);
+            }
+        };
+
+        var apiSpy = sinon.spy(SUGAR.App.api, "getMetadata");
+        var setSpy = sinon.spy(SUGAR.App.metadata, "set");
+
+        SUGAR.App.metadata.sync();
+
+        expect(apiSpy).toHaveBeenCalled();
+        expect(setSpy).toHaveBeenCalled();
+
+        SUGAR.App.api.getMetadata.restore();
+    });
 });
