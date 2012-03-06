@@ -253,7 +253,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $queryObj = new Elastica_Query_QueryString($qString);
             $queryObj->setAnalyzeWildcard(false);
             $queryObj->setAutoGeneratePhraseQueries(false);
-
+            if( !empty($options['append_wildcard']) )
+                $queryObj->setRewrite('top_terms_boost_5');
+            
             if( !is_admin($GLOBALS['current_user']) )
             {
                 $teamFilter = new Elastica_Filter_Or();

@@ -60,7 +60,9 @@ $(document).ready(function(){
 });
 
 SUGAR.themes = SUGAR.namespace("themes");
-
+if(Get_Cookie("sugar_theme_menu_load") == null) {
+	Set_Cookie('sugar_theme_menu_load','false',30,'/','','');
+}
 SUGAR.append(SUGAR.themes, {
     setRightMenuTab: function(el, params) {
 
@@ -88,7 +90,7 @@ SUGAR.append(SUGAR.themes, {
     setCurrentTab: function(params) {
         var el = '#moduleTab_'+ sugar_theme_gm_current + params.module;
         if ($(el) && $(el).parent()) {
-            SUGAR.themes.setRightMenuTab(el, params);
+            //SUGAR.themes.setRightMenuTab(el, params);
             var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";   
             if ($(currActiveTab)) {
                 if ($(currActiveTab) == $(el).parent()) return;
@@ -97,6 +99,19 @@ SUGAR.append(SUGAR.themes, {
             $(el).parent().addClass("current");
         }
         makeCall = true;
+    },
+    setModuleTabs: function(html) {
+        var el = $("#moduleList");
+        if (el) {
+            try {
+                el.remove("ul.sf-menu");
+            } catch (e) {
+                //If the menu fails to load, we can get leave the user stranded, reload the page instead.
+                window.location.reload();
+            }
+            el.html(html);
+            this.loadModuleList();
+        }
     },
     toggleMenuOverFlow: function(menuName,maction) {
     	
