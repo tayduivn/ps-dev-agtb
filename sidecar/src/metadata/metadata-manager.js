@@ -17,7 +17,7 @@
         if (typeof(_metadata[module]) == "undefined") {
             _metadata[module] = app.cache.get("metadata." + module);
             if (typeof(_metadata[module]) == "undefined") {
-                app.Sync();
+                app.sync();
                 return null;
             }
         }
@@ -26,7 +26,7 @@
             return _metadata[module];
 
         if (typeof(_metadata[module][type]) == "undefined") {
-            app.Sync();
+            app.sync();
             return null;
         }
 
@@ -136,7 +136,6 @@
         return null;
     }
 
-
     app.augment("metadata", {
         /**
          * The Metadata Manager get method should be the be the only accessor for metadata.
@@ -195,28 +194,23 @@
             });
         },
         /**
-         * syncs metadata from server and sets
+         * Syncs metadata from server using the Api wrapper. Saves the metadata to the manager.
+         * @method
          */
-       sync: function(){
+       sync: function(callback) {
            var self = this;
            app.api.getMetadata([], [], {
                success: function(metadata) {
                    self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
                    self.set(metadata);
+                   callback.call(self, null, metadata);
                },
-               error: function(o) {
+               error: function(error) {
                    console.log("Error fetching metadata");
-                   console.log(o);
+                   console.log(error);
+                   callback.call(self, error);
                }
            });
-       },
-
-        /**
-         * Called during initialization phase
-         * @method
-         * @private
-         */
-        init: function() {
-        }
+       }
     })
 })(SUGAR.App);

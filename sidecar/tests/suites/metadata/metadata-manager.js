@@ -81,11 +81,13 @@ describe('metadata', function () {
 
         var apiSpy = sinon.spy(SUGAR.App.api, "getMetadata");
         var setSpy = sinon.spy(SUGAR.App.metadata, "set");
+        var cbSpy = sinon.spy();
 
-        SUGAR.App.metadata.sync();
+        SUGAR.App.metadata.sync(cbSpy);
 
         expect(apiSpy).toHaveBeenCalled();
         expect(setSpy).toHaveBeenCalled();
+        expect(cbSpy).toHaveBeenCalled()
 
         SUGAR.App.api.getMetadata.restore();
     });

@@ -28,8 +28,10 @@
              * </pre></code>
              * @event start
              */
-            app.events.publish("app:start", this);
-            this.poop = "100";
+            app.events.register("app:start", this);
+
+            // When the app has been synced, start the rest of the app flow.
+            app.events.on("app:sync:complete", this.syncComplete);
         },
 
         /**
@@ -111,14 +113,10 @@
         },
 
         /**
-         * Starts the application. Call this function when all the dependencies have been loaded.
+         * Callback function once the app.sync() finishes.
          * @method
          */
-        start: function() {
-            // TODO: Right now the metadata is hardcoded, but should be changed to pull from metadata manager
-            app.dataManager.declareModels(app.metadata.get());
-            // this.declareModels(fixtures.metadata.modules);
-
+        syncComplete: function() {
             // Check if we have an authenticated session
             if (!(app.sugarAuth.isAuthenticated())) {
                 app.sugarAuth.login({
@@ -127,18 +125,15 @@
                 }, {
                     success: function(data) {
                         console.log("login success");
-                        //the router will return true if a route was matched in the starting url
-                        if (!app.router.start())
-                            app.router.navigate("", {trigger: true});
+                        app.router.start();
+                        app.router.navigate("", {trigger: true});
                     }, error: function(data) {
                         console.log("login error");
                         console.log(data);
                     }
                 });
             } else {
-                //the router will return true if a route was matched in the starting url
-                if (!app.router.start())
-                    app.router.navigate("", {trigger: true});
+                app.router.navigate("login", {trigger: true});
             }
         }
     });

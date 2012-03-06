@@ -5,9 +5,9 @@ describe("Events Hub", function() {
         cb2 = sinon.spy(),
         cb3 = sinon.spy();
 
-    describe("when an event is published", function() {
+    describe("when an event is registered", function() {
         it("should fire event and all listners should call their callbacks", function() {
-            eventHub.publish("testEvent", context);
+            eventHub.register("testEvent", context);
             eventHub.on("testEvent", cb1);
             context.trigger("testEvent");
 
@@ -17,7 +17,7 @@ describe("Events Hub", function() {
 
     describe("when an event is removed", function() {
         it("should not broadcast removed events to subscribers", function() {
-            eventHub.publish("nextEvent", context);
+            eventHub.register("nextEvent", context);
             eventHub.on("nextEvent", cb2);
             eventHub.clear("nextEvent", context);
             context.trigger("nextEvent");
