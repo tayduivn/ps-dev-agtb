@@ -41,6 +41,7 @@ class SOAPAPI4_1Test extends SOAPTestCase
     protected $meeting1;
     protected $meeting2;
     protected $meeting3;
+    protected $meeting4;
     protected $call1;
     protected $call2;
 
@@ -105,6 +106,14 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $this->meeting3->load_relationship('users');
         $this->meeting3->users->add($current_user);
         $this->meeting3->save();
+
+        $this->meeting4 = SugarTestMeetingUtilities::createMeeting();
+        $this->meeting4->name = 'SOAPAPI4_1Test4';
+        $this->meeting4->load_relationship('users');
+        $this->meeting4->users->add($current_user);
+        $this->meeting4->mark_deleted($this->meeting4->id);
+        $this->meeting4->deleted = 1;
+        $this->meeting4->save();
         $GLOBALS['db']->commit();
     }
 
@@ -138,6 +147,10 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $this->assertNotEmpty($result[2]['item']);
         $this->assertEquals(2, $result[0]);
 
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => '1', 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => $one_hour_ago));
+        $this->assertNotEmpty($result[2]['item']);
+        $this->assertEquals(1, $result[0]);
+
         $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Calls', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'calls_users', 'deletion_date' => ''));
         $this->assertNotEmpty($result[2]['item']);
         $this->assertEquals(2, $result[0]);
@@ -145,6 +158,7 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Contacts', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $contactsSelectFields, 'relationship_name' => 'contacts_users', 'deletion_date' => ''));
         $this->assertNotEmpty($result[2]['item']);
         $this->assertEquals(1, $result[0]);
+
     }
 
 
