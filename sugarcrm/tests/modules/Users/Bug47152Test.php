@@ -67,9 +67,15 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
     	$GLOBALS['current_user']->is_admin = true;
 	    $this->admin = new Administration();
 	    $this->admin->retrieveSettings();
-	    unset($_SESSION['license_seats_needed']);
+        if(isset($_SESSION['license_seats_needed']))
+        {
+	        unset($_SESSION['license_seats_needed']);
+        }
 	    $_SESSION['EXCEEDS_MAX_USERS'] = 0;
-	    unset($_SESSION['authenticated_user_id']);
+        if(isset($_SESSION['authenticated_user_id']))
+        {
+	        unset($_SESSION['authenticated_user_id']);
+        }
 	}
 
 	public function tearDown()

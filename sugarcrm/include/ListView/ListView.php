@@ -824,7 +824,34 @@ function getUserVariable($localVarName, $varName) {
 }
 
 
+    /**
+     * helper method to determine sort order by priority of source
+     * 1. explicit in request object
+     * 2. in session variable
+     * 3. subpaneldefs metadata
+     * 4. default 'asc'
+     * @param array $sortOrderList - contains options
+     * @return string 'asc' | 'desc'
+     */
+    function calculateSortOrder($sortOrderList)
+    {
+        $priority_map = array(
+          'request',
+          'session',
+          'subpaneldefs',
+          'default',
+        );
 
+        foreach($priority_map as $p) {
+            if (key_exists($p, $sortOrderList)) {
+                $order = strtolower($sortOrderList[$p]);
+                if (in_array($order, array('asc', 'desc'))) {
+                    return $order;
+                }
+            }
+        }
+        return 'asc';
+    }
 
 
     /**
@@ -899,6 +926,8 @@ function getUserVariable($localVarName, $varName) {
         return $list;
     }
 
+
+
     function processUnionBeans($sugarbean, $subpanel_def, $html_var = 'CELL') {
         //BEGIN SUGARCRM flav=int ONLY
         $date_start_time = microtime(true);
@@ -914,34 +943,37 @@ function getUserVariable($localVarName, $varName) {
 		$module = isset($_REQUEST['module']) ? $_REQUEST['module'] : '';
 		$response = array();
 
-        $this->sort_order = 'asc';
-        if (isset($_REQUEST['sort_order']))
+        // choose sort order
+        $sort_order = array();
+        $sort_order['default'] = 'asc';
+
+        // explicit request parameter gets priority over all
+        $sort_order['request'] = isset($_REQUEST['sort_order']) ? $_REQUEST['sort_order'] : null;
+
+        // see if the session data has a sort order
+        if (isset($_SESSION['last_sub' . $this->subpanel_module . '_order']))
         {
-            $this->sort_order = $_REQUEST['sort_order'];
+            $sort_order['session'] = $_SESSION['last_sub' . $this->subpanel_module . '_order'];
+
+            // We swap the order when the request contains an offset (indicating a column sort issued);
+            // otherwise we do not sort.  If we don't make this check, then the subpanel listview will
+            // swap ordering each time a new record is entered via quick create forms
+            if (isset($_REQUEST[$module . '_' . $html_var . '_offset']))
+            {
+                $sort_order['session'] = $sort_order['session'] == 'asc' ? 'desc' : 'asc';
+            }
         }
         else
         {
-            if (isset($_SESSION['last_sub' . $this->subpanel_module . '_order']))
-            {
-                // We swap the order when the request contains an offset (indicating a column sort issued);
-                // otherwise we do not sort.  If we don't make this check, then the subpanel listview will
-                // swap ordering each time a new record is entered via quick create forms
+            $sort_order['session'] = null;
+        }
 
-                if (isset($_REQUEST[$module . '_' . $html_var . '_offset']))
-                {
-                    $this->sort_order = $_SESSION['last_sub' . $this->subpanel_module . '_order'] == 'asc' ? 'desc' : 'asc';
-                }
-                else
-                {
-                    $this->sort_order = $_SESSION['last_sub' . $this->subpanel_module . '_order'];
-                }
-            }
+        // does the metadata have a default sort order?
+        $sort_order['subpaneldefs'] = isset($subpanel_def->_instance_properties['sort_order']) ?
+            $subpanel_def->_instance_properties['sort_order'] : null;
 
-            if (isset($subpanel_def->_instance_properties['sort_order']))
-            {
-                $this->sort_order = $subpanel_def->_instance_properties['sort_order'];
-            }
-        }        
+        $this->sort_order = $this->calculateSortOrder($sort_order);
+
 
         if (isset($subpanel_def->_instance_properties['sort_by'])) {
             $this->query_orderby = $subpanel_def->_instance_properties['sort_by'];
