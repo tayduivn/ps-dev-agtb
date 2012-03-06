@@ -133,20 +133,24 @@ SUGAR.append(SUGAR.themes, {
     
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
-			delay:     0,
+			//delay:     100,
 			speed: 'fast',
 			firstOnClick: SUGAR.themes.getMenuMode(),
 			autoArrows: false,
 			dropShadows: false,
+            ignoreClass: 'megawrapper',
 			onBeforeShow: function() {
 				if($(this).attr("class") == "megamenu") {
-					var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
-					var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
-					//Check if the menu we want to show is in the more menu		
+                    var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+					//var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
+                    var moduleName = $(this).prev().attr("module");
+                    //$("body").append($(this).attr("id", moduleName + "_megamenu_" + sugar_theme_gm_current));
+                    //Check if the menu we want to show is in the more menu
 					if($(this).parents().is(extraMenu)) {
 						var moduleName = moduleName.replace("Overflow","");
 						var moduleName = moduleName.replace("Hidden","");
 					}
+
 					that = $(this);
 					//ajax call for favorites
 					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;" || makeCall == true) {

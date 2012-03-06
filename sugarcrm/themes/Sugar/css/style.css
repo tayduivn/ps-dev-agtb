@@ -3886,23 +3886,24 @@ button.id-ff-remove {
 
 /* jquery module menu */
 /*** ESSENTIAL STYLES ***/
-#moduleList .sf-menu, .sf-menu * {
+ul#moduleTabMoreAll, ul#moduleTabMoreAll *, ul.sf-sub-modulelist, ul.sf-sub-modulelist *,
+#moduleList .sf-menu, .sf-menu *, ul.megamenu, ul.megamenu * {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-#moduleList .sf-menu {
+#moduleList .sf-menu, ul.megamenu {
 	line-height: 1.0;
 }
 
-#moduleList .sf-menu ul {
+#moduleList .sf-menu ul, ul.megamenu {
 	position: absolute;
 	top: -999em;
 	width: 10em;
 }
 
-#moduleList .sf-menu ul.megamenu {
+#moduleList .sf-menu ul.megamenu, ul.megamenu {
 	width: 600px;
 }
 
@@ -3914,11 +3915,12 @@ button.id-ff-remove {
 	visibility: inherit; /* fixes IE7 'sticky bug' */
 }
 
-#moduleList .sf-menu li {
+#moduleList .sf-menu li, ul.megamenu li {
 	float: left;
 	position: relative;
 }
 
+ul.megamenu a, ul#moduleTabMoreAll a, ul.sf-sub-modulelist a,
 #moduleList .sf-menu a {
 	display: block;
 	position: relative;
@@ -3974,7 +3976,7 @@ button.id-ff-remove {
 }
 
 
-#moduleList .sf-menu li a {
+#moduleList .sf-menu li a, ul.megamenu li a, ul#moduleTabMoreAll li a, ul.sf-sub-modulelist li a {
 	padding:  8px 12px;
 	line-height: 1.9;
 	text-decoration:none;
@@ -3982,31 +3984,35 @@ button.id-ff-remove {
 	border-right: none;
 }
 
-#moduleList .sf-menu li a.more {
+#moduleList .sf-menu li a.more, ul.megamenu li a.more, ul#moduleTabMoreAll li a.more, ul.sf-sub-modulelist li a.more {
 	float: left;
 }
 
-#moduleList .sf-menu li li a {
+#moduleList .sf-menu li li a, ul.megamenu li li a, ul#moduleTabMoreAll li a.sf-with-ul, ul.sf-sub-modulelist li a {
 	padding:  4px 10px;
 	font-size: 13px;
 }
 
-#moduleList .sf-menu ul li a {
+#moduleList .sf-menu ul li a, ul.megamenu li a, ul#moduleTabMoreAll li a, ul.sf-sub-modulelist li a {
 	color: #666;
 	
 }
 
+ul.megamenu a,
 #moduleList .sf-menu a, 
 #moduleList.sf-menu a:visited { /* visited pseudo selector so IE6 applies text colour*/
 	color: #FFF;
 }
 
-#moduleList .sf-menu li ul li, 
+ul.megamenu, ul.megamenu li,
+ul#moduleTabMoreAll, ul#moduleTabMoreAll li, ul.sf-sub-modulelist li,
+#moduleList .sf-menu li ul li,
 #moduleList .sf-menu li ul {
 	background-color:		#fff;
 }
 
-#moduleList .sf-menu li ul {
+ul#moduleTabMoreAll, ul.sf-sub-modulelist,
+#moduleList .sf-menu li ul, ul.megamenu {
 box-shadow: #999 0px 5px 10px;
 -moz-box-shadow: #999 0px 5px 10px;
 -webkit-box-shadow: #999 0px 5px 10px;
@@ -4014,14 +4020,19 @@ border: 1px solid #999999;
 border-top: 0px;
 }
 
+ul.megamenu,
 #moduleList .sf-menu li > ul {
 	padding: 10px 0px;	
 }
 
+ul.sf-sub-modulelist,
 #moduleList .sf-menu li ul li ul {
 	border-top: 1px solid #999;
 }
 
+ul.megamenu .MMShortcuts li:hover,
+ul#moduleTabMoreAll li:hover,
+ul.sf-sub-modulelist li:hover,
 #moduleList .sf-menu > li:hover, 
 #moduleList .sf-menu > li.sfHover,
 #moduleList .sf-menu > li a:focus, 
@@ -4031,6 +4042,9 @@ border-top: 0px;
 	outline:		0;
 }
 
+ul.megamenu ul a:hover,
+ul#moduleTabMoreAll li a:hover,
+ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu ul a:focus, 
 #moduleList .sf-menu ul a:hover, 
 #moduleList .sf-menu ul a:active {
@@ -4068,6 +4082,7 @@ border-top: 0px;
 	background-position: 0 -100px; /* use translucent arrow for modern browsers*/
 }
 
+ul#moduleTabMoreAll em,
 #moduleList .sf-menu li.moduleTabExtraMenu em {
     overflow:hidden;
     text-indent:-9999px;
@@ -4078,11 +4093,12 @@ border-top: 0px;
 	margin-left: 6px;
 	float: left;
 }
-
+ul#moduleTabMoreAll,
 #moduleList .sf-menu li.moduleTabExtraMenu > ul {
 	width: 225px;
 }
 
+ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
 background-color: #355b7e;
 color: #fff;
@@ -4133,41 +4149,41 @@ color: #fff;
 Mega Column Styles
 */
 
-#moduleList .megawrapper {
+#moduleList .megawrapper, ul.megamenu .megawrapper {
 	float: left;
 	width: 600px;
 }
 
-#moduleList .megacolumn {
+#moduleList .megacolumn, ul.megamenu .megacolumn {
 	width: 200px;
 	float: left;
 }
 
-#moduleList .megacolumn-content, #moduleList .megacolumn-content.divider {
+#moduleList .megacolumn-content, #moduleList .megacolumn-content.divider, ul.megamenu .megacolumn-content, ul.megamenu .megacolumn-content.divider {
 	overflow: hidden;
 }
 
-#moduleList .megacolumn-content.divider {
+#moduleList .megacolumn-content.divider, ul.megamenu .megacolumn-content.divider {
  	border-right: 1px solid #ccc;
 }
 
-#moduleList .megacolumn-content p {
+#moduleList .megacolumn-content p, ul.megamenu .megacolumn-content p {
 	margin-bottom: 16px;
 }
 
-#moduleList .megafooter {
+#moduleList .megafooter, ul.megamenu .megafooter {
 	clear: both;
 	padding: 12px;
 }
 
-#moduleList .clearfloat {
+#moduleList .clearfloat, ul.megamenu .clearfloat {
 	clear: both;
 	height: 0;
 	line-height: 0.0;
 	font-size: 0;
 }
 
-#moduleList .sf-menu ul .megawrapper ul {
+#moduleList .sf-menu ul .megawrapper ul, ul.megamenu .megawrapper ul {
 	background-image: none;
 	position: relative;
 	top: auto;
@@ -4179,7 +4195,7 @@ Mega Column Styles
 	float: left;
 }
 
-
+ul.megamenu .megawrapper ul li,
 #moduleList .sf-menu ul .megawrapper ul li {
 	background-color: transparent;
 	color: #999999;
@@ -4188,10 +4204,11 @@ Mega Column Styles
     width: 100%;
 }
 
-#moduleList .sf-menu ul .megawrapper ul li.groupLabel {
+#moduleList .sf-menu ul .megawrapper ul li.groupLabel, ul.megamenu .megawrapper ul li.groupLabel {
 	padding-left: 10px;
 	padding-bottom: 5px;
 }
+ul.megamenu .megawrapper ul li a,
 #moduleList .sf-menu ul .megawrapper ul li a{
 	font-weight: normal;
 	font-size: 13px;
@@ -4207,13 +4224,14 @@ Mega Column Styles
     top: 0;
 }
 
+ul.megamenu .moduleTabExtraMenu, ul.megamenu .moduleTabGroupMenu
 #moduleList .moduleTabExtraMenu, #moduleList .moduleTabGroupMenu
 {
 height: 43px;
 }
 
 
-#moduleList .menuHR {
+#moduleList .menuHR, ul#moduleTabMoreAll .menuHR {
    border-top: 1px solid #DDDDDD;
    margin: 10px 0;
 }
@@ -4229,12 +4247,12 @@ height: 43px;
 	color: #999;
 }
 
-
+ul#moduleTabMoreAll .moreOverflow,
 #moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess, #moduleList .moduleTabExtraMenu .flexMenuItems {
 	display: none;
 }
 
-
+ul#moduleTabMoreAll .moduleMenuOverFlowMore,
  #moduleList .moduleTabExtraMenu.showMore .moduleMenuOverFlowMore
 {
 display: none;	
@@ -5616,6 +5634,9 @@ position: fixed;
 top: 0;
 width:100%;
 z-index:20;
+}
+ul.megamenu, ul#moduleTabMoreAll, ul.sf-sub-modulelist{
+    z-index:20;
 }
 
 #dcmenutop{

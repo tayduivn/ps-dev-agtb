@@ -16,7 +16,7 @@
         c = sf.c,
         menuActive = false,
         $arrow = $(['<span class="', c.arrowClass, '"> &#187;</span>'].join('')),
-        click = function() {
+        click = function(evt) {
         	$(".subnav.ddopen").hide();
             var $$ = $(this),
             menu = getMenu($$),
@@ -27,8 +27,9 @@
                 clearTimeout(menu.sfTimer);
 
                 $$.showSuperfishUl().siblings().hideSuperfishUl();
-                return false;
+                //return false;
                 // prevent redirect to anchor target href
+                evt.preventDefault();
             }
         },
         over = function() {
@@ -38,16 +39,18 @@
             if (!o.firstOnClick || menuActive || $$.parent()[0] != menu)
             {
                 clearTimeout(menu.sfTimer);
+                console.log('v' + menu.sfTimer);
                 $$.showSuperfishUl().siblings().hideSuperfishUl();
             }
         },
         out = function() {
             var $$ = $(this),
             menu = getMenu($$),
-            o = sf.op;
+            o = sf.op,
+            $menu = $(menu);
             clearTimeout(menu.sfTimer);
-            menu.sfTimer = setTimeout(function() {
-
+            console.log('t' + menu.sfTimer);
+            menu.sfTimer = $menu.hasClass(sf.retainClass) ? null : setTimeout(function() {
                 o.retainPath = ($.inArray($$[0], o.$path) > -1);
                 $$.hideSuperfishUl();
                 if (o.$path.length && $$.parents(['li.', o.hoverClass].join('')).length < 1)
@@ -58,18 +61,22 @@
                 {
                     menuActive = false;
                 }
+
             },
             o.delay);
         },
         getMenu = function($menu) {
-            var menu = $menu.parents(['ul.', c.menuClass, ':first'].join(''))[0];
+            var menu = $menu.hasClass(sf.menuClass) ? $menu[0] : $menu.parents(['ul.', c.menuClass, ':first'].join(''))[0];
+            if(!menu)
+                return $menu[0];
+                //menu = $('ul.' + sf.c.menuClass + ':visible')[0];
             sf.op = sf.o[menu.serial];
             return menu;
         },
         addArrow = function($a) {
             $a.addClass(c.anchorClass).append($arrow.clone());
         };
-
+        sf.getMenu = getMenu;
         return this.each(function() {
             var s = this.serial = sf.o.length;
             var o = $.extend({},
@@ -85,9 +92,9 @@
             sf.o[s] = sf.op = o;
 
 			if(o.firstOnClick){
-				$('li:has(ul)', this)['click'](click);
+				$('li:has(ul)', this).not('li:has( > .' + sf.ignoreClass + ')')['click'](click);
 			} else {
-				$('li:has(ul)', this)[($.fn.hoverIntent && !o.disableHI) ? 'hoverIntent' : 'hover'](over, out);
+				$('li:has(ul)', this).not('li:has( > .' + sf.ignoreClass + ')')[($.fn.hoverIntent && !o.disableHI) ? 'hoverIntent' : 'hover'](over, out);
 			}
             
             $('li:has(ul)', this)
@@ -142,11 +149,69 @@
     var sf = $.fn.superfish;
     sf.o = [];
     sf.op = {};
+    sf.counter = 0;
     sf.IE7fix = function() {
         var o = sf.op;
         if ($.browser.msie && $.browser.version > 6 && o.dropShadows &&
         o.animation.opacity != undefined)
         this.toggleClass(sf.c.shadowClass + '-off');
+    };
+    sf.cssValue = function($css) {
+        if(this.length == 0)
+            return 0;
+        var _val = parseInt(this.css($css).replace("px", ""));
+        return (_val) ? _val : 0;
+    };
+    sf.IEfix = function($ul) {
+        //if ($.browser.msie && $.browser.version > 6) {
+            if($ul) {
+                var $$ = this,
+                    o = sf.op,
+                    _id = this.attr("ul-child-id") ? this.attr("ul-child-id") : ($ul.attr('id')) ? $ul.attr('id') : o.megamenuID ? o.megamenuID + ++sf.counter : 'megamenu' + ++sf.counter,
+                    _top = this.position().top + this.outerHeight() + 1,
+                    _left = this.offset().left - sf.cssValue.call($ul, "border-left-width"),
+                    $menu = this;
+                if(this.css('position') == 'static') {
+                    _left += this.outerWidth() + sf.cssValue.call($ul, "border-right-width");
+                    $ul.addClass('sf-sub-modulelist');
+                    //$menu = $('ul.' + sf.c.menuClass + ':visible');
+                }
+
+                $('body').append($ul.attr("id", _id).css({
+                    top: _top,
+                    left:_left,
+                    position: 'fixed'
+                    })
+                    .mouseover(function(){
+                        var menu = sf.getMenu($menu),
+                            o = sf.op;
+                        clearTimeout(menu.sfTimer);
+                        console.log('ov' + menu.sfTimer);
+                        if( $(menu).hasClass(sf.defaults['retainClass']) === false )
+                            $(menu).addClass(sf.defaults['retainClass']);
+                    }).mouseout(function(){
+                        var menu = sf.getMenu($menu),
+                            o = sf.op;
+                        clearTimeout(menu.sfTimer);
+                        console.log('ot' + menu.sfTimer);
+                        menu.sfTimer = setTimeout(function() {
+                            console.log('kill3' + menu.sfTimer);
+                            //if($(menu).hasClass(sf.defaults['retainClass'])){
+                                $$.hideSuperfishUl();
+                                $(menu).removeClass(sf.defaults['retainClass']);
+                            //}
+                        }, o.delay)
+                    })
+                );
+                this.attr("ul-child-id", _id);
+
+            } else {
+                this.each(function(){
+                    var _id = $(this).attr("ul-child-id");
+                    $(this).append($("body>#"+_id));
+                });
+            }
+        //}
     };
     sf.c = {
         bcClass: 'sf-breadcrumb',
@@ -157,8 +222,10 @@
     };
     sf.defaults = {
         hoverClass: 'sfHover',
+        retainClass: 'retainThisItem',
+        ignoreClass: 'none',
         pathClass: 'overideThisToUse',
-        pathLevels: 1,
+        pathLevels: 8,
         delay: 800,
         animation: {
             opacity: 'show'
@@ -182,6 +249,7 @@
             var o = sf.op,
             not = (o.retainPath === true) ? o.$path: '';
             o.retainPath = false;
+            sf.IEfix.call(this);
             var $ul = $(['li.', o.hoverClass].join(''), this).add(this).not
                 (not).removeClass(o.hoverClass).find('>ul').hide().css('visibility', 'hidden');
             o.onHide.call($ul);
@@ -193,6 +261,7 @@
             $ul = this.addClass(o.hoverClass).find('>ul:hidden').css('visibility', 'visible');
             sf.IE7fix.call($ul);
             o.onBeforeShow.call($ul);
+            sf.IEfix.call(this, $ul);
             $ul.animate(o.animation, o.speed,
             function() {
                 sf.IE7fix.call($ul);
