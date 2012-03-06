@@ -80,10 +80,14 @@ SUGAR.App = (function() {
                 }
             }, this);
 
-            // Start the app
-            app.controller.start();
-
             return app;
+        },
+
+        /**
+         * Starts the application. A shortcut method to {@link Controller#start}.
+         */
+        start: function() {
+            this.controller.start();
         },
 
         /**

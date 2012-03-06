@@ -33,6 +33,7 @@ describe("Offline", function() {
         var metadata, sqlHelper;
 
         beforeEach(function() {
+            app.init({el: "body"});
             metadata = SugarTest.loadJson("things-metadata");
             sqlHelper = new app.Offline.SqlHelper("Thing", metadata["Things"].beans["Thing"]);
         });
@@ -259,8 +260,9 @@ describe("Offline", function() {
 
         it("should be able to create db schema and declare models", function() {
             runs(function() {
-                odm.declareModels(metadata, {
+                odm.migrate(metadata, {
                     success: function() {
+                        dm.declareModels(metadata);
                         SugarTest.setWaitFlag();
                     }
                 });

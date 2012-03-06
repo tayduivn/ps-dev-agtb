@@ -31,8 +31,9 @@ describe("Offline+DB+server", function() {
 
         SugarTest.resetWaitFlag();
 
-        odm.declareModels(metadata, {
+        odm.migrate(metadata, {
             success: function() {
+                app.dataManager.declareModels(metadata);
                 SugarTest.setWaitFlag();
             }
         });

@@ -6,6 +6,7 @@ describe("DataManager", function() {
         server;
 
     beforeEach(function() {
+        app.init({el: "body"});
         dm.reset();
         metadata = SugarTest.loadJson("metadata");
     });
