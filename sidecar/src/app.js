@@ -84,6 +84,13 @@ SUGAR.App = (function() {
         },
 
         /**
+         * Starts the application. A shortcut method to {@link Controller#start}.
+         */
+        start: function() {
+            this.controller.start();
+        },
+
+        /**
          * Destroys the instance of the current app
          * TODO: Not properly implemented
          */
