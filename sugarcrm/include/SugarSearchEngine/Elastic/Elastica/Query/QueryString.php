@@ -6,7 +6,7 @@
  * @category Xodoa
  * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>, Jasper van Wanrooy <jasper@vanwanrooy.net>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html
+ * @link http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query.html 
  */
 class Elastica_Query_QueryString extends Elastica_Query_Abstract
 {
@@ -231,12 +231,13 @@ class Elastica_Query_QueryString extends Elastica_Query_Abstract
     /**
      * Set a re-write condition. See https://github.com/elasticsearch/elasticsearch/issues/1186 for additional information
      *
+     * @author Andreas Sandberg @sugarcrm Added pull request https://github.com/ruflin/Elastica/pull/141
      * @param string $rewrite
      * @return Elastica_Param
      */
     public function setRewrite($rewrite = "") {
     		return $this->setParam('rewrite', $rewrite);
-    	}
+    }
 
 	/**
 	 * Converts query to array
