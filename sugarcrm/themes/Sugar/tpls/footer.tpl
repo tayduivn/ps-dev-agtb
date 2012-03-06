@@ -55,7 +55,7 @@
 
 <script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script><style type="text/css" media="screen, projection">  @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);</style><script type="text/javascript">  if (typeof(Zenbox) !== "undefined") {
     Zenbox.init({
-      dropboxID:   "20045491",
+      dropboxID:   "20047068",
       url:         "https://suga.zendesk.com",
       tabID:       "support",
       tabColor:    "black",
@@ -67,7 +67,7 @@ $('#zenbox_tab').ready(function(){
 	$('#zenbox_tab').html("Feedback").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Feedback"});
 }).click(function(){
 	if($('.zenbox_support_links').length == 0) {
-		var links = $('<div class="zenbox_support_links"><a href="http://www.sugarcrm.com/crm/support/bugs.html" target="_blank">Submit a bug</a> or visit our <a href="http://www.sugarcrm.com/forums/f5/" target="_blank">Feature Request Forum.</a></div>');
+		var links = $('<div class="zenbox_support_links">If you are reporting a bug on the page, please submit it <a href="http://www.sugarcrm.com/crm/support/bugs.html" target="_new">here</a>. You can also submit feature requests in our <br>forum <a href="http://www.sugarcrm.com/forums/f5/" target="_blank">here</a>.</div>');
 		
 		setTimeout(function(){
 			$('#zenbox_container').append(links);
