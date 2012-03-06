@@ -2,7 +2,7 @@ describe("sugarAuth", function () {
 
     // setup to be run before every test
     beforeEach(function () {
-        this.App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl});
+        //this.App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl});
         this.user_name = 'admin';
         this.validPassword = 'asdf';
         this.invalidPassword = 'invalid';

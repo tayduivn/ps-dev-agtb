@@ -44,6 +44,8 @@ describe("Controller", function() {
 
             SUGAR.App.layout = layoutMan;
             SUGAR.App.dataManager = dataMan;
+            //TODO dont pass in SUGAR.App
+            controller.initialize(SUGAR.App);
             controller.setElement("body");
         });
 

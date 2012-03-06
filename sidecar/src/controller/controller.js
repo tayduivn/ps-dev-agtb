@@ -49,7 +49,7 @@
             this.layout = this.getLayout(params);
 
             this.context.getData(this);
-            this.context.set({layoutObj:this.layout});
+            this.context.set({layoutObj: this.layout});
 
             // Render the rendered layout to the main element
             this.$el.html(this.layout.$el);
@@ -154,10 +154,16 @@
          * @param {Object} instance The instance of the App
          * @method
          */
-        init: function(instance) {
+        initialize: function(instance, modules) {
+            if (modules && _.indexOf(modules, "controller") == -1) {
+                return;
+            }
+
             instance.controller = _.extend(module, instance.controller, new Controller({el: app.rootEl}));
         }
     };
 
+
+    app.events.on("app:init", module.initialize);
     app.augment("controller", module);
 })(SUGAR.App);

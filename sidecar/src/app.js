@@ -60,7 +60,7 @@ SUGAR.App = (function() {
             api: SUGAR.Api.getInstance({
                 baseUrl: opts.rest || "/rest/v10" // TODO: Change this default
             })
-        }, this);
+        }, this, Backbone.Events);
     }
 
     return {
@@ -71,7 +71,14 @@ SUGAR.App = (function() {
          * @method
          */
         init: function(opts) {
+            opts.modules = opts.modules || {};
             app = app || _.extend(this, new App(opts));
+
+            app.events.publish("app:init", this);
+
+            if (!opts.silent) {
+                app.trigger("app:init", this, opts.modules);
+            }
 
             // Here we initialize all the modules;
             _.each(modules, function(module, key) {
