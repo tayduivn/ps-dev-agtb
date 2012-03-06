@@ -163,7 +163,7 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 		),
 	'indices' => array (
 		array(
-			'name' =>'schedulers_timespk',
+			'name' =>'job_queuepk',
 			'type' =>'primary',
 			'fields' => array(
 				'id'
