@@ -31,3 +31,10 @@ var SugarTest = {};
 
 })(SugarTest);
 
+beforeEach(function(){
+
+});
+
+afterEach(function(){
+    Backbone.history.stop();
+});

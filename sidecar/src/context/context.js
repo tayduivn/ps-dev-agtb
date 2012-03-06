@@ -121,9 +121,8 @@
             /**
              * Gets data
              *
-             * @param {Object} controller current controller that data will be attatched to
              */
-            getData: function(controller) {
+            getData: function() {
                 var data, fields, bean, collection, options, state=this.get();
                 if(state.view){
                     fields = state.view.getFields();
@@ -150,10 +149,6 @@
                     state.view.bindData(collection);
                     collection.fetch(options);
                     bean = collection.models[0] || {};
-                }
-
-                if(controller) {
-                    controller.data = {collection: collection, model: bean};
                 }
 
                 this.set({collection: collection, model: bean});
