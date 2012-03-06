@@ -65,7 +65,7 @@ class Bug56077Test extends SOAPTestCase
 
     public function tearDown()
     {
-        $GLOBALS['db']->query('DELETE FROM product_bundle_product WHERE bundle_id = "' . $this->_product_bundle->id . '";');
+        $GLOBALS['db']->query("DELETE FROM product_bundle_product WHERE bundle_id = '{$this->_product_bundle->id}'");
 
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
