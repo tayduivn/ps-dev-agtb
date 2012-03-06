@@ -58,7 +58,7 @@ describe("Controller", function() {
             // Check to make sure it loads the proper data
             expect(dataSpy.called).toBeTruthy();
             expect(collectionSpy.called).toBeTruthy();
-            expect(_.isEmpty(controller.data)).toBeFalsy();
+            expect(_.isEmpty(controller.context.state)).toBeFalsy();
 
             // Check to make sure we have set the context
             expect(controller.context).toBeDefined();

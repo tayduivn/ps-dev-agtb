@@ -43,7 +43,6 @@
          *  @option {String} layout Name of the current layout
          */
         loadView: function(params) {
-            this.data = {};
             this.layout = null;
 
             this.context.init(params);
