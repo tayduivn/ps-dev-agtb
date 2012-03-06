@@ -204,8 +204,8 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConnectWithNoDbName()
     {
-        if ( $GLOBALS['db']->dbType != 'mssql' )
-            $this->markTestSkipped('Only applies to SQL Server');
+        if ( ($GLOBALS['db']->dbType != 'mssql') || !function_exists('mssql_connect'))
+            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
 
         // set up a connection w/o a db_name
         $configOptions = array(
