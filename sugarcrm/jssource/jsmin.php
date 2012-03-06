@@ -80,7 +80,7 @@ class Tokenizer {
         $this->comments_before = array();
         $this->quote_string = $quote_string;
 
-        $this->WHITESPACE_CHARS = array(" ", "\n", "\t", "\f", "\r");
+        $this->WHITESPACE_CHARS = array(" ", "\n", "\t", "\f", "\r", "\s", "\v");
         $this->KEYWORDS = array("break", "case", "catch", "const", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function",
                 "if", "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with");
         $this->RESERVED_WORDS = array("abstract", "boolean","byte","char","class","double","enum","export","extends","final","float","goto","implements","import","int","interface","long","native",
@@ -166,8 +166,10 @@ class Tokenizer {
     }
 
     function skip_whitespace() {
-        while(in_array($this->peek(), $this->WHITESPACE_CHARS) || ord($this->peek()) < 32) {
+        $ch = $this->peek();
+        while(in_array($ch, $this->WHITESPACE_CHARS) || ord($ch) < 32) {
             $this->nextChar();
+            $ch = $this->peek();
         }
     }
 
