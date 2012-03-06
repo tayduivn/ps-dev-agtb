@@ -230,6 +230,7 @@ $out3 =<<<EOQ3
 </table>
 EOQ3;
 
+//BEGIN SUGARCRM flav=pro ONLY
 $GLOBALS['sugar_config']['default_language'] = 'en_us';
 $app_list_strings = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
 $ftsTypeDropdown = "<select name='fts_type' id='fts_type'>";
@@ -262,6 +263,8 @@ $outFTS =<<<EOQ3
 </tr>
 </table>
 EOQ3;
+//END SUGARCRM flav=pro ONLY
+
 
 $out4 =<<<EOQ4
 </td>
