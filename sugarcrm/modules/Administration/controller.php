@@ -160,7 +160,10 @@ class AdministrationController extends SugarController
             $config = array('port' => $port, 'host' => $host);
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
             $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
-            echo json_encode($searchEngine->getServerStatus());
+            $result = $searchEngine->getServerStatus();
+            if($result['valid'])
+                $result['status'] = $GLOBALS['mod_strings']['LBL_FTS_CONN_SUCCESS'];
+            echo json_encode($result);
         }
         else
         {
