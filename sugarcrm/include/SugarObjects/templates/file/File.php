@@ -90,4 +90,42 @@ class File extends Basic
 
 		return $ret_val;
 	}
+
+    /**
+     * Method to delete an attachment
+     *
+     * @param string $isduplicate
+     * @return bool
+     */
+    public function deleteAttachment($isduplicate = "false")
+    {
+        if ($this->ACLAccess('edit')) {
+            if ($isduplicate == "true") {
+                return true;
+            }
+            $removeFile = "upload://{$this->id}";
+        }
+        if (file_exists($removeFile)) {
+            if (!unlink($removeFile)) {
+                $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
+            } else {
+                $this->uploadfile = '';$this->uploadfile = '';
+                $this->filename = '';
+                $this->file_mime_type = '';
+                $this->file_ext = '';
+                $this->save();
+                return true;
+            }
+        } else {
+            $this->uploadfile = '';
+            $this->filename = '';
+            $this->file_mime_type = '';
+            $this->file_ext = '';
+            $GLOBALS['log']->fatal("DeleteAttachment Save" . $this->filename);
+            $this->save();
+            $GLOBALS['log']->fatal("DeleteAttachment Save" . $this->filename);
+            return true;
+        }
+        return false;
+    }
 }
