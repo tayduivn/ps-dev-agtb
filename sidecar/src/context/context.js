@@ -121,7 +121,6 @@
             /**
              * Gets data
              *
-             * @param {Object} controller current controller that data will be attatched to
              */
             getData: function() {
                 var data, fields, bean, collection, options, state=this.get();
