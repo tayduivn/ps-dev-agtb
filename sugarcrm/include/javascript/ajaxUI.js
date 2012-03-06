@@ -72,7 +72,12 @@ SUGAR.ajaxUI = {
             //BEGIN SUGARCRM flav=pro ONLY
             if (r.menu)
             {
-               SUGAR.themes.setCurrentTab(r.menu);
+				if(Get_Cookie("sugar_theme_menu_load") == 'true') {
+					SUGAR.themes.setModuleTabs(r.moduleList);
+					Set_Cookie('sugar_theme_menu_load','false',30,'/','','');
+				} else {
+	               SUGAR.themes.setCurrentTab(r.menu);
+				}
             }
             if (r.record)
             {
