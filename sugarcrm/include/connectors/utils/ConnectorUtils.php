@@ -266,6 +266,14 @@ class ConnectorUtils
           }
           if(file_exists($src4)) {
               require($src4);
+
+            //define connectors if it doesn't exist or is not an array
+            if (!isset($connectors) || !is_array($connectors)){
+                $connectors = array();
+                $err_str = string_format($GLOBALS['app_strings']['ERR_CONNECTOR_NOT_ARRAY'],array($src4));
+                $GLOBALS['log']->fatal($err_str);
+            }
+
               $sources = array_merge($sources, $connectors);
           }
 
