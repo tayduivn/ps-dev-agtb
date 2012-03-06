@@ -30,3 +30,4 @@ var SugarTest = {};
     test.setWaitFlag = function() { this.waitFlag = true; };
 
 })(SugarTest);
+

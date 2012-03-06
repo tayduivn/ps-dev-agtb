@@ -80,9 +80,6 @@ SUGAR.App = (function() {
                 }
             }, this);
 
-            // Start the app
-            app.controller.start();
-
             return app;
         },
 
