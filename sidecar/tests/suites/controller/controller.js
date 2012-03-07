@@ -58,8 +58,8 @@ describe("Controller", function() {
             controller.loadView(params);
 
             // Check to make sure it loads the proper data
-            expect(dataSpy.called).toBeTruthy();
-            expect(collectionSpy.called).toBeTruthy();
+            expect(dataSpy).toHaveBeenCalled();
+            expect(collectionSpy).toHaveBeenCalled();
             expect(_.isEmpty(controller.context.state)).toBeFalsy();
 
             // Check to make sure we have set the context
@@ -69,10 +69,10 @@ describe("Controller", function() {
 
             // Check to make sure we have loaded a layout
             expect(controller.layout).toBeDefined();
-            expect(layoutSpy.called).toBeTruthy();
+            expect(layoutSpy).toHaveBeenCalled();
 
             // Check to make sure layout's render function is called
-            expect(renderSpy.called).toBeTruthy();
+            expect(renderSpy).toHaveBeenCalled();
         });
     });
 });
