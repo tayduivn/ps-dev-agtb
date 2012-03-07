@@ -558,6 +558,21 @@ class FacebookLib
     $opts[CURLOPT_SSL_VERIFYPEER] = false;
 	$opts[CURLOPT_SSL_VERIFYHOST] = 2;
 
+    $proxy_config = SugarModule::get('Administration')->loadBean();
+    $proxy_config->retrieveSettings('proxy');
+    
+    if( !empty($proxy_config) && 
+        !empty($proxy_config->settings['proxy_on']) &&
+        $proxy_config->settings['proxy_on'] == 1) {
+        
+        $opts[CURLOPT_PROXY] = $proxy_config->settings['proxy_host'];
+        $opts[CURLOPT_PROXYPORT] = $proxy_config->settings['proxy_port'];
+
+        if (!empty($proxy_settings['proxy_auth'])) {
+            $opts[CURLOPT_PROXYUSERPWD] = $proxy_settings['proxy_username'] . ':' . $proxy_settings['proxy_password'];
+        }
+    }  
+  
     // disable the 'Expect: 100-continue' behaviour. This causes CURL to wait
     // for 2 seconds if the server does not support this header.
     if (isset($opts[CURLOPT_HTTPHEADER])) {
