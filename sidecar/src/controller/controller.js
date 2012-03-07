@@ -91,7 +91,6 @@
                     success: function(data) {
                         console.log("login success");
                         app.router.start();
-                        app.router.navigate("", {trigger: true});
                     }, error: function(data) {
                         console.log("login error");
                         console.log(data);
