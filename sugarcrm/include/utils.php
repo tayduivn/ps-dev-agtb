@@ -1909,7 +1909,9 @@ function translate($string, $mod='', $selectedValue=''){
 		return $string;
 	}
 
-	if(is_array($returnValue) && ! empty($selectedValue) && isset($returnValue[$selectedValue]) ){
+    // Bug 48996 - Custom enums with '0' value were not returning because of empty check
+    // Added a numeric 0 checker to the conditional to allow 0 value indexed to pass
+	if(is_array($returnValue) && (!empty($selectedValue) || (is_numeric($selectedValue) && $selectedValue == 0))  && isset($returnValue[$selectedValue]) ){
 		return $returnValue[$selectedValue];
 	}
 
