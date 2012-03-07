@@ -42,7 +42,7 @@
         // init results
         var result, views;
 
-        var name = fieldTypeMap[field.name] || field.name;
+        var name = fieldTypeMap[field.type] || field.type;
 
         if (!name) {
             app.logger.error("No field name provided to getSugarField");
@@ -51,14 +51,15 @@
 
         // get sugarfield from app cache if we dont have it in memory
         if (typeof(_sugarFields[name]) == "undefined") {
-            _sugarFields[name] = app.cache.get("sugarFields." + field.name);
+            _sugarFields[name] = app.cache.get("sugarFields." + name);
         }
 
         if (_sugarFields[name]) {
             views = _sugarFields[name].views || _sugarFields[name];
+            var viewName = field.viewName || field.view;
             // assign fields to results if set
-            if (field.view && views[field.view]) {
-                result = views[field.view];
+            if (viewName && views[viewName]) {
+                result = views[viewName];
                 // fall back to detailview if field for this view doesnt exist
             } else if (views && views['default']) {
                 result = views['default'];
@@ -66,20 +67,13 @@
             }
         }
 
-        if (!result && _sugarFields['text'] && _sugarFields['text']['default']) {
-            result = _sugarFields['text']['default'];
+        if (!result && _sugarFields['text'] && _sugarFields['text']['views']['default']) {
+            result = _sugarFields['text']['views']['default'];
         }
         //Could not get valid view data for this field
         else if (!result) {
             app.Sync();
             return null;
-        }
-
-        // get compiled template
-        if (result.template && !result.templateC) {
-            result.templateC = app.template.get(name + ":" + field.view);
-            if (!result.templateC)
-                result.templateC = app.template.compile(result.template, name + ":" + field.view);
         }
 
         return result;

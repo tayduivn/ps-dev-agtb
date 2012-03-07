@@ -5,45 +5,13 @@
                 return str.charAt(0).toUpperCase() + str.substr(1);
         }
         /**
-         * App.Layout
+         * Layout Manager is used to retrieve views and layouts based on metadata inputs.
+         * @class layout
+         * @alias SUGAR.App.layout
+         * @singleton
          */
         var Layout = {
             init: function(args) {
-                var sfid = 0;
-                //Register Handlebars helpers
-                Handlebars.registerHelper('sugar_field', function(context, view, bean) {
-                    var ftype, sf, ret, viewName = view.name;
-                    //If bean was not specified, the third parameter will be a hash
-                    if (!bean || !bean.fields)
-                        bean = context.get("model");
-                    if (!this.type && (!bean.fields[this.name] || !bean.fields[this.name].type)) {
-                        //If the field doesn't exist for this bean type, skip it
-                        app.logger.error("Sugar Field: Unknown field " + this.name + " for " + context.get("module") + ".");
-                        return "";
-                    }
-                    ftype = this.type || bean.fields[this.name].type;
-                    sf = app.metadata.get({"sugarField": {"name": ftype, "view": viewName}});
-                    if (sf.error)
-                        return sf.error;
-                    this.value = bean.get(this.name);
-                    this.model = bean;
-                    this.view = viewName;
-                    this.model = bean;
-                    this.context = context;
-
-                    ret = sf.templateC(this);
-                    //Event binding will require wrapping the field
-                    if (this.events) {
-                        ret = '<span sfuuid="' + (++sfid) + '">' + ret + '</span>';
-                        view.fieldIDs[this.name] = sfid;
-                    }
-                    try {
-                        return new Handlebars.SafeString(ret);
-                    } catch (e) {
-                        app.logger.error("Sugar Field: Unable to execute template for field " + ftype + " on view " + this.name + ".\n" + e.message);
-                    }
-                });
-
                 Handlebars.registerHelper('get_field_value', function(bean, field) {
                     return bean.get(field);
                 });
@@ -144,6 +112,13 @@
             }
         };
 
+        /**
+         * Base View class. Use {@link App.layout} to create instances of beans.
+         *
+         * @class View
+         * @extends Backbone.View
+         * @alias SUGAR.App.layout.View
+         */
         Layout.View = Backbone.View.extend({
             initialize: function(options) {
                 _.bindAll(this, 'render', 'bindData');
@@ -157,12 +132,16 @@
                 this.template = options.template || app.template.get(this.name, this.context.get("module"));
                 this.meta = options.meta;
                 this.fieldIDs = {};
+                this.sugarFields = {};
                 //Bind will cause the view to automatically try to link form elements to attributes on the model
                 this.autoBind = options.bind || true;
             },
-            bindData: function(data){
-                data.on('reset',this.render);
-                data.on('reset',function(e){console.log(e);console.log("data changing")});
+            bindData: function(data) {
+                data.on('reset', this.render);
+                data.on('reset', function(e) {
+                    console.log(e);
+                    console.log("data changing")
+                });
             },
             _render: function() {
                 if (this.template)
@@ -172,9 +151,11 @@
                 //Bad templates can cause a JS error that we want to catch here
                 try {
                     this._render();
-                    if (this.autoBind && this.context && this.context.get("model")) {
-                        this.bind(this.context);
-                    }
+                    //Render will create a placeholder for sugar fields. we now need to populate those fields
+                    _.each(this.sugarFields, function(sf) {
+                        sf.setElement(this.$el.find("span[sfuuid=" + sf.sfid + "]"));
+                        sf.render();
+                    }, this);
                 } catch (e) {
                     app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
                 }
@@ -182,57 +163,24 @@
             },
             getFields: function() {
                 var fields = [];
-                _.each(this.components, function(component) {
-                    if (component.meta && component.meta.panels) {
-                        _.each(component.meta.panels, function(panel) {
-                            fields = fields.concat(_.pluck(panel.fields, 'name'));
-                        });
-                    }
-                });
+                if (this.meta && this.meta.panels) {
+                    _.each(this.meta.panels, function(panel) {
+                        fields = fields.concat(_.pluck(panel.fields, 'name'));
+                    });
+                }
 
                 return _.filter(_.uniq(fields), function(value) {
                     return value
                 });
             },
             bind: function(context) {
-                var model = context.get("model");
-                _.each(model.fields, function(def, field) {
-                    var el = this.$el.find('input[name="' + field + '"],span[name="' + field + '"]');
-                    if (!el[0] && this.fieldIDs[field])
-                        el = this.$el.find('span[sfuuid="' + this.fieldIDs[field] + '"]');
-                    if (el.length > 0) {
-                        //Bind input to the model
-                        el.on("change", function(ev) {
-                            model.set(field, el.val());
-                        });
-                        //And bind the model to the input
-                        model.on("change:" + field, function(model, value) {
-                            if (el[0].tagName.toLowerCase() == "input")
-                                el.val(value);
-                            else
-                                el.html(value);
-                        });
-                        _.each(def.events, function(event, fn) {
-                            if (typeof(fn) == "string")
-                                fn = eval(fn);
-                            el.on(event, null, this, fn);
-                        }, this);
-                    }
-                }, this)
+
             },
             getID: function() {
                 if (this.id)
                     return this.id;
 
                 return this.context.get("module") + "_" + this.options.name;
-            }
-        });
-        Layout.EditView = Layout.View.extend({
-            _render: function() {
-                if (this.template)
-                    this.$el.html(
-                        this.template(this)
-                    );
             }
         });
         Layout.ListView = Layout.View.extend({
@@ -250,8 +198,7 @@
                             //And bind the model to the input
                             model.on("change:" + field, function(model, value) {
                                 if (el[0].tagName.toLowerCase() == "input")
-                                    el.val(value);
-                                else
+                                    el.val(value); else
                                     el.html(value);
                             });
                         }
@@ -293,8 +240,7 @@
                                 layout: def.layout,
                                 module: module
                             }), def);
-                        }
-                        else if (typeof def.layout == "object") {
+                        } else if (typeof def.layout == "object") {
                             //Inline definition of a sublayout
                             this.addComponent(app.layout.get({
                                 context: context,
@@ -325,6 +271,21 @@
                 _.each(this.components, function(comp) {
                     comp.render();
                 }, this);
+            },
+
+            /**
+             * Used to get a list of all fields used on this layout and its sub layouts/views
+             *
+             * @method
+             * @return {Array} list of fields used by this layout.
+             */
+            getFields: function() {
+                var fields = [];
+                _.each(this.components, function(view) {
+                    fields = _.union(fields, view.getFields());
+                });
+
+                return fields;
             }
         });
 

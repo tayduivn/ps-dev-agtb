@@ -55,19 +55,19 @@ describe('metadata', function () {
     it('gets a specific sugarfield', function () {
         expect(SUGAR.App.metadata.get({
             sugarField:{
-                name:'varchar',
+                type:'varchar',
                 view:'editView'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.editView);
+        })).toBe(sugarFieldsFixtures.fieldsData.text.views.editView);
     });
 
     it('gets a specific sugarfield defaulted to default if the view does not exist', function () {
         expect(SUGAR.App.metadata.get({
             sugarField:{
-                name:'varchar',
+                type:'varchar',
                 view:'thisViewDoesntExist'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text["default"]);
+        })).toBe(sugarFieldsFixtures.fieldsData.text.views["default"]);
     });
 
     it ('should sync metadata', function (){
