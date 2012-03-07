@@ -31,10 +31,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/DynamicFields/DynamicField.php');
 require_once("data/Relationships/RelationshipFactory.php");
-
-
-
-
+//BEGIN SUGARCRM flav=pro ONLY
+require_once 'data/BeanVisibility.php';
+//END SUGARCRM flav=pro ONLY
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -76,6 +75,13 @@ class SugarBean
 	 * @var BOOL -- default false
 	 */
 	var $disable_row_level_security =false;
+
+	/**
+	 * Bean visibility manager
+	 * @var BeanVisibility
+	 */
+	protected $visibility;
+
 	//END SUGARCRM flav=pro ONLY
 
 	/**
@@ -375,6 +381,7 @@ class SugarBean
         //END SUGARCRM flav=pro ONLY
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Load visibility manager
      * @return BeanVisibility
@@ -405,7 +412,7 @@ class SugarBean
     {
         return $this->loadVisibility()->addVisibilityClause($query);
     }
-
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * Returns the object name. If object_name is not set, table_name is returned.
