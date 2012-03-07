@@ -64,6 +64,8 @@ class Bug27066Test extends SOAPTestCase
     public function tearDown()
     {
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
+        $GLOBALS['db']->query("DELETE FROM contacts where first_name='Contact Test 27066'");
+        $GLOBALS['db']->query("DELETE FROM accounts where name='Account Test 27066'");
         unset($GLOBALS['current_user']);
     }
 
