@@ -121,9 +121,7 @@ class File extends Basic
             $this->filename = '';
             $this->file_mime_type = '';
             $this->file_ext = '';
-            $GLOBALS['log']->fatal("DeleteAttachment Save" . $this->filename);
             $this->save();
-            $GLOBALS['log']->fatal("DeleteAttachment Save" . $this->filename);
             return true;
         }
         return false;
