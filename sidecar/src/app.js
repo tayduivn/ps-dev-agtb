@@ -142,9 +142,17 @@ SUGAR.App = (function() {
             async.waterfall([function(callback) {
                 app.metadata.sync(callback);
             }, function(metadata, callback) {
+                if (app.Offline) {
+                    app.Offline.dataManager.migrate(metadata, {callback: callback});
+                }
+                else {
+                    callback(null, metadata);
+                }
+            }, function(metadata, callback) {
                 app.dataManager.declareModels(metadata);
                 callback(null, metadata);
             }], function(err, result) {
+                if (err) app.logger.error(err);
                 // Result should be metadata
                 self.trigger("app:sync:complete", result);
             });
