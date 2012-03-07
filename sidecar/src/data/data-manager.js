@@ -7,7 +7,7 @@
  * - Factory methods for creating instances of beans and bean collections.
  * - Custom implementation of <code>Backbone.sync</code> pattern.
  *
- * <pre>
+ * <pre><code>
  * // From the following sample metadata, data manager would declare two classes: Team and TeamSet.
  * var metadata =
  * {
@@ -44,7 +44,7 @@
  * team.save();
  *
  *
- * </pre>
+ * </code></pre>
  *
  * @class dataManager
  * @alias SUGAR.App.dataManager
@@ -52,7 +52,6 @@
  */
 (function(app) {
 
-    //
     // Class cache:
     // _models[module].primaryBean - primary bean class name
     // _models[module].beans - hash of bean models
@@ -63,17 +62,18 @@
 
         /**
          * Reference to the base bean model class. Defaults to {@link Bean}.
-         * @type {Bean}
+         * @property {Bean}
          */
         beanModel: app.Bean,
         /**
          * Reference to the base bean collection class. Defaults to {@link BeanCollection}.
-         * @type {BeanCollection}
+         * @property {BeanCollection}
          */
         beanCollection: app.BeanCollection,
 
         /**
          * Initializes data manager.
+         * @method
          */
         init: function() {
             _serverProxy = app.api;
@@ -88,6 +88,7 @@
         /**
          * Resets class declarations.
          * @param {String} module(optional) module name. If not specified, resets models of all modules.
+         * @method
          */
         reset: function(module) {
             if (module) {
@@ -102,6 +103,7 @@
          * Declares bean model and collection classes for a given module.
          * @param {String} moduleName module name.
          * @param module module metadata object.
+         * @method
          */
         declareModel: function(moduleName, module) {
             this.reset(moduleName);
@@ -126,7 +128,7 @@
                         }
                         defaults[field.name] = field["default"];
                     }
-                    if(!_.isUndefined(field["type"])) {
+                    if (!_.isUndefined(field["type"])) {
                         handler = app.sugarFieldManager.getFieldHandler(field["type"]);
                         if (handler != null)
                             sf[field.name] = handler;
@@ -134,7 +136,7 @@
                 });
 
                 var model = this.beanModel.extend({
-                    sugarFields : sf,
+                    sugarFields: sf,
                     defaults: defaults,
                     /**
                      * Module name.
@@ -187,7 +189,7 @@
          *
          * Each module may have multiple bean types.
          * We declare a class for each bean type.
-         * <pre>
+         * <pre><code>
          * {
          *   "Teams": {
          *      "primary_bean": "Team",
@@ -205,7 +207,7 @@
          *      }
          *    }
          * }
-         * </pre>
+         * </code></pre>
          *
          * @param metadata metadata hash in which keys are module names and values are module definitions.
          */

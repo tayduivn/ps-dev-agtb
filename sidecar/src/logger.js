@@ -1,17 +1,17 @@
 /**
  * Application logger.
- * <pre>
- *     // Log a string message
- *     SUGAR.App.logger.debug("Some debug message");
+ * <pre><code>
+ * // Log a string message
+ * SUGAR.App.logger.debug("Some debug message");
  *
- *     // Log an object
- *     var obj = { foo: "bar" };
- *     SUGAR.App.logger.info(obj);
+ * // Log an object
+ * var obj = { foo: "bar" };
+ * SUGAR.App.logger.info(obj);
  *
- *     // Log a closure.
- *     var a = 1;
- *     SUGAR.App.logger.error(function() { return a; });
- * </pre>
+ * // Log a closure.
+ * var a = 1;
+ * SUGAR.App.logger.error(function() { return a; });
+ * </code></pre>
  * @class Logger
  * @alias SUGAR.App.logger
  * @singleton
@@ -21,36 +21,55 @@
     app.augment("logger", {
 
         /**
-         * @property {Object}
-         * Logging levels hash
+         * The different types of logging levels availabe
+         * @class Logger.levels
+         * @singleton
          */
         levels: {
-            //Trace level logging
+            /**
+             * Trace log level
+             * @property {Logger.levels}
+             */
             TRACE: {
                 value: 1,
                 name: "TRACE"
             },
-            //Debug level logging
+            /**
+             * Debug log level
+             * @property {Logger.levels}
+             */
             DEBUG: {
                 value: 2,
                 name: "DEBUG"
             },
-            //Info level logging
+            /**
+             * Info log level
+             * @property {Logger.levels}
+             */
             INFO: {
                 value: 3,
                 name: "INFO"
             },
-            //Warning level logging
+            /**
+             * Warn log level
+             * @property {Logger.levels}
+             */
             WARN: {
                 value: 4,
                 name: "WARN"
             },
-            //Error level logging
+            /**
+             * Error log level
+             * @property {Logger.levels}
+             */
             ERROR: {
                 value: 5,
                 name: "ERROR"
             },
-            // Fatal level logging
+            /**
+             * Fatal log level
+             * @property {Logger.levels}
+             */
             FATAL: {
                 value: 6,
                 name: "FATAL"
@@ -70,7 +89,7 @@
              * <code>console.info</code> for <code>TRACE</code>, <code>DEBUG</code> and <code>INFO<code>,
              * <code>console.warn</code> for <code>WARN</code>, and
              * <code>console.error</code> for <code>ERROR</code> and <code>FATAL</code>.
-             * @param {String} level A logger level from logger.levels
+             * @param {Logger.levels} level A logger level from logger.levels
              * @param {String} message
              * @method
              */
@@ -89,13 +108,13 @@
 
         /**
          * Formats a log message as a string with log level and UTC timestamp.
-         * <pre>
+         * <pre><code>
          * // Log a trace message
          * SUGAR.App.logger.trace("Blah-blah");
          *
          * // Output
          * // TRACE[2012-1-26 2:38:23]: Blah-blah
-         * </pre>
+         * </code></pre>
          * @class Logger.SimpleFormatter
          * @member Logger
          * @singleton
