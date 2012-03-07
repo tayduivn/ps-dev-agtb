@@ -17,7 +17,7 @@
          * Logging level.
          * @cfg {Object} [logLevel=logger.Levels.DEBUG]
          */
-        logLevel: app.logger.Levels.DEBUG,
+        logLevel: app.logger.levels.DEBUG,
 
         /**
          * Logging writer.

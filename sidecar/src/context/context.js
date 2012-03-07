@@ -3,6 +3,14 @@
 
     /**
      * A state variable to hold the states of the current context.
+     *
+     * Use the getContext method to get a new instance of a context.
+     * <pre><code>
+     * var myContext = App.context.getContext({
+     *     module: "Contacts",
+     *     url: "contacts/id"
+     * });
+     * </code></pre>
      * @class Context
      * @param {Object} obj Any parameters and state properties to attach to the context
      * @param {Object} data Hash of collection and or models to save to the context

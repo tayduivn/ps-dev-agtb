@@ -9,6 +9,11 @@
 
     app.augment("Bean", Backbone.Model.extend({
 
+        /**
+         * Bean initialization
+         * @method
+         * @private
+         */
         initialize: function() {
             /* var bean = this;
 
@@ -19,9 +24,16 @@
             });*/
         },
 
+        /**
+         * Overloaded backbone model set function.
+         * @param {String} key
+         * @param {Mixed} value
+         * @param {Object} options
+         * @return {Mixed}
+         */
         set: function(key, value, options) {
             var attrs, attr, val;
-            if (_.isObject(key) || key == null) {
+            if (_.isObject(key) || key === null) {
                 attrs = key;
                 options = value;
             } else {
@@ -30,7 +42,8 @@
             }
 
             // Extract attributes and options.
-            options || (options = {});
+            options = options || (options = {});
+
             if (!attrs) return this;
             if (attrs instanceof Backbone.Model) attrs = attrs.attributes;
             if (options.unset) for (attr in attrs) attrs[attr] = void 0;
@@ -46,10 +59,8 @@
         },
 
         get: function(attr) {
-            if (this.sugarFields && this.sugarFields[attr])
-                return this.sugarFields[attr].get(this, attr);
-            else
-                return Backbone.Model.prototype.get.call(this, attr);
+            return (this.sugarFields && this.sugarFields[attr]) ?
+                this.sugarFields[attr].get(this, attr) : Backbone.Model.prototype.get.call(this, attr);
         },
 
         /**
@@ -95,7 +106,7 @@
          * @param options Options hash (success and error callbacks, etc.)
          */
         setRelated: function(attribute, bean, options) {
-            options || (options = {});
+            options = options || (options = {});
             var origError = options.error;
             var origSuccess = options.success;
 
@@ -126,7 +137,7 @@
             options.success = function(model, resp) {
                 options.success = origSuccess;
                 self.save(null, options);
-            }
+            };
 
             return this.addRelated(link, bean, options);
         },
@@ -146,12 +157,12 @@
          * - error definition can be a primitive type or an object. It depends on validator.
          *
          *  Example:
-         *  <pre>
+         *  <pre><code>
          *  {
          *    first_name: { maxLength: 20, someOtherValidator: { some complex error definition... } },
          *    last_name: { required: true }
          *  }
-         *  </pre>
+         *  </code></pre>
          *
          * @param attrs attributes hash that is about to be set on this bean
          * @return {Object} errors hash if the bean is invalid or nothing otherwise.

@@ -140,7 +140,7 @@
          * @member Logger
          */
         trace: function(message) {
-            this.log(this.Levels.TRACE, message);
+            this.log(this.levels.TRACE, message);
         },
 
         /**
@@ -149,7 +149,7 @@
          * @member Logger
          */
         debug: function(message) {
-            this.log(this.Levels.DEBUG, message);
+            this.log(this.levels.DEBUG, message);
         },
 
         /**
@@ -158,7 +158,7 @@
          * @member Logger
          */
         info: function(message) {
-            this.log(this.Levels.INFO, message);
+            this.log(this.levels.INFO, message);
         },
 
         /**
@@ -167,7 +167,7 @@
          * @member Logger
          */
         warn: function(message) {
-            this.log(this.Levels.WARN, message);
+            this.log(this.levels.WARN, message);
         },
 
         /**
@@ -176,7 +176,7 @@
          * @member Logger
          */
         error: function(message) {
-            this.log(this.Levels.ERROR, message);
+            this.log(this.levels.ERROR, message);
         },
 
         /**
@@ -185,7 +185,7 @@
          * @member Logger
          */
         fatal: function(message) {
-            this.log(this.Levels.FATAL, message);
+            this.log(this.levels.FATAL, message);
         },
 
         // TODO: We may want to add support for format strings like "Some message %s %d", params
@@ -200,14 +200,14 @@
         log: function(level, message) {
             try {
                 message = message || "<none>";
-                var l = app.config.logLevel || this.Levels.ERROR;
+                var l = app.config.logLevel || this.levels.ERROR;
                 var writer = app.config.logWriter || this.ConsoleWriter;
                 var formatter = app.config.logFormatter || this.SimpleFormatter;
 
                 if (level.value >= l.value) {
                     if (_.isFunction(message)) message = message.call(this);
                     if (_.isObject(message)) message = JSON.stringify(message);
-                    writer.write(level, formatter.format(level, message, new Date));
+                    writer.write(level, formatter.format(level, message, new Date()));
                 }
             }
             catch (e) {
