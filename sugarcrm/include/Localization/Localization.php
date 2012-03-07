@@ -63,7 +63,8 @@ class Localization {
     var $invalidNameFormatUpgradeFilename = 'upgradeInvalidLocaleNameFormat.php';
     /* Charset mappings for iconv */
     var $iconvCharsetMap = array(
-        'KS_C_5601-1987' => 'CP949'
+        'KS_C_5601-1987' => 'CP949',
+        'ISO-8859-8-I' => 'ISO-8859-8'            
         );
 
 	/**
