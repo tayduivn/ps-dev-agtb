@@ -500,7 +500,7 @@ class TemplateHandler {
         
         $js .= "});";
 
-        $js .= "\nYAHOO.util.Event.onContentReady('$view', SUGAR.forms.AssignmentHandler.loadComplete);});</script>";
+        $js .= "\nYAHOO.util.Event.onContentReady('$view', SUGAR.forms.AssignmentHandler.loadComplete);</script>";
         return $js;
     }
     //END SUGARCRM flav=pro ONLY
