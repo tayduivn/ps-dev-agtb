@@ -1042,7 +1042,9 @@ function add_create_account($seed)
 	    $arr = array();
 
 	    $query = "select id, deleted from {$focus->table_name} ";
+	//BEGIN SUGARCRM flav=pro ONLY
 	    $focus->add_team_security_where_clause($query);
+	//END SUGARCRM flav=pro ONLY
 	    $query .= " WHERE name='".$seed->db->quote($account_name)."'";
 	    $query .=" ORDER BY deleted ASC";
 	    $result = $seed->db->query($query, true);
