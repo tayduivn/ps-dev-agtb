@@ -1,15 +1,21 @@
 describe("Framework", function() {
-    var authStub, metaStub;
+    var authStub, metaStub, isGetMetadataSucceeded;
 
     beforeEach(function() {
+        isGetMetadataSucceeded = true;
         // Replace sugarauth isAuthenticated method with fake
         authStub = sinon.stub(SUGAR.App.sugarAuth, "isAuthenticated", function() {
             return true;
         });
 
         metaStub = sinon.stub(SUGAR.App.api, "getMetadata", function(modules, filters, callbacks) {
-            var metadata = fixtures.metadata
-            callbacks.success(metadata);
+            if (isGetMetadataSucceeded) {
+                var metadata = fixtures.metadata;
+                callbacks.success(metadata);
+            }
+            else {
+                callbacks.error({code: 500});
+            }
         });
     });
 
@@ -54,7 +60,7 @@ describe("Framework", function() {
     });
 
     describe("when a data sync is required", function() {
-        it("should fire a syncComplete event when all of the sync jobs have finished", function() {
+        it("should fire a sync:complete event when all of the sync jobs have finished", function() {
             var cbSpy = sinon.spy(function() {
                 SugarTest.setWaitFlag();
             });
@@ -62,6 +68,25 @@ describe("Framework", function() {
 
             // Add listener onto app for the syncComplete event
             app.on("app:sync:complete", cbSpy);
+            app.sync();
+
+            SugarTest.wait();
+
+            runs(function() {
+                expect(cbSpy).toHaveBeenCalled();
+            });
+        });
+
+        it("should fire a sync:error event when one of the sync jobs have failed", function() {
+            var cbSpy = sinon.spy(function() {
+                SugarTest.setWaitFlag();
+            });
+            var app = SUGAR.App.init({el: "body"});
+
+            // Add listener onto app for the syncComplete event
+            app.on("app:sync:error", cbSpy);
+
+            isGetMetadataSucceeded = false;
             app.sync();
 
             SugarTest.wait();

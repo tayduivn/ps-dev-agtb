@@ -77,6 +77,7 @@ SUGAR.App = (function() {
             // Register app specific events
             app.events.register("app:init", this);
             app.events.register("app:sync:complete", this);
+            app.events.register("app:sync:error", this);
 
             if (!opts.silent) {
                 app.trigger("app:init", this, opts.modules);
@@ -152,9 +153,14 @@ SUGAR.App = (function() {
                 app.dataManager.declareModels(metadata);
                 callback(null, metadata);
             }], function(err, result) {
-                if (err) app.logger.error(err);
-                // Result should be metadata
-                self.trigger("app:sync:complete", result);
+                if (err) {
+                    app.logger.error(err);
+                    self.trigger("app:sync:error", err);
+                }
+                else {
+                    // Result should be metadata
+                    self.trigger("app:sync:complete", result);
+                }
             });
         },
 
