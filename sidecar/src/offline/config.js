@@ -1,11 +1,4 @@
 (function(app) {
-//    /**
-//     * Flag indicating if offline storage is enabled.
-//     * @type {Boolean}
-//     * @member config
-//     */
-//    app.config.offlineModeEnabled = true;
-
     /**
      * Database adapter.
      * @member config

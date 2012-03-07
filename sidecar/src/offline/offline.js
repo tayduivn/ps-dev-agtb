@@ -98,9 +98,6 @@
 
         init: function() {
             Backbone.sync = app.Offline.dataManager.sync;
-//            if (app.config.offlineModeEnabled) {
-//                Backbone.sync = app.Offline.dataManager.sync;
-//            }
         },
 
         DbError: function(code, message) {
