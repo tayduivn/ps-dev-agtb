@@ -26,7 +26,7 @@
  */
 
 Calendar = function() {};
-
+Calendar._TT = {};
 Calendar.getHighestZIndex = function (containerEl)
 {
    var highestIndex = 0;
