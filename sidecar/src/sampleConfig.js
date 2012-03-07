@@ -34,7 +34,7 @@
         /**
          * Sugar REST server URL.
          */
-        baseUrl: '/builds/ent/sugarcrm/rest'
+        baseUrl: '../sugarcrm/rest'
 
     }, false);
 

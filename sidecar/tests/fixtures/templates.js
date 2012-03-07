@@ -19,7 +19,7 @@ fixtures.templates = {
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-                "<div>{{sugar_field ../../context ../../this}}</div>" +
+                "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
         "{{/each}}</form>",
@@ -33,7 +33,7 @@ fixtures.templates = {
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-                "<div>{{sugar_field ../../context ../../this}}</div>" +
+                "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
         "{{/each}}</form>",
