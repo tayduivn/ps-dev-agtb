@@ -1687,7 +1687,7 @@ SUGAR.reports = function() {
 
 			report_def.report_name = document.ReportsWizardForm.save_report_as.value;
 			report_def.chart_type = chart_type;
-			report_def.do_round = do_round;
+			report_def.do_round = (report_def.chart_type != "" && document.ReportsWizardForm.do_round.checked) ? 1 : 0;
 			report_def.chart_description = chart_description;			
 			report_def.numerical_chart_column = document.ReportsWizardForm.numerical_chart_column.value;
 			report_def.numerical_chart_column_type = document.ReportsWizardForm.numerical_chart_column_type.value;
