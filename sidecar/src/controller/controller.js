@@ -24,7 +24,7 @@
              * everything.
              *
              * <pre><code>
-             * obj.bind("app:start", callback);
+             * obj.on("app:start", callback);
              * </pre></code>
              * @event start
              */
