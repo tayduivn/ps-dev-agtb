@@ -1,6 +1,6 @@
 /**
  * Application configuration.
- * @class config
+ * @class Config
  * @alias SUGAR.App.config
  * @singleton
  */
@@ -9,30 +9,31 @@
     app.augment("config", {
         /**
          * Application environment. Possible values: 'dev', 'test', 'prod'
-         * @type {String}
+         * @cfg {String}
          */
         env: 'dev',
 
         /**
          * Logging level.
-         * @property {logger.Levels} [logLevel=logger.Levels.DEBUG]
+         * @cfg {Object} [logLevel=logger.Levels.DEBUG]
          */
         logLevel: app.logger.Levels.DEBUG,
 
         /**
          * Logging writer.
-         * @property [logWrtiter=logger.ConsoleWriter]
+         * @cfg [logWrtiter=logger.ConsoleWriter]
          */
         logWriter: app.logger.ConsoleWriter,
 
         /**
          * Logging formatter.
-         * @property [logFormatter=logger.SimpleFormatter]
+         * @cfg [logFormatter=logger.SimpleFormatter]
          */
         logFormatter: app.logger.SimpleFormatter,
 
         /**
          * Sugar REST server URL.
+         * @cfg {String}
          */
         baseUrl: '../sugarcrm/rest'
 
