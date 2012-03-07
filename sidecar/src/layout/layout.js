@@ -11,7 +11,7 @@
          * @singleton
          */
         var Layout = {
-            init:function (args) {
+            init: function (args) {
                 Handlebars.registerHelper('get_field_value', function (bean, field) {
                     return bean.get(field);
                 });
@@ -52,7 +52,7 @@
              * @param Object params should contain either view or layout to specify which type of
              * component you are retreiving.
              */
-            get:function (params) {
+            get: function (params) {
                 var meta = params.meta;
                 var layoutClass = "Layout";
                 var viewClass = "View";
@@ -70,9 +70,9 @@
                 var view = null;
                 if (params.view) {
                     meta = meta || app.metadata.get({
-                        type:"view",
-                        module:module,
-                        view:params.view
+                        type: "view",
+                        module: module,
+                        view: params.view
                     }) || {};
                     ucType = ucfirst(meta.view || params.type || params.view);
                     //Check if the view type has its own view subclass
@@ -83,30 +83,30 @@
                         viewClass = ucType;
 
                     view = new app.layout[viewClass]({
-                        context:params.context,
-                        name:params.view,
-                        meta:meta
+                        context: params.context,
+                        name: params.view,
+                        meta: meta
                     });
                 } else if (params.layout) {
                     meta = params.meta || app.metadata.get({
-                        type:"layout",
-                        module:module,
-                        layout:params.layout
+                        type: "layout",
+                        module: module,
+                        layout: params.layout
                     });
                     ucType = ucfirst(meta.type);
                     //Check if the layout type has its own layout subclass
                     if (meta && app.layout[ucType + "Layout"])
                         layoutClass = ucType + "Layout";
                     view = new app.layout[layoutClass]({
-                        context:params.context,
-                        name:params.layout,
-                        module:module,
-                        meta:meta
+                        context: params.context,
+                        name: params.layout,
+                        module: module,
+                        meta: meta
                     });
 
                 }
                 if (view) {
-                    context.set({view:view});
+                    context.set({view: view});
                 }
                 return view;
             }
@@ -120,7 +120,7 @@
          * @alias SUGAR.App.layout.View
          */
         Layout.View = Backbone.View.extend({
-            initialize:function (options) {
+            initialize: function (options) {
                 _.bindAll(this, 'render', 'bindData');
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
@@ -136,18 +136,18 @@
                 //Bind will cause the view to automatically try to link form elements to attributes on the model
                 this.autoBind = options.bind || true;
             },
-            bindData:function (data) {
+            bindData: function (data) {
                 data.on('reset', this.render);
                 data.on('reset', function (e) {
                     console.log(e);
                     console.log("data changing")
                 });
             },
-            _render:function () {
+            _render: function () {
                 if (this.template)
                     this.$el.html(this.template(this));
             },
-            render:function () {
+            render: function () {
                 //Bad templates can cause a JS error that we want to catch here
                 try {
                     this._render();
@@ -161,7 +161,7 @@
                 }
 
             },
-            getFields:function () {
+            getFields: function () {
                 var fields = [];
                 if (this.meta && this.meta.panels) {
                     _.each(this.meta.panels, function (panel) {
@@ -173,10 +173,10 @@
                     return value
                 });
             },
-            bind:function (context) {
+            bind: function (context) {
 
             },
-            getID:function () {
+            getID: function () {
                 if (this.id)
                     return this.id;
 
@@ -184,7 +184,7 @@
             }
         });
         Layout.ListView = Layout.View.extend({
-            bind:function (context) {
+            bind: function (context) {
                 var collection = context.get("collection");
                 _.each(collection.models, function (model) {
                     var tr = this.$el.find('tr[name="' + model.beanType + '_' + model.get("id") + '"]');
@@ -207,7 +207,7 @@
             }
         })
         Layout.Layout = Layout.View.extend({
-            initialize:function () {
+            initialize: function () {
                 _.bindAll(this, 'render', 'bindData');
                 //The context is used to determine what the current focus is
                 // (includes a model, collection, and module)
@@ -227,46 +227,46 @@
 
                     if (def.view) {
                         this.addComponent(app.layout.get({
-                            context:context,
-                            view:def.view,
-                            module:module
+                            context: context,
+                            view: def.view,
+                            module: module
                         }), def);
                     }
                     //Layouts can either by referenced by name or defined inline
                     else if (def.layout) {
                         if (typeof def.layout == "string") {
                             this.addComponent(app.layout.get({
-                                context:context,
-                                layout:def.layout,
-                                module:module
+                                context: context,
+                                layout: def.layout,
+                                module: module
                             }), def);
                         } else if (typeof def.layout == "object") {
                             //Inline definition of a sublayout
                             this.addComponent(app.layout.get({
-                                context:context,
-                                module:module,
-                                layout:true,
-                                meta:def.layout
+                                context: context,
+                                module: module,
+                                layout: true,
+                                meta: def.layout
                             }), def);
                         }
                     }
                 }, this);
             },
-            addComponent:function (comp, def) {
+            addComponent: function (comp, def) {
                 this.components.push(comp);
                 this._placeComponent(comp, def);
             },
             //Default layout just appends all the components to itself
-            _placeComponent:function (comp) {
+            _placeComponent: function (comp) {
                 this.$el.append(comp.el);
             },
-            removeComponent:function (comp) {
+            removeComponent: function (comp) {
                 //If comp is an index, remove the component at that index. Otherwise see if comp is in the array
                 var i = typeof comp == "number" ? comp : this.components.indexOf(comp);
                 if (i > -1)
                     this.components.splice(i, 1);
             },
-            render:function () {
+            render: function () {
                 //default layout will pass render container divs and pass down to all its views.
                 _.each(this.components, function (comp) {
                     comp.render();
@@ -279,7 +279,7 @@
              * @method
              * @return {Array} list of fields used by this layout.
              */
-            getFields:function () {
+            getFields: function () {
                 var fields = [];
                 _.each(this.components, function (view) {
                     fields = _.union(fields, view.getFields());
@@ -291,7 +291,7 @@
 
         Layout.ColumnsLayout = Layout.Layout.extend({
             //column layout uses a table for columns and prevent wrapping
-            _placeComponent:function (comp) {
+            _placeComponent: function (comp) {
                 if (!this.$el.children()[0]) {
                     this.$el.append("<table><tbody><tr></tr></tbody></table>");
                 }
@@ -305,7 +305,7 @@
          * @extend App.Layout.Layout
          */
         Layout.FluidLayout = Layout.Layout.extend({
-            _placeComponent:function (comp, def) {
+            _placeComponent: function (comp, def) {
                 var size = def.size || 4;
                 if (!this.$el.children()[0]) {
                     this.$el.addClass("container-fluid").append('<div class="row-fluid"></div>');
