@@ -74,6 +74,8 @@ class ViewConfigureFts extends SugarView
             $config = array('host' => '','port' => '');
         }
 
+        $justRequestedAScheduledIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
+
         $scheduleDisableButton = empty($defaultEngine) ? 'disabled' : '';
         $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
         $schedulerCompleted = SugarSearchEngineFullIndexer::isFTSIndexScheduleCompleted($schedulerID);
@@ -88,6 +90,7 @@ class ViewConfigureFts extends SugarView
         $disableEdit = !empty($GLOBALS['sugar_config']['full_text_engine_disable_edit']) ? TRUE : FALSE;
         $this->ss->assign('disableEdit',$disableEdit);
         $this->ss->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
+        $this->ss->assign('justRequestedAScheduledIndex', $justRequestedAScheduledIndex);
 
         $filteredModules = $this->getFilterModules();
         $this->ss->assign('enabled_modules', json_encode($filteredModules['enabled']));

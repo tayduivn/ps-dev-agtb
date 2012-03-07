@@ -479,7 +479,7 @@ class ListViewData {
 
         if( isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search")
         {
-                	$queryString = "-advanced_search";
+            $queryString = "-advanced_search";
         }
         else if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "basic_search")
         {
@@ -492,7 +492,7 @@ class ListViewData {
             foreach( $basicSearchFields as $basicSearchField)
             {
                 $field_name = $basicSearchField['name'] . "_basic";
-                if( isset($_REQUEST[$field_name]) )
+                if( isset($_REQUEST[$field_name])  && (!isset($basicSearchField['type']) || $basicSearchField['type'] == 'text') )
                 {
                     $queryString = htmlentities($_REQUEST[$field_name]);
                     break;

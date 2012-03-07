@@ -2345,9 +2345,8 @@ sugarListView.prototype.check_entire_list = function(form, field, value, list_co
 		}
 	}
 	document.MassUpdate.select_entire_list.value = 1;
-	//if(value)
 	sugarListView.update_count(list_count, false);
-	//else sugarListView.update_count(-1 * count, true);
+    sugarListView.prototype.toggleSelected();
 }
 
 sugarListView.prototype.check_all = function(form, field, value, pageTotal) {

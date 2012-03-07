@@ -138,7 +138,7 @@
         {$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}
         </td>
         <td width='35%' >
-            <img id="company_logo_image" src='{$company_logo}' alt=$mod_strings.LBL_LOGO height="40" width="212">
+            <img id="company_logo_image" src='{$company_logo}' alt=$mod_strings.LBL_LOGO>
         </td>
         //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>

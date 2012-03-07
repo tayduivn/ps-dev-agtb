@@ -254,6 +254,10 @@
             <td width="15%" scope="row"><slot>{$MOD.LBL_SEARCH_URL|strip_semicolon}:</slot></td>
             <td colspan=2><slot>{$CALENDAR_SEARCH_URL}</slot></td>
             </tr>
+            <tr>
+            <td width="15%" scope="row"><slot>{$MOD.LBL_ICAL_PUB_URL|strip_semicolon}: {sugar_help text=$MOD.LBL_ICAL_PUB_URL_HELP}</slot></td>
+            <td colspan=2><slot>{$CALENDAR_ICAL_URL}</slot></td>
+            </tr>
             </table>
         </div>
         <!--//END SUGARCRM flav!=sales ONLY -->

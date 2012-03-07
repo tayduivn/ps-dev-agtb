@@ -296,10 +296,11 @@ class ViewModulefield extends SugarView
         ksort($field_types);
         $fv->ss->assign('field_types',$field_types);
         $ftsEngineType = getFTSEngineType();
-        $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');
-        $fv->ss->assign('fts_options', $ftsBoostOptions);
-        // TODO: should probably add a check here to not show this for some data types, like boolean, etc?
-        if (!empty($ftsEngineType)) {
+
+        require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
+        if (!empty($ftsEngineType) && SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type'])) {
+            $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');
+            $fv->ss->assign('fts_options', $ftsBoostOptions);
             $fv->ss->assign('show_fts', true);
         } else {
             $fv->ss->assign('show_fts', false);

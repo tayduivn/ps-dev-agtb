@@ -569,6 +569,13 @@ $mod_strings = array(
     'LBL_OOTB_DCE_SALES_REPORT'   => 'Create weekly Sales Report Email',
     //END SUGARCRM flav=dce ONLY
 
+    // BEGIN SUGARCRM flav=pro ONLY
+    'LBL_FTS_TABLE_TITLE'     => 'Provide Full-Text Search Settings',
+    'LBL_FTS_HOST'     => 'FTS Host',
+    'LBL_FTS_PORT'     => 'FTS Port',
+    'LBL_FTS_TYPE'     => 'FTS Type',
+    'LBL_FTS_ERROR'    => 'Unable to connect to Full Text Search server, please verify your settings.',
+    // END SUGARCRM flav=pro ONLY
 
     'LBL_PATCHES_TITLE'     => 'Install Latest Patches',
     'LBL_MODULE_TITLE'      => 'Install Language Packs',

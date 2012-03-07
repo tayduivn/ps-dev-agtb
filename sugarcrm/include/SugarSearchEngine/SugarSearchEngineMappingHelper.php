@@ -66,6 +66,25 @@ class SugarSearchEngineMappingHelper
     );
 
     /**
+     * this defines the field types that can be enabled for full text search
+     * @var array
+     */
+    protected static $ftsEnabledFieldTypes = array('name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url');
+
+    /**
+     *
+     * Given a field type, determine whether this type can be enabled for full text search.
+     *
+     * @param $type field type
+     *
+     * @return boolean whether the field type can be enabled for full text search
+     */
+    public static function isTypeFtsEnabled($type)
+    {
+        return in_array($type, self::$ftsEnabledFieldTypes);
+    }
+
+    /**
      *
      * Given a search engine name and a vardef name, this function returns corresponding search engine map type.
      *

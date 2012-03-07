@@ -1064,9 +1064,10 @@ $mod_strings = array (
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
 
 //BEGIN SUGARCRM flav=pro ONLY
-	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Shortcut Bar',
-	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the Shortcut Bar',
+	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Navigation Bar Quick Create',
+	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the navigation bar quick create',
 	'LBL_ERROR_PROD_BAR_NUM_MODULES' => 'Error: There can be at most 10 modules on the Sugar Shortcut Bar at a time.',
+    'LBL_CONFIGURE_SHORTCUT_BAR_HELP' => 'Choose which modules for which users can quickly create records using the Plus icon in the top navigation bar. Drag & drop modules between the Enabled Modules and Disabled Modules boxes.',
 //END SUGARCRM flav=pro ONLY
 	'LBL_ACTIVE_MODULES' => 'Enabled Modules',
 	'LBL_DISABLED_MODULES' => 'Disabled Modules',
@@ -1192,12 +1193,19 @@ $mod_strings = array (
     'LBL_FTS_TYPE' => 'System Type',
     'LBL_FTS_HOST' => 'Host',
     'LBL_FTS_PORT' => 'Port',
+    'LBL_FTS_TYPE_HELP' => 'Type of engine for full text search',
+    'LBL_FTS_HOST_HELP' => 'The hostname where the full text search engine resides.',
+    'LBL_FTS_PORT_HELP' => 'The port number where the full text search engine resides. ',
+
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
     'LBL_FTS_TEST' => 'Test',
     'LBL_SAVE_SCHED_BUTTON' => 'Schedule Full System Index',
     'LBL_SAVE_SCHED_WARNING' => 'Are you sure sure?',
     'LBL_FTS_SCHED_ENABLED' => 'A Full System Index operation has been scheduled, to see additional details please visit the <a href="index.php?module=Schedulers&action=DetailView&record={0}">schedulers</a> page',
     'LBL_FTS_NO_MODULES' => 'Select at least one module to search.',
-    'LBL_ADVANCED' => 'Advanced'
-	);
+    'LBL_FTS_ADVANCED_LINK' => 'Enable Modules',
+    'LBL_FTS_ADVANCED_LINK_HELP' => 'Select the module(s) that users will be able to search against using the Full Text Search.',
+    'LBL_FTS_CONN_SUCCESS' => 'The connection was successfully set up and we are recommend performing a full system index. Please click on the Schedule full system index button when you are ready.',
+	'LBL_FTS_CONN_SUCCESS_SHORT' => 'A Full System Index operation has been scheduled.'
+    );
 

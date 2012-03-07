@@ -1329,8 +1329,12 @@ EOHTML;
      */
     protected function _getModuleTab()
     {
-        global $app_list_strings, $moduleTabMap;
+        global $app_list_strings, $moduleTabMap, $current_user;
 
+		$userTabs = query_module_access_list($current_user);
+		//If the home tab is in the user array use it as the default tab, otherwise use the first element in the tab array
+		$defaultTab = (in_array("Home",$userTabs)) ? "Home" : key($userTabs);
+		
         // Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
         if ( !empty($_REQUEST['module_tab']) )
             return $_REQUEST['module_tab'];
@@ -1340,10 +1344,12 @@ EOHTML;
         elseif ( $this->module == 'MergeRecords' )
             return !empty($_REQUEST['merge_module']) ? $_REQUEST['merge_module'] : $_REQUEST['return_module'];
         elseif ( $this->module == 'Users' && $this->action == 'SetTimezone' )
-            return 'Home';
+            return $defaultTab;
         // Default anonymous pages to be under Home
         elseif ( !isset($app_list_strings['moduleList'][$this->module]) )
-            return 'Home';
+            return $defaultTab;
+        elseif ( $_REQUEST['action'] == "ajaxui" )
+        	return $defaultTab;
         else
             return $this->module;
     }

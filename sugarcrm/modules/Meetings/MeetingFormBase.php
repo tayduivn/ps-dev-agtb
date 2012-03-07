@@ -181,8 +181,8 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 		$_POST['email_reminder_checked'] = 1;
 	}
 	
-	// don't allow to create not-editable meetings
-	$_POST['recurring_source'] = false;
+	// don't allow to set recurring_source from a form
+	unset($_POST['recurring_source']);
 	
 	$time_format = $timedate->get_user_time_format();
     $time_separator = ":";
