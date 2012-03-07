@@ -243,6 +243,7 @@ SUGAR.reports = function() {
 					
 				}
 				if (report_def_str.chart_type) {
+					do_round = report_def_str.do_round;
 					selected_chart_index = 0;
 					for(var i=0;i < document.ReportsWizardForm.chart_type.options.length; i++) {
 						if (document.ReportsWizardForm.chart_type.options[i].value == report_def_str.chart_type) {
@@ -1388,14 +1389,7 @@ SUGAR.reports = function() {
 			chart_type = document.ReportsWizardForm.chart_type.value;
 			chart_description = document.ReportsWizardForm.chart_description.value;
 			numerical_chart_column = document.ReportsWizardForm.numerical_chart_column.value;
-			if (document.ReportsWizardForm.do_round.checked)
-			{
-		        do_round = 1;
-			}
-			else
-			{
-		        do_round = 0;
-			}
+			do_round = document.ReportsWizardForm.do_round.checked ? 1 : 0;
 			SUGAR.reports.setNumericalChartColumnType();
 		},
 		saveCurrentStep: function() {
