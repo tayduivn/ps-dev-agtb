@@ -1,5 +1,5 @@
 /**
- * Base bean class. Use {@link dataManager} to create instances of beans.
+ * Base bean class. Use {@link DataManager} to create instances of beans.
  *
  * @class Bean
  * @extends Backbone.Model

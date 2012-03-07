@@ -46,7 +46,7 @@
  *
  * </code></pre>
  *
- * @class dataManager
+ * @class DataManager
  * @alias SUGAR.App.dataManager
  * @singleton
  */
