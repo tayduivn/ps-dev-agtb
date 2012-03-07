@@ -1,9 +1,6 @@
 (function(app) {
-
     /**
-     * Controller extends from a BackboneView
-     * It requires the app to be initialized for the controller init to work
-     *
+     * Controller manages the loading and unloading of Views within the app. It extends from a Backbone.View.
      * @class Controller
      * @singleton
      */
@@ -14,21 +11,27 @@
          * @method
          */
         initialize: function() {
+            /**
+             * The primary context state variable - the states associated with the focus of the View
+             * @property {Object}
+             */
             this.context = app.context.getContext();
 
             // Subscribe and publish events
-
-            /**
-             * Fully qualified event name "app:start". Start event. Fired when the application has
-             * finished loading its dependencies and should initialize
-             * everything.
-             *
-             * <pre><code>
-             * obj.on("app:start", callback);
-             * </pre></code>
-             * @event start
-             */
-            app.events.register("app:start", this);
+            app.events.register(
+                /**
+                 * Start event. Fired when the application has
+                 * finished loading its dependencies and should initialize
+                 * everything.
+                 *
+                 * <pre><code>
+                 * obj.on("app:start", callback);
+                 * </pre></code>
+                 * @event
+                 */
+                "app:start",
+                this
+            );
 
             // When the app has been synced, start the rest of the app flow.
             app.events.on("app:sync:complete", this.syncComplete);
@@ -40,9 +43,11 @@
          *
          * @method
          * @param {Object} params Options to set the global context and the current layout
-         *  @option {String} id Current Id of the global context
-         *  @option {String} module Current module
-         *  @option {String} layout Name of the current layout
+         * <ul>
+         *  <li>id: Current Id of the global context</li>
+         *  <li>module: Current module</li>
+         *  <li>layout: Name of the current layout</li>
+         * </ul>
          */
         loadView: function(params) {
             this.layout = null;
@@ -61,6 +66,7 @@
         },
 
         /**
+         * DEPRECATED?
          * Retrieves data based on the params. If the parameters include an id,
          * then a model is returned, else a collection is returned.
          *
@@ -113,7 +119,9 @@
         },
 
         /**
-         * Callback function once the app.sync() finishes.
+         * Callback function once the app.sync() finishes. This should check if
+         * the current user has authenticated or not and handle the redirection
+         * if necessary.
          * @method
          */
         syncComplete: function() {
@@ -147,9 +155,10 @@
          * Initializes this module when a new instance of App is created.
          *
          * @param {Object} instance The instance of the App
+         * @param {Array} modules An optional list of modules to initialize
          * @method
          */
-        initialize: function(instance, modules) {
+        initController: function(instance, modules) {
             if (modules && _.indexOf(modules, "controller") == -1) {
                 return;
             }
@@ -158,7 +167,6 @@
         }
     };
 
-
-    app.events.on("app:init", module.initialize);
+    app.events.on("app:init", module.initController);
     app.augment("controller", module);
 })(SUGAR.App);

@@ -12,6 +12,8 @@ var SUGAR = SUGAR || {};
  * </pre></code>
  * If you want to initialize an app without initializing its modules,
  * <pre><code>var App = SUGAR.App.init({el: "#root", silent: true});</code></pre>
+ * If you only want to initialize certain modules,
+ * <pre><code>var App = SUGAR.App.init({el: "#root", modules: ["router", "controller"]});</code></pre>
  * @class App
  * @singleton
  */
@@ -22,6 +24,7 @@ SUGAR.App = (function() {
     /**
      * @constructor Constructor class for the main framework app
      * @param {Object} opts Configuration options
+     * @private
      */
     function App(opts) {
         var appId = _.uniqueId("SugarApp_"),
@@ -30,6 +33,9 @@ SUGAR.App = (function() {
         // Set parameters
         opts = opts || {};
 
+        /**
+         * @cfg {String/Object} el Node or selector of root node for the app.
+         */
         if (opts.el) {
             rootEl = (_.isString(opts.el)) ? $(opts.el) : opts.el;
         } else {
@@ -44,11 +50,15 @@ SUGAR.App = (function() {
             appId: appId,
 
             /**
-             * Base element to use as the root of the App
-             * @property {jQuery Node}
+             * Base element to use as the root of the App. This will typically be a jQuery Node.
+             * @property {Object}
              */
             rootEl: rootEl,
 
+            /**
+             * Base url to use to build rest calls
+             * @cfg {String} rest
+             */
             /**
              * Alias to SUGAR.Api
              * @property {Object}
@@ -63,16 +73,14 @@ SUGAR.App = (function() {
         /**
          * Returns an instance of the app
          * @param {Object} opts Pass through configuration options
-         * <ul>
-         *     <li>el: Root node of where the application will be rendered to. Could be a jQuery node or selector</li>
-         *     <li>rest: Rest url root</li>
-         *     <li>silent: Set true if you want to suppress initialization of modules</li>
-         *     <li>modules: Set an array of modules you want to be initialized</li>
-         * </ul>
          * @return {Object} Application instance
          * @method
          */
         init: function(opts) {
+            /**
+             * Set an array of modules you want to be initialized.
+             * @cfg {Array} modules
+             */
             opts.modules = opts.modules || {};
             app = app || _.extend(this, new App(opts));
 
@@ -105,7 +113,10 @@ SUGAR.App = (function() {
                 this
             );
 
-            // If the silent flag is set, we do not want to initialize any of the app's modules.
+            /**
+             * Set true if you want to suppress initialization of modules
+             * @cfg {Boolean} silent
+             */
             if (!opts.silent) {
                 app.trigger("app:init", this, opts.modules);
             }
@@ -122,7 +133,7 @@ SUGAR.App = (function() {
         },
 
         /**
-         * Starts the application. A shortcut method to {@link Controller#start}.
+         * Starts the main execution phase of the application.
          * @method
          */
         start: function() {
