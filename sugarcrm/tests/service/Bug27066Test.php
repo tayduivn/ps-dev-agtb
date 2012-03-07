@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -63,6 +64,8 @@ class Bug27066Test extends SOAPTestCase
     public function tearDown()
     {
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
+        $GLOBALS['db']->query("DELETE FROM contacts where first_name='Contact Test 27066'");
+        $GLOBALS['db']->query("DELETE FROM accounts where name='Account Test 27066'");
         unset($GLOBALS['current_user']);
     }
 
@@ -81,6 +84,8 @@ class Bug27066Test extends SOAPTestCase
         $this->assertArrayHasKey("ids", $result, "Bad result");
 
         $new_contact = $result["ids"][0];
+        // switch to admin user
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, true);
         $contact = new Contact();
         $contact->retrieve($new_contact);
         $contact->load_relationship("accounts");
