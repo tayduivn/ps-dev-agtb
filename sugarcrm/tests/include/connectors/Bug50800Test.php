@@ -34,13 +34,13 @@ require_once('include/connectors/utils/ConnectorUtils.php');
 class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $has_custom_connectors_file;
-    var $custom_path = 'custom/modules/connectors/metadata/';
+    var $custom_path = 'custom/modules/Connectors/metadata/';
 
     function setUp() {
 
         //lets make sure the directory exists, if not let's create it
         if(!file_exists($this->custom_path)) {
-            sugar_mkdir($this->custom_path);
+            sugar_mkdir($this->custom_path,null,true);
         }
 
         //back up any existing connector file
@@ -54,18 +54,27 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
     
     function tearDown() {
         //remove connector file
-        unlink('custom/modules/connectors/metadata/connectors.php');
+         if(!file_exists($this->custom_path)){
+            unlink($this->custom_path.'connectors.php');
+         }
 
         //copy back original file if it existed
         if($this->has_custom_connectors_file) {
-           copy('custom/modules/connectors/metadata/connectors.php.bak', 'custom/modules/connectors/metadata/connectors.php');
-           unlink('custom/modules/connectors/metadata/connectors.php.bak');
+           copy($this->custom_path.'connectors.php.bak', $this->custom_path.'connectors.php');
+           unlink($this->custom_path.'connectors.php.bak');
         }	
 
     }
+
+    function testConnectorCustomPath(){
+
+        $this->assertFileExists($this->custom_path,' there was an error creating the custom path, perhaps permissions. ');
+    }
     
     function testConnectorFailsStringGracefully() {
-
+        if(!file_exists($this->custom_path)){
+                $this->markTestSkipped('path '.$this->custom_path.' could not be created, this test will fail');
+        }
         //now write a connector file with a string instead of an array for the connector var
         file_put_contents($this->custom_path.'connectors.php',"<?php\n \$connector = 'Connector String ';");
 
@@ -75,7 +84,9 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     function testConnectorFailsNullGracefully() {
-
+        if(!file_exists($this->custom_path)){
+                $this->markTestSkipped('path '.$this->custom_path.' could not be created, this test will fail');
+        }
         //now write a connector file with missing array info instead of an array for the connector var
         file_put_contents($this->custom_path.'connectors.php',"<?php\n ");
 
