@@ -167,7 +167,7 @@ class Tokenizer {
 
     function skip_whitespace() {
         $ch = $this->peek();
-        while((in_array($ch, $this->WHITESPACE_CHARS) || ord($ch) < 32) && $ch !== FALSE) {
+        while(in_array($ch, $this->WHITESPACE_CHARS)) {
             $this->nextChar();
             $ch = $this->peek();
         }
