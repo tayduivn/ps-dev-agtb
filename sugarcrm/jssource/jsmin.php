@@ -620,9 +620,12 @@ class SugarMin {
             $substr = $this->preprocess($token);
             $substr .= $token["value"];
             $substr .= $this->postprocess($token);
+
             $substr = str_replace('  ', ' ', $substr);
-            $substr .= str_replace(') ;', ');', $substr);
-            $str .= str_replace(') .', ').', $substr);
+            $substr = str_replace(') ;', ');', $substr);
+            $substr = str_replace(') .', ').', $substr);
+            
+            $str .= $substr;
 
             $token = $tokenizer->get_token();
         }
