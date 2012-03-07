@@ -49,7 +49,7 @@ describe("Application context manager", function() {
             });
 
             it("should fire off a context event", function() {
-                expect(stub.called).toBeTruthy();
+                expect(stub).toHaveBeenCalled();
             });
 
             // Ideally this function should go first, but don't want to write two different context mocks just to test reset. So we test

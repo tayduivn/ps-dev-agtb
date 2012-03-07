@@ -6,7 +6,7 @@ describe("Offline+DB+server", function() {
 
     var metadata, origSync, origDb, server;
     var app = SUGAR.App;
-    var odm = app.Offline.dataManager, dm = app.dataManager;
+    var odm = app.Offline.dataManager, dm = app.dataManager, spec = this;
     var success = function() {
         SugarTest.setWaitFlag();
     }
@@ -22,19 +22,22 @@ describe("Offline+DB+server", function() {
 
     beforeEach(function() {
         origSync = Backbone.sync;
-        origDb = app.config.db;
 
         app.dataManager.init();
-        app.config.db = app.webSqlAdapter;
         Backbone.sync = app.Offline.dataManager.sync;
         metadata = SugarTest.loadJson("things-metadata");
 
         SugarTest.resetWaitFlag();
 
         odm.migrate(metadata, {
-            success: function() {
-                app.dataManager.declareModels(metadata);
-                SugarTest.setWaitFlag();
+            callback: function(error) {
+                if (error) {
+                    spec.fail("Failed to migrate schema: " + error);
+                }
+                else {
+                    app.dataManager.declareModels(metadata);
+                    SugarTest.setWaitFlag();
+                }
             }
         });
 
@@ -48,7 +51,6 @@ describe("Offline+DB+server", function() {
 
     afterEach(function() {
         Backbone.sync = origSync;
-        app.config.db = origDb;
         server.restore();
     });
 

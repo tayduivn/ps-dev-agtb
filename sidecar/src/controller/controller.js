@@ -66,42 +66,6 @@
         },
 
         /**
-         * DEPRECATED?
-         * Retrieves data based on the params. If the parameters include an id,
-         * then a model is returned, else a collection is returned.
-         *
-         * @private
-         * @method
-         * @param {Object} opts
-         *  @option id Id of model (if model)
-         *  @option module Module type for data
-         * @return {Object} obj Data model / collection
-         */
-        getData: function(opts) {
-            var data, bean, collection;
-
-            if (opts.id) {
-                bean = app.dataManager.fetchBean(opts.module, opts.id);
-                collection = app.dataManager.createBeanCollection(opts.module, [bean]);
-            }
-            else if (opts.create) {
-                bean = app.dataManager.createBean(opts.module);
-                collection = app.dataManager.createBeanCollection(opts.module, [bean]);
-            }
-            else if (opts.url) {
-                // TODO: Make this hit a custom url
-            } else {
-                collection = app.dataManager.fetchBeans(opts.module);
-                bean = collection.models[0] || {};
-            }
-
-            return {
-                model: bean,
-                collection: collection
-            };
-        },
-
-        /**
          * Returns a layout from the layout manager
          *
          * @private
@@ -134,7 +98,6 @@
                     success: function(data) {
                         console.log("login success");
                         app.router.start();
-                        app.router.navigate("", {trigger: true});
                     }, error: function(data) {
                         console.log("login error");
                         console.log(data);

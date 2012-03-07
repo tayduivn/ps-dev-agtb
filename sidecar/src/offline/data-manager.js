@@ -22,13 +22,17 @@
             //app.dataManager.beanCollection = app.Offline.BeanCollection;
 
             if (!app.Offline.storageAdapter.open()) {
-                if (options.error) options.error(); // TODO: Pass something meaningful in the callback
+                if (options.callback) options.callback.call(this, "Can't open database"); // TODO: Pass something meaningful in the callback
                 return;
             }
 
             app.Offline.storageAdapter.migrate(metadata, options.oldMetadata,
-                options.success,
-                options.error
+                function() {
+                    if (options.callback) options.callback.call(this, null, metadata);
+                },
+                function(error) {
+                    if (options.callback) options.callback.call(this, error);
+                }
             );
         },
 

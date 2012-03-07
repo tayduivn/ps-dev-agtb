@@ -97,9 +97,7 @@
     app.augment("Offline", {
 
         init: function() {
-            if (app.config.offlineModeEnabled) {
-                Backbone.sync = app.Offline.dataManager.sync;
-            }
+            Backbone.sync = app.Offline.dataManager.sync;
         },
 
         DbError: function(code, message) {
@@ -115,7 +113,7 @@
                 var version = "1.0";
 
                 try {
-                    _db = app.config.db;
+                    _db = app[app.config.db];
                     _db.open(name, version, size);
                 }
                 catch (e) {
@@ -206,7 +204,7 @@
             this._tableName = 'd_' + name;
 
             this.fields = _.select(_.values(definition.vardefs.fields), function(field) {
-                return field.type != "link";
+                return field.type != "link" && field.name != "id";
             });
 
             // Build SQL statements

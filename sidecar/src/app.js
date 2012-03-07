@@ -85,7 +85,6 @@ SUGAR.App = (function() {
             app = app || _.extend(this, new App(opts));
 
             // Register app specific events
-
             app.events.register(
                 /**
                  * @event
@@ -110,6 +109,15 @@ SUGAR.App = (function() {
                  * This event is fired when the app has finished its syncing process and is ready to proceed.
                  */
                 "app:sync:complete",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * @event
+                 * This event is fired when a sync process failed
+                 */
+                "app:sync:error",
                 this
             );
 
@@ -184,11 +192,24 @@ SUGAR.App = (function() {
             async.waterfall([function(callback) {
                 app.metadata.sync(callback);
             }, function(metadata, callback) {
+                if (app.Offline) {
+                    app.Offline.dataManager.migrate(metadata, {callback: callback});
+                }
+                else {
+                    callback(null, metadata);
+                }
+            }, function(metadata, callback) {
                 app.dataManager.declareModels(metadata);
                 callback(null, metadata);
             }], function(err, result) {
-                // Result should be metadata
-                self.trigger("app:sync:complete", result);
+                if (err) {
+                    app.logger.error(err);
+                    self.trigger("app:sync:error", err);
+                }
+                else {
+                    // Result should be metadata
+                    self.trigger("app:sync:complete", result);
+                }
             });
         },
 
