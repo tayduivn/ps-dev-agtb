@@ -36,7 +36,7 @@ describe("Logger", function() {
             return "Test message " + a;
         });
 
-        expect(e.args[0]).toMatch(/INFO\[.{15,20}\]: Test message foo/);
+        expect(e.args[0]).toMatch(/INFO\[.{14,20}\]: Test message foo/);
         mock.verify();
     });
 
@@ -47,7 +47,7 @@ describe("Logger", function() {
         config.logLevel = logger.Levels.TRACE;
         var foo = { bar: "some bar"};
         logger.trace(foo);
-        expect(e.args[0]).toMatch(/TRACE\[.{15,20}\]: {"bar":"some bar"}/);
+        expect(e.args[0]).toMatch(/TRACE\[.{14,20}\]: {"bar":"some bar"}/);
         mock.verify();
     });
 
