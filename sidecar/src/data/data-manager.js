@@ -80,7 +80,7 @@
             // Backbone.js sync methods correspond to Sugar API functions except "read/get" :)
             _serverProxy.read = function(model, attributes, params, callbacks) {
                 return this.get(model, attributes, params, callbacks);
-            }
+            };
 
             Backbone.sync = this.sync;
         },
@@ -108,30 +108,33 @@
         declareModel: function(moduleName, module) {
             this.reset(moduleName);
 
-            _models[moduleName].primaryBean = module["primary_bean"];
+            _models[moduleName].primaryBean = module.primary_bean;
             _models[moduleName].beans = {};
             _models[moduleName].collections = {};
-            var beans = module["beans"];
+
+            var beans = module.beans;
 
             _.each(_.keys(beans), function(beanType) {
-                var vardefs = beans[beanType]["vardefs"];
+                var vardefs = beans[beanType].vardefs;
                 var fields = vardefs.fields;
-                var relationships = beans[beanType]["relationships"];
+                var relationships = beans[beanType].relationships;
                 var sf = {};
                 var handler = null;
 
                 var defaults = null;
                 _.each(_.values(fields), function(field) {
                     if (!_.isUndefined(field["default"])) {
-                        if (defaults == null) {
+                        if (defaults === null) {
                             defaults = {};
                         }
                         defaults[field.name] = field["default"];
                     }
-                    if (!_.isUndefined(field["type"])) {
-                        handler = app.sugarFieldManager.getFieldHandler(field["type"]);
-                        if (handler != null)
+
+                    if (!_.isUndefined(field.type)) {
+                        handler = app.sugarFieldManager.getFieldHandler(field.type);
+                        if (handler !== null) {
                             sf[field.name] = handler;
+                        }
                     }
                 });
 
@@ -141,23 +144,25 @@
                     /**
                      * Module name.
                      * @member Bean
-                     * @type {String}
+                     * @property {String}
                      */
                     module: moduleName,
                     /**
                      * Bean type.
                      * @member Bean
-                     * @type {String}
+                     * @property {String}
                      */
                     beanType: beanType,
                     /**
                      * Vardefs metadata.
                      * @member Bean
+                     * @property {Object}
                      */
                     fields: fields,
                     /**
                      * Relationships metadata.
                      * @member Bean
+                     * @property {Object}
                      */
                     relationships: relationships
                 });
@@ -239,13 +244,13 @@
 
         /**
          * Creates instance of a bean collection.
-         * <pre>
+         * <pre><code>
          * // Create an empty collection of account beans.
          * var accounts = SUGAR.App.dataManager.createBeanCollection("Accounts");
          *
          * // Create an empty collection of team set beans.
          * var teamSets = SUGAR.App.dataManager.createBeanCollection("Teams", null, "TeamSet");
-         * </pre>
+         * </code></pre>
          * @param {String} module Sugar module name.
          * @param {Bean[]} models(optional) initial array of models.
          * @param {String} beanType(optional) bean type. If not specified, a collection of primary bean types is returned.
@@ -266,7 +271,7 @@
          * @return {Relation} a new instance of the relationship
          */
         createRelation: function(link, bean1, beanOrId2, data) {
-            var name = bean1.fields[link]["relationship"];
+            var name = bean1.fields[link].relationship;
             var relationship = bean1.relationships[name];
 
             var id2;
@@ -281,7 +286,7 @@
             var ids = [bean1.id, id2];
             var beans = [bean1, beanOrId2];
 
-            if (relationship["rhs_module"] == bean1.module) {
+            if (relationship.rhs_module == bean1.module) {
                 ids.reverse();
                 beans.reverse();
             }
@@ -289,30 +294,31 @@
             var relation = new app.Relation({
                 /**
                  * Relationship name.
-                 * @type {String}
+                 * @property {String}
                  * @member Relation
                  */
                 name: name,
                 /**
                  * Relationship metadata.
                  * @member Relation
+                 * @property {Object}
                  */
                 relationship: relationship,
                 /**
                  * ID of the left bean.
-                 * @type {String}
+                 * @property {String}
                  * @member Relation
                  */
                 id1: ids[0],
                 /**
                  * ID of the right bean.
-                 * @type {String}
+                 * @property {String}
                  * @member Relation
                  */
                 id2: ids[1],
                 /**
                  * Reference to the left bean.
-                 * @type {Bean}
+                 * @property {Bean}
                  * @member Relation
                  */
                 bean1: beans[0],
@@ -341,7 +347,7 @@
          * @return {RelationCollection} a new instance of the relationship collection
          */
         createRelationCollection: function(link, bean) {
-            var name = bean.fields[link]["relationship"];
+            var name = bean.fields[link].relationship;
             var relationship = bean.relationships[name];
             return new app.RelationCollection(undefined, {
                 /**
@@ -386,7 +392,7 @@
         sync: function(method, model, options) {
             app.logger.trace('remote-sync-' + method + ": " + model);
 
-            options || (options = {});
+            options = options || (options = {});
 
             var success = function(data) {
                 if (options.success) {
