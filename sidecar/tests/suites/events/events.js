@@ -11,7 +11,7 @@ describe("Events Hub", function() {
             eventHub.on("testEvent", cb1);
             context.trigger("testEvent");
 
-            expect(cb1.called).toBeTruthy();
+            expect(cb1).toHaveBeenCalled();
         });
     });
 
@@ -23,8 +23,8 @@ describe("Events Hub", function() {
             context.trigger("nextEvent");
             context.trigger("testEvent");
 
-            expect(cb2.called).not.toBeTruthy();
-            expect(cb1.calledTwice).toBeTruthy();
+            expect(cb2).not.toHaveBeenCalled();
+            expect(cb1).toHaveBeenCalledTwice();
         });
     });
 
@@ -34,7 +34,7 @@ describe("Events Hub", function() {
             eventHub.clear(context);
             context.trigger("testEvent");
 
-            expect(cb3.called).not.toBeTruthy();
+            expect(cb3).not.toHaveBeenCalled();
         });
     })
 });

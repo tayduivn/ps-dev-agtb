@@ -207,8 +207,8 @@ describe("DataManager", function() {
         var bean = dm.createBean(moduleName, { first_name: "test", last_name: "more"});
         bean.set("first_name", "bar");
         expect(bean.get("first_name")).toBe("bar");
-        expect(getSpy.called).toBeTruthy();
-        expect(setSpy.called).toBeTruthy();
+        expect(getSpy).toHaveBeenCalled();
+        expect(setSpy).toHaveBeenCalled();
 
         stubGFH.restore();
     });
