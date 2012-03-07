@@ -589,8 +589,13 @@ class SugarMin {
      * @return void
      */
     private function __construct($text, $compression) {
-        $this->text = $text;
+        $this->text = trim($text);
         $this->compression = $compression;
+
+        // Check for BOM.
+        if(substr($this->text, 0, 3) == pack("CCC", 0xEF, 0xBB, 0xBF)) {
+            $this->text = substr($this->text, 3);
+        }
     }
 
     /**
