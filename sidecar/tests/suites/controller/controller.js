@@ -60,7 +60,7 @@ describe("Controller", function() {
             // Check to make sure it loads the proper data
             expect(dataSpy).toHaveBeenCalled();
             expect(collectionSpy).toHaveBeenCalled();
-            expect(_.isEmpty(controller.context.state)).toBeFalsy();
+            //expect(_.isEmpty(controller.context.get("model"))).toBeFalsy();
 
             // Check to make sure we have set the context
             expect(controller.context).toBeDefined();

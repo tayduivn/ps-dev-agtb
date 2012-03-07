@@ -15,52 +15,11 @@
          * @private
          */
         initialize: function() {
-            /* var bean = this;
-
-            Object.defineProperty(this.attributes, "full_name2", {
-                get : function(){
-                    return bean.get("first_name") + " " + bean.get("last_name");
+            _.each(this.fields , function(def){
+                if (def.calculated){
+                    //TODO: SugarLogic Code here
                 }
-            });*/
-        },
-
-        /**
-         * Overloaded backbone model set function.
-         * @param {String} key
-         * @param {Mixed} value
-         * @param {Object} options
-         * @return {Mixed}
-         */
-        set: function(key, value, options) {
-            var attrs, attr, val;
-            if (_.isObject(key) || key === null) {
-                attrs = key;
-                options = value;
-            } else {
-                attrs = {};
-                attrs[key] = value;
-            }
-
-            // Extract attributes and options.
-            options = options || (options = {});
-
-            if (!attrs) return this;
-            if (attrs instanceof Backbone.Model) attrs = attrs.attributes;
-            if (options.unset) for (attr in attrs) attrs[attr] = void 0;
-
-            for (attr in attrs) {
-                if (this.sugarFields && this.sugarFields[attr]){
-                    Backbone.Model.prototype.set.call(this, attr, this.sugarFields[attr].set(this, attr, attrs[attr]), options);
-                } else {
-                    Backbone.Model.prototype.set.call(this, attr, attrs[attr], options);
-                }
-            }
-            return this;
-        },
-
-        get: function(attr) {
-            return (this.sugarFields && this.sugarFields[attr]) ?
-                this.sugarFields[attr].get(this, attr) : Backbone.Model.prototype.get.call(this, attr);
+            }, this);
         },
 
         /**

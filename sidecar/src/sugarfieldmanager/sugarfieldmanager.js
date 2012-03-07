@@ -134,6 +134,10 @@
                         return result;
                     },
 
+                    get : function(def){
+                        return new app.SugarField(def);
+                    },
+
                     /**
                      * Get an object that contains the setter and getter functions for this type of it exists
                      * @param name

@@ -70,7 +70,10 @@ fixtures.metadata = {
                         type:"button_save",
                         label:"Save",
                         value:"save",
-                        primary:true
+                        primary:true,
+                        events : {
+                            click : ""
+                        }
                     },
                     {
                         name:"cancel_button",
@@ -80,11 +83,6 @@ fixtures.metadata = {
                         route:{
                             action:"detail",
                             module: "Cases"
-                        },
-                        events : {
-                            click : "SUGAR.App.myExtension.callback",
-                            drag: "",
-                            foo : 'function(e){console.log(this)}'
                         },
                         primary:false
                     }
@@ -274,8 +272,8 @@ fixtures.metadata = {
                             module: "Contacts"
                         },
                         events : {
-                            click : "SUGAR.App.myExtension.callback",
-                            drag: "",
+                            //click : "SUGAR.App.myExtension.callback",
+                            //drag: "",
                             foo : 'function(e){console.log(this)}'
                         },
                         primary:false

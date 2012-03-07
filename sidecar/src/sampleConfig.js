@@ -35,7 +35,7 @@
          * Sugar REST server URL.
          * @cfg {String}
          */
-        baseUrl: '/builds/ent/sugarcrm/rest'
+        baseUrl: '../sugarcrm/rest'
 
     }, false);
 

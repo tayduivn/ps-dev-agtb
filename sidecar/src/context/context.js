@@ -175,8 +175,15 @@
                 } else if (state.url) {
                     // TODO: Make this hit a custom url
                 } else {
+                    var that = this;
+                    options.success = function(){
+                        that.set({model:collection.models[0]});
+                        if (state.view) {
+                            //state
+                            state.view.render();
+                        }
+                    };
                     collection = app.dataManager.createBeanCollection(state.module);
-                    state.view.bindData(collection);
                     collection.fetch(options);
                     bean = collection.models[0] || {};
                 }

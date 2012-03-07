@@ -1,3 +1,31 @@
+
+
+/**
+ * Modification to backbone events to allow unbinding by scope only
+ * TODO: Don't put this here, it should be in its own file.
+ */
+
+var offByScope = function(scope){
+    var calls;
+    calls = this._callbacks;
+    _.each(calls, function(node, ev){
+        if (node.context === scope)
+            this.off(ev, node.callback, node.context);
+    }, this);
+    return this;
+};
+_.extend(Backbone.Events, {
+    offByScope : offByScope
+});
+
+_.extend(Backbone.Model.prototype, {
+    offByScope : offByScope
+});
+
+_.extend(Backbone.View.prototype, {
+    offByScope : offByScope
+});
+
 /**
  SideCar Platform
  * @ignore
