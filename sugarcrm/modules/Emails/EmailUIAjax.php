@@ -693,7 +693,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             //Bug: 
             //echo $json->encode($out);
             //header("Content-Type: application/json; charset=UTF-8");
-            echo $json->encode(utf8_recursive_encode($out));
+            echo $json->encode($out); // talk to collin about how to make utf8_recursive_encode safe
         } else {
             echo "error: no UID";
         }
