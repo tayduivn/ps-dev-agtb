@@ -77,7 +77,6 @@ class Bug27066Test extends SOAPTestCase
             array(
                 array('name'=>'first_name','value'=>'Contact Test 27066'),
                 array('name'=>'account_name','value'=>$this->account->name),
-                array('name' => 'team_id', 'value' => $this->team1->id)
             )),
         );
 
@@ -86,7 +85,7 @@ class Bug27066Test extends SOAPTestCase
 
         $new_contact = $result["ids"][0];
         // switch to admin user
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, true);
         $contact = new Contact();
         $contact->retrieve($new_contact);
         $contact->load_relationship("accounts");
