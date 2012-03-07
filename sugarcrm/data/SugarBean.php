@@ -375,6 +375,37 @@ class SugarBean
         //END SUGARCRM flav=pro ONLY
     }
 
+    /**
+     * Load visibility manager
+     * @return BeanVisibility
+     */
+    public function loadVisibility()
+    {
+        if(empty($this->visibility) && isset($GLOBALS['dictionary'][$this->object_name]['visibility'])) {
+            $this->visibility = new BeanVisibility($this, $GLOBALS['dictionary'][$this->object_name]['visibility']);
+        }
+        return $this->visibility;
+    }
+
+    /**
+     * Dynamically add visibility strategy to the bean
+     * @param string $strategy Strategy class name
+     * @param mixed $data Parameters
+     */
+    public function addVisibilityStrategy($strategy, $data = null)
+    {
+        return $this->loadVisibility()->addStrategy($strategy, $data);
+    }
+
+    /**
+     * Add visibility clauses to the query
+     * @param string $query
+     */
+    public function addVisibilityClause(&$query)
+    {
+        return $this->loadVisibility()->addVisibilityClause($query);
+    }
+
 
     /**
      * Returns the object name. If object_name is not set, table_name is returned.
@@ -482,11 +513,11 @@ class SugarBean
      *
      * Internal function, do not override.
      */
-    public function get_custom_table_name() 
-    { 
-        return $this->getTableName().'_cstm'; 
+    public function get_custom_table_name()
+    {
+        return $this->getTableName().'_cstm';
     }
-    
+
     /**
      * If auditing is enabled, create the audit table.
      *
@@ -3102,6 +3133,9 @@ function save_relationship_changes($is_update, $exclude=array())
             $ret_array['select'] = " SELECT $distinct $this->table_name.id ";
         }
         $ret_array['from'] = " FROM $this->table_name ";
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->add_team_security_where_clause($ret_array['from']);
+        //END SUGARCRM flav=pro ONLY
         $ret_array['from_min'] = $ret_array['from'];
         $ret_array['secondary_from'] = $ret_array['from'] ;
         $ret_array['where'] = '';
@@ -3126,14 +3160,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 $ret_array['select'] .= ' ' .$custom_join['select'];
             }
         }
-        //BEGIN SUGARCRM flav=pro ONLY
-        if(!$this->disable_row_level_security)
-        {
-            $this->add_team_security_where_clause($ret_array['from']);
-            $this->add_team_security_where_clause($ret_array['from_min']);
-            if(!$singleSelect)$this->add_team_security_where_clause($ret_array['secondary_from']);
-        }
-        //END SUGARCRM flav=pro ONLY
+
         if($custom_join)
         {
             $ret_array['from'] .= ' ' . $custom_join['join'];
@@ -4783,7 +4810,7 @@ function save_relationship_changes($is_update, $exclude=array())
         //fixing bug #46230: Dependent Field values are not refreshed in subpanels & listviews
         $this->updateDependentField();
         //END SUGARCRM flav=pro ONLY
-        
+
         $return_array = Array();
         global $app_list_strings, $mod_strings;
         foreach($this->field_defs as $field=>$value){
@@ -5001,12 +5028,22 @@ function save_relationship_changes($is_update, $exclude=array())
 
     //BEGIN SUGARCRM flav=pro ONLY
     /**
+     * Add visibility clauses to the query
+     * @param string $query
+     */
+    function add_team_security_where_clause(&$query)
+    {
+        return $this->addVisibilityClause($query);
+    }
+
+    /**
     * Add a join to the query to enforce the data returned will only be for
     * teams to which this user has membership
      *
      * Internal function, do not override.
+     * @deprecated
     */
-    function add_team_security_where_clause(&$query,$table_alias='',$join_type='INNER',$force_admin=false,$join_teams=false)
+    function add_team_security(&$query,$table_alias='',$join_type='INNER',$force_admin=false,$join_teams=false)
     {
         // We need to confirm that the user is a member of the team of the item.
 

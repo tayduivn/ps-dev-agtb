@@ -27,7 +27,8 @@
  ********************************************************************************/
 
 $vardefs = array(
-'fields' => array(
+  'visibility' => array('TeamSecurity' => true),
+  'fields' => array(
 	 //BEGIN SUGARCRM flav=pro ONLY
 	'team_id' =>
 		array (
@@ -98,7 +99,7 @@ $vardefs = array(
 			'len' => 36,
 			'custom_type' => 'teamset',
 		),
-		'team_link' => 
+		'team_link' =>
 	    array (
 	      'name' => 'team_link',
 	      'type' => 'link',
@@ -139,16 +140,16 @@ $vardefs = array(
 		'reportable'=>false,
 	),
 	//END SUGARCRM flav=pro ONLY
-), 
+),
 
 'relationships'=>array(
 	strtolower($module).'_team_count_relationship' =>
 		 array(
 		 	'lhs_module'=> 'Teams',
-		 	'lhs_table'=> 'team_sets', 
+		 	'lhs_table'=> 'team_sets',
 		 	'lhs_key' => 'id',
-    		'rhs_module'=> $module, 
-    		'rhs_table'=> $table_name, 
+    		'rhs_module'=> $module,
+    		'rhs_table'=> $table_name,
     		'rhs_key' => 'team_set_id',
    			'relationship_type'=>'one-to-many'
 		 ),
@@ -175,7 +176,7 @@ $vardefs = array(
 'indices' => array(
 		array(
 			'name' => 'idx_'.strtolower($table_name).'_tmst_id',
-			'type' => 'index', 
+			'type' => 'index',
 			'fields' => array('team_set_id')
 		),
 	)
