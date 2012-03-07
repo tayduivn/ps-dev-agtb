@@ -297,10 +297,8 @@ class ViewModulefield extends SugarView
         $fv->ss->assign('field_types',$field_types);
         $ftsEngineType = getFTSEngineType();
 
-        // these are the types that can be full text searched
-        $ftsEnabledTypes = array('name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url');
-
-        if (!empty($ftsEngineType) && in_array($vardef['type'], $ftsEnabledTypes)) {
+        require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
+        if (!empty($ftsEngineType) && SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type'])) {
             $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');
             $fv->ss->assign('fts_options', $ftsBoostOptions);
             $fv->ss->assign('show_fts', true);
