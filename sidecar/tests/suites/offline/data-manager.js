@@ -30,7 +30,6 @@ describe("DataManager.sync", function() {
         app.Offline.storageAdapter = sa;
         spySa = sinon.spy(sa, "sync");
         options.synced = false;
-        SugarTest.resetWaitFlag();
     });
 
     afterEach(function() {
@@ -169,7 +168,6 @@ describe("DataManager.sync", function() {
             origDataManager = app.dataManager;
             app.dataManager = dm;
             spyDm = sinon.spy(dm, "sync");
-            SugarTest.resetWaitFlag();
         });
 
         afterEach(function() {

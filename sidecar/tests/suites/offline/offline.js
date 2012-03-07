@@ -1,6 +1,6 @@
 describe("Offline", function() {
 
-    var app = SUGAR.App;
+    var app = SUGAR.App, origWebSqlAdapter = app.webSqlAdapter, spec = this;
 
     // WebSQL adapter stub
     var db = {
@@ -70,7 +70,7 @@ describe("Offline", function() {
         };
 
         beforeEach(function() {
-            app.config.db = db;
+            app.webSqlAdapter = db;
             app.dataManager.beanModel = app.Offline.Bean;
 
             var metadata = SugarTest.loadJson("things-metadata");
@@ -78,11 +78,11 @@ describe("Offline", function() {
             sa.migrate(metadata);
             dm.declareModels(metadata);
             dbSpy = sinon.spy(db, "executeSql");
-            SugarTest.resetWaitFlag();
         });
 
         afterEach(function() {
             if (db.executeSql.restore) db.executeSql.restore();
+            app.webSqlAdapter = origWebSqlAdapter;
         });
 
         it("should be able to insert a bean", function() {
@@ -248,22 +248,27 @@ describe("Offline", function() {
 
         beforeEach(function() {
             metadata = SugarTest.loadJson("metadata");
-            app.config.db = db;
+            app.webSqlAdapter = db;
             dm.init();
             dbSpy = sinon.spy(db, "executeStatements");
-            SugarTest.resetWaitFlag();
         });
 
         afterEach(function() {
             if (db.executeStatements.restore) db.executeStatements.restore();
+            app.webSqlAdapter = origWebSqlAdapter;
         });
 
         it("should be able to create db schema and declare models", function() {
             runs(function() {
                 odm.migrate(metadata, {
-                    success: function() {
-                        dm.declareModels(metadata);
-                        SugarTest.setWaitFlag();
+                    callback: function(error) {
+                        if (error) {
+                            spec.fail("Failed to migrate: " + error);
+                        }
+                        else {
+                            dm.declareModels(metadata);
+                            SugarTest.setWaitFlag();
+                        }
                     }
                 });
             });
