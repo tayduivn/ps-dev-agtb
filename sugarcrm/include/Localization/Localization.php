@@ -783,14 +783,13 @@ eoq;
      * Attempts to detect the charset used in the string
      *
      * @param  $str string
+     * @param $strict bool default false (use strict encoding?)
      * @return string
      */
-    public function detectCharset(
-        $str
-        )
+    public function detectCharset($str, $strict=false)
     {
         if ( function_exists('mb_convert_encoding') )
-            return mb_detect_encoding($str,'ASCII,JIS,UTF-8,EUC-JP,SJIS,ISO-8859-1');
+            return mb_detect_encoding($str,'ASCII,JIS,UTF-8,EUC-JP,SJIS,ISO-8859-1',$strict);
 
         return false;
     }

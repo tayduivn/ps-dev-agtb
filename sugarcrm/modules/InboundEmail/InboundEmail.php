@@ -349,14 +349,7 @@ class InboundEmail extends SugarBean {
      */
     function convertToUtf8($input)
     {
-       // bail if we have no way to detect a charset
-       if (!function_exists('mb_convert_encoding')) {
-           return $input;
-       }
-       //$charset = $GLOBALS['locale']->detectCharset($input);
-        // we need something a bit more strict than detectCharset
-        $charset = mb_detect_encoding($input,'ASCII,JIS,UTF-8,EUC-JP,SJIS,ISO-8859-1', true);
-
+       $charset = $GLOBALS['locale']->detectCharset($input);
 
        // we haven't a clue due to missing package?, just return as itself
        if ($charset === FALSE) {

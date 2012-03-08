@@ -61,6 +61,11 @@ class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
                 'GyRCJWYhPCU2TD4bKEI=',
                 'ユーザ名',
                 'ISO-2022-JP'
+            ),
+            array (
+                'RnJvbTog6eXh7CD55eTt',
+                'From: יובל שוהם',
+                'ISO-8859-8'
             )
         );
     }
