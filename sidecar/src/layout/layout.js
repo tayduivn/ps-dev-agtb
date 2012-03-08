@@ -18,7 +18,7 @@
 
                 Handlebars.registerHelper('buildRoute', function(context, action, model, options) {
 
-
+                    var route = app.router.buildRoute(context, action, model, options);
                     return new Handlebars.SafeString(route);
                 });
 
