@@ -133,7 +133,6 @@ class SOAPAPI4_1Test extends SOAPTestCase
 
     /**
      * testGetModifiedRelationships
-     *
      */
     public function testGetModifiedRelationships()
     {
@@ -144,21 +143,24 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $contactsSelectFields = array('id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced');
 
        	$result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
-        $this->assertNotEmpty($result[2]['item']);
-        $this->assertEquals(2, $result[0]);
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(2, $result['result_count']);
+        $this->assertEquals(2, $result['next_offset']);
 
         $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => '1', 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => $one_hour_ago));
-        $this->assertNotEmpty($result[2]['item']);
-        $this->assertEquals(1, $result[0]);
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(1, $result['result_count']);
+        $this->assertEquals(1, $result['next_offset']);
 
         $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Calls', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'calls_users', 'deletion_date' => ''));
-        $this->assertNotEmpty($result[2]['item']);
-        $this->assertEquals(2, $result[0]);
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(2, $result['result_count']);
+        $this->assertEquals(2, $result['next_offset']);
 
         $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Contacts', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $contactsSelectFields, 'relationship_name' => 'contacts_users', 'deletion_date' => ''));
-        $this->assertNotEmpty($result[2]['item']);
-        $this->assertEquals(1, $result[0]);
-
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(1, $result['result_count']);
+        $this->assertEquals(1, $result['next_offset']);
     }
 
 
