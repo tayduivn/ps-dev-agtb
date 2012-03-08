@@ -388,8 +388,9 @@ class SugarBean
      */
     public function loadVisibility()
     {
-        if(empty($this->visibility) && isset($GLOBALS['dictionary'][$this->object_name]['visibility'])) {
-            $this->visibility = new BeanVisibility($this, $GLOBALS['dictionary'][$this->object_name]['visibility']);
+        if(empty($this->visibility)) {
+            $data = isset($GLOBALS['dictionary'][$this->object_name]['visibility'])?$GLOBALS['dictionary'][$this->object_name]['visibility']:array();
+            $this->visibility = new BeanVisibility($this, $data);
         }
         return $this->visibility;
     }
