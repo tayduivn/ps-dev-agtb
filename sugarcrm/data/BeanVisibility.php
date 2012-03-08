@@ -48,6 +48,7 @@ class BeanVisibility
     {
         $this->bean = $bean;
         foreach($metadata as $visclass => $data) {
+            if($data === false) continue;
             $this->strategies[] = new $visclass($bean, $data);
         }
     }
