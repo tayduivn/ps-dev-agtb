@@ -11,7 +11,6 @@
         text: "textarea"
     };
 
-
     //Function that attempts to retrieve metadata from offline cache.
     //If its not there, it will make a server call to start a sync
     //The sync will block the app
