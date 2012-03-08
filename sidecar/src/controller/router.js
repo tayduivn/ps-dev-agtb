@@ -101,8 +101,9 @@
 
         buildRoute : function(context, action, model, options){
             var module = options.module || model.module || context.module;
+
             action = options.action || action;
-            var id = model.get ? model.get("id") : model;
+            var id = model.get ? model.get("id") : "";
             var route = "";
             if (id && module) {
                 route = module + "/" + id;
