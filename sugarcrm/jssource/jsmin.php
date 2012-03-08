@@ -436,34 +436,40 @@ class Tokenizer {
     }
 
     function read_punc() {
-        $last_token = $this->tokens_since_last_keyword[count($this->tokens_since_last_keyword) - 1];
+        $last_token = array();
+        if(!empty($this->tokens_since_last_keyword)) {
+            $last_token = $this->tokens_since_last_keyword [count($this->tokens_since_last_keyword) - 1];
+        }
         $token = $this->token("punc", $this->nextChar());
         if($token["value"] == "{") {
             // It's either an object literal, or the start of a block.
-            // Object literals could be variable assignemnts, passed in directly into functions without being named, or could be subproperties.
+            // Object literals could be variable assignemnts, passed in directly into functions without being named, could be subproperties, or returned.
             // Case one: { follows an =
             // Case two: { follows a ( or a ,
             // Case three: { follows a :
+            // Case four: { follows a return
             $block_type = $this->tokens_since_last_keyword[0]["value"];
-            if($last_token['type'] == 'punc') {
+            if(isset($last_token['type']) && $last_token['type'] == 'punc') {
                 if($last_token['value'] == '=' || $last_token['value'] == '(' || $last_token['value'] == ',' || $last_token['value'] == ':') {
                     $block_type = 'object_literal';
                 }
+            } elseif(isset($last_token['value']) && $last_token['value'] == 'return') {
+                $block_type = 'object_literal';
             }
             $token["block_type"] = $block_type;
 
-            //$spaces = count($this->open_blocks) * 4;
-            //while($spaces > 0) { echo ' '; --$spaces; }
-            //echo "Start ".$block_type."\n";
+            // $spaces = count($this->open_blocks) * 4;
+            // while($spaces > 0) { echo ' '; --$spaces; }
+            // echo "Start ".$block_type."\n";
             array_push($this->open_blocks, $block_type);
         } elseif($token["value"] == "}") {
             // LIFO queue.
             $block_type = array_pop($this->open_blocks);
             $token["block_type"] = $block_type;
             
-            //$spaces = count($this->open_blocks) * 4;
-            //while($spaces > 0) { echo ' '; --$spaces; }
-            //echo "End ".$type."\n";
+            // $spaces = count($this->open_blocks) * 4;
+            // while($spaces > 0) { echo ' '; --$spaces; }
+            // echo "End ".$block_type."\n";
         }
         return $token;
     }
