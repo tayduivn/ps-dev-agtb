@@ -105,6 +105,14 @@ function buildTableForm($rows, $mod='Accounts'){
 		$form = '<table width="100%"><tr><td>'.$mod_strings['MSG_SHOW_DUPLICATES']. '</td></tr><tr><td height="20"></td></tr></table>';
 	}
 
+    if(isset($_POST['return_action']) && $_POST['return_action'] == 'SubPanelViewer') {
+        $_POST['return_action'] = 'DetailView';
+    }
+
+    if(isset($_POST['return_action']) && $_POST['return_action'] == 'DetailView' && empty($_REQUEST['return_id'])) {
+        unset($_POST['return_action']);
+    }
+
 	$form .= "<table width='100%' cellpadding='0' cellspacing='0' class='list view' border='0'><tr class='pagination'><td colspan='$cols'><table width='100%' cellspacing='0' cellpadding='0' border='0'><tr><td>";
 	// handle buttons
 	if ($action == 'ShowDuplicates') {
@@ -128,14 +136,6 @@ function buildTableForm($rows, $mod='Accounts'){
 	}
 	require_once('include/formbase.php');
 
-	if(isset($_POST['return_action']) && $_POST['return_action'] == 'SubPanelViewer') {
-		$_POST['return_action'] = 'DetailView';
-	} 
-	
-	if(isset($_POST['return_action']) && $_POST['return_action'] == 'DetailView' && empty($_REQUEST['return_id'])) {
-		unset($_POST['return_action']);
-	}	
-	
 	$form .= getPostToForm();
 	if(isset($rows[0])){
 		foreach ($rows[0] as $key=>$value){
