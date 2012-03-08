@@ -74,7 +74,7 @@ class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSele
 
 		$focus = $widget_data['focus'];
 		if(ACLController::moduleSupportsACL($widget_data['module']) && !ACLController::checkAccess($widget_data['module'], 'list', true)){
-			$button = ' <input type="button" name="' .$this->getWidgetId() . '_select_button" id="' .$this->getWidgetId() . '_select_button" class="button"' . "\"\n"
+			$button = ' <input type="button" name="' .$this->getWidgetId() . '" id="' .$this->getWidgetId() . '" class="button"' . "\"\n"
 			. ' title="' . $this->title . '"'
 			. ' value="' . $this->value . "\"\n"
 			.' disabled />';
@@ -173,7 +173,7 @@ class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSele
 		$json_encoded_php_array = $this->_create_json_encoded_popup_request($popup_request_data);
 
 		return '<form action="index.php">' . "\n"
-			. ' <input type="button" name="' .$this->getWidgetId() . '_select_button" id="' .$this->getWidgetId() . '_select_button" class="button"' . "\"\n"
+			. ' <input type="button" name="' .$this->getWidgetId() . '" id="' .$this->getWidgetId() . '" class="button"' . "\"\n"
 				. ' title="' . $this->title . '"'
 			. ' value="' . $this->value . "\"\n"
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' /></form>\n";
