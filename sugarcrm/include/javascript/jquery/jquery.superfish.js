@@ -39,7 +39,6 @@
             if (!o.firstOnClick || menuActive || $$.parent()[0] != menu)
             {
                 clearTimeout(menu.sfTimer);
-                console.log('v' + menu.sfTimer);
                 $$.showSuperfishUl().siblings().hideSuperfishUl();
             }
         },
@@ -49,17 +48,18 @@
             o = sf.op,
             $menu = $(menu);
             clearTimeout(menu.sfTimer);
-            console.log('t' + menu.sfTimer);
-            menu.sfTimer = $menu.hasClass(sf.retainClass) ? null : setTimeout(function() {
-                o.retainPath = ($.inArray($$[0], o.$path) > -1);
-                $$.hideSuperfishUl();
-                if (o.$path.length && $$.parents(['li.', o.hoverClass].join('')).length < 1)
-                {
-                    over.call(o.$path);
-                }
-                else
-                {
-                    menuActive = false;
+            menu.sfTimer = $menu.hasClass(sf.defaults['retainClass']) ? null : setTimeout(function() {
+                if($menu.hasClass(sf.defaults['retainClass']) === false) {
+                    o.retainPath = ($.inArray($$[0], o.$path) > -1);
+                    $$.hideSuperfishUl();
+                    if (o.$path.length && $$.parents(['li.', o.hoverClass].join('')).length < 1)
+                    {
+                        over.call(o.$path);
+                    }
+                    else
+                    {
+                        menuActive = false;
+                    }
                 }
 
             },
@@ -69,7 +69,6 @@
             var menu = $menu.hasClass(sf.menuClass) ? $menu[0] : $menu.parents(['ul.', c.menuClass, ':first'].join(''))[0];
             if(!menu)
                 return $menu[0];
-                //menu = $('ul.' + sf.c.menuClass + ':visible')[0];
             sf.op = sf.o[menu.serial];
             return menu;
         },
@@ -163,55 +162,58 @@
         return (_val) ? _val : 0;
     };
     sf.IEfix = function($ul) {
-        //if ($.browser.msie && $.browser.version > 6) {
+        if ($.browser.msie && $.browser.version > 6) {
             if($ul) {
-                var $$ = this,
-                    o = sf.op,
-                    _id = this.attr("ul-child-id") ? this.attr("ul-child-id") : ($ul.attr('id')) ? $ul.attr('id') : o.megamenuID ? o.megamenuID + ++sf.counter : 'megamenu' + ++sf.counter,
-                    _top = this.position().top + this.outerHeight() + 1,
-                    _left = this.offset().left - sf.cssValue.call($ul, "border-left-width"),
-                    $menu = this;
-                if(this.css('position') == 'static') {
-                    _left += this.outerWidth() + sf.cssValue.call($ul, "border-right-width");
-                    $ul.addClass('sf-sub-modulelist');
-                    //$menu = $('ul.' + sf.c.menuClass + ':visible');
-                }
+                this.each(function(){
+                    var $$ = $(this),
+                        o = sf.op,
+                        _id = $$.attr("ul-child-id") ? $$.attr("ul-child-id") : ($ul.attr('id')) ? $ul.attr('id') : o.megamenuID ? o.megamenuID + ++sf.counter : 'megamenu' + ++sf.counter,
+                        _top = $$.position().top + $$.outerHeight() + 1,
+                        _left = $$.offset().left - sf.cssValue.call($ul, "border-left-width"),
+                        $menu = $('ul.' + sf.c.menuClass + ':visible');
+                    if($$.css('position') == 'static') {
+                        _left += $$.outerWidth() + sf.cssValue.call($ul, "border-right-width");
+                        $ul.addClass('sf-sub-modulelist').on('mouseover', function(){
+                                $$.addClass(sf.defaults['retainClass']);
+                            }).on('mouseout', function(){
+                                $$.removeClass(sf.defaults['retainClass']);
+                                $('ul.' + sf.c.menuClass + ':visible').removeClass(sf.defaults['retainClass'])[0].sfTimer = setTimeout(function(){
+                                    $$.hideSuperfishUl();
+                                    $('ul.' + sf.c.menuClass + ':visible > li').hideSuperfishUl();
+                                }, o.delay);
+                            });
+                    }
 
-                $('body').append($ul.attr("id", _id).css({
-                    top: _top,
-                    left:_left,
-                    position: 'fixed'
-                    })
-                    .mouseover(function(){
-                        var menu = sf.getMenu($menu),
-                            o = sf.op;
-                        clearTimeout(menu.sfTimer);
-                        console.log('ov' + menu.sfTimer);
-                        if( $(menu).hasClass(sf.defaults['retainClass']) === false )
-                            $(menu).addClass(sf.defaults['retainClass']);
-                    }).mouseout(function(){
-                        var menu = sf.getMenu($menu),
-                            o = sf.op;
-                        clearTimeout(menu.sfTimer);
-                        console.log('ot' + menu.sfTimer);
-                        menu.sfTimer = setTimeout(function() {
-                            console.log('kill3' + menu.sfTimer);
-                            //if($(menu).hasClass(sf.defaults['retainClass'])){
+                    $('body').append($ul.attr("id", _id).css({
+                        top: _top,
+                        left:_left,
+                        position: 'fixed'
+                        }).on('mouseover',function(){
+                            var menu = sf.getMenu($menu),
+                                o = sf.op;
+                            clearTimeout(menu.sfTimer);
+                            if( $(menu).hasClass(sf.defaults['retainClass']) === false )
+                                $(menu).addClass(sf.defaults['retainClass']);
+                        }).on('mouseout', function(){
+                            var menu = sf.getMenu($menu),
+                                o = sf.op;
+                            clearTimeout(menu.sfTimer);
+                            menu.sfTimer = setTimeout(function() {
                                 $$.hideSuperfishUl();
                                 $(menu).removeClass(sf.defaults['retainClass']);
-                            //}
-                        }, o.delay)
-                    })
-                );
-                this.attr("ul-child-id", _id);
+                            }, o.delay)
+                        })
+                    );
+                    $$.attr("ul-child-id", _id);
+                });
 
             } else {
                 this.each(function(){
                     var _id = $(this).attr("ul-child-id");
-                    $(this).append($("body>#"+_id));
+                    $(this).append($("body>#"+_id).off('mouseover mouseout'));
                 });
             }
-        //}
+        }
     };
     sf.c = {
         bcClass: 'sf-breadcrumb',

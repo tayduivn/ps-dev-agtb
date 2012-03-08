@@ -99,7 +99,7 @@ SUGAR.append(SUGAR.themes, {
         makeCall = true;
     },
     toggleMenuOverFlow: function(menuName,maction) {
-    	
+
     	var menuName = "#"+menuName;
 	    if(maction == "more") {
 			$(menuName).addClass("showMore");
@@ -217,21 +217,22 @@ SUGAR.append(SUGAR.themes, {
 	    var maxMenuWidth = Math.round($(window).width()*.45);
 		var menuWidth = $('#moduleList').width();
 		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
-
-			$('ul.sf-menu').children("li").each(
-				function(index) {
-						menuItemsWidth += $(this).width();
-					if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
-			    		//console.log($(this).attr("id"));
-			    		$(this).css("display","none");
-			    		$("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
-					}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
-						//console.log($(this).attr("id"));
-						$(this).css("display","list-item");
-						$("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
-					}
-				}
-			);
+			$('ul.sf-menu').each(function(){
+                $(this).children("li").each(
+                    function(index) {
+                            menuItemsWidth += $(this).width();
+                        if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
+                            //console.log($(this).attr("id"));
+                            $(this).css("display","none");
+                            $("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
+                        }  else if( (menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) || $(this).hasClass("moduleTabExtraMenu") ) {
+                            //console.log($(this).attr("id"));
+                            $(this).css("display","list-item");
+                            $("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
+                        }
+                    }
+			    );
+            });
     },
     globalToolTips: function () {
     	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
@@ -308,14 +309,31 @@ SUGAR.append(SUGAR.themes, {
 		});	
    	},
    	sugar_theme_gm_switch: function(groupName) {
-	   	$('#themeTabGroupMenu_'+sugar_theme_gm_current).css("display","none");
-	    sugar_theme_gm_current = groupName;
-	    $.ajax({
+
+        SUGAR.themes.current_theme = (SUGAR.themes.current_theme) ? SUGAR.themes.current_theme : sugar_theme_gm_current;
+        $('ul.sf-menu:visible li').hideSuperfishUl();
+        $('#moduleTabMore'+SUGAR.themes.current_theme +' li').hideSuperfishUl();
+        var dcheight = $("#dcmenu").outerHeight();
+        var current_menu = $('ul.sf-menu:visible');
+        var target_menu = $('#themeTabGroupMenu_'+groupName);
+        SUGAR.themes.current_theme = sugar_theme_gm_current = groupName;
+
+        $("#dcmenu").animate({
+            top: '-=' + dcheight
+        }, 200, function() {
+            current_menu.hide();
+            target_menu.show();
+            SUGAR.themes.resizeMenu();
+            $(this).animate({
+                top: '+=' + dcheight
+            }, 200);
+        });
+        $.ajax({
 	    	type: "POST",
 	    	url: "index.php?module=Users&action=ChangeGroupTab&to_pdf=true",
 	    	data: 'newGroup='+groupName
 	    });
-	    $('#themeTabGroupMenu_'+groupName).css("display","block");
+
    	}
     
 });
