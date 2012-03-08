@@ -67,12 +67,17 @@ fixtures.metadata = {
                 "buttons":[
                     {
                         name:"save_button",
-                        type:"button_save",
+                        type:"button",
                         label:"Save",
                         value:"save",
                         primary:true,
                         events : {
-                            click : ""
+                            click : "function(){ var self = this; " +
+                                    "this.model.save(null, {success:" +
+                                        "function(){self.app.navigate(self.context, 'detail', self.model);}" +
+                                    "});" +
+                                "}",
+                            hover : "myCallback"
                         }
                     },
                     {

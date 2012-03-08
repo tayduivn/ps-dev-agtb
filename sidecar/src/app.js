@@ -192,6 +192,16 @@ SUGAR.App = (function() {
             });
         },
 
+        navigate : function(context, action, model, options) {
+            model = model || context.get("model");
+            options = options || {};
+            var route = this.router.buildRoute(context, action, model, options);
+            this.router.navigate(route, {trigger: true});
+        },
+
+
+
+
         modules: modules
     };
 })();
