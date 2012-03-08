@@ -96,4 +96,21 @@ describe("Framework", function() {
             });
         });
     });
+    it('should navigate given context, model and action',function(){
+        var app = SUGAR.App.init({el: "body"});
+        var route = "";
+        var model = new Backbone.Model();
+        var action = "edit";
+        var options = {};
+        var context = {};
+        var routerSpy = sinon.spy(app.router, "navigate");
+
+        model.set("id", "1234");
+        model.module = "Contacts";
+        app.navigate(context,action,model,options);
+
+        expect(routerSpy).toHaveBeenCalled();
+
+        routerSpy.restore();
+    });
 });
