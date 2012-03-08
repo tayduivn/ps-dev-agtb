@@ -33,7 +33,7 @@
         }
 
         return _metadata[module][type];
-    }
+    };
 
     //Function that attempts to retrieve sugarFields from offline caches
     //If its not there, it will make a server call to start a sync
@@ -69,8 +69,8 @@
             }
         }
 
-        if (!result && _sugarFields['text'] && _sugarFields['text']['views']['default']) {
-            result = _sugarFields['text']['views']['default'];
+        if (!result && _sugarFields.text && _sugarFields.text.views['default']) {
+            result = _sugarFields.text.views['default'];
         }
         //Could not get valid view data for this field
         else if (!result) {
@@ -79,16 +79,16 @@
         }
 
         return result;
-    }
+    };
 
     /**
      *
-     * @param string module name of module to retrieve from
-     * @param string view optional name of view to get
+     * @param {String} module name of module to retrieve from
+     * @param {String} view optional name of view to get
      */
     var _getView = function(module, view) {
         var views = _get(module, "views");
-        if (views != null) {
+        if (views !== null) {
             if (view) {
                 if (typeof(views[view]) != "undefined")
                     return views[view];
@@ -97,11 +97,11 @@
             }
         }
         return null;
-    }
+    };
 
     var _getLayout = function(module, layout) {
         var layouts = _get(module, "layouts");
-        if (layouts != null) {
+        if (layouts !== null) {
             if (layout) {
                 if (typeof(layouts[layout]) != "undefined")
                     return layouts[layout];
@@ -110,7 +110,7 @@
             }
         }
         return null;
-    }
+    };
 
     var _getVardef = function(module, bean) {
         var beans = _get(module, "beans");
@@ -118,11 +118,11 @@
             bean = _get(module, "primary_bean");
 
         if (bean && beans[bean] && beans[bean].vardefs) {
-            return beans[bean].vardefs
+            return beans[bean].vardefs;
         }
 
         return null;
-    }
+    };
 
     var _getFieldDef = function(module, bean, field) {
         var vardef = _getVardef(module, bean);
@@ -130,7 +130,7 @@
             return vardef.fields[field];
 
         return null;
-    }
+    };
 
     app.augment("metadata", {
         /**
@@ -211,5 +211,5 @@
                 }
             });
         }
-    })
+    });
 })(SUGAR.App);
