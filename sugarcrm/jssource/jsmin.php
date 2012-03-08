@@ -255,10 +255,10 @@ class Tokenizer {
     function read_escaped_char($in_string = null) {
         $ch = $this->nextChar(TRUE, $in_string);
         switch ($ch) {
-            case "n" : return "\n";
-            case "r" : return "\r";
-            case "t" : return "\t";
-            case "b" : return "\b";
+            case "n" : return "\\n";
+            case "r" : return "\\r";
+            case "t" : return "\\t";
+            case "b" : return "\\b";
             case "v" : return "\u000b";
             case "f" : return "\f";
             case "0" : return "\0";
@@ -619,39 +619,55 @@ class SugarMin {
 
     protected function jsParser() {
         $tokenizer = new Tokenizer($this->text, TRUE);
+        $prev_token = null;
         $token = $tokenizer->get_token();
-        $str = '';
+        $str = "\n";
         while($token["type"] != "eof") {
-            $substr = $this->preprocess($token);
+            if($token["type"] == "regexp") {
+                $token["value"] = '/'.$token["value"][0].'/'.$token["value"][1];
+            }
+
+            $substr = $this->preprocess($token, $prev_token);
             $substr .= $token["value"];
             $substr .= $this->postprocess($token);
 
-            $substr = str_replace('  ', ' ', $substr);
-            $substr = str_replace(') ;', ');', $substr);
-            $substr = str_replace(') .', ').', $substr);
-            
             $str .= $substr;
 
+            $prev_token = $token;
             $token = $tokenizer->get_token();
         }
+
+        $str = str_replace(', ', ',', $str);
+        $str = str_replace(' [', '[', $str);
+        $str = str_replace(' (', '(', $str);
+        $str = str_replace('] ', ']', $str);
+        $str = str_replace(' ;', ';', $str);
+        $str = str_replace(') .', ').', $str);
+        $str = str_replace('elseif', 'else if', $str);
+        
         return $str;
 	}
 
-    private function preprocess($token) {
+    private function preprocess($token, $prev_token = null) {
         $ret = '';
         $SPACE_PUNC = str_split("([{");
-        if ($token["type"] == "punc" && in_array($token['value'], $SPACE_PUNC)) {
+        $SPACE_BEFORE_KEYWORDS = array("in", "instanceof");
+
+        if(!is_null($prev_token) && $prev_token["type"] == "punc" && $prev_token["value"] == "}" && $token["type"] == "name") {
+            $ret = ';';
+        } elseif(($token["type"] == "keyword" || $token["type"] == "operator") && in_array($token["value"], $SPACE_BEFORE_KEYWORDS)) {
             $ret = ' ';
         }
+
         return $ret;
     }
 
     private function postprocess($token) {
         $ret = '';
         $SPACE_PUNC = str_split(")]},;:");
-        if($token["type"] == "keyword") {
-            $ret = ' ';
-        } elseif ($token["type"] == "punc" && in_array($token['value'], $SPACE_PUNC)) {
+        $SPACE_AFTER_KEYWORDS = array("case", "catch", "function", "in", "instanceof", "new", "return", "throw", "typeof", "var");
+
+        if(($token["type"] == "keyword" || $token["type"] == "operator") && in_array($token["value"], $SPACE_AFTER_KEYWORDS)) {
             $ret = ' ';
         }
         return $ret;
