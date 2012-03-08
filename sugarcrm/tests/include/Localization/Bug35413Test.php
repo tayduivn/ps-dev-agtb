@@ -71,6 +71,11 @@ class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
                 'srvSqtaxytPEsMn6yMu1xNHbvqYK',
                 "不要直视陌生人的眼睛\n",
                 'GB2312'
+            ),
+            array ( // what happens when we post a dummy charset?
+                base64_encode("12345"),
+                "12345",
+                " "
             )
         );
     }

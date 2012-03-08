@@ -3236,10 +3236,11 @@ class InboundEmail extends SugarBean {
 				$text = $this->handleTranserEncoding($text, $flip[strtoupper($upperCaseKeyDecodeHeader[strtoupper('Content-Transfer-Encoding')])]);
 			}
 
-			$msgPart = $text;
 			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset'])) {
-				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
+				// we have an explicit content type, use it
+                $msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
 			} else {
+                // make a best guess as to what our content type is
                 $msgPart = $this->convertToUtf8($text);
             }
 		} // end else clause
