@@ -64,7 +64,15 @@
   }
 $('#zenbox_tab').ready(function(){
 	$('#partner').append($('#zenbox_tab'));	
-	$('#zenbox_tab').html("Feedback").tipTip({maxWidth: "auto", edgeOffset: 10, content: "Feedback"});
+	$('#zenbox_tab').attr('title','').html("Feedback");
+	$('#zenbox_close').remove();
+	$('.zenbox_header').html('<div class="close">&nbsp;</div>')
+	$('.zenbox_header .close').click(function() {
+		window.Zenbox.hide();
+		});
+	
+	
+	
 }).click(function(){
 	if($('.zenbox_support_links').length == 0) {
 		var links = $('<div class="zenbox_support_links">If you are reporting a bug on the page, please submit it <a href="http://www.sugarcrm.com/crm/support/bugs.html" target="_new">here</a>. You can also submit feature requests in our <br>forum <a href="http://www.sugarcrm.com/forums/f5/" target="_blank">here</a>.</div>');
