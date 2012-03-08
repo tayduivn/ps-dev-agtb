@@ -1,3 +1,6 @@
+/**
+ * @class MetadataManager
+ */
 (function(app) {
     //Metadata that has been loaded from offline storage
     var _metadata = {};
@@ -134,19 +137,22 @@
         /**
          * The Metadata Manager get method should be the be the only accessor for metadata.
          *
-         * @param Object params. Params can have the following properties. <ul>
-         * <li>String module : Module to retrieve metadata for</li>
-         * <li>String type : Type of metadata to retrieve, possible values are
-         *   "view", "layout", and "vardef". If not specified, all the metadata
-         *    for the given module is returned (Optional)</li>
-         * <li>String view : Specific view to retrieve. If not specified, all views for the given
-         *    module are returned.(Optional)</li>
-         * <li>String layout : Specific layout to retrieve. If not specified, all layouts for the
-         *     given module are returned.(Optional)</li>
-         * <li>String bean : Specific bean to retrieve. If not specified, the vardefs for the
-         *     primary bean are returned.(Optional) </li> </ul>
-         *
-         * @return Object metadata
+         * @param {Object} params. Params can have the following properties.
+         * <ul>
+         *      <li>String module : Module to retrieve metadata for</li>
+         *      <li>String type : Type of metadata to retrieve, possible values are
+         *          "view", "layout", and "vardef". If not specified, all the metadata
+         *          for the given module is returned (Optional)</li>
+         *      <li>String view : Specific view to retrieve. If not specified, all views for the given
+         *          module are returned.(Optional)</li>
+         *      <li>String layout : Specific layout to retrieve. If not specified, all layouts for the
+         *          given module are returned.(Optional)</li>
+         *      <li>String bean : Specific bean to retrieve. If not specified, the vardefs for the
+         *          primary bean are returned.(Optional)</li>
+         * </ul>
+         * @method
+         * @member MetadataManager
+         * @return {Object} metadata
          */
         get: function(params) {
             if (params && params.sugarField) {
@@ -191,20 +197,20 @@
          * Syncs metadata from server using the Api wrapper. Saves the metadata to the manager.
          * @method
          */
-       sync: function(callback) {
-           var self = this;
-           app.api.getMetadata([], [], {
-               success: function(metadata) {
-                   self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
-                   self.set(metadata);
-                   callback.call(self, null, metadata);
-               },
-               error: function(error) {
-                   console.log("Error fetching metadata");
-                   console.log(error);
-                   callback.call(self, error);
-               }
-           });
-       }
+        sync: function(callback) {
+            var self = this;
+            app.api.getMetadata([], [], {
+                success: function(metadata) {
+                    self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
+                    self.set(metadata);
+                    callback.call(self, null, metadata);
+                },
+                error: function(error) {
+                    console.log("Error fetching metadata");
+                    console.log(error);
+                    callback.call(self, error);
+                }
+            });
+        }
     })
 })(SUGAR.App);

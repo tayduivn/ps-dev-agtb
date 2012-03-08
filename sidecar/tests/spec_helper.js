@@ -3,7 +3,7 @@ var SugarTest = {};
 
 (function(test) {
 
-    SUGAR.App.config.logLevel = SUGAR.App.logger.Levels.TRACE;
+    SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
     SUGAR.App.config.env = "test";
 
     test.loadJson = function(jsonFile) {

@@ -40,17 +40,8 @@
          * @method
          */
         start: function() {
-            console.log("Router Started");
+            app.logger.info("Router Started");
             var ret = false;
-
-            // Start monitoring hash changes
-            // Right now backbone doesn't support checking to see
-            // if the history has been started.
-            /**try {
-                ret =  Backbone.history.start();
-            } catch (e) {
-                app.logger.error(e.message);
-            }**/
 
             Backbone.history.stop();
             ret = Backbone.history.start();
@@ -139,17 +130,24 @@
     var module = {
         /**
          * Initializes the router however does not start routing. To start routing, call Router.start();
+         *
          * @method
-         * @param {Object} instance
+         * @param {Object} instance The instance of the App
+         * @param {Array} modules An optional list of modules to initialize
          */
-        initialize: function(instance) {
+        initRouter: function(instance, modules) {
             if (!instance.controller) {
                 throw "app.controller does not exist yet. Cannot create router instance";
             }
 
+            if (modules && _.indexOf(modules, "controller") == -1) {
+                return;
+            }
+
             _.extend(module, new Router({controller: instance.controller}));
         }
-    }
-    app.events.on("app:init", module.initialize);
+    };
+
+    app.events.on("app:init", module.initRouter);
     app.augment("router", module);
 })(SUGAR.App);

@@ -1,5 +1,5 @@
 /**
- * Base bean class. Use {@link dataManager} to create instances of beans.
+ * Base bean class. Use {@link DataManager} to create instances of beans.
  *
  * @class Bean
  * @extends Backbone.Model
@@ -9,6 +9,11 @@
 
     app.augment("Bean", Backbone.Model.extend({
 
+        /**
+         * Bean initialization
+         * @method
+         * @private
+         */
         initialize: function() {
             _.each(this.fields , function(def){
                 if (def.calculated){
@@ -60,7 +65,7 @@
          * @param options Options hash (success and error callbacks, etc.)
          */
         setRelated: function(attribute, bean, options) {
-            options || (options = {});
+            options = options || (options = {});
             var origError = options.error;
             var origSuccess = options.success;
 
@@ -91,7 +96,7 @@
             options.success = function(model, resp) {
                 options.success = origSuccess;
                 self.save(null, options);
-            }
+            };
 
             return this.addRelated(link, bean, options);
         },
@@ -111,12 +116,12 @@
          * - error definition can be a primitive type or an object. It depends on validator.
          *
          *  Example:
-         *  <pre>
+         *  <pre><code>
          *  {
          *    first_name: { maxLength: 20, someOtherValidator: { some complex error definition... } },
          *    last_name: { required: true }
          *  }
-         *  </pre>
+         *  </code></pre>
          *
          * @param attrs attributes hash that is about to be set on this bean
          * @return {Object} errors hash if the bean is invalid or nothing otherwise.

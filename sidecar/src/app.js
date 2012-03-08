@@ -38,6 +38,10 @@ var SUGAR = SUGAR || {};
  * <pre><code>
  * var App = SUGAR.App.init({el: "#root"});
  * </pre></code>
+ * If you want to initialize an app without initializing its modules,
+ * <pre><code>var App = SUGAR.App.init({el: "#root", silent: true});</code></pre>
+ * If you only want to initialize certain modules,
+ * <pre><code>var App = SUGAR.App.init({el: "#root", modules: ["router", "controller"]});</code></pre>
  * @class App
  * @singleton
  */
@@ -47,13 +51,8 @@ SUGAR.App = (function() {
 
     /**
      * @constructor Constructor class for the main framework app
-     *
      * @param {Object} opts Configuration options
-     *
-     * <ul>
-     *     <li>el: Root node of where the application will be rendered to. Could be a jQuery node or selector</li>
-     * </ul>
-     *
+     * @private
      */
     function App(opts) {
         var appId = _.uniqueId("SugarApp_"),
@@ -62,6 +61,9 @@ SUGAR.App = (function() {
         // Set parameters
         opts = opts || {};
 
+        /**
+         * @cfg {String/Object} el Node or selector of root node for the app.
+         */
         if (opts.el) {
             rootEl = (_.isString(opts.el)) ? $(opts.el) : opts.el;
         } else {
@@ -76,11 +78,15 @@ SUGAR.App = (function() {
             appId: appId,
 
             /**
-             * Base element to use as the root of the App
-             * @property {jQuery Node}
+             * Base element to use as the root of the App. This will typically be a jQuery Node.
+             * @property {Object}
              */
             rootEl: rootEl,
 
+            /**
+             * Base url to use to build rest calls
+             * @cfg {String} rest
+             */
             /**
              * Alias to SUGAR.Api
              * @property {Object}
@@ -99,19 +105,60 @@ SUGAR.App = (function() {
          * @method
          */
         init: function(opts) {
+            /**
+             * Set an array of modules you want to be initialized.
+             * @cfg {Array} modules
+             */
             opts.modules = opts.modules || {};
             app = app || _.extend(this, new App(opts));
 
             // Register app specific events
-            app.events.register("app:init", this);
-            app.events.register("app:sync:complete", this);
-            app.events.register("app:sync:error", this);
+            app.events.register(
+                /**
+                 * @event
+                 * Starts the initialization phase of the app. Modules bound to this event will initialize.
+                 */
+                "app:init",
+                this
+            );
 
+            app.events.register(
+                /**
+                 * @event
+                 * This event is fired when the app is beginning to sync data / metadata from the server.
+                 */
+                "app:sync",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * @event
+                 * This event is fired when the app has finished its syncing process and is ready to proceed.
+                 */
+                "app:sync:complete",
+                this
+            );
+
+            app.events.register(
+                /**
+                 * @event
+                 * This event is fired when a sync process failed
+                 */
+                "app:sync:error",
+                this
+            );
+
+            /**
+             * Set true if you want to suppress initialization of modules
+             * @cfg {Boolean} silent
+             */
             if (!opts.silent) {
                 app.trigger("app:init", this, opts.modules);
             }
 
             // Here we initialize all the modules;
+            // TODO DEPRECATED: Convert old style initialization method to noveau style
             _.each(modules, function(module, key) {
                 if (_.isFunction(module.init)) {
                     module.init(this);
@@ -122,7 +169,8 @@ SUGAR.App = (function() {
         },
 
         /**
-         * Starts the application. A shortcut method to {@link Controller#start}.
+         * Starts the main execution phase of the application.
+         * @method
          */
         start: function() {
             this.sync();
@@ -131,6 +179,7 @@ SUGAR.App = (function() {
         /**
          * Destroys the instance of the current app
          * TODO: Not properly implemented
+         * @method
          */
         destroy: function() {
             if (Backbone.history) {

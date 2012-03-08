@@ -3,6 +3,14 @@
 
     /**
      * A state variable to hold the states of the current context.
+     *
+     * Use the getContext method to get a new instance of a context.
+     * <pre><code>
+     * var myContext = App.context.getContext({
+     *     module: "Contacts",
+     *     url: "contacts/id"
+     * });
+     * </code></pre>
      * @class Context
      * @param {Object} obj Any parameters and state properties to attach to the context
      * @param {Object} data Hash of collection and or models to save to the context
@@ -100,10 +108,29 @@
              * Triggers two events. The first event is a plain "context:change" event, the second
              * event is the context's id concatenated with change.
              * @method
+             * @private
              */
             fire: function() {
                 this.trigger(contextId + ":change", this);
-                this.trigger("context:change", this);
+                this.trigger(
+                    /**
+                     * @event
+                     * This event is triggered when an attribute on the context has been set.
+                     * The current context is passed in as the argument.
+                     * Another event with the contextId as the namespace is also fired. Ex: `"context10:change"`
+                     */
+                    "context:change",
+                    this
+                );
+            },
+
+            /**
+             * Changes the focus of the context. Fires the context:focus event.
+             * @param {Object} focus The model / bean to change the focus to
+             * @method
+             */
+            focus: function(focus) {
+                this.trigger("context:focus", focus);
             },
 
             /**
@@ -119,30 +146,33 @@
             },
 
             /**
-             * Gets data
-             *
+             * Populates the data and stores it internally.
+             * @method
              */
             getData: function() {
-                var data, fields, bean, collection, options, state=this.get();
-                if(state.view){
+                var data, fields, bean, collection,
+                    options = {},
+                    state = this.get();
+
+                if (state.view) {
                     fields = state.view.getFields();
                     this.set({fields:fields});
+                }
 
-                }
-                options = {};
-                if(fields){
+                if (fields) {
                     var fieldString = fields.join(",");
-                    options.params = [{key:"fields",value:fieldString}];
+                    options.params = [
+                        {key: "fields", value: fieldString}
+                    ];
                 }
+
                 if (state.id) {
                     bean = app.dataManager.fetchBean(state.module, state.id, options);
                     collection = app.dataManager.createBeanCollection(state.module, [bean]);
-                }
-                else if (state.create) {
+                } else if (state.create) {
                     bean = app.dataManager.createBean(state.module);
                     collection = app.dataManager.createBeanCollection(state.module, [bean]);
-                }
-                else if (state.url) {
+                } else if (state.url) {
                     // TODO: Make this hit a custom url
                 } else {
                     var that = this;
@@ -160,12 +190,10 @@
 
                 this.set({collection: collection, model: bean});
 
-                //bean.change();
                 _.each(this.children, function(child) { //TODO optimize for batch
                     child.getData();
                 });
             }
-
         }, Backbone.Events);
 
         context.init((obj || {}), (data || {}));
@@ -177,8 +205,7 @@
          * Returns a new instance of the context object
          * @param {Object} obj Any parameters and state properties to attach to the context
          * @param {Object} data Hash of collection and or models to save to the context
-         *
-         * <
+         * @member Context
          */
         getContext: function(obj, data) {
             return new Context(obj, data);

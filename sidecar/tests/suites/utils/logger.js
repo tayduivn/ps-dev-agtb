@@ -19,7 +19,7 @@ describe("Logger", function() {
         var date = new Date(Date.UTC(2012, 2, 3, 6, 15, 32));
         clock = sinon.useFakeTimers(date.getTime());
 
-        config.logLevel = logger.Levels.ERROR;
+        config.logLevel = logger.levels.ERROR;
 
         mock.expects("error").once().withArgs("ERROR[2012-2-3 6:15:32]: Test message");
         logger.error("Test message");
@@ -30,7 +30,7 @@ describe("Logger", function() {
         var mock = sinon.mock(console);
         var e = mock.expects("info").once();
 
-        config.logLevel = logger.Levels.INFO;
+        config.logLevel = logger.levels.INFO;
         var a = "foo";
         logger.info(function() {
             return "Test message " + a;
@@ -44,7 +44,7 @@ describe("Logger", function() {
         var mock = sinon.mock(console);
         var e = mock.expects("info").once();
 
-        config.logLevel = logger.Levels.TRACE;
+        config.logLevel = logger.levels.TRACE;
         var foo = { bar: "some bar"};
         logger.trace(foo);
         expect(e.args[0]).toMatch(/TRACE\[.{14,20}\]: {"bar":"some bar"}/);
@@ -54,13 +54,13 @@ describe("Logger", function() {
     it("should not log a message if log level is below the configured one", function() {
         var mock = sinon.mock(console);
         mock.expects("info").never();
-        config.logLevel = logger.Levels.INFO;
+        config.logLevel = logger.levels.INFO;
         logger.debug("");
         mock.verify();
     });
 
     it("should be able to log a message with a given log level", function() {
-        config.logLevel = logger.Levels.TRACE;
+        config.logLevel = logger.levels.TRACE;
 
         var mock = sinon.mock(logger);
 
