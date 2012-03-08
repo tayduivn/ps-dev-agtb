@@ -115,9 +115,6 @@ class ViewQuickcreate extends ViewAjax
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
 		
-        //fixing bug #45220: if edit form comes from DC menu 
-        //it shouldn't contain relate_to hidden fields
-        $this->_isDCForm = 1;
 		$this->ev->ss->assign('isDCForm', $this->_isDCForm);
 		//$_REQUEST['return_action'] = 'SubPanelViewer';
 		$this->ev->setup($module, null, $source);
