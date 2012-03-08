@@ -75,8 +75,9 @@
 
         login: function() {
             this.controller.loadView({
-                module: "home",
-                layout: "login"
+                module: "Home",
+                layout: "login",
+                create: true
             });
         },
 

@@ -37,6 +37,19 @@ fixtures.templates = {
             "{{/each}}" +
             "</div>" +
         "{{/each}}</form>",
+    "loginView" :
+        "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
+        "<form name='{{name}}' class='well'>" +
+        "{{#each meta.panels}}" +
+            '<div class="{{../name}} panel">' +
+            "<h4>{{label}}</h4>" +
+            "{{#each fields}}" +
+                "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "{{/each}}" +
+            "</div>" +
+        "{{/each}}"+        "{{#each meta.buttons}}" +
+                    "{{sugar_field ../context ../this ../model}}" +
+                "{{/each}}"+"</form>",
     "subpanelView" :
         "",
     "listView" :
