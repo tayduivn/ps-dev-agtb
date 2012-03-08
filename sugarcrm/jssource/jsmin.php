@@ -94,6 +94,9 @@ class Tokenizer {
         $this->PUNC_CHARS = str_split("[]{}(),;:");
         $this->PUNC_BEFORE_EXPRESSION = str_split("[{(,.;:");
         $this->OPERATOR_CHARS = str_split("+-*&%=<>!?|~^");
+
+        $this->open_blocks = array();
+        $this->tokens_since_last_keyword = array();
     }
 
     function charAt($pos) {
@@ -162,6 +165,12 @@ class Tokenizer {
             $this->comments_before = array();
         }
         $this->newline_before = FALSE;
+
+        if($ret["type"] == "keyword") {
+            $this->tokens_since_last_keyword = array($ret);
+        } else {
+            array_push($this->tokens_since_last_keyword, $ret);
+        }
         return $ret;
     }
 
@@ -264,8 +273,8 @@ class Tokenizer {
             case "0" : return "\0";
             case "x" : return chr($this->hex_bytes(2));
             case "u" : return chr($this->hex_bytes(4));
-            case "\n": return "";
-            default  : return $ch;
+            case "\n": return "\\";
+            default  : return "\\".$ch;
         }
     }
 
@@ -426,6 +435,22 @@ class Tokenizer {
         });
     }
 
+    function read_punc() {
+        $token = $this->token("punc", $this->nextChar());
+        if($token["value"] == "{") {
+            // It's either an object literal, or the start of a block.
+
+            // The first element is the last keyword we've got.
+            echo "Start ".$this->tokens_since_last_keyword[0]["value"]."\n";
+            array_push($this->open_blocks, $this->tokens_since_last_keyword[0]["value"]);
+        } elseif($token["value"] == "}") {
+            // LIFO queue.
+            $type = array_pop($this->open_blocks);
+            echo "End ".$type."\n";
+        }
+        return $token;
+    }
+
     function read_operator($prefix = "") {
         // Workaround until PHP 5.4.
         $ref = $this;
@@ -526,7 +551,7 @@ class Tokenizer {
         }
 
         if(in_array($ch, $this->PUNC_CHARS)) {
-            return $this->token("punc", $this->nextChar());
+            return $this->read_punc();
         }
 
         if($ch == ".") {
