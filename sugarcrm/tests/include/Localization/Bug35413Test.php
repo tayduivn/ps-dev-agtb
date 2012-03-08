@@ -66,6 +66,11 @@ class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
                 'RnJvbTog6eXh7CD55eTt',
                 'From: יובל שוהם',
                 'ISO-8859-8'
+            ),
+            array (
+                'srvSqtaxytPEsMn6yMu1xNHbvqYK',
+                "不要直视陌生人的眼睛\n",
+                'GB2312'
             )
         );
     }
@@ -83,6 +88,7 @@ class Bug35413Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $source = base64_decode($source);
         $translateCharsetResult = $this->_localization->translateCharset($source, $encoding, 'UTF-8');
+
         $this->assertEquals($utf8string, $translateCharsetResult, 'Strings have to be the same');
     }
 }

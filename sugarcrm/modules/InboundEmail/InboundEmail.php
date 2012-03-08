@@ -349,7 +349,7 @@ class InboundEmail extends SugarBean {
      */
     function convertToUtf8($input)
     {
-       $charset = $GLOBALS['locale']->detectCharset($input);
+       $charset = $GLOBALS['locale']->detectCharset($input, true);
 
        // we haven't a clue due to missing package?, just return as itself
        if ($charset === FALSE) {
@@ -3237,7 +3237,7 @@ class InboundEmail extends SugarBean {
 			}
 
 			$msgPart = $text;
-			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader[$upperCaseKeyDecodeHeader['CONTENT-TYPE']]['charset'])) {
+			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset'])) {
 				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
 			} else {
                 $msgPart = $this->convertToUtf8($text);
