@@ -2,10 +2,6 @@
 
   $(function(){
 
-    // Disable certain links in demo
-    $('[href^=#]').click(function (e) {
-      e.preventDefault()
-    })
 
     // make code pretty
     window.prettyPrint && prettyPrint()
@@ -39,7 +35,8 @@
         $nav.removeClass('subnav-fixed')
       }
     }
-		
+
+if ( $(window).width() > 960) {		
     // tooltip demo
     $('section').tooltip({
       selector: "a[rel=tooltip]"
@@ -58,6 +55,12 @@
     })
     $('.tooltip-test').tooltip()
     $('.popover-test').popover()
+	} else {
+		$('.cube').click(function () {
+      $('html').find('body').toggleClass('onL');
+    		return false;
+		})
+	}
 
     // popover demo
     $("a[rel=popover]")
@@ -77,18 +80,27 @@
         }, 2000)
       })
 
-			//  sortable
-    	$(function() {
-    		$( ".row-fluid" ).sortable({handle : '.drag', connectWith: '.row-fluid'});
-    		$( ".row-fluid" ).disableSelection();
-    	});
-
     // javascript build logic
     var inputsComponent = $("#listed input");
+
+		// remove a close item
+    $('.close').on('click', function (e) {
+			$(this).parent().remove();
+    })
+    // toggle stars
+    $('.icon-star-empty').on('click', function (e) {
+			$(this).removeClass('icon-star-empty')
+			$(this).addClass('icon-star')
+    })
+    $('.icon-star').on('click', function (e) {
+			$(this).removeClass('icon-star')
+			$(this).addClass('icon-star-empty')
+    })
 
     // toggle all checkboxes
     $('.toggle-all').on('click', function (e) {
       inputsComponent.attr('checked', !inputsComponent.is(':checked'))
+			$('.alert').show()
     })
 
     // request built javascript
@@ -154,13 +166,5 @@ $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
     }
   }
 })
-
-	// editable demo
-  $(".dblclick").editable({ 
-      indicator : "",
-      tooltip   : "Doubleclick to edit...",
-      event     : "dblclick",
-      style  : "inherit"
-		})
 
 }(window.jQuery)

@@ -78,7 +78,7 @@
   // Buttons in navbar
   .btn,
   .btn-group {
-    margin-top: 5px; // make buttons vertically centered in navbar
+    margin: 0 10px 0; // make buttons vertically centered in navbar
   }
   .btn-group .btn {
     margin-top: 0; // then undo the margin here so we don't accidentally double it
@@ -123,10 +123,8 @@
   .search-query {
     padding: 4px 9px;
     #font > .sans-serif(13px, normal, 1);
-    color: @white;
-    color: rgba(255,255,255,.75);
-    background: #666;
-    background: rgba(255,255,255,.3);
+    color: @grayLighter;
+    background: @white;
     border: 1px solid #111;
     @shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0px rgba(255,255,255,.15);
     .box-shadow(@shadow);
@@ -194,17 +192,18 @@
 // Links
 .navbar .nav > li > a {
   float: none;
-  padding: 12px 10px 12px;
+  padding: 12px 9px 12px;
   line-height: 19px;
   color: @navbarLinkColor;
   text-decoration: none;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  text-shadow: 0 -1px 1px rgba(0,0,0,.25);
 }
 // Hover
 .navbar .nav > li > a:hover {
-  background-color: @navbarLinkBackgroundHover; // "transparent" is default to differentiate :hover from .active
-  color: @navbarLinkColorHover;
+  background-color:  @grayDark; // "transparent" is default to differentiate :hover from .active
+  color: @white;
   text-decoration: none;
+  text-shadow: 0 -1px 0 rgb(0,0,0);
 }
 
 // Active nav items
@@ -212,14 +211,17 @@
 .navbar .nav .active > a:hover {
   color: @white;
   text-decoration: none;
-  background-color: @grayDark !important;
+  background-color: @black;
+  @shadow: inset 0 -1px 0 rgba(0,0,0,.4);
+  .box-shadow(@shadow);
+  text-shadow: 0 -1px 0 rgb(0,0,0);
 }
 
 // Dividers (basically a vertical hr)
 .navbar .divider-vertical {
   height: @navbarHeight;
   width: 1px;
-  margin: 0 9px;
+  margin: 0;
   overflow: hidden;
   background-color: @navbarBackground;
   border-right: 1px solid @navbarBackgroundHighlight;

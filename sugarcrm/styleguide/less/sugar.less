@@ -2,7 +2,7 @@
 -------------------------------------------------- */
 body {
   position: relative;
-  padding: 44px 0;
+  padding: 47px 0;
 }
 
 body#login {
@@ -23,6 +23,33 @@ footer {
 .tright {
 	text-align: right;
 }
+
+/* Colors */
+.black {background-color: @black;}
+.grayDarker  {background-color: @grayDarker;}
+.grayDark  {background-color: @grayDark;}
+.gray {background-color: @gray;}
+.grayLight {background-color: @grayLight;}
+.grayLighter {background-color: @grayLighter;}
+.white {background-color: @white;}
+.blueLight  {background-color: @blueLight;}
+.blue {background-color: @blue;}
+.blueDark {background-color: @blueDark;}
+.green {background-color: @green;}
+.red {background-color: @red;}
+.yellow {background-color: @yellow;}
+.orange {background-color: @orange;}
+.pink {background-color: @pink;}
+.purple {background-color: @purple;}
+.infoText {background-color: @infoText;}
+.errorText {background-color: @errorText;}
+.successText {background-color: @successText;}
+.warningText {background-color: @warningText;}
+.infoBackground {background-color: @infoBackground;}
+.errorBackground {background-color: @errorBackground;}
+.successBackground {background-color: @successBackground;}
+.warningBackground {background-color: @warningBackground;}
+
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
@@ -64,7 +91,9 @@ article p {
 	background: #e1f0fa;
 }
 
+/* Activity streams */
 #stream {position: relative;}
+#stream table {margin-top: -15px;}
 #stream tr td {padding: 20px 4px }
 #stream tbody tr:first-child td {border-top: none;} 
 #stream tbody tr td:first-child {
@@ -89,18 +118,32 @@ article p {
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   }
+  
+  
+/* Messages 
+------------*/
+.top.alert {
+  width: 50%;
+  left: 25%;
+  position: absolute;
+  top: 55px;
+  z-index: 1060;
+  @shadow: 0 1px 4px rgba(0,0,0,.4);
+  .box-shadow(@shadow);  
+}
+
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
-.navbar .brand {
-  background: url(/img/cube.png) 0 6px no-repeat;
+a.cube {
   float: left;
+  background-image: url(/img/cube.png);
+  background-position: 0 7px;
+  background-repeat: no-repeat;
   display: block;
-  padding: 0;
   text-indent: -7000px;
-  height: 41px;
-  width: 42px;
-	margin-left: 20px; 
+  height: 40px;
+  width: 40px;
   white-space: nowrap;    
   line-height: 1;
   font-weight: bold;
@@ -110,15 +153,15 @@ article p {
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   }
-.navbar .brand:hover {
+.navbar .cube:hover {
   text-decoration: none;
   }
-.navbar-fixed-top .brand {
+.navbar-fixed-top .cube {
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
 }
-.navbar-fixed-top .brand:hover {
+.navbar-fixed-top .cube:hover {
   text-decoration: none;
 }
 .navbar .avatar, .block .avatar {
@@ -137,10 +180,9 @@ article p {
 }
 
 .navbar .btn {
-	margin-top: 7px;
+	margin-top: 8px;
 	min-width: 16px;
 	padding: 3px 4px !important;
-	color: #fff !important;
 }
 
 .logo {
@@ -191,7 +233,7 @@ article p {
 /* blocks */
 .block {
 	margin-bottom: 15px;
-	border-top: 1px solid @grayLighter;
+	border-top: 1px solid @grayLight;
   position: relative;
 	display: block;
 	padding-right: 10px;
@@ -412,7 +454,7 @@ padding-bottom: 15px;
 .subnav, footer {
   width: 100%;
   min-height: 44px;
-  #gradient > .vertical(@grayLighter, @grayLight);
+  #gradient > .vertical(@subnavbarBackgroundHighlight, @subnavbarBackground);
   border: 1px solid darken(@grayLight, 10%);
   position: relative;
 }
@@ -423,16 +465,16 @@ padding-bottom: 15px;
   margin-top: -5px;
 }
 .subnav #accordion2 {
-  margin-top: 46px;
+  margin-top: 44px;
   z-index: @zindexFixedNavbar;
   position: relative;
 }
 .subnav form {
   margin: 0;
 }
-.subnav .btn-toolbar.pull-right {margin: 10px 16px 0 0;}
-.subnav .btn-toolbar.pull-left{margin: 10px 0 0 16px;}
-.subnav .actions {left: 10px; top: 9px}
+.subnav .btn-toolbar.pull-right {margin: 8px 20px 0 0;}
+.subnav .btn-toolbar.pull-left {margin: 8px 0 0 20px;}
+.subnav .actions {left: 8px; top: 9px}
 
 .subnav .nav {
   margin-bottom: 0;
@@ -445,15 +487,24 @@ padding-bottom: 15px;
   border-left: 1px solid @grayLighter;
   border-right: 1px solid @grayLight;
   .border-radius(0px);
-
+  color: @subnavbarLinkColor;
+}
+.subnav .nav > a,
+.subnav .nav > a:hover {
+  color: @subnavbarLinkColorHover;
+  background-color: @grayLight;
+  border-right-color: @gray;
+  border-left: 0;
+  @shadow: inset 0 1px 5px rgba(0,0,0,.2);
+  .box-shadow(@shadow);
 }
 .subnav .nav > .active > a,
 .subnav .nav > .active > a:hover {
-  color: lighten(@gray, 10%);
+  color: @subnavbarLinkColorHover;
   background-color: @grayLight;
-  border-right-color: #ddd;
+  border-right-color: @grayLight;
   border-left: 0;
-  @shadow: inset 0 3px 5px rgba(0,0,0,.05);
+  @shadow: inset 0 1px 5px rgba(0,0,0,.2);
   .box-shadow(@shadow);
 }
 .subnav .nav > .active > a .caret,
@@ -477,15 +528,13 @@ padding-bottom: 15px;
 @media (min-width: 980px) {
   .subnav-fixed {
     position: fixed;
-    top: 44px;
+    top: 47px;
     left: 0;
     right: 0;
     z-index: @zindexTooltip;
     border-color: #d5d5d5;
     border-width: 0 0 1px; /* drop the border on the fixed edges */
-    -webkit-border-radius: 0;
-       -moz-border-radius: 0;
-            border-radius: 0;
+  .border-radius(0px);
             @shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
             .box-shadow(@shadow);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false); /* IE6-9 */
@@ -504,7 +553,8 @@ padding-bottom: 15px;
   }
 }
 
-.container-fluid {margin-top: 20px;}
+.navbar .container-fluid {margin-top: 0;}
+.container-fluid {margin-top: 16px;}
 
 /* Quick links
 -------------------------------------------------- */
@@ -544,8 +594,8 @@ footer p {
   margin-bottom: 0;
   color: #555;
 }
-footer .btn-toolbar.pull-right {margin: 6px 10px 0 0; height: 20px;}
-footer .btn-toolbar.pull-left {margin: 6px 0 0 10px; height: 20px;}
+footer .btn-toolbar.pull-right {margin: 8px 8px 0 0; height: 20px;}
+footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
 
 
 
@@ -601,7 +651,7 @@ footer .btn-toolbar.pull-left {margin: 6px 0 0 10px; height: 20px;}
 .swatch-col {
   width: 30px;
 }
-/* Le swatch */
+
 .swatch {
   display: inline-block;
   width: 30px;
@@ -609,7 +659,7 @@ footer .btn-toolbar.pull-left {margin: 6px 0 0 10px; height: 20px;}
   margin: -6px 0;
   .border-radius(3px);
 }
-/* For white swatches, give a border */
+
 .swatch-bordered {
   width: 28px;
   height: 18px;
@@ -649,8 +699,8 @@ tr:hover .dropdown.hide {
 
 .drag:hover {cursor: move;}
 
-img.pull-right {margin: 0 0 10px 10px;}
-img.pull-left {margin: 0 10px 10px 0;}
+img.pull-right {margin: 0 0 8px 8px;}
+img.pull-left {margin: 0 8px 8px 0;}
 
 .ui-sortable-helper {
   .opacity(30);
@@ -665,10 +715,20 @@ background: @grayLighter;
 }
 .ui-sortable-placeholder * { visibility: hidden; }
 
+.titlebar {
+  .buttonBackground(@white, @grayLight);
+  .border-radius(3px 3px 0 0);
+}
+
 .thumbnail {
   position: relative; 
   margin-bottom: 20px !important;
   background: #fff;
+}
+.thumbnail h2,
+.thumbnail p {
+  padding: 0 5px;
+  margin: 0;
 }
 
 .thumbnail h4 {
@@ -753,7 +813,7 @@ form.well {
   .opacity(30);
 }
 a [class^="icon-"] {
-  .opacity(70);
+  .opacity(80);
 }
 a:hover [class^="icon-"]{
   .opacity(90);
@@ -764,6 +824,14 @@ a:hover [class^="icon-"]{
 }
 .the-icons i:hover {
   background-color: rgba(255,0,0,.25);
+}
+
+.navbar [class^="icon-"] {
+  margin-top: 2px;
+}
+
+.btn [class^="icon-"] {
+  margin-top: 1px;
 }
 
 .wide {
@@ -853,7 +921,7 @@ a:hover [class^="icon-"]{
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
 
   /* Remove any padding from the body */
   body {
@@ -868,7 +936,7 @@ a:hover [class^="icon-"]{
   /* Subnav */
   .subnav {
     position: static;
-    top: auto;
+    top: 0;
     z-index: auto;
     width: auto;
     height: auto;
@@ -930,6 +998,7 @@ a:hover [class^="icon-"]{
 
 
 @media (min-width: 768px) and (max-width: 980px) {
+body {width: 100%}
 
   /* Remove any padding from the body */
   body {
@@ -945,7 +1014,6 @@ a:hover [class^="icon-"]{
 
 
 @media (max-width: 980px) {
-
   /* Unfloat brand */
   .navbar-fixed-top .brand {
     float: left;
@@ -967,6 +1035,9 @@ a:hover [class^="icon-"]{
 @media (min-width: 1210px) {
 
   /* Update subnav container */
+  .subhead .subnav-fixed {
+    .border-radius(0px);
+  }
   .subnav-fixed .nav {
     width: 1168px; /* 2px less to account for left/right borders being removed when in fixed mode */
   }

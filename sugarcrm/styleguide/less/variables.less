@@ -7,34 +7,35 @@
 
 // Grays
 @black:                 #000;
-@grayDarker:            #333;
-@grayDark:              #444;
-@gray:                  #555;
-@grayLight:             #e7e7e7;
+@grayDarker:            darken(@grayDark, 1%);
+@grayDark:              #343433;
+@gray:                  #58595B;
+@grayLight:             #CDCCCB;
 @grayLighter:           #f5f5f5;
 @white:                 #fff;
-@transparent            rgba(0,0,0,0);
+@transparent:            rgba(0,0,0,0);
 
-// Accent colors (hue is roughly 20%)
-@bluelight:             lighten(@blue, 30%);
-@blue:                  #0c7ec7;
-@blueDark:              darken(@blue, 10%);
-@green:                 #0cc763;
-@red:                   #C60C30;
-@yellow:                #e0d20d;
-@orange:                #c67e0c;
-@pink:                  #c70ca2;
-@purple:                #830cc7;
+
+// Accent colors
+@blueLight:             lighten(@blue, 20%);
+@blue:                  #177EE5;
+@blueDark:              darken(@blue, 5%);
+@green:                 #3FB300;
+@red:                   #E61718;
+@yellow:                #EAE82F;
+@orange:                #E57417;
+@pink:                  #CC147C;
+@purple:                #7D12B2;
 
 // Links
-@linkColor:             @blue;
+@linkColor:             @blueDark;
 @linkColorHover:        darken(@linkColor, 10%);
 
 // Typography
 @baseFontSize:          13px;
 @baseFontFamily:        "Open Sans", Arial, sans-serif;
 @baseLineHeight:        18px;
-@textColor:             @gray;
+@textColor:             lighten(@black, 35%);
 
 // Buttons
 @primaryButtonBackground:    @linkColor;
@@ -65,31 +66,40 @@
 
 // Navbar
 @navbarHeight:                    44px;
-@navbarBackground:                @grayDarker;
-@navbarBackgroundHighlight:       @gray;
-@navbarLinkBackgroundHover:       @gray;
+@navbarBackground:                darken(@grayDark, 15%);
+@navbarBackgroundHighlight:       @grayDark;
+@navbarLinkBackgroundHover:       lighten(@black, 5%);
 
 @navbarText:                      @white;
 @navbarLinkColor:                 @white;
 @navbarLinkColorHover:            @grayLight;
 
+// Navbar - Subnav
+@subnavbarHeight:                 44px;
+@subnavbarBackground:             lighten(@grayLight, 10%);
+@subnavbarBackgroundHighlight:    @white;
+@subnavbarLinkBackgroundHover:    @grayLight;
+
+@subnavbarText:                   @gray;
+@subnavbarLinkColor:              @gray;
+@subnavbarLinkColorHover:         @grayDarker;
+
 // Form states and alerts
-@warningText:             #c09853;
+@warningText:             darken(@warningBackground, 70%);
 @warningBackground:       #fcf8e3;
 @warningBorder:           darken(spin(@warningBackground, -10), 3%);
 
-@errorText:               #b94a48;
+@errorText:               darken(@errorBackground, 70%);
 @errorBackground:         #f2dede;
 @errorBorder:             darken(spin(@errorBackground, -10), 3%);
 
-@successText:             #468847;
+@successText:             darken(@successBackground, 70%);
 @successBackground:       #dff0d8;
 @successBorder:           darken(spin(@successBackground, -10), 5%);
 
-@infoText:                #3a87ad;
+@infoText:                darken(@infoBackground, 70%);
 @infoBackground:          #d9edf7;
 @infoBorder:              darken(spin(@infoBackground, -10), 7%);
-
 
 
 // GRID

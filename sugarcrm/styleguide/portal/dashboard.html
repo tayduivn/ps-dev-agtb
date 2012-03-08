@@ -15,18 +15,13 @@
     <!-- styles -->
     <link href="/css/bootstrap.css" rel="stylesheet">
     <link href="/css/jquery-ui-1.8.18.custom.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
   </head>
   <body id="portal">
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container" style="width: auto;">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>              
-          <a class="brand" href="index.html" rel="tooltip" title="Dashboard"></a>
+        <div class="container-fluid">
+          <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="">
@@ -65,7 +60,7 @@
                </li>
               <li class="divider-vertical"></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="icon-plus icon-white"></b> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white"></i> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="#">Create Account</a></li>
                   <li><a href="#">Create Lead</a></li>
@@ -87,13 +82,7 @@
       </div>
       <div class="btn-toolbar pull-right">
         <div class="btn-group"> 
-          <a class="btn" href="layout-2-1.html" rel="tooltip" title="2/3 1/3 Column Layout"><b class="icon-layout-2-1"></b></a>
-          <a class="btn" href="layout-1-2.html" rel="tooltip" title="1/3 2/3 Column Layout"><b class="icon-layout-1-2"></b></a>
-          <a class="btn" href="layout-2.html" rel="tooltip" title="2 Column Layout"><b class="icon-layout-2"></b></a>
-          <a class="btn active" href="dashboard.html" rel="tooltip" title="3 Column Layout"><b class="icon-layout-3"></b></a>
-        </div> 
-        <div class="btn-group"> 
-          <a  data-toggle="modal" class="btn" href="#adminManage" rel="tooltip" title="Admin options"><b class="icon-cog"></b></a>
+          <a  data-toggle="modal" class="btn" href="#adminManage" rel="tooltip" title="Admin options"><i class="icon-cog"></i></a>
         </div>           
       </div>
     </div>    
@@ -145,16 +134,16 @@
            </div>
            <ul class="nav nav-pills actions">
              <li>  
-               <a data-toggle="modal" href="#accountAdd"rel="tooltip" title="Add an Account"><b class="icon-plus"></b></a>
+               <a data-toggle="modal" href="#accountAdd"rel="tooltip" title="Add an Account"><i class="icon-plus"></i></a>
              </li>
              <li>  
-               <a data-toggle="modal" href="#share" rel="tooltip" title="Embed this Widget"><b class="icon-share"></b></a>
+               <a data-toggle="modal" href="#share" rel="tooltip" title="Embed this Widget"><i class="icon-share"></i></a>
              </li>                     
              <li>  
-              <a data-toggle="modal" href="#adminAccounts" rel="tooltip" title="Account options"><b class="icon-cog"></b></a>
+              <a data-toggle="modal" href="#adminAccounts" rel="tooltip" title="Account options"><i class="icon-cog"></i></a>
              </li>
              <li>  
-               <a href="#" class="drag" rel="tooltip" title="Move to another column"><b class="icon-move"></b></a>
+               <a href="#" class="drag" rel="tooltip" title="Move to another column"><i class="icon-move"></i></a>
              </li>             
            </ul>
          </div>
@@ -172,31 +161,31 @@
               </thead>
               <tbody>
                 <tr>
-                  <td><b class="icon-star-empty"></b></td>
+                  <td><i class="icon-star-empty"></i></td>
                   <td>20543</td>
                   <td>Bad links in Pitch</td>
                   <td>High</td>
                 </tr>
                 <tr>
-                  <td><b class="icon-star"></b></td>
+                  <td><i class="icon-star"></i></td>
                   <td>20546</td>
                   <td>Broken images in pdf</td>
                   <td>High</td>
                 </tr>
                 <tr>
-                  <td><b class="icon-star-empty"></b></td>
+                  <td><i class="icon-star-empty"></i></td>
                   <td>20550</td>
                   <td>Misspellings everywhere</td>
                   <td>Medium</td>
                 </tr>
                 <tr>
-                  <td><b class="icon-star-empty"></b></td>
+                  <td><i class="icon-star-empty"></i></td>
                   <td>20554</td>
                   <td>404 on faq</td>
                   <td>Medium</td>
                 </tr>
                 <tr>
-                  <td><b class="icon-star-empty"></b></td>
+                  <td><i class="icon-star-empty"></i></td>
                   <td>20555</td>
                   <td>Nothing happens when ...</td>
                   <td>Low</td>
@@ -209,16 +198,16 @@
             </div>
             <ul class="nav nav-pills actions">
               <li>  
-                <a href="#adminAdd" rel="tooltip" title="Add an Account"><b class="icon-plus"></b></a>
+                <a href="#adminAdd" rel="tooltip" title="Add an Account"><i class="icon-plus"></i></a>
               </li>   
               <li>  
-                <a data-toggle="modal" href="#share" rel="tooltip" title="Embed this Widget"><b class="icon-share"></b></a>
+                <a data-toggle="modal" href="#share" rel="tooltip" title="Embed this Widget"><i class="icon-share"></i></a>
               </li>                        
               <li>  
-               <a data-toggle="modal" href="#adminActivity" rel="tooltip" title="Account options"><b class="icon-cog"></b></a>
+               <a data-toggle="modal" href="#adminActivity" rel="tooltip" title="Account options"><i class="icon-cog"></i></a>
               </li>
               <li>  
-                <a href="#" class="drag" rel="tooltip" title="Move to another column"><b class="icon-move"></b></a>
+                <a href="#" class="drag" rel="tooltip" title="Move to another column"><i class="icon-move"></i></a>
               </li>             
             </ul>
           </div>
@@ -264,13 +253,13 @@
              </div>
              <ul class="nav nav-pills actions">
                <li>  
-                 <a data-toggle="modal" href="#adminAdd"  rel="tooltip" title="Add an Account"><b class="icon-plus"></b></a>
+                 <a data-toggle="modal" href="#adminAdd"  rel="tooltip" title="Add an Account"><i class="icon-plus"></i></a>
                </li>             
                <li>  
-                <a data-toggle="modal" href="#adminAccount" rel="tooltip" title="Account options"><b class="icon-cog"></b></a>
+                <a data-toggle="modal" href="#adminAccount" rel="tooltip" title="Account options"><i class="icon-cog"></i></a>
                </li>
                <li>  
-                 <a href="#" class="drag" rel="tooltip" title="Move to another column"><b class="icon-move"></b></a>
+                 <a href="#" class="drag" rel="tooltip" title="Move to another column"><i class="icon-move"></i></a>
                </li>             
              </ul>
            </div>           
@@ -283,12 +272,12 @@
           <div class="span6">
             <div class="btn-toolbar pull-right">
               <div class="btn-group">
-                <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><b class="icon-road"></b> Tour</a>
-                <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><b class="icon-comment"></b> Feedback</a> 
-                <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><b class="icon-question-sign"></b> Support</a>
+                <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
+                <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
+                <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
               </div>
               <div class="btn-group">
-                <a href="#" class="btn"><b class="icon-print"></b> Print</a> <a href="#" class="btn"><b class="icon-arrow-up"></b> Top</a>
+                <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
               </div>
             </div>
           </div>
@@ -368,53 +357,60 @@
       </div>
     </div>
 
-    <!-- dynamic generation -->
-    <div class="modal hide" id="adminManage">
-      <div class="modal-header">
-        <a class="close" data-dismiss="modal">×</a>
-        <h3>Manage Dashboard</h3>
+      <!-- dynamic generation -->
+      <div class="modal hide" id="adminManage">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>Manage Dashboard</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+            <fieldset>
+              <div class="control-group">
+                <label class="control-label">Layout</label>
+                <div class="controls btn-group"> 
+                  <a class="btn" href="layout-2.html" rel="tooltip" title="2 Column Layout"><i class="icon-layout-2"></i></a>
+                  <a class="btn active" href="dashboard.html" rel="tooltip" title="3 Column Layout"><i class="icon-layout-3"></i></a>
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="input01" class="control-label">Filter Name</label>
+                <div class="controls">
+                  <input type="text" id="input01" class="input-xlarge">
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="input01" class="control-label">Account</label>
+                <div class="controls">
+                  <input type="text" id="input01" class="input-xlarge">
+                </div>
+              </div>                    
+              <div class="control-group">
+                <label for="select01" class="control-label">Result Amount</label>
+                <div class="controls">
+                  <select id="select01">
+                    <option>something</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="textarea" class="control-label">Keywords</label>
+                <div class="controls">
+                  <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-primary">Save</a>
+          <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+        </div>
       </div>
-      <div class="modal-body">
-        <form class="form-horizontal">
-          <fieldset>
-            <div class="control-group">
-              <label for="input01" class="control-label">Filter Name</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="input01" class="control-label">Account</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>                    
-            <div class="control-group">
-              <label for="select01" class="control-label">Result Amount</label>
-              <div class="controls">
-                <select id="select01">
-                  <option>something</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="textarea" class="control-label">Keywords</label>
-              <div class="controls">
-                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-primary">Save</a>
-        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-      </div>
-    </div>
  
     <!-- this needs to get dynamically generated -->
     <div class="modal hide" id="share">
@@ -435,7 +431,7 @@
         </form>
       </div>
       <div class="modal-footer tleft">
-        <a href="#" class="btn"><b class="icon-share-alt"></b> Save to Clipboard</a>
+        <a href="#" class="btn"><i class="icon-share-alt"></i> Save to Clipboard</a>
       </div>
     </div>
               
@@ -454,5 +450,8 @@
     <script src="/js/bootstrap-button.js"></script>
     <script src="/js/bootstrap-typeahead.js"></script>
     <script src="/js/application.js"></script>
+    <script src="/js/sortable.js"></script>
+    <script src="/js/application.js"></script>
+
   </body>
 </html>

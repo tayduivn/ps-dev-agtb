@@ -27,14 +27,12 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="/index.html">SUGARCRM</a>
+          <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
           <div class="nav-collapse">
             <ul class="nav">
+              <li class="">
+                <a href="/index.html">Overview</a>
+              </li>           
               <li class="">
                 <a href="/index.html">Overview</a>
               </li>
@@ -1093,14 +1091,6 @@
       </tr>
       <tr>
         <td>
-          <span class="label label-alert">Alert</span>
-        </td>
-        <td>
-          <code>&lt;span class="label label-alert"&gt;Alert&lt;/span&gt;</code>
-        </td>
-      </tr>
-      <tr>
-        <td>
           <span class="label label-contact">Contact</span>
         </td>
         <td>
@@ -1383,6 +1373,7 @@
       <div class="progress">
         <div class="bar" style="width: 60%;"></div>
       </div>
+      <br>
 <pre class="prettyprint linenums">
 &lt;div class="progress"&gt;
   &lt;div class="bar"
@@ -1396,6 +1387,7 @@
       <div class="progress progress-info progress-striped">
         <div class="bar" style="width: 20%;"></div>
       </div>
+      <br>
 <pre class="prettyprint linenums">
 &lt;div class="progress progress-info
      progress-striped"&gt;
@@ -1407,11 +1399,12 @@
     <div class="span4">
       <h3>Animated</h3>
       <p>Takes the striped example and animates it.</p>
-      <div class="progress progress-danger progress-striped active">
+      <div class="progress progress-success progress-striped active">
         <div class="bar" style="width: 45%"></div>
       </div>
+      <br>
 <pre class="prettyprint linenums">
-&lt;div class="progress progress-danger
+&lt;div class="progress progress-success
      progress-striped active"&gt;
   &lt;div class="bar"
        style="width: 40%;"&gt;&lt;/div&gt;
@@ -1483,7 +1476,6 @@
   </div><!--/row-->
 </section>
 </div>
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="/js/jquery.js"></script>
     <script src="/js/google-code-prettify/prettify.js"></script>
     <script src="/js/bootstrap-transition.js"></script>

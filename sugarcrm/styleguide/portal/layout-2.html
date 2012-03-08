@@ -15,18 +15,13 @@
     <!-- styles -->
     <link href="/css/bootstrap.css" rel="stylesheet">
     <link href="/css/jquery-ui-1.8.18.custom.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
   </head>
   <body id="portal">
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container" style="width: auto;">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>              
-          <a class="brand" href="index.html" rel="tooltip" title="Dashboard"></a>
+        <div class="container">
+          <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="">
@@ -65,7 +60,7 @@
                </li>
               <li class="divider-vertical"></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="icon-plus icon-white"></b> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white"></i> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="#accountAdd">Create Account</a></li>
                   <li><a href="#">Create Case</a></li>
@@ -87,13 +82,13 @@
       </div>
       <div class="btn-toolbar pull-right">
         <div class="btn-group"> 
-          <a class="btn" href="layout-2-1.html" rel="tooltip" title="2/3 1/3 Column Layout"><b class="icon-layout-2-1"></b></a>
-          <a class="btn" href="layout-1-2.html" rel="tooltip" title="1/3 2/3 Column Layout"><b class="icon-layout-1-2"></b></a>
-          <a class="btn active" href="layout-2.html" rel="tooltip" title="2 Column Layout"><b class="icon-layout-2"></b></a>
-          <a class="btn" href="dashboard.html" rel="tooltip" title="3 Column Layout"><b class="icon-layout-3"></b></a>
+          <a class="btn" href="layout-2-1.html" rel="tooltip" title="2/3 1/3 Column Layout"><i class="icon-layout-2-1"></i></a>
+          <a class="btn" href="layout-1-2.html" rel="tooltip" title="1/3 2/3 Column Layout"><i class="icon-layout-1-2"></i></a>
+          <a class="btn active" href="layout-2.html" rel="tooltip" title="2 Column Layout"><i class="icon-layout-2"></i></a>
+          <a class="btn" href="dashboard.html" rel="tooltip" title="3 Column Layout"><i class="icon-layout-3"></i></a>
         </div> 
         <div class="btn-group"> 
-          <a class="btn" href="#adminManage" rel="tooltip" title="Admin options"><b class="icon-cog"></b></a>
+          <a class="btn" href="#adminManage" rel="tooltip" title="Admin options"><i class="icon-cog"></i></a>
         </div>           
       </div>
     </div>    
@@ -163,13 +158,13 @@
            </div>
            <ul class="nav nav-pills actions">
              <li>  
-               <a data-toggle="modal" href="#accountAdd"rel="tooltip" title="Add an Account"><b class="icon-plus"></b></a>
+               <a data-toggle="modal" href="#accountAdd"rel="tooltip" title="Add an Account"><i class="icon-plus"></i></a>
              </li>             
              <li>  
-              <a data-toggle="modal" href="#adminAccounts" rel="tooltip" title="Account options"><b class="icon-cog"></b></a>
+              <a data-toggle="modal" href="#adminAccounts" rel="tooltip" title="Account options"><i class="icon-cog"></i></a>
              </li>
              <li>  
-               <a href="#" class="drag" rel="tooltip" title="Move to another column"><b class="icon-move"></b></a>
+               <a href="#" class="drag" rel="tooltip" title="Move to another column"><i class="icon-move"></i></a>
              </li>             
            </ul>
          </div>
@@ -224,13 +219,13 @@
             </div>
             <ul class="nav nav-pills actions">
               <li>  
-                <a href="#adminAdd" rel="tooltip" title="Add an Account"><b class="icon-plus"></b></a>
+                <a href="#adminAdd" rel="tooltip" title="Add an Account"><i class="icon-plus"></i></a>
               </li>             
               <li>  
-               <a data-toggle="modal" href="#adminActivity" rel="tooltip" title="Account options"><b class="icon-cog"></b></a>
+               <a data-toggle="modal" href="#adminActivity" rel="tooltip" title="Account options"><i class="icon-cog"></i></a>
               </li>
               <li>  
-                <a href="#" class="drag" rel="tooltip" title="Move to another column"><b class="icon-move"></b></a>
+                <a href="#" class="drag" rel="tooltip" title="Move to another column"><i class="icon-move"></i></a>
               </li>             
             </ul>
           </div>
@@ -278,13 +273,13 @@
              </div>
              <ul class="nav nav-pills actions">
                <li>  
-                 <a data-toggle="modal" href="#leadAdd"  rel="tooltip" title="Add a Lead"><b class="icon-plus"></b></a>
+                 <a data-toggle="modal" href="#leadAdd"  rel="tooltip" title="Add a Lead"><i class="icon-plus"></i></a>
                </li>             
                <li>  
-                <a data-toggle="modal" href="#adminAccount" rel="tooltip" title="Account Options"><b class="icon-cog"></b></a>
+                <a data-toggle="modal" href="#adminAccount" rel="tooltip" title="Account Options"><i class="icon-cog"></i></a>
                </li>
                <li>  
-                 <a href="#" class="drag" rel="tooltip" title="Move to another column"><b class="icon-move"></b></a>
+                 <a href="#" class="drag" rel="tooltip" title="Move to another column"><i class="icon-move"></i></a>
                </li>             
              </ul>
            </div>           
@@ -298,12 +293,12 @@
                 <div class="span6">
                   <div class="btn-toolbar pull-right">
                     <div class="btn-group">
-                      <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><b class="icon-road"></b> Tour</a>
-                      <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><b class="icon-comment"></b> Feedback</a> 
-                      <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><b class="icon-question-sign"></b> Support</a>
+                      <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
+                      <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
+                      <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
                     </div>
                     <div class="btn-group">
-                      <a href="#" class="btn"><b class="icon-print"></b> Print</a> <a href="#" class="btn"><b class="icon-arrow-up"></b> Top</a>
+                      <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
                     </div>
                   </div>
                 </div>

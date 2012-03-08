@@ -15,7 +15,7 @@
     <![endif]-->
 
     <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 
     <link href="/js/google-code-prettify/prettify.css" rel="stylesheet">
   </head>
@@ -26,12 +26,7 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="/index.html">SUGARCRM</a>
+          <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="">
@@ -73,7 +68,7 @@
       <li><a href="#tables">Tables</a></li>
       <li><a href="#forms">Forms</a></li>
       <li><a href="#buttons">Buttons</a></li>
-      <li><a href="#icons">Icons by Glyphicons</a></li>
+      <li><a href="#icons">Icons</a></li>
     </ul>
   </div>
 </header>
@@ -193,8 +188,8 @@
       <h3>Example addresses</h3>
       <p>Here are two examples of how the <code>&lt;address&gt;</code> tag can be used:</p>
       <address>
-        <strong>Twitter, Inc.</strong><br>
-        795 Folsom Ave, Suite 600<br>
+        <strong>SugarCRM, Inc.</strong><br>
+        33 Some Ave, Suite 600<br>
         San Francisco, CA 94107<br>
         <abbr title="Phone">P:</abbr> (123) 456-7890
       </address>
@@ -748,9 +743,9 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
         <thead>
           <tr>
             <th>#</th>
-            <th class="yellow">First Name</th>
-            <th class="blue">Last Name</th>
-            <th class="green">Language</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Language</th>
           </tr>
         </thead>
         <tbody>
@@ -1017,21 +1012,21 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
             <label class="control-label" for="inputError">Input with warning</label>
             <div class="controls">
               <input type="text" id="inputError">
-              <span class="help-inline">Something may have gone wrong</span>
+              <span class="help-inline"><span class="btn btn-warning"><i class="icon-white icon-warning-sign"></i></span>  Something may have gone wrong</span>
             </div>
           </div>
           <div class="control-group error">
             <label class="control-label" for="inputError">Input with error</label>
             <div class="controls">
               <input type="text" id="inputError">
-              <span class="help-inline">Please correct the error</span>
+              <span class="help-inline"><span class="btn btn-danger"><i class="icon-white icon-exclamation-sign"></i></span> Please correct the error</span>
             </div>
           </div>
           <div class="control-group success">
             <label class="control-label" for="inputError">Input with success</label>
             <div class="controls">
               <input type="text" id="inputError">
-              <span class="help-inline">Woohoo!</span>
+              <span class="help-inline"><span class="btn btn-success"><i class="icon-white icon-ok-sign"></i></span> Woohoo!</span>
             </div>
           </div>
           <div class="control-group success">
@@ -1044,7 +1039,7 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
                 <option>4</option>
                 <option>5</option>
               </select>
-              <span class="help-inline">Woohoo!</span>
+              <span class="help-inline"><span class="btn btn-success"><i class="icon-white icon-ok-sign"></i></span> Woohoo!</span>
             </div>
           </div>
           <div class="form-actions">
@@ -1222,31 +1217,31 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
       <tr>
         <td><a class="btn btn-primary" href="#">Primary</a></td>
         <td><code>.btn-primary</code></td>
-        <td>#0c7ec7 with 10% darker gradient effect</td>                
+        <td>#177EE5 with 10% darker gradient effect</td>                
         <td>Provides extra visual weight and identifies the primary action in a set of buttons</td>
       </tr>
       <tr>
-        <td><a class="btn btn-info" href="#">Info</a></td>
+        <td><a class="btn btn-info" href="#"><i class="icon-white icon-info-sign"></i> Info</a></td>
         <td><code>.btn-info</code></td>
-        <td>#62BCF6 with 10% darker gradient effect</td>        
+        <td>#71B1F1 with 10% darker gradient effect</td>        
         <td>Used as an alternate but compliments the primary to the default styles</td>
       </tr>
       <tr>
-        <td><a class="btn btn-success" href="#">Success</a></td>
+        <td><a class="btn btn-success" href="#"><i class="icon-white icon-ok-sign"></i> Success</a></td>
         <td><code>.btn-success</code></td>
-        <td>#0cc763 with 10% darker gradient effect</td>
+        <td>#3FB300 with 10% darker gradient effect</td>
         <td>Indicates a successful or positive action</td>
       </tr>
       <tr>
-        <td><a class="btn btn-warning" href="#">Warning</a></td>
+        <td><a class="btn btn-warning" href="#"><i class="icon-white icon-warning-sign"></i> Warning</a></td>
         <td><code>.btn-warning</code></td>
-        <td>#e0d20d with 10% darker gradient effect</td>        
+        <td>#E57417 with 10% darker gradient effect</td>        
         <td>Indicates caution should be taken with this action</td>
       </tr>
       <tr>
-        <td><a class="btn btn-danger" href="#">Danger</a></td>
+        <td><a class="btn btn-danger" href="#"><i class="icon-white icon-exclamation-sign"></i> Danger</a></td>
         <td><code>.btn-danger</code></td>
-        <td>#C60C30 with 10% darker gradient effect</td>        
+        <td>#E61718 with 10% darker gradient effect</td>        
         <td>Indicates a dangerous or potentially negative action</td>
       </tr>
     </tbody>
@@ -1283,12 +1278,12 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
       <h3>Disabled state</h3>
       <p>For disabled buttons, use <code>.btn-disabled</code> for links and <code>:disabled</code> for <code>&lt;button&gt;</code> elements.</p>
       <p>
-        <a href="#" class="btn btn-large btn-primary disabled">Primary action</a>
-        <a href="#" class="btn btn-large disabled">Action</a>
+        <a href="#" class="btn btn-primary disabled">Primary action</a>
+        <a href="#" class="btn disabled">Action</a>
       </p>
       <p>
-        <button class="btn btn-large btn-primary disabled" disabled="disabled">Primary action</button>
-        <button class="btn btn-large" disabled>Action</button>
+        <button class="btn btn-primary disabled" disabled="disabled">Primary action</button>
+        <button class="btn" disabled>Action</button>
       </p>
     </div>
     <div class="span4">
@@ -1308,7 +1303,7 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
 ================================================== -->
 <section id="icons">
   <div class="page-header">
-    <h1>Icons <small> provided by <a href="http://glyphicons.com" target="_blank">Glyphicons</a></small></h1>
+    <h1>Icons <small> set by <a href="http://glyphicons.com" target="_blank">Glyphicons</a></small></h1>
   </div>
   <div class="row">
       <div class="span3">
@@ -1463,7 +1458,7 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
   <div class="row">
     <div class="span4">
       <h3>Built as a sprite</h3>
-      <p>Instead of making every icon an extra request, we've compiled them into a sprite&mdash;a bunch of images in one file that uses CSS to position the images with <code>background-position</code>. This is the same method we use on Twitter.com and it has worked well for us.</p>
+      <p>Instead of making every icon an extra request, we've compiled them into a sprite&mdash;a bunch of images in one file that uses CSS to position the images with <code>background-position</code>.</p>
       <p>All icons classes are prefixed with <code>.icon-</code> for proper namespacing and scoping, much like our other components. This will help avoid conflicts with other tools.</p>
       <p><a href="http://glyphicons.com" target="_blank">Glyphicons</a> has granted us use of the Halflings set in our open-source toolkit so long as we provide a link and credit here in the docs. Please consider doing the same in your projects.</p>
     </div>
@@ -1553,7 +1548,6 @@ For example, &lt;code&gt;section&lt;/code&gt; should be wrapped as inline.
 </section>
 </div>
 
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="/js/jquery.js"></script>
     <script src="/js/google-code-prettify/prettify.js"></script>
     <script src="/js/bootstrap-transition.js"></script>

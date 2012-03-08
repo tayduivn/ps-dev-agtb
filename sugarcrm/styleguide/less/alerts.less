@@ -12,7 +12,7 @@
 }
 .alert,
 .alert-heading {
-  color: @warningText;
+  color:  darken(@warningBackground, 70%)
 }
 
 // Adjust close link position
@@ -32,7 +32,7 @@
 }
 .alert-success,
 .alert-success .alert-heading {
-  color: @successText;
+  color:  darken(@successBackground, 70%);
 }
 .alert-danger,
 .alert-error {
@@ -43,7 +43,7 @@
 .alert-error,
 .alert-danger .alert-heading,
 .alert-error .alert-heading {
-  color: @errorText;
+  color:  darken(@errorBackground, 70%);
 }
 .alert-info {
   background-color: @infoBackground;
@@ -51,7 +51,7 @@
 }
 .alert-info,
 .alert-info .alert-heading {
-  color: @infoText;
+  color:  darken(@infoBackground, 70%);
 }
 
 
