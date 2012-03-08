@@ -58,7 +58,7 @@ width:70%;
 {/if}
 
 
-<table width="50%">
+<table width="80%">
 <tr ><td width="20%">&nbsp;</td><td width="90%"></td></tr>
 <tr valign="top" >
     <td id="moduleListTD" style="">
