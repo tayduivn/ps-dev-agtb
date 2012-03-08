@@ -63,7 +63,7 @@ describe("Router", function() {
 
         SUGAR.App.router.initialize({controller: controller});
         route = SUGAR.App.router.buildRoute(context,action,{},options);
-        
+
         expect(route).toEqual("Contacts/create?first=Rick&last=Astley&job=Rock+Star");
     });
 });
