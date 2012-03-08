@@ -138,7 +138,7 @@
 					var fancymenu = "";
 					var slideUpSpeed = "fast";
 					var slideDownSpeed = "fast";
-					
+
 					//if the dropdown handle doesn't exist, lets create it and 
 					//add it to the dom
 					if(parent.find("span").length == 0){
@@ -164,7 +164,11 @@
 						//add click handler to handle
 						dropDownHandle.click(function(event){
 
+
 							//close all other open menus
+                            $("ul.SugarActionMenu > li").each(function() {
+                                $(this).sugarActionMenu('IEfix');
+                            });
 							$("ul.SugarActionMenu ul.subnav").each(function(subIndex, node){
 								var subjNode = $(node);
 								if(!(subjNode[0] === jNode[0])){
@@ -173,10 +177,14 @@
 								}
 							});
 							if(jNode.hasClass("ddopen")){
+                                parent.sugarActionMenu('IEfix');
+
 								jNode.slideUp(slideUpSpeed);
 								jNode.removeClass("ddopen");
 							}
 							else{
+                                parent.sugarActionMenu('IEfix', jNode);
+
 								jNode.slideDown(slideDownSpeed).show();
 								jNode.addClass("ddopen");
 							}
@@ -195,6 +203,10 @@
 						if(jBody.data("sugarActionMenu") != true){
 							jBody.data("sugarActionMenu", true);
 							jBody.bind("click", function(){
+
+                                $("ul.SugarActionMenu > li").each(function() {
+                                    $(this).sugarActionMenu('IEfix');
+                                });
 
 								$("ul.SugarActionMenu ul.subnav").each(function(subIndex, node){
                                     //prevent hiding the submenu when user click the submenu which contains one more depth submenu
@@ -270,7 +282,42 @@
 				}
 			});
 			return index;
-		}
+		},
+        IEfix: function($ul) {
+            if ($.browser.msie && $.browser.version > 6) {
+                if($ul) {
+                    if( $ul.hasClass('iefixed') === false)
+                        return;
+                    this.each(function(){
+                        SUGAR.themes.counter = SUGAR.themes.counter ? SUGAR.themes.counter++ : 1;
+                        var $$ = $(this),
+                            _id = $$.attr("ul-child-id") ? $$.attr("ul-child-id") : ($$.parent('.SugarActionMenu').attr("id")) ? $$.parent('.SugarActionMenu').attr("id") + 'Subnav' : 'sugaractionmenu' + SUGAR.themes.counter,
+                            _top = $$.position().top + $$.outerHeight(),
+                            _width = 'auto', //to obtain a certain size, apply min-width in css
+                            _css = {
+                                top: _top,
+                                width: _width,
+                                position: 'fixed'
+                            },
+                            _right = $('body').width() - $$.offset().left - $$.width(),
+                            _left = $$.offset().left;
+                        if($ul.css('right') != 'auto') {
+                            _css['right'] = _right;
+                        } else {
+                            _css['left'] = _left;
+                        }
+                        $('body').append($ul.attr("id", _id).addClass("SugarActionMenuIESub").css(_css));
+                        $$.attr("ul-child-id", _id);
+                    });
+
+                } else {
+                    this.each(function(){
+                        var _id = $(this).attr("ul-child-id");
+                        $(this).append($("body>#"+_id).removeClass("SugarActionMenuIESub"));
+                    });
+                }
+            }
+        }
 	}
 		
 	$.fn.sugarActionMenu = function(method) {

@@ -42,7 +42,7 @@
             <li>
                
 
-                <ul class="subnav">
+                <ul class="subnav iefixed">
     {foreach from=$GCLS item=GCL name=gcl key=gcl_key}
 
 

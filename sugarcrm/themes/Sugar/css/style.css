@@ -5609,6 +5609,9 @@ top: 0;
 width:100%;
 z-index:20;
 }
+#globalLinksSubnav, #quickCreateULSubnav {
+    z-index: 20;
+}
 
 #dcmenutop{
 padding:0px;
@@ -6247,6 +6250,9 @@ ul.clickMenu {
 	   display: inline-block;
 	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
+ul.SugarActionMenuIESub {
+    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+}
 
 ul.clickMenu:hover {
    		background-image: -moz-linear-gradient(center top, 
@@ -6267,7 +6273,7 @@ ul.clickMenu:hover {
 		border-color: #000;
 		color: #fff;	
 }
-
+ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
 ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
 	color: #fff !important;	
 }
@@ -6275,7 +6281,7 @@ ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
 ul.clickMenu:hover > li > span {
 	background-position: 6px 3px;
 }
-ul.clickMenu li {
+ul.clickMenu li, ul.SugarActionMenuIESub li {
 	float: left;
 	margin: 0;	
 	padding: 0 0 0 0;
@@ -6283,6 +6289,7 @@ ul.clickMenu li {
 	position: relative; /*--Declare X and Y axis base--*/
     cursor: pointer;
 }
+ul.SugarActionMenuIESub li a,
 ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
 	display: block;
 	text-decoration: none;
@@ -6320,7 +6327,7 @@ ul.clickMenu li > span.ab { /*--Drop down trigger styles--*/
 ul.clickMenu li span.subhover {
 	cursor: pointer;
 	} /*--Hover effect for trigger--*/
-ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub {
+ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
 	left: 0; top: 23px;
@@ -6338,7 +6345,7 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub {
 	overflow:hidden;
 }
 
-ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li{
+ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li, ul.SugarActionMenuIESub li{
 	margin: 0; 
 	padding: 0px;
 	clear: both;
@@ -6421,7 +6428,7 @@ ul.clickMenu li a.disabled {
 	opacity: 1;
 }
 
-ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input, ul.subnav-sub li a {
+ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input, ul.subnav-sub li a, ul.SugarActionMenuIESub li a {
 	float: left;
 	background: #fff;
 	padding: 3px 10px !important;
@@ -6439,6 +6446,7 @@ ul.clickMenu li ul.subnav li input {
 	/*width: 170px;*/
 	width:100%	
 }
+ul.SugarActionMenuIESub li a:hover,
 ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
 background-color: #355b7e;
 color: #fff;
@@ -6460,7 +6468,9 @@ ul.clickMenu.showLess .moreOverflow , ul.clickMenu.showLess .moduleMenuOverFlowL
 	float: right;
 	margin-right: 0px;	
 }
-
+ul#globalLinksSubnav, ul#quickCreateULSubnav{
+    font-family: Arial;
+}
 ul#globalLinks.clickMenu {
 	background: none;
 	border: 0px none;
@@ -6589,8 +6599,8 @@ ul#detailViewActions.clickMenu {
 #quickCreate ul.clickMenu > li:hover {
 	background-color: #276499;
 }
-
-
+ul#globalLinksSubnav li { min-width: 120px;}
+ul#globalLinksSubnav, ul#quickCreateULSubnav,
 #quickCreate ul.clickMenu li ul.subnav, #globalLinksModule ul.clickMenu li ul.subnav{
 	top: 43px;
 	right: 0;
@@ -6604,13 +6614,14 @@ ul#detailViewActions.clickMenu {
 	width: auto;		
 }
 
+#globalLinksSubnav li a, #quickCreateULSubnav li a,
 #quickCreate ul.clickMenu li ul.subnav li a, #globalLinksModule ul.clickMenu li ul.subnav li a {
 	padding: 4px 10px !important;
 	font-size: 13px !important;
 	color: #666666 !important;
 	line-height: 1.45;
 }
-
+#quickCreateULSubnav li.moduleMenuOverFlowLess a, #quickCreateULSubnav li.moduleMenuOverFlowMore a,
 #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {
 	color: #999 !important;
 }
