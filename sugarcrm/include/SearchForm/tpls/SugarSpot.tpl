@@ -59,7 +59,9 @@
 {else}
     <section class="resultNull">
         <h1>{$appStrings.LBL_EMAIL_SEARCH_NO_RESULTS}</h1>
-        <a href="">Search again</a>
+        <div style="float:right;">
+            <a href="index.php?module=Home&action=spot&full=true&q={$queryEncoded}">{$appStrings.LNK_ADVANCED_SEARCH}</a>
+        </div>
     </section>
 {/if}
 </div>
