@@ -436,17 +436,34 @@ class Tokenizer {
     }
 
     function read_punc() {
+        $last_token = $this->tokens_since_last_keyword[count($this->tokens_since_last_keyword) - 1];
         $token = $this->token("punc", $this->nextChar());
         if($token["value"] == "{") {
             // It's either an object literal, or the start of a block.
+            // Object literals could be variable assignemnts, passed in directly into functions without being named, or could be subproperties.
+            // Case one: { follows an =
+            // Case two: { follows a ( or a ,
+            // Case three: { follows a :
+            $block_type = $this->tokens_since_last_keyword[0]["value"];
+            if($last_token['type'] == 'punc') {
+                if($last_token['value'] == '=' || $last_token['value'] == '(' || $last_token['value'] == ',' || $last_token['value'] == ':') {
+                    $block_type = 'object_literal';
+                }
+            }
+            $token["block_type"] = $block_type;
 
-            // The first element is the last keyword we've got.
-            echo "Start ".$this->tokens_since_last_keyword[0]["value"]."\n";
-            array_push($this->open_blocks, $this->tokens_since_last_keyword[0]["value"]);
+            //$spaces = count($this->open_blocks) * 4;
+            //while($spaces > 0) { echo ' '; --$spaces; }
+            //echo "Start ".$block_type."\n";
+            array_push($this->open_blocks, $block_type);
         } elseif($token["value"] == "}") {
             // LIFO queue.
-            $type = array_pop($this->open_blocks);
-            echo "End ".$type."\n";
+            $block_type = array_pop($this->open_blocks);
+            $token["block_type"] = $block_type;
+            
+            //$spaces = count($this->open_blocks) * 4;
+            //while($spaces > 0) { echo ' '; --$spaces; }
+            //echo "End ".$type."\n";
         }
         return $token;
     }
@@ -678,7 +695,7 @@ class SugarMin {
         $SPACE_PUNC = str_split("([{");
         $SPACE_BEFORE_KEYWORDS = array("in", "instanceof");
 
-        if(!is_null($prev_token) && $prev_token["type"] == "punc" && $prev_token["value"] == "}" && $token["type"] == "name") {
+        if(!is_null($prev_token) && $prev_token["type"] == "punc" && $prev_token["value"] == "}" && $prev_token['block_type'] == 'function' && $token["type"] == "name") {
             $ret = ';';
         } elseif(($token["type"] == "keyword" || $token["type"] == "operator") && in_array($token["value"], $SPACE_BEFORE_KEYWORDS)) {
             $ret = ' ';
