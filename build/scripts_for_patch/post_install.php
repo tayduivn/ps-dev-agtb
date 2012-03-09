@@ -350,7 +350,7 @@ function post_install() {
 		$sugar_config['chartEngine'] = 'Jit';
 	}
     // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.	
-    if ($origVersion < '640') {
+    if ($origVersion < '642') {
         _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
         $sugar_config['upload_maxsize'] = 30000000;
     }
