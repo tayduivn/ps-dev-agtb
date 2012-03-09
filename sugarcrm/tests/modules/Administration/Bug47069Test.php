@@ -51,7 +51,10 @@ class Bug47069Test extends Sugar_PHPUnit_Framework_TestCase
         unset($_REQUEST);
         $GLOBALS['db']->query("DELETE FROM notes WHERE id IN ('".$this->note1->id."','".$this->note2->id."')");
         // Just in case there is a custom table here
-        $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN ('".$this->note1->id."','".$this->note2->id."')");
+        if($GLOBALS['db']->tableExists('notes_cstm'))
+        {
+            $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN ('".$this->note1->id."','".$this->note2->id."')");
+        }
         parent::tearDown();
     }
 

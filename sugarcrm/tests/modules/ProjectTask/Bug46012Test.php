@@ -59,8 +59,8 @@ class Bug46012Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 
-        $GLOBALS['db']->query(sprintf("delete from projects where id='%s'", $this->project->id));
-        $GLOBALS['db']->query(sprintf("delete from project_task where id='%s'", $this->task->id));
+        $GLOBALS['db']->query("DELETE FROM projects WHERE id='{$this->project->id}'");
+        $GLOBALS['db']->query("DELETE FROM project_task WHERE id='{$this->task->id}'");
     }
 
 
