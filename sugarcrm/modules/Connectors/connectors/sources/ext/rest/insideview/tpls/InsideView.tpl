@@ -32,7 +32,6 @@ function allowInsideView() {ldelim}
 document.getElementById('insideViewFrame').src = "{$AJAX_URL}";
 document.getElementById('insideViewConfirm').style.display = 'none';
 document.getElementById('insideViewFrame').style.display = 'block';
-document.getElementById('insideViewDiv').style.height='430px';
 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallConnectorFunc&source_id=ext_rest_insideview&source_func=allowInsideView', {ldelim}{rdelim}, null);
 {rdelim}
 SUGAR.util.doWhen("typeof(markSubPanelLoaded) != 'undefined' && document.getElementById('subpanel_insideview')", function() {ldelim}
@@ -89,7 +88,7 @@ function toggleGettingStartedButton(){ldelim}
     </table>
   <div id='subpanel_insideview' style='width:100%' {if !$showInsideView}align="center"{/if}>
       <div id='insideViewConfirm' class="detail view" style="width: 100%; text-align: left; position: relative;{if $showInsideView}display:none;{/if}">
-          <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$close}" border="0" style='position: absolute; top: -8px; right: -9px;'></a>
+          <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"></a>
           <div style="width: 100%; float: left; padding: 10px 0px 20px 0pt;">
             <a target="_blank"  href="http://community.insideview.com/t5/Getting-Started/Find-Opportunities-to-Reach-Out-to-Customers/ta-p/1133"  style="float: left; width: 230px;display:block;text-decoration:none;">
                 <img title="{$connector_language.LBL_OPP}" src="https://my.insideview.com/iv/common/ruby/images/sugarembed-img1.png" style="float: left;border:0 solid;">
@@ -113,10 +112,10 @@ function toggleGettingStartedButton(){ldelim}
                 </div>
             </a>
           </div>
-          <hr style="border-color: rgb(238, 238, 238); background-color: rgb(238, 238, 238); width: 700px;">
+          <hr style="border-color: rgb(238, 238, 238); background-color: rgb(238, 238, 238); width: 100%;">
           <form>
               <input type="checkbox" class="checkbox" name="insideview_accept_box" id="insideview_accept_box" style="display: none;" onclick="toggleGettingStartedButton();">
-              <div style="float:left;">
+              <div style="float:left;padding:0 0 10px 0">
                     <div style="font-size: 11px; float:left;margin: 5px 15px 0px 150px;">
                         {$connector_language.iv_description0}&nbsp;<a href="http://www.insideview.com/cat-terms-use.html" target="_blank" style="color:#0099CC;text-decoration: none; font-size: 11px;">{$connector_language.LBL_TOS1}</a>&nbsp;and&nbsp;<a style="color:#0099CC;text-decoration: none; font-size: 11px;" target="_blank" href="http://www.insideview.com/cat-privacy.html">{$connector_language.LBL_TOS3}</a>.
                     </div>
