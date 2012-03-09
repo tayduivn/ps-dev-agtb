@@ -32,13 +32,15 @@ class Bug28260Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp()
     {
-        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->user = $GLOBALS['current_user'];
 	}
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->user);
+        unset($GLOBALS['current_user']);
     }
     
     public function _providerEmailTemplateFormat()
@@ -61,13 +63,13 @@ class Bug28260Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    $GLOBALS['sugar_config']['default_date_format'] = $dateFormat;
 		$GLOBALS['sugar_config']['default_time_format'] = $timeFormat;
-		$this->user->setPreference('datef', $dateFormat);
-		$this->user->setPreference('timef', $timeFormat);
+        $GLOBALS['current_user']->setPreference('datef', $dateFormat);
+		$GLOBALS['current_user']->setPreference('timef', $timeFormat);
 		
         require_once('include/SugarFields/SugarFieldHandler.php');
    		$sfr = SugarFieldHandler::getSugarField('datetime');
     	$formattedValue = $sfr->getEmailTemplateValue($unformattedValue,array('type'=>'datetime'), array('notify_user' => $this->user));
     	
-   	 	$this->assertEquals($expectedValue, $formattedValue);
+   	 	$this->assertSame($expectedValue, $formattedValue);
     }
 }
