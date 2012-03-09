@@ -131,7 +131,6 @@ SUGAR.append(SUGAR.themes, {
     		Set_Cookie('sugar_theme_menu_mode','click',30,'/','','');
     	}
     	location.reload();
-    	//console.log(Get_Cookie("sugar_theme_menu_mode"));
     },
     getMenuMode: function() {
     	
@@ -157,9 +156,7 @@ SUGAR.append(SUGAR.themes, {
 			onBeforeShow: function() {
 				if($(this).attr("class") == "megamenu") {
                     var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
-					//var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
-                    var moduleName = $(this).prev().attr("module");
-                    //$("body").append($(this).attr("id", moduleName + "_megamenu_" + sugar_theme_gm_current));
+					var moduleName = $(this).prev().attr("module");
                     //Check if the menu we want to show is in the more menu
 					if($(this).parents().is(extraMenu)) {
 						var moduleName = moduleName.replace("Overflow","");
@@ -237,11 +234,9 @@ SUGAR.append(SUGAR.themes, {
                     function(index) {
                             menuItemsWidth += $(this).width();
                         if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
-                            //console.log($(this).attr("id"));
                             $(this).css("display","none");
                             $("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
                         }  else if( (menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) || $(this).hasClass("moduleTabExtraMenu") ) {
-                            //console.log($(this).attr("id"));
                             $(this).css("display","list-item");
                             $("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
                         }
@@ -352,7 +347,7 @@ SUGAR.append(SUGAR.themes, {
         var current_menu = $('ul.sf-menu:visible');
         var target_menu = $('#themeTabGroupMenu_'+groupName);
         SUGAR.themes.current_theme = sugar_theme_gm_current = groupName;
-
+        //fliping over-and-out is added to change the global menu theme
         $("#dcmenu").animate({
             top: '-=' + dcheight
         }, 200, function() {

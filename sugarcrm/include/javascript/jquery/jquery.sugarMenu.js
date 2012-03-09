@@ -165,6 +165,7 @@
 
 
 							//close all other open menus
+                            //retore the dom elements back by handling iefix
                             $("ul.SugarActionMenu > li").each(function() {
                                 $(this).sugarActionMenu('IEfix');
                             });
@@ -182,6 +183,8 @@
 								jNode.removeClass("ddopen");
 							}
 							else{
+                                //To support IE fixed size rendering,
+                                //parse out dom elements out of the fixed element
                                 parent.sugarActionMenu('IEfix', jNode);
 
 								jNode.slideDown(slideDownSpeed).show();
@@ -202,7 +205,7 @@
 						if(jBody.data("sugarActionMenu") != true){
 							jBody.data("sugarActionMenu", true);
 							jBody.bind("click", function(){
-
+                                //retore the dom elements back by handling iefix
                                 $("ul.SugarActionMenu > li").each(function() {
                                     $(this).sugarActionMenu('IEfix');
                                 });
@@ -282,6 +285,34 @@
 			});
 			return index;
 		},
+        /**
+         * To support IE fixed size rendering,
+         * parse out dom elements out of the fixed element
+         *
+         * Prepare ===
+         * <div style=position:fixed>
+         *     ...
+         *     <li jquery-attached>
+         *         <ul style=position:absoulte>
+         *             ...
+         *         </ul>
+         *     </li>
+         * </div>
+         *
+         * Application ===
+         * <div style=position:fixed>
+         *     <li ul-child-id='auto-evaluted-id'>
+         *     ...
+         *     </li>
+         * </div>
+         *
+         * <ul id='auto-evaluted-id' style=position:fix;left/right/top-positioning:auto-calculated>
+         *     ...
+         * </ul>
+         * @param this - element container which is inside the fixed box model
+         * @param $ul - dropdown box model which needs to render out of the fixed box range
+         *              if $ul is not given, it will restore back to the original structure
+         */
         IEfix: function($ul) {
             if ($.browser.msie && $.browser.version > 6) {
                 if($ul) {
@@ -300,6 +331,7 @@
                             },
                             _right = $('body').width() - $$.offset().left - $$.width(),
                             _left = $$.offset().left;
+                        //fixed positioning depends on the css property
                         if($ul.css('right') != 'auto') {
                             _css['right'] = _right;
                         } else {

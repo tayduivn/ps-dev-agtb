@@ -27,7 +27,6 @@
                 clearTimeout(menu.sfTimer);
 
                 $$.showSuperfishUl().siblings().hideSuperfishUl();
-                //return false;
                 // prevent redirect to anchor target href
                 evt.preventDefault();
             }
@@ -155,15 +154,52 @@
         o.animation.opacity != undefined)
         this.toggleClass(sf.c.shadowClass + '-off');
     };
+    /**
+     * Return css property variale which contains numerical data.
+     * i.e. width, border, padding-left, etc.
+     * @param this - element that is trying to retrive
+     * @param $css - css properity which contains numerical data
+     * @return int - value of the size
+     */
     sf.cssValue = function($css) {
         if(this.length == 0)
             return 0;
         var _val = parseInt(this.css($css).replace("px", ""));
         return (_val) ? _val : 0;
     };
+    /**
+     * To support IE fixed size rendering,
+     * parse out dom elements out of the fixed element
+     *
+     * Prepare ===
+     * <div style=position:fixed>
+     *     ...
+     *     <li jquery-attached>
+     *         <ul style=position:absoulte>
+     *             ...
+     *         </ul>
+     *     </li>
+     * </div>
+     *
+     * Application ===
+     * <div style=position:fixed>
+     *     <li ul-child-id='auto-evaluted-id'>
+     *     ...
+     *     </li>
+     * </div>
+     *
+     * <ul id='auto-evaluted-id' style=position:fix;left/right/top-positioning:auto-calculated>
+     *     ...
+     * </ul>
+     * @param this - element container which is inside the fixed box model
+     * @param $ul - dropdown box model which needs to render out of the fixed box range
+     *              if $ul is not given, it will restore back to the original structure
+     */
     sf.IEfix = function($ul) {
         if ($.browser.msie && $.browser.version > 6) {
             if($ul) {
+                //Take out the element out of the fixed box model,
+                //and then append it into the end of body container
                 this.each(function(){
                     var $$ = $(this),
                         o = sf.op,
@@ -171,6 +207,7 @@
                         _top = $$.position().top + $$.outerHeight() + 1,
                         _left = $$.offset().left - sf.cssValue.call($ul, "border-left-width"),
                         $menu = $('ul.' + sf.c.menuClass + ':visible');
+                    //handling sub-sliding menu
                     if($$.css('position') == 'static') {
                         _left += $$.outerWidth() + sf.cssValue.call($ul, "border-right-width");
                         $ul.addClass('sf-sub-modulelist').on('mouseover', function(){
@@ -184,17 +221,20 @@
                             });
                     }
 
+                    //append the item into the body element, and then save the id to restore back later
                     $('body').append($ul.attr("id", _id).css({
                         top: _top,
                         left:_left,
                         position: 'fixed'
                         }).on('mouseover',function(){
+                            //maintaining the dropdown container
                             var menu = sf.getMenu($menu),
                                 o = sf.op;
                             clearTimeout(menu.sfTimer);
                             if( $(menu).hasClass(sf.defaults['retainClass']) === false )
                                 $(menu).addClass(sf.defaults['retainClass']);
                         }).on('mouseout', function(){
+                            //clear out the dropdown menu
                             var menu = sf.getMenu($menu),
                                 o = sf.op;
                             clearTimeout(menu.sfTimer);
@@ -208,6 +248,7 @@
                 });
 
             } else {
+                //restore back the element to the original structure
                 this.each(function(){
                     var _id = $(this).attr("ul-child-id");
                     $(this).append($("body>#"+_id).off('mouseover mouseout'));

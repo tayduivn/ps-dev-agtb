@@ -4032,6 +4032,7 @@ ul.sf-sub-modulelist,
 }
 ul.megamenu .MMShortcuts li.sfHover div.megawrapper,
 ul.moduleTabMore li.sfHover div.megawrapper,
+#moduleList li.sfHover div.megawrapper,
 ul.sf-sub-modulelist li.sfHover div.megawrapper {
     background: #fff;
 }
@@ -4259,13 +4260,18 @@ ul.moduleTabMore .moduleMenuOverFlowLess .yuimenuitemlabel, ul.moduleTabMore .mo
 	font-weight: normal;
 	color: #999;
 }
-
-ul.moduleTabMore .moreOverflow,
+ul#quickCreateULSubnav.showLess .moreOverflow,
+ul#quickCreateUL .showLess .moreOverflow,
+ul.moduleTabMore.showLess .moreOverflow,
 #moduleList .moduleTabExtraMenu.showLess .moreOverflow, #moduleList .moduleTabExtraMenu .flexMenuItems {
 	display: none;
 }
+ul#quickCreateULSubnav.showMore .moreOverflow,
 ul.moduleTabMore.showMore li.moreOverflow, #moduleList ul.moduleTabMore.showMore li.moreOverflow { display:block; }
+
 ul.moduleTabMore.showMore .moduleMenuOverFlowMore, ul.moduleTabMore.showLess .moduleMenuOverFlowLess,
+ul#quickCreateUL .showMore .moduleMenuOverFlowMore, ul#quickCreateUL .showLess .moduleMenuOverFlowLess,
+ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
 #moduleList ul.moduleTabMore.showMore .moduleMenuOverFlowMore, #moduleList ul.moduleTabMore.showLess .moduleMenuOverFlowLess
 {
 display: none;	
