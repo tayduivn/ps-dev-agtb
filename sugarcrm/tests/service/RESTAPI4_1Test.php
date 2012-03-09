@@ -174,6 +174,9 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     *
+     */
     public function testGetModifiedRelationships()
     {
         $result = $this->_login();
@@ -204,8 +207,10 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertNotEmpty($result['entry_list'], 'Failed to return $result[\'entry_list\']');
-        $this->assertEquals($result['entry_list'][0]['module_name'], 'contacts_users');
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(1, $result['result_count']);
+        $this->assertEquals(1, $result['next_offset']);
+
 
         $result = $this->_makeRESTCall('get_modified_relationships',
             array(
@@ -224,8 +229,9 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertNotEmpty($result['entry_list'], 'Failed to return $result[\'entry_list\']');
-        $this->assertEquals($result['entry_list'][0]['module_name'], 'meetings_users');
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(2, $result['result_count']);
+        $this->assertEquals(2, $result['next_offset']);
 
         $result = $this->_makeRESTCall('get_modified_relationships',
             array(
@@ -244,8 +250,9 @@ class RESTAPI4_1Test extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertNotEmpty($result['entry_list'], 'Failed to return $result[\'entry_list\']');
-        $this->assertEquals($result['entry_list'][0]['module_name'], 'meetings_users');
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(1, $result['result_count']);
+        $this->assertEquals(1, $result['next_offset']);
 
     }
 
