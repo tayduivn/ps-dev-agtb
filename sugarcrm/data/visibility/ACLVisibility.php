@@ -21,42 +21,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 /**
- * Base class for visibility implementations
+ * ACL-driven visibility
  * @api
  */
-abstract class SugarVisibility
+class ACLVisibility extends SugarVisibility
 {
-    /**
-     * Parent bean
-     * @var SugarBean
-     */
-    protected $bean;
-    protected $module_dir;
-
-    /**
-     * @param SugarBean $bean
-     */
-    public function __construct($bean)
-    {
-        $this->bean = $bean;
-        $this->module_dir = $this->bean->module_dir;
-    }
-
-    /**
-     * Add visibility clauses to the FROM part of the query
-     * @param string $query
-     */
-    public function addVisibilityFrom(&$query)
-    {
-        return $query;
-    }
-
-    /**
-     * Add visibility clauses to the WHERE part of the query
-     * @param string $query
-     */
     public function addVisibilityWhere(&$query)
     {
+        if($this->bean->bean_implements('ACL') && ACLController::requireOwner($this->bean->module_dir, 'list')) {
+            $owner_where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id);
+            if(!empty($query)) {
+                $query .= " AND $owner_where";
+            } else {
+                $query = $owner_where;
+            }
+        }
         return $query;
     }
 }

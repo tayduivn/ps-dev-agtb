@@ -85,6 +85,16 @@ class SugarAutoLoader{
 	 */
 	protected static function getVisibilityStrategy($class)
 	{
+	    if(substr($class, 0, 8) == 'SugarACL') {
+	        // ACL class
+	        if(file_exists("custom/data/acl/$class.php")) {
+	            return "custom/data/acl/$class.php";
+	        }
+	        if(file_exists("data/acl/$class.php")) {
+	            return "data/acl/$class.php";
+	        }
+	        return false;
+	    }
 	    if(file_exists("custom/data/visibility/$class.php")) {
 	        return "custom/data/visibility/$class.php";
 	    }

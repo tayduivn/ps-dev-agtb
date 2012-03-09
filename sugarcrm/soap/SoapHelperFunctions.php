@@ -296,18 +296,21 @@ function get_user_module_list($user){
 		$modules[$invis] = 'read_only';
 	}
 
-	$actions = ACLAction::getUserActions($user->id,true);
-	foreach($actions as $key=>$value){
-		if(isset($value['module']) && $value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
-			if ($value['module']['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
-				unset($modules[$key]);
-			} else {
-				$modules[$key] = 'read_only';
-			} // else
-		} else {
-			$modules[$key] = '';
-		} // else
-	} // foreach
+	foreach($modules as $key=>$val) {
+	    if(!SugarACL::checkAccess($key, 'access')) {
+	        if(!SugarACL::checkAccess($key, 'access', array("owner_override" => true))) {
+	            // access available, but not to you
+	            $modules[$key] = 'read_only';
+	        } else {
+	            // access denied
+	            unset($modules[$key]);
+	        }
+	    } else {
+	        // access ok
+	        if($modules[$key] != 'read_only') $modules[$key] = '';
+	    }
+
+	}
 
 	//Remove all modules that don't have a beanFiles entry associated with it
 	foreach($modules as $module_name=>$module)

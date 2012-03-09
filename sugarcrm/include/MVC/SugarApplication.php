@@ -158,8 +158,9 @@ class SugarApplication
 
 	}
 
-	function ACLFilter(){
-		ACLController :: filterModuleList($GLOBALS['moduleList']);
+	public function ACLFilter()
+	{
+		$GLOBALS['moduleList'] = SugarACL::filterModuleList($GLOBALS['moduleList']);
 	}
 
 	/**
@@ -836,7 +837,7 @@ class SugarApplication
         //BEGIN SUGARCRM flav=pro ONLY
         $this->trackLogin();
         //END SUGARCRM flav=pro ONLY
-        
+
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 	}
 

@@ -31,9 +31,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/DynamicFields/DynamicField.php');
 require_once("data/Relationships/RelationshipFactory.php");
-//BEGIN SUGARCRM flav=pro ONLY
 require_once 'data/BeanVisibility.php';
-//END SUGARCRM flav=pro ONLY
+require_once 'data/SugarACL.php';
+
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -281,14 +281,8 @@ class SugarBean
             $this->module_name = $this->module_dir;
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!empty($current_user->id) &&
-                    $this->bean_implements('ACL') &&
-                    !is_admin($current_user) &&
-                    ACLAction::getUserAccessLevel($current_user->id,$this->module_dir, 'access')
-            == ACL_ALLOW_ENABLED && (ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
-            == ACL_ALLOW_ADMIN || ACLAction::getUserAccessLevel($current_user->id, $this->module_dir, 'admin')
-            == ACL_ALLOW_ADMIN_DEV))
-        {
+        if(!empty($current_user->id) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
+            // We can disable team security for this module
             $this->disable_row_level_security =true;
         }
         //END SUGARCRM flav=pro ONLY
@@ -372,6 +366,7 @@ class SugarBean
             //BEGIN SUGARCRM flav=pro ONLY
             ACLField::loadUserFields($this->module_dir,$this->object_name, $GLOBALS['current_user']->id);
             //END SUGARCRM flav=pro ONLY
+            $this->addVisibilityStrategy("ACLSecurity");
         }
         $this->populateDefaultValues();
         //BEGIN SUGARCRM flav=pro ONLY
@@ -381,7 +376,6 @@ class SugarBean
         //END SUGARCRM flav=pro ONLY
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Load visibility manager
      * @return BeanVisibility
@@ -409,11 +403,19 @@ class SugarBean
      * Add visibility clauses to the query
      * @param string $query
      */
-    public function addVisibilityClause(&$query)
+    public function addVisibilityFrom(&$query)
     {
-        return $this->loadVisibility()->addVisibilityClause($query);
+        return $this->loadVisibility()->addVisibilityFrom($query);
     }
-    //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Add visibility clauses to the query
+     * @param string $query
+     */
+    public function addVisibilityWhere(&$query)
+    {
+        return $this->loadVisibility()->addVisibilityWhere($query);
+    }
 
     /**
      * Returns the object name. If object_name is not set, table_name is returned.
@@ -448,15 +450,11 @@ class SugarBean
      */
     function getAuditEnabledFieldDefinitions()
     {
-        $aclcheck = $this->bean_implements('ACL');
-        $is_owner = $this->isOwner($GLOBALS['current_user']->id);
         if (!isset($this->audit_enabled_fields))
         {
-
             $this->audit_enabled_fields=array();
             foreach ($this->field_defs as $field => $properties)
             {
-
                 if (
                 (
                 //BEGIN SUGARCRM flav=pro ONLY
@@ -464,7 +462,7 @@ class SugarBean
                 //END SUGARCRM flav=pro ONLY
                 !empty($properties['Audited']) || !empty($properties['audited']))
                 //BEGIN SUGARCRM flav=pro ONLY
-                && (!$aclcheck || ACLField::hasAccess($field,$this->module_dir, $GLOBALS['current_user']->id, $is_owner))
+                && SugarACL::checkField($this->module_dir, $field, "access", array("bean" => $this))
                 //END SUGARCRM flav=pro ONLY
                 )
                 {
@@ -2355,7 +2353,6 @@ function save_relationship_changes($is_update, $exclude=array())
             //$this->table_name != 'users' && $this->table_name != 'teams' && $this->table_name != 'team_memberships' && $this->table_name != 'currencies')
             $this->add_team_security_where_clause($query);
         }
-
         //END SUGARCRM flav=pro ONLY
 
         if($custom_join)
@@ -2571,22 +2568,8 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         $order_by=$this->process_order_by($order_by);
 
-        if($this->bean_implements('ACL') && ACLController::requireOwner($this->module_dir, 'list') )
-        {
-            global $current_user;
-            $owner_where = $this->getOwnerWhere($current_user->id);
-
-            //rrs - because $this->getOwnerWhere() can return '' we need to be sure to check for it and
-            //handle it properly else you could get into a situation where you are create a where stmt like
-            //WHERE .. AND ''
-            if(!empty($owner_where)){
-                if(empty($where)){
-                    $where = $owner_where;
-                }else{
-                    $where .= ' AND '.  $owner_where;
-                }
-            }
-        }
+        // FIXME: duplicate with create_new_list_query, why?
+        $this->addVisibilityWhere($where);
         $query = $this->create_new_list_query($order_by, $where,$select_fields,array(), $show_deleted,'',false,null,$singleSelect);
         return $this->process_list_query($query, $row_offset, $limit, $max, $where);
     }
@@ -2676,20 +2659,8 @@ function save_relationship_changes($is_update, $exclude=array())
             $show_deleted = 1;
         }
 
-        if($this->bean_implements('ACL') && ACLController::requireOwner($this->module_dir, 'list') )
-        {
-            global $current_user;
-            $owner_where = $this->getOwnerWhere($current_user->id);
-
-            if(empty($where))
-            {
-                $where = $owner_where;
-            }
-            else
-            {
-                $where .= ' AND '.  $owner_where;
-            }
-        }
+        // FIXME: Duplicate with create_new_list_query - why?
+        $this->addVisibilityWhere($where);
         $query = $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted, $offset);
 
         //Add Limit and Offset to query
@@ -2812,12 +2783,8 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
 
                 $submodulename = $this_subpanel->_instance_properties['module'];
-                $submoduleclass = $beanList[$submodulename];
-                //require_once($beanFiles[$submoduleclass]);
-                $submodule = new $submoduleclass();
+                $submodule = BeanFactory::newBean($submodulename);
                 $subwhere = $where_definition;
-
-
 
                 $subwhere = str_replace('WHERE', '', $subwhere);
                 $list_fields = $this_subpanel->get_list_fields();
@@ -2828,7 +2795,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         unset($list_fields[$list_key]);
                     }
                     //BEGIN SUGARCRM flav=pro ONLY
-                    if( !ACLField::hasAccess($list_key,$submodule->module_dir, $GLOBALS['current_user']->id, true)){
+                    if( !SugarACL::checkField($submodule->module_dir, $list_key, "detail", array("bean" => $submodule, "owner_override" => true))) {
                         $list_fields[$list_key]['force_blank']=true;
                     }
                     //END SUGARCRM flav=pro ONLY
@@ -3115,19 +3082,9 @@ function save_relationship_changes($is_update, $exclude=array())
         $secondarySelectedFields = array();
         $ret_array = array();
         $distinct = '';
-        if($this->bean_implements('ACL') && ACLController::requireOwner($this->module_dir, 'list') )
-        {
-            global $current_user;
-            $owner_where = $this->getOwnerWhere($current_user->id);
-            if(empty($where))
-            {
-                $where = $owner_where;
-            }
-            else
-            {
-                $where .= ' AND '.  $owner_where;
-            }
-        }
+
+        $this->addVisibilityWhere($where);
+
         if(!empty($params['distinct']))
         {
             $distinct = ' DISTINCT ';
@@ -3142,7 +3099,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         $ret_array['from'] = " FROM $this->table_name ";
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->add_team_security_where_clause($ret_array['from']);
+        $this->addVisibilityFrom($ret_array['from']);
         //END SUGARCRM flav=pro ONLY
         $ret_array['from_min'] = $ret_array['from'];
         $ret_array['secondary_from'] = $ret_array['from'] ;
@@ -5041,7 +4998,7 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     function add_team_security_where_clause(&$query)
     {
-        return $this->addVisibilityClause($query);
+        return $this->addVisibilityFrom($query);
     }
 
     /**
@@ -5051,7 +5008,7 @@ function save_relationship_changes($is_update, $exclude=array())
      * Internal function, do not override.
      * @deprecated
     */
-    function add_team_security(&$query,$table_alias='',$join_type='INNER',$force_admin=false,$join_teams=false)
+    private function _add_team_security(&$query,$table_alias='',$join_type='INNER',$force_admin=false,$join_teams=false)
     {
         // We need to confirm that the user is a member of the team of the item.
 
@@ -5375,32 +5332,85 @@ function save_relationship_changes($is_update, $exclude=array())
     {
         return false;
     }
+
+    /**
+     * Default ACL implementations for a bean
+     */
+    public function defaultACLs()
+    {
+        if($this->bean_implements('ACL')) {
+// FIXME: make configurable
+            return array(
+            	'SugarACLStatic',
+//BEGIN SUGARCRM flav=dce ONLY
+    			'SugarACLDCE',
+//END SUGARCRM flav=dce ONLY
+            );
+        }
+        return array();
+    }
+
     //BEGIN SUGARCRM flav=pro ONLY
-    function ACLFilterFields($view = 'detail'){
-        if(!$this->bean_implements('ACL'))return;
-        if(empty($GLOBALS['current_user']->id))return;
-        $access = 4;
-        if($view == 'detail')$access = 1;
-        if($view == 'edit')$access = 3;
-        $is_owner = $this->isOwner($GLOBALS['current_user']->id);
+    public function ACLFilterFields($view = 'detail')
+    {
+        $context = array('bean' => $this);
+        $acl_category = $this->getACLCategory();
         foreach($this->field_defs as $field=>$def){
             if(isset($this->$field) && $def['type'] != 'link'){
-                $field_access = ACLField::hasAccess($field, $this->module_dir,$GLOBALS['current_user']->id,  $is_owner);
-                if(!($field_access == 4 || $field_access == $access)){
+                if(!SugarACL::checkField($acl_category, $field, $view, $context)) {
                     $this->$field = '';
                 }
-
-                }
             }
-
+        }
     }
     //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Check field access for certain field
+     * @param string $field Field name
+     * @param string $action Action to check
+     * @return bool has access?
+     */
+    public function ACLFieldAccess($field, $action = 'access')
+    {
+        return SugarACL::checkField($this->getACLCategory(), $field, $view, array('bean' => $this));
+    }
+
+    /**
+     * Get field access level
+     * @param string $field Field name
+     * @return int Access level
+     */
+    public function ACLFieldGet($field)
+    {
+        return SugarACL::getFieldAccess($this->getACLCategory(), $field, array('bean' => $this));
+    }
+
+    /**
+     * Check ACL access to certain view for this object
+     */
+    public function ACLAccess($view, $context = null)
+    {
+        if(!is_null($context)) {
+            // BC hack to accept owner override
+           $context = array('owner_override' => $context);
+        }
+        if(empty($context)) {
+            $context = array();
+        }
+        if(!isset($context['bean'])) {
+            $context['bean'] = $this;
+        }
+        return SugarACL::checkAccess($this->getACLCategory(), $view, $context);
+    }
+
+
     /**
     * Check whether the user has access to a particular view for the current bean/module
     * @param $view string required, the view to determine access for i.e. DetailView, ListView...
     * @param $is_owner bool optional, this is part of the ACL check if the current user is an owner they will receive different access
     */
-    function ACLAccess($view,$is_owner='not_set')
+    private function _ACLAccess($view,$is_owner='not_set')
     {
         global $current_user;
         if($current_user->isAdminForModule($this->getACLCategory())) {

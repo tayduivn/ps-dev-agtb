@@ -399,7 +399,7 @@ EOHTML;
                 {
 			        $return_fields[$field] = $seed->field_defs[$field];
 			    }
-			} 
+			}
 
 			$searchForm = new SearchForm ( $seed, $moduleName ) ;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
@@ -501,13 +501,13 @@ EOHTML;
                 // some names are composite name fields (e.g. last_name, first_name), check access to these fields
 			    foreach($return_fields['name']['fields'] as $field)
                 {
-                    if(ACLField::hasAccess($field, $seed->module_dir, $current_user->id, false))
+                    if($seed->ACLFieldAccess($field))
                     {
                        $readAccess = true;
                     }
 			    }
             } else {
-                $readAccess = ACLField::hasAccess($name_field, $seed->module_dir, $current_user->id, false);
+                $readAccess = $seed->ACLFieldAccess($field);
             }
             //END SUGARCRM flav=pro ONLY
 		    $results[$moduleName] = array("data"=>$data, "pageData"=>$pageData, "readAccess"=>$readAccess);
@@ -635,7 +635,7 @@ EOHTML;
      * filterSearchType
      *
      * This is a private function to determine if the search type field should be filtered out based on the query string value
-     * 
+     *
      * @param String $type The string value of the field type (e.g. phone, date, datetime, int, etc.)
      * @param String $query The search string value sent from the global search
      * @return boolean True if the search type fits the query string value; false otherwise

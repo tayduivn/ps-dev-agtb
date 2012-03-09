@@ -21,42 +21,32 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 /**
- * Base class for visibility implementations
+ * Base class for ACL implementations
  * @api
  */
-abstract class SugarVisibility
+abstract class SugarACLStrategy
 {
-    /**
-     * Parent bean
-     * @var SugarBean
-     */
-    protected $bean;
-    protected $module_dir;
+    abstract public function checkAccess($module, $view, $context);
 
-    /**
-     * @param SugarBean $bean
-     */
-    public function __construct($bean)
+    public function getCurrentUser($context)
     {
-        $this->bean = $bean;
-        $this->module_dir = $this->bean->module_dir;
+        if(isset($context['user'])) {
+            return $context['user'];
+        }
+        return isset($GLOBALS['current_user'])?$GLOBALS['current_user']:null;
     }
 
-    /**
-     * Add visibility clauses to the FROM part of the query
-     * @param string $query
-     */
-    public function addVisibilityFrom(&$query)
+    public function getUserID($context)
     {
-        return $query;
-    }
-
-    /**
-     * Add visibility clauses to the WHERE part of the query
-     * @param string $query
-     */
-    public function addVisibilityWhere(&$query)
-    {
-        return $query;
+        if(isset($context['user'])) {
+            return $context['user']->id;
+        }
+        if(isset($context['user_id'])) {
+            return $context['user_id'];
+        }
+        if(isset($GLOBALS['current_user'])) {
+            return $GLOBALS['current_user']->id;
+        }
+        return null;
     }
 }

@@ -19,44 +19,26 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+//FILE SUGARCRM flav=dce ONLY
 
 /**
- * Base class for visibility implementations
- * @api
+ * DCE ACLs
  */
-abstract class SugarVisibility
+class SugarACLDCE extends SugarACLStrategy
 {
-    /**
-     * Parent bean
-     * @var SugarBean
-     */
-    protected $bean;
-    protected $module_dir;
-
-    /**
-     * @param SugarBean $bean
-     */
-    public function __construct($bean)
+    public function checkAccess($module, $action, $context)
     {
-        $this->bean = $bean;
-        $this->module_dir = $this->bean->module_dir;
-    }
-
-    /**
-     * Add visibility clauses to the FROM part of the query
-     * @param string $query
-     */
-    public function addVisibilityFrom(&$query)
-    {
-        return $query;
-    }
-
-    /**
-     * Add visibility clauses to the WHERE part of the query
-     * @param string $query
-     */
-    public function addVisibilityWhere(&$query)
-    {
-        return $query;
+        $action = strtolower($action);
+        switch($action) {
+            case 'upgrade':
+            case 'archive':
+            case 'clone':
+            case 'convert':
+            case 'deploy':
+            case 'recover':
+            case 'support_user':
+                return ACLController::checkAccess($module, $action, true, 'DCE');
+        }
+        return true;
     }
 }

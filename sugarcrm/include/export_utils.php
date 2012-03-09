@@ -131,9 +131,7 @@ function export($type, $records = null, $members = false, $sample=false) {
     $focus = 0;
     $content = '';
 
-    $bean = $beanList[$type];
-    require_once($beanFiles[$bean]);
-    $focus = new $bean;
+	$focus = BeanFactory::newBean($type);
     $searchFields = array();
     $db = DBManagerFactory::getInstance();
 
@@ -147,26 +145,21 @@ function export($type, $records = null, $members = false, $sample=false) {
         if(!empty($_REQUEST['current_post'])) {
             $ret_array = generateSearchWhere($type, $_REQUEST['current_post']);
 
-            $where = $ret_array['where'];
-            $searchFields = $ret_array['searchFields'];
-        } else {
-            $where = '';
-        }
-    }
-    $order_by = "";
-    if($focus->bean_implements('ACL')){
-        if(!ACLController::checkAccess($focus->module_dir, 'export', true)){
-            ACLController::displayNoAccess();
-            sugar_die('');
-        }
-        if(ACLController::requireOwner($focus->module_dir, 'export')){
-            if(!empty($where)){
-                $where .= ' AND ';
-            }
-            $where .= $focus->getOwnerWhere($current_user->id);
-        }
+			$where = $ret_array['where'];
+			$searchFields = $ret_array['searchFields'];
+		} else {
+			$where = '';
+		}
+	}
+	$order_by = "";
 
-    }
+	if($focus->bean_implements('ACL')){
+		if(!ACLController::checkAccess($focus->module_dir, 'export', true)){
+			ACLController::displayNoAccess();
+			sugar_die('');
+		}
+	    $focus->addVisibilityWhere($where);
+	}
     // Export entire list was broken because the where clause already has "where" in it
     // and when the query is built, it has a "where" as well, so the query was ill-formed.
     // Eliminating the "where" here so that the query can be constructed correctly.

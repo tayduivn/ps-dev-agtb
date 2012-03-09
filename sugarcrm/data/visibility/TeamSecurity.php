@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class TeamSecurity extends SugarVisibility
 {
-    public function addVisibilityClause(&$query)
+    public function addVisibilityFrom(&$query)
     {
         if(!$this->bean->disable_row_level_security) {
             // We need to confirm that the user is a member of the team of the item.

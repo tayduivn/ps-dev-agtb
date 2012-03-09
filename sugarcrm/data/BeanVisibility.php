@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//FILE SUGARCRM flav=pro ONLY
 require_once 'data/SugarVisibility.php';
 
 /**
@@ -64,14 +63,27 @@ class BeanVisibility
     }
 
     /**
-     * Add visibility clauses to the query
+     * Add visibility clauses to the FROM part of the query
      * @param string $query
      * @return string Modified query
      */
-    public function addVisibilityClause(&$query)
+    public function addVisibilityFrom(&$query)
     {
         foreach($this->strategies as $strategy) {
-            $strategy->addVisibilityClause($query);
+            $strategy->addVisibilityFrom($query);
+        }
+        return $query;
+    }
+
+    /**
+     * Add visibility clauses to the WHERE part of the query
+     * @param string $query
+     * @return string Modified query
+     */
+    public function addVisibilityWhere(&$query)
+    {
+        foreach($this->strategies as $strategy) {
+            $strategy->addVisibilityWhere($query);
         }
         return $query;
     }

@@ -45,6 +45,7 @@ class ACLController {
 			return ACLAction::userNeedsOwnership($current_user->id, $category, $value,$type);
 	}
 
+	// FIXME: convert
 	function filterModuleList(&$moduleList, $by_value=true){
 
 		global $aclModuleList, $current_user;

@@ -45,14 +45,14 @@ class ViewGS extends SugarWirelessView
         $this->searchRegex = '/' . $this->searchString . '/i';
         $this->options['show_title'] = false;
 		$this->options['show_header'] = false;
-		$this->options['show_footer'] = false; 	  
-		$this->options['show_javascript'] = false; 
-		$this->options['show_subpanels'] = false; 
-		$this->options['show_search'] = false; 
+		$this->options['show_footer'] = false;
+		$this->options['show_javascript'] = false;
+		$this->options['show_subpanels'] = false;
+		$this->options['show_search'] = false;
 		parent::SugarView();
     }
-    
-    
+
+
      private function _getGlobalSearchFields()
      {
          $results = array();
@@ -62,19 +62,19 @@ class ViewGS extends SugarWirelessView
              {
                  if($fieldName == 'email_addresses' || $fieldName == 'emails')
                     $results[] = 'email1';
-                 else   
+                 else
                     $results[] = $fieldName;
              }
          }
-         return $results;     
+         return $results;
      }
-     
+
      function preDisplay()
      {
         $this->searchFields = $this->_getGlobalSearchFields();
-        	
- 	} 
- 	
+
+ 	}
+
     /**
      * @see SugarView::display()
      */
@@ -83,11 +83,11 @@ class ViewGS extends SugarWirelessView
  		// no record, we should also provide a way out
  	    if (empty($this->bean->id)){
  	        sugar_die($GLOBALS['app_strings']['ERROR_NO_RECORD']);
- 	    }	    
+ 	    }
 
- 	    // set up Smarty variables 	    
+ 	    // set up Smarty variables
 		$this->ss->assign('BEAN_ID', $this->bean->id);
-		$this->ss->assign('BEAN_NAME', $this->bean->name);		
+		$this->ss->assign('BEAN_NAME', $this->bean->name);
 	   	$this->ss->assign('MODULE', $this->module);
 	   	$this->ss->assign('MODULE_NAME', translate('LBL_MODULE_NAME',$this->module));
 
@@ -101,7 +101,7 @@ class ViewGS extends SugarWirelessView
 
 	   	$this->ss->assign('ENABLE_FORM', $this->checkEditPermissions());
 	   	$this->ss->assign('LBL_GS_HELP', $GLOBALS['app_strings']['LBL_GS_HELP']);
-	   	
+
 	   	// display the detail view
         $file = 'include/MVC/View/tpls/gsdetail.tpl';
 
@@ -113,7 +113,7 @@ class ViewGS extends SugarWirelessView
         }
 
     }
-    
+
     protected function setMatchedFields($fields)
     {
         if($this->searchString == null)
@@ -190,7 +190,7 @@ class ViewGS extends SugarWirelessView
 				   }
 				}
                 //END SUGARCRM flav=pro ONLY
-				
+
 				$field_info = $this->setup_detail_field($field);
 
 				if (is_array($field_info))
@@ -199,15 +199,15 @@ class ViewGS extends SugarWirelessView
 
                     //BEGIN SUGARCRM flav=pro ONLY
                     //If we don't have ACL field access, don't display the value
-                    if(!ACLField::hasAccess($name, $this->bean->module_dir, $current_user->id, false))
+                    if(!$this->bean->ACLFieldAccess($name))
                     {
                        $field_info['value'] = '';
                     }
                     //END SUGARCRM flav=pro ONLY
 					$bean_details[$name] = $field_info;
-				}				
+				}
         	}
-        
+
         return $bean_details;
  	}
 }
