@@ -102,6 +102,9 @@ class SugarFieldDatetime extends SugarFieldBase {
         } else {
             $user = $GLOBALS['current_user'];
         }
+        if($timedate->check_matching_format($inputField, $timedate->get_date_time_format($user))){
+            return $inputField;
+        }        
         if($vardef['type'] == 'date') {
             // convert without TZ
             return $timedate->to_display($inputField, $timedate->get_db_date_format(),  $timedate->get_date_format($user));
