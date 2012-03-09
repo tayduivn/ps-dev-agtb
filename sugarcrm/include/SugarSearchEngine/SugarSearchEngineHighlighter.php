@@ -232,6 +232,12 @@ class SugarSearchEngineHighlighter
 
     protected function constructPattern($searchString, $partialMatch)
     {
+        $infront = '';
+        if (isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
+            $GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
+            $infront = '\S*';
+        }
+
         // handle / and *
         $searchString = str_replace('/', '\/', $searchString);
         $searchString = str_replace('*', '.*?', $searchString);
@@ -245,6 +251,13 @@ class SugarSearchEngineHighlighter
         {
             $search = $searches[$i];
 
+            $begin = '(';
+            if ($i == 0 && !empty($infront)) {
+                $begin .= $infront;
+            } else {
+                $begin .= '\b';
+            }
+
             if (empty($search) || $this->isOperator($search) || $this->isStopWord($search))
             {
                 continue;
@@ -252,11 +265,11 @@ class SugarSearchEngineHighlighter
 
             if ($i == $tokenCount-1 && $partialMatch)
             {
-                $patterns[] = '(\b' . $search . ')';
+                $patterns[] = $begin . $search . ')';
             }
             else
             {
-                $patterns[] = '(\b' . $search . '\b)';
+                $patterns[] = $begin . $search . '\b)';
             }
         }
         $final = '/' . implode('|', $patterns) . '/i';
