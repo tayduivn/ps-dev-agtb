@@ -54,7 +54,7 @@ user_detailview_tabs.on('contentReady', function(e){
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="actionsContainer">
 <tr>
-<td>
+<td width="20%">
 
 <form action="index.php" method="post" name="DetailView" id="form">
     <input type="hidden" name="module" value="Users">
