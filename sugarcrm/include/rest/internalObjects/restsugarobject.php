@@ -424,7 +424,7 @@ class RestSugarObject extends RestObject implements IRestObject {
         }
 
         $tmp = json_encode($retData);
-        print_r($tmp); die;
+        $this->sendJSONResponse($tmp);
     }
 
     /**
