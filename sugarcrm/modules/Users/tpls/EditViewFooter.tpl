@@ -458,8 +458,20 @@
             </tr>
                         <tr>
                             <td width="17%" scope="row"><slot>{$MOD.LBL_PUBLISH_KEY}:</slot>&nbsp;{sugar_help text=$MOD.LBL_CHOOSE_A_KEY}</td>
-                            <td width="20%" ><slot><input name='calendar_publish_key' tabindex='17' size='25' maxlength='25' type="text" value="{$CALENDAR_PUBLISH_KEY}"></slot></td>
+                            <td width="20%" ><slot><input id='calendar_publish_key' name='calendar_publish_key' tabindex='17' size='25' maxlength='25' type="text" value="{$CALENDAR_PUBLISH_KEY}"></slot></td>
                             <td width="63%" ><slot>&nbsp;</slot></td>
+                        </tr>
+                        <tr>
+                            <td width="15%" scope="row"><slot><nobr>{$MOD.LBL_YOUR_PUBLISH_URL|strip_semicolon}:</nobr></slot></td>
+                            <td colspan=2><slot>{$CALENDAR_PUBLISH_URL}</slot></td>
+                        </tr>
+                        <tr>
+                            <td width="17%" scope="row"><slot>{$MOD.LBL_SEARCH_URL|strip_semicolon}:</slot></td>
+                            <td colspan=2><slot>{$CALENDAR_SEARCH_URL}</slot></td>
+                        </tr>
+                        <tr>
+                            <td width="15%" scope="row"><slot>{$MOD.LBL_ICAL_PUB_URL|strip_semicolon}: {sugar_help text=$MOD.LBL_ICAL_PUB_URL_HELP}</slot></td>
+                            <td colspan=2><slot>{$CALENDAR_ICAL_URL}</slot></td>
                         </tr>
                     </table>
         </div>
@@ -488,8 +500,16 @@ function Admin_check(){
 	else
 		return true;
 }
+
+$(document).ready(function() {
+    $('#calendar_publish_key').keypress(function(){
+        $('#cal_pub_key_span').html( $(this).val());
+    });
+    $('#calendar_publish_key').change(function(){
+            $('#cal_pub_key_span').html( $(this).val());
+    });
+});
 {/literal}
--->
 </script>
 {$JAVASCRIPT}
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
@@ -502,6 +522,8 @@ currencies = {$currencySymbolJSON};
 themeGroupList = {$themeGroupListJSON};
 
 onUserEditView();
+
+
 </script>
 
 </form>

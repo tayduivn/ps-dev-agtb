@@ -90,7 +90,7 @@ SUGAR.append(SUGAR.themes, {
     setCurrentTab: function(params) {
         var el = '#moduleTab_'+ sugar_theme_gm_current + params.module;
         if ($(el) && $(el).parent()) {
-            //SUGAR.themes.setRightMenuTab(el, params);
+            SUGAR.themes.setRightMenuTab(el, params);
             var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";   
             if ($(currActiveTab)) {
                 if ($(currActiveTab) == $(el).parent()) return;

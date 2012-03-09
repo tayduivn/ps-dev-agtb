@@ -240,6 +240,7 @@ $ftsTypeDropdown .= "</select>";
 $outFTS =<<<EOQ3
 <table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
 <tr><th colspan="3" align="left">{$mod_strings['LBL_FTS_TABLE_TITLE']}</th></tr>
+<tr><td colspan='3'>{$mod_strings['LBL_FTS_HELP']}</td></tr>
 <tr>
         <td width='1%'></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_TYPE']}</b></td>
