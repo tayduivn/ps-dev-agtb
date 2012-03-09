@@ -325,7 +325,7 @@ class InboundEmail extends SugarBean {
 				$r = $this->db->query($q);
 				$a = $this->db->fetchByAssoc($r);
 				$ret = array();
-				$raw = utf8_encode($a['raw_source']);
+				$raw = $this->convertToUtf8($a['raw_source']);
 				if (empty($raw)) {
 					$raw = $app_strings['LBL_EMAIL_ERROR_VIEW_RAW_SOURCE'];
 				}
@@ -334,7 +334,7 @@ class InboundEmail extends SugarBean {
 					$uid = $this->getCorrectMessageNoForPop3($uid);
 				}
 				$raw  = imap_fetchheader($this->conn, $uid, FT_UID+FT_PREFETCHTEXT);
-				$raw .= utf8_encode(imap_body($this->conn, $uid, FT_UID));
+				$raw .= $this->convertToUtf8(imap_body($this->conn, $uid, FT_UID));
 			} // else
 			$raw = to_html($raw);
 			$raw = nl2br($raw);
@@ -342,6 +342,26 @@ class InboundEmail extends SugarBean {
 
 		return $raw;
 	}
+
+
+    /**
+     * helper method to convert text to utf-8 if necessary
+     *
+     * @param string $input text
+     * @return string output text
+     */
+    function convertToUtf8($input)
+    {
+       $charset = $GLOBALS['locale']->detectCharset($input, true);
+
+       // we haven't a clue due to missing package?, just return as itself
+       if ($charset === FALSE) {
+           return $input;
+       }
+
+       // convert if we can or must
+       return $this->handleCharsetTranslation($input, $charset);
+    }
 
 	/**
 	 * constructs a nicely formatted version of email headers.
@@ -3219,11 +3239,12 @@ class InboundEmail extends SugarBean {
 				$text = $this->handleTranserEncoding($text, $flip[strtoupper($upperCaseKeyDecodeHeader[strtoupper('Content-Transfer-Encoding')])]);
 			}
 
-			$msgPart = $text;
-			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader[$upperCaseKeyDecodeHeader['CONTENT-TYPE']]['charset'])) {
-				$msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
+			if(is_array($upperCaseKeyDecodeHeader['CONTENT-TYPE']) && isset($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']) && !empty($upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset'])) {
+				// we have an explicit content type, use it
+                $msgPart = $this->handleCharsetTranslation($text, $upperCaseKeyDecodeHeader['CONTENT-TYPE']['charset']);
 			} else {
-                $msgPart = utf8_encode($text);
+                // make a best guess as to what our content type is
+                $msgPart = $this->convertToUtf8($text);
             }
 		} // end else clause
 

@@ -178,7 +178,7 @@ require_once('include/EditView/EditView2.php');
                 $this->tabs[$tabkey]['displayDiv']='';
                 //if this is advanced tab, use form with saved search sub form built in
                 if($viewName=='advanced'){
-                    $this->tpl = 'include/SearchForm/tpls/SearchFormGenericAdvanced.tpl';
+                    $this->tpl = get_searchform_tpl_path($this->module,'advanced');
                     if ($this->action =='ListView') {
                         $this->th->ss->assign('DISPLAY_SEARCH_HELP', true);
                     }

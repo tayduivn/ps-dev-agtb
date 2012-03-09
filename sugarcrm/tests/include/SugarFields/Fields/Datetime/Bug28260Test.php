@@ -1,5 +1,4 @@
-<?php
-//FILE SUGARCRM flav=pro ONLY
+<?php 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,66 +21,55 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+ 
+require_once('include/SugarFields/Fields/Datetime/SugarFieldDatetime.php');
 
+$timedate = TimeDate::getInstance();
 
-require_once "modules/ProjectTask/ProjectTask.php";
-require_once "modules/Project/Project.php";
-
-class Bug46012Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug28260Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ProjectTask
-     */
-    private $task;
-
-    /**
-     * @var Project
-     */
-    private $project;
-    
-    /**
-     * @var User
-     */
     private $user;
-
-    public function setUp()
+    
+	public function setUp()
     {
-        $GLOBALS['current_user'] = $this->user = SugarTestUserUtilities::createAnonymousUser();
-        $this->project = new Project();
-        $this->project->name = 'Bug46012Test';
-        $this->project->team_id = $this->user->team_id;
-        $this->project->team_set_id = $this->user->team_set_id;
-        $this->project->save();
-    }
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->user = $GLOBALS['current_user'];
+	}
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($this->user);
         unset($GLOBALS['current_user']);
-
-        $GLOBALS['db']->query("DELETE FROM projects WHERE id='{$this->project->id}'");
-        $GLOBALS['db']->query("DELETE FROM project_task WHERE id='{$this->task->id}'");
     }
-
-
-    public function testProjectTaskIdCreatedForWorkflowSave()
-    {
-    	$this->task = new ProjectTask();
-        $this->task->fill_in_additional_detail_fields();
-        $this->task->in_workflow = true;
-        $this->task->project_id = $this->project->id;
-        $id = $this->task->save();
-        $this->assertEquals(1, $this->task->project_task_id, 'Assert that the project_task_id value was set to 1');
-    }
-
     
-    public function testProjectTaskIdNotCreatedForNonWorkflowSave()
+    public function _providerEmailTemplateFormat()
     {
-    	$this->task = new ProjectTask();
-        $this->task->fill_in_additional_detail_fields();
-        $this->task->in_workflow = false;
-        $this->task->project_id = $this->project->id;
-        $id = $this->task->save();
-        $this->assertNull($this->task->project_task_id, 'Assert that the project_task_id value is null');
-    }    
+        return array(
+            array('10/11/2010 13:00','10/11/2010 13:00', 'm/d/Y', 'H:i' ), 
+            array('11/10/2010 13:00','11/10/2010 13:00', 'd/m/Y', 'H:i' ), 
+            array('2010-10-11 13:00:00','10/11/2010 13:00', 'm/d/Y', 'H:i' ), 
+            array('2010-10-11 13:00:00','11/10/2010 13:00', 'd/m/Y', 'H:i' ), 
+            array('2010-10-11 13:00:00','10-11-2010 13:00', 'm-d-Y', 'H:i' ), 
+            array('2010-10-11 13:00:00','11-10-2010 13:00', 'd-m-Y', 'H:i' ), 
+            array('2010-10-11 13:00:00','2010-10-11 13:00', 'Y-m-d', 'H:i' )                
+        );   
+    }
+    
+     /**
+     * @dataProvider _providerEmailTemplateFormat
+     */
+	public function testEmailTemplateFormat($unformattedValue, $expectedValue, $dateFormat, $timeFormat)
+	{
+	    $GLOBALS['sugar_config']['default_date_format'] = $dateFormat;
+		$GLOBALS['sugar_config']['default_time_format'] = $timeFormat;
+        $GLOBALS['current_user']->setPreference('datef', $dateFormat);
+		$GLOBALS['current_user']->setPreference('timef', $timeFormat);
+		
+        require_once('include/SugarFields/SugarFieldHandler.php');
+   		$sfr = SugarFieldHandler::getSugarField('datetime');
+    	$formattedValue = $sfr->getEmailTemplateValue($unformattedValue,array('type'=>'datetime'), array('notify_user' => $this->user));
+    	
+   	 	$this->assertSame($expectedValue, $formattedValue);
+    }
 }
