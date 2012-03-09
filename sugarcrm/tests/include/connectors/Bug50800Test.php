@@ -80,7 +80,7 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
 
         //create the connector and call getConnectors
         $cu = new ConnectorUtils();
-       $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $cu->getConnectors(true), ' ConnectorsUtils::getConnectors() failed to return an array when $connectors is a string');
+        $this->assertInternalType(PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $cu->getConnectors(true), ' ConnectorsUtils::getConnectors() failed to return an array when $connectors is a string');
     }
 
     function testConnectorFailsNullGracefully() {
@@ -92,7 +92,7 @@ class Bug50800Test extends Sugar_PHPUnit_Framework_TestCase
 
         //create the connector and call getConnectors
         $cu = new ConnectorUtils();
-        $this->assertType(PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $cu->getConnectors(true), ' ConnectorsUtils::getConnectors() failed to return an array when connectors array was missing. ');
+        $this->assertInternalType(PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $cu->getConnectors(true), ' ConnectorsUtils::getConnectors() failed to return an array when connectors array was missing. ');
     }
 }
 ?>
