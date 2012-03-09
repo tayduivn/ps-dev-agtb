@@ -418,12 +418,6 @@
 </div>
 {$JAVASCRIPT}
 
-
-<script>
-addToValidate('ConfigureSettings', 'system_name', 'varchar', true,'System Name' );
-addToValidateMoreThan('ConfigureSettings', 'list_max_entries_per_page', 'int', true, '', 1);
-addToValidateMoreThan('ConfigureSettings', 'list_max_entries_per_subpanel', 'int', true, '', 1);
-</script>
 </form>
 <div id='upload_panel' style="display:none">
     <form id="upload_form" name="upload_form" method="POST" action='index.php' enctype="multipart/form-data">
