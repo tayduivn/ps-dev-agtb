@@ -106,9 +106,6 @@ public class TestAccountObjects extends TestCase {
 			System.out.printf("New Account ID: '%s'\n", accID.id);
 			// finished account create //
 			
-			Thread.currentThread();
-			Thread.sleep(2000);
-			
 			// try to use Accounts object/module //
 			System.out.printf("(*)Getting Accounts Object...\n");
 			uri = String.format("%s/Accounts?fields=id", testData.getValue("sugarinst"));
@@ -117,6 +114,8 @@ public class TestAccountObjects extends TestCase {
 			get = new HttpGet(uri);
 			get.addHeader("OAuth-Token", id.token.toString());
 			get.addHeader("User-Agent", "evilkook");
+			Thread.currentThread();
+			Thread.sleep(5000);
 			response = client.execute(get);
 			
 			status = response.getStatusLine().getStatusCode();
