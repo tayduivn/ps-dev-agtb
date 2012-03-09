@@ -168,8 +168,13 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 * @exception 'SoapFault' -- The SOAP error, if any
 */
 function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted ){
-	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
+    $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
 	global  $beanList, $beanFiles;
+    $result = array(
+        "error" => 0,
+        "err_msg" => "",
+        "data" => null
+    );
 	$error = new SoapError();
     $using_cp = false;
     //BEGIN SUGARCRM flav!=sales ONLY
@@ -181,7 +186,9 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     //END SUGARCRM flav!=sales ONLY
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
-		return;
+        $result["error"] = 401;
+        $result["err_msg"] = "Invalid session!";
+		return $result;
 	} // if
 
 	// If the maximum number of entries per page was specified, override the configuration value.
@@ -196,17 +203,23 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 
     if (!self::$helperObject->checkQuery($error, $query, $order_by)) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
-    	return;
+        $result["error"] = 501;
+        $result["err_msg"] = "Check Query Failed!";
+    	return $result;
     } // if
 
     if (!self::$helperObject->checkACLAccess($seed, 'Export', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
-    	return;
+        $result["error"] = 403;
+        $result["err_msg"] = "Access to Export module '{$module_name}' is not allowed!";
+    	return $result;
     } // if
 
     if (!self::$helperObject->checkACLAccess($seed, 'list', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
-    	return;
+        $result["error"] = 403;
+        $result["err_msg"] = "Access to list for module '{$module_name}' is not allowed!";
+    	return $result;
     } // if
 
 	if($query == ''){
@@ -216,10 +229,10 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		$offset = 0;
 	} // if
     if($using_cp){
-        $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
+        $response = $seed->retrieveTargetList($query, $select_fields, $offset, -1, -1, $deleted);
     }else{
         /* @var $seed SugarBean */
-	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted, false, $select_fields);
+	   $response = $seed->get_list($order_by, $query, $offset, -1, -1, $deleted, false, $select_fields);
     } // else
 	$list = $response['list'];
 
@@ -240,9 +253,15 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 
 	// Calculate the offset for the start of the next page
 	$next_offset = $offset + sizeof($output_list);
-
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
-	return array('result_count'=>sizeof($output_list), 'next_offset'=>$next_offset, 'entry_list'=>$output_list, 'relationship_list' => $linkoutput_list);
+    $result["error"] = 0;
+    $result["result_count"] = sizeof($output_list);
+    $result["next_offset"] = $next_offset;
+    $result["entry_list"] = $output_list;
+    $result["relationship_list"] =$linkoutput_list;
+
+    return $result;
+
 } // fn
 
 
@@ -513,8 +532,8 @@ function set_entry($session, $module_name, $name_value_list){
 	}
 
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
-
     $result["id"] = $seed->id;
+
     return $result;
 } // fn
 

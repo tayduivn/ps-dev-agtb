@@ -3,7 +3,7 @@ if (!defined('sugarEntry')) define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -27,48 +27,56 @@ if (!defined('sugarEntry')) define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * This is a class for creating HTTP error responses.
- *
- */
-class RestError {
+include_once("include/rest/RestObjectInterface.php");
+include_once("include/modules.php");
+include_once("RestError.php");
+include_once("RestUtils.php");
+include_once("RestObject.php");
+include_once("include/MetaDataManager/MetaDataManager.php");
+include_once("include/rest/SoapHelperWebService.php");
+include_once("include/rest/SugarWebServiceImpl.php");
 
-    private $errorData = null;
+class ListObjects extends RestObject implements IRestObject {
 
-    /**
-     * Class constructor.  Currently just building a list of error codes at runtime, might want
-     * to move this to a static list of it ever gets too big to save on processor time.  Don't really
-     * think that will ever be an issue though.
-     */
     function __construct() {
+        parent::__construct();
 
-        $this->errorData = array(
-            400 => "",
-            401 => "The session ID or OAuth token used has expired or is invalid.",
-            403 => "The request has been refused. Verify that the logged-in user has appropriate permissions.",
-            404 => "The requested resource could not be found. Check the URI for errors, and" .
-                " verify that there are no sharing issues.",
-            415 => "The server is refusing to service the request because the entity of the ".
-                "request is in a format not supported by the requested resource for the requested method.",
-            410 => "",
-            501 => "Internal SugarCRM Error!"
-        );
+        $this->verbID = $this->verbToId();
+        $this->getAuth();
     }
 
-    /**
-     * This method creates an HTTP error from the passed in error code, and appends a message to the
-     * error's body if the user sets $msg to something other then null.
-     *
-     * @param $code The http error code to use.
-     * @param null $msg An extra message body to append to the default one.
-     */
-    public function ReportError($code, $msg = null) {
-        header("HTTP/1.0 {$code}");
-        print $this->errorData[$code];
+    public function execute() {
+        $result = null;
 
-        if ($msg != null) {
-            print "\n\n{$msg}\n";
+        switch ($this->verbID) {
+            case HTTP_GET:
+                $result = $this->handleGet();
+                break;
+            default:
+                break;
         }
+
+        return $result;
+    }
+
+    private function handleGet() {
+        $result = null;
+        global $current_user;
+        $auth = $this->getAuth();
+        $this->isValidToken($auth);
+
+        $obj = new SugarWebServiceImpl();
+        $result = $obj->get_available_modules($auth);
+
+        if (!array_key_exists("modules", $result)) {
+            $err = new RestError();
+            $err->ReportError(501);
+            exit;
+        }
+
+        $result = array_values($result["modules"]);
+        $result = json_encode($result);
+
+        print $result;
     }
 }
-
