@@ -5,17 +5,25 @@ class JSIterator implements Iterator {
     private $key = 0;
     private $test_files = array();
 
-    public function __construct($directory) {
+    public function __construct($directory, $expectFiles = TRUE) {
         $root_dir = realpath('tests/jssource/'.$directory);
         $test_dir = $root_dir.'/test/';
-        $expect_dir = $root_dir.'/expect/';
+        if($expectFiles) {
+            $expect_dir = $root_dir.'/expect/';
+        }
 
         $test_contents = scandir($test_dir);
         foreach($test_contents as $possible_file) {
             $test_file = $test_dir.$possible_file;
-            $expect_file = $expect_dir.$possible_file;
-            if(is_file($test_file) && is_file($expect_file)) {
-                $this->test_files[] = array($test_file, $expect_file);
+            if($expectFiles) {
+                $expect_file = $expect_dir.$possible_file;
+                if(is_file($test_file) && is_file($expect_file)) {
+                    $this->test_files[] = array($test_file, $expect_file);
+                }
+            } else {
+                if(is_file($test_file)) {
+                    $this->test_files[] = array($test_file);
+                }
             }
         }
     }
@@ -61,9 +69,14 @@ class SugarJSMinTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @dataProvider tokenizerProvider
+     * @dataProvider parserProvider
      */
-    /*public function testTokenizer($source, $numTokens) {
-        $this->assertEquals()
-    }*/
+    public function testParser($source) {
+        require_once('jssource/jsmin.php');
+        $this->assertEquals(SugarMin::minify($unminified), $minified);
+    }
+
+    public function parserProvider() {
+        return new JSIterator('parser');
+    }
 }
