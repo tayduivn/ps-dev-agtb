@@ -60,7 +60,7 @@
 	{/if}
 		{if $shortcutTopMenu.$name && $name != "Home"}
 		<ul class="megamenu">
-		<li id="{$tabGroupName}{$name}_actions">
+		<li id="{$tabGroupName}{$module|replace:" ":""}_actions">
 			<div class="megawrapper">
 				<div class="megacolumn">
 					<div class="megacolumn-content">
@@ -120,7 +120,7 @@
 				{if $shortcutTopMenu.$module && $module != "Home"}
 					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name"}
 					<ul class="megamenu">
-					<li id="{$tabGroupName}{$name}_actions">
+					<li id="{$tabGroupName}{$module|replace:" ":""}_actions">
 						<div class="megawrapper">
 							<div class="megacolumn">
 								<div class="megacolumn-content">
@@ -172,7 +172,7 @@
 			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name"}
 				{if $shortcutTopMenu.$module}
 				<ul class="megamenu">
-				<li id="{$tabGroupName}{$name}_actions">
+				<li id="{$tabGroupName}{$module|replace:" ":""}_actions">
 					<div class="megawrapper">
 						<div class="megacolumn">
 							<div class="megacolumn-content">
