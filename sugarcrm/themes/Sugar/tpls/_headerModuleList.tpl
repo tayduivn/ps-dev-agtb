@@ -116,7 +116,7 @@
 			{* hidden menu items that become visible in overflow menu when browser size reaches a certain width*}
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
-				{if $shortcutTopMenu.$module && $module != "Home"}
+				{if $shortcutTopMenu.$name}
 					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name" class="sf-with-ul"}
 					<ul class="megamenu">
 					<li id="{$tabGroupName}{$module|replace:" ":""}_actions">
@@ -125,7 +125,7 @@
 								<div class="megacolumn-content divider">
 								<ul class="MMShortcuts">
 								<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
-								{foreach from=$shortcutTopMenu.$module item=shortcut_item}
+								{foreach from=$shortcutTopMenu.$name item=shortcut_item}
 								  {if $shortcut_item.URL == "-"}
 					              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 								  {else}

@@ -414,6 +414,9 @@ class TimeDate
            $cacheKey .= "_{$user->id}";
         }
 
+        if( $this->isAlwaysDb() )
+            $cacheKey .= '_asdb';
+        
         return $cacheKey;
     }
 
