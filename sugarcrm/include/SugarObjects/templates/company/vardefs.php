@@ -327,7 +327,6 @@ $vardefs= array (
         'vname' => 'LBL_EMAIL_ADDRESSES',
         'reportable'=>false,
         'unified_search' => true,
-        'full_text_search' => array('boost' => 2),
         'rel_fields' => array('primary_address' => array('type'=>'bool')),
     ),
 ),

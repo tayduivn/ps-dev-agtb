@@ -240,11 +240,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function search($queryString, $offset = 0, $limit = 20, $options = array())
     {
+        $appendWildcard = false;
         if( !empty($options['append_wildcard']) )
         {
-            if( substr($queryString, 0,-1) !==  self::WILDCARD_CHAR)
-                $queryString .= self::WILDCARD_CHAR;
+            if( substr($queryString, -1) !==  self::WILDCARD_CHAR) {
+                $appendWildcard = true;
+            }
         }
+        $queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
+
         $GLOBALS['log']->info("Going to search with query $queryString");
         $results = null;
         try
