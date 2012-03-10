@@ -2442,30 +2442,36 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$name = $fieldDef['name'];
 		$type = $this->getFieldType($fieldDef);
-		$colType = $this->getColumnType($type);
+        $colType = $this->getColumnType($type);
 
-		if (( $colType == 'nvarchar'
-				or $colType == 'nchar'
-				or $colType == 'varchar'
-				or $colType == 'char'
-				or $colType == 'varchar2') ) {
+        if(preg_match("((?'type'\w+)\s*(?'arg'\((?'len'\d+)(,(?'scale'\d+))*\))*)", $colType, $matches))
+        {
+            $colType = $matches['type'];
+            $defLen =  isset($matches['len']) ? $matches['len'] : '255'; // Use the mappings length (precision) as default if it exists
+            $defArg =  isset($matches['arg']) ? $matches['arg'] : '';
+        }
+
+		if (in_array($colType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
+                                'clob', 'blob', 'longclob', 'longblob', 'text', 'longtext'))) {
 			if( !empty($fieldDef['len']))
 				$colType .= "(".$fieldDef['len'].")";
 			else
-				$colType .= "(255)";
+				$colType .= "($defLen)";
 		}
-	if($colType == 'decimal' || $colType == 'float'){
-			if(!empty($fieldDef	['len'])){
-				if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
-					if(strpos($fieldDef	['len'],',') === false){
-						$colType .= "(".$fieldDef['len'].",".$fieldDef['precision'].")";
-					}else{
-						$colType .= "(".$fieldDef['len'].")";
-					}
-				else
-						$colType .= "(".$fieldDef['len'].")";
-			}
-	}
+        if($colType == 'decimal' || $colType == 'float'){
+                if(!empty($fieldDef	['len'])){
+                    if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
+                        if(strpos($fieldDef	['len'],',') === false){
+                            $colType .= "(".$fieldDef['len'].",".$fieldDef['precision'].")";
+                        }else{
+                            $colType .= "(".$fieldDef['len'].")";
+                        }
+                    else
+                            $colType .= "(".$fieldDef['len'].")";
+                } else {
+                    $colType .= $defArg;    //If nothing was specified in the fieldDef we add the default argument including the accolades
+                }
+        }
 
 
 		if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
