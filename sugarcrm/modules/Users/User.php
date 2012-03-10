@@ -169,7 +169,7 @@ class User extends Person {
 	{
 	    $signatures = $this->getSignaturesArray();
 
-	    return $signatures[$id];
+	    return isset($signatures[$id]) ? $signatures[$id] : FALSE;
 	}
 
 	function getSignaturesArray() {
