@@ -376,6 +376,10 @@ class ViewConvertLead extends SugarView
 
             	$this->populateNewBean($module, $beans[$module], $beans['Contacts'], $lead);
 
+                // when creating a new contact, do not populate it with lead's old account_id
+                if ($module == 'Contacts') {
+                    $beans[$module]->account_id = '';
+                }
             }
             //If an existing bean was selected, relate it to the contact
             else if (!empty($vdef['ConvertLead']['select'])) 
