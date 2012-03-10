@@ -114,7 +114,7 @@ SUGAR.append(SUGAR.themes, {
         }
     },
     toggleMenuOverFlow: function(menuName,maction) {
-    	
+
     	var menuName = "#"+menuName;
 	    if(maction == "more") {
 			$(menuName).addClass("showMore");
@@ -131,7 +131,6 @@ SUGAR.append(SUGAR.themes, {
     		Set_Cookie('sugar_theme_menu_mode','click',30,'/','','');
     	}
     	location.reload();
-    	//console.log(Get_Cookie("sugar_theme_menu_mode"));
     },
     getMenuMode: function() {
     	
@@ -148,20 +147,22 @@ SUGAR.append(SUGAR.themes, {
     
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
-			delay:     0,
+			//delay:     100,
 			speed: 'fast',
 			firstOnClick: SUGAR.themes.getMenuMode(),
 			autoArrows: false,
 			dropShadows: false,
+            ignoreClass: 'megawrapper',
 			onBeforeShow: function() {
 				if($(this).attr("class") == "megamenu") {
-					var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
-					var moduleName = $(this).prev().attr("id").replace("moduleTab_"+sugar_theme_gm_current,"");
-					//Check if the menu we want to show is in the more menu		
+                    var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
+					var moduleName = $(this).prev().attr("module");
+                    //Check if the menu we want to show is in the more menu
 					if($(this).parents().is(extraMenu)) {
 						var moduleName = moduleName.replace("Overflow","");
 						var moduleName = moduleName.replace("Hidden","");
 					}
+
 					that = $(this);
 					//ajax call for favorites
 					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;" || makeCall == true) {
@@ -228,21 +229,20 @@ SUGAR.append(SUGAR.themes, {
 	    var maxMenuWidth = Math.round($(window).width()*.45);
 		var menuWidth = $('#moduleList').width();
 		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
-
-			$('ul.sf-menu').children("li").each(
-				function(index) {
-						menuItemsWidth += $(this).width();
-					if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
-			    		//console.log($(this).attr("id"));
-			    		$(this).css("display","none");
-			    		$("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
-					}  else if(menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
-						//console.log($(this).attr("id"));
-						$(this).css("display","list-item");
-						$("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
-					}
-				}
-			);
+			$('ul.sf-menu').each(function(){
+                $(this).children("li").each(
+                    function(index) {
+                            menuItemsWidth += $(this).width();
+                        if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
+                            $(this).css("display","none");
+                            $("#"+$(this).children("a").attr("id")+"_flex").css("display","list-item");
+                        }  else if( (menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) || $(this).hasClass("moduleTabExtraMenu") ) {
+                            $(this).css("display","list-item");
+                            $("#"+$(this).children("a").attr("id")+"_flex").css("display","none");
+                        }
+                    }
+			    );
+            });
     },
     globalToolTips: function () {
     	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
@@ -339,14 +339,31 @@ SUGAR.append(SUGAR.themes, {
 		});	
    	},
    	sugar_theme_gm_switch: function(groupName) {
-	   	$('#themeTabGroupMenu_'+sugar_theme_gm_current).css("display","none");
-	    sugar_theme_gm_current = groupName;
-	    $.ajax({
+
+        SUGAR.themes.current_theme = (SUGAR.themes.current_theme) ? SUGAR.themes.current_theme : sugar_theme_gm_current;
+        $('ul.sf-menu:visible li').hideSuperfishUl();
+        $('#moduleTabMore'+SUGAR.themes.current_theme +' li').hideSuperfishUl();
+        var dcheight = $("#dcmenu").outerHeight();
+        var current_menu = $('ul.sf-menu:visible');
+        var target_menu = $('#themeTabGroupMenu_'+groupName);
+        SUGAR.themes.current_theme = sugar_theme_gm_current = groupName;
+        //fliping over-and-out is added to change the global menu theme
+        $("#dcmenu").animate({
+            top: '-=' + dcheight
+        }, 200, function() {
+            current_menu.hide();
+            target_menu.show();
+            SUGAR.themes.resizeMenu();
+            $(this).animate({
+                top: '+=' + dcheight
+            }, 200);
+        });
+        $.ajax({
 	    	type: "POST",
 	    	url: "index.php?module=Users&action=ChangeGroupTab&to_pdf=true",
 	    	data: 'newGroup='+groupName
 	    });
-	    $('#themeTabGroupMenu_'+groupName).css("display","block");
+
    	}
     
 });

@@ -295,8 +295,9 @@ class ViewModulefield extends SugarView
         $fv->ss->assign('field_name_exceptions', $json->encode($field_name_exceptions));
         ksort($field_types);
         $fv->ss->assign('field_types',$field_types);
-        $ftsEngineType = getFTSEngineType();
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        $ftsEngineType = getFTSEngineType();
         require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
         if (!empty($ftsEngineType) && SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type'])) {
             $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');
@@ -305,6 +306,8 @@ class ViewModulefield extends SugarView
         } else {
             $fv->ss->assign('show_fts', false);
         }
+        //END SUGARCRM flav=pro ONLY
+
         $fv->ss->assign('importable_options', $GLOBALS['app_list_strings']['custom_fields_importable_dom']);
         $fv->ss->assign('duplicate_merge_options', $GLOBALS['app_list_strings']['custom_fields_merge_dup_dom']);
 
