@@ -92,7 +92,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '1024',
 						),
 					),
-					'/foo\s+\w+/i',
+					'/foo\s+\w+\(1024\)/i',
 					1
 				),
 				array(
@@ -124,7 +124,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '1024',
 						),
 					),
-					'/foo\s+blob/i',
+					'/foo\s+blob\(1024\)/i',
 					1
 				),
            );

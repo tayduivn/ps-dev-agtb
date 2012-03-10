@@ -2446,36 +2446,31 @@ protected function checkQuery($sql, $object_name = false)
 
         if(preg_match("((?'type'\w+)\s*(?'arg'\((?'len'\d+)(,(?'scale'\d+))*\))*)", $colType, $matches))
         {
-            $colType = $matches['type'];
+            $colBaseType = $colType = $matches['type'];
             $defLen =  isset($matches['len']) ? $matches['len'] : '255'; // Use the mappings length (precision) as default if it exists
             $defArg =  isset($matches['arg']) ? $matches['arg'] : '';
         }
 
-        if (in_array($colType, array('blob', 'longblob', 'text', 'longtext'))) {
-            // leave LOBs separate for now as MySQL doesn't have length on them
-            if(!empty($defArg)) {
-                $colType .= "($defArg)";
-            }
-        } elseif (in_array($colType, array( 'clob', 'longclob', 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char'))) {
+		if (in_array($colType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
+                                'clob', 'blob', 'text'))) {
 			if( !empty($fieldDef['len']))
 				$colType .= "(".$fieldDef['len'].")";
 			else
 				$colType .= "($defLen)";
-		}
-        if($colType == 'decimal' || $colType == 'float'){
-                if(!empty($fieldDef	['len'])){
-                    if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
-                        if(strpos($fieldDef	['len'],',') === false){
-                            $colType .= "(".$fieldDef['len'].",".$fieldDef['precision'].")";
-                        }else{
-                            $colType .= "(".$fieldDef['len'].")";
-                        }
-                    else
-                            $colType .= "(".$fieldDef['len'].")";
-                } else {
-                    $colType .= $defArg;    //If nothing was specified in the fieldDef we add the default argument including the accolades
-                }
+		} elseif(($colType == 'decimal' || $colType == 'float')
+                    && !empty($fieldDef['len'])){
+                if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
+                    if(strpos($fieldDef	['len'],',') === false){
+                        $colType .= "(".$fieldDef['len'].",".$fieldDef['precision'].")";
+                    }else{
+                        $colType .= "(".$fieldDef['len'].")";
+                    }
+                else
+                        $colType .= "(".$fieldDef['len'].")";
+        } else {
+            $colType .= $defArg;    //If nothing was specified in the fieldDef or we didn't deal with the type, we add the default argument including the accolades
         }
+
 
 
 		if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
@@ -2508,6 +2503,7 @@ protected function checkQuery($sql, $object_name = false)
 			return array(
 				'name' => $name,
 				'colType' => $colType,
+                'colBaseType' => $colBaseType,  // Adding base type for easier processing in derived classes
 				'default' => $default,
 				'required' => $required,
 				'auto_increment' => $auto_increment,
