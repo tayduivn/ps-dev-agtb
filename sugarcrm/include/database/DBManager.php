@@ -2451,8 +2451,12 @@ protected function checkQuery($sql, $object_name = false)
             $defArg =  isset($matches['arg']) ? $matches['arg'] : '';
         }
 
-		if (in_array($colType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
-                                'clob', 'blob', 'longclob', 'longblob', 'text', 'longtext'))) {
+        if (in_array($colType, array('blob', 'longblob', 'text', 'longtext'))) {
+            // leave LOBs separate for now as MySQL doesn't have length on them
+            if(!empty($defArg)) {
+                $colType .= "($defArg)";
+            }
+        } elseif (in_array($colType, array( 'clob', 'longclob', 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char'))) {
 			if( !empty($fieldDef['len']))
 				$colType .= "(".$fieldDef['len'].")";
 			else
