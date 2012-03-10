@@ -59,7 +59,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '34',
 						),
 					),
-					'/foo\s+varchar\(34\)/i',
+					'/foo\s+$baseType\(34\)/i',
 					1
 				),
 				array(
@@ -70,7 +70,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '35',
 						),
 					),
-					'/foo\s+nvarchar\(35\)/i',
+					'/foo\s+$baseType\(35\)/i',
 					1
 				),
 				array(
@@ -81,7 +81,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '23',
 						),
 					),
-					'/foo\s+char\(23\)/i',
+					'/foo\s+$baseType\(23\)/i',
 					1
 				),
 				array(
@@ -92,7 +92,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '1024',
 						),
 					),
-					'/foo\s+\w+\(1024\)/i',
+					'/foo\s+$baseType\(1024\)/i',
 					1
 				),
 				array(
@@ -102,7 +102,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'type' => 'clob',
 						),
 					),
-					'/foo\s+clob\(255\)/i',
+					'/foo\s+$colType/i',
 					1
 				),
 				array(
@@ -113,7 +113,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '1024',
 						),
 					),
-					'/foo\s+clob\(1024\)/i',
+					'/foo\s+$baseType\(1024\)/i',
 					1
 				),
 				array(
@@ -124,7 +124,7 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 						'len' => '1024',
 						),
 					),
-					'/foo\s+blob\(1024\)/i',
+					'/foo\s+$baseType\(1024\)/i',
 					1
 				),
            );
@@ -138,7 +138,22 @@ class Bug51161Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBug51161($fieldDef,$successRegex, $times)
     {
-		$result = $this->_db->createTableSQLParams('test', $fieldDef, array());
-        $this->assertEquals($times, preg_match($successRegex, $result), "Resulting statement: $result");
+        // Allowing type part variables in passed in regular expression so that database specific mappings
+        // can be accounted for in the test
+        $ftype = $this->_db->getFieldType($fieldDef['foo']);
+        $colType = $this->_db->getColumnType($ftype);
+        $successRegex = preg_replace('/\$colType/', $colType, $successRegex);
+        if($type = $this->_db->getTypeParts($colType)){
+            if(isset($type['baseType']))
+                $successRegex = preg_replace('/\$baseType/', $type['baseType'], $successRegex);
+            if(isset($type['len']))
+                $successRegex = preg_replace('/\$len/', $type['len'], $successRegex);
+            if(isset($type['scale']))
+                $successRegex = preg_replace('/\$scale/', $type['scale'], $successRegex);
+            if(isset($type['arg']))
+                $successRegex = preg_replace('/\$arg/', $type['arg'], $successRegex);
+        }
+        $result = $this->_db->createTableSQLParams('test', $fieldDef, array());
+        $this->assertEquals($times, preg_match($successRegex, $result), "Resulting statement: $result failed to match /$successRegex/");
     }
 }
