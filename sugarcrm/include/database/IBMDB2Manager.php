@@ -719,15 +719,9 @@ public function convert($string, $type, array $additional_parameters = array())
 //            }
 		}
 
-		if(!empty($ref['default'])){
-			$type = $this->getFieldType($fieldDef);
-			$colType = $this->getColumnType($type); // not using $ref['colType'] as it includes lengths
-
-			if(in_array($colType, array('integer', 'smallint', 'bigint', 'double'))
-				|| strpos($colType, 'decimal') !== false)
-			{
+		if(!empty($ref['default'])
+            && in_array($ref['colBaseType'], array('integer', 'smallint', 'bigint', 'double', 'decimal'))) {
 				$ref['default'] = str_replace(array("'", "\""), "", $ref['default']); // Stripping quotes
-			}
 		}
 
 		if ( $return_as_array )
