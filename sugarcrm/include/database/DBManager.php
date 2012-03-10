@@ -2429,6 +2429,32 @@ protected function checkQuery($sql, $object_name = false)
 		return null;
 	}
 
+    /**
+     * retrieves the different components from the passed column type as it is used in the type mapping and vardefs
+     * type format: <baseType>[(<len>[,<scale>])]
+     * @param string $type Column type
+     * @return array|bool array containing the different components of the passed in type or false in case the type contains illegal characters
+     */
+    public function getTypeParts($type) {
+        if(preg_match("((?'type'\w+)\s*(?'arg'\((?'len'\w+)\s*(,\s*(?'scale'\d+))*\))*)", $type, $matches))
+        {
+            $return = array();  // Not returning matches array as such as we don't want to expose the regex make up on the interface
+            $return['baseType'] = $matches['type'];
+            if( isset($matches['arg'])) {
+                $return['arg'] = $matches['arg'];
+            }
+            if( isset($matches['len'])) {
+                $return['len'] = $matches['len'];
+            }
+            if( isset($matches['scale'])) {
+                $return['scale'] = $matches['scale'];
+            }
+            return $return;
+        } else {
+            return false;
+        }
+    }
+
 	/**
 	 * Returns the defintion for a single column
 	 *
@@ -2444,34 +2470,31 @@ protected function checkQuery($sql, $object_name = false)
 		$type = $this->getFieldType($fieldDef);
         $colType = $this->getColumnType($type);
 
-        if(preg_match("((?'type'\w+)\s*(?'arg'\((?'len'\d+)(,(?'scale'\d+))*\))*)", $colType, $matches))
+        if($parts = $this->getTypeParts($colType))
         {
-            $colBaseType = $colType = $matches['type'];
-            $defLen =  isset($matches['len']) ? $matches['len'] : '255'; // Use the mappings length (precision) as default if it exists
-            $defArg =  isset($matches['arg']) ? $matches['arg'] : '';
+            $colBaseType = $parts['baseType'];
+            $defLen =  isset($parts['len']) ? $parts['len'] : '255'; // Use the mappings length (precision) as default if it exists
         }
 
-		if (in_array($colType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
-                                'clob', 'blob', 'text'))) {
-			if( !empty($fieldDef['len']))
-				$colType .= "(".$fieldDef['len'].")";
-			else
-				$colType .= "($defLen)";
-		} elseif(($colType == 'decimal' || $colType == 'float')
-                    && !empty($fieldDef['len'])){
-                if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
-                    if(strpos($fieldDef	['len'],',') === false){
-                        $colType .= "(".$fieldDef['len'].",".$fieldDef['precision'].")";
-                    }else{
-                        $colType .= "(".$fieldDef['len'].")";
-                    }
-                else
-                        $colType .= "(".$fieldDef['len'].")";
+        if(!empty($fieldDef['len'])) {
+            if (in_array($colBaseType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
+                                          'clob', 'blob', 'text'))) {
+          	    $colType = "$colBaseType(${fieldDef['len']})";
+            } elseif(($colBaseType == 'decimal' || $colBaseType == 'float')){
+                  if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
+                      if(strpos($fieldDef['len'],',') === false){
+                          $colType = $colBaseType . "(".$fieldDef['len'].",".$fieldDef['precision'].")";
+                      }else{
+                          $colType = $colBaseType . "(".$fieldDef['len'].")";
+                      }
+                  else
+                          $colType = $colBaseType . "(".$fieldDef['len'].")";
+              }
         } else {
-            $colType .= $defArg;    //If nothing was specified in the fieldDef or we didn't deal with the type, we add the default argument including the accolades
+            if (in_array($colBaseType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char'))) {
+                $colType = "$colBaseType($defLen)";
+            }
         }
-
-
 
 		if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
 			$default = " DEFAULT ".$this->quoted($fieldDef['default']);
