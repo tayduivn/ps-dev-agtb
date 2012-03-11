@@ -80,10 +80,7 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
     public function testParentsAreRelatedDuringImport()
     {
 
-        //$file = 'upload://test50438.csv';
-        $upload_dir = isset($GLOBALS['sugar_config']['upload_dir']) ? $GLOBALS['sugar_config']['upload_dir'] : 'upload';
-        $file = $upload_dir . '/test50438.csv';
-
+        $file = 'upload://test50438.csv';
         $ret = file_put_contents($file, $this->fileArr);
         $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.var_export($this->fileArr,true));
 
@@ -123,9 +120,11 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains($this->contact->id, $related_contacts,' Contact was not related during simulated import despite being set in related parent id');
         unset($call);
 
+        /*
         if (is_file($file)) {
             unlink($file);
         }
+        */
     }
 
 }
