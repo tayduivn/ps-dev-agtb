@@ -6694,10 +6694,7 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 	color: #fff !important;
 }
 
-ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav li a:hover .showMoreArrow {
-	background-position: center 8px;
-	opacity: 1;
-}
+
 
 
 #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a img, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a img
