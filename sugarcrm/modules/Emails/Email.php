@@ -924,12 +924,13 @@ class Email extends SugarBean {
 	} // end email2send
 
 	/**
-	 * Generates a comma sperated name and addresses to be used in compose email screen for contacts or leads
-	 * from listview
+	 * Generates a config-specified separated name and addresses to be used in compose email screen for
+	 * contacts or leads from listview
+     * By default, use comma, but allow for non-standard delimeters as specified in email_address_separator
 	 *
 	 * @param $module string module name
 	 * @param $idsArray array of record ids to get the email address for
-	 * @return string comma delimited list of email addresses
+	 * @return string (config-specified) delimited list of email addresses
 	 */
 	public function getNamePlusEmailAddressesForCompose($module, $idsArray)
 	{
@@ -981,7 +982,24 @@ class Email extends SugarBean {
 			}
 		}
 
-		return join(",", array_values($returndata));
+        // broken out of method to facilitate unit testing
+        return $this->_arrayToDelimitedString($returndata);
+    }
+
+    /**
+     * @param Array $arr - list of strings
+     * @return string the list of strings delimited by email_address_separator
+     */
+    function _arrayToDelimitedString($arr)
+    {
+        // bug 51804: outlook does not respect the correct email address separator (',') , so let
+        // clients override the default.
+        $separator = (isset($GLOBALS['sugar_config']['email_address_separator']) &&
+                        !empty($GLOBALS['sugar_config']['email_address_separator'])) ?
+                     $GLOBALS['sugar_config']['email_address_separator'] :
+                     ',';
+
+		return join($separator, array_values($arr));
     }
 
 	/**
