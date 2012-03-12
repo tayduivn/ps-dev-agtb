@@ -49,7 +49,7 @@ class SugarSearchEngineMetadataHelper
             return $cachedResults;
         }
         $results = array();
-        foreach( $GLOBALS['moduleList'] as $moduleName )
+        foreach( $GLOBALS['beanList'] as $moduleName => $beanName )
         {
             $fields = self::retrieveFtsEnabledFieldsPerModule($moduleName);
             if( !empty($fields) && self::isModuleFtsEnabled($moduleName) )
@@ -104,6 +104,11 @@ class SugarSearchEngineMetadataHelper
             $obj = $module;
         }
         else
+        {
+            return $results;
+        }
+
+        if (empty($obj->table_name))
         {
             return $results;
         }
