@@ -138,7 +138,7 @@ class One2MBeanRelationship extends One2MRelationship
      * @param  $link Link2 loads the relationship for this link.
      * @return void
      */
-    public function load($link)
+    public function load($link, $params = array())
     {
         $relatedModule = $link->getSide() == REL_LHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
         $rows = array();
@@ -156,10 +156,11 @@ class One2MBeanRelationship extends One2MRelationship
         else //If the link is LHS, we need to query to get the full list and load all the beans.
         {
             $db = DBManagerFactory::getInstance();
-            $query = $this->getQuery($link);
+            $query = $this->getQuery($link, $params);
             if (empty($query))
             {
-                echo ("query for {$this->name} was empty when loading from   {$this->lhsLink}\n");
+                $GLOBALS['log']->fatal("query for {$this->name} was empty when loading from   {$this->lhsLink}\n");
+                return array("rows" => array());
             }
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result, FALSE))
@@ -172,8 +173,12 @@ class One2MBeanRelationship extends One2MRelationship
         return array("rows" => $rows);
     }
 
-    public function getQuery($link, $return_as_array = false)
+    public function getQuery($link, $params = array())
     {
+        //There was an old signature with $return_as_array as the second parameter. We should respect this if $params is true
+        if ($params === true){
+            $params = array("return_as_array" => true);
+        }
 
         if ($link->getSide() == REL_RHS) {
             return false;
@@ -183,7 +188,9 @@ class One2MBeanRelationship extends One2MRelationship
             $lhsKey = $this->def['lhs_key'];
             $rhsTable = $this->def['rhs_table'];
             $rhsTableKey = "{$rhsTable}.{$this->def['rhs_key']}";
-            $where = "WHERE $rhsTableKey = '{$link->getFocus()->$lhsKey}' AND {$rhsTable}.deleted=0";
+            $deleted = !empty($params['deleted']) ? 1 : 0;
+            $where = "WHERE $rhsTableKey = '{$link->getFocus()->$lhsKey}' AND {$rhsTable}.deleted=$deleted";
+
             //Check for role column
             if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"]))
             {
@@ -191,8 +198,21 @@ class One2MBeanRelationship extends One2MRelationship
                 $roleValue = $this->def["relationship_role_column_value"];
                 $where .= " AND $rhsTable.$roleField = '$roleValue'";
             }
-            if (!$return_as_array) {
-                return "SELECT id FROM {$this->def['rhs_table']} $where";
+
+            //Add any optional where clause
+            if (!empty($params['where'])){
+                $add_where = $this->getOptionalWhereClause($params['where']);
+                if (!empty($add_where))
+                    $where .= " AND $rhsTable.$add_where";
+            }
+
+            if (empty($params['return_as_array'])) {
+                //Limit is not compatible with return_as_array
+                $query = "SELECT id FROM {$this->def['rhs_table']} $where";
+                if (!empty($params['limit']) && $params['limit'] > 0) {
+                    $query = DBManagerFactory::getInstance()->limitQuery($query, 0, $params['limit'], false, "", false);
+                }
+                return $query;
             }
             else
             {
