@@ -28,7 +28,8 @@ require_once('include/EditView/EditView2.php');
 class SubpanelQuickCreate{
 	var $defaultProcess = true;
 
-	function SubpanelQuickCreate($module, $view='QuickCreate', $proccessOverride = false){
+    public function SubpanelQuickCreate($module, $view='QuickCreate', $proccessOverride = false)
+    {
         //treat quickedit and quickcreate views as the same
         if($view == 'QuickEdit') {$view = 'QuickCreate';}
 
@@ -50,7 +51,7 @@ class SubpanelQuickCreate{
 			}
 		}
 
-		$this->ev = new EditView();
+        $this->ev = $this->getEditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
 		//$_REQUEST['return_action'] = 'SubPanelViewer';
@@ -131,5 +132,13 @@ class SubpanelQuickCreate{
         $this->ev->process(true, $form_name);
 		echo $this->ev->display(false, true);
 	}
+
+    /**
+     * Get EditView object
+     * @return EditView
+     */
+    protected function getEditView()
+    {
+        return new EditView();
+    }
 }
-?>

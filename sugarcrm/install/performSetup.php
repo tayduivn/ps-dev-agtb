@@ -136,17 +136,24 @@ echo "<br>";
 // create the SugarCRM database
 if($setup_db_create_database) {
     installLog("calling handleDbCreateDatabase()");
+    installerHook('pre_handleDbCreateDatabase');
     handleDbCreateDatabase();
+    installerHook('post_handleDbCreateDatabase');
 } else {
 
 // ensure the charset and collation are utf8
     installLog("calling handleDbCharsetCollation()");
+    installerHook('pre_handleDbCharsetCollation');
     handleDbCharsetCollation();
+    installerHook('post_handleDbCharsetCollation');
 }
 
 // create the SugarCRM database user
-if($setup_db_create_sugarsales_user)
+if($setup_db_create_sugarsales_user){
+    installerHook('pre_handleDbCreateSugarUser');
     handleDbCreateSugarUser();
+    installerHook('post_handleDbCreateSugarUser');
+}
 
 foreach( $beanFiles as $bean => $file ){
     require_once( $file );
@@ -186,6 +193,7 @@ if($db->supports('fulltext') && $db->full_text_indexing_installed()){
  installLog("looping through all the Beans and create their tables");
  //start by clearing out the vardefs
  VardefManager::clearVardef();
+installerHook('pre_createAllModuleTables');
 foreach( $beanFiles as $bean => $file ) {
 	$doNotInit = array('Scheduler', 'SchedulersJob', 'ProjectTask');
 
@@ -242,7 +250,9 @@ foreach( $beanFiles as $bean => $file ) {
         }
 
         installLog("creating Relationship Meta for ".$focus->getObjectName());
+        installerHook('pre_createModuleTable', array('module' => $focus->getObjectName()));
         SugarBean::createRelationshipMeta($focus->getObjectName(), $db, $table_name, $empty, $focus->module_dir);
+        installerHook('post_createModuleTable', array('module' => $focus->getObjectName()));
 		echo ".";
 
     } // end if()
@@ -252,6 +262,7 @@ foreach( $beanFiles as $bean => $file ) {
     }
 //END SUGARCRM flav=int ONLY
 }
+installerHook('post_createAllModuleTables');
 
 echo "<br>";
 ////    END TABLE STUFF
@@ -282,10 +293,12 @@ echo "<br>";
     echo "<b>{$mod_strings['LBL_PERFORM_CREATE_DEFAULT']}</b><br>";
     echo "<br>";
     installLog("Begin creating Defaults");
+    installerHook('pre_createDefaultSettings');
     if ($new_config) {
         installLog("insert defaults into config table");
         insert_default_settings();
     }
+    installerHook('post_createDefaultSettings');
 
 
   //BEGIN SUGARCRM lic=sub ONLY
@@ -300,6 +313,7 @@ echo "<br>";
 
 
 
+    installerHook('pre_createUsers');
     if ($new_tables) {
         echo $line_entry_format.$mod_strings['LBL_PERFORM_DEFAULT_USERS'].$line_exit_format;
         installLog($mod_strings['LBL_PERFORM_DEFAULT_USERS']);
@@ -313,6 +327,7 @@ echo "<br>";
         set_admin_password($setup_site_admin_password);
         echo $mod_strings['LBL_PERFORM_DONE'];
     }
+    installerHook('post_createUsers');
 
 
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
@@ -320,8 +335,10 @@ echo "<br>";
     if ($new_report) {
         echo $line_entry_format.$mod_strings['LBL_PERFORM_DEFAULT_REPORTS'].$line_exit_format;
         installLog($mod_strings['LBL_PERFORM_DEFAULT_REPORTS']);
+        installerHook('pre_createDefaultReports');
         require_once('modules/Reports/SeedReports.php');
         create_default_reports();
+        installerHook('post_createDefaultReports');
         echo $mod_strings['LBL_PERFORM_DONE'];
     }
 
@@ -333,7 +350,9 @@ echo "<br>";
     echo $line_entry_format.$mod_strings['LBL_PERFORM_DEFAULT_SCHEDULER'].$line_exit_format;
     installLog($mod_strings['LBL_PERFORM_DEFAULT_SCHEDULER']);
     $scheduler = new Scheduler();
+    installerHook('pre_createDefaultSchedulers');
     $scheduler->rebuildDefaultSchedulers();
+    installerHook('post_createDefaultSchedulers');
 
     //BEGIN SUGARCRM flav=pro ONLY
 
@@ -386,11 +405,15 @@ $defaultTrackerRoles = array(
         'TrackerSessions'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
      )
 );
+installerHook('pre_addDefaultRolesTracker');
 addDefaultRoles($defaultTrackerRoles);
+installerHook('post_addDefaultRolesTracker');
 
 // Adding MLA Roles
+installerHook('pre_addDefaultRoles');
 require_once('modules/ACLRoles/SeedRoles.php');
 create_default_roles();
+installerHook('post_addDefaultRoles');
 
 // Hide certain subpanels by default
 require_once('include/SubPanel/SubPanelDefinitions.php');
@@ -403,8 +426,10 @@ $disabledTabs = array(
     "contracts",
     );
 
+installerHook('pre_setHiddenSubpanels');
 $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
 SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
+installerHook('post_setHiddenSubpanels');
 
 //END SUGARCRM flav=pro ONLY
 
@@ -427,6 +452,7 @@ enableInsideViewConnector();
     // populating the db with seed data
     installLog("populating the db with seed data");
     if( $_SESSION['demoData'] != 'no' ){
+        installerHook('pre_installDemoData');
         set_time_limit( 301 );
 
       echo "<br>";
@@ -440,6 +466,7 @@ enableInsideViewConnector();
         $current_user = new User();
         $current_user->retrieve(1);
         include("install/populateSeedData.php");
+        installerHook('post_installDemoData');
     }
 
     $endTime = microtime(true);
@@ -607,11 +634,13 @@ FP;
     $enabled_tabs[] = 'Cases';
     $enabled_tabs[] = 'Reports';
     //END SUGARCRM flav=dce ONLY
-
+    
+    installerHook('pre_setSystemTabs');
     require_once('modules/MySettings/TabController.php');
     $tabs = new TabController();
     $tabs->set_system_tabs($enabled_tabs);
-
+    installerHook('post_setSystemTabs');
+    
 post_install_modules();
 
 //Call rebuildSprites
@@ -628,6 +657,7 @@ if( count( $bottle ) > 0 ){
 } else {
     $bottleMsg = $mod_strings['LBL_PERFORM_SUCCESS'];
 }
+installerHook('post_installModules');
 
 
 

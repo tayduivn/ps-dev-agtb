@@ -1296,7 +1296,7 @@ EOQ;
             }
 
             $searchForm = new SearchForm($seed, $module);
-            $searchForm->setup($searchdefs, $searchFields, get_searchform_tpl_path($module));
+            $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
         }
 	/* bug 31271: using false to not add all bean fields since some beans - like SavedReports
 	   can have fields named 'module' etc. which may break the query */

@@ -71,7 +71,7 @@ class ViewWirelesslist extends SugarWirelessListView{
 			$searchForm = new SearchForm($this->bean, $GLOBALS['module'], 'wirelesslist');
 			require_once('modules/'.$GLOBALS['module'].'/metadata/searchdefs.php');
 			require_once('modules/'.$GLOBALS['module'].'/metadata/SearchFields.php');
-			$searchForm->setup($searchdefs, $searchFields, get_searchform_tpl_path($GLOBALS['module']));
+			$searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
 		}
 		else{
 			require_once('include/SearchForm/SearchForm.php');

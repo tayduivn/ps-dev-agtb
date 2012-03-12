@@ -400,7 +400,7 @@ function generateSearchWhere($module, $query) {//this function is similar with f
             return;
         }
         $searchForm = new SearchForm($seed, $module);
-        $searchForm->setup($searchdefs, $searchFields, get_searchform_tpl_path( $module ));
+        $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
     }
     $searchForm->populateFromArray(unserialize(base64_decode($query)));
     $where_clauses = $searchForm->generateSearchWhere(true, $module);
@@ -833,3 +833,4 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
     }
 
 }
+?>
