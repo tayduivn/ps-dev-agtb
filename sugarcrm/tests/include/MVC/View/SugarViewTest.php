@@ -28,6 +28,11 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_backup = array();
 
+    /**
+     * @var SugarViewTestMock
+     */
+    private $_view;
+
     public function setUp()
     {
         $this->_view = new SugarViewTestMock();
@@ -189,6 +194,20 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_view->getBreadCrumbSymbol()
             );
     }
+
+    public function testGetSugarConfigJS()
+    {
+        global $sugar_config;
+
+        $sugar_config['js_available'] = array('default_action');
+
+        $js_array = $this->_view->getSugarConfigJS();
+
+        // this should return 3 objects
+        $this->assertEquals(3, count($js_array));
+
+        $this->assertEquals('SUGAR.config.default_action = "index";', $js_array[2]);
+    }
 }
 
 class SugarViewTestMock extends SugarView
@@ -201,5 +220,10 @@ class SugarViewTestMock extends SugarView
     public function initSmarty()
     {
         return parent::_initSmarty();
+    }
+
+    public function getSugarConfigJS()
+    {
+        return parent::getSugarConfigJS();
     }
 }

@@ -224,7 +224,7 @@ class ViewList extends SugarView{
 
 
             $this->searchForm = new SearchForm($this->seed, $this->module, $this->action);
-            $this->searchForm->setup($searchdefs, $searchFields, get_searchform_tpl_path($this->module), $view, $this->listViewDefs);
+            $this->searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl', $view, $this->listViewDefs);
             $this->searchForm->lv = $this->lv;
         }
     }

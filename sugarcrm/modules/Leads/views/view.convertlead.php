@@ -94,7 +94,7 @@ class ViewConvertLead extends SugarView
         echo $this->getModuleTitle();
 
         require_once("include/QuickSearchDefaults.php");
-        $qsd = new QuickSearchDefaults();
+        $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName("ConvertLead");
 
         $this->contact = new Contact();

@@ -84,6 +84,10 @@ class SugarApplication
 			        $this->controller->action = 'DetailView';
 			    elseif(strtolower($this->controller->action) == 'save')
 			        $this->controller->action = 'EditView';
+                elseif(strtolower($this->controller->action) == 'quickcreate') {
+                    $this->controller->action = 'index';
+                    $this->controller->module = 'home';
+                }
 			    elseif(isset($_REQUEST['massupdate'])|| isset($_GET['massupdate']) || isset($_POST['massupdate']))
 			        $this->controller->action = 'index';
 			    elseif($this->isModifyAction())
@@ -832,6 +836,8 @@ class SugarApplication
         //BEGIN SUGARCRM flav=pro ONLY
         $this->trackLogin();
         //END SUGARCRM flav=pro ONLY
+        
+        LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 	}
 
 

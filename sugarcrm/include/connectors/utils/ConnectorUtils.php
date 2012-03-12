@@ -271,10 +271,10 @@ class ConnectorUtils
             if (!isset($connectors) || !is_array($connectors)){
                 $connectors = array();
                 $err_str = string_format($GLOBALS['app_strings']['ERR_CONNECTOR_NOT_ARRAY'],array($src4));
-                $GLOBALS['log']->fatal($err_str);
+                $GLOBALS['log']->error($err_str);
             }
 
-              $sources = array_merge($sources, $connectors);
+            $sources = array_merge($sources, $connectors);
           }
 
           if(!self::saveConnectors($sources, $src4)) {

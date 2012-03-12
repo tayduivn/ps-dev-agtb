@@ -120,9 +120,11 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains($this->contact->id, $related_contacts,' Contact was not related during simulated import despite being set in related parent id');
         unset($call);
 
+        /*
         if (is_file($file)) {
             unlink($file);
         }
+        */
     }
 
 }

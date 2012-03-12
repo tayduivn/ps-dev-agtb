@@ -5034,30 +5034,3 @@ function get_help_url($send_edition = '', $send_version = '', $send_lang = '', $
     }
     return $sendUrl;
 }
-
-/**
- * get_searchform_template_path
- *
- * This will return the URL of the proper SearchFormGeneric.tpl file
- * Sets default searchFormPath then checks to see if user has added a custom searchform
- *
- * bug48863 - check if user has placed a custom SearchFormGeneric.tpl file in the custom folder
- *
- * @param string $moduleName name of the module to check
- * @param string $viewName 'basic' || 'advanced' view
- */
-function get_searchform_tpl_path( $moduleName , $viewName = 'basic')  {
-    $searchFormPath = '';
-    if( $viewName == 'basic' )  {
-        $searchFormPath = 'include/SearchForm/tpls/SearchFormGeneric.tpl';
-        if( file_exists( 'custom/modules/' . $moduleName . '/tpls/SearchForm/SearchFormGeneric.tpl' ) )  {
-            $searchFormPath = 'custom/modules/' . $moduleName . '/tpls/SearchForm/SearchFormGeneric.tpl';
-        }
-    } else {
-        $searchFormPath = 'include/SearchForm/tpls/SearchFormGenericAdvanced.tpl';
-        if( file_exists( 'custom/modules/' . $moduleName . '/tpls/SearchForm/SearchFormGenericAdvanced.tpl' ) )  {
-            $searchFormPath = 'custom/modules/' . $moduleName . '/tpls/SearchForm/SearchFormGenericAdvanced.tpl';
-        }
-    }
-    return $searchFormPath;
-}

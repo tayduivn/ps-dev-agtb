@@ -42,6 +42,10 @@ class SOAPAPI4_1Test extends SOAPTestCase
     protected $meeting2;
     protected $meeting3;
     protected $meeting4;
+    protected $meeting5;
+    protected $meeting6;
+    protected $leads1;
+    protected $leads2;
     protected $call1;
     protected $call2;
 
@@ -54,7 +58,7 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
         $this->_login();
-        global $current_user;
+        global $current_user, $timedate;
         $this->another_user = SugarTestUserUtilities::createAnonymousUser();
 
         $this->contact1 = SugarTestContactUtilities::createContact();
@@ -91,29 +95,62 @@ class SOAPAPI4_1Test extends SOAPTestCase
 
         $this->meeting1 = SugarTestMeetingUtilities::createMeeting();
         $this->meeting1->name = 'SOAPAPI4_1Test1';
+        $this->meeting1->date_start = $timedate->nowDb();
         $this->meeting1->load_relationship('users');
         $this->meeting1->users->add($current_user);
         $this->meeting1->save();
 
         $this->meeting2 = SugarTestMeetingUtilities::createMeeting();
         $this->meeting2->name = 'SOAPAPI4_1Test2';
+        $this->meeting2->date_start = $timedate->nowDb();
         $this->meeting2->load_relationship('users');
         $this->meeting2->users->add($this->another_user);
         $this->meeting2->save();
 
         $this->meeting3 = SugarTestMeetingUtilities::createMeeting();
         $this->meeting3->name = 'SOAPAPI4_1Test3';
+        $this->meeting3->date_start = $timedate->nowDb();
         $this->meeting3->load_relationship('users');
         $this->meeting3->users->add($current_user);
         $this->meeting3->save();
 
         $this->meeting4 = SugarTestMeetingUtilities::createMeeting();
         $this->meeting4->name = 'SOAPAPI4_1Test4';
+        $this->meeting4->date_start = $timedate->nowDb();
         $this->meeting4->load_relationship('users');
         $this->meeting4->users->add($current_user);
         $this->meeting4->mark_deleted($this->meeting4->id);
         $this->meeting4->deleted = 1;
         $this->meeting4->save();
+
+        $this->meeting5 = SugarTestMeetingUtilities::createMeeting();
+        $this->meeting5->name = 'SOAPAPI4_1Test5';
+        //Set this to a week ago
+        $this->meeting5->date_start = $timedate->asDb($timedate->getNow()->get("-7 days"));
+        $this->meeting5->load_relationship('users');
+        $this->meeting5->users->add($current_user);
+        $this->meeting5->save();
+
+        $this->meeting6 = SugarTestMeetingUtilities::createMeeting();
+        $this->meeting6->name = 'SOAPAPI4_1Test6';
+        //Set this to a week later
+        $this->meeting6->date_start = $timedate->asDb($timedate->getNow()->get("+7 days"));
+        $this->meeting6->load_relationship('users');
+        $this->meeting6->users->add($current_user);
+        $this->meeting6->save();
+
+        $this->leads1 = SugarTestLeadUtilities::createLead();
+        $this->leads1->first_name = 'First1';
+        $this->leads1->last_name = 'Last1';
+        $this->leads1->save();
+
+        $this->meeting1->load_relationship('leads');
+        $this->meeting1->leads->add($this->leads1);
+        $this->meeting1->save();
+
+        //We need to set date_modified manually since SugarBean code sets it upon call to save function
+        $GLOBALS['db']->query("UPDATE meetings SET date_modified = " . $GLOBALS['db']->quoteType('datetime', $timedate->asDb($timedate->getNow()->get("-7 days"))) . " WHERE id = '" . $this->meeting5->id . "'");
+        $GLOBALS['db']->query("UPDATE meetings SET date_modified = " . $GLOBALS['db']->quoteType('datetime', $timedate->asDb($timedate->getNow()->get("+7 days"))) . " WHERE id = '" . $this->meeting6->id . "'");
         $GLOBALS['db']->commit();
     }
 
@@ -133,16 +170,48 @@ class SOAPAPI4_1Test extends SOAPTestCase
 
     /**
      * testGetModifiedRelationships
+     * @outputBuffering disabled
      */
     public function testGetModifiedRelationships()
     {
         global $timedate, $current_user;
         $one_hour_ago = $timedate->asDb($timedate->getNow()->get("-1 hours"));
         $one_hour_later = $timedate->asDb($timedate->getNow()->get("+1 hours"));
-        $callsAndMeetingsFields = array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced');
+        $callsAndMeetingsFields = array('id', 'date_modified', 'deleted', 'name', 'status', 'rt.deleted synced');
         $contactsSelectFields = array('id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced');
+        $leadsFields = array('id', 'name', 'date_modified', 'rt.lead_id', 'rt.meeting_id');
 
+        //Test that we only get 2 meetings based on the date_modified range
        	$result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(2, $result['result_count']);
+        $this->assertEquals(2, $result['next_offset']);
+
+        //Test that we get 4 meetings based on an expanded date_modified range
+        $eight_days_ago = $timedate->asDb($timedate->getNow()->get("-8 days"));
+        $eight_days_later = $timedate->asDb($timedate->getNow()->get("+8 days"));
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $eight_days_ago, 'to_date' => $eight_days_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(4, $result['result_count']);
+        $this->assertEquals(4, $result['next_offset']);
+
+        //Test that we get an error if we don't supply a from_date value
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => '', 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
+        $this->assertEmpty($result['entry_list']);
+        $this->assertNotEmpty($result['error'], 'Failed to get error from result with empty from_date');
+
+        //Test that we get an error if we don't supply a to_date value
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => '', 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
+        $this->assertEmpty($result['entry_list']);
+        $this->assertNotEmpty($result['error'], 'Failed to get error from result with empty from_date');
+
+        //Test that we get an error if we don't supply both a from_date or to_date value
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => '', 'to_date' => '', 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
+        $this->assertEmpty($result['entry_list']);
+        $this->assertNotEmpty($result['error'], 'Failed to get error from result with empty from_date');
+
+        //Test that we get 2 entries if we don't supply a user id (defaults to current user)
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Meetings', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => '', 'select_fields'=> $callsAndMeetingsFields, 'relationship_name' => 'meetings_users', 'deletion_date' => ''));
         $this->assertNotEmpty($result['entry_list']);
         $this->assertEquals(2, $result['result_count']);
         $this->assertEquals(2, $result['next_offset']);
@@ -161,53 +230,19 @@ class SOAPAPI4_1Test extends SOAPTestCase
         $this->assertNotEmpty($result['entry_list']);
         $this->assertEquals(1, $result['result_count']);
         $this->assertEquals(1, $result['next_offset']);
+
+        /*
+        //This doesn't work since the API assumes we are deriving User module relationships anyway
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Meetings', 'related_module' => 'Leads', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id'=>'', 'select_fields'=> $leadsFields, 'relationship_name' => 'meetings_leads', 'deletion_date' => ''));
+        echo var_export($result, true);
+        $this->assertNotEmpty($result['entry_list']);
+        $this->assertEquals(1, $result['result_count']);
+        $this->assertEquals(1, $result['next_offset']);
+        */
+
+        //Test an incorrect relationship
+        $result = $this->_soapClient->call('get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'GooberVille', 'related_module' => 'UberVille', 'from_date' => $one_hour_ago, 'to_date' => $one_hour_later, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'user_id' => $current_user->id, 'select_fields'=> $leadsFields, 'relationship_name' => 'goober_uber', 'deletion_date' => ''));
+        $this->assertEquals(20, $result['faultcode'], 'Failed to trigger a SOAP fault code for invalid relationship');
     }
-
-
-    /**
-     * testGetMeetingWithGetEntryList
-     *
-     * Test the equivalent using get_entry_list and get_relationships
-     */
-    /*
-    public function testGetMeetingWithGetEntryList()
-    {
-        global $timedate;
-        $one_hour_ago = $timedate->asDb($timedate->getNow()->get("-1 hours"));
-        $one_hour_later = $timedate->asDb($timedate->getNow()->get("+1 hours"));
-   		$result = $this->_soapClient->call('get_entry_list',
-           array(
-               'session' => $this->_sessionId,
-               'module_name' => 'Meetings',
-               'query' => "(meetings.date_modified >= '{$one_hour_ago}' AND meetings.date_modified <= '{$one_hour_later}')",
-               'order_by' => '',
-               'offset' => 0,
-               'select_fields' => array('name', 'id'),
-               'link_name_to_fields_array' =>  array(array('name' =>'users', 'value' => array('id'))),
-               'max_results' => 20,
-               'deleted' => 0,
-               'favorites' => false,
-           )
-        );
-
-        //Now you'd have to loop through Meetings to find user relationship
-        foreach($result as $entry)
-        {
-            $relationships = $this->_soapClient->call('get_relationships', array(
-                                'session' => $this->_sessionId,
-                                'module_name' => 'Users',
-                                'module_id' => self::$_user->id,
-                                'link_field_name' => 'meetings',
-                                'related_module_query' => '',
-                                'related_fields' => array('id', 'name'),
-                                'related_module_link_name_to_fields_array' => '',
-                                'deleted' => 0,
-                                'order_by' => 'date_entered',
-                                'offset' => 0,
-                                'limit' => false)
-            );
-        }
-    }
-    */
 
 }
