@@ -37,15 +37,21 @@
         },
 
         //TODO: Convert string function names to references to the callback function
-        //Then call the parent delegate
+        // Then call the parent delegate
         delegateEvents : function(events){
             if (!(events || (events = this.events))) return;
             events = _.clone(events);
+
             for (var key in events) {
+
                 var method = events[key];
-                if (!_.isFunction(method)) method = this[events[key]];
+
+                method = this[events[key]];
+
+
                 if (!method){
                     if (_.isString(events[key])){
+
                         try{
                             method = eval("(" + events[key] + ")");
                         } catch(e) {
@@ -82,12 +88,6 @@
             });
         },
 
-        bindEvents : function(){
-            _.each(this.events, function(callback, ev){
-
-            });
-        },
-
         bind : function(context, model){
             this.unBind();
             this.context = context;
@@ -100,9 +100,6 @@
                 this.model.offByScope(this);
             delete this.model;
             delete this.context;
-        },
-        navigate : function(action) {
-
         }
     }));
 }(SUGAR.App));

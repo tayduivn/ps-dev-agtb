@@ -76,8 +76,7 @@ fixtures.metadata = {
                                     "this.model.save(null, {success:" +
                                         "function(){self.app.navigate(self.context, 'detail', self.model);}" +
                                     "});" +
-                                "}",
-                            hover : "myCallback"
+                                "}"
                         }
                     },
                     {
