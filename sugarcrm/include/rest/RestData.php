@@ -42,6 +42,7 @@ $restObjectList = array(
     "logout" => array(),
     "metadata" => array(),
     "serverinfo" => array(),
+    "listobjects" => array(),
     "objects" => array()
 );
 
@@ -52,7 +53,9 @@ $restObjectList["login"] = "internalObjects/login.php";
 $restObjectList["logout"] = "internalObjects/logout.php";
 $restObjectList["metadata"] = "internalObjects/metadata.php";
 $restObjectList["serverinfo"] = "internalObjects/serverinfo.php";
+$restObjectList["listobjects"] = "internalObjects/listobjects.php";
 $restObjectList["objects"] = "internalObjects/objects.php";
+
 
 /*
  * setup some defines that we will use later in life.

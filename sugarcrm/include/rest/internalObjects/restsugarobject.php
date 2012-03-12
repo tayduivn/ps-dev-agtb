@@ -136,7 +136,7 @@ class RestSugarObject extends RestObject implements IRestObject {
      */
     private function getRecordIds() {
         global $current_user;
-        $deleted = -1;
+        $deleted = false;
         $offset = 0;
         $maxresult = 0;
         $userFields = array();
@@ -149,9 +149,9 @@ class RestSugarObject extends RestObject implements IRestObject {
             $deleted = strtolower($deleted);
 
             if ($deleted == "true") {
-                $deleted = 1;
+                $deleted = true;
             } else {
-                $deleted = -1;
+                $deleted = false;
             }
         }
 
@@ -217,6 +217,12 @@ class RestSugarObject extends RestObject implements IRestObject {
         $entryList = $obj->get_entry_list("{$auth}", "{$this->objName}", '', '', $offset, $userFields,
             array(), $maxresult, $deleted);
 
+        if ($entryList["error"] != 0) {
+            $err = new RestError();
+            $err->ReportError($entryList["error"], $entryList["err_msg"]);
+            exit;
+        }
+
         $ids = array();
 
         foreach ($entryList["entry_list"] as $dhash) {
@@ -224,9 +230,11 @@ class RestSugarObject extends RestObject implements IRestObject {
                 $fieldsData = array();
                 foreach (array_keys($dhash["name_value_list"]) as $dkey) {
                     // don't need this is the hash's data since it is the key for the hash data //
+                    /*
                     if ($dkey == "id") {
                         continue;
                     }
+                    */
 
                     $fieldsData[$dkey] = $dhash["name_value_list"][$dkey]["value"];
                 }
@@ -238,10 +246,8 @@ class RestSugarObject extends RestObject implements IRestObject {
             }
         }
 
-        $md5 = json_encode($ids);
-        $md5 = md5($md5);
+
         $response = array();
-        $response["md5"] = $md5;
         $response["next_offset"] = $entryList["next_offset"];
         $response["result_count"] = $entryList["result_count"];
         $response["records"] = $ids;
@@ -346,59 +352,48 @@ class RestSugarObject extends RestObject implements IRestObject {
         $this->sendJSONResponse($json);
     }
 
+    /**
+     * This method gets all relationships for a given object id for the parent bean/module type.
+     *
+     * Example URI that returns default fields:
+     * http://localhost:8888/sugar/ent/sugarcrm/rest/Accounts/a7365389-020c-d7f4-7513-4f5a84280ac0/Contacts
+     *
+     * Exmaple URI that returns wanted fields:
+     * http://localhost:8888/sugar/ent/sugarcrm/rest/Accounts/a7365389-020c-d7f4-7513-4f5a84280ac0/Contacts?fields=last_name,first_name,title
+     *
+     *
+     * @param $objId, the sugar guid
+     * @param $relateName, the name of the relationship: Example => Contacts
+     */
     function handleGetRealtionship($objId, $relateName) {
         global $current_user;
         $auth = $this->getAuth();
         $this->isValidToken($auth);
         $deleted = 0;
         $relatedFields = array();
+        $fields = array();
+        $where = "";
 
-        if (array_key_exists("relatedfields", $_GET)) {
-            $tmp = explode(",", $_GET["relatedfields"]);
+        if (array_key_exists("fields", $_GET)) {
+            $tmp = explode(",", $_GET["fields"]);
             foreach ($tmp as $f) {
                 if (!empty($f)) {
-                    array_push($relatedFields, $f);
+                    array_push($fields, $f);
                 }
             }
         }
 
+        if (array_key_exists("where", $_GET)) {
+            $where = $_GET["where"];
+        }
+
         $obj = new SugarWebServiceImpl();
-
-        /*
-
-        $tmp = $obj->get_relationships($auth,
-            $this->objName,
-            $objId,
-            $relateName,
-            '',
-            array('first_name', 'last_name', 'primary_address_city'),
-            array(array('name' =>  'opportunities', 'value' => array('name', 'type', 'lead_source')),
-            array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))
-            ,$deleted);
-
-        /*
-        * Retrieve a collection of beans that are related to the specified bean and optionally return relationship data for those related beans.
- * So in this API you can get contacts info for an account and also return all those contact's email address or an opportunity info also.
- *
- * @param String $session -- Session ID returned by a previous call to login.
- * @param String $module_name -- The name of the module that the primary record is from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
- * @param String $module_id -- The ID of the bean in the specified module
- * @param String $link_field_name -- The name of the lnk field to return records from.  This name should be the name the relationship.
- * @param String $related_module_query -- A portion of the where clause of the SQL statement to find the related items.  The SQL query will already be filtered to only include the beans that are related to the specified bean. (IGNORED)
- * @param Array $related_fields - Array of related bean fields to be returned.
- * @param Array $related_module_link_name_to_fields_array - For every related bean returrned, specify link fields name to fields info for that bean to be returned. For ex.'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address'))).
- * @param Number $deleted -- false if deleted records should not be include, true if deleted records should be included.
- * @return Array 'entry_list' -- Array - The records that were retrieved
- *	     		 'relationship_list' -- Array - The records link field data. The example is if asked about accounts contacts email address then return data would look like Array ( [0] => Array ( [name] => email_addresses [records] => Array ( [0] => Array ( [0] => Array ( [name] => id [value] => 3fb16797-8d90-0a94-ac12-490b63a6be67 ) [1] => Array ( [name] => email_address [value] => hr.kid.qa@example.com ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 1 ) ) [1] => Array ( [0] => Array ( [name] => id [value] => 403f8da1-214b-6a88-9cef-490b63d43566 ) [1] => Array ( [name] => email_address [value] => kid.hr@example.name ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 0 ) ) ) ) )
-* @exception 'SoapFault' -- The SOAP error, if any
-*/
-
         $relateData = $obj->get_relationships($auth,
             $this->objName,
             $objId,
             $relateName,
-            '',
-            $relatedFields,
+            $where,
+            $fields,
             array(),
             $deleted);
 
@@ -410,18 +405,26 @@ class RestSugarObject extends RestObject implements IRestObject {
 
         $retData = array();
         foreach ($relateData["entry_list"] as $entry) {
-            foreach ($relateData["name_value_list"] as $key => $value) {
-                print "VALUE: {$value}"; die;
+            $keys = array_keys($entry);
+
+            $tmpData = array();
+            // this inner loop is needed to remove the unneeded nesting of hashes where name="name" &
+            // value="value" //
+            foreach ($keys as $key) {
+                if ($key != "name_value_list") {
+                    $tmpData[$key] = $entry[$key];
+                } else {
+                    $value = $entry[$key];
+                    foreach ($value as $listData) {
+                        $tmpData[$listData["name"]] = $listData["value"];
+                    }
+                }
             }
-
-            array_push($retData, $entry["id"]);
-
+            array_push($retData, $tmpData);
         }
 
-        print_r($relateData); die;
-
         $tmp = json_encode($retData);
-        print_r($tmp); die;
+        $this->sendJSONResponse($tmp);
     }
 
     /**

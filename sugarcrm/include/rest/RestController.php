@@ -50,9 +50,15 @@ class RestController {
      */
     public function execute() {
         $this->getURI();
+        $data = $this->uriData;
 
-        if (!empty($this->uriData[0])) {
-            $tmp = RestFactory::newRestObject($this->uriData[0]);
+        if (empty($data)) {
+            $data = array();
+            $data[0] = "listobjects";
+        }
+
+        if (!empty($data[0])) {
+            $tmp = RestFactory::newRestObject($data[0]);
             $tmp->setURIData($this->uriData);
             $tmp->execute();
         } else {
