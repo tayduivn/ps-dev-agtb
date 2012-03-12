@@ -30,7 +30,7 @@
 <div id="quickCreate">
 <ul class="clickMenu" id="quickCreateUL">
     <li>
-        <ul class="subnav iefixed showLess">
+        <ul class="subnav iefixed showLess" id="quickCreateULSubnav">
             {foreach from=$DCACTIONS item=action name=quickCreate}
                 <li {if $smarty.foreach.quickCreate.index > 4}class="moreOverflow"{/if}><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);">{$action.createRecordTitle}</a></li>
 
