@@ -110,7 +110,7 @@
 	
 	{* more menu items overlfow *}
 	
-		<li class="moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
+		<li class="moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
 		<a href="#" class="more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
 		
 		<ul id="moduleTabMore{$tabGroupName}">
@@ -219,8 +219,8 @@
 				</li>
 			{/foreach}
 			{if count($tabGroup.extra) > 5}
-			<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
-			<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
+			<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
+			<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
 			{/if}
 			
 			{* group modules *}
