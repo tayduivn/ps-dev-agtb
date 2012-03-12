@@ -76,6 +76,55 @@ class JSMin {
     }
 }
 
+class AST_Walker {
+
+
+    public function walk($ast) {
+        if(is_null($ast)) {
+            return null;
+        }
+        try {
+            array_push($this->stack, $ast);
+            $type = $ast[0];
+            $gen = $this->user[$type];
+            if($gen) {
+                $ret = ??
+                if(!is_null($ret)) {
+                    return $ret;
+                }
+                $gen = $this->walkers[$type];
+                return ??
+            }
+        }
+        array_pop($this->stack);
+    }
+
+    public function dive($ast) {
+        if(is_null($ast)) {
+            return null;
+        }
+        try {
+            array_push($this->stack, $ast);
+            return ??
+        }
+
+    }
+
+    public function with_walkers($walkers, $cont) {
+        $save = array();
+        ??
+    }
+
+    public function parent() {
+        // count - 1 is the current node.
+        return $this->stack[count($this->stack) - 2];
+    }
+
+    public function stack() {
+        return $this->stack;
+    }
+}
+
 class SugarMin {
 
     /**
@@ -123,6 +172,7 @@ class SugarMin {
     }
 
     protected function jsParser() {
+        require_once('jssource/Tokenizer.php');
         $tokenizer = new Tokenizer($this->text, TRUE);
         $prev_token = null;
         $token = $tokenizer->get_token();
@@ -149,7 +199,7 @@ class SugarMin {
         $str = str_replace(' ;', ';', $str);
         $str = str_replace(') .', ').', $str);
         $str = str_replace('elseif', 'else if', $str);
-        
+
         return $str;
 	}
 
