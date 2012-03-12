@@ -121,10 +121,10 @@ class Bug44928Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        $this->lead->mark_deleted($this->lead->id);
+       /* $this->lead->mark_deleted($this->lead->id);
         $this->campaign->mark_deleted($this->campaign->id);
         $this->team->mark_deleted($this->team->id);
-
+        */
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
