@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -17,33 +16,71 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- *$Id: QuickSearchDefaults.php 16849 2006-09-28 00:11:56Z clee $
+ *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights
+ *Reserved.
  ********************************************************************************/
-$filePath = 'modules/Home/QuickSearch.php';
-if (file_exists('custom/' . $filePath))
-{
-    require_once('custom/' . $filePath);
-    $quicksearchQuery = new quicksearchQueryCustom();
-}
-else
-{
-    require_once($filePath);
-    $quicksearchQuery = new quicksearchQuery();
-}
 
-$json = getJSONobj();
-$data = $json->decode(html_entity_decode($_REQUEST['data']));
-if(isset($_REQUEST['query']) && !empty($_REQUEST['query'])){
-    foreach($data['conditions'] as $k=>$v){
-        if (empty($data['conditions'][$k]['value']) && ($data['conditions'][$k]['op'] != quicksearchQuery::CONDITION_EQUAL)) 
-        {
-            $data['conditions'][$k]['value']=$_REQUEST['query'];
-        }
+require_once 'include/FileLocator/FileLocatorInterface.php';
+
+class FileLocator implements FileLocatorInterface
+{
+    private $paths;
+
+    /**
+     * @param  $paths
+     * @param  $options
+     * @return void
+     */
+    public function __construct(array $paths)
+    {
+        $this->paths = (array)$paths;
     }
-}
 
-$method = !empty($data['method']) ? $data['method'] : 'query';
-if(method_exists($quicksearchQuery, $method)) {
-   echo $quicksearchQuery->$method($data);
+
+    /**
+     * @param  $name
+     * @return bool|string
+     */
+    public function locate($name)
+    {
+        if($this->isAbsolutePath($name) && file_exists($name))
+        {
+          return $name;
+        }
+
+        foreach($this->paths as $path)
+        {
+            $file = $path . DIRECTORY_SEPARATOR . $name;
+            if(file_exists($file) && is_file($file))
+            {
+                return $file;
+            }
+        }
+        return false;
+    }
+
+    public function setPaths($paths)
+    {
+        $this->paths = (array)$paths;
+    }
+
+    public function getPaths()
+    {
+        return $this->paths;
+    }
+
+    private function isAbsolutePath($file)
+    {
+        if ($file[0] == '/' || $file[0] == '\\'
+            || (strlen($file) > 3 && ctype_alpha($file[0])
+                && $file[1] == ':'
+                && ($file[2] == '\\' || $file[2] == '/')
+            )
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

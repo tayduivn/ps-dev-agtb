@@ -359,7 +359,7 @@ if($focus->is_personal) {
 } else {
 //$xtpl->assign('TEAM_ID', $team_id);
 require_once('include/QuickSearchDefaults.php');
-$qsd = new QuickSearchDefaults();
+$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 
 $sqs_objects = array(
                      'team_name' => $qsd->getQSTeam(),

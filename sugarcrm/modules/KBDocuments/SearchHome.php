@@ -235,7 +235,7 @@ if(isset($_POST['clear_loaded'])){
         require_once('include/json_config.php');
         $json_config = new json_config();
 		$json = getJSONobj();
-        $qsd = new QuickSearchDefaults();
+        $qsd = QuickSearchDefaults::getQuickSearchDefaults();
         $qsd->setFormName('FTSFormAdvanced');
         $sqs_objects = array('FTSFormAdvanced_tag_name' => getQSTags('FTSFormAdvanced'),
                              'FTSFormAdvanced_team_name' => $qsd->getQSTeam(),

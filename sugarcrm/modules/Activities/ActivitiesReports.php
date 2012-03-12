@@ -33,7 +33,7 @@ if (!isset($_REQUEST['export_report']) || $_REQUEST['export_report'] != '1') {
 		global $global_json;
 		$global_json = getJSONobj();
 		require_once('include/QuickSearchDefaults.php');
-		$qsd = new QuickSearchDefaults();
+		$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 		if (isset($_REQUEST['parent_type']))
 				$sqs_objects = array('parent_name' => $qsd->getQSParent($_REQUEST['parent_type']));
 		else
