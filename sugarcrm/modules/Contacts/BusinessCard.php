@@ -298,7 +298,7 @@ $encoded_contact_popup_request_data = $json->encode($popup_request_data);
 
 //Account
 require_once('include/QuickSearchDefaults.php');
-$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+$qsd = new QuickSearchDefaults();
 $qsd->setFormName('BusinessCard');
 $sqs_objects = array('BusinessCard_display_account_name' => $qsd->getQSParent());
 $sqs_objects['BusinessCard_display_account_name']['populate_list'] = array('display_account_name', 'selectedAccount');

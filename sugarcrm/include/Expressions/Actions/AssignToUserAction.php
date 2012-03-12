@@ -108,8 +108,7 @@ class AssignToUserAction extends AbstractAction{
         require_once ('include/QuickSearchDefaults.php');
         $json = getJSONobj();
         $userName = Parser::evaluate($this.expr, $target).evaluate();
-        $qsd = QuickSearchDefaults::getQuickSearchDefaults();
-        $data = $qsd->getQSUser();
+        $data = new QuickSearchDefaults().getQSUser();
         $data['modules'] = array("Users");
         $data['conditions'][0]['value'] = $userName;
         $qs = new quicksearchQuery();

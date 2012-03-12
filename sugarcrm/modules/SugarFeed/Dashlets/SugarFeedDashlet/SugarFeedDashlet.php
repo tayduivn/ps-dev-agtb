@@ -515,7 +515,7 @@ enableQS(false);
 
         $str = $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/SugarFeedScript.tpl');
 		//BEGIN SUGARCRM flav=pro ONLY
-		$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+		$qsd = new QuickSearchDefaults();
 		$json = getJSONobj();
 		$sqs_objects = $qsd->getQSTeam();
 		foreach($sqs_objects['populate_list'] as &$v){

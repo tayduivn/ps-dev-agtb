@@ -143,7 +143,7 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
     function createQuickSearchCode($returnAsJavascript=true){
         $sqs_objects = array();
         require_once('include/QuickSearchDefaults.php');
-        $qsd = QuickSearchDefaults::getQuickSearchDefaults();
+        $qsd = new QuickSearchDefaults();
         $qsd->setFormName($this->form_name);
         for($i=0; $i<$this->numFields; $i++) {
             $name1 = "{$this->form_name}_{$this->name}_collection_{$i}";

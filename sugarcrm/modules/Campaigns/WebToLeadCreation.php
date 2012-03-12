@@ -190,7 +190,7 @@ $xtpl->assign("WEB_POST_URL",$web_post_url);
 //$xtpl->assign("LEAD_SELECT_FIELDS",'MOD.LBL_SELECT_LEAD_FIELDS');
 
 require_once('include/QuickSearchDefaults.php');
-$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+$qsd = new QuickSearchDefaults();
 $sqs_objects = array('account_name' => $qsd->getQSParent(),
 					'assigned_user_name' => $qsd->getQSUser(),
 					'campaign_name' => $qsd->getQSCampaigns(),

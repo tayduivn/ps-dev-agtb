@@ -79,7 +79,7 @@ class EditView
      */
     function setup($module, $focus = null, $metadataFile = null, $tpl = 'include/EditView/EditView.tpl', $createFocus = true)
     {
-        $this->th = $this->getTemplateHandler();
+        $this->th = new TemplateHandler();
         $this->th->ss =& $this->ss;
         $this->tpl = $tpl;
         $this->module = $module;
@@ -885,15 +885,6 @@ class EditView
         }
 
         return '';
-    }
-
-    /**
-     * Get template handler object
-     * @return TemplateHandler
-     */
-    protected function getTemplateHandler()
-    {
-        return new TemplateHandler();
     }
 }
 

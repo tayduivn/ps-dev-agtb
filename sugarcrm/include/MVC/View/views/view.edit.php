@@ -21,29 +21,17 @@ require_once('include/EditView/EditView2.php');
  		parent::SugarView();
  	}
 
-    /**
-     * @see SugarView::preDisplay()
-     */
-    public function preDisplay()
-    {
-        $metadataFile = $this->getMetaDataFile();
-        $this->ev = $this->getEditView();
-        $this->ev->ss =& $this->ss;
-        $this->ev->setup($this->module, $this->bean, $metadataFile, 'include/EditView/EditView.tpl');
-    }
+ 	function preDisplay(){
+ 		$metadataFile = $this->getMetaDataFile();
+ 		$this->ev = new EditView();
+ 		$this->ev->ss =& $this->ss;
+ 		$this->ev->setup($this->module, $this->bean, $metadataFile, 'include/EditView/EditView.tpl');
+
+ 	}
 
  	function display(){
 		$this->ev->process();
 		echo $this->ev->display($this->showTitle);
  	}
-
-    /**
-     * Get EditView object
-     * @return EditView
-     */
-    protected function getEditView()
-    {
-        return new EditView();
-    }
-}
-
+ }
+?>

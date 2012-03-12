@@ -301,15 +301,6 @@ if (!make_writable('./upload'))
     installLog("/upload directory check passed");
 }
 
-$customSystemChecks = installerHook('additionalCustomSystemChecks');
-if($customSystemChecks != 'undefined'){
-	if($customSystemChecks['error_found'] == true){
-		$error_found = true;
-	}
-	if(!empty($customSystemChecks['error_txt'])){
-		$error_txt .= $customSystemChecks['error_txt'];
-	}
-}
 
 // PHP.ini
 $phpIniLocation = get_cfg_var("cfg_file_path");

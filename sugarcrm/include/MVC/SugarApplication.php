@@ -832,8 +832,6 @@ class SugarApplication
         //BEGIN SUGARCRM flav=pro ONLY
         $this->trackLogin();
         //END SUGARCRM flav=pro ONLY
-        
-        LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 	}
 
 

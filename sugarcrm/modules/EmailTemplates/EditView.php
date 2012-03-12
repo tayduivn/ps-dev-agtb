@@ -158,7 +158,7 @@ $xtpl->assign("assign_user_select", SugarThemeRegistry::current()->getImage('id-
 $xtpl->assign("assign_user_clear", SugarThemeRegistry::current()->getImage('id-ff-clear','',null,null,'.gif',$mod_strings['LBL_ID_FF_CLEAR']));
 //Assign qsd script
 require_once('include/QuickSearchDefaults.php');
-$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+$qsd = new QuickSearchDefaults();
 $sqs_objects = array( 'EditView_assigned_user_name' => $qsd->getQSUser());
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '; enableQS();</script>';
 

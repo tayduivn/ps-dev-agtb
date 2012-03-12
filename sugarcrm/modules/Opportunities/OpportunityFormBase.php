@@ -421,7 +421,7 @@ EOQ;
 
 
 require_once('include/QuickSearchDefaults.php');
-$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+$qsd = new QuickSearchDefaults();
 $sqs_objects = array('qc_account_name' => $qsd->getQSParent());
 $sqs_objects['qc_account_name']['populate_list'] = array('qc_account_name', 'qc_account_id');
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';

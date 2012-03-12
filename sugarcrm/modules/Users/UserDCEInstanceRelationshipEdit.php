@@ -62,7 +62,7 @@ $GLOBALS['log']->info("User dceinstance relationship");
 
 $json = getJSONobj();
 require_once('include/QuickSearchDefaults.php');
-$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+$qsd = new QuickSearchDefaults();
 $sqs_objects = array('dceinstance_name' => $qsd->getQSParent());
 $sqs_objects['dceinstance_name']['populate_list'] = array('dceinstance_name', 'instance_id');
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';

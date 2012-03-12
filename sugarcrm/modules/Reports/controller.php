@@ -103,7 +103,7 @@ class ReportsController extends SugarController
 		global $global_json;
 		$global_json = getJSONobj();
 		require_once('include/QuickSearchDefaults.php');
-		$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+		$qsd = new QuickSearchDefaults();
 		if (!empty($_REQUEST['parent_form']))
 			$qsd->form_name = $_REQUEST['parent_form'];
 		$quicksearch_js = '';

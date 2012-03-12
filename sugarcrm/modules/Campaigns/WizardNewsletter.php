@@ -80,7 +80,7 @@ if (empty($_REQUEST['return_id'])) {
 $ss->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 
 require_once('include/QuickSearchDefaults.php');
-$qsd = QuickSearchDefaults::getQuickSearchDefaults();
+$qsd = new QuickSearchDefaults();
 $qsd->setFormName('wizform');
 $sqs_objects = array('parent_name' => $qsd->getQSParent(), 
                     'assigned_user_name' => $qsd->getQSUser(),

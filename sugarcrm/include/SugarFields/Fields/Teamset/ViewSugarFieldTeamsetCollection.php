@@ -320,7 +320,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         $fieldName = empty($this->displayParams['idName']) ? $this->name : $this->displayParams['idName'];
 		$sqs_objects = array();
         require_once('include/QuickSearchDefaults.php');
-        $qsd = QuickSearchDefaults::getQuickSearchDefaults();
+        $qsd = new QuickSearchDefaults();
         $qsd->setFormName($this->form_name);
         for($i=0; $i<$this->numFields; $i++){
             	$name1 = "{$this->form_name}_{$fieldName}_collection_{$i}";

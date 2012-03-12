@@ -40,8 +40,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * before_login
  * after_login
  * login_failed
- * after_session_start
- * after_entry_point
  *
  * @api
  */

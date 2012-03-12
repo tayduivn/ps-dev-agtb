@@ -31,7 +31,6 @@ require_once('include/ListView/ListViewSmarty.php');
 
 require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/EditView/EditView2.php');
-require_once('include/FileLocator/FileLocator.php');
 
 
  class SearchForm extends EditView{
@@ -66,17 +65,7 @@ require_once('include/FileLocator/FileLocator.php');
 
     var $displayType = 'searchView';
 
-    /**
-     * @var FileLocatorInterface
-     */
-    private $fileLocator;
-
-    /**
-     * @var array
-     */
-    private $options;
-
- 	function SearchForm($seed, $module, $action = 'index', $options = array()){
+ 	function SearchForm($seed, $module, $action = 'index'){
  		$this->th = new TemplateHandler();
  		$this->th->loadSmarty();
 		$this->seed = $seed;
@@ -94,35 +83,7 @@ require_once('include/FileLocator/FileLocator.php');
                             'displayDiv'   => 'display:none'),
                        );
         $this->searchColumns = array () ;
-        $this->setOptions($options);
-    }
-
-    public function getFileLocator()
-    {
-        if (!$this->fileLocator) {
-            $ref = new ReflectionClass($this->options['locator_class']);
-            $this->fileLocator = $ref->newInstanceArgs($this->options['locator_class_params']);
-        }
-
-        return $this->fileLocator;
-    }
-
-    public function setOptions($options)
-    {
-        $defaults = array(
-            'locator_class' => 'FileLocator',
-            'locator_class_params' => array(
-                array(
-                    'custom/modules/' . $this->module . '/tpls/SearchForm',
-                    'modules/' . $this->module . '/tpls/SearchForm',
-                    'custom/include/SearchForm/tpls',
-                    'include/SearchForm/tpls'
-                )
-            )
-        );
-
-        $this->options = empty($options) ? $defaults : $options;
-    }
+ 	}
 
  	function setup($searchdefs, $searchFields = array(), $tpl, $displayView = 'basic_search', $listViewDefs = array()){
 		$this->searchdefs =  $searchdefs[$this->module];
@@ -265,12 +226,12 @@ require_once('include/FileLocator/FileLocator.php');
         if ($this->module == 'Documents'){
             $this->th->ss->assign('DOCUMENTS_MODULE', true);
         }
-        $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->getFileLocator()->locate($this->tpl));
+        $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->tpl);
         if($header){
 			$this->th->ss->assign('return_txt', $return_txt);
-			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', $this->getFileLocator()->locate('header.tpl'));
+			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', 'include/SearchForm/tpls/header.tpl');
             //pass in info to render the select dropdown below the form
-            $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', $this->getFileLocator()->locate('footer.tpl'));
+            $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', 'include/SearchForm/tpls/footer.tpl');
 			$return_txt = $header_txt.$footer_txt;
 		}
 		return $return_txt;

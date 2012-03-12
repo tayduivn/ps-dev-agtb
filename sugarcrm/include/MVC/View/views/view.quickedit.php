@@ -146,8 +146,8 @@ class ViewQuickedit extends ViewAjax
           return;
 
         }
-
-        $this->ev = $this->getEditView();
+        
+		$this->ev = new EditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
 		
@@ -215,13 +215,4 @@ class ViewQuickedit extends ViewAjax
             echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $this->ev->display(false, true), 'eval'=>true));
 		}
 	}
-
-    /**
-     * Get EditView object
-     * @return EditView
-     */
-    protected function getEditView()
-    {
-        return new EditView();
-    }
 }
