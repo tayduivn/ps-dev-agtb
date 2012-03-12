@@ -53,7 +53,12 @@
 {literal}
 
 
-<script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script><style type="text/css" media="screen, projection">  @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);</style><script type="text/javascript">  if (typeof(Zenbox) !== "undefined") {
+<script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script>
+<style type="text/css" media="screen, projection">
+  @import url(//asset0.zendesk.com/external/zenbox/v2.4/zenbox.css);
+</style>
+<script type="text/javascript">
+  if (typeof(Zenbox) !== "undefined") {
     Zenbox.init({
       dropboxID:   "20047068",
       url:         "https://suga.zendesk.com",
@@ -62,6 +67,9 @@
       tabPosition: "Left"
     });
   }
+ {/literal}
+
+{if !$DISABLE_FEEDBACK_WIDGET}{literal}
 $('#zenbox_tab').ready(function(){
 	$('#partner').append($('#zenbox_tab'));	
 	$('#zenbox_tab').attr('title','').html("Feedback");
@@ -70,9 +78,6 @@ $('#zenbox_tab').ready(function(){
 	$('.zenbox_header .close').click(function() {
 		window.Zenbox.hide();
 		});
-	
-	
-	
 }).click(function(){
 	if($('.zenbox_support_links').length == 0) {
 		var links = $('<div class="zenbox_support_links">If you are reporting a bug on the page, please submit it <a href="http://www.sugarcrm.com/crm/support/bugs.html" target="_new">here</a>. You can also submit feature requests in our <br>forum <a href="http://www.sugarcrm.com/forums/f5/" target="_blank">here</a>.</div>');
@@ -82,9 +87,10 @@ $('#zenbox_tab').ready(function(){
 		}, 1000);
 	}
 		
-});  
-</script>
-{/literal}
+});
+{/literal}{/if}
+</script>
+
 
     <div class="clear"></div>
 </div>
