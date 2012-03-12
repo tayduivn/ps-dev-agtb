@@ -1419,7 +1419,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 	float: left;
 }
 
-#footer #partner img {
+#footer #partner a span {
 	width: 25px;
 	height: 24px;
 	margin: 4px 10px 4px 0px;
@@ -1428,6 +1428,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     float:right;
     margin-right:25px;
      border-right: 1px solid #CCCCCC;
+     height: 31px;
 }
 
 #footer p {
@@ -5049,9 +5050,15 @@ border-radius: 0px 6px 0px 0px;
 #dashletCtrls a {
 font-size: 13px;
 }
-#add_dashlets {
+#change_layout {
 margin-left: 5px;
 *margin-left: 0px;
+}
+
+#dashletCtrls a span.title {
+	margin-left: 5px;
+	position: relative;
+	top: -7px;	
 }
 /* sitemap */
 #sitemap .edit.view
@@ -5213,10 +5220,7 @@ padding: 2px 10px;
 	box-shadow: #444 0px 2px 10px;
 	-moz-box-shadow: #444 0px 2px 10px;
 	-webkit-box-shadow: #444 0px 2px 10px;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	border-color: #98c6ea;
+	border-color: #666;
 }
 .yui-module .hd, .yui-panel .hd {
 	background-image: -moz-linear-gradient(center top, 
@@ -5243,10 +5247,7 @@ padding: 2px 10px;
 	top: 0px;
 }
 .yui-module .ft, .yui-panel .ft {
-	-moz-border-radius: 0px 0px 6px 6px;
-	-webkit-border-bottom-right-radius: 6px;
-	-webkit-border-bottom-left-radius: 6px;
-	border-radius: 0px 0px 6px 6px;
+
 }
 
 .yui-dialog .container-close {
@@ -6988,5 +6989,76 @@ td #moduleListTD
 
 #sugar_spot_search_div .spot_fts_summary
 {
-    color: #444
+    color: #444;
+}
+
+#zenbox_tab, #uvTab {
+border: 0px none !important;
+left: auto !important;
+top: auto !important;
+right: 20px;
+bottom: 0px;	
+position: inherit !important;
+text-indent: 0px !important;
+width: 100px !important;
+height: 24px !important;
+background-image: none !important;
+display: inline-block !important;
+height: 31px !important;
+background-color: transparent !important;
+border-left: 1px solid #CCCCCC !important;
+text-align: center;
+font-family: tahoma;
+font-size: 15px;
+text-shadow: 0px 1px #fff;
+padding-top: 6px;
+font-weight: bold;
+color: #444;
+text-decoration: none;
+}
+
+
+.zenbox_support_links {
+	z-index: 100000;
+    position: absolute;
+    top: 77px;
+    left: 32px;
+}
+
+#zenbox_container .zenbox_header {
+	height: 20px;	
+	background-image: -moz-linear-gradient(center top, 
+	#eeeeee 0%,
+	#cccccc 100%
+	);
+	background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #eeeeee),
+	    color-stop(1, #cccccc)
+    );	
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc');	
+	border-bottom: 1px solid #999999;
+	border-top: 1px solid #ffffff;
+}
+
+#zenbox_container {
+	width: 615px !important;
+	height: 477px !important;
+	box-shadow: 0px 2px 10px #444;
+	background-color: #fff;
+}
+
+#zenbox_body {
+	margin-top: 0px !important;
+	height: 458px !important;
+}
+
+#zenbox_container .zenbox_header .close {
+	background: url("../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png") no-repeat scroll 6px -67px transparent;
+    width: 18px;
+    float: right;
+    margin: 2px 6px 0px 0px;
+    cursor: pointer;
 }
