@@ -46,12 +46,12 @@ class SugarACL
     {
         if(!isset(self::$acls[$module])) {
             self::$acls[$module] = array();
+            $bean = BeanFactory::newBean($module);
             if(isset($GLOBALS['dictionary'][$module]['acls'])) {
                 $acl_list = $GLOBALS['dictionary'][$module]['acls'];
             } else {
                 $acl_list = array();
             }
-            $bean = BeanFactory::newBean($module);
             foreach($bean->defaultACLs() as $defacl) {
                 if(isset($acl_list[$defacl])) {
                     continue;
