@@ -43,6 +43,6 @@ class SugarMin {
 
     protected function jsParser() {
         require_once('jssource/Minifier.php');
-        return Minifier::minify($str);
+        return Minifier::minify($this->text);
 	}
 }

@@ -42,8 +42,7 @@
  * @version    Release: 0.4
  */
 
-
- namespace JShrink;
+// Some changes done by Akshay Joshi to preserve compatibility with PHP 5.2.
 
 /**
  * Minifier
@@ -127,7 +126,7 @@ class Minifier
             $currentOptions = array_merge(self::$defaultOptions, $options);
 
             if(!isset(self::$jshrink))
-                self::$jshrink = new JShrink();
+                self::$jshrink = new Minifier();
 
             self::$jshrink->breakdownScript($js, $currentOptions);
             return ob_get_clean();
@@ -347,7 +346,7 @@ class Minifier
                 }
 
                 if($char === false)
-                    throw new \RuntimeException('Stray comment. ' . $this->index);
+                    throw new RuntimeException('Stray comment. ' . $this->index);
 
                 // if we're here c is part of the comment and therefore tossed
                 if(isset($this->c))
@@ -397,7 +396,7 @@ class Minifier
                         break 2;
 
                     case "\n":
-                        throw new \RuntimeException('Unclosed string. ' . $this->index);
+                        throw new RuntimeException('Unclosed string. ' . $this->index);
                         break;
 
                     case '\\':
@@ -427,7 +426,7 @@ class Minifier
             }
 
             if($this->a == "\n")
-                throw new \RuntimeException('Stray regex pattern. ' . $this->index);
+                throw new RuntimeException('Stray regex pattern. ' . $this->index);
 
             echo $this->a;
         }
