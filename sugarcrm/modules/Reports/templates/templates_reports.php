@@ -1423,7 +1423,7 @@ function get_select_related_html(&$args)
 function js_setup(&$smarty) {
 	global $global_json;
 	require_once('include/QuickSearchDefaults.php');
-	$qsd = new QuickSearchDefaults();
+	$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 	$qsd->form_name = "ReportsWizardForm";
 	$sqs_objects = array('ReportsWizardForm_assigned_user_name' => $qsd->getQSUser()); //, 'ReportsWizardForm_team_name_collection_0' => $qsd->getQSTeam());
 

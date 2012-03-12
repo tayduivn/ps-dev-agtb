@@ -298,7 +298,7 @@ class PopupSmarty extends ListViewSmarty{
         $this->searchdefs[$this->module]['templateMeta']['widths']['field'] = 30;
 
         $this->searchForm->view = 'PopupSearchForm';
-		$this->searchForm->setup($this->searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGenericAdvanced.tpl', 'advanced_search', $this->listviewdefs);
+		$this->searchForm->setup($this->searchdefs, $searchFields, 'SearchFormGenericAdvanced.tpl', 'advanced_search', $this->listviewdefs);
 
 		$lv = new ListViewSmarty();
 		$displayColumns = array();
