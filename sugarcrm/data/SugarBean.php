@@ -412,9 +412,9 @@ class SugarBean
      * Add visibility clauses to the query
      * @param string $query
      */
-    public function addVisibilityWhere(&$query)
+    public function addVisibilityWhere(&$query, $action = 'list')
     {
-        return $this->loadVisibility()->addVisibilityWhere($query);
+        return $this->loadVisibility()->addVisibilityWhere($query, $action);
     }
 
     /**

@@ -54,8 +54,9 @@ abstract class SugarVisibility
     /**
      * Add visibility clauses to the WHERE part of the query
      * @param string $query
+     * @param string $action
      */
-    public function addVisibilityWhere(&$query)
+    public function addVisibilityWhere(&$query, $action = 'list')
     {
         return $query;
     }

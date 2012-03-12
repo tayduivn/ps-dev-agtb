@@ -2358,10 +2358,7 @@ eoq;
 				continue;
 			} // if
 			$where = "({$table}.deleted = 0 AND eabr.primary_address = 1 AND {$table}.id <> '{$current_user->id}')";
-
-            if (ACLController::requireOwner($module, 'list')) {
-            	$where = $where . " AND ({$table}.assigned_user_id = '{$current_user->id}')";
-            } // if
+            $person->addVisibilityWhere($where);
 			if(!empty($whereAdd)) {
 				$where .= " AND ({$whereAdd})";
 			}
@@ -2375,7 +2372,7 @@ eoq;
 			$t .= "JOIN email_addr_bean_rel eabr ON ({$table}.id = eabr.bean_id and eabr.deleted=0) ";
 			$t .= "JOIN email_addresses ea ON (eabr.email_address_id = ea.id) ";
 			//BEGIN SUGARCRM flav=pro ONLY
-			$person->add_team_security_where_clause($t);
+			$person->addVisibilityFrom($t);
 			//END SUGARCRM flav=pro ONLY
 			$t .= " WHERE {$where}";
 
@@ -2501,10 +2498,7 @@ eoq;
 			} else {
 				$where = "({$table}.deleted = 0 AND eabr.primary_address = 1)";
 			}
-
-			if (ACLController::requireOwner($module, 'list')) {
-				$where = $where . " AND ({$table}.assigned_user_id = '{$current_user->id}')";
-			} // if
+            $person->addVisibilityWhere($where);
 			if(!empty($whereAdd)) {
 				$where .= " AND ({$whereAdd})";
 			}

@@ -26,9 +26,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class ACLVisibility extends SugarVisibility
 {
-    public function addVisibilityWhere(&$query)
+    public function addVisibilityWhere(&$query, $action = 'list')
     {
-        if($this->bean->bean_implements('ACL') && ACLController::requireOwner($this->bean->module_dir, 'list')) {
+        if($this->bean->bean_implements('ACL') && ACLController::requireOwner($this->bean->module_dir, $action)) {
             $owner_where = $this->bean->getOwnerWhere($GLOBALS['current_user']->id);
             if(!empty($query)) {
                 $query .= " AND $owner_where";

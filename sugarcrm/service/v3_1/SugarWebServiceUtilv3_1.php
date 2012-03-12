@@ -417,18 +417,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 		}
 		$order_by=$seed->process_order_by($order_by, null);
 
-		if($seed->bean_implements('ACL') && ACLController::requireOwner($seed->module_dir, 'list') )
-		{
-			global $current_user;
-			$owner_where = $seed->getOwnerWhere($current_user->id);
-			if(!empty($owner_where)){
-				if(empty($where)){
-					$where = $owner_where;
-				}else{
-					$where .= ' AND '.  $owner_where;
-				}
-			}
-		}
+		$seed->addVisibilityWhere($where);
 		$params = array();
 		if($favorites)
 		  $params['favorites'] = true;
