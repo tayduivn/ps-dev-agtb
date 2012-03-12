@@ -1054,6 +1054,12 @@ EOHTML;
             $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
         }
         //END SUGARCRM flav=sales || flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!empty($GLOBALS['sugar_config']['disabled_feedback_widget']))
+            $ss->assign('DISABLE_FEEDBACK_WIDGET', TRUE);
+        //END SUGARCRM flav=pro ONLY
+
         $ss->display(SugarThemeRegistry::current()->getTemplate('footer.tpl'));
     }
 
