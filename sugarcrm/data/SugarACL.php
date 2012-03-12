@@ -123,7 +123,7 @@ class SugarACL
      * @param bool $use_value Use value or key as module name?
      * @return array Disabled modules
      */
-    public static function disabledModuleList($list, $action = 'list', $use_value = false)
+    public static function disabledModuleList($list, $action = 'access', $use_value = false)
     {
         $result = array();
         foreach($list as $key => $module) {
