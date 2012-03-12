@@ -2668,10 +2668,7 @@ function parse_list_modules(&$listArray)
 		}
 		//END SUGARCRM flav!=sales ONLY
 	}
-	$acldenied = SugarACL::disabledModuleList($listArray);
-	foreach($acldenied as $denied){
-		unset($returnArray[$denied]);
-	}
+	$returnArray = SugarACL::filterModuleList($listArray, 'access', true);
 	asort($returnArray);
 
 	return $returnArray;

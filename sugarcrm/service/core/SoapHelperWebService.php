@@ -326,7 +326,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_user_module_list');
 		global $app_list_strings, $current_language;
 		$app_list_strings = return_app_list_strings_language($current_language);
-		$modules = SugarACL::filterModuleList(query_module_access_list($user), 'access', false);
+		$modules = SugarACL::filterModuleList(query_module_access_list($user));
 		global $modInvisList;
 
 		foreach($modInvisList as $invis){

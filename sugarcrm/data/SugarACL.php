@@ -120,14 +120,16 @@ class SugarACL
      * Get list of disabled modules
      * @param array $list Module list
      * @param string $action
+     * @param bool $use_value Use value or key as module name?
      * @return array Disabled modules
      */
-    public static function disabledModuleList($list, $action = 'list')
+    public static function disabledModuleList($list, $action = 'list', $use_value = false)
     {
         $result = array();
         foreach($list as $key => $module) {
-            if(!self::checkAccess($module, $action)) {
-                $result[$key] = $module;
+            $checkmodule = $use_value?$module:$key;
+            if(!self::checkAccess($checkmodule, $action)) {
+                $result[$checkmodule] = $checkmodule;
             }
         }
         return $result;
@@ -140,7 +142,7 @@ class SugarACL
      * @param bool $use_value Use value or key as module name?
      * @return array Filtered list
      */
-    public static function filterModuleList($list, $action = 'access', $use_value = true)
+    public static function filterModuleList($list, $action = 'access', $use_value = false)
     {
         $result = array();
         foreach($list as $key => $module) {

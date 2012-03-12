@@ -87,10 +87,10 @@ var $myFavoritesOnly = false;
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFeedDashlet']['columns'];
 		$catCount = count($this->categories);
-		$this->categories = SugarACL::filterModuleList($this->categories, 'access', false);
+		$this->categories = SugarACL::filterModuleList($this->categories);
 		if(count($this->categories) < $catCount){
 			if(!empty($this->selectedCategories)){
-				$this->selectedCategories = SugarACL::filterModuleList($this->selectedCategories);
+				$this->selectedCategories = SugarACL::filterModuleList($this->selectedCategories, 'access', true);
 			}else{
 				$this->selectedCategories = array_keys($this->categories);
 				unset($this->selectedCategories[0]);

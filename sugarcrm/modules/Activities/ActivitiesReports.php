@@ -49,11 +49,7 @@ if (!isset($_REQUEST['export_report']) || $_REQUEST['export_report'] != '1') {
 		echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_ACTIVITIES_REPORTS']), false);
 
 	global $app_list_strings;
-	$parent_types = $app_list_strings['parent_type_display'];
-	$disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
-	foreach($disabled_parent_types as $disabled_parent_type){
-		unset($parent_types[$disabled_parent_type]);
-	}
+	$parent_types = SugarACL::filterModuleList($app_list_strings['parent_type_display']);
 	global $timedate;
 	$parent_types['Users']=$app_list_strings['moduleListSingular']['Users'];
 	$sugar_smarty = new Sugar_Smarty();

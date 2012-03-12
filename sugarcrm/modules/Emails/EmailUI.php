@@ -395,12 +395,7 @@ eoq;
 		global $app_list_strings,$current_user, $app_strings, $mod_strings,$current_language,$locale;
 
 		//Link drop-downs
-		$parent_types = $app_list_strings['record_type_display'];
-		$disabled_parent_types = ACLController::disabledModuleList($parent_types, false, 'list');
-
-		foreach($disabled_parent_types as $disabled_parent_type) {
-		  unset($parent_types[$disabled_parent_type]);
-		}
+		$parent_types = SugarACL::filterModuleList($app_list_strings['record_type_display']);
 		asort($parent_types);
 		$linkBeans = json_encode(get_select_options_with_id($parent_types, ''));
 

@@ -288,8 +288,7 @@ function get_user_module_list($user){
 	global $app_list_strings, $current_language, $beanList, $beanFiles;
 
 	$app_list_strings = return_app_list_strings_language($current_language);
-	$modules = query_module_access_list($user);
-	ACLController :: filterModuleList($modules, false);
+	$modules = SugarACL::filterModuleList(query_module_access_list($user));
 	global $modInvisList;
 
 	foreach($modInvisList as $invis){

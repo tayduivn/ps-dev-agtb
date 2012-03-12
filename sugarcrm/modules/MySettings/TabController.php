@@ -61,7 +61,7 @@ function get_system_tabs(){
 					if (!in_array($tab, $moduleList))
 						unset($tabs[$id]);
 				}
-				$tabs = $this->get_key_array(SugarACL::filterModuleList($tabs));
+				$tabs = $this->get_key_array(SugarACL::filterModuleList($tabs, 'access', true));
 				$system_tabs_result = $tabs;
 			}else{
 				$system_tabs_result = $this->get_key_array($moduleList);
