@@ -32,7 +32,7 @@ class AccountFormBase{
 
 function checkForDuplicates($prefix){
 	require_once('include/formbase.php');
-	
+
 	$focus = new Account();
 	$query = '';
 	$baseQuery = 'select id, name, website, billing_address_city  from accounts where deleted!=1 and ';
@@ -159,7 +159,7 @@ function buildTableForm($rows, $mod='Accounts'){
 				if($key != 'id'){
                     if(isset($_POST['popup']) && $_POST['popup']==true){
                         $form .= "<td scope='row'><a  href='javascript:void(0)' onclick=\"window.opener.location='index.php?module=Accounts&action=DetailView&record=${row['id']}'\">$value</a></td>\n";
-                    }   
+                    }
                     else
 					    $form .= "<td><a target='_blank' href='index.php?module=Accounts&action=DetailView&record=${row['id']}'>$value</a></td>\n";
 
@@ -178,8 +178,8 @@ function buildTableForm($rows, $mod='Accounts'){
 	if ($action == 'ShowDuplicates') {
 		$return_action = 'ListView'; // cn: bug 6658 - hardcoded return action break popup -> create -> duplicate -> cancel
 		$return_action = (isset($_REQUEST['return_action']) && !empty($_REQUEST['return_action'])) ? $_REQUEST['return_action'] : $return_action;
-		$form .= "<input type='hidden' name='selectedAccount' id='selectedAccount' value=''><input title='${app_strings['LBL_SAVE_BUTTON_TITLE']}' class='button' onclick=\"this.form.action.value='Save';\" type='submit' name='button' value='  ${app_strings['LBL_SAVE_BUTTON_LABEL']}  '>\n";
-	    
+		$form .= "<input type='hidden' name='selectedAccount' id='selectedAccount' value=''><input title='${app_strings['LBL_SAVE_BUTTON_TITLE']}' accessKey='${app_strings['LBL_SAVE_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='Save';\" type='submit' name='button' value='  ${app_strings['LBL_SAVE_BUTTON_LABEL']}  '>\n";
+
         if (!empty($_REQUEST['return_module']) && !empty($_REQUEST['return_action']) && !empty($_REQUEST['return_id']))
             $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' class='button' onclick=\"this.form.module.value='".$_REQUEST['return_module']."';this.form.action.value='".$_REQUEST['return_action']."';this.form.record.value='".$_REQUEST['return_id']."'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
         else if (!empty($_POST['return_module']) && !empty($_POST['return_action']))
@@ -259,17 +259,17 @@ $user_id = $current_user->id;
 			<input type="hidden" name="action" value="Save">
 EOQ;
 //BEGIN SUGARCRM flav=pro ONLY
-if(ACLField::hasAccess('name','Accounts', $user_id, true) > 1){
+if(SugarACL::checkField('Accounts', 'name', 'edit', array("owner_override" => true))) {
 //END SUGARCRM flav=pro ONLY
 	$form .= "$lbl_account_name&nbsp;<span class='required'>$lbl_required_symbol</span><br><input name='name' type='text' value=''><br>";
 //BEGIN SUGARCRM flav=pro ONLY
 }
-if(ACLField::hasAccess('phone_office','Accounts', $user_id, true) > 1){
+if(SugarACL::checkField('Accounts', 'phone_office', 'edit', array("owner_override" => true))) {
 //END SUGARCRM flav=pro ONLY
 	$form .= "$lbl_phone<br><input name='phone_office' type='text' value=''><br>";
 //BEGIN SUGARCRM flav=pro ONLY
 }
-if(ACLField::hasAccess('website','Accounts', $user_id, true) > 1){
+if(SugarACL::checkField('Accounts', 'website', 'edit', array("owner_override" => true))) {
 //END SUGARCRM flav=pro ONLY
 		$form .= "$lbl_website<br><input name='website' type='text' value='http://'><br>";
 //BEGIN SUGARCRM flav=pro ONLY
@@ -294,7 +294,7 @@ function getWideFormBody($prefix, $mod='',$formname='',  $contact=''){
 	if(!ACLController::checkAccess('Accounts', 'edit', true)){
 		return '';
 	}
-	
+
 	if(empty($contact)){
 		$contact = new Contact();
 	}
@@ -385,7 +385,7 @@ EOQ;
 $form .= <<<EOQ
 		</TABLE>
 EOQ;
-	
+
 
 $javascript = new javascript();
 $javascript->setFormName($formname);
@@ -398,8 +398,8 @@ $mod_strings = $temp_strings;
 
 
 function handleSave($prefix,$redirect=true, $useRequired=false){
-	
-    
+
+
 	require_once('include/formbase.php');
 
 	$focus = new Account();
@@ -429,7 +429,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 			if(isset($_POST['relate_id']) && !empty($_POST['relate_id'])) {
 				$get .= '&Accountsrelate_id='.$_POST['relate_id'];
 			}
-			
+
 			//add all of the post fields to redirect get string
 			foreach ($focus->column_fields as $field)
 			{
@@ -446,27 +446,27 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 					$get .= "&Accounts$field=".urlencode($focus->$field);
 				}
 			}
-            
-			
+
+
 			if($focus->hasCustomFields()) {
-				foreach($focus->field_defs as $name=>$field) {	
+				foreach($focus->field_defs as $name=>$field) {
 					if (!empty($field['source']) && $field['source'] == 'custom_fields')
 					{
 						$get .= "&Accounts$name=".urlencode($focus->$name);
-					}			    
+					}
 				}
 			}
-			
-			
-			
+
+
+
 			$emailAddress = new SugarEmailAddress();
 			$get .= $emailAddress->getFormBaseURL($focus);
 
 			//BEGIN SUGARCRM flav=pro ONLY
 			$get .= get_teams_url('Accounts');
 			//END SUGARCRM flav=pro ONLY
-			
-			
+
+
 			//create list of suspected duplicate account id's in redirect get string
 			$i=0;
 			foreach ($duplicateAccounts as $account)
@@ -485,7 +485,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 			if(!empty($_POST['return_id'])) $get .= '&return_id='.$_POST['return_id'];
 			if(!empty($_POST['popup'])) $get .= '&popup='.$_POST['popup'];
 			if(!empty($_POST['create'])) $get .= '&create='.$_POST['create'];
-			
+
 			$_SESSION['SHOW_DUPLICATES'] = $get;
 			//now redirect the post to modules/Accounts/ShowDuplicates.php
             if (!empty($_POST['is_ajax_call']) && $_POST['is_ajax_call'] == '1')
@@ -513,7 +513,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 
 	$focus->save($check_notify);
     $return_id = $focus->id;
-    
+
 	$GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
 
@@ -523,7 +523,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
                                  'get' => ''));
    	 	$trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
-        if($monitor = $trackerManager->getMonitor('tracker')){ 
+        if($monitor = $trackerManager->getMonitor('tracker')){
 	        //BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
 	        //END SUGARCRM flav=pro ONLY
@@ -532,7 +532,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	        $monitor->setValue('module_name', 'Accounts');
 	        $monitor->setValue('date_modified', $timeStamp);
 	        $monitor->setValue('visible', 1);
-	
+
 	        if (!empty($this->bean->id)) {
 	            $monitor->setValue('item_id', $return_id);
 	            $monitor->setValue('item_summary', $focus->get_summary_text());
