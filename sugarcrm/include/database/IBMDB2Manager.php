@@ -277,16 +277,7 @@ class IBMDB2Manager  extends DBManager
 			$start = 0;
 		$this->log->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
-		if ($start == 0)
-        {
-            $sql = "SELECT * FROM ($sql) FETCH FIRST $count ROWS ONLY";
-        }
-        else
-        {
-            $sql = "SELECT * FROM ( " .
-                   "SELECT main_query.*,  ROW_NUMBER() OVER () AS main_row_counter FROM ($sql) AS main_query " .
-                   ") WHERE main_row_counter BETWEEN $start AND " . ($start + $count);
-        }
+		$sql = "SELECT * FROM ($sql) LIMIT $start,$count";
 		$this->lastsql = $sql;
 
 		if(!empty($GLOBALS['sugar_config']['check_query'])){
