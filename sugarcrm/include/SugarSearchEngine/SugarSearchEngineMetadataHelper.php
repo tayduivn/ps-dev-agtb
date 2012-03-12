@@ -48,17 +48,22 @@ class SugarSearchEngineMetadataHelper
             $GLOBALS['log']->debug("Retrieving enabled fts modules from cache");
             return $cachedResults;
         }
+
         $results = array();
-        foreach( $GLOBALS['beanList'] as $moduleName => $beanName )
+
+        require_once('modules/Home/UnifiedSearchAdvanced.php');
+        $usa = new UnifiedSearchAdvanced();
+        $modules = $usa->retrieveEnabledAndDisabledModules();
+
+        foreach($modules['enabled'] as $module)
         {
-            $fields = self::retrieveFtsEnabledFieldsPerModule($moduleName);
-            if( !empty($fields) && self::isModuleFtsEnabled($moduleName) )
-                $results[$moduleName] = $fields;
+            $fields = self::retrieveFtsEnabledFieldsPerModule($module['module']);
+            $results[$module['module']] = $fields;
         }
 
-        //write_array_to_file('cacheFtsModulesFile', $results, $this->cacheFtsModulesFile);
         sugar_cache_put(self::ENABLE_MODULE_CACHE_KEY, $results);
         return $results;
+
     }
 
     /**
@@ -68,20 +73,16 @@ class SugarSearchEngineMetadataHelper
      */
     public static function getSystemDisabledFTSModules()
     {
-        $cachedResults = sugar_cache_retrieve(self::DISABLED_MODULE_CACHE_KEY);
-        if($cachedResults != null && !empty($cachedResults) )
+        require_once('modules/Home/UnifiedSearchAdvanced.php');
+        $usa = new UnifiedSearchAdvanced();
+        $modules = $usa->retrieveEnabledAndDisabledModules();
+        $disabledModules = array();
+        foreach($modules['disabled'] as $module)
         {
-            $GLOBALS['log']->debug("Retrieving disabled fts modules from cache");
-            return $cachedResults;
+            $disabledModules[ $module['module'] ] = $module['module'];
         }
-        $GLOBALS['log']->debug("Could not resolve fts module cache, loading from file....");
-        $cacheFtsModulesFile = sugar_cached('modules/ftsModulesCache.php');
-        if( file_exists($cacheFtsModulesFile) )
-        {
-            include($cacheFtsModulesFile);
-            return $ftsDisabledModules;
-        }
-        return array();
+
+        return $disabledModules;
     }
 
     /**
@@ -169,6 +170,7 @@ class SugarSearchEngineMetadataHelper
     {
         $GLOBALS['log']->debug("Checking if module is fts enabled");
         $disabledModules = self::getSystemDisabledFTSModules();
+
         if( empty($disabledModules) )
             return TRUE;
 
