@@ -37,6 +37,11 @@ class SugarACL
     const ACL_READ_ONLY = 1;
     const ACL_READ_WRITE = 4;
 
+    /**
+     * Load ACLs for module
+     * @param string $module
+     * @return array ACLs list
+     */
     public static function loadACLs($module)
     {
         if(!isset(self::$acls[$module])) {
@@ -63,6 +68,14 @@ class SugarACL
         return self::$acls[$module];
     }
 
+    /**
+     * Check ACLs for field
+     * @param string $module
+     * @param string $field
+     * @param string $action
+     * @param array $context
+     * @return bool Access allowed?
+     */
     public static function checkField($module, $field, $action,  $context = array())
     {
         $context['field'] = $field;
@@ -70,6 +83,13 @@ class SugarACL
         return self::checkAccess($module, "field", $context);
     }
 
+    /**
+     * Get ACL access level
+     * @param string $module
+     * @param string $field
+     * @param array $context
+     * @return int Access level - one of ACL_* constants
+     */
     public static function getFieldAccess($module, $field, $context = array())
     {
         $read = self::checkField($module, $field, "detail", $context);
@@ -79,6 +99,13 @@ class SugarACL
         return self::ACL_READ_ONLY;
     }
 
+    /**
+     * Check access
+     * @param string $module
+     * @param string $action
+     * @param array $context
+     * @return bool Access allowed?
+     */
     public static function checkAccess($module, $action, $context = array())
     {
         foreach($this->loadACLs($module) as $acl) {
@@ -89,6 +116,12 @@ class SugarACL
         return true;
     }
 
+    /**
+     * Get list of disabled modules
+     * @param array $list Module list
+     * @param string $action
+     * @return array Disabled modules
+     */
     public static function disabledModuleList($list, $action = 'list')
     {
         $result = array();
@@ -100,6 +133,13 @@ class SugarACL
         return $result;
     }
 
+    /**
+     * Remove disabled modules from list
+     * @param array $list Module list
+     * @param string $action
+     * @param bool $use_value Use value or key as module name?
+     * @return array Filtered list
+     */
     public static function filterModuleList($list, $action = 'access', $use_value = true)
     {
         $result = array();

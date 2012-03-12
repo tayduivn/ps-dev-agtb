@@ -5351,9 +5351,16 @@ function save_relationship_changes($is_update, $exclude=array())
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
-    public function ACLFilterFields($view = 'detail')
+    /**
+     * Filter fields - null those that aren't allowed by ACL
+     * @param string $view
+     * @param array $context
+     */
+    public function ACLFilterFields($view = 'detail', $context = array())
     {
-        $context = array('bean' => $this);
+        if(empty($context['bean'])) {
+            $context['bean'] = $this;
+        }
         $acl_category = $this->getACLCategory();
         foreach($this->field_defs as $field=>$def){
             if(isset($this->$field) && $def['type'] != 'link'){
@@ -5369,25 +5376,36 @@ function save_relationship_changes($is_update, $exclude=array())
      * Check field access for certain field
      * @param string $field Field name
      * @param string $action Action to check
+     * @param array $context
      * @return bool has access?
      */
-    public function ACLFieldAccess($field, $action = 'access')
+    public function ACLFieldAccess($field, $action = 'access', $context = array())
     {
-        return SugarACL::checkField($this->getACLCategory(), $field, $view, array('bean' => $this));
+        if(empty($context['bean'])) {
+            $context['bean'] = $this;
+        }
+        return SugarACL::checkField($this->getACLCategory(), $field, $view, $context);
     }
 
     /**
      * Get field access level
      * @param string $field Field name
+     * @param array $context
      * @return int Access level
      */
-    public function ACLFieldGet($field)
+    public function ACLFieldGet($field, $context = array())
     {
-        return SugarACL::getFieldAccess($this->getACLCategory(), $field, array('bean' => $this));
+        if(empty($context['bean'])) {
+            $context['bean'] = $this;
+        }
+        return SugarACL::getFieldAccess($this->getACLCategory(), $field, $context);
     }
 
     /**
      * Check ACL access to certain view for this object
+     * @param string $view
+     * @param array $context
+     * @return bool has access?
      */
     public function ACLAccess($view, $context = null)
     {
@@ -5407,6 +5425,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     /**
     * Check whether the user has access to a particular view for the current bean/module
+    * @deprecated
     * @param $view string required, the view to determine access for i.e. DetailView, ListView...
     * @param $is_owner bool optional, this is part of the ACL check if the current user is an owner they will receive different access
     */

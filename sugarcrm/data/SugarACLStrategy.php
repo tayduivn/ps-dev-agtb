@@ -26,8 +26,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 abstract class SugarACLStrategy
 {
+    /**
+     * Check access
+     * @param string $module
+     * @param string $view
+     * @param array $context
+     * @return bool has access?
+     */
     abstract public function checkAccess($module, $view, $context);
 
+    /**
+     * Get current user from context
+     * @param array $context
+     * @return User|null Current user
+     */
     public function getCurrentUser($context)
     {
         if(isset($context['user'])) {
@@ -36,6 +48,11 @@ abstract class SugarACLStrategy
         return isset($GLOBALS['current_user'])?$GLOBALS['current_user']:null;
     }
 
+    /**
+     * Get current user ID from context
+     * @param array $context
+     * @return string|null Current user ID
+     */
     public function getUserID($context)
     {
         if(isset($context['user'])) {
