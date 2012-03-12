@@ -91,7 +91,7 @@ class DCEInstancesViewDCEUpgradeStep1 extends ViewList
         $this->searchForm->showAdvanced=false;
         $this->searchForm->showSavedSearchesOptions=false;
         $this->searchForm->parsedView='dceupgrade_search';
-        $this->searchForm->setup($searchdefs, $searchFields, get_searchform_tpl_path($this->module), 'dceupgrade_search', $this->listViewDefs);
+        $this->searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl', 'dceupgrade_search', $this->listViewDefs);
         $this->searchForm->lv = $this->lv;
         // set where to have an empty list view when arriving on the page
     }
