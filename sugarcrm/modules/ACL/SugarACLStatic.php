@@ -64,10 +64,10 @@ class SugarACLStatic extends SugarACLStrategy
         }
 
         if($module == 'Trackers') {
-            return ACLController::checkAccess($module, $action, true, 'Tracker');
+            return ACLController::checkAccessInternal($module, $action, true, 'Tracker');
         }
 
-        return ACLController::checkAccess($module, $action);
+        return ACLController::checkAccessInternal($module, $action);
 
         return true;
     }
@@ -150,11 +150,11 @@ class SugarACLStatic extends SugarACLStrategy
         {
             case 'import':
             case 'list':
-                return ACLController::checkAccess($module, $action, true);
+                return ACLController::checkAccessInternal($module, $action, true);
             case 'delete':
             case 'view':
             case 'export':
-                return ACLController::checkAccess($module, $action, $is_owner);
+                return ACLController::checkAccessInternal($module, $action, $is_owner);
             case 'edit':
                 if(!isset($context['owner_override']) && !empty($bean->id)) {
                     if(!empty($bean->fetched_row) && !empty($bean->fetched_row['id']) && !empty($bean->fetched_row['assigned_user_id']) && !empty($bean->fetched_row['created_by'])){
@@ -167,7 +167,7 @@ class SugarACLStatic extends SugarACLStrategy
                 }
             case 'popupeditview':
             case 'editview':
-                return ACLController::checkAccess($this->module_dir,'edit', $is_owner);
+                return ACLController::checkAccessInternal($this->module_dir,'edit', $is_owner);
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;

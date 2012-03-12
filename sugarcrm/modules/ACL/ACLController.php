@@ -21,10 +21,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('modules/ACLActions/actiondefs.php');
 require_once('modules/ACL/ACLJSController.php');
-class ACLController {
+class ACLController
+{
 
+    public function checkAccess($category, $action, $is_owner=false, $type='module')
+    {
+        return SugarACL::checkAccess($category, $action, $is_owner?array("owner_override" => true):array());
+    }
 
-	function checkAccess($category, $action, $is_owner=false, $type='module'){
+	function checkAccessInternal($category, $action, $is_owner=false, $type='module'){
 
 		global $current_user;
 		if(is_admin($current_user))return true;
@@ -39,13 +44,26 @@ class ACLController {
 		return ACLAction::userHasAccess($current_user->id, $category, $action,$type, $is_owner);
 	}
 
-	function requireOwner($category, $value, $type='module'){
+	/**
+	 * Does ACL require ownership?
+	 * @internal
+	 * @param string $category
+	 * @param string $value
+	 * @param string $type
+	 */
+	public function requireOwner($category, $value, $type='module')
+	{
 			global $current_user;
 			if(is_admin($current_user))return false;
 			return ACLAction::userNeedsOwnership($current_user->id, $category, $value,$type);
 	}
 
-	// FIXME: convert
+	/**
+	 * Filter list of modules
+	 * @internal
+	 * @param string $moduleList
+	 * @param bool $by_value
+	 */
 	function filterModuleList(&$moduleList, $by_value=true){
 
 		global $aclModuleList, $current_user;
@@ -97,11 +115,11 @@ class ACLController {
 
 	/**
 	 * Check to see if the module is available for this user.
-	 *
+	 * @internal
 	 * @param String $module_name
 	 * @return true if they are allowed.  false otherwise.
 	 */
-	function checkModuleAllowed($module_name, $actions)
+	protected function checkModuleAllowed($module_name, $actions)
 	{
 	    if(!empty($actions[$module_name]['module']['access']['aclaccess']) &&
 			ACL_ALLOW_ENABLED == $actions[$module_name]['module']['access']['aclaccess'])
@@ -112,6 +130,10 @@ class ACLController {
 		return false;
 	}
 
+	/**
+	 * Get list of disabled modules
+	 * @internal
+	 */
 	function disabledModuleList($moduleList, $by_value=true,$view='list'){
 		global $aclModuleList, $current_user;
 		if(is_admin($GLOBALS['current_user'])) return array();
