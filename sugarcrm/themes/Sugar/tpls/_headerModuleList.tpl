@@ -109,7 +109,7 @@
 	
 	{* more menu items overlfow *}
 	
-		<li class="moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
+		<li class="moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
 		<a href="javascript: void(0);" class="more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
 		
 		<ul id="moduleTabMore{$tabGroupName}" class="showLess moduleTabMore">
