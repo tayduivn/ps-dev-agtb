@@ -61,7 +61,7 @@ class SugarSearchEngineMetadataHelper
             $results[$module['module']] = $fields;
         }
 
-        sugar_cache_put(self::ENABLE_MODULE_CACHE_KEY, $results);
+        sugar_cache_put(self::ENABLE_MODULE_CACHE_KEY, $results, 0);
         return $results;
 
     }
