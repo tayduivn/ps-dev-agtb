@@ -486,7 +486,7 @@
 </div>
 
 <script type="text/javascript">
-<!--
+
 var mail_smtpport = '{$MAIL_SMTPPORT}';
 var mail_smtpssl = '{$MAIL_SMTPSSL}';
 {literal}
