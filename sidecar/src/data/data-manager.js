@@ -180,7 +180,8 @@
                      * @member BeanCollection
                      * @type {String}
                      */
-                    beanType: beanType
+                    beanType: beanType,
+                    offset: 0
                 });
 
                 _models[moduleName].beans[beanType] = model;
@@ -387,18 +388,32 @@
          * Custom implementation of <code>Backbone.sync</code> pattern. Syncs models with remote server using Sugar.Api lib.
          * @param {String} method the CRUD method (<code>"create", "read", "update", or "delete"</code>)
          * @param {Bean/BeanCollection/Relation} model the model to be saved (or collection to be read)
-         * @param options(optional) success and error callbacks, and all other Sugar.Api request options
+         * @param options(optional) success and error callbacks, and all other Sugar.Api request options, offset can be any non negative integer and pull records n+1 from that point in the collection for the maxQuery result size specificed in the config
          */
         sync: function(method, model, options) {
+
             app.logger.trace('remote-sync-' + method + ": " + model);
 
-            options = options || (options = {});
+            options = options || {};
+            options.params = options.params || [];
+
+            if ((method == "read") && (model instanceof app.BeanCollection)) {
+                if (options.offset && options.offset != 0) {
+                   options.params.push({key:"offset", value:options.offset});
+                }
+
+                if (app.config && app.config.maxQueryResult) {
+                    options.params.push({key:"maxresult", value:app.config.maxQueryResult});
+                }
+            }
 
             var success = function(data) {
                 if (options.success) {
                     if ((method == "read") && (model instanceof app.BeanCollection)) {
+                        if(data.next_offset){
+                            model.offset = data.next_offset;
+                        }
                         data = data.records;
-                        // TODO: Set pagination properties on the collection
                     }
                     options.success(data);
                 }
