@@ -47,11 +47,19 @@ class SugarACL
         if(!isset(self::$acls[$module])) {
             self::$acls[$module] = array();
             $bean = BeanFactory::newBean($module);
+
+            // Be sure we got a SugarBean:
+            // Some modules do not extend SugarBean (ie DynamicFields)
+			// FIXME: see how we can support ACLs for those too
+            if(! $bean instanceof SugarBean) {
+				return array();
+            }
             if(isset($GLOBALS['dictionary'][$module]['acls'])) {
                 $acl_list = $GLOBALS['dictionary'][$module]['acls'];
             } else {
                 $acl_list = array();
             }
+
             foreach($bean->defaultACLs() as $defacl) {
                 if(isset($acl_list[$defacl])) {
                     continue;
