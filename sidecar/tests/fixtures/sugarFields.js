@@ -12,6 +12,12 @@ var sugarFieldsFixtures = {
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
                         "<\/p> <\/div>"
                 },
+                "loginView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
                 "default":{
                     "type":"basic",
                     "template":"<span name=\"{{name}}\">{{value}}</span>"
@@ -24,11 +30,17 @@ var sugarFieldsFixtures = {
                 "type":"basic",
                 "template":"\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}},
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
+            "loginView":{
+                "type":"basic",
+                "template":"\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                    "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}
+        },
         "button":{
             "default":{
                 "type":"basic",
-                "template":"<a href=\"{{#if route}}#{{buildRoute context route.action model route}}" +
+                "template":"<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"btn {{#if primary}}btn-primary{{/if}}\">{{label}}<\/a>\n"
             }
         },

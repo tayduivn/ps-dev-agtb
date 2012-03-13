@@ -49,7 +49,7 @@ if (function_exists('exec')) {
 
     // Generate Docs
     echo "\nGenerating Documentation\n";
-    $docs = shell_exec('jsduck src --output docs');
+    $docs = shell_exec('jsduck src lib/sugarapi --output docs');
 }
 
 // Add library files to unminified

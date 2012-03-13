@@ -33,6 +33,7 @@ public class TestAccountContactsRelate extends TestCase {
 		HashMap<String, Object> data = new HashMap<String, Object>();
 		TestData testData = new TestData();
 		String account_name = "New Rest Account Name";
+		String existing_id = "a7365389-020c-d7f4-7513-4f5a84280ac0";
 		
 		data.put("username", testData.getValue("sugaruser"));
 		data.put("password", testData.getValue("sugarpass"));
@@ -71,43 +72,11 @@ public class TestAccountContactsRelate extends TestCase {
 			UserId id = (UserId)json.fromJson(buffer, UserId.class);
 			System.out.printf("(*)TOKEN: %s\n", id.token);
 			// end login //
-			
-			// try to use Accounts object/module //
-			System.out.printf("(*)Getting Accounts Object...\n");
-			uri = String.format("%s/Accounts", testData.getValue("sugarinst"));
-
-			System.out.printf("(*)URI: %s\n\n", uri);
-			HashMap<String, String> postData = new HashMap<String, String>();
-			
-			postData.put("name", account_name);
-			postData.put("description", "Testing\n1\n2\n3...\nDONE>...");
-			postData.put("phone_office", "7078314197771");
-			postData.put("email1", "foo@bar.com");
-			String postJson = json.toJson(postData);
-			
-			// create new account //
-			post = new HttpPost(uri);
-			entity = new StringEntity(postJson, "application/json", "UTF-8");
-			post.setEntity(entity);
-			post.addHeader("OAuth Token", id.token.toString());
-			post.addHeader("User-Agent", "evilkook");
-			
-			response = client.execute(post);
-			status = response.getStatusLine().getStatusCode();
-			if (status != 200) {
-				tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
-				fail(tmp);
-			}
-			
-			responseData = response.getEntity();
-			buffer = TestUtils.bufferToString(responseData);
-			System.out.printf("RESPONSE: '%s'\n\n", buffer);
-			AccountId accID = json.fromJson(buffer, AccountId.class);
-			System.out.printf("New Account ID: '%s'\n", accID.id);
-			// finished account create //
-			
+						
 			// get account from server and check some data //
-			uri = String.format("%s/Accounts/%s/Contacts?relatedfields=last_name", testData.getValue("sugarinst"), accID.id);
+			uri = String.format("%s/Accounts/%s/Contacts?fields=last_name,first_name,title", 
+					testData.getValue("sugarinst"), existing_id);
+			
 			get = new HttpGet(uri);
 			System.out.printf("URI: '%s'\n", uri);
 			get.addHeader("OAuth-Token", id.token.toString());
@@ -122,17 +91,8 @@ public class TestAccountContactsRelate extends TestCase {
 			responseData = response.getEntity();
 			buffer = TestUtils.bufferToString(responseData);
 			System.out.printf("RESPONSE: '%s'\n\n", buffer);
-			/*
-			@SuppressWarnings("unchecked")
-			
-			HashMap<String, Object> accountInfo = json.fromJson(buffer, HashMap.class);
-			assertEquals(account_name, accountInfo.get("name"));
-			*/
-			// finished checking account data //
+
 			System.out.printf("(*)Finished getting Accounts Object...\n");
-			
-			HttpDelete del = new HttpDelete(uri);
-			
 		} catch (Exception exp) {
 			exp.printStackTrace();
 			fail(exp.getMessage());

@@ -12,8 +12,6 @@
                 return instance;
             }
 
-            ;
-
             function SugarFieldManager() {
                 return {
                     //TODO move this to global cache
@@ -25,7 +23,6 @@
                         text:"textarea"
                     },
                     fieldHandlers: {},
-
 
                     /**
                      * Retrieves sugarFields and stores them internally
@@ -71,14 +68,15 @@
                         var result = {};
                         var name = "";
                         var view = "";
+                        var field;
 
                         // loop over fields and set them in the result
                         for (field in fields) {
 
-                            name = fields[field]['name'];
+                            name = fields[field].name;
 
-                            if (fields[field]['view']) {
-                                view = fields[field]['view'];
+                            if (fields[field].view) {
+                                view = fields[field].view;
                             }
 
                             if (!(result[name])) {
@@ -87,7 +85,7 @@
 
                             fresult = this.getField(name, view);
                             if (view) {
-                                result[name][fields[field]['view']] = fresult;
+                                result[name][fields[field].view] = fresult;
                             } else {
                                 result[name] = fresult;
                             }
@@ -176,10 +174,9 @@
 
                     }
                 };
-            };
+            }
 
             return instance || init();
-            ;
         }()));
 
     //SugarFields are obects that will listen to models and massage the data and handle events on the field

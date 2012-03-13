@@ -22,13 +22,16 @@ class serverinfo extends RestObject implements IRestObject {
     }
 
     public function execute() {
+
         switch($this->verbID) {
             case HTTP_GET:
-                $this->handleGet();
+                $result = $this->handleGet();
                 break;
             default:
                 $err = new RestError();
                 $err->ReportError(404);
+                $result["error"] = 404;
+                $result["err_msg"] = "";
                 exit;
                 break;
         }

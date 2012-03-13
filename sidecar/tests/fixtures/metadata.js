@@ -74,10 +74,9 @@ fixtures.metadata = {
                         events : {
                             click : "function(){ var self = this; " +
                                     "this.model.save(null, {success:" +
-                                        "function(){self.app.navigate(self.context, 'detail', self.model);}" +
+                                        "function(){self.app.navigate(self.context, self.model, 'detail');}" +
                                     "});" +
-                                "}",
-                            hover : "myCallback"
+                                "}"
                         }
                     },
                     {
@@ -409,5 +408,68 @@ fixtures.metadata = {
                 ]
             }
         }
-    }
+    },
+    "Home":{
+            "primary_bean":"Home",
+            "beans":{
+                "Home":{
+                    "vardefs":{
+                        "table":"",
+                        "fields":{
+                            "username":{
+                                "name":"username",
+                                "type":"varchar"
+                            },
+                            "password":{
+                                "name":"password",
+                                "type":"password"
+                            }
+                        }
+                    }
+                }
+            },
+            "views":{
+                "loginView":{
+                    "buttons":[
+                        {
+                            name:"login_button",
+                            type:"button",
+                            label:"Login",
+                            value:"login",
+                            primary:true,
+                            events : {
+                                click : "function(){ var self = this; " +
+                                        " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.sugarAuth.login(args, {success:" +
+                                            "function(){console.log(\"logged in successfully!\");self.app.navigate('', self.model); }" +
+                                        "});" +
+                                    "}",
+                                hover : "myCallback"
+                            }
+                        }
+                    ],
+                    "panels":[
+                        {
+                            "label":"Login",
+                            "fields":[
+                                {name:"username", label:"Username"},
+                                {name:"password", label:"Password"}
+                            ]
+                        }
+                    ]
+
+                }
+
+            },
+            //Layouts map an action to a lyout that defines a set of views and how to display them
+            //Different clients will get different layouts for the same actions
+            "layouts":{
+                "login":{
+                    //Default layout is a single view
+                    "type":"simple",
+                    "components":[
+                        {view:"loginView"}
+                    ]
+                }
+            }
+        }
 };
