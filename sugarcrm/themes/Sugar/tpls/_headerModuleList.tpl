@@ -70,7 +70,7 @@
 					  {if $shortcut_item.URL == "-"}
 		              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 					  {else}
-		                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+		                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 					  {/if}
 					{/foreach}
 					</ul>
@@ -181,7 +181,7 @@
 							  {if $shortcut_item.URL == "-"}
 				              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 							  {else}
-				                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+				                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 							  {/if}
 							{/foreach}
 							</ul>
