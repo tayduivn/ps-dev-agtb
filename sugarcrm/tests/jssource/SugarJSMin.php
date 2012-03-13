@@ -67,16 +67,4 @@ class SugarJSMinTest extends PHPUnit_Framework_TestCase {
     public function minifyProvider() {
         return new JSIterator('minify');
     }
-
-    /**
-     * @dataProvider parserProvider
-     */
-    /*public function testParser($source) {
-        require_once('jssource/jsmin.php');
-        $this->assertEquals(SugarMin::minify($unminified), $minified);
-    }*/
-
-    public function parserProvider() {
-        return new JSIterator('parser');
-    }
 }
