@@ -1,29 +1,27 @@
-
-
 /**
  * Modification to backbone events to allow unbinding by scope only
  * TODO: Don't put this here, it should be in its own file.
  */
 
-var offByScope = function(scope){
+var offByScope = function(scope) {
     var calls;
     calls = this._callbacks;
-    _.each(calls, function(node, ev){
+    _.each(calls, function(node, ev) {
         if (node.context === scope)
             this.off(ev, node.callback, node.context);
     }, this);
     return this;
 };
 _.extend(Backbone.Events, {
-    offByScope : offByScope
+    offByScope: offByScope
 });
 
 _.extend(Backbone.Model.prototype, {
-    offByScope : offByScope
+    offByScope: offByScope
 });
 
 _.extend(Backbone.View.prototype, {
-    offByScope : offByScope
+    offByScope: offByScope
 });
 
 /**
@@ -239,6 +237,26 @@ SUGAR.App = (function() {
                     self.trigger("app:sync:complete", result);
                 }
             });
+        },
+
+        /**
+         * Navigate to a new Layout / View convenience function.
+         * @method
+         * @param {Context} context Context object to extract module from.
+         * @param {Bean} model Model object to route with
+         * @param {String} action Desired action, leave blank if
+         * @param {Object} params Additional parameters
+         */
+        navigate: function(context, model, action, params) {
+            var route, id, module;
+            context = context || app.controller.context;
+            model = model || context.get("model");
+            id = model.id;
+            module = (context.get) ? context.get("module") : model.module;
+
+            route = this.router.buildRoute(module, id, action, params);
+
+            this.router.navigate(route, {trigger: true});
         },
 
         modules: modules

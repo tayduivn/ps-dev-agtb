@@ -18,28 +18,9 @@
                     return bean.get(field);
                 });
 
-                Handlebars.registerHelper('buildRoute', function(context, action, model, options) {
-                    var module = options.module || model.module || context.module;
-                    action = options.action || action;
-                    var id = model.get ? model.get("id") : model;
-                    var route = "";
-                    if (id && module) {
-                        route = module + "/" + id;
-                        if (action) {
-                            route += "/" + action;
-                        }
-                    } else if (module && action) {
-                        route = module + "/" + action;
-                    } else if (action) {
-                        route = action;
-                    } else if (module) {
-                        route = module;
-                    }
-
-                    if (options.params) {
-                        route += "?" + $.param(options.params);
-                    }
-
+                Handlebars.registerHelper('buildRoute', function(context, model, action, options) {
+                    options = options || {};
+                    var route = app.router.buildRoute(context.get("module"), model.id, action, options);
                     return new Handlebars.SafeString(route);
                 });
 

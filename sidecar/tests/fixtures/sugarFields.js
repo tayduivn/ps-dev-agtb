@@ -12,6 +12,12 @@ var sugarFieldsFixtures = {
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
                         "<\/p> <\/div>"
                 },
+                "loginView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
                 "default":{
                     "type":"basic",
                     "template":"<span name=\"{{name}}\">{{value}}</span>"
@@ -24,18 +30,18 @@ var sugarFieldsFixtures = {
                 "type":"basic",
                 "template":"\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}},
-        "button_save":{
-            "default":{
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
+            "loginView":{
                 "type":"basic",
-                "template":"<button type=\"submit\" class=\"btn btn-primary\" value={{value}}>{{label}}<\/button>\n"}},
+                "template":"\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                    "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}
+        },
         "button":{
             "default":{
                 "type":"basic",
-                "template":"<button {{#if primary}}class=\"btn btn-primary\"{{/if}} value=\"{{value}}\" " +
-                    "{{#if route}}onclick=\"" +
-                        "SUGAR.App.router.navigate('{{buildRoute context route.action model route}}', {trigger: true}); return false;\"" +
-                    "{{/if}}>{{label}}<\/button>\n"
+                "template":"<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+                    "{{else}}javascript:void(0){{/if}}\" class=\"btn {{#if primary}}btn-primary{{/if}}\">{{label}}<\/a>\n"
             }
         },
         "textarea":{
