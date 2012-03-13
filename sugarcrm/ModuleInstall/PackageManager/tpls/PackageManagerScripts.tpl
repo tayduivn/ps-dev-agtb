@@ -130,14 +130,14 @@ if(typeof PackageManager == 'undefined') {
 					_loadingBar.render(document.body);
 					_loadingBar.show();
 	        		_pmg = new PackageManagerGrid();
-	        		PackageManager.refreshGrid();
+	        		//PackageManager.refreshGrid();
 	        	 	_pmg.renderAll();
 	        	 {/literal}{/if}{literal}
 	        	//PackageManager.initLicenseDiv();
 	        	//PackageManager.initModuleStaging();
 
     			var tabView = new YAHOO.widget.TabView('demo');
-				PackageManager.checkForUpdates();
+				//PackageManager.checkForUpdates();
 	        },
 	        download : function(){
 	        	if(confirm('{/literal}{$MOD.DOWNLOAD_QUESTION}{literal}')){
@@ -841,7 +841,7 @@ if(typeof PackageManager == 'undefined') {
 									 {/literal}{else}{literal}
 									_pmg = new PackageManagerGrid();
 
-									 	PackageManager.refreshGrid();
+									 	//PackageManager.refreshGrid();
 									 	_pmg.renderAll();
 									  {/literal}{/if}{literal}
 								}else{
