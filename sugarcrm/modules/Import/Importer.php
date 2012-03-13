@@ -273,9 +273,11 @@ class Importer
             {
                 //Start
                 $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
-                if($rowValue === FALSE)
+                if ($rowValue === FALSE) {
+					/* BUG 51213 - jeff @ neposystems.com */
+                    $do_save = false;
                     continue;
-
+				}
             }
 
             // if the parent type is in singular form, get the real module name for parent_type
