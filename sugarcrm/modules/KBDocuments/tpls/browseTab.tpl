@@ -51,7 +51,7 @@
 
 
 		//create data to send across
-		postData = 'sortCol='+name+ '&params=' + YAHOO.lang.JSON.stringify(params) + '&module=KBDocuments&action=BrowseListView&to_pdf=1'; 
+		postData = 'sortCol='+name+ '&params=' + YAHOO.lang.JSON.stringify(params) + '&query=true&module=KBDocuments&action=BrowseListView&to_pdf=1';
 		//create callback function
 		var callback =	{
 			//on success, refresh list
