@@ -92,7 +92,7 @@ class SugarACLStatic extends SugarACLStrategy
     {
         $bean = isset($context['bean'])?$context['bean']:null;
         $is_owner = false;
-        if($context['owner_override']) {
+        if(!empty($context['owner_override'])) {
             $is_owner = $context['owner_override'];
         } else {
             if($bean) {
@@ -136,7 +136,7 @@ class SugarACLStatic extends SugarACLStrategy
         //if we don't implent acls return true
         if(!$bean->bean_implements('ACL')) return true;
 
-        if($context['owner_override']) {
+        if(!empty($context['owner_override'])) {
             $is_owner = $context['owner_override'];
         } else {
             $is_owner = $bean->isOwner($this->getUserID($context));
