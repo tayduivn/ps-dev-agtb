@@ -5384,7 +5384,7 @@ function save_relationship_changes($is_update, $exclude=array())
         if(empty($context['bean'])) {
             $context['bean'] = $this;
         }
-        return SugarACL::checkField($this->getACLCategory(), $field, $view, $context);
+        return SugarACL::checkField($this->getACLCategory(), $field, $action, $context);
     }
 
     /**
