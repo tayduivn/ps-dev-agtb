@@ -258,5 +258,31 @@ class CalendarController extends SugarController
         
         return true;
     }
+    
+    protected function action_getActivities()
+    {
+        $this->view = 'json';
+        
+        if(!ACLController::checkAccess('Calendar', 'list', true)){
+            ACLController::displayNoAccess(true);
+        }
+    
+        require_once('modules/Calendar/Calendar.php');
+        $cal = new Calendar($_REQUEST['view']);
+        
+        if (in_array($cal->view, array('day', 'week', 'month'))){
+            $cal->add_activities($GLOBALS['current_user']);    
+       
+        } else if ($cal->view == 'shared') {
+            $cal->init_shared();
+            $sharedUser = new User();    
+            foreach ($cal->shared_ids as $member) {
+                $sharedUser->retrieve($member);
+                $cal->add_activities($sharedUser);
+            }
+        }
+        $cal->load_activities();
+        $this->view_object_map['jsonData'] = $cal->items;   
+    }
 
 }

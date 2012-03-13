@@ -70,6 +70,10 @@
 		CAL.lbl_error_loading = "{$MOD.LBL_ERROR_LOADING}";
 		CAL.lbl_repeat_limit_error = "{$MOD.LBL_REPEAT_LIMIT_ERROR}";
 		
+		CAL.year = {$year};
+		CAL.month = {$month};
+		CAL.day = {$day};
+		
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
 		if(scrollable){
