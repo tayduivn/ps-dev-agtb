@@ -36,8 +36,8 @@
             }
 
             // set callbacks
-            if (options.sucess) {
-                fetchOptions.sucess = options.sucess;
+            if (options.success) {
+                fetchOptions.success = options.success;
             }
 
             // set offset index
