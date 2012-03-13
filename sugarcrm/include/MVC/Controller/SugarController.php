@@ -484,18 +484,21 @@ class SugarController{
 
     public function action_spot()
     {
-
+        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
         //Default db search will be handled by the spot view, everything else by fts.
         if($searchEngine instanceOf SugarSearchEngine)
         {
+            //END SUGARCRM flav=pro ONLY
             $this->view = 'spot';
+            //BEGIN SUGARCRM flav=pro ONLY
         }
         else
         {
             $this->view = 'fts';
         }
+        //END SUGARCRM flav=pro ONLY
     }
 
 
@@ -527,9 +530,11 @@ class SugarController{
 				sugar_cleanup(true);
 			}
 			$this->bean->mark_deleted($_REQUEST['record']);
+            //BEGIN SUGARCRM flav=pro ONLY
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
             $searchEngine = SugarSearchEngineFactory::getInstance();
             $searchEngine->delete($this->bean);
+            //END SUGARCRM flav=pro ONLY
 		}else{
 			sugar_die("A record number must be specified to delete");
 		}

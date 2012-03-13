@@ -799,8 +799,8 @@ EOHTML;
 				$img = 'unknown';
 			}
 			switch($img_placement) {
-				case 'left': 	$inner_html = $img.$title; break;
-				case 'right':	$inner_html = $title.$img; break;
+				case 'left': 	$inner_html = $img."<span class='title'>".$title."</span>"; break;
+				case 'right':	$inner_html = "<span class='title'>".$title."</span>".$img; break;
 				default:		$inner_html = $img; break;
 			}
 		} else {

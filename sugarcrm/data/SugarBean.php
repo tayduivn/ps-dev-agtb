@@ -1039,7 +1039,14 @@ class SugarBean
                 return array_values($this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where));
             } else {
                 // Link2 style
-                return array_values($this->$field_name->getBeans());
+                if ($end_index != -1 || !empty($deleted) || !empty($optional_where))
+                    return array_values($this->$field_name->getBeans(array(
+                        'where' => $optional_where,
+                        'deleted' => $deleted,
+                        'limit' => ($end_index - $begin_index)
+                    )));
+                else
+                    return array_values($this->$field_name->getBeans());
             }
         }
         else
