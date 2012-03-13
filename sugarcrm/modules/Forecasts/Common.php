@@ -107,7 +107,7 @@ class Common {
 
 				//set name..
                 //jclark - Bug 51212 - Forecasting user rollup shows incorrect user name
-				if ("{$this->current_user}" == $row['id']) {
+				if ("{$this->current_user}" == "{$row['id']}") {
 					$this->my_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 				}
 			}
