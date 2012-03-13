@@ -6,6 +6,7 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -106,12 +107,9 @@ public class TestAccountObjects extends TestCase {
 			System.out.printf("New Account ID: '%s'\n", accID.id);
 			// finished account create //
 			
-			Thread.currentThread();
-			Thread.sleep(2000);
-			
 			// try to use Accounts object/module //
 			System.out.printf("(*)Getting Accounts Object...\n");
-			uri = String.format("%s/Accounts?fields=id", testData.getValue("sugarinst"));
+			uri = String.format("%s/accounts?fields=id&maxresult=999999", testData.getValue("sugarinst"));
 
 			System.out.printf("(*)URI: %s\n\n", uri);
 			get = new HttpGet(uri);
@@ -131,12 +129,11 @@ public class TestAccountObjects extends TestCase {
 			
 			@SuppressWarnings("unchecked")
 			HashMap<String, Object> accdata = json.fromJson(buffer, HashMap.class);
-			@SuppressWarnings("unchecked")
-			
+			@SuppressWarnings("unchecked")		
 			ArrayList<HashMap<String, String>> ids = (ArrayList<HashMap<String, String>>)accdata.get("records");
 			
 			int found = -1;
-			for (int i = 0; i <= ids.size() -1; i ++) {
+			for (int i = 0; i <= ids.size() -1; i++) {  
 				HashMap<String, String> d1 = ids.get(i);
 				String value = d1.get("id").toString();
 				
@@ -145,9 +142,31 @@ public class TestAccountObjects extends TestCase {
 					break;
 				}
 			}
-
 			System.out.printf("(*)Finished getting Accounts Object: %d...\n", found);
 			assertFalse(-1 == found);
+			
+			// delete all accounts //
+			for (int i = 0; i <= ids.size() -1; i++) {  
+				HashMap<String, String> d1 = ids.get(i);
+				String value = d1.get("id").toString();
+				uri = String.format("%s/accounts/%s", testData.getValue("sugarinst"), value);
+				
+				System.out.printf("Deleting Account: %s\n", value);
+				
+				HttpDelete del = new HttpDelete(uri);
+				del.addHeader("User-Agent", "evilkook");
+				del.addHeader("OAuth-Token", id.token.toString());			
+				response = client.execute(del);
+				
+				status = response.getStatusLine().getStatusCode();
+				if (status != 200) {
+					tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
+					fail(tmp);
+				}
+				
+				responseData = response.getEntity();
+				TestUtils.bufferToString(responseData);
+			}
 		} catch (Exception exp) {
 			exp.printStackTrace();
 			fail(exp.getMessage());

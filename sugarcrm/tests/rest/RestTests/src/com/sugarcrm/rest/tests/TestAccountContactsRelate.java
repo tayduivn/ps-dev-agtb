@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -105,9 +106,6 @@ public class TestAccountContactsRelate extends TestCase {
 			System.out.printf("New Account ID: '%s'\n", accID.id);
 			// finished account create //
 			
-			// tmp hack //
-			accID.id = "deca0d90-aff4-6764-b888-4f4eb42fc593";
-			
 			// get account from server and check some data //
 			uri = String.format("%s/Accounts/%s/Contacts?relatedfields=last_name", testData.getValue("sugarinst"), accID.id);
 			get = new HttpGet(uri);
@@ -131,7 +129,10 @@ public class TestAccountContactsRelate extends TestCase {
 			assertEquals(account_name, accountInfo.get("name"));
 			*/
 			// finished checking account data //
-			System.out.printf("(*)Finished getting Accounts Object...\n");			
+			System.out.printf("(*)Finished getting Accounts Object...\n");
+			
+			HttpDelete del = new HttpDelete(uri);
+			
 		} catch (Exception exp) {
 			exp.printStackTrace();
 			fail(exp.getMessage());
