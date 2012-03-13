@@ -24,11 +24,30 @@ require_once('modules/ACL/ACLJSController.php');
 class ACLController
 {
 
+    /**
+     * Check access to given action
+     * @api
+     * TODO: convert to SugarACL, temporary function to allow less code changes
+     * @param string $category Module name
+     * @param string $action
+     * @param bool $is_owner Should we assume current user is owner of the record?
+     * @param string $type ACL type, usually module but can be different for DCE and Trackers
+     * @return bool
+     */
     public function checkAccess($category, $action, $is_owner=false, $type='module')
     {
         return SugarACL::checkAccess($category, $action, $is_owner?array("owner_override" => true):array());
     }
 
+    /**
+     * Check ACLs for given module
+     * @internal
+     * @param string $category Module name
+     * @param string $action
+     * @param bool $is_owner Should we assume current user is owner of the record?
+     * @param string $type ACL type, usually module but can be different for DCE and Trackers
+     * @return bool
+     */
 	function checkAccessInternal($category, $action, $is_owner=false, $type='module'){
 
 		global $current_user;
@@ -192,12 +211,29 @@ class ACLController
 
 
 
-	function addJavascript($category,$form_name='', $is_owner=false){
+	/**
+	 * @internal
+	 * Add ACL javascript
+	 */
+	function addJavascript($category,$form_name='', $is_owner=false)
+	{
 		$jscontroller = new ACLJSController($category, $form_name, $is_owner);
 		echo $jscontroller->getJavascript();
 	}
 
-	function moduleSupportsACL($module){
+	/**
+	 * Check if module supports ACLs
+	 * @api
+	 * @param string $module
+	 * @return bool
+	 */
+	public function moduleSupportsACL($module)
+	{
+	    // FIXME: add support for non-bean ACLs
+	    if(!isset($GLOBALS['beanList'][$module])) return false;
+	    // Always use ACLs via SugarACL
+	    return SugarACL::moduleSupportsACL($module);
+
 		static $checkModules = array();
 		global $beanFiles, $beanList;
 		if(isset($checkModules[$module])){
@@ -220,6 +256,10 @@ class ACLController
 
 	}
 
+	/**
+	 * Display "access denied" message
+	 * @api
+	 */
 	function displayNoAccess($redirect_home = false){
 		echo '<script>function set_focus(){}</script><p class="error">' . translate('LBL_NO_ACCESS', 'ACL') . '</p>';
 		if($redirect_home)echo translate('LBL_REDIRECT_TO_HOME', 'ACL') . ' <span id="seconds_left">3</span> ' . translate('LBL_SECONDS', 'ACL') . '<script> function redirect_countdown(left){document.getElementById("seconds_left").innerHTML = left; if(left == 0){document.location.href = "index.php";}else{left--; setTimeout("redirect_countdown("+ left+")", 1000)}};setTimeout("redirect_countdown(3)", 1000)</script>';

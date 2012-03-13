@@ -43,7 +43,7 @@ class ACLField  extends ACLAction
     /**
     * static addActions($category, $type='module')
     * Adds all default actions for a category/type
-    *
+    * @internal
     * @param STRING $category - the category (e.g module name - Accounts, Contacts)
     * @param STRING $type - the type (e.g. 'module', 'field')
     */

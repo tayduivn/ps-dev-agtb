@@ -77,6 +77,17 @@ class SugarACL
     }
 
     /**
+     * Check if module has any ACLs defined
+     * @param string $module
+     * @return bool
+     */
+    public static function moduleSupportsACL($module)
+    {
+        $acls = self::loadACLs($module);
+        return !empty($acls);
+    }
+
+    /**
      * Check ACLs for field
      * @param string $module
      * @param string $field
