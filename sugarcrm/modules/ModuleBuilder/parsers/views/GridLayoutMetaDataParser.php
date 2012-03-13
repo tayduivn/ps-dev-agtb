@@ -53,11 +53,6 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
         $view = strtolower ( $view ) ;
 
-        // BEGIN ASSERTIONS
-        if (! isset ( self::$variableMap [ $view ] ) )
-            sugar_die ( get_class ( $this ) . ": View $view is not supported" ) ;
-        // END ASSERTIONS
-
 		$this->FILLER = array ( 'name' => MBConstants::$FILLER['name'] , 'label' => translate ( MBConstants::$FILLER['label'] ) ) ;
 
         $this->_moduleName = $moduleName ;
@@ -74,9 +69,12 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         }
 
         $viewdefs = $this->implementation->getViewdefs () ;
+        if (!isset(self::$variableMap [ $view ]))
+            self::$variableMap [ $view ] = $view;
 
-        if (! isset ( $viewdefs [ self::$variableMap [ $view ] ] ))
-            sugar_die ( get_class ( $this ) . ": missing variable " . self::$variableMap [ $view ] . " in layout definition" ) ;
+        if (!isset($viewdefs [ self::$variableMap [ $view ]])){
+            sugar_die ( get_class ( $this ) . ": incorrect view variable for $view" ) ;
+        }
 
         $viewdefs = $viewdefs [ self::$variableMap [ $view ] ] ;
         if (! isset ( $viewdefs [ 'templateMeta' ] ))
@@ -720,7 +718,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	{
     		$panels = $viewdef['panels']; 
     	} else {
-    	$panels = $viewdef[self::$variableMap [ $this->_view ] ]['panels']; 
+    	    $panels = $viewdef[self::$variableMap [ $this->_view ] ]['panels'];
     	}
     	
         $ret = array();
