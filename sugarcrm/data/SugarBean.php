@@ -366,7 +366,7 @@ class SugarBean
             //BEGIN SUGARCRM flav=pro ONLY
             ACLField::loadUserFields($this->module_dir,$this->object_name, $GLOBALS['current_user']->id);
             //END SUGARCRM flav=pro ONLY
-            $this->addVisibilityStrategy("ACLSecurity");
+            $this->addVisibilityStrategy("ACLVisibility");
         }
         $this->populateDefaultValues();
         //BEGIN SUGARCRM flav=pro ONLY
