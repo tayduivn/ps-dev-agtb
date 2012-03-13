@@ -1896,23 +1896,34 @@ function save_relationship_changes($is_update, $exclude=array())
         $new_rel_id = false;
         $new_rel_link = false;
 
-        //this allows us to dynamically relate modules without adding it to the relationship_fields array
-        if(!empty($_REQUEST['relate_id']) && !empty($_REQUEST['relate_to']) && !in_array($_REQUEST['relate_to'], $exclude) && $_REQUEST['relate_id'] != $this->id){
-            $new_rel_id = $_REQUEST['relate_id'];
-            $new_rel_relname = $_REQUEST['relate_to'];
-            if(!empty($this->in_workflow) && !empty($this->not_use_rel_in_req)) {
-                $new_rel_id = !empty($this->new_rel_id) ? $this->new_rel_id : '';
-                $new_rel_relname = !empty($this->new_rel_relname) ? $this->new_rel_relname : '';
-            }
-            $new_rel_link = $new_rel_relname;
+        // check incoming data
+        if(isset($this->not_use_rel_in_req) && $this->not_use_rel_in_req)
+        {
+            // if we should use relation data from properties (for REQUEST-independent calls)
+            $rel_id=isset($this->new_rel_id) ? $this->new_rel_id : '';
+            $rel_link=isset($this->new_rel_relname) ? $this->new_rel_relname : '';
+        }
+        else 
+        {  
+            // if we should use relation data from REQUEST
+            $rel_id=isset($_REQUEST['relate_id']) ? $_REQUEST['relate_id'] : '';
+            $rel_link=isset($_REQUEST['relate_to']) ? $_REQUEST['relate_to'] : '';
+        }
+
+        // filter relation data
+        if($rel_id && $rel_link && !in_array($rel_link, $exclude) && $rel_id != $this->id)
+        {
+            $new_rel_id = $rel_id;
+            $new_rel_link = $rel_link;
             //Try to find the link in this bean based on the relationship
-            foreach ( $this->field_defs as $key => $def ) {
-                if (isset($def['type']) && $def['type'] == 'link'
-                && isset($def['relationship']) && $def['relationship'] == $new_rel_relname) {
+            foreach ($this->field_defs as $key => $def)
+            {
+                if (isset($def['type']) && $def['type'] == 'link' && isset($def['relationship']) && $def['relationship'] == $new_rel_link)
+                {
                     $new_rel_link = $key;
                 }
             }
-        }
+         }
 
 
         // First we handle the preset fields listed in the fixed relationship_fields array hardcoded into the OOB beans
