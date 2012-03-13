@@ -134,7 +134,7 @@
                     this._render();
                     //Render will create a placeholder for sugar fields. we now need to populate those fields
                     _.each(this.sugarFields, function(sf) {
-                        sf.setElement(this.$el.find("span[sfuuid=" + sf.sfid + "]"));
+                        sf.setElement(this.$el.find("span[sfuuid='" + sf.sfid + "']"));
                         sf.render();
                     }, this);
                 } catch (e) {
