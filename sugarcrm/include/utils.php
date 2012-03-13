@@ -310,7 +310,8 @@ function get_sugar_config_defaults() {
     'display_email_template_variable_chooser' => false,
 	'display_inbound_email_buttons' => false,
 	'dump_slow_queries' => false,
-	'email_default_editor' => 'html',
+	'email_address_separator' => ',', // use RFC2368 spec unless we have a noncompliant email client
+    'email_default_editor' => 'html',
 	'email_default_client' => 'sugar',
 	'email_default_delete_attachments' => true,
 	'history_max_viewed' => 50,

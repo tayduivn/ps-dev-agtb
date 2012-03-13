@@ -44,11 +44,14 @@ class ViewLayoutView extends ViewEdit
         if ($this->fromModuleBuilder)
         {
             $this->package = $_REQUEST [ 'view_package' ] ;
+            $this->type = $this->editLayout;
         } else
         {
             global $app_list_strings ;
             $moduleNames = array_change_key_case ( $app_list_strings [ 'moduleList' ] ) ;
             $this->translatedEditModule = $moduleNames [ strtolower ( $this->editModule ) ] ;
+            $this->sm = StudioModuleFactory::getStudioModule($this->editModule);
+            $this->type = $this->sm->getViewType($this->editLayout);
         }
     }
 
@@ -104,6 +107,7 @@ class ViewLayoutView extends ViewEdit
         {
             $smarty->assign ( 'layouttitle', translate ( 'LBL_CURRENT_LAYOUT', 'ModuleBuilder' ) ) ;
 
+            //Check if we need to synch edit view to other layouts
             if($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE){
 		        $parser2 = ParserFactory::getParser(MB_EDITVIEW,$this->editModule,$this->package);
                 if($this->editLayout == MB_DETAILVIEW){
@@ -241,11 +245,30 @@ class ViewLayoutView extends ViewEdit
         //END SUGARCRM flav=pro || flav=sales ONLY
 
         $ajax = new AjaxCompose ( ) ;
-        $viewType;
 
         $translatedViewType = '' ;
 		if ( isset ( $labels [ strtolower ( $this->editLayout ) ] ) )
 			$translatedViewType = translate ( $labels [ strtolower( $this->editLayout ) ] , 'ModuleBuilder' ) ;
+        else if (isset($this->sm))
+        {
+            foreach($this->sm->sources as $file => $def)
+            {
+                if (!empty($def['view']) && $def['view'] == $this->editLayout && !empty($def['name']))
+                {
+                    $translatedViewType = $def['name'];
+                }
+            }
+            if(empty($translatedViewType))
+            {
+                $label = "LBL_" . strtoupper($this->editLayout);
+                $translated = translate($label, $this->editModule);
+                if ($translated != $label)
+                    $translatedViewType =  $translated;
+            }
+        }
+
+
+
 
         if ($this->fromModuleBuilder)
         {

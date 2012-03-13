@@ -572,9 +572,17 @@ class OracleManager extends DBManager
 			$configOptions = $sugar_config['dbconfig'];
 
 		$this->configOptions = $configOptions;
+		if(!empty($configOptions['charset'])) {
+		    $charset = $configOptions['charset'];
+		} else {
+		    $charset = $this->getOption('charset');
+		}
+		if(empty($charset)) {
+		    $charset = "AL32UTF8";
+		}
 		if($this->getOption('persistent'))
 		{
-            $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
+            $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], $charset);
             $err = oci_error();
             if ($err != false) {
 	            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
@@ -582,7 +590,7 @@ class OracleManager extends DBManager
 		}
 
         if(!$this->database){
-                $this->database = oci_connect($configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
+                $this->database = oci_connect($configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name'], $charset);
                 if (!$this->database) {
                 	$err = oci_error();
                 	if ($err != false) {
@@ -615,7 +623,12 @@ class OracleManager extends DBManager
                 QUERY_REWRITE_ENABLED = TRUE
                 NLS_LENGTH_SEMANTICS=CHAR ";
 
-            if(!empty($GLOBALS['sugar_config']['oracle_enable_ci'])){
+            $collation = $this->getOption('collation');
+            if(!empty($collation)) {
+                $session_query .= "
+            	NLS_COMP=LINGUISTIC
+				NLS_SORT=$collation";
+            } else if(!empty($GLOBALS['sugar_config']['oracle_enable_ci']) || $this->getOption('enable_ci')) {
             	$session_query .= "
             	NLS_COMP=LINGUISTIC
 				NLS_SORT=BINARY_CI";
