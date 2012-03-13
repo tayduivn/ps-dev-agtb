@@ -483,7 +483,6 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'relationship' => 'emails_leads_rel',
     'source'=>'non-db',
     'unified_search'=>true,
-    'full_text_search'=>2,
 	'vname'=>'LBL_EMAILS',
   ),
 	'email_addresses' =>

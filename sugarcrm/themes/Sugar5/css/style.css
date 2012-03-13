@@ -3687,7 +3687,13 @@ div#chartDashlets
     white-space: nowrap;
 }
 
-
 td.teamset-row, .edit tr td.teamset-row, .edit tr td table tr td.teamset-row {
     padding: 5px !important;
 }
+/* competible for SugarActionMenu */
+ul.clickMenu, ul.clickMenu ul { list-style:none; padding:0px; margin:0px; float:left; }
+ul.clickMenu li { margin:0 6px 0 0;}
+ul.clickMenu ul.subnav {margin:0 0 0 6px; }
+ul.clickMenu li, ul.clickMenu li input { float:left; }
+ul.clickMenu li input { height:20px; }
+ul.clickMenu ul.subnav-sub { display:none; }

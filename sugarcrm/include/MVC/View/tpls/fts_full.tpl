@@ -58,7 +58,7 @@ width:70%;
 {/if}
 
 
-<table width="50%">
+<table width="80%">
 <tr ><td width="20%">&nbsp;</td><td width="90%"></td></tr>
 <tr valign="top" >
     <td id="moduleListTD" style="">
@@ -180,7 +180,8 @@ width:70%;
                 type: "POST",
                 url: "index.php",
                 dataType: 'json',
-                data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true, 'offset': SUGAR.FTS.currentOffset, 'refreshModList': rml},
+                data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true,
+                        'offset': SUGAR.FTS.currentOffset, 'refreshModList': rml},
                 success: function(o)
                 {
                     if(typeof(append) != 'undefined' && append)
@@ -278,7 +279,7 @@ width:70%;
     //Setup autocomplete
     var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
     var autoCom = $( "#ftsSearchField" ).autocomplete({
-        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&data='+data,
+        source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&full=true&rs_only=true&append_wildcard=true&data='+data,
         select: function(event, ui) {},
         minLength: 3,
         search: function(event,ui){

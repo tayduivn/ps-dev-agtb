@@ -60,7 +60,7 @@
 	{/if}
 		{if $shortcutTopMenu.$name && $name != "Home"}
 		<ul class="megamenu">
-		<li>
+		<li >
 			<div class="megawrapper">
 				<div class="megacolumn">
 					<div class="megacolumn-content divider">
@@ -70,7 +70,7 @@
 					  {if $shortcut_item.URL == "-"}
 		              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 					  {else}
-		                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+		                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 					  {/if}
 					{/foreach}
 					</ul>
@@ -109,27 +109,27 @@
 	
 	{* more menu items overlfow *}
 	
-		<li class="moduleTabExtraMenu more showLess" id="moduleTabExtraMenu{$tabGroupName}">
+		<li class="moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
 		<a href="javascript: void(0);" class="more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
 		
-		<ul id="moduleTabMore{$tabGroupName}">
+		<ul id="moduleTabMore{$tabGroupName}" class="showLess moduleTabMore">
 			{* hidden menu items that become visible in overflow menu when browser size reaches a certain width*}
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
-				{if $shortcutTopMenu.$module && $module != "Home"}
+				{if $shortcutTopMenu.$name}
 					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name" class="sf-with-ul"}
 					<ul class="megamenu">
-					<li>
+					<li >
 						<div class="megawrapper">
 							<div class="megacolumn">
 								<div class="megacolumn-content divider">
 								<ul class="MMShortcuts">
 								<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
-								{foreach from=$shortcutTopMenu.$module item=shortcut_item}
+								{foreach from=$shortcutTopMenu.$name item=shortcut_item}
 								  {if $shortcut_item.URL == "-"}
 					              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 								  {else}
-					                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+					                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 								  {/if}
 								{/foreach}
 								</ul>
@@ -171,7 +171,7 @@
 			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name" class="sf-with-ul"}
 				{if $shortcutExtraMenu.$module}
 				<ul class="megamenu">
-				<li>
+				<li >
 					<div class="megawrapper">
 						<div class="megacolumn">
 							<div class="megacolumn-content divider">
@@ -181,7 +181,7 @@
 							  {if $shortcut_item.URL == "-"}
 				              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 							  {else}
-				                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+				                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 							  {/if}
 							{/foreach}
 							</ul>
@@ -218,8 +218,8 @@
 				</li>
 			{/foreach}
 			{if count($tabGroup.extra) > 5}
-			<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
-			<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabExtraMenu{$currentGroupTab}','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
+			<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
+			<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowLess{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
 			{/if}
 			
 			{* group modules *}

@@ -5008,10 +5008,7 @@ function order_beans($beans, $field_name)
  * @param string $like_char  Database like character, usually '%'
  * @return string Returns a string to be searched in db query
  */
-function sql_like_string($str, $like_char) {
-
-    // default behaviour
-    $wildcard = '%';
+function sql_like_string($str, $like_char, $wildcard = '%', $appendWildcard = true) {
 
     // override default wildcard character
     if (isset($GLOBALS['sugar_config']['search_wildcard_char']) &&
@@ -5027,8 +5024,10 @@ function sql_like_string($str, $like_char) {
     }
 
     // add wildcard at the end of search string (default)
-    if(substr($str,-1) <> $wildcard) {
-        $str .= $wildcard;
+    if ($appendWildcard) {
+        if(substr($str,-1) <> $wildcard) {
+            $str .= $wildcard;
+        }
     }
 
     return str_replace($wildcard, $like_char, $str);

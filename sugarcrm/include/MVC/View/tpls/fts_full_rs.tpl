@@ -7,21 +7,18 @@
             {capture assign=url}index.php?module={$result->getModule()}&record={$result->getId()}&action=DetailView{/capture}
                 <ul>
                     <li>
-                        <span class="details">
-                            <a href="{sugar_ajax_url url=$url}">
-                                {assign var="resultHits" value=$result->getHighlightedHitText(100, 1, '<span class="highlight">', '</span>')}
-                                {foreach from=$resultHits key=k item=v}
-                                {$k}: {$v}
-                                <br>
-                            {/foreach}
-                            </a>
-                        </span>
                         {if empty($resultHits)}
                             <a href="{sugar_ajax_url url=$url}"> <span>{$result->getSummaryText()}</span></a>
                         {else}
-                            <span>{$result->getSummaryText()}</span>
+                            <span href="{sugar_ajax_url url=$url}">{$result->getSummaryText()}</span>
                         {/if}
-
+                        <br>
+                        <span class="details">
+                                {assign var="resultHits" value=$result->getHighlightedHitText(100, 1, '<span class="highlight">', '</span>')}
+                                {foreach from=$resultHits key=k item=v}
+                                {$k}: {$v}
+                            {/foreach}
+                        </span>
                     </li>
                 </ul>
             <div class="clear"></div>

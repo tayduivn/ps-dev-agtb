@@ -30,7 +30,7 @@
 <div id="globalLinksModule">
     <ul class="clickMenu" id="globalLinks">
         <li>
-            <ul class="subnav">
+            <ul class="subnav iefixed">
                 {foreach from=$GCLS item=GCL name=gcl key=gcl_key}
     			    <li><a id="{$gcl_key}_link" href="{$GCL.URL}" {if $smarty.foreach.gcl.last}class="last"{/if}{if !empty($GCL.ONCLICK)} onclick="{$GCL.ONCLICK}"{/if}>{$GCL.LABEL}</a></li>
 

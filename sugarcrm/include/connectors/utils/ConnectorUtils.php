@@ -847,7 +847,7 @@ class ConnectorUtils
 
                       $menuParams .= '";';
                       $code .= $menuParams . "\n";
-                      $code .= "return SUGAR.uitl.showHelpTips(el,menuParams);\n";
+                      $code .= "return SUGAR.util.showHelpTips(el,menuParams);\n";
                       $code .= "{literal} } {/literal}\n";
                       $code .= "</script>\n";
                       $code .= $formatterCode;
