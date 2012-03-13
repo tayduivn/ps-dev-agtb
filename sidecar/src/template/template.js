@@ -56,5 +56,5 @@
         init: function() {
             this.load(fixtures.templates);
         }
-    })
+    });
 })(SUGAR.App);
