@@ -156,7 +156,7 @@ class RestSugarObject extends RestObject implements IRestObject {
         }
 
         if (array_key_exists("maxresult", $_GET)) {
-            $maxresult = $_GET["maxresult"];
+            $maxresult = (int)$_GET["maxresult"];
             if (!is_numeric($maxresult)) {
                 $err = new RestError();
                 $err->ReportError(415, "\nThe value for 'offset' '{$maxresult}' is not a numeric value!\n");
@@ -169,7 +169,7 @@ class RestSugarObject extends RestObject implements IRestObject {
         }
 
         if (array_key_exists("offset", $_GET)) {
-            $offset = $_GET["offset"];
+            $offset = (int)$_GET["offset"];
             if (!is_numeric($offset)) {
                 $err = new RestError();
                 $err->ReportError(415, "\nThe value for 'offset' '{$offset}' is not a numeric value!\n");
@@ -229,13 +229,6 @@ class RestSugarObject extends RestObject implements IRestObject {
             if (array_key_exists("name_value_list", $dhash)) {
                 $fieldsData = array();
                 foreach (array_keys($dhash["name_value_list"]) as $dkey) {
-                    // don't need this is the hash's data since it is the key for the hash data //
-                    /*
-                    if ($dkey == "id") {
-                        continue;
-                    }
-                    */
-
                     $fieldsData[$dkey] = $dhash["name_value_list"][$dkey]["value"];
                 }
 
@@ -406,10 +399,10 @@ class RestSugarObject extends RestObject implements IRestObject {
         $retData = array();
         foreach ($relateData["entry_list"] as $entry) {
             $keys = array_keys($entry);
-
             $tmpData = array();
+
             // this inner loop is needed to remove the unneeded nesting of hashes where name="name" &
-            // value="value" //
+            // value="value" so the data is a proper hash //
             foreach ($keys as $key) {
                 if ($key != "name_value_list") {
                     $tmpData[$key] = $entry[$key];
@@ -428,6 +421,9 @@ class RestSugarObject extends RestObject implements IRestObject {
     }
 
     /**
+     * This method is a handler that decides what helper function should be called based on
+     * the type of GET request from the client.  This is currently done by counting uri path
+     * sections.
      *
      */
     private function handleGet() {
@@ -450,7 +446,5 @@ class RestSugarObject extends RestObject implements IRestObject {
                 exit;
                 break;
         }
-
     }
-
 }

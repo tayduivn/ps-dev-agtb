@@ -253,12 +253,16 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 
 	// Calculate the offset for the start of the next page
 	$next_offset = $offset + sizeof($output_list);
+    if (sizeof($output_list) == 0) {
+        $next_offset = 0;
+    }
+
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
     $result["error"] = 0;
     $result["result_count"] = sizeof($output_list);
     $result["next_offset"] = $next_offset;
     $result["entry_list"] = $output_list;
-    $result["relationship_list"] =$linkoutput_list;
+    $result["relationship_list"] = $linkoutput_list;
 
     return $result;
 
