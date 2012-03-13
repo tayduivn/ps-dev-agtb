@@ -40,7 +40,7 @@ var sugarFieldsFixtures = {
         "button":{
             "default":{
                 "type":"basic",
-                "template":"<a href=\"{{#if route}}#{{buildRoute context route.action model route}}" +
+                "template":"<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"btn {{#if primary}}btn-primary{{/if}}\">{{label}}<\/a>\n"
             }
         },

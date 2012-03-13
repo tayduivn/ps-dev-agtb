@@ -1,11 +1,13 @@
-(function (app) {
-
+(function(app) {
     var sfid = 0;
-    //Register Handlebars helper
+
+    //Register Handlebars helper to create fields with unique id's
     Handlebars.registerHelper('sugar_field', function (context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>';
         var name = this.name;
+
         bean = bean || context.get("model");
+
         var sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
             def: bean.fields[name] || this,
             view : view,
@@ -14,71 +16,111 @@
         }));
 
         sf.sfid = sfid;
+
         return new Handlebars.SafeString(ret);
     });
 
+    /**
+     * SugarField widget. A sugarfield widget is a low level field widget. Some examples of sugarfields are
+     * text boxes, date pickers, drop down menus.
+     * @class SugarField
+     */
     app.augment('SugarField', Backbone.View.extend({
-        app : app,
-        template : null,
-        sfid : -1,
+        /**
+         * Reference to the application
+         * @property {Object}
+         */
+        app: app,
+
+        /**
+         * Id of the SugarField
+         * TODO: This is a shared property on the SugarField
+         * @property {Number}
+         */
+        sfid: -1,
 
         initialize: function(options) {
             var templateKey;
             _.extend(this, options.def);
+
             this.view = options.view;
             this.label = this.label || this.name;
             this.bind(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = app.metadata.get({sugarField:this});
+
             templateKey = "sugarField." + this.name + "." + this.view.name;
-            this.templateC = app.template.get(templateKey);
-            if (!this.templateC)
-                this.templateC = app.template.compile(this.meta.template, templateKey);
+
+            this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
         },
 
-        //TODO: Convert string function names to references to the callback function
-        // Then call the parent delegate
-        delegateEvents : function(events){
-            if (!(events || (events = this.events))) return;
+        /**
+         * Override default Backbone.Events to also use custom handlers
+         * TODO: Convert string function names to references to the callback function
+         * The events hash is similar to the backbone events. We store the eventHandlers as
+         * part of the SugarField with the `"callback_"` prefix.
+         * <pre><code>
+         * events: {
+         *     handler: "function() {}";
+         * }
+         * </code></pre>
+         * Is stored as:
+         * <pre><code>
+         * this.callback_handler
+         * </code></pre>
+         * @private
+         * @param {Object} events Hash of events and their handlers
+         */
+        delegateEvents : function(events) {
+            if (!(events || (events = this.events))) {
+                return;
+            }
+
             events = _.clone(events);
 
-            for (var key in events) {
+            _.each(events, function(eventHandler, handlerName) {
+                var callback = this[eventHandler];
 
-                var method = events[key];
+                // If our callbacks / events have not been registered, go ahead and registered.
+                if (!callback && _.isString(eventHandler)) {
+                    try {
+                        callback = eval("(" + eventHandler + ")");
 
-                method = this[events[key]];
-
-
-                if (!method){
-                    if (_.isString(events[key])){
-
-                        try{
-                            method = eval("(" + events[key] + ")");
-                        } catch(e) {
-                            app.logger.error("invalid event callback " + key + " : " + events[key]);
-                            delete events[key];
+                        // Store this callback if it is a function. Prefix it with "callback_"
+                        if (_.isFunction(callback)) {
+                            this["callback_" + handlerName] = callback;
+                            events[handlerName] = "callback_" + handlerName;
                         }
-                    }
-                    if (_.isFunction(method)) {
-                        this["callback_" + key] = method;
-                        events[key] = "callback_" + key;
+                    } catch(e) {
+                        app.logger.error("invalid event callback " + handlerName + " : " + eventHandlerG);
+                        delete events[handlerName];
                     }
                 }
-            }
+
+            }, this);
+
             Backbone.View.prototype.delegateEvents.call(this, events);
         },
 
-        render : function(){
+        /**
+         * Renders the SugarField widget
+         * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
+         * @method
+         * @return {Object} this Reference to the SugarField
+         */
+        render: function() {
             this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
             this.$el.html(this.templateC(this));
 
             var model = this.model;
             var field = this.name;
             var el = this.$el.find("input");
+
             //Bind input to the model
             el.on("change", function(ev) {
                 model.set(field, el.val());
             });
+
             //And bind the model to the input
             model.on("change:" + field, function(model, value) {
                 if (el[0] && el[0].tagName.toLowerCase() == "input")
@@ -86,18 +128,23 @@
                 else
                     el.html(value);
             });
+
+            return this;
         },
 
-        bind : function(context, model){
+        bind: function(context, model) {
             this.unBind();
             this.context = context;
             this.model = model;
             this.model.on("change:" + this.name, this.render, this);
         },
-        unBind : function(){
+
+        unBind: function() {
             //this will only work if all events we listen to, we set the scope to this
-            if (this.model)
+            if (this.model) {
                 this.model.offByScope(this);
+            }
+
             delete this.model;
             delete this.context;
         }

@@ -49,6 +49,39 @@
             return ret;
         },
 
+
+        /**
+         * Convenience function to build routes
+         *
+         * @param {Object/String} module The name of the module or a context object to extract the module from
+         * @param {String} id The model's ID
+         * @param {String} action Action to perform. This is an optional param
+         * @param {Object} options Additional parameters. Should not include id/module/action.
+         * @return {String} route The built route
+         */
+        buildRoute : function(module, id, action, params) {
+            var route;
+
+            if (module) {
+                // If module is a context object, then extract module from it
+                route = (_.isString(module)) ? module : module.get("module");
+
+                if (id) {
+                    route += "/" + id;
+                }
+
+                if (action) {
+                    route += "/" + action;
+                }
+            } else {
+                route = action;
+            }
+
+            // TODO: Currently not supported and breaks other routes
+            // return (_.isObject(params)) ? route += "/?" + $.param(params) : route;
+            return route;
+        },
+
         // Routes
 
         index: function() {
@@ -82,11 +115,8 @@
         },
 
         record: function(module, id, action) {
-
             console.log("====Routing record====");
-            console.log("Module: "+ module);
-            console.log("Action: "+ action);
-            console.log("Id: "+ id);
+            console.log("Module: ", module, "Action: ", action, "Id: ", id);
 
             action = action || "detail";
 
@@ -95,35 +125,8 @@
                 id: id,
                 action: action,
                 layout: action
-
             });
-        },
-
-        buildRoute : function(context, action, model, options){
-            var module = options.module || model.module || context.module;
-
-            action = options.action || action;
-            var id = model.get ? model.get("id") : "";
-            var route = "";
-            if (id && module) {
-                route = module + "/" + id;
-                if (action) {
-                    route += "/" + action;
-                }
-            } else if (module && action) {
-                route = module + "/" + action;
-            } else if (action) {
-                route = action;
-            } else if (module) {
-                route = module;
-            }
-
-            if (options.params) {
-                route += "?" + $.param(options.params);
-            }
-            return route;
         }
-
     });
 
     /**

@@ -16,9 +16,9 @@
                     return bean.get(field);
                 });
 
-                Handlebars.registerHelper('buildRoute', function(context, action, model, options) {
-
-                    var route = app.router.buildRoute(context, action, model, options);
+                Handlebars.registerHelper('buildRoute', function(context, model, action, options) {
+                    options = options || {};
+                    var route = app.router.buildRoute(context.get("module"), model.id, action, options);
                     return new Handlebars.SafeString(route);
                 });
 
