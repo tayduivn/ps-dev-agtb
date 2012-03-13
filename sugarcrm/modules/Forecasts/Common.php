@@ -104,8 +104,10 @@ class Common {
 				if (isset($row['reports_to_id']) && $this->current_user == $row['reports_to_id'] ) {
 					$this->my_direct_reports[$row['id']] = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 				}
+
 				//set name..
-				if ($this->current_user == $row['id']) {
+                //jclark - Bug 51212 - Forecasting user rollup shows incorrect user name
+				if ("{$this->current_user}" == $row['id']) {
 					$this->my_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 				}
 			}
