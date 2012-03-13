@@ -68,5 +68,3 @@ class AbstractMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 }
-?>
-- 
