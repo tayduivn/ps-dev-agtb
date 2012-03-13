@@ -108,7 +108,7 @@ class SugarACL
      */
     public static function checkAccess($module, $action, $context = array())
     {
-        foreach($this->loadACLs($module) as $acl) {
+        foreach(self::loadACLs($module) as $acl) {
             if(!$acl->checkAccess($module, $action, $context)) {
                 return false;
             }
