@@ -39,6 +39,10 @@ class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopBu
         return $GLOBALS['mod_strings']['LBL_VIEW_GANTT_TITLE'];
     }
 
+    public function getWidgetId()
+    {
+        return 'project_task_submit_button';
+    }
 	//widget_data is the collection of attributes associated with the button in the layout_defs file.
 	function display(&$widget_data)
 	{
@@ -59,6 +63,7 @@ class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopBu
 			. '<input type="hidden" name="record" value="' . $id .'" /> '
 			. '<input type="submit" name="EditProjectTasks" '
 			. ' class="button"'
+            . ' id="' . $this->getWidgetId() . '"'
 			. ' title="' . $title . '"'
 			. ' value="' . $value . '" />'
 			. '</form>';
