@@ -291,7 +291,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                 //minify javascript
                 //$jMin = new JSMin($from_path,$to_path,$lic_arr);
-                $out = $lic_str . JSMin::minify(file_get_contents($from_path));
+                $out = $lic_str . SugarMin::minify(file_get_contents($from_path));
 
             	if(function_exists('sugar_fopen') && $fh = @sugar_fopen( $to_path, 'w' ) )
 			    {
