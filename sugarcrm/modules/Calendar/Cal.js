@@ -1681,8 +1681,14 @@
 									var remove_all_recurrences = CAL.get("edit_all_recurrences").value;
 									
 									var isRecurrence = false;
-									if (CAL.get("repeat_parent_id").value != '') {
-										var isRecurrence = true;
+									if (CAL.enable_repeat) {
+										if (CAL.get("repeat_parent_id").value != '') {
+											var isRecurrence = true;
+										} else {
+											if (document.CalendarRepeatForm.repeat_type.value != '') {
+												var isRecurrence = true;
+											}
+										}
 									}
 											
 									var callback = {
