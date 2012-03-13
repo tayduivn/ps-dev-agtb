@@ -273,7 +273,7 @@
 		var elContent = document.createElement("div");
 			elContent.setAttribute("class","content");
 			if(params.content_style != "") {
-				elContent.setAttribute(params.content_style,params.content_style_value);
+				elContent.style[params.content_style] = params.content_style_value;
 			}
 			elContent.innerHTML = params.item_text;
 			el.appendChild(elContent);
