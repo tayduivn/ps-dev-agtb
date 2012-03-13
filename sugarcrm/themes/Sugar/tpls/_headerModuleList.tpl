@@ -60,7 +60,7 @@
 	{/if}
 		{if $shortcutTopMenu.$name && $name != "Home"}
 		<ul class="megamenu">
-		<li id="{$tabGroupName}{$module|replace:" ":""}_actions">
+		<li >
 			<div class="megawrapper">
 				<div class="megacolumn">
 					<div class="megacolumn-content divider">
@@ -70,7 +70,7 @@
 					  {if $shortcut_item.URL == "-"}
 		              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 					  {else}
-		                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+		                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 					  {/if}
 					{/foreach}
 					</ul>
@@ -119,7 +119,7 @@
 				{if $shortcutTopMenu.$name}
 					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name" class="sf-with-ul"}
 					<ul class="megamenu">
-					<li id="{$tabGroupName}{$module|replace:" ":""}_actions">
+					<li >
 						<div class="megawrapper">
 							<div class="megacolumn">
 								<div class="megacolumn-content divider">
@@ -129,7 +129,7 @@
 								  {if $shortcut_item.URL == "-"}
 					              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 								  {else}
-					                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+					                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 								  {/if}
 								{/foreach}
 								</ul>
@@ -171,7 +171,7 @@
 			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name" class="sf-with-ul"}
 				{if $shortcutExtraMenu.$module}
 				<ul class="megamenu">
-				<li id="{$tabGroupName}{$module|replace:" ":""}_actions">
+				<li >
 					<div class="megawrapper">
 						<div class="megacolumn">
 							<div class="megacolumn-content divider">
@@ -181,7 +181,7 @@
 							  {if $shortcut_item.URL == "-"}
 				              	<hr style="margin-top: 2px; margin-bottom: 2px" />
 							  {else}
-				                <li><a href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+				                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
 							  {/if}
 							{/foreach}
 							</ul>

@@ -134,12 +134,34 @@ class Link2 {
      * Will be called internally when the $rows property is accessed or get() is called
      * @return void
      */
-    public function load()
+    public function load($params = array())
     {
-        $data = $this->relationship->load($this);
+        $data = $this->query($params);
         $this->rows = $data['rows'];
         $this->beans = null;
         $this->loaded = true;
+    }
+
+    /**
+     *  Perform a query on this relationship.
+     *
+     * @param array $params An array that can contain the following parameters:<br/>
+     * <ul><li><b>where:</b> An array with 3 key/value pairs.
+     *  lhs_field: The name of the field to check search.
+     *  operator: The operator to use in the search.
+     *  rhs_value: The value to search for.<br/>
+     *  Example:<pre>
+     *  'where' => array(
+             'lhs_field' => 'source',
+             'operator' => '=',
+             'rhs_value' => 'external'
+         )</pre>
+     *  </li>
+     * <li><b>limit:</b> The maximum number of rows</li>
+     * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
+     */
+    public function query($params){
+        return $this->relationship->load($this, $params);
     }
 
     /**
@@ -335,32 +357,72 @@ class Link2 {
     }
 
     /**
-     * @return array of SugarBeans related through this link. Use with caution.
+     * Use with caution as if you have a large list of beans in the relationship,
+     * it can cause the app to timeout or run out of memory.
+     *
+     * @param array $params An array that can contain the following parameters:<br/>
+     * <ul><li><b>where:</b> An array with 3 key/value pairs.
+     *  lhs_field: The name of the field to check search.
+     *  operator: The operator to use in the search.
+     *  rhs_value: The value to search for.<br/>
+     *  Example:<pre>
+     *  'where' => array(
+             'lhs_field' => 'source',
+             'operator' => '=',
+             'rhs_value' => 'external'
+         )</pre>
+     *  </li>
+     * <li><b>limit:</b> The maximum number of beans to load.</li>
+     * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
+     * @return array of SugarBeans related through this link.
      */
-    function getBeans() {
-        if (!$this->loaded) {
+    function getBeans($params = array()) {
+        if (!$this->loaded && empty($params)) {
             $this->load();
         }
-        if(!is_array($this->beans))
+
+        $rows = $this->rows;
+        //If params is set, we are doing a query rather than a complete load of the relationship
+        if (!empty($params)) {
+            $data = $this->query($params);
+            $rows = $data['rows'];
+        }
+
+        $result = array();
+        if(!$this->beansAreLoaded() || !empty($params))
         {
-            $this->beans = array();
+            if (!is_array($this->beans))
+                $this->beans = array();
+
             $rel_module = $this->getRelatedModuleName();
-            //First swap in the temp loaded beans
-            $this->beans = $this->tempBeans;
-            $this->tempBeans = array();
+
+            //First swap in the temp loaded beans, only if we are doing a complete load (no params)
+            if (empty($params)) {
+                $result = $this->tempBeans;
+                $this->tempBeans = array();
+            }
+
             //now load from the rows
-            foreach ($this->rows as $id => $vals)
+            foreach ($rows as $id => $vals)
             {
                 if (empty($this->beans[$id]))
                 {
                     $tmpBean = BeanFactory::getBean($rel_module, $id);
                     if($tmpBean !== FALSE)
-                        $this->beans[$id] = $tmpBean;
+                        $result[$id] = $tmpBean;
+                } else {
+                    $result[$id] = $this->beans[$id];
                 }
             }
+
+            //If we did a compelte load, cache the result in $this->beans
+            if (empty($params))
+                $this->beans = $result;
+        } else {
+            $result = $this->beans;
         }
 
-        return $this->beans;
+        return $result;
     }
 
     /**
