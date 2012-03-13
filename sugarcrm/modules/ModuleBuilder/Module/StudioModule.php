@@ -365,13 +365,18 @@ class StudioModule
 
             $GLOBALS [ 'log' ]->debug ( "StudioModule->getSubpanels(): getting subpanels for " . $this->module ) ;
 
+            // counter to add a unique key to assoc array below
+            $ct=0;
             foreach ( SubPanel::getModuleSubpanels ( $this->module ) as $name => $label )
             {
                 if ($name == 'users')
                     continue ;
                 $subname = sugar_ucfirst ( (! empty ( $label )) ? translate ( $label, $this->module ) : $name ) ;
                 $action = "module=ModuleBuilder&action=editLayout&view=ListView&view_module={$this->module}&subpanel={$name}&subpanelLabel=" . urlencode($subname);
-                $nodes [ $subname ] = array ( 
+
+                //  bug47452 - adding a unique number to the $nodes[ key ] so if you have 2+ panels
+                //  with the same subname they will not cancel each other out
+                $nodes [ $subname . $ct++ ] = array (
                 	'name' => $name , 
                 	'label' => $subname , 
                 	'action' =>  $action,
