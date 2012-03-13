@@ -1557,8 +1557,10 @@
 		CAL.get("btn-send-invites").setAttribute("disabled","disabled");
 		CAL.get("btn-delete").setAttribute("disabled","disabled");
 		CAL.get("btn-full-form").setAttribute("disabled","disabled");
-		CAL.get("btn-edit-all-recurrences").setAttribute("disabled","disabled");
-		CAL.get("btn-remove-all-recurrences").setAttribute("disabled","disabled");
+		if (CAL.enable_repeat) {
+			CAL.get("btn-edit-all-recurrences").setAttribute("disabled","disabled");
+			CAL.get("btn-remove-all-recurrences").setAttribute("disabled","disabled");
+		}
 	}
 	
 	CAL.enable_buttons = function() {
@@ -1567,8 +1569,10 @@
 		if (CAL.get("record").value != "")
 			CAL.get("btn-delete").removeAttribute("disabled");	
 		CAL.get("btn-full-form").removeAttribute("disabled");
-		CAL.get("btn-edit-all-recurrences").removeAttribute("disabled");
-		CAL.get("btn-remove-all-recurrences").removeAttribute("disabled");
+		if (CAL.enable_repeat) {
+			CAL.get("btn-edit-all-recurrences").removeAttribute("disabled");
+			CAL.get("btn-remove-all-recurrences").removeAttribute("disabled");
+		}
 	}
 		
 	
