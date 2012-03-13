@@ -101,7 +101,12 @@ class ViewQuickedit extends ViewAjax
      */
     public function display()
     {	    
-		
+        if(($this->bean instanceOf SugarBean) && !$this->bean->ACLAccess('edit')){
+            $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?module=' . $this->bean->module_dir . '&action=Noaccess&record=' . $this->bean->id.'")</script>';
+            echo json_encode(array('scriptOnly'=> $no_defs_js));
+            return;
+        }
+        		
     	$view = (!empty($_REQUEST['target_view']))?$_REQUEST['target_view']: 'QuickCreate';
 		$module = $_REQUEST['module'];
 		
