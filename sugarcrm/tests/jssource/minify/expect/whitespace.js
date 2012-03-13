@@ -1,1 +1,1 @@
-function id(a) {return a;}
+function id(a){return a;}
