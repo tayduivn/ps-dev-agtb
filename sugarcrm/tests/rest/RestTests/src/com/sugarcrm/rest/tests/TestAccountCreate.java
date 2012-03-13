@@ -5,6 +5,7 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -125,8 +126,20 @@ public class TestAccountCreate extends TestCase {
 			HashMap<String, Object> accountInfo = json.fromJson(buffer, HashMap.class);
 			assertEquals(account_name, accountInfo.get("name"));
 			
-			// finished checking account data //
-			System.out.printf("(*)Finished getting Accounts Object...\n");			
+			uri = String.format("%s/Accounts/%s", testData.getValue("sugarinst"), accID.id);
+			HttpDelete del = new HttpDelete(uri);
+			del.addHeader("OAuth-Token", id.token.toString());
+			del.addHeader("User-Agent", "evilkook");
+			response = client.execute(del);
+			responseData = response.getEntity();
+			TestUtils.bufferToString(responseData);
+			
+			status = response.getStatusLine().getStatusCode();
+			if (status != 200) {
+				tmp = String.format("Error: Status Code is '%d', was expecting: '200'!", status);
+				fail(tmp);
+			}
+						
 		} catch (Exception exp) {
 			exp.printStackTrace();
 			fail(exp.getMessage());

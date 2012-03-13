@@ -1015,6 +1015,7 @@ function validate_user($user_name, $password){
 	    if (isset($_SESSION['notifyonsave']) && $_SESSION['notifyonsave'] == true) {
 	    	$notifyonsave = true;
 	    } // if
+
 		return $notifyonsave;
 	}
 	/*
