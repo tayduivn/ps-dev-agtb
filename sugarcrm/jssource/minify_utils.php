@@ -139,7 +139,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 //make sure we have handles to both source and target file
                 if ($trgt_handle) {
                         $buffer = SugarMin::minify(file_get_contents($loc));
-                        $buffer .= "// End of File $relpath\n\n";
+                        $buffer .= "/* End of File $relpath */\n\n";
                         $num = fwrite($trgt_handle, $buffer);
 
                         if( $num=== false){
