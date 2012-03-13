@@ -1398,6 +1398,8 @@ SE.composeLayout = {
 		} else {
        	    tiny.setContent('');
 		}
+        //now that content is set, call method to set signature
+        setTimeout("SUGAR.email2.composeLayout.setSignature("+idx+");",500);
     },
 
 	processResult : function(idx , id){
@@ -1452,6 +1454,8 @@ SE.composeLayout = {
 		} else {
         	tiny.setContent(text);
 		}
+		//now that content is set, call method to set signature
+        setTimeout("SUGAR.email2.composeLayout.setSignature("+idx+");",500);
     },
 
     /**
