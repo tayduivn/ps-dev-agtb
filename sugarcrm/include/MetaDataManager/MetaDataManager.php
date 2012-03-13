@@ -321,6 +321,11 @@ class MetaDataManager {
 
         foreach ($keys as $key) {
             if (array_key_exists($key, $dictionary)) {
+                require_once("data/BeanFactory.php");
+                $obj = BeanFactory::getObjectName($key);
+                require_once("include/SugarObjects/VardefManager.php");
+                global $dictionary;
+                VardefManager::loadVardef($key, $obj);
                 $data[$key] = $dictionary[$key];
             }
         }
@@ -344,10 +349,12 @@ class MetaDataManager {
         $data = array();
 
         global $beanList;
+        //global $dictionary;
 
         require_once("data/BeanFactory.php");
 
         $bean = BeanFactory::newBean($name);
+
         if ($bean != false) {
             if (key_exists($name, $beanList)) {
                 $data["bean_name"] = $beanList[$name];
