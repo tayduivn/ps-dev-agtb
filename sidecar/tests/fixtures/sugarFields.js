@@ -59,7 +59,7 @@ var sugarFieldsFixtures = {
                 "template":"<label class=\"control-label\">{{label}}<\/label>{{value}}\n"},
             "editView":{
                 "type":"basic",
-                "template":"<label class=\"control-label\">{{label}}<\/label>{{value}}\n"}
+                "template":"<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"}
         },
         "sugarField_actionsLink":{
             "default":{

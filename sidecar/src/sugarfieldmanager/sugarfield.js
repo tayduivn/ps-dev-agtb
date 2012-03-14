@@ -5,6 +5,7 @@
     Handlebars.registerHelper('sugar_field', function (context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>';
         var name = this.name;
+        var label = this.label || this.name;
         var def = this;
         bean = bean || context.get("model");
         if (bean.fields && bean.fields[name]){
@@ -14,6 +15,7 @@
             def: def,
             view : view,
             context : context,
+            label: label,
             model : bean || context.get("model")
         }));
 
@@ -46,7 +48,7 @@
             _.extend(this, options.def);
 
             this.view = options.view;
-            this.label = this.label || this.name;
+            this.label = options.label;
             this.bind(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = app.metadata.get({sugarField:this});

@@ -144,7 +144,7 @@ fixtures.metadata = {
                         class:"loading",
                         events : {
                             click : "function(){ var self = this; " +
-                                    "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render()}});" +
+                                    "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render();window.scrollTo(0,document.body.scrollHeight);}});" +
                                 "}"
                         }
                     }
