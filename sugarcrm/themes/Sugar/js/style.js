@@ -49,8 +49,8 @@ $(document).ready(function(){
     SUGAR.themes.toggleFooter();
     //initialize global tooltips
 	SUGAR.themes.globalToolTips();
-	
-	
+
+
     $('body').click(function(e) {
         if($(e.target).closest('#dcmenuSearchDiv').length == 0)
         {
@@ -89,7 +89,7 @@ SUGAR.append(SUGAR.themes, {
             var possibleOverflowID = oldID + 'Overflow';
             var possibleOverflowHiddenID = oldID + 'OverflowHidden';
 
-            //Check if the element previously existed in the overlofw or hidden submenu.
+            //Check if the element previously existed in the overflow or hidden submenu.
             if(  $('#' + possibleOverflowID).length == 0 && $('#' + possibleOverflowHiddenID).length == 0  )
             {
                 //Add previous module in right hand position to be first in line in the more menu
@@ -98,7 +98,7 @@ SUGAR.append(SUGAR.themes, {
             }
             else
             {
-                //We have a dup in the overlofw menu already so hide whats visible.
+                //We have a dup in the overflow menu already so hide what's visible.
                 $(el).parent().prev().remove();
             }
 
@@ -109,7 +109,7 @@ SUGAR.append(SUGAR.themes, {
         var el = '#moduleTab_'+ sugar_theme_gm_current + params.module;
         if ($(el) && $(el).parent()) {
             SUGAR.themes.setRightMenuTab(el, params);
-            var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";   
+            var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";
             if ($(currActiveTab)) {
                 if ($(currActiveTab) == $(el).parent()) return;
                 $(currActiveTab).removeClass("current");
@@ -151,18 +151,18 @@ SUGAR.append(SUGAR.themes, {
     	location.reload();
     },
     getMenuMode: function() {
-    	
+
     	if(Get_Cookie("sugar_theme_menu_mode") == null) {
     		Set_Cookie('sugar_theme_menu_mode','hover',30,'/','','');
     	}
-    	
+
     	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
 	    	return true;
     	} else {
     		return false;
-    	}	
+    	}
     },
-    
+
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
 			//delay:     100,
@@ -184,11 +184,11 @@ SUGAR.append(SUGAR.themes, {
 					that = $(this);
 					//ajax call for favorites
 					if($(this).find("ul.MMFavorites li:last a").html() == "&nbsp;" || makeCall == true) {
-						
+
 						$.ajax({
 						  url: "index.php?module="+moduleName+"&action=favorites",
 						  success: function(json){
-						    var lastViewed = $.parseJSON(json);				    
+						    var lastViewed = $.parseJSON(json);
 						    $(that).find("ul.MMFavorites").children().not(':eq(0)').remove();
 						    $.each(lastViewed, function(k,v) {
 						    	if(v.text == "none") {
@@ -203,7 +203,7 @@ SUGAR.append(SUGAR.themes, {
 							});
 						  }
 						});
-					}					
+					}
 					//ajax call for last viewed
 					if($(this).find("ul.MMLastViewed li:last a").html() == "&nbsp;" || makeCall == true) {
 						$.ajax({
@@ -217,7 +217,7 @@ SUGAR.append(SUGAR.themes, {
 						    	}
 						    	$(that).find("ul.MMLastViewed").append("<li><a href=\""+ v.url +"\">"+v.text+"</a></li>");
 						    });
-						    
+
 						    //update column heights so dividers are even
 							$(that).find("ul.MMLastViewed li:nth("+lastViewed.length+")").children().ready(function() {
 								wrapperHeight = $(that).find("li div.megawrapper").height();
@@ -231,7 +231,7 @@ SUGAR.append(SUGAR.themes, {
 			},
 			onShow: function() {
 			}
-		});	
+		});
     },
     editMenuMode: function() {
 
@@ -240,7 +240,7 @@ SUGAR.append(SUGAR.themes, {
     },
     resizeSearch: function() {
     	searchWidth = .16;
-    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54); 
+    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
 		$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
     },
     resizeMenu: function () {
@@ -272,13 +272,13 @@ SUGAR.append(SUGAR.themes, {
 		    $("#dcmenuSugarCube").tipTip({maxWidth: "auto", edgeOffset: 10});
         }
 
-		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});	
+		$("#sugar_spot_search").tipTip({maxWidth: "auto", edgeOffset: 10});
 		//setup tool tips for partner integrations
 		$("#partner").children("a").each(
             function (index) {
                     $(this).tipTip({maxWidth: "auto", edgeOffset: 10});
                 }
-		); 
+		);
     },
     toggleFooter: function () {
         var isVisible = Get_Cookie('sugar_theme_footer_visible');
@@ -300,7 +300,7 @@ SUGAR.append(SUGAR.themes, {
                 SUGAR.themes.hideFooter(this);
 	        }
 	        $("#footer").slideToggle("fast");
-	    });	
+	    });
     },
     hideFooter: function(el){
         $(el).attr("title","Show");
@@ -317,7 +317,7 @@ SUGAR.append(SUGAR.themes, {
     	$("#sugar_spot_search").keypress(function(event) {
 			DCMenu.startSearch(event);
 			$('#close_spot_search').css("display","inline-block");
-			
+
 			 if(event.charCode == 0 && !firstHit) {
 			$('#sugar_spot_search_div').css("left",110);
 			$('#sugar_spot_search_div').css("width",344);
@@ -328,7 +328,7 @@ SUGAR.append(SUGAR.themes, {
 				SUGAR.themes.clearSearch();
 			});
 
-		});	
+		});
     },
     clearSearch: function() {
    		$("div#sugar_spot_search_results").hide();
@@ -337,7 +337,7 @@ SUGAR.append(SUGAR.themes, {
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
 		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
-	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));	
+	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
 	  	firstHit = false;
    	},
    	actionMenu: function() {
@@ -345,7 +345,7 @@ SUGAR.append(SUGAR.themes, {
 		$("ul.clickMenu").each(function(index, node){
 	  		$(node).sugarActionMenu();
 	  	});
-		
+
 		//Fix show more/show less buttons in top action menus
 		$("[class^='moduleMenuOverFlow']").each(function(index,node){
 		    var jNode = $(node);
@@ -353,8 +353,8 @@ SUGAR.append(SUGAR.themes, {
 			jNode.click(function(event){
 				event.stopPropagation();
 			});
-		    
-		});	
+
+		});
    	},
    	sugar_theme_gm_switch: function(groupName) {
 
@@ -383,7 +383,7 @@ SUGAR.append(SUGAR.themes, {
 	    });
 
    	}
-    
+
 });
 
 /**
@@ -394,15 +394,15 @@ $("#moduleList").ready(function(){
 	SUGAR.themes.loadModuleList();
 });
 
-$(document).bind('keydown', 'Ctrl+b',function() { 
+$(document).bind('keydown', 'Ctrl+b',function() {
 	SUGAR.themes.switchMenuMode()
 });
 /**
  * For the module list menu scrolling functionality
  */
-YAHOO.util.Event.onContentReady("tabListContainer", function() 
+YAHOO.util.Event.onContentReady("tabListContainer", function()
 {
-    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y) 
+    YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y)
     {
         var content = Y.one('#content');
         //BEGIN SUGARCRM flav!=sales ONLY
@@ -421,9 +421,9 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
         //BEGIN SUGARCRM flav!=sales ONLY
         var maxWidth = (contentWidth-3)-(dashletCtrlsWidth+addPageWidth+2);
         //END SUGARCRM flav!=sales ONLY
-        
+
         var tabListChildren = tabList.get('children');
-        
+
         var tabListWidth = 0;
         for(i=0;i<tabListChildren.size();i++) {
             if(Y.UA.ie == 7) {
@@ -432,7 +432,7 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
 				tabListWidth += tabListChildren.item(i).get('offsetWidth');
 			}
         }
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
         if(tabListWidth > maxWidth) {
             tabListContainer.setStyle('width',maxWidth+"px");
@@ -440,8 +440,8 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
             tabListContainer.addClass('active');
         }
         //END SUGARCRM flav!=sales ONLY
-        
-    
+
+
         var node = Y.one('#tabListContainer .yui-bd');
         var anim = new Y.Anim({
             node: node,
@@ -452,18 +452,18 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
             },
             easing: Y.Easing.easeOut
         });
-    
+
         var onClick = function(e) {
-    
+
             var y = node.get('offsetWidth');
             if (e.currentTarget.hasClass('yui-scrollup')) {
                 y = 0 - y;
             }
-    
+
             anim.set('to', { scroll: [y + node.get('scrollLeft'),0] });
             anim.run();
         };
-    
+
         Y.all('#tabListContainer .yui-hd a').on('click', onClick);
     });
 
