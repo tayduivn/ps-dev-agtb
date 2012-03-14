@@ -4,8 +4,9 @@
 			  $(".dblclick").editable({ 
 			      indicator : "",
 			      tooltip   : "Doubleclick to edit...",
-			      event     : "dblclick",
-			      style  : "inherit"
+			      style  : "inherit",
+		        submit     : "OK",
+			      cssclass : "editable"
 					})
     	});
 }(window.jQuery)

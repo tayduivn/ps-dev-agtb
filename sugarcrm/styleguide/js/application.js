@@ -2,12 +2,10 @@
 
   $(function(){
 
-
-    // make code pretty
+    // make code pretty (styleguide only)
     window.prettyPrint && prettyPrint()
 
-
-    // add tipsies to grid for scaffolding REMOVE
+    // add tipsies to grid for scaffolding (styleguide only)
     if ($('#grid-system').length) {
       $('#grid-system').tooltip({
           selector: '.show-grid > div'
@@ -36,6 +34,7 @@
       }
     }
 
+// do this if greater than 960px page width
 if ( $(window).width() > 960) {		
     // tooltip demo
     $('section').tooltip({
@@ -53,21 +52,23 @@ if ( $(window).width() > 960) {
       selector: "a[rel=tooltip]",
 			placement: "bottom"
     })
+		// styleguide
     $('.tooltip-test').tooltip()
     $('.popover-test').popover()
-	} else {
-		$('.cube').click(function () {
-      $('html').find('body').toggleClass('onL');
-    		return false;
-		})
-	}
 
-    // popover demo
+    // popover demo 
     $("a[rel=popover]")
       .popover()
       .click(function(e) {
         e.preventDefault()
       })
+	} else {
+		// mobile
+		$('.cube').click(function () {
+      $('html').find('body').toggleClass('onL');
+    		return false;
+		})
+	}
 
     // button state demo
     $('.loading')
@@ -87,7 +88,7 @@ if ( $(window).width() > 960) {
     $('.close').on('click', function (e) {
 			$(this).parent().remove();
     })
-    // toggle stars
+    // toggle stars (needs tap logic for mobile)
     $('.icon-star-empty').on('click', function (e) {
 			$(this).removeClass('icon-star-empty')
 			$(this).addClass('icon-star')
@@ -102,37 +103,6 @@ if ( $(window).width() > 960) {
       inputsComponent.attr('checked', !inputsComponent.is(':checked'))
 			$('.alert').show()
     })
-
-    // request built javascript
-    $('.download-btn').on('click', function () {
-
-      var css = $("#components.download input:checked")
-            .map(function () { return this.value })
-            .toArray()
-        , js = $("#plugins.download input:checked")
-            .map(function () { return this.value })
-            .toArray()
-        , vars = {}
-        , img = ['glyphicons-halflings.png', 'glyphicons-halflings-white.png']
-
-    $("#variables.download input")
-      .each(function () {
-        $(this).val() && (vars[ $(this).prev().text() ] = $(this).val())
-      })
-
-      $.ajax({
-        type: 'POST'
-      , url: 'http://bootstrap.herokuapp.com'
-      , dataType: 'jsonpi'
-      , params: {
-          js: js
-        , css: css
-        , vars: vars
-        , img: img
-      }
-      })
-    })
-
   })
 
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
