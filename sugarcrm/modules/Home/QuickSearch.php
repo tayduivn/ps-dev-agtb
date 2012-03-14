@@ -432,7 +432,6 @@ class quicksearchQuery
      */
     protected function updateData($data, $focus, $orderBy, $where, $limit, $singleSelect = false)
     {
-        error_log($where);
         $result = $focus->get_list($orderBy, $where, 0, $limit, -1, 0, $singleSelect);
 
         return array_merge($data, $result['list']);

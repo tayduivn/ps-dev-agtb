@@ -27,6 +27,7 @@
  ********************************************************************************/
 require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
+require_once ('modules/ModuleBuilder/Module/StudioModuleFactory.php');
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ModuleBuilderController extends SugarController
@@ -98,42 +99,60 @@ class ModuleBuilderController extends SugarController
 
     function action_editLayout ()
     {
-        switch ( strtolower ( $_REQUEST [ 'view' ] ))
+        $view = strtolower ( $_REQUEST [ 'view' ] );
+        $found = false;
+        //Check the StudioModule first for mapping overrides
+        if(empty($_REQUEST [ 'view_package' ] )|| $_REQUEST [ 'view_package' ] == "studio")
         {
-            case MB_EDITVIEW :
-            case MB_DETAILVIEW :
-            case MB_QUICKCREATE :
-            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-            case MB_WIRELESSEDITVIEW :
-            case MB_WIRELESSDETAILVIEW :
-            //END SUGARCRM flav=pro || flav=sales ONLY
-                $this->view = 'layoutView' ;
-                break ;
-            case MB_LISTVIEW :
-            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-            case MB_WIRELESSLISTVIEW :
-            //END SUGARCRM flav=pro || flav=sales ONLY
-                $this->view = 'listView' ;
-                break ;
-            case MB_BASICSEARCH :
-            case MB_ADVANCEDSEARCH :
-            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-            case MB_WIRELESSBASICSEARCH :
-            case MB_WIRELESSADVANCEDSEARCH :
-            //END SUGARCRM flav=pro || flav=sales ONLY
-                $this->view = 'searchView' ;
-                break ;
-            case MB_DASHLET :
-            case MB_DASHLETSEARCH :
-                $this->view = 'dashlet' ;
-                break ;
-            case MB_POPUPLIST :
-            case MB_POPUPSEARCH :
-                $this->view = 'popupview' ;
-                break ;
-            default :
-                $GLOBALS [ 'log' ]->fatal ( 'Action = editLayout with unknown view=' . $_REQUEST [ 'view' ] ) ;
+            $sm = StudioModuleFactory::getStudioModule($_REQUEST [ 'view_module' ]);
+            foreach($sm->sources as $file => $def)
+            {
+                if (!empty($def['type']) && !empty($def['view']) && $def['view'] == $view )
+                {
+                    $view = $def['type'];
+                }
+            }
         }
+        if (!$found)
+        {
+            switch ( $view)
+            {
+                case MB_EDITVIEW :
+                case MB_DETAILVIEW :
+                case MB_QUICKCREATE :
+                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                case MB_WIRELESSEDITVIEW :
+                case MB_WIRELESSDETAILVIEW :
+                //END SUGARCRM flav=pro || flav=sales ONLY
+                    $this->view = 'layoutView' ;
+                    break ;
+                case MB_LISTVIEW :
+                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                case MB_WIRELESSLISTVIEW :
+                //END SUGARCRM flav=pro || flav=sales ONLY
+                    $this->view = 'listView' ;
+                    break ;
+                case MB_BASICSEARCH :
+                case MB_ADVANCEDSEARCH :
+                //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+                case MB_WIRELESSBASICSEARCH :
+                case MB_WIRELESSADVANCEDSEARCH :
+                //END SUGARCRM flav=pro || flav=sales ONLY
+                    $this->view = 'searchView' ;
+                    break ;
+                case MB_DASHLET :
+                case MB_DASHLETSEARCH :
+                    $this->view = 'dashlet' ;
+                    break ;
+                case MB_POPUPLIST :
+                case MB_POPUPSEARCH :
+                    $this->view = 'popupview' ;
+                    break ;
+                default :
+                    $GLOBALS [ 'log' ]->fatal ( 'Action = editLayout with unknown view=' . $_REQUEST [ 'view' ] ) ;
+            } 
+        }
+
     }
 
 

@@ -1,5 +1,6 @@
 <?php
-/* * *******************************************************************************
+//FILE SUGARCRM flav=ent ONLY
+/*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
@@ -24,47 +25,49 @@
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
- * ****************************************************************************** */
-
-require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php';
+ ********************************************************************************/
 
 /**
- * Wrapper class to test protected functions of AbstractMetaDataParser
+ * Bug51242Test.php
+ *
+ * This test checks to see that the parsers may be properly loaded depending on the layout requested.
+ *
+ *
  */
-class TestMetaDataParser extends AbstractMetaDataParser
-{
-    //Trim Field defs implementation is required to extend AbstractMetaDataParser
-    static function _trimFieldDefs ( $def ) {}
-    
-    //Wrapper of isTrue for testing purposes
-    public static function testIsTrue($val)
-    {
-        return self::isTrue($val);
-    }
-}
 
-class AbstractMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
+
+class Bug51242Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * Test the the isTrue function works correctly for boolean and non-boolean values
-     * @group Studio
-     */
-    public function testIsTrue()
+    public static function setUpBeforeClass()
     {
-        $testValues = array(
-            true => true,
-            false => false,
-            0 => false,
-            "" => false,
-            "true" => true,
-            "false" => false,
-            "FALSE" => false,
-            "0" => false,
-            "something" => true,
+        global $app_list_strings;
+        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+    }
+
+    public function providerGetParser()
+    {
+        return array(
+            array('PortalListView', 'Cases'),
+            array('portallayoutview','Cases'),
+            array('PortalListView', 'Leads'),
+            array('portallayoutview','Leads'),
+            array('PortalListView', 'Bugs'),
+            array('portallayoutview','Bugs'),
+            array('PortalListView', 'KBDocuments'),
+            array('portallayoutview','KBDocuments'),
         );
-        
-        foreach($testValues as $testVal => $boolVal){
-            $this->assertEquals($boolVal, TestMetaDataParser::testIsTrue($testVal));
-        }
+    }
+
+
+    /**
+     *  @dataProvider providerGetParser
+     *  @param string $view String value of the view to load
+     *  @param string $moduleName String value of the module name
+     */
+    public function testGetParser($view, $module)
+    {
+        $parser = ParserFactory::getParser($view, $module);
+        $this->assertNotEmpty($parser, 'Failed to retrieve parser instance');
     }
 }

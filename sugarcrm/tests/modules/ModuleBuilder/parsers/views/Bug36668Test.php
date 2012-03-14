@@ -72,5 +72,3 @@ class Bug36668Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(array_key_exists('widget_class', $newDefs['name']) == $flag);
     }
 }
-?>
-- 
