@@ -6,6 +6,7 @@ describe("DataManager", function() {
         server;
 
     beforeEach(function() {
+        app.config.maxQueryResult = 2;
         app.init({el: "body"});
         dm.reset();
         metadata = SugarTest.loadJson("metadata");
@@ -172,7 +173,7 @@ describe("DataManager", function() {
 
         server = sinon.fakeServer.create();
 
-        server.respondWith("GET", "/rest/v10/Contacts",
+        server.respondWith("GET", "/rest/v10/Contacts?maxresult=2",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
@@ -183,6 +184,27 @@ describe("DataManager", function() {
         expect(beans.at(0).get("name")).toEqual("Vladimir Vladimirov");
         expect(beans.at(1).get("name")).toEqual("Petr Petrov");
 
+    });
+
+    it("should add result count and next offset to a collection if in server response", function(){
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var beans = dm.createBeanCollection(moduleName);
+
+        var contacts = SugarTest.loadJson("contacts");
+
+        server = sinon.fakeServer.create();
+
+        server.respondWith("GET", "/rest/v10/Contacts?maxresult=2",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify(contacts)]);
+
+        beans.fetch();
+        server.respond();
+
+        expect(beans.offset).toEqual(2);
+
+        server.restore();
     });
 
 });

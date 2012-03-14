@@ -136,6 +136,19 @@ fixtures.metadata = {
             },
             //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
             "listView":{
+                "buttons":[
+                    {
+                        name:"show_more_button",
+                        type:"button",
+                        label:"Show More",
+                        primary:true,
+                        events : {
+                            click : "function(){ var self = this; " +
+                                    "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render()}});" +
+                                "}"
+                        }
+                    }
+                ],
                 "panels":[
                     {
                         "label":"LBL_PANEL_1",
