@@ -343,8 +343,8 @@ class ACLAction  extends SugarBean
             ACLAction::getUserActions($user_id, false);
 
         }
-
         if(!empty($_SESSION['ACL'][$user_id][$category][$type][$action])){
+            if($action == 'access' && $_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess'] == ACL_ALLOW_ENABLED) return true;
             return ACLAction::hasAccess($is_owner, $_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess']);
         }
         return false;
