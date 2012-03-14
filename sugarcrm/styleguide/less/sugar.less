@@ -318,6 +318,25 @@ position: relative;
   .border-radius(4px);
 }
 
+/* charts */
+svg {
+  width: 900px;
+  height: 300px;
+  font: 11px sans-serif;
+  shape-rendering: crispEdges;
+}
+
+
+.block ul.list ul {
+  margin: 10px 0 10px 20px;
+}
+.block ul.list ul li {
+  margin: 0 0 5px;
+}
+.block ul.list [class^="icon-"] {
+  margin-right: 5px;
+}
+
 /* vcard */
 .vcard {
 	display: inline-block;
@@ -329,6 +348,9 @@ position: relative;
 .block span {
 	margin-left: 75px;
 }
+.block span.add-on {margin-left:0 !important;}
+.span2 .input-prepend input {width: inherit;}
+
 .vcard span, .block span {
 	display: block;	
 }
@@ -850,10 +872,35 @@ a:hover [class^="icon-"]{
 -------------------------------------------------- */
 @media (max-width: 480px) {
 
+.span2 .block > * {
+  display: none !important;
+}
+
+table th:gt(3), table td:gt(3)  {
+  display: none !important;
+}
+
+.span2 .block > h4 {
+  display: block !important;
+}
+
+  #stream tbody tr td {
+    #gradient > .vertical(@white, lighten(@grayLighter, 1%));
+    border-top: 1px solid @white;
+    border-bottom: 1px solid darken(@white, 10%);
+    vertical-align: middle;
+  }
+
+  #stream table [class^="icon-star"] {
+    margin: 0 10px 0;
+    .opacity(40);
+  }
+
   /* Reduce padding above jumbotron */
   body {
     padding-top: 70px;
   }
+
 
   /* Change up some type stuff */
   h2 {
@@ -865,33 +912,6 @@ a:hover [class^="icon-"]{
   }
   h3 {
     margin-top: 18px;
-  }
-
-  /* Adjust the jumbotron */
-  .jumbotron h1,
-  .jumbotron p {
-    text-align: center;
-    margin-right: 0;
-  }
-  .jumbotron h1 {
-    font-size: 45px;
-    margin-right: 0;
-  }
-  .jumbotron p {
-    margin-right: 0;
-    margin-left: 0;
-    font-size: 18px;
-    line-height: 24px;
-  }
-  .jumbotron .btn {
-    display: block;
-    font-size: 18px;
-    padding: 10px 14px;
-    margin: 0 auto 10px;
-  }
-  /* Masthead (home page jumbotron) */
-  .masthead {
-    padding-top: 0;
   }
 
   /* Don't space out quick links so much */
@@ -927,24 +947,7 @@ a:hover [class^="icon-"]{
   body {
     padding-top: 0;
   }
-
-  /* Jumbotron buttons */
-  .jumbotron .btn {
-    margin-bottom: 10px;
-  }
-
-  /* Subnav */
-  .subnav {
-    position: static;
-    top: 0;
-    z-index: auto;
-    width: auto;
-    height: auto;
-    background: #fff; /* whole background property since we use a background-image for gradient */
-    -webkit-box-shadow: none;
-       -moz-box-shadow: none;
-            box-shadow: none;
-  }
+  .block {padding-left: 10px;}
   .subnav .nav > li {
     float: none;
   }
@@ -1014,6 +1017,11 @@ body {width: 100%}
 
 
 @media (max-width: 980px) {
+
+.subnav { margin-top: -15px;}
+.block {padding-left: 10px;}
+.subnav h1 { margin-left: -10px;}
+
   /* Unfloat brand */
   .navbar-fixed-top .brand {
     float: left;
