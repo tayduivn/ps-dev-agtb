@@ -50,6 +50,13 @@ user_detailview_tabs.on('contentReady', function(e){
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY
 });
+{literal}
+$(document).ready(function(){
+        $("ul.clickMenu").each(function(index, node){
+            $(node).sugarActionMenu();
+        });
+    });
+{/literal}
 </script>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="actionsContainer">

@@ -437,10 +437,10 @@ class TemplateField{
 
 	function populateFromPost(){
 		foreach($this->vardef_map as $vardef=>$field){
-			if(isset($_REQUEST[$vardef])){		    
+			if(isset($_REQUEST[$vardef])){
 				$this->$vardef = $_REQUEST[$vardef];
 
-				// Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'. 
+				// Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'.
 				// Add to the list below if we need to do the same for other fields.
 				if (!empty($this->$vardef) && in_array($vardef, array('formula', 'dependency'))){
 				    $this->$vardef = to_html(strip_tags(from_html($this->$vardef)));
@@ -456,8 +456,7 @@ class TemplateField{
 				if($vardef != $field){
 					$this->$field = $this->$vardef;
 				}
-			} else
-                _ppl("$vardef was not set");
+			}
 		}
 		$this->applyVardefRules();
 		$GLOBALS['log']->debug('populate: '.print_r($this,true));
@@ -488,7 +487,7 @@ class TemplateField{
 
     /**
      * get_field_name
-     * 
+     *
      * This is a helper function to return a field's proper name.  It checks to see if an instance of the module can
      * be created and then attempts to retrieve the field's name based on the name lookup skey supplied to the method.
      *
