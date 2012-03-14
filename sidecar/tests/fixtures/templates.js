@@ -71,5 +71,8 @@ fixtures.templates = {
                 '</tr>' +
             '{{/each}}' +
             '</tbody></table>' +
-        '{{/each}}'
+        '{{/each}}'+
+    "{{#each meta.buttons}}" +
+                "{{sugar_field ../context ../this ../model}}" +
+            "{{/each}}"
 };
