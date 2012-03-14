@@ -2,25 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Opportunities - Activity - SugarCRM</title>
+    <title>Nomad - SugarCRM</title>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <!-- HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <!-- styles -->
     <link href="/css/bootstrap.css" rel="stylesheet">
-
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
   </head>
-  <body>
-
+  <body id="nomad">
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container">
+        <div class="container-fluid">
           <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
           <div class="nav-collapse">
             <ul class="nav">
@@ -102,48 +99,6 @@
         </div>
       </div><!-- /navbar-inner -->
     </div>
-    <div class="subnav">
-      <div class="btn-toolbar pull-left">
-        <div class="btn-group"> 
-          <div class="dropdown">
-            <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-            <ul class="dropdown-menu menu">
-              <li><a href="#">Email</a></li>
-              <li><a href="#">---</a></li>
-              <li><a href="#">---</a></li>
-              <li><a href="#">---</a></li>
-              <li><a href="#">Export</a></li>
-            </ul>
-          </div>
-        </div>        
-        <div class="btn-group"> 
-          <a class="btn" data-toggle="collapse" data-toggle="button" data-parent="#accordion2" href="#collapseOne"><i class="icon-search"></i> Filter</a>
-        </div>        
-      </div>
-      <div class="btn-toolbar pull-right">
-        <div class="btn-group"> 
-          <a class="btn" href="opportunities.html" rel="tooltip" title="List view"><i class="icon-align-justify"></i></a>
-          <a class="btn active" href="activity.html" rel="tooltip" title="Activity view"><i class="icon-th-list"></i></a>
-          <a class="btn" href="#"><i class="icon-th-large"></i></a>
-        </div>
-      </div>  
-      <div id="accordion2">
-        <div class="accordion-group">
-          <div id="collapseOne" class="accordion-body collapse">
-            <div class="accordion-inner">
-              <form class="" action="">
-                <button class="btn disabled"><i class="icon-minus"></i></button> <button class="btn"><i class="icon-plus"></i></button>
-                <select>
-                    <option>Relevance</option>
-                    <option>Last Updated</option>
-                    <option>Recently Added</option>
-                </select>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>          
-    </div>    
     <div class="container-fluid subhead" id="stream">
       <div class="row-fluid">        
           <table class="table">
@@ -173,8 +128,14 @@
                 </td>
               </tr>
               <tr>
-                <td><i class="icon-star"></i></td>
-                <td>Perkin Kleiners is an	                                    $50,000         24 days         Call Chris Lottery to ask how to import his...
+                <td>
+                  <i class="icon-star-empty"></i>
+                </td>                
+                <td>
+                  <a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b>
+                  <span class="actions">
+                    <a href=""><i class="icon-email"></i> Email</a> <a href=""><i class="icon-print"></i> Email</a> <a href="">Email</a> <a href="">Email</a> 
+                  </span>
                 </td>
                 <td rel="tooltip" title="50% complete">
                   <div class="progress progress-mid">
@@ -274,9 +235,22 @@
               </tr>                                                                                                                                                                                                                                                                                                                                        
             </tbody>
           </table> 
-    </div>  
+    </div>
     
-    <script src="/js/jquery.js"></script>
+<script>
+    	function gJs(url) {
+    		  var script = document.createElement('script');
+    		  script.src = url;
+    		  var head = document.getElementsByTagName('head')[0],
+    		};
+        head.appendChild(script);
+    	};
+
+    if(navigator.appName == 'Microsoft Internet Explorer'){
+        gJs('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
+    } else {
+        gJs('http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
+    }</script>
     <script src="/js/application.js"></script>
   </body>
 </html>
