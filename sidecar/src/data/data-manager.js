@@ -5,6 +5,7 @@
  *
  * - Interface to declare bean model and collection classes from metadata.
  * - Factory methods for creating instances of beans and bean collections.
+ * - Factory methods for creating instances of bean relations and relation collections.
  * - Custom implementation of <code>Backbone.sync</code> pattern.
  *
  * <pre><code>
@@ -42,9 +43,9 @@
  * // You can save a bean using standard Backbone.Model.save method.
  * // The save method will use dataManager's sync method to communicate chages to the remote server.
  * team.save();
- *
- *
  * </code></pre>
+ *
+ * TODO: Document relationship management.
  *
  * @class DataManager
  * @alias SUGAR.App.dataManager
@@ -255,121 +256,85 @@
          * @param {String} module Sugar module name.
          * @param {Bean[]} models(optional) initial array of models.
          * @param {String} beanType(optional) bean type. If not specified, a collection of primary bean types is returned.
+         * @param {Object} options(optional) options hash.
          * @return {BeanCollection} A new instance of bean collection.
          */
-        createBeanCollection: function(module, models, beanType) {
+        createBeanCollection: function(module, models, beanType, options) {
             beanType = beanType || _models[module].primaryBean;
-            return new _models[module].collections[beanType](models);
+            return new _models[module].collections[beanType](models, options);
         },
 
         /**
-         * Creates an instance of {@link Relation} class.
+         * Creates an instance of related {@link Bean} or updates an existing bean with relation reference.
          *
-         * @param {String} link relationship link name
+         * <pre><code>
+         * // Create a related contact for an opportunity.
+         * var contact = SUGAR.App.dataManager.createRelation(opportunity, "1", "contacts", { "contact_role": "Decision Maker" });
+         * contact.save();
+         * </code></pre>
+         *
          * @param {Bean} bean1 instance of the first bean
-         * @param {Bean/String} beanOrId2 instance or ID of the second bean
-         * @param data custom data fields
-         * @return {Relation} a new instance of the relationship
+         * @param {Bean/String} beanOrId2 instance or ID of the second bean. A new instance is created if the parameter <code>null</code>
+         * @param {String} link relationship link name
+         * @param {Object} attrs(optional) bean attributes hash
+         * @return {Bean} a new instance of the related bean
          */
-        createRelation: function(link, bean1, beanOrId2, data) {
+        createRelation: function(bean1, beanOrId2, link, attrs) {
             var name = bean1.fields[link].relationship;
             var relationship = bean1.relationships[name];
+            var relatedModule = bean1.module == relationship.lhs_module ? relationship.rhs_module : relationship.lhs_module;
 
-            var id2;
-            if (beanOrId2 instanceof app.Bean) {
-                id2 = beanOrId2.id;
+            attrs = attrs || {};
+            if (_.isString(beanOrId2)) {
+                attrs.id = beanOrId2;
+                beanOrId2 = this.createBean(relatedModule, attrs);
+            }
+            else if (_.isNull(beanOrId2)) {
+                beanOrId2 = this.createBean(relatedModule, attrs);
             }
             else {
-                id2 = beanOrId2;
-                beanOrId2 = null;
+                beanOrId2.set(attrs);
             }
 
-            var ids = [bean1.id, id2];
-            var beans = [bean1, beanOrId2];
+            /**
+             * Relation hash.
+             * @member Bean
+             */
+            beanOrId2.relation = {
+                link: link,
+                bean: bean1
+            };
 
-            if (relationship.rhs_module == bean1.module) {
-                ids.reverse();
-                beans.reverse();
-            }
-
-            var relation = new app.Relation({
-                /**
-                 * Relationship name.
-                 * @property {String}
-                 * @member Relation
-                 */
-                name: name,
-                /**
-                 * Relationship metadata.
-                 * @member Relation
-                 * @property {Object}
-                 */
-                relationship: relationship,
-                /**
-                 * ID of the left bean.
-                 * @property {String}
-                 * @member Relation
-                 */
-                id1: ids[0],
-                /**
-                 * ID of the right bean.
-                 * @property {String}
-                 * @member Relation
-                 */
-                id2: ids[1],
-                /**
-                 * Reference to the left bean.
-                 * @property {Bean}
-                 * @member Relation
-                 */
-                bean1: beans[0],
-                /**
-                 * Reference to the right bean.
-                 * @type {Bean}
-                 * @member Relation
-                 */
-                bean2: beans[1],
-                /**
-                 * Custom data.
-                 * @member Relation
-                 */
-                data: data
-            });
-
-            relation.id = name + "-" + ids[0] + "-" + ids[1];
-            return relation;
+            return beanOrId2;
         },
 
         /**
-         * Creates an instance of {@link RelationCollection} class.
+         * Creates an instance of {@link BeanCollection} class of related beans.
          *
+         * <pre><code>
+         * // Create contacts collection for an opportunity.
+         * var contact = SUGAR.App.dataManager.createRelationCollection(opportunity, "contacts");
+         * contacts.fetch();
+         * </code></pre>
+         *
+         * @param {Bean} bean the relations are linked to the specified bean
          * @param {String} link relationship link name
-         * @param {Bean} bean the collection will reference the specified bean
-         * @return {RelationCollection} a new instance of the relationship collection
+         * @return {BeanCollection} a new instance of the bean collection
          */
-        createRelationCollection: function(link, bean) {
+        createRelationCollection: function(bean, link) {
             var name = bean.fields[link].relationship;
             var relationship = bean.relationships[name];
-            return new app.RelationCollection(undefined, {
+            var relatedModule = relationship.lhs_module == bean.module ? relationship.rhs_module : relationship.lhs_module;
+            return this.createBeanCollection(relatedModule, undefined, undefined, {
                 /**
-                 * Relationship name.
-                 * @type {String}
-                 * @member RelationCollection
+                 * Relation hash.
+                 * @member BeanCollection
                  */
-                name: name,
-                /**
-                 * Relationship metadata.
-                 * @member RelationCollection
-                 */
-                relationship: relationship,
-                /**
-                 * Reference to the owner bean.
-                 * @type {Bean}
-                 * @member RelationCollection
-                 */
-                bean: bean
+                relation: {
+                    link: link,
+                    bean: bean
+                }
             });
-
         },
 
         fetchBean: function(module, id, options, beanType) {
@@ -387,8 +352,8 @@
         /**
          * Custom implementation of <code>Backbone.sync</code> pattern. Syncs models with remote server using Sugar.Api lib.
          * @param {String} method the CRUD method (<code>"create", "read", "update", or "delete"</code>)
-         * @param {Bean/BeanCollection/Relation} model the model to be saved (or collection to be read)
-         * @param options(optional) success and error callbacks, and all other Sugar.Api request options, offset can be any non negative integer and pull records n+1 from that point in the collection for the maxQuery result size specificed in the config
+         * @param {Bean/BeanCollection} model the model to be saved (or collection to be read)
+         * @param options(optional) success and error callbacks, and all other Sugar.Api request options
          */
         sync: function(method, model, options) {
 
@@ -398,22 +363,23 @@
             options.params = options.params || [];
 
             if ((method == "read") && (model instanceof app.BeanCollection)) {
-                if (options.offset && options.offset != 0) {
-                   options.params.push({key:"offset", value:options.offset});
+                if (options.offset && options.offset !== 0) {
+                    options.params.push({key: "offset", value: options.offset});
                 }
 
                 if (app.config && app.config.maxQueryResult) {
-                    options.params.push({key:"maxresult", value:app.config.maxQueryResult});
+                    options.params.push({key: "maxresult", value: app.config.maxQueryResult});
                 }
             }
 
             var success = function(data) {
                 if (options.success) {
                     if ((method == "read") && (model instanceof app.BeanCollection)) {
-                        if(data.next_offset){
+                        if (data.next_offset) {
                             model.offset = data.next_offset;
                         }
-                        data = data.records;
+                        // TODO: Hack to overcome wrong response format of get-relations request until fixed
+                        data = data.records ? data.records : data;
                     }
                     options.success(data);
                 }
@@ -424,12 +390,16 @@
                 error: options.error
             };
 
-            if (model instanceof app.Bean || model instanceof app.BeanCollection) {
+            if ((method == "read") && (model instanceof app.BeanCollection) && (model.relation)) {
+                _serverProxy.getRelations(model.relation.bean.module, model.relation.bean.id, model.relation.link, options.params, callbacks);
+            }
+            else if (model instanceof app.Bean || model instanceof app.BeanCollection) {
                 _serverProxy[method](model.module, model.attributes, options.params, callbacks);
             }
-            else {
-                // TODO: Deal with relationships
+            else if (options.relate) {
+                // TODO: Implement create/Delete relationships once the API is spec'ed out
             }
+
         }
     };
 
