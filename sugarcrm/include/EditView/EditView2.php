@@ -491,7 +491,7 @@ class EditView
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY
-                $this->fieldDefs[$name]['acl'] = $this->focus->ACLFieldGet($field);
+                $this->fieldDefs[$name]['acl'] = $this->focus->ACLFieldGet($name);
                 //END SUGARCRM flav=pro ONLY
 
                 //This code is used for QuickCreates that go to Full Form view.  We want to overwrite the values from the bean

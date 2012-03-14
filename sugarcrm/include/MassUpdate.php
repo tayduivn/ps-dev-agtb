@@ -693,7 +693,11 @@ EOJS;
 			".SugarThemeRegistry::current()->getImage("id-ff-select", '', null, null, ".png", $app_strings['LBL_ID_FF_SELECT'])."
 			</button></span>";
 			$parent_type = $field['parent_type'];
-            $parent_types = SugarACL::filterModuleList($app_list_strings[$parent_type]);
+			$parent_types = $app_list_strings[$parent_type];
+            $disabled_parent_types = SugarACL::disabledModuleList($parent_types);
+            foreach($disabled_parent_types as $disabled_parent_type) {
+                unset($parent_types[$disabled_parent_type]);
+            }
 			$types = get_select_options_with_id($parent_types, '');
 			//BS Fix Bug 17110
 			$pattern = "#\n<OPTION.*".$app_strings['LBL_NONE'].'</OPTION>#';

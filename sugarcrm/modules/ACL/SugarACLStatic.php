@@ -158,16 +158,19 @@ class SugarACLStatic extends SugarACLStrategy
             case 'edit':
                 if(!isset($context['owner_override']) && !empty($bean->id)) {
                     if(!empty($bean->fetched_row) && !empty($bean->fetched_row['id']) && !empty($bean->fetched_row['assigned_user_id']) && !empty($bean->fetched_row['created_by'])){
-                        $temp = BeanFactory::newBean($bean->object_name);
+                        $temp = BeanFactory::newBean($bean->module_dir);
                         $temp->populateFromRow($bean->fetched_row);
                     }else{
-                        $temp = BeanFactory::getBean($bean->object_name, $bean->id);
+                        $temp = BeanFactory::getBean($bean->module_dir, $bean->id);
                     }
-                    $is_owner = $temp->isOwner($this->getUserID($context));
+                    if(!empty($temp)) {
+                        $is_owner = $temp->isOwner($this->getUserID($context));
+                    }
+                    unset($temp);
                 }
             case 'popupeditview':
             case 'editview':
-                return ACLController::checkAccessInternal($this->module_dir,'edit', $is_owner);
+                return ACLController::checkAccessInternal($module,'edit', $is_owner);
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;

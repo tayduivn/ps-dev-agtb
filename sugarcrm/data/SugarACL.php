@@ -145,6 +145,9 @@ class SugarACL
     public static function disabledModuleList($list, $action = 'access', $use_value = false)
     {
         $result = array();
+        if(empty($list)) {
+            return $result;
+        }
         foreach($list as $key => $module) {
             $checkmodule = $use_value?$module:$key;
             if(!self::checkAccess($checkmodule, $action)) {
@@ -164,6 +167,9 @@ class SugarACL
     public static function filterModuleList($list, $action = 'access', $use_value = false)
     {
         $result = array();
+        if(empty($list)) {
+            return $list;
+        }
         foreach($list as $key => $module) {
             if(self::checkAccess($use_value?$module:$key, $action)) {
                 $result[$key] = $module;
