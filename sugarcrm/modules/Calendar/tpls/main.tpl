@@ -175,7 +175,11 @@
 		});	
 	
 		YAHOO.util.Event.on("btn-cancel","click",function(){			
-			CAL.editDialog.cancel();						
+			document.schedulerwidget.reset();
+            if(document.getElementById('empty-search-message')) {
+                document.getElementById('empty-search-message').style.display = 'none';
+            }
+            CAL.editDialog.cancel();						
 		}); 
 		
 		YAHOO.util.Event.on("btn-full-form","click",function(){			
