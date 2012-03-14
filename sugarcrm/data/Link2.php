@@ -377,6 +377,11 @@ class Link2 {
      * @return array of SugarBeans related through this link.
      */
     function getBeans($params = array()) {
+        //Some depricated code attempts to pass in the old format to getBeans with a large number of useless paramters.
+        //reset the parameters if they are not in the new array format.
+        if (!is_array($params))
+            $params = array();
+
         if (!$this->loaded && empty($params)) {
             $this->load();
         }
