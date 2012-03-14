@@ -1,49 +1,70 @@
 describe("Relationships", function() {
 
-    var dm = SUGAR.App.dataManager, metadata;
+    var dm = SUGAR.App.dataManager, metadata, server;
 
     beforeEach(function() {
         dm.reset();
         metadata = SugarTest.loadJson("metadata");
     });
 
-    it("should be able to create a relation instance (one-to-many)", function() {
-        dm.declareModels(metadata);
-
-        var opportunity = dm.createBean("Opportunities");
-        opportunity.id = "opp-1";
-        var call = dm.createBean("Contacts");
-        call.id = "call-1";
-
-        var data = { prop1: "custom prop1" };
-        var relation = dm.createRelation("calls", opportunity, call, data);
-
-        expect(relation.get("name")).toEqual("opportunity_calls");
-        expect(relation.get("relationship")).toEqual(opportunity.relationships["opportunity_calls"]);
-        expect(relation.get("id1")).toEqual(opportunity.id);
-        expect(relation.get("id2")).toEqual(call.id);
-        expect(relation.get("bean1")).toEqual(opportunity);
-        expect(relation.get("bean2")).toEqual(call);
-        expect(relation.get("data")).toEqual(data);
+    afterEach(function() {
+        if (server && server.restore) server.restore();
     });
 
-    it("should be able to create a relation instance (one-to-many reversed)", function() {
+    it("should be able to create a relation instance for ID", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities");
         opportunity.id = "opp-1";
-        var account = dm.createBean("Accounts");
-        account.id = "account-1";
 
-        var relation = dm.createRelation("accounts", opportunity, account);
+        var attrs = { first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
+        var contact = dm.createRelation(opportunity, "contact-1", "contacts", attrs);
 
-        expect(relation.get("name")).toEqual("accounts_opportunities");
-        expect(relation.get("relationship")).toEqual(opportunity.relationships["accounts_opportunities"]);
-        expect(relation.get("id1")).toEqual(account.id);
-        expect(relation.get("id2")).toEqual(opportunity.id);
-        expect(relation.get("bean1")).toEqual(account);
-        expect(relation.get("bean2")).toEqual(opportunity);
-        expect(relation.get("data")).toBeUndefined();
+        expect(contact.relation).toBeDefined();
+        expect(contact.relation.link).toEqual("contacts");
+        expect(contact.relation.bean).toEqual(opportunity);
+        expect(contact.id).toEqual("contact-1");
+        expect(contact.get("first_name")).toEqual("John");
+        expect(contact.get("last_name")).toEqual("Smith");
+        expect(contact.get("contact_role")).toEqual("Decision Maker");
+    });
+
+    it("should be able to create a relation instance for bean", function() {
+        dm.declareModels(metadata);
+
+        var opportunity = dm.createBean("Opportunities");
+        opportunity.id = "opp-1";
+
+        var attrs = { id: "contact-1", first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
+        var contact = dm.createBean("Contacts", attrs);
+        var relation = dm.createRelation(opportunity, contact, "contacts");
+
+        expect(contact).toEqual(relation);
+        expect(contact.relation).toBeDefined();
+        expect(contact.relation.link).toEqual("contacts");
+        expect(contact.relation.bean).toEqual(opportunity);
+        expect(contact.id).toEqual("contact-1");
+        expect(contact.get("first_name")).toEqual("John");
+        expect(contact.get("last_name")).toEqual("Smith");
+        expect(contact.get("contact_role")).toEqual("Decision Maker");
+    });
+
+    it("should be able to create a new relation instance", function() {
+        dm.declareModels(metadata);
+
+        var opportunity = dm.createBean("Opportunities");
+        opportunity.id = "opp-1";
+
+        var attrs = { id: "contact-1", first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
+        var contact = dm.createRelation(opportunity, null, "contacts", attrs);
+
+        expect(contact.relation).toBeDefined();
+        expect(contact.relation.link).toEqual("contacts");
+        expect(contact.relation.bean).toEqual(opportunity);
+        expect(contact.id).toEqual("contact-1");
+        expect(contact.get("first_name")).toEqual("John");
+        expect(contact.get("last_name")).toEqual("Smith");
+        expect(contact.get("contact_role")).toEqual("Decision Maker");
     });
 
     it("should be able to create a relation collection", function() {
@@ -52,14 +73,43 @@ describe("Relationships", function() {
         var opportunity = dm.createBean("Opportunities");
         opportunity.id = "opp-1";
 
-        var relations = dm.createRelationCollection("contacts", opportunity);
+        var contacts = dm.createRelationCollection(opportunity, "contacts");
 
-        expect(relations.name).toEqual("opportunities_contacts");
-        expect(relations.relationship).toEqual(opportunity.relationships["opportunities_contacts"]);
-        expect(relations.bean).toEqual(opportunity);
+        expect(contacts.module).toEqual("Contacts");
+        expect(contacts.beanType).toEqual("Contact");
+        expect(contacts.relation).toBeDefined();
+        expect(contacts.relation.link).toEqual("contacts");
+        expect(contacts.relation.bean).toEqual(opportunity);
     });
 
-    it("should be able to add related beans", function() {
+    it("should be able to fetch related beans", function() {
+        dm.declareModels(metadata);
+
+        var opportunity = dm.createBean("Opportunities");
+        opportunity.id = "opp-1";
+
+        var payload = SugarTest.loadJson("opportunity_contacts");
+
+        server = sinon.fakeServer.create();
+        server.respondWith("GET", "/rest/v10/Opportunities/opp-1/contacts",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify(payload)]);
+
+        var contacts = dm.createRelationCollection(opportunity, "contacts");
+        contacts.fetch();
+        server.respond();
+
+        expect(contacts.length).toEqual(3);
+        _.each(["x1", "x2", "x3"], function(id) {
+            var contact = contacts.get(id);
+            expect(contact).toBeDefined();
+            expect(contact.get("first_name")).toBeDefined();
+            expect(contact.get("last_name")).toBeDefined();
+            expect(contact.relation).toEqual(contacts.relation);
+        });
+    });
+
+    xit("should be able to add related beans", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities");
@@ -73,7 +123,7 @@ describe("Relationships", function() {
         mock.verify();
     });
 
-    it("should be able to remove related bean", function() {
+    xit("should be able to remove related bean", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities");
@@ -85,20 +135,7 @@ describe("Relationships", function() {
         mock.verify();
     });
 
-    it("should be able to fetch related beans", function() {
-        dm.declareModels(metadata);
-
-        var opportunity = dm.createBean("Opportunities");
-        opportunity.id = "opp-1";
-
-        var mock = sinon.mock(Backbone);
-        mock.expects("sync").once().withArgs("read");
-        opportunity.fetchRelated("contacts");
-        mock.verify();
-
-    });
-
-    it("should be able to set an attribute of type 'relate'", function() {
+    xit("should be able to set an attribute of type 'relate'", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities", {

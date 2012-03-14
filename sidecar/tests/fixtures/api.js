@@ -474,6 +474,29 @@ fixtures.api = {
         },
         "DELETE": { "status" : 200 },
         "POST" : { "status" : 405 }
+    },
+
+    "rest/v10/opportunities/xyz/contacts" : {
+        "GET": {
+            "status": 200,
+            "response": [
+                {
+                    "id": "6beade8e-ea5c-1906-203f-4f501294939e",
+                    "first_name": "Darnell",
+                    "last_name": "Fossett"
+                },
+                {
+                    "id": "877df603-25c8-a601-198c-4f50124b0366",
+                    "first_name": "Lee",
+                    "last_name": "Fredrick"
+                },
+                {
+                    "id": "8c440c9c-7357-54d2-7b43-4f5012552ba9",
+                    "first_name": "Micheal",
+                    "last_name": "Seman"
+                }
+            ]
+        }
     }
 
 };

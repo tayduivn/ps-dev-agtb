@@ -22,83 +22,15 @@
             }, this);
         },
 
-        /**
-         * Fetches relationships.
-         * @param link Link name
-         * @param options Options hash (see Backbone.Collection.fetch method documentation for details).
-         */
-        fetchRelated: function(link, options) {
-            var relations = app.dataManager.createRelationCollection(link, this);
-            relations.fetch(options);
-            return relations;
-        },
-
-        /*
-         * Adds a relationship.
-         * @param link Link name
-         * @param beanOrId related bean instance or its ID.
-         * @param options Options hash (success and error callbacks, etc.)
-         * @param data Additional data to attach to the new relationship.
-         */
-        addRelated: function(link, beanOrId, options, data) {
-            var relation = app.dataManager.createRelation(link, this, beanOrId, data);
-            relation.save(options);
-            return relation;
-        },
-
-        /*
-         * Removes relationship.
-         * @param link Link name
-         * @param beanOrId Related bean instance or its ID.
-         * @param options Options hash (success and error callbacks, etc.)
-         */
-        removeRelated: function(link, beanOrId, options) {
-            var relation = app.dataManager.createRelation(link, this, beanOrId);
-            relation.destroy(options);
-            return relation;
-        },
-
         /*
          * Updates a property of type 'relate'.
-         * @param attribute Property name
-         * @param bean Related bean
-         * @param options Options hash (success and error callbacks, etc.)
+         * @param {String} attribute field name
+         * @param {Bean} bean related bean
          */
-        setRelated: function(attribute, bean, options) {
-            options = options || (options = {});
-            var origError = options.error;
-            var origSuccess = options.success;
-
-            var self = this;
-            var field = this.fields[attribute];
-            var link = field.link;
-            var rname = field.rname;
-            var idFieldName = field.id_name;
-
-            var oldValue = this.get(attribute);
-            var oldId = this.get(idFieldName);
-
-            var values = {};
-            values[attribute] = bean.get(rname);
-            values[idFieldName] = bean.id;
-            this.set(values);
-
-            options.error = function(model, resp) {
-                values[attribute] = oldValue;
-                values[idFieldName] = oldId;
-                self.set(values);
-
-                if (origError) {
-                    origError(self, resp);
-                }
-            };
-
-            options.success = function(model, resp) {
-                options.success = origSuccess;
-                self.save(null, options);
-            };
-
-            return this.addRelated(link, bean, options);
+        setRelated: function(attribute, bean) {
+            // TODO: Implement once the metadata is spec'ed out
+            // This will be a convinience method.
+            // We may decide to drop it and resort to setting related bean ID into the corresponding field
         },
 
         /**

@@ -8,17 +8,38 @@
 
     app.augment("BeanCollection", Backbone.Collection.extend({
 
+        constructor: function(models, options) {
+            if (options && options.relation) {
+                this.relation = options.relation;
+                delete options.relation;
+            }
+            Backbone.Collection.prototype.constructor.call(this, models, options);
+        },
+
+        _prepareModel: function(model, options) {
+            var model = Backbone.Collection.prototype._prepareModel(model, options);
+            if (model) {
+                model.relation = this.relation;
+            }
+            return model;
+        },
+
         /**
          * Returns string representation useful for debugging:
-         * <code>coll:[module-name]/[bean-type]-[length]</code>
-         * @return {String}
+         * <code>coll:[module-name]/[bean-type]-[length]</code>  or
+         * <code>coll:[related-module-name]/[bean-type]/[id]/[module-name]/[bean-type]-[length]</code> if it's a collection of related beans.
+         * @return {String} string representation of this collection.
          */
         toString: function() {
-            return "coll:" + this.module + "/" + this.beanType + "-" + this.length;
+            return "coll:" + (this.relation ?
+                (this.relation.bean.module + "/" + this.relation.bean.beanType + "/" + this.relation.bean.id + "/") : "") +
+                this.module + "/" + this.beanType +
+                "-" + this.length;
         },
+
         /**
-         * paginates current collection
-         * @param {Object} options.page is the n page from the current to paginate to, options.add will append new records
+         * Paginates current collection.
+         * @param {Object} options(optional) options.page is the n page from the current to paginate to, options.add will append new records
          */
         paginate: function(options) {
             var fetchOptions = {};
@@ -42,7 +63,7 @@
 
             // set offset index
             if (app.config && app.config.maxQueryResult) {
-                fetchOptions.offset = this.offset+(options.page*app.config.maxQueryResult);
+                fetchOptions.offset = this.offset + (options.page * app.config.maxQueryResult);
             }
 
             // get new records
