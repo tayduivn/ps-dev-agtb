@@ -5,11 +5,13 @@
     Handlebars.registerHelper('sugar_field', function (context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>';
         var name = this.name;
-
+        var def = this;
         bean = bean || context.get("model");
-
+        if (bean.fields && bean.fields[name]){
+            def = bean.fields[name];
+        }
         var sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
-            def: bean.fields[name] || this,
+            def: def,
             view : view,
             context : context,
             model : bean || context.get("model")
@@ -109,6 +111,7 @@
          * @return {Object} this Reference to the SugarField
          */
         render: function() {
+            if (!this.model.has) return;
             this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
             this.$el.html(this.templateC(this));
 
@@ -136,12 +139,14 @@
             this.unBind();
             this.context = context;
             this.model = model;
-            this.model.on("change:" + this.name, this.render, this);
+            if (this.model.on){
+                this.model.on("change:" + this.name, this.render, this);
+            }
         },
 
         unBind: function() {
             //this will only work if all events we listen to, we set the scope to this
-            if (this.model) {
+            if (this.model && this.model.offByScope) {
                 this.model.offByScope(this);
             }
 
