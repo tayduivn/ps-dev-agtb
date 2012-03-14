@@ -768,7 +768,7 @@
 			}
 			
 			CAL.basic.remove(item);
-			if(CAL.style == "basic" || item.days > 1 || item.module_name == "Tasks"){
+			if(CAL.style == "basic" || item.days > 1){
 				CAL.basic.add(item);
 				return;
 			}
@@ -817,12 +817,14 @@
 
 				slot.appendChild(el);	
 				
-				if(item.module_name != "Tasks" && item.edit == 1){
+				if(item.edit == 1){
 					if(CAL.items_draggable)				
-						CAL.make_draggable(elm_id,"advanced");	
-					if(CAL.items_resizable)				
-						CAL.make_resizable(elm_id,slot);
-				}
+						CAL.make_draggable(elm_id,"advanced");
+                    if(item.module_name != "Tasks"){	
+					    if(CAL.items_resizable)				
+						    CAL.make_resizable(elm_id,slot);
+				    }
+                }
 
 				CAL.cut_record(item.record + id_suffix);				
 				//CAL.arrange_slot("t_" + time_cell + suffix);
