@@ -115,7 +115,7 @@ class ParserFactory
                 require_once 'modules/ModuleBuilder/parsers/parser.visibility.php' ;
                 return new ParserVisibility ( $moduleName, $packageName ) ;
             default :
-                $parser = checkForParserClass($view, $moduleName, $packageName);
+                $parser = self::checkForParserClass($view, $moduleName, $packageName);
                 if ($parser)
                     return $parser;
 
