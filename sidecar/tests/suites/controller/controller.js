@@ -17,11 +17,11 @@ describe("Controller", function() {
 
             // Overload the data manager
             dataMan = {
-                fetchBean: function() {
-                    return {};
+                createBean: function() {
+                    return new SUGAR.App.Bean;
                 },
                 createBeanCollection: function() {
-                    return {};
+                    return new SUGAR.App.BeanCollection;
                 }
             };
 
@@ -39,7 +39,7 @@ describe("Controller", function() {
 
             layoutSpy = sinon.spy(layoutMan, "get");
             renderSpy = sinon.spy(layout, "render");
-            dataSpy = sinon.spy(dataMan, "fetchBean");
+            dataSpy = sinon.spy(dataMan, "createBean");
             collectionSpy = sinon.spy(dataMan, "createBeanCollection");
 
             SUGAR.App.layout = layoutMan;
