@@ -489,8 +489,7 @@ fixtures.metadata = {
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.sugarAuth.login(args, {success:" +
                                             "function(){console.log(\"logged in successfully!\");self.app.navigate('', self.model); }" +
                                         "});" +
-                                    "}",
-                                hover : "myCallback"
+                                    "}"
                             }
                         }
                     ],

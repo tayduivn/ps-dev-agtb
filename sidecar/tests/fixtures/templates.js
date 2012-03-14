@@ -75,15 +75,12 @@ fixtures.templates = {
         "{{#each meta.buttons}}" +
                 "{{sugar_field ../context ../this ../model}}" +
         "{{/each}}"+
-            "<div class=\"btn-group\">"+
-           "</div>"+
             '<ul class="nav nav-pills actions">'+
         "{{#each meta.listNav}}" +
             '<li>'  +
             "{{sugar_field ../context ../this ../model}}" +
             '</li>'+
         "{{/each}}"+
-            "</div>"+
             '</ul>'+
             "</div>"
 };
