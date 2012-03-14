@@ -103,9 +103,7 @@ class Call extends Activity
 										'user_id'			=> 'users',
 										'assigned_user_id'	=> 'users',
 										'note_id'			=> 'notes',
-										//BEGIN SUGARCRM flav=sales ONLY
-										'lead_id'			=> 'leads',
-										//END SUGARCRM flav=sales ONLY
+                                        'lead_id'			=> 'leads',
 								);
 
 	function Call() {
