@@ -768,6 +768,7 @@
 			}
 			
 			CAL.basic.remove(item);
+            //Add item to top grid if items have a duration > 1 day and view style is basic
 			if(CAL.style == "basic" || item.days > 1){
 				CAL.basic.add(item);
 				return;
