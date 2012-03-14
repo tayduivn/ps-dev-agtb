@@ -265,21 +265,25 @@
         },
 
         /**
-         * Creates an instance of related {@link Bean} or updates an existing bean with relation reference.
+         * Creates an instance of related {@link Bean} or updates an existing bean with link information.
          *
          * <pre><code>
-         * // Create a related contact for an opportunity.
-         * var contact = SUGAR.App.dataManager.createRelation(opportunity, "1", "contacts", { "contact_role": "Decision Maker" });
+         * // Create a new contact related to the given opportunity.
+         * var contact = SUGAR.App.dataManager.createRelatedBean(opportunity, "1", "contacts", {
+         *    "first_name": "John",
+         *    "last_name": "Smith",
+         *    "contact_role": "Decision Maker"
+         * });
          * contact.save();
          * </code></pre>
          *
          * @param {Bean} bean1 instance of the first bean
-         * @param {Bean/String} beanOrId2 instance or ID of the second bean. A new instance is created if the parameter <code>null</code>
+         * @param {Bean/String} beanOrId2 instance or ID of the second bean. A new instance is created if this parameter is <code>null</code>
          * @param {String} link relationship link name
          * @param {Object} attrs(optional) bean attributes hash
          * @return {Bean} a new instance of the related bean
          */
-        createRelation: function(bean1, beanOrId2, link, attrs) {
+        createRelatedBean: function(bean1, beanOrId2, link, attrs) {
             var name = bean1.fields[link].relationship;
             var relationship = bean1.relationships[name];
             var relatedModule = bean1.module == relationship.lhs_module ? relationship.rhs_module : relationship.lhs_module;
@@ -297,11 +301,21 @@
             }
 
             /**
-             * Relation hash.
+             * Link information.
+             *
+             * <pre>
+             * <code>
+             * {
+             *   name: link name,
+             *   bean: reference to the related bean
+             * }
+             * </code>
+             * </pre>
+             *
              * @member Bean
              */
-            beanOrId2.relation = {
-                link: link,
+            beanOrId2.link = {
+                name: link,
                 bean: bean1
             };
 
@@ -313,25 +327,35 @@
          *
          * <pre><code>
          * // Create contacts collection for an opportunity.
-         * var contact = SUGAR.App.dataManager.createRelationCollection(opportunity, "contacts");
+         * var contact = SUGAR.App.dataManager.createRelatedCollection(opportunity, "contacts");
          * contacts.fetch();
          * </code></pre>
          *
-         * @param {Bean} bean the relations are linked to the specified bean
+         * @param {Bean} bean the related beans are linked to the specified bean
          * @param {String} link relationship link name
          * @return {BeanCollection} a new instance of the bean collection
          */
-        createRelationCollection: function(bean, link) {
+        createRelatedCollection: function(bean, link) {
             var name = bean.fields[link].relationship;
             var relationship = bean.relationships[name];
             var relatedModule = relationship.lhs_module == bean.module ? relationship.rhs_module : relationship.lhs_module;
             return this.createBeanCollection(relatedModule, undefined, undefined, {
                 /**
-                 * Relation hash.
+                 * Link information.
+                 *
+                 * <pre>
+                 * <code>
+                 * {
+                 *   name: link name,
+                 *   bean: reference to the related bean
+                 * }
+                 * </code>
+                 * </pre>
+                 *
                  * @member BeanCollection
                  */
-                relation: {
-                    link: link,
+                link: {
+                    name: link,
                     bean: bean
                 }
             });
@@ -390,8 +414,8 @@
                 error: options.error
             };
 
-            if ((method == "read") && (model instanceof app.BeanCollection) && (model.relation)) {
-                _serverProxy.getRelations(model.relation.bean.module, model.relation.bean.id, model.relation.link, options.params, callbacks);
+            if ((method == "read") && (model instanceof app.BeanCollection) && (model.link)) {
+                _serverProxy.getRelations(model.link.bean.module, model.link.bean.id, model.link.name, options.params, callbacks);
             }
             else if (model instanceof app.Bean || model instanceof app.BeanCollection) {
                 _serverProxy[method](model.module, model.attributes, options.params, callbacks);
