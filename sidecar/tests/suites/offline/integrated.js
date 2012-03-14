@@ -100,7 +100,8 @@ describe("Offline+DB+server", function() {
                         bool_field: false
                     })]);
 
-        var bean = dm.fetchBean("Things", "xyz", options);
+        var bean = dm.createBean("Things", {id: "xyz"});
+        bean.fetch(options);
 
         _.delay(function() {
             server.respond();

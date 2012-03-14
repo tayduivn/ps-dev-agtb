@@ -361,18 +361,6 @@
             });
         },
 
-        fetchBean: function(module, id, options, beanType) {
-            var bean = this.createBean(module, { id: id }, beanType);
-            bean.fetch(options);
-            return bean;
-        },
-
-        fetchBeans: function(module, options, beanType) {
-            var collection = this.createBeanCollection(module, null, beanType);
-            collection.fetch(options);
-            return collection;
-        },
-
         /**
          * Custom implementation of <code>Backbone.sync</code> pattern. Syncs models with remote server using Sugar.Api lib.
          * @param {String} method the CRUD method (<code>"create", "read", "update", or "delete"</code>)
