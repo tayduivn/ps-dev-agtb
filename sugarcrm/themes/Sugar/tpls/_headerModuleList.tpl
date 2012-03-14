@@ -117,7 +117,7 @@
 			{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			
 				{if $shortcutTopMenu.$name}
-					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$module" data="$name" class="sf-with-ul"}
+					<li class="flexMenuItems"  id="moduleTab_{$tabGroupName}{$name}_flex">{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix$overflowHidden" module="$name" data="$name" class="sf-with-ul"}
 					<ul class="megamenu">
 					<li >
 						<div class="megawrapper">
