@@ -1378,6 +1378,26 @@ a [class*=" icon-"] {
   vertical-align: top;
   font-size: 1.3333333333333333em;
 }
+/* makes the font 16px */
+.icon-sm:before {
+  vertical-align: top;
+  font-size: 16px;
+}
+/* makes the font 26px */
+.icon-md:before {
+  vertical-align: top;
+  font-size: 26px;
+}
+/* makes the font 42px */
+.icon-lg:before {
+  vertical-align: top;
+  font-size: 42px;
+}
+/* makes the font 68px */
+.icon-xl:before {
+  vertical-align: top;
+  font-size: 68px;
+}
 .btn [class^="icon-"],
 .btn [class*=" icon-"] {
   /* keeps button heights with and without icons the same */
