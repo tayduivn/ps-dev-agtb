@@ -141,10 +141,44 @@ fixtures.metadata = {
                         name:"show_more_button",
                         type:"button",
                         label:"Show More",
-                        primary:true,
+                        class:"loading",
                         events : {
                             click : "function(){ var self = this; " +
                                     "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render()}});" +
+                                "}"
+                        }
+                    }
+                ],
+                "listNav":[
+                    {
+                        name:"show_more_button_back",
+                        type:"navElement",
+                        icon:"icon-plus",
+                        label:" ",
+                        route:{
+                            action:"create",
+                            module: "Cases"
+                        }
+                    },
+                    {
+                        name:"show_more_button_back",
+                        type:"navElement",
+                        icon:"icon-chevron-left",
+                        label:" ",
+                        events : {
+                            click : "function(){ var self = this; " +
+                                    "console.log(this); this.context.state.collection.paginate({page:-1, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render()}});" +
+                                "}"
+                        }
+                    },
+                    {
+                        name:"show_more_button_forward",
+                        type:"navElement",
+                        icon:"icon-chevron-right",
+                        label:" ",
+                        events : {
+                            click : "function(){ var self = this; " +
+                                    "console.log(this); this.context.state.collection.paginate({success:function(){console.log(\"in paginate success\"); console.log(self.context.state.collection);self.context.state.layoutObj.render()}});" +
                                 "}"
                         }
                     }

@@ -68,7 +68,7 @@ describe("BeanCollection", function() {
         expect(syncSpy.getCall(1).args[0].offset).toEqual(1);
         var options = {page:-1};
         beans.paginate(options);
-        expect(syncSpy.getCall(2).args[0].offset).toEqual(0);
+        expect(syncSpy.getCall(2).args[0].offset).toEqual(-1);
 
         syncSpy.restore();
     });
