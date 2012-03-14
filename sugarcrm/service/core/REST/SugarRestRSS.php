@@ -127,7 +127,7 @@ EORSS;
 	/**
 	 * @see SugarRest::fault()
 	 */
-	public function fault($faultObject)
+	public function fault($errorObject)
 	{
 		ob_clean();
 		$this->generateResponseHeader();
