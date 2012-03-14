@@ -84,7 +84,9 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration
       'lbl_call_information' =>
       array (
         array (
-          'name' => 'name',
+          array(
+          	'name' => 'name',
+          ),
           array (
             'name' => 'status',
             'fields' =>
