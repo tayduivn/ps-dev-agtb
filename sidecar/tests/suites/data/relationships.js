@@ -91,7 +91,7 @@ describe("Relationships", function() {
         var payload = SugarTest.loadJson("opportunity_contacts");
 
         server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/Opportunities/opp-1/contacts",
+        server.respondWith("GET", "/rest/v10/Opportunities/opp-1/contacts?maxresult=20",
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(payload)]);
 

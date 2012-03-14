@@ -3,11 +3,6 @@ var SugarTest = {};
 
 (function(test) {
 
-    if (SUGAR.App) {
-        SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
-        SUGAR.App.config.env = "test";
-    }
-
     test.loadJson = function(jsonFile) {
       var json = null;
       $.ajax({
@@ -35,6 +30,11 @@ var SugarTest = {};
 
 beforeEach(function(){
     SugarTest.resetWaitFlag();
+    if (SUGAR.App) {
+        SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
+        SUGAR.App.config.env = "test";
+        SUGAR.App.config.maxQueryResult = 20;
+    }
 });
 
 afterEach(function() {

@@ -274,7 +274,7 @@
          * </code></pre>
          *
          * @param {Bean} bean1 instance of the first bean
-         * @param {Bean|String} beanOrId2(optional) instance or ID of the second bean. A new instance is created if the parameter <code>null</code>
+         * @param {Bean/String} beanOrId2 instance or ID of the second bean. A new instance is created if the parameter <code>null</code>
          * @param {String} link relationship link name
          * @param {Object} attrs(optional) bean attributes hash
          * @return {Bean} a new instance of the related bean
@@ -363,7 +363,7 @@
             options.params = options.params || [];
 
             if ((method == "read") && (model instanceof app.BeanCollection)) {
-                if (options.offset && options.offset != 0) {
+                if (options.offset && options.offset !== 0) {
                     options.params.push({key: "offset", value: options.offset});
                 }
 

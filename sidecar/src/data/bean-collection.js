@@ -17,10 +17,8 @@
         },
 
         _prepareModel: function(model, options) {
-            var model = Backbone.Collection.prototype._prepareModel(model, options);
-            if (model) {
-                model.relation = this.relation;
-            }
+            model = Backbone.Collection.prototype._prepareModel(model, options);
+            if (model) model.relation = this.relation;
             return model;
         },
 

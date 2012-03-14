@@ -40,7 +40,6 @@
         /**
          * Max Query Result Set size
          */
-
         maxQueryResult: 20
 
     }, false);
