@@ -1,12 +1,9 @@
 package com.sugarcrm.rest.tests;
 
 import static org.junit.Assert.*;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -17,10 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
-
 import com.google.gson.Gson;
-import com.sugarcrm.rest.tests.TestAccountCreate.AccountId;
-import com.sugarcrm.rest.tests.TestAccountCreate.UserId;
 
 public class TestAccountPagnation {
 
@@ -30,7 +24,6 @@ public class TestAccountPagnation {
 		int status = -1;
 		String uri = "";
 		HttpPost post = null;
-		HttpGet get = null;
 		HttpContext context;
 		HttpResponse response;
 		DefaultHttpClient client = null;
@@ -84,7 +77,7 @@ public class TestAccountPagnation {
 			// end delete all accounts //
 			
 			// creating accounts //
-			ArrayList<String> ids = this.createAccounts(id.token);
+			this.createAccounts(id.token);
 			// end accoutns create //
 			
 			// paging //
@@ -101,22 +94,20 @@ public class TestAccountPagnation {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void pageAccounts(String token) {
 		int bucketSize = 5;
 		double offset = 0;
 		TestData testData = new TestData();
-		String tmp = null;
 		String buffer = null;
 		Gson json = new Gson();
 		String uri = String.format("%s/accounts?fields=id&maxresult=%d&offset=%d", 
 				testData.getValue("sugarinst"), bucketSize, (int)offset);
 		HttpGet get = null;
 		HttpResponse response = null;
-		int status;
 		DefaultHttpClient client = new DefaultHttpClient();
 		ArrayList<String> pagedIds = new ArrayList<String>();
 		
-		int count = 0;
 		try {
 			do {
 				uri = String.format("%s/accounts?fields=id&maxresult=%d&offset=%d", 
@@ -129,10 +120,9 @@ public class TestAccountPagnation {
 				response = client.execute(get);
 				buffer = TestUtils.bufferToString(response.getEntity());
 				System.out.printf("PAGE: '%s'\n", buffer);
-				@SuppressWarnings("unchecked")
 				HashMap<String, Object> data = json.fromJson(buffer, HashMap.class);
 				
-				double result_count = Double.valueOf((Double)data.get("result_count"));
+				//double result_count = Double.valueOf((Double)data.get("result_count"));
 				double next_offset = Double.valueOf((Double)data.get("next_offset"));
 				ArrayList<HashMap<String, String>> tmp_data = (ArrayList<HashMap<String, String>>)data.get("records");
 				
@@ -142,9 +132,8 @@ public class TestAccountPagnation {
 					}
 				}
 				
-				offset = next_offset;
-				count = (int)result_count;				
-			} while (count > 0);
+				offset = next_offset;		
+			} while (offset != 0);
 			
 			uri = String.format("%s/accounts?fields=id&maxresult=9999999", 
 					testData.getValue("sugarinst"));
@@ -156,7 +145,6 @@ public class TestAccountPagnation {
 			response = client.execute(get);
 			buffer = TestUtils.bufferToString(response.getEntity());
 			System.out.printf("PAGE: '%s'\n", buffer);
-			@SuppressWarnings("unchecked")
 			HashMap<String, Object> data = json.fromJson(buffer, HashMap.class);
 			ArrayList<String> waddedIds = new ArrayList<String>();
 			ArrayList<HashMap<String, String>> tmp_data = (ArrayList<HashMap<String, String>>)data.get("records");
