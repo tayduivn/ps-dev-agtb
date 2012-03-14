@@ -4,8 +4,6 @@
 
 Modification information for LGPL compliance
 
-         2012-03-12 Bug 50968 - SOAP fault reporting out of order, reordered the fault message to match the expected order.
-
 r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
     Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
 
@@ -113,8 +111,8 @@ class nusoap_fault extends nusoap_base {
 				'<SOAP-ENV:Body>'.
 				'<SOAP-ENV:Fault>'.
 					$this->serialize_val($this->faultcode, 'faultcode').
-					$this->serialize_val($this->faultstring, 'faultstring').
 					$this->serialize_val($this->faultactor, 'faultactor').
+					$this->serialize_val($this->faultstring, 'faultstring').
 					$this->serialize_val($this->faultdetail, 'detail').
 				'</SOAP-ENV:Fault>'.
 				'</SOAP-ENV:Body>'.
