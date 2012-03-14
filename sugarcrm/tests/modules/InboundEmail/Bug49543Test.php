@@ -45,7 +45,7 @@ class Bug49543Test extends Sugar_PHPUnit_Framework_TestCase
         $mail->message_id = '';
         $mail->size = '1234';
         $mail->uid = $uid;
-        $mail->msgno = '';
+        $mail->msgno = 0;
         $mail->recent = 0;
         $mail->flagged = 0;
         $mail->answered = 0;
