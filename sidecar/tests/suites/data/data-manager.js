@@ -183,6 +183,9 @@ describe("DataManager", function() {
         expect(beans.length).toEqual(2);
         expect(beans.at(0).get("name")).toEqual("Vladimir Vladimirov");
         expect(beans.at(1).get("name")).toEqual("Petr Petrov");
+        expect(beans.at(1).module).toEqual("Contacts");
+        expect(beans.at(1).beanType).toEqual("Contact");
+        expect(beans.at(1).fields).toBeDefined();
 
     });
 
