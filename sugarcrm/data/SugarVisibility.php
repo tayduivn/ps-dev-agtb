@@ -34,6 +34,12 @@ abstract class SugarVisibility
     protected $module_dir;
 
     /**
+     * Options for this run
+     * @var array|null
+     */
+    protected $options;
+
+    /**
      * @param SugarBean $bean
      */
     public function __construct($bean)
@@ -54,10 +60,34 @@ abstract class SugarVisibility
     /**
      * Add visibility clauses to the WHERE part of the query
      * @param string $query
-     * @param string $action
      */
-    public function addVisibilityWhere(&$query, $action = 'list')
+    public function addVisibilityWhere(&$query)
     {
         return $query;
+    }
+
+    /**
+     * Get visibility options
+     * @param string $name
+     * @param mixed $default Default value if option not set
+     * @return mixed
+     */
+    public function getOption($name, $default = null)
+    {
+        if(isset($this->options[$name])) {
+            return $this->options[$name];
+        }
+        return $default;
+    }
+
+    /**
+     * Set visibility options
+     * @param array $options
+     * @return SugarVisibility
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+        return $this;
     }
 }

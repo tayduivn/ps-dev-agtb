@@ -67,10 +67,10 @@ class BeanVisibility
      * @param string $query
      * @return string Modified query
      */
-    public function addVisibilityFrom(&$query)
+    public function addVisibilityFrom(&$query, $options = null)
     {
         foreach($this->strategies as $strategy) {
-            $strategy->addVisibilityFrom($query);
+            $strategy->setOptions($options)->addVisibilityFrom($query);
         }
         return $query;
     }
@@ -80,10 +80,10 @@ class BeanVisibility
      * @param string $query
      * @return string Modified query
      */
-    public function addVisibilityWhere(&$query, $action = 'list')
+    public function addVisibilityWhere(&$query, $options = null)
     {
         foreach($this->strategies as $strategy) {
-            $strategy->addVisibilityWhere($query, $action);
+            $strategy->setOptions($options)->addVisibilityWhere($query);
         }
         return $query;
     }

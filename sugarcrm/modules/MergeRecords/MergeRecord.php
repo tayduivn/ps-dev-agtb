@@ -317,7 +317,7 @@ class MergeRecord extends SugarBean {
         }
         // Add ACL Check
         $where_acl = '';
-        $this->merge_bean->addVisibilityWhere($where_acl, 'delete');
+        $this->merge_bean->addVisibilityWhere($where_acl, array('action' => 'delete'));
         if(!empty($where_acl)) {
             $where_clauses[] = $where_acl;
         }

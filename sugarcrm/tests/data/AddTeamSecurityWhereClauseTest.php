@@ -35,17 +35,18 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 	}
-    
+
 	public function testAddTeamSecurityWhereClauseForRegularUser()
 	{
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $bean->disable_row_level_security = false;
+        $bean->addVisibilityStrategy('TeamSecurity');
         $query = '';
-        
+
         $bean->add_team_security_where_clause($query);
-        
+
         $this->assertEquals(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
                                     AND team_memberships.user_id = '{$GLOBALS['current_user']->id}'
@@ -53,17 +54,18 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
             $query
             );
     }
-    
+
     public function testAddTeamSecurityWhereClauseForRegularUserSpecifyTableAlias()
 	{
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $bean->disable_row_level_security = false;
+        $bean->addVisibilityStrategy('TeamSecurity');
         $query = '';
-        
+
         $bean->add_team_security_where_clause($query,'myfoo');
-        
+
         $this->assertEquals(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsmyfoo ON tst.team_id = team_membershipsmyfoo.team_id
                                     AND team_membershipsmyfoo.user_id = '{$GLOBALS['current_user']->id}'
@@ -71,17 +73,18 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
             $query
             );
     }
-    
+
     public function testAddTeamSecurityWhereClauseForRegularUserSpecifyJoinType()
 	{
-        $bean = new SugarBean();
+	    $this->markTestIncomplete("Unused functionality");
+	    $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $bean->disable_row_level_security = false;
         $query = '';
-        
+
         $bean->add_team_security_where_clause($query,'','LEFT OUTER');
-        
+
         $this->assertEquals(
             "LEFT OUTER JOIN (select tst.team_set_id from team_sets_teams tst LEFT OUTER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
                                     AND team_memberships.user_id = '{$GLOBALS['current_user']->id}'
@@ -89,7 +92,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
             $query
             );
     }
-    
+
     public function testAddTeamSecurityWhereClauseForRegularUserWithJoinTeamsParameterTrue()
 	{
         $bean = new SugarBean();
@@ -97,9 +100,10 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->table_name = 'foo';
         $bean->disable_row_level_security = false;
         $query = '';
-        
+        $bean->addVisibilityStrategy('TeamSecurity');
+
         $bean->add_team_security_where_clause($query,'','INNER',false,true);
-        
+
         $this->assertEquals(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
                                     AND team_memberships.user_id = '{$GLOBALS['current_user']->id}'
@@ -107,66 +111,71 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
             $query
             );
     }
-	
+
     public function testAddTeamSecurityWhereClauseWhenRowLevelSecurityIsDisabled()
 	{
 	    $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $bean->disable_row_level_security = true;
+        $bean->addVisibilityStrategy('TeamSecurity');
         $query = '';
-        
+
         $bean->add_team_security_where_clause($query);
-        
+
         $this->assertEquals(
             '',
             $query
             );
     }
-    
+
     public function testAddTeamSecurityWhereClauseWhenModuleIsWorkflow()
 	{
 	    $bean = new SugarBean();
         $bean->module_dir = 'WorkFlow';
         $bean->table_name = 'workflow';
+        $bean->addVisibilityStrategy('TeamSecurity');
         $query = '';
-        
+
         $bean->add_team_security_where_clause($query);
-        
+
         $this->assertEquals(
             '',
             $query
             );
     }
-    
+
     public function testAddTeamSecurityWhereClauseForAdmin()
 	{
 	    $GLOBALS['current_user']->is_admin = 1;
-	    
+
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
+        $bean->addVisibilityStrategy('TeamSecurity');
         $query = '';
-        
+
         $bean->add_team_security_where_clause($query);
-        
+
         $this->assertEquals(
             '',
             $query
             );
     }
-    
+
     public function testAddTeamSecurityWhereClauseForAdminWhenForceAdminIsTrue()
 	{
+	    $this->markTestIncomplete("Unused functionality");
 	    $GLOBALS['current_user']->is_admin = 1;
-	    
+
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
+        $bean->addVisibilityStrategy('TeamSecurity');
         $query = '';
-        
+
         $bean->add_team_security_where_clause($query,'','INNER',true);
-        
+
         $this->assertEquals(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
                                     AND team_memberships.user_id = '{$GLOBALS['current_user']->id}'
@@ -174,26 +183,27 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
             $query
             );
     }
-    
+
     /**
      * @ticket 26772
      */
 	public function testAddTeamSecurityWhereClauseForAdminForModule()
 	{
 	    $_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user'] = array('Foo');
-	    
+
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $query = '';
-        
+        $bean->addVisibilityStrategy('TeamSecurity');
+
         $bean->add_team_security_where_clause($query);
-        
+
         $this->assertEquals(
             '',
             $query
             );
-        
+
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user']);
     }
 }

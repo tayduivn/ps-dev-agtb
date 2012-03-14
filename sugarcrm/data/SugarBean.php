@@ -403,18 +403,18 @@ class SugarBean
      * Add visibility clauses to the query
      * @param string $query
      */
-    public function addVisibilityFrom(&$query)
+    public function addVisibilityFrom(&$query, $options = null)
     {
-        return $this->loadVisibility()->addVisibilityFrom($query);
+        return $this->loadVisibility()->addVisibilityFrom($query, $options);
     }
 
     /**
      * Add visibility clauses to the query
      * @param string $query
      */
-    public function addVisibilityWhere(&$query, $action = 'list')
+    public function addVisibilityWhere(&$query, $options = null)
     {
-        return $this->loadVisibility()->addVisibilityWhere($query, $action);
+        return $this->loadVisibility()->addVisibilityWhere($query, $options);
     }
 
     /**
@@ -4996,9 +4996,17 @@ function save_relationship_changes($is_update, $exclude=array())
      * Add visibility clauses to the query
      * @param string $query
      */
-    function add_team_security_where_clause(&$query)
+    function add_team_security_where_clause(&$query,$table_alias='',$join_type='INNER',$force_admin=false,$join_teams=false)
     {
-        return $this->addVisibilityFrom($query);
+        // join type & force admin ignored since they are not used anywhere
+        $options = array();
+        if(!empty($table_alias)) {
+            $options['table_alias'] = $table_alias;
+        }
+        if(!empty($join_teams)) {
+            $options['join_teams'] = true;
+        }
+        return $this->addVisibilityFrom($query, $options);
     }
 
     /**
