@@ -820,10 +820,8 @@
 				if(item.edit == 1){
 					if(CAL.items_draggable)				
 						CAL.make_draggable(elm_id,"advanced");
-                    if(item.module_name != "Tasks"){	
-					    if(CAL.items_resizable)				
+					if(item.module_name != "Tasks" && CAL.items_resizable)				
 						    CAL.make_resizable(elm_id,slot);
-				    }
                 }
 
 				CAL.cut_record(item.record + id_suffix);				
