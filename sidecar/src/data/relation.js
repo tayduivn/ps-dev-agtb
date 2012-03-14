@@ -9,9 +9,9 @@
 
         /**
          * Returns string representation of a relationship useful for debugging.
-         * <pre>
+         * <pre><code>
          * rel:[relationship-name]-[id1]-[id2]
-         * </pre>
+         * </code><pre>
          *
          * @return {String} string representation of this relation.
          */

@@ -168,6 +168,13 @@
 
     }), false);
 
+    /**
+     * @param errors
+     * @param result
+     * @param fieldName
+     * @param validatorName
+     * @private
+     */
     function _addValidationError(errors, result, fieldName, validatorName) {
         if (result) {
             if (_.isUndefined(errors[fieldName])) {

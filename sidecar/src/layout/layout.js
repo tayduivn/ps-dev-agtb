@@ -1,12 +1,14 @@
 (function(app) {
     app.augment("layout", function() {
         var ucfirst = function(str) {
-            if (typeof(str) == "string")
+            if (_.isString(str)) {
                 return str.charAt(0).toUpperCase() + str.substr(1);
-        }
+            }
+        };
+
         /**
          * Layout Manager is used to retrieve views and layouts based on metadata inputs.
-         * @class layout
+         * @class Layout
          * @alias SUGAR.App.layout
          * @singleton
          */
@@ -121,7 +123,7 @@
                 data.on('reset', this.render);
                 data.on('reset', function(e) {
                     console.log(e);
-                    console.log("data changing")
+                    console.log("data changing");
                 });
             },
             _render: function() {
@@ -151,7 +153,7 @@
                 }
 
                 return _.filter(_.uniq(fields), function(value) {
-                    return value
+                    return value;
                 });
             },
             bind: function(context) {
@@ -164,6 +166,7 @@
                 return this.context.get("module") + "_" + this.options.name;
             }
         });
+
         Layout.ListView = Layout.View.extend({
             bind: function(context) {
                 var collection = context.get("collection");
@@ -183,10 +186,11 @@
                                     el.html(value);
                             });
                         }
-                    }, this)
-                }, this)
+                    }, this);
+                }, this);
             }
-        })
+        });
+
         Layout.Layout = Layout.View.extend({
             initialize: function() {
                 _.bindAll(this, 'render', 'bindData');
