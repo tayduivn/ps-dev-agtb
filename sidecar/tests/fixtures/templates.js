@@ -53,10 +53,10 @@ fixtures.templates = {
     "subpanelView" :
         "",
     "listView" :
-        '<h3 class="view_title">{{context.state.module}}</h3>' +
+        '<div class="thumbnail span12"><h4 class="view_title">{{context.state.module}}</h4>' +
         "{{#each meta.panels}}" +
-            '<div class="{{../name}} panel hero-unit">' +
-            '<table class="table table-bordered table-striped"><thead><tr>' +
+            '<div class="{{../name}}">' +
+            '<table class="table table-striped"><thead><tr>' +
             '{{#each fields}}' +
                 '<th width="{{width}}%">{{label}}</th>' +
             '{{/each}}' +
@@ -70,9 +70,20 @@ fixtures.templates = {
                 '{{/each}}' +
                 '</tr>' +
             '{{/each}}' +
-            '</tbody></table>' +
+            '</tbody></table>'+
         '{{/each}}'+
-    "{{#each meta.buttons}}" +
+        "{{#each meta.buttons}}" +
                 "{{sugar_field ../context ../this ../model}}" +
-            "{{/each}}"
+        "{{/each}}"+
+            "<div class=\"btn-group\">"+
+           "</div>"+
+            '<ul class="nav nav-pills actions">'+
+        "{{#each meta.listNav}}" +
+            '<li>'  +
+            "{{sugar_field ../context ../this ../model}}" +
+            '</li>'+
+        "{{/each}}"+
+            "</div>"+
+            '</ul>'+
+            "</div>"
 };

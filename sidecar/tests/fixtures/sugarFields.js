@@ -41,7 +41,16 @@ var sugarFieldsFixtures = {
             "default":{
                 "type":"basic",
                 "template":"<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
-                    "{{else}}javascript:void(0){{/if}}\" class=\"btn {{#if primary}}btn-primary{{/if}}\">{{label}}<\/a>\n"
+                    "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">"+
+                    "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+            }
+        },
+        "navElement":{
+            "default":{
+                "type":"basic",
+                "template":"<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+                    "{{else}}javascript:void(0){{/if}}\" class=\"{{class}}\">"+
+                    "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "textarea":{
@@ -50,7 +59,7 @@ var sugarFieldsFixtures = {
                 "template":"<label class=\"control-label\">{{label}}<\/label>{{value}}\n"},
             "editView":{
                 "type":"basic",
-                "template":"<label class=\"control-label\">{{label}}<\/label>{{value}}\n"}
+                "template":"<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"}
         },
         "sugarField_actionsLink":{
             "default":{

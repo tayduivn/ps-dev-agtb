@@ -45,9 +45,7 @@
             options.page = options.page || 1;
 
             // fix page number since our offset is already at the end of the collection subset
-            if (options.page >= 0) {
                 options.page--;
-            }
 
             // can haz append?
             if (options.add && options.add === true) {
