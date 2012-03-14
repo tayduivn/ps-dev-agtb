@@ -67,24 +67,42 @@ SUGAR.append(SUGAR.themes, {
     setRightMenuTab: function(el, params) {
 
         var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
-        
+        var moreItemsContainer = "#moduleTabMore"+sugar_theme_gm_current;
+
 		//Check if the menu we want to show is in the more menu
 		if($(el+"Overflow").parents().is(extraMenu)) {
-			//get the previous sibling of extraMenu
-			var $currRight = $(extraMenu).prev();
-			//add menu after prev sib
+            var parent = $(el+"Overflow").parent();
 
-			 $(el+"Overflow").parent().insertAfter($currRight);
-			 var newId = el.replace("#","");
-			 var currRightId = $currRight.children("a:first-child").attr("id") + "OverflowHidden";
-			 $(el+"Overflow").attr("id",newId);
-			 $(el).parent().addClass("current");
-			 //remove prev sib
-			 
-			 $(el).parent().prev().remove();
+            //get the previous sibling of extraMenu
+            var $currRight = $(extraMenu).prev();
+            //add menu after prev sib
+
+             $(el+"Overflow").parent().insertAfter($currRight);
+             var newId = el.replace("#","");
+
+             var currRightId = $currRight.children("a:first-child").attr("id") + "OverflowHidden";
+             $(el+"Overflow").attr("id",newId);
+             $(el).parent().addClass("current");
+
+            var oldElement = $(el).parent().prev();
+            var oldID = oldElement.children("a:first-child").attr("id");
+            var possibleOverflowID = oldID + 'Overflow';
+            var possibleOverflowHiddenID = oldID + 'OverflowHidden';
+
+            //Check if the element previously existed in the overlofw or hidden submenu.
+            if(  $('#' + possibleOverflowID).length == 0 && $('#' + possibleOverflowHiddenID).length == 0  )
+            {
+                //Add previous module in right hand position to be first in line in the more menu
+                oldElement.children("a:first-child").attr("id",possibleOverflowID);
+                oldElement.insertAfter($(moreItemsContainer).children(':first-child'));
+            }
+            else
+            {
+                //We have a dup in the overlofw menu already so hide whats visible.
+                $(el).parent().prev().remove();
+            }
+
 			 $("#"+currRightId).parent().css("display","list-item");
-			 
-			 
 		}
     },
     setCurrentTab: function(params) {
