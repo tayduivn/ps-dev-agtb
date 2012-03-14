@@ -95,6 +95,8 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
         );
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ACL');
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        // reset cached ACLs
+        SugarACL::$acls = array();
     }
 
     /**
