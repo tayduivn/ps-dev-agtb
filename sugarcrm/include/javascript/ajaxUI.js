@@ -60,14 +60,7 @@ SUGAR.ajaxUI = {
 
             var c = document.getElementById("content");
             c.innerHTML = cont;
-            SUGAR.util.evalScript(cont);
-
-            //BEGIN SUGARCRM flav=com ONLY
-            if (r.moduleList)
-            {
-                SUGAR.themes.setModuleTabs(r.moduleList);
-            }
-            //END SUGARCRM flav=com ONLY
+            SUGAR.util.evalScript(cont);       
 
             //BEGIN SUGARCRM flav=pro ONLY
             if (r.menu)
