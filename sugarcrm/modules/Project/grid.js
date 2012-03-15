@@ -2355,8 +2355,7 @@ SUGAR.grid = function() {
 		/* BEGIN - CODE FOR THE RIGHT MOUSE MENU													   */
 		/***********************************************************************************************/
 		setUpContextMenu: function() {
-			if (document.getElementById('selected_view') &&
-				document.getElementById('selected_view').value <= 1 && currentUser == owner) {
+			if (document.getElementById('selected_view') && document.getElementById('selected_view').value <= 1) {
 		        // Create the context menu
 		        var oContextMenu = new YAHOO.widget.ContextMenu(
 		                                "contextmenu",

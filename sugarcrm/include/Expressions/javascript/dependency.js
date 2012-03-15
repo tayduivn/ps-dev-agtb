@@ -316,7 +316,7 @@ AH.assign = function(variable, value, flash)
     }
 	else {
         // See if this is a numeric field that needs formatting
-        var fieldForm = field.form.name;
+        var fieldForm = field.form.attributes.name.value;
         var fieldType = 'text';
         if ( typeof(validate[fieldForm]) == "object" ) {
             for ( var idx in validate[fieldForm] ) {
