@@ -140,6 +140,8 @@ $mod_strings = array (
 	
 	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Occurrences',
 	'LBL_REMOVE_ALL_RECURRENCES' => 'Remove All Occurrences',
+	
+	'LBL_DATE_END_ERROR' => 'End date is before start date',
 
 );
 

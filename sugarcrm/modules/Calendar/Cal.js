@@ -457,6 +457,13 @@
 						CAL.records_openable = true;
 						CAL.update_vcal();
 						ajaxStatus.hideStatus();
+					
+					} else {
+						if (res.errorMessage != 'undefined') {
+							alert(res.errorMessage);							
+						}
+						CAL.refresh();
+						ajaxStatus.hideStatus();	
 					}
 				}							 
 			};
