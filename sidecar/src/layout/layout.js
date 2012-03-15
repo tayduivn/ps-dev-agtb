@@ -20,7 +20,11 @@
 
                 Handlebars.registerHelper('buildRoute', function(context, model, action, options) {
                     options = options || {};
-                    var route = app.router.buildRoute(context.get("module"), model.id, action, options);
+                    var id=model.id
+                    if (action =='create'){
+                        id = '';
+                    }
+                    var route = app.router.buildRoute(context.get("module"), id, action, options);
                     return new Handlebars.SafeString(route);
                 });
 

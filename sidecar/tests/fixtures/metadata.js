@@ -95,7 +95,6 @@ fixtures.metadata = {
                     {
                         "label":"Details",
                         "fields":[
-                            {name:"case_number", label:"Case Number", "class":"foo"},
                             {name:"name", label:"Name"},
                             {name:"status", label:"Status"},
                             {name:"description", label:"Description"}
@@ -141,10 +140,44 @@ fixtures.metadata = {
                         name:"show_more_button",
                         type:"button",
                         label:"Show More",
-                        primary:true,
+                        class:"loading wide",
                         events : {
                             click : "function(){ var self = this; " +
-                                    "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render()}});" +
+                                    "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render();window.scrollTo(0,document.body.scrollHeight);}});" +
+                                "}"
+                        }
+                    }
+                ],
+                "listNav":[
+                    {
+                        name:"show_more_button_back",
+                        type:"navElement",
+                        icon:"icon-plus",
+                        label:" ",
+                        route:{
+                            action:"create",
+                            module: "Cases"
+                        }
+                    },
+                    {
+                        name:"show_more_button_back",
+                        type:"navElement",
+                        icon:"icon-chevron-left",
+                        label:" ",
+                        events : {
+                            click : "function(){ var self = this; " +
+                                    "console.log(this); this.context.state.collection.paginate({page:-1, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render()}});" +
+                                "}"
+                        }
+                    },
+                    {
+                        name:"show_more_button_forward",
+                        type:"navElement",
+                        icon:"icon-chevron-right",
+                        label:" ",
+                        events : {
+                            click : "function(){ var self = this; " +
+                                    "console.log(this); this.context.state.collection.paginate({success:function(){console.log(\"in paginate success\");  self.context.state.layoutObj.render(); console.log(self); }});" +
                                 "}"
                         }
                     }
@@ -455,8 +488,7 @@ fixtures.metadata = {
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.sugarAuth.login(args, {success:" +
                                             "function(){console.log(\"logged in successfully!\");self.app.navigate('', self.model); }" +
                                         "});" +
-                                    "}",
-                                hover : "myCallback"
+                                    "}"
                             }
                         }
                     ],

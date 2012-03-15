@@ -73,7 +73,8 @@ describe("DataManager", function() {
         var mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
 
-        var bean = dm.fetchBean(moduleName, "xyz", null, beanType);
+        var bean = dm.createBean(moduleName, {id: "xyz"}, beanType);
+        bean.fetch();
 
         expect(bean.id).toEqual("xyz");
         expect(bean.module).toEqual(moduleName);
@@ -89,7 +90,8 @@ describe("DataManager", function() {
         var mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
 
-        var collection = dm.fetchBeans(moduleName, null, beanType);
+        var collection = dm.createBeanCollection(moduleName, null, beanType);
+        collection.fetch();
 
         expect(collection.module).toEqual(moduleName);
         expect(collection.beanType).toEqual(beanType);
