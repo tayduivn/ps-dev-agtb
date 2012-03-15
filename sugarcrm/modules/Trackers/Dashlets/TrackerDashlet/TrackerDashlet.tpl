@@ -36,6 +36,7 @@ function onLoadDoInit() {
 {/literal}
 tracker_dashlet = new TrackerDashlet();
 tracker_dashlet.init('{$id}', {$height});
+tracker_dashlet.comboChanged();
 {literal}
 }
 

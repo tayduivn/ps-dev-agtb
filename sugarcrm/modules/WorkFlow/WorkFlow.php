@@ -649,7 +649,7 @@ $alert_file_contents = "";
 		while($row = $this->db->fetchByAssoc($result, false)){
 
 			///BEGIN check to see if this is new, update, or all, then add proper if statement
-			$record_type_needed = write_record_type($eval_dump, $row['record_type']);
+            $record_type_needed = write_record_type($eval_dump, $row['record_type'], $row);
 
 			$trigger_processed=false;
 			if($row['trigger_type']=="compare_count"){
@@ -1268,7 +1268,7 @@ function get_rel_module_array($include_none=false){
 	return $field_option_list;
 }
 
-function get_rel_module($var_rel_name, $get_rel_field_name = false){
+function get_rel_module($var_rel_name, $get_rel_name = false){
 
 
 	//get the vardef fields relationship name
@@ -1280,8 +1280,10 @@ function get_rel_module($var_rel_name, $get_rel_field_name = false){
 		$var_rel_name = $rel_name;
 	}
 	$var_rel_name = strtolower($var_rel_name);
-    if($get_rel_field_name) {
-        $this->rel_field_name = $var_rel_name;
+    if($get_rel_name)
+    {
+        //bug #46246: should set relationship name instead of related field name
+        $this->rel_name = isset($rel_name) ? $rel_name : $var_rel_name;
     }
 	$rel_attribute_name = $module_bean->field_defs[$var_rel_name]['relationship'];
 	//use the vardef to retrive the relationship attribute

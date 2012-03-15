@@ -496,6 +496,7 @@ function displayGroupCount() {
 	// no op
 } // fn
 {/literal}
+var current_user_id = '{$current_user_id}';
 {foreach from=$user_array key=user_id item=user_name}
 {literal}users_array[users_array.length] = {text:{/literal}'{$user_name}',value:'{$user_id}'};
 {/foreach}

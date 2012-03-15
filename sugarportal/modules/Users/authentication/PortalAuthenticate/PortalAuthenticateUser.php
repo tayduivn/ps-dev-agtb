@@ -73,6 +73,7 @@ class PortalAuthenticateUser{
             $portal->soapClient = new nusoapclient($sugar_config['parent_site_url'] . '/soap.php?wsdl', true);
             $portal->soapSession = $_SESSION['authenticated_user_id'];
             $portal->soapClientProxy = $portal->soapClient->getProxy();
+            $portal->soapClientProxy->decodeUTF8($sugar_config['use_decode_utf8_for_data_from_soap']);
 
             return true;
         }
