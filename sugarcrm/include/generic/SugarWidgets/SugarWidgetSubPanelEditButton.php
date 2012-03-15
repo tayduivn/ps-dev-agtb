@@ -40,7 +40,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 	function displayHeaderCell($layout_def)
 	{
-		return '&nbsp;';
+		return '';
 	}
 
 	function displayList($layout_def)

@@ -72,7 +72,7 @@
 {if !$DISABLE_FEEDBACK_WIDGET}{literal}
 $('#zenbox_tab').ready(function(){
 	$('#partner').append($('#zenbox_tab'));	
-	$('#zenbox_tab').attr('title','').html("Feedback");
+	$('#zenbox_tab').css('text-indent','0px').attr('title','').html("Feedback");
 	$('#zenbox_close').remove();
 	$('.zenbox_header').html('<div class="close">&nbsp;</div>')
 	$('.zenbox_header .close').click(function() {

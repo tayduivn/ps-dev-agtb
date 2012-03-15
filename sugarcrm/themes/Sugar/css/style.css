@@ -5778,7 +5778,7 @@ span.dcmenuitem:hover{
 
 #dcmenuSugarCube {
 float: right;
-margin: 0px 0px 0 2px;
+padding: 0px 0px 0 2px;
 height: 43px;
 }
 
@@ -6290,7 +6290,7 @@ li.active a img.deletePageImg, li.active a span.deletePageImg {
 
 ul.clickMenu {
 	list-style: none;
-	padding: 0px 3px 0px 0px;	
+	padding: 0px;	
 	margin: 0 !important;
 	vertical-align: bottom;
 	-webkit-border-radius: 1px; 
@@ -6360,7 +6360,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	text-decoration: none;
 	float: left;
 	font-weight: normal !important;
-	padding: 3px 0px 3px 10px !important;
+	padding: 3px 10px 3px 10px !important;
 	color: #000;
 	font-size: 12px;
 }
@@ -6377,17 +6377,15 @@ ul.clickMenu li a:hover{
 text-decoration: none !important;
 }
 ul.clickMenu li > span { /*--Drop down trigger styles--*/
-	width: 17px;
+	width: 20px;
 	height: 21px;
 	float: left;
-	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 6px -25px;
+	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 5px -25px;
 	cursor: pointer;
 }
 
 ul.clickMenu li > span.ab { /*--Drop down trigger styles--*/
     border-left: 1px #aaa solid;
-    margin-left: 10px;
-    padding-left: 5px;
 }
 ul.clickMenu li span.subhover {
 	cursor: pointer;
@@ -6431,7 +6429,6 @@ ul.clickMenu.subpanel.records li a{
 
 ul.clickMenu.subpanel.records li > span{ 
 	opacity: .5;
-    height: 15px;
 }
 
 ul.clickMenu.subpanel.records li ul.subnav li a span {
@@ -6440,26 +6437,26 @@ ul.clickMenu.subpanel.records li ul.subnav li a span {
 	background-image: none;
 }
 
-ul.clickMenu.button li > span {
+ul.clickMenu.button.nosplit li > span {
 	width: auto;
 	background-position: right -25px;	
 	padding: 3px 15px 3px 10px !important;
 	height: auto;
 }
 
-ul.clickMenu.button:hover li > span {
+ul.clickMenu.button.nosplit:hover li > span {
 	background-position: right 3px;
 }
 
-ul.clickMenu.button li > span a {
+ul.clickMenu.button.nosplit li > span a {
 	padding: 0px !important;
 }
 
-ul.clickMenu.button {
+ul.clickMenu.button.nosplit {
 	padding-right: 5px;
 }
 
-ul.clickMenu.button li ul.subnav {
+ul.clickMenu.button.nosplit li ul.subnav {
 	width: auto;	
 }
 
@@ -6992,14 +6989,13 @@ td #moduleListTD
     color: #444;
 }
 
-#zenbox_tab, #uvTab {
+#zenbox_tab {
 border: 0px none !important;
 left: auto !important;
 top: auto !important;
 right: 20px;
 bottom: 0px;	
 position: inherit !important;
-text-indent: 0px !important;
 width: 100px !important;
 height: 24px !important;
 background-image: none !important;
