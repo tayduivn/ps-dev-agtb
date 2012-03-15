@@ -685,6 +685,9 @@ table#tabFormPagination td,  #tabFormPagination, #EditView > table#tabFormPagina
 	border-bottom: none;
 	margin-bottom: 0;
 }
+td.paginationWrapper {
+	text-align: right;	
+}
 .edit tr td table, 
 .edit tr td table tr td
 {
