@@ -239,8 +239,8 @@ class SugarSearchEngineHighlighter
         }
 
         // handle special characters
-        $toSearch = array('?', '*', "\\", '+', '/');
-        $replace = array('.', '.*?', "\\"."\\", ' ', '\/');
+        $toSearch = array('.', '?', '*', "\\", '+', '/', '|', '(', ')', '[', ']', '{', '}');
+        $replace = array('\.', '.', '.*?', "\\"."\\", '\+', '\/', '\|', '\(', '\)', '\[', '\]', '\{', '\}');
         $searchString = str_replace($toSearch, $replace, $searchString);
 
         // it may contain multiple words
