@@ -6348,7 +6348,7 @@ ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
 }
 
 ul.clickMenu:hover > li > span {
-	background-position: 6px 3px;
+	background-position: 5px 3px;
 }
 ul.clickMenu li, ul.SugarActionMenuIESub li {
 	float: left;
@@ -6425,6 +6425,28 @@ ul.clickMenu.subpanel.records {
 	background-color: #eee;
 	border: 1px solid #ddd;	
 	background-image: none;
+}
+
+ul.clickMenu.subpanel.records:hover {
+   		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#255e90 2%,
+		#3d74a5 100%
+		) !important;
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.02, #255e90),
+	    color-stop(1, #3d74a5)
+	   ) !important;	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5') !important;
+}
+
+ul.clickMenu.subpanel.records:hover > li div a{ 
+	color: #fff !important;	
 }
 
 ul.clickMenu.subpanel.records li a{ 
