@@ -270,6 +270,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 
 	template_reports_filters($smarty, $args);
 	$smarty->assign('reporter_report_type', $args['reporter']->report_type);
+	$smarty->assign('current_user_id', $current_user->id);
 	$smarty->assign('md5_current_user_id', md5($current_user->id));
 	if (!hasRuntimeFilter($reporter)) {
 		//$showRunReportButton = false;
@@ -1469,7 +1470,7 @@ function get_select_related_html(&$args)
 function js_setup(&$smarty) {
 	global $global_json;
 	require_once('include/QuickSearchDefaults.php');
-	$qsd = new QuickSearchDefaults();
+	$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 	$qsd->form_name = "ReportsWizardForm";
 	$sqs_objects = array('ReportsWizardForm_assigned_user_name' => $qsd->getQSUser()); //, 'ReportsWizardForm_team_name_collection_0' => $qsd->getQSTeam());
 

@@ -349,7 +349,11 @@ function post_install() {
 		_logThis('Set chartEngine in config.php to JS Charts', $path);
 		$sugar_config['chartEngine'] = 'Jit';
 	}
-
+    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.	
+    if ($origVersion < '642') {
+        _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
+        $sugar_config['upload_maxsize'] = 30000000;
+    }
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs).
     if(file_exists('modules/Administration/SaveTabs.php'))

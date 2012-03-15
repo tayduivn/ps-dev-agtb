@@ -39,9 +39,9 @@
 	<input type="hidden" value="Users" name="module" />
 	<input type="hidden" value="Authenticate" name="action" />
 	<input type="hidden" value="Users" name="return_module" />
-    <input type="hidden" name="login_module" value="{if isset($smarty.request.login_module)}{$smarty.request.login_module}{else}Users{/if}">
-    <input type="hidden" name="login_action" value="{if isset($smarty.request.login_action)}{$smarty.request.login_action}{else}wirelessmain{/if}">
-    <input type="hidden" name="login_record" value="{if isset($smarty.request.login_record)}{$smarty.request.login_record}{/if}">
+	{foreach from=$LOGIN_VARS key=key item=var}
+		<input type="hidden" name="{$key}" value="{$var}">
+	{/foreach}
 </form>
 <p>
 <a href="index.php?module=Users&action=Login&mobile=0">{$LBL_NORMAL_LOGIN}</a>

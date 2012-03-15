@@ -103,7 +103,9 @@ echo $viewLicenseText;
 
 //BEGIN SUGARCRM flav=com  && dep=os ONLY
 
-		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im"; /*SKIP_IMAGE_TAG*/
+//		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im"; /*SKIP_IMAGE_TAG*/
+$imgTagString = '<img style="margin-top: 2px" border="0" width="106" height="23" src="include/images/poweredby_sugarcrm.png" alt="'.$mod_strings['LBL_POWERED_BY_SUGAR'].'">';
+		
 
 //END SUGARCRM flav=com  && dep=os ONLY
 

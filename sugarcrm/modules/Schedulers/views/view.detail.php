@@ -55,3 +55,4 @@ class SchedulersViewDetail extends ViewDetail {
  		parent::display();
  	}
 }
+

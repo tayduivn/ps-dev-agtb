@@ -48,8 +48,26 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
                 {
                     $this->AddPage();
                     list($width, $height) = getimagesize($imageFile); 
-                    $imageHeight = ($height >= $width) ? $this->getPageHeight()*.5 : "";
-                    $imageWidth = ($width >= $width) ? $this->getPageWidth()*.7 : "";
+                    $imageWidthAsUnits = $this->pixelsToUnits($width);
+                    $imageHeightAsUnits = $this->pixelsToUnits($height);
+                    
+                    $dimensions = $this->getPageDimensions();
+                    
+                    $pageWidth = $dimensions['wk'];
+                    $pageHeight = $dimensions['hk'];
+                    
+                    $marginTop = $dimensions['tm'];
+                    $marginBottom = $dimensions['bm'];
+                    $marginLeft = $dimensions['lm'];
+                    $marginRight = $dimensions['rm'];
+                    
+                    $freeWidth = 0.9*($pageWidth - $marginLeft - $marginRight);
+                    $freeHeight = 0.9*($pageHeight - $marginTop - $marginBottom);
+                    
+                    $rate = min($freeHeight/$imageHeightAsUnits, $freeWidth/$imageWidthAsUnits);
+                    $imageWidth = floor($rate*$imageWidthAsUnits);
+                    $imageHeight = floor($rate*$imageHeightAsUnits);
+                     
                     $this->Image($imageFile,$this->GetX(),$this->GetY(),$imageWidth,$imageHeight,"","","N",false,300,"", false,false,0,true);
 
                     if($sugarChart->print_html_legend_pdf)

@@ -372,8 +372,8 @@ if(empty($_REQUEST['to_pdf']) && empty($_REQUEST['to_csv'])) {
 	echo '<link rel="stylesheet" type="text/css" media="all" href="themes/'.$theme.'/calendar-win2k-cold-1.css?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '">';
 	echo '<script>jscal_today = ' . (1000 * strtotime($timedate->handle_offset(gmdate('Y-m-d H:i:s', gmmktime()), 'Y-m-d H:i:s'))) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
 	echo '<script type="text/javascript" src="jscalendar/calendar.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-	echo '<script type="text/javascript" src="jscalendar/lang/calendar-en.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo '<script type="text/javascript" src="jscalendar/calendar-setup_3.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
+    echo '<script type="text/javascript" src="jscalendar/lang/calendar-en.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo '<script src="include/javascript/yui/YAHOO.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 //  echo '<script src="include/javascript/yui/log.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo '<script src="include/javascript/yui/dom.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
