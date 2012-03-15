@@ -69,7 +69,7 @@ class SugarSearchEngineMappingHelper
      * this defines the field types that can be enabled for full text search
      * @var array
      */
-    protected static $ftsEnabledFieldTypes = array('name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url');
+    protected static $ftsEnabledFieldTypes = array('name', 'user_name', 'varchar', 'decimal', 'float', 'int', 'phone', 'text', 'url');
 
     /**
      *
