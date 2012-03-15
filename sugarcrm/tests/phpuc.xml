@@ -27,7 +27,7 @@
  ********************************************************************************/
 -->
 
-<phpunit bootstrap="./SugarTestHelper.php" 
+<phpunit bootstrap="./SugarTestHelper.php"
     backupGlobals="false"
     backupStaticAttributes="false">
     <testsuites>
@@ -36,6 +36,7 @@
                 <directory>data</directory>
                 <directory>include</directory>
                 <directory>install</directory>
+                <directory>jssource</directory>
                 <directory>modules</directory>
                 <directory>ModuleInstall</directory>
                 <directory>service</directory>
@@ -45,6 +46,7 @@
     <testsuite name="All Sugar Tests">
         <directory>./tests/data</directory>
         <directory>./tests/include</directory>
+        <directory>./tests/jssource</directory>
         <directory>./tests/modules</directory>
         <directory>./tests/ModuleInstall</directory>
         <directory>./tests/service</directory>
@@ -56,7 +58,6 @@
             <directory suffix=".php">./custom</directory>
             <directory suffix=".php">./examples</directory>
             <directory suffix=".php">./jscalendar</directory>
-            <directory suffix=".php">./jssource</directory>
             <directory suffix=".php">./log4php</directory>
             <directory suffix=".php">./metadata</directory>
             <!-- //BEGIN SUGARCRM flav=pro ONLY -->
