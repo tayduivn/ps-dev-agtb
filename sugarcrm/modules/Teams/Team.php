@@ -41,6 +41,7 @@ class Team extends SugarBean
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
+	var $associated_user_id;
 
 	var $name;
 	var $description;

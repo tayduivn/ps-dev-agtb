@@ -267,7 +267,7 @@ class VardefManager{
         if($cacheCustom){
             require_once("modules/DynamicFields/DynamicField.php");
             $df = new DynamicField ($module) ;
-            $df->buildCache($module);
+            $df->buildCache($module, false);
         }
         //BEGIN SUGARCRM flav=pro ONLY
         if (empty($params['ignore_rel_calc_fields']))

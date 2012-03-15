@@ -138,7 +138,10 @@ for ($i = 0; $i < count($projectTasks); $i++){
 	$mpx .= $projTaskId . "," .$projTaskId . ",";
 	
 	// name
-	$mpx .= $locale->translateCharset($projectTasks[$i]->name, 'UTF-8', $locale->getExportCharset()) . ",";
+    $mpx_name = htmlspecialchars_decode( $locale->translateCharset($projectTasks[$i]->name, 'UTF-8', $locale->getExportCharset()) );
+    $mpx_name = str_replace('"', '""', $mpx_name);
+    
+	$mpx .= "\"" . $mpx_name . "\",";
 	
 	// milestone
 	$mpx .= ($projectTasks[$i]->milestone_flag == 1) ? "Yes," :  "No,";

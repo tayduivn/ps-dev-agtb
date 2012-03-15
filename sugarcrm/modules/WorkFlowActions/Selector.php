@@ -155,47 +155,9 @@ $form->out("main");
 	$js = "<script type=\"text/javascript\">";
 	$js .= "function toggle_type(type){";
 	$js .= "if(type == 'Advanced'){";
-	if(in_array($type, ProcessView::get_js_exception_fields()) != 1){
-		$js .= "removeFromValidate('EditView', 'field_".$field_num."__field_value');";
-	}
 	$javascript = new javascript();
-
-	if($type == 'date' || $type == 'time' || $type=='datetimecombo'){
-		$js .= "addToValidate('EditView', 'field_".$field_num."__adv_value', 'assigned_user_name', 1,'". $javascript->stripEndColon(translate($temp_module->field_name_map[$action_object->field]['vname'])) . "' )";
-	}
-	else if(in_array($type, ProcessView::get_js_exception_fields()) == 1){
-				//do nothing
-			}
-	else
-	{
-		$javascript->setFormName('EditView');
-		$javascript->setSugarBean($temp_module);
-		$javascript->addField($action_object->field, true, '', 'field_'.$_REQUEST['field_num'].'__adv_value');
-		$js .= $javascript->getScript(false);
-	}
-	$js .= "}";
-	$js .= "else{";
-	if(in_array($type, ProcessView::get_js_exception_fields()) != 1){
-	$js .= "removeFromValidate('EditView', 'field_".$field_num."__adv_value');";
-	}
-	$javascript = new javascript();
-
-	if($type == 'date' || $type == 'time' || $type=='datetimecombo'){
-		$js .= "addToValidate('EditView', 'field_".$field_num."__field_value', 'assigned_user_name', 1,'". $javascript->stripEndColon(translate($temp_module->field_name_map[$action_object->field]['vname'])) . "' )";
-	}
-	else if(in_array($type, ProcessView::get_js_exception_fields()) == 1){
-				//do nothing
-
-			}
-	else{
-
-		$javascript->setFormName('EditView');
-		$javascript->setSugarBean($temp_module);
-		$javascript->addField($action_object->field, true, '', 'field_'.$_REQUEST['field_num'].'__field_value');
-		$js .= $javascript->getScript(false);
-	}
-	$js .= "}}";
-	$js .= "</script>";
+$js .= processJsForSelectorField($js, $javascript, $action_object->field, $type, $temp_module, $field_num, 'adv') . "}";
+$js .= "else{" . processJsForSelectorField($js, $javascript, $action_object->field, $type, $temp_module, $field_num, 'field') . "}}</script>";
 	if(empty($action_object->set_type) || $action_object->set_type == "Basic"){
 		$js .= $javascript->getScript(true);
 	}
@@ -210,6 +172,31 @@ $form->out("main");
 	//rsmith
 	echo $GLOBALS['timedate']->get_javascript_validation();
 
+
+function processJsForSelectorField($jsString, &$javascript, $field, $type, $tempModule, $fieldNumber, $ifAdvanced = 'field')
+{
+    // Validate everything. 
+    $workFlowActionsExceptionFields = array ();
+    if (in_array($type, $workFlowActionsExceptionFields) != 1)
+    {
+        $jsString .= "removeFromValidate('EditView', 'field_{$fieldNumber}__{$ifAdvanced}_value');";
+    }
+    $javascript = new javascript();
+
+    if (in_array($type, array ('date', 'time', 'datetimecombo')))
+    {
+        $jsString .=
+            "addToValidate('EditView', 'field_{$fieldNumber}__{$ifAdvanced}_value', 'assigned_user_name', 1,'{$javascript->stripEndColon(translate($tempModule->field_name_map[$field]['vname']))}' )";
+    } 
+    else if (!(in_array($type, $workFlowActionsExceptionFields) == 1))
+    {
+        $javascript->setFormName('EditView');
+        $javascript->setSugarBean($tempModule);
+        $javascript->addField($field, true, '', "field_{$_REQUEST['field_num']}__{$ifAdvanced}_value");
+        $jsString .= $javascript->getScript(false);
+    }
+    return $jsString;
+}
 ?>
 
 <?php insert_popup_footer(); ?>

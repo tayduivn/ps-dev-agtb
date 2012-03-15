@@ -42,7 +42,6 @@ $mod_strings = array (
 	'LBL_BODY' => '正文:',
 	'LBL_CLOSE' => '关闭:',
 	'LBL_COLON'					=> ':',
-	'LBL_CONTACT_AND_OTHERS' => '联系人/潜在客户/销售前景',
 	'LBL_DESCRIPTION' => '说明:',
 	'LBL_EDIT_ALT_TEXT' => '编辑纯文本:',
 	'LBL_EMAIL_ATTACHMENT' => '电子邮件附件',

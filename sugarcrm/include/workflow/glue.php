@@ -54,12 +54,18 @@ class WorkFlowGlue {
 
 	var $eval = "";
 
-	var $operator_array = array (
-    		'Equals' => '==',
-			'Less Than' => '<',
-			'More Than' => '>',
-			'Does not Equal' => '!=',
-		);
+	var $operator_array = array(
+        'Equals' => '==',
+        'Is empty' => '==',
+        'Less Than' => '<',
+        'More Than' => '>',
+        'Does not Equal' => '!=',
+        'Is not empty' => '!=',
+    );
+    var $translateOperators = array(
+        'Is empty' => 'LBL_IS_EMPTY',
+        'Is not empty' => 'LBL_IS_NOT_EMPTY',
+    );
 
 
 	function WorkFlowGlue(){
@@ -69,6 +75,18 @@ class WorkFlowGlue {
 
 	}
 
+    public function translateOperator($operatorName) 
+    {
+        foreach ($this->translateOperators as $key => $value) 
+        {
+            if (translate($value) == $operatorName)
+            {
+                return $this->operator_array[$key];
+            }
+        }
+        return $this->operator_array[$operatorName];
+    }
+    
 	private function getCompareText($shell_object)
     {
         //We need to parse datetime fields as they may come from the DB in a different format from the one in save which
@@ -376,7 +394,7 @@ class WorkFlowGlue {
 				//use the variable, but from the past array
 
 				$eval_string .= build_source_array($parent_type, $type_object->lhs_field);
-				$eval_string .= " ".$this->operator_array[$type_object->operator]." ";
+				$eval_string .= " " . $this->translateOperator($type_object->operator) . " ";
 
 				//escape the quotes as needed
 				$eval_string .= " '".$this->write_escape($right_value)."'";

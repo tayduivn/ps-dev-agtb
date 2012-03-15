@@ -43,6 +43,7 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
 
     public function setUp()
     {
+        $GLOBALS['app_strings'] = return_application_language('en_us');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $_SESSION['ACL'] = array();
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['KBDocuments'] =
@@ -93,6 +94,7 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
             'fields' => array(),
         );
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ACL');
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     /**
@@ -101,8 +103,6 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
      */
     public function testAccessToKBDocument()
     {
-
-
         $this->expectOutputRegex('/.*(' . quotemeta($GLOBALS['mod_strings']['LBL_NO_ACCESS']) . ')+.*/');
         $controller = new KBDocument();
         $view_object_map = array();
@@ -119,5 +119,6 @@ class Bug43069Test extends PHPUnit_Extensions_OutputTestCase
         unset($GLOBALS['current_user']);
         unset($_SESSION['ACL']);
         unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_strings']);
     }
 }

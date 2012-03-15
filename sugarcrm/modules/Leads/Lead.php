@@ -613,6 +613,17 @@ class Lead extends Person {
         
         return $return_array;
     }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Overriden to filter legacy calls and meetings
+     * @see SugarBean::call_vardef_handler()
+     */
+    public function call_vardef_handler($meta_array_type=null)
+    {
+        require_once('modules/Leads/LeadsVarDefHandler.php');
+        $this->vardef_handler = new LeadsVarDefHandler($this, $meta_array_type);
+    }
+    //END SUGARCRM flav=pro ONLY    
 }
 
-?>

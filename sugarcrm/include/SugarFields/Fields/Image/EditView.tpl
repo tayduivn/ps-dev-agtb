@@ -44,7 +44,7 @@
 
 <input 
 	type="file" id="{{$idname}}" name="{{$idname}}" 
-	title="" size="30" maxlength="255" value="" tabindex="0" 
+	title="" size="30" maxlength="255" value="" tabindex="{{$tabindex}}"
 	onchange="SUGAR.image.confirm_imagefile('{{$idname}}');" 
 	class="imageUploader"
 	{if !empty({{sugarvar key='value' string=true}}) {{if !empty($vardef.calculated)}}|| true{{/if}} }

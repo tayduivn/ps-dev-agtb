@@ -20,10 +20,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 // try to use the user's theme if we can figure it out
-if ( isset($_REQUEST['themeName']) )
+if ( isset($_REQUEST['themeName']) && SugarThemeRegistry::current()->name != $_REQUEST['themeName']) {
     SugarThemeRegistry::set($_REQUEST['themeName']);
-elseif ( isset($_SESSION['authenticated_user_theme']) )
+} elseif ( isset($_SESSION['authenticated_user_theme']) ) {
     SugarThemeRegistry::set($_SESSION['authenticated_user_theme']);
+}
 
 while(substr_count($_REQUEST['imageName'], '..') > 0){
 	$_REQUEST['imageName'] = str_replace('..', '.', $_REQUEST['imageName']);

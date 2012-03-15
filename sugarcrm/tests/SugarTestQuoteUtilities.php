@@ -66,6 +66,9 @@ class SugarTestQuoteUtilities
     {
         $quote_ids = self::getCreatedQuoteIds();
         $GLOBALS['db']->query('DELETE FROM quotes WHERE id IN (\'' . implode("', '", $quote_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM quotes_contacts WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM quotes_accounts WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM quotes_opportunities WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')');
     }
         
     public static function getCreatedQuoteIds() 
