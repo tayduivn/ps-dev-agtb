@@ -893,6 +893,10 @@ class MssqlManager extends DBManager
             $tbl_name = $module_str;
             $sql = strtolower($sql);
 
+            // Bug #45625 : Getting Multi-part identifier (reports.id) could not be bound error when navigating to next page in reprots in mssql
+            // there is cases when sql string is multiline string and it we cannot find " from " string in it
+            $sql = str_replace(array("\n", "\r"), " ", $sql);
+
             //look for the location of the "from" in sql string
             $fromLoc = strpos($sql," from " );
             if ($fromLoc>0){
