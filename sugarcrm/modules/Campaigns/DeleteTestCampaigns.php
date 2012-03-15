@@ -81,7 +81,7 @@ function deleteTestRecords($focus)
 
     if($focus->db->getScriptName() == 'mysql'
        //BEGIN SUGARCRM flav=ent ONLY
-        || $focus->db->getSriptName() == 'IBM_DB2'
+        || $focus->db->getScriptName() == 'IBM_DB2'
        //END SUGARCRM flav=ent ONLY
     )
     {
