@@ -155,7 +155,7 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
         $button_class_name = str_replace("SubPanelTop", "", $widget_data['widget_class']);
 
         //create unique button id from the class name by converting camel case letters to the underscore form
-        $func_to_underscore = create_function('$args', 'return "_" . strtolower($args[0].$args[1]);');
+        $func_to_underscore = create_function('$args', 'return "_" . strtolower($args[0]);');
         $inputID = $this->getWidgetId() . preg_replace_callback('/[A-Z]/', $func_to_underscore, $button_class_name);
 
 		return ' <input type="button" name="' . $this->getWidgetId() . '_select_button" id="' . $inputID . '" class="button"' . "\n"
