@@ -167,7 +167,8 @@
                 }
 
                 if (state.id) {
-                    bean = app.dataManager.fetchBean(state.module, state.id, options);
+                    bean = app.dataManager.createBean(state.module, { id: state.id });
+                    bean.fetch(options);
                     collection = app.dataManager.createBeanCollection(state.module, [bean]);
                 } else if (state.create) {
                     bean = app.dataManager.createBean(state.module);

@@ -9,16 +9,16 @@
     app.augment("BeanCollection", Backbone.Collection.extend({
 
         constructor: function(models, options) {
-            if (options && options.relation) {
-                this.relation = options.relation;
-                delete options.relation;
+            if (options && options.link) {
+                this.link = options.link;
+                delete options.link;
             }
             Backbone.Collection.prototype.constructor.call(this, models, options);
         },
 
         _prepareModel: function(model, options) {
-            model = Backbone.Collection.prototype._prepareModel(model, options);
-            if (model) model.relation = this.relation;
+            model = Backbone.Collection.prototype._prepareModel.call(this, model, options);
+            if (model) model.link = this.link;
             return model;
         },
 
@@ -29,8 +29,8 @@
          * @return {String} string representation of this collection.
          */
         toString: function() {
-            return "coll:" + (this.relation ?
-                (this.relation.bean.module + "/" + this.relation.bean.beanType + "/" + this.relation.bean.id + "/") : "") +
+            return "coll:" + (this.link ?
+                (this.link.bean.module + "/" + this.link.bean.beanType + "/" + this.link.bean.id + "/") : "") +
                 this.module + "/" + this.beanType +
                 "-" + this.length;
         },
@@ -45,9 +45,7 @@
             options.page = options.page || 1;
 
             // fix page number since our offset is already at the end of the collection subset
-            if (options.page >= 0) {
                 options.page--;
-            }
 
             // can haz append?
             if (options.add && options.add === true) {
