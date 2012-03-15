@@ -53,7 +53,8 @@ fixtures.templates = {
     "subpanelView" :
         "",
     "listView" :
-        '<div class="thumbnail span12"><h4 class="view_title">{{context.state.module}}</h4>' +
+            '<div class="span12 container-fluid subhead">'+
+                '<h3>{{context.state.module}}</h3>' +
         "{{#each meta.panels}}" +
             '<div class="{{../name}}">' +
             '<table class="table table-striped"><thead><tr>' +
@@ -66,7 +67,7 @@ fixtures.templates = {
                 '{{#each ../fields}}' +
                     // SugarField requires the current context, field name, and the current bean in the context
                     // since we are pulling from the collection rather than the default bean in the context
-                    '<td>{{sugar_field ../../../context ../../../this ../this}}</td>' +
+                    '<td class="dblclick">{{sugar_field ../../../context ../../../this ../this}}</td>' +
                 '{{/each}}' +
                 '</tr>' +
             '{{/each}}' +
@@ -75,15 +76,12 @@ fixtures.templates = {
         "{{#each meta.buttons}}" +
                 "{{sugar_field ../context ../this ../model}}" +
         "{{/each}}"+
-            "<div class=\"btn-group\">"+
-           "</div>"+
-            '<ul class="nav nav-pills actions">'+
-        "{{#each meta.listNav}}" +
-            '<li>'  +
-            "{{sugar_field ../context ../this ../model}}" +
-            '</li>'+
-        "{{/each}}"+
-            "</div>"+
-            '</ul>'+
+            "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
+                        '<li>'  +
+                        "{{sugar_field ../context ../this ../model}}" +
+                        '</li>'+
+                    "{{/each}}"+
+                        '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}'+
+                        '</ul>'+
             "</div>"
 };
