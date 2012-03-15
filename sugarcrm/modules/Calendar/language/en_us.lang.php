@@ -128,7 +128,7 @@ $mod_strings = array (
 	'LBL_REPEAT_TAB' => 'Occurrence',	
 	
 	'LBL_REPEAT_TYPE' => 'Repeat',
-	'LBL_REPEAT_INTERVAL' => 'Interval',
+	'LBL_REPEAT_INTERVAL' => 'Every',
 	'LBL_REPEAT_END' => 'End',	
 	'LBL_REPEAT_END_AFTER' => 'After',
 	'LBL_REPEAT_OCCURRENCES' => 'occurrences',

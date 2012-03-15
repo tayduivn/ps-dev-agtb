@@ -1484,6 +1484,14 @@ $app_list_strings = array (
 	'Yearly' => 'Yearly',
     ),
     
+    'repeat_intervals' => array(
+        '' => '',
+        'Daily' => 'day(s)',
+        'Weekly' => 'week(s)',
+        'Monthly' => 'month(s)',
+        'Yearly' => 'year(s)',
+    ),
+    
     'duration_dom' => array(
     	'' => 'None',
     	'900' => '15 minutes',
