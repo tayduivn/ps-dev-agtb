@@ -298,10 +298,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
         $fields = $aItem->get_list_view_data();
         //BEGIN SUGARCRM flav=pro ONLY
-        if($aItem->bean_implements('ACL')){
-            ACLField::listFilter($fields,$aItem->module_dir,$GLOBALS['current_user']->id, $aItem->isOwner($GLOBALS['current_user']->id));
-
-        }
+        $aItem->ACLFilterFieldList($fields);
         //END SUGARCRM flav=pro ONLY
         if(isset($processed_ids[$aItem->id])) {
             continue;
@@ -529,7 +526,7 @@ function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
     $orderByColumn = $this->getSessionVariableName($varName, "ORDER_BY");
     $lastEqualsSortBy = false;
     $defaultOrder = false; //ascending
-    
+
     if(empty($sortBy)) {
         $this->setUserVariable($varName, "ORDER_BY", $defaultOrderBy);
         $sortBy = $defaultOrderBy;
@@ -1390,7 +1387,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             }
         }
         //bug43465 end
-        
+
         $sort_URL_base = $this->base_URL. "&".$this->getSessionVariableName($html_varName,"ORDER_BY")."=";
 
         if($sort_URL_base !== "")

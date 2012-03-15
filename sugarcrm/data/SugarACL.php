@@ -97,7 +97,7 @@ class SugarACL
      */
     public static function checkField($module, $field, $action,  $context = array())
     {
-        $context['field'] = $field;
+        $context['field'] = strtolower($field);
         $context['action'] = $action;
         return self::checkAccess($module, "field", $context);
     }
@@ -178,4 +178,65 @@ class SugarACL
         return $result;
     }
 
+    /**
+     * Filter list of fields and remove/blank fields that we can not access.
+     * Modifies the list directly.
+     * @param string $module
+     * @param array $list list of fields, keys are field names
+     * @param array $context
+     * @param array options Filtering options:
+     * - blank_value (bool) - instead of removing inaccessible field put '' there
+     * - add_acl (bool) - instead of removing fields add 'acl' value with access level
+     * - suffix (string) - strip suffix from field names
+     * - min_access (int) - require this level of access for field
+     * - use_value (bool) - look for field name in value, not in key of the list
+     */
+    public static function listFilter($module, &$list, $context = array(), $options = array())
+    {
+        foreach($list as $key=>$value) {
+            if(!empty($options['use_value'])) {
+                if(is_array($value)) {
+                    if(!empty($value['group'])){
+                        $value = $value['group'];
+                    } elseif(!empty($value['name'])) {
+                        $value = $value['name'];
+                    } else {
+                        // we don't know what to do with this one, skip it
+                        continue;
+                    }
+                }
+                $field = $value;
+            } else {
+                $field = $key;
+                if(is_array($value) && !empty($value['group'])){
+                        $field = $value['group'];
+                }
+            }
+            if(!empty($options['suffix'])) {
+                // remove suffix like _advanced
+                $field = str_replace($options['suffix'], '', $field);
+            }
+            if(!empty($options['add_acl'])) {
+                // finding out access level
+                $list[$key]['acl'] = self::getFieldAccess($module, $field, $context);
+            } else {
+                // or just checking for specific access
+                if(empty($options['min_access'])) {
+                    $min_access = 'access';
+                } else {
+                    if($options['min_access'] >= SugarACL::ACL_READ_WRITE) {
+                       $min_access = "edit";
+                    }
+                }
+                if(!self::checkField($module, $field, $min_access, $context)) {
+                    // if have no access, blank or remove field value
+                    if(empty($options['blank_value'])) {
+                        unset($list[$key]);
+                    } else {
+                        $list[$key] = '';
+                    }
+                }
+            }
+        }
+    }
 }

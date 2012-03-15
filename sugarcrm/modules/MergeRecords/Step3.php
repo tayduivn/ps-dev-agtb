@@ -149,16 +149,10 @@ $field_count = 1;
 $json = new JSON(JSON_LOOSE_TYPE);
 $diff_field_count=0;
 //BEGIN SUGARCRM flav=pro ONLY
-ACLField::listFilter($temp_field_array, $focus->merge_bean->module_dir, $GLOBALS['current_user']->id, false, true, 2, false, true);
+$focus->merge_bean->ACLFilterFieldList($temp_field_array, array(), array("min_access" => SugarACL::ACL_READ_WRITE));
 //END SUGARCRM flav=pro ONLY
 foreach ($temp_field_array as $field_array) {
-
-
-    if (show_field($field_array)
-    //BEGIN SUGARCRM flav=pro ONLY
-    && $field_array['acl'] > 1
-    //END SUGARCRM flav=pro ONLY
-    ) {
+    if (show_field($field_array)) {
 
         $select_row_curr_field_value = null;
         $b_values_different = false;

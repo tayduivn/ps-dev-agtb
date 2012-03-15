@@ -193,7 +193,7 @@ class ACLField  extends ACLAction
     /**
      * Filter fields list by ACLs
      * NOTE: works with global ACLs
-	 * @api
+	 * @internal
      * @param array $list Field list. Will be modified.
      * @param string $category Module for ACL
      * @param string $user_id

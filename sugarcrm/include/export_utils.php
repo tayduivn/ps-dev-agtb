@@ -201,7 +201,7 @@ function export($type, $records = null, $members = false, $sample=false) {
         //Remove fields that are only used for logic
         if($members && (in_array($dbname, $remove_from_members)))
             continue;
-        
+
         //default to the db name of label does not exist
         $field_labels[$key] = translateForExport($dbname,$focus);
     }
@@ -226,7 +226,7 @@ function export($type, $records = null, $members = false, $sample=false) {
                 $focus->id = (!empty($val['id']))?$val['id']:'';
                 $focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
                 $focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
-                ACLField::listFilter($val, $focus->module_dir,$current_user->id, $focus->isOwner($current_user->id), true, 1, true );
+                $focus->ACLFilterFieldList($val, array(), array("blank_value" => true));
             }
 
 		//END SUGARCRM flav=pro ONLY

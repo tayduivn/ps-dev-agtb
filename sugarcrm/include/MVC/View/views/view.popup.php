@@ -100,11 +100,7 @@ class ViewPopup extends SugarView{
 			$displayColumns = array();
 			$filter_fields = array();
 			$popup = new PopupSmarty($this->bean, $this->module);
-			//BEGIN SUGARCRM flav=pro ONLY
-            if($this->bean->bean_implements('ACL')) {
-                ACLField::listFilter($listViewDefs[$this->module],$this->module, $GLOBALS['current_user']->id ,true);
-            }
-            //END SUGARCRM flav=pro ONLY
+			$this->bean->ACLFilterFieldList($listViewDefs[$this->module], array("owner_override" => true));
 			foreach($listViewDefs[$this->module] as $col => $params) {
 	        	$filter_fields[strtolower($col)] = true;
 				 if(!empty($params['related_fields'])) {
@@ -140,7 +136,7 @@ class ViewPopup extends SugarView{
 			$popup->massUpdateData = $massUpdateData;
 
 			$popup->setup('include/Popups/tpls/PopupGeneric.tpl');
-			
+
             //We should at this point show the header and javascript even if to_pdf is true.
             //The insert_popup_header javascript is incomplete and shouldn't be relied on.
             if (isset($this->options['show_all']) && $this->options['show_all'] == false)

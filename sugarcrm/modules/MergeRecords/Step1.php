@@ -72,32 +72,28 @@ $sel_fields=array();
 $temp_field_array = $focus->merge_bean->field_defs;
 $bean_data=array();
 //BEGIN SUGARCRM flav=pro ONLY
-ACLField::listFilter($temp_field_array, $focus->merge_bean->module_dir, $GLOBALS['current_user']->id, false, true, 2, false, true);
+$focus->merge_bean->ACLFilterFieldList($temp_field_array);
 //END SUGARCRM flav=pro ONLY
 foreach($temp_field_array as $field_array)
 {
-	if (isset($field_array['merge_filter']) 
-	//BEGIN SUGARCRM flav=pro ONLY
-	&& $field_array['acl'] > 0
-	//END SUGARCRM flav=pro ONLY
-	) {
+	if (isset($field_array['merge_filter'])) {
 		if (strtolower($field_array['merge_filter'])=='enabled' or strtolower($field_array['merge_filter'])=='selected') {
 			$col_name = $field_array['name'];
 
-                            
+
 			if(!isset($focus->merge_bean_strings[$field_array['vname']])) {
 				$col_label = $col_name;
 			}
 			else {
 				$col_label = str_replace(':', '', $focus->merge_bean_strings[$field_array['vname']]);
 			}
-			
+
 			if (strtolower($field_array['merge_filter'])=='selected') {
 				$sel_fields[$col_name]=$col_label;
 			} else {
                 $avail_fields[$col_name] = $col_label;
             }
-			
+
 			$bean_data[$col_name]=$focus->merge_bean->$col_name;
 		}
 	}
@@ -164,7 +160,7 @@ $xtpl->out("main");
  */
 function addFieldRow($colName,$colLabel,$colValue) {
     global $theme, $app_list_strings;
-    
+
     static $operator_options;
     if (empty($operator_options)) {
         $operator_options= get_select_options_with_id($app_list_strings['merge_operators_dom'],'');
@@ -179,8 +175,8 @@ function addFieldRow($colName,$colLabel,$colValue) {
                 <td width='2%'><a class="listViewTdToolsS1" href="javascript:remove_filter('filter_{$colName}')"><!--not_in_theme!--><img src='{$deleteInlineImage}' align='absmiddle' alt='{$LBL_REMOVE}' border='0' height='12' width='12'>&nbsp;</a></td>
                 <td width='20%'>{$colLabel}:&nbsp;</td>
                 <td width='10%'><select name='{$colName}SearchType'>{$operator_options}</select></td>
-                <td width='68%'><input value="{$colValue}" id="{$colName}SearchField" name="{$colName}SearchField" type="text"></td>                  
-            </tr> 
+                <td width='68%'><input value="{$colValue}" id="{$colName}SearchField" name="{$colName}SearchField" type="text"></td>
+            </tr>
         </table>
     </span>
 EOQ;
