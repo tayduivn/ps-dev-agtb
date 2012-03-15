@@ -119,8 +119,8 @@ var callbackIndex = 16;
 var allowblank = 8;
 var validate = new Array();
 var maxHours = 24;
-var requiredTxt = 'Missing Required Field:'
-var invalidTxt = 'Invalid Value:'
+var requiredTxt = 'Missing Required Field:';
+var invalidTxt = 'Invalid Value:';
 var secondsSinceLoad = 0;
 var inputsWithErrors = new Array();
 var tabsWithErrors = new Array();
@@ -208,7 +208,7 @@ function toggleDisplay(id) {
 			this.document.getElementById(id+"_anchor").innerHTML='[ - ]';
 	}
 	else {
-		this.document.getElementById(id).style.display = 'none'
+		this.document.getElementById(id).style.display = 'none';
 		if(this.document.getElementById(id+"link") != undefined) {
 			this.document.getElementById(id+"link").style.display = '';
 		}
@@ -255,30 +255,30 @@ function addToValidateCallback(formname, name, type, required, msg, callback)
 
 function addToValidateRange(formname, name, type,required,  msg,min,max) {
 	addToValidate(formname, name, type,required,  msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'range'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'range';
 	validate[formname][validate[formname].length - 1][minIndex] = min;
 	validate[formname][validate[formname].length - 1][maxIndex] = max;
 }
 
 function addToValidateIsValidDate(formname, name, type, required, msg) {
 	addToValidate(formname, name, type, required, msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'date'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'date';
 }
 
 function addToValidateIsValidTime(formname, name, type, required, msg) {
 	addToValidate(formname, name, type, required, msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'time'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'time';
 }
 
 function addToValidateDateBefore(formname, name, type, required, msg, compareTo) {
 	addToValidate(formname, name, type,required,  msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore';
 	validate[formname][validate[formname].length - 1][compareToIndex] = compareTo;
 }
 
 function addToValidateDateBeforeAllowBlank(formname, name, type, required, msg, compareTo, allowBlank) {
 	addToValidate(formname, name, type,required,  msg);
-	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore'
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'isbefore';
 	validate[formname][validate[formname].length - 1][compareToIndex] = compareTo;
 	validate[formname][validate[formname].length - 1][allowblank] = allowBlank;
 }
