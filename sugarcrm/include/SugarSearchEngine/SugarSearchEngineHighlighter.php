@@ -238,9 +238,10 @@ class SugarSearchEngineHighlighter
             $infront = '\S*';
         }
 
-        // handle / and *
-        $searchString = str_replace('/', '\/', $searchString);
-        $searchString = str_replace('*', '.*?', $searchString);
+        // handle special characters
+        $toSearch = array('?', '*', "\\", '+', '/');
+        $replace = array('.', '.*?', "\\"."\\", ' ', '\/');
+        $searchString = str_replace($toSearch, $replace, $searchString);
 
         // it may contain multiple words
         $searches = preg_split("/[\s,-]+/", $searchString);
