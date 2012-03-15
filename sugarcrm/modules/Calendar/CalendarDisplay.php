@@ -160,10 +160,10 @@ class CalendarDisplay {
 				$repeat_tpl = "modules/Calendar/tpls/repeat.tpl";
 			$ss->assign("repeat",$repeat_tpl);
 
-			$repeat_intevals = array();
+			$repeat_intervals = array();
 			for($i = 1; $i <= 30; $i++)
-				$repeat_intevals[$i] = $i;
-			$ss->assign("repeat_intevals",$repeat_intevals);
+				$repeat_intervals[$i] = $i;
+			$ss->assign("repeat_intervals",$repeat_intervals);
 
 
 			$fdow = $GLOBALS['current_user']->get_first_day_of_week();
