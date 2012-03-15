@@ -70,6 +70,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * @from_path root directory where processing should take place
      */
     function ConcatenateFiles($from_path){
+
         // Minifying the group files takes a long time sometimes.
         @ini_set('max_execution_time', 300);
         $js_groupings = array();
@@ -83,6 +84,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $files_opened = array();
         $currPerm = '';
 
+        $excludedFiles = get_exclude_files($from_path);
         //for each item in array, concatenate the source files
         foreach($file_groups as $fg){
 
@@ -141,7 +143,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                 //make sure we have handles to both source and target file
                 if ($trgt_handle) {
-                        $buffer = SugarMin::minify(file_get_contents($loc));
+                        if(isset($excludedFiles[dirname($loc)]) )
+                            $buffer = file_get_contents($loc);
+                        else
+                            $buffer = SugarMin::minify(file_get_contents($loc));
+
                         $buffer .= "/* End of File $relpath */\n\n";
                         $num = fwrite($trgt_handle, $buffer);
 
