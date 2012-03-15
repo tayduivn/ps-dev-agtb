@@ -131,12 +131,6 @@
                         defaults[field.name] = field["default"];
                     }
 
-                    if (!_.isUndefined(field.type)) {
-                        handler = app.sugarFieldManager.getFieldHandler(field.type);
-                        if (handler !== null) {
-                            sf[field.name] = handler;
-                        }
-                    }
                 });
 
                 var model = this.beanModel.extend({
@@ -389,6 +383,7 @@
                     if ((method == "read") && (model instanceof app.BeanCollection)) {
                         if (data.next_offset) {
                             model.offset = data.next_offset;
+                            model.page = model.getPageNumber();
                         }
                         // TODO: Hack to overcome wrong response format of get-relations request until fixed
                         data = data.records ? data.records : data;
