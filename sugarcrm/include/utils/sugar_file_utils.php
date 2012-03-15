@@ -160,9 +160,20 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
     $filedir = dirname($filename);
     $temp = tempnam($filedir, 'temp');
 
+    if(!file_exists($temp))
+    {
+   	   sugar_touch($temp);
+   	}
+
     if (!($f = @fopen($temp, $mode)))
     {
         $temp = $filedir . DIRECTORY_SEPARATOR . uniqid('temp');
+
+        if(!file_exists($temp))
+        {
+       	   sugar_touch($temp);
+       	}
+
         if (!($f = @fopen($temp, $mode)))
         {
             $GLOBALS['log']->error("sugar_file_put_contents_atomic() : error writing temporary file '{$temp}'");
