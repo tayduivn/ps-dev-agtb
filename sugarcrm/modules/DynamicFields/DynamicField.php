@@ -206,12 +206,17 @@ class DynamicField {
                     } //if
                 }
             }
-            $manager = new VardefManager ( );
-            $manager->saveCache ( $this->module, $object );
+
+            //Do not call saveCache here (this will wind up doing two rewrites (see VardefManager::refreshVardefs)
+            //$manager = new VardefManager ( );
+            //$manager->saveCache ( $this->module, $object );
+
             // Everything works off of vardefs, so let's have it save the users vardefs
             // to the employees module, because they both use the same table behind
             // the scenes
-            if ( $module == 'Users' ) {
+            if ($module == 'Users')
+            {
+                $manager = new VardefManager();
                 $manager->loadVardef('Employees', 'Employee', true);
                 return;
             }
