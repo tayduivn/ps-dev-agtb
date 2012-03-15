@@ -319,7 +319,7 @@ $app_list_strings = array (
   'sales_stage_default_key' => 'Prospecting',
   'fts_type' => array (
       '' => '',
-      'Elastic' => 'Elastic Search'
+      'Elastic' => 'elasticsearch'
   ),
   'sales_stage_dom' =>
   array (
@@ -1482,6 +1482,14 @@ $app_list_strings = array (
 	'Weekly' => 'Weekly',
 	'Monthly' => 'Monthly',
 	'Yearly' => 'Yearly',
+    ),
+    
+    'repeat_intervals' => array(
+        '' => '',
+        'Daily' => 'day(s)',
+        'Weekly' => 'week(s)',
+        'Monthly' => 'month(s)',
+        'Yearly' => 'year(s)',
     ),
     
     'duration_dom' => array(

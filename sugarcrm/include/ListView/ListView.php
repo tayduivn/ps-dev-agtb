@@ -451,6 +451,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 		                $this->xTemplate->assign('CELL', $widget_contents);
 		                $this->xTemplate->parse($xtemplateSection.".row.cell");
                 	} elseif (preg_match("/button/i", $list_field['name'])) {
+                		if($layout_manager->widgetDisplay($list_field) != "")
                 		$button_contents[] = $layout_manager->widgetDisplay($list_field);
                 	} else {
                			$count++;
@@ -484,7 +485,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             else if ($first && count($button_contents) == 1)
             {
                 $firstaction = $action;
-                $widget_contents .= "<li>&nbsp;</li>";
+                //$widget_contents .= "<li>&nbsp;</li>";
             }
             else
             {
@@ -497,6 +498,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 				$count++;
                 $this->xTemplate->assign('CELL_COUNT', $count);
                 $pre = '<ul class="clickMenu subpanel records fancymenu button">'. "\n";
+                $post = "";
                 $this->xTemplate->assign('CLASS', "inlineButtons");
                 if(sizeof($button_contents) == 1)
                 {
@@ -510,16 +512,12 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                 $pre .= '<script type="text/javascript">
                         var zz = $("#'.$tempid.'").children().first().find("span").remove();
                     </script>';
-                $pre .= "<div style='display: inline' id='$tempid'>".$firstaction."</div>";
-
-        		$pre .= '<ul class="subnav';
-        		if(sizeof($button_contents) > 1)
-                {
-        			$pre .= " multi";
-        		}
-
-        		$pre .='" id="'.$tempid.'">' . "\n";
-        		$post = ' </ul>' . "\n";
+                $pre .= "<div style='display: inline; float: left;' id='$tempid'>".str_replace("&nbsp;","",$firstaction)."</div>";
+				if(sizeof($button_contents) > 1) {
+	        		$pre .= '<ul class="subnav';
+	        		$pre .='" id="'.$tempid.'">' . "\n";
+	        		$post .= ' </ul>' . "\n";
+          		 }
 		        $post .= '</li>' . "\n";
 		        $post .= '</ul>' . "\n";
 

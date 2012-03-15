@@ -56,13 +56,9 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         '</h2></td></tr><tr><td colspan="100">' .
 		$mod_strings['LBL_GLOBAL_SEARCH_SETTINGS_TITLE'] .
 		'</td></tr><tr><td><br></td></tr><tr><td colspan="100">';
-			
-		//echo $this->getModuleTitle();
+
     	require_once('modules/Home/UnifiedSearchAdvanced.php');
 		$usa = new UnifiedSearchAdvanced();
-		
-		
-		
 		echo $usa->modifyGlobalSearchSettings();
     }
 }

@@ -429,6 +429,10 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9c8d7', endC
 	background-color: #ef3067;	
 }
 
+#dcmenuSugarCube:hover {
+	background-color: #ef3067;	
+}
+
 .moduleTitle h2 {
 color:#BB0058;
 }

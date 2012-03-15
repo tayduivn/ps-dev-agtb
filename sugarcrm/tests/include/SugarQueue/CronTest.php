@@ -32,6 +32,8 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // clean up queue
+		$GLOBALS['db']->query("DELETE FROM job_queue WHERE status='queued'");
     }
 
     public static function tearDownAdterClass()
@@ -78,7 +80,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->name = "Unit test Job";
         $job->target = "function::CronTest::cronJobFunction";
         $job->assigned_user_id = $GLOBALS['current_user']->id;
@@ -102,7 +104,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->name = "Unit test Job";
         $job->target = "function::test::test";
         $job->assigned_user_id = $GLOBALS['current_user']->id;
@@ -110,6 +112,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $jobid = $job->id;
 
         $this->jq->min_interval = 0; // disable throttle
+        $this->jq->disable_schedulers = true;
         $this->jq->runCycle();
 
         $this->assertFalse($this->jq->runOk(), "Wrong OK flag");
@@ -125,7 +128,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->date_entered = '2010-01-01 12:00:00';
         $job->name = "Unit test Job 1";
         $job->target = "function::CronTest::cronJobFunction";
@@ -136,7 +139,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->date_entered = '2012-01-01 12:00:00';
         $job->name = "Unit test Job 2";
         $job->target = "function::CronTest::cronJobFunction";
@@ -166,7 +169,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->date_entered = '2010-01-01 12:00:00';
         $job->name = "Unit test Job 1";
         $job->target = "function::CronTest::cronJobLongFunction";
@@ -177,7 +180,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->date_entered = '2012-01-01 12:00:00';
         $job->name = "Unit test Job 2";
         $job->target = "function::CronTest::cronJobLongFunction";
@@ -208,7 +211,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_RUNNING;
         $job->scheduler_id = 'unittest';
-        $job->execute_time = $GLOBALS['timedate']->nowDb();
+        $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->date_entered = '2010-01-01 12:00:00';
         $job->date_modified = '2010-01-01 12:00:00';
         $job->name = "Unit test Job 1";
