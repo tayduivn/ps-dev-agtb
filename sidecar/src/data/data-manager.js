@@ -131,12 +131,6 @@
                         defaults[field.name] = field["default"];
                     }
 
-                    if (!_.isUndefined(field.type)) {
-                        handler = app.sugarFieldManager.getFieldHandler(field.type);
-                        if (handler !== null) {
-                            sf[field.name] = handler;
-                        }
-                    }
                 });
 
                 var model = this.beanModel.extend({
