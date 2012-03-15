@@ -72,9 +72,10 @@ function deleteTestRecords($focus)
                 WHERE emailman.campaign_id = '{$focus->id}'";
     } else {
         $query = "delete from emailman
-                from emailman
-                inner join prospect_lists on emailman.id = prospect_lists.id and prospect_lists.list_type='test'
-                and emailman.campaign_id = '{$focus->id}'";
+                where list_id in (
+                select prospect_list_id from prospect_list_campaigns
+                inner join prospect_lists on prospect_list_campaigns.prospect_list_id = prospect_lists.id
+                where prospect_lists.list_type='test' and prospect_list_campaigns.campaign_id = '{$focus->id}')";
     }
 
     $focus->db->query($query);
