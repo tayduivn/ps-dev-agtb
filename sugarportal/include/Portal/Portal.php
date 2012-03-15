@@ -67,6 +67,7 @@ class Portal {
 
         $this->soapClient = new nusoapclient($sugar_config['parent_site_url'] . '/soap.php?wsdl', true);
         $this->soapClientProxy = $this->soapClient->getProxy();
+        $this->soapClientProxy->decodeUTF8($sugar_config['use_decode_utf8_for_data_from_soap']);
 
         $result = $this->soapClientProxy->portal_login(array('user_name' => $name, 'password' => md5($password), 'version' => '.01'), 'lead', 'SoapTest');
         $this->soapSession = $result['id'];
@@ -127,6 +128,7 @@ class Portal {
         else 
         {
             $this->soapClientProxy = $this->soapClient->getProxy();
+            $this->soapClientProxy->decodeUTF8($sugar_config['use_decode_utf8_for_data_from_soap']);
         }
     }
 
@@ -148,6 +150,7 @@ class Portal {
         }
         else {
             $this->soapClientProxy = $this->soapClient->getProxy();
+            $this->soapClientProxy->decodeUTF8($sugar_config['use_decode_utf8_for_data_from_soap']);
         }
 
         $this->checkPortalStatus('portal_get_sugar_contact_id');

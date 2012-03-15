@@ -221,9 +221,6 @@ SugarWidgetSchedulerSearch.prototype.display = function() {
 	html += '<div id="create-invitee-edit" style="display: none;">';
 	html += '<form name="createInviteeForm" id="createInviteeForm" onsubmit="SugarWidgetSchedulerSearch.createInvitee(this); return false;">';
 	html += '<input type="hidden" name="inviteeModule" value="Contacts">';
-
-	html += '<button type="button" id="create-invitee-btn" onclick="SugarWidgetSchedulerSearch.createInvitee(this.form);">' + GLOBAL_REGISTRY['meeting_strings']['LBL_CREATE_AND_ADD'] + '</button> ';
-	html += '<button type="button" id="cancel-create-invitee-btn" onclick="SugarWidgetSchedulerSearch.hideCreateForm();">' + GLOBAL_REGISTRY['meeting_strings']['LBL_CANCEL_CREATE_INVITEE'] + '</button> ';
 	html += '<table class="edit view" cellpadding="0" cellspacing="0" style="width: 330px; margin-top: 2px;">'
 	html += '<tr>';
 	html += '<td valign="top" width="33%">' + GLOBAL_REGISTRY['meeting_strings']['LBL_FIRST_NAME'] + ': </td><td valign="top"><input name="first_name" type="text" size="19"></td>';
@@ -235,6 +232,8 @@ SugarWidgetSchedulerSearch.prototype.display = function() {
 	html += '<td valign="top" width="33%">' + GLOBAL_REGISTRY['meeting_strings']['LBL_EMAIL'] + ': </td><td valign="top"><input name="email1" type="text" size="19"></td>';
 	html += '</tr>';
 	html += '</table>';	
+	html += '<button type="button" id="create-invitee-btn" onclick="SugarWidgetSchedulerSearch.createInvitee(this.form);">' + GLOBAL_REGISTRY['meeting_strings']['LBL_CREATE_AND_ADD'] + '</button> ';
+	html += '<button type="button" id="cancel-create-invitee-btn" onclick="SugarWidgetSchedulerSearch.hideCreateForm();">' + GLOBAL_REGISTRY['meeting_strings']['LBL_CANCEL_CREATE_INVITEE'] + '</button> ';
 	html += '</form>';
 	html += '</div>';	
 	html += '</div>';
@@ -252,7 +251,15 @@ SugarWidgetSchedulerSearch.showCreateForm = function(module){
 	document.getElementById('list_div_win').style.display = 'none';
 	document.forms['createInviteeForm'].elements['inviteeModule'].value = module;	
 	
-	document.getElementById('empty-search-message').style.display = 'none';	
+	document.getElementById('empty-search-message').style.display = 'none';
+	
+	if (typeof document.createInviteeForm.first_name != 'undefined' && typeof document.schedulerwidget.search_first_name != 'undefined')
+		document.createInviteeForm.first_name.value = document.schedulerwidget.search_first_name.value;
+	if (typeof document.createInviteeForm.last_name != 'undefined' && typeof document.schedulerwidget.search_last_name != 'undefined')
+		document.createInviteeForm.last_name.value = document.schedulerwidget.search_last_name.value;
+	if (typeof document.createInviteeForm.email1 != 'undefined' && typeof document.schedulerwidget.search_email != 'undefined')
+		document.createInviteeForm.email1.value = document.schedulerwidget.search_email.value;
+	
 }
 
 SugarWidgetSchedulerSearch.hideCreateForm = function(module){

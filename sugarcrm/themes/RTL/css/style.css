@@ -26,7 +26,7 @@ div.moduleTitle{    direction: rtl;}
 table.actionsContainer table td {text-align: left;direction: ltr;}
 
 table.actionsContainer td:last-child {
-text-align: left;
+text-align: right;
 }
 
 .list tr.pagination td table td:first-child {text-align: right;
@@ -165,7 +165,7 @@ text-align: right;
 #dcboxbody  .hd .close {float: left;}
 
 #glblSearchBtn {float: left;margin-left: 10px;}
-#dcmenuSugarCube {float: right;margin: 0px 15px 0 0px;}
+#dcmenuSugarCube {float: left;}
 
 #dcmenuContainer{float: right;}
 
@@ -238,3 +238,26 @@ direction: rtl;
 	direction: rtl;	
 }
 
+#footer #partner {
+    border-left: 0px solid #CCCCCC;
+    float: left;
+    margin-left: 25px;
+    margin-right: 0px;
+}
+
+.buttons {
+	text-align: right;
+}
+
+.paginationWrapper {
+	text-align: left;
+}
+
+#notifDivider {
+	float: left;	
+}
+
+ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
+	left: auto;
+	right: 0px;
+}

@@ -100,7 +100,12 @@ class ViewQuickedit extends ViewAjax
      * @see SugarView::display()
      */
     public function display()
-    {
+    {	    
+        if(($this->bean instanceOf SugarBean) && !$this->bean->ACLAccess('edit')){
+            $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?module=' . $this->bean->module_dir . '&action=Noaccess&record=' . $this->bean->id.'")</script>';
+            echo json_encode(array('scriptOnly'=> $no_defs_js));
+            return;
+        }
 
     	$view = (!empty($_REQUEST['target_view']))?$_REQUEST['target_view']: 'QuickCreate';
 		$module = $_REQUEST['module'];
@@ -147,7 +152,7 @@ class ViewQuickedit extends ViewAjax
 
         }
 
-		$this->ev = new EditView();
+        $this->ev = $this->getEditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
 
@@ -215,4 +220,14 @@ class ViewQuickedit extends ViewAjax
             echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $this->ev->display(false, true), 'eval'=>true));
 		}
 	}
+
+
+    /**
+     * Get EditView object
+     * @return EditView
+     */
+    protected function getEditView()
+    {
+        return new EditView();
+    }
 }

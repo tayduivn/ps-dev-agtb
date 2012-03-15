@@ -28,10 +28,11 @@ class TrackerMonitorTest extends Sugar_PHPUnit_Framework_TestCase {
     function setUp() {
     	$trackerManager = TrackerManager::getInstance();
         $trackerManager->unsetMonitors();
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }    
     
     function tearDown() {
-
+        unset($GLOBALS['app_strings']);
     }
     
     function testValidMonitors() {

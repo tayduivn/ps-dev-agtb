@@ -31,6 +31,7 @@ require_once('include/ListView/ListViewSmarty.php');
 
 require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/EditView/EditView2.php');
+require_once('include/FileLocator/FileLocator.php');
 
 
  class SearchForm extends EditView{
@@ -65,7 +66,17 @@ require_once('include/EditView/EditView2.php');
 
     var $displayType = 'searchView';
 
- 	function SearchForm($seed, $module, $action = 'index'){
+    /**
+     * @var FileLocatorInterface
+     */
+    private $fileLocator;
+
+    /**
+     * @var array
+     */
+    private $options;
+
+ 	function SearchForm($seed, $module, $action = 'index', $options = array()){
  		$this->th = new TemplateHandler();
  		$this->th->loadSmarty();
 		$this->seed = $seed;
@@ -83,7 +94,35 @@ require_once('include/EditView/EditView2.php');
                             'displayDiv'   => 'display:none'),
                        );
         $this->searchColumns = array () ;
- 	}
+        $this->setOptions($options);
+    }
+
+    public function getFileLocator()
+    {
+        if (!$this->fileLocator) {
+            $ref = new ReflectionClass($this->options['locator_class']);
+            $this->fileLocator = $ref->newInstanceArgs($this->options['locator_class_params']);
+        }
+
+        return $this->fileLocator;
+    }
+
+    public function setOptions($options)
+    {
+        $defaults = array(
+            'locator_class' => 'FileLocator',
+            'locator_class_params' => array(
+                array(
+                    'custom/modules/' . $this->module . '/tpls/SearchForm',
+                    'modules/' . $this->module . '/tpls/SearchForm',
+                    'custom/include/SearchForm/tpls',
+                    'include/SearchForm/tpls'
+                )
+            )
+        );
+
+        $this->options = empty($options) ? $defaults : $options;
+    }
 
  	function setup($searchdefs, $searchFields = array(), $tpl, $displayView = 'basic_search', $listViewDefs = array()){
 		$this->searchdefs =  $searchdefs[$this->module];
@@ -178,7 +217,7 @@ require_once('include/EditView/EditView2.php');
                 $this->tabs[$tabkey]['displayDiv']='';
                 //if this is advanced tab, use form with saved search sub form built in
                 if($viewName=='advanced'){
-                    $this->tpl = 'include/SearchForm/tpls/SearchFormGenericAdvanced.tpl';
+                    $this->tpl = 'SearchFormGenericAdvanced.tpl';
                     if ($this->action =='ListView') {
                         $this->th->ss->assign('DISPLAY_SEARCH_HELP', true);
                     }
@@ -226,12 +265,12 @@ require_once('include/EditView/EditView2.php');
         if ($this->module == 'Documents'){
             $this->th->ss->assign('DOCUMENTS_MODULE', true);
         }
-        $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->tpl);
+        $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->getFileLocator()->locate($this->tpl));
         if($header){
 			$this->th->ss->assign('return_txt', $return_txt);
-			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', 'include/SearchForm/tpls/header.tpl');
+			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', $this->getFileLocator()->locate('header.tpl'));
             //pass in info to render the select dropdown below the form
-            $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', 'include/SearchForm/tpls/footer.tpl');
+            $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', $this->getFileLocator()->locate('footer.tpl'));
 			$return_txt = $header_txt.$footer_txt;
 		}
 		return $return_txt;
@@ -437,7 +476,6 @@ require_once('include/EditView/EditView2.php');
                         }
                     }
                 }
-
                 //BEGIN SUGARCRM flav=pro ONLY
                 if(isset($array['team_name_advanced_new_on_update'])){
                    	require_once('include/SugarFields/SugarFieldHandler.php');
@@ -457,13 +495,15 @@ require_once('include/EditView/EditView2.php');
                 foreach($this->searchFields as $name => $params) {
 					$long_name = $name.'_'.$SearchName;
 					/*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
-                	if(isset($array[$long_name]) && !$this->isEmptyDropdownField($long_name, $array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
+                    if (isset($array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
 					{
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$long_name];
                         }
-                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic
+                    }
+                    else if(!empty($array[$name]) && !$fromMergeRecords) // basic
+                    {
                     	$this->searchFields[$name]['value'] = $array[$name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$name];
@@ -492,10 +532,9 @@ require_once('include/EditView/EditView2.php');
                     	if($key != 'assigned_user_name' && $key != 'modified_by_name')
                     	{
                     		$long_name = $key.'_'.$SearchName;
-
-	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys) && !$this->isEmptyDropdownField($long_name, $array[$long_name]))
+                    		
+	                        if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys))
 	                    	{
-
 	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
 
                                 if (!empty($params['type']) && $params['type'] == 'parent'
@@ -516,7 +555,6 @@ require_once('include/EditView/EditView2.php');
                         }
                     }
                 }
-
                 //BEGIN SUGARCRM flav=pro ONLY
                 if(isset($array['team_name_advanced_new_on_update'])){
                    	require_once('include/SugarFields/SugarFieldHandler.php');
@@ -1026,7 +1064,7 @@ require_once('include/EditView/EditView2.php');
                                                    {
                                                       foreach($GLOBALS['app_list_strings']['salutation_dom'] as $salutation)
                                                       {
-                                                         if(!empty($salutation) && strpos($field_value, $salutation) == 0)
+                                                         if(!empty($salutation) && strpos($field_value, $salutation) === 0)
                                                          {
                                                             $field_value = trim(substr($field_value, strlen($salutation)));
                                                             break;
@@ -1153,5 +1191,55 @@ require_once('include/EditView/EditView2.php');
     	$GLOBALS['log']->debug("Found empty value for {$name} dropdown search key");
     	return $result;
     }
- }
+
+    /**
+    * Return the search defs for a particular module.
+    *
+    * @static
+    * @param $module
+    */
+    public static function retrieveSearchDefs($module)
+    {
+        $searchdefs = array();
+        $searchFields = array();
+
+        if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php'))
+        {
+            require('custom/modules/'.$module.'/metadata/metafiles.php');
+        }
+        elseif(file_exists('modules/'.$module.'/metadata/metafiles.php'))
+        {
+            require('modules/'.$module.'/metadata/metafiles.php');
+        }
+
+        if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
+        {
+            require('custom/modules/'.$module.'/metadata/searchdefs.php');
+        }
+        elseif (!empty($metafiles[$module]['searchdefs']))
+        {
+            require($metafiles[$module]['searchdefs']);
+        }
+        elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
+        {
+            require('modules/'.$module.'/metadata/searchdefs.php');
+        }
+
+
+        if(!empty($metafiles[$module]['searchfields']))
+        {
+            require($metafiles[$module]['searchfields']);
+        }
+        elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
+        {
+            require('modules/'.$module.'/metadata/SearchFields.php');
+        }
+        if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
+        {
+            require('custom/modules/'.$module.'/metadata/SearchFields.php');
+        }
+
+        return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
+    }
+}
 

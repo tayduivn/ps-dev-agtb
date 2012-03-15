@@ -346,7 +346,7 @@ class LayoutManager
             return $theclass->getDisplayName();
         }
         if ($grabId) {
-            return $theclass->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($theclass->getDisplayName())).'_button';
+            return $theclass->getWidgetId();
         }
         
 		return $theclass->display($widget_def, null, null);

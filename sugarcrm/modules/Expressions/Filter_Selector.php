@@ -187,6 +187,9 @@ if($exp_object->lhs_field != ""){
 	$javascript->setFormName('FieldViewNonSelector');
 	$javascript->setSugarBean($temp_module);
 	$type = $temp_module->field_name_map[$field]['type'];
+	$js = "";
+    if (isset($temp_module->field_name_map[$field]['required']))
+    {
 	if($type == 'date' || $type == 'time'){
 		$js = "<script type=\"text/javascript\">";
 		$js .= "addToValidate('EditView', '".$exp_object->parent_type."__field_value', 'assigned_user_name', 1,'". $javascript->stripEndColon(translate($temp_module->field_name_map[$field]['vname'])) . "' )";
@@ -199,6 +202,7 @@ if($exp_object->lhs_field != ""){
 		$javascript->addField($field, true, '', $exp_object->parent_type."__field_value");
 		$js = $javascript->getScript();
 	}
+    }
 	echo $js;
 	//rsmith
 }

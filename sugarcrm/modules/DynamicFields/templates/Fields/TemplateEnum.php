@@ -88,7 +88,6 @@ class TemplateEnum extends TemplateText{
     		unset ( $this->trigger ) ;
     		unset ( $this->action ) ;
     	}
-        _ppl($this->visibility_grid);
     }
 	function get_xtpl_edit(){
 		$name = $this->name;

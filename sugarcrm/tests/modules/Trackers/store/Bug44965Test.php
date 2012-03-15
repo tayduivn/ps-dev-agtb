@@ -49,6 +49,10 @@ public function tearDown()
 	$GLOBALS['db']->query("DELETE FROM tracker_sessions WHERE session_id = 'Bug44965Test'");
 }
 
+/**
+ * Bug #42557
+ * IPv6 has max length of 45 chars
+ */
 public function testTrackerSessionDatabaseStore()
 {
 	$trackerManager = TrackerManager::getInstance(); 
@@ -62,12 +66,12 @@ public function testTrackerSessionDatabaseStore()
 		$monitor->setValue('seconds', '5');
 		$monitor->setValue('round_trips', 1);
 		$monitor->setValue('active', 0);
-		$monitor->setValue('client_ip', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+		$monitor->setValue('client_ip', '12345678901234567890123456789012345678901234567890');
 		$trackerManager->saveMonitor($monitor, true);
 		
 		$client_ip = $GLOBALS['db']->getOne("SELECT client_ip FROM tracker_sessions WHERE session_id = 'Bug44965Test'");
-		$this->assertTrue(strlen($client_ip) <= 20);
-		$this->assertEquals('ABCDEFGHIJKLMNOPQRST', $client_ip, 'Assert that client_ip address value is truncated to first 20 characters');	
+        $this->assertLessThanOrEqual(45, strlen($client_ip));
+        $this->assertEquals('123456789012345678901234567890123456789012345', $client_ip, 'Assert that client_ip address value is truncated to first 45 characters');
 	} else {
 		$this->markTestSkipped = true;
 	}	

@@ -513,6 +513,7 @@ div.moduleTitle
     margin-bottom: 10px;
     margin-top: 0;
 }
+#moduleList img { border:0; }
 .moduleTitle img
 {
     margin-right: 0px;
@@ -525,7 +526,6 @@ div.moduleTitle
     float: left;
 	color: #666;
 	font-size: 18px;
-	padding-left: 4px;
 	padding-top: 7px;
 	font-weight: normal;
 	
@@ -538,7 +538,7 @@ text-decoration: none;
 }
 
 .moduleTitle h2 span.pointer {
-padding: 0px 0px;
+padding: 0px 10px;
 font-size: 18px;
 line-height: 16px;
 
@@ -684,6 +684,9 @@ table#tabFormPagination td,  #tabFormPagination, #EditView > table#tabFormPagina
 {
 	border-bottom: none;
 	margin-bottom: 0;
+}
+td.paginationWrapper {
+	text-align: right;	
 }
 .edit tr td table, 
 .edit tr td table tr td
@@ -1419,7 +1422,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 	float: left;
 }
 
-#footer #partner img {
+#footer #partner a span {
 	width: 25px;
 	height: 24px;
 	margin: 4px 10px 4px 0px;
@@ -1428,6 +1431,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     float:right;
     margin-right:25px;
      border-right: 1px solid #CCCCCC;
+     height: 31px;
 }
 
 #footer p {
@@ -3887,23 +3891,24 @@ button.id-ff-remove {
 
 /* jquery module menu */
 /*** ESSENTIAL STYLES ***/
-#moduleList .sf-menu, .sf-menu * {
+ul.moduleTabMore, ul.moduleTabMore *, ul.sf-sub-modulelist, ul.sf-sub-modulelist *,
+#moduleList .sf-menu, .sf-menu *, ul.megamenu, ul.megamenu * {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-#moduleList .sf-menu {
+#moduleList .sf-menu, ul.megamenu {
 	line-height: 1.0;
 }
 
-#moduleList .sf-menu ul {
+#moduleList .sf-menu ul, ul.megamenu {
 	position: absolute;
 	top: -999em;
 	width: 10em;
 }
 
-#moduleList .sf-menu ul.megamenu {
+#moduleList .sf-menu ul.megamenu, ul.megamenu {
 	width: 600px;
 }
 
@@ -3915,11 +3920,12 @@ button.id-ff-remove {
 	visibility: inherit; /* fixes IE7 'sticky bug' */
 }
 
-#moduleList .sf-menu li {
+#moduleList .sf-menu li, ul.megamenu li {
 	float: left;
 	position: relative;
 }
 
+ul.megamenu a, ul.moduleTabMore a, ul.sf-sub-modulelist a,
 #moduleList .sf-menu a {
 	display: block;
 	position: relative;
@@ -3975,7 +3981,7 @@ button.id-ff-remove {
 }
 
 
-#moduleList .sf-menu li a {
+#moduleList .sf-menu li a, ul.megamenu li a, ul.moduleTabMore li a, ul.sf-sub-modulelist li a {
 	padding:  8px 12px;
 	line-height: 1.9;
 	text-decoration:none;
@@ -3983,31 +3989,35 @@ button.id-ff-remove {
 	border-right: none;
 }
 
-#moduleList .sf-menu li a.more {
+#moduleList .sf-menu li a.more, ul.megamenu li a.more, ul.moduleTabMore li a.more, ul.sf-sub-modulelist li a.more {
 	float: left;
 }
 
-#moduleList .sf-menu li li a {
+#moduleList .sf-menu li li a, ul.megamenu li li a, ul.moduleTabMore li a, ul.sf-sub-modulelist li a {
 	padding:  4px 10px;
 	font-size: 13px;
 }
 
-#moduleList .sf-menu ul li a {
+#moduleList .sf-menu ul li a, ul.megamenu li a, ul.moduleTabMore li a, ul.sf-sub-modulelist li a {
 	color: #666;
 	
 }
 
+ul.megamenu a,
 #moduleList .sf-menu a, 
 #moduleList.sf-menu a:visited { /* visited pseudo selector so IE6 applies text colour*/
 	color: #FFF;
 }
 
-#moduleList .sf-menu li ul li, 
+ul.megamenu, ul.megamenu li,
+ul.moduleTabMore, ul.moduleTabMore li, ul.sf-sub-modulelist li,
+#moduleList .sf-menu li ul li,
 #moduleList .sf-menu li ul {
 	background-color:		#fff;
 }
 
-#moduleList .sf-menu li ul {
+ul.moduleTabMore, ul.sf-sub-modulelist,
+#moduleList .sf-menu li ul, ul.megamenu {
 box-shadow: #999 0px 5px 10px;
 -moz-box-shadow: #999 0px 5px 10px;
 -webkit-box-shadow: #999 0px 5px 10px;
@@ -4015,23 +4025,42 @@ border: 1px solid #999999;
 border-top: 0px;
 }
 
+ul.megamenu,
 #moduleList .sf-menu li > ul {
 	padding: 10px 0px;	
 }
 
+ul.sf-sub-modulelist,
 #moduleList .sf-menu li ul li ul {
 	border-top: 1px solid #999;
 }
+ul.megamenu .MMShortcuts li.sfHover div.megawrapper,
+ul.moduleTabMore li.sfHover div.megawrapper,
+#moduleList li.sfHover div.megawrapper,
+ul.sf-sub-modulelist li.sfHover div.megawrapper {
+    background: #fff;
+}
 
-#moduleList .sf-menu > li:hover, 
-#moduleList .sf-menu > li.sfHover,
-#moduleList .sf-menu > li a:focus, 
-#moduleList .sf-menu > li a:hover, 
-#moduleList .sf-menu > li a:active {
+ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
+ul.moduleTabMore li.sfHover a.sf-with-ul,
+ul.sf-sub-modulelist li.sfHover > a.sf-with-ul{
+    color: #fff !important;
+}
+ul.megamenu .MMShortcuts li.sfHover,
+ul.moduleTabMore li.sfHover,
+ul.sf-sub-modulelist li.sfHover,
+#moduleList .sf-menu li:hover,
+#moduleList .sf-menu li.sfHover,
+#moduleList .sf-menu li a:focus,
+#moduleList .sf-menu li a:hover,
+#moduleList .sf-menu li a:active {
 	background:		#276499;
 	outline:		0;
 }
 
+ul.megamenu ul a:hover,
+ul.moduleTabMore li a:hover,
+ul.sf-sub-modulelist li a:hover,
 #moduleList .sf-menu ul a:focus, 
 #moduleList .sf-menu ul a:hover, 
 #moduleList .sf-menu ul a:active {
@@ -4069,6 +4098,7 @@ border-top: 0px;
 	background-position: 0 -100px; /* use translucent arrow for modern browsers*/
 }
 
+ul.moduleTabMore em,
 #moduleList .sf-menu li.moduleTabExtraMenu em {
     overflow:hidden;
     text-indent:-9999px;
@@ -4079,11 +4109,12 @@ border-top: 0px;
 	margin-left: 6px;
 	float: left;
 }
-
+ul.moduleTabMore,
 #moduleList .sf-menu li.moduleTabExtraMenu > ul {
 	width: 225px;
 }
 
+ul.sf-sub-modulelist .selected,
 #moduleList .more .selected{
 background-color: #355b7e;
 color: #fff;
@@ -4134,41 +4165,41 @@ color: #fff;
 Mega Column Styles
 */
 
-#moduleList .megawrapper {
+#moduleList .megawrapper, ul.megamenu .megawrapper {
 	float: left;
 	width: 600px;
 }
 
-#moduleList .megacolumn {
+#moduleList .megacolumn, ul.megamenu .megacolumn {
 	width: 200px;
 	float: left;
 }
 
-#moduleList .megacolumn-content, #moduleList .megacolumn-content.divider {
+#moduleList .megacolumn-content, #moduleList .megacolumn-content.divider, ul.megamenu .megacolumn-content, ul.megamenu .megacolumn-content.divider {
 	overflow: hidden;
 }
 
-#moduleList .megacolumn-content.divider {
+#moduleList .megacolumn-content.divider, ul.megamenu .megacolumn-content.divider {
  	border-right: 1px solid #ccc;
 }
 
-#moduleList .megacolumn-content p {
+#moduleList .megacolumn-content p, ul.megamenu .megacolumn-content p {
 	margin-bottom: 16px;
 }
 
-#moduleList .megafooter {
+#moduleList .megafooter, ul.megamenu .megafooter {
 	clear: both;
 	padding: 12px;
 }
 
-#moduleList .clearfloat {
+#moduleList .clearfloat, ul.megamenu .clearfloat {
 	clear: both;
 	height: 0;
 	line-height: 0.0;
 	font-size: 0;
 }
 
-#moduleList .sf-menu ul .megawrapper ul {
+#moduleList .sf-menu ul .megawrapper ul, ul.megamenu .megawrapper ul {
 	background-image: none;
 	position: relative;
 	top: auto;
@@ -4180,7 +4211,7 @@ Mega Column Styles
 	float: left;
 }
 
-
+ul.megamenu .megawrapper ul li,
 #moduleList .sf-menu ul .megawrapper ul li {
 	background-color: transparent;
 	color: #999999;
@@ -4189,10 +4220,11 @@ Mega Column Styles
     width: 100%;
 }
 
-#moduleList .sf-menu ul .megawrapper ul li.groupLabel {
+#moduleList .sf-menu ul .megawrapper ul li.groupLabel, ul.megamenu .megawrapper ul li.groupLabel {
 	padding-left: 10px;
 	padding-bottom: 5px;
 }
+ul.megamenu .megawrapper ul li a,
 #moduleList .sf-menu ul .megawrapper ul li a{
 	font-weight: normal;
 	font-size: 13px;
@@ -4208,35 +4240,43 @@ Mega Column Styles
     top: 0;
 }
 
+ul.megamenu .moduleTabExtraMenu, ul.megamenu .moduleTabGroupMenu
 #moduleList .moduleTabExtraMenu, #moduleList .moduleTabGroupMenu
 {
 height: 43px;
 }
 
 
-#moduleList .menuHR {
+#moduleList .menuHR, ul.moduleTabMore .menuHR {
    border-top: 1px solid #DDDDDD;
    margin: 10px 0;
 }
 
+ul.moduleTabMore .moduleMenuOverFlowLess .yuimenuitemlabel img, ul.moduleTabMore .moduleMenuOverFlowMore .yuimenuitemlabel img,
 #moduleList .moduleMenuOverFlowLess .yuimenuitemlabel img, #moduleList .moduleMenuOverFlowMore .yuimenuitemlabel img
 {
 	margin-left: 2px;
     vertical-align: baseline;
     opacity: 0.6;
 }
+ul.moduleTabMore .moduleMenuOverFlowLess .yuimenuitemlabel, ul.moduleTabMore .moduleMenuOverFlowMore .yuimenuitemlabel,
 #moduleList .moduleTabExtraMenu .moduleMenuOverFlowLess .yuimenuitemlabel, #moduleList .moduleTabExtraMenu .moduleMenuOverFlowMore .yuimenuitemlabel {
 	font-weight: normal;
 	color: #999;
 }
-
-
-#moduleList .moduleTabExtraMenu.showLess .moreOverflow,  #moduleList .moduleTabExtraMenu.showLess .moduleMenuOverFlowLess, #moduleList .moduleTabExtraMenu .flexMenuItems {
+ul#quickCreateULSubnav.showLess .moreOverflow,
+ul#quickCreateUL .showLess .moreOverflow,
+ul.moduleTabMore.showLess .moreOverflow,
+#moduleList .moduleTabExtraMenu.showLess .moreOverflow, #moduleList .moduleTabExtraMenu .flexMenuItems {
 	display: none;
 }
+ul#quickCreateULSubnav.showMore .moreOverflow,
+ul.moduleTabMore.showMore li.moreOverflow, #moduleList ul.moduleTabMore.showMore li.moreOverflow { display:block; }
 
-
- #moduleList .moduleTabExtraMenu.showMore .moduleMenuOverFlowMore
+ul.moduleTabMore.showMore .moduleMenuOverFlowMore, ul.moduleTabMore.showLess .moduleMenuOverFlowLess,
+ul#quickCreateUL .showMore .moduleMenuOverFlowMore, ul#quickCreateUL .showLess .moduleMenuOverFlowLess,
+ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
+#moduleList ul.moduleTabMore.showMore .moduleMenuOverFlowMore, #moduleList ul.moduleTabMore.showLess .moduleMenuOverFlowLess
 {
 display: none;	
 }
@@ -4262,6 +4302,10 @@ display: none;
 	border-left-color:#0046ad;
 }
 
+a div.showMoreArrow, a div.showLessArrow, {
+    clear:none;
+    display:inline;
+}
 .showMoreArrow, .showLessArrow {
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=dropdown_menu_toggle_more.gif);
     display: inline-block;
@@ -4275,12 +4319,12 @@ display: none;
 	background-position: center 16px;
 }
 
-#moduleList .moduleTabExtraMenu .moduleMenuOverFlowLess a:hover .showLessArrow {
+a:hover .showLessArrow {
 	background-position: center 8px;
 	opacity: 1;
 }
 
-#moduleList .moduleTabExtraMenu .moduleMenuOverFlowMore a:hover .showMoreArrow {
+a:hover .showMoreArrow {
 	background-position: center -8px;
 	opacity: 1;
 }
@@ -5009,9 +5053,15 @@ border-radius: 0px 6px 0px 0px;
 #dashletCtrls a {
 font-size: 13px;
 }
-#add_dashlets {
+#change_layout {
 margin-left: 5px;
 *margin-left: 0px;
+}
+
+#dashletCtrls a span.title {
+	margin-left: 5px;
+	position: relative;
+	top: -7px;	
 }
 /* sitemap */
 #sitemap .edit.view
@@ -5173,10 +5223,7 @@ padding: 2px 10px;
 	box-shadow: #444 0px 2px 10px;
 	-moz-box-shadow: #444 0px 2px 10px;
 	-webkit-box-shadow: #444 0px 2px 10px;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	border-color: #98c6ea;
+	border-color: #666;
 }
 .yui-module .hd, .yui-panel .hd {
 	background-image: -moz-linear-gradient(center top, 
@@ -5203,10 +5250,7 @@ padding: 2px 10px;
 	top: 0px;
 }
 .yui-module .ft, .yui-panel .ft {
-	-moz-border-radius: 0px 0px 6px 6px;
-	-webkit-border-bottom-right-radius: 6px;
-	-webkit-border-bottom-left-radius: 6px;
-	border-radius: 0px 0px 6px 6px;
+
 }
 
 .yui-dialog .container-close {
@@ -5618,6 +5662,12 @@ top: 0;
 width:100%;
 z-index:20;
 }
+#globalLinksSubnav, #quickCreateULSubnav {
+    z-index: 20;
+}
+ul.megamenu, ul.moduleTabMore, ul.sf-sub-modulelist{
+    z-index:20;
+}
 
 #dcmenutop{
 padding:0px;
@@ -5647,7 +5697,7 @@ background-image: -webkit-gradient(
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#20517c', endColorstr='#0d3a62');
 height: 43px\9;
 }
-
+#dcmenu ul.clickMenu { filter:none; }
 
 #dcboxtitle{
 background-color:#000000;
@@ -5731,7 +5781,7 @@ span.dcmenuitem:hover{
 
 #dcmenuSugarCube {
 float: right;
-margin: 0px 0px 0 2px;
+padding: 0px 0px 0 2px;
 height: 43px;
 }
 
@@ -6010,6 +6060,7 @@ margin-left:10px;
     border-bottom-right-radius:4px;
     position: relative;
     max-height: 600px;
+    min-height: 30px;
     overflow: auto;
 }
 
@@ -6243,7 +6294,7 @@ li.active a img.deletePageImg, li.active a span.deletePageImg {
 
 ul.clickMenu {
 	list-style: none;
-	padding: 0px 3px 0px 0px;	
+	padding: 0px;	
 	margin: 0 !important;
 	vertical-align: bottom;
 	-webkit-border-radius: 1px; 
@@ -6268,6 +6319,9 @@ ul.clickMenu {
 	   display: inline-block;
 	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
+ul.SugarActionMenuIESub {
+    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+}
 
 ul.clickMenu:hover {
    		background-image: -moz-linear-gradient(center top, 
@@ -6288,15 +6342,15 @@ ul.clickMenu:hover {
 		border-color: #000;
 		color: #fff;	
 }
-
+ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
 ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
 	color: #fff !important;	
 }
 
 ul.clickMenu:hover > li > span {
-	background-position: 6px 3px;
+	background-position: 5px 3px;
 }
-ul.clickMenu li {
+ul.clickMenu li, ul.SugarActionMenuIESub li {
 	float: left;
 	margin: 0;	
 	padding: 0 0 0 0;
@@ -6304,12 +6358,13 @@ ul.clickMenu li {
 	position: relative; /*--Declare X and Y axis base--*/
     cursor: pointer;
 }
+ul.SugarActionMenuIESub li a,
 ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .list tr.pagination td.buttons ul.clickMenu > li > a{
 	display: block;
 	text-decoration: none;
 	float: left;
 	font-weight: normal !important;
-	padding: 3px 0px 3px 10px !important;
+	padding: 3px 10px 3px 10px !important;
 	color: #000;
 	font-size: 12px;
 }
@@ -6326,22 +6381,20 @@ ul.clickMenu li a:hover{
 text-decoration: none !important;
 }
 ul.clickMenu li > span { /*--Drop down trigger styles--*/
-	width: 17px;
+	width: 20px;
 	height: 21px;
 	float: left;
-	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 6px -25px;
+	background: url(../../../../index.php?entryPoint=getImage&imageName=actionMenuArrow.png) no-repeat 5px -25px;
 	cursor: pointer;
 }
 
 ul.clickMenu li > span.ab { /*--Drop down trigger styles--*/
     border-left: 1px #aaa solid;
-    margin-left: 10px;
-    padding-left: 5px;
 }
 ul.clickMenu li span.subhover {
 	cursor: pointer;
 	} /*--Hover effect for trigger--*/
-ul.clickMenu li ul.subnav {
+ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
 	left: 0; top: 23px;
@@ -6359,7 +6412,7 @@ ul.clickMenu li ul.subnav {
 	overflow:hidden;
 }
 
-ul.clickMenu li ul.subnav li{
+ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li, ul.SugarActionMenuIESub li{
 	margin: 0; 
 	padding: 0px;
 	clear: both;
@@ -6374,13 +6427,34 @@ ul.clickMenu.subpanel.records {
 	background-image: none;
 }
 
+ul.clickMenu.subpanel.records:hover {
+   		background-image: -moz-linear-gradient(center top, 
+		#ffffff 0%,
+		#255e90 2%,
+		#3d74a5 100%
+		) !important;
+		background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #ffffff),
+	    color-stop(.02, #255e90),
+	    color-stop(1, #3d74a5)
+	   ) !important;	
+	   
+	   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#255e90', endColorstr='#3d74a5') !important;
+}
+
+ul.clickMenu.subpanel.records:hover > li div a{ 
+	color: #fff !important;	
+}
+
 ul.clickMenu.subpanel.records li a{ 
 	color: #aaa;	
 }
 
 ul.clickMenu.subpanel.records li > span{ 
 	opacity: .5;
-    height: 15px;
 }
 
 ul.clickMenu.subpanel.records li ul.subnav li a span {
@@ -6389,26 +6463,26 @@ ul.clickMenu.subpanel.records li ul.subnav li a span {
 	background-image: none;
 }
 
-ul.clickMenu.button li > span {
+ul.clickMenu.button.nosplit li > span {
 	width: auto;
 	background-position: right -25px;	
 	padding: 3px 15px 3px 10px !important;
 	height: auto;
 }
 
-ul.clickMenu.button:hover li > span {
+ul.clickMenu.button.nosplit:hover li > span {
 	background-position: right 3px;
 }
 
-ul.clickMenu.button li > span a {
+ul.clickMenu.button.nosplit li > span a {
 	padding: 0px !important;
 }
 
-ul.clickMenu.button {
+ul.clickMenu.button.nosplit {
 	padding-right: 5px;
 }
 
-ul.clickMenu.button li ul.subnav {
+ul.clickMenu.button.nosplit li ul.subnav {
 	width: auto;	
 }
 
@@ -6442,7 +6516,7 @@ ul.clickMenu li a.disabled {
 	opacity: 1;
 }
 
-ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input {
+ul.clickMenu li ul.subnav li a,ul.clickMenu li ul.subnav li input, ul.subnav-sub li a, ul.SugarActionMenuIESub li a {
 	float: left;
 	background: #fff;
 	padding: 3px 10px !important;
@@ -6460,7 +6534,8 @@ ul.clickMenu li ul.subnav li input {
 	/*width: 170px;*/
 	width:100%	
 }
-ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+ul.SugarActionMenuIESub li a:hover,
+ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
 background-color: #355b7e;
 color: #fff;
 font-weight: normal !important;
@@ -6481,7 +6556,9 @@ ul.clickMenu.showLess .moreOverflow , ul.clickMenu.showLess .moduleMenuOverFlowL
 	float: right;
 	margin-right: 0px;	
 }
-
+ul#globalLinksSubnav, ul#quickCreateULSubnav{
+    font-family: Arial;
+}
 ul#globalLinks.clickMenu {
 	background: none;
 	border: 0px none;
@@ -6610,8 +6687,8 @@ ul#detailViewActions.clickMenu {
 #quickCreate ul.clickMenu > li:hover {
 	background-color: #276499;
 }
-
-
+ul#globalLinksSubnav li { min-width: 120px;}
+ul#globalLinksSubnav, ul#quickCreateULSubnav,
 #quickCreate ul.clickMenu li ul.subnav, #globalLinksModule ul.clickMenu li ul.subnav{
 	top: 43px;
 	right: 0;
@@ -6625,13 +6702,14 @@ ul#detailViewActions.clickMenu {
 	width: auto;		
 }
 
+#globalLinksSubnav li a, #quickCreateULSubnav li a,
 #quickCreate ul.clickMenu li ul.subnav li a, #globalLinksModule ul.clickMenu li ul.subnav li a {
 	padding: 4px 10px !important;
 	font-size: 13px !important;
 	color: #666666 !important;
 	line-height: 1.45;
 }
-
+#quickCreateULSubnav li.moduleMenuOverFlowLess a, #quickCreateULSubnav li.moduleMenuOverFlowMore a,
 #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a {
 	color: #999 !important;
 }
@@ -6640,10 +6718,7 @@ ul#detailViewActions.clickMenu {
 	color: #fff !important;
 }
 
-ul.clickMenu li ul.subnav li a:hover .showLessArrow, ul.clickMenu li ul.subnav li a:hover .showMoreArrow {
-	background-position: center 8px;
-	opacity: 1;
-}
+
 
 
 #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowMore a img, #quickCreate ul.clickMenu li ul.subnav li.moduleMenuOverFlowLess a img
@@ -6937,5 +7012,75 @@ td #moduleListTD
 
 #sugar_spot_search_div .spot_fts_summary
 {
-    color: #444
+    color: #444;
+}
+
+#zenbox_tab {
+border: 0px none !important;
+left: auto !important;
+top: auto !important;
+right: 20px;
+bottom: 0px;	
+position: inherit !important;
+width: 100px !important;
+height: 24px !important;
+background-image: none !important;
+display: inline-block !important;
+height: 31px !important;
+background-color: transparent !important;
+border-left: 1px solid #CCCCCC !important;
+text-align: center;
+font-family: tahoma;
+font-size: 15px;
+text-shadow: 0px 1px #fff;
+padding-top: 6px;
+font-weight: bold;
+color: #444;
+text-decoration: none;
+}
+
+
+.zenbox_support_links {
+	z-index: 100000;
+    position: absolute;
+    top: 77px;
+    left: 32px;
+}
+
+#zenbox_container .zenbox_header {
+	height: 20px;	
+	background-image: -moz-linear-gradient(center top, 
+	#eeeeee 0%,
+	#cccccc 100%
+	);
+	background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #eeeeee),
+	    color-stop(1, #cccccc)
+    );	
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc');	
+	border-bottom: 1px solid #999999;
+	border-top: 1px solid #ffffff;
+}
+
+#zenbox_container {
+	width: 615px !important;
+	height: 477px !important;
+	box-shadow: 0px 2px 10px #444;
+	background-color: #fff;
+}
+
+#zenbox_body {
+	margin-top: 0px !important;
+	height: 458px !important;
+}
+
+#zenbox_container .zenbox_header .close {
+	background: url("../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png") no-repeat scroll 6px -67px transparent;
+    width: 18px;
+    float: right;
+    margin: 2px 6px 0px 0px;
+    cursor: pointer;
 }

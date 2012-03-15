@@ -405,9 +405,9 @@ class Expression extends SugarBean {
 		}
 		
 		//if blank value then set to "NONE"
-		if($this->display_array['rhs_value']==""){
-			$this->display_array['rhs_value'] = "none";
-		}	
+		//if($this->display_array['rhs_value']==""){
+		//	$this->display_array['rhs_value'] = "none";
+		//}	
 		
 		return $this->display_array;
 	

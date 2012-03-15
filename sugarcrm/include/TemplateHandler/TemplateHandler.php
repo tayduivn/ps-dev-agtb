@@ -292,14 +292,23 @@ class TemplateHandler {
      * This function creates the $sqs_objects array that will be used by the quicksearch Javascript
      * code.  The $sqs_objects array is wrapped in a $json->encode call.
      *
-     * @param $def The vardefs.php definitions
-     * @param $defs2 The Meta-Data file definitions
-     *
+     * @param array $def The vardefs.php definitions
+     * @param array $defs2 The Meta-Data file definitions
+     * @param string $view
+     * @param strign $module
+     * @return string
      */
-    function createQuickSearchCode($defs, $defs2, $view = '', $module='') {
+    public function createQuickSearchCode($defs, $defs2, $view = '', $module='')
+    {
         $sqs_objects = array();
         require_once('include/QuickSearchDefaults.php');
-        $qsd = new QuickSearchDefaults();
+        if(isset($this) && $this instanceof TemplateHandler) //If someone calls createQuickSearchCode as a static method (@see ImportViewStep3) $this becomes anoter object, not TemplateHandler
+        {
+            $qsd = QuickSearchDefaults::getQuickSearchDefaults($this->getQSDLookup());
+        }else
+        {
+            $qsd = QuickSearchDefaults::getQuickSearchDefaults(array());
+        }
         $qsd->setFormName($view);
         if(preg_match('/^SearchForm_.+/', $view)){
         	if(strpos($view, 'popup_query_form')){
@@ -386,7 +395,6 @@ class TemplateHandler {
 					   $field['id_name'] = $field['name'] . "_" . $field['id_name'];
                 }
 				$name = $qsd->form_name . '_' . $field['name'];
-
 
 
                 if($field['type'] == 'relate' && isset($field['module']) && (preg_match('/_name$|_c$/si',$name) || !empty($field['quicksearch']))) {
@@ -497,10 +505,22 @@ class TemplateHandler {
         foreach($dependencies as $dep) {
             $js .= $dep->getJavascript($view);
         }
+        
+        $js .= "});";
 
         $js .= "\nYAHOO.util.Event.onContentReady('$view', SUGAR.forms.AssignmentHandler.loadComplete);</script>";
         return $js;
     }
     //END SUGARCRM flav=pro ONLY
+    
+    /**
+     * Get lookup array for QuickSearchDefaults custom class
+     * @return array
+     * @see QuickSearchDefaults::getQuickSearchDefaults()
+     */
+    protected function getQSDLookup()
+    {
+        return array();
+    }
 }
 ?>

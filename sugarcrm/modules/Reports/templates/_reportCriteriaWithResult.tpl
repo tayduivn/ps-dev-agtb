@@ -66,39 +66,45 @@
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td>
-
-<input type="submit" class="button" name="runReportButton" id="runReportButton" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
-	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='';">
-{* //BEGIN SUGARCRM flav=sales ONLY*}
-<input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
+<ul class="clickMenu fancymenu" id="detailViewActions">
+    <li>
+        <input name="runReportButton" id="runReportButton" type="button" class="button" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+        onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}">
+        <ul class="subnav multi">
+    {* //BEGIN SUGARCRM flav=sales ONLY*}
+<li><input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();"></li>
 {* //END SUGARCRM flav=sales ONLY*}
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<input type="submit" class="button" name="editReportButton" id="editReportButton" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
-	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';">
+<li><input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings.LBL_EDIT_BUTTON_KEY}" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
+	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';"></li>
 {/if}
-{$duplicateButtons}
+<li>{$duplicateButtons}</li>
 {if ($report_edit_access)}
-<input type="button" class="button"  name="scheduleReportButton" id="scheduleReportButton" value="{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}"
-	onclick="schedulePOPUP()">
+<li><input type="button" class="button"  name="scheduleReportButton" id="scheduleReportButton" value="{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}"
+	onclick="schedulePOPUP()"></li>
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
 {if ($report_export_access)}
-<input type="submit" class="button" name="printPDFButton" id="printPDFButton"  value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
-	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
+<li><input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
+	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'"></li>
 
 {/if}
 {if ($report_export_as_csv_access)}
-<input type="button" class="button"  name="exportReportButton" id="exportReportButton" value="{$mod_strings.LBL_EXPORT}" onclick="do_export();">
+<li><input type="button" class="button"  name="exportReportButton" id="exportReportButton" value="{$mod_strings.LBL_EXPORT}" onclick="do_export();"></li>
 {/if}
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings.LBL_DELETE_BUTTON_KEY}" value="{$app_strings.LBL_DELETE_BUTTON_LABEL}" title="{$app_strings.LBL_DELETE_BUTTON_TITLE}"
+<li><input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings.LBL_DELETE_BUTTON_KEY}" value="{$app_strings.LBL_DELETE_BUTTON_LABEL}" title="{$app_strings.LBL_DELETE_BUTTON_TITLE}"
 	onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){literal}{{/literal}this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();{literal}}{/literal}">
+</li>
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
+        </ul>
+    </li>
+</ul>
 </td>
 </tr>
 </table>
@@ -490,6 +496,7 @@ function displayGroupCount() {
 	// no op
 } // fn
 {/literal}
+var current_user_id = '{$current_user_id}';
 {foreach from=$user_array key=user_id item=user_name}
 {literal}users_array[users_array.length] = {text:{/literal}'{$user_name}',value:'{$user_id}'};
 {/foreach}

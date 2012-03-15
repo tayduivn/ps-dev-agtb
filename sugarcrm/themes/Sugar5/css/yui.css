@@ -1335,7 +1335,7 @@ p#clear {
 }
 
 .yui-dt-scrollable .yui-dt-bd {
-    overflow: auto;
+    overflow: scroll;
 }
 
 .yui-dt-scrollable .yui-dt-hd {

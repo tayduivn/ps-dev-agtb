@@ -89,7 +89,7 @@ class ViewQuickcreate extends ViewAjax
      * @see SugarView::display()
      */
     public function display()
-    {	    
+    {
     	$view = (!empty($_REQUEST['target_view']))?$_REQUEST['target_view']: 'QuickCreate';
 		$module = $_REQUEST['module'];
 		
@@ -111,7 +111,7 @@ class ViewQuickcreate extends ViewAjax
 			}
 		}
 
-		$this->ev = new EditView();
+        $this->ev = $this->getEditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
 		
@@ -167,4 +167,13 @@ class ViewQuickcreate extends ViewAjax
 		   echo $this->ev->display(false, true);
 		}
 	}
+
+    /**
+     * Get EditView object
+     * @return EditView
+     */
+    protected function getEditView()
+    {
+        return new EditView();
+    }
 }

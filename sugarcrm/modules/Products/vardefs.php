@@ -605,6 +605,17 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
 	    'source'=>'non-db',
 	    'vname'=>'LBL_PROJECTS',
 	),
+    'products' =>
+      array (
+        'name' => 'products',
+        'type' => 'link',
+        'relationship' => 'product_bundle_product',
+        'module'=>'ProductBundles',
+        'bean_name'=>'ProductBundle',
+        'source'=>'non-db',
+        'rel_fields'=>array('product_index'=>array('type'=>'integer')),
+        'vname'=>'LBL_PRODUCTS',
+      ),
 )
  , 'indices' => array (
        array('name' =>'idx_products', 'type'=>'index', 'fields'=>array('name','deleted')),

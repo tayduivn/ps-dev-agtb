@@ -30,16 +30,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class ViewConfigureshortcutbar extends SugarView
 {
     /**
+     * List of modules that should not be available for selection.
+     *
+     * @var array
+     */
+    private $blacklistedModules = array('EAPM', 'Users', 'Employees');
+    /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
 	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
-    	return array(
-    	   "<a href='index.php?module=Administration&action=index'>".$mod_strings['LBL_MODULE_NAME']."</a>",
-    	   $mod_strings['LBL_CONFIGURE_SHORTCUT_BAR']
-    	   );
+    	return array("<a href='index.php?module=Administration&action=index'>".$mod_strings['LBL_MODULE_NAME']."</a>", $mod_strings['LBL_CONFIGURE_SHORTCUT_BAR']);
     }
     
     /**
@@ -49,7 +52,8 @@ class ViewConfigureshortcutbar extends SugarView
 	{
 	    global $current_user;
         
-	    if (!is_admin($current_user)) {
+	    if (!is_admin($current_user))
+        {
 	        sugar_die("Unauthorized access to administration.");
         }
 	}
@@ -69,10 +73,7 @@ class ViewConfigureshortcutbar extends SugarView
         
         $title = getClassicModuleTitle(
                     "Administration", 
-                    array(
-                        "<a href='index.php?module=Administration&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>",
-                       translate('LBL_CONFIGURE_SHORTCUT_BAR')
-                       ), 
+                    array("<a href='index.php?module=Administration&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>",translate('LBL_CONFIGURE_SHORTCUT_BAR')),
                     false
                     );
         $msg = "";
@@ -103,11 +104,14 @@ class ViewConfigureshortcutbar extends SugarView
                create_custom_directory("include/DashletContainer/Containers/");
             if ( file_put_contents ( "custom/" . $actions_path, $out ) === false)
                echo translate("LBL_SAVE_FAILED");
-            else  {
+            else
+            {
                echo "true";
             }
             
-        } else {
+        }
+        else
+        {
             include($actions_path);
             //Start with the default module
             $availibleModules = $DCActions;
@@ -121,7 +125,7 @@ class ViewConfigureshortcutbar extends SugarView
             $modules = $app_list_strings['moduleList'];
             foreach ($modules as $module => $modLabel)
             {
-                if (is_file("modules/$module/metadata/quickcreatedefs.php") || is_file("custom/modules/$module/metadata/quickcreatedefs.php"))
+                if (is_file("modules/$module/metadata/quickcreatedefs.php") || is_file("custom/modules/$module/metadata/quickcreatedefs.php") )
                    $availibleModules[$module] = $module;
             }
             
@@ -138,7 +142,9 @@ class ViewConfigureshortcutbar extends SugarView
             {
                 $disabled[] = array("module" => $mod, 'label' => translate($mod));
             }
-            
+
+            $enabled = $this->filterModules($enabled);
+            $disabled = $this->filterModules($disabled);
             $this->ss->assign('APP', $GLOBALS['app_strings']);
             $this->ss->assign('MOD', $GLOBALS['mod_strings']);
             $this->ss->assign('title',  $title);
@@ -150,5 +156,16 @@ class ViewConfigureshortcutbar extends SugarView
             
             echo $this->ss->fetch('modules/Administration/templates/ShortcutBar.tpl');	
         }
+    }
+
+    protected function filterModules($moduleList)
+    {
+        $results = array();
+        foreach($moduleList as $mod)
+        {
+            if(!in_array($mod['module'], $this->blacklistedModules))
+                $results[] = $mod;
+        }
+        return $results;
     }
 }

@@ -59,52 +59,47 @@ testing_module = "{$smarty.request.module}";
 <input type="hidden" name="action" value="EditView">
 <input type="hidden" name="sugar_body_only">
 {{if isset($form.hidden)}}
-{{foreach from=$form.hidden item=field}}
-{{$field}}
-{{/foreach}}
+    {{foreach from=$form.hidden item=field}}
+        {{$field}}
+    {{/foreach}}
 {{/if}}
-    <ul class="clickMenu fancymenu" id="detailViewActions">
-        <li style="cursor: pointer">
-        	{{sugar_actions_link module="$module" id="EDIT2" view="$view"}}  
-       			<ul class="subnav multi">       
-{{if !isset($form.buttons)}} 
-<li>{{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}</li>
-<li>{{sugar_actions_link module="$module" id="DELETE" view="$view"}}</li>
-{{else}}
-	{{counter assign="num_buttons" start=0 print=false}}
-	{{foreach from=$form.buttons key=val item=button}}
-	  {{if !is_array($button) && in_array($button, $built_in_buttons)}}
-	     {{counter print=false}}
-	     	{{if $button != "EDIT"}}
-	        	<li>{{sugar_actions_link module="$module" id="$button" view="EditView"}}</li>
-            {{/if}}
-	  {{/if}}
-	{{/foreach}}
+<ul class="clickMenu fancymenu" id="detailViewActions">
+    <li style="cursor: pointer">
+        {{sugar_actions_link module="$module" id="EDIT2" view="$view"}}
+            <ul class="subnav multi">
+                {{if !isset($form.buttons)}}
+                    <li>{{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}</li>
+                    <li>{{sugar_actions_link module="$module" id="DELETE" view="$view"}}</li>
+                {{else}}
+                    {{counter assign="num_buttons" start=0 print=false}}
+                    {{foreach from=$form.buttons key=val item=button}}
+                      {{if !is_array($button) && in_array($button, $built_in_buttons)}}
+                         {{counter print=false}}
+                            {{if $button != "EDIT"}}
+                                {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+                            {{/if}}
+                      {{/if}}
+                    {{/foreach}}
 
-    {{if isset($closeFormBeforeCustomButtons)}}
-        </form>
-    {{/if}}
+                    {{if isset($closeFormBeforeCustomButtons)}}
+                        </form>
+                    {{/if}}
 
-	{{if count($form.buttons) > $num_buttons}}
-			{{foreach from=$form.buttons key=val item=button}}
-			  {{if is_array($button) && $button.customCode}}
+                    {{if count($form.buttons) > $num_buttons}}
+                        {{foreach from=$form.buttons key=val item=button}}
+                            {{if is_array($button) && $button.customCode}}
+                                <li>{{sugar_actions_link module="$module" id="$button" view="EditView"}}</li>
+                            {{/if}}
+                        {{/foreach}}
+                    {{/if}}
+                {{/if}}
 
-			    <li>{{sugar_actions_link module="$module" id="$button" view="EditView"}}</li>
-
-			  {{/if}}
-			{{/foreach}}
-	{{/if}}
-{{/if}}
-
-{{if empty($form.hideAudit) || !$form.hideAudit}}
-<li>{{sugar_actions_link module="$module" id="Audit" view="EditView"}}</li>
-{{/if}}
-
-
-                </ul>
-            </li>
-
-        </ul>
+                {{if empty($form.hideAudit) || !$form.hideAudit}}
+                    <li>{{sugar_actions_link module="$module" id="Audit" view="EditView"}}</li>
+                {{/if}}
+            </ul>
+    </li>
+</ul>
 </form>
 </div>
 

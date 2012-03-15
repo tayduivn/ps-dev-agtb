@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
@@ -82,7 +83,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      'vname' => 'LBL_FILE_UPLOAD',
      'type' => 'file',
      'source' => 'non-db',
-     'noChange' => true,
+    //'noChange' => true,
+    // jwhitcraft BUG44657 - Take this out as it was causing the remove button not to show up on custom modules
   ),
 
 'active_date' =>

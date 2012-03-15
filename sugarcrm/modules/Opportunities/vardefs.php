@@ -64,7 +64,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'len' => '255',
    	 'source'=>'non-db',
    	 'unified_search' => true,
-   	 'full_text_search' => array('boost' => 1),
    	 'required' => true,
    	 'importable' => 'required',
      'required' => true,
@@ -152,6 +151,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'duplicate_merge'=>'0',
     'audited'=>true,
     'comment' => 'Formatted amount of the opportunity',
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'editview'=>false, 'detailview'=>false, 'quickcreate'=>false,),
   ),
   'currency_id' =>
   array (

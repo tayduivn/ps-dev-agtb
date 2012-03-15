@@ -230,6 +230,52 @@ class SugarSearchEngineHighlighter
         return in_array($search, self::$stopWords);
     }
 
+    protected function constructPattern($searchString, $partialMatch)
+    {
+        $infront = '';
+        if (isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
+            $GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
+            $infront = '\S*';
+        }
+
+        // handle special characters
+        $toSearch = array('.', '?', '*', "\\", '+', '/', '|', '(', ')', '[', ']', '{', '}');
+        $replace = array('\.', '.', '.*?', "\\"."\\", '\+', '\/', '\|', '\(', '\)', '\[', '\]', '\{', '\}');
+        $searchString = str_replace($toSearch, $replace, $searchString);
+
+        // it may contain multiple words
+        $searches = preg_split("/[\s,-]+/", $searchString);
+
+        $tokenCount = count($searches);
+        $patterns = array();
+        for ($i=0; $i<$tokenCount; $i++)
+        {
+            $search = $searches[$i];
+
+            $begin = '(';
+            if ($i == 0 && !empty($infront)) {
+                $begin .= $infront;
+            } else {
+                $begin .= '\b';
+            }
+
+            if (empty($search) || $this->isOperator($search) || $this->isStopWord($search))
+            {
+                continue;
+            }
+
+            if ($i == $tokenCount-1 && $partialMatch)
+            {
+                $patterns[] = $begin . $search . ')';
+            }
+            else
+            {
+                $patterns[] = $begin . $search . '\b)';
+            }
+        }
+        $final = '/' . implode('|', $patterns) . '/i';
+        return $final;
+    }
 
     /**
      *
@@ -244,35 +290,22 @@ class SugarSearchEngineHighlighter
     {
         $ret = array();
 
-        // it may contain multiple words
-        $searches = preg_split("/[\s,-]+/", $searchString);
+        $pattern = $this->constructPattern($searchString, $partialMatch);
 
         foreach ($resultArray as $field=>$value)
         {
+            if ($field == 'module' || $field == 'team_set_id')
+            {
+                continue;
+            }
             $this->_currentCount = 0;
 
-            foreach ($searches as $search)
+            $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
+            if ($count > 0)
             {
-                if (empty($search) || $this->isOperator($search) || $this->isStopWord($search))
-                {
-                    continue;
-                }
-
-                if ($partialMatch)
-                {
-                    $pattern = '/\b' . str_replace('*', '.*?', $search) . '/i';
-                }
-                else
-                {
-                    $pattern = '/\b' . str_replace('*', '.*?', $search) . '\b/i';
-                }
-                $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
-                if ($count > 0)
-                {
-                    $this->_currentCount += $count;
-                    $field = $this->translateFieldName($field);
-                    $ret[$field] = $this->postProcessHighlights($value);
-                }
+                $this->_currentCount += $count;
+                $field = $this->translateFieldName($field);
+                $ret[$field] = $this->postProcessHighlights($value);
             }
         }
 

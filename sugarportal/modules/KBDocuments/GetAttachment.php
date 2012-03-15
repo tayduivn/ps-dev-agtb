@@ -27,6 +27,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 global $portal;
+
+// Bug 31864: "Downloading attachments from portal not working on OD2"
+// Similar to other download bugs we encountered on main instance functionality in relation to OD2 stack (i.e. downloading quote PDFs - bug 27537).
+// Chris Raffle - We should also add this code to line 2 of ./modules/KBDocuments/GetAttachment.php
+if(function_exists('gzopen') 
+    && headers_sent() == false 
+    && (ini_get('zlib.output_compression') == 1)) 
+{
+    ini_set('zlib.output_compression', 'Off');
+}
+
 //Retrieve document via id
 $result = $portal->getKBDocumentAttachment($_REQUEST['id']);
 $output = base64_decode($result['note_attachment']['file']);

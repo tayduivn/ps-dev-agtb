@@ -40,7 +40,7 @@ class ViewEditFormula extends SugarView
  		$json = new JSON();
 		require_once('include/JSON.php');
 		//Load the field list from the target module
-		if (!empty($_REQUEST['targetModule']))
+        if(!empty($_REQUEST['targetModule']) && $_REQUEST['targetModule'] != 'undefined')
  		{
 			$module = $_REQUEST['targetModule'];
  			if (isset($_REQUEST['package']) && $_REQUEST['package'] != 'studio' && $_REQUEST['package'] != '') {

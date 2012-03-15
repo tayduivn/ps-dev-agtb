@@ -216,6 +216,7 @@ function get_sugar_config_defaults(){
             'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ),
         'upload_maxsize' => 3000000,
         'use_php_code_json' => returnPhpJsonStatus(),
+        'use_decode_utf8_for_data_from_soap' => false,
         'verify_client_ip' => true,
         'js_custom_version' => '',
         'default_number_grouping_seperator' => ',',

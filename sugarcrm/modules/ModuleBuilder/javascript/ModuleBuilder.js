@@ -97,9 +97,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}));
 
 			var viewHeight = document.documentElement ? document.documentElement.clientHeight : self.innerHeight;
+            var heightOffset = $('#dcmenu').length > 0 ? $('#dcmenu').height() : $('#header').height();
 			var mp = ModuleBuilder.mainPanel = new YAHOO.widget.Layout('mblayout', {
 				border: false,
-				height: viewHeight - (document.getElementById('dcmenu').clientHeight ) - 40,
+				height: viewHeight - heightOffset - 40,
 				//autoHeight: true
 				//frame: true,
 				units: [//ModuleBuilder.tree, ModuleBuilder.tabPanel,
@@ -1002,7 +1003,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		paramsToUrl : function (params) {
 			url = "";
 			for (i in params) {
-				url += i + "=" + params[i] + "&";
+				url += escape(i) + "=" + escape(params[i]) + "&";
 			}
 			return url;
 		},

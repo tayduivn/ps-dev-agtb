@@ -73,14 +73,12 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
     {
         $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule('Accounts');
         $this->assertContains('name', array_keys($ftsFields));
-        $this->assertContains('email_addresses', array_keys($ftsFields));
         $this->assertArrayHasKey('name', $ftsFields['name'], 'name key not found');
 
         //Pass in a sugar bean for the test
         $account = BeanFactory::getBean('Accounts', null);
         $ftsFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($account);
         $this->assertContains('name', array_keys($ftsFields));
-        $this->assertContains('email_addresses', array_keys($ftsFields));
     }
 
 

@@ -62,17 +62,6 @@
 			'include/javascript/jquery/jquery-min.js'              => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
-            //jqueryui
-			'include/javascript/jquery/jqueryui/jquery.ui.core.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.widget.min.js'            => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jqueryui/jquery.ui.position.min.js'          => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jqueryui/jquery.ui.menu.min.js'          => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jqueryui/jquery.ui.autocomplete.min.js'      => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.mouse.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
-			'include/javascript/jquery/jqueryui/jquery.ui.sortable.min.js'          => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jqueryui/jquery.ui.draggable.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jqueryui/jquery.ui.resizable.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jqueryui/jquery.ui.dialog.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
             //jquery for moddule menus
             'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.hotkeys.js'              => 'include/javascript/sugar_grp1_jquery.js',

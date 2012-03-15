@@ -886,7 +886,7 @@ function validate_dbConfig() {
 }
 
 function validate_siteConfig(){
-	global $mod_strings;
+	global $mod_strings, $sugar_config;
    $errors = array();
 
    if($_SESSION['setup_site_url'] == ''){
@@ -957,6 +957,7 @@ function validate_siteConfig(){
         }
         else { // check portal option is enabled
             $soapClientProxy = $soapClient->getProxy();
+            $soapClientProxy->decodeUTF8($sugar_config['use_decode_utf8_for_data_from_soap']);
             
             if(empty($soapClientProxy->operations['portal_login_contact'])) { // portal not turned on on parent
                 $errors[] = $mod_strings['ERR_PARENT_SOAP'];

@@ -467,7 +467,7 @@ function buildExportLink($forecast_type) {
     //SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_COPY'])."&nbsp;
     //$script = "<a onclick=\"return copyvalue_overlib('{$forecast_type}');\" href=\"#\" >".$mod_strings['LBL_COPY']."</a>";
     $script = "
-    <ul class=\"clickMenu button\">
+    <ul class=\"clickMenu button nosplit\">
     <li>
      <ul class=\"subnav\">
      
