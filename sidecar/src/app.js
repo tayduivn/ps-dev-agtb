@@ -4,9 +4,7 @@
  */
 
 var offByScope = function(scope) {
-    var calls;
-    calls = this._callbacks;
-    _.each(calls, function(node, ev) {
+    _.each(this._callbacks, function(node, ev) {
         if (node.context === scope)
             this.off(ev, node.callback, node.context);
     }, this);
