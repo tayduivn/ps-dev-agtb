@@ -52,6 +52,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 
 			case "CANCEL":
 			$cancelButton  = '{if !empty($smarty.request.return_action) && ($smarty.request.return_action == "DetailView" && !empty($smarty.request.return_id))}';
+			$cancelButton  = '{if !empty($smarty.request.return_action) && ($smarty.request.return_action == "DetailView" && !empty($smarty.request.return_id))}';
 			$cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="SUGAR.ajaxUI.loadContent(\'index.php?action=DetailView&module={$smarty.request.return_module}&record={$smarty.request.return_id}\'); return false;" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" type="button" id="'.$type.$location.'"> ';
 			$cancelButton .= '{elseif !empty($smarty.request.return_action) && ($smarty.request.return_action == "DetailView" && !empty($fields.id.value))}';
 			$cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="SUGAR.ajaxUI.loadContent(\'index.php?action=DetailView&module={$smarty.request.return_module}&record={$fields.id.value}\'); return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" id="'.$type.$location.'"> ';
@@ -64,15 +65,15 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 			break;
 
 			case "DELETE":
-			return '{if $bean->aclAccess("delete")}<li><a title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" onclick="$(\'#form\')[0].return_module.value=\'' . $module . '\'; $(\'#form\')[0].return_action.value=\'ListView\'; $(\'#form\')[0].action.value=\'Delete\'; if(confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){literal}{$(\'#form\').submit()}{/literal};" name="Delete" id="delete_button">{$APP.LBL_DELETE_BUTTON_LABEL}</a></li>{/if} ';
+			return '{if $bean->aclAccess("delete")}<a title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" onclick="$(\'#form\')[0].return_module.value=\'' . $module . '\'; $(\'#form\')[0].return_action.value=\'ListView\'; $(\'#form\')[0].action.value=\'Delete\'; if(confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')){literal}{$(\'#form\').submit()}{/literal};" name="Delete" id="delete_button">{$APP.LBL_DELETE_BUTTON_LABEL}</a>{/if} ';
 			break;
 
 			case "DUPLICATE":
-			return '{if $bean->aclAccess("edit")}<li><a title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" onclick="$(\'#form\')[0].return_module.value=\''. $module . '\'; $(\'#form\')[0].return_action.value=\'DetailView\'; $(\'#form\')[0].isDuplicate.value=true; $(\'#form\')[0].action.value=\'' . $view . '\'; $(\'#form\')[0].return_id.value=\'{$id}\';SUGAR.ajaxUI.submitForm($(\'#form\')[0]);" name="Duplicate" id="duplicate_button">{$APP.LBL_DUPLICATE_BUTTON_LABEL}</a></li>{/if} ';
+			return '{if $bean->aclAccess("edit")}<a title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" onclick="$(\'#form\')[0].return_module.value=\''. $module . '\'; $(\'#form\')[0].return_action.value=\'DetailView\'; $(\'#form\')[0].isDuplicate.value=true; $(\'#form\')[0].action.value=\'' . $view . '\'; $(\'#form\')[0].return_id.value=\'{$id}\';SUGAR.ajaxUI.submitForm($(\'#form\')[0]);" name="Duplicate" id="duplicate_button">{$APP.LBL_DUPLICATE_BUTTON_LABEL}</a>{/if} ';
 			break;
 
 			case "EDIT";
-			return '{if $bean->aclAccess("edit")}<li><a title="{$APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" onclick="$(\'#form\')[0].return_module.value=\'' . $module . '\'; $(\'#form\')[0].return_action.value=\'DetailView\'; $(\'#form\')[0].return_id.value=\'{$id}\'; $(\'#form\')[0].action.value=\'EditView\';SUGAR.ajaxUI.submitForm($(\'#form\')[0]);" name="Edit" id="edit_button">{$APP.LBL_EDIT_BUTTON_LABEL}</a></li>{/if} ';
+			return '{if $bean->aclAccess("edit")}<a title="{$APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{$APP.LBL_EDIT_BUTTON_KEY}" onclick="$(\'#form\')[0].return_module.value=\'' . $module . '\'; $(\'#form\')[0].return_action.value=\'DetailView\'; $(\'#form\')[0].return_id.value=\'{$id}\'; $(\'#form\')[0].action.value=\'EditView\';SUGAR.ajaxUI.submitForm($(\'#form\')[0]);" name="Edit" id="edit_button">{$APP.LBL_EDIT_BUTTON_LABEL}</a>{/if} ';
 			break;
 
             case "EDIT2";
@@ -80,7 +81,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 			break;
 
 			case "FIND_DUPLICATES":
-			return '{if $bean->aclAccess("edit") && $bean->aclAccess("delete")}<li><a title="{$APP.LBL_DUP_MERGE}" accessKey="M" onclick="$(\'#form\')[0].return_module.value=\'' . $module . '\'; $(\'#form\')[0].return_action.value=\'DetailView\'; $(\'#form\')[0].return_id.value=\'{$id}\'; $(\'#form\')[0].action.value=\'Step1\'; $(\'#form\')[0].module.value=\'MergeRecords\';SUGAR.ajaxUI.submitForm($(\'#form\')[0]);" name="Merge"  id="merge_duplicate_button">{$APP.LBL_DUP_MERGE}</a></li>{/if} ';
+			return '{if $bean->aclAccess("edit") && $bean->aclAccess("delete")}<a title="{$APP.LBL_DUP_MERGE}" accessKey="M" onclick="$(\'#form\')[0].return_module.value=\'' . $module . '\'; $(\'#form\')[0].return_action.value=\'DetailView\'; $(\'#form\')[0].return_id.value=\'{$id}\'; $(\'#form\')[0].action.value=\'Step1\'; $(\'#form\')[0].module.value=\'MergeRecords\';SUGAR.ajaxUI.submitForm($(\'#form\')[0]);" name="Merge"  id="merge_duplicate_button">{$APP.LBL_DUP_MERGE}</a>{/if} ';
 			break;
 
 			case "SAVE":
@@ -134,7 +135,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 
 	            require_once('include/SugarFields/Parsers/MetaParser.php');
 	            $encoded_popup_request_data = MetaParser::parseDelimiters($json->encode($popup_request_data));
-	 			$audit_link = '<li><a id="btn_view_change_log" title="{$APP.LNK_VIEW_CHANGE_LOG}" onclick=\'open_popup("Audit", "600", "400", "&record={$fields.id.value}&module_name=' . $params['module'] . '", true, false, ' . $encoded_popup_request_data . '); return false;\'>{$APP.LNK_VIEW_CHANGE_LOG}</a></li>';
+	 			$audit_link = '<a id="btn_view_change_log" title="{$APP.LNK_VIEW_CHANGE_LOG}" onclick=\'open_popup("Audit", "600", "400", "&record={$fields.id.value}&module_name=' . $params['module'] . '", true, false, ' . $encoded_popup_request_data . '); return false;\'>{$APP.LNK_VIEW_CHANGE_LOG}</a>';
 				$view = '{if $bean->aclAccess("detail")}{if !empty($fields.id.value) && $isAuditEnabled}'.$audit_link.'{/if}{/if}';
 				return $view;
 
@@ -151,7 +152,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 					    	foreach($entry as $source_id) {
 					    		$source = SourceFactory::getSource($source_id);
 					    		if($source->isEnabledInWizard()) {
-					    			return '<li><a title="{$APP.LBL_MERGE_CONNECTORS}" accessKey="{$APP.LBL_MERGE_CONNECTORS_BUTTON_KEY}" onClick="document.location=\'index.php?module=Connectors&action=Step1&record={$fields.id.value}&merge_module={$module}\'" name="merge_connector">{$APP.LBL_MERGE_CONNECTORS}</a></li>';
+					    			return '<a title="{$APP.LBL_MERGE_CONNECTORS}" accessKey="{$APP.LBL_MERGE_CONNECTORS_BUTTON_KEY}" onClick="document.location=\'index.php?module=Connectors&action=Step1&record={$fields.id.value}&merge_module={$module}\'" name="merge_connector">{$APP.LBL_MERGE_CONNECTORS}</a>';
 					    		}
 					    	}
 					    }
