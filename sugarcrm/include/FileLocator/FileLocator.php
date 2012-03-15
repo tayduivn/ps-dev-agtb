@@ -22,14 +22,23 @@
 
 require_once 'include/FileLocator/FileLocatorInterface.php';
 
+/**
+ * A simple File Locator class. When created you pass in an array of paths for it to search.
+ *
+ */
 class FileLocator implements FileLocatorInterface
 {
+    /**
+     * Paths to check when we try and locate a file
+     *
+     * @var array
+     */
     private $paths;
 
     /**
-     * @param  $paths
-     * @param  $options
-     * @return void
+     * Constructor
+     *
+     * @param array $paths      Where we want to look for files at
      */
     public function __construct(array $paths)
     {
@@ -38,8 +47,10 @@ class FileLocator implements FileLocatorInterface
 
 
     /**
-     * @param  $name
-     * @return bool|string
+     * Try and find a file in the paths that were passed in when the object was created
+     *
+     * @param string $name          Name of the file we are looking for
+     * @return bool|string          Returns the path of the file if one is found.  If not boolean FALSE is returned
      */
     public function locate($name)
     {
@@ -59,16 +70,32 @@ class FileLocator implements FileLocatorInterface
         return false;
     }
 
+    /**
+     * Set new Paths to check
+     *
+     * @param array $paths
+     */
     public function setPaths($paths)
     {
         $this->paths = (array)$paths;
     }
 
+    /**
+     * Return the current set paths
+     *
+     * @return array
+     */
     public function getPaths()
     {
         return $this->paths;
     }
 
+    /**
+     * Check to see if the file contains an absolute path to the file.
+     *
+     * @param string $file      The file to check if the path is an absolute path or not
+     * @return bool             True if file is an Absolute Path; False if not.
+     */
     private function isAbsolutePath($file)
     {
         if ($file[0] == '/' || $file[0] == '\\'
