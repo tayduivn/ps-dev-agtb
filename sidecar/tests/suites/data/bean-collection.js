@@ -16,7 +16,7 @@ describe("BeanCollection", function() {
         if (server && server.restore) server.restore();
     });
 
-    it("should get records for page +n from the current", function(){
+    it("should get records for page +n from the current", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
@@ -25,8 +25,8 @@ describe("BeanCollection", function() {
 
         var contacts = SugarTest.loadJson("contacts");
 
-        contacts.next_offset=1;
-        contacts.result_count=1;
+        contacts.next_offset = 1;
+        contacts.result_count = 1;
         contacts.records.pop();
 
         server = sinon.fakeServer.create();
@@ -42,7 +42,7 @@ describe("BeanCollection", function() {
         expect(syncSpy.getCall(1).args[0].offset).toEqual(1);
         syncSpy.restore();
     });
-    it("should get records for page -n from the current", function(){
+    it("should get records for page -n from the current", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
@@ -51,8 +51,8 @@ describe("BeanCollection", function() {
 
         var contacts = SugarTest.loadJson("contacts");
 
-        contacts.next_offset=1;
-        contacts.result_count=1;
+        contacts.next_offset = 1;
+        contacts.result_count = 1;
         contacts.records.pop();
 
         server = sinon.fakeServer.create();
@@ -66,13 +66,13 @@ describe("BeanCollection", function() {
         beans.paginate();
         expect(syncSpy).toHaveBeenCalledTwice();
         expect(syncSpy.getCall(1).args[0].offset).toEqual(1);
-        var options = {page:-1};
+        var options = {page: -1};
         beans.paginate(options);
         expect(syncSpy.getCall(2).args[0].offset).toEqual(-1);
 
         syncSpy.restore();
     });
-    it("should append records for page +n", function(){
+    it("should append records for page +n", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
@@ -81,8 +81,8 @@ describe("BeanCollection", function() {
 
         var contacts = SugarTest.loadJson("contacts");
         var subSetContacts = contacts;
-        subSetContacts.next_offset=1;
-        subSetContacts.result_count=1;
+        subSetContacts.next_offset = 1;
+        subSetContacts.result_count = 1;
         subSetContacts.records.pop();
 
         server = sinon.fakeServer.create();
@@ -103,24 +103,22 @@ describe("BeanCollection", function() {
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
-        beans.paginate({add:true});
+        beans.paginate({add: true});
         server.respond();
 
         expect(beans.models.length).toEqual(2);
     });
-    it("should get the current page number", function(){
+    it("should get the current page number", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
         dm.declareModel(moduleName, metadata[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadJson("contacts");
-        var subSetContacts = contacts;
-        beans.offset=3;
+        beans.offset = 3;
         app.config.maxQueryResult = 2;
 
-        var p =beans.getPageNumber();
+        var p = beans.getPageNumber();
         expect(p).toEqual(2);
     });
 });

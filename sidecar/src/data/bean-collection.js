@@ -45,7 +45,7 @@
             options.page = options.page || 1;
 
             // fix page number since our offset is already at the end of the collection subset
-                options.page--;
+            options.page--;
 
             // can haz append?
             if (options.add && options.add === true) {
@@ -70,10 +70,10 @@
          * gets current page of collection being displayed depending on offset
          * @return {Integer} current ceil of offfset/maxQuery result default 1
          */
-        getPageNumber: function(){
+        getPageNumber: function() {
             var pageNumber = 1;
             if (this.offset && app.config.maxQueryResult) {
-                pageNumber=Math.ceil(this.offset/app.config.maxQueryResult);
+                pageNumber = Math.ceil(this.offset / app.config.maxQueryResult);
             }
             return pageNumber;
         }
