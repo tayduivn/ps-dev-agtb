@@ -377,6 +377,7 @@
                     if ((method == "read") && (model instanceof app.BeanCollection)) {
                         if (data.next_offset) {
                             model.offset = data.next_offset;
+                            model.page = model.getPageNumber();
                         }
                         // TODO: Hack to overcome wrong response format of get-relations request until fixed
                         data = data.records ? data.records : data;

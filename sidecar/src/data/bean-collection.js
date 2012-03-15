@@ -65,6 +65,17 @@
             // get new records
             this.fetch(fetchOptions);
 
+        },
+        /**
+         * gets current page of collection being displayed depending on offset
+         * @return {Integer} current ceil of offfset/maxQuery result default 1
+         */
+        getPageNumber: function(){
+            var pageNumber = 1;
+            if (this.offset && app.config.maxQueryResult) {
+                pageNumber=Math.ceil(this.offset/app.config.maxQueryResult);
+            }
+            return pageNumber;
         }
     }), false);
 

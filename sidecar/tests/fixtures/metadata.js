@@ -95,7 +95,6 @@ fixtures.metadata = {
                     {
                         "label":"Details",
                         "fields":[
-                            {name:"case_number", label:"Case Number", "class":"foo"},
                             {name:"name", label:"Name"},
                             {name:"status", label:"Status"},
                             {name:"description", label:"Description"}
@@ -141,7 +140,7 @@ fixtures.metadata = {
                         name:"show_more_button",
                         type:"button",
                         label:"Show More",
-                        class:"loading",
+                        class:"loading wide",
                         events : {
                             click : "function(){ var self = this; " +
                                     "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");self.context.state.layoutObj.render();window.scrollTo(0,document.body.scrollHeight);}});" +
@@ -178,7 +177,7 @@ fixtures.metadata = {
                         label:" ",
                         events : {
                             click : "function(){ var self = this; " +
-                                    "console.log(this); this.context.state.collection.paginate({success:function(){console.log(\"in paginate success\"); console.log(self.context.state.collection);self.context.state.layoutObj.render()}});" +
+                                    "console.log(this); this.context.state.collection.paginate({success:function(){console.log(\"in paginate success\");  self.context.state.layoutObj.render(); console.log(self); }});" +
                                 "}"
                         }
                     }

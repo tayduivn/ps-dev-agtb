@@ -108,4 +108,19 @@ describe("BeanCollection", function() {
 
         expect(beans.models.length).toEqual(2);
     });
+    it("should get the current page number", function(){
+        app.config.maxQueryResult = 1;
+
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var beans = dm.createBeanCollection(moduleName);
+
+        var contacts = SugarTest.loadJson("contacts");
+        var subSetContacts = contacts;
+        beans.offset=3;
+        app.config.maxQueryResult = 2;
+
+        var p =beans.getPageNumber();
+        expect(p).toEqual(2);
+    });
 });
