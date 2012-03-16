@@ -184,6 +184,7 @@
                     };
 
                     collection = app.dataManager.createBeanCollection(state.module);
+                    collection.on("app:collection:fetch", state.view.render, this);
                     collection.fetch(options);
 
                     bean = collection.models[0] || {};

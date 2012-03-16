@@ -108,6 +108,7 @@ describe("BeanCollection", function() {
 
         expect(beans.models.length).toEqual(2);
     });
+
     it("should get the current page number", function() {
         app.config.maxQueryResult = 1;
 
@@ -120,5 +121,32 @@ describe("BeanCollection", function() {
 
         var p = beans.getPageNumber();
         expect(p).toEqual(2);
+    });
+
+    it("should trigger app:collection:fetch on fetch", function() {
+        var triggerFuncSpy = sinon.spy(function(data){
+                    var x = 2;
+                    return x;
+                });
+        app.config.maxQueryResult = 1;
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata[moduleName]);
+        var beans = dm.createBeanCollection(moduleName);
+
+        var contacts = SugarTest.loadJson("contacts");
+
+        contacts.next_offset = 1;
+        contacts.result_count = 1;
+        contacts.records.pop();
+
+        server = sinon.fakeServer.create();
+        server.respondWith("GET", "/rest/v10/Contacts?maxresult=1",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify(contacts)]);
+        beans.on("app:collection:fetch", triggerFuncSpy, this);
+        beans.fetch();
+        server.respond();
+        server.restore();
+        expect(triggerFuncSpy).toHaveBeenCalledOnce();
     });
 });
