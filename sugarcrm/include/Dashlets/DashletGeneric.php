@@ -380,7 +380,7 @@ class DashletGeneric extends Dashlet {
         $this->lvs->displayColumns = $displayColumns;
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $seedBean->ACLFilterFieldList($this->lvs->displayColumns, array("owner_override" => true));
+        $this->seedBean->ACLFilterFieldList($this->lvs->displayColumns, array("owner_override" => true));
         //END SUGARCRM flav=pro ONLY
 
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
