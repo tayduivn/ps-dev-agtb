@@ -5350,9 +5350,6 @@ function save_relationship_changes($is_update, $exclude=array())
 // FIXME: make configurable
             return array(
             	'SugarACLStatic',
-//BEGIN SUGARCRM flav=dce ONLY
-    			'SugarACLDCE',
-//END SUGARCRM flav=dce ONLY
             );
         }
         return array();
