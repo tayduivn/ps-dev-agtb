@@ -43,8 +43,8 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     var $email = null;
     var $emailman = null;
 	var $saved_current_user = null;
-	var $clear_database = false;
-	var $remove_beans = false;
+	var $clear_database = true;
+	var $remove_beans = true;
 	
 	public function setUp()
     {
