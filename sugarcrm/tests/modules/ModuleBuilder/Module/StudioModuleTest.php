@@ -28,7 +28,6 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public static function setUpBeforeClass()
     {
-        $this->markTestIncomplete('skipping');
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
