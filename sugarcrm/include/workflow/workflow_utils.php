@@ -346,8 +346,8 @@ function build_source_array($type, $field_value, $var_symbol=true){
 	//end function build_source_array
 	}
 
-	function write_record_type(& $eval_dump, $record_type){
-
+    function write_record_type(& $eval_dump, $record_type, $row = array())
+    {
 		if($record_type=="All"){
 			return false;
 		}
@@ -355,10 +355,16 @@ function build_source_array($type, $field_value, $var_symbol=true){
 			$eval_dump .= "if(isset(\$focus->fetched_row['id']) && \$focus->fetched_row['id']!=\"\"){ \n ";
 			return true;
 		}
-		if($record_type=="New"){
-			$eval_dump .= "if(empty(\$focus->fetched_row['id'])){ \n ";
-			return true;
-		}
+        if ($record_type=="New")
+        {
+            $condition = "empty(\$focus->fetched_row['id'])";
+            if (isset($row['id']) && $row['id'] != false)
+            {
+                $condition .= ' || (!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" && !empty($_SESSION["workflow_id_cron"]) && $_SESSION["workflow_id_cron"]=="' . $row['id'] . '")';
+            }
+            $eval_dump .= "if($condition){ \n ";
+            return true;
+        }
 
 	//end function write_record_type
 	}

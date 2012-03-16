@@ -57,6 +57,12 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
 	    global $sugar_config;
 	    $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
 	    $sugar_config['disable_count_query'] = true;
+
+        global $beanList;
+        global $beanFiles;
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
     }
 
     public function tearDown()
@@ -74,6 +80,8 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
 
     public function testGetBeanSelectArray()

@@ -40,7 +40,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 	function displayHeaderCell($layout_def)
 	{
-		return '&nbsp;';
+		return '';
 	}
 
 	function displayList($layout_def)
@@ -121,8 +121,10 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
                 }
                 //include the button class and see if it extends quick create
                 $className = 'SugarWidget'.$buttonClass;
-                if (file_exists('include/generic/SugarWidgets/'.$className.'.php')){
-                    include_once('include/generic/SugarWidgets/'.$className.'.php');
+
+                $widgetClass = get_custom_file_if_exists('include/generic/SugarWidgets/'.$className.'.php');
+                if (file_exists($widgetClass)){
+                    include_once($widgetClass);
                     if (class_exists($className,true)){
                         $button = new $className();
                         //set valid flag to true if this class extends quickcreate button

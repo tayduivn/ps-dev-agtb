@@ -569,6 +569,14 @@ $mod_strings = array(
     'LBL_OOTB_DCE_SALES_REPORT'   => 'Create weekly Sales Report Email',
     //END SUGARCRM flav=dce ONLY
 
+    // BEGIN SUGARCRM flav=pro ONLY
+    'LBL_FTS_TABLE_TITLE'     => 'Provide Full-Text Search Settings',
+    'LBL_FTS_HOST'     => 'Host',
+    'LBL_FTS_PORT'     => 'Port',
+    'LBL_FTS_TYPE'     => 'Search Engine Type',
+    'LBL_FTS_HELP'      => 'To enable full-text searching, select the search engine type and enter the Host and Port where the search engine is hosted. Sugar includes built-in support for the elasticsearch engine.',
+    'LBL_FTS_ERROR'    => 'Unable to connect to Full Text Search server, please verify your settings.',
+    // END SUGARCRM flav=pro ONLY
 
     'LBL_PATCHES_TITLE'     => 'Install Latest Patches',
     'LBL_MODULE_TITLE'      => 'Install Language Packs',

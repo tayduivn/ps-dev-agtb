@@ -54,31 +54,37 @@
 {if count($data) == 0}
 	{assign var="hideTable" value=true}
 	<div class="list view listViewEmpty">
-	{if strlen($query) == 0}
-			{capture assign="createLink"}<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
-			{capture assign="importLink"}<a href="?module=Import&action=Step1&import_module={$pageData.bean.moduleDir}&return_module={$pageData.bean.moduleDir}&return_action=index">{$APP.LBL_IMPORT}</a>{/capture}
-			{capture assign="helpLink}<a target="_blank" href='?module=Administration&action=SupportPortal&view=documentation&version={$sugar_info.sugar_version}&edition={$sugar_info.sugar_flavor}&lang=&help_module={$currentModule}&help_action=&key='>{$APP.LBL_CLICK_HERE}</a>{/capture}
-			<p class="msg">
-				{$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS|replace:"<item2>":$createLink|replace:"<item3>":$importLink}
-			</p>
-			<p class="submsg">
-				{$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$pageData.bean.moduleDir|replace:"<item4>":$helpLink}
-			</p>
-	{elseif $query == "-advanced_search"}
-		<p class="msg">
-			{$APP.MSG_LIST_VIEW_NO_RESULTS_BASIC}
-		</p>
-	{else}
-		<p class="msg">
-			{capture assign="quotedQuery"}"{$query}"{/capture}
-			{$APP.MSG_LIST_VIEW_NO_RESULTS|replace:"<item1>":$quotedQuery}
-		</p>
-		<p class = "submsg">
-			<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">
-				{$APP.MSG_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$quotedQuery|replace:"<item2>":$singularModule}
-			</a>
-			
-		</p>
+    {if $displayEmptyDataMesssages}
+        {if strlen($query) == 0}
+                {capture assign="createLink"}<a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
+                {capture assign="importLink"}<a href="?module=Import&action=Step1&import_module={$pageData.bean.moduleDir}&return_module={$pageData.bean.moduleDir}&return_action=index">{$APP.LBL_IMPORT}</a>{/capture}
+                {capture assign="helpLink"}<a target="_blank" href='?module=Administration&action=SupportPortal&view=documentation&version={$sugar_info.sugar_version}&edition={$sugar_info.sugar_flavor}&lang=&help_module={$currentModule}&help_action=&key='>{$APP.LBL_CLICK_HERE}</a>{/capture}
+                <p class="msg">
+                    {$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS|replace:"<item2>":$createLink|replace:"<item3>":$importLink}
+                </p>
+                <p class="submsg">
+                    {$APP.MSG_EMPTY_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$pageData.bean.moduleDir|replace:"<item4>":$helpLink}
+                </p>
+        {elseif $query == "-advanced_search"}
+            <p class="msg">
+                {$APP.MSG_LIST_VIEW_NO_RESULTS_BASIC}
+            </p>
+        {else}
+            <p class="msg">
+                {capture assign="quotedQuery"}"{$query}"{/capture}
+                {$APP.MSG_LIST_VIEW_NO_RESULTS|replace:"<item1>":$quotedQuery}
+            </p>
+            <p class = "submsg">
+                <a href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">
+                    {$APP.MSG_LIST_VIEW_NO_RESULTS_SUBMSG|replace:"<item1>":$quotedQuery|replace:"<item2>":$singularModule}
+                </a>
+
+            </p>
+        {/if}
+    {else}
+        <p class="msg">
+            {$APP.LBL_NO_DATA}
+        </p>
 	{/if}
 	</div>
 {/if}

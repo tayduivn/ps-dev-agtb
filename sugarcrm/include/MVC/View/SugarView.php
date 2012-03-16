@@ -130,7 +130,7 @@ class SugarView
                      'label' => translate($module),
                      $this->getMenu($module),
                  ),
-                'moduleList' => $this->displayHeader(true),
+                'moduleList' => "",
                 'title' => $this->getBrowserTitle(),
                 'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : "",
                 'record' => isset($_REQUEST['record']) ? $_REQUEST['record'] : "",
@@ -604,6 +604,28 @@ class SugarView
 
 
         }
+        
+        if ( isset($extraTabs) && is_array($extraTabs) ) {
+            // Adding shortcuts array to extra menu array for displaying shortcuts associated with each module
+            $shortcutExtraMenu = array();
+            foreach($extraTabs as $module_key => $label) {
+                global $mod_strings;
+                $mod_strings = return_module_language($current_language, $module_key);
+                foreach ( $this->getMenu($module_key) as $key => $menu_item ) {
+                    $shortcutExtraMenu[$module_key][$key] = array(
+                        "URL"         => $menu_item[0],
+                        "LABEL"       => $menu_item[1],
+                        "MODULE_NAME" => $menu_item[2],
+                        "IMAGE"       => $themeObject
+                        ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                        "ID"          => $menu_item[2]."_link",
+                        );
+                }
+            }
+            $ss->assign("shortcutExtraMenu",$shortcutExtraMenu);
+        }
+        
+        
         $imageURL = SugarThemeRegistry::current()->getImageURL("dashboard.png");
         $homeImage = "<img src='$imageURL'>";
 		$ss->assign("homeImage",$homeImage);
@@ -1032,6 +1054,12 @@ EOHTML;
             $ss->assign('DYNAMICDCACTIONS',$dcm->getPartnerIconMenus());
         }
         //END SUGARCRM flav=sales || flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!empty($GLOBALS['sugar_config']['disabled_feedback_widget']))
+            $ss->assign('DISABLE_FEEDBACK_WIDGET', TRUE);
+        //END SUGARCRM flav=pro ONLY
+
         $ss->display(SugarThemeRegistry::current()->getTemplate('footer.tpl'));
     }
 
@@ -1307,8 +1335,12 @@ EOHTML;
      */
     protected function _getModuleTab()
     {
-        global $app_list_strings, $moduleTabMap;
+        global $app_list_strings, $moduleTabMap, $current_user;
 
+		$userTabs = query_module_access_list($current_user);
+		//If the home tab is in the user array use it as the default tab, otherwise use the first element in the tab array
+		$defaultTab = (in_array("Home",$userTabs)) ? "Home" : key($userTabs);
+		
         // Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
         if ( !empty($_REQUEST['module_tab']) )
             return $_REQUEST['module_tab'];
@@ -1318,10 +1350,12 @@ EOHTML;
         elseif ( $this->module == 'MergeRecords' )
             return !empty($_REQUEST['merge_module']) ? $_REQUEST['merge_module'] : $_REQUEST['return_module'];
         elseif ( $this->module == 'Users' && $this->action == 'SetTimezone' )
-            return 'Home';
+            return $defaultTab;
         // Default anonymous pages to be under Home
         elseif ( !isset($app_list_strings['moduleList'][$this->module]) )
-            return 'Home';
+            return $defaultTab;
+        elseif ( $_REQUEST['action'] == "ajaxui" )
+        	return $defaultTab;
         else
             return $this->module;
     }
@@ -1343,13 +1377,15 @@ EOHTML;
         $module = preg_replace("/ /","",$this->module);
 
         $params = $this->_getModuleTitleParams();
-        $count = count($params);
         $index = 0;
 
 		if(SugarThemeRegistry::current()->directionality == "rtl") {
 			$params = array_reverse($params);
 		}
-
+		if(count($params) > 1) {
+			array_shift($params);
+		}
+		$count = count($params);
         $paramString = '';
         foreach($params as $parm){
             $index++;
@@ -1468,12 +1504,12 @@ EOHTML;
     	if($this->action == "ListView" || $this->action == "index") {
     	    if (!empty($iconPath) && !$browserTitle) {
     	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
-    	    		return $app_strings['LBL_SEARCH'].$this->getBreadCrumbSymbol()
+    	    		return $app_strings['LBL_SEARCH']."&nbsp;"
     	    			 . "$firstParam";
 
     	    	} else {
 					return "$firstParam"
-					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
+					     . "&nbsp;".$app_strings['LBL_SEARCH'];
     	    	}
 			} else {
 				return $firstParam;
@@ -1528,13 +1564,18 @@ EOHTML;
     public function getBreadCrumbSymbol()
     {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='pointer'>&nbsp;&nbsp;</span>";
+        	return "<span class='pointer'>&raquo;</span>";
         }
         else {
-        	return "<span class='pointer'>&nbsp;&nbsp;</span>";
+        	return "<span class='pointer'>&laquo;</span>";
         }
     }
 
+    /**
+     * Fetch config values to be put into an array for JavaScript
+     *
+     * @return array
+     */
     protected function getSugarConfigJS(){
         global $sugar_config;
 
@@ -1543,7 +1584,7 @@ EOHTML;
         // AjaxUI stock banned modules
         $config_js[] = "SUGAR.config.stockAjaxBannedModules = ".json_encode(ajaxBannedModules()).";";
         if ( isset($sugar_config['quicksearch_querydelay']) ) {
-            $config_js[] = "SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};";
+            $config_js[] = $this->prepareConfigVarForJs('quicksearch_querydelay', $sugar_config['quicksearch_querydelay']);
         }
         if ( empty($sugar_config['disableAjaxUI']) ) {
             $config_js[] = "SUGAR.config.disableAjaxUI = false;";
@@ -1552,15 +1593,41 @@ EOHTML;
             $config_js[] = "SUGAR.config.disableAjaxUI = true;";
         }
         if ( !empty($sugar_config['addAjaxBannedModules']) ){
-            $config_js[] = "SUGAR.config.addAjaxBannedModules = ".json_encode($sugar_config['addAjaxBannedModules']).";";
+            $config_js[] = $this->prepareConfigVarForJs('addAjaxBannedModules', $sugar_config['addAjaxBannedModules']);
         }
         if ( !empty($sugar_config['overrideAjaxBannedModules']) ){
-            $config_js[] = "SUGAR.config.overrideAjaxBannedModules = ".json_encode($sugar_config['overrideAjaxBannedModules']).";";
+            $config_js[] = $this->prepareConfigVarForJs('overrideAjaxBannedModules', $sugar_config['overrideAjaxBannedModules']);
+        }
+        if (!empty($sugar_config['js_available']) && is_array ($sugar_config['js_available']))
+        {
+            foreach ($sugar_config['js_available'] as $configKey)
+            {
+                if (isset($sugar_config[$configKey])) 
+                {
+                    $jsVariableStatement = $this->prepareConfigVarForJs($configKey, $sugar_config[$configKey]);
+                    if (!array_search($jsVariableStatement, $config_js))
+                    {
+                        $config_js[] = $jsVariableStatement;
+                    }
+                }
+            }
         }
 
         return $config_js;
     }
 
+    /**
+     * Utility method to convert sugar_config values into a JS acceptable format.
+     *
+     * @param string $key       Config Variable Name
+     * @param string $value     Config Variable Value
+     * @return string
+     */
+    protected function prepareConfigVarForJs($key, $value)
+    {
+        $value = json_encode($value);
+        return "SUGAR.config.{$key} = {$value};";
+    }
 
     /**
      * getHelpText

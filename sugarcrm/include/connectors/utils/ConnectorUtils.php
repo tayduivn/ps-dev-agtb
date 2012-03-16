@@ -266,7 +266,15 @@ class ConnectorUtils
           }
           if(file_exists($src4)) {
               require($src4);
-              $sources = array_merge($sources, $connectors);
+
+            //define connectors if it doesn't exist or is not an array
+            if (!isset($connectors) || !is_array($connectors)){
+                $connectors = array();
+                $err_str = string_format($GLOBALS['app_strings']['ERR_CONNECTOR_NOT_ARRAY'],array($src4));
+                $GLOBALS['log']->error($err_str);
+            }
+
+            $sources = array_merge($sources, $connectors);
           }
 
           if(!self::saveConnectors($sources, $src4)) {
@@ -847,7 +855,7 @@ class ConnectorUtils
 
                       $menuParams .= '";';
                       $code .= $menuParams . "\n";
-                      $code .= "return SUGAR.uitl.showHelpTips(el,menuParams);\n";
+                      $code .= "return SUGAR.util.showHelpTips(el,menuParams);\n";
                       $code .= "{literal} } {/literal}\n";
                       $code .= "</script>\n";
                       $code .= $formatterCode;

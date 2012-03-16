@@ -414,6 +414,9 @@ class TimeDate
            $cacheKey .= "_{$user->id}";
         }
 
+        if( $this->isAlwaysDb() )
+            $cacheKey .= '_asdb';
+        
         return $cacheKey;
     }
 
@@ -1888,7 +1891,7 @@ class TimeDate
 
     /**
      * AMPMMenu
-     * This method renders a <select> HTML form element based on the
+     * This method renders a SELECT HTML form element based on the
      * user's time format preferences, with give date's value highlighted.
      *
      * If user's prefs have no AM/PM string, returns empty string.

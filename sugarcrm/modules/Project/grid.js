@@ -509,14 +509,12 @@ SUGAR.grid = function() {
 
 			cell = row.insertCell(5);
 			cell.innerHTML =
-				"<input name='date_start_" + numRows + "' id='date_start_" + numRows + "' style='border:0' onchange='parseDate(this, \"" + calendar_dateformat + "\");' " +
-					"onBlur='SUGAR.grid.processStartDate(this, \"" + numRows + "\");'" +
+				"<input name='date_start_" + numRows + "' id='date_start_" + numRows + "' style='border:0' onchange='parseDate(this, \"" + calendar_dateformat + "\"); SUGAR.grid.processStartDate(this, \"" + numRows + "\");' " +
 					" type='text' tabindex='2' size='11' maxlength='10' value=''>";
 
 			cell = row.insertCell(6);
 			cell.innerHTML =
-				"<input name='date_finish_" + numRows + "' id='date_finish_" + numRows + "' style='border:0' onchange='parseDate(this, \"" + calendar_dateformat + "\");' " +
-					"onBlur='SUGAR.grid.processFinishDate(this, \"" + numRows + "\");'" +
+				"<input name='date_finish_" + numRows + "' id='date_finish_" + numRows + "' style='border:0' onchange='parseDate(this, \"" + calendar_dateformat + "\"); SUGAR.grid.processFinishDate(this, \"" + numRows + "\");' " +
 					" type='text' tabindex='2' size='11' maxlength='10' value=''>";
 
 			var startDateObj = SUGAR.grid.getNextValidDate(new Date());
@@ -2171,17 +2169,16 @@ SUGAR.grid = function() {
 
 		/**
 		 * validateDate: given a date widget, this function alerts the user if
-		 * the entered values fall on a weekend.
+		 * the entered values fall on a weekend, and instead picks the first valid wokring day
 		 */
 		validateDate: function(widget) {
 			var dateObj = SUGAR.grid.getJSDate(widget.value);
 			var widgetId = widget.id;
 			if (dateObj.getDay() == 0 || dateObj.getDay() == 6) {
 				alert(SUGAR.language.get('Project', 'ERR_DATE'));
-				widget.value = "";
-				setTimeout("document.getElementById('" + widgetId + "').focus();",1);
-				setTimeout("document.getElementById('" + widgetId + "').select();",1);
-				return false;
+				// Bug 25082
+				// When the selected date is a non-working day, pick the next valid working day
+				dateObj = SUGAR.grid.getNextValidDate(dateObj).date;
 			}
 
 			// Bug 11790: If a user enters, Feb 30th as the date, JS automatically makes that March 2nd,
@@ -2358,8 +2355,7 @@ SUGAR.grid = function() {
 		/* BEGIN - CODE FOR THE RIGHT MOUSE MENU													   */
 		/***********************************************************************************************/
 		setUpContextMenu: function() {
-			if (document.getElementById('selected_view') &&
-				document.getElementById('selected_view').value <= 1 && currentUser == owner) {
+			if (document.getElementById('selected_view') && document.getElementById('selected_view').value <= 1) {
 		        // Create the context menu
 		        var oContextMenu = new YAHOO.widget.ContextMenu(
 		                                "contextmenu",

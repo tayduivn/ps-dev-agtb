@@ -95,7 +95,7 @@ margin-top:8px;
 }
 
 
-ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+ul.clickMenu:hover, ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, ul.clickMenu.subpanel.records li ul.subnav li a:hover, ul.clickMenu ul.subnav-sub li a:hover { /*--Hover effect for subnav links--*/
 	background:		#6ea100;
 }
 
@@ -103,6 +103,9 @@ ul.clickMenu li ul.subnav li a:hover,ul.clickMenu li ul.subnav li input:hover, u
 	background-color: #6ea100;	
 }
 
+#dcmenuSugarCube:hover {
+	background-color: #6ea100;	
+}
 
 .dashletPanel.dc {
 border: 1px solid #0a6315;

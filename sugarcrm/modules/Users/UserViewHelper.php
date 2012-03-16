@@ -442,7 +442,7 @@ class UserViewHelper {
             }
         }
         
-        $publish_url .= $token.'type=vfb&source=outlook&key='.$this->bean->getPreference('calendar_publish_key' );
+        $publish_url .= $token.'type=vfb&source=outlook&key=<span id="cal_pub_key_span">'.$this->bean->getPreference('calendar_publish_key' ) . '</span>';
         if (! empty($this->bean->email1)) {
             $publish_url .= '&email='.$this->bean->email1;
         } else {
@@ -450,7 +450,7 @@ class UserViewHelper {
         }
         $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
         $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url'].'/vcal_server.php/type=vfb&email=%NAME%@%SERVER%');
-        
+        $this->ss->assign("CALENDAR_ICAL_URL", $sugar_config['site_url'].'/ical_server.php');
         //END SUGARCRM flav!=sales ONLY
         //BEGIN SUGARCRM flav!=dce ONLY
         //BEGIN SUGARCRM flav=ent ONLY

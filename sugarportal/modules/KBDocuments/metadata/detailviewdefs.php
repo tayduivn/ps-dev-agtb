@@ -38,7 +38,7 @@ $viewdefs['KBDocuments']['detailview'] = array (
   'data' =>
   array (
     array ('kbdocument_name', 'active_date'),
-    array (array ('field' => 'description', 'nl2br' => true),
+    array (array ('field' => 'description'),
     ),
   ),
 );

@@ -733,6 +733,9 @@ function parse_target_body($target_body, $base_module){
 //end function parse_target_body
 }
 
+function decodeMultienumField($field) {
+    return implode(', ', unencodeMultienum($field));
+}
 
 function reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id=""){
 	global $beanList;
@@ -757,13 +760,13 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 				}
 
 				if($field_array['value_type'] == 'future'){
-					$replacement_value = check_special_fields($field_array['name'], $focus, false, array("notify_user" => $notify_user_object));
+					$replacement_value = check_special_fields($field_array['name'], $focus, false, array());
 				}
 				if($field_array['value_type'] == 'past'){
-					$replacement_value = check_special_fields($field_array['name'], $focus, true, array("notify_user" => $notify_user_object));
+					$replacement_value = check_special_fields($field_array['name'], $focus, true, array());
 				}
 
-				$replace_array[$field_array['original']] = $replacement_value;
+				$replace_array[$field_array['original']] = decodeMultienumField($replacement_value);
 
 
 			//end foreach module_array
@@ -817,12 +820,12 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 							$replacement_value = get_invite_link($rel_object, $notify_user_id);
 						} else {
 							//use future always for rel because fetched should always be the same
-							$replacement_value = check_special_fields($field_array['name'], $rel_object, false, array("notify_user" => $notify_user_object));
+							$replacement_value = check_special_fields($field_array['name'], $rel_object, false, array());
 						}
 					} else {
 						$replacement_value = "Invalid Value";
 					}
-					$replace_array[$field_array['original']] = $replacement_value;
+					$replace_array[$field_array['original']] = decodeMultienumField($replacement_value);
 
 				//end foreach module_array
 				}

@@ -1,4 +1,4 @@
-{* //FILE SUGARCRM flav!=sales ONLY*}
+{* //FILE SUGARCRM flav=pro ONLY *}
 {*
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -56,15 +56,15 @@
         <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_FTS_SETTINGS_TITLE}</h4></th></tr>
 
         <tr>
-            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}&nbsp;</td>
+            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}&nbsp;{sugar_help text=$MOD.LBL_FTS_TYPE_HELP}</td>
             <td width="85%" align="left" valign="middle"><select name="fts_type" id="fts_type">{$fts_type}</select></td>
         </tr>
         <tr class="shouldToggle">
-            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}&nbsp;</td>
+            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
             <td width="85%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
         </tr>
         <tr class="shouldToggle">
-            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}&nbsp;</td>
+            <td width="15%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
             <td width="85%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
         </tr>
         <tr class="shouldToggle">
@@ -85,7 +85,7 @@
                     <span id='basic_search_img_span' style="display:none;">
                         {sugar_getimage alt=$alt_show_hide name="basic_search" ext=".gif" other_attributes='border="0" id="basic_search_img" '}
                     </span>
-                    {$MOD.LBL_ADVANCED}
+                    {$MOD.LBL_FTS_ADVANCED_LINK}&nbsp;{sugar_help text=$MOD.LBL_FTS_ADVANCED_LINK_HELP}
                 </a>
             </td>
         </tr>
@@ -123,6 +123,7 @@
     var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
     var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
     var shouldHide = '{$scheduleDisableButton}';
+    var justRequestedAScheduledIndex = '{$justRequestedAScheduledIndex}';
     {literal}
     $(document).ready(function()
     {
@@ -130,6 +131,8 @@
         {
             $('.shouldToggle').toggle(false);
         }
+        if(justRequestedAScheduledIndex)
+            alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
     });
 
     SUGAR.FTS = {
@@ -160,7 +163,7 @@
 
             SUGAR.FTS.rsPanel = new YAHOO.widget.SimpleDialog("FTSPanel", {
                                     modal: true,
-                                    width: "200px",
+                                    width: "260px",
                                     visible: true,
                                     constraintoviewport: true,
                                     loadingText: SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING"),

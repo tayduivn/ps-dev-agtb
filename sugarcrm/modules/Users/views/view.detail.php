@@ -73,16 +73,16 @@ class UsersViewDetail extends ViewDetail {
             && $sugar_config['default_user_name'] == $this->bean->user_name
             && isset($sugar_config['lock_default_user_name'])
             && $sugar_config['lock_default_user_name']) {
-            $buttons .= "<a id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' onclick='$(\"#userEditButton\").click();' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' name='Edit'>".$app_strings['LBL_EDIT_BUTTON_LABEL']."</a>  ";
-            $buttons .= "<input id='userEditButton' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='".$this->bean->id."'; this.form.action.value='EditView'\" type='submit' style='display:none;'>";
+            $buttons .= "<a id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' onclick='$(\"#userEditButton_old\").click();' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' name='Edit'>".$app_strings['LBL_EDIT_BUTTON_LABEL']."</a>  ";
+            $buttons .= "<input id='userEditButton' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='".$this->bean->id."'; this.form.action.value='EditView'\" type='submit' style='display:none; value='" . $app_strings['LBL_EDIT_BUTTON_LABEL'] .  "'>";
         }
         elseif (is_admin($current_user)|| ($GLOBALS['current_user']->isAdminForModule('Users')&& !$this->bean->is_admin)
                 //BEGIN SUGARCRM flav=sales ONLY
                 || ($current_user->user_type == 'UserAdministrator' && !$this->bean->is_admin)
                 //END SUGARCRM flav=sales ONLY
                 || $_REQUEST['record'] == $current_user->id) {
-            $buttons .= "<a id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' onclick='$(\"#userEditButton\").click();' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' name='Edit'>".$app_strings['LBL_EDIT_BUTTON_LABEL']."</a>  ";
-            $buttons .= "<input id='userEditButton' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='".$this->bean->id."'; this.form.action.value='EditView'\" type='submit' style='display:none;'>";
+            $buttons .= "<a id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' onclick='$(\"#userEditButton_old\").click();' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' name='Edit'>".$app_strings['LBL_EDIT_BUTTON_LABEL']."</a>  ";
+            $buttons .= "<input id='userEditButton' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='".$this->bean->id."'; this.form.action.value='EditView'\" type='submit' style='display:none;' value='" . $app_strings['LBL_EDIT_BUTTON_LABEL'] .  "'>";
             $buttons .= "<ul class='subnav multi'>";
             if ((is_admin($current_user)|| $GLOBALS['current_user']->isAdminForModule('Users')
                  //BEGIN SUGARCRM flav=sales ONLY

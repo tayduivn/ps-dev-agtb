@@ -64,7 +64,7 @@ class SugarTestUserUtilities
         return $user;
     }
     
-    public function removeAllCreatedAnonymousUsers() 
+    public static function removeAllCreatedAnonymousUsers()
     {
         $user_ids = self::getCreatedUserIds();
         if ( count($user_ids) > 0 ) {

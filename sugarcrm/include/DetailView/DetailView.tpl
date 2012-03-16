@@ -83,6 +83,7 @@ class="yui-navset detailview_tabs"
 		{{/if}}
 		{{* //END SUGARCRM flav=pro ONLY*}}
 			{counter name="fieldsUsed"}
+			{{if empty($colData.field.hideLabel)}}
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="col">
 				{{if !empty($colData.field.name)}}
 				    {if !$fields.{{$colData.field.name}}.hidden}
@@ -115,6 +116,7 @@ class="yui-navset detailview_tabs"
                     {counter name="fieldsHidden"}
                 {{* //END SUGARCRM flav=pro ONLY*}}
                 {/if}
+                {{/if}}
                 {{/if}}
 			</td>
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}} {{if isset($fields[$colData.field.name].type) && $fields[$colData.field.name].type == 'phone'}}class="phone"{{/if}}>

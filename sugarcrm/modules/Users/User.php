@@ -169,7 +169,7 @@ class User extends Person {
 	{
 	    $signatures = $this->getSignaturesArray();
 
-	    return $signatures[$id];
+	    return isset($signatures[$id]) ? $signatures[$id] : FALSE;
 	}
 
 	function getSignaturesArray() {
@@ -480,10 +480,9 @@ class User extends Person {
 							    $sv->init('Users');
 							    $sv->renderJavascript();
 							    $sv->displayHeader();
-		        				//$sv->includeClassicFile('themes/' . $GLOBALS['theme'] . '/header.php');
-		        				//$sv->includeClassicFile('modules/Administration/DisplayWarnings.php');
-							    displayAdminError(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
-							    $sv->displayFooter();
+		        				$sv->errors[] = translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration');
+                                $sv->displayErrors();
+                                $sv->displayFooter();
 							    die();
 						  	}
 				        }
@@ -663,8 +662,8 @@ class User extends Person {
      * @return object User bean
      * @return null null if no User found
      */
-	function retrieve($id, $encode = true) {
-		$ret = parent::retrieve($id, $encode);
+	function retrieve($id, $encode = true, $deleted = true) {
+		$ret = parent::retrieve($id, $encode, $deleted);
 		if ($ret) {
 			if (isset ($_SESSION)) {
 				$this->loadPreferences();

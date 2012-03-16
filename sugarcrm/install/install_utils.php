@@ -31,6 +31,41 @@ require_once('include/utils/zip_utils.php');
 require_once('include/upload_file.php');
 
 
+////////////////
+////  GLOBAL utility
+/**
+ * Calls a custom function (if it exists) based on the first parameter,
+ *   and returns result of function call, or 'undefined' if the function doesn't exist
+ * @param string function name to call in custom install hooks
+ * @return mixed function call result, or 'undefined'
+ */
+function installerHook($function_name, $options = array()){
+    if(!isset($GLOBALS['customInstallHooksExist'])){
+        if(file_exists('custom/install/install_hooks.php')){
+            installLog("installerHook: Found custom/install/install_hooks.php");
+            require_once('custom/install/install_hooks.php');
+            $GLOBALS['customInstallHooksExist'] = true;
+        }   
+        else{
+            installLog("installerHook: Could not find custom/install/install_hooks.php");
+            $GLOBALS['customInstallHooksExist'] = false;
+        }   
+    }
+
+    if($GLOBALS['customInstallHooksExist'] === false){
+        return 'undefined';
+    }   
+    else{   
+        if(function_exists($function_name)){
+            installLog("installerHook: function {$function_name} found, calling and returning the return value");
+            return $function_name($options);
+        }   
+        else{
+            installLog("installerHook: function {$function_name} not found in custom install hooks file");
+            return 'undefined';
+        }
+    }   
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    FROM welcome.php
@@ -731,6 +766,10 @@ function handleSugarConfig() {
     $sugar_config['disable_convert_lead']           = false;
     $sugar_config['log_dir']                        = $setup_site_log_dir;
     $sugar_config['log_file']                       = $setup_site_log_file;
+
+    //Setup FTS
+    if(!empty($_SESSION['fts_type']))
+        $sugar_config['full_text_engine']               = array($_SESSION['fts_type'] => array('host'=> $_SESSION['fts_host'], 'port' => $_SESSION['fts_port']));
 
 	/*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
 		these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
@@ -2070,7 +2109,7 @@ function create_past_date()
     global $timedate;
     $now = $timedate->getNow(true);
     $day=$now->day-mt_rand(1, 365);
-    return $timedate->asUserDate($now->get_day_begin($day));
+    return $timedate->asDbDate($now->get_day_begin($day));
 }
 
 /**
