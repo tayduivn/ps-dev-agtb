@@ -45,26 +45,26 @@ function installerHook($function_name, $options = array()){
             installLog("installerHook: Found custom/install/install_hooks.php");
             require_once('custom/install/install_hooks.php');
             $GLOBALS['customInstallHooksExist'] = true;
-        }   
+        }
         else{
             installLog("installerHook: Could not find custom/install/install_hooks.php");
             $GLOBALS['customInstallHooksExist'] = false;
-        }   
+        }
     }
 
     if($GLOBALS['customInstallHooksExist'] === false){
         return 'undefined';
-    }   
-    else{   
+    }
+    else{
         if(function_exists($function_name)){
             installLog("installerHook: function {$function_name} found, calling and returning the return value");
             return $function_name($options);
-        }   
+        }
         else{
             installLog("installerHook: function {$function_name} not found in custom install hooks file");
             return 'undefined';
         }
-    }   
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1201,67 +1201,18 @@ function update_license_settings( $users, $expire_date, $key, $num_lic_oc ){
   //END SUGARCRM lic=sub ONLY
 
 
-
-
-
-
 // Returns true if the given file/dir has been made writable (or is already
 // writable).
-function make_writable($file)
-{
-    //BEGIN SUGARCRM flav=int ONLY
-    //if the file belongs in svn directory
-    //ignore it
-    if (strpos($file,".svn") !== false) {
-        return true;
-    }
-    //END SUGARCRM flav=int ONLY
-
-    $ret_val = false;
-    if(is_file($file) || is_dir($file))
-    {
-        if(is_writable($file))
-        {
-            $ret_val = true;
-        }
-        else
-        {
-            $original_fileperms = fileperms($file);
-
-            // add user writable permission
-            $new_fileperms = $original_fileperms | 0x0080;
-            @sugar_chmod($file, $new_fileperms);
+function make_writable($file) {
+    if(is_file($file) || is_dir($file)) {
+        if(!is_writable($file)) {
+            // Add rwx permissions for user/group rwx, and rx for others.
+            @sugar_chmod($file, 0775);
             clearstatcache();
-            if(is_writable($file))
-            {
-                $ret_val = true;
-            }
-            else
-            {
-                // add group writable permission
-                $new_fileperms = $original_fileperms | 0x0010;
-                @chmod($file, $new_fileperms);
-                clearstatcache();
-                if(is_writable($file))
-                {
-                    $ret_val = true;
-                }
-                else
-                {
-                    // add world writable permission
-                    $new_fileperms = $original_fileperms | 0x0002;
-                    @chmod($file, $new_fileperms);
-                    clearstatcache();
-                    if(is_writable($file))
-                    {
-                        $ret_val = true;
-                    }
-                }
-            }
         }
+        return is_writable($file);
     }
-
-    return $ret_val;
+    return false;
 }
 
 //BEGIN SUGARCRM flav=int ONLY
