@@ -116,7 +116,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                     }else{
                         if(!function_exists('mkdir_recursive')) {
-                            require_once($from_path.'/include/dir_inc.php');
+                            require_once('include/dir_inc.php');
                         }
                         mkdir_recursive(dirname($trgt));
                         //create and open target file
