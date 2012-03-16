@@ -80,6 +80,7 @@ describe("Layout.View", function(){
         });
         expect(view.meta).toBeDefined();
         view.render();
+        console.log("SHOULD RENDER EIDT VIEWS", view, view.$el.html(), context);
         html = view.$el.html();
         expect(html).toContain('editView');
         expect(view.$el).toContain('input=[value="Foo"]');

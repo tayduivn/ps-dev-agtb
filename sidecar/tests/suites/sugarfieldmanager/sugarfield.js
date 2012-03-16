@@ -19,56 +19,55 @@ describe("SugarField", function() {
     });
 
     it("should render sugarfields html", function() {
-        var bean = new Backbone.Model();
-            bean.set("status","new");
-        var view = {};
-        var context = {};
-        var inputEvents = fixtures.metadata.Cases.views.editView.buttons[0].events;
-        var field = SUGAR.App.sugarFieldManager.get({
-            def: {name: "status", type: "varchar"},
-            view: view,
-            context: context,
-            model: bean
-        });
+        var bean = new Backbone.Model(),
+            view = {},
+            context = {},
+            field = SUGAR.App.sugarFieldManager.get({
+                def: {name: "status", type: "varchar"},
+                view: view,
+                context: context,
+                model: bean
+            });
 
+        bean.set({status: "new", id: "anId"});
         field.render();
 
         expect(field.$el.html()).toEqual('<span name="status">new</span>');
     });
 
-    it("should bind change on render", function(){
-        var bean = new Backbone.Model();
-            bean.set("status","new");
-        var view = {};
-        var context = {};
-        var inputEvents = fixtures.metadata.Cases.views.editView.buttons[0].events;
-        var field = SUGAR.App.sugarFieldManager.get({
-            def: {name: "status", type: "varchar"},
-            view: view,
-            context: context,
-            model: bean
-        });
+    it("should bind change on render", function() {
+        var bean = new Backbone.Model(),
+            view = {},
+            context = {},
+            field = SUGAR.App.sugarFieldManager.get({
+                def: {name: "status", type: "varchar"},
+                view: view,
+                context: context,
+                model: bean
+            });
+
 
         var modelOnSpy = sinon.spy(field.model, "on");
 
+        bean.set({status: "new", id: "anId"});
         field.render();
 
         expect(modelOnSpy).toHaveBeenCalled();
     });
 
     it("unbind events", function() {
-        var bean = new Backbone.Model();
-            bean.set("status","new");
-        var view = {};
-        var context = {bob:"bob"};
-        var inputEvents = fixtures.metadata.Cases.views.editView.buttons[0].events;
-        var field = SUGAR.App.sugarFieldManager.get({
-            def: {name: "status", type: "varchar"},
-            view: view,
-            context: context,
-            model: bean
-        });
+        var bean = new Backbone.Model(),
+            view = {},
+            context = {bob: "bob"},
+            inputEvents = fixtures.metadata.Cases.views.editView.buttons[0].events,
+            field = SUGAR.App.sugarFieldManager.get({
+                def: {name: "status", type: "varchar"},
+                view: view,
+                context: context,
+                model: bean
+            });
 
+        bean.set({status: "new", id: "anId"});
         field.unBind();
 
         expect(field.model).toBeUndefined();
@@ -77,21 +76,21 @@ describe("SugarField", function() {
 
 
     it("bind events", function() {
-        var bean = new Backbone.Model();
-            bean.set("status","new");
-        var secondBean = new Backbone.Model();
-            secondBean.set("status","old");
-        var view = {};
-        var context = {bob:"bob"};
-        var secondContext = {rob:"rob"};
-        var inputEvents = fixtures.metadata.Cases.views.editView.buttons[0].events;
-        var field = SUGAR.App.sugarFieldManager.get({
-            def: {name: "status", type: "varchar"},
-            view: view,
-            context: context,
-            model: bean
-        });
+        var bean = new Backbone.Model(),
+            secondBean = new Backbone.Model(),
+            view = {},
+            context = {bob:"bob"},
+            secondContext = {rob:"rob"},
+            field = SUGAR.App.sugarFieldManager.get({
+                def: {name: "status", type: "varchar"},
+                view: view,
+                context: context,
+                model: bean
+            });
 
+
+        bean.set({status: "new", id: "anId"});
+        secondBean.set({status: "old", id: "anotherId"});
         field.render();
 
         field.bind(secondContext,secondBean);
