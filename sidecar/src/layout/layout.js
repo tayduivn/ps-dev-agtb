@@ -8,7 +8,7 @@
 
         /**
          * Layout Manager is used to retrieve views and layouts based on metadata inputs.
-         * @class Layout
+         * @class LayoutManager
          * @alias SUGAR.App.layout
          * @singleton
          */
@@ -19,12 +19,15 @@
                 });
 
                 Handlebars.registerHelper('buildRoute', function(context, model, action, options) {
+                    var id = model.id,
+                        route;
+
                     options = options || {};
-                    var id=model.id
-                    if (action =='create'){
+                    if (action == 'create') {
                         id = '';
                     }
-                    var route = app.router.buildRoute(context.get("module"), id, action, options);
+
+                    route = app.router.buildRoute(context.get("module"), id, action, options);
                     return new Handlebars.SafeString(route);
                 });
 
@@ -113,9 +116,9 @@
         };
 
         /**
-         * Base View class. Use {@link App.layout} to create instances of beans.
+         * Base View class. Use {@link LayoutManager} to create instances of views.
          *
-         * @class Layout.View
+         * @class View
          * @extends Backbone.View
          * @alias SUGAR.App.layout.View
          */
@@ -160,25 +163,7 @@
                  * @cfg {Object}
                  */
                 this.meta = options.meta;
-
-                /**
-                 * Field Ids
-                 * @cfg {Object}
-                 */
-                this.fieldIDs = {};
-
-                /**
-                 * Sugarfields on the View
-                 * @cfg {Object}
-                 */
                 this.sugarFields = {};
-
-                /**
-                 * To enable autobind, set to true.
-                 * Bind will cause the view to automatically try to link form elements to attributes on the model
-                 * @cfg {Boolean}
-                 */
-                this.autoBind = options.bind || true;
             },
 
             /**
@@ -191,19 +176,27 @@
             },
 
             /**
-             * Renders the layout's template
+             * Bind this view to listen to the given context's event.
+             * @param {Context} context
+             */
+            bind: function(context) {
+
+            },
+            
+            /**
+             * Renders the view onto the page. (should be overriden by subclasses instead of the formal render function if they need more advanced rendering or do not use a template)
+             * @protected
              * @method
-             * @private
              */
             _render: function() {
                 if (this.template) {
                     this.$el.html(this.template(this));
                 }
             },
-
+            
             /**
-             * Renders the SugarFields and Layout / View
-             * @method
+             * Renders the view onto the page. See Backbone.View
+             * @return {Object} this
              */
             render: function() {
                 //Bad templates can cause a JS error that we want to catch here
@@ -217,12 +210,14 @@
                 } catch (e) {
                     app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
                 }
+                
+                return this;
             },
 
             /**
              * Extracts the fields from the metadata for directly related views/panels
              * TODO: Possibly refactor
-             * @return {Array}
+             * @return {Array} List of fields used on this view
              */
             getFields: function() {
                 var fields = [];
@@ -236,15 +231,10 @@
                     return value;
                 });
             },
-
-            // TODO: Not sure what this function is all about
-            bind: function(context) {
-
-            },
-
+            
             /**
-             * Returns the id of the layout if there is one. Generates one based on the context's module if there isn't one.
-             * @return {String} id
+             * Returns the html id of this view's el. Will create one if one doesn't exist.
+             * @return {String} id of this view.
              */
             getID: function() {
                 return this.id || this.context.get("module") + "_" + this.options.name;
@@ -252,7 +242,10 @@
         });
 
         /**
+         * View that displays a list of models pulled from the context's collection.
          * @class Layout.ListView
+         * @extends View
+         * @alias SUGAR.App.layout.ListView
          */
         Layout.ListView = Layout.View.extend({
             bind: function(context) {
@@ -279,7 +272,11 @@
         });
 
         /**
+         * Base Layout class. Use {@link LayoutManager} to create instances of layouts.
+         *
          * @class Layout.Layout
+         * @extends SUGAR.App.layout.View
+         * @alias SUGAR.App.layout.Layout
          */
         Layout.Layout = Layout.View.extend({
             initialize: function() {
@@ -354,11 +351,11 @@
                     }
                 }, this);
             },
-
+            
             /**
-             * Adds a component to the components array as well as add unrendered divs.
-             * @param {Layout/View} comp Subcomponent layout
-             * @param {Object} def Metadata definition
+             * Add a view (or layout) to this layout.
+             * @param {Layout/View} comp Componant to add
+             * @param {array} def Metadata definition
              */
             addComponent: function(comp, def) {
                 this.components.push(comp);
@@ -366,19 +363,21 @@
             },
 
             /**
-             * Default layout just appends all the components to itself
-             * @private
+             * Places a view's element on the page. This shoudl be overriden by any custom layout types.
+             * @param {View} comp
+             * @protected
              * @method
-             * @param {Layout/View} comp Layout or View component to be appended.
              */
+            //Default layout just appends all the components to itself
             _placeComponent: function(comp) {
                 this.$el.append(comp.el);
             },
+            
 
             /**
-             * Removes the component from the components array.
+             * Removes the given view / layout from this layout.
              * If comp is an index, remove the component at that index. Otherwise see if comp is in the array.
-             * @param {Layout/View/Number} comp
+             * @param {Layout/View/Number} comp Layout / View to remove
              * @method
              */
             removeComponent: function(comp) {
@@ -417,10 +416,18 @@
         });
 
         /**
+         * Layout that places views in a table with each view in its own column
          * @class Layout.ColumnsLayout
+         * @extends Layout
+         * @alias SUGAR.App.layout.ColumnsLayout
          */
         Layout.ColumnsLayout = Layout.Layout.extend({
             //column layout uses a table for columns and prevent wrapping
+            /**
+             *
+             * @param comp
+             * @protected
+             */
             _placeComponent: function(comp) {
                 if (!this.$el.children()[0]) {
                     this.$el.append("<table><tbody><tr></tr></tbody></table>");
@@ -431,8 +438,7 @@
         });
 
         /**
-         * Layout that places components using bootstrap fluid layout divs
-         * @class Layout.FluidLayout
+         * @class Layout.FluidLayout Layout that places components using bootstrap fluid layout divs
          * @extend App.Layout.Layout
          */
         Layout.FluidLayout = Layout.Layout.extend({
