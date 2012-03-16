@@ -36,7 +36,7 @@
          */
         get: function(params) {
             if (params && params.sugarField) {
-                return this.getSugarField(params.sugarField);
+                return this._getSugarField(params.sugarField);
             }
 
             // If no parameters are passed in, we return the whole metadata
@@ -44,19 +44,19 @@
                 return _metadata;
             }
             if (!params.type)
-                return this.getModule(params.modules);
+                return this._getModule(params.modules);
 
             if (params.type == "view")
-                return this.getView(params.module, params.view);
+                return this._getView(params.module, params.view);
 
             if (params.type == "layout")
-                return this.getLayout(params.module, params.layout);
+                return this._getLayout(params.module, params.layout);
 
             if (params.type == "vardef")
-                return this.getVardef(params.module, params.bean);
+                return this._getVardef(params.module, params.bean);
 
             if (params.type == "fieldDef")
-                return this.getFieldDef(params.module, params.bean, params.field);
+                return this._getFieldDef(params.module, params.bean, params.field);
         },
 
         /**
