@@ -8,7 +8,7 @@
 
         /**
          * Layout Manager is used to retrieve views and layouts based on metadata inputs.
-         * @class Layout
+         * @class LayoutManager
          * @alias SUGAR.App.layout
          * @singleton
          */
@@ -100,9 +100,9 @@
         };
 
         /**
-         * Base View class. Use {@link App.layout} to create instances of beans.
+         * Base View class. Use {@link LayoutManager} to create instances of views.
          *
-         * @class View
+         * @class layout.View
          * @extends Backbone.View
          * @alias SUGAR.App.layout.View
          */
@@ -118,10 +118,7 @@
                 this.$el.addClass("view " + (options.className || this.name));
                 this.template = options.template || app.template.get(this.name, this.context.get("module"));
                 this.meta = options.meta;
-                this.fieldIDs = {};
                 this.sugarFields = {};
-                //Bind will cause the view to automatically try to link form elements to attributes on the model
-                this.autoBind = options.bind || true;
             },
             bindData: function(data) {
                 data.on('reset', this.render);
@@ -130,10 +127,26 @@
                     console.log("data changing");
                 });
             },
+
+            /**
+             * Bind this view to listen to the given context's event.
+             * @param {Context} context
+             */
+            bind: function(context) {
+
+            },
+            /**
+             *  Renders the view onto the page. (should be overriden by subclasses instead of the formal render function if they need more advanced rendering or do not use a template)
+             *  @protected
+             */
             _render: function() {
                 if (this.template)
                     this.$el.html(this.template(this));
             },
+            /**
+             * Renders the view onto the page. See Backbone.View
+             * @return {void}
+             */
             render: function() {
                 //Bad templates can cause a JS error that we want to catch here
                 try {
@@ -148,6 +161,9 @@
                 }
 
             },
+            /**
+             *  @return {array} List of fields used on this view
+             */
             getFields: function() {
                 var fields = [];
                 if (this.meta && this.meta.panels) {
@@ -160,9 +176,10 @@
                     return value;
                 });
             },
-            bind: function(context) {
-
-            },
+            /**
+             * Returns the html id of this view's el.
+             * @return {string} id of this view.
+             */
             getID: function() {
                 if (this.id)
                     return this.id;
@@ -171,6 +188,12 @@
             }
         });
 
+        /**
+         * View that displays a list of models pulled from the context's collection.
+         * @class layout.ListView
+         * @extends View
+         * @alias SUGAR.App.layout.ListView
+         */
         Layout.ListView = Layout.View.extend({
             bind: function(context) {
                 var collection = context.get("collection");
@@ -195,6 +218,13 @@
             }
         });
 
+        /**
+         * Base Layout class. Use {@link LayoutManager} to create instances of layouts.
+         *
+         * @class layout.Layout
+         * @extends SUGAR.App.layout.View
+         * @alias SUGAR.App.layout.Layout
+         */
         Layout.Layout = Layout.View.extend({
             initialize: function() {
                 _.bindAll(this, 'render', 'bindData');
@@ -241,20 +271,37 @@
                     }
                 }, this);
             },
+            /**
+             * Add a view (or layout) to this layout.
+             * @param {View} comp
+             * @param {array} def
+             */
             addComponent: function(comp, def) {
                 this.components.push(comp);
                 this._placeComponent(comp, def);
             },
-            //Default layout just appends all the components to itself
+
+            /**
+             * Places a view's element on the page. This shoudl be overriden by any custom layout types.
+             * @param {View} comp
+             * @protected
+             */
+                //Default layout just appends all the components to itself
             _placeComponent: function(comp) {
                 this.$el.append(comp.el);
             },
+
+            /**
+             * Removes the given view from this layout.
+             * @param {View} comp
+             */
             removeComponent: function(comp) {
                 //If comp is an index, remove the component at that index. Otherwise see if comp is in the array
                 var i = typeof comp == "number" ? comp : this.components.indexOf(comp);
                 if (i > -1)
                     this.components.splice(i, 1);
             },
+
             render: function() {
                 //default layout will pass render container divs and pass down to all its views.
                 _.each(this.components, function(comp) {
@@ -278,8 +325,19 @@
             }
         });
 
+        /**
+         * Layout that places views in a table with each view in its own column
+         * @class layout.ColumnsLayout
+         * @extends Layout
+         * @alias SUGAR.App.layout.ColumnsLayout
+         */
         Layout.ColumnsLayout = Layout.Layout.extend({
             //column layout uses a table for columns and prevent wrapping
+            /**
+             *
+             * @param comp
+             * @protected
+             */
             _placeComponent: function(comp) {
                 if (!this.$el.children()[0]) {
                     this.$el.append("<table><tbody><tr></tr></tbody></table>");
@@ -290,7 +348,7 @@
         });
 
         /**
-         * @class FluidLayout Layout that places components using bootstrap fluid layout divs
+         * @class layout.FluidLayout Layout that places components using bootstrap fluid layout divs
          * @extend App.Layout.Layout
          */
         Layout.FluidLayout = Layout.Layout.extend({
