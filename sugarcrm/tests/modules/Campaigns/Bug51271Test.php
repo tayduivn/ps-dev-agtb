@@ -43,8 +43,8 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     var $email = null;
     var $emailman = null;
 	var $saved_current_user = null;
-	var $clear_database = false;
-	var $remove_beans = false;
+	var $clear_database = true;
+	var $remove_beans = true;
 	
 	public function setUp()
     {
@@ -74,6 +74,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->emailmarketing->reply_to_addr = 'reply@exmaple.com';
     	$this->emailmarketing->status = 'active';
     	$this->emailmarketing->all_prospect_lists = 1;
+        $this->emailmarketing->template_id = 'test';
     	$this->emailmarketing->date_start =  $timedate->asDb($timedate->getNow()->modify("+1 week"));
     	
     	$this->emailmarketing2 = new EmailMarketing();
@@ -85,6 +86,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->emailmarketing2->reply_to_addr = 'reply@exmaple.com';    	
     	$this->emailmarketing2->status = 'active';
     	$this->emailmarketing2->all_prospect_lists = 1;
+        $this->emailmarketing2->template_id = 'test';
     	$this->emailmarketing2->date_start = $timedate->asDb($timedate->getNow()->modify("+1 week"));
     	
     	$query = 'SELECT id FROM inbound_email WHERE deleted=0';

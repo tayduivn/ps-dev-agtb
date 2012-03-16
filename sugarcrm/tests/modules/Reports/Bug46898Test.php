@@ -67,6 +67,7 @@ class Bug46898Test extends Sugar_PHPUnit_Framework_TestCase
         $user2->mark_deleted($user2->id);
         $reportSchedule->mark_deleted($schedule1);
         $reportSchedule->mark_deleted($schedule2);
+        $GLOBALS['db']->commit();
 
         $this->assertEquals(2, count($ids));
         $this->assertContains($user1->id, $ids, 'User is missed in returned array');
