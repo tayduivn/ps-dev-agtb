@@ -73,7 +73,9 @@
 			),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
+               //BEGIN SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Teamset/Teamset.js' => 'include/javascript/sugar_field_grp.js',
+               //END SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Datetimecombo/Datetimecombo.js' => 'include/javascript/sugar_field_grp.js',
            ),
             $sugar_grp1_yui = array(
