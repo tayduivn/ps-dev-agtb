@@ -59,11 +59,17 @@
                 return this.getFieldDef(params.module, params.bean, params.field);
         },
 
-        //Function that attempts to retrieve metadata from offline cache.
-        //If its not there, it will make a server call to start a sync
-        //The sync will block the app
-        //TODO add infinite loop prevetion in sync
-        getModule: function(module, type) {
+        /**
+         * Function that attempts to retrieve sugarFields from offline caches
+         * If its not there, it will make a server call to start a sync
+         * The sync will block the app
+         * TODO add infinite loop prevetion in sync
+         * @param {String} module of metadata
+         * @param {String} type of metadata
+         * @return {Object} metadata
+         * @private
+         */
+        _getModule: function(module, type) {
             if (typeof(_metadata[module]) == "undefined") {
                 _metadata[module] = app.cache.get("metadata." + module);
                 if (typeof(_metadata[module]) == "undefined") {
@@ -83,11 +89,12 @@
             return _metadata[module][type];
         },
 
-        //Function that attempts to retrieve sugarFields from offline caches
-        //If its not there, it will make a server call to start a sync
-        //The sync will block the app
-        //TODO add infinite loop prevetion in sync
-        getSugarField: function(field) {
+        /**
+         * @param {String} field Name of field metadata
+         * @return {Object} metadata
+         * @private
+         */
+        _getSugarField: function(field) {
 
             // init results
             var result, views;
@@ -131,12 +138,13 @@
 
         /**
          * Returns metadata for Views
+         * @private
          * @param {String} module Name of module to retrieve from
          * @param {String} view Optional name of view to get
          * @return {Object} metadata
          */
-        getView: function(module, view) {
-            var views = this.getModule(module, "views");
+        _getView: function(module, view) {
+            var views = this._getModule(module, "views");
             if (views !== null) {
                 if (view) {
                     if (typeof(views[view]) != "undefined")
@@ -150,12 +158,13 @@
 
         /**
          * Returns metadat for Layouts
+         * @private
          * @param {String} module Name of module to retrieve from
          * @param {String} layout Name of layout to retrieve from
          * @return {Object} metadata
          */
-        getLayout: function(module, layout) {
-            var layouts = this.getModule(module, "layouts");
+        _getLayout: function(module, layout) {
+            var layouts = this._getModule(module, "layouts");
 
             if (layouts !== null) {
                 if (layout) {
@@ -171,15 +180,16 @@
 
         /**
          * Returns vardef
+         * @private
          * @param {String} module Module name
          * @param {String} bean Bean name
          * @return {Object} vardef
          */
-        getVardef: function(module, bean) {
-            var beans = this.getModule(module, "beans");
+        _getVardef: function(module, bean) {
+            var beans = this._getModule(module, "beans");
 
             if (!bean) {
-                bean = this.getModule(module, "primary_bean");
+                bean = this._getModule(module, "primary_bean");
             }
 
             return (bean && beans[bean] && beans[bean].vardefs) ? beans[bean].vardefs : null;
@@ -191,10 +201,11 @@
          * @param {String} bean Bean name
          * @param {String} field Name of field
          * @return {Object} metadata
+         * @private
          * @method
          */
-        getFieldDef: function(module, bean, field) {
-            var vardef = this.getVardef(module, bean);
+        _getFieldDef: function(module, bean, field) {
+            var vardef = this._getVardef(module, bean);
 
             return (vardef && vardef.fields) ? vardef.fields[field] : null;
         },
