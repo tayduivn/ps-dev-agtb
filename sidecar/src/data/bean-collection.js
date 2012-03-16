@@ -23,6 +23,26 @@
         },
 
         /**
+         * overload fetch so we can trigger events for rendering
+         * @param options standard options for fetch as outlined in the backbone docs
+         */
+        fetch: function(options) {
+            options = options || {};
+            if (options.success) {
+                var origSuccess = options.success;
+            }
+            var that = this;
+            var _success = function(args){
+                that.trigger("app:collection:fetch");
+                if(origSuccess){
+                    origSuccess(args);
+                }
+            }
+            options.success= _success;
+            return Backbone.Collection.prototype.fetch.call(this, options);
+        },
+
+        /**
          * Returns string representation useful for debugging:
          * <code>coll:[module-name]/[bean-type]-[length]</code>  or
          * <code>coll:[related-module-name]/[bean-type]/[id]/[module-name]/[bean-type]-[length]</code> if it's a collection of related beans.
