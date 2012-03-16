@@ -3087,6 +3087,7 @@ SUGAR.util = function () {
 						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
 					}
 					$dialog.dialog('open');
+					$(".ui-dialog").appendTo("#content");
 
 
 		},
@@ -3125,6 +3126,7 @@ SUGAR.util = function () {
 			}
 
 			$dialog.dialog('open');
+			$(".ui-dialog").appendTo("#content");
 
 		},
 
@@ -3169,6 +3171,7 @@ SUGAR.util = function () {
 					}
 
 					$dialog.dialog('open');
+					$(".ui-dialog").appendTo("#content");
 				}
 
 				success = function(data) {

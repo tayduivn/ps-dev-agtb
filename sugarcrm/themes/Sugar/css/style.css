@@ -6606,7 +6606,7 @@ ul#selectLink.clickMenu #massall{
 }
 
 ul#selectLink.clickMenu > li > a{
-	padding-left: 0px !important;
+	padding: 0px !important;
 }
 
 ul#selectLink.clickMenu li span {
