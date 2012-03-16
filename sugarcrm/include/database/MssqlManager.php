@@ -275,7 +275,7 @@ class MssqlManager extends DBManager
         $this->query_time = microtime(true);
 
         // Bug 34892 - Clear out previous error message by checking the @@ERROR global variable
-		$errorNumber = $this->getOne("SELECT @@ERROR");
+		@mssql_query("SELECT @@ERROR", $this->database);
 
         $result = $suppress?@mssql_query($sql, $this->database):mssql_query($sql, $this->database);
 
