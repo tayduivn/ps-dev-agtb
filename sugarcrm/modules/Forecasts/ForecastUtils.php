@@ -466,26 +466,18 @@ function buildExportLink($forecast_type) {
     //id='$id'
     //SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_COPY'])."&nbsp;
     //$script = "<a onclick=\"return copyvalue_overlib('{$forecast_type}');\" href=\"#\" >".$mod_strings['LBL_COPY']."</a>";
-    $script = "
-    <ul class=\"clickMenu button nosplit\">
-    <li>
-     <ul class=\"subnav\">
-     
-    ";
+    $buttons = array("<a href='javascript: void(0);'>".$mod_strings['LBL_COPY']."</a>");
+
     if($forecast_type =="direct") {
-    	$script .= "<li><a onclick='copy_amount(\"direct\",\"amount\")' href='#'>".$mod_strings['LBL_COPY_AMOUNT']."</a></li>";	
-    	$script .= "<li><a onclick='copy_amount(\"direct\",\"weigh\")' href='#'>".$mod_strings['LBL_COPY_WEIGH_AMOUNT']."</a></li>";	
-    	$script .= "<li><a onclick='copy_amount(\"direct\",\"worksheet\")' href='#'>".$mod_strings['LBL_WORKSHEET_AMOUNT']."</a></li>";	
+    	$buttons[] = "<a onclick='copy_amount(\"direct\",\"amount\")' href='#'>".$mod_strings['LBL_COPY_AMOUNT']."</a>";
+        $buttons[] = "<a onclick='copy_amount(\"direct\",\"weigh\")' href='#'>".$mod_strings['LBL_COPY_WEIGH_AMOUNT']."</a>";
+        $buttons[] = "<a onclick='copy_amount(\"direct\",\"worksheet\")' href='#'>".$mod_strings['LBL_WORKSHEET_AMOUNT']."</a>";
     } else {
-    	$script .= "<li><a onclick='copy_amount(\"rollup\",\"amount\")' href='#'>".$mod_strings['LBL_COPY_WEIGH_AMOUNT']."</a></li>";	
-    	$script .= "<li><a onclick='copy_amount(\"rollup\",\"worksheet\")' href='#'>".$mod_strings['LBL_WORKSHEET_AMOUNT']."</a></li>";
+        $buttons[] = "<a onclick='copy_amount(\"rollup\",\"amount\")' href='#'>".$mod_strings['LBL_COPY_WEIGH_AMOUNT']."</a>";
+        $buttons[] = "<a onclick='copy_amount(\"rollup\",\"worksheet\")' href='#'>".$mod_strings['LBL_WORKSHEET_AMOUNT']."</a>";
     }
-    
-    $script .= "</ul>";
-        $script .= "<span><a href='javascript: void(0);'>".$mod_strings['LBL_COPY']."</a></span>";
-    $script .= "</li>";
-    $script .= "</ul>";
-    return $script;
+
+    return $buttons;
 }
 
 ?>

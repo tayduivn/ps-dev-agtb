@@ -117,7 +117,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
             $buttonDuplicateAsDetail .
             $buttonDuplicateAsMatrix;
         $duplicateOverLibs .= "</ul>";
-        $duplicateButtons .= $duplicateOverLibs;
+        if(SugarThemeRegistry::current()->name != "Classic")
+            $duplicateButtons .= $duplicateOverLibs;
 	}
 	// Summation with Details
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['display_columns']) && count($reporter->report_def['display_columns']) > 0 )) {
@@ -135,7 +136,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
             $duplicateOverLibs .= $buttonDuplicateAsMatrix;
         }
         $duplicateOverLibs .= "</ul>";
-        $duplicateButtons .= $duplicateOverLibs;
+        if(SugarThemeRegistry::current()->name != "Classic")
+            $duplicateButtons .= $duplicateOverLibs;
     }
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
@@ -147,7 +149,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
             $buttonDuplicateAsDetail .
             $buttonDuplicateAsTabular;
         $duplicateOverLibs .= "</ul>";
-        $duplicateButtons .= $duplicateOverLibs;
+        if(SugarThemeRegistry::current()->name != "Classic")
+            $duplicateButtons .= $duplicateOverLibs;
 
     }
 
@@ -168,7 +171,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
             $duplicateOverLibs .= $buttonDuplicateAsMatrix;
         }
         $duplicateOverLibs .= "</ul>";
-        $duplicateButtons .= $duplicateOverLibs;
+        if(SugarThemeRegistry::current()->name != "Classic")
+            $duplicateButtons .= $duplicateOverLibs;
 
     }
 
