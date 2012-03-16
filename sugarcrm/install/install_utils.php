@@ -440,8 +440,10 @@ function writeSugarConfig($sugar_config) {
         '// created: ' . date('Y-m-d H:i:s') . "\n" .
         '$sugar_config = ' .
         var_export($sugar_config, true) .
-        ";\n?>\n";
-    if(is_writable('config.php') && write_array_to_file( "sugar_config", $sugar_config, "config.php")) {
+        ";\n";
+    if(is_writable('config.php'))
+    {
+       sugar_file_put_contents('config.php', $sugar_config_string, LOCK_EX);
     }
 }
 
