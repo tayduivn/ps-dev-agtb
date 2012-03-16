@@ -56,6 +56,13 @@ function deleteTestRecords($focus)
                 select campaign_log.related_id from campaign_log
                 left join emails on campaign_log.related_id = e.id and campaign_log.campaign_id = '{$focus->id}'
                 left join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test')";
+    } else if ($focus->db->getScriptName() == 'oci8') {
+        $query = "update emails
+                set deleted = 1
+                where id in (
+                select campaign_log.related_id from campaign_log
+                left join emails on campaign_log.related_id = emails.id and campaign_log.campaign_id = '{$focus->id}'
+                left join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test')";
 //END SUGARCRM flav=ent ONLY
     } else {
         $query = "update emails
@@ -89,7 +96,7 @@ function deleteTestRecords($focus)
                 set campaign_log.deleted=1
                 where campaign_log.campaign_id='{$focus->id}'";
 //BEGIN SUGARCRM flav=ent ONLY
-    } else if ($focus->db->getScriptName() == 'ibm_db2') {
+    } else if ($focus->db->getScriptName() == 'ibm_db2' || $focus->db->getScriptName() == 'oci8') {
         $query = "update campaign_log c
                 set c.deleted=1
                 where c.list_id in (select prospect_lists.id
