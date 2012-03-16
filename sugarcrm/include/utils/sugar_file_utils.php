@@ -146,43 +146,31 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
  * @return int - Returns the number of bytes written to the file, false otherwise.
  */
 function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_include_path=false, $context=null){
-	//check to see if the file exists, if not then use touch to create it.
-	if(!file_exists($filename))
-    {
-	   sugar_touch($filename);
-	}
 
-	if(!is_writable($filename) ) {
-	   $GLOBALS['log']->error("File $filename cannot be written to");
-	   return false;
-	}
-
-    $filedir = dirname($filename);
-    $temp = tempnam($filedir, 'temp');
+    $temp = tempnam(dirname($filename), 'temp');
 
     if(!file_exists($temp))
     {
-   	   sugar_touch($temp);
+   		sugar_touch($filename);
    	}
 
-    if (!($f = @fopen($temp, $mode)))
+   	if (!is_writable($temp))
+    {
+        trigger_error("sugar_file_put_contents_atomic() : file '{$temp}' is not writable", E_USER_WARNING);
+   	    return false;
+   	}
+
+    if (!file_exists($temp))
     {
         $temp = $filedir . DIRECTORY_SEPARATOR . uniqid('temp');
-
-        if(!file_exists($temp))
+        if (!file_exists($temp))
         {
-       	   sugar_touch($temp);
-       	}
-
-        if (!($f = @fopen($temp, $mode)))
-        {
-            $GLOBALS['log']->error("sugar_file_put_contents_atomic() : error writing temporary file '{$temp}'");
+            trigger_error("sugar_file_put_contents_atomic() : error creating file '{$temp}'", E_USER_WARNING);
             return false;
         }
     }
 
-    fwrite($f, $data);
-    fclose($f);
+    file_put_contents($temp, $data);
 
     if (!@rename($temp, $filename))
     {
