@@ -762,6 +762,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'importable' => 'false',
             'duplicate_merge' => 'disabled',
+            'studio' => false,
         ) ,
         'dceinstance_role_id' => array(
             'name' => 'dceinstance_role_id',

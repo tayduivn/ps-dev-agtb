@@ -103,6 +103,11 @@ function get_row_remap(& $row, & $reporter) {
         $row_remap['group_base_text'] = $row['cells'][0]['val'];
     }
 
+    //jclark - bug 47329 - report charts show html link text
+    $row_remap['group_text'] = strip_tags($row_remap['group_text']);
+    $row_remap['group_base_text'] = strip_tags($row_remap['group_base_text']);
+    //end jclark fix
+
     return $row_remap;
 
 }

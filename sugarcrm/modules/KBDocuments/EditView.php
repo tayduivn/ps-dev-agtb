@@ -167,7 +167,7 @@ $javascript = get_set_focus_js().get_validate_record_js();
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('include/QuickSearchDefaults.php');
 require_once('modules/KBDocuments/SearchUtils.php');
-$qsd = new QuickSearchDefaults();
+$qsd = QuickSearchDefaults::getQuickSearchDefaults();
 
 $sqs_objects = array(
                      'team_name' => $qsd->getQSTeam(),

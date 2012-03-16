@@ -97,6 +97,8 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 		//BEGIN SUGARCRM flav!=sales ONLY
 		if($linked_field == 'get_products_query')
 			$linked_field = 'products';
+        else if($linked_field == 'get_emails_by_assign_or_link')
+            $linked_field = 'emails';
 		//END SUGARCRM flav!=sales ONLY
 		//based on listview since that lets you select records
 		if($layout_def['ListView'] && !$hideremove) {

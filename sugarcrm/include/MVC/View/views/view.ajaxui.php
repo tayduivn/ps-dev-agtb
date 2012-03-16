@@ -25,9 +25,20 @@ class ViewAjaxUI extends SugarView
 
     public function display()
  	{
- 		header("cache-control: max-age=86400");
- 		header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+ 		$user = $GLOBALS["current_user"];
+ 		$etag = md5($user->user_name . $user->full_name . $user->email1);
+ 		header("cache-control:");
+ 		header('Expires: ');
+ 		header("ETag: " . $etag);
  		header("Pragma:");
+ 		if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
+ 			if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+ 				ob_clean();
+ 				header("Status: 304 Not Modified");
+ 				header("HTTP/1.0 304 Not Modified");
+ 				die();
+ 			}
+ 		}
         //Prevent double footers
         $GLOBALS['app']->headerDisplayed = false;
  	}

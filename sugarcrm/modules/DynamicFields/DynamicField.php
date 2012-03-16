@@ -80,9 +80,10 @@ class DynamicField {
     * Builds the cache for custom fields based on the vardefs
     *
     * @param STRING $module
+    * @param boolean saveCache Boolean value indicating whether or not to pass saveCache value to saveToVardef, defaults to true
     * @return unknown
     */
-    function buildCache($module = false) {
+    function buildCache($module = false, $saveCache=true) {
         //We can't build the cache while installing as the required database tables may not exist.
         if (!empty($GLOBALS['installing']) && $GLOBALS['installing'] == true|| empty($GLOBALS['db']))
             return false;
@@ -127,13 +128,13 @@ class DynamicField {
         }
         if (empty ( $module )) {
             foreach ( $results as $module => $result ) {
-                $this->saveToVardef ( $module, $result );
+                $this->saveToVardef ( $module, $result, $saveCache);
             }
         } else {
             if (! empty ( $results [$module] )) {
-                $this->saveToVardef ( $module, $results [$module] );
+                $this->saveToVardef ( $module, $results [$module], $saveCache);
             }else{
-                $this->saveToVardef ( $module, false );
+                $this->saveToVardef ( $module, false, $saveCache);
             }
         }
 
@@ -164,8 +165,9 @@ class DynamicField {
     *
     * @param string $module
     * @param array $result
+    * @param boolean saveCache Boolean value indicating whether or not to call VardefManager::saveCache, defaults to true
     */
-    function saveToVardef($module,$result) {
+    function saveToVardef($module,$result,$saveCache=true) {
 
 
         global $beanList;
@@ -206,12 +208,18 @@ class DynamicField {
                     } //if
                 }
             }
-            $manager = new VardefManager ( );
-            $manager->saveCache ( $this->module, $object );
+
+            $manager = new VardefManager();
+            if($saveCache)
+            {
+                $manager->saveCache ($this->module, $object);
+            }
+
             // Everything works off of vardefs, so let's have it save the users vardefs
             // to the employees module, because they both use the same table behind
             // the scenes
-            if ( $module == 'Users' ) {
+            if ($module == 'Users')
+            {
                 $manager->loadVardef('Employees', 'Employee', true);
                 return;
             }

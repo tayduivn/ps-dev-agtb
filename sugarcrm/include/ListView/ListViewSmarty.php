@@ -188,13 +188,12 @@ class ListViewSmarty extends ListViewDisplay{
 	function display($end = true) {
 
 		if(!$this->should_process) return $GLOBALS['app_strings']['LBL_SEARCH_POPULATE_ONLY'];
-        global $app_strings, $sugar_version, $sugar_flavor, $server_unique_key, $current_module, $app_list_strings;  
+        global $app_strings, $sugar_version, $sugar_flavor, $server_unique_key, $currentModule, $app_list_strings;
         $this->ss->assign('moduleListSingular', $app_list_strings["moduleListSingular"]);
         $this->ss->assign('data', $this->data['data']);
         $this->ss->assign('query', $this->data['query']);
         $this->ss->assign('sugar_info', array("sugar_version" => $sugar_version, 
 											  "sugar_flavor" => $sugar_flavor));
-      
 		$this->data['pageData']['offsets']['lastOffsetOnPage'] = $this->data['pageData']['offsets']['current'] + count($this->data['data']);
 		$this->ss->assign('pageData', $this->data['pageData']);
 
@@ -204,6 +203,16 @@ class ListViewSmarty extends ListViewDisplay{
                             'start' => $app_strings['LNK_LIST_START'],
                             'of' => $app_strings['LBL_LIST_OF']);
         $this->ss->assign('navStrings', $navStrings);
+
+        $displayEmptyDataMessages = TRUE;
+        //TODO: Cleanup, better logic for which modules are exempt from the new messaging. 
+        $modulesExemptFromEmptyDataMessages = array('WorkFlow','ContractTypes');
+        if( (isset($GLOBALS['moduleTabMap'][$currentModule]) && $GLOBALS['moduleTabMap'][$currentModule] == 'Administration')
+            || isset($GLOBALS['adminOnlyList'][$currentModule]) || in_array($currentModule, $modulesExemptFromEmptyDataMessages) )
+        {
+            $displayEmptyDataMessages = FALSE;
+        }
+        $this->ss->assign('displayEmptyDataMesssages', $displayEmptyDataMessages);
 
 		$str = parent::display();
 		$strend = $this->displayEnd();

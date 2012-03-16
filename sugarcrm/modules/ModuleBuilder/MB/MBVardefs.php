@@ -112,6 +112,7 @@ class MBVardefs{
 		return $this->vardef;
 	}
 		
+
     function addFieldVardef($vardef)
     {
         if(!isset($vardef['default']) || strlen($vardef['default']) == 0)

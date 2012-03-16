@@ -27,6 +27,15 @@
  ********************************************************************************/
 global $portal;
 
+// Bug 31864: "Downloading attachments from portal not working on OD2"
+// Similar to other download bugs we encountered on main instance functionality in relation to OD2 stack (i.e. downloading quote PDFs - bug 27537).
+if(function_exists('gzopen') 
+    && headers_sent() == false 
+    && (ini_get('zlib.output_compression') == 1)) 
+{
+    ini_set('zlib.output_compression', 'Off');
+}
+
 $result = $portal->getAttachment($_REQUEST['id']);
 
 $output = base64_decode($result['note_attachment']['file']);

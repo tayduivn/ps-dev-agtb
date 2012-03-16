@@ -26,6 +26,7 @@
  ********************************************************************************/
 
 (function() {
+
 /**
  * This JavaScript file provides an entire framework for the new
  * SUGAR Calculated Fields/Dependent Dropdowns implementation.
@@ -37,7 +38,7 @@
  * @import formvalidation.js  (RequireDependency function)
  * @import yui-dom-event.js	    (although, we could do without this in the future)
  */
- 
+
 // namespace
 if ( typeof(SUGAR.forms) == 'undefined' )	SUGAR.forms = {};
 if ( typeof(SUGAR.forms.animation) == 'undefined') SUGAR.forms.animation = {};
@@ -148,9 +149,8 @@ AH.registerForm = function(f, formEl) {
             {
                 //Find the parent span to get the field name
                 var span = Dom.getAncestorByTagName(el, "span");
-                sId = span.id; //Will be in the format fieldName_span
-                fieldName = sId.substring(0, sId.length - 5);
-
+                    sId = span.id; //Will be in the format fieldName_span
+                    fieldName = sId.substring(0, sId.length - 5);
                 if (!AH.VARIABLE_MAP[f][fieldName] || !Dom.isAncestor(span, AH.VARIABLE_MAP[f][fieldName])) {
                     AH.VARIABLE_MAP[f][fieldName] = el;
                     AH.updateListeners(fieldName, f, el);
@@ -236,7 +236,7 @@ AH.getValue = function(variable, view, ignoreLinks) {
     {
         return document.all ? trim(field.innerText) : trim(field.textContent);
     }
-	
+
 	if (field.value !== null && typeof(field.value) != "undefined")
 	{
 		var asNum = SUGAR.expressions.unFormatNumber(field.value);
@@ -245,7 +245,7 @@ AH.getValue = function(variable, view, ignoreLinks) {
 		}
 		return field.value;
 	}
-	
+
 	return YAHOO.lang.trim(field.innerText);
 }
 
@@ -315,7 +315,7 @@ AH.getElement = function(variable, view) {
 
 	// retrieve the variable
 	var field = AH.VARIABLE_MAP[view][variable];
-		
+
 	if ( field == null )	
 		field = YAHOO.util.Dom.get(variable);
 
@@ -333,8 +333,8 @@ AH.assign = function(variable, value, flash)
 		flash = true;
 	// retrieve the variable
 	var field = AH.getElement(variable);
-	
-	if ( field == null )	
+
+	if ( field == null )
 		return null;
 
 	// now check if this field is locked
@@ -364,9 +364,37 @@ AH.assign = function(variable, value, flash)
         }
     }
 	else {
+        // See if this is a numeric field that needs formatting
+        var fieldForm = field.form.attributes.name.value;
+        var fieldType = 'text';
+        if ( typeof(validate[fieldForm]) == "object" ) {
+            for ( var idx in validate[fieldForm] ) {
+                if (validate[fieldForm][idx][0] == field.name) {
+                    // We found our field
+                    fieldType = validate[fieldForm][idx][1];
+                    break;
+                }
+            }
+        }
+        if ( fieldType == 'decimal' || fieldType == 'currency' || fieldType == 'int' ) {
+            // It's numeric, let's format it
+            var localPrecision = 2;
+            if ( fieldType == 'int' ) {
+                localPrecision = 0;
+            } else {
+                // Some pages actually populate the precision, most do not however.
+                if ( typeof(precision) != 'undefined' ) {
+                    localPrecision = precision;
+                }
+            }
+            
+            if ( value != '' ) {
+                value = formatNumber(value,num_grp_sep,dec_sep,localPrecision,localPrecision);
+            }
+        }
 		field.value = value;
 	}
-	
+
 	// animate
 	if ( AH.ANIMATE && flash){
         try{
@@ -506,10 +534,10 @@ AH.showError = function(variable, error)
 {
 	// retrieve the variable
 	var field = AH.getElement(variable);
-	
+
 	if ( field == null )	
 		return null;
-	
+
 	add_error_style(field.form.name, field, error, false);
 }
 
@@ -517,19 +545,18 @@ AH.clearError = function(variable)
 {
 	// retrieve the variable
 	var field = AH.getElement(variable);
-	
-	if ( field == null )	
+	if ( field == null )
 		return;
-	
+
 	for(var i in inputsWithErrors)
 	{
 		if (inputsWithErrors[i] == field)
 		{
-			if ( field.parentNode.className.indexOf('x-form-field-wrap') != -1 ) 
+			if ( field.parentNode.className.indexOf('x-form-field-wrap') != -1 )
             {
 				field.parentNode.parentNode.removeChild(field.parentNode.parentNode.lastChild);
             }
-            else 
+            else
             {
             	field.parentNode.removeChild(field.parentNode.lastChild);
             }
@@ -820,7 +847,7 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap, view)
 			continue;
 			//throw "Unable to find field: " + v;
 		}
-		
+
 		var regex = new RegExp("\\$" + v, "g");
 
 		if (value === null)
@@ -942,8 +969,8 @@ SUGAR.forms._performRangeReplace = function(expression)
 
 SUGAR.forms.getFieldsFromExpression = function(expression)
 {
-	var re = /[^$]*?\$(\w+)[^$]*?/g, 
-		matches = [], 
+	var re = /[^$]*?\$(\w+)[^$]*?/g,
+		matches = [],
 		result;
 	while (result = re.exec(expression))
 	{
@@ -987,7 +1014,7 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 		var actions = this.actions;
 		if (undo && this.falseActions != null)
 			actions = this.falseActions;
-		
+
 		if (actions instanceof SUGAR.forms.AbstractAction) {
 			actions.setContext(this.context);
 			actions.exec();
@@ -1001,7 +1028,7 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 			}
 		}
 	} catch (e) {
-		if (!SUGAR.isIE && console && console.log){ 
+		if (!SUGAR.isIE && console && console.log){
 			console.log('ERROR: ' + e);
 		}
 		return;

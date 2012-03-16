@@ -40,7 +40,7 @@ class CallHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('EditView',<<<EOHTML
-<select id="duration_minutes"onchange="SugarWidgetScheduler.update_time();"tabindex="1" name="duration_minutes">
+<select id="duration_minutes" onchange="SugarWidgetScheduler.update_time();" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
@@ -48,7 +48,7 @@ class CallHelperTest extends Sugar_PHPUnit_Framework_TestCase
 EOHTML
                 ),
             array('MassUpdate',<<<EOHTML
-<select id="duration_minutes"tabindex="1" name="duration_minutes">
+<select id="duration_minutes" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
@@ -56,7 +56,7 @@ EOHTML
 EOHTML
                 ),
             array('QuickCreate',<<<EOHTML
-<select id="duration_minutes"onchange="SugarWidgetScheduler.update_time();"tabindex="1" name="duration_minutes">
+<select id="duration_minutes" onchange="SugarWidgetScheduler.update_time();" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
@@ -66,7 +66,7 @@ EOHTML
             //BEGIN SUGARCRM flav=pro ONLY
 
             array('wirelessedit',<<<EOHTML
-<select id="duration_minutes"tabindex="1" name="duration_minutes">
+<select id="duration_minutes" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>

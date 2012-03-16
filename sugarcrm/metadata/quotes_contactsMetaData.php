@@ -38,17 +38,17 @@ $dictionary['quotes_contacts'] = array ( 'table' => 'quotes_contacts'
                                                       )
                                                       
   , 'relationships' => array ('quotes_contacts_shipto' => 
-   								array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 
-								'lhs_key' => 'id','rhs_module'=> 'Contacts', 'rhs_table'=> 'contacts', 
-								'rhs_key' => 'id','relationship_type'=>'many-to-many',
-						  		'join_table'=> 'quotes_contacts', 'join_key_lhs'=>'quote_id', 'join_key_rhs'=>'contact_id',
+   								array('rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 
+								'rhs_key' => 'id','lhs_module'=> 'Contacts', 'lhs_table'=> 'contacts', 
+								'lhs_key' => 'id','relationship_type'=>'many-to-many','true_relationship_type' => 'one-to-many',
+						  		'join_table'=> 'quotes_contacts', 'join_key_rhs'=>'quote_id', 'join_key_lhs'=>'contact_id',
 							    'relationship_role_column'=>'contact_role', 'relationship_role_column_value'=>'Ship To'
 						  		),
 					   			'quotes_contacts_billto' => 
-   								array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 
-								'lhs_key' => 'id','rhs_module'=> 'Contacts', 'rhs_table'=> 'contacts', 
-								'rhs_key' => 'id','relationship_type'=>'many-to-many',
-						  		'join_table'=> 'quotes_contacts', 'join_key_lhs'=>'quote_id', 'join_key_rhs'=>'contact_id',
+   								array('rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 
+								'rhs_key' => 'id','lhs_module'=> 'Contacts', 'lhs_table'=> 'contacts', 
+								'lhs_key' => 'id','relationship_type'=>'many-to-many','true_relationship_type' => 'one-to-many',
+						  		'join_table'=> 'quotes_contacts', 'join_key_rhs'=>'quote_id', 'join_key_lhs'=>'contact_id',
 							    'relationship_role_column'=>'contact_role', 'relationship_role_column_value'=>'Bill To'
 						  		)						  		
 							)

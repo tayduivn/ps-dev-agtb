@@ -70,6 +70,10 @@
 		CAL.lbl_error_loading = "{$MOD.LBL_ERROR_LOADING}";
 		CAL.lbl_repeat_limit_error = "{$MOD.LBL_REPEAT_LIMIT_ERROR}";
 		
+		CAL.year = {$year};
+		CAL.month = {$month};
+		CAL.day = {$day};
+		
 		{literal}
 		var scrollable = CAL.get("cal-scrollable");
 		if(scrollable){
@@ -175,7 +179,11 @@
 		});	
 	
 		YAHOO.util.Event.on("btn-cancel","click",function(){			
-			CAL.editDialog.cancel();						
+			document.schedulerwidget.reset();
+            if(document.getElementById('empty-search-message')) {
+                document.getElementById('empty-search-message').style.display = 'none';
+            }
+            CAL.editDialog.cancel();						
 		}); 
 		
 		YAHOO.util.Event.on("btn-full-form","click",function(){			

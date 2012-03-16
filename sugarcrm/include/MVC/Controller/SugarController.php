@@ -484,18 +484,21 @@ class SugarController{
 
     public function action_spot()
     {
-
+        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
         //Default db search will be handled by the spot view, everything else by fts.
         if($searchEngine instanceOf SugarSearchEngine)
         {
+            //END SUGARCRM flav=pro ONLY
             $this->view = 'spot';
+            //BEGIN SUGARCRM flav=pro ONLY
         }
         else
         {
             $this->view = 'fts';
         }
+        //END SUGARCRM flav=pro ONLY
     }
 
 
@@ -527,9 +530,11 @@ class SugarController{
 				sugar_cleanup(true);
 			}
 			$this->bean->mark_deleted($_REQUEST['record']);
+            //BEGIN SUGARCRM flav=pro ONLY
             require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
             $searchEngine = SugarSearchEngineFactory::getInstance();
             $searchEngine->delete($this->bean);
+            //END SUGARCRM flav=pro ONLY
 		}else{
 			sugar_die("A record number must be specified to delete");
 		}
@@ -686,6 +691,27 @@ class SugarController{
 		    return '0';
 		}
 	}
+
+    /**
+     * Global method to delete an attachment
+     *
+     * If the bean does not have a deleteAttachment method it will return 'false' as a string
+     *
+     * @return void
+     */
+    protected function action_deleteattachment()
+    {
+        $this->view = 'edit';
+        $GLOBALS['view'] = $this->view;
+        ob_clean();
+        if(method_exists($this->bean, 'deleteAttachment')) {
+            echo $this->bean->deleteAttachment($_REQUEST['isDuplicate']) ? 'true' : 'false';
+        } else {
+            echo 'false';
+        }
+
+        sugar_cleanup(true);
+    }
 
 	/**
 	 * getActionFilename

@@ -70,7 +70,6 @@ array (
 			'len' => '255',
 			'source' => 'non-db',
 			'unified_search' => true,
-			'full_text_search' => array('boost' => 1),
 		),
 	'account_id' =>
 		array (
@@ -103,7 +102,7 @@ array (
 			'source' => 'non-db',
 			'importable' => 'false',
             'duplicate_merge'=> 'disabled',
-			'studio' => array('listview' => false),
+			'studio' => false,
 		),
 	'opportunity_role_id' =>
 		array(
@@ -263,7 +262,6 @@ array (
 		'reportable'=>false,
 	    'rel_fields' => array('primary_address' => array('type'=>'bool')),
 		'unified_search'=>true,
-		'full_text_search'=>array('boost' => 2),
 	),
 	'email_addresses_primary' =>
 	array (
@@ -536,7 +534,7 @@ array (
 			'source' => 'non-db',
 			'importable' => 'false',
             'duplicate_merge'=> 'disabled',
-			'studio' => array('listview' => false),
+			'studio' => false,
 		),
 	'm_accept_status_fields' =>
 		array (
@@ -551,7 +549,7 @@ array (
 			'importable' => 'false',
 			'hideacl'=>true,
             'duplicate_merge'=> 'disabled',
-			'studio' => array('listview' => false),
+			'studio' => false,
 		),
 	'accept_status_id' =>
 		array(
@@ -607,6 +605,7 @@ array (
             'source' => 'non-db',
             'importable' => 'false',
             'duplicate_merge'=> 'disabled',
+            'studio' => false,
 
         ),
     'dceinstance_role_id' =>
