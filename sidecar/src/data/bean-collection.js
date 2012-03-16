@@ -23,22 +23,21 @@
         },
 
         /**
-         * overload fetch so we can trigger events for rendering
-         * @param options standard options for fetch as outlined in the backbone docs
+         * Fetches beans
+         *
+         * Overloaded fetch to trigger app:collection:fetch
+         * @param options(optional) standard options for fetch as outlined in the backbone docs
          */
         fetch: function(options) {
             options = options || {};
-            if (options.success) {
-                var origSuccess = options.success;
-            }
+            var origSuccess = options.success;
             var that = this;
-            var _success = function(args){
+            options.success = function(args) {
                 that.trigger("app:collection:fetch");
-                if(origSuccess){
+                if (origSuccess) {
                     origSuccess(args);
                 }
             }
-            options.success= _success;
             return Backbone.Collection.prototype.fetch.call(this, options);
         },
 
