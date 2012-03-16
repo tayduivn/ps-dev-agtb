@@ -50,6 +50,10 @@ class Bug41523Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $focus;
 
+        // Init session user settings
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->setPreference('max_tabs', 2);
+
         $this->campaign = SugarTestCampaignUtilities::createCampaign();
         $this->db       = $GLOBALS['db'];
         $focus          = $this->campaign;
