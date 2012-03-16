@@ -1415,7 +1415,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer img.logo {
-    margin: 6px 10px;
+    margin: 7px 10px;
 }
 
 #footer #partner a {
@@ -6606,7 +6606,7 @@ ul#selectLink.clickMenu #massall{
 }
 
 ul#selectLink.clickMenu > li > a{
-	padding-left: 0px !important;
+	padding: 0px !important;
 }
 
 ul#selectLink.clickMenu li span {

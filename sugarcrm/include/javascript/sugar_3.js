@@ -693,7 +693,7 @@ function add_error_style(formname, input, txt, flash) {
     {
 		// We only need to setup the flashy-flashy on the first entry, it loops through all fields automatically
 	    if ( inputsWithErrors.length == 1 ) {
-	      for(wp = 1; wp <= 10; wp++) {
+	      for(var wp = 1; wp <= 10; wp++) {
 	        window.setTimeout('fade_error_style(style, '+wp*10+')',1000+(wp*50));
 	      }
 	    }
@@ -1879,7 +1879,7 @@ sugarListView.prototype.confirm_action = function(del) {
 sugarListView.get_num_selected = function () {
 	if(typeof document.MassUpdate != 'undefined') {
 		the_form = document.MassUpdate;
-		for(wp = 0; wp < the_form.elements.length; wp++) {
+		for(var wp = 0; wp < the_form.elements.length; wp++) {
 			if(typeof the_form.elements[wp].name != 'undefined' && the_form.elements[wp].name == 'selectCount[]') {
 				return the_form.elements[wp].value;
 			}
@@ -1891,7 +1891,7 @@ sugarListView.get_num_selected = function () {
 sugarListView.update_count = function(count, add) {
 	if(typeof document.MassUpdate != 'undefined') {
 		the_form = document.MassUpdate;
-		for(wp = 0; wp < the_form.elements.length; wp++) {
+		for(var wp = 0; wp < the_form.elements.length; wp++) {
 			if(typeof the_form.elements[wp].name != 'undefined' && the_form.elements[wp].name == 'selectCount[]') {
 				if(add)	{
 					the_form.elements[wp].value = parseInt(the_form.elements[wp].value,10) + count;
@@ -2416,7 +2416,7 @@ sugarListView.prototype.check_boxes = function() {
 		if (theForm.select_entire_list.value == 1)
 			document.MassUpdate.massall.disabled = true;
 
-		for(wp = 0 ; wp < inputs_array.length; wp++) {
+		for(var wp = 0 ; wp < inputs_array.length; wp++) {
 			if(inputs_array[wp].name == "mass[]") {
 				inputsCount++;
 				if (theForm.select_entire_list.value == 1) {
@@ -2429,19 +2429,15 @@ sugarListView.prototype.check_boxes = function() {
 						if(inputs_array[wp].value == checked_items[i]) {
 							checkedCount++;
 							inputs_array[wp].checked = true;
+							sugarListView.prototype.check_item(inputs_array[wp], document.MassUpdate);
 						}
 					}
 				}
 			}
 		}
-		if (theForm.select_entire_list.value == 0)
-			sugarListView.update_count(checked_items.length);
-		else
-			sugarListView.update_count(0, true);
-
 	}
 	else {
-		for(wp = 0 ; wp < inputs_array.length; wp++) {
+		for(var wp = 0 ; wp < inputs_array.length; wp++) {
 			if(inputs_array[wp].name == "mass[]") {
 				inputs_array[wp].checked = false;
 				inputs_array[wp].disabled = false;
@@ -2455,7 +2451,6 @@ sugarListView.prototype.check_boxes = function() {
 	}
 	if(checkedCount > 0 && checkedCount == inputsCount)
 		document.MassUpdate.massall.checked = true;
-
 }
 
 
@@ -2497,7 +2492,7 @@ sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 
 	switch(mode) {
 		case 'selected':
-			for(wp = 0; wp < document.MassUpdate.elements.length; wp++) {
+			for(var wp = 0; wp < document.MassUpdate.elements.length; wp++) {
 				var reg_for_existing_uid = new RegExp('^'+RegExp.escape(document.MassUpdate.elements[wp].value)+'[\s]*,|,[\s]*'+RegExp.escape(document.MassUpdate.elements[wp].value)+'[\s]*,|,[\s]*'+RegExp.escape(document.MassUpdate.elements[wp].value)+'$|^'+RegExp.escape(document.MassUpdate.elements[wp].value)+'$');
 				//when the uid is already in document.MassUpdate.uid.value, we should not add it to ar.
 				if(typeof document.MassUpdate.elements[wp].name != 'undefined'
@@ -3087,6 +3082,7 @@ SUGAR.util = function () {
 						$dialog.dialog("option","position",{my: 'left top',at: 'right top',of: $(el)})	;
 					}
 					$dialog.dialog('open');
+					$(".ui-dialog").appendTo("#content");
 
 
 		},
@@ -3125,6 +3121,7 @@ SUGAR.util = function () {
 			}
 
 			$dialog.dialog('open');
+			$(".ui-dialog").appendTo("#content");
 
 		},
 
@@ -3169,6 +3166,7 @@ SUGAR.util = function () {
 					}
 
 					$dialog.dialog('open');
+					$(".ui-dialog").appendTo("#content");
 				}
 
 				success = function(data) {
