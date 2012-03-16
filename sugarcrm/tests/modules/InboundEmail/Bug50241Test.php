@@ -62,14 +62,14 @@ font-family:Tahoma
 </html>
 EOS;
 
-	    $outStr=<<<EOS
+$outStr=<<<EOS
 <div dir="ltr">
-<span style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">hello, </span><br />
-<span style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">i recently got Batman Arkham City and tried to get catwoman as an add-on character but when i put the code in it said that my code had already been used. </span><br />
-<span style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">what can i do, so that i can play catwoman?</span><br />
- <br /> </div>
+<span style="font-family:Tahoma, 'sans-serif';font-size:10pt;">hello, &lt;?xml:namespace prefix = o ns = "urn:schemas-microsoft-com:office:office" /&gt;</span><p></p><br /><span style="font-family:Tahoma, 'sans-serif';font-size:10pt;">i recently
+got Batman Arkham City and tried to get catwoman as an add-on character but when i put the code in it said that my code had already been used. </span><p></p><br /><
+span style="font-family:Tahoma, 'sans-serif';font-size:10pt;">what can i do, so that i can play catwoman?</span><p></p><br /><br /></div>
 EOS;
-	    
-        $this->assertEquals(trim($outStr),trim($this->ie->cleanContent($inStr)));
+
+	    $actual = SugarCleaner::cleanHtml($inStr);
+        $this->assertEquals(trim($outStr),trim($actual));
 	}
 }
