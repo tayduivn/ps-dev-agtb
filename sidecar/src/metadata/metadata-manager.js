@@ -1,6 +1,3 @@
-/**
- * @class MetadataManager
- */
 (function(app) {
     //Metadata that has been loaded from offline storage
     var _metadata = {};
@@ -11,127 +8,11 @@
         text: "textarea"
     };
 
-    //Function that attempts to retrieve metadata from offline cache.
-    //If its not there, it will make a server call to start a sync
-    //The sync will block the app
-    //TODO add infinite loop prevetion in sync
-    var _get = function(module, type) {
-        if (typeof(_metadata[module]) == "undefined") {
-            _metadata[module] = app.cache.get("metadata." + module);
-            if (typeof(_metadata[module]) == "undefined") {
-                app.sync();
-                return null;
-            }
-        }
-
-        if (!type)
-            return _metadata[module];
-
-        if (typeof(_metadata[module][type]) == "undefined") {
-            app.sync();
-            return null;
-        }
-
-        return _metadata[module][type];
-    };
-
-    //Function that attempts to retrieve sugarFields from offline caches
-    //If its not there, it will make a server call to start a sync
-    //The sync will block the app
-    //TODO add infinite loop prevetion in sync
-    var _getSugarField = function(field) {
-
-        // init results
-        var result, views;
-
-        var name = fieldTypeMap[field.type] || field.type;
-
-        if (!name) {
-            app.logger.error("No field name provided to getSugarField");
-            return null;
-        }
-
-        // get sugarfield from app cache if we dont have it in memory
-        if (typeof(_sugarFields[name]) == "undefined") {
-            _sugarFields[name] = app.cache.get("sugarFields." + name);
-        }
-
-        if (_sugarFields[name]) {
-            views = _sugarFields[name].views || _sugarFields[name];
-            var viewName = field.viewName || field.view;
-            // assign fields to results if set
-            if (viewName && views[viewName]) {
-                result = views[viewName];
-                // fall back to detailview if field for this view doesnt exist
-            } else if (views && views['default']) {
-                result = views['default'];
-                //fall back to base field detailview if none of the above exist
-            }
-        }
-
-        if (!result && _sugarFields.text && _sugarFields.text.views['default']) {
-            result = _sugarFields.text.views['default'];
-        }
-        //Could not get valid view data for this field
-        else if (!result) {
-            app.Sync();
-            return null;
-        }
-
-        return result;
-    };
-
     /**
-     *
-     * @param {String} module name of module to retrieve from
-     * @param {String} view optional name of view to get
+     * The metadata manager is responsible for parsing and returning various metadata to components that request it.
+     * @singleton
+     * @class MetadataManager
      */
-    var _getView = function(module, view) {
-        var views = _get(module, "views");
-        if (views !== null) {
-            if (view) {
-                if (typeof(views[view]) != "undefined")
-                    return views[view];
-            } else {
-                return views;
-            }
-        }
-        return null;
-    };
-
-    var _getLayout = function(module, layout) {
-        var layouts = _get(module, "layouts");
-        if (layouts !== null) {
-            if (layout) {
-                if (typeof(layouts[layout]) != "undefined")
-                    return layouts[layout];
-            } else {
-                return layouts;
-            }
-        }
-        return null;
-    };
-
-    var _getVardef = function(module, bean) {
-        var beans = _get(module, "beans");
-        if (!bean)
-            bean = _get(module, "primary_bean");
-
-        if (bean && beans[bean] && beans[bean].vardefs) {
-            return beans[bean].vardefs;
-        }
-
-        return null;
-    };
-
-    var _getFieldDef = function(module, bean, field) {
-        var vardef = _getVardef(module, bean);
-        if (vardef && vardef.fields)
-            return vardef.fields[field];
-
-        return null;
-    };
-
     app.augment("metadata", {
         /**
          * The Metadata Manager get method should be the be the only accessor for metadata.
@@ -155,7 +36,7 @@
          */
         get: function(params) {
             if (params && params.sugarField) {
-                return _getSugarField(params.sugarField);
+                return this._getSugarField(params.sugarField);
             }
 
             // If no parameters are passed in, we return the whole metadata
@@ -163,23 +44,183 @@
                 return _metadata;
             }
             if (!params.type)
-                return _get(params.modules);
+                return this._getModule(params.modules);
 
             if (params.type == "view")
-                return _getView(params.module, params.view);
+                return this._getView(params.module, params.view);
 
             if (params.type == "layout")
-                return _getLayout(params.module, params.layout);
+                return this._getLayout(params.module, params.layout);
 
             if (params.type == "vardef")
-                return _getVardef(params.module, params.bean);
+                return this._getVardef(params.module, params.bean);
 
             if (params.type == "fieldDef")
-                return _getFieldDef(params.module, params.bean, params.field);
+                return this._getFieldDef(params.module, params.bean, params.field);
+        },
+
+        /**
+         * Function that attempts to retrieve sugarFields from offline caches
+         * If its not there, it will make a server call to start a sync
+         * The sync will block the app
+         * TODO add infinite loop prevetion in sync
+         * @param {String} module of metadata
+         * @param {String} type of metadata
+         * @return {Object} metadata
+         * @private
+         */
+        _getModule: function(module, type) {
+            if (typeof(_metadata[module]) == "undefined") {
+                _metadata[module] = app.cache.get("metadata." + module);
+                if (typeof(_metadata[module]) == "undefined") {
+                    app.sync();
+                    return null;
+                }
+            }
+
+            if (!type)
+                return _metadata[module];
+
+            if (typeof(_metadata[module][type]) == "undefined") {
+                app.sync();
+                return null;
+            }
+
+            return _metadata[module][type];
+        },
+
+        /**
+         * @param {String} field Name of field metadata
+         * @return {Object} metadata
+         * @private
+         */
+        _getSugarField: function(field) {
+
+            // init results
+            var result, views;
+
+            var name = fieldTypeMap[field.type] || field.type;
+
+            if (!name) {
+                app.logger.error("No field name provided to getSugarField");
+                return null;
+            }
+
+            // get sugarfield from app cache if we dont have it in memory
+            if (typeof(_sugarFields[name]) == "undefined") {
+                _sugarFields[name] = app.cache.get("sugarFields." + name);
+            }
+
+            if (_sugarFields[name]) {
+                views = _sugarFields[name].views || _sugarFields[name];
+                var viewName = field.viewName || field.view;
+                // assign fields to results if set
+                if (viewName && views[viewName]) {
+                    result = views[viewName];
+                    // fall back to detailview if field for this view doesnt exist
+                } else if (views && views['default']) {
+                    result = views['default'];
+                    //fall back to base field detailview if none of the above exist
+                }
+            }
+
+            if (!result && _sugarFields.text && _sugarFields.text.views['default']) {
+                result = _sugarFields.text.views['default'];
+            }
+            //Could not get valid view data for this field
+            else if (!result) {
+                app.Sync();
+                return null;
+            }
+
+            return result;
+        },
+
+        /**
+         * Returns metadata for Views
+         * @private
+         * @param {String} module Name of module to retrieve from
+         * @param {String} view Optional name of view to get
+         * @return {Object} metadata
+         */
+        _getView: function(module, view) {
+            var views = this._getModule(module, "views");
+            if (views !== null) {
+                if (view) {
+                    if (typeof(views[view]) != "undefined")
+                        return views[view];
+                } else {
+                    return views;
+                }
+            }
+            return null;
+        },
+
+        /**
+         * Returns metadat for Layouts
+         * @private
+         * @param {String} module Name of module to retrieve from
+         * @param {String} layout Name of layout to retrieve from
+         * @return {Object} metadata
+         */
+        _getLayout: function(module, layout) {
+            var layouts = this._getModule(module, "layouts");
+
+            if (layouts !== null) {
+                if (layout) {
+                    if (typeof(layouts[layout]) != "undefined")
+                        return layouts[layout];
+                } else {
+                    return layouts;
+                }
+            }
+
+            return null;
+        },
+
+        /**
+         * Returns vardef
+         * @private
+         * @param {String} module Module name
+         * @param {String} bean Bean name
+         * @return {Object} vardef
+         */
+        _getVardef: function(module, bean) {
+            var beans = this._getModule(module, "beans");
+
+            if (!bean) {
+                bean = this._getModule(module, "primary_bean");
+            }
+
+            return (bean && beans[bean] && beans[bean].vardefs) ? beans[bean].vardefs : null;
+        },
+
+        /**
+         * Returns Fielddef metadata
+         * @param {String} module Module name
+         * @param {String} bean Bean name
+         * @param {String} field Name of field
+         * @return {Object} metadata
+         * @private
+         * @method
+         */
+        _getFieldDef: function(module, bean, field) {
+            var vardef = this._getVardef(module, bean);
+
+            return (vardef && vardef.fields) ? vardef.fields[field] : null;
         },
 
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
+
+        /**
+         * Set the metadata.
+         * By default this function is used by MetadataManager to translate server responses into metadata
+         * useable internally.
+         * @param {Object} data Metadata
+         * @param {String} key Metadata identifier
+         * @method
+         */
         set: function(data, key) {
             key = key || "metadata";
             _.each(data, function(entry, module) {
@@ -192,9 +233,11 @@
                 app.cache.set(key + "." + module, entry);
             });
         },
+
         /**
          * Syncs metadata from server using the Api wrapper. Saves the metadata to the manager.
          * @method
+         * @param {Function} callback Callback function to be executed after a sync
          */
         sync: function(callback) {
             var self = this;

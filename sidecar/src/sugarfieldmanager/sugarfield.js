@@ -3,15 +3,19 @@
 
     //Register Handlebars helper to create fields with unique id's
     Handlebars.registerHelper('sugar_field', function (context, view, bean) {
-        var ret = '<span sfuuid="' + (++sfid) + '"></span>';
-        var name = this.name;
-        var label = this.label || this.name;
-        var def = this;
+        var ret = '<span sfuuid="' + (++sfid) + '"></span>',
+            name = this.name,
+            label = this.label || this.name,
+            def = this,
+            sf;
+
         bean = bean || context.get("model");
-        if (bean.fields && bean.fields[name]){
+
+        if (bean.fields && bean.fields[name]) {
             def = bean.fields[name];
         }
-        var sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
+
+        sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
             def: def,
             view : view,
             context : context,
@@ -113,7 +117,11 @@
          * @return {Object} this Reference to the SugarField
          */
         render: function() {
-            if (!this.model.has) return;
+            // If we don't have any data in the model yet
+            if (_.isEmpty(this.model.attributes)) {
+                return null;
+            }
+
             this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
             this.$el.html(this.templateC(this));
 
@@ -137,15 +145,25 @@
             return this;
         },
 
+        /**
+         * Binds render to model changes
+         * @param {Context} context
+         * @param {Bean} model Data to bind the sugarfield to
+         */
         bind: function(context, model) {
             this.unBind();
             this.context = context;
             this.model = model;
+
             if (this.model.on){
                 this.model.on("change:" + this.name, this.render, this);
             }
         },
 
+        /**
+         * Unbinds model event callbacks
+         * @method
+         */
         unBind: function() {
             //this will only work if all events we listen to, we set the scope to this
             if (this.model && this.model.offByScope) {

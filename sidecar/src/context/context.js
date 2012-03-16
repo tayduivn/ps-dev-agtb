@@ -150,45 +150,43 @@
              * @method
              */
             getData: function() {
-                var data, fields, bean, collection,
+                var fields, bean, collection,
                     options = {},
+                    self = this,
                     state = this.get();
 
                 if (state.view) {
                     fields = state.view.getFields();
-                    this.set({fields:fields});
-                }
+                    this.set({fields: fields});
 
-                if (fields) {
-                    var fieldString = fields.join(",");
                     options.params = [
-                        {key: "fields", value: fieldString}
+                        {key: "fields", value: fields.join(",")}
                     ];
                 }
 
                 if (state.id) {
                     bean = app.dataManager.createBean(state.module, { id: state.id });
-                    bean.fetch(options);
                     collection = app.dataManager.createBeanCollection(state.module, [bean]);
+
+                    bean.fetch(options);
                 } else if (state.create) {
                     bean = app.dataManager.createBean(state.module);
                     collection = app.dataManager.createBeanCollection(state.module, [bean]);
                 } else if (state.url) {
                     // TODO: Make this hit a custom url
                 } else {
-                    var that = this;
-                    options.success = function(){
-                        that.set({model:collection.models[0]});
+                    options.success = function() {
+                        self.set({model: collection.models[0]});
                         if (state.view) {
                             //state
                             state.view.render();
                         }
                     };
 
-
                     collection = app.dataManager.createBeanCollection(state.module);
                     collection.on("app:collection:fetch", state.view.render, this);
                     collection.fetch(options);
+
                     bean = collection.models[0] || {};
                 }
 
