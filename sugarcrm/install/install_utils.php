@@ -441,7 +441,8 @@ function writeSugarConfig($sugar_config) {
         '$sugar_config = ' .
         var_export($sugar_config, true) .
         ";\n?>\n";
-    if(is_writable('config.php') && write_array_to_file( "sugar_config", $sugar_config, "config.php")) {
+    if(is_writable('config.php')) {
+        write_array_to_file( "sugar_config", $sugar_config, "config.php");
     }
 }
 
