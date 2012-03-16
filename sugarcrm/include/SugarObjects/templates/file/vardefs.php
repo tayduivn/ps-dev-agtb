@@ -141,7 +141,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'source' => 'non-db',
     'Comment' => 'Document status for Meta-Data framework',
   ),
- ),
+ )
 );
 
 ?>
