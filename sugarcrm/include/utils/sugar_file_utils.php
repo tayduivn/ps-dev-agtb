@@ -153,7 +153,7 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
 	}
 
 	if(!is_writable($filename) ) {
-	   $GLOBALS['log']->error("File $filename cannot be written to");
+       trigger_error("sugar_file_put_contents_atomic() : file '{$filename}' is not writable", E_USER_WARNING);
 	   return false;
 	}
 
@@ -176,7 +176,7 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
 
         if (!($f = @fopen($temp, $mode)))
         {
-            $GLOBALS['log']->error("sugar_file_put_contents_atomic() : error writing temporary file '{$temp}'");
+            trigger_error("sugar_file_put_contents_atomic() : error writing temporary file '{$temp}'", E_USER_WARNING);
             return false;
         }
     }
