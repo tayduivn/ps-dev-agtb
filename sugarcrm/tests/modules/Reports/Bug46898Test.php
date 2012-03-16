@@ -49,8 +49,8 @@ class Bug46898Test extends Sugar_PHPUnit_Framework_TestCase
         $savedReports->save();
 
         $reportSchedule = new ReportSchedule();
-        $schedule1 = $reportSchedule->save_schedule(false, $user1->id, $savedReports->id, false, false, true, 'bug');
-        $schedule2 = $reportSchedule->save_schedule(false, $user2->id, $savedReports->id, false, false, true, 'bug');
+        $schedule1 = $reportSchedule->save_schedule(false, $user1->id, $savedReports->id, false, 1, true, 'bug');
+        $schedule2 = $reportSchedule->save_schedule(false, $user2->id, $savedReports->id, false, 1, true, 'bug');
         $GLOBALS['db']->query("UPDATE {$reportSchedule->table_name} SET next_run='2001-01-01 00:00:00' WHERE id='{$schedule1}'");
         $GLOBALS['db']->query("UPDATE {$reportSchedule->table_name} SET next_run='2001-01-01 00:00:00' WHERE id='{$schedule2}'");
 
@@ -67,6 +67,7 @@ class Bug46898Test extends Sugar_PHPUnit_Framework_TestCase
         $user2->mark_deleted($user2->id);
         $reportSchedule->mark_deleted($schedule1);
         $reportSchedule->mark_deleted($schedule2);
+        $GLOBALS['db']->commit();
 
         $this->assertEquals(2, count($ids));
         $this->assertContains($user1->id, $ids, 'User is missed in returned array');
