@@ -23,6 +23,7 @@
                         route;
 
                     options = options || {};
+
                     if (action == 'create') {
                         id = '';
                     }
@@ -118,8 +119,7 @@
         /**
          * Base View class. Use {@link LayoutManager} to create instances of views.
          *
-         * @class View
-         * @extends Backbone.View
+         * @class Layout.View
          * @alias SUGAR.App.layout.View
          */
         Layout.View = Backbone.View.extend({
@@ -244,8 +244,8 @@
         /**
          * View that displays a list of models pulled from the context's collection.
          * @class Layout.ListView
-         * @extends View
          * @alias SUGAR.App.layout.ListView
+         * @extends Layout.View
          */
         Layout.ListView = Layout.View.extend({
             bind: function(context) {
@@ -275,13 +275,12 @@
          * Base Layout class. Use {@link LayoutManager} to create instances of layouts.
          *
          * @class Layout.Layout
-         * @extends SUGAR.App.layout.View
          * @alias SUGAR.App.layout.Layout
+         * @extends Layout.View
          */
         Layout.Layout = Layout.View.extend({
             initialize: function() {
                 _.bindAll(this, 'render', 'bindData');
-
 
                 /**
                  * The context is used to determine what the current focus is
@@ -316,8 +315,8 @@
                 this.$el.addClass("layout " + (this.options.className || this.meta.type));
 
                 _.each(this.meta.components, function(def) {
-                    var context = def.context ? this.context.getRelatedContext(def.context) : this.context;
-                    var module = def.module || context.get("module");
+                    var context = def.context ? this.context.getRelatedContext(def.context) : this.context,
+                        module = def.module || context.get("module");
 
                     //If the context wasn't specified in the def, use the parent layouts module
                     // (even if that isn't the module of the current context)
@@ -372,7 +371,6 @@
             _placeComponent: function(comp) {
                 this.$el.append(comp.el);
             },
-            
 
             /**
              * Removes the given view / layout from this layout.
@@ -418,15 +416,14 @@
         /**
          * Layout that places views in a table with each view in its own column
          * @class Layout.ColumnsLayout
-         * @extends Layout
          * @alias SUGAR.App.layout.ColumnsLayout
+         * @extends Layout.Layout
          */
         Layout.ColumnsLayout = Layout.Layout.extend({
             //column layout uses a table for columns and prevent wrapping
             /**
-             *
-             * @param comp
-             * @protected
+             * Add a view (or layout) to this layout.
+             * @param {Layout/View} comp Componant to add
              */
             _placeComponent: function(comp) {
                 if (!this.$el.children()[0]) {
@@ -438,10 +435,17 @@
         });
 
         /**
-         * @class Layout.FluidLayout Layout that places components using bootstrap fluid layout divs
-         * @extend App.Layout.Layout
+         * Layout that places components using bootstrap fluid layout divs
+         * @class Layout.FluidLayout
+         * @extends Layout.Layout
          */
         Layout.FluidLayout = Layout.Layout.extend({
+            /**
+             * Places a view's element on the page. This shoudl be overriden by any custom layout types.
+             * @param {View} comp
+             * @protected
+             * @method
+             */
             _placeComponent: function(comp, def) {
                 var size = def.size || 4;
                 if (!this.$el.children()[0]) {

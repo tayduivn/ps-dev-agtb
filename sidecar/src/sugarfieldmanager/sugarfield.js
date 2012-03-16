@@ -113,7 +113,11 @@
          * @return {Object} this Reference to the SugarField
          */
         render: function() {
-            if (!this.model.has) return;
+            // If we don't have any data in the model yet
+            if (!this.model.id) {
+                return null;
+            }
+
             this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
             this.$el.html(this.templateC(this));
 

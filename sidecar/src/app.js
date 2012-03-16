@@ -23,7 +23,7 @@ _.extend(Backbone.View.prototype, {
 });
 
 /**
- SideCar Platform
+ * SideCar Platform
  * @ignore
  */
 var SUGAR = SUGAR || {};
