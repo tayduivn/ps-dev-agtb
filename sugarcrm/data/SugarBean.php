@@ -5360,7 +5360,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     //BEGIN SUGARCRM flav=pro ONLY
     /**
-     * Filter fields - null those that aren't allowed by ACL
+     * Filter fields for specific view - null those that aren't allowed by ACL
      * @param string $view
      * @param array $context
      */
@@ -5379,6 +5379,26 @@ function save_relationship_changes($is_update, $exclude=array())
         }
     }
     //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Filter list of fields and remove/blank fields that we can not access
+     * Modifies the list directly.
+     * @param array $list list of fields, keys are field names
+     * @param array $context
+     * @param array options Filtering options:
+     * - blank_value (bool) - instead of removing inaccessible field put '' there
+     * - add_acl (bool) - instead of removing fields add 'acl' value with access level
+     * - suffix (string) - strip suffix from field names
+     * - min_access (int) - require this level of access for field
+     * - use_value (bool) - look for field name in value, not in key of the list
+     */
+    public function ACLFilterFieldList(&$list, $context = array(), $options = array())
+    {
+        if(empty($context['bean'])) {
+            $context['bean'] = $this;
+        }
+        SugarACL::listFilter($this->getACLCategory(), $list, $context, $options);
+    }
 
     /**
      * Check field access for certain field

@@ -119,7 +119,7 @@ var field_defs_<?php echo $module_name; ?> = new Object();
 
 		if(is_array($module->field_defs)) {
 			//BEGIN SUGARCRM flav!=sales ONLY
-			ACLField::listFilter($module->field_defs, $module->module_dir, $GLOBALS['current_user']->id, true);
+			$module->ACLFilterFieldList($module->field_defs, array("owner_override" => true));
 
 			if($module->object_name == 'Team' && $module->ACLFieldAccess('team_set_id', 'access', array("owner_override" => true))) {
 		       $module->field_defs['team_set_id'] = array('name'=>'team_set_id', 'type'=>'team_set_id', 'vname' => 'LBL_TEAMS', 'rname'=>'id', 'dbType'=>'id', 'id_name'=>'team_set_id');

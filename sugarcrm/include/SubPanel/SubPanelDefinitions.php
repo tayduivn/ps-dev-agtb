@@ -116,7 +116,7 @@ class aSubPanel
 				$this->panel_definition = $subpanel_layout ;
 
 				//BEGIN SUGARCRM flav=pro ONLY
-				ACLField::listFilter ( $this->panel_definition [ 'list_fields' ], $this->_instance_properties [ 'module' ], $GLOBALS [ 'current_user' ]->id, true ) ;
+				SugarACL::listFilter($this->_instance_properties [ 'module' ], $this->panel_definition [ 'list_fields' ], array("owner_override" => true));
 				//END SUGARCRM flav=pro ONLY
 			}
 			$this->load_module_info () ; //load module info from the module's bean file.
