@@ -50,11 +50,11 @@ class Bug51371Test extends Sugar_PHPUnit_Framework_TestCase
             // md5 crypt
             $checks[] = array("my passw0rd", '$1$F0l3iEs7$sT3th960AcuSzp9kiSmxh/');
        }
-       if(defined('CRYPT_MD5') && constant('CRYPT_MD5')) {
+       if(defined('CRYPT_BLOWFISH') && constant('CRYPT_BLOWFISH')) {
             // blowfish
             $checks[] = array("my passw0rd", '$2a$07$usesomesillystringforeETvnK0/TgBVIVHViQjGDve4qlnRzeWS');
        }
-       if(defined('CRYPT_MD5') && constant('CRYPT_MD5')) {
+       if(defined('CRYPT_SHA256') && constant('CRYPT_SHA256')) {
             // sha-256
             $checks[] = array("my passw0rd", '$5$rounds=5000$usesomesillystri$aKwd34p0LSvMZdW1LolZOPCCsx1mYdTynQn9ZrWrO87');
        }
