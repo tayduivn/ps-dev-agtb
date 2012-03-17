@@ -14,6 +14,12 @@
         env: 'dev',
 
         /**
+         * Flag indicating whether to output Sugar API debug information.
+         * @cfg {Boolean}
+         */
+        debugSugarApi: true,
+
+        /**
          * Logging level.
          * @cfg {Object} [logLevel=logger.Levels.DEBUG]
          */
