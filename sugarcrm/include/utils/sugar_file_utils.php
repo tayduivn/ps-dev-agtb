@@ -166,7 +166,12 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
         @rename($temp, $filename);
     }
 
-    return file_exists($filename);
+    if(file_exists($filename))
+    {
+       return sugar_chmod($filename, 0655);
+    }
+
+    return false;
 }
 
 
