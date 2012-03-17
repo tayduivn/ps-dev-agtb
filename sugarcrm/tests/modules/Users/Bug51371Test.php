@@ -36,20 +36,29 @@ class Bug51371Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function getHashes()
     {
-        return array(
+        $checks = array(
             // plain MD5
             array("my passw0rd", "0db22d09a263d458c79581aefcbdb300"),
-            // extended crypt
-            array("my passw0rd", "_.012saltIO.319ikKPU"),
-            // md5 crypt
-            array("my passw0rd", '$1$F0l3iEs7$sT3th960AcuSzp9kiSmxh/'),
-            // blowfish
-            array("my passw0rd", '$2a$07$usesomesillystringforeETvnK0/TgBVIVHViQjGDve4qlnRzeWS'),
-            // sha-256
-            array("my passw0rd", '$5$rounds=5000$usesomesillystri$aKwd34p0LSvMZdW1LolZOPCCsx1mYdTynQn9ZrWrO87'),
-            // whatever User has
+           // whatever User has
             array("my passw0rd", User::getPasswordHash("my passw0rd")),
-        );
+            );
+       if(defined('CRYPT_EXT_DES') && constant('CRYPT_EXT_DES')) {
+            // extended crypt
+            $checks[] = array("my passw0rd", "_.012saltIO.319ikKPU");
+       }
+       if(defined('CRYPT_MD5') && constant('CRYPT_MD5')) {
+            // md5 crypt
+            $checks[] = array("my passw0rd", '$1$F0l3iEs7$sT3th960AcuSzp9kiSmxh/');
+       }
+       if(defined('CRYPT_MD5') && constant('CRYPT_MD5')) {
+            // blowfish
+            $checks[] = array("my passw0rd", '$2a$07$usesomesillystringforeETvnK0/TgBVIVHViQjGDve4qlnRzeWS');
+       }
+       if(defined('CRYPT_MD5') && constant('CRYPT_MD5')) {
+            // sha-256
+            $checks[] = array("my passw0rd", '$5$rounds=5000$usesomesillystri$aKwd34p0LSvMZdW1LolZOPCCsx1mYdTynQn9ZrWrO87');
+       }
+       return $checks;
     }
 
     /**
