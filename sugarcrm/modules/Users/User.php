@@ -775,7 +775,7 @@ EOQ;
 	 */
 	public static function getPasswordHash($password)
 	{
-	    if(1 || !defined('CRYPT_MD5')) {
+	    if(defined('CRYPT_MD5')) {
 	        // does not support MD5 crypt - leave as is
 	        if(defined('CRYPT_EXT_DES')) {
 	            return crypt(strtolower(md5($password)),
