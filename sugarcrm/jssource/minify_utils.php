@@ -310,6 +310,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 //minify javascript
                 //$jMin = new JSMin($from_path,$to_path,$lic_arr);
                 $min_file = str_replace('.js', '-min.js', $from_path);
+                if(strpos($from_path, '-min.js') !== FALSE) {
+                    $min_file = $from_path;
+                }
+
                 if(is_file($min_file)) {
                     $out = file_get_contents($min_file);
                 } else {
