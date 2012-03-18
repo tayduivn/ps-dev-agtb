@@ -50,6 +50,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $prefix.'jssource'                      => true,
             $prefix.'modules/ModuleBuilder'         => true,
             $prefix.'include/javascript/jquery'     => true,
+            $prefix.'tests/PHPUnit/PHP/CodeCoverage/Report/HTML/Template' => true,
+            $prefix.'tests/jssource/minify/expect'  => true,
+            $prefix.'tests/jssource/minify/test'    => true,
         );
 
         return $compress_exempt_files;
