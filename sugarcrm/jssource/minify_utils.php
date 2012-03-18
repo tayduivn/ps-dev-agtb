@@ -89,8 +89,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
             //process each group array
             foreach($fg as $loc=>$trgt){
+                $already_minified = FALSE;
+                $minified_loc = str_replace('.js', '-min.js', $loc);
+                if(is_file($minified_loc)) {
+                    $loc = $minified_loc;
+                    $already_minified = TRUE;
+                }
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
+
                 $trgt = sugar_cached($trgt);
                 //check to see that source file is a file, and is readable.
                 if(is_file($loc) && is_readable($loc)){
@@ -144,10 +151,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                 //make sure we have handles to both source and target file
                 if ($trgt_handle) {
-                        if(isset($excludedFiles[dirname($loc)]) )
+                        if($already_minified || isset($excludedFiles[dirname($loc)])) {
                             $buffer = file_get_contents($loc);
-                        else
+                        } else {
                             $buffer = SugarMin::minify(file_get_contents($loc));
+                        }
 
                         $buffer .= "/* End of File $relpath */\n\n";
                         $num = fwrite($trgt_handle, $buffer);
