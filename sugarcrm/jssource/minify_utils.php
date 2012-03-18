@@ -93,8 +93,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
                 $trgt = sugar_cached($trgt);
-                //check to see that source file exists, that it is a file, and is readable
-                if(file_exists($loc) && is_file($loc)  && is_readable($loc)){
+                //check to see that source file is a file, and is readable.
+                if(is_file($loc) && is_readable($loc)){
                     $currPerm = fileperms($loc);
                     //check to see if target exists, if it does then open file
                     if(file_exists($trgt)){
