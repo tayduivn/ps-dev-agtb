@@ -56,6 +56,7 @@
             this.bind(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = app.metadata.get({sugarField:this});
+            this.events = this.meta.events;
 
             templateKey = "sugarField." + this.name + "." + this.view.name;
 

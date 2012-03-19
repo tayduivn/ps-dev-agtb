@@ -61,6 +61,16 @@ var sugarFieldsFixtures = {
                 "type":"basic",
                 "template":"<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"}
         },
+        "url": {
+            "detailView": {
+                "template": "<a href=\"http://{{value}}\">{{value}}</a>"
+            },
+            "editView": {
+                "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                    "<input placeholder=\"www.website.com\" type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                    "<\/p> <\/div>"
+            }
+        },
         "sugarField_actionsLink":{
             "default":{
                 "template":"<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>"+
