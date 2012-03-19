@@ -831,23 +831,30 @@ function getUserArrayFromFullName($args, $hide_portal_users = false) {
 	global $locale;
 	$db = DBManagerFactory::getInstance();
 
-	$argArray = array();
-	if(strpos($args, " ")) {
-		$argArray = explode(" ", $args);
-	} else {
-		$argArray[] = $args;
-	}
-
-	$inClause = '';
-	foreach($argArray as $arg) {
-		if(!empty($inClause)) {
-			$inClause .= ' OR ';
-		}
-		if(empty($arg))
-		continue;
-
-		$inClause .= "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
-	}
+	// jmorais@dri - Bug #51411
+	// 
+    // Refactor the code responsible for parsing supplied $args, this way we 
+    // ensure that if $args has at least one space (after trim), the $inClause 
+    // will be composed by several clauses ($inClauses) inside parenthesis. 
+    //
+    // Ensuring that operator precedence is respected, and avoiding 
+    // inactive/deleted users to be retrieved.
+    //
+    $args = trim($args);
+    if (strpos($args, ' ')) {
+        $inClauses = array();
+        
+        $argArray = explode(' ', $args);
+        foreach ($argArray as $arg) {
+            $inClauses[] = "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
+        }
+        
+        $inClause = '(' . implode('OR ', $inClauses) . ')';
+        
+    } else {
+        $inClause = "(first_name LIKE '{$args}%' OR last_name LIKE '{$args}%')";
+    }
+    // ~jmorais@dri
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
 	if ( $hide_portal_users ) {
