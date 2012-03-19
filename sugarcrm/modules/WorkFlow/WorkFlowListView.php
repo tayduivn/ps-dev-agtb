@@ -106,6 +106,6 @@ $ListView->xTemplateAssign("RETURN_URL", "&return_module=".$currentModule."&retu
 $ListView->xTemplateAssign("DELETE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']));
 $workflow_strings = return_module_language($current_language, 'WorkFlow');
 $ListView->xTemplateAssign("NTC_REMOVE_ALERT", $workflow_strings['NTC_REMOVE_ALERT']);
-$ListView->setQuery($where, "", "email_templates.date_entered DESC", "EMAIL_TEMPLATE");
+$ListView->setQuery($where, "", "email_templates.date_entered DESC", "EMAIL_TEMPLATE", false);
 $ListView->processListView($seedEmailTemplate, "main", "EMAIL_TEMPLATE");
 ?>
