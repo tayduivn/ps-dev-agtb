@@ -267,7 +267,7 @@ if(document.DetailView != null &&
             if ($thisPanel === false)
                 continue;
             // Check ACLs for the subpanel
-            if(!$this->focus->checkAccess("subpanel", array("subpanel" => $thisPanel))) {
+            if(!$this->focus->ACLAccess("subpanel", array("subpanel" => $thisPanel))) {
                 continue;
             }
 			//this if-block will try to skip over ophaned subpanels. Studio/MB are being delete unloaded modules completely.
