@@ -76,7 +76,7 @@ testing_module = "{$smarty.request.module}";
                       {{if !is_array($button) && in_array($button, $built_in_buttons)}}
                          {{counter print=false}}
                             {{if $button != "EDIT"}}
-                                {{sugar_actions_link module="$module" id="$button" view="EditView"}}
+                                <li>{{sugar_actions_link module="$module" id="$button" view="EditView"}}</li>
                             {{/if}}
                       {{/if}}
                     {{/foreach}}
