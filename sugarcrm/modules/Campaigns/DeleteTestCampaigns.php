@@ -41,63 +41,29 @@ function deleteTestRecords($focus)
         return;
     }
 
-    if($focus->db->getScriptName() == 'mysql'
-       //BEGIN SUGARCRM flav=ent ONLY
-        || $focus->db->getScriptName() == 'IBM_DB2'
-       //END SUGARCRM flav=ent ONLY
-    )
-    {
-        $query= "update emails
-                inner join campaign_log on campaign_log.related_id = emails.id and campaign_log.campaign_id = '{$focus->id}'
-                inner join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test'
-                set emails.deleted=1";
-    } else {
-        $query = "update emails
-                set emails.deleted=1
-                from emails inner join campaign_log
-                on campaign_log.related_id = emails.id and campaign_log.campaign_id = '{$focus->id}'
-                inner join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test'";
+    $res = $focus->db->query("SELECT DISTINCT campaign_log.related_id emailid, prospect_lists.id as listid FROM campaign_log
+            JOIN prospect_lists on campaign_log.list_id = prospect_lists.id
+            WHERE campaign_log.campaign_id = '{$focus->id}' AND prospect_lists.list_type='test'");
+    $test_ids = array();
+    $test_list_ids = array();
+    while($row = $focus->db->fetchByAssoc($res)) {
+       $test_ids[] = $row['emailid'];
+       $test_list_ids[$row['listid']] = true;
+    }
+    $test_list_ids = array_keys($test_list_ids);
+    unset($res);
+    if(!empty($test_ids)) {
+        $focus->db->query("UPDATE emails SET deleted=1 WHERE id IN ('".join("','", $test_ids)."')");
     }
 
-    $focus->db->query($query);
+    if(!empty($test_list_ids)) {
+        $query = "DELETE FROM emailman WHERE campaign_id = '{$focus->id}' AND list_id IN ('".join("','", $test_list_ids)."')";
+        $focus->db->query($query);
 
-    if($focus->db->getScriptName() == 'mysql'
-       //BEGIN SUGARCRM flav=ent ONLY
-        || $focus->db->getScriptName() == 'IBM_DB2'
-       //END SUGARCRM flav=ent ONLY
-    )
-    {
-        $query = "delete emailman.* from emailman
-                inner join prospect_lists on emailman.list_id = prospect_lists.id and prospect_lists.list_type='test'
-                WHERE emailman.campaign_id = '{$focus->id}'";
-    } else {
-        $query = "delete from emailman
-                where list_id in (
-                select prospect_list_id from prospect_list_campaigns
-                inner join prospect_lists on prospect_list_campaigns.prospect_list_id = prospect_lists.id
-                where prospect_lists.list_type='test' and prospect_list_campaigns.campaign_id = '{$focus->id}')";
+        $query = "UPDATE campaign_log SET deleted=1 WHERE campaign_id = '{$focus->id}' AND list_id IN ('".join("','", $test_list_ids)."')";
+
+        $focus->db->query($query);
     }
-
-    $focus->db->query($query);
-
-    if($focus->db->getScriptName() == 'mysql'
-       //BEGIN SUGARCRM flav=ent ONLY
-        || $focus->db->getScriptName() == 'IBM_DB2'
-       //END SUGARCRM flav=ent ONLY
-    )
-    {
-        $query = "update campaign_log
-                inner join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test'
-                set campaign_log.deleted=1
-                where campaign_log.campaign_id='{$focus->id}'";
-    } else {
-        $query = "update campaign_log
-                set campaign_log.deleted=1
-                from campaign_log inner join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test'
-                where campaign_log.campaign_id='{$focus->id}'";
-    }
-
-    $focus->db->query($query);
 }
 
 }
