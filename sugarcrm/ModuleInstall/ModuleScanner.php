@@ -56,7 +56,22 @@ class ModuleScanner{
 	private $classBlackListExempt = array();
 
 	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml');
-	private $classBlackList = array();
+	private $classBlackList = array(
+        // Class names specified here must be in lowercase as the implementation
+        // of the tokenizer converts all tokens to lowercase.
+        'reflection',
+        'reflectionclass',
+        'reflectionzendextension',
+        'reflectionextension',
+        'reflectionfunction',
+        'reflectionfunctionabstract',
+        'reflectionmethod',
+        'reflectionobject',
+        'reflectionparameter',
+        'reflectionproperty',
+        'reflector',
+        'reflectionexception',
+    );
 	private $blackList = array(
     'popen',
     'proc_open',
