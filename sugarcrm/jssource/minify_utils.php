@@ -46,14 +46,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $prefix.sugar_cached('')                => true,
             $prefix.'include/javascript/tiny_mce'   => true,
             $prefix.'include/javascript/yui'        => true,
-            $prefix.'include/javascript/yui-old'    => true,
-            $prefix.'include/javascript/ext-1.1.1'  => true,
-            $prefix.'include/javascript/ext-2.0'    => true,
-            $prefix.'include/javascript/tiny_mce'   => true,
             $prefix.'modules/Emails'                => true,
             $prefix.'jssource'                      => true,
-            $prefix.'modules/ModuleBuilder'			=> true,
+            $prefix.'modules/ModuleBuilder'         => true,
             $prefix.'include/javascript/jquery'     => true,
+            $prefix.'tests/PHPUnit/PHP/CodeCoverage/Report/HTML/Template' => true,
+            $prefix.'tests/jssource/minify/expect'  => true,
+            $prefix.'tests/jssource/minify/test'    => true,
         );
 
         return $compress_exempt_files;
@@ -90,11 +89,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
             //process each group array
             foreach($fg as $loc=>$trgt){
+                $already_minified = FALSE;
+                $minified_loc = str_replace('.js', '-min.js', $loc);
+                if(is_file($minified_loc)) {
+                    $loc = $minified_loc;
+                    $already_minified = TRUE;
+                }
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
+
                 $trgt = sugar_cached($trgt);
-                //check to see that source file exists, that it is a file, and is readable
-                if(file_exists($loc) && is_file($loc)  && is_readable($loc)){
+                //check to see that source file is a file, and is readable.
+                if(is_file($loc) && is_readable($loc)){
                     $currPerm = fileperms($loc);
                     //check to see if target exists, if it does then open file
                     if(file_exists($trgt)){
@@ -145,10 +151,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                 //make sure we have handles to both source and target file
                 if ($trgt_handle) {
-                        if(isset($excludedFiles[dirname($loc)]) )
+                        if($already_minified || isset($excludedFiles[dirname($loc)])) {
                             $buffer = file_get_contents($loc);
-                        else
+                        } else {
                             $buffer = SugarMin::minify(file_get_contents($loc));
+                        }
 
                         $buffer .= "/* End of File $relpath */\n\n";
                         $num = fwrite($trgt_handle, $buffer);
@@ -302,7 +309,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                 //minify javascript
                 //$jMin = new JSMin($from_path,$to_path,$lic_arr);
-                $out = $lic_str . SugarMin::minify(file_get_contents($from_path));
+                $min_file = str_replace('.js', '-min.js', $from_path);
+                if(strpos($from_path, '-min.js') !== FALSE) {
+                    $min_file = $from_path;
+                }
+
+                if(is_file($min_file)) {
+                    $out = file_get_contents($min_file);
+                } else {
+                    $out = $lic_str . SugarMin::minify(file_get_contents($from_path));
+                }
 
             	if(function_exists('sugar_fopen') && $fh = @sugar_fopen( $to_path, 'w' ) )
 			    {
