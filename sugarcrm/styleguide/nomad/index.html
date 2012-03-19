@@ -1,256 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Nomad - SugarCRM</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!-- styles -->
-    <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
-  </head>
-  <body id="nomad">
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="">
-                <a href="#">Accounts</a>
-              </li>
-              <li class="">
-                <a href="#">Contacts</a>
-              </li>              
-              <li class="active">
-                <a href="opportunities.html">Opportunities</a>
-              </li>              
-              <li class="">
-                <a href="#">Leads</a>
-              </li>
-              <li class="">
-                <a href="#">Reports</a>
-              </li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">More</a>
-                <ul class="dropdown-menu">
-        					<li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-        					<li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-        					<li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-        					<li id="gen20"><a href="#ajaxUILoc=index.php%3Fmodule%3DOpportunities%26action%3Dindex" id="moduleTab_Opportunities">Opportunities</a></li>
-        					<li id="gen21"><a href="index.php?module=Forecasts&amp;action=index" id="moduleTab_Forecasts">Forecasts</a></li>
-        					<li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Reports</a></li>
-        					<li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
-        					<li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
-        					<li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
-        					<li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
-        					<li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
-                  <li class="divider"></li>
-                  <li><a href="#"><i class="icon-plus"></i> Filter Menu By</a></li>
-                </ul>
-              </li>
-            </ul>
-            <ul class="nav pull-right">
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
-                <ul class="dropdown-menu">
-                  <li><a href="">System-wide maintenance &hellip;</a></li>
-                  <li class="divider"></li>
-                  <li><a href="">Upgrade to 7.0!</a></li>
-                  <li class="divider"></li>                       
-                  <li><a href="">Please take our survey.</a></li>
-                </ul>
-              </li>
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src=" https://lh5.googleusercontent.com/-tYj7_rm5E1w/AAAAAAAAAAI/AAAAAAAAAdM/DO9e_nVVDPw/s26-c-k/photo.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
-                 <ul class="dropdown-menu">
-                   <li><a href="#">Profile</a></li>
-                   <li><a href="#">Password</a></li>
-                   <li><a href="#">Advanced</a></li>
-                   <li><a href="#">External Accounts</a></li>
-                   <li class="divider"></li>
-                   <li><a href="#">Log Out</a></li>
-                 </ul>
-               </li>
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white"></i> <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Account</a></li>
-                  <li><a href="#">Contact</a></li>
-                  <li><a href="#">Opportunity</a></li>
-                  <li><a href="#">Lead</a></li>
-                  <li><a href="#">Case</a></li>
-                  <li><a href="#">Report</a></li>
-                </ul>
-              </li>              
-            </ul>
-            <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
-            </form>
-          </div><!-- /.nav-collapse -->
-        </div>
-      </div><!-- /navbar-inner -->
-    </div>
-    <div class="container-fluid subhead" id="stream">
-      <div class="row-fluid">        
-          <table class="table">
-            <thead class="hidden">
-              <tr>
-                <th style="min-width: 0 !important; width: 0%">                 
-                </th>
-                <th style="width: 94.5%">Opportunity</th>
-                <th style="width: 5%">Sales Stage</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <i class="icon-star-empty"></i>
-                </td>
-                <td>
-                  <a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b>
-                  <span class="actions">
-                    <a href=""><i class="icon-email"></i> Email</a> <a href=""><i class="icon-print"></i> Email</a> <a href="">Email</a> <a href="">Email</a> 
-                  </span>
-                </td>
-                <td rel="tooltip" title="75% complete">
-                  <div class="progress progress-near">
-                    <div class="bar" style="width: 75%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <i class="icon-star-empty"></i>
-                </td>                
-                <td>
-                  <a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b>
-                  <span class="actions">
-                    <a href=""><i class="icon-email"></i> Email</a> <a href=""><i class="icon-print"></i> Email</a> <a href="">Email</a> <a href="">Email</a> 
-                  </span>
-                </td>
-                <td rel="tooltip" title="50% complete">
-                  <div class="progress progress-mid">
-                    <div class="bar" style="width: 50%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="20% complete">
-                  <div class="progress progress-min">
-                    <div class="bar" style="width: 20%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="60% complete">
-                  <div class="progress progress-mid">
-                    <div class="bar" style="width: 60%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that was closed <b>24 days ago</b></td>
-                <td rel="tooltip" title="100% complete">
-                  <div class="progress progress-closed">
-                    <div class="bar" style="width: 100%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that was halted <b>4 days ago</b></td>
-                <td rel="tooltip" title="HALTED - 60% complete">
-                  <div class="progress progress-halt">
-                    <div class="bar" style="width: 60%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="100% complete">
-                  <div class="progress progress-closed">
-                    <div class="bar" style="width: 100%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="100% complete">
-                  <div class="progress progress-closed">
-                    <div class="bar" style="width: 100%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="100% complete">
-                  <div class="progress progress-closed">
-                    <div class="bar" style="width: 100%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="100% complete">
-                  <div class="progress progress-closed">
-                    <div class="bar" style="width: 100%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i></td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="100% complete">
-                  <div class="progress progress-closed">
-                    <div class="bar" style="width: 100%;"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="icon-star-empty"></i> </td>
-                <td><a href="user.html">Lisa Loeb</a> is an <a href="">Opportunity</a> via <a href="user.html">Chris Lottery</a> for <b>$50,000</b> that closes in <b>24 days</b></td>
-                <td rel="tooltip" title="100% complete">
-                  <div class="progress progress-closed">
-                    <div class="bar" style="width: 100%;"></div>
-                  </div>
-                </td>
-              </tr>                                                                                                                                                                                                                                                                                                                                        
-            </tbody>
-          </table> 
-    </div>
-    
-<script>
-    	function gJs(url) {
-    		  var script = document.createElement('script');
-    		  script.src = url;
-    		  var head = document.getElementsByTagName('head')[0],
-    		};
-        head.appendChild(script);
-    	};
+<head>
+  <meta charset="utf-8">
+  <title>Nomad - SugarCRM</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="shortcut icon" href="/img/avatar_16.png">
+  <link rel="apple-touch-icon" href="/img/avatar_128.png">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <!-- styles -->
+  <link href="/css/bootstrap-mobile.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+</head>
+<body id="nomad">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
+        <div class="nav-collapse">
+          <ul class="nav" id="moduleList">
+            <li id="gen1"><a href="" id="moduleTab_Accounts">Accounts <small class="btn btn-small btn-default pull-right">120</small></a></li>
+            <li id="gen2"><a href="" id="moduleTab_Contacts">Contacts <small class="btn btn-small btn-default pull-right">1200</small></a></li>              
+            <li id="gen3"><a href="list.html" id="moduleTab_Opportunities">Opportunities <small class="btn btn-small  btn-success btn-default  pull-right">12</small></a></li>              
+            <li id="gen4"><a href="" id="moduleTab_Leads">Leads <small class="btn btn-small btn-default pull-right">87</small></a></li>
+            <li id="gen22"><a href="" id="moduleTab_Reports">Reports <small class="btn btn-small btn-default pull-right">9</small></a></li>
+            <li id="gen17"><a href="" id="moduleTab_Campaigns">Campaigns <small class="btn btn-small btn-success pull-right">8</small></a></li>
+            <li id="gen21"><a href="" id="moduleTab_Forecasts">Forecasts</a></li>
+            <li id="gen23"><a href="" id="moduleTab_Documents">Documents <small class="btn btn-small btn-default pull-right">145</small></a></li>
+            <li id="gen23"><a href="" id="moduleTab_Emails">Emails <small class="btn btn-small btn-default pull-right">12,568</small></a></li> 
+            <li id="gen23"><a href="" id="moduleTab_Cases">Cases <small class="btn btn-small btn-default pull-right">150</small></a></li>                        
+            <li id="gen23"><a href="" id="moduleTab_Cases">Cases <small class="btn btn-small btn-default pull-right">150</small></a></li>                        
 
-    if(navigator.appName == 'Microsoft Internet Explorer'){
-        gJs('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
-    } else {
-        gJs('http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
-    }</script>
-    <script src="/js/application.js"></script>
-  </body>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span12" id="listing">
+        <article>     
+          <i class="icon-star-empty"></i>
+          <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
+          <span id="listing-action-item1">
+            <i class="grip">|||</i>
+            <span class="hidden">
+              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            </span>
+          </span>
+        </article>
+      </div>
+    </div>
+  </div>   
+  <script src="/js/jquery.js"></script>
+  <script src="/js/mobile.js"></script>
+</body>
 </html>
