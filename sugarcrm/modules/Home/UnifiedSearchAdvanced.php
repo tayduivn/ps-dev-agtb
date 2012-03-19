@@ -518,30 +518,6 @@ class UnifiedSearchAdvanced {
         return array('enabled' => $json_enabled, 'disabled' => $json_disabled);
     }
 
-	/**
-	 *
-	 */
-	function modifyGlobalSearchSettings()
-	{
-		global $mod_strings, $app_strings;
-
-		$sugar_smarty = new Sugar_Smarty();
-		$sugar_smarty->assign('APP', $app_strings);
-		$sugar_smarty->assign('MOD', $mod_strings);
-
-        $modules = $this->retrieveEnabledAndDisabledModules();
-
-		$sugar_smarty->assign('enabled_modules', json_encode($modules['enabled']));
-		$sugar_smarty->assign('disabled_modules', json_encode($modules['disabled']));
-
-		$tpl = 'modules/Administration/templates/GlobalSearchSettings.tpl';
-		if(file_exists('custom/' . $tpl))
-		{
-		   $tpl = 'custom/' . $tpl;
-		}
-		return $sugar_smarty->fetch($tpl);
-	}
-
 
 	/**
 	 * saveGlobalSearchSettings

@@ -103,6 +103,12 @@ SUGAR.append(SUGAR.themes, {
             }
 
 			 $("#"+currRightId).parent().css("display","list-item");
+			 
+			 
+			 //kill menu and reload it so all events are assigned properly
+			 var moduleList = $("#moduleList");
+			 $("#moduleList").find("a").unbind();
+			 SUGAR.themes.loadModuleList();
 		}
     },
     setCurrentTab: function(params) {

@@ -20,6 +20,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
+//BEGIN SUGARCRM flav=pro ONLY
+require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+//END SUGARCRM flav=pro ONLY
 
 class AdministrationViewGlobalsearchsettings extends SugarView 
 {
@@ -49,17 +53,59 @@ class AdministrationViewGlobalsearchsettings extends SugarView
 	 */
 	public function display() 
     {
-    	global $mod_strings;
-    	
-        echo '<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr><td colspan="100"><h2>' . $this->getModuleTitle(false) . 
-        '</h2></td></tr><tr><td colspan="100">' .
-		$mod_strings['LBL_GLOBAL_SEARCH_SETTINGS_TITLE'] .
-		'</td></tr><tr><td><br></td></tr><tr><td colspan="100">';
-
     	require_once('modules/Home/UnifiedSearchAdvanced.php');
 		$usa = new UnifiedSearchAdvanced();
-		echo $usa->modifyGlobalSearchSettings();
+        global $mod_strings, $app_strings, $app_list_strings;
+
+        $sugar_smarty = new Sugar_Smarty();
+        $sugar_smarty->assign('APP', $app_strings);
+        $sugar_smarty->assign('MOD', $mod_strings);
+        $sugar_smarty->assign('moduleTitle', $this->getModuleTitle(false));
+
+        $modules = $usa->retrieveEnabledAndDisabledModules();
+
+        $sugar_smarty->assign('enabled_modules', json_encode($modules['enabled']));
+        $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled']));
+        //BEGIN SUGARCRM flav=pro ONLY
+        //FTS Options
+        $ftsScheduleEnabledText = $mod_strings['LBL_FTS_SCHED_ENABLED'];
+        if(isset($GLOBALS['sugar_config']['full_text_engine']))
+        {
+            $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
+            $defaultEngine = $engines[0];
+            $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
+        }
+        else
+        {
+            $defaultEngine = '';
+            $config = array('host' => '','port' => '');
+        }
+
+        $justRequestedAScheduledIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
+
+        $scheduleDisableButton = empty($defaultEngine) ? 'disabled' : '';
+        $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
+        $schedulerCompleted = SugarSearchEngineFullIndexer::isFTSIndexScheduleCompleted($schedulerID);
+
+        $ftsScheduleEnabledText = string_format($ftsScheduleEnabledText, array($schedulerID));
+        $sugar_smarty->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
+        $sugar_smarty->assign("fts_host", $config['host']);
+        $sugar_smarty->assign("fts_port", $config['port']);
+        $sugar_smarty->assign("scheduleDisableButton", $scheduleDisableButton);
+        $sugar_smarty->assign("fts_scheduled", !empty($schedulerID) && !$schedulerCompleted);
+        $disableEdit = !empty($GLOBALS['sugar_config']['full_text_engine_disable_edit']) ? TRUE : FALSE;
+        $sugar_smarty->assign('disableEdit',$disableEdit);
+        $sugar_smarty->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
+        $sugar_smarty->assign('justRequestedAScheduledIndex', $justRequestedAScheduledIndex);
+        //End FTS
+        //END SUGARCRM flav=pro ONLY
+        $tpl = 'modules/Administration/templates/GlobalSearchSettings.tpl';
+        if(file_exists('custom/' . $tpl))
+        {
+           $tpl = 'custom/' . $tpl;
+        }
+        echo $sugar_smarty->fetch($tpl);
+
     }
 }
 ?>

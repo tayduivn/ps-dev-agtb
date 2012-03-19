@@ -28,7 +28,7 @@
  ********************************************************************************/
 
 
-require_once('modules/Administration/views/view.configurefts.php');
+require_once('modules/Administration/views/view.globalsearchsettings.php');
 
 class Bug50781Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
@@ -40,7 +40,7 @@ class Bug50781Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $GLOBALS['module'] = 'Administration';
         $GLOBALS['action'] = 'ConfigureFTS';
 
-        $view = new ViewConfigureFts();
+        $view = new AdministrationViewGlobalsearchsettings();
         $view->init();
         $view->display();
 

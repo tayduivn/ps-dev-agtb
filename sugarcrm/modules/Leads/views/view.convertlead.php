@@ -692,6 +692,12 @@ class ViewConvertLead extends SugarView
 
 		if ($rel = $this->findRelationship($newActivity, $bean))
         {
+            if (isset($newActivity->$rel))
+            {
+                // this comes form $activity, get rid of it and load our own
+                $newActivity->$rel = '';
+            }
+
             $newActivity->load_relationship ($rel) ;
             $relObj = $newActivity->$rel->getRelationshipObject();
             if ( $relObj->relationship_type=='one-to-one' || $relObj->relationship_type == 'one-to-many' )

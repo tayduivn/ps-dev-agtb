@@ -73,7 +73,9 @@
 			),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
+               //BEGIN SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Teamset/Teamset.js' => 'include/javascript/sugar_field_grp.js',
+               //END SUGARCRM flav=pro ONLY
                'include/SugarFields/Fields/Datetimecombo/Datetimecombo.js' => 'include/javascript/sugar_field_grp.js',
            ),
             $sugar_grp1_yui = array(
@@ -82,7 +84,7 @@
             'include/javascript/yui3/build/loader/loader-min.js'        => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/yahoo/yahoo-min.js'           => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui/build/dom/dom-min.js'               => 'include/javascript/sugar_grp1_yui.js',
-			'include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event-min.js'
+			'include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event.js'
 			    => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/event/event-min.js'           => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/logger/logger-min.js'         => 'include/javascript/sugar_grp1_yui.js',
