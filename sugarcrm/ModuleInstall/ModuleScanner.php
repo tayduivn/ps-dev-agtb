@@ -53,8 +53,10 @@ class ModuleScanner{
 	);
 
 	private $blackListExempt = array();
+	private $classBlackListExempt = array();
 
 	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml');
+	private $classBlackList = array();
 	private $blackList = array(
     'popen',
     'proc_open',
@@ -195,6 +197,12 @@ class ModuleScanner{
 		if(!empty($GLOBALS['sugar_config']['moduleInstaller']['blackList'])){
 			$this->blackList = array_merge($this->blackList, $GLOBALS['sugar_config']['moduleInstaller']['blackList']);
 		}
+        if(!empty($GLOBALS['sugar_config']['moduleInstaller']['classBlackListExempt'])){
+            $this->classBlackListExempt = array_merge($this->classBlackListExempt, $GLOBALS['sugar_config']['moduleInstaller']['classBlackListExempt']);
+        }
+        if(!empty($GLOBALS['sugar_config']['moduleInstaller']['classBlackList'])){
+            $this->classBlackList = array_merge($this->classBlackList, $GLOBALS['sugar_config']['moduleInstaller']['classBlackList']);
+        }
 	  if(!empty($GLOBALS['sugar_config']['moduleInstaller']['validExt'])){
 			$this->validExt = array_merge($this->validExt, $GLOBALS['sugar_config']['moduleInstaller']['validExt']);
 		}
@@ -314,13 +322,22 @@ class ModuleScanner{
 						break;
 					case T_STRING:
 						$token[1] = strtolower($token[1]);
-						if(!in_array($token[1], $this->blackList))break;
-						if(in_array($token[1], $this->blackListExempt))break;
-						if ($lastToken !== false &&
-						($lastToken[0] == T_NEW || $lastToken[0] == T_OBJECT_OPERATOR ||  $lastToken[0] == T_DOUBLE_COLON))
-						{
-							break;
-						}
+						if($lastToken !== false && $lastToken[0] == T_NEW) {
+                            if(!in_array($token[1], $this->classBlackList))break;
+                            if(in_array($token[1], $this->classBlackListExempt))break;
+                        } elseif ($token[0] == T_DOUBLE_COLON) {
+                            if(!in_array($lastToken[1], $this->classBlackList))break;
+                            if(in_array($lastToken[1], $this->classBlackListExempt))break;
+                        } else {
+                            if(!in_array($token[1], $this->blackList))break;
+                            if(in_array($token[1], $this->blackListExempt))break;
+
+                            if ($lastToken !== false &&
+                            ($lastToken[0] == T_OBJECT_OPERATOR ||  $lastToken[0] == T_DOUBLE_COLON))
+                            {
+                                break;
+                            }
+                        }
 					case T_VARIABLE:
 						$checkFunction = true;
 						$possibleIssue = translate('ML_INVALID_FUNCTION') . ' ' .  $token[1] . '()';
