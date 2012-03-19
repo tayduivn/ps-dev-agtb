@@ -26,7 +26,7 @@ class ViewAjaxUI extends SugarView
     public function display()
  	{
  		$user = $GLOBALS["current_user"];
- 		$etag = $user->user_hash;
+ 		$etag = $user->id;
  		header("cache-control:");
  		header('Expires: ');
  		header("ETag: " . $etag);
