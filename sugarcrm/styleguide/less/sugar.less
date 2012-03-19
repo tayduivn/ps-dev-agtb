@@ -71,12 +71,15 @@ h1 {font-size: 26px !important;}
 /* activity and twitter */
 
 article {
+  position: relative;
 	display: block;
   padding: 8px;
 }
 article p {
 	display: block;
-	margin-left: 56px;
+}
+article p:last-child {
+	margin: 0;
 }
 #activity article:nth-child(odd), #twitter article:nth-child(odd), #sActivity article:nth-child(odd), .modal article:nth-child(odd) {
 	background: @grayLighter;
@@ -108,7 +111,16 @@ article p {
     padding: 6px;
 }
 
-.modal .brand {
+#portal .welcome {
+ margin-top: 6%;
+}
+
+#portal .welcome .modal {
+  width: 300px;
+  margin-left: -150px;
+}
+
+.modal .brand, .thumbnail .brand {
   background: url(/img/sugar-red.png) 0 0 no-repeat;
   text-indent: -7000px;
   margin: 0 auto;
@@ -118,7 +130,6 @@ article p {
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   }
-  
   
 /* Messages 
 ------------*/
@@ -265,6 +276,9 @@ a.cube {
   position: absolute;
   top: 5px;
   right: 0;
+}
+.actions a {
+  color: #000;
 }
 
 #portal .thumbnail .actions {
@@ -445,9 +459,7 @@ hr.soften {
 }
 
 .subhead .span2 {
-margin-top: -22px;
-@shadow: 0 1px 0 rgba(0,0,0,.4);
-.box-shadow(@shadow);
+  margin-top: -22px;
 	padding-top: 10px;
 }
 .subhead {
@@ -831,6 +843,9 @@ form.well {
 
 /* Icons
 ------------------------- */
+[class^="icon-"] {
+  font-size: 16px;
+}
 .actions [class^="icon-"] {
   .opacity(30);
 }
@@ -856,6 +871,14 @@ a:hover [class^="icon-"]{
   margin-top: 1px;
 }
 
+.icon-star {
+  color: @orange;
+}
+
+.btn-fixed {
+  width: 178px;
+  margin-right: 10px;
+}
 .wide {
   width: 98%;
   text-align: center;
@@ -943,6 +966,25 @@ table th:gt(3), table td:gt(3)  {
 
 @media (max-width: 700px) {
 
+html {overflow: hidden;}
+
+/* mobile menu foo */
+.onL .navbar .nav-collapse {
+  float: none;
+  position: absolute;
+  top: 0;
+  left: -280px;
+  display: block;
+  height: 100%;
+}
+
+.onL {
+  position: absolute;
+  left: 280px;
+  top: 0;
+  width: 320px;
+}
+
   /* Remove any padding from the body */
   body {
     padding-top: 0;
@@ -985,35 +1027,6 @@ table th:gt(3), table td:gt(3)  {
 
 }
 
-
-@media (min-width: 480px) and (max-width: 768px) {
-
-  /* Scale down the jumbotron content */
-  .jumbotron h1 {
-    font-size: 54px;
-  }
-  .jumbotron p {
-    margin-right: 0;
-    margin-left: 0;
-  }
-
-}
-
-
-@media (min-width: 768px) and (max-width: 980px) {
-body {width: 100%}
-
-  /* Remove any padding from the body */
-  body {
-    padding-top: 0;
-  }
-
-  /* Scale down the jumbotron content */
-  .jumbotron h1 {
-    font-size: 72px;
-  }
-
-}
 
 
 @media (max-width: 980px) {

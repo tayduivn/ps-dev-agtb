@@ -34,7 +34,7 @@
                 <a href="#">Contacts</a>
               </li>              
               <li class="active">
-                <a href="opportunities.html">Opportunities</a>              
+                <a href="list.html">Opportunities</a>              
               </li>              
               <li>
                 <a href="#">Leads</a>
@@ -87,7 +87,7 @@
                </li>
               <li class="divider-vertical"></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white"></i> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="#">Account</a></li>
                   <li><a href="#">Contact</a></li>
@@ -172,11 +172,6 @@
                    </div>
                  </form>
               </li>
-            </ul>
-            <ul class="nav nav-pills actions">
-              <li>  
-               <a data-toggle="modal" rel="popover" title="Admin options for tasks" data-content="Your tasks list out the things you want to get done or automated tasks that SugarCRM determins you need to do. To add a new task click on the plus sign."><i class="icon-info-sign"></i></a>
-              </li>
             </ul>              
           </div>
           <div class="block">
@@ -188,8 +183,10 @@
               <li><a href="">Adjust accounts for new channel</a></li>
               <li><a href="">Share reports with Tina</a></li>
             </ul>
-            <a href="" class="btn"><i class="icon-plus"></i> Add Task</a>
             <ul class="nav nav-pills actions">
+              <li>  
+               <a data-toggle="modal" rel="tooltip" title="Add a task" href="#addTask"><i class="icon-plus"></i></a>
+              </li>
               <li>  
                <a data-toggle="modal" rel="tooltip" title="Admin options for tasks" href="#adminTasks"><i class="icon-cog"></i></a>
               </li>
@@ -209,9 +206,12 @@
             </ul>
             <ul class="nav nav-pills actions">
               <li>  
-               <a data-toggle="modal" title="Admin options for History" href="#adminHistory"><i class="icon-cog"></i></a>
+               <a data-toggle="modal" rel="tooltip" title="Admin options for your history" href="#adminTasks"><i class="icon-cog"></i></a>
               </li>
-            </ul>            
+              <li>  
+               <a data-toggle="modal" rel="popover" title="Your History" data-content="Recent actions you have taken."><i class="icon-info-sign"></i></a>
+              </li>
+            </ul>          
           </div>
           </div>                      
         </div>
