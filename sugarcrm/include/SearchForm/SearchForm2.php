@@ -1018,7 +1018,9 @@ require_once('include/FileLocator/FileLocator.php');
                                      $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
                                      $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
                                  }else{
-                                     $where .= "{$db_field} $in ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').")";
+                                     //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
+                                     //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
+                                    $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').") as {$field}_derived)";
                                  }
 
                                  break;

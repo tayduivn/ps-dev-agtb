@@ -294,10 +294,6 @@ class SugarSearchEngineHighlighter
 
         foreach ($resultArray as $field=>$value)
         {
-            if ($field == 'module' || $field == 'team_set_id')
-            {
-                continue;
-            }
             $this->_currentCount = 0;
 
             $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);

@@ -26,7 +26,24 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
-<script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+    <td colspan="100">
+        <h2> {$moduleTitle}</h2>
+    </td>
+</tr>
+<tr>
+    <td colspan="100">{$MOD.LBL_GLOBAL_SEARCH_SETTINGS_TITLE}</td>
+</tr>
+<tr>
+    <td>
+        <br>
+    </td>
+</tr>
+<tr>
+<td colspan="100">
+
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 <form name="GlobalSearchSettings" method="POST">
 	<input type="hidden" name="module" value="Administration">
@@ -54,7 +71,35 @@
 			</tr>
 		</table>
 	</div>
-	
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+    <br>
+    {$MOD.LBL_FTS_PAGE_DESC} {$ftsScheduleEnabledText}
+    <br><br>
+    <table width="50%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+        <tbody>
+            <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_FTS_SETTINGS_TITLE}</h4></th></tr>
+
+            <tr>
+                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}&nbsp;{sugar_help text=$MOD.LBL_FTS_TYPE_HELP}</td>
+                <td width="25%" align="left" valign="middle"><select name="fts_type" id="fts_type">{$fts_type}</select></td>
+                <td width="60%">&nbsp;</td>
+            </tr>
+            <tr class="shouldToggle">
+                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
+                <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
+                <td width="60%" valign="bottom">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.testSettings();" style="text-decoration: none;">{$MOD.LBL_FTS_TEST}</a></td>
+            </tr>
+            <tr class="shouldToggle">
+                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
+                <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
+                <td width="60%">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.schedFullSystemIndex();" id='schedFullSystemIndex' style="display: none;text-decoration: none;">{$MOD.LBL_SAVE_SCHED_BUTTON}</a></td>
+            </tr>
+            <tr class="shouldToggle">
+                <td colspan="2">&nbsp;</td>
+            </tr>
+        </tbody>
+    </table>
+{* //END SUGARCRM flav=pro ONLY *}
 	<table border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>
@@ -106,6 +151,18 @@
 	
 	SUGAR.saveGlobalSearchSettings = function()
 	{
+        {* //BEGIN SUGARCRM flav=pro ONLY *}
+        var host = document.getElementById('fts_host').value;
+        var port = document.getElementById('fts_port').value;
+        var typeEl = document.getElementById('fts_type');
+        var type = typeEl.options[typeEl.selectedIndex].value;
+
+        if( type != "")
+        {
+            if(!check_form('GlobalSearchSettings'))
+                return;
+        }
+        {* //END SUGARCRM flav=pro ONLY *}
 		var enabledTable = SUGAR.globalSearchEnabledTable;
 		var modules = "";
 		for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
@@ -123,6 +180,11 @@
 			SUGAR.util.paramsToUrl({
 				module: "Administration",
 				action: "saveglobalsearchsettings",
+                {* //BEGIN SUGARCRM flav=pro ONLY *}
+                host: host,
+                port: port,
+                type: type,
+                {* //END SUGARCRM flav=pro ONLY *}
 				enabled_modules: modules
 			}) + "to_pdf=1"
         );
@@ -142,4 +204,125 @@
 	}	
 })();
 {/literal}
+</script>
+<script type="text/javascript">
+    {* //BEGIN SUGARCRM flav=pro ONLY *}
+    var shouldHide = '{$scheduleDisableButton}';
+    var justRequestedAScheduledIndex = '{$justRequestedAScheduledIndex}';
+    {literal}
+    $(document).ready(function()
+    {
+        if (shouldHide)
+        {
+            $('.shouldToggle').toggle(false);
+        }
+        if(justRequestedAScheduledIndex)
+            alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
+    });
+
+    SUGAR.FTS = {
+        schedFullSystemIndex : function()
+        {
+            if( confirm(SUGAR.language.get('Administration','LBL_SAVE_SCHED_WARNING')) )
+            {
+                var host = document.getElementById('fts_host').value;
+                var port = document.getElementById('fts_port').value;
+                var typeEl = document.getElementById('fts_type');
+                var type = typeEl.options[typeEl.selectedIndex].value;
+                if(host == "" || port == "" || type == "")
+                {
+                    check_form('GlobalSearchSettings');
+                    return
+                }
+                var sUrl = 'index.php?to_pdf=1&module=Administration&action=ScheduleFTSIndex&sched=true&type='
+                                + encodeURIComponent(type) + '&host=' + encodeURIComponent(host) + '&port=' + encodeURIComponent(port);
+
+                var callback = {
+                success: function(o) {
+                    var r = YAHOO.lang.JSON.parse(o.responseText);
+                    if(r.success)
+                    {
+                        alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
+                    }
+                    else
+                    {
+                        alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
+                    }
+
+                },
+                failure: function(o) {
+                    alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
+                }
+            }
+                var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback, null);
+            }
+
+        },
+        testSettings : function()
+        {
+            var host = document.getElementById('fts_host').value;
+            var port = document.getElementById('fts_port').value;
+            var typeEl = document.getElementById('fts_type');
+            var type = typeEl.options[typeEl.selectedIndex].value;
+            if(type != "")
+            {
+                if(!check_form('GlobalSearchSettings'))
+                    return
+            }
+
+            SUGAR.FTS.rsPanel = new YAHOO.widget.SimpleDialog("FTSPanel", {
+                                    modal: true,
+                                    width: "260px",
+                                    visible: true,
+                                    constraintoviewport: true,
+                                    loadingText: SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING"),
+                                    close: true
+                                });
+
+            var panel = SUGAR.FTS.rsPanel;
+            panel.setHeader(SUGAR.language.get('Administration','LBL_CONNECT_STATUS')) ;
+            panel.setBody(SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING"));
+            panel.render(document.body);
+            panel.show();
+            panel.center();
+
+            var callback = {
+                success: function(o) {
+                    var r = YAHOO.lang.JSON.parse(o.responseText);
+                    panel.setBody(r.status);
+                    if(r.valid)
+                    {
+                        $('#schedFullSystemIndex').show();
+                    }
+                    else
+                    {
+                        $('#schedFullSystemIndex').hide();
+                    }
+
+                },
+                failure: function(o) {}
+            }
+
+            var sUrl = 'index.php?to_pdf=1&module=Administration&action=checkFTSConnection&type='
+                + encodeURIComponent(type) + '&host=' + encodeURIComponent(host) + '&port=' + encodeURIComponent(port);
+
+            var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback, null);
+
+        }
+    };
+
+    $('#fts_type').change(function(e)
+    {
+        $('.shouldToggle').toggle();
+
+        if($(this).val() == '')
+        {
+            $('.sched_button').attr('disabled', 'disabled');
+        }
+    });
+    {/literal}
+addForm('GlobalSearchSettings');
+addToValidateMoreThan('GlobalSearchSettings', 'fts_port', 'int', true, '{$MOD.LBL_FTS_PORT}', 1);
+addToValidate('GlobalSearchSettings', 'fts_host', 'varchar', 'true', '{$MOD.LBL_FTS_URL}');
+    {* //END SUGARCRM flav=pro ONLY *}
 </script>
