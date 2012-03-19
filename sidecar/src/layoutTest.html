@@ -86,6 +86,7 @@
 //			i.debug = true;
 
 			var App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl});
+            App.api.debug = App.config.debugSugarApi;
             App.start();
 			//Initialize the data model
 //			App.dataManager.declareModels(fixtures.metadata);
