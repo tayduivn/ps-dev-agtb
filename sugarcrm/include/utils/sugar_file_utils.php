@@ -143,41 +143,35 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
  * @param string $mode String value of the parameter to specify the type of access you require to the file stream
  * @param boolean $use_include_path set to '1' or TRUE if you want to search for the file in the include_path too
  * @param context $context Context to pass into fopen operation
- * @return int - Returns the number of bytes written to the file, false otherwise.
+ * @return boolean - Returns true if $filename was created, false otherwise.
  */
 function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_include_path=false, $context=null){
 
-    $temp = tempnam(dirname($filename), 'temp');
+    $dir = dirname($filename);
+    $temp = tempnam($dir, 'temp');
 
-    if(!file_exists($temp))
-    {
-   		sugar_touch($filename);
-   	}
-
-   	if (!is_writable($temp))
-    {
-        trigger_error("sugar_file_put_contents_atomic() : file '{$temp}' is not writable", E_USER_WARNING);
-   	    return false;
-   	}
-
-    if (!file_exists($temp))
-    {
-        $temp = $filedir . DIRECTORY_SEPARATOR . uniqid('temp');
-        if (!file_exists($temp))
-        {
-            trigger_error("sugar_file_put_contents_atomic() : error creating file '{$temp}'", E_USER_WARNING);
+    if (!($f = @fopen($temp, $mode))) {
+        $temp =  $dir . DIRECTORY_SEPARATOR . uniqid('temp');
+        if (!($f = @fopen($temp, $mode))) {
+            trigger_error("sugar_file_put_contents_atomic() : error writing temporary file '$temp'", E_USER_WARNING);
             return false;
         }
     }
 
-    file_put_contents($temp, $data);
+    fwrite($f, $data);
+    fclose($f);
 
-    if (!@rename($temp, $filename))
-    {
+    if (!@rename($temp, $filename)) {
         @unlink($filename);
         @rename($temp, $filename);
     }
-    return true;
+
+    if(file_exists($filename))
+    {
+       return sugar_chmod($filename, 0655);
+    }
+
+    return false;
 }
 
 
