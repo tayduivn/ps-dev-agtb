@@ -18,7 +18,7 @@ class SugarMin {
      * @return void
      */
     private function __construct($text, $compression) {
-        $this->text = trim($text);
+        $this->text = trim($text)."\n";
         $this->compression = $compression;
     }
 
