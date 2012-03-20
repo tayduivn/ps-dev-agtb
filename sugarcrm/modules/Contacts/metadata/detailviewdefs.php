@@ -28,7 +28,7 @@
 $viewdefs['Contacts']['DetailView'] = array(
 'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',
 //BEGIN SUGARCRM flav!=dce && flav!=sales ONLY
-                                                         array('customCode'=>'<li><a title="{$APP.LBL_MANAGE_SUBSCRIPTIONS}" onclick="this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Contacts\';" name="Manage Subscriptions">{$APP.LBL_MANAGE_SUBSCRIPTIONS}</a></li>'),
+                                                         array('customCode'=>'<a title="{$APP.LBL_MANAGE_SUBSCRIPTIONS}" onclick="this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Contacts\';" name="Manage Subscriptions">{$APP.LBL_MANAGE_SUBSCRIPTIONS}</a>'),
 //END SUGARCRM flav!=dce && flav!=sales ONLY
                                                         ),
                                        ),
