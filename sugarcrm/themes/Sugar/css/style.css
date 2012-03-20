@@ -6318,6 +6318,7 @@ ul.clickMenu {
 	   border: 1px solid #aaaaaa;
 	   display: inline-block;
 	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	    zoom:1; *display: inline; /*ie fix*/
 }
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
@@ -6634,6 +6635,7 @@ ul#detailViewActions.clickMenu {
 	border-radius: 1px; 
 	vertical-align: bottom;
 	padding: 0 3px 0 10px;
+	zoom:1; *display: inline; /*ie fix */
 }
 
 #selectActionsDisabled span {
@@ -7037,6 +7039,8 @@ padding-top: 6px;
 font-weight: bold;
 color: #444;
 text-decoration: none;
+_height: 26px !important;
+padding-top: 0px !important\9;
 }
 
 
