@@ -130,7 +130,7 @@ class SugarView
                      'label' => translate($module),
                      $this->getMenu($module),
                  ),
-                'moduleList' => "",
+                'moduleList' => $this->displayHeader(true),
                 'title' => $this->getBrowserTitle(),
                 'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : "",
                 'record' => isset($_REQUEST['record']) ? $_REQUEST['record'] : "",
