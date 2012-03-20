@@ -22,7 +22,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/Contacts/Contact.php');
 require_once('modules/Campaigns/Campaign.php');
 require_once('modules/CampaignLog/CampaignLog.php');
@@ -45,7 +45,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 	var $saved_current_user = null;
 	var $clear_database = true;
 	var $remove_beans = true;
-	
+
 	public function setUp()
     {
         global $current_user, $beanFiles, $beanList, $timedate;
@@ -76,19 +76,19 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->emailmarketing->all_prospect_lists = 1;
         $this->emailmarketing->template_id = 'test';
     	$this->emailmarketing->date_start =  $timedate->asDb($timedate->getNow()->modify("+1 week"));
-    	
+
     	$this->emailmarketing2 = new EmailMarketing();
     	$this->emailmarketing2->name = $this->campaign->name . ' Email2';
     	$this->emailmarketing2->campaign_id = $this->campaign->id;
     	$this->emailmarketing2->from_name = 'SugarCRM';
     	$this->emailmarketing2->from_addr = 'do_not_reply@exmaple.com';
     	$this->emailmarketing2->reply_to_name = 'SugarCRM';
-    	$this->emailmarketing2->reply_to_addr = 'reply@exmaple.com';    	
+    	$this->emailmarketing2->reply_to_addr = 'reply@exmaple.com';
     	$this->emailmarketing2->status = 'active';
     	$this->emailmarketing2->all_prospect_lists = 1;
         $this->emailmarketing2->template_id = 'test';
     	$this->emailmarketing2->date_start = $timedate->asDb($timedate->getNow()->modify("+1 week"));
-    	
+
     	$query = 'SELECT id FROM inbound_email WHERE deleted=0';
     	$result = $GLOBALS['db']->query($query);
     	while($row = $GLOBALS['db']->fetchByAssoc($result))
@@ -96,16 +96,16 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 			  $this->emailmarketing->inbound_email_id = $row['id'];
 			  $this->emailmarketing2->inbound_email_id = $row['id'];
 			  break;
-		}    	
-    	
+		}
+
 		$query = 'SELECT id FROM email_templates WHERE deleted=0';
     	while($row = $GLOBALS['db']->fetchByAssoc($result))
     	{
 			  $this->emailmarketing->template_id = $row['id'];
 			  $this->emailmarketing2->template_id = $row['id'];
 			  break;
-		}    		
-		
+		}
+
     	$this->emailmarketing->save();
     	$this->emailmarketing2->save();
 
@@ -133,7 +133,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
         $this->emailman->save();
 
         $campaign_log_states = array(0=>'viewed', 1=>'link', 2=>'invalid email', 3=>'send error', 4=>'removed', 5=>'blocked', 6=>'lead', 7=>'contact');
-        
+
         for($i=0; $i < 1; $i++)
         {
         	$contact = SugarTestContactUtilities::createContact();
@@ -146,7 +146,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing, $this->prospectlist, 'targeted');
 	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);
 	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing2, $this->prospectlist, 'targeted');
-	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing2, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);	        
+	        $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing2, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);
         }
 
         for($i=0; $i < 1; $i++)
@@ -157,14 +157,14 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
         	$lead->save();
  			$lead->load_relationship('prospect_lists');
 	        $lead->prospect_lists->add($this->prospectlist->id);
-	        
+
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing, $this->prospectlist, 'targeted');
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing2, $this->prospectlist, 'targeted');
 	        $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing2, $this->prospectlist, $campaign_log_states[mt_rand(0, 7)]);
        }
 	}
-	
+
     public function tearDown()
     {
 
@@ -175,7 +175,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 			SugarTestContactUtilities::removeAllCreatedContacts();
 			SugarTestLeadUtilities::removeAllCreatedLeads();
     	}
-		
+
 		if($this->clear_database)
 		{
             $sql = 'DELETE FROM emails WHERE id = \'' . $this->email->id . '\'';
@@ -186,27 +186,27 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 
 			$sql = 'DELETE FROM email_marketing WHERE campaign_id = \'' . $this->campaign->id . '\'';
 			$GLOBALS['db']->query($sql);
-			
+
 			$sql = 'DELETE FROM emailman WHERE campaign_id = \'' . $this->campaign->id . '\'';
-			$GLOBALS['db']->query($sql);				
-			
+			$GLOBALS['db']->query($sql);
+
 			$sql = 'DELETE FROM campaign_log WHERE campaign_id = \'' . $this->campaign->id . '\'';
 			$GLOBALS['db']->query($sql);
-			
+
 			$sql = 'DELETE FROM prospect_lists_prospects WHERE prospect_list_id=\'' . $this->prospectlist->id . '\'';
 			$GLOBALS['db']->query($sql);
-			
+
 			$sql = 'DELETE FROM prospect_lists WHERE id = \'' . $this->prospectlist->id . '\'';
 			$GLOBALS['db']->query($sql);
-			
+
 			$sql = 'DELETE FROM prospect_list_campaigns WHERE campaign_id = \'' . $this->campaign->id . '\'';
-			$GLOBALS['db']->query($sql);				
-			
+			$GLOBALS['db']->query($sql);
+
 			$sql = 'DELETE FROM campaigns WHERE id = \'' . $this->campaign->id . '\'';
-			$GLOBALS['db']->query($sql);	
+			$GLOBALS['db']->query($sql);
 		}
-		
-    }	
+
+    }
 
     protected function create_campaign_log($campaign, $target, $marketing, $prospectlist, $activity_type, $target_tracker_key='')
     {
@@ -248,8 +248,8 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
         $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM emailman WHERE campaign_id = '{$this->campaign->id}'");
         $this->assertEquals(0, $result);
 
-        $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM campaign_log WHERE deleted=0 AND id = '{$this->campaign->id}'");
+        $result = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM campaign_log WHERE deleted=0 AND campaign_id = '{$this->campaign->id}'");
         $this->assertEquals(0, $result);
-    }    
-    
+    }
+
 }
