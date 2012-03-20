@@ -87,6 +87,9 @@ function formsubmit(theform) {
 					window.setTimeout('ajaxStatus.hideStatus()', 2000);
 			    	var targetdiv=document.getElementById('activetimeperiodsworksheet');
 	    			targetdiv.innerHTML=o.responseText;
+                    $("ul.clickMenu").each(function(index, node){
+                     	  		$(node).sugarActionMenu();
+                    });
 			  },
 			  failure: function(o) {/*failure handler code*/}
 		};
