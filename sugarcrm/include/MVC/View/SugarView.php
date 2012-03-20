@@ -1398,6 +1398,17 @@ EOHTML;
         if(!empty($paramString)){
                $theTitle .= "<h2> $paramString </h2>\n";
            }
+		$theTitle .= "<span class='utils'>";
+		$createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+        $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
+		$theTitle .= <<<EOHTML
+&nbsp;
+<a id="create_image" href="{$url}" class="utilsLink">
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a id="create_link" href="{$url}" class="utilsLink">
+{$GLOBALS['app_strings']['LNK_CREATE']}
+</a>
+EOHTML;
 
         $theTitle .= "</div>\n";
         return $theTitle;

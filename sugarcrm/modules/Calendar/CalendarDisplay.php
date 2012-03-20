@@ -461,7 +461,8 @@ class CalendarDisplay {
 	 */
 	public function display_title(){
 		global $mod_strings;
-		echo get_module_title("Calendar","<span class='pointer'>&raquo;</span>".$mod_strings['LBL_MODULE_TITLE'], false);
+		//Hack to make this 6.5 compatible until this module is converted to MVC
+        echo "<div class='moduleTitle'><h2>". $mod_strings['LBL_MODULE_TITLE'] ."</h2></div>"; 
 	}
 
 	/**
