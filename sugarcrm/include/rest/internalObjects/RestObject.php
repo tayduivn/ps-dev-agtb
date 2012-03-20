@@ -140,4 +140,33 @@ abstract class RestObject implements IRestObject {
         return $this->uriData;
     }
 
+    public function getRealURIData() {
+        static $realURIData;
+
+        if (isset($realURIData)) {
+            return $realURIData;
+        }
+
+        $path = parse_url($_SERVER["REQUEST_URI"]);
+        $uri_data = explode('/',$path['path']);
+        $found_rest = false;
+        $uri_tmp = array();
+
+        foreach ($uri_data as $d) {
+            if ($found_rest != true && $d == "rest") {
+                $found_rest = true;
+                continue;
+            }
+
+            if ($found_rest) {
+                array_push($uri_tmp, $d);
+            }
+        }
+
+        $realURIData = $uri_tmp;
+
+        return $realURIData;
+        
+    }
+
 }
