@@ -396,14 +396,14 @@ SUGAR.append(SUGAR.themes, {
 
 		});
    	},
-   	sugar_theme_gm_switch: function(groupName) {
+   	sugar_theme_gm_switch: function(groupName, groupId) {
 
         SUGAR.themes.current_theme = (SUGAR.themes.current_theme) ? SUGAR.themes.current_theme : sugar_theme_gm_current;
         $('ul.sf-menu:visible li').hideSuperfishUl();
         $('#moduleTabMore'+SUGAR.themes.current_theme +' li').hideSuperfishUl();
         var dcheight = $("#dcmenu").outerHeight();
         var current_menu = $('ul.sf-menu:visible');
-        var target_menu = $('#themeTabGroupMenu_'+groupName);
+        var target_menu = $('#themeTabGroupMenu_'+ (groupId ? groupId : groupName));
         SUGAR.themes.current_theme = sugar_theme_gm_current = groupName;
         //fliping over-and-out is added to change the global menu theme
         $("#dcmenu").animate({
