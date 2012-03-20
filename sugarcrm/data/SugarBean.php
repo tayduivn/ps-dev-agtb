@@ -3210,7 +3210,7 @@ function save_relationship_changes($is_update, $exclude=array())
             //layout customization.. this happens in subpanel customizations, use case, from the contacts subpanel
             //in opportunities module remove the contact_role/opportunity_role field.
             $process_field=true;
-            if (isset($data['relationship_fields']) and !empty($data['relationship_fields']))
+            if (!empty($data['relationship_fields']))
             {
                 foreach ($data['relationship_fields'] as $field_name)
                 {
