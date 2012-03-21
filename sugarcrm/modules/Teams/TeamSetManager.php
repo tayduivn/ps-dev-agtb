@@ -238,7 +238,7 @@ class TeamSetManager {
             mkdir_recursive(dirname($cachefile));
         }
 
-        if(sugar_file_put_contents($cachefile, "<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>") === false)
+        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>") === false)
         {
             $GLOBALS['log']->error("File $cachefile could not be written");
         }
@@ -290,7 +290,7 @@ class TeamSetManager {
             mkdir_recursive(dirname($cachefile));
         }
 
-        if(sugar_file_put_contents($cachefile, "<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>") === false)
+        if(sugar_file_put_contents_atomic($cachefile, "<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>") === false)
         {
             $GLOBALS['log']->error("File $cachefile could not be written");
         }
