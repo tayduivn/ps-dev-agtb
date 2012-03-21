@@ -100,7 +100,9 @@ class ViewPopup extends SugarView{
 			$displayColumns = array();
 			$filter_fields = array();
 			$popup = new PopupSmarty($this->bean, $this->module);
+			//BEGIN SUGARCRM flav=pro ONLY
 			$this->bean->ACLFilterFieldList($listViewDefs[$this->module], array("owner_override" => true));
+			//END SUGARCRM flav=pro ONLY
 			foreach($listViewDefs[$this->module] as $col => $params) {
 	        	$filter_fields[strtolower($col)] = true;
 				 if(!empty($params['related_fields'])) {
