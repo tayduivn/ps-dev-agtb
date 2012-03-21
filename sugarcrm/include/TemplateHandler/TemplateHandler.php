@@ -505,10 +505,9 @@ class TemplateHandler {
         foreach($dependencies as $dep) {
             $js .= $dep->getJavascript($view);
         }
-        
-        $js .= "});";
+        $js .= "\nYAHOO.util.Event.onContentReady('$view', SUGAR.forms.AssignmentHandler.loadComplete);";
+        $js .= "});</script>";
 
-        $js .= "\nYAHOO.util.Event.onContentReady('$view', SUGAR.forms.AssignmentHandler.loadComplete);</script>";
         return $js;
     }
     //END SUGARCRM flav=pro ONLY

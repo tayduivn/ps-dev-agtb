@@ -68,6 +68,10 @@ $outStr=<<<EOS
 EOS;
 
 	    $actual = SugarCleaner::cleanHtml($inStr);
+
+	    // Normalize the line endings - Bug #51227
+	    $outStr = str_replace("\r\n", "\n", $outStr);
+	    $actual = str_replace("\r\n", "\n", $actual);
         $this->assertEquals(trim($outStr),trim($actual));
 	}
 }
