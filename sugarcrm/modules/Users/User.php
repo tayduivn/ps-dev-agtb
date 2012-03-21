@@ -419,6 +419,46 @@ class User extends Person {
 
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
+	
+	/**
+     * incrementETag
+     * 
+     * This function increments any ETag seed needed for a particular user's 
+     * UI. For example, if the user changes their theme, the ETag seed for the 
+     * main menu needs to be updated, so you call this function with the seed name
+     * to do so:
+     * 
+     * UserPreference::incrementETag("mainMenuETag");
+     * 
+     * @param string $tag ETag seed name.
+     * @return nothing
+     */
+    public function incrementETag($tag){
+    	$val = $this->getETagSeed($tag);
+    	if($val == 2147483648){
+    		$val = 0;
+    	}
+    	$val++;
+    	$this->setPreference($tag, $val, 0, "ETag");
+    }
+    
+    /**
+     * getETagSeed
+     * 
+     * This function is a wrapper to encapsulate getting the ETag seed and 
+     * making sure it's sanitized for use in the app.
+     * 
+     * @param string $tag ETag seed name.
+     * @return integer numeric value of the seed
+     */
+    public function getETagSeed($tag){
+    	$val = $this->getPreference($tag, "ETag");
+    	if($val == null){
+    		$val = 0;
+    	}
+    	return $val;
+    }
+	
 
    /**
     * Get WHERE clause that fetches all users counted for licensing purposes
