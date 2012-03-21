@@ -59,7 +59,17 @@ class Labels extends RestObject implements IRestObject {
         return $result;
     }
 
-    private function handleGet() {
+    /**
+     * This method returns various label strings for the current user.
+     *
+     * Can handle calls in the following formats:
+     * /labels
+     * /labels/
+     * /labels/list
+     * /labels/<module>
+     * /labels/<module>/
+     */
+    protected function handleGet() {
         $result = null;
         global $current_user;
         $auth = $this->getAuth();
