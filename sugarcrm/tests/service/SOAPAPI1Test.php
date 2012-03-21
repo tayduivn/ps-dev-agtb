@@ -56,18 +56,20 @@ class SOAPAPI1Test extends SOAPTestCase
      */
     public function tearDown()
     {
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();
-        $this->_contact = null;
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestMeetingUtilities::removeMeetingContacts();
         $this->_meeting = null;
-    	parent::tearDown();
+        $this->_contact = null;
+        parent::tearDown();
     }
 
 	/**
 	 * Ensure we can create a session on the server.
 	 *
 	 */
+
     public function testCanLogin()
     {
 		$result = $this->_login();
@@ -108,7 +110,6 @@ class SOAPAPI1Test extends SOAPTestCase
 
     public function testGetEntryList()
     {
-        $ids = array($this->_contact->id);
         $data = array(
                 'session'=>$this->_sessionId,
                 'module_name' => 'Contacts',
