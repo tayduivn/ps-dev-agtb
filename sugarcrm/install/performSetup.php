@@ -473,6 +473,14 @@ createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
         $current_user->retrieve(1);
         include("install/populateSeedData.php");
         installerHook('post_installDemoData');
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(!empty($_SESSION['fts_type']))
+        {
+            require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
+            $indexer = new SugarSearchEngineFullIndexer();
+            $results = $indexer->performFullSystemIndex()->getStatistics();
+        }
+        //END SUGARCRM flav=pro ONLY
     }
 
     $endTime = microtime(true);
