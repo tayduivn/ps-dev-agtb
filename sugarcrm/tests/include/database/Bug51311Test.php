@@ -38,12 +38,13 @@ class Bug51311Test extends Sugar_PHPUnit_Framework_TestCase
             array(
                 array (
                   'name' => 'contents',
-                  'dbType' => 'nvarchar(max)',
+                  'dbType' => 'longtext',
                   'type' => 'nvarchar',
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
                 ),
-                'user_preferences'
+                'user_preferences',
+                'max'
             ),
 
             array(
@@ -54,27 +55,67 @@ class Bug51311Test extends Sugar_PHPUnit_Framework_TestCase
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
                 ),
-                'user_preferences'
+                'user_preferences',
+                'max'
+            ),
+
+            array(
+                array (
+                  'name' => 'contents',
+                  'dbType'  => 'image',
+                  'type' => 'image',
+                  'vname' => 'LBL_DESCRIPTION',
+                  'isnull' => true,
+                ),
+                'user_preferences',
+                '2147483647'
+            ),
+
+            array(
+                array (
+                  'name' => 'contents',
+                  'dbType'  => 'ntext',
+                  'type' => 'image',
+                  'vname' => 'LBL_DESCRIPTION',
+                  'isnull' => true,
+                ),
+                'user_preferences',
+                '2147483646'
+            ),
+
+            array(
+                array (
+                  'name' => 'contents',
+                  'dbType' => 'nvarchar',
+                  'type' => 'nvarchar',
+                  'vname' => 'LBL_DESCRIPTION',
+                  'isnull' => true,
+                ),
+                'user_preferences',
+                '255'
             ),
         );
     }
 
+
     /**
      * @dataProvider providerBug51311
      */
-    public function testFreeTDSMassageFieldDef($fieldDef, $tablename)
+    public function testFreeTDSMassageFieldDef($fieldDef, $tablename, $len)
     {
         $manager = new FreeTDSManager();
-        $this->assertTrue($manager->isTextType($fieldDef['dbType']));
+        $manager->massageFieldDef($fieldDef, $tablename);
+        $this->assertEquals($len, $fieldDef['len']);
     }
 
     /**
      * @dataProvider providerBug51311
      */
-    public function testSqlSrvMassageFieldDef($fieldDef, $tablename)
+    public function testSqlSrvMassageFieldDef($fieldDef, $tablename, $len)
     {
         $manager = new SqlsrvManager();
-        $this->assertTrue($manager->isTextType($fieldDef['dbType']));
+        $manager->massageFieldDef($fieldDef, $tablename);
+        $this->assertEquals($len, $fieldDef['len']);
     }
 
 
