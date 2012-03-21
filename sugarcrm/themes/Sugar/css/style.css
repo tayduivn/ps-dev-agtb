@@ -546,7 +546,7 @@ line-height: 16px;
 
 .moduleTitle span.utils
 {
-    display: block;
+    display: none;
     float: right;
     margin-top: 6px;
 }
