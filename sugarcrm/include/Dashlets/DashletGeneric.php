@@ -145,7 +145,7 @@ class DashletGeneric extends Dashlet {
         //$this->addCustomFields();
         if($this->displayColumns) {
              //BEGIN SUGARCRM flav=pro ONLY
-             $seedBean->ACLFilterFieldList($this->displayColumns, array("owner_override" => true));
+             $this->seedBean->ACLFilterFieldList($this->displayColumns, array("owner_override" => true));
              //END SUGARCRM flav=pro ONLY
              // columns to display
              foreach($this->displayColumns as $num => $name) {
@@ -164,7 +164,7 @@ class DashletGeneric extends Dashlet {
         }
         else {
              //BEGIN SUGARCRM flav=pro ONLY
-             $seedBean->ACLFilterFieldList($this->displayColumns, array("owner_override" => true));
+             $this->seedBean->ACLFilterFieldList($this->displayColumns, array("owner_override" => true));
              //END SUGARCRM flav=pro ONLY
              foreach($this->columns as $name => $val) {
                 // defensive code for array being returned
