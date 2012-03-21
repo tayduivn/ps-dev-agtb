@@ -50,7 +50,6 @@
     {/foreach}
 
      </div>
-{literal}
 
 
     <div class="clear"></div>
