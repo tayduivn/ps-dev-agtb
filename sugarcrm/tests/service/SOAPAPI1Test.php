@@ -108,19 +108,10 @@ class SOAPAPI1Test extends SOAPTestCase
     	$decoded = base64_decode($result['result']);
     }
 
+
     public function testGetEntryList()
     {
-        $data = array(
-                'session'=>$this->_sessionId,
-                'module_name' => 'Contacts',
-                'query' => "contacts.id = '{$this->_contact->id}' AND contacts.last_name = '{$this->_contact->last_name}'",
-                'select_fields' => array('id', 'first_name', 'last_name'),
-                'offset' => 0,
-                'max_results' => 25,
-                'deleted' => 0
-            );
-        $result = $this->_soapClient->call('get_entry_list', $data);
-        $this->assertNotEmpty($result['entry_list']);
+        $result = $this->_soapClient->call('get_entry_list', array('session'=>$this->_sessionId,'module_name'=>'Contacts','query'=>" contacts.id = '{$this->_contact->id}' AND contacts.last_name = '{$this->_contact->last_name}' ", 'last_name', '0', 'select_field'=>array('last_name'),10000,0));
         $last_name = '';
         foreach($result['entry_list'][0]['name_value_list'] as $entry)
         {
@@ -132,6 +123,7 @@ class SOAPAPI1Test extends SOAPTestCase
         }
         $this->assertEquals($this->_contact->last_name, $last_name);
     }
+
 
 	public function testGetAttendeeList()
     {
