@@ -44,7 +44,6 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     var $emailman = null;
 	var $saved_current_user = null;
 	var $clear_database = true;
-	var $remove_beans = true;
 
 	public function setUp()
     {
@@ -165,14 +164,8 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-
-    	if($this->remove_beans)
-    	{
-			$this->campaign->mark_deleted($this->campaign->id);
-			$this->prospectlist->mark_deleted($this->prospectlist->id);
-			SugarTestContactUtilities::removeAllCreatedContacts();
-			SugarTestLeadUtilities::removeAllCreatedLeads();
-    	}
+		SugarTestContactUtilities::removeAllCreatedContacts();
+		SugarTestLeadUtilities::removeAllCreatedLeads();
 
 		if($this->clear_database)
 		{
