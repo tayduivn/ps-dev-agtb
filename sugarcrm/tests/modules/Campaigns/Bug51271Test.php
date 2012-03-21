@@ -181,7 +181,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
             $sql = 'DELETE FROM emails WHERE id = \'' . $this->email->id . '\'';
          	$GLOBALS['db']->query($sql);
 
-            $sql = 'DELETE FROM emailman WHERE id = \'' . $this->emailman->id . '\'';
+            $sql = 'DELETE FROM emailman WHERE campaign_id = \'' . $this->campaign->id . '\'';
          	$GLOBALS['db']->query($sql);
 
 			$sql = 'DELETE FROM email_marketing WHERE campaign_id = \'' . $this->campaign->id . '\'';
