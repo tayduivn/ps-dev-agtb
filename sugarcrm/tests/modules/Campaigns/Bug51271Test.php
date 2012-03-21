@@ -96,7 +96,8 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 		}
 
 		$query = 'SELECT id FROM email_templates WHERE deleted=0';
-    	while($row = $GLOBALS['db']->fetchByAssoc($result))
+    	$result = $GLOBALS['db']->query($query);
+		while($row = $GLOBALS['db']->fetchByAssoc($result))
     	{
 			  $this->emailmarketing->template_id = $row['id'];
 			  $this->emailmarketing2->template_id = $row['id'];
@@ -170,9 +171,6 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 		if($this->clear_database)
 		{
             $sql = 'DELETE FROM emails WHERE id = \'' . $this->email->id . '\'';
-         	$GLOBALS['db']->query($sql);
-
-            $sql = 'DELETE FROM emailman WHERE id = \'' . $this->emailman->id . '\'';
          	$GLOBALS['db']->query($sql);
 
 			$sql = 'DELETE FROM email_marketing WHERE campaign_id = \'' . $this->campaign->id . '\'';
