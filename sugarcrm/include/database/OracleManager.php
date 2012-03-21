@@ -484,7 +484,7 @@ class OracleManager extends DBManager
      */
     protected function AltlobExecute($table, $field_defs, $data, $sql)
     {
-    	$GLOBALS['log']->debug("Oracle Execute: $sql");
+    	$GLOBALS['log']->info("Oracle Execute: $sql");
         $this->checkConnection();
         if(empty($sql)){
             return false;
