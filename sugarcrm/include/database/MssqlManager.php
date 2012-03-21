@@ -1237,7 +1237,11 @@ class MssqlManager extends DBManager
     public function isTextType($type)
     {
         $type = strtolower($type);
-        return in_array($this->type_map[$type], array('ntext','text','image'));
+        if(!isset($this->type_map[$type]))
+        {
+            return false;
+        }
+        return in_array($type, array('ntext','text','image','longtext'));
     }
 
     /**
@@ -1673,10 +1677,8 @@ EOQ;
                 case 'smallint' : $fieldDef['len'] = '2'; break;
                 case 'float'    : $fieldDef['len'] = '8'; break;
                 case 'varchar'  :
-                case 'nvarchar' : if(!in_array($fieldDef['dbType'],array('text','ntext')))
-                                      $fieldDef['len'] = '255';
-                                  else
-                                      $fieldDef['len'] = 'max'; // text or ntext
+                case 'nvarchar' :
+                                  $fieldDef['len'] = $this->isTextType($fieldDef['dbType']) ? 'max' : '255';
                                   break;
                 case 'image'    : $fieldDef['len'] = '2147483647'; break;
                 case 'ntext'    : $fieldDef['len'] = '2147483646'; break;   // Note: this is from legacy code, don't know if this is correct

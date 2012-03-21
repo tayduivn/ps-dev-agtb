@@ -65,6 +65,7 @@ EOQ;
             fclose( $fh );
         }
 
+        sugar_chmod('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php', 0655);
 
         global $beanList, $beanFiles, $current_user;
         //$beanList['Contacts'] = 'Contact';
@@ -78,7 +79,6 @@ EOQ;
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
         $_SESSION['avail_modules'][$this->package] = 'write';
-        $this->useOutputBuffering = false;
     }
 
     public function tearDown()

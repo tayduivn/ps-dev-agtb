@@ -70,6 +70,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM calls WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM tasks WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM meetings WHERE name like 'UNIT TEST%' ");
+        $GLOBALS['db']->commit();
         //$this->useOutputBuffering = false;
     }
 
