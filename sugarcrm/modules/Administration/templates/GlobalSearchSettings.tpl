@@ -49,7 +49,7 @@
 	<input type="hidden" name="module" value="Administration">
 	<input type="hidden" name="action" value="updateWirelessEnabledModules">
 	<input type="hidden" name="enabled_modules" value="">
-	
+
 	<table border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>
@@ -58,12 +58,12 @@
 			</td>
 		</tr>
 	</table>
-	
+
 	<div class='add_table' style='margin-bottom:5px'>
 		<table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
 		    <tr>
 				<td width='1%'>
-					<div id="enabled_div"></div>	
+					<div id="enabled_div"></div>
 				</td>
 				<td>
 					<div id="disabled_div"></div>
@@ -73,7 +73,7 @@
 	</div>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
     <br>
-    {$MOD.LBL_FTS_PAGE_DESC} {$ftsScheduleEnabledText}
+    {$MOD.LBL_FTS_PAGE_DESC} {$ftsScheduleEnabledText|default:''}
     <br><br>
     <table width="50%" border="0" cellspacing="1" cellpadding="0" class="edit view">
         <tbody>
@@ -129,7 +129,7 @@
 		 {key:"module", label: lblEnabled, hidden:true}],
 		new YAHOO.util.LocalDataSource(enabled_modules, {
 			responseSchema: {fields : [{key : "module"}, {key : "label"}]}
-		}),  
+		}),
 		{height: "300px"}
 	);
 	SUGAR.globalSearchDisabledTable = new YAHOO.SUGAR.DragDropTable(
@@ -141,14 +141,14 @@
 		}),
 		{height: "300px"}
 	);
-	
+
 	SUGAR.globalSearchEnabledTable.disableEmptyRows = true;
 	SUGAR.globalSearchDisabledTable.disableEmptyRows = true;
 	SUGAR.globalSearchEnabledTable.addRow({module: "", label: ""});
 	SUGAR.globalSearchDisabledTable.addRow({module: "", label: ""});
 	SUGAR.globalSearchEnabledTable.render();
 	SUGAR.globalSearchDisabledTable.render();
-	
+
 	SUGAR.saveGlobalSearchSettings = function()
 	{
         {* //BEGIN SUGARCRM flav=pro ONLY *}
@@ -171,11 +171,11 @@
 			    modules += "," + data.module;
 		}
 		modules = modules == "" ? modules : modules.substr(1);
-		
+
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
 		Connect.asyncRequest(
-            Connect.method, 
-            Connect.url, 
+            Connect.method,
+            Connect.url,
             {success: SUGAR.saveCallBack},
 			SUGAR.util.paramsToUrl({
 				module: "Administration",
@@ -188,10 +188,10 @@
 				enabled_modules: modules
 			}) + "to_pdf=1"
         );
-		
+
 		return true;
 	}
-	
+
 	SUGAR.saveCallBack = function(o)
 	{
 	   ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_DONE'));
@@ -201,7 +201,7 @@
 	   } else {
 	       YAHOO.SUGAR.MessageBox.show({msg:o.responseText});
 	   }
-	}	
+	}
 })();
 {/literal}
 </script>
