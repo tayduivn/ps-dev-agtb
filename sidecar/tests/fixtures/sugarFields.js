@@ -71,6 +71,33 @@ var sugarFieldsFixtures = {
                     "<\/p> <\/div>"
             }
         },
+        "email": {
+            "detailView": {
+                "template": ""
+            },
+            "editView": {
+                "template": ""
+            }
+        },
+        "radio": {
+            "detailView": {
+                "template": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n"
+            },
+            "editView": {
+                "template": "{{#each options}}{{this}}{{/each}}"
+            }
+        },
+        "image": {
+            "detailView": {
+                "template":""
+            },
+            "editView": {
+                "template": ""
+            },
+            "listView": {
+                "template": ""
+            }
+        },
         "sugarField_actionsLink":{
             "default":{
                 "template":"<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>"+

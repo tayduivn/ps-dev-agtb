@@ -56,8 +56,10 @@
             this.bind(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = app.metadata.get({sugarField:this});
-            this.events = this.meta.events;
 
+            // this is experimental to try to see if we can have custom events on sugarfields themselves.
+            // the following line doesn't work, need to _.extend it or something.
+            // this.events = this.meta.events;
             templateKey = "sugarField." + this.name + "." + this.view.name;
 
             this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
