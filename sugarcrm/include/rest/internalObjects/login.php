@@ -1,9 +1,9 @@
 <?php
 
-include_once("include/rest/RestObjectInterface.php");
-include_once("RestError.php");
-include_once("RestUtils.php");
-include_once("RestObject.php");
+require_once("include/rest/RestObjectInterface.php");
+require_once("include/rest/internalObjects/RestError.php");
+require_once("include/rest/internalObjects/RestUtils.php");
+require_once("include/rest/internalObjects/RestObject.php");
 
 
 /**
@@ -79,7 +79,7 @@ class Login extends RestObject implements IRestObject {
     }
 
     private function login($user, $pass) {
-        include_once("include/rest/SugarWebServiceImpl.php");
+        require_once("include/rest/SugarWebServiceImpl.php");
         $result = array();
         global $current_user;
 
