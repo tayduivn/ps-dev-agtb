@@ -40,6 +40,7 @@
             <directory>modules</directory>
             <directory>ModuleInstall</directory>
             <directory>service</directory>
+            <directory>rest</directory>
             <directory>tests</directory>
         </testsuite>
     </testsuites>
