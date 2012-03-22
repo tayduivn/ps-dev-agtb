@@ -76,6 +76,8 @@ class MetaDataManager {
             $this->platforms = array('base');
         }
         
+        $data = array();
+
         if (in_array('modules',$this->typeFilter)) {
             $data['modules'] = array();
             foreach ($modules as $modName) {
@@ -223,19 +225,25 @@ class MetaDataManager {
                 $templates = array();
                 
                 if ( is_dir($templateDir) ) {
-                    $templates = glob($templateDir."*.hbt");
+                    $stdTemplates = glob($templateDir."*.hbt");
+                    if ( is_array($stdTemplates) ) {
+                        foreach ( $stdTemplates as $templateFile ) {
+                            $templateName = substr(basename($templateFile),0,-4);
+                            $fieldData['templates'][$templateName] = file_get_contents($templateFile);
+                        }
+                    }                    
                 }
                 // Do the custom directory last so it will override anything in the core product
                 if ( is_dir('custom/'.$templateDir) ) {
                     $cstmTemplates = glob('custom/'.$templateDir."*.hbt");
-                    if ( !empty($cstmTemplates) ) {
-                        $templates += $cstmTemplates;
+                    if ( is_array($cstmTemplates) ) {
+                        foreach ( $cstmTemplates as $templateFile ) {
+                            $templateName = substr(basename($templateFile),0,-4);
+                            $fieldData['templates'][$templateName] = file_get_contents($templateFile);
+                        }
                     }
                 }
-                foreach ( $templates as $templateFile ) {
-                    $templateName = substr(basename($templateFile),0,-4);
-                    $fieldData['templates'][$templateName] = file_get_contents($templateFile);
-                }
+                
             }
             
             $result[$fieldName] = $fieldData;
