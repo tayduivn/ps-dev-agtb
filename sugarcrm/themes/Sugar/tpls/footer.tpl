@@ -50,6 +50,7 @@
     {/foreach}
 
      </div>
+{if $smarty.request.module != "Emails" && $smarty.request.module != "Users"}     
 {literal}
 
 
@@ -88,7 +89,7 @@ $('#zenbox_tab').ready(function(){
 	}
 		
 });
-{/literal}{/if}
+{/literal}{/if}{/if}
 </script>
 
 
