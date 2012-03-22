@@ -80,17 +80,17 @@
             <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_FTS_SETTINGS_TITLE}</h4></th></tr>
 
             <tr>
-                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}&nbsp;{sugar_help text=$MOD.LBL_FTS_TYPE_HELP}</td>
+                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}:&nbsp;{sugar_help text=$MOD.LBL_FTS_TYPE_HELP}</td>
                 <td width="25%" align="left" valign="middle"><select name="fts_type" id="fts_type">{$fts_type}</select></td>
                 <td width="60%">&nbsp;</td>
             </tr>
             <tr class="shouldToggle">
-                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
+                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}:&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
                 <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
                 <td width="60%" valign="bottom">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.testSettings();" style="text-decoration: none;">{$MOD.LBL_FTS_TEST}</a></td>
             </tr>
             <tr class="shouldToggle">
-                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
+                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}:&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
                 <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
                 <td width="60%">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.schedFullSystemIndex();" id='schedFullSystemIndex' style="display: none;text-decoration: none;">{$MOD.LBL_SAVE_SCHED_BUTTON}</a></td>
             </tr>
