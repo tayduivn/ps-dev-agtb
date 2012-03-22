@@ -31,6 +31,37 @@
     /**
      * SugarField widget. A sugarfield widget is a low level field widget. Some examples of sugarfields are
      * text boxes, date pickers, drop down menus.
+     *
+     * ##Creating a SugarField
+     * SugarCRM allows for customized "sugarfields" which are visual representations of a type of data (e.g. url would
+     * be displayed as a hyperlink).
+     *
+     * ###Anatomy of a SugarField
+     * A Sugarfield resides in the **`sugarcrm/include/SugarFields/{{SUGARFIELD_NAME}}`** folder.
+     *
+     * Inside the folder contains the different folders of the SugarField which correspond to their respective supported
+     * views. A typical directory structure will look like the following:
+     * <pre>
+     * SugarField
+     * |- portal
+     *   |-sugarField.js
+     *   |-editView.hbt
+     *   |-detailView.hbt
+     * |- mobile
+     *   |-sugarField.js
+     *   |-editView.hbt
+     * |- web
+     *   |-sugarField.js
+     *   |-listFiew.hbt
+     * </pre>
+     * `sugarField.js` contains the controller for your SugarField; this includes event handlers and necessary data
+     * bindings.
+     *
+     * `viewName.hbt` contains your templates corresponding to the type of view the SugarField is to be displayed on.
+     *
+     * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
+     * Sugar JavaScript client.
+     *
      * @class SugarField
      */
     app.augment('SugarField', Backbone.View.extend({

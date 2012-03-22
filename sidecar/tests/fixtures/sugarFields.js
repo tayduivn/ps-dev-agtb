@@ -5,7 +5,8 @@ var sugarFieldsFixtures = {
             "views" : {
                 "detailView":{
                     "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
+                },
                 "editView":{
                     "type":"basic",
                     "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
@@ -22,8 +23,7 @@ var sugarFieldsFixtures = {
                     "type":"basic",
                     "template":"<span name=\"{{name}}\">{{value}}</span>"
                 }
-            },
-            "events" : {}
+            }
         },
         "password":{
             "editView":{
