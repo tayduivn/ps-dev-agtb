@@ -142,4 +142,33 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
     }
+
+   /**
+     * bug#: 50188
+     * Fix the Logger to create dateformat suffix in the file name
+     */
+    public function testFileName() {
+
+        $config = SugarConfig::getInstance();
+        $file_name = $config->get('logger.file.name');
+        $log_dir = $config->get('log_dir');
+        $log_dir = $log_dir . (empty($log_dir)?'':'/');
+        $ext = $config->get('logger.file.ext');
+
+        $file_suffix = $config->get('logger.file.suffix');
+        //reviewing the suffix in the global configuration stores in the valid format
+        $this->assertArrayHasKey($file_suffix, SugarLogger::$filename_suffix, 'File suffix type is invalid');
+
+        $invalid_file_suffix = "%d_y%s";
+        $this->assertArrayNotHasKey($invalid_file_suffix, SugarLogger::$filename_suffix, 'invalid format is included in the SugarLogger');
+
+        $suffix_date_part = "_" . date(str_replace("%", "", $file_suffix));
+        $full_path = $log_dir . $file_name . $suffix_date_part . $ext;
+        $logger = new SugarLogger;
+        //Asserting the file format the tester expects with the file format from the SugarLogger
+        $this->assertEquals($full_path, $logger->getLogFileNameWithPath(), "SugarLogger generates invalid log file format");
+
+        //If the logger returns correct file format, the file must exist in the path.
+        $this->assertFileExists($full_path, "SugarLogger generates invalid log file format");
+    }
 }
