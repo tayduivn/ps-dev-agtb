@@ -44,7 +44,7 @@
                 return _metadata;
             }
             if (!params.type)
-                return this._getModule(params.modules);
+                return this._getModule(params.module);
 
             if (params.type == "view")
                 return this._getView(params.module, params.view);
@@ -53,10 +53,10 @@
                 return this._getLayout(params.module, params.layout);
 
             if (params.type == "vardef")
-                return this._getVardef(params.module, params.bean);
+                return this._getVardef(params.module);
 
             if (params.type == "fieldDef")
-                return this._getFieldDef(params.module, params.bean, params.field);
+                return this._getFieldDef(params.module, params.field);
         },
 
         /**
@@ -182,32 +182,23 @@
          * Returns vardef
          * @private
          * @param {String} module Module name
-         * @param {String} bean Bean name
          * @return {Object} vardef
          */
-        _getVardef: function(module, bean) {
-            var beans = this._getModule(module, "beans");
-
-            if (!bean) {
-                bean = this._getModule(module, "primary_bean");
-            }
-
-            return (bean && beans[bean] && beans[bean].vardefs) ? beans[bean].vardefs : null;
+        _getVardef: function(module) {
+            return this._getModule(module, "fields");
         },
 
         /**
          * Returns Fielddef metadata
          * @param {String} module Module name
-         * @param {String} bean Bean name
          * @param {String} field Name of field
          * @return {Object} metadata
          * @private
          * @method
          */
-        _getFieldDef: function(module, bean, field) {
-            var vardef = this._getVardef(module, bean);
-
-            return (vardef && vardef.fields) ? vardef.fields[field] : null;
+        _getFieldDef: function(module, field) {
+            var vardef = this._getVardef(module);
+            return vardef ? vardef[field] : null;
         },
 
         // set is going to be used by the sync function and will transalte
@@ -223,15 +214,19 @@
          */
         set: function(data, key) {
             key = key || "metadata";
-            _.each(data, function(entry, module) {
-                if (key == "sugarFields") {
-                    _sugarFields[module] = entry;
-                } else {
-                    _metadata[module] = entry;
-                }
-
-                app.cache.set(key + "." + module, entry);
-            });
+            if (data.modules) {
+                _.each(data.modules, function(entry, module) {
+                                    _metadata[module] = entry;
+                                app.cache.set(key + "." + module, entry);
+                            });
+            }
+            if (data.sugarFields) {
+                _.each(data.sugarFields, function(entry, module) {
+                                    _sugarFields[module] = entry;
+                                app.cache.set(key + "." + module, entry);
+                            });
+            }
+            //TODO add template support
         },
 
         /**
@@ -243,7 +238,6 @@
             var self = this;
             app.api.getMetadata([], [], {
                 success: function(metadata) {
-                    self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
                     self.set(metadata);
                     callback.call(self, null, metadata);
                 },

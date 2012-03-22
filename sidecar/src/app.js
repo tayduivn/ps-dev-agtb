@@ -169,7 +169,12 @@ SUGAR.App = (function() {
          * @method
          */
         start: function() {
-            this.sync();
+            if (!(app.sugarAuth.isAuthenticated()))
+            {
+                app.router.login();
+            }
+            else
+                this.sync();
         },
 
         /**
@@ -210,7 +215,7 @@ SUGAR.App = (function() {
          * the series of sync operations have finished.
          * @method
          */
-        sync: function() {
+        sync: function(syncsuccess) {
             var self = this;
 
             async.waterfall([function(callback) {
@@ -234,6 +239,8 @@ SUGAR.App = (function() {
                     // Result should be metadata
                     self.trigger("app:sync:complete", result);
                 }
+                if ($.isFunction(syncsuccess))
+                    syncsuccess();
             });
         },
 

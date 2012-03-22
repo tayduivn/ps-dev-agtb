@@ -6,7 +6,7 @@ describe("SugarField", function() {
 
         var view = {};
         var context = {};
-        var inputEvents = fixtures.metadata.Cases.views.editView.buttons[0].events;
+        var inputEvents = fixtures.metadata.modules.Cases.views.editView.buttons[0].events;
         var field = SUGAR.App.sugarFieldManager.get({
             def: {name: "status", type: "varchar"},
             view: view,
@@ -59,7 +59,7 @@ describe("SugarField", function() {
         var bean = new Backbone.Model(),
             view = {},
             context = {bob: "bob"},
-            inputEvents = fixtures.metadata.Cases.views.editView.buttons[0].events,
+            inputEvents = fixtures.metadata.modules.Cases.views.editView.buttons[0].events,
             field = SUGAR.App.sugarFieldManager.get({
                 def: {name: "status", type: "varchar"},
                 view: view,

@@ -60,9 +60,6 @@
 
             // Render the rendered layout to the main element
             this.$el.html(this.layout.$el);
-
-            // Render the layout
-            this.layout.render();
         },
 
         /**
@@ -104,7 +101,7 @@
                     }
                 });
             } else {
-                app.router.navigate("login", {trigger: true});
+                app.router.start();
             }
         }
     });

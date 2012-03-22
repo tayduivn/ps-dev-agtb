@@ -9,23 +9,15 @@
  * - Custom implementation of <code>Backbone.sync</code> pattern.
  *
  * <pre><code>
- * // From the following sample metadata, data manager would declare two classes: Team and TeamSet.
+ * // From the following sample metadata, data manager would declare two classes: Accounts and Contacts.
  * var metadata =
  * {
- *   "Teams": {
- *      "primary_bean": "Team",
- *      "beans": {
- *        "Team": {
- *          "vardefs": {
- *            "fields": {}
- *          }
- *        },
- *        "TeamSet": {
- *          "vardefs": {
- *            "fields": {}
- *          }
- *        }
- *      }
+ *   "modules": {
+ *     "Accounts": {
+ *        "fields": {},
+ *        "relationships": {}
+ *      },
+ *      "Contacts": {}
  *    }
  * }
  *
@@ -33,16 +25,15 @@
  * // This method should be called at application start-up and whenever the metadata changes.
  * SUGAR.App.dataManager.declareModels(metadata);
  * // You may now create bean instances using factory methods.
- * // Create an instance of primary bean.
- * var team = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" });
- * // Create an instance of specific bean type.
- * var teamSet = SUGAR.App.dataManager.createBean("Teams", { name: "Acme" }, "TeamSet");
- * // Create an empty collection of team sets.
- * var teamSets = SUGAR.App.dataManager.createBeanCollection("Teams", null, "TeamSet");
- *
+ * var account = SUGAR.App.dataManager.createBean("Accounts", { name: "Acme" });
  * // You can save a bean using standard Backbone.Model.save method.
- * // The save method will use dataManager's sync method to communicate chages to the remote server.
- * team.save();
+ * // The save method will use dataManager's sync method to communicate changes to the remote server.
+ * account.save();
+ *
+ * // Create an empty collection of contacts.
+ * var contacts = SUGAR.App.dataManager.createBeanCollection("Contacts");
+ * // Fetch a list of contacts
+ * contacts.fetch();
  * </code></pre>
  *
  * TODO: Document relationship management.
@@ -53,11 +44,11 @@
  */
 (function(app) {
 
-    // Class cache:
-    // _models[module].primaryBean - primary bean class name
-    // _models[module].beans - hash of bean models
-    // _models[module].collections - hash of bean collections
-    var _models;
+    // Bean class cache
+    var _models = {};
+    // Bean collection class cache
+    var _collections = {};
+
     var _serverProxy;
     var _dataManager = {
 
@@ -93,10 +84,12 @@
          */
         reset: function(module) {
             if (module) {
-                _models[module] = {};
+                delete _models[module];
+                delete _collections[module];
             }
             else {
                 _models = {};
+                _collections = {};
             }
         },
 
@@ -109,113 +102,75 @@
         declareModel: function(moduleName, module) {
             this.reset(moduleName);
 
-            _models[moduleName].primaryBean = module.primary_bean;
-            _models[moduleName].beans = {};
-            _models[moduleName].collections = {};
+            var fields = module.fields;
+            var relationships = module.relationships;
+            var defaults = null;
 
-            var beans = module.beans;
-
-            _.each(_.keys(beans), function(beanType) {
-                var vardefs = beans[beanType].vardefs;
-                var fields = vardefs.fields;
-                var relationships = beans[beanType].relationships;
-                var sf = {};
-                var handler = null;
-
-                var defaults = null;
-                _.each(_.values(fields), function(field) {
-                    if (!_.isUndefined(field["default"])) {
-                        if (defaults === null) {
-                            defaults = {};
-                        }
-                        defaults[field.name] = field["default"];
+            _.each(_.values(fields), function(field) {
+                if (!_.isUndefined(field["default"])) {
+                    if (defaults === null) {
+                        defaults = {};
                     }
+                    defaults[field.name] = field["default"];
+                }
+            });
 
-                });
+            var model = this.beanModel.extend({
+                defaults: defaults,
+                /**
+                 * TODO: Documentation required
+                 * @member Bean
+                 * @property {Object}
+                 *
+                 */
+                sugarFields: {},
+                /**
+                 * Module name.
+                 * @member Bean
+                 * @property {String}
+                 */
+                module: moduleName,
+                /**
+                 * Vardefs metadata.
+                 * @member Bean
+                 * @property {Object}
+                 */
+                fields: fields,
+                /**
+                 * Relationships metadata.
+                 * @member Bean
+                 * @property {Object}
+                 */
+                relationships: relationships
+            });
 
-                var model = this.beanModel.extend({
-                    sugarFields: sf,
-                    defaults: defaults,
-                    /**
-                     * Module name.
-                     * @member Bean
-                     * @property {String}
-                     */
-                    module: moduleName,
-                    /**
-                     * Bean type.
-                     * @member Bean
-                     * @property {String}
-                     */
-                    beanType: beanType,
-                    /**
-                     * Vardefs metadata.
-                     * @member Bean
-                     * @property {Object}
-                     */
-                    fields: fields,
-                    /**
-                     * Relationships metadata.
-                     * @member Bean
-                     * @property {Object}
-                     */
-                    relationships: relationships
-                });
+            _collections[moduleName] = this.beanCollection.extend({
+                model: model,
+                /**
+                 * Module name.
+                 * @member BeanCollection
+                 * @property {String}
+                 */
+                module: moduleName,
+                /**
+                 * Pagination offset.
+                 * @member BeanCollection
+                 * @property {Number}
+                 */
+                offset: 0
+            });
 
-                _models[moduleName].collections[beanType] = this.beanCollection.extend({
-                    model: model,
-                    /**
-                     * Module name.
-                     * @member BeanCollection
-                     * @type {String}
-                     */
-                    module: moduleName,
-                    /**
-                     * Bean type.
-                     * @member BeanCollection
-                     * @type {String}
-                     */
-                    beanType: beanType,
-                    offset: 0
-                });
-
-                _models[moduleName].beans[beanType] = model;
-            }, this);
+            _models[moduleName] = model;
         },
 
         /**
          * Declares bean models and collections classes for each module definition.
-         *
-         * **IMPORTANT:**
-         *
-         * Each module may have multiple bean types.
-         * We declare a class for each bean type.
-         * <pre><code>
-         * {
-         *   "Teams": {
-         *      "primary_bean": "Team",
-         *      "beans": {
-         *        "Team": {
-         *          "vardefs": {
-         *            "fields": {}
-         *          }
-         *        },
-         *        "TeamSet": {
-         *          "vardefs": {
-         *            "fields": {}
-         *          }
-         *        }
-         *      }
-         *    }
-         * }
-         * </code></pre>
-         *
          * @param metadata metadata hash in which keys are module names and values are module definitions.
          */
         declareModels: function(metadata) {
             this.reset();
-            _.each(_.keys(metadata), function(moduleName) {
-                this.declareModel(moduleName, metadata[moduleName]);
+            _.each(metadata.modules, function(module, name) {
+                this.declareModel(name, module);
             }, this);
         },
 
@@ -226,16 +181,14 @@
          * var account = SUGAR.App.dataManager.createBean("Accounts", { name: "Acme" });
          *
          * // Create a team set bean with a given ID
-         * var teamSet = SUGAR.App.dataManager.createBean("Teams", { id: "xyz" }, "TeamSet");
+         * var teamSet = SUGAR.App.dataManager.createBean("TeamSets", { id: "xyz" });
          * </pre>
          * @param {String} module Sugar module name.
          * @param attrs(optional) initial values of bean attributes, which will be set on the model.
-         * @param {String} beanType(optional) bean type. If not specified, an instance of primary bean type is returned.
          * @return {Bean} A new instance of bean model.
          */
-        createBean: function(module, attrs, beanType) {
-            beanType = beanType || _models[module].primaryBean;
-            return new _models[module].beans[beanType](attrs);
+        createBean: function(module, attrs) {
+            return new _models[module](attrs);
         },
 
         /**
@@ -243,19 +196,14 @@
          * <pre><code>
          * // Create an empty collection of account beans.
          * var accounts = SUGAR.App.dataManager.createBeanCollection("Accounts");
-         *
-         * // Create an empty collection of team set beans.
-         * var teamSets = SUGAR.App.dataManager.createBeanCollection("Teams", null, "TeamSet");
          * </code></pre>
          * @param {String} module Sugar module name.
-         * @param {Bean[]} models(optional) initial array of models.
-         * @param {String} beanType(optional) bean type. If not specified, a collection of primary bean types is returned.
+         * @param {Bean[]} models(optional) initial array or collection of models.
          * @param {Object} options(optional) options hash.
          * @return {BeanCollection} A new instance of bean collection.
          */
-        createBeanCollection: function(module, models, beanType, options) {
-            beanType = beanType || _models[module].primaryBean;
-            return new _models[module].collections[beanType](models, options);
+        createBeanCollection: function(module, models, options) {
+            return new _collections[module](models, options);
         },
 
         /**
@@ -333,7 +281,7 @@
             var name = bean.fields[link].relationship;
             var relationship = bean.relationships[name];
             var relatedModule = relationship.lhs_module == bean.module ? relationship.rhs_module : relationship.lhs_module;
-            return this.createBeanCollection(relatedModule, undefined, undefined, {
+            return this.createBeanCollection(relatedModule, undefined, {
                 /**
                  * Link information.
                  *

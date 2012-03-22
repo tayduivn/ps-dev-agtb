@@ -37,21 +37,20 @@
                 if (origSuccess) {
                     origSuccess(args);
                 }
-            }
+            };
             return Backbone.Collection.prototype.fetch.call(this, options);
         },
 
         /**
          * Returns string representation useful for debugging:
-         * <code>coll:[module-name]/[bean-type]-[length]</code>  or
-         * <code>coll:[related-module-name]/[bean-type]/[id]/[module-name]/[bean-type]-[length]</code> if it's a collection of related beans.
+         * <code>coll:[module-name]-[length]</code>  or
+         * <code>coll:[related-module-name]/[id]/[module-name]-[length]</code> if it's a collection of related beans.
          * @return {String} string representation of this collection.
          */
         toString: function() {
             return "coll:" + (this.link ?
-                (this.link.bean.module + "/" + this.link.bean.beanType + "/" + this.link.bean.id + "/") : "") +
-                this.module + "/" + this.beanType +
-                "-" + this.length;
+                (this.link.bean.module + "/" + this.link.bean.id + "/") : "") +
+                this.module + "-" + this.length;
         },
 
         /**
@@ -87,7 +86,7 @@
         },
         /**
          * gets current page of collection being displayed depending on offset
-         * @return {Integer} current ceil of offfset/maxQuery result default 1
+         * @return {Number} current ceil of offfset/maxQuery result default 1
          */
         getPageNumber: function() {
             var pageNumber = 1;
