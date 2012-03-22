@@ -278,9 +278,9 @@ class Task extends SugarBean {
 
 		$today = $timedate->nowDb();
 		$task_fields = $this->get_list_view_array();
-		$dbtime = $timedate->to_db($task_fields['DATE_DUE']);
+                $dbtime = $task_fields['DATE_DUE'];
 		if($override_date_for_subpanel){
-			$dbtime = $timedate->to_db($task_fields['DATE_START']);
+			$dbtime = $task_fields['DATE_START'];
 		}
 
         if(!empty($dbtime))

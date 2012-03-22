@@ -55,6 +55,9 @@ class TasksTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testListviewTimeDueFieldProperlyHandlesDst()
     {
+        $this->markTestSkipped('Bug 46605, after fix SugarBean does not reformat dates from DB format during retrieve()');
+        return;
+        
         $task = new Task();
         $task->name = "New Task";
         $task->date_due = $GLOBALS['timedate']->to_display_date_time("2010-08-30 15:00:00");

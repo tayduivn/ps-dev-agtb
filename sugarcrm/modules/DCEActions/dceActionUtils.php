@@ -739,7 +739,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                     $emailObj->from_addr = $mail->From;
                     $emailObj->parent_type = 'DCEInstance';
                     $emailObj->parent_id = $inst_id ;
-                    $emailObj->date_sent =TimeDate::getInstance()->now();
+                    //bug #46605, dates in Bean should always be in DB format
+                    $emailObj->date_sent =TimeDate::getInstance()->nowDbDate(); 
                     $emailObj->modified_user_id = '1';                               
                     $emailObj->created_by = '1';
                     $emailObj->status='sent';

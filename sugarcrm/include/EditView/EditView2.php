@@ -507,6 +507,8 @@ class EditView
                     $this->fieldDefs[$name]['value'] = $this->getValueFromRequest($_REQUEST, $name);
                 }
 
+                $this->fieldDefs[$name]['value'] = $this->focus->fixFieldDateForView($this->fieldDefs[$name]['type'], $value);
+                
                /*
                 * Populate any relate fields that are linked by a relationship to the calling module.
                 * Clicking the create button on a subpanel for example will populate three values in the $_REQUEST:

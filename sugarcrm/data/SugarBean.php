@@ -1454,7 +1454,7 @@ class SugarBean
         //END SUGARCRM flav=pro ONLY
 
         // use the db independent query generator
-        $this->preprocess_fields_on_save();
+        // $this->preprocess_fields_on_save(); // -- this function only produces messages in sugarcrm.log
 
         //construct the SQL to create the audit record if auditing is enabled.
         $dataChanges=array();
@@ -4800,7 +4800,8 @@ function save_relationship_changes($is_update, $exclude=array())
         foreach($this->field_defs as $field=>$value){
 
             if(isset($this->$field)){
-
+                $fieldType = $this->field_defs[$field]['type'];
+                $return_array[$cache[$field]] = $this->fixFieldDateForView($fieldType, $this->$field);
                 // cn: bug 12270 - sensitive fields being passed arbitrarily in listViews
                 if(isset($sensitiveFields[$field]))
                     continue;
@@ -4848,6 +4849,32 @@ function save_relationship_changes($is_update, $exclude=array())
             }
         }
         return $return_array;
+    }
+    
+    /**
+     * Transform $value of given field $type to user prefered format for output.
+     *
+     * @global TimeDate $timedate
+     * @param string $type type of the field (date, datetime, etc.)
+     * @param string $value value of the field
+     * @return string formatted for output date
+     */
+    public function fixFieldDateForView($type, $value)
+    {
+        global $timedate;
+        switch ($type)
+        {
+            case 'datetime':
+            case 'datetimecombo':
+                return $timedate->to_display_date_time($value, true, true);
+            case 'date':
+                return $timedate->to_display_date($value, true);
+            case 'time':
+                return $timedate->to_display_time($value, true, true);
+
+            default:
+                return $value;
+        }
     }
     /**
      * Override this function to set values in the array used to render list view data.
