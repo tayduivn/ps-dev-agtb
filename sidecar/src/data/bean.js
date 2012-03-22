@@ -91,11 +91,11 @@
 
         /**
          * Returns string representation useful for debugging:
-         * <code>bean:[module-name]/[bean-type]-[id]</code>
+         * <code>bean:[module-name]/[id]</code>
          * @return {String} string representation of this bean
          */
         toString: function() {
-            return "bean:" + this.module + "/" + this.beanType + "-" + (this.id ? this.id : "<no-id>");
+            return "bean:" + this.module + "/" + (this.id ? this.id : "<no-id>");
         }
 
     }), false);

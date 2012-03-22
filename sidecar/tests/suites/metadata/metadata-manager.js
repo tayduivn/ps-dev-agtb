@@ -17,9 +17,8 @@ describe('metadata', function () {
     it('gets vardefs for a bean', function () {
         expect(SUGAR.App.metadata.get({
             type:"vardef",
-            module:"Contacts",
-            bean:"Contact"
-        })).toBe(fixtures.metadata.modules.Contacts.beans.Contact.fields);
+            module:"Contacts"
+        })).toBe(fixtures.metadata.modules.Contacts.fields);
     });
 
     it('gets viewdefs', function () {
