@@ -6412,6 +6412,8 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 	padding: 8px 0px;
 	z-index: 10;
 	overflow:hidden;
+    /*css hack for IE7*/
+    *overflow:visible;
 }
 
 ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li, ul.SugarActionMenuIESub li{
@@ -6628,6 +6630,13 @@ ul#detailViewActions.clickMenu {
 
 .selectActions.clickMenu {
 	display: none;
+}
+
+#selectActions.clickMenu.show {
+    display:inline-block;
+    /*css hack for IE*/
+    *display:inline;
+    *zoom:1;
 }
 
 #selectActionsDisabled {
