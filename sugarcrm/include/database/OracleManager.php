@@ -1358,8 +1358,6 @@ EOQ;
             $fieldDef['len'] = '38';
         if ($fieldDef['dbType'] == 'long')
             $fieldDef['len'] = '38';
-        if ($fieldDef['dbType'] == 'enum')
-            $fieldDef['len'] = '255';
         if ($fieldDef['dbType'] == 'bool')
             $fieldDef['len'] = '1';
         if ($fieldDef['dbType'] == 'id')
@@ -1374,7 +1372,7 @@ EOQ;
             $fieldDef['len'] = '3';
         if ($fieldDef['type'] == 'int' && empty($fieldDef['len']) )
             $fieldDef['len'] = '';
-        if ($fieldDef['dbType'] == 'enum')
+        if ($fieldDef['dbType'] == 'enum' && empty($fieldDef['len']))
             $fieldDef['len'] = '255';
         if ($fieldDef['type'] == 'varchar2' && empty($fieldDef['len']) )
             $fieldDef['len'] = '255';

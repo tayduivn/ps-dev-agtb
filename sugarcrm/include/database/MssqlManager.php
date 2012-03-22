@@ -276,7 +276,7 @@ class MssqlManager extends DBManager
         $this->query_time = microtime(true);
 
         // Bug 34892 - Clear out previous error message by checking the @@ERROR global variable
-		$errorNumber = $this->getOne("SELECT @@ERROR");
+		@mssql_query("SELECT @@ERROR", $this->database);
 
         $result = $suppress?@mssql_query($sql, $this->database):mssql_query($sql, $this->database);
 
@@ -1232,8 +1232,11 @@ class MssqlManager extends DBManager
     public function isTextType($type)
     {
         $type = strtolower($type);
-        if(!isset($this->type_map[$type])) return false;
-        return in_array($this->type_map[$type], array('ntext','text','image', 'nvarchar(max)'));
+        if(!isset($this->type_map[$type]))
+        {
+            return false;
+        }
+        return in_array($type, array('ntext','text','image','longtext','nvarchar(max)'));
     }
 
     /**
@@ -1669,10 +1672,15 @@ EOQ;
                 case 'smallint' : $fieldDef['len'] = '2'; break;
                 case 'float'    : $fieldDef['len'] = '8'; break;
                 case 'varchar'  :
+<<<<<<< HEAD
                 case 'nvarchar' : if(!$this->isTextType($fieldDef['dbType']))
                                       $fieldDef['len'] = '255';
                                   else
                                       $fieldDef['len'] = 'max'; // text or ntext
+=======
+                case 'nvarchar' :
+                                  $fieldDef['len'] = $this->isTextType($fieldDef['dbType']) ? 'max' : '255';
+>>>>>>> 6_4_3
                                   break;
                 case 'image'    : $fieldDef['len'] = '2147483647'; break;
                 case 'ntext'    : $fieldDef['len'] = '2147483646'; break;   // Note: this is from legacy code, don't know if this is correct

@@ -28,10 +28,8 @@
 
 require_once('include/tabs.php');
 require_once('include/ListView/ListViewSmarty.php');
-
 require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/EditView/EditView2.php');
-require_once('include/FileLocator/FileLocator.php');
 
 
  class SearchForm extends EditView{
@@ -66,17 +64,13 @@ require_once('include/FileLocator/FileLocator.php');
 
     var $displayType = 'searchView';
 
-    /**
-     * @var FileLocatorInterface
-     */
-    private $fileLocator;
-
-    /**
+	/**
      * @var array
      */
-    private $options;
+    protected $options;
 
- 	function SearchForm($seed, $module, $action = 'index', $options = array()){
+    public function SearchForm($seed, $module, $action = 'index', $options = array())
+    {
  		$this->th = new TemplateHandler();
  		$this->th->loadSmarty();
 		$this->seed = $seed;
@@ -95,33 +89,6 @@ require_once('include/FileLocator/FileLocator.php');
                        );
         $this->searchColumns = array () ;
         $this->setOptions($options);
-    }
-
-    public function getFileLocator()
-    {
-        if (!$this->fileLocator) {
-            $ref = new ReflectionClass($this->options['locator_class']);
-            $this->fileLocator = $ref->newInstanceArgs($this->options['locator_class_params']);
-        }
-
-        return $this->fileLocator;
-    }
-
-    public function setOptions($options)
-    {
-        $defaults = array(
-            'locator_class' => 'FileLocator',
-            'locator_class_params' => array(
-                array(
-                    'custom/modules/' . $this->module . '/tpls/SearchForm',
-                    'modules/' . $this->module . '/tpls/SearchForm',
-                    'custom/include/SearchForm/tpls',
-                    'include/SearchForm/tpls'
-                )
-            )
-        );
-
-        $this->options = empty($options) ? $defaults : $options;
     }
 
  	function setup($searchdefs, $searchFields = array(), $tpl, $displayView = 'basic_search', $listViewDefs = array()){
@@ -265,21 +232,75 @@ require_once('include/FileLocator/FileLocator.php');
         if ($this->module == 'Documents'){
             $this->th->ss->assign('DOCUMENTS_MODULE', true);
         }
-        $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->getFileLocator()->locate($this->tpl));
+
+        $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->locateFile($this->tpl));
+
         if($header){
 			$this->th->ss->assign('return_txt', $return_txt);
-			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', $this->getFileLocator()->locate('header.tpl'));
+			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', $this->locateFile('header.tpl'));
             //pass in info to render the select dropdown below the form
-            $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', $this->getFileLocator()->locate('footer.tpl'));
+            $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', $this->locateFile('footer.tpl'));
 			$return_txt = $header_txt.$footer_txt;
 		}
 		return $return_txt;
  	}
 
-  function displaySavedSearch(){
+ 	/**
+ 	 * Set options
+ 	 * @param array $options
+ 	 * @return SearchForm2
+ 	 */
+    public function setOptions($options = null)
+    {
+        $defaults = array(
+            'locator_class' => 'FileLocator',
+            'locator_class_params' => array(
+                array(
+                    'custom/modules/' . $this->module . '/tpls/SearchForm',
+                    'modules/' . $this->module . '/tpls/SearchForm',
+                    'custom/include/SearchForm/tpls',
+                    'include/SearchForm/tpls'
+                )
+            )
+        );
+
+        $this->options = empty($options) ? $defaults : $options;
+        return $this;
+    }
+
+    /**
+     * Get Options
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+
+ 	/**
+      * Locate a file in the custom or stock folders.  Look in the custom folders first.
+      *
+      * @param string $file         The file we are looking for
+      * @return bool|string         If the file is found return the path, False if not
+      */
+     protected function locateFile($file)
+     {
+        $paths = isset($this->options['locator_class_params'])?$this->options['locator_class_params'][0]:array();
+        foreach ($paths as $path) {
+             if (is_file($path . '/' . $file)) {
+                 return $path . '/' . $file;
+             }
+         }
+
+         return false;
+     }
+
+     function displaySavedSearch()
+     {
         $savedSearch = new SavedSearch($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
         return $savedSearch->getForm($this->module, false);
-    }
+     }
 
 
   function displaySavedSearchSelect(){
@@ -532,7 +553,7 @@ require_once('include/FileLocator/FileLocator.php');
                     	if($key != 'assigned_user_name' && $key != 'modified_by_name')
                     	{
                     		$long_name = $key.'_'.$SearchName;
-                    		
+
 	                        if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys))
 	                    	{
 	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
@@ -1194,54 +1215,5 @@ require_once('include/FileLocator/FileLocator.php');
     	return $result;
     }
 
-    /**
-    * Return the search defs for a particular module.
-    *
-    * @static
-    * @param $module
-    */
-    public static function retrieveSearchDefs($module)
-    {
-        $searchdefs = array();
-        $searchFields = array();
-
-        if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php'))
-        {
-            require('custom/modules/'.$module.'/metadata/metafiles.php');
-        }
-        elseif(file_exists('modules/'.$module.'/metadata/metafiles.php'))
-        {
-            require('modules/'.$module.'/metadata/metafiles.php');
-        }
-
-        if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
-        {
-            require('custom/modules/'.$module.'/metadata/searchdefs.php');
-        }
-        elseif (!empty($metafiles[$module]['searchdefs']))
-        {
-            require($metafiles[$module]['searchdefs']);
-        }
-        elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
-        {
-            require('modules/'.$module.'/metadata/searchdefs.php');
-        }
-
-
-        if(!empty($metafiles[$module]['searchfields']))
-        {
-            require($metafiles[$module]['searchfields']);
-        }
-        elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
-        {
-            require('modules/'.$module.'/metadata/SearchFields.php');
-        }
-        if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
-        {
-            require('custom/modules/'.$module.'/metadata/SearchFields.php');
-        }
-
-        return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
-    }
-}
+ }
 
