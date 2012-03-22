@@ -45,7 +45,7 @@ describe("Layout.View", function(){
             context : context,
             view:"editView"
         });
-        expect(view.meta).toEqual(fixtures.metadata.Contacts.views.editView);
+        expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.editView);
     });
 
     it('should accept metadata overrides', function(){
@@ -113,8 +113,8 @@ describe("Layout.Layout", function(){
     //Fake template manager
     SUGAR.App.template = SUGAR.App.template || {
         get:function (key) {
-            if (fixtures.templates[key])
-                return Handlebars.compile(fixtures.templates[key]);
+            if (fixtures.metadata.viewTemplates[key])
+                return Handlebars.compile(fixtures.metadata.viewTemplates[key]);
         }
     };
     //Fake a field list
@@ -141,7 +141,7 @@ describe("Layout.Layout", function(){
             context : context,
             layout: "edit"
         });
-        expect(layout.meta).toEqual(fixtures.metadata.Contacts.layouts.edit);
+        expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit);
     });
 
     it('should accept metadata overrides', function(){

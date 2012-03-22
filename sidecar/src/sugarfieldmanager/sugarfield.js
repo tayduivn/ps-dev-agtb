@@ -118,7 +118,7 @@
          */
         render: function() {
             // If we don't have any data in the model yet
-            if (_.isEmpty(this.model.attributes)) {
+            if (!(this.model instanceof Backbone.Model)) {
                 return null;
             }
 
