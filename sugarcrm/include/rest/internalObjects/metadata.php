@@ -1,11 +1,11 @@
 <?php
 
-include_once("include/rest/RestObjectInterface.php");
-include_once("RestError.php");
-include_once("RestUtils.php");
-include_once("RestObject.php");
-include_once("include/MetaDataManager/MetaDataManager.php");
-include_once("include/rest/SoapHelperWebService.php");
+require_once("include/rest/RestObjectInterface.php");
+require_once("include/rest/internalObjects/RestError.php");
+require_once("include/rest/internalObjects/RestUtils.php");
+require_once("include/rest/internalObjects/RestObject.php");
+require_once("include/MetaDataManager/MetaDataManager.php");
+require_once("include/rest/SoapHelperWebService.php");
 
 
 /**

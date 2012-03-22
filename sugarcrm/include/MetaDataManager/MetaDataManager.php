@@ -47,12 +47,12 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  */
 class MetaDataManager {
 
-    private $modules = null;
-    private $mobile = false;
-    private $filter = null;
-    private $typeFilter = null;
-    private $filterVarDefs = false;
-    private $basePath = "modules";
+    protected $modules = null;
+    protected $mobile = false;
+    protected $filter = null;
+    protected $typeFilter = null;
+    protected $filterVarDefs = false;
+    protected $basePath = "modules";
 
     /**
      * The constructor for the class.
@@ -92,16 +92,24 @@ class MetaDataManager {
         } else {
             $mods = $this->modules;
         }
-
+        
+        $data['modules'] = array();
         foreach ($mods as $modName) {
-            $data[$modName] = $this->getDataCollection($modName);
+            $modData = $this->getModuleData($modName);
+            $data['modules'][$modName] = $modData;
         }
 
-        $data['SugarFields'] = $this->getSugarFields();
+        $data['sugarFields'] = $this->getSugarFields();
+        
+        $data['viewTemplates'] = $this->getViewTemplates();
+        
+        $data['appStrings'] = $this->getAppStrings();
+        
+        $data['appListStrings'] = $this->getAppListStrings();
 
         $md5 = serialize($data);
         $md5 = md5($md5);
-        $data["md5"] = $md5;
+        $data["_hash"] = md5(serialize($data));
 
         return $data;
     }
@@ -114,7 +122,7 @@ class MetaDataManager {
      *
      * @return Array A hash of all of the view data.
      */
-    private function getAllViewsData($moduleName) {
+    protected function getModuleViews($moduleName) {
         $data = array();
 
         $types = array(
@@ -154,16 +162,16 @@ class MetaDataManager {
             }
 
             $stdDef = "modules/{$moduleName}/metadata/{$defFile}";
-            $cusDef = "custom/modules/{$moduleName}/metadata/{$defFile}";
+            $cusDef = "custom/{$stdDef}";
 
             unset($$viewAccessor);
 
             if (file_exists($stdDef)) {
-                include_once($stdDef);
+                require($stdDef);
             }
 
             if (file_exists($cusDef)) {
-                include_once($cusDef);
+                require($cusDef);
                 $isCustom = true;
             }
 
@@ -177,9 +185,6 @@ class MetaDataManager {
             $data[$viewType] = $tmp[$keys[0]];
             $data[$viewType]['isCustom'] = $isCustom;
             $data[$viewType]['isMobile'] = $this->mobile;
-            $md5 = serialize($data[$viewType]);
-            $md5 = md5($md5);
-            $data[$viewType]["{$viewType}_md5"] = $md5;
             unset($$viewAccessor);
         }
 
@@ -187,53 +192,24 @@ class MetaDataManager {
     }
 
     /**
-     * The master collector method.  Gets metadata for all of the known types.
+     * The collector method for modules.  Gets metadata for all of the module specific data
      *
      * @param $moduleName The name of the module to collect metadata about.
      * @return array An array of hashes containing the metadata.  Empty arrays are
      * returned in the case of no metadata.
      */
-    private function getDataCollection($moduleName) {
-        $data = array(
-            "views" => array()
-        );
-        $vardefs = null;
+    protected function getModuleData($moduleName) {
+        $data['views'] = $this->getModuleViews($moduleName);
+        $vardefs = $this->getVarDef($moduleName);
 
-        $data["views"] = $this->getAllViewsData($moduleName);
-        $vardefs = $this->getVarDefs($moduleName);
-
-        foreach (array_keys($vardefs) as $key => $val) {
-            if (is_array($vardefs[$val])) {
-
-                global $beanList;
-                include_once("include/modules.php");
-
-                if (in_array($val, $beanList)) {
-                    $reverse_name = null;
-
-                    foreach ($beanList as $bName => $bValue) {
-                        if ($bValue == $val) {
-                            $reverse_name = $bName;
-                            break;
-                        }
-                    }
-
-                    if ($reverse_name != null) {
-                        $data['beans'][$val] = $this->getBeanInfo($reverse_name);
-                        $data['beans'][$val]['vardefs'] = $vardefs[$val];
-                    }
-                }
-            }
-        }
-
-        $keys = array_keys($vardefs);
-        if (count($keys) > 0) {
-            $data["beans"]["primary_bean"] = $keys[0];
-        }
+        $data['fields'] = $vardefs['fields'];
+        //FIXME: Need more relationshp data (all relationship data)
+        $data['relationships'] = $vardefs['relationships'];
+        $data['labels'] = return_module_language($GLOBALS['current_language'],$moduleName);
 
         $md5 = serialize($data);
         $md5 = md5($md5);
-        $data["{$moduleName}_md5"] = $md5;
+        $data["_hash"] = $md5;
 
         return $data;
     }
@@ -245,7 +221,7 @@ class MetaDataManager {
      * @param $dir The directory to read modules directory's from.
      * @return array An array of module names.
      */
-    private function readModuleDir($dir) {
+    protected function readModuleDir($dir) {
         $dir = opendir($dir);
         $modules = array();
 
@@ -270,121 +246,28 @@ class MetaDataManager {
      * @param $moduleName The name of the module to collect vardef information about.
      * @return array The vardef's $dictonary array.
      */
-    private function getVarDefs($moduleName) {
-        $data = array();
-        $vdefFile = "vardefs.php";
-        $isCustom = false;
-        $stdVdef = "modules/{$moduleName}/{$vdefFile}";
-        $cusVdef = "custom/modules/{$moduleName}/{$vdefFile}";
-        $extVdef = "custom/modules/{$moduleName}/Ext/Vardefs/vardefs.ext.php";
-        $keys = null;
-
-        if ($this->filterVarDefs) {
-            return $data;
-        }
-
-        // check to see if
-        if (file_exists($stdVdef)) {
-            include_once($stdVdef);
-        }
-
-        if (file_exists($cusVdef)) {
-            include_once($cusVdef);
-        }
-
-        if (file_exists($extVdef)) {
-            include_once($extVdef);
-        }
-
-        if (!isset($dictionary)) {
-            return $data;
-        }
-
-        // this is a hack, but for some reason php will choke and die on $dictionary unless this is all done
-        // before going and then setting up the global version.  Lame and needs debugging!
-        $keys = array_keys($dictionary);
-
-        global $dictionary;
-        if (file_exists($stdVdef)) {
-            include_once($stdVdef);
-        }
-
-        if (file_exists($cusVdef)) {
-            include_once($cusVdef);
-        }
-
-        if (file_exists($extVdef)) {
-            include_once($extVdef);
-        }
-
-        if (!isset($dictionary)) {
-            return $data;
-        }
-
-        foreach ($keys as $key) {
-            if (array_key_exists($key, $dictionary)) {
-                require_once("data/BeanFactory.php");
-                $obj = BeanFactory::getObjectName($key);
-                require_once("include/SugarObjects/VardefManager.php");
-                global $dictionary;
-                VardefManager::loadVardef($key, $obj);
-                $data[$key] = $dictionary[$key];
-            }
-        }
-
-        $data['isCustom'] = $isCustom;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data['vardefs_md5'] = $md5;
-
-        return $data;
-    }
-
-    /**
-     * Collects information from a bean after trying to create it using the bean factory.
-     *
-     *
-     * @param $name
-     * @return array
-     */
-    private function getBeanInfo($name) {
-        $data = array();
-
-        global $beanList;
-        //global $dictionary;
+    protected function getVarDef($moduleName) {
 
         require_once("data/BeanFactory.php");
+        $obj = BeanFactory::getObjectName($moduleName);
 
-        $bean = BeanFactory::newBean($name);
-
-        if ($bean != false) {
-            if (key_exists($name, $beanList)) {
-                $data["bean_name"] = $beanList[$name];
-            }
-
-            if (isset($bean->module_dir)) {
-                $mod_dir = $bean->module_dir;
-            } else {
-                $mod_dir = "";
-            }
-
-            if (isset($bean->module_name)) {
-                $mod_name = $bean->module_name;
-            } else {
-                $mod_name = "";
-            }
-
-            $data["module_dir"] = $mod_dir;
-            $data["module_name"] = $mod_name;
+        require_once("include/SugarObjects/VardefManager.php");
+        global $dictionary;
+        VardefManager::loadVardef($moduleName, $obj);
+        if ( isset($dictionary[$obj]) ) {
+            $data = $dictionary[$obj];
         }
 
-        $md5 = json_encode($data);
-        $md5 = md5($md5);
-        $data["bean_md5"] = $md5;
+        // vardefs are missing something, for consistancy let's populate some arrays
+        if (!isset($data['fields']) ) {
+            $data['fields'] = array();
+        }
+        if (!isset($data['relationships'])) {
+            $data['relationships'] = array();
+        }
 
         return $data;
     }
-
 
     /**
      * gets sugar fields
@@ -418,21 +301,21 @@ class MetaDataManager {
             if ($build) {
                 $fcontents = file_get_contents($finfo["dirname"]."/".$finfo["basename"]);
                 if (!isset($result[$fieldName])) {
-                    $result[$fieldName] = array('views'=>array());
+                    $result[$fieldName] = array('templates'=>array());
                 }
-                if (!isset($result[$fieldName]['views'][$action]) && strtolower($action) != strtolower($fieldName)) {
-                    $result[$fieldName]['views'][$action] = array();
+                if (!isset($result[$fieldName]['templates'][$action]) && strtolower($action) != strtolower($fieldName)) {
+                    $result[$fieldName]['templates'][$action] = array();
                 }
 
                 if (strtolower($action) != strtolower($fieldName)){
-                    $result[$fieldName]['views'][$action] = array_merge($result[$fieldName]['views'][$action], array($fieldMeta=>$fcontents)) ;
+                    $result[$fieldName]['templates'][$action] = array_merge($result[$fieldName]['templates'][$action], array($fieldMeta=>$fcontents)) ;
                 } else {
-                    $result[$fieldName]['handler'] = $fcontents ;
+                    $result[$fieldName]['controller'] = $fcontents ;
                 }
 
             }
 
-            $result['md5'] = md5(serialize($result));
+            $result['_hash'] = md5(serialize($result));
         }
         return $result;
     }
@@ -447,7 +330,7 @@ class MetaDataManager {
      * @param array $exempt_extensions file extensions to ignore
      * @return array
      */
-    private function getFiles($directory, $exempt = array('.', '..', '.ds_store', '.svn'), &$files = array(), $exempt_extensions = array('tpl', 'php'))
+    protected function getFiles($directory, $exempt = array('.', '..', '.ds_store', '.svn'), &$files = array(), $exempt_extensions = array('tpl', 'php'))
     {
         $handle = opendir($directory);
         while (false !== ($resource = readdir($handle))) {
@@ -469,4 +352,36 @@ class MetaDataManager {
         return $files;
     }
 
+    /**
+     * The collector method for view templates
+     *
+     * @return array A hash of the template name and the template contents
+     */
+    protected function getViewTemplates() {
+        $templates = array();
+        $templates['_hash'] = md5(serialize($templates));
+        return $templates;
+    }
+
+    /**
+     * The collector method for the app strings
+     *
+     * @return array The app strings for the current language, and a hash of the app strings
+     */
+    protected function getAppStrings() {
+        $appStrings = $GLOBALS['app_strings'];
+        $appStrings['_hash'] = md5(serialize($appStrings));
+        return $appStrings;
+    }
+
+    /**
+     * The collector method for the app strings
+     *
+     * @return array The app strings for the current language, and a hash of the app strings
+     */
+    protected function getAppListStrings() {
+        $appStrings = $GLOBALS['app_list_strings'];
+        $appStrings['_hash'] = md5(serialize($appStrings));
+        return $appStrings;
+    }
 }
