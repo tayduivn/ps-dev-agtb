@@ -22,9 +22,8 @@
  ********************************************************************************/
 
 /**
- * This is an abstract class for all the web services.
- * All type of web services should provide proper implementation of all the abstract methods
- * @api
+ * This is an abstract class for all the web services. 
+ * All type of web services should provide proper implementation of all the abstract methods 
  */
 abstract class SugarWebService{
 	protected $server = null;
