@@ -113,8 +113,8 @@ describe("Layout.Layout", function(){
     //Fake template manager
     SUGAR.App.template = SUGAR.App.template || {
         get:function (key) {
-            if (fixtures.templates[key])
-                return Handlebars.compile(fixtures.templates[key]);
+            if (fixtures.metadata.viewTemplates[key])
+                return Handlebars.compile(fixtures.metadata.viewTemplates[key]);
         }
     };
     //Fake a field list

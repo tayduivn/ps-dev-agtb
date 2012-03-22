@@ -1,6 +1,6 @@
 describe('metadata', function () {
     //Preload the templates
-    SUGAR.App.template.load(fixtures.templates);
+    SUGAR.App.template.load(fixtures.metadata.viewTemplates);
 
     beforeEach(function () {
         //Load the metadata
