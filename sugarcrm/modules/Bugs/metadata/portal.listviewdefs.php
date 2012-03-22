@@ -19,40 +19,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Bugs']['editview'] = array (
-  'templateMeta' =>
-  array (
-    'maxColumns' => '2',
-    'widths' => array(
-                    array('label' => '10', 'field' => '30'),
-                    array('label' => '10', 'field' => '30')
-                    ),
-    'formId' => 'BugEditView',
-    'formName' => 'BugEditView',
-    'hiddenInputs' =>
-    array (
-      'module' => 'Bugs',
-      'returnmodule' => 'Bugs',
-      'returnaction' => 'DetailView',
-      'action' => 'Save',
-    ),
-    //BEGIN SUGARCRM flav=pro ONLY
-    'hiddenFields' => array(
-	    array (
-           'name'=>'portal_viewable',
-           'operator'=>'=',
-           'value'=>'1',
-	    ),
-    ),
-    //END SUGARCRM flav=pro ONLY
-  ),
-  'data' => array(
-     array ('priority','status'),
-     array ('source','product_category'),
-     array ('resolution'),
-     array (array ('field' => 'name', 'displayParams' => array('size' => 60))),
-     array (array ('field' => 'description', 'displayParams' => array ('rows' => '15', 'cols' => '100'))),
-     array (array ('field' => 'work_log', 'displayParams' => array ('rows' => '15', 'cols' => '100'))),
-  )
+$viewdefs['Bugs']['listview'] = array(
+	'BUG_NUMBER' => array(
+		'width' => '5',
+		//'label' => 'LBL_LIST_NUMBER',
+		'label' => 'LBL_BUG_NUMBER',
+        'link' => true,
+        'default' => true),
+	'NAME' => array(
+		'width' => '30',
+		'label' => 'LBL_LIST_SUBJECT',
+		'default' => true,
+        'link' => true),
+	'STATUS' => array(
+		'width' => '10',
+		'label' => 'LBL_LIST_STATUS',
+        'default' => true),
+    'TYPE' => array(
+        'width' => '10',
+        'label' => 'LBL_LIST_TYPE',
+        'default' => true),
+    'PRIORITY' => array(
+        'width' => '10',
+        'label' => 'LBL_LIST_PRIORITY',
+        'default' => true),
+/*
+    'RELEASE_NAME' => array(
+        'width' => '10',
+        'label' => 'LBL_FOUND_IN_RELEASE',
+        'default' => false,
+        'related_fields' => array('found_in_release'),
+        'module' => 'Releases',
+        'id' => 'FOUND_IN_RELEASE',),
+    'FIXED_IN_RELEASE_NAME' => array(
+        'width' => '15',
+        'label' => 'LBL_LIST_FIXED_IN_RELEASE',
+        'default' => true,
+        'related_fields' => array('fixed_in_release'),
+        'module' => 'Releases',
+        'id' => 'FIXED_IN_RELEASE',),
+*/
+        'RESOLUTION' => array(
+        'width' => '10',
+        'label' => 'LBL_LIST_RESOLUTION',
+        'default' => false),
 );
 ?>

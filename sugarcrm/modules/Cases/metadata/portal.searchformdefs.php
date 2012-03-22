@@ -19,40 +19,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Bugs']['editview'] = array (
-  'templateMeta' =>
-  array (
-    'maxColumns' => '2',
-    'widths' => array(
-                    array('label' => '10', 'field' => '30'),
-                    array('label' => '10', 'field' => '30')
-                    ),
-    'formId' => 'BugEditView',
-    'formName' => 'BugEditView',
-    'hiddenInputs' =>
-    array (
-      'module' => 'Bugs',
-      'returnmodule' => 'Bugs',
-      'returnaction' => 'DetailView',
-      'action' => 'Save',
-    ),
-    //BEGIN SUGARCRM flav=pro ONLY
-    'hiddenFields' => array(
-	    array (
-           'name'=>'portal_viewable',
-           'operator'=>'=',
-           'value'=>'1',
-	    ),
-    ),
-    //END SUGARCRM flav=pro ONLY
-  ),
-  'data' => array(
-     array ('priority','status'),
-     array ('source','product_category'),
-     array ('resolution'),
-     array (array ('field' => 'name', 'displayParams' => array('size' => 60))),
-     array (array ('field' => 'description', 'displayParams' => array ('rows' => '15', 'cols' => '100'))),
-     array (array ('field' => 'work_log', 'displayParams' => array ('rows' => '15', 'cols' => '100'))),
-  )
+$viewdefs['Cases']['searchform']['basic'] = array(
+    'templateMeta' => array('maxColumns' => '2',
+                            'widths' => array(
+                                            array('label' => '10', 'field' => '30'),
+                                            array('label' => '10', 'field' => '30')
+                                            ),
+                            'formId' => 'CaseSearchForm',
+                            'formName' => 'CaseSearchForm',
+                           ),
+    'data' => array(
+        array('case_number', 'name'),
+        array('status', 'priority'),
+    )
 );
 ?>

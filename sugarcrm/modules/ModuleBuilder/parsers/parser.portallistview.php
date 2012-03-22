@@ -54,11 +54,13 @@ class ParserPortalListView extends ParserModifyListView
 		$class = $GLOBALS ['beanList'] [$this->module_name];
 		require_once ($GLOBALS ['beanFiles'] [$class]);
 		$this->module = new $class();
-		
-		include ('portal/modules/' . $this->module_name . '/metadata/listviewdefs.php');
+
+        // Set our def file 
+        $defFile = 'modules/' . $this->module_name . '/metadata/portal.listviewdefs.php';
+		include $defFile;
 		$this->originalListViewDefs = $viewdefs[$this->module_name]['listview'];
 		$this->fixKeys($this->originalListViewDefs);
-		$this->customFile = 'custom/portal/modules/' . $this->module_name . '/metadata/listviewdefs.php';
+		$this->customFile = 'custom/' . $defFile;
 		if (file_exists($this->customFile)) {
 			include ($this->customFile);
 			$this->listViewDefs = $viewdefs[$this->module_name]['listview'];
@@ -103,7 +105,7 @@ class ParserPortalListView extends ParserModifyListView
 	{
 		if (!file_exists($this->customFile)) {
 			//Backup the orginal layout to the history
-			$this->_history->append('portal/modules/' . $this->module_name . '/metadata/listviewdefs.php');
+			$this->_history->append('modules/' . $this->module_name . '/metadata/portal.listviewdefs.php');
 		}
 		
 		$requestfields = $this->_loadLayoutFromRequest();
