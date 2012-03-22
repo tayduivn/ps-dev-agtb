@@ -2,7 +2,7 @@
     var sfid = 0;
 
     //Register Handlebars helper to create fields with unique id's
-    Handlebars.registerHelper('sugar_field', function (context, view, bean) {
+    Handlebars.registerHelper('sugar_field', function(context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>',
             name = this.name,
             label = this.label || this.name,
@@ -17,10 +17,10 @@
 
         sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
             def: def,
-            view : view,
-            context : context,
+            view: view,
+            context: context,
             label: label,
-            model : bean || context.get("model")
+            model: bean || context.get("model")
         }));
 
         sf.sfid = sfid;
@@ -76,11 +76,13 @@
      * Sugar JavaScript client.
      *
      * ###Advanced Fields
+     * Sometimes a SugarField needs to do more than just display a simple input element, other times input elements
+     * additional data such as drop down menu choices.
      *
      * @class SugarField
      */
     app.augment('sugarField', {
-        base : Backbone.View.extend({
+        base: Backbone.View.extend({
             /**
              * Reference to the application
              * @property {Object}
@@ -102,12 +104,12 @@
                 this.label = options.label;
                 this.bind(options.context, options.model || options.context.get("model"));
                 this.viewName = this.view.name;
-                this.meta = app.metadata.get({sugarField:this});
+                this.meta = app.metadata.get({sugarField: this});
 
-            // this is experimental to try to see if we can have custom events on sugarfields themselves.
-            // the following line doesn't work, need to _.extend it or something.
-            // this.events = this.meta.events;
-            templateKey = "sugarField." + this.name + "." + this.view.name;
+                // this is experimental to try to see if we can have custom events on sugarfields themselves.
+                // the following line doesn't work, need to _.extend it or something.
+                // this.events = this.meta.events;
+                templateKey = "sugarField." + this.name + "." + this.view.name;
 
                 this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
             },
@@ -129,7 +131,7 @@
              * @private
              * @param {Object} events Hash of events and their handlers
              */
-            delegateEvents : function(events) {
+            delegateEvents: function(events) {
                 if (!(events || (events = this.events))) {
                     return;
                 }
@@ -149,7 +151,7 @@
                                 this["callback_" + handlerName] = callback;
                                 events[handlerName] = "callback_" + handlerName;
                             }
-                        } catch(e) {
+                        } catch (e) {
                             app.logger.error("invalid event callback " + handlerName + " : " + eventHandler);
                             delete events[handlerName];
                         }
@@ -160,17 +162,17 @@
                 Backbone.View.prototype.delegateEvents.call(this, events);
             },
 
-        /**
-         * Renders the SugarField widget
-         * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
-         * @method
-         * @return {Object} this Reference to the SugarField
-         */
-        render: function() {
-            // If we don't have any data in the model yet
-            if (!(this.model instanceof Backbone.Model)) {
-                return null;
-            }
+            /**
+             * Renders the SugarField widget
+             * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
+             * @method
+             * @return {Object} this Reference to the SugarField
+             */
+            render: function() {
+                // If we don't have any data in the model yet
+                if (!(this.model instanceof Backbone.Model)) {
+                    return null;
+                }
 
                 this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
                 this.$el.html(this.templateC(this));
@@ -205,7 +207,7 @@
                 this.context = context;
                 this.model = model;
 
-                if (this.model.on){
+                if (this.model.on) {
                     this.model.on("change:" + this.name, this.render, this);
                 }
             },
