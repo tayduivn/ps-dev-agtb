@@ -761,6 +761,11 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                     'customCode' => true , 'customLabel' => true , 'tabindex' => true , 'hideLabel' => true) ) ;
         if (!empty($def['vname']) && empty($def['label']))
             $ret['label'] = $def['vname'];
+        // bug 43787: Cases quick create layout allows user to input case number 
+        if (!empty($def['readonly']))
+        {
+            $ret['type'] = 'readonly';
+        }
 		return $ret;
 	}
 	
