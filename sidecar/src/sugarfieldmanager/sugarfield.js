@@ -55,15 +55,27 @@
      *   |-sugarField.js
      *   |-listFiew.hbt
      * </pre>
-     * `sugarField.js` contains the controller for your SugarField; this includes event handlers and necessary data
+     * **`sugarField.js`** contains the controller for your SugarField; this includes event handlers and necessary data
      * bindings.
+     * <pre><code>
+     * var controller = {
+     *    events: {
+     *        handler: function() {}
+     *    }
+     * }
+     * </code></pre>
      *
-     * `viewName.hbt` contains your templates corresponding to the type of view the SugarField is to be displayed on.
+     * **`viewName.hbt`** contains your templates corresponding to the type of view the SugarField is to be displayed on.
      * Sugar uses Handlebars.js as its client side template of choice. At this time no other templating engines are
-     * supported.
+     * supported. Sample:
+     * <pre><code>
+     * &lt;span name="{{name}}"&gt;{{value}}&lt;/span&gt;
+     * </code></pre>
      *
      * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
      * Sugar JavaScript client.
+     *
+     * ###Advanced Fields
      *
      * @class SugarField
      */
