@@ -232,23 +232,16 @@ eoq;
 				if(isset($_POST['Delete'])){
 					$this->sugarbean->retrieve($id);
 					if($this->sugarbean->ACLAccess('Delete')){
-					//Martin Hu Bug #20872
-						if($this->sugarbean->object_name == 'EmailMan'){
-							$query = "DELETE FROM emailman WHERE id = '" . $this->sugarbean->id . "'";
-							$db->query($query);
-						} else {
-
-							//BEGIN SUGARCRM flav=pro ONLY
-						    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
-                                if(!isset($_SESSION['REASSIGN_TEAMS'])) {
-						    	   $_SESSION['REASSIGN_TEAMS'] = array();
-                                }
-                                $_SESSION['REASSIGN_TEAMS'][] = $this->sugarbean->id;
-						    	continue;
-						    }
-						    //END SUGARCRM flav=pro ONLY
-							$this->sugarbean->mark_deleted($id);
+						//BEGIN SUGARCRM flav=pro ONLY
+					    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
+                            if(!isset($_SESSION['REASSIGN_TEAMS'])) {
+                                $_SESSION['REASSIGN_TEAMS'] = array();
+                            }
+                            $_SESSION['REASSIGN_TEAMS'][] = $this->sugarbean->id;
+						    continue;
 						}
+						//END SUGARCRM flav=pro ONLY
+						$this->sugarbean->mark_deleted($id);
 					}
 				}
 				else {

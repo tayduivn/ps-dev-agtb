@@ -33,6 +33,7 @@ require_once('include/ListView/ListViewData.php');
 require_once('include/MassUpdate.php');
 
 class ListViewDisplay {
+    static $listViewCounter = 0;
 
 	var $show_mass_update_form = false;
 	var $show_action_dropdown = true;
@@ -284,19 +285,19 @@ class ListViewDisplay {
 
 
 		$close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $app_strings['LBL_CLOSEINLINE']);
-		$menuItems = "<li><a  name='thispage' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='if (document.MassUpdate.select_entire_list.value==1){document.MassUpdate.select_entire_list.value=0;sListView.check_all(document.MassUpdate, \"mass[]\", true, $pageTotal)}else {sListView.check_all(document.MassUpdate, \"mass[]\", true)};' href='#'>{$app_strings['LBL_LISTVIEW_OPTION_CURRENT']}&nbsp;&#x28;{$pageTotal}&#x29;&#x200E;</a></li>"
-			. "<li><a  name='selectall' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$total});' href='#'>{$app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$total}&#x29;&#x200E;</a></li>"
-			. "<li><a name='deselect' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.clear_all(document.MassUpdate, \"mass[]\", false);' href='#'>{$app_strings['LBL_LISTVIEW_NONE']}</a></li>";
+		$menuItems = array(
+            "<input title=\"".$app_strings['LBL_SELECT_ALL_TITLE']."\" type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked);' /><a id='$id'  href='javascript: void(0);'></a>",
+            "<a  name='thispage' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='if (document.MassUpdate.select_entire_list.value==1){document.MassUpdate.select_entire_list.value=0;sListView.check_all(document.MassUpdate, \"mass[]\", true, $pageTotal)}else {sListView.check_all(document.MassUpdate, \"mass[]\", true)};' href='#'>{$app_strings['LBL_LISTVIEW_OPTION_CURRENT']}&nbsp;&#x28;{$pageTotal}&#x29;&#x200E;</a>",
+            "<a  name='selectall' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$total});' href='#'>{$app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$total}&#x29;&#x200E;</a>",
+            "<a name='deselect' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.clear_all(document.MassUpdate, \"mass[]\", false);' href='#'>{$app_strings['LBL_LISTVIEW_NONE']}</a>",
+        );
 
-		    $script = "<ul class='clickMenu' id='selectLink'>";
-            $script .= "<li>";
-                $script .="<input title=\"".$app_strings['LBL_SELECT_ALL_TITLE']."\" type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, \"mass[]\", this.checked);' /><a id='$id'  href='javascript: void(0);'></a>";
-                $script .="<ul class='subnav'>";
-                    $script .= $menuItems;
-                $script .="</ul>";
-            $script .="</li>";
-        $script .="</ul>";
-		return $script;
+        $link = array(
+            'class' => 'clickMenu',
+            'id' => 'selectLink',
+            'buttons' => $menuItems
+        );
+        return $link;
 	}
 
 	/**
@@ -350,26 +351,13 @@ class ListViewDisplay {
 		foreach ( $this->actionsMenuExtraItems as $item )
 		    $menuItems[] = $item;
 
-        $output = "<ul class='clickMenu fancymenu' id='selectActions' name='selectActions'>";
-        $i = 0;
-        foreach($menuItems as $item)
-        {
-            if($i == 0)
-            {
-                $output .= "<li>$item<ul class='subnav'>";
-            }
-            else
-            {
-                $output .= "<li>$item</li>";
-            }
-            $i++;
-        }
-
-        $output .= "</ul></li></ul>";
-        $output .= "<div id='selectActionsDisabled' class='selectActionsDisabled'>{$menuItems[0]}<span class='ab'></span></div>";
-
-
-        return $output;
+        $link = array(
+            'class' => 'clickMenu selectActions',
+            'id' => 'selectActions',
+            'name' => 'selectActions',
+            'buttons' => $menuItems
+        );
+        return $link;
 
 }
 	/**

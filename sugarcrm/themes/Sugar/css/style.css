@@ -6600,12 +6600,12 @@ ul#selectLink.clickMenu {
 	height: 22px;
 	min-width: 20px;
 }
-
+td.paginationActionButtons ul.clickMenu #massall,
 ul#selectLink.clickMenu #massall{
 	float: left;
 	margin: 4px 4px;
 }
-
+td.paginationActionButtons ul.clickMenu > li > a,
 ul#selectLink.clickMenu > li > a{
 	padding: 0px !important;
 }
@@ -6622,7 +6622,7 @@ ul#detailViewActions.clickMenu {
 	margin-top: 2px !important;
 }
 
-#selectActions.clickMenu {
+.selectActions.clickMenu {
 	display: none;
 }
 

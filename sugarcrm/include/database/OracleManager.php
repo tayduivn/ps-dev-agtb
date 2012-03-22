@@ -484,7 +484,7 @@ class OracleManager extends DBManager
      */
     protected function AltlobExecute($table, $field_defs, $data, $sql)
     {
-    	$GLOBALS['log']->debug("Oracle Execute: $sql");
+    	$GLOBALS['log']->debug("Oracle Execute Args: $sql");
         $this->checkConnection();
         if(empty($sql)){
             return false;
@@ -494,7 +494,7 @@ class OracleManager extends DBManager
         $lob_field_type=array();
         $lobs=array();
         foreach ($field_defs as $fieldDef) {
-            $type = $this->getFieldType($fieldDef);
+            $type = $this->getColumnType($this->getFieldType($fieldDef));
             if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
                 continue;
             }
@@ -503,8 +503,8 @@ class OracleManager extends DBManager
             if (!isset($data[$fieldDef['name']])) continue;
 
             $lob_type = false;
-            if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
-            else if ($type == 'blob' || $type == 'longblob') $lob_type = OCI_B_BLOB;
+            if ($this->isTextType($type)) $lob_type = OCI_B_CLOB;
+            else if ($type == 'blob') $lob_type = OCI_B_BLOB;
 
             // this is not a lob, continue;
             if ($lob_type === false) continue;
@@ -516,7 +516,7 @@ class OracleManager extends DBManager
         if (count($lob_fields) > 0 ) {
             $sql .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
         }
-
+        $GLOBALS['log']->info("Oracle Execute: $sql");
         $stmt = oci_parse($this->database, $sql);
         if($this->checkError("Update parse failed: $sql", false)) {
             return false;
