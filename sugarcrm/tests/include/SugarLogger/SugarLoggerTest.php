@@ -64,8 +64,16 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         $logfile = $config->get('logger.file.name');
         $log_dir = $config->get('log_dir'); 
         $log_dir = $log_dir . (empty($log_dir)?'':'/');
-        
-        $logFile = file_get_contents($log_dir . $logfile . $ext);
+        $file_suffix = $config->get('logger.file.suffix');
+        $date_suffix = "";
+
+        if( !empty($file_suffix) )
+        {
+            $date_suffix = "_" . date(str_replace("%", "", $file_suffix));
+        }
+
+
+        $logFile = file_get_contents($log_dir . $logfile . $date_suffix . $ext);
         
         if ( $shouldMessageBeWritten )
             $this->assertContains($messageWritten,$logFile);
@@ -84,8 +92,15 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         $logfile = $config->get('logger.file.name');
         $log_dir = $config->get('log_dir'); 
         $log_dir = $log_dir . (empty($log_dir)?'':'/');
-        
-        $logFile = file_get_contents($log_dir . $logfile . $ext);
+        $file_suffix = $config->get('logger.file.suffix');
+        $date_suffix = "";
+
+        if( !empty($file_suffix) )
+        {
+            $date_suffix = "_" . date(str_replace("%", "", $file_suffix));
+        }
+
+        $logFile = file_get_contents($log_dir . $logfile . $date_suffix . $ext);
         
         $this->assertContains('[DEBUG] this was asserted false',$logFile);
         $this->assertNotContains('[DEBUG] this was asserted true',$logFile);
