@@ -467,69 +467,25 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             }
         }
 
-		$button_count = 1;
-		$widget_contents = "";
-        $first = true;
         // this is for inline buttons on listviews
-		foreach ($button_contents as $actions => $action)
-        {
-
-            if ($first && count($button_contents) > 1)
-            {
-                $hide = " style:'display: none'";
-                $firstaction = $action;
-                $button_count++;
-                $first = false;
-                continue;
-            }
-            else if ($first && count($button_contents) == 1)
-            {
-                $firstaction = $action;
-                //$widget_contents .= "<li>&nbsp;</li>";
-            }
-            else
-            {
-                $widget_contents .= "<li>".$action."</li>";
-            }
-
-
-			if(sizeof($button_contents) == $button_count)
-            {
-				$count++;
-                $this->xTemplate->assign('CELL_COUNT', $count);
-                $pre = '<ul class="clickMenu subpanel records fancymenu button">'. "\n";
-                $post = "";
-                $this->xTemplate->assign('CLASS', "inlineButtons");
-                if(sizeof($button_contents) == 1)
-                {
-        			$pre .= '<li class="single">'. "\n";
-                }
-                else {
-                	$pre .= '<li>'. "\n";
-                }
-
-                $tempid = create_guid();
-                $pre .= '<script type="text/javascript">
+        // bug#51275: smarty widget to help provide the action menu functionality as it is currently sprinkled throughout the app with html
+        require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+        $tempid = create_guid();
+        $button_contents[0] = "<div style='display: inline' id='$tempid'>".$button_contents[0]."</div>";
+        $action_button = smarty_function_sugar_action_menu(array(
+            'id' => $tempid,
+            'buttons' => $button_contents,
+            'class' => 'clickMenu subpanel records fancymenu button',
+            'theme' => 'Sugar' //assign theme value to display dropdown menu on class theme
+        ), $this->xTemplate);
+        $pre_script = '<script type="text/javascript">
                         var zz = $("#'.$tempid.'").children().first().find("span").remove();
                     </script>';
-                $pre .= "<div style='display: inline; float: left;' id='$tempid'>".str_replace("&nbsp;","",$firstaction)."</div>";
-				if(sizeof($button_contents) > 1) {
-	        		$pre .= '<ul class="subnav';
-	        		$pre .='" id="'.$tempid.'">' . "\n";
-	        		$post .= ' </ul>' . "\n";
-          		 }
-		        $post .= '</li>' . "\n";
-		        $post .= '</ul>' . "\n";
+        $this->xTemplate->assign('CLASS', "inlineButtons");
+        $this->xTemplate->assign('CELL_COUNT', ++$count);
+        $this->xTemplate->assign('CELL', $pre_script.$action_button);
+        $this->xTemplate->parse($xtemplateSection.".row.cell");
 
-                if ( empty($widget_contents) )
-                    $widget_contents = '&nbsp;';
-
-                $this->xTemplate->assign('CELL', $pre.$widget_contents.$post);
-                $this->xTemplate->parse($xtemplateSection.".row.cell");
-			}
-			$button_count++;
-            $first = false;
-		}
 
         $aItem->setupCustomFields($aItem->module_dir);
         $aItem->custom_fields->populateAllXTPL($this->xTemplate, 'detail', $html_varName, $fields);

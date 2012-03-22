@@ -787,7 +787,7 @@ border-radius: 6px;
 {
   
 }
-.list tr.pagination td table td a:link, 
+.list tr.pagination td table td a:link,
 .list tr.pagination td table td a:visited,
 .reportGroupByDataChildTablelistViewThS1 a:link,
 .reportGroupByDataChildTablelistViewThS1 a:visited
@@ -6320,6 +6320,7 @@ ul.clickMenu {
 	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 	    zoom:1; *display: inline; /*ie fix*/
 }
+ul.clickMenu form, div.action_buttons form {float:left;}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
@@ -6344,7 +6345,7 @@ ul.clickMenu:hover {
 		color: #fff;	
 }
 ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
-ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
+ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a, ul.clickMenu:hover > li > form > a {
 	color: #fff !important;	
 }
 
@@ -6596,6 +6597,8 @@ ul#globalLinks.clickMenu > li > a {
     padding: 14px 7px !important;	
 }
 
+#contentTable .yui-nav, #contentTable .yui-nav * { position:static; }
+
 ul#selectLink.clickMenu {
 	height: 22px;
 	min-width: 20px;
@@ -6605,7 +6608,8 @@ ul#selectLink.clickMenu #massall{
 	float: left;
 	margin: 4px 4px;
 }
-td.paginationActionButtons ul.clickMenu > li > a,
+
+td.paginationActionButtons ul.selectmenu > li > a,
 ul#selectLink.clickMenu > li > a{
 	padding: 0px !important;
 }
