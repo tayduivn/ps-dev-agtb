@@ -63,6 +63,47 @@ class SugarSearchEngineFullIndexer
         $this->results = array();
     }
 
+    public function populateIndexQueue()
+    {
+        if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
+            return $this;
+
+        //Create the necessary index server side.
+        $this->SSEngine->createIndex(TRUE);
+
+        $GLOBALS['log']->info("Populating Full System Index Queue");
+        $startTime = microtime(true);
+        $allModules = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
+
+        $totalCount = 0;
+        foreach($allModules as $module => $fieldDefinitions)
+        {
+            $totalCount += $this->populateIndexQueueForModule($module);
+        }
+
+        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
+        $this->results['totalTime'] = $totalTime;
+        $GLOBALS['log']->fatal("Total time to populate full system index queue: $totalTime (s)");
+        $avgRecs = number_format(round(($totalCount / $totalTime), 2), 2);
+        $GLOBALS['log']->fatal("Total number of records queued: $totalCount , records per sec. $avgRecs");
+
+        return $this;
+
+
+    }
+
+    public function populateIndexQueueForModule($module)
+    {
+        $GLOBALS['log']->info("Going to populate index queue for module {$module} ");
+        $db = DBManagerFactory::getInstance('fts');
+        $obj = BeanFactory::getBean($module, null);
+        $beanName = BeanFactory::getBeanName($module);
+        $query = "INSERT INTO fts_queue (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name}";
+        $result = $db->query($query, true, "Error populating index queue for fts");
+
+    }
+
+
     /**
      * Index the entire system. This should only be called from a worker process as this is a time intensive process.
      */
