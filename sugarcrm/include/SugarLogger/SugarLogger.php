@@ -52,6 +52,8 @@ class SugarLogger implements LoggerTemplate
 	 * used for config screen
 	 */
 	public static $filename_suffix = array(
+        //bug#50265: Added none option for previous version users
+        "" => "None",
 	    "%m_%Y"    => "Month_Year",
 	    "%w_%m"    => "Week_Month",
 	    "%m_%d_%y" => "Month_Day_Year",
@@ -182,12 +184,18 @@ class SugarLogger implements LoggerTemplate
         if (!$this->initialized || empty($this->logSize)) {
             return;
         }
-		// lets get the number of megs we are allowed to have in the file
-		$megs = substr ( $this->logSize, 0, strlen ( $this->logSize ) - 2 );
-		//convert it to bytes
-		$rollAt = ( int ) $megs * 1024 * 1024;
-		//check if our log file is greater than that or if we are forcing the log to roll
-		if ($force || filesize ( $this->full_log_file ) >= $rollAt) {
+		// bug#50265: Parse the its unit string and get the size properly
+        $units = array(
+            'b' => 1,                   //Bytes
+            'k' => 1024,                //KBytes
+            'm' => 1024 * 1024,         //MBytes
+            'g' => 1024 * 1024 * 1024,  //GBytes
+        );
+        if( preg_match('/^\s*([0-9]+\.[0-9]+|\.?[0-9]+)\s*(k|m|g|b)(b?ytes)?/i', $this->logSize, $match) ) {
+            $rollAt = ( int ) $match[1] * $units[strtolower($match[2])];
+        }
+		//check if our log file is greater than that or if we are forcing the log to roll if and only if roll size assigned the value correctly
+		if ( $force || ($rollAt && filesize ( $this->full_log_file ) >= $rollAt) ) {
 			//now lets move the logs starting at the oldest and going to the newest
 			for($i = $this->maxLogs - 2; $i > 0; $i --) {
 				if (file_exists ( $this->log_dir . $this->logfile . $i . $this->ext )) {
