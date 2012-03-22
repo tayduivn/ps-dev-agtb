@@ -484,7 +484,7 @@ class OracleManager extends DBManager
      */
     protected function AltlobExecute($table, $field_defs, $data, $sql)
     {
-    	$GLOBALS['log']->info("Oracle Execute: $sql");
+    	$GLOBALS['log']->debug("Oracle Execute Args: $sql");
         $this->checkConnection();
         if(empty($sql)){
             return false;
@@ -516,7 +516,7 @@ class OracleManager extends DBManager
         if (count($lob_fields) > 0 ) {
             $sql .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
         }
-
+        $GLOBALS['log']->info("Oracle Execute: $sql");
         $stmt = oci_parse($this->database, $sql);
         if($this->checkError("Update parse failed: $sql", false)) {
             return false;
