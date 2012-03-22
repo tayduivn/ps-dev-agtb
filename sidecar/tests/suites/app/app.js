@@ -1,4 +1,4 @@
-describe("Framework", function() {
+describe("App", function() {
     var authStub, metaStub, isGetMetadataSucceeded;
 
     beforeEach(function() {

@@ -20,7 +20,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");
@@ -46,7 +46,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");
@@ -76,7 +76,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");
@@ -113,7 +113,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         beans.offset = 3;
@@ -130,7 +130,7 @@ describe("BeanCollection", function() {
                 });
         app.config.maxQueryResult = 1;
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");

@@ -5,7 +5,6 @@ describe('metadata', function () {
     beforeEach(function () {
         //Load the metadata
         SUGAR.App.metadata.set(fixtures.metadata);
-        SUGAR.App.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
     });
 
     afterEach(function () {
@@ -15,18 +14,19 @@ describe('metadata', function () {
         expect(typeof(SUGAR.App.metadata)).toBe('object');
     });
 
-    it('gets vardefs', function () {
+    it('gets vardefs for a bean', function () {
         expect(SUGAR.App.metadata.get({
             type:"vardef",
-            module:"Contacts"
-        })).toBe(fixtures.metadata.Contacts.beans.Contact.vardefs);
+            module:"Contacts",
+            bean:"Contact"
+        })).toBe(fixtures.metadata.modules.Contacts.beans.Contact.fields);
     });
 
     it('gets viewdefs', function () {
         expect(SUGAR.App.metadata.get({
             type:"view",
             module:"Contacts"
-        })).toBe(fixtures.metadata.Contacts.views);
+        })).toBe(fixtures.metadata.modules.Contacts.views);
     });
 
     it('gets defs for a specific view', function () {
@@ -34,14 +34,14 @@ describe('metadata', function () {
             type:"view",
             module:"Contacts",
             view:"editView"
-        })).toBe(fixtures.metadata.Contacts.views.editView);
+        })).toBe(fixtures.metadata.modules.Contacts.views.editView);
     });
 
     it('gets layoutdefs', function () {
         expect(SUGAR.App.metadata.get({
             type:"layout",
             module:"Contacts"
-        })).toBe(fixtures.metadata.Contacts.layouts);
+        })).toBe(fixtures.metadata.modules.Contacts.layouts);
     });
 
     it('gets a specific layout', function () {
@@ -49,7 +49,7 @@ describe('metadata', function () {
             type:"layout",
             module:"Contacts",
             layout:'detail'
-        })).toBe(fixtures.metadata.Contacts.layouts.detail);
+        })).toBe(fixtures.metadata.modules.Contacts.layouts.detail);
     });
 
     it('gets a specific sugarfield', function () {
@@ -58,7 +58,7 @@ describe('metadata', function () {
                 type:'varchar',
                 view:'editView'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.views.editView);
+        })).toBe(fixtures.metadata.sugarFields.text.views.editView);
     });
 
     it('gets a specific sugarfield defaulted to default if the view does not exist', function () {
@@ -67,14 +67,14 @@ describe('metadata', function () {
                 type:'varchar',
                 view:'thisViewDoesntExist'
             }
-        })).toBe(sugarFieldsFixtures.fieldsData.text.views["default"]);
+        })).toBe(fixtures.metadata.sugarFields.text.views["default"]);
     });
 
     it ('should sync metadata', function (){
         //Spy on API
         SUGAR.App.api = {
             getMetadata:function(modules, filters, callbacks){
-                var metadata = fixtures.metadata
+                var metadata = fixtures.metadata.modules
                 callbacks.success(metadata);
             }
         };

@@ -19,7 +19,7 @@ describe("DataManager", function() {
     it("should be able to create an instance of primary bean and collection", function() {
         dm.declareModels(metadata);
 
-        _.each(_.keys(metadata), function(moduleName) {
+        _.each(_.keys(metadata.modules), function(moduleName) {
             expect(dm.createBean(moduleName, {})).toBeDefined();
             expect(dm.createBeanCollection(moduleName)).toBeDefined();
         });
@@ -30,12 +30,12 @@ describe("DataManager", function() {
         var moduleName = "Contacts",
             beanType = "Contact";
 
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
 
         var bean = dm.createBean(moduleName, { someAttr: "Some attr value"});
         expect(bean.module).toEqual(moduleName);
         expect(bean.beanType).toEqual(beanType);
-        expect(bean.fields).toEqual(metadata[moduleName].beans[beanType].vardefs.fields);
+        expect(bean.fields).toEqual(metadata.modules[moduleName].beans[beanType].fields);
         expect(bean.get("someAttr")).toEqual("Some attr value");
 
         var collection = dm.createBeanCollection(moduleName);
@@ -49,12 +49,12 @@ describe("DataManager", function() {
         var moduleName = "Teams",
             beanType = "TeamSet";
 
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
 
         var bean = dm.createBean(moduleName, { someAttr: "Some attr value"}, beanType);
         expect(bean.module).toEqual(moduleName);
         expect(bean.beanType).toEqual(beanType);
-        expect(bean.fields).toEqual(metadata[moduleName].beans[beanType].vardefs.fields);
+        expect(bean.fields).toEqual(metadata.modules[moduleName].beans[beanType].fields);
         expect(bean.get("someAttr")).toEqual("Some attr value");
 
         var collection = dm.createBeanCollection(moduleName, undefined, beanType);
@@ -68,7 +68,7 @@ describe("DataManager", function() {
         var moduleName = "Teams",
             beanType = "TeamSet";
 
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
 
         var mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
@@ -85,7 +85,7 @@ describe("DataManager", function() {
     it("should be able to fetch beans", function() {
         var moduleName = "Teams",
             beanType = "TeamSet";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
 
         var mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
@@ -101,7 +101,7 @@ describe("DataManager", function() {
 
     it("should be able to sync (read) a bean", function() {
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var bean = dm.createBean(moduleName, { id: "1234" });
 
         var contact = SugarTest.loadJson("contact");
@@ -120,7 +120,7 @@ describe("DataManager", function() {
 
     it("should be able to sync (create) a bean", function() {
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var contact = dm.createBean(moduleName, { first_name: "Clara", last_name: "Tsetkin" });
 
         server = sinon.fakeServer.create();
@@ -137,7 +137,7 @@ describe("DataManager", function() {
 
     it("should be able to sync (update) a bean", function() {
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var contact = dm.createBean(moduleName, { id: "xyz", first_name: "Clara", last_name: "Tsetkin", dateModified: "1" });
 
         server = sinon.fakeServer.create();
@@ -154,7 +154,7 @@ describe("DataManager", function() {
 
     it("should be able to sync (delete) a bean", function() {
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var contact = dm.createBean(moduleName, { id: "xyz" });
 
         server = sinon.fakeServer.create();
@@ -168,7 +168,7 @@ describe("DataManager", function() {
 
     it("should be able to sync (read) beans", function() {
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");
@@ -193,7 +193,7 @@ describe("DataManager", function() {
 
     it("should add result count and next offset to a collection if in server response", function(){
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");

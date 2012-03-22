@@ -109,18 +109,16 @@
         declareModel: function(moduleName, module) {
             this.reset(moduleName);
 
-            _models[moduleName].primaryBean = module.primary_bean;
+            _models[moduleName].primaryBean = module.primaryBean;
             _models[moduleName].beans = {};
             _models[moduleName].collections = {};
 
             var beans = module.beans;
 
             _.each(_.keys(beans), function(beanType) {
-                var vardefs = beans[beanType].vardefs;
-                var fields = vardefs.fields;
+                var fields = beans[beanType].fields;
                 var relationships = beans[beanType].relationships;
                 var sf = {};
-                var handler = null;
 
                 var defaults = null;
                 _.each(_.values(fields), function(field) {
@@ -182,7 +180,6 @@
                 _models[moduleName].beans[beanType] = model;
             }, this);
         },
-
         /**
          * Declares bean models and collections classes for each module definition.
          *
@@ -196,13 +193,11 @@
          *      "primary_bean": "Team",
          *      "beans": {
          *        "Team": {
-         *          "vardefs": {
-         *            "fields": {}
+         *          "fields": {
          *          }
          *        },
          *        "TeamSet": {
-         *          "vardefs": {
-         *            "fields": {}
+         *          "fields": {
          *          }
          *        }
          *      }
@@ -214,8 +209,8 @@
          */
         declareModels: function(metadata) {
             this.reset();
-            _.each(_.keys(metadata), function(moduleName) {
-                this.declareModel(moduleName, metadata[moduleName]);
+            _.each(_.keys(metadata.modules), function(moduleName) {
+                this.declareModel(moduleName, metadata.modules[moduleName]);
             }, this);
         },
 

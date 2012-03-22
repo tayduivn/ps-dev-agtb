@@ -45,7 +45,7 @@ describe("Layout.View", function(){
             context : context,
             view:"editView"
         });
-        expect(view.meta).toEqual(fixtures.metadata.Contacts.views.editView);
+        expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.editView);
     });
 
     it('should accept metadata overrides', function(){
@@ -141,7 +141,7 @@ describe("Layout.Layout", function(){
             context : context,
             layout: "edit"
         });
-        expect(layout.meta).toEqual(fixtures.metadata.Contacts.layouts.edit);
+        expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit);
     });
 
     it('should accept metadata overrides', function(){
