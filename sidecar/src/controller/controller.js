@@ -101,7 +101,7 @@
                     }
                 });
             } else {
-                app.router.navigate("login", {trigger: true});
+                app.router.start();
             }
         }
     });

@@ -15,8 +15,6 @@
             function SugarFieldManager() {
                 return {
                     //TODO move this to global cache
-                    fieldsObj:{},
-                    fieldsHash:'',
                     fieldTypeMap:{
                         varchar:"text",
                         name:"text",
@@ -24,8 +22,13 @@
                     },
                     fieldHandlers: {},
 
-                    get : function(def){
-                        return new app.SugarField(def);
+                    get : function(params){
+                        var type = params.def && params.def.type ? params.def && params.def.type : false;
+                        type = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;
+                        if (type && app.sugarField[type])
+                            return new app.sugarField[type](params);
+
+                        return new app.sugarField.base(params);
                     }
 
                 };
