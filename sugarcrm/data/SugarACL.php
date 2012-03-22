@@ -193,6 +193,9 @@ class SugarACL
      */
     public static function listFilter($module, &$list, $context = array(), $options = array())
     {
+        if(empty($list)) {
+            return;
+        }
         foreach($list as $key=>$value) {
             if(!empty($options['use_value'])) {
                 if(is_array($value)) {
