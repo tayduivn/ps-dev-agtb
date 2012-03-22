@@ -27,7 +27,7 @@ if (!defined('sugarEntry')) define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-include_once("internalObjects/RestError.php");
+require_once("include/rest/internalObjects/RestError.php");
 
 /**
  * This is a class factory class for all rest api entry points.  This class works much like
@@ -48,17 +48,17 @@ class RestFactory {
         global $restObjectList;
         $obj = null;
 
-        include_once("RestData.php");
+        require_once("include/rest/RestData.php");
 
         try {
             if (array_key_exists($objName, $restObjectList)) {
-                include_once($restObjectList[$objName]);
+                require_once($restObjectList[$objName]);
                 return new $objName();
             }
 
             if (RestFactory::isValidSugarModule($objName)) {
                 $objName = ucfirst($objName);
-                include_once("internalObjects/restsugarobject.php");
+                require_once("include/rest/internalObjects/restsugarobject.php");
                 return new RestSugarObject($objName);
             } else {
                 $err = new RestError();
@@ -97,10 +97,10 @@ class RestFactory {
         global $beanList;
         $valid = 0;
 
-        include_once("include/modules.php");
+        require_once("include/modules.php");
 
         if (file_exists("custom/include/modules.php")) {
-            include_once("custom/include/modules.php");
+            require_once("custom/include/modules.php");
         }
 
         $modName = ucfirst($modName);

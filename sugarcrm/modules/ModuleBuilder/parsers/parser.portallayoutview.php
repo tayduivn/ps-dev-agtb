@@ -48,12 +48,17 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
 
 
     /**
-     * Constructor
+     * Initializer, sets up the defs, files to use and other needed parts of the
+     * parser.
+     *
+     * @param string $module The module to load the defs for
+     * @param string $view The view defs to load
+     * @param boolean $submittedLayout If there is a new layout proposed
      */
-    function init ($module, $view, $submittedLayout = false)
+    function init($module, $view, $submittedLayout = false)
     {
         $GLOBALS['log']->debug("in ParserPortalLayoutView");
-        $file = "portal/modules/{$module}/metadata/" . strtolower($view) . "defs.php";
+        $file = "modules/{$module}/metadata/portal." . strtolower($view) . "defs.php";
         $this->_customFile = "custom/" . $file;
         $this->_workingFile = "custom/working/" . $file;
         $this->_sourceFile = $file;
@@ -61,22 +66,21 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         $this->_view = strtolower($view);
         $this->language_module = $module;
 
-        if (is_file($this->_workingFile))
-        {
+        // Choose our source file if there is a choice to be made
+        if (is_file($this->_workingFile)) {
             $this->_sourceFile = $this->_workingFile;
             $this->usingWorkingFile = true;
-        }
-        else if (is_file($this->_customFile))
-        {
+        } elseif (is_file($this->_customFile)) {
             $this->_sourceFile = $this->_customFile;
         }
 
-        // get the fieldDefs from the bean
-        $class = $GLOBALS ['beanList'] [$module];
-        require_once ($GLOBALS ['beanFiles'] [$class]);
+        // Get the fieldDefs from the bean
+        $class = $GLOBALS['beanList'][$module];
+        require_once($GLOBALS['beanFiles'][$class]);
         $bean = new $class();
-        $this->_fieldDefs = & $bean->field_defs;
+        $this->_fieldDefs = &$bean->field_defs;
 
+        // This will load up the view defs into this parser
         $this->loadModule($this->_module, $this->_view);
 
         // now fix the layout so that it is compatible with the latest metadata definition = rename data section as a panel within a panel section
@@ -86,70 +90,64 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         $this->maxColumns = $this->_viewdefs ['templateMeta'] ['maxColumns'];
 
         $GLOBALS['log']->debug("ParserPortalLayoutView: after loadModule");
-        if ($submittedLayout)
-        {
+        if ($submittedLayout) {
             // replace the definitions with the new submitted layout
             $this->_loadLayoutFromRequest();
-        } else
-        {
+        } else {
             $this->_padFields(); // destined for a View, so we want to add in (empty) fields
         }
 		
-		$this->_history = new History ( $this->_customFile ) ;
-
-
+		$this->_history = new History($this->_customFile);
     }
 
     function _parseData ($panel)
     {
-        $fields = array();
-        if (empty($panel))
-        return;
-        foreach ($panel as $rowID => $row)
-        {
-            foreach ($row as $colID => $col)
-            {
+        if (empty($panel)) {
+            return;
+        }
+
+        // In for testing parsing at this point. Will be removed. rgonzalez
+        $returnData = $displayData = array();
+
+        foreach ($panel as $rowID => $row) {
+            foreach ($row as $colID => $col) {
                 $properties = array();
 
-                if (! empty($col))
-                {
-                    if (is_string($col))
-                    {
-                        $properties ['name'] = $col;
-                    } else if (! empty($col ['field']))
-                    {
-                        // portal metadata uses 'field' to identify the fieldname; new metadata uses 'name'
-                        $col['name'] = $col['field'];
-                        unset($col['field']);
-                        $properties = $col;
+                if (!empty($col)) {
+                    if (is_string($col)) {
+                        $properties['name'] = $col;
+                    } else {
+                        if (is_array($col)) {
+                            if (!empty($col['field'])) {
+                                // portal metadata uses 'field' to identify the fieldname; new metadata uses 'name'
+                                $col['name'] = $col['field'];
+                                unset($col['field']);
+                                $properties = $col;
+                            }
+                        }
                     }
-                } else
-                {
-                    $properties ['name'] = translate('LBL_FILLER');
+                } else {
+                    $properties['name'] = translate('LBL_FILLER');
                 }
 
-                if (! empty($properties ['name']))
-                {
-
+                if (!empty($properties['name'])) {
                     // get this field's label - if it has not been explicity provided, see if the fieldDefs has a label for this field, and if not fallback to the field name
-                    if (! isset($properties ['label']))
-                    {
-                        if (! empty($this->_fieldDefs [$properties ['name']] ['vname']))
-                        {
-                            $properties['label'] = translate($this->_fieldDefs[$properties ['name']]['vname'], $this->_module);
-                        } else
-                        {
-                            $properties ['label'] = $properties ['name'];
+                    if (!isset($properties ['label'])) {
+                        if (!empty($this->_fieldDefs[$properties['name']]['vname'])) {
+                            $properties['label'] = translate($this->_fieldDefs[$properties['name']]['vname'], $this->_module);
+                        } else {
+                            $properties['label'] = $properties['name'];
                         }
                     } else {
-                    	$properties['label'] = translate($this->_fieldDefs[$properties ['name']]['vname'], $this->_module);
-                    }                    
+                    	$properties['label'] = translate($this->_fieldDefs[$properties['name']]['vname'], $this->_module);
+                    }
 
-                    $displayData[$rowID] [$colID] = $properties;
-
+                    $displayData[$rowID][$colID] = $properties;
+                    $returnData[] = $properties;
                 }
             }
         }
+
         return $displayData;
     }
 

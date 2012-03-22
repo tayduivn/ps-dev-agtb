@@ -44,7 +44,7 @@
                 return _metadata;
             }
             if (!params.type)
-                return this._getModule(params.modules);
+                return this._getModule(params.module);
 
             if (params.type == "view")
                 return this._getView(params.module, params.view);
@@ -187,12 +187,10 @@
          */
         _getVardef: function(module, bean) {
             var beans = this._getModule(module, "beans");
-
             if (!bean) {
                 bean = this._getModule(module, "primary_bean");
             }
-
-            return (bean && beans[bean] && beans[bean].vardefs) ? beans[bean].vardefs : null;
+            return (bean && beans[bean] && beans[bean].fields) ? beans[bean].fields : null;
         },
 
         /**
@@ -223,15 +221,19 @@
          */
         set: function(data, key) {
             key = key || "metadata";
-            _.each(data, function(entry, module) {
-                if (key == "sugarFields") {
-                    _sugarFields[module] = entry;
-                } else {
-                    _metadata[module] = entry;
-                }
-
-                app.cache.set(key + "." + module, entry);
-            });
+            if (data.modules) {
+                _.each(data.modules, function(entry, module) {
+                                    _metadata[module] = entry;
+                                app.cache.set(key + "." + module, entry);
+                            });
+            }
+            if (data.sugarFields) {
+                _.each(data.sugarFields, function(entry, module) {
+                                    _sugarFields[module] = entry;
+                                app.cache.set(key + "." + module, entry);
+                            });
+            }
+            //TODO add template support
         },
 
         /**
@@ -243,7 +245,6 @@
             var self = this;
             app.api.getMetadata([], [], {
                 success: function(metadata) {
-                    self.set(sugarFieldsFixtures.fieldsData, "sugarFields"); // TODO: Right now metadata is hardcoded, replace with actual from api later
                     self.set(metadata);
                     callback.call(self, null, metadata);
                 },

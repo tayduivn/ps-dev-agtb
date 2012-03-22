@@ -43,7 +43,8 @@ $restObjectList = array(
     "metadata" => array(),
     "serverinfo" => array(),
     "listobjects" => array(),
-    "objects" => array()
+    "objects" => array(),
+    "labels" => array(),
 );
 
 /*
@@ -55,6 +56,7 @@ $restObjectList["metadata"] = "internalObjects/metadata.php";
 $restObjectList["serverinfo"] = "internalObjects/serverinfo.php";
 $restObjectList["listobjects"] = "internalObjects/listobjects.php";
 $restObjectList["objects"] = "internalObjects/objects.php";
+$restObjectList["labels"] = "internalObjects/labels.php";
 
 
 /*

@@ -39,8 +39,9 @@ class SugarPortalBrowser
     {
         $d = dir('modules');
 		while($e = $d->read()){
-			if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;
-			if ((file_exists('modules/' . $e . '/metadata/studio.php')) && is_dir('portal/modules/'.$e.'/metadata'))
+			if (substr($e, 0, 1) == '.' || !is_dir('modules/' . $e)) continue;
+            $path = "modules/$e/metadata/";
+			if ((file_exists($path . 'studio.php')) && $this->isPortalModule($path))
 			{
 				$this->modules[$e] = new SugarPortalModule($e);
 			}
@@ -64,6 +65,35 @@ class SugarPortalBrowser
             'action'=>'module=ModuleBuilder&action=wizard&portal=1&layout=1');
         ksort($nodes);
         return $nodes;
+    }
+
+    /**
+     * Runs through the PHP files in a directory and checks for files prefixed
+     * with "portal." to determine if the module is a portal module. This replaces
+     * the old file path checker that looked for portal/modules/$module/metadata
+     *
+     * @param string $dir The directory to scan
+     * @return bool True if a portal.*.php file was found
+     */
+    function isPortalModule($dir) {
+        // Standardize the directory path
+        $path = rtrim($dir, '/') . '/';
+
+        // Get our glob pattern
+        $glob = $path . '*.php';
+
+        // Set our search string
+        $find = $path . 'portal.';
+
+        // Handle it
+        $files = glob($glob);
+        foreach ($files as $file) {
+            if (strpos($file, $find) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
