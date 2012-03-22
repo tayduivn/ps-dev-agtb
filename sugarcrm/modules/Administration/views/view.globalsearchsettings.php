@@ -68,19 +68,20 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign('disabled_modules', json_encode($modules['disabled']));
         //BEGIN SUGARCRM flav=pro ONLY
         //FTS Options
-        $ftsScheduleEnabledText = $mod_strings['LBL_FTS_SCHED_ENABLED'];
+        $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
+        $ftsScheduleEnabledText = '';
         if(isset($GLOBALS['sugar_config']['full_text_engine']))
         {
             $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
             $defaultEngine = $engines[0];
             $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
-            $ftsScheduleEnabledText = string_format($ftsScheduleEnabledText, array($schedulerID));
+            if(!empty($schedulerID))
+               $ftsScheduleEnabledText = string_format($mod_strings['LBL_FTS_SCHED_ENABLED'], array($schedulerID));
         }
         else
         {
             $defaultEngine = '';
             $config = array('host' => '','port' => '');
-            $ftsScheduleEnabledText = '';
         }
 
         $justRequestedAScheduledIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
