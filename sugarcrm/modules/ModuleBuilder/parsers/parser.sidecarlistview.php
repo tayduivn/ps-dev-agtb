@@ -36,7 +36,7 @@ if (! defined('sugarEntry') || ! sugarEntry)
 require_once ('modules/ModuleBuilder/parsers/parser.modifylistview.php');
 require_once 'modules/ModuleBuilder/parsers/views/History.php' ;
 
-class ParserPortalListView extends ParserModifyListView
+class ParserSidecarListView extends ParserModifyListView
 {
 	
 	var $listViewDefs = false;
@@ -55,35 +55,36 @@ class ParserPortalListView extends ParserModifyListView
 		$this->mod_strings = return_module_language($GLOBALS ['current_language'], $this->module_name);
 
 
+        // determine our name
+        $file = "modules/{$module_name}/metadata/portal.listviewdefs.php";
+        $this->originalFile = $file;
+        $this->customFile = "custom/" . $file;
+
+
         // get our bean
-		$class = $GLOBALS ['beanList'] [$this->module_name];
+        $class = $GLOBALS ['beanList'] [$this->module_name];
 		require_once ($GLOBALS ['beanFiles'] [$class]);
 		$this->module = new $class();
 
-        // Set our def file
-        $defFile = 'modules/' . $this->module_name . '/metadata/portal.listviewdefs.php';
-        $this->originalFile = $defFile;
-		include $defFile;
+        // pull in our $viewdefs
+		include ($this->originalFile);
+
 
 		$this->originalListViewDefs = $viewdefs[$this->module_name]['listview'];
-		$this->fixKeys($this->originalListViewDefs);
-		$this->customFile = 'custom/' . $defFile;
-
+		//$this->fixKeys($this->originalListViewDefs); // we won't be needing any of this crap
 
 		if (file_exists($this->customFile)) {
-			include $this->customFile;
+			include ($this->customFile);
 			$this->listViewDefs = $viewdefs[$this->module_name]['listview'];
-			$this->fixKeys($this->listViewDefs);
+			//$this->fixKeys($this->listViewDefs);
 		} else
 		{
 			$this->listViewDefs = & $this->originalListViewDefs;
 		}
-		
-		$this->_fromNewToOldMetaData();
 
 		$this->language_module = $this->module_name;
 		
-		$this->_history = new History ($this->customFile);
+		$this->_history = new History ($this->customFile) ;
 	}
 	
 	function _fromNewToOldMetaData()
