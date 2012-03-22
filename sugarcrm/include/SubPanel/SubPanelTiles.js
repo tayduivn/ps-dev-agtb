@@ -518,6 +518,12 @@ SUGAR.subpanelUtils = function() {
                     form_el;
                 SUGAR.subpanelUtils.dataToDOMAvail = false;
 
+                // Show buttons before we remove subpanel
+                if (typeof currentPanelDiv != 'undefined' && currentPanelDiv != null) {            
+                    var button_elements = YAHOO.util.Selector.query('td.buttons', currentPanelDiv, false);
+                    YAHOO.util.Dom.setStyle(button_elements, 'display', ''); 
+                }
+               
                 // Check if preview subpanel form exists, remove if it does.
                 SUGAR.subpanelUtils.removeSubPanel();
 
