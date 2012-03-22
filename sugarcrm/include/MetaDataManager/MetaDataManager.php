@@ -35,78 +35,72 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  * @method Array getData getData() gets all meta data.
  *
- * Notes:
- *  All data that is retuned for each data type such as vardefs, listviewdefs, etc... will
- * all have hash keys called "isMobile", "isCustom", "{moduleName}_md5".
  *
- *  "isMobile": is a bool value which lets you know if the data is for a mobile view or not.
- *  "isCustom": is a bool value which lets you know if the data is from the custom sugarcrm
- *      directory or not.
- *  "{moduleName}_md5": Is this an md5sum of the metadata for a given module.
+ *  "platform": is a bool value which lets you know if the data is for a mobile view, portal or not.
  *
  */
 class MetaDataManager {
 
     protected $modules = null;
-    protected $mobile = false;
-    protected $filter = null;
+    protected $platform = 'base';
     protected $typeFilter = null;
-    protected $filterVarDefs = false;
-    protected $basePath = "modules";
 
     /**
      * The constructor for the class.
      *
-     * @param null $filter A list of modules to return, if null all modules are returned.
-     * @param bool $isMobile Will cause mobile metadata to be returned where it exists.
      */
-    function __construct ($filter = null, $type = null, $isMobile = false) {
-        $this->mobile = $isMobile;
-        $this->filter = $filter;
-        $this->typeFilter = $type;
-        $this->modules = $this->readModuleDir($this->basePath);
-
-        if ($this->typeFilter != null && in_array("vardefs", $this->typeFilter)) {
-            $this->filterVarDefs = true;
-        }
-
+    function __construct () {
     }
 
     /**
      * This function goes and collects the metadata for you.
      *
-     * @return array Retuns an array of module names and all of the metata for each module
-     * in hashes contained in the array.
+     * @param array $modules A list of modules to return *REQUIRED*
+     * @param array $typeFilter A list of data types to return, if null all modules are returned.
+     * @param string $platform What platform to load metadata for: "base", "mobile", "portal" are likely options, defaults to "base"
+     * @return array Retuns an array of module names and all of the metata for each module in hashes contained in the array.
      */
-    public function getData() {
-        $mods = null;
-        $data = array();
+    public function getData($modules, $typeFilter = array(), $platform = 'base') {
+        // Default the type filter to everything
+        if ( empty($typeFilter) ) {
+            $typeFilter = array('modules','sugarFields','viewTemplates','labels','appStrings','appListStrings');
+        }
 
-        // check to see if there is a list of mods to return other then all of them.
-        if ($this->filter != null) {
-            if (count($this->filter) < 1) {
-                $mods = $this->modules;
-            } else {
-                $mods = $this->filter;
-            }
+        $this->modules = $modules;
+        $this->typeFilter = $typeFilter;
+        if ( $platform == 'mobile' ) {
+            $this->platforms = array('mobile','portal','base');
+        } else if ( $platform == 'portal' ) {
+            $this->platforms = array('portal','base');
         } else {
-            $mods = $this->modules;
+            $this->platforms = array('base');
         }
         
-        $data['modules'] = array();
-        foreach ($mods as $modName) {
-            $modData = $this->getModuleData($modName);
-            $data['modules'][$modName] = $modData;
+        if (in_array('modules',$this->typeFilter)) {
+            $data['modules'] = array();
+            foreach ($modules as $modName) {
+                $modData = $this->getModuleData($modName);
+                $data['modules'][$modName] = $modData;
+            }
+        }
+        
+        if (in_array('sugarFields',$this->typeFilter)) {
+            $data['sugarFields'] = $this->getSugarFields();
+        }
+        
+        if (in_array('viewTemplates',$this->typeFilter)) {
+            $data['viewTemplates'] = $this->getViewTemplates();
+        }
+        
+        if (in_array('appStrings', $this->typeFilter)) {
+            $data['appStrings'] = $this->getAppStrings();
+        }
+        
+        if (in_array('appListStrings', $this->typeFilter)) {
+            $data['appListStrings'] = $this->getAppListStrings();
         }
 
-        $data['sugarFields'] = $this->getSugarFields();
-        
-        $data['viewTemplates'] = $this->getViewTemplates();
-        
-        $data['appStrings'] = $this->getAppStrings();
-        
-        $data['appListStrings'] = $this->getAppListStrings();
-
+        // TODO: When we actually start caching the results of the metadata, we will have to calculate everything and only send the requested parts so the md5 is consistent.
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
@@ -125,69 +119,6 @@ class MetaDataManager {
     protected function getModuleViews($moduleName) {
         $data = array();
 
-        $types = array(
-            "detailviewdefs" => "viewdefs",
-            "editviewdefs" => "viewdefs",
-            "searchdefs" => "searchdefs",
-            "listviewdefs" => "listViewDefs"
-        );
-
-        /*
-         * filter out the unwanted views.
-         */
-        if ($this->typeFilter != null) {
-            $tmptypes = array();
-            foreach ($this->typeFilter as $userFilter) {
-                $userFilter = strtolower($userFilter);
-
-                if ($userFilter != "vardefs") {
-                    $tmptypes[$userFilter] = "{$types[$userFilter]}";
-                }
-            }
-
-            $types = $tmptypes;
-            $tmptypes = null;
-        }
-
-        foreach ($types as $viewType => $viewAccessor) {
-            $data[$viewType] = array();
-            $stdDel = "";
-            $cusDel = "";
-            $useFile = null;
-            $isCustom = false;
-            $defFile = "{$viewType}.php";
-
-            if ($this->mobile) {
-                $defFile = "wireless.{$defFile}";
-            }
-
-            $stdDef = "modules/{$moduleName}/metadata/{$defFile}";
-            $cusDef = "custom/{$stdDef}";
-
-            unset($$viewAccessor);
-
-            if (file_exists($stdDef)) {
-                require($stdDef);
-            }
-
-            if (file_exists($cusDef)) {
-                require($cusDef);
-                $isCustom = true;
-            }
-
-            if (!isset($$viewAccessor)) {
-                $data[$viewType] = array();
-                continue;
-            }
-
-            $tmp = $$viewAccessor;
-            $keys = array_keys($tmp);
-            $data[$viewType] = $tmp[$keys[0]];
-            $data[$viewType]['isCustom'] = $isCustom;
-            $data[$viewType]['isMobile'] = $this->mobile;
-            unset($$viewAccessor);
-        }
-
         return $data;
     }
 
@@ -199,45 +130,21 @@ class MetaDataManager {
      * returned in the case of no metadata.
      */
     protected function getModuleData($moduleName) {
-        $data['views'] = $this->getModuleViews($moduleName);
         $vardefs = $this->getVarDef($moduleName);
 
         $data['fields'] = $vardefs['fields'];
         //FIXME: Need more relationshp data (all relationship data)
         $data['relationships'] = $vardefs['relationships'];
-        $data['labels'] = return_module_language($GLOBALS['current_language'],$moduleName);
+        if(in_array('labels',$this->typeFilter)) {
+            $data['labels'] = return_module_language($GLOBALS['current_language'],$moduleName);
+        }
+        $data['views'] = $this->getModuleViews($moduleName);
 
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = $md5;
 
         return $data;
-    }
-
-    /**
-     * Reads the directory passed to it, and generates a list of directories contained within
-     * the parent directory.  This method filters out the ".." & "." directories.
-     *
-     * @param $dir The directory to read modules directory's from.
-     * @return array An array of module names.
-     */
-    protected function readModuleDir($dir) {
-        $dir = opendir($dir);
-        $modules = array();
-
-        if ($dir == FALSE) {
-            return $modules;
-        }
-
-        while (($file = readdir($dir)) != false) {
-            if ( $file === "." || $file  === "..") {
-                continue;
-            }
-
-            array_push($modules, $file);
-        }
-
-        return $modules;
     }
 
     /**
@@ -272,84 +179,70 @@ class MetaDataManager {
     /**
      * gets sugar fields
      *
-     * @return array array of sugarfields with
+     * @return array array of sugarfields with a hash
      */
     public function getSugarFields()
     {
-        $fieldFileTypes2meta = array('hbt'=>'template','js'=>'js');
         $result = array();
-        $fieldsDirectory = "include/SugarFields/PortalFields/";
-        // get list of portal fields
-        $portalFiles = $this->getFiles($fieldsDirectory);
 
-        foreach ($portalFiles as $finfo) {
-            $build = false;
-            $fieldMeta = '';
-
-            // get file info
-            $fieldName = array_pop(explode('/', $finfo['dirname']));
-            $fileExtension = $finfo['extension'];
-            $action=$finfo["filename"];
-
-            // check if we want this file
-            if (in_array($fileExtension, array_keys($fieldFileTypes2meta))) {
-                $build = true;
-                $fieldMeta = $fieldFileTypes2meta[$fileExtension];
-            }
-
-            // add it to result if we want it
-            if ($build) {
-                $fcontents = file_get_contents($finfo["dirname"]."/".$finfo["basename"]);
-                if (!isset($result[$fieldName])) {
-                    $result[$fieldName] = array('templates'=>array());
-                }
-                if (!isset($result[$fieldName]['templates'][$action]) && strtolower($action) != strtolower($fieldName)) {
-                    $result[$fieldName]['templates'][$action] = array();
-                }
-
-                if (strtolower($action) != strtolower($fieldName)){
-                    $result[$fieldName]['templates'][$action] = array_merge($result[$fieldName]['templates'][$action], array($fieldMeta=>$fcontents)) ;
-                } else {
-                    $result[$fieldName]['controller'] = $fcontents ;
-                }
-
-            }
-
-            $result['_hash'] = md5(serialize($result));
+        $baseFieldDirectory = "include/SugarFields/Fields/";        
+        $builtinSugarFields = glob($baseFieldDirectory."*",GLOB_ONLYDIR);
+        if ( is_dir('custom/'.$baseFieldDirectory) ) {
+            $customSugarFields = glob('custom/'.$baseFieldDirectory."*",GLOB_ONLYDIR);
+        } else {
+            $customSugarFields = array();
         }
-        return $result;
-    }
+        $allSugarFieldDirs = $builtinSugarFields+$customSugarFields;
+        $allSugarFields = array();
+        foreach ( $allSugarFieldDirs as $fieldDir ) {
+            // To prevent doing the work twice, let's sort this out by basename
+            $field = basename($fieldDir);
+            $allSugarFields[$field] = $field;
+        }
 
-
-    /**
-     * return files from a directory recursively
-     *
-     * @param $directory
-     * @param array $exempt full file names to ignore
-     * @param array $files
-     * @param array $exempt_extensions file extensions to ignore
-     * @return array
-     */
-    protected function getFiles($directory, $exempt = array('.', '..', '.ds_store', '.svn'), &$files = array(), $exempt_extensions = array('tpl', 'php'))
-    {
-        $handle = opendir($directory);
-        while (false !== ($resource = readdir($handle))) {
-            if (!in_array(strtolower($resource), $exempt)) {
-                if (is_dir($directory . $resource . '/')) {
-                    array_merge($files,
-                        $this->getFiles($directory . $resource . '/', $exempt, $files));
+        foreach ( $allSugarFields as $fieldName ) {
+            $fieldData = array();
+            // Check each platform in order of precendence to find the "best" controller
+            foreach ( $this->platforms as $platform ) {
+                $controller = $baseFieldDirectory.$fieldName."/${platform}/${fieldName}.js";
+                if ( file_exists('custom/'.$controller) ) {
+                    $controller = 'custom/'.$controller;
                 }
-                else {
-                    $resourceParts = explode('.', $resource);
-                    $extension = end($resourceParts);
-                    if ($extension && !in_array($extension, $exempt_extensions)) {
-                        $files[] = pathinfo($directory . $resource);
+                if ( file_exists($controller) ) {
+                    $fieldData['controller'] = file_get_contents($controller);
+                    // We found a controller, let's get out of here!
+                    break;
+                }
+            }
+
+            $fieldData['templates'] = array();
+            // Reverse the platform order so that "better" templates override worse ones
+            $backwardsPlatforms = array_reverse($this->platforms);
+            foreach ( $backwardsPlatforms as $platform ) {
+                $templateDir = $baseFieldDirectory.$fieldName."/${platform}/";
+                $templates = array();
+                
+                if ( is_dir($templateDir) ) {
+                    $templates = glob($templateDir."*.hbt");
+                }
+                // Do the custom directory last so it will override anything in the core product
+                if ( is_dir('custom/'.$templateDir) ) {
+                    $cstmTemplates = glob('custom/'.$templateDir."*.hbt");
+                    if ( !empty($cstmTemplates) ) {
+                        $templates += $cstmTemplates;
                     }
                 }
+                foreach ( $templates as $templateFile ) {
+                    $templateName = substr(basename($templateFile),0,-4);
+                    $fieldData['templates'][$templateName] = file_get_contents($templateFile);
+                }
             }
+            
+            $result[$fieldName] = $fieldData;
         }
-        closedir($handle);
-        return $files;
+
+        $result['_hash'] = md5(serialize($result));
+        return $result;
     }
 
     /**
