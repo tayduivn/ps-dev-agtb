@@ -191,7 +191,9 @@
                 }
 
                 this.set({collection: collection, model: bean});
-
+                if ((state.id || state.create) && state.view) {
+                    state.view.render();
+                }
                 _.each(this.children, function(child) { //TODO optimize for batch
                     child.getData();
                 });

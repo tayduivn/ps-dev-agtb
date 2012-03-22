@@ -60,9 +60,6 @@
 
             // Render the rendered layout to the main element
             this.$el.html(this.layout.$el);
-
-            // Render the layout
-            this.layout.render();
         },
 
         /**
