@@ -32,6 +32,10 @@
                     return new Handlebars.SafeString(route);
                 });
 
+                Handlebars.registerHelper('formatNumber', function(value, round, precision, number_group_seperator, decimal_seperator) {
+                    return app.utils.formatNumber(value, round, precision, number_group_seperator, decimal_seperator);
+                });
+
                 Handlebars.registerHelper('getfieldvalue', function(bean, field) {
                     return bean.get(field);
                 });
