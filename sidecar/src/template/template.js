@@ -69,7 +69,7 @@
              * @method
              */
             initTemplate: function(instance) {
-                this.load(fixtures.templates);
+                this.load(fixtures.metadata.viewTemplates);
             }
         };
 
