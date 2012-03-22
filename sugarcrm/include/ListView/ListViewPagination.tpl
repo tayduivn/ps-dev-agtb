@@ -47,7 +47,7 @@
                         $this->assign('link_select_id', 'selectLink_'.ListViewDisplay::$listViewCounter++);
                         $this->assign('link_action_id', 'selectLink_'.ListViewDisplay::$listViewCounter++);
                         {/php}
-                        
+
                         {sugar_action_menu id=$link_seelct_id params=$selectLink theme="Sugar"}
 					
 						{/if}
