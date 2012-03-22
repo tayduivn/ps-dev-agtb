@@ -76,12 +76,12 @@ function open_tag($tagName, $params = array()) {
 
     $options = "";
 
-    if(is_array($params))
-    {
-        foreach($params as $attr => $value) {
-            if($value)
-                $options .= $attr.'="'.$value.'" ';
-        }
+    if(empty($params))
+        return "<{$tagName}>";
+
+    foreach($params as $attr => $value) {
+        if($value)
+            $options .= $attr.'="'.$value.'" ';
     }
     return "<{$tagName} {$options}>";
 }

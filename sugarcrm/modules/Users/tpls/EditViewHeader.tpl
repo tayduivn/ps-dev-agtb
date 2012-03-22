@@ -154,7 +154,7 @@ EOD
                 );
                 $this->append('ACTION_BUTTON', <<<EOD
                     <input	title="{$APP['LBL_CANCEL_BUTTON_TITLE']}" accessKey="{$APP['LBL_CANCEL_BUTTON_KEY']}"
-                              class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}'; this.form.record.value='{$RETURN_ID}'; this.form.submit()"
+                              class="button" onclick="var _form = $('#EditView')[0]; _form.action.value='{$RETURN_ACTION}'; _form.module.value='{$RETURN_MODULE}'; _form.record.value='{$RETURN_ID}'; _form.submit()"
                               type="button" name="button" value="{$APP['LBL_CANCEL_BUTTON_LABEL']}">
 EOD
                     );
