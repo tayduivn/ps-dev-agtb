@@ -337,9 +337,9 @@ class StudioModule
     	$nodes = array ( ) ;
         foreach ( $this->sources as $file => $def )
         {
-            if (file_exists ( "portal/modules/{$this->module}/metadata/$file" ))
+            if (file_exists ( "modules/{$this->module}/metadata/portal.$file" ))
             {
-            	$file = str_replace ( $file, '.php', '' ) ;
+            	//$file = str_replace ( $file, '.php', '' ) ;
             	$nodes [] = array ( 
             	   'name' => $def [ 'name' ] , 
             	   'action' => 'module=ModuleBuilder&action=editPortal&view=' . ucfirst ( $def [ 'type' ] ) . '&view_module=' . $this->module 
