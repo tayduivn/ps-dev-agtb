@@ -37,20 +37,21 @@
      * be displayed as a hyperlink).
      *
      * ###Anatomy of a SugarField
-     * A Sugarfield resides in the **`sugarcrm/include/SugarFields/{{SUGARFIELD_NAME}}`** folder.
+     * Sugarfield files resides in the **`sugarcrm/include/SugarFields/{{SUGARFIELD_NAME}}`** folder.
      *
-     * Inside the folder contains the different folders of the SugarField which correspond to their respective supported
+     * Inside the {{SUGARFIELD_NAME}} directory are different folders of the SugarField which correspond to their respective supported
      * views. A typical directory structure will look like the following:
      * <pre>
      * SugarField
      * |- portal
+     *   |-default.js
      *   |-sugarField.js
      *   |-editView.hbt
      *   |-detailView.hbt
      * |- mobile
      *   |-sugarField.js
      *   |-editView.hbt
-     * |- web
+     * |- base
      *   |-sugarField.js
      *   |-listFiew.hbt
      * </pre>
@@ -58,6 +59,8 @@
      * bindings.
      *
      * `viewName.hbt` contains your templates corresponding to the type of view the SugarField is to be displayed on.
+     * Sugar uses Handlebars.js as its client side template of choice. At this time no other templating engines are
+     * supported.
      *
      * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
      * Sugar JavaScript client.
