@@ -31,6 +31,52 @@
     /**
      * SugarField widget. A sugarfield widget is a low level field widget. Some examples of sugarfields are
      * text boxes, date pickers, drop down menus.
+     *
+     * ##Creating a SugarField
+     * SugarCRM allows for customized "sugarfields" which are visual representations of a type of data (e.g. url would
+     * be displayed as a hyperlink).
+     *
+     * ###Anatomy of a SugarField
+     * Sugarfield files resides in the **`sugarcrm/include/SugarFields/{{SUGARFIELD_NAME}}`** folder.
+     *
+     * Inside the {{SUGARFIELD_NAME}} directory are different folders of the SugarField which correspond to their respective supported
+     * views. A typical directory structure will look like the following:
+     * <pre>
+     * SugarField
+     * |- portal
+     *   |-default.js
+     *   |-sugarField.js
+     *   |-editView.hbt
+     *   |-detailView.hbt
+     * |- mobile
+     *   |-sugarField.js
+     *   |-editView.hbt
+     * |- base
+     *   |-sugarField.js
+     *   |-listFiew.hbt
+     * </pre>
+     * **`sugarField.js`** contains the controller for your SugarField; this includes event handlers and necessary data
+     * bindings.
+     * <pre><code>
+     * var controller = {
+     *    events: {
+     *        handler: function() {}
+     *    }
+     * }
+     * </code></pre>
+     *
+     * **`viewName.hbt`** contains your templates corresponding to the type of view the SugarField is to be displayed on.
+     * Sugar uses Handlebars.js as its client side template of choice. At this time no other templating engines are
+     * supported. Sample:
+     * <pre><code>
+     * &lt;span name="{{name}}"&gt;{{value}}&lt;/span&gt;
+     * </code></pre>
+     *
+     * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
+     * Sugar JavaScript client.
+     *
+     * ###Advanced Fields
+     *
      * @class SugarField
      */
     app.augment('sugarField', {
@@ -58,7 +104,10 @@
                 this.viewName = this.view.name;
                 this.meta = app.metadata.get({sugarField:this});
 
-                templateKey = "sugarField." + this.name + "." + this.view.name;
+            // this is experimental to try to see if we can have custom events on sugarfields themselves.
+            // the following line doesn't work, need to _.extend it or something.
+            // this.events = this.meta.events;
+            templateKey = "sugarField." + this.name + "." + this.view.name;
 
                 this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
             },
