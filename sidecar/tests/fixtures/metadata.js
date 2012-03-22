@@ -539,6 +539,23 @@ fixtures.metadata = {
             },
             "events": {}
         },
+        "float":{
+            "views" : {
+                "detailView":{
+                    "type":"basic",
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{formatNumber value round precision number_group_seperator decimal_seperator}}</span>\n"},
+                "editView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{formatNumber value round precision number_group_seperator decimal_seperator}}\">  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
+                "default":{
+                    "type":"basic",
+                    "template":"<span name=\"{{name}}\">{{formatNumber value round precision number_group_seperator decimal_seperator}}</span>"
+                }
+            }
+        },
         "password": {
             "editView": {
                 "type": "basic",
