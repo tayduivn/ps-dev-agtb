@@ -140,4 +140,39 @@ abstract class RestObject implements IRestObject {
         return $this->uriData;
     }
 
+    /**
+     * The typical URI data that is handed in to setURIData has been run through
+     * strtolower(), this makes matching Module names, or even ID's with uppercase
+     * / lowercase letters in them near impossible. This function grabs an unaltered
+     * version of the URI data
+     */
+    protected function getRealURIData() {
+        static $realURIData;
+
+        if (isset($realURIData)) {
+            return $realURIData;
+        }
+
+        $path = parse_url($_SERVER["REQUEST_URI"]);
+        $uri_data = explode('/',$path['path']);
+        $found_rest = false;
+        $uri_tmp = array();
+
+        foreach ($uri_data as $d) {
+            if ($found_rest != true && $d == "rest") {
+                $found_rest = true;
+                continue;
+            }
+
+            if ($found_rest && !empty($d)) {
+                array_push($uri_tmp, $d);
+            }
+        }
+
+        $realURIData = $uri_tmp;
+
+        return $realURIData;
+        
+    }
+
 }

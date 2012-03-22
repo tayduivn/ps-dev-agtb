@@ -27,8 +27,8 @@ if (!defined('sugarEntry')) define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-include_once("RestData.php");
-include_once("RestFactory.php");
+require_once("include/rest/RestData.php");
+require_once("include/rest/RestFactory.php");
 
 class RestController {
 
