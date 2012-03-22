@@ -1,80 +1,77 @@
-{
-    "Teams":    {
-        "primary_bean": "Team",
-        "beans":        {
-            "Team":    {
-                "vardefs": {"fields":{}}
+{"modules": {
+    "Teams": {
+        "primaryBean": "Team",
+        "beans": {
+            "Team": {
+                "fields": {}
             },
             "TeamSet": {
-                "vardefs": {"fields":{}}
+                "fields": {}
             }
         }
     },
-    "Accounts":    {
-        "primary_bean": "Account",
-        "beans":        {
-            "Account":    {
-                "vardefs": {"fields":{}}
+    "Accounts": {
+        "primaryBean": "Account",
+        "beans": {
+            "Account": {
+                "fields": {}
             }
         }
     },
-    "Calls":    {
-        "primary_bean": "Call",
-        "beans":        {
-            "Call":    {
-                "vardefs": {"fields":{}}
+    "Calls": {
+        "primaryBean": "Call",
+        "beans": {
+            "Call": {
+                "fields": {}
             }
         }
     },
     "Opportunities": {
-        "primary_bean": "Opportunity",
-        "beans":        {
+        "primaryBean": "Opportunity",
+        "beans": {
             "Opportunity": {
-                "vardefs":       {
-                    "table":  "opportunities",
-                    "fields": {
-                        "account_name": {
-                            "name": "account_name",
-                            "rname": "name",
-                            "id_name": "account_id",
-                            "vname": "LBL_ACCOUNT_NAME",
-                            "type": "relate",
-                            "table": "accounts",
-                            "join_name": "accounts",
-                            "isnull": "true",
-                            "module": "Accounts",
-                            "dbType": "varchar",
-                            "link": "accounts",
-                            "len": "255",
-                            "source": "non-db",
-                            "unified_search": true,
-                            "required": true,
-                            "importable": "required"
-                        },
-                        "account_id": {
-                            "name": "account_id",
-                            "vname": "LBL_ACCOUNT_ID",
-                            "type": "id",
-                            "source": "non-db",
-                            "audited": true
-                        },
-                        "contacts": {
-                            "name": "contacts",
-                            "type": "link",
-                            "relationship": "opportunities_contacts"
-                        },
-                        "accounts":  {
-                            "name": "accounts",
-                            "type": "link",
-                            "relationship": "accounts_opportunities"
-                        },
-                        "calls":  {
-                            "name": "calls",
-                            "type": "link",
-                            "relationship": "opportunity_calls"
-                        }
-
+                "fields": {
+                    "account_name": {
+                        "name": "account_name",
+                        "rname": "name",
+                        "id_name": "account_id",
+                        "vname": "LBL_ACCOUNT_NAME",
+                        "type": "relate",
+                        "table": "accounts",
+                        "join_name": "accounts",
+                        "isnull": "true",
+                        "module": "Accounts",
+                        "dbType": "varchar",
+                        "link": "accounts",
+                        "len": "255",
+                        "source": "non-db",
+                        "unified_search": true,
+                        "required": true,
+                        "importable": "required"
+                    },
+                    "account_id": {
+                        "name": "account_id",
+                        "vname": "LBL_ACCOUNT_ID",
+                        "type": "id",
+                        "source": "non-db",
+                        "audited": true
+                    },
+                    "contacts": {
+                        "name": "contacts",
+                        "type": "link",
+                        "relationship": "opportunities_contacts"
+                    },
+                    "accounts": {
+                        "name": "accounts",
+                        "type": "link",
+                        "relationship": "accounts_opportunities"
+                    },
+                    "calls": {
+                        "name": "calls",
+                        "type": "link",
+                        "relationship": "opportunity_calls"
                     }
+
                 },
                 "relationships": {
                     "opportunities_contacts": {
@@ -107,63 +104,60 @@
     },
 
     "Contacts": {
-        "primary_bean": "Contact",
-        "beans":        {
+        "primaryBean": "Contact",
+        "beans": {
             "Contact": {
-                "vardefs":       {
-                    "table":  "contacts",
-                    "fields": {
-                        "first_name": {
-                            "name": "first_name",
-                            "type": "varchar",
-                            "len": 20
-                        },
-                        "last_name":  {
-                            "name": "last_name",
-                            "type": "varchar",
-                            "required": true,
-                            "len": 20
-                        },
-                        "field_0":  {
-                            "name": "field_0",
-                            "default": 100
-                        }
-
+                "fields": {
+                    "first_name": {
+                        "name": "first_name",
+                        "type": "varchar",
+                        "len": 20
+                    },
+                    "last_name": {
+                        "name": "last_name",
+                        "type": "varchar",
+                        "required": true,
+                        "len": 20
+                    },
+                    "field_0": {
+                        "name": "field_0",
+                        "default": 100
                     }
+
                 },
                 "relationships": {
 
                 }
             }
         },
-        "views":        {
-            "EditView":     {
+        "views": {
+            "EditView": {
             },
-            "DetailView":   {
+            "DetailView": {
 
             },
-            "QuickCreate":  {
+            "QuickCreate": {
 
             },
-            "ListView":     {
+            "ListView": {
 
             },
             "SubpanelView": {
 
             }
         },
-        "layouts":      {
-            "edit":          {
-                "type":       "simple",
+        "layouts": {
+            "edit": {
+                "type": "simple",
                 "components": [
                     {
                         "view": "EditView"
                     }
                 ]
             },
-            "detail":        {
+            "detail": {
                 "components": "rows",
-                "views":      [
+                "views": [
                     {
                         "view": "DetailView"
                     },
@@ -172,12 +166,12 @@
                     }
                 ]
             },
-            "sublayout":     {
-                "type":       "rows",
+            "sublayout": {
+                "type": "rows",
                 "components": [
                     {
                         "layout": {
-                            "type":       "columns",
+                            "type": "columns",
                             "components": [
                                 {
                                     "view": "ListView"
@@ -194,17 +188,18 @@
                 ]
             },
             "complexlayout": {
-                "type":       "columns",
+                "type": "columns",
                 "components": [
                     {
                         "view": "EditView"
                     },
                     {
-                        "view":    "DetailView",
+                        "view": "DetailView",
                         "context": "accounts"
                     }
                 ]
             }
         }
     }
+}
 }
