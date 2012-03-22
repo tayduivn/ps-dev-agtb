@@ -44,10 +44,10 @@
 						{if $prerow}
 				
                         {php}
-                        $this->assign('link_seelct_id', 'selectLink_'.ListViewDisplay::$listViewCounter++);
+                        $this->assign('link_select_id', 'selectLink_'.ListViewDisplay::$listViewCounter++);
                         $this->assign('link_action_id', 'selectLink_'.ListViewDisplay::$listViewCounter++);
                         {/php}
-                        {sugar_action_menu id=$link_seelct_id attr=$selectLink theme="Sugar"}
+                        {sugar_action_menu id=$link_select_id attr=$selectLink theme="Sugar"}
 					
 						{/if}
 
