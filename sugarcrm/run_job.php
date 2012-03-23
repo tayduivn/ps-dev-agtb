@@ -53,6 +53,7 @@ $result = SchedulersJob::runJobId($argv[1], $argv[2]);
 if(is_string($result)) {
     // something wrong happened
     echo $result;
+    echo "\n";
     $result = false;
 }
 
