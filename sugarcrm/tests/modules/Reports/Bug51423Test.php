@@ -138,10 +138,10 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
         $mb = new ModuleBuilderController();
         $mb->action_DeleteField();
 
-        $this->_account_1->mark_deleted($this->id);
-        $this->_account_2->mark_deleted($this->id);
-        $this->_contact_1->mark_deleted($this->id);
-        $this->_contact_2->mark_deleted($this->id);
+        $this->_account_1->mark_deleted($this->_account_1->id);
+        $this->_account_2->mark_deleted($this->_account_2->id);
+        $this->_contact_1->mark_deleted($this->_contact_1->id);
+        $this->_contact_2->mark_deleted($this->_contact_2->id);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
