@@ -87,7 +87,7 @@ class SugarSNIP
 
     /**
     * Set client to talk to SNIP
-    * @param SugarSNIPClient $client
+    * @param SugarHttpClient $client
     */
     public function setClient(SugarSNIPClient $client)
     {
