@@ -92,7 +92,7 @@ $('#zenbox_tab').ready(function(){
 });
 {/literal}{/if}{/if}
 </script>
-
+{literal}
 
 
     <div class="clear"></div>
