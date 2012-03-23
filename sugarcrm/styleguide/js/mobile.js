@@ -29,17 +29,24 @@
       return false;
     })
 
+
+	$('article > .icon-star-empty, article > .icon-star').on('click', function () {
+	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
+	})
+
+/*
+    // toggle stars (needs tap logic for mobile)
+    $('article').find('[class^=icon-star]').on('click', function () {
+      $(this).toggleClass('icon-star icon-star-empty');
+    })
+*/
+
     // trigger the module menu - this could be a tap function but zepto will not honor return false
     $('.launch').click(function () {
       $('html').find('body').toggleClass('onR');
       return false;
     })
 
-
-    // toggle stars (needs tap logic for mobile)
-    $('article').find('[class^=icon-star]').on('click', function () {
-      $(this).toggleClass('icon-star icon-star-empty');
-    })
     
 
 		$('article').swipeLeft(function () {
