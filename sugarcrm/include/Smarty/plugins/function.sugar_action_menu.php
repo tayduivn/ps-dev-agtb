@@ -76,7 +76,7 @@
  */
 function smarty_function_sugar_action_menu($params, &$smarty)
 {
-    $theme = $params['theme'] ? $params['theme'] : SugarThemeRegistry::current()->name;
+    $theme = !empty($params['theme']) ? $params['theme'] : SugarThemeRegistry::current()->name;
     $addition_params = $params['params'];
     if($addition_params) {
         unset($params['params']);
