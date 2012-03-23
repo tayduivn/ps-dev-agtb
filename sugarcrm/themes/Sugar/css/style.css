@@ -787,7 +787,7 @@ border-radius: 6px;
 {
   
 }
-.list tr.pagination td table td a:link, 
+.list tr.pagination td table td a:link,
 .list tr.pagination td table td a:visited,
 .reportGroupByDataChildTablelistViewThS1 a:link,
 .reportGroupByDataChildTablelistViewThS1 a:visited
@@ -6318,8 +6318,11 @@ ul.clickMenu {
 	   border: 1px solid #aaaaaa;
 	   display: inline-block;
 	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
-	    zoom:1; *display: inline; /*ie fix*/
+    /*hack for IE7*/
+    *display:inline;
+    *zoom:1;
 }
+ul.clickMenu form, div.action_buttons form {float:left;}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
@@ -6344,7 +6347,7 @@ ul.clickMenu:hover {
 		color: #fff;	
 }
 ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
-ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
+ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a, ul.clickMenu:hover > li > form > a {
 	color: #fff !important;	
 }
 
@@ -6411,6 +6414,8 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 	padding: 8px 0px;
 	z-index: 10;
 	overflow:hidden;
+    /*css hack for IE7*/
+    *overflow:visible;
 }
 
 ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li, ul.SugarActionMenuIESub li{
@@ -6596,6 +6601,8 @@ ul#globalLinks.clickMenu > li > a {
     padding: 14px 7px !important;	
 }
 
+#contentTable .yui-nav, #contentTable .yui-nav * { position:static; }
+
 ul#selectLink.clickMenu {
 	height: 22px;
 	min-width: 20px;
@@ -6605,7 +6612,8 @@ ul#selectLink.clickMenu #massall{
 	float: left;
 	margin: 4px 4px;
 }
-td.paginationActionButtons ul.clickMenu > li > a,
+
+td.paginationActionButtons ul.selectmenu > li > a,
 ul#selectLink.clickMenu > li > a{
 	padding: 0px !important;
 }
@@ -6626,6 +6634,13 @@ ul#detailViewActions.clickMenu {
 	display: none;
 }
 
+ul.clickMenu.show {
+    display:inline-block;
+    /*css hack for IE*/
+    *display:inline;
+    *zoom:1;
+}
+
 #selectActionsDisabled {
 	display: inline-block;
 	background-color: #eee;
@@ -6635,7 +6650,9 @@ ul#detailViewActions.clickMenu {
 	border-radius: 1px; 
 	vertical-align: bottom;
 	padding: 0 3px 0 10px;
-	zoom:1; *display: inline; /*ie fix */
+    /*css hack for IE*/
+    *display:inline;
+    *zoom:1;
 }
 
 #selectActionsDisabled span {

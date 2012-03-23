@@ -2323,17 +2323,17 @@ sugarListView.prototype.toggleSelected = function() {
 	var selectActions = document.getElementById("selectActions");
 	var selectActionsDisabled = document.getElementById("selectActionsDisabled");
 	if(numSelected > 0) {
-		selectedRecords.style.display = "inline-block";
-        $(".selectActionsDisabled").css("display", "none");
+        $(selectedRecords).removeAttr("style").addClass("show");
+        $(".selectActionsDisabled").hide();
         jQuery('ul[name=selectActions]').each(function () {
-            jQuery(this).css("display", "inline-block");
+            jQuery(this).removeAttr("style").addClass("show");
         });
 
 	} else {
-		selectedRecords.style.display = "none";
-        $(".selectActionsDisabled").css("display", "inline-block");
+        $(selectedRecords).hide();
+        $(".selectActionsDisabled").removeAttr("style").addClass("show");
         jQuery('ul[name=selectActions]').each(function () {
-                    jQuery(this).css("display", "none");
+            jQuery(this).hide();
         });
 	}
 
