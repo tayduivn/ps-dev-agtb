@@ -73,6 +73,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->emailmarketing->reply_to_addr = 'reply@exmaple.com';
     	$this->emailmarketing->status = 'active';
     	$this->emailmarketing->all_prospect_lists = 1;
+        $this->emailmarketing->template_id = 'test';
     	$this->emailmarketing->date_start =  $timedate->asDb($timedate->getNow()->modify("+1 week"));
 
     	$this->emailmarketing2 = new EmailMarketing();
@@ -84,6 +85,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->emailmarketing2->reply_to_addr = 'reply@exmaple.com';
     	$this->emailmarketing2->status = 'active';
     	$this->emailmarketing2->all_prospect_lists = 1;
+        $this->emailmarketing2->template_id = 'test';
     	$this->emailmarketing2->date_start = $timedate->asDb($timedate->getNow()->modify("+1 week"));
 
     	$query = 'SELECT id FROM inbound_email WHERE deleted=0';
@@ -96,7 +98,8 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 		}
 
 		$query = 'SELECT id FROM email_templates WHERE deleted=0';
-    	while($row = $GLOBALS['db']->fetchByAssoc($result))
+    	$result = $GLOBALS['db']->query($query);
+		while($row = $GLOBALS['db']->fetchByAssoc($result))
     	{
 			  $this->emailmarketing->template_id = $row['id'];
 			  $this->emailmarketing2->template_id = $row['id'];
@@ -170,9 +173,6 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
 		if($this->clear_database)
 		{
             $sql = 'DELETE FROM emails WHERE id = \'' . $this->email->id . '\'';
-         	$GLOBALS['db']->query($sql);
-
-            $sql = 'DELETE FROM emailman WHERE id = \'' . $this->emailman->id . '\'';
          	$GLOBALS['db']->query($sql);
 
 			$sql = 'DELETE FROM email_marketing WHERE campaign_id = \'' . $this->campaign->id . '\'';
