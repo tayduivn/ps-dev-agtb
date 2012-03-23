@@ -34,8 +34,6 @@
       }
     }
 
-// do this if greater than 960px page width
-if ( $(window).width() > 960) {		
     // tooltip demo
     $('section').tooltip({
       selector: "a[rel=tooltip]"
@@ -62,13 +60,7 @@ if ( $(window).width() > 960) {
       .click(function(e) {
         e.preventDefault()
       })
-	} else {
-		// mobile
-		$('.cube').click(function () {
-      $('html').find('body').toggleClass('onL');
-    		return false;
-		})
-	}
+
 
     // button state demo
     $('.loading')
@@ -126,7 +118,7 @@ $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
       $.each(opts.params, function(k, v) {
 
         $('<input>')
-          .attr('type', 'hidden')
+          .attr('type', 'hide')
           .attr('name', k)
           .attr('value', typeof v == 'string' ? v : JSON.stringify(v))
           .appendTo(form)
