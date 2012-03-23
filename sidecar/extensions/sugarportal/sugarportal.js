@@ -1,22 +1,16 @@
-(function(app){
+(function(app) {
     var base_metadata = {
         _hash: '',
         "modules": {
             "Home": {
-                '_hash': '',
-                "primaryBean": "Home",
-                "beans": {
-                    "Home": {
-                        "fields": {
-                            "username": {
-                                "name": "username",
-                                "type": "varchar"
-                            },
-                            "password": {
-                                "name": "password",
-                                "type": "password"
-                            }
-                        }
+                "fields": {
+                    "username": {
+                        "name": "username",
+                        "type": "varchar"
+                    },
+                    "password": {
+                        "name": "password",
+                        "type": "password"
                     }
                 },
                 "views": {
@@ -32,9 +26,9 @@
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
                                         "this.app.sugarAuth.login(args, {success:" +
-                                            "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
-                                                "function(){app.router.navigate('', {trigger:true})}); }" +
-                                            "});" +
+                                        "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
+                                        "function(){app.router.navigate('', {trigger:true})}); }" +
+                                        "});" +
                                         "}"
                                 }
                             }
@@ -70,7 +64,8 @@
                 "views": {
                     "detailView": {
                         "type": "basic",
-                        "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                        "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
+                    },
                     "editView": {
                         "type": "basic",
                         "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
@@ -88,19 +83,22 @@
                         "template": "<span name=\"{{name}}\">{{value}}</span>"
                     }
                 },
-                "events": {}
+                "events": {
+                }
             },
             "password": {
                 "editView": {
                     "type": "basic",
                     "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                         "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
+                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                },
                 "loginView": {
                     "type": "basic",
                     "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                         "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}
+                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                }
             },
             "button": {
                 "default": {
@@ -112,23 +110,23 @@
             }
         },
         'viewTemplates': {
-            "loginView" :
-               "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
-               "<form name='{{name}}' class='well'>" +
-               "{{#each meta.panels}}" +
-                   '<div class="{{../name}} panel">' +
-                   "<h4>{{label}}</h4>" +
-                   "{{#each fields}}" +
-                       "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
-                   "{{/each}}" +
-                   "</div>" +
-               "{{/each}}"+        "{{#each meta.buttons}}" +
-                           "{{sugar_field ../context ../this ../model}}" +
-                       "{{/each}}"+"</form>"
+            "loginView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
+                "<form name='{{name}}' class='well'>" +
+                "{{#each meta.panels}}" +
+                '<div class="{{../name}} panel">' +
+                "<h4>{{label}}</h4>" +
+                "{{#each fields}}" +
+                "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+                "{{/each}}" +
+                "</div>" +
+                "{{/each}}" + "{{#each meta.buttons}}" +
+                "{{sugar_field ../context ../this ../model}}" +
+                "{{/each}}" + "</form>"
         }
     }
-    if (_.isEmpty(app.metadata.get())){
+    if (_.isEmpty(app.metadata.get())) {
         app.metadata.set(base_metadata);
         app.dataManager.declareModels(base_metadata);
     }
-})(SUGAR.App);
+})
+    (SUGAR.App);

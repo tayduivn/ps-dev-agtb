@@ -12,55 +12,49 @@ fixtures.metadata = {
     "modules": {
         "Cases": {
             '_hash': '12345678910',
-            "primaryBean": "Case",
-            "beans": {
-                "Case": {
-                    "fields": {
-                        "id": {
-                            "name": "id",
-                            "type": "id"
-                        },
-                        "case_number": {
-                            "name": "case_number",
-                            "type": "varchar"
-                        },
-                        "name": {
-                            "name": "name",
-                            "type": "varchar"
-                        },
-                        "description": {
-                            "name": "description",
-                            "type": "text"
-                        },
-                        "type": {
-                            "name": "type",
-                            "type": "varchar"
-                        },
-                        "status": {
-                            "name": "status",
-                            "type": "varchar"
-                        },
-                        "date_entered": {
-                            "name": "date_entered",
-                            "type": "varchar"
-                        },
-                        "created_by": {
-                            "name": "created_by",
-                            "type": "varchar"
-                        },
-                        "date_modified": {
-                            "name": "date_modified",
-                            "type": "varchar"
-                        },
-                        "modified_user_id": {
-                            "name": "modified_user_id",
-                            "type": "varchar"
-                        }
-                    },
-                    "relationships": {
-
-                    }
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id"
+                },
+                "case_number": {
+                    "name": "case_number",
+                    "type": "varchar"
+                },
+                "name": {
+                    "name": "name",
+                    "type": "varchar"
+                },
+                "description": {
+                    "name": "description",
+                    "type": "text"
+                },
+                "type": {
+                    "name": "type",
+                    "type": "varchar"
+                },
+                "status": {
+                    "name": "status",
+                    "type": "varchar"
+                },
+                "date_entered": {
+                    "name": "date_entered",
+                    "type": "varchar"
+                },
+                "created_by": {
+                    "name": "created_by",
+                    "type": "varchar"
+                },
+                "date_modified": {
+                    "name": "date_modified",
+                    "type": "varchar"
+                },
+                "modified_user_id": {
+                    "name": "modified_user_id",
+                    "type": "varchar"
                 }
+            },
+            "relationships": {
             },
             "views": {
                 "editView": {
@@ -265,40 +259,34 @@ fixtures.metadata = {
         },
         "Contacts": {
             '_hash': '12345678910',
-            "primaryBean": "Contact",
-            "beans": {
-                "Contact": {
-                    "fields": {
-                        "id": {
-                            "name": "id",
-                            "type": "id"
-                        },
-                        "first_name": {
-                            "name": "first_name",
-                            "type": "varchar"
-                        },
-                        "last_name": {
-                            "name": "last_name",
-                            "type": "varchar"
-                        },
-                        "phone_work": {
-                            "name": "phone_work",
-                            "type": "varchar"
-                        },
-                        "email1": {
-                            "name": "email1",
-                            "type": "varchar"
-                        },
-                        "full_name": {
-                            "name": "full_name",
-                            "type": "varchar",
-                            "concat": ["first_name", "last_name"]
-                        }
-                    },
-                    "relationships": {
-
-                    }
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id"
+                },
+                "first_name": {
+                    "name": "first_name",
+                    "type": "varchar"
+                },
+                "last_name": {
+                    "name": "last_name",
+                    "type": "varchar"
+                },
+                "phone_work": {
+                    "name": "phone_work",
+                    "type": "varchar"
+                },
+                "email1": {
+                    "name": "email1",
+                    "type": "varchar"
+                },
+                "full_name": {
+                    "name": "full_name",
+                    "type": "varchar",
+                    "concat": ["first_name", "last_name"]
                 }
+            },
+            "relationships": {
             },
             "views": {
                 "editView": {
@@ -455,19 +443,14 @@ fixtures.metadata = {
         },
         "Home": {
             '_hash': '12345678910',
-            "primaryBean": "Home",
-            "beans": {
-                "Home": {
-                    "fields": {
-                        "username": {
-                            "name": "username",
-                            "type": "varchar"
-                        },
-                        "password": {
-                            "name": "password",
-                            "type": "password"
-                        }
-                    }
+            "fields": {
+                "username": {
+                    "name": "username",
+                    "type": "varchar"
+                },
+                "password": {
+                    "name": "password",
+                    "type": "password"
                 }
             },
             "views": {
@@ -537,7 +520,14 @@ fixtures.metadata = {
                     "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
-            "events": {}
+            "events": {},
+            controller : "{" +
+                "render : function(){" +
+                    "console.log('text rendered!');" +
+                    "this.app.sugarField.base.prototype.render.call(this);" +
+                "}," +
+                "customCallback : function(){}" +
+            "}"
         },
         "password": {
             "editView": {
@@ -610,80 +600,75 @@ fixtures.metadata = {
 
     },
     'viewTemplates': {
-        "detailView" :
-               "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
-               "<form name='{{name}}' class='well'>" +
-                   "{{#each meta.buttons}}" +
-                       "{{sugar_field ../context ../this ../model}}" +
-                   "{{/each}}" +
-                   "{{#each meta.panels}}" +
-                   '<div class="{{../name}} panel">' +
-                   "<h4>{{label}}</h4>" +
-                   "{{#each fields}}" +
-                       "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
-                   "{{/each}}" +
-                   "</div>" +
-               "{{/each}}</form>",
-           "editView" :
-               "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
-               "<form name='{{name}}' class='well'>" +
-               "{{#each meta.buttons}}" +
-                   "{{sugar_field ../context ../this ../model}}" +
-               "{{/each}}" +
-               "{{#each meta.panels}}" +
-                   '<div class="{{../name}} panel">' +
-                   "<h4>{{label}}</h4>" +
-                   "{{#each fields}}" +
-                       "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
-                   "{{/each}}" +
-                   "</div>" +
-               "{{/each}}</form>",
-           "loginView" :
-               "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
-               "<form name='{{name}}' class='well'>" +
-               "{{#each meta.panels}}" +
-                   '<div class="{{../name}} panel">' +
-                   "<h4>{{label}}</h4>" +
-                   "{{#each fields}}" +
-                       "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
-                   "{{/each}}" +
-                   "</div>" +
-               "{{/each}}"+        "{{#each meta.buttons}}" +
-                           "{{sugar_field ../context ../this ../model}}" +
-                       "{{/each}}"+"</form>",
-           "subpanelView" :
-               "",
-           "listView" :
-                   '<div class="span12 container-fluid subhead">'+
-                       '<h3>{{context.state.module}}</h3>' +
-               "{{#each meta.panels}}" +
-                   '<div class="{{../name}}">' +
-                   '<table class="table table-striped"><thead><tr>' +
-                   '{{#each fields}}' +
-                       '<th width="{{width}}%">{{label}}</th>' +
-                   '{{/each}}' +
-                   '</tr></thead><tbody>' +
-                   '{{#each ../context.state.collection.models}}' +
-                       '<tr name="{{beanType}}_{{attributes.id}}">' +
-                       '{{#each ../fields}}' +
-                           // SugarField requires the current context, field name, and the current bean in the context
-                           // since we are pulling from the collection rather than the default bean in the context
-                           '<td class="dblclick">{{sugar_field ../../../context ../../../this ../this}}</td>' +
-                       '{{/each}}' +
-                       '</tr>' +
-                   '{{/each}}' +
-                   '</tbody></table>'+
-               '{{/each}}'+
-               "{{#each meta.buttons}}" +
-                       "{{sugar_field ../context ../this ../model}}" +
-               "{{/each}}"+
-                   "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
-                               '<li>'  +
-                               "{{sugar_field ../context ../this ../model}}" +
-                               '</li>'+
-                           "{{/each}}"+
-                               '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}'+
-                               '</ul>'+
-                   "</div>"
+        "detailView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+            "<form name='{{name}}' class='well'>" +
+            "{{#each meta.buttons}}" +
+            "{{sugar_field ../context ../this ../model}}" +
+            "{{/each}}" +
+            "{{#each meta.panels}}" +
+            '<div class="{{../name}} panel">' +
+            "<h4>{{label}}</h4>" +
+            "{{#each fields}}" +
+            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "{{/each}}" +
+            "</div>" +
+            "{{/each}}</form>",
+        "editView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+            "<form name='{{name}}' class='well'>" +
+            "{{#each meta.buttons}}" +
+            "{{sugar_field ../context ../this ../model}}" +
+            "{{/each}}" +
+            "{{#each meta.panels}}" +
+            '<div class="{{../name}} panel">' +
+            "<h4>{{label}}</h4>" +
+            "{{#each fields}}" +
+            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "{{/each}}" +
+            "</div>" +
+            "{{/each}}</form>",
+        "loginView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
+            "<form name='{{name}}' class='well'>" +
+            "{{#each meta.panels}}" +
+            '<div class="{{../name}} panel">' +
+            "<h4>{{label}}</h4>" +
+            "{{#each fields}}" +
+            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "{{/each}}" +
+            "</div>" +
+            "{{/each}}" + "{{#each meta.buttons}}" +
+            "{{sugar_field ../context ../this ../model}}" +
+            "{{/each}}" + "</form>",
+        "subpanelView": "",
+        "listView": '<div class="span12 container-fluid subhead">' +
+            '<h3>{{context.state.module}}</h3>' +
+            "{{#each meta.panels}}" +
+            '<div class="{{../name}}">' +
+            '<table class="table table-striped"><thead><tr>' +
+            '{{#each fields}}' +
+            '<th width="{{width}}%">{{label}}</th>' +
+            '{{/each}}' +
+            '</tr></thead><tbody>' +
+            '{{#each ../context.state.collection.models}}' +
+            '<tr name="{{module}}_{{attributes.id}}">' +
+            '{{#each ../fields}}' +
+            // SugarField requires the current context, field name, and the current bean in the context
+            // since we are pulling from the collection rather than the default bean in the context
+            '<td class="dblclick">{{sugar_field ../../../context ../../../this ../this}}</td>' +
+            '{{/each}}' +
+            '</tr>' +
+            '{{/each}}' +
+            '</tbody></table>' +
+            '{{/each}}' +
+            "{{#each meta.buttons}}" +
+            "{{sugar_field ../context ../this ../model}}" +
+            "{{/each}}" +
+            "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
+            '<li>' +
+            "{{sugar_field ../context ../this ../model}}" +
+            '</li>' +
+            "{{/each}}" +
+            '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}' +
+            '</ul>' +
+            "</div>"
     }
 };
