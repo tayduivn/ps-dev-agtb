@@ -76,12 +76,16 @@
  */
 function smarty_function_sugar_action_menu($params, &$smarty)
 {
-    $theme = !empty($params['theme']) ? $params['theme'] : SugarThemeRegistry::current()->name;
-    $addition_params = $params['params'];
-    if($addition_params) {
+    $theme = array_key_exists('theme', $params) ? $params['theme'] : SugarThemeRegistry::current()->name;
+
+    if(array_key_exists('params', $params)) {
+        $addition_params = $params['params'];
         unset($params['params']);
         $params = array_merge_recursive($params, $addition_params);
     }
+    //if buttons have not implemented, it returns empty string;
+    if(array_key_exists('buttons', $params) === false)
+        return '';
 
     if(is_array($params['buttons']) && $theme != 'Classic') {
 
@@ -98,10 +102,10 @@ function smarty_function_sugar_action_menu($params, &$smarty)
             }
         }
         $action_menu = array(
-            'id' => $params['id'] ? (is_array($params['id']) ? $params['id'][0] : $params['id']) : '',
+            'id' => array_key_exists('id', $params) ? (is_array($params['id']) ? $params['id'][0] : $params['id']) : '',
             'htmlOptions' => array(
-                'class' => $params['class'] && strpos($params['class'], 'clickMenu') !== false  ? $params['class'] : 'clickMenu '.$params['class'],
-                'name' => $params['name'] ? $params['name'] : '',
+                'class' => array_key_exists('class', $params) && strpos($params['class'], 'clickMenu') !== false  ? $params['class'] : 'clickMenu '. (array_key_exists('class', $params) ? $params['class'] : ''),
+                'name' => array_key_exists('name', $params) ? $params['name'] : '',
                 'title' => 'sugar_action_menu'
             ),
             'itemOptions' => array(
