@@ -159,7 +159,7 @@ textarea {
 }
 
 // Hidden inputs
-input[type="hidden"] {
+input[type="hide"] {
   display: none;
 }
 
@@ -281,15 +281,29 @@ textarea[readonly] {
 
 // Warning
 .control-group.warning {
-  .formFieldState(@warningText, @warningText, @warningBackground);
+  .formFieldState(darken(@orange, 10%), @orange, @warningBackground);
 }
+.control-group.warning .add-on {
+  background: @errorBackground;
+  color: darken(@orange, 10%);
+  border-color: darken(@orange, 10%);
+}
+
+.add-on.success {}
+
 // Error
 .control-group.error {
-  .formFieldState(@errorText, @errorText, @errorBackground);
+  .formFieldState(darken(@red, 10%), @red, @errorBackground);
 }
+.control-group.error .add-on {
+  background: @errorBackground;
+  color: darken(@red, 10%);
+  border-color: darken(@red, 10%);
+}
+
 // Success
 .control-group.success {
-  .formFieldState(@successText, @successText, @successBackground);
+  .formFieldState(darken(@green, 10%), @green, @successBackground);
 }
 
 // HTML5 invalid states
@@ -370,8 +384,7 @@ select:focus:required:invalid {
     border-left-color: #ccc;
   }
   .add-on {
-    float: left;
-    display: block;
+position: absolute;
     width: auto;
     min-width: 16px;
     height: @baseLineHeight;
@@ -399,7 +412,6 @@ select:focus:required:invalid {
 .input-append {
   input,
   .uneditable-input {
-    float: left;
     .border-radius(3px 0 0 3px);
   }
   .uneditable-input {
@@ -453,7 +465,7 @@ select:focus:required:invalid {
     display: inline-block;
     margin-bottom: 0;
   }
-  // Re-hide hidden elements due to specifity
+  // Re-hide hide elements due to specifity
   .hide {
     display: none;
   }
