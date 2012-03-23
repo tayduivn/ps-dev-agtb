@@ -16,7 +16,7 @@
   font-weight: 500;
   font-family: 'Helvetica Neue';
   text-align: center;
-  text-shadow: 0 1px 1px rgba(255,255,255,.75);
+  text-shadow: 0 1px 0 rgba(255,255,255,.75);
   vertical-align: middle;
   .buttonBackground(@white, @grayLight);
   border: 1px solid darken(@grayLight, 15%);
@@ -155,12 +155,18 @@
 .btn-info {
   .buttonBackground(@blueLight, darken(@blueLight, 10%));
 }
-// Inverse appears as dark gray
+// Inverse appears as black
 .btn-inverse {
-  .buttonBackground(@grayDarker, darken(@grayDarker, 10%));
+  .buttonBackground(@grayDarker, darken(@black, 5%));
+  text-shadow: 0 1px 0 @black;
 }
 
-
+// sugar red buttons
+.btn-sugar {
+  .buttonBackground(@red, darken(@red, 15%));
+  text-shadow: 0 -1px 0 darken(@red, 25%);
+  color: #fff;
+}
 
 // Cross-browser Jank
 // --------------------------------------------------
