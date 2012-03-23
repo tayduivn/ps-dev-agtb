@@ -71,18 +71,18 @@ class SugarSearchEngineMetadataHelper
      *
      * @return mixed|The
      */
-    public static function getSystemDisabledFTSModules()
+    public static function getSystemEnabledFTSModules()
     {
         require_once('modules/Home/UnifiedSearchAdvanced.php');
         $usa = new UnifiedSearchAdvanced();
         $modules = $usa->retrieveEnabledAndDisabledModules();
-        $disabledModules = array();
-        foreach($modules['disabled'] as $module)
+        $enabledModules = array();
+        foreach($modules['enabled'] as $module)
         {
-            $disabledModules[ $module['module'] ] = $module['module'];
+            $enabledModules[ $module['module'] ] = $module['module'];
         }
 
-        return $disabledModules;
+        return $enabledModules;
     }
 
     /**
@@ -169,13 +169,9 @@ class SugarSearchEngineMetadataHelper
     public static function isModuleFtsEnabled($module)
     {
         $GLOBALS['log']->debug("Checking if module is fts enabled");
-        $disabledModules = self::getSystemDisabledFTSModules();
+        $enabledModules = self::getSystemEnabledFTSModules();
 
-        if( empty($disabledModules) )
-            return TRUE;
-
-        return !in_array($module, $disabledModules);
-
+        return in_array($module, $enabledModules);
     }
 
 
