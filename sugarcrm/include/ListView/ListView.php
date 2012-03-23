@@ -478,12 +478,10 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             'class' => 'clickMenu subpanel records fancymenu button',
             'theme' => 'Sugar' //assign theme value to display dropdown menu on class theme
         ), $this->xTemplate);
-        $pre_script = '<script type="text/javascript">
-                        var zz = $("#'.$tempid.'").children().first().find("span").remove();
-                    </script>';
         $this->xTemplate->assign('CLASS', "inlineButtons");
         $this->xTemplate->assign('CELL_COUNT', ++$count);
-        $this->xTemplate->assign('CELL', $pre_script.$action_button);
+        //Bug#51275 for beta3 pre_script is not required any more
+        $this->xTemplate->assign('CELL', $action_button);
         $this->xTemplate->parse($xtemplateSection.".row.cell");
 
 

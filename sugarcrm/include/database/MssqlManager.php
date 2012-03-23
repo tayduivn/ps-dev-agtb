@@ -1232,11 +1232,8 @@ class MssqlManager extends DBManager
     public function isTextType($type)
     {
         $type = strtolower($type);
-        if(!isset($this->type_map[$type]))
-        {
-            return false;
-        }
-        return in_array($type, array('ntext','text','image','longtext','nvarchar(max)'));
+        if(!isset($this->type_map[$type])) return false;
+        return in_array($this->type_map[$type], array('ntext','text','image', 'nvarchar(max)'));
     }
 
     /**

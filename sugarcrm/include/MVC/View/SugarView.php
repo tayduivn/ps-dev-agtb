@@ -1410,7 +1410,7 @@ EOHTML;
 </a>
 EOHTML;
 
-        $theTitle .= "</div>\n";
+        $theTitle .= "</span></div>\n";
         return $theTitle;
     }
 

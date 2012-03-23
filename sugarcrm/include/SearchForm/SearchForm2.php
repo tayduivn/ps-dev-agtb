@@ -1215,5 +1215,53 @@ require_once('include/EditView/EditView2.php');
     	return $result;
     }
 
- }
+     /**
+      * Return the search defs for a particular module.
+      *
+      * @static
+      * @param $module
+      */
+     public static function retrieveSearchDefs($module)
+     {
+         $searchdefs = array();
+         $searchFields = array();
 
+         if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php'))
+         {
+             require('custom/modules/'.$module.'/metadata/metafiles.php');
+         }
+         elseif(file_exists('modules/'.$module.'/metadata/metafiles.php'))
+         {
+             require('modules/'.$module.'/metadata/metafiles.php');
+         }
+
+         if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
+         {
+             require('custom/modules/'.$module.'/metadata/searchdefs.php');
+         }
+         elseif (!empty($metafiles[$module]['searchdefs']))
+         {
+             require($metafiles[$module]['searchdefs']);
+         }
+         elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
+         {
+             require('modules/'.$module.'/metadata/searchdefs.php');
+         }
+
+
+         if(!empty($metafiles[$module]['searchfields']))
+         {
+             require($metafiles[$module]['searchfields']);
+         }
+         elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
+         {
+             require('modules/'.$module.'/metadata/SearchFields.php');
+         }
+         if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
+         {
+             require('custom/modules/'.$module.'/metadata/SearchFields.php');
+         }
+
+         return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
+     }
+ }

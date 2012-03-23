@@ -5180,17 +5180,16 @@ function get_help_url($send_edition = '', $send_version = '', $send_lang = '', $
  * @param string $etag ETag to use for this content.
  */
 function generateETagHeader($etag){
-	$user = $GLOBALS["current_user"];
- 		header("cache-control:");
- 		header('Expires: ');
- 		header("ETag: " . $etag);
- 		header("Pragma:");
- 		if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
- 			if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
- 				ob_clean();
- 				header("Status: 304 Not Modified");
- 				header("HTTP/1.0 304 Not Modified");
- 				die();
- 			}
- 		}
+	header("cache-control:");
+	header('Expires: ');
+	header("ETag: " . $etag);
+	header("Pragma:");
+	if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
+		if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
+			ob_clean();
+			header("Status: 304 Not Modified");
+			header("HTTP/1.0 304 Not Modified");
+			die();
+		}
+	}
 }

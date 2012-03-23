@@ -24,6 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'include/MVC/SugarModule.php';
 require_once 'modules/OAuthKeys/OAuthKey.php';
 require_once 'modules/OAuthTokens/OAuthToken.php';
+require_once 'include/SugarHttpClient.php';
 
 /**
  * SNIP data handling implementation
@@ -81,14 +82,14 @@ class SugarSNIP
     {
         global $sugar_config;
         $this->config = $sugar_config;
-        $this->setClient(new SugarSNIPClient());
+        $this->setClient(new SugarHttpClient());
     }
 
     /**
     * Set client to talk to SNIP
-    * @param SugarSNIPClient $client
+    * @param SugarHttpClient $client
     */
-    public function setClient(SugarSNIPClient $client)
+    public function setClient(SugarHttpClient $client)
     {
         $this->client = $client;
         return $this;
