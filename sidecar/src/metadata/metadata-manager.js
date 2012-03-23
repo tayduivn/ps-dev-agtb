@@ -114,14 +114,22 @@
             if (_sugarFields[name]) {
                 views = _sugarFields[name].views || _sugarFields[name];
                 var viewName = field.viewName || field.view;
-                // assign fields to results if set
-                if (viewName && views[viewName]) {
-                    result = views[viewName];
-                    // fall back to detailview if field for this view doesnt exist
-                } else if (views && views['default']) {
-                    result = views['default'];
-                    //fall back to base field detailview if none of the above exist
+                //No viewname means return the full metadata for this field
+                if (!viewName)
+                {
+                    result = _sugarFields[name];
                 }
+                else {
+                    // assign fields to results if set
+                    if (viewName && views[viewName]) {
+                        result = views[viewName];
+                        // fall back to detailview if field for this view doesnt exist
+                    } else if (views && views['default']) {
+                        result = views['default'];
+                        //fall back to base field detailview if none of the above exist
+                    }
+                }
+
             }
 
             if (!result && _sugarFields.text && _sugarFields.text.views['default']) {
