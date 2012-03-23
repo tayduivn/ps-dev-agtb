@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -76,7 +77,6 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->markTestIncomplete("Disabling broken test for sanity check");
 
         $beanList = array();
         $beanFiles = array();
