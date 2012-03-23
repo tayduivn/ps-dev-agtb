@@ -56,7 +56,7 @@
     <div class="clear"></div>
 </div>
 <script>
-{literal}
+
 
 //qe_init function sets listeners to click event on elements of 'quickEdit' class
  if(typeof(DCMenu) !='undefined'){
