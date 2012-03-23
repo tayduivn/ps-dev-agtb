@@ -54,8 +54,8 @@ class SugarACL
             if(! $bean instanceof SugarBean) {
 				return array();
             }
-            if(isset($GLOBALS['dictionary'][$module]['acls'])) {
-                $acl_list = $GLOBALS['dictionary'][$module]['acls'];
+            if(isset($GLOBALS['dictionary'][$bean->object_name]['acls'])) {
+                $acl_list = $GLOBALS['dictionary'][$bean->object_name]['acls'];
             } else {
                 $acl_list = array();
             }
