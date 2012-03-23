@@ -1241,7 +1241,7 @@ class MssqlManager extends DBManager
         {
             return false;
         }
-        return in_array($type, array('ntext','text','image','longtext'));
+        return in_array($this->type_map[$type], array('ntext','text','image','nvarchar(max)'));
     }
 
     /**
