@@ -20,9 +20,11 @@
           <h3 class="sub-brand">Portal</h3>
         </div>
         <div class="modal-body tcenter">
-          <div class="control-group">
-            <label for="input01" class="hide">Username</label>
-            <input type="text" class="center" id="input01" placeholder="Username">
+          <div class="control-group error input-append">
+            <div class="alert alert-error tleft"><i class="icon-exclamation-sign"></i> Username is not recognized!</div>
+              <label class="hide control-label" for="user_name">Username</label>
+              <input type="text" tabindex="1" id="user_name" name="user_name" placeholder="Username or Email" value="thfonz" class="center">
+              <span class="add-on alert-error"><i class="icon-exclamation-sign"></i></span>
           </div>
           <div class="control-group">
             <label for="input01" class="hide">Password</label>

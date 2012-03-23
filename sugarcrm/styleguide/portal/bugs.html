@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Deashboard - SugarCRM</title>
+  <title>Bugs - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -20,7 +20,7 @@
         <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
         <div class="nav-collapse">
           <ul class="nav" id="moduleList">
-            <li>
+            <li class="active">
               <a href="bugs.html">Bugs</a>
             </li>
             <li class="">
@@ -30,9 +30,12 @@
           <ul class="nav pull-right" id="userList">
             <li class="divider-vertical"></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_uwelcome.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src=" https://lh5.googleusercontent.com/-tYj7_rm5E1w/AAAAAAAAAAI/AAAAAAAAAdM/DO9e_nVVDPw/s26-c-k/photo.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="#">Profile</a></li>
+                <li><a href="#">Password</a></li>
+                <li><a href="#">Advanced</a></li>
+                <li><a href="#">External Accounts</a></li>
                 <li class="divider"></li>
                 <li><a href="#">Log Out</a></li>
               </ul>
@@ -41,7 +44,8 @@
             <li class="dropdown" id="createList">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Create Bug</a></li>
+                <li><a href="#">Create Account</a></li>
+                <li><a href="#">Create Lead</a></li>
                 <li><a href="#">Create Case</a></li>
               </ul>
             </li>              
@@ -54,52 +58,173 @@
         </div><!-- /.nav-collapse -->
       </div>
     </div><!-- /navbar-inner -->
-  </div>
+  </div>   
   <div class="container-fluid">
     <div class="row-fluid">
-      <div class="span8">
+      <div class="span12">
         <div class="thumbnail">
-          <h4><a href="bugs.html">Bugs</a> <small>(5 of 30)</small></h4>
+          <h4>Bugs <small>(10 of 30)</small></h4>
           <table class="table table-striped">
             <thead>
               <tr>
                 <th class="span1">ID</th>
-                <th class="span7">Title</th>
+                <th class="span6">Title</th>
                 <th class="span2">Priority</th>
                 <th class="span2">Status</th>
+                <td class="span1"></td>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="listed">
               <tr>
                 <td>20543</td>
-                <td>Bad links in Pitch</td>
-                <td>High</td>
-                <td>Open</td>
+                <td class="dblclick">Bad links in Pitch</td>
+                <td class="dblclick">High</td>
+                <td class="dblclick">Open</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>20546</td>
                 <td>Broken images in pdf</td>
                 <td>High</td>
                 <td>Open</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>                
               </tr>
               <tr>
                 <td>20550</td>
                 <td>Misspellings everywhere</td>
                 <td>Medium</td>
                 <td>Closed</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>                
               </tr>
               <tr>
                 <td>20554</td>
                 <td>404 on faq</td>
                 <td>Medium</td>
                 <td>Pending</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>                
               </tr>
               <tr>
                 <td>20555</td>
                 <td>Problem revalidating the key</td>
                 <td>Low</td>
                 <td>Pending</td>
-              </tr>               
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td> 
+              </tr>  
+              <tr>
+                <td>20543</td>
+                <td>Bad links in Pitch</td>
+                <td>High</td>
+                <td>Open</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>20546</td>
+                <td>Broken images in pdf</td>
+                <td>High</td>
+                <td>Open</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>20550</td>
+                <td>Misspellings everywhere</td>
+                <td>Medium</td>
+                <td>Closed</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>20554</td>
+                <td>404 on faq</td>
+                <td>Medium</td>
+                <td>Pending</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td> 
+              </tr>
+              <tr>
+                <td>20555</td>
+                <td>Problem revalidating the key</td>
+                <td>Low</td>
+                <td>Pending</td>
+                <td>
+                  <div class="dropdown hide pull-right">  
+                    <a href="#" class="dropdown-toggle btn btn-small btn-success" data-toggle="dropdown">Actions <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      <li><a data-toggle="modal" href="#edit">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                </td> 
+              </tr>                           
             </tbody>
           </table>
           <div class="block-footer">
@@ -116,144 +241,13 @@
             </li>          
           </ul>
         </div>
-        <div class="thumbnail">
-          <h4><a href="cases.html">Cases</a> <small>(4 of 4)</small></h4>
-          <div class="scroll">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th class="span1">ID</th>
-                  <th class="span5">Title</th>
-                  <th class="span2">Priority</th>
-                  <th class="span2">Support Team</th>
-                  <th class="span2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>102339</td>
-                  <td>Bad links in Pitch</td>
-                  <td>High</td>
-                  <td>Team Edward</td>  
-                  <td>Open</td>
-                </tr>
-                <tr>
-                  <td>102339</td>
-                  <td>Broken images in pdf</td>
-                  <td>High</td>
-                  <td>Team Jacob</td>  
-                  <td>Open</td>
-                </tr>
-                <tr>
-                  <td>102339</td>
-                  <td>Misspellings everywhere</td>
-                  <td>Medium</td>
-                  <td>Team Jacob</td>
-                  <td>Closed</td>
-                </tr>
-                <tr>
-                  <td>102339</td>
-                  <td>404 on faq</td>
-                  <td>Medium</td>
-                  <td>Team Force5</td>
-                  <td>Pending</td>
-                </tr>              
-              </tbody>
-            </table>
-          </div>
-          <ul class="nav nav-pills actions" id="casesModuleActions">
-            <li>  
-              <a data-toggle="modal" href="#adminAdd" rel="tooltip" title="Add an Account" id="casesModuleActionsAdd"><i class="icon-plus"></i></a>
-            </li>        
-            <li>  
-              <a data-toggle="modal" href="#adminActivity" rel="tooltip" title="Account options" id="casesModuleActionsAdmin"><i class="icon-cog"></i></a>
-            </li>          
-          </ul>
-        </div>
-      </div>  
-      <div class="span4">
-        <div class="thumbnail">
-          <h4>My Activity <small>(10 of 30)</small></h4>
-          <div id="activity">
-            <article data-type="update" data-pubdate="2012-02-16">
-              <a href="/users/tdetalus" class="pull-left" data-author_id="mitani">
-                <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-              </a>
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> as a <a href="">Lead</a>.<br>
-                <date class="date">Posted just a second ago</date>
-              </p>
-            </article> 
-            <article data-type="update" data-pubdate="2012-02-16">
-              <a href="/users/toreilly" class="pull-left" data-author_id="toreilly">
-                <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
-              </a>
-              <p>
-                <a href="/users/toreilly">Tim O'Reilly</a> made a <a href="">phone call</a> and <a href="">emailed</a> a <a href="">Purchase Order Statement</a>.<br>
-                <date class="date">Posted 2 days ago</date>
-              </p>
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <a href="/users/tdetalus" class="pull-left" data-author_id="mitani">
-                <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-              </a>
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="">SugarCRM Pricing</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-                <br>
-                <date class="date">Posted 4 days ago</date>
-              </p>
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <a href="/users/toreilly" class="pull-left" data-author_id="toreilly">
-                <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
-              </a>
-              <p>
-                <a href="/users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
-                <date class="date">Posted 1 week ago</date>
-              </p>                   
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <a href="/users/tdetalus" class="pull-left" data-author_id="mitani">
-                <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-              </a>
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-                <br>
-                <date class="date">Posted 4 days ago</date>
-              </p>
-            </article>               
-            <article data-type="update" data-pubdate="2012-02-16">
-              <a href="/users/tdetalus" class="pull-left" data-author_id="mitani">
-                <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-              </a>
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> as a <a href="">contact</a> and a <a href="">lead</a>
-                <br>
-                <date class="date">Posted 1 week ago</date>
-              </p>
-            </article>
-            <div class="block-footer">
-              <button data-loading-text="Loading..." class="btn">
-                Show more activity
-              </button>
-            </div>
-          </div>
-          <ul class="nav nav-pills actions" id="activityModuleActions">
-            <li>  
-              <a href="#adminAdd" rel="tooltip" title="Add an Account" id="activityModuleActionsAdd"><i class="icon-plus"></i></a>
-            </li>        
-            <li>  
-              <a data-toggle="modal" href="#adminActivity" rel="tooltip" title="Account options" id="activityModuleActionsAdmin"><i class="icon-cog"></i></a>
-            </li>          
-          </ul>
-        </div>          
       </div>
     </div>
-  </div>
+  </div>   
   <footer>
     <div class="row-fluid">
-      <div class="span3"><a href="" class="logo">SugarCRM</a></div>        
-      <div class="span9">
+      <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
+      <div class="span6">
         <div class="btn-toolbar pull-right">
           <div class="btn-group">
             <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
@@ -275,17 +269,35 @@
   <div class="modal hide" id="adminAdd">
     <div class="modal-header">
       <a class="close" data-dismiss="modal">×</a>
-      <h3>Add an Account</h3>
+      <h3>Add a Bug</h3>
     </div>
     <div class="modal-body">
       <form class="form-horizontal">
         <fieldset>
+          <div class="control-group">
+            <label for="input01" class="control-label">Number</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
           <div class="control-group">
             <label for="input01" class="control-label">Name</label>
             <div class="controls">
               <input type="text" id="input01" class="input-xlarge">
             </div>
           </div>
+          <div class="control-group">
+            <label for="input01" class="control-label">Name</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="input01" class="control-label">Name</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>          
           <div class="control-group">
             <label for="input01" class="control-label">Label</label>
             <div class="controls">
@@ -308,8 +320,9 @@
       <button class="btn cancel" data-dismiss="modal">Cancel</button>
     </div>
   </div>
-  
+
   <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../js/jquery.jeditable.js"></script>        
   <script src="../js/bootstrap-transition.js"></script>
   <script src="../js/bootstrap-alert.js"></script>
   <script src="../js/bootstrap-modal.js"></script>
@@ -322,6 +335,6 @@
   <script src="../js/bootstrap-button.js"></script>
   <script src="../js/bootstrap-typeahead.js"></script>
   <script src="../js/application.js"></script>
-    <script src="../js/mobile.js"></script>
+  <script src="../js/mobile.js"></script>
 </body>
 </html>
