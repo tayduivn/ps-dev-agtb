@@ -16,85 +16,59 @@ describe("DataManager", function() {
         if (server && server.restore) server.restore();
     });
 
-    it("should be able to create an instance of primary bean and collection", function() {
+    it("should be able to create an empty instance of bean and collection", function() {
         dm.declareModels(metadata);
 
         _.each(_.keys(metadata.modules), function(moduleName) {
-            expect(dm.createBean(moduleName, {})).toBeDefined();
+            expect(dm.createBean(moduleName)).toBeDefined();
             expect(dm.createBeanCollection(moduleName)).toBeDefined();
         });
 
     });
 
-    it("should be able to create an instance of default bean and collection", function() {
-        var moduleName = "Contacts",
-            beanType = "Contact";
+    it("should be able to create an instance of bean and collection", function() {
+        var moduleName = "Contacts";
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
         var bean = dm.createBean(moduleName, { someAttr: "Some attr value"});
         expect(bean.module).toEqual(moduleName);
-        expect(bean.beanType).toEqual(beanType);
-        expect(bean.fields).toEqual(metadata.modules[moduleName].beans[beanType].fields);
+        expect(bean.fields).toEqual(metadata.modules[moduleName].fields);
         expect(bean.get("someAttr")).toEqual("Some attr value");
 
         var collection = dm.createBeanCollection(moduleName);
         expect(collection.module).toEqual(moduleName);
-        expect(collection.beanType).toEqual(beanType);
-        expect(collection.model).toBeDefined();
-
-    });
-
-    it("should be able to create an instance of non-default bean and collection", function() {
-        var moduleName = "Teams",
-            beanType = "TeamSet";
-
-        dm.declareModel(moduleName, metadata.modules[moduleName]);
-
-        var bean = dm.createBean(moduleName, { someAttr: "Some attr value"}, beanType);
-        expect(bean.module).toEqual(moduleName);
-        expect(bean.beanType).toEqual(beanType);
-        expect(bean.fields).toEqual(metadata.modules[moduleName].beans[beanType].fields);
-        expect(bean.get("someAttr")).toEqual("Some attr value");
-
-        var collection = dm.createBeanCollection(moduleName, undefined, beanType);
-        expect(collection.module).toEqual(moduleName);
-        expect(collection.beanType).toEqual(beanType);
         expect(collection.model).toBeDefined();
 
     });
 
     it("should be able to fetch a bean by ID", function() {
-        var moduleName = "Teams",
-            beanType = "TeamSet";
+        var moduleName = "Teams";
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
         var mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
 
-        var bean = dm.createBean(moduleName, {id: "xyz"}, beanType);
+        var bean = dm.createBean(moduleName, {id: "xyz"});
         bean.fetch();
 
         expect(bean.id).toEqual("xyz");
         expect(bean.module).toEqual(moduleName);
-        expect(bean.beanType).toEqual(beanType);
         mock.verify();
     });
 
     it("should be able to fetch beans", function() {
-        var moduleName = "Teams",
-            beanType = "TeamSet";
+        var moduleName = "Teams";
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
         var mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
 
-        var collection = dm.createBeanCollection(moduleName, null, beanType);
+        var collection = dm.createBeanCollection(moduleName, null);
         collection.fetch();
 
         expect(collection.module).toEqual(moduleName);
-        expect(collection.beanType).toEqual(beanType);
         expect(collection.model).toBeDefined();
         mock.verify();
     });
@@ -186,7 +160,6 @@ describe("DataManager", function() {
         expect(beans.at(0).get("name")).toEqual("Vladimir Vladimirov");
         expect(beans.at(1).get("name")).toEqual("Petr Petrov");
         expect(beans.at(1).module).toEqual("Contacts");
-        expect(beans.at(1).beanType).toEqual("Contact");
         expect(beans.at(1).fields).toBeDefined();
 
     });

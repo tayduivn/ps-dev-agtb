@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestLabels extends RestTestBase {
+class RestTestMetadata extends RestTestBase {
     public function setUp()
     {
         //Create an anonymous user for login purposes/
@@ -38,19 +38,16 @@ class RestTestLabels extends RestTestBase {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testLabels() {
+    public function testFullMetadata() {
         $restReply = $this->_restCall('metadata');
-        
-        $this->assertNotEmpty($restReply['reply']['appStrings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
-        
-        $this->assertNotEmpty($restReply['reply']['modules']['Contacts']['labels']['LBL_ACCOUNT_NAME']);
-    }
 
-    public function testAppListLabels() {
-        $restReply = $this->_restCall('metadata');
-        
-        $this->assertNotEmpty($restReply['reply']['appListStrings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
+        file_put_contents("/sugar/tmp/full_metadata.json",$restReply['replyRaw']);
 
+        $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
+    
+        $this->assertTrue(isset($restReply['reply']['sugarFields']),'SugarFields are missing.');
+        $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
     }
 
 }

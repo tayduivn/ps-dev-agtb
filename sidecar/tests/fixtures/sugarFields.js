@@ -5,7 +5,8 @@ var sugarFieldsFixtures = {
             "templates" : {
                 "detailView":{
                     "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
+                },
                 "editView":{
                     "type":"basic",
                     "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
@@ -58,6 +59,43 @@ var sugarFieldsFixtures = {
                 "detailView":"<label class=\"control-label\">{{label}}<\/label>{{value}}\n",
                 "editView":"<label class=\"control-label\">{{label}}<\/label>" +
                            "<textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"
+            }
+        },
+        "url": {
+            "detailView": {
+                "template": "<a href=\"http://{{value}}\">{{value}}</a>"
+            },
+            "editView": {
+                "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                    "<input placeholder=\"www.website.com\" type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                    "<\/p> <\/div>"
+            }
+        },
+        "email": {
+            "detailView": {
+                "template": ""
+            },
+            "editView": {
+                "template": ""
+            }
+        },
+        "radio": {
+            "detailView": {
+                "template": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n"
+            },
+            "editView": {
+                "template": "{{#each options}}{{this}}{{/each}}"
+            }
+        },
+        "image": {
+            "detailView": {
+                "template":""
+            },
+            "editView": {
+                "template": ""
+            },
+            "listView": {
+                "template": ""
             }
         },
         "sugarField_actionsLink":{

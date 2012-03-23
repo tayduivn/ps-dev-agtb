@@ -255,7 +255,7 @@
             bind: function(context) {
                 var collection = context.get("collection");
                 _.each(collection.models, function(model) {
-                    var tr = this.$el.find('tr[name="' + model.beanType + '_' + model.get("id") + '"]');
+                    var tr = this.$el.find('tr[name="' + model.module + '_' + model.get("id") + '"]');
                     _.each(model.attributes, function(value, field) {
                         var el = tr.find('input[name="' + field + '"],span[name="' + field + '"]');
                         if (el.length > 0) {
