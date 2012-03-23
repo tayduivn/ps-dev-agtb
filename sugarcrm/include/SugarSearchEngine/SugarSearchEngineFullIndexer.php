@@ -51,6 +51,11 @@ class SugarSearchEngineFullIndexer
     public static $schedulerName = "Full Text Search Indexer";
 
     /**
+     * The name of the queue table
+     */
+    const QUEUE_TABLE = 'fts_queue';
+
+    /**
      * @param SugarSearchEngineAqbstractBase $engine
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
@@ -63,20 +68,17 @@ class SugarSearchEngineFullIndexer
         $this->results = array();
     }
 
-    public function populateIndexQueue()
+    public function populateIndexQueue($modules = array())
     {
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
             return $this;
 
-        //Create the necessary index server side.
-        $this->SSEngine->createIndex(TRUE);
-
         $GLOBALS['log']->info("Populating Full System Index Queue");
         $startTime = microtime(true);
-        $allModules = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
+        $allModules = !empty($modules) ? $modules : array_keys(SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules());
 
         $totalCount = 0;
-        foreach($allModules as $module => $fieldDefinitions)
+        foreach($allModules as $module)
         {
             $totalCount += $this->populateIndexQueueForModule($module);
         }
@@ -84,7 +86,8 @@ class SugarSearchEngineFullIndexer
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
         $this->results['totalTime'] = $totalTime;
         $GLOBALS['log']->fatal("Total time to populate full system index queue: $totalTime (s)");
-        $avgRecs = number_format(round(($totalCount / $totalTime), 2), 2);
+        $avgRecs = ($totalCount != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
+
         $GLOBALS['log']->fatal("Total number of records queued: $totalCount , records per sec. $avgRecs");
 
         return $this;
@@ -98,11 +101,30 @@ class SugarSearchEngineFullIndexer
         $db = DBManagerFactory::getInstance('fts');
         $obj = BeanFactory::getBean($module, null);
         $beanName = BeanFactory::getBeanName($module);
-        $query = "INSERT INTO fts_queue (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name}";
+        $tableName = self::QUEUE_TABLE;
+        $query = "INSERT INTO {$tableName} (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name}";
         $result = $db->query($query, true, "Error populating index queue for fts");
-
+        $this->createJobQueueConsumerForModule($module);
     }
 
+    public function createJobQueueConsumerForModule($module)
+    {
+        $job = new SchedulersJob();
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->data = $module;
+        $job->execute_time = TimeDate::getInstance()->nowDb();
+        $job->name = "FTSConsumer {$module}";
+        $job->target = "function::SugarSearchEngineFullIndexer::indexModule";
+        $job->save();
+    }
+
+    public function __get($name)
+    {
+        if($name == 'table_name')
+            return self::QUEUE_TABLE;
+        else
+            return $this->$name;
+    }
 
     /**
      * Index the entire system. This should only be called from a worker process as this is a time intensive process.
