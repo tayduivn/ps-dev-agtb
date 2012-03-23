@@ -174,7 +174,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 			{* visible overflow menu items *}
 			{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
-			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name" class="sf-with-ul"}
+			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module" module="$module" data="$name" class="sf-with-ul"}
 				{if $shortcutExtraMenu.$module}
 				<ul class="megamenu">
 				<li >
