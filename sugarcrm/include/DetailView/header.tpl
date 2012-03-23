@@ -32,7 +32,6 @@
 {{/if}}
 
 <script>
-testing_module = "{$smarty.request.module}";
 {literal}
 	$(document).ready(function(){
 		$("ul.clickMenu").each(function(index, node){
