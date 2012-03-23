@@ -26,6 +26,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarACLStatic extends SugarACLStrategy
 {
+    /**
+     * (non-PHPdoc)
+     * @see SugarACLStrategy::checkAccess()
+     */
     public function checkAccess($module, $action, $context)
     {
         if($this->getCurrentUser($context)->isAdminForModule($module)) {
@@ -67,9 +71,7 @@ class SugarACLStatic extends SugarACLStrategy
             return ACLController::checkAccessInternal($module, $action, true, 'Tracker');
         }
 
-        return ACLController::checkAccessInternal($module, $action);
-
-        return true;
+        return ACLController::checkAccessInternal($module, $action, !empty($context['owner_override']));
     }
 
     static $action_translate = array(
