@@ -163,12 +163,16 @@ class SugarACLStatic extends SugarACLStrategy
                         $temp = BeanFactory::newBean($bean->module_dir);
                         $temp->populateFromRow($bean->fetched_row);
                     }else{
-                        $temp = BeanFactory::getBean($bean->module_dir, $bean->id);
+                        if($bean->new_with_id) {
+                            $is_owner = true;
+                        } else {
+                            $temp = BeanFactory::getBean($bean->module_dir, $bean->id);
+                            if(!empty($temp)) {
+                                $is_owner = $temp->isOwner($this->getUserID($context));
+                            }
+                            unset($temp);
+                        }
                     }
-                    if(!empty($temp)) {
-                        $is_owner = $temp->isOwner($this->getUserID($context));
-                    }
-                    unset($temp);
                 }
             case 'popupeditview':
             case 'editview':
