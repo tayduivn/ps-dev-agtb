@@ -135,19 +135,33 @@ EditView_tabs.on('contentReady', function(e){
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
     <tr>
         <td>
-            <ul class="clickMenu" id="userEditActions">
-                <li>
-                    <a	id="Save" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}"
-                    onclick="var _form = $('#EditView')[0]; if (!set_password(_form,newrules('{$PWDSETTINGS.minpwdlength}','{$PWDSETTINGS.maxpwdlength}','{$REGEX}'))) return false; if (!Admin_check()) return false; _form.action.value='Save'; {$CHOOSER_SCRIPT} {$REASSIGN_JS} if(verify_data(EditView)) _form.submit();"
-                    name="button">{$APP.LBL_SAVE_BUTTON_LABEL}</a>
-                    <ul class="subnav iefixed multi">
-                    <li><input	title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}"
-                    class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}'; this.form.record.value='{$RETURN_ID}'; this.form.submit()"
-                    type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"></li>
-            {$BUTTONS}
-                    </ul>
-                </li>
-            </ul>
+            {php}
+                $additional_buttons = $this->get_template_vars('BUTTONS');
+                $APP = $this->get_template_vars('APP');
+                $PWDSETTINGS = $this->get_template_vars('PWDSETTINGS');
+                $REGEX = $this->get_template_vars('REGEX');
+                $CHOOSER_SCRIPT = $this->get_template_vars('CHOOSER_SCRIPT');
+                $REASSIGN_JS = $this->get_template_vars('REASSIGN_JS');
+                $RETURN_ACTION = $this->get_template_vars('RETURN_ACTION');
+                $RETURN_MODULE = $this->get_template_vars('RETURN_MODULE');
+                $RETURN_ID = $this->get_template_vars('RETURN_ID');
+
+                $this->append('ACTION_BUTTON', <<<EOD
+                    <input type="button" id="Save" title="{$APP['LBL_SAVE_BUTTON_TITLE']}" accessKey="{$APP['LBL_SAVE_BUTTON_KEY']}"
+                          class="button primary" onclick="var _form = $('#EditView')[0]; if (!set_password(_form,newrules('{$PWDSETTINGS['minpwdlength']}','{$PWDSETTINGS['maxpwdlength']}','{$REGEX}'))) return false; if (!Admin_check()) return false; _form.action.value='Save'; {$CHOOSER_SCRIPT} {$REASSIGN_JS} if(verify_data(EditView)) _form.submit();"
+                          name="button" value="{$APP['LBL_SAVE_BUTTON_LABEL']}">
+EOD
+                );
+                $this->append('ACTION_BUTTON', <<<EOD
+                    <input	title="{$APP['LBL_CANCEL_BUTTON_TITLE']}" accessKey="{$APP['LBL_CANCEL_BUTTON_KEY']}"
+                              class="button" onclick="var _form = $('#EditView')[0]; _form.action.value='{$RETURN_ACTION}'; _form.module.value='{$RETURN_MODULE}'; _form.record.value='{$RETURN_ID}'; _form.submit()"
+                              type="button" name="button" value="{$APP['LBL_CANCEL_BUTTON_LABEL']}">
+EOD
+                    );
+                foreach($additional_buttons as $button)
+                    $this->append('ACTION_BUTTON', $button);
+            {/php}
+            {sugar_action_menu id="userEditActions" class="clickMenu fancymenu" buttons=$ACTION_BUTTON}
         </td>
         <td align="right" nowrap>
             <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}

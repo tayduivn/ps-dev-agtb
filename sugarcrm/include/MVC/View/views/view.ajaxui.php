@@ -26,19 +26,8 @@ class ViewAjaxUI extends SugarView
     public function display()
  	{
  		$user = $GLOBALS["current_user"];
- 		$etag = $user->id . SugarThemeRegistry::current()->__get("name");
- 		header("cache-control:");
- 		header('Expires: ');
- 		header("ETag: " . $etag);
- 		header("Pragma:");
- 		if(isset($_SERVER["HTTP_IF_NONE_MATCH"])){
- 			if($etag == $_SERVER["HTTP_IF_NONE_MATCH"]){
- 				ob_clean();
- 				header("Status: 304 Not Modified");
- 				header("HTTP/1.0 304 Not Modified");
- 				die();
- 			}
- 		}
+ 		$etag = $user->id . $user->getETagSeed("mainMenuETag");
+ 		generateEtagHeader($etag);
         //Prevent double footers
         $GLOBALS['app']->headerDisplayed = false;
  	}

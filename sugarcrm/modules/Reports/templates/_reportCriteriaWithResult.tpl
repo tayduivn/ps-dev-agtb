@@ -66,49 +66,80 @@
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td>
-<ul class="clickMenu fancymenu" id="detailViewActions">
-    <li>
-        <input name="runReportButton" id="runReportButton" type="button" class="button" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
-        onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}">
-        <ul class="subnav multi">
+
+    {php}
+    $mod_strings = $this->get_template_vars('mod_strings');
+    $app_strings = $this->get_template_vars('app_strings');
+    $this->append('buttons', <<<EOD
+        <input name="runReportButton" id="runReportButton" type="button" class="button" accessKey="{$mod_strings['LBL_RUN_REPORT_BUTTON_KEY']}" title="{$mod_strings['LBL_RUN_BUTTON_TITLE']}"
+               onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']}">
+EOD
+    );
+    {/php}
     {* //BEGIN SUGARCRM flav=sales ONLY*}
-<li><input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();"></li>
+    {php}
+    $reportDetailsButtonTitle = $this->get_template_vars('reportDetailsButtonTitle');
+    $this->append('buttons', <<<EOD
+        <input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
+EOD
+    );
+    {/php}
 {* //END SUGARCRM flav=sales ONLY*}
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<li><input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings.LBL_EDIT_BUTTON_KEY}" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
-	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';"></li>
+    {php}
+        $this->append('buttons', <<<EOD
+            <input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" value="{$app_strings['LBL_EDIT_BUTTON_LABEL']}" title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}"
+               onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';">
+EOD
+        );
+    {/php}
 {/if}
-<li>{$duplicateButtons}</li>
+    {append var="buttons" value="$duplicateButtons"}
 {if ($report_edit_access)}
-<li><input type="button" class="button"  name="scheduleReportButton" id="scheduleReportButton" value="{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}"
-	onclick="schedulePOPUP()"></li>
+    {php}
+        $this->append('buttons', <<<EOD
+        <input type="button" class="button"  name="scheduleReportButton" id="scheduleReportButton" value="{$mod_strings['LBL_REPORT_SCHEDULE_TITLE']}"
+               onclick="schedulePOPUP()">
+EOD
+        );
+    {/php}
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
 {if ($report_export_access)}
-<li><input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
-	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'"></li>
-
+    {php}
+        $this->append('buttons', <<<EOD
+        <input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings['LBL_VIEW_PDF_BUTTON_KEY']}" value="{$app_strings['LBL_VIEW_PDF_BUTTON_LABEL']}" title="{$app_strings['LBL_VIEW_PDF_BUTTON_TITLE']}"
+               onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
+EOD
+        );
+    {/php}
 {/if}
 {if ($report_export_as_csv_access)}
-<li><input type="button" class="button"  name="exportReportButton" id="exportReportButton" value="{$mod_strings.LBL_EXPORT}" onclick="do_export();"></li>
+    {php}
+        $this->append('buttons', <<<EOD
+        <input type="button" class="button"  name="exportReportButton" id="exportReportButton" value="{$mod_strings['LBL_EXPORT']}" onclick="do_export();">
+EOD
+        );
+    {/php}
 {/if}
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<li><input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings.LBL_DELETE_BUTTON_KEY}" value="{$app_strings.LBL_DELETE_BUTTON_LABEL}" title="{$app_strings.LBL_DELETE_BUTTON_TITLE}"
-	onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){literal}{{/literal}this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();{literal}}{/literal}">
-</li>
+    {php}
+        $this->append('buttons', <<<EOD
+        <input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" value="{$app_strings['LBL_DELETE_BUTTON_LABEL']}" title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}"
+               onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();}">
+EOD
+        );
+    {/php}
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
-        </ul>
-    </li>
-</ul>
+{sugar_action_menu buttons=$buttons class="clickMenu fancymenu"}
 </td>
 </tr>
 </table>
-
 <script language="javascript">
 var form_submit = "{$form_submit}";
 LBL_RELATED = '{$mod_strings.LBL_RELATED}';
