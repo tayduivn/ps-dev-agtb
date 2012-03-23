@@ -40,7 +40,7 @@
                 formatNumber: function(value, round, precision, number_group_seperator, decimal_seperator) {
                     // TODO: ADD LOCALIZATION SUPPORT FOR CURRENT USER
 
-                    if (_.isString(value)){
+                    if (_.isString(value)) {
                         value = parseFloat(value, 10);
                     }
 
@@ -62,6 +62,34 @@
                         number_array[0] = number_array[0].toString().replace(regex, '$1' + number_group_seperator + '$2');
                     }
                     return number_array[0] + (number_array.length > 1 && number_array[1] != '' ? decimal_seperator + number_array[1] : '');
+                },
+
+                /**
+                 * Unformats number strings
+                 * @param number_string
+                 * @param number_group_seperator
+                 * @param decimal_seperator
+                 * @param toFloat
+                 */
+                unformatNumberString: function(n, number_group_seperator, decimal_seperator, toFloat) {
+                    toFloat = toFloat || false;
+                    if (typeof number_group_seperator == 'undefined' || typeof decimal_seperator == 'undefined') return number_string;
+                        // parse out number group seperators
+                        if (number_group_seperator != '') {
+                            var num_grp_sep_re = new RegExp('\\' + number_group_seperator, 'g');
+                            n = n.replace(num_grp_sep_re, '');
+                        }
+
+                        // parse out decimal seperators
+                        n = n.replace(decimal_seperator, '.');
+
+                        // convert to float
+                        if (n.length > 0 && toFloat) {
+                            n = parseFloat(n);
+                        }
+
+                        // return
+                        return n;
                 }
             }
         }

@@ -51,5 +51,23 @@ describe("utils", function() {
             var result = utils.formatNumber(value, round, precision, number_group_seperator, decimal_seperator)
             expect(result).toEqual("2123,38");
         });
+
+        it("should unformat number strings to unformatted number strings", function() {
+            var value = '2,123 3828';
+            var number_group_seperator = ",";
+            var decimal_seperator = " ";
+            var toFloat = false;
+            var result = utils.unformatNumberString(value, number_group_seperator, decimal_seperator, toFloat);
+            expect(result).toEqual("2123.3828");
+        });
+
+        it("should unformat number strings to floats", function() {
+            var value = '2,123 3828';
+            var number_group_seperator = ",";
+            var decimal_seperator = " ";
+            var toFloat = true;
+            var result = utils.unformatNumberString(value, number_group_seperator, decimal_seperator, toFloat);
+            expect(result).toEqual(2123.3828);
+        });
     });
 });
