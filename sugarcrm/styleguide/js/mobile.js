@@ -7,10 +7,16 @@
 		$('#logo').swipeRight(function () {
       $('html').find('body').addClass('onL');
 		})
+		$('#logo').swipeLeft(function () {
+      $('html').find('body').removeClass('onL');
+		})
 		
 		$('#create').swipeLeft(function () {
       $('html').find('body').addClass('onR');
 		})  		
+		$('#create').swipeRight(function () {
+      $('html').find('body').removeClass('onR');
+		})
 		
 		$('#moduleList').swipeLeft(function () {
       $('html').find('body').removeClass('onL');
