@@ -46,9 +46,9 @@
 function smarty_function_sugar_menu($params, &$smarty)
 {
     $root_options = array(
-        "id" => $params['id'] ? $params['id'] : ""
+        "id" => array_key_exists('id', $params) ? $params['id'] : ""
     );
-    if($params['htmlOptions']) {
+    if(array_key_exists('htmlOptions', $params)) {
         foreach($params['htmlOptions'] as $attr => $value) {
             $root_options[$attr] = $value;
         }
@@ -59,11 +59,11 @@ function smarty_function_sugar_menu($params, &$smarty)
             $output .= $item['html'];
             continue;
         }
-        $output .= open_tag('li', $params['itemOptions']).$item['html'];
+        $output .= open_tag('li', array_key_exists('itemOptions', $params) ? $params['itemOptions'] : array()).$item['html'];
         if(isset($item['items']) && count($item['items'])) {
             $output .= smarty_function_sugar_menu(array(
                 'items' => $item['items'],
-                'htmlOptions' => $params['submenuHtmlOptions']
+                'htmlOptions' => array_key_exists('submenuHtmlOptions', $params) ? $params['submenuHtmlOptions'] : array()
             ), $smarty);
         }
         $output .= "</li>";
