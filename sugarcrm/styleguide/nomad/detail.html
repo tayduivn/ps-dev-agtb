@@ -1,43 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Nomad - SugarCRM</title>
+  <title>Module - Record - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="shortcut icon" href="../img/avatar_16.png">
+  <link rel="apple-touch-icon" href="../img/badge_128.png">
+  <link rel="apple-touch-icon-precomposed" href="../img/badge_128.png">
   <meta name="description" content="">
   <meta name="author" content="">
-  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-  <!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-  <!-- styles -->
-  <link href="/css/bootstrap-mobile.css" rel="stylesheet">
+  <link href="../css/bootstrap-mobile.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
 <body id="nomad">
+  <div class="hide" id="searchForm">
+    <form class="form-search" action="">
+      <input type="text" class="search-query span2">
+      <a href="" class="btn btn-inverse cancel">Cancel</a>
+    </form>  
+  </div>
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
-      <div class="container-fluid">
-        <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
+        <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard" id="logo"></a>
+        <h1>Contact</h1>
+        <a href="" id="search" title="Search"><i class="icon-search icon-md"></i></a>
+        <a href="create.html" id="edit"><i class="icon-plus icon-md"></i></a>
         <div class="nav-collapse">
-          <ul class="nav">
-            <li id="gen1"><a href="" id="moduleTab_Accounts">Accounts <small class="btn btn-small btn-default pull-right">120</small></a></li>
-            <li id="gen2"><a href="" id="moduleTab_Contacts">Contacts <small class="btn btn-small btn-default pull-right">1200</small></a></li>              
-            <li id="gen3"><a href="list.html" id="moduleTab_Opportunities">Opportunities <small class="btn btn-small  btn-success btn-default  pull-right">12</small></a></li>              
-            <li id="gen4"><a href="" id="moduleTab_Leads">Leads <small class="btn btn-small btn-default pull-right">87</small></a></li>
-            <li id="gen22"><a href="" id="moduleTab_Reports">Reports <small class="btn btn-small btn-default pull-right">9</small></a></li>
-            <li id="gen17"><a href="" id="moduleTab_Campaigns">Campaigns <small class="btn btn-small btn-success pull-right">8</small></a></li>
-            <li id="gen21"><a href="" id="moduleTab_Forecasts">Forecasts</a></li>
-            <li id="gen23"><a href="" id="moduleTab_Documents">Documents <small class="btn btn-small btn-default pull-right">145</small></a></li>
-            <li id="gen23"><a href="" id="moduleTab_Emails">Emails <small class="btn btn-small btn-default pull-right">12,568</small></a></li> 
-            <li id="gen23"><a href="" id="moduleTab_Cases">Cases <small class="btn btn-small btn-default pull-right">150</small></a></li>                        
+          <ul class="nav" id="moduleList">
+            <li id="userAdmin"><a href="" id="userTab"><i class="icon-user"></i> Mia Hamm</a></li>                        
+            <li id="gen1"><a href="" id="moduleTab_Activity">Activity <small class="btn btn-small btn-inverse pull-right">120</small></a></li>
+
+            <li id="gen1"><a href="list.html" id="moduleTab_Accounts">Accounts <small class="btn btn-small btn-inverse pull-right">120</small></a></li>
+            <li id="gen2"><a href="list.html" id="moduleTab_Contacts">Contacts <small class="btn btn-small btn-inverse pull-right">1200</small></a></li>              
+            <li id="gen3"><a href="list.html" id="moduleTab_Opportunities">Opportunities <small class="btn btn-small btn-primary   pull-right">12</small></a></li>              
+            <li id="gen4"><a href="list.html" id="moduleTab_Leads">Leads <small class="btn btn-small btn-inverse pull-right">87</small></a></li>
+            <li id="gen22"><a href="list.html" id="moduleTab_Reports">Reports <small class="btn btn-small btn-inverse pull-right">9</small></a></li>
+            <li id="gen17"><a href="list.html" id="moduleTab_Campaigns">Campaigns <small class="btn btn-small btn-primary pull-right">8</small></a></li>
+            <li id="gen21"><a href="list.html" id="moduleTab_Forecasts">Forecasts</a></li>
+            <li id="gen23"><a href="list.html" id="moduleTab_Documents">Documents <small class="btn btn-small btn-inverse pull-right">145</small></a></li>
+            <li id="gen24"><a href="list.html" id="moduleTab_Emails">Emails <small class="btn btn-small btn-inverse pull-right">12,568</small></a></li> 
+            <li id="gen25"><a href="list.html" id="moduleTab_Cases">Cases <small class="btn btn-small btn-inverse pull-right">150</small></a></li>                        
+            <li id="gen26"><a href="list.html" id="moduleTab_Cases">Subscriptions <small class="btn btn-small btn-inverse pull-right">150,000</small></a></li>                               
+          </ul>
+          <ul>  
+            <li id="gen0"><a href="login.html" id="userTab_Logout">Log Out</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
-      </div>
     </div><!-- /navbar-inner -->
   </div>
   <div class="bizcard">
-    <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
+    <img src="../img/avatar_sabra.jpg" class="avatar" alt="Sabra Kahn avatar">
       <div class="card">
         <h3>Sabra Kahn</h3>
         <strong>National Sales Manager</strong><br>
@@ -45,9 +57,7 @@
         Boston, MA
       </div>
     <div id="record-action">
-      <span>
         <a href=""><i class="icon-star-empty icon-md"></i></a> <a href=""><i class="icon-volume-up icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-cog icon-md"></i></a>
-      </span>
     </div>
   </div>
   <div class="container-fluid" id="detailListing">
@@ -55,11 +65,11 @@
       <div class="span12" id="listing">
         <article>     
           <i class="icon-star-empty"></i>
-          <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
+          <a href="detail.html">Perkin Kleiners</a> is a <b>100 seat</b> <a href="detail.html">Opportunity</a> of <b>$50K</b> closing in <b>24</b> days <a href="list.html">in-progress</a> at <b>30%</b>. 
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -68,8 +78,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -78,8 +88,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -88,8 +98,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -98,8 +108,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -108,8 +118,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -118,8 +128,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -128,8 +138,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -138,8 +148,8 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
@@ -148,15 +158,18 @@
           <a href="detail.html">Sabra Kahn</a> is an <a href="detail.html">Opportunity</a> for <b>$50,000</b> that closes in <b>24 days</b>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hidden">
-              <a href=""><i class="icon-print icon-md"></i></a> <a href=""><i class="icon-share icon-md"></i></a> <a href=""><i class="icon-edit icon-md"></i></a> <a href=""><i class="icon-trash icon-md"></i></a>
+            <span class="hide">
+              <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
         </article>
+        <article>     
+          <a href="">Load more 50 out of 100 more <i class="icon-cycle"></i></a>
+        </article>        
       </div>     
     </div>     
   </div>  
-  <script src="/js/jquery.js"></script>
-  <script src="/js/mobile.js"></script>
+  <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../js/mobile.js"></script>
 </body>
 </html>

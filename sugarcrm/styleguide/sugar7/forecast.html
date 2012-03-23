@@ -13,12 +13,12 @@
     <![endif]-->
 
     <!-- styles -->
-    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="../css/bootstrap.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
     <link href="http://jqueryui.com/themes/base/jquery.ui.all.css">
     
-  	<link type="text/css" rel="stylesheet" href="/rickshaw/src/css/graph.css">
-  	<link type="text/css" rel="stylesheet" href="/rickshaw/src/css/lines.css">
+  	<link type="text/css" rel="stylesheet" href="rickshaw/src/css/graph.css">
+  	<link type="text/css" rel="stylesheet" href="rickshaw/src/css/lines.css">
   	<style>
 
     path.area {
@@ -286,23 +286,23 @@
     </div>
     
     
-    <script src="/js/jquery.js"></script>
-    <script src="/js/bootstrap-transition.js"></script>
-    <script src="/js/bootstrap-alert.js"></script>
-    <script src="/js/bootstrap-modal.js"></script>
-    <script src="/js/bootstrap-dropdown.js"></script>
-    <script src="/js/bootstrap-scrollspy.js"></script>
-    <script src="/js/bootstrap-tab.js"></script>
-    <script src="/js/bootstrap-tooltip.js"></script>
-    <script src="/js/bootstrap-popover.js"></script>
-    <script src="/js/bootstrap-button.js"></script>
-    <script src="/js/bootstrap-typeahead.js"></script>
-    <script src="/js/application.js"></script>
-		<script src="/js/jquery.jeditable.js"></script>        
-		<script src="/js/editable.js"></script>        
+    <script src="../js/jquery-1.7.2.min.js"></script>
+    <script src="../js/bootstrap-transition.js"></script>
+    <script src="../js/bootstrap-alert.js"></script>
+    <script src="../js/bootstrap-modal.js"></script>
+    <script src="../js/bootstrap-dropdown.js"></script>
+    <script src="../js/bootstrap-scrollspy.js"></script>
+    <script src="../js/bootstrap-tab.js"></script>
+    <script src="../js/bootstrap-tooltip.js"></script>
+    <script src="../js/bootstrap-popover.js"></script>
+    <script src="../js/bootstrap-button.js"></script>
+    <script src="../js/bootstrap-typeahead.js"></script>
+    <script src="../js/application.js"></script>
+		<script src="../js/jquery.jeditable.js"></script>        
+		<script src="../js/editable.js"></script>        
 
 <!-- Charts -->
-<script src="/d3/d3.v2.min.js"></script>
+<script src="d3/d3.v2.min.js"></script>
 <script>
 
 var p = [20, 50, 30, 20],
@@ -320,7 +320,7 @@ var svg = d3.select("#chart").append("svg")
   .append("g")
     .attr("transform", "translate(" + p[3] + "," + (h + p[0]) + ")");
 
-d3.csv("/d3/examples/crimea/crimea.csv", function(crimea) {
+d3.csv("d3/examples/crimea/crimea.csv", function(crimea) {
 
   // Transpose the data into layers by cause.
   var causes = d3.layout.stack()(["wounds", "other", "disease"].map(function(cause) {
