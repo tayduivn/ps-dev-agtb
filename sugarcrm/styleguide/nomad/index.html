@@ -5,35 +5,28 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="shortcut icon" href="../img/avatar_16.png">
-  <link rel="apple-touch-icon" href="../img/badge_128.png">
-  <link rel="apple-touch-icon-precomposed" href="../img/badge_128.png">
+  <link rel="apple-touch-icon" href="../img/badge.png">
+  <link rel="apple-touch-icon-precomposed" href="../img/badge.png">
   <meta name="description" content="">
   <meta name="author" content="">
   <link href="../css/bootstrap-mobile.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
-  <script type="text/javascript">document.write(unescape("%3Cscript src='" + (("https:" == document.location.protocol) ? "https" : "http") + "://c.mouseflow.com/projects/2ee816e3-6da8-4e32-acc6-3e78eea0dcac.js' type='text/javascript'%3E%3C/script%3E"));</script>
 </head>
 <body id="nomad">
-  <div class="hide" id="searchForm">
-    <form class="form-search" action="">
-      <input type="text" class="search-query span2">
-      <a href="" class="btn btn-inverse cancel">Cancel</a>
-    </form>  
-  </div>
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar navbar-fixed-top">    
     <div class="navbar-inner">
       <h1>SugarCRM</h1>
-      <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard" id="logo"></a>
-      <a href="" id="search" title="Search"><i class="icon-search icon-md"></i></a>
-      <a href="" id="edit" class="launch"><i class="icon-plus icon-md"></i></a>
+      <a href="dashboard.html" title="Dashboard" class="cube" id="logo"></a>
+      <a href="" title="Search" id="search"><i class="icon-search icon-md"></i></a>
+      <a href="" class="launch" id="create"><i class="icon-plus icon-md"></i></a>
       <div class="nav-collapse">
         <ul class="nav" id="moduleList">
           <li id="userAdmin"><a href="" id="userTab"><i class="icon-user"></i> Mia Hamm</a></li>                        
-          <li id="gen1"><a href="accounts.html" id="moduleTab_Accounts">Accounts <small class="btn btn-small btn-inverse pull-right">120</small></a></li>
-          <li id="gen25"><a href="cases.html" id="moduleTab_Cases">Cases <small class="btn btn-small btn-inverse pull-right">15</small></a></li>             
-          <li id="gen2"><a href="contacts.html" id="moduleTab_Contacts">Contacts <small class="btn btn-small btn-inverse pull-right">11,200</small></a></li>
-          <li id="gen23"><a href="documents.html" id="moduleTab_Documents">Documents <small class="btn btn-small btn-inverse pull-right">1,145</small></a></li>                      
-          <li id="gen3"><a href="opportunity.html" id="moduleTab_Opportunities">Opportunities <small class="btn btn-small btn-primary   pull-right">12</small></a></li>            
+          <li id="gen1"><a href="accounts.html" id="moduleTab_Accounts">Accounts</a></li>
+          <li id="gen25"><a href="cases.html" id="moduleTab_Cases">Cases</a></li>             
+          <li id="gen2"><a href="contacts.html" id="moduleTab_Contacts">Contacts</a></li>
+          <li id="gen23"><a href="documents.html" id="moduleTab_Documents">Documents</a></li>                      
+          <li id="gen3"><a href="opportunity.html" id="moduleTab_Opportunities">Opportunities</a></li>            
         </ul>
         <ul class="nav" id="createList">
           <li><a href="account_create.html">Account</a></li>
@@ -43,6 +36,12 @@
         </ul>
       </div><!-- /.nav-collapse -->
     </div><!-- /navbar-inner -->
+    <div class="hide" id="searchForm">
+      <form class="form-search" action="">
+        <input type="text" class="search-query span2">
+        <a href="" class="btn btn-inverse cancel">Cancel</a>
+      </form>  
+    </div>
   </div>
   <div class="container-fluid">
     <div class="row-fluid">
@@ -52,7 +51,7 @@
           <a href="detail.html">Perkin Kleiners</a> is a <b>100 seat</b> <a href="detail.html">Opportunity</a> of <b>$50K</b> closing in <b>24</b> days <a href="list.html">in-progress</a> at <b>30%</b>. 
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hide">
+            <span class="hide actions">
               <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
@@ -62,7 +61,7 @@
           <a href="detail.html">Perkin Kleiners</a> is a <b>100 seat</b> <a href="detail.html">Opportunity</a> of <b>$50K</b> closing in <b>24</b> days <a href="list.html">in-progress</a> at <b>30%</b>. 
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hide">
+            <span class="hide actions">
               <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
@@ -72,7 +71,7 @@
           <a href="detail.html">Perkin Kleiners</a> is a <b>100 seat</b> <a href="detail.html">Opportunity</a> of <b>$50K</b> closing in <b>24</b> days <a href="list.html">in-progress</a> at <b>30%</b>. 
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hide">
+            <span class="hide actions">
               <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
@@ -82,7 +81,7 @@
           <a href="detail.html">Perkin Kleiners</a> is a <b>100 seat</b> <a href="detail.html">Opportunity</a> of <b>$50K</b> closing in <b>24</b> days <a href="list.html">in-progress</a> at <b>30%</b>. 
           <span id="listing-action-item1">
             <i class="grip">|||</i>
-            <span class="hide">
+            <span class="hide actions">
               <a href="" title="Log"><i class="icon-book icon-md"></i></a> <a href="" title="Task"><i class="icon-check icon-md"></i></a> <a href="" title="Mail"><i class="icon-envelope icon-md"></i></a> <a href="" title="Note"><i class="icon-plus-sign icon-md"></i></a> <a href="" title="Schedule"><i class="icon-calendar icon-md"></i></a> <a href="" title="Remove"><i class="icon-trash icon-md"></i></a>
             </span>
           </span>
@@ -150,7 +149,9 @@
       </div>
     </div>
   </div>   
-  <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../js/zepto/zepto.js"></script>
+  <script src="../js/zepto/event.js"></script>
+  <script src="../js/zepto/touch.js"></script>
   <script src="../js/mobile.js"></script>
 </body>
 </html>

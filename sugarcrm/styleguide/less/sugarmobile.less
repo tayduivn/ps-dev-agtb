@@ -24,7 +24,6 @@ body {
    margin: -10px;
  }
 
-
 .container-fluid {
   background: @white;
   height: 100%;
@@ -106,7 +105,7 @@ article [id^="listing-action"] span {
   width: 100%;
   height: 100%;
   z-index: 0;
-  background: @grayDarker url(/img/black_linen_v2.png);
+  background: @grayDarker url(../img/black_linen_v2.png);
   @shadow: inset 0 2px 4px @black, inset 0 -2px 4px @black;
   .box-shadow(@shadow);
   list-style: none;
@@ -210,7 +209,7 @@ date {
   font-size: 16px;
 }
 .actions [class^="icon-"] {
-  .opacity(30);
+  .opacity(80);
 }
 a [class^="icon-"] {
   .opacity(80);
@@ -293,7 +292,7 @@ html {
   display: block;
   width:86%;
   height: 100%;
-  background: @grayDarker url(/img/black_linen_v2.png);
+  background: @grayDarker url(../img/black_linen_v2.png);
 }
 .onR .navbar .nav-collapse {
   float: none;
@@ -303,7 +302,7 @@ html {
   display: block;
   width:86%;
   height: 100%;
-  background: @grayDarker url(/img/black_linen_v2.png);
+  background: @grayDarker url(../img/black_linen_v2.png);
 }
 
 .onL .navbar .nav-collapse #moduleList, .onR .navbar .nav-collapse #createList {
@@ -352,7 +351,7 @@ html {
   left: 58px;
 }
 
-.navbar #edit {
+.navbar #create {
   position: absolute;
   top: 0;
   right: 0;
@@ -376,12 +375,12 @@ html {
   z-index: 2000;
   width: 100%;
   height: 44px !important;
-  background: @grayDarker url(/img/black_linen_v2.png);
+  background: @grayDarker url(../img/black_linen_v2.png);
 }
 #searchForm .btn {
   position: absolute;
-  top:8px;
-  right: 10px;
+  top:1px;
+  right: 0px;
   width: inherit;
   }
   
@@ -393,6 +392,7 @@ html {
   padding: 4px;
   left: 10px;
   top: 9px;
+  height: 28px;
   width: 70% !important;
   .border-radius(4px);
   z-index: 1080;
@@ -462,14 +462,14 @@ html {
 
 .onL .nav-collapse li {
   .border-radius(0px);
-  background: @grayDarker url(/img/black_linen_v2.png);
+  background: @grayDarker url(../img/black_linen_v2.png);
   @shadow: inset -2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
   .box-shadow(@shadow);  
 }
 
 .onR .nav-collapse li {
   .border-radius(0px);
-  background: @grayDarker url(/img/black_linen_v2.png);
+  background: @grayDarker url(../img/black_linen_v2.png);
   @shadow: inset 2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
   .box-shadow(@shadow);  
 }
@@ -573,7 +573,7 @@ color: @gray;
 /* Log In
 ----------*/
 #login {
-	background: #E61718 url(../img/sugar_bg.png);
+	background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 -4px 60px rgba(0,0,0,.8);
   .box-shadow(@shadow);
 }

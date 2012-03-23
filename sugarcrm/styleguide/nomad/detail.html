@@ -23,27 +23,22 @@
     <div class="navbar-inner">
         <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard" id="logo"></a>
         <h1>Contact</h1>
-        <a href="" id="search" title="Search"><i class="icon-search icon-md"></i></a>
-        <a href="create.html" id="edit"><i class="icon-plus icon-md"></i></a>
+        <a href="" title="Search" id="search"><i class="icon-search icon-md"></i></a>
+        <a href="" class="launch" id="create"><i class="icon-plus icon-md"></i></a>
         <div class="nav-collapse">
           <ul class="nav" id="moduleList">
             <li id="userAdmin"><a href="" id="userTab"><i class="icon-user"></i> Mia Hamm</a></li>                        
-            <li id="gen1"><a href="" id="moduleTab_Activity">Activity <small class="btn btn-small btn-inverse pull-right">120</small></a></li>
-
-            <li id="gen1"><a href="list.html" id="moduleTab_Accounts">Accounts <small class="btn btn-small btn-inverse pull-right">120</small></a></li>
-            <li id="gen2"><a href="list.html" id="moduleTab_Contacts">Contacts <small class="btn btn-small btn-inverse pull-right">1200</small></a></li>              
-            <li id="gen3"><a href="list.html" id="moduleTab_Opportunities">Opportunities <small class="btn btn-small btn-primary   pull-right">12</small></a></li>              
-            <li id="gen4"><a href="list.html" id="moduleTab_Leads">Leads <small class="btn btn-small btn-inverse pull-right">87</small></a></li>
-            <li id="gen22"><a href="list.html" id="moduleTab_Reports">Reports <small class="btn btn-small btn-inverse pull-right">9</small></a></li>
-            <li id="gen17"><a href="list.html" id="moduleTab_Campaigns">Campaigns <small class="btn btn-small btn-primary pull-right">8</small></a></li>
-            <li id="gen21"><a href="list.html" id="moduleTab_Forecasts">Forecasts</a></li>
-            <li id="gen23"><a href="list.html" id="moduleTab_Documents">Documents <small class="btn btn-small btn-inverse pull-right">145</small></a></li>
-            <li id="gen24"><a href="list.html" id="moduleTab_Emails">Emails <small class="btn btn-small btn-inverse pull-right">12,568</small></a></li> 
-            <li id="gen25"><a href="list.html" id="moduleTab_Cases">Cases <small class="btn btn-small btn-inverse pull-right">150</small></a></li>                        
-            <li id="gen26"><a href="list.html" id="moduleTab_Cases">Subscriptions <small class="btn btn-small btn-inverse pull-right">150,000</small></a></li>                               
+            <li id="gen1"><a href="accounts.html" id="moduleTab_Accounts">Accounts</a></li>
+            <li id="gen25"><a href="cases.html" id="moduleTab_Cases">Cases</a></li>             
+            <li id="gen2"><a href="contacts.html" id="moduleTab_Contacts">Contacts</a></li>
+            <li id="gen23"><a href="documents.html" id="moduleTab_Documents">Documents</a></li>                      
+            <li id="gen3"><a href="opportunity.html" id="moduleTab_Opportunities">Opportunities</a></li>            
           </ul>
-          <ul>  
-            <li id="gen0"><a href="login.html" id="userTab_Logout">Log Out</a></li>
+          <ul class="nav" id="createList">
+            <li><a href="account_create.html">Account</a></li>
+            <li><a href="case_create.html">Case</a></li>
+            <li><a href="contact_create.html">Contact</a></li>
+            <li><a href="opportunity_create.html">Opportunity</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
     </div><!-- /navbar-inner -->
@@ -169,7 +164,9 @@
       </div>     
     </div>     
   </div>  
-  <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../js/zepto/zepto.js"></script>
+  <script src="../js/zepto/event.js"></script>
+  <script src="../js/zepto/touch.js"></script>
   <script src="../js/mobile.js"></script>
 </body>
 </html>
