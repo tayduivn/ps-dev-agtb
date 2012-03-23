@@ -5,90 +5,59 @@
  * Time: 5:15 PM
  * To change this template use File | Settings | File Templates.
  */
-xdescribe("SugarFieldManager", function () {
+describe("SugarFieldManager", function () {
+        var app = SUGAR.App;
+        app.metadata.set(fixtures.metadata);
+        app.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
+        app.dataManager.declareModels(fixtures.metadata);
 
-        // setup to be run before every test
-        beforeEach(function () {
-            this.sugarFieldManager = SUGAR.App.sugarFieldManager;
-            this.api = SUGAR.Api.getInstance();
-            this.server = sinon.fakeServer.create();
+        //Need a sample Bean
+        var bean = app.dataManager.createBean("Contacts", {
+            first_name: "Foo",
+            last_name: "Bar"
+        });
+        var collection = new app.BeanCollection([bean]);
+        //Setup a context
+        var context = app.context.getContext({
+            url: "someurl",
+            module: "Contacts",
+            model : bean,
+            collection : collection
         });
 
-        afterEach(function () {
-           //this.sugarFieldManager.reset();
-            this.server.restore();
-        });
-
-        it("should reset if asked", function () {
-                var result = this.sugarFieldManager.reset();
-                expect(this.sugarFieldManager.fieldsObj).toEqual({});
-                expect(this.sugarFieldManager.fieldsHash).toEqual('');
-            }
-        );
-
-        it("should sync all sugar fields from server", function () {
-                var callspy = sinon.spy(this.api, 'call');
-                var callbackSpy = sinon.spy(this.sugarFieldManager, 'handleResponse');
-                this.sugarFieldManager.reset();
-                this.server.respondWith("GET", "/rest/v10/sugarFields/?md5=",
-                                [200, {  "Content-Type":"application/json"},
-                                    JSON.stringify(sugarFieldsFixtures)]);
-
-                var syncResult=this.sugarFieldManager.syncFields();
-
-                this.server.respond(); //tell server to respond to pending async call
-                expect(callspy).toHaveBeenCalledOnce();
-                expect(callbackSpy).toHaveBeenCalledOnce();
-                expect(syncResult).toBeTruthy();
-                this.api.call.restore();
-                this.sugarFieldManager.handleResponse.restore();
-                this.sugarFieldManager.reset();
-            }
-        );
+        var view = {
+            name : "test"
+        }
 
         it("should get a sugar field", function () {
-                this.sugarFieldManager.reset();
-                this.server.respondWith("GET", "/rest/v10/sugarFields/?md5=",
-                                [200, {  "Content-Type":"application/json"},
-                                    JSON.stringify(sugarFieldsFixtures)]);
+                var result = app.sugarFieldManager.get({
+                    def : {
+                        type : 'varchar',
+                        name : "description"
+                    },
+                    context : context,
+                    view : view
+                });
 
-
-                var syncResult=this.sugarFieldManager.syncFields();
-
-                this.server.respond(); //tell server to respond to pending async call
-                expect(syncResult).toBeTruthy();
-
-                var result = this.sugarFieldManager.getField('varchar','editView');
-
+                expect(result).toBeDefined();
+                expect(result.render).toBeDefined();
             }
         );
 
-        it("should return an object of sugar fields", function () {
-                this.sugarFieldManager.reset();
-                this.server.respondWith("GET", "/rest/v10/sugarFields/?md5=",
-                                [200, {  "Content-Type":"application/json"},
-                                    JSON.stringify(sugarFieldsFixtures)]);
+        it("should return a new Sugar field class when the field has a custom controller", function () {
+            var result = app.sugarFieldManager.get({
+                def : {
+                    type : 'varchar',
+                    name : "description"
+                },
+                context : context,
+                view : view
+            });
 
-
-                var syncResult=this.sugarFieldManager.syncFields();
-
-                this.server.respond(); //tell server to respond to pending async call
-
-                var stubbedFieldList = [
-                    {name:"text",view:"editView"},
-                    {name:"text", view:"detailView"},
-                    {name:"password", view:"editView"},
-                    {name:"button_save", view:"default"},
-                    {name:"textarea", view: "editView"},
-                    {name:"textarea", view: "detailView"},
-                    {name:"asdfasd", view: "asdf"}
-                ];
-
-                var result = this.sugarFieldManager.getFields(stubbedFieldList);
-
-                //expect(result).toEqual(sugarFieldsGetFieldsResponse);
-            }
-        );
+            expect(result).toBeDefined();
+            expect(result.customCallback).toBeDefined();
+            expect(app.sugarField.text).toBeDefined();
+        });
 
 
     }

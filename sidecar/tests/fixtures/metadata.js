@@ -520,7 +520,14 @@ fixtures.metadata = {
                     "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
-            "events": {}
+            "events": {},
+            controller : "{" +
+                "render : function(){" +
+                    "console.log('text rendered!');" +
+                    "this.app.sugarField.base.prototype.render.call(this);" +
+                "}," +
+                "customCallback : function(){}" +
+            "}"
         },
         "password": {
             "editView": {
