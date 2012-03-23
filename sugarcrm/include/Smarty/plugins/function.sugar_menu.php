@@ -59,11 +59,11 @@ function smarty_function_sugar_menu($params, &$smarty)
             $output .= $item['html'];
             continue;
         }
-        $output .= open_tag('li', array_key_exists('itemOptions', $params) ? $params['itemOptions'] : array()).$item['html'];
+        $output .= open_tag('li', !empty($params['itemOptions']) ? $params['itemOptions'] : array()).$item['html'];
         if(isset($item['items']) && count($item['items'])) {
             $output .= smarty_function_sugar_menu(array(
                 'items' => $item['items'],
-                'htmlOptions' => array_key_exists('submenuHtmlOptions', $params) ? $params['submenuHtmlOptions'] : array()
+                'htmlOptions' => !empty($params['submenuHtmlOptions']) ? $params['submenuHtmlOptions'] : array()
             ), $smarty);
         }
         $output .= "</li>";
