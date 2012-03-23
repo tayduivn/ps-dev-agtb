@@ -81,7 +81,7 @@ describe("Relationships", function() {
         expect(contacts.link.bean).toEqual(opportunity);
     });
 
-    it("should be able to fetch related beans", function() {
+    xit("should be able to fetch related beans", function() {
         dm.declareModels(metadata);
 
         var opportunity = dm.createBean("Opportunities");
