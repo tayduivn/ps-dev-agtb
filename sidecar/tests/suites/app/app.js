@@ -61,11 +61,12 @@ describe("App", function() {
 
     describe("when a data sync is required", function() {
         it("should fire a sync:complete event when all of the sync jobs have finished", function() {
+
             var cbSpy = sinon.spy(function() {
                 SugarTest.setWaitFlag();
             });
             var app = SUGAR.App.init({el: "body"});
-
+            app.events.off("app:sync:complete"); // clear the app sync complete events
             // Add listener onto app for the syncComplete event
             app.on("app:sync:complete", cbSpy);
             app.sync();
