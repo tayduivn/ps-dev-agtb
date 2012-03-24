@@ -3525,6 +3525,11 @@ SUGAR.searchForm = function() {
                 else if ( elemType == 'select' || elemType == 'select-one' || elemType == 'select-multiple' ) {
                     // We have, what I hope, is a select box, time to unselect all options
                     var optionList = elem.options;
+                     
+                    if (optionList.length > 0) {
+                    	optionList[0].selected = "selected"; 
+                    }
+                    
                     for ( var ii = 0 ; ii < optionList.length ; ii++ ) {
                         optionList[ii].selected = false;
                     }
