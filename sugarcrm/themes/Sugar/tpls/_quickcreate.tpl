@@ -32,7 +32,7 @@
     <li>
         <ul class="subnav iefixed showLess" id="quickCreateULSubnav">
             {foreach from=$DCACTIONS item=action name=quickCreate}
-                <li {if $smarty.foreach.quickCreate.index > 4}class="moreOverflow"{/if}><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);">{$action.createRecordTitle}</a></li>
+                <li {if $smarty.foreach.quickCreate.index > 4}class="moreOverflow"{/if}><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('{$action.module}','{$action.createRecordTitle}', true);" id="{$action.module}_quickcreate">{$action.createRecordTitle}</a></li>
 
             {/foreach}
 
