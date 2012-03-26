@@ -5434,9 +5434,9 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     public function ACLAccess($view, $context = null)
     {
-        if(!is_null($context)) {
+        if(is_bool($context)) {
             // BC hack to accept owner override
-           $context['owner_override'] = $context;
+           $context = array('owner_override' => $context);
         }
         if(empty($context)) {
             $context = array();
