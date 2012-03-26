@@ -279,7 +279,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   ),  
   'email_reminder_sent' => array( 
     'name' => 'email_reminder_sent',
-    'vname' => 'LBL_EMAIL_EMAIL_SENT',
+    'vname' => 'LBL_EMAIL_REMINDER_SENT',
     'default' => 0,
     'type' => 'bool',
     'comment' => 'Whether email reminder is already sent',
