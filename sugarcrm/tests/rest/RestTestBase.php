@@ -57,9 +57,9 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $ch = curl_init($urlBase.$urlPart);
         if (!empty($postBody)) {
             if (empty($httpAction)) {
-                curl_setopt($ch, CURLOPT_POST, 1);
                 $httpAction = 'POST';
             }
+            curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
         } else {
             if (empty($httpAction)) {

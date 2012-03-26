@@ -27,6 +27,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('soap/SoapHelperFunctions.php');
+
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modifiy any of the metadata using this
@@ -55,18 +57,21 @@ class MetaDataManager {
     /**
      * This function goes and collects the metadata for you.
      *
-     * @param array $modules A list of modules to return *REQUIRED*
+     * @param array $clientHashes A list provided by the client of the current hashes, any hash that matches will mean that the data for that section will not be returned.
+     * @param array $moduleFilter A list of modules to return, if null it will return data for all modules
      * @param array $typeFilter A list of data types to return, if null all modules are returned.
      * @param string $platform What platform to load metadata for: "base", "mobile", "portal" are likely options, defaults to "base"
+     * @param array $options An array of additional options to control the field, currently recognized options are: onlyHash: only return hashes of the metadata.
      * @return array Retuns an array of module names and all of the metata for each module in hashes contained in the array.
      */
-    public function getData($modules, $typeFilter = array(), $platform = 'base') {
+    public function getData($clientHashes = array(), $moduleFilter = array(), $typeFilter = array(), $platform = 'base', $options = array()) {
         // Default the type filter to everything
         if ( empty($typeFilter) ) {
-            $typeFilter = array('modules','sugarFields','viewTemplates','labels','appStrings','appListStrings');
+            $typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings');
         }
 
-        $this->modules = $modules;
+        $this->modules = array_keys(get_user_module_list($GLOBALS['current_user']));
+
         $this->typeFilter = $typeFilter;
         if ( $platform == 'mobile' ) {
             $this->platforms = array('mobile','portal','base');
@@ -75,41 +80,85 @@ class MetaDataManager {
         } else {
             $this->platforms = array('base');
         }
-        
+
         $data = array();
 
-        if (in_array('modules',$this->typeFilter)) {
-            $data['modules'] = array();
-            foreach ($modules as $modName) {
-                $modData = $this->getModuleData($modName);
-                $data['modules'][$modName] = $modData;
-            }
-        }
-        
-        if (in_array('sugarFields',$this->typeFilter)) {
-            $data['sugarFields'] = $this->getSugarFields();
-        }
-        
-        if (in_array('viewTemplates',$this->typeFilter)) {
-            $data['viewTemplates'] = $this->getViewTemplates();
-        }
-        
-        if (in_array('appStrings', $this->typeFilter)) {
-            $data['appStrings'] = $this->getAppStrings();
-        }
-        
-        if (in_array('appListStrings', $this->typeFilter)) {
-            $data['appListStrings'] = $this->getAppListStrings();
+        $data['modules'] = array();
+        foreach ($this->modules as $modName) {
+            $modData = $this->getModuleData($modName);
+            $data['modules'][$modName] = $modData;
         }
 
-        // TODO: When we actually start caching the results of the metadata, we will have to calculate everything and only send the requested parts so the md5 is consistent.
+        $data['modStrings'] = array();
+        foreach ($this->modules as $modName) {
+            $modData = $this->getModuleStrings($modName);
+            $data['modStrings'][$modName] = $modData;
+            $data['modStrings'][$modName]['_hash'] = md5(serialize($data['modStrings'][$modName]));
+        }
+
+        $data['sugarFields'] = $this->getSugarFields();
+        $data['viewTemplates'] = $this->getViewTemplates();
+        $data['appStrings'] = $this->getAppStrings();
+        $data['appListStrings'] = $this->getAppListStrings();
+        
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
+        
+        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings');
+        $perModuleChunks = array('modules','modStrings');
 
+        if ( isset($options['onlyHash']) && $options['onlyHash'] ) {
+            // The client only wants hashes
+            $hashesOnly = array();
+            $hashesOnly['_hash'] = $data['_hash'];
+            foreach ( $baseChunks as $chunk ) {
+                if (in_array($chunk,$this->typeFilter) ) {
+                    $hashesOnly[$chunk]['_hash'] = $data['_hash'];
+                }        
+            }
+            
+            foreach ( $perModuleChunks as $chunk ) {
+                if (in_array($chunk, $this->typeFilter)) {
+                    // We want modules, let's filter by the requested modules and by which hashes match.
+                    foreach($data[$chunk] as $modName => &$modData) {
+                        if (empty($moduleFilter) || in_array($modName,$moduleFilter)) {
+                            $hashesOnly[$chunk][$modName]['_hash'] = $data[$chunk][$modName]['_hash'];
+                        }
+                    }
+                }
+            }
+
+            $data = $hashesOnly;
+            
+        } else {
+            // The client is being bossy and wants some data as well.
+            foreach ( $baseChunks as $chunk ) {
+                if (!in_array($chunk,$this->typeFilter)
+                    || (isset($clientHashes[$chunk]) && $clientHashes[$chunk] == $data[$chunk]['_hash'])) {
+                    unset($data[$chunk]);
+                }        
+            }
+
+            foreach ( $perModuleChunks as $chunk ) {
+                if (!in_array($chunk, $this->typeFilter)) {
+                    unset($data[$chunk]);
+                } else {
+                    // We want modules, let's filter by the requested modules and by which hashes match.
+                    foreach($data[$chunk] as $modName => &$modData) {
+                        if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
+                            || (isset($clientHashes[$chunk][$modName]) && $clientHashes[$chunk][$modName] == $modData['_hash'])) {
+                            unset($data[$chunk][$modName]);
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        
         return $data;
     }
-
+        
     /**
      * This method collects all view data for the different types of views supported by
      * the SugarCRM app.
@@ -137,9 +186,6 @@ class MetaDataManager {
         $data['fields'] = $vardefs['fields'];
         //FIXME: Need more relationshp data (all relationship data)
         $data['relationships'] = $vardefs['relationships'];
-        if(in_array('labels',$this->typeFilter)) {
-            $data['labels'] = return_module_language($GLOBALS['current_language'],$moduleName);
-        }
         $data['views'] = $this->getModuleViews($moduleName);
 
         $md5 = serialize($data);
@@ -262,6 +308,15 @@ class MetaDataManager {
         $templates = array();
         $templates['_hash'] = md5(serialize($templates));
         return $templates;
+    }
+
+    /**
+     * The collector method for the module strings
+     *
+     * @return array The module strings for the current language
+     */
+    protected function getModuleStrings( $moduleName ) {
+        return return_module_language($GLOBALS['current_language'],$moduleName);
     }
 
     /**
