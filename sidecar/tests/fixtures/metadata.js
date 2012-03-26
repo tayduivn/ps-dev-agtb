@@ -91,7 +91,8 @@ fixtures.metadata = {
                             "fields": [
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"}
+                                {name: "description", label: "Description"},
+                                {name: "date_modified", label: "Modifed Date"}
 
                             ]
                         }
@@ -118,7 +119,8 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"}
+                                {name: "description", label: "Description"},
+                                {name: "date_modified", label: "Modifed Date"}
 
                             ]
                         }
@@ -183,6 +185,7 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+                                {name: "date_modified", label: "Modifed Date"},
                                 {type: "sugarField_actionsLink", label: "Actions"}
                             ]
                         }
