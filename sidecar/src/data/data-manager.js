@@ -69,11 +69,6 @@
          */
         init: function() {
             _serverProxy = app.api;
-            // Backbone.js sync methods correspond to Sugar API functions except "read/get" :)
-            _serverProxy.read = function(model, attributes, params, callbacks) {
-                return this.get(model, attributes, params, callbacks);
-            };
-
             Backbone.sync = this.sync;
         },
 
@@ -346,10 +341,10 @@
             };
 
             if ((method == "read") && (model instanceof app.BeanCollection) && (model.link)) {
-                _serverProxy.getRelations(model.link.bean.module, model.link.bean.id, model.link.name, options.params, callbacks);
+                _serverProxy.relationships(method, model.link.bean.module, model.link.bean.id, model.link.name, options.params, callbacks);
             }
             else if (model instanceof app.Bean || model instanceof app.BeanCollection) {
-                _serverProxy[method](model.module, model.attributes, options.params, callbacks);
+                _serverProxy.beans(method, model.module, model.attributes, options.params, callbacks);
             }
             else if (options.relate) {
                 // TODO: Implement create/Delete relationships once the API is spec'ed out
