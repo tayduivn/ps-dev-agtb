@@ -19,7 +19,11 @@ fixtures.metadata = {
                 },
                 "case_number": {
                     "name": "case_number",
-                    "type": "varchar"
+                    "type": "float",
+                    round: 2,
+                    precision:2,
+                    number_group_seperator:",",
+                    decimal_seperator:"."
                 },
                 "name": {
                     "name": "name",
@@ -89,6 +93,7 @@ fixtures.metadata = {
                         {
                             "label": "Details",
                             "fields": [
+                                {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
@@ -531,6 +536,33 @@ fixtures.metadata = {
                 "}," +
                 "customCallback : function(){}" +
             "}"
+        },
+        "float":{
+            "views" : {
+                "detailView":{
+                    "type":"basic",
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
+                "default":{
+                    "type":"basic",
+                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                }
+            },
+            controller: "{" +
+                    "unformat:function(value){\n" +
+                "  value = SUGAR.App.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
+                        "return value\n" +
+                    "}," +
+                "format:function(value){\n" +
+                " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                "return value\n" +
+                "}" +
+                "}"
         },
         "password": {
             "editView": {

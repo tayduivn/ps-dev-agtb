@@ -2,7 +2,7 @@
     var sfid = 0;
 
     //Register Handlebars helper to create fields with unique id's
-    Handlebars.registerHelper('sugar_field', function (context, view, bean) {
+    Handlebars.registerHelper('sugar_field', function(context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>',
             name = this.name,
             label = this.label || this.name,
@@ -17,10 +17,10 @@
 
         sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
             def: def,
-            view : view,
-            context : context,
+            view: view,
+            context: context,
             label: label,
-            model : bean || context.get("model")
+            model: bean || context.get("model")
         }));
 
         sf.sfid = sfid;
@@ -80,7 +80,7 @@
      * @class SugarField
      */
     app.augment('sugarField', {
-        base : Backbone.View.extend({
+        base: Backbone.View.extend({
             /**
              * Reference to the application
              * @property {Object}
@@ -102,12 +102,12 @@
                 this.label = options.label;
                 this.bind(options.context, options.model || options.context.get("model"));
                 this.viewName = this.view.name;
-                this.meta = app.metadata.get({sugarField:this});
+                this.meta = app.metadata.get({sugarField: this});
 
-            // this is experimental to try to see if we can have custom events on sugarfields themselves.
-            // the following line doesn't work, need to _.extend it or something.
-            // this.events = this.meta.events;
-            templateKey = "sugarField." + this.name + "." + this.view.name;
+                // this is experimental to try to see if we can have custom events on sugarfields themselves.
+                // the following line doesn't work, need to _.extend it or something.
+                // this.events = this.meta.events;
+                templateKey = "sugarField." + this.name + "." + this.view.name;
 
                 this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
             },
@@ -129,7 +129,7 @@
              * @private
              * @param {Object} events Hash of events and their handlers
              */
-            delegateEvents : function(events) {
+            delegateEvents: function(events) {
                 if (!(events || (events = this.events))) {
                     return;
                 }
@@ -149,7 +149,7 @@
                                 this["callback_" + handlerName] = callback;
                                 events[handlerName] = "callback_" + handlerName;
                             }
-                        } catch(e) {
+                        } catch (e) {
                             app.logger.error("invalid event callback " + handlerName + " : " + eventHandler);
                             delete events[handlerName];
                         }
@@ -160,19 +160,19 @@
                 Backbone.View.prototype.delegateEvents.call(this, events);
             },
 
-        /**
-         * Renders the SugarField widget
-         * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
-         * @method
-         * @return {Object} this Reference to the SugarField
-         */
-        render: function() {
-            // If we don't have any data in the model yet
-            if (!(this.model instanceof Backbone.Model)) {
-                return null;
-            }
-
-                this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
+            /**
+             * Renders the SugarField widget
+             * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
+             * @method
+             * @return {Object} this Reference to the SugarField
+             */
+            render: function() {
+                // If we don't have any data in the model yet
+                if (!(this.model instanceof Backbone.Model)) {
+                    return null;
+                }
+                var self = this;
+                this.value = self.format(this.model.has(this.name) ? this.model.get(this.name) : "");
                 this.$el.html(this.templateC(this));
 
                 var model = this.model;
@@ -181,18 +181,36 @@
 
                 //Bind input to the model
                 el.on("change", function(ev) {
-                    model.set(field, el.val());
+                    model.set(field, self.unformat(el.val()));
                 });
 
                 //And bind the model to the input
                 model.on("change:" + field, function(model, value) {
                     if (el[0] && el[0].tagName.toLowerCase() == "input")
-                        el.val(value);
+                        el.val(self.format(value));
                     else
-                        el.html(value);
+                        el.html(self.format(value));
                 });
 
                 return this;
+            },
+            /**
+             * Formats values for display
+             * This function is meant to be overridden by a sugarFieldname.js controller class
+             * @param {Mixed} value
+             * @return {Mixed}
+             */
+            format: function(value) {
+                return value;
+            },
+            /**
+             * Unformats values for display
+             * This function is meant to be overridden by a sugarFieldname.js controller class
+             * @param {Mixed} value
+             * @return {Mixed} 
+             */
+            unformat: function(value) {
+                return value;
             },
 
             /**
@@ -205,7 +223,7 @@
                 this.context = context;
                 this.model = model;
 
-                if (this.model.on){
+                if (this.model.on) {
                     this.model.on("change:" + this.name, this.render, this);
                 }
             },

@@ -31,7 +31,10 @@ class MetaData extends RestObject implements IRestObject {
 
         switch($this->verbID) {
             case HTTP_GET:
-                $this->handleGET();
+                $this->handleGetMetadata(false);
+            break;
+            case HTTP_POST:
+                $this->handleGetMetadata(true);
             break;
 
             default:
@@ -43,13 +46,12 @@ class MetaData extends RestObject implements IRestObject {
     }
 
     /**
-     * This method handles all GET requests for this class.
+     * This method handles all GET/POST requests for this class.
      */
-    private function handleGET() {
+    private function handleGetMetadata($isPost=false) {
         global $current_user;
         $auth = $this->getAuth();
         $this->isValidToken($auth);
-        $userModList = $this->helper->get_user_module_list($current_user);
 
         // Default to mobile for now
         $platform = 'base';
@@ -58,16 +60,13 @@ class MetaData extends RestObject implements IRestObject {
         }
         
 
-        $moduleFilter = $userModList;
+        $moduleFilter = array();
         if (!empty($_REQUEST['modules'])) {
             // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
+            // The modules are filtered for security by the MetaDataManager, so let's just pass everything the user wants along.
             $modules = str_getcsv($_REQUEST['modules'],',','');
-            if (!empty($modules) ) {
-                foreach ($modules as $modName) {
-                    if (isset($userModList[$modName])) {
-                        array_push($moduleFilter, $modName);
-                    }
-                }
+            if ( $modules != false ) {
+                $moduleFilter = $modules;
             }
         }
 
@@ -80,9 +79,25 @@ class MetaData extends RestObject implements IRestObject {
             }
         }
 
+        $clientHashes = array();
+        if ( $isPost ) {
+            $postData = $this->getRequestData();
+            $postData = RestUtils::isValidJson($postData['raw_post_data']);
+            if ($postData["err"] != false) {
+                $err = new RestError();
+                $err->ReportError(415, $postData["err_str"]);
+                exit;
+            }
+            $clientHashes = $postData['data'];
+        }
+        
+        $options = array();
+        if ( isset($_REQUEST['onlyHash']) && $_REQUEST['onlyHash'] == 'true' ) {
+            $options['onlyHash'] = true;
+        }
 
         $meta = new MetaDataManager();
-        $data = $meta->getData($moduleFilter, $typeFilter, $platform);
+        $data = $meta->getData($clientHashes,$moduleFilter, $typeFilter, $platform, $options);
         $json = json_encode($data);
         $err = json_last_error();
 
