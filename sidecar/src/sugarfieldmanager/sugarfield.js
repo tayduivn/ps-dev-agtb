@@ -75,9 +75,23 @@
      * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
      * Sugar JavaScript client.
      *
-     * ###Advanced Fields
+     * ###Advanced SugarFields
      * Sometimes a SugarField needs to do more than just display a simple input element, other times input elements
-     * additional data such as drop down menu choices.
+     * additional data such as drop down menu choices. To support advanced functionality, just add your additional
+     * controller logic to **`sugarField.js`** javascript file where sugarfield is the name of the SugarField.
+     * <pre><code>
+     * ({
+     *     events: {
+     *         handler: function() {
+     *             // Actions
+     *         }
+     *     },
+     *
+     *     initialize: function() {
+     *
+     *     }
+     * })
+     * </pre></code>
      *
      * @class SugarField
      */
