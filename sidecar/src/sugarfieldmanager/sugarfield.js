@@ -197,7 +197,8 @@
             /**
              * Formats values for display
              * This function is meant to be overridden by a sugarFieldname.js controller class
-             * @param value
+             * @param {Mixed} value
+             * @return {Mixed}
              */
             format: function(value) {
                 return value;
@@ -205,7 +206,8 @@
             /**
              * Unformats values for display
              * This function is meant to be overridden by a sugarFieldname.js controller class
-             * @param value
+             * @param {Mixed} value
+             * @return {Mixed} 
              */
             unformat: function(value) {
                 return value;
