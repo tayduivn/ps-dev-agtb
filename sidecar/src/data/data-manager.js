@@ -309,15 +309,15 @@
             app.logger.trace('remote-sync-' + method + ": " + model);
 
             options = options || {};
-            options.params = options.params || [];
+            options.params = options.params || {};
 
             if ((method == "read") && (model instanceof app.BeanCollection)) {
                 if (options.offset && options.offset !== 0) {
-                    options.params.push({key: "offset", value: options.offset});
+                    options.params["offset"] = options.offset;
                 }
 
                 if (app.config && app.config.maxQueryResult) {
-                    options.params.push({key: "maxresult", value: app.config.maxQueryResult});
+                    options.params["maxresult"] = app.config.maxQueryResult;
                 }
             }
 

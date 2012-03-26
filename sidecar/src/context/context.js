@@ -159,9 +159,7 @@
                     fields = state.view.getFields();
                     this.set({fields: fields});
 
-                    options.params = [
-                        {key: "fields", value: fields.join(",")}
-                    ];
+                    options.params = { fields: fields.join(",") };
                 }
 
                 if (state.id) {
