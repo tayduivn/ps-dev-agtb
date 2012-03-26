@@ -169,7 +169,7 @@
 			{* visible overflow menu items *}
 			{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
-			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name"}
+			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module" module="$module" data="$name"}
 				{if $shortcutTopMenu.$module}
 				<ul class="megamenu">
 				<li >

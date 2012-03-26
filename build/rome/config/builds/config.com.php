@@ -276,5 +276,10 @@ $config['blackList']['com'] = array(
 'sugarcrm/themes/default/images/tabMoreArrow.png'=>1,
 'sugarcrm/themes/default/images/tabRowBg.png'=>1,
 'sugarcrm/themes/default/images/tabSubDivider.png'=>1,
+'sugarcrm/themes/Sugar5/images/Teams_favico.png' => 1,
+'sugarcrm/themes/Sugar5/images/Forecasts_favico.png' => 1,
+'sugarcrm/themes/Sugar5/images/KBDocuments_favico.png' => 1,
+'sugarcrm/themes/Sugar5/images/Quotes_favico.png' => 1,
+'sugarcrm/themes/Sugar5/images/Reports_favico.png' => 1,
 );
 $build = 'com';

@@ -34,6 +34,12 @@
 {assign var='overflowSuffix' value='Overflow'}
 {assign var='overflowHidden' value='Hidden'}
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
+{php}
+$tabGroupName = str_replace(" ", "_", $this->get_template_vars('tabGroupName'));
+$currentGroupTab = str_replace(" ", "_", $this->get_template_vars('currentGroupTab'));
+$this->assign('tabGroupName', $tabGroupName);
+$this->assign('currentGroupTab', $currentGroupTab);
+{/php}
   {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
   {if $tabGroupName == $APP.LBL_TABGROUP_ALL}
   {assign var='groupTabId' value=''}
@@ -168,7 +174,7 @@
 			{* visible overflow menu items *}
 			{foreach from=$tabGroup.extra item=name key=module name=moduleList}
 
-			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module$overflowSuffix" module="$module" data="$name" class="sf-with-ul"}
+			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module" module="$module" data="$name" class="sf-with-ul"}
 				{if $shortcutExtraMenu.$module}
 				<ul class="megamenu">
 				<li >
@@ -236,7 +242,11 @@
 	
 				<ul>
 		          {foreach from=$groupTabs item=module key=group name=groupList}
-		          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(SUGAR.themes.sugar_theme_gm_switch('{$group}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
+                      {php}
+                          $group = str_replace(" ", "_", $this->get_template_vars('group'));
+                          $this->assign('group_id', $group);
+                      {/php}
+		          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(SUGAR.themes.sugar_theme_gm_switch('{$group}', '{$group_id}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
 		          {/foreach}
 				</ul>
         

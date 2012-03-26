@@ -705,13 +705,14 @@ AH.getRelatedField = function(link, ftype, field, view){
  */
 AH.clearRelatedFieldCache = function(link, view){
     if (!view) view = AH.lastView;
-    for (var link in fields)
-    {
-        for (var type in fields[link])
-        {
-            AH.cacheRelatedField(link, type, fields[link][type]);
-        }
-    }
+
+    if(!AH.LINKS[view][link])
+        return false;
+
+    delete (AH.LINKS[view][link]["relId"]);
+    delete (AH.LINKS[view][link]["related"]);
+
+    return true;
 }
 
 /**

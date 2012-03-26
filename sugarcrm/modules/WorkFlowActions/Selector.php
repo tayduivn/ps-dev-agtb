@@ -156,8 +156,8 @@ $form->out("main");
 	$js .= "function toggle_type(type){";
 	$js .= "if(type == 'Advanced'){";
 	$javascript = new javascript();
-$js .= processJsForSelectorField($js, $javascript, $action_object->field, $type, $temp_module, $field_num, 'adv') . "}";
-$js .= "else{" . processJsForSelectorField($js, $javascript, $action_object->field, $type, $temp_module, $field_num, 'field') . "}}</script>";
+    $js .= processJsForSelectorField($javascript, $action_object->field, $type, $temp_module, $field_num, 'adv') . "}";
+    $js .= "else{" . processJsForSelectorField($javascript, $action_object->field, $type, $temp_module, $field_num, 'field') . "}}</script>";
 	if(empty($action_object->set_type) || $action_object->set_type == "Basic"){
 		$js .= $javascript->getScript(true);
 	}
@@ -165,7 +165,7 @@ $js .= "else{" . processJsForSelectorField($js, $javascript, $action_object->fie
 		$javascript = new javascript();
 		$javascript->setFormName('EditView');
 		$javascript->setSugarBean($temp_module);
-		$javascript->addField($action_object->field, true, '', 'field_'.$_REQUEST['field_num'].'__adv_value');
+		$javascript->addField($action_object->field, '', '', 'field_'.$_REQUEST['field_num'].'__adv_value');
 		$js .= $javascript->getScript(true);
 	}
 	echo $js;
@@ -173,15 +173,16 @@ $js .= "else{" . processJsForSelectorField($js, $javascript, $action_object->fie
 	echo $GLOBALS['timedate']->get_javascript_validation();
 
 
-function processJsForSelectorField($jsString, &$javascript, $field, $type, $tempModule, $fieldNumber, $ifAdvanced = 'field')
+function processJsForSelectorField(&$javascript, $field, $type, $tempModule, $fieldNumber, $ifAdvanced = 'field')
 {
+    $jsString = '';
+    $javascript = new javascript();
     // Validate everything. 
     $workFlowActionsExceptionFields = array ();
     if (in_array($type, $workFlowActionsExceptionFields) != 1)
     {
         $jsString .= "removeFromValidate('EditView', 'field_{$fieldNumber}__{$ifAdvanced}_value');";
     }
-    $javascript = new javascript();
 
     if (in_array($type, array ('date', 'time', 'datetimecombo')))
     {
@@ -192,7 +193,7 @@ function processJsForSelectorField($jsString, &$javascript, $field, $type, $temp
     {
         $javascript->setFormName('EditView');
         $javascript->setSugarBean($tempModule);
-        $javascript->addField($field, true, '', "field_{$_REQUEST['field_num']}__{$ifAdvanced}_value");
+        $javascript->addField($field, '', '', "field_{$_REQUEST['field_num']}__{$ifAdvanced}_value");
         $jsString .= $javascript->getScript(false);
     }
     return $jsString;
