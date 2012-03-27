@@ -75,17 +75,43 @@
      * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
      * Sugar JavaScript client.
      *
-     * ###Advanced Fields
+     * ###Advanced SugarFields
+     * Sometimes a SugarField needs to do more than just display a simple input element, other times input elements
+     * additional data such as drop down menu choices. To support advanced functionality, just add your additional
+     * controller logic to **`sugarField.js`** javascript file where sugarfield is the name of the SugarField.
+     * <pre><code>
+     * ({
+     *     events: {
+     *         handler: function() {
+     *             // Actions
+     *         }
+     *     },
+     *
+     *     initialize: function() {
+     *        this.parent.initialize();
+     *     },
+     *
+     *     format: function() {
+     *         return // Some formatted option;
+     *     }
+     * })
+     * </pre></code>
      *
      * @class SugarField
      */
     app.augment('sugarField', {
-        base: Backbone.View.extend({
+        base : Backbone.View.extend({
             /**
              * Reference to the application
              * @property {Object}
              */
             app: app,
+
+            /**
+             * Reference to the parent constructor
+             * @property {Object}
+             */
+            parent: this,
 
             /**
              * Id of the SugarField
@@ -102,12 +128,12 @@
                 this.label = options.label;
                 this.bind(options.context, options.model || options.context.get("model"));
                 this.viewName = this.view.name;
-                this.meta = app.metadata.get({sugarField: this});
+                this.meta = app.metadata.get({sugarField:this});
 
-                // this is experimental to try to see if we can have custom events on sugarfields themselves.
-                // the following line doesn't work, need to _.extend it or something.
-                // this.events = this.meta.events;
-                templateKey = "sugarField." + this.name + "." + this.view.name;
+            // this is experimental to try to see if we can have custom events on sugarfields themselves.
+            // the following line doesn't work, need to _.extend it or something.
+            // this.events = this.meta.events;
+            templateKey = "sugarField." + this.name + "." + this.view.name;
 
                 this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
             },
@@ -129,7 +155,7 @@
              * @private
              * @param {Object} events Hash of events and their handlers
              */
-            delegateEvents: function(events) {
+            delegateEvents : function(events) {
                 if (!(events || (events = this.events))) {
                     return;
                 }
@@ -149,7 +175,7 @@
                                 this["callback_" + handlerName] = callback;
                                 events[handlerName] = "callback_" + handlerName;
                             }
-                        } catch (e) {
+                        } catch(e) {
                             app.logger.error("invalid event callback " + handlerName + " : " + eventHandler);
                             delete events[handlerName];
                         }
@@ -171,13 +197,14 @@
                 if (!(this.model instanceof Backbone.Model)) {
                     return null;
                 }
-                var self = this;
-                this.value = self.format(this.model.has(this.name) ? this.model.get(this.name) : "");
+
+                this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
                 this.$el.html(this.templateC(this));
 
                 var model = this.model;
                 var field = this.name;
                 var el = this.$el.find("input");
+                var self = this;
 
                 //Bind input to the model
                 el.on("change", function(ev) {
@@ -194,6 +221,7 @@
 
                 return this;
             },
+
             /**
              * Formats values for display
              * This function is meant to be overridden by a sugarFieldname.js controller class
@@ -203,6 +231,7 @@
             format: function(value) {
                 return value;
             },
+
             /**
              * Unformats values for display
              * This function is meant to be overridden by a sugarFieldname.js controller class
@@ -223,7 +252,7 @@
                 this.context = context;
                 this.model = model;
 
-                if (this.model.on) {
+                if (this.model.on){
                     this.model.on("change:" + this.name, this.render, this);
                 }
             },

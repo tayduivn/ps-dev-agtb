@@ -353,7 +353,7 @@
         }
     };
 
-    app.augment("dataManager", _.extend(_dataManager, Backbone.Events), false);
+    app.augment("dataManager", _dataManager, false);
 
 })(SUGAR.App);
 
