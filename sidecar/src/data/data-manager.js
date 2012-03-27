@@ -312,16 +312,16 @@
             options.params = options.params || {};
 
             if (options.fields) {
-                options.params["fields"] = options.fields.join(",");
+                options.params.fields = options.fields.join(",");
             }
 
             if ((method == "read") && (model instanceof app.BeanCollection)) {
                 if (options.offset && options.offset !== 0) {
-                    options.params["offset"] = options.offset;
+                    options.params.offset = options.offset;
                 }
 
                 if (app.config && app.config.maxQueryResult) {
-                    options.params["maxresult"] = app.config.maxQueryResult;
+                    options.params.maxresult = app.config.maxQueryResult;
                 }
             }
 
