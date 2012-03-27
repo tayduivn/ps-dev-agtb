@@ -32,6 +32,7 @@ class SugarWidgetSubPanelDeleteButton extends SugarWidgetField
 		$return_id = $_REQUEST['record'];
 		$module_name = $layout_def['module'];
 		$record_id = $layout_def['fields']['ID'];
+        $unique_id = $layout_def['subpanel_id']."_delete_".$_REQUEST['subpanel_item_count']; //bug 51512
 
 		// calls and meetings are held.
 		$new_status = 'Held';
@@ -53,7 +54,7 @@ class SugarWidgetSubPanelDeleteButton extends SugarWidgetField
 			$refresh_page = 1;
 		}
 
-		$html = "<a id='delete_subpanel_item' onclick='return sp_del_conf();' href=\"javascript:sub_p_del('$subpanel', '$module_name', '$record_id', $refresh_page);\">".$app_strings['LNK_DELETE']."</a>";
+		$html = "<a id=\"$unique_id\" onclick='return sp_del_conf();' href=\"javascript:sub_p_del('$subpanel', '$module_name', '$record_id', $refresh_page);\">".$app_strings['LNK_DELETE']."</a>";
 		return $html;
 
 	}

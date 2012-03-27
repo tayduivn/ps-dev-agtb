@@ -78,6 +78,7 @@ class ListView
     var $force_mass_update=false;
     var $keep_mass_update_form_open=false;
     var $ignorePopulateOnly = false;
+    var $subpanel_item_count = 0; // keeps the count subpanel items - bug 51512
 
 function setDataArray($value) {
     $this->data_array = $value;
@@ -228,6 +229,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
  */
  function process_dynamic_listview_rows($data,$parent_data, $xtemplateSection, $html_varName, $subpanel_def)
  {
+    $subpanel_item_count = 0;
     global $odd_bg;
     global $even_bg;
     global $hilite_bg;
@@ -276,6 +278,8 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
     while(list($aVal, $aItem) = each($data))
     {
+        $subpanel_item_count++;
+        $_REQUEST['subpanel_item_count'] = $subpanel_item_count; //bug 51512
         $aItem->check_date_relationships_load();
         // TODO: expensive and needs to be removed and done better elsewhere
 
