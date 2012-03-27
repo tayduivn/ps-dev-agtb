@@ -320,15 +320,21 @@ html {
 }
 
 #listing {
-  height: 88%;
+  height: 100%;
   position: absolute;
   left: 0;
-  top: 46px;
   width: 100%;
   overflow: scroll;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom: 46px;
+  -webkit-overflow-scrolling: touch;
   display: block;
+}
+
+#listing > article:first-child {
+	margin-top:33px;
+}
+
+#listing > article:last-child {
+	margin-bottom:20px;
 }
 
 .navbar [class^="icon-"] {
