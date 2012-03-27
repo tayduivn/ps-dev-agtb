@@ -274,7 +274,7 @@
                         if(sub_items.length == 0)
                             menuNode.hide();
                         else
-                            _this.prepend($(node).find(".subnav > li:first").children());
+                            _this.prepend(sub_items.children());
                     }
                 });
 
