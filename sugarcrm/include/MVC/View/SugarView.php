@@ -130,13 +130,17 @@ class SugarView
                      'label' => translate($module),
                      $this->getMenu($module),
                  ),
-                'moduleList' => $this->displayHeader(true),
                 'title' => $this->getBrowserTitle(),
                 'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : "",
                 'record' => isset($_REQUEST['record']) ? $_REQUEST['record'] : "",
                 'favicon' => $this->getFavicon(),
             );
-            if(empty($this->responseTime)) $this->_calculateFooterMetrics();
+
+            if(SugarThemeRegistry::current()->name == 'Classic')
+                $ajax_ret['moduleList'] = $this->displayHeader(true);
+
+            if(empty($this->responseTime))
+                $this->_calculateFooterMetrics();
             $ajax_ret['responseTime'] = $this->responseTime;
             $json = getJSONobj();
             echo $json->encode($ajax_ret);
