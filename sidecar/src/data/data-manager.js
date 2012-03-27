@@ -311,6 +311,10 @@
             options = options || {};
             options.params = options.params || {};
 
+            if (options.fields) {
+                options.params["fields"] = options.fields.join(",");
+            }
+
             if ((method == "read") && (model instanceof app.BeanCollection)) {
                 if (options.offset && options.offset !== 0) {
                     options.params["offset"] = options.offset;
