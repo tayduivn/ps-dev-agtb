@@ -43,7 +43,7 @@ fixtures.metadata = {
                 },
                 "date_entered": {
                     "name": "date_entered",
-                    "type": "varchar"
+                    "type": "datetime"
                 },
                 "created_by": {
                     "name": "created_by",
@@ -51,10 +51,14 @@ fixtures.metadata = {
                 },
                 "date_modified": {
                     "name": "date_modified",
-                    "type": "varchar"
+                    "type": "datetime"
                 },
                 "modified_user_id": {
                     "name": "modified_user_id",
+                    "type": "varchar"
+                },
+                "checkbox_c": {
+                    "name": "checkbox_c",
                     "type": "varchar"
                 }
             },
@@ -97,7 +101,9 @@ fixtures.metadata = {
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"}
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "date_entered", label: "Date Entered"},
+                                {name: "checkbox_c", label: "CheckBox"}
 
                             ]
                         }
@@ -125,8 +131,8 @@ fixtures.metadata = {
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"}
-
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "checkbox_c", label: "CheckBox"}
                             ]
                         }
                     ]
@@ -560,6 +566,44 @@ fixtures.metadata = {
                     "}," +
                 "format:function(value){\n" +
                 " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
+        "datetime":{
+            "views" : {
+                "detailView":{
+                    "type":"basic",
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
+                "default":{
+                    "type":"basic",
+                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                }
+            },
+            controller: "{" +
+                "render:function(value){\n" +
+                "  console.log('calling datetime render'); console.log(app);\n" +
+                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                "  	$(function() {"+
+                		"$( \".datepicker\" ).datepicker({"+
+                			"showOn: \"button\","+
+                			"buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\","+
+                			"buttoSUnImageOnly: true"+
+                		"});"+
+                	"});\n" +
+                "}," +
+                    "unformat:function(value){\n" +
+                "  console.log('calling datetime unformat');\n" +
+                        "return value\n" +
+                    "}," +
+                "format:function(value){\n" +
+                "  console.log('calling datetime format');\n" +
                 "return value\n" +
                 "}" +
                 "}"

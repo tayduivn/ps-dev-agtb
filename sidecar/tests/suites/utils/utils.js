@@ -70,4 +70,27 @@ describe("utils", function() {
             expect(result).toEqual(2123.3828);
         });
     });
+    describe('date', function() {
+        it("should guess date string formats", function() {
+            var value = '2012-03-27 00:48:32';
+            var result = utils.date.guessFormat(value);
+            expect(result).toEqual('Y-m-d H:i');
+        });
+        it("should parse date strings into javascript date objects", function() {
+            var value = '2,123 3828';
+            var number_group_seperator = ",";
+            var decimal_seperator = " ";
+            var toFloat = true;
+            var result = utils.date.parse('2012-03-27 00:48:32');
+            expect(result.toString()).toEqual('Tue Mar 27 2012 00:48:00 GMT-0700 (PDT)');
+        });
+        it("should format date objects into strings", function() {
+            var value = '2,123 3828';
+            var number_group_seperator = ",";
+            var decimal_seperator = " ";
+            var toFloat = true;
+            var result = utils.unformatNumberString(value, number_group_seperator, decimal_seperator, toFloat);
+            expect(result).toEqual(2123.3828);
+        });
+    });
 });
