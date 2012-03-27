@@ -204,6 +204,7 @@
                 var model = this.model;
                 var field = this.name;
                 var el = this.$el.find("input");
+                var self = this;
 
                 //Bind input to the model
                 el.on("change", function(ev) {
