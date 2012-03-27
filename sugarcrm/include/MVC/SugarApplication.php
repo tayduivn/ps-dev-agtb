@@ -743,7 +743,7 @@ class SugarApplication
      * The list of the actions excepted from referer checks by default
      * @var array
      */
-	protected $whiteListActions = array('index', 'ListView', 'DetailView', 'EditView', 'oauth', 'Authenticate', 'Login', 'SupportPortal');
+	protected $whiteListActions = array('index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login', 'SupportPortal');
 
 	/**
 	 *
@@ -836,7 +836,7 @@ class SugarApplication
         //BEGIN SUGARCRM flav=pro ONLY
         $this->trackLogin();
         //END SUGARCRM flav=pro ONLY
-        
+
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 	}
 
