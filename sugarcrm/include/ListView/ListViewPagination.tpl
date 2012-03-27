@@ -42,15 +42,14 @@
 				<tr>
 					<td nowrap="nowrap" width='2%' class='paginationActionButtons'>
 						{if $prerow}
-				
 
-								{$selectLink}
-								
+                        {sugar_action_menu id=$link_select_id params=$selectLink theme="Sugar"}
 					
 						{/if}
 
-		
-						{$actionsLink}&nbsp;
+						{sugar_action_menu id=$link_action_id params=$actionsLink theme="Sugar"}
+
+                        <div id='selectActionsDisabled' class='selectActionsDisabled'>{$actionsLink.buttons[0]}<span class='ab'></span></div>
 						<!--//BEGIN SUGARCRM flav=dce ONLY -->
 						{$DCEUpgradeLink}
 						{$DCEUpgradeButton}

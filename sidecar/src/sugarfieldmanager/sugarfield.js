@@ -88,7 +88,11 @@
      *     },
      *
      *     initialize: function() {
+     *        this.parent.initialize();
+     *     },
      *
+     *     format: function() {
+     *         return // Some formatted option;
      *     }
      * })
      * </pre></code>
@@ -96,12 +100,18 @@
      * @class SugarField
      */
     app.augment('sugarField', {
-        base: Backbone.View.extend({
+        base : Backbone.View.extend({
             /**
              * Reference to the application
              * @property {Object}
              */
             app: app,
+
+            /**
+             * Reference to the parent constructor
+             * @property {Object}
+             */
+            parent: this,
 
             /**
              * Id of the SugarField
@@ -118,12 +128,12 @@
                 this.label = options.label;
                 this.bind(options.context, options.model || options.context.get("model"));
                 this.viewName = this.view.name;
-                this.meta = app.metadata.get({sugarField: this});
+                this.meta = app.metadata.get({sugarField:this});
 
-                // this is experimental to try to see if we can have custom events on sugarfields themselves.
-                // the following line doesn't work, need to _.extend it or something.
-                // this.events = this.meta.events;
-                templateKey = "sugarField." + this.name + "." + this.view.name;
+            // this is experimental to try to see if we can have custom events on sugarfields themselves.
+            // the following line doesn't work, need to _.extend it or something.
+            // this.events = this.meta.events;
+            templateKey = "sugarField." + this.name + "." + this.view.name;
 
                 this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
             },
@@ -145,7 +155,7 @@
              * @private
              * @param {Object} events Hash of events and their handlers
              */
-            delegateEvents: function(events) {
+            delegateEvents : function(events) {
                 if (!(events || (events = this.events))) {
                     return;
                 }
@@ -165,7 +175,7 @@
                                 this["callback_" + handlerName] = callback;
                                 events[handlerName] = "callback_" + handlerName;
                             }
-                        } catch (e) {
+                        } catch(e) {
                             app.logger.error("invalid event callback " + handlerName + " : " + eventHandler);
                             delete events[handlerName];
                         }
@@ -197,18 +207,38 @@
 
                 //Bind input to the model
                 el.on("change", function(ev) {
-                    model.set(field, el.val());
+                    model.set(field, self.unformat(el.val()));
                 });
 
                 //And bind the model to the input
                 model.on("change:" + field, function(model, value) {
                     if (el[0] && el[0].tagName.toLowerCase() == "input")
-                        el.val(value);
+                        el.val(self.format(value));
                     else
-                        el.html(value);
+                        el.html(self.format(value));
                 });
 
                 return this;
+            },
+
+            /**
+             * Formats values for display
+             * This function is meant to be overridden by a sugarFieldname.js controller class
+             * @param {Mixed} value
+             * @return {Mixed}
+             */
+            format: function(value) {
+                return value;
+            },
+
+            /**
+             * Unformats values for display
+             * This function is meant to be overridden by a sugarFieldname.js controller class
+             * @param {Mixed} value
+             * @return {Mixed} 
+             */
+            unformat: function(value) {
+                return value;
             },
 
             /**
@@ -221,7 +251,7 @@
                 this.context = context;
                 this.model = model;
 
-                if (this.model.on) {
+                if (this.model.on){
                     this.model.on("change:" + this.name, this.render, this);
                 }
             },

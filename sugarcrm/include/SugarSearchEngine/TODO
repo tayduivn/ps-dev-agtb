@@ -1,6 +1,0 @@
-Items which need to be completed for fts:
-
-2. Falvoritize the SugarSearchEngine functionality, is it available for CE?
-6. ACLs for fields -
-9. Rollback if field have been marked unified_search enabled but then FTS is not available....
-11. Studio
