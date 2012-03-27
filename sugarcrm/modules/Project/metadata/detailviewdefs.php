@@ -48,7 +48,7 @@ $viewdefs['Project']['DetailView'] = array(
 						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'ProjectTemplatesEditView\';"'.
 					'{else}'.
 						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'EditView\';" {/if}'.
-					'"/>', 
+					'/>',
 				),
 				array( 'customCode' =>
 					'<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" ' .
@@ -58,9 +58,9 @@ $viewdefs['Project']['DetailView'] = array(
 						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesListView\'; this.form.action.value=\'Delete\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');"'.
 					'{else}'.
 						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');" {/if}'.
-					'"/>', 
+					'/>',
 				),
-								
+
 				//BEGIN SUGARCRM flav=com ONLY
 				 array( 'customCode' =>
 				 	'<input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" ' .
@@ -70,12 +70,12 @@ $viewdefs['Project']['DetailView'] = array(
 						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'ProjectTemplatesDetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'projecttemplateseditview\'; this.form.return_id.value=\'{$id}\';"'.
 					'{else}'.
 						'onclick="this.form.return_module.value=\'Project\'; this.form.return_action.value=\'DetailView\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'; this.form.return_id.value=\'{$id}\';" {/if}'.
-					'"/>', 
+					'"/>',
 				),
 				//END SUGARCRM flav=com ONLY
 
 				//BEGIN SUGARCRM flav=pro ONLY
-				array( 'customCode' => 
+				array( 'customCode' =>
 					'{if $EDIT_RIGHTS_ONLY}<input title="{$MOD.LBL_VIEW_GANTT_TITLE}" '.
 					'class="button" type="submit" '.
 					'name="EditProjectTasks" id="view_gantt_button" value="  {$MOD.LBL_VIEW_GANTT_TITLE}  " '.
@@ -91,7 +91,7 @@ $viewdefs['Project']['DetailView'] = array(
 						'onclick="prep_save_as_template(this.form) {/if}'.
 					'"/>',
 				),
-				array( 'customCode' => 
+				array( 'customCode' =>
 					'<input title="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
 					'class="button" type="submit" ' .
 					'name="ExportToProject" value="{$MOD.LBL_EXPORT_TO_MS_PROJECT}" ' .
