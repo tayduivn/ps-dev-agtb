@@ -988,7 +988,7 @@ class SugarApplication
 	    $_COOKIE[$name] = $value;
 	}
 
-	protected $redirectVars = array('module', 'action', 'record', 'token');
+	protected $redirectVars = array('module', 'action', 'record', 'token', 'oauth_token');
 
 	/**
 	 * Create string to attach to login URL with vars to preserve post-login
