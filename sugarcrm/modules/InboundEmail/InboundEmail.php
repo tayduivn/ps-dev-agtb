@@ -869,6 +869,7 @@ class InboundEmail extends SugarBean {
 						case "mailsize":
 						case "senddate":
 						case "mbox":
+                        case "ie_id":
 						break;
 
 						default:
