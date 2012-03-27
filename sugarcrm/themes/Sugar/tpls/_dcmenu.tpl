@@ -29,7 +29,7 @@
 {if $AUTHENTICATED}
 {$DCSCRIPT}
 <div id='dcmenutop'></div>
-<div id='dcmenu' class='dcmenu dcmenuFloat'>
+<div id='dcmenu' class='dcmenu dcmenuFloat' style="z-index: 20;">
   {include file="_headerModuleList.tpl" theme_template=true}
     
     {if $AUTHENTICATED}
