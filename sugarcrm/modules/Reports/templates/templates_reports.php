@@ -132,7 +132,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
         $duplicateOverLibs .= $buttonDuplicateAsOrigin .
             $buttonDuplicateAsSummation .
             $buttonDuplicateAsTabular;
-        if (canCovertToMatrix) {
+        if ($canCovertToMatrix) {
             $duplicateOverLibs .= $buttonDuplicateAsMatrix;
         }
         $duplicateOverLibs .= "</ul>";
