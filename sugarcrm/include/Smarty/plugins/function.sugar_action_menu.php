@@ -108,7 +108,7 @@ function smarty_function_sugar_action_menu($params, &$smarty)
                 'name' => !empty($params['name']) ? $params['name'] : '',
             ),
             'itemOptions' => array(
-                'class' => (count($menus['items']) == 0) ? 'single' : ''
+                'class' => (count($menus['items']) == 0) ? 'single' : 'sugar_action_button'
             ),
             'submenuHtmlOptions' => array(
                 'class' => 'subnav'
