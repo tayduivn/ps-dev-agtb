@@ -170,7 +170,7 @@ class SugarSNIP
 
         $request = array (
                         'user' => $snipuser->user_name,
-                        'password' => $snipuser->authenicate_id,
+                        'password' => $snipuser->authenticate_id,
                         'client_api_url' => $this->getURL(),
                         'license' => $license,
             );
