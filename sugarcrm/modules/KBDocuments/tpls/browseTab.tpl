@@ -22,7 +22,7 @@
  ********************************************************************************/
 *}
 
-
+{$SITEURL}
 			<table width="100%" cellpadding="0" cellspacing="0" border="{$BORDER}" class="edit view search kb">
 				<tr>
 					<td width="{$TREE_WIDTH}" valign="top" >
