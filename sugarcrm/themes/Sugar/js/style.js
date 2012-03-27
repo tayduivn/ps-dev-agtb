@@ -256,49 +256,63 @@ SUGAR.append(SUGAR.themes, {
 			$('ul.sf-menu').each(function(){
 				if($(this).attr("id") == ("themeTabGroupMenu_" + sugar_theme_gm_current)){
 	                $(this).children("li").each(
-	                    function(index) {
-                            menuItemsWidth += $(this).width();
+	                    function(index) {                  
                             var menuNode = $(this);
-                            var menuActions = menuNode.find(".MMShortcuts").find("a");
-                            var menuLink = menuNode.children("a:first");
-                           
-                            if($.data(menuLink[0], "origID") == undefined){
-                            	$.data(menuLink[0], "origID", menuLink.attr("id"));
-                            	menuActions.each(function(index, node){
-                            		$.data(node, "origID", $(node).attr("id"));
-                            	});
-                            }
-                           
-                            var flexNode = $("#" + $.data(menuLink[0], "origID")+"_flex");
-                            var flexActions = flexNode.find(".MMShortcuts").find("a");
-                               
-	                        if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
-	                            if(menuNode.css("display") != "none"){
-		                        	menuNode.css("display","none");
-		                            flexNode.css("display","list-item");
-		                            flexNode.children("a:first").attr("id", $.data(menuLink[0], "origID"));
-		                            menuNode.children("a:first").attr("id", "");
-		                            flexActions.each(function(index, node){
-		                            	$(node).attr("id", $.data(menuActions[index], "origID"));
-		                            	$(menuActions[index]).attr("id", "")
-		                            });
-	                            }
-	                        	
-	                        }  else if( (menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) || $(this).hasClass("moduleTabExtraMenu") ) {
-	                            if(menuNode.css("display") != "list-item"){
-		                        	menuNode.css("display","list-item");
-		                            flexNode.css("display","none");
-		                            menuNode.children("a:first").attr("id", $.data(menuLink[0], "origID"));
-		                            flexNode.children("a:first").attr("id", "");
-		                            menuActions.each(function(index, node){
-		                            	$(node).attr("id", $.data(menuActions[index], "origID"));
-		                            	$(flexActions[index]).attr("id", "")
-		                            	
-		                            });
-	                            }	                        	
-	                        }
+                            menuItemsWidth += menuNode.width();
 	                    }
 				    );
+	                var count = 20;
+	                var counter = 0;
+	                
+	                if(menuItemsWidth > maxMenuWidth){
+	                	while(menuItemsWidth > maxMenuWidth){
+	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
+	                		if(menuNode.hasClass("current")){
+	                			menuNode = menuNode.prev();
+	                		}
+	                		if(menuNode.hasClass("home")){
+	                			break;
+	                		}
+	                		menuItemsWidth -= menuNode.width();
+	                		menuNode.remove();
+	                		$("#moduleTabMore" + sugar_theme_gm_current).prepend(menuNode);
+	                	}
+	                }
+	                else if(menuItemsWidth <= maxMenuWidth){
+	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
+	                	if(insertNode.prev().hasClass("current")){
+	                		insertNode = insertNode.prev();
+                		}
+	                	while(menuItemsWidth <= maxMenuWidth){
+	                		counter++;
+	                		if(counter > count){break}
+	                		var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first");
+	                		
+	                		if((menuNode.attr("id") != undefined && 
+	                		   menuNode.attr("id").match(/moduleMenuOverFlow[a-zA-Z]*/)) ||
+	                		   (menuItemsWidth + menuNode.width()) > maxMenuWidth){
+	                			break;	                			
+	                		}
+	                		menuItemsWidth += menuNode.width();
+		                	menuNode.remove();
+		                	
+		                	insertNode.before(menuNode);
+	                	}
+	                }
+	                
+	                /*if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
+                        
+                        menuNode.remove();
+                    	$("#moduleTabMore" + sugar_theme_gm_current).prepend(menuNode);
+                    	console.log("hide");
+                    	
+                    }  else if( (menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) || $(this).hasClass("moduleTabExtraMenu") ) {
+                                               	
+                    	menuItemsWidth -= menuNode.width();
+                    	menuNode.remove();
+                    	$("moduleTabExtraMenu" + sugar_theme_gm_current).before(menuNode);
+                    	
+                    }*/
 				}
             });
     },

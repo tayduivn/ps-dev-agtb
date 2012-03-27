@@ -42,13 +42,8 @@
 				<tr>
 					<td nowrap="nowrap" width='2%' class='paginationActionButtons'>
 						{if $prerow}
-				
-                        {php}
-                        $this->assign('link_select_id', 'selectLink_'.ListViewDisplay::$listViewCounter++);
-                        $this->assign('link_action_id', 'selectLink_'.ListViewDisplay::$listViewCounter++);
-                        {/php}
 
-                        {sugar_action_menu id=$link_seelct_id params=$selectLink theme="Sugar"}
+                        {sugar_action_menu id=$link_select_id params=$selectLink theme="Sugar"}
 					
 						{/if}
 

@@ -556,18 +556,16 @@ onUserEditView();
 </div>
 {literal}
 <style>
-    .actionsContainer ul, .actionsContainer li {
-        list-style:none;
-    }
-    .actionsContainer li {
-        float:left;
+    .actionsContainer.footer td {
+        height:120px;
+        vertical-align: top;
     }
 </style>
 {/literal}
-<table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer footer">
     <tr>
         <td>
-        {sugar_action_menu id="userEditActions" class="clickMenu fancymenu" buttons=$ACTION_BUTTON theme="Classic"}
+        {sugar_action_menu id="userEditActions" class="clickMenu fancymenu" buttons=$ACTION_BUTTON}
         </td>
         <td align="right" nowrap>
             <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
