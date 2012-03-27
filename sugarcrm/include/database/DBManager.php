@@ -2181,7 +2181,8 @@ protected function checkQuery($sql, $object_name = false)
 		}
 		$type = $this->getColumnType($fieldDef['dbType'],$fieldDef['name'],$tablename);
 		$matches = array();
-		preg_match_all('/(\w+)(?:\(([0-9]+,?[0-9]*)\)|)/i', $type, $matches);
+        // len can be a number or a string like 'max', for example, nvarchar(max)
+        preg_match_all('/(\w+)(?:\(([0-9]+,?[0-9]*|\w+)\)|)/i', $type, $matches);
 		if ( isset($matches[1][0]) )
 			$fieldDef['type'] = $matches[1][0];
 		if ( isset($matches[2][0]) && empty($fieldDef['len']) )

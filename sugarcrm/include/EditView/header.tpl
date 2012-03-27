@@ -26,6 +26,16 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+
+<script>
+    {literal}
+    $(document).ready(function(){
+        $("ul.clickMenu").each(function(index, node){
+            $(node).sugarActionMenu();
+        });
+    });
+    {/literal}
+</script>
 <div class="clear"></div>
 <form action="index.php" method="POST" name="{$form_name}" id="{$form_id}" {$enctype}>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="dcQuickEdit">
@@ -59,16 +69,17 @@
 {{if empty($form.button_location) || $form.button_location == 'top'}}
 {{if !empty($form) && !empty($form.buttons)}}
    {{foreach from=$form.buttons key=val item=button}}
-      {{sugar_button module="$module" id="$button" view="$view"}}
+      {{sugar_button module="$module" id="$button" view="$view" appendTo="header_buttons"}}
    {{/foreach}}
 {{else}}
-{{sugar_button module="$module" id="SAVE" view="$view" location="HEADER"}}
-{{sugar_button module="$module" id="CANCEL" view="$view" location="HEADER"}}
+{{sugar_button module="$module" id="SAVE" view="$view" location="HEADER" appendTo="header_buttons"}}
+{{sugar_button module="$module" id="CANCEL" view="$view" location="HEADER" appendTo="header_buttons"}}
 {{/if}}
 {{if empty($form.hideAudit) || !$form.hideAudit}}
-{{sugar_button module="$module" id="Audit" view="$view"}}
+{{sugar_button module="$module" id="Audit" view="$view" appendTo="header_buttons"}}
 {{/if}}
 {{/if}}
+{{sugar_action_menu buttons=$header_buttons class="fancymenu"}}
 </td>
 <td align='right'>{{$ADMIN_EDIT}}
 {{if $panelCount == 0}}

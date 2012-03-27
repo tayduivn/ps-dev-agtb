@@ -32,7 +32,6 @@
 {{/if}}
 
 <script>
-testing_module = "{$smarty.request.module}";
 {literal}
 	$(document).ready(function(){
 		$("ul.clickMenu").each(function(index, node){
@@ -63,44 +62,37 @@ testing_module = "{$smarty.request.module}";
         {{$field}}
     {{/foreach}}
 {{/if}}
-<ul class="clickMenu fancymenu" id="detailViewActions">
-    <li style="cursor: pointer">
-        {{sugar_actions_link module="$module" id="EDIT2" view="$view"}}
-            <ul class="subnav multi">
-                {{if !isset($form.buttons)}}
-                    <li>{{sugar_actions_link module="$module" id="DUPLICATE" view="EditView"}}</li>
-                    <li>{{sugar_actions_link module="$module" id="DELETE" view="$view"}}</li>
-                {{else}}
-                    {{counter assign="num_buttons" start=0 print=false}}
-                    {{foreach from=$form.buttons key=val item=button}}
-                      {{if !is_array($button) && in_array($button, $built_in_buttons)}}
-                         {{counter print=false}}
-                            {{if $button != "EDIT"}}
-                                {{sugar_actions_link module="$module" id="$button" view="EditView"}}
-                            {{/if}}
-                      {{/if}}
-                    {{/foreach}}
 
-                    {{if isset($closeFormBeforeCustomButtons)}}
-                        </form>
-                    {{/if}}
-
-                    {{if count($form.buttons) > $num_buttons}}
-                        {{foreach from=$form.buttons key=val item=button}}
-                            {{if is_array($button) && $button.customCode}}
-                                <li>{{sugar_actions_link module="$module" id="$button" view="EditView"}}</li>
-                            {{/if}}
-                        {{/foreach}}
-                    {{/if}}
-                {{/if}}
-
-                {{if empty($form.hideAudit) || !$form.hideAudit}}
-                    <li>{{sugar_actions_link module="$module" id="Audit" view="EditView"}}</li>
-                {{/if}}
-            </ul>
-    </li>
-</ul>
+{{if !isset($form.buttons)}}
+    {{sugar_button module="$module" id="EDIT" view="$view" appendTo="detail_header_buttons"}}
+    {{sugar_button module="$module" id="DUPLICATE" view="EditView" appendTo="detail_header_buttons"}}
+    {{sugar_button module="$module" id="DELETE" view="$view" appendTo="detail_header_buttons"}}
+{{else}}
+    {{counter assign="num_buttons" start=0 print=false}}
+    {{foreach from=$form.buttons key=val item=button}}
+        {{if !is_array($button) && in_array($button, $built_in_buttons)}}
+        {{counter print=false}}
+        {{sugar_button module="$module" id="$button" view="EditView" appendTo="detail_header_buttons"}}
+        {{/if}}
+    {{/foreach}}
+    {{if isset($closeFormBeforeCustomButtons)}}
+        {{append var="detail_header_buttons" value="</form>"}}
+    {{/if}}
+    {{if count($form.buttons) > $num_buttons}}
+        {{foreach from=$form.buttons key=val item=button}}
+            {{if is_array($button) && $button.customCode}}
+                {{sugar_button module="$module" id="$button" view="EditView" appendTo="detail_header_buttons"}}
+            {{/if}}
+        {{/foreach}}
+    {{/if}}
+    {{if empty($form.hideAudit) || !$form.hideAudit}}
+        {{sugar_button module="$module" id="Audit" view="EditView" appendTo="detail_header_buttons"}}
+    {{/if}}
+{{/if}}
+{{sugar_action_menu id="detail_header_action_menu" buttons=$detail_header_buttons class="fancymenu" }}
+{{if !isset($closeFormBeforeCustomButtons)}}
 </form>
+{{/if}}
 </div>
 
 </td>

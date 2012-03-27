@@ -33,7 +33,9 @@
 
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list View'>
-	{include file='include/ListView/ListViewPagination.tpl'}
+{assign var="link_select_id" value="selectLinkTop"}
+{assign var="link_action_id" value="actionLinkTop"}
+{include file='include/ListView/ListViewPagination.tpl'}
 
 	<tr height='20'>
 	    {if !empty($quickViewLinks)}
@@ -112,7 +114,9 @@
 	    </td>
 	</tr>
 	{/foreach}
-	{include file='include/ListView/ListViewPagination.tpl'}
+{assign var="link_select_id" value="selectLinkBottom"}
+{assign var="link_action_id" value="actionLinkBottom"}
+{include file='include/ListView/ListViewPagination.tpl'}
 </table>
 <script type='text/javascript'>
 {literal}function lvg_nav(m,id,act,offset,t){if(t.href.search(/#/) < 0){return;}else{if(act=='pte'){act='ProjectTemplatesEditView';}else if(act=='d'){ act='DetailView';}else if( act =='ReportsWizard'){act = 'ReportsWizard';}else{ act='EditView';}{/literal}url = 'index.php?module='+m+'&offset=' + offset + '&stamp={$pageData.stamp}&return_module='+m+'&action='+act+'&record='+id;t.href=url;{literal}}}{/literal}

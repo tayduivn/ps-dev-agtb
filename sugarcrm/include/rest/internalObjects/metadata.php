@@ -1,11 +1,11 @@
 <?php
 
-include_once("include/rest/RestObjectInterface.php");
-include_once("RestError.php");
-include_once("RestUtils.php");
-include_once("RestObject.php");
-include_once("include/MetaDataManager/MetaDataManager.php");
-include_once("include/rest/SoapHelperWebService.php");
+require_once("include/rest/RestObjectInterface.php");
+require_once("include/rest/internalObjects/RestError.php");
+require_once("include/rest/internalObjects/RestUtils.php");
+require_once("include/rest/internalObjects/RestObject.php");
+require_once("include/MetaDataManager/MetaDataManager.php");
+require_once("include/rest/SoapHelperWebService.php");
 
 
 /**
@@ -31,7 +31,10 @@ class MetaData extends RestObject implements IRestObject {
 
         switch($this->verbID) {
             case HTTP_GET:
-                $this->handleGET();
+                $this->handleGetMetadata(false);
+            break;
+            case HTTP_POST:
+                $this->handleGetMetadata(true);
             break;
 
             default:
@@ -43,56 +46,58 @@ class MetaData extends RestObject implements IRestObject {
     }
 
     /**
-     * This method handles all GET requests for this class.
+     * This method handles all GET/POST requests for this class.
      */
-    private function handleGET() {
+    private function handleGetMetadata($isPost=false) {
         global $current_user;
-        $isMobile = false;
-        $typeFiler = null;
-        $filter = null;
         $auth = $this->getAuth();
         $this->isValidToken($auth);
-        $userModList = $this->helper->get_user_module_list($current_user);
-        $userModList = array_keys($userModList);
 
-        // hack, should make this better and reuseable later. //
-        if (array_key_exists("mobile", $_GET)) {
-            $isMobile = strtolower($_GET['mobile']);
-            if ($isMobile == "true") {
-                $isMobile = true;
-            } else {
-                $isMobile = false;
+        // Default to mobile for now
+        $platform = 'base';
+        if (!empty($_REQUEST['platform'])) {
+            $platform = $_REQUEST['platform'];
+        }
+        
+
+        $moduleFilter = array();
+        if (!empty($_REQUEST['modules'])) {
+            // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
+            // The modules are filtered for security by the MetaDataManager, so let's just pass everything the user wants along.
+            $modules = str_getcsv($_REQUEST['modules'],',','');
+            if ( $modules != false ) {
+                $moduleFilter = $modules;
             }
         }
 
-        if (array_key_exists("filter", $_GET) && !empty($_GET['filter'])) {
-            $fdata = explode(",", $_GET['filter']);
-            if ($fdata != false) {
-                $filter = $fdata;
+        $typeFilter = '';
+        if (!empty($_REQUEST['metadataType'])) {
+            // Explode is fine here, we control the list of types
+            $types = explode(",", $_REQUEST['metadataType']);
+            if ($types != false) {
+                $typeFilter = $types;
             }
         }
 
-        if (array_key_exists("type", $_GET) && !empty($_GET['type'])) {
-            $fdata = explode(",", $_GET['type']);
-            if ($fdata != false) {
-                $typeFiler = $fdata;
+        $clientHashes = array();
+        if ( $isPost ) {
+            $postData = $this->getRequestData();
+            $postData = RestUtils::isValidJson($postData['raw_post_data']);
+            if ($postData["err"] != false) {
+                $err = new RestError();
+                $err->ReportError(415, $postData["err_str"]);
+                exit;
             }
+            $clientHashes = $postData['data'];
+        }
+        
+        $options = array();
+        if ( isset($_REQUEST['onlyHash']) && $_REQUEST['onlyHash'] == 'true' ) {
+            $options['onlyHash'] = true;
         }
 
-        if ($filter != null) {
-            $tmpFilter = array();
-            foreach ($filter as $modName) {
-                if (in_array(ucfirst($modName), $userModList)) {
-                    array_push($tmpFilter, ucfirst($modName));
-                }
-            }
-            $filter = $tmpFilter;
-        } else {
-            $filter = $userModList;
-        }
-
-        $meta = new MetaDataManager($filter, $typeFiler, $isMobile);
-        $data = $meta->getData();
+        $meta = new MetaDataManager();
+        $data = $meta->getData($clientHashes,$moduleFilter, $typeFilter, $platform, $options);
         $json = json_encode($data);
         $err = json_last_error();
 

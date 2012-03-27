@@ -159,9 +159,7 @@
                     fields = state.view.getFields();
                     this.set({fields: fields});
 
-                    options.params = [
-                        {key: "fields", value: fields.join(",")}
-                    ];
+                    options.params = { fields: fields.join(",") };
                 }
 
                 if (state.id) {
@@ -191,7 +189,9 @@
                 }
 
                 this.set({collection: collection, model: bean});
-
+                if ((state.id || state.create) && state.view) {
+                    state.view.render();
+                }
                 _.each(this.children, function(child) { //TODO optimize for batch
                     child.getData();
                 });

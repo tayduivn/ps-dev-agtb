@@ -14,18 +14,34 @@
 
             function SugarFieldManager() {
                 return {
-                    //TODO move this to global cache
-                    fieldsObj:{},
-                    fieldsHash:'',
-                    fieldTypeMap:{
-                        varchar:"text",
-                        name:"text",
-                        text:"textarea"
+                    fieldTypeMap : {
+                        varchar: "text",
+                        name: "text",
+                        text: "textarea"
                     },
-                    fieldHandlers: {},
 
-                    get : function(def){
-                        return new app.SugarField(def);
+                    get : function(params){
+                        var meta, controller;
+                        var type = params.def && params.def.type ? params.def && params.def.type : false;
+                        var fClass = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;
+                        if (type && app.sugarField[fClass])
+                            return new app.sugarField[fClass](params);
+
+                        meta = app.metadata.get({sugarField:{type: type}});
+                        controller = meta.controller;
+                        if (controller) {
+                            try {
+                                var obj = eval("(" + controller + ")");
+                                if (typeof (obj) == "object"){
+                                    app.sugarField[fClass] = app.sugarField.base.extend(obj);
+                                }
+                                return new app.sugarField[fClass](params);
+                            } catch(e) {
+                                app.logger.error("invalid field controller " + fClass + " : " + controller);
+                            }
+                        }
+
+                        return new app.sugarField.base(params);
                     }
 
                 };
