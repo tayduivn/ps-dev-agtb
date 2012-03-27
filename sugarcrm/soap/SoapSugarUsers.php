@@ -1871,7 +1871,6 @@ function get_mailmerge_document2($session, $file_name, $fields)
         }
         $html .= "</table></body></html>";
      }
-    $GLOBALS['log']->fatal($html);
     $result = base64_encode($html);
 
     return array('html' => $result, 'name_value_list' => $resultIds, 'error' => $error);
