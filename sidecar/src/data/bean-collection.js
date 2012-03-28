@@ -25,8 +25,14 @@
         /**
          * Fetches beans.
          *
+         * Options:
+         *
+         * - relate: boolean flag indicating that relationships should be fetched.
+         * All other options are standard options outlined in the backbone docs.
+         * User {@link BeanCollection#paginate} to for details about pagination options.
+         *
          * Triggers <code>app:collection:fetch</code> event.
-         * @param options(optional) standard options for fetch as outlined in the backbone docs
+         * @param options(optional) fetch options
          */
         fetch: function(options) {
             options = options || {};
@@ -62,12 +68,14 @@
         /**
          * Paginates a collection.
          *
-         * Fetch options:
+         * Options:
          *
          * - page: page index (integer) from the current page to paginate to.
+         * - relate: boolean flag indicating that relationships should be fetched.
          * - add: boolean flag indicating if new records should be appended to the collection.
          * - success: success callback.
          * - error: error callback.
+         * All other options are standard options outlined in the backbone docs.
          * @param options(optional) fetch options
          */
         paginate: function(options) {

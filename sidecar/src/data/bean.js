@@ -1,6 +1,11 @@
 /**
  * Base bean class. Use {@link DataManager} to create instances of beans.
  *
+ * **CRUD on beans**
+ *
+ * Use standard Backbone's <code>fetch</code>, <code>save</code>, and <code>destroy</code>
+ * methods to perform CRUD operations on beans. See {@link DataManager} class for details.
+ *
  * @class Bean
  * @extends Backbone.Model
  * @alias SUGAR.App.Bean
@@ -8,30 +13,6 @@
 (function(app) {
 
     app.augment("Bean", Backbone.Model.extend({
-
-//        /**
-//         * Bean initialization
-//         * @method
-//         * @private
-//         */
-//        initialize: function() {
-//            _.each(this.fields , function(def){
-//                if (def.calculated){
-//                    //TODO: SugarLogic Code here
-//                }
-//            }, this);
-//        },
-
-        /*
-         * Updates a property of type 'relate'.
-         * @param {String} attribute field name
-         * @param {Bean} bean related bean
-         */
-        setRelated: function(attribute, bean) {
-            // TODO: Implement once the metadata is spec'ed out
-            // This will be a convinience method.
-            // We may decide to drop it and resort to setting related bean ID into the corresponding field
-        },
 
         /**
          * Validates a bean.
@@ -50,10 +31,12 @@
          *  Example:
          *  <pre><code>
          *  {
-         *    first_name: { maxLength: 20, someOtherValidator: { some complex error definition... } },
-         *    last_name: { required: true }
+         *    first_name: { maxLength: 20, someOtherValidator: { some complex error definition... } }
          *  }
          *  </code></pre>
+         *
+         *  This method does not check for required fields.
+         *  TODO: Add convinience method that checks for required fields
          *
          * @param attrs attributes hash that is about to be set on this bean
          * @return {Object} errors hash if the bean is invalid or nothing otherwise.
@@ -66,12 +49,7 @@
                 field = self.fields[fieldName];
                 value = attrs[fieldName];
 
-                // First, check if the field is required
-                result = app.validation.requiredValidator(field, fieldName, self, value);
-                _addValidationError(errors, !result, fieldName, "required");
-
-                // Next, run all validations for the value only if "required" validation passed
-                if (result && value) {
+                if (value) {
                     _.each(_.keys(app.validation.validators), function(validatorName) {
                         validator = app.validation.validators[validatorName];
                         result = validator(field, value);
@@ -82,7 +60,6 @@
 
             //{
             // first_name: { maxLength: 20 },
-            // last_name: { required: true }
             // }
 
             // "validate" method should not return anything in case there are no validation errors

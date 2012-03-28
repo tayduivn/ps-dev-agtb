@@ -22,10 +22,6 @@ describe("Bean", function() {
         expect(error).toBeDefined();
         expect(error.maxLength).toEqual(20);
 
-        error = errors["last_name"];
-        expect(error).toBeDefined();
-        expect(error.required).toBeTruthy();
-
     });
 
     it("should be populated with defaults upon instantiation", function() {
