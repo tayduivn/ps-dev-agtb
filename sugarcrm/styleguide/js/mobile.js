@@ -79,15 +79,22 @@
       return false;
     })
 
-    $('a[title = Remove]').on('click', function () {
-	$(this).closest('article').addClass('deleted');
+    $('a[title=Remove]').on('click', function () {
+      //$(this).closest('article').hide();
+      $(this).closest('article').addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+      setTimeout(rmel,250);
 	  return false;
     })
+
 
     // fake hide of record for prototype
     $('article').find('[class^=icon-remove]').on('click', function () {
       $(this).parent().remove();
       $('container-fluid').html('<div class="top alert alert-danger alert-block">Opportunity has been removed.</div>');
     })
-    
+
+	function rmel(){
+      $('.deleted').hide();
+	}
+
 })(window.Zepto);
