@@ -79,10 +79,10 @@
       return false;
     })
 
-    // fake hide of message for prototype
-    setTimeout(function() {
-      $(".alert").fadeOut();
-    }, 3600);
+    $('a[title = Remove]').on('click', function () {
+	$(this).closest('article').addClass('deleted');
+	  return false;
+    })
 
     // fake hide of record for prototype
     $('article').find('[class^=icon-remove]').on('click', function () {

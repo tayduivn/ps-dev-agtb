@@ -4427,3 +4427,29 @@ li.divider-horizontal {
 .invisible {
   visibility: hidden;
 }
+
+#listing article {
+	-webkit-transition: all .25s ease-in-out;
+}
+
+#listing article.deleted {
+    opacity:0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
