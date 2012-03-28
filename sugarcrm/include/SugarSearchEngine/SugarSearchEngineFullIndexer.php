@@ -156,7 +156,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function populateIndexQueueForModule($module)
     {
-        $GLOBALS['log']->info("Going to populate index queue for module {$module} ");
+        $GLOBALS['log']->fatal("Going to populate index queue for module {$module} ");
         $db = DBManagerFactory::getInstance('fts');
         $obj = BeanFactory::getBean($module, null);
         $beanName = BeanFactory::getBeanName($module);
@@ -175,13 +175,12 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function createJobQueueConsumerForModule($module)
     {
-        $GLOBALS['log']->info("Creating FTS Job queue consumer for: {$module} ");
+        $GLOBALS['log']->fatal("Creating FTS Job queue consumer for: {$module} ");
         $job = new SchedulersJob();
         $job->data = $module;
         $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->name = "FTSConsumer {$module}";
         $job->target = "class::SugarSearchEngineFullIndexer";
-        $job->save();
         $queue = new SugarJobQueue();
         $queue->submitJob($job);
 
@@ -210,7 +209,6 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             return $this;
         }
         $this->initiateFTSIndexer();
-
         require_once 'include/SugarQueue/SugarCronJobs.php';
         $jobq = new SugarCronJobs();
         $jobq->runCycle();
@@ -233,7 +231,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function run($module)
     {
-        $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
+        $GLOBALS['log']->info("Going to index all records in module {$module} ");
         $queuTableName = self::QUEUE_TABLE;
         $beanName = BeanFactory::getBeanName($module);
         $db = DBManagerFactory::getInstance('fts');
@@ -250,7 +248,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $bean = BeanFactory::getBean($module, $beanID);
             if($bean !== FALSE)
             {
-                $GLOBALS['log']->fatal("About to index bean: $beanID");
+                $GLOBALS['log']->info("About to index bean: $beanID");
                 $docs[] = $this->SSEngine->createIndexDocument($bean, $fieldDefinitions);
                 $processedBeans[] = $beanID;
                 $count++;
@@ -333,7 +331,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $tableName = self::QUEUE_TABLE;
         $inClause = implode("','", $deleteIDs);
         $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
-        $GLOBALS['log']->fatal("MARK BEAN QUERY IS: $query");
+        $GLOBALS['log']->info("MARK BEAN QUERY IS: $query");
         $GLOBALS['db']->query($query);
     }
 
@@ -345,6 +343,13 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function getStatistics()
     {
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
+
+        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0");
+        while($row = $GLOBALS['db']->fetchByAssoc($res))
+        {
+            $jobBean->mark_deleted($row["id"]);
+        }
         return $this->results;
     }
 
@@ -368,25 +373,25 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     }
 
     /**
-     * Determine if a given scheduler has completed it's task. 
+     * Determine if a system has been indexed
      *
      * @static
-     * @param Scheduler $s
      * @return bool
      */
-    public static function isFTSIndexScheduleCompleted($id)
+    public static function isFTSIndexScheduleCompleted()
     {
-        if( empty($id) )
-            return FALSE;
+        $completed = FALSE;
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
 
-        $scheduler = new Scheduler();
-        $scheduler->retrieve($id);
-        $scheduler->load_relationship('schedulers_times');
-        $runs  = $scheduler->schedulers_times->get();
+        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0");
+        while($row = $GLOBALS['db']->fetchByAssoc($res))
+        {
+            $completed = TRUE;//At least one job must have been executed
+            $jobBean->retrieve($row["id"]);
+            if($jobBean->status != SchedulersJob::JOB_STATUS_DONE)
+               return FALSE;
+        }
 
-        if(count($runs) >= 1)
-            return TRUE;
-        else
-            return FALSE;
+        return $completed;
     }
 }

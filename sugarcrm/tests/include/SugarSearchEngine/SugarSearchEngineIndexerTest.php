@@ -168,6 +168,12 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    public function testIsFTSIndexScheduleCompleted()
+    {
+        $this->assertFalse($this->indexer->isFTSIndexScheduleCompleted());
+        $this->indexer->performFullSystemIndex();
+        $this->assertTrue($this->indexer->isFTSIndexScheduleCompleted());
+    }
     public function markBeansProvider()
     {
         return array(
