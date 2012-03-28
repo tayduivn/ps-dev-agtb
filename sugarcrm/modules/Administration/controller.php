@@ -136,7 +136,8 @@ class AdministrationController extends SugarController
         if($scheduleIndex)
         {
             require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-            SugarSearchEngineFullIndexer::scheduleFullSystemIndex();
+            $indexer = new SugarSearchEngineFullIndexer();
+            $indexer->initiateFTSIndexer();
             $scheduled = TRUE;
         }
         echo json_encode(array('success' => $scheduled));

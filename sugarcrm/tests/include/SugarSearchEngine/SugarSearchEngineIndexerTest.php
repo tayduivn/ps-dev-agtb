@@ -66,7 +66,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->query("TRUNCATE table {$this->indexer->table_name}");
         $jobQueue = BeanFactory::getBean('SchedulersJobs', null);
         $this->_db->query("DELETE FROM {$jobQueue->table_name} WHERE name like 'FTSConsumer%' ");
-
+        $GLOBALS['db'] = DBManagerFactory::getInstance();
     }
 
     /**
@@ -75,7 +75,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFTSPopulateFullQueue()
     {
-        $this->indexer->populateIndexQueue();
+        $this->indexer->initiateFTSIndexer();
 
         $ids = SugarTestAccountUtilities::getCreatedAccountIds();
         $accountID = $ids[0];
@@ -90,7 +90,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEnsureFTSConsumerCreated()
     {
-        $this->indexer->populateIndexQueue(array('Accounts','Contacts'));
+        $this->indexer->initiateFTSIndexer(array('Accounts','Contacts'));
         $jobQueue = BeanFactory::getBean('SchedulersJobs', null);
         $jobName = "FTSConsumer Accounts";
         $loadedJobs = $jobQueue->retrieve_by_string_fields(array('name'=>'FTSConsumer Accounts'));
@@ -104,7 +104,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testClearFTSQueue()
     {
-        $this->indexer->populateIndexQueue(array('Accounts'));
+        $this->indexer->initiateFTSIndexer(array('Accounts'));
         $this->indexer->clearFTSIndexQueueStub();
         $query = "SELECT bean_id FROM {$this->indexer->table_name}";
         $recordExists = $this->_db->getOne($query);
@@ -129,7 +129,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveExistinFTSConsumers()
     {
-        $this->indexer->populateIndexQueue(array('Accounts'));
+        $this->indexer->initiateFTSIndexer(array('Accounts'));
         $this->indexer->removeExistingFTSConsumersStub();
 
         $jobBean = BeanFactory::getBean('SchedulersJobs');
@@ -145,7 +145,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFTSDoNotPopulateQueue()
     {
-        $this->indexer->populateIndexQueue(array('Contacts'));
+        $this->indexer->initiateFTSIndexer(array('Contacts'));
 
         $ids = SugarTestAccountUtilities::getCreatedAccountIds();
         $accountID = $ids[0];
@@ -163,10 +163,34 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $indexer = new TestSugarSearchEngineFullIndexer($SSEngine);
         $indexer->setJob($jobBean);
-        $indexer->populateIndexQueue(array('Accounts'));
+        $indexer->initiateFTSIndexer(array('Accounts'));
         $indexer->run('Accounts');
 
     }
+
+    public function markBeansProvider()
+    {
+        return array(
+            array(range(0,299), 3),
+            array(range(0,1), 1),
+            array(array(), 0),
+            array(range(0,101), 2)
+        );
+    }
+    /**
+    * @dataProvider markBeansProvider
+    */
+    public function testMarkBeansProcessed($ids, $expected)
+    {
+        $GLOBALS['db'] = DBManagerFactory::getInstance();
+        $DBManagerClass = get_class($GLOBALS['db']);
+        $db = $this->getMock($DBManagerClass);
+        $db->expects($this->exactly($expected))->method('query');
+        $GLOBALS['db'] = $db;
+        $indexer = new TestSugarSearchEngineFullIndexer();
+        $indexer->markBeansProcessedStub($ids);
+    }
+
     /**
      * Helper function to see if a record is in the queue
      *
@@ -183,6 +207,11 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
 class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
 {
+
+    public function markBeansProcessedStub($ids)
+    {
+        $this->markBeansProcessed($ids);
+    }
 
     public function setEngine($engine)
     {

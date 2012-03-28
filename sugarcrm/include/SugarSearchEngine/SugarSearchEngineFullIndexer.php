@@ -52,6 +52,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     const MAX_BULK_THRESHOLD = 5000;
 
     /**
+     * The max number of beans we delete at a time
+     */
+    const MAX_BULK_DELETE_THRESHOLD = 100;
+
+    /**
      * Name of the scheduler to perform a full index
      * @var string
      */
@@ -77,10 +82,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
     /**
      * Remove all records that may be currently queued for FTS ingestion
+     *
      */
     protected function clearFTSIndexQueue()
     {
-        $GLOBALS['log']->fatal("Clearing FTS Index Queue");
+        $GLOBALS['log']->debug("Clearing FTS Index Queue");
         $truncateQuery = $GLOBALS['db']->truncateTableSQL('fts_queue');
         $GLOBALS['db']->query($truncateQuery);
     }
@@ -91,7 +97,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     protected function removeExistingFTSConsumers()
     {
-        $GLOBALS['log']->fatal("Removing existing FTS Consumers");
+        $GLOBALS['log']->info("Removing existing FTS Consumers");
 
         $jobBean = BeanFactory::getBean('SchedulersJobs');
 
@@ -102,7 +108,14 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         }
     }
 
-    public function populateIndexQueue($modules = array())
+    /**
+     * Initiate the FTS indexer.  Once initiated, all work will be done by the FTS consumers which will be invoked
+     * by the job queue system.
+     *
+     * @param array $modules
+     * @return SugarSearchEngineFullIndexer
+     */
+    public function initiateFTSIndexer($modules = array())
     {
         $GLOBALS['log']->fatal("Populating Full System Index Queue");
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
@@ -113,6 +126,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
         //Clear the existing queue
         $this->clearFTSIndexQueue();
+
         //Remove any consumers that may be set to run
         $this->removeExistingFTSConsumers();
 
@@ -127,13 +141,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
         $this->results['totalTime'] = $totalTime;
-        $GLOBALS['log']->fatal("Total time to populate full system index queue: $totalTime (s)");
+        $GLOBALS['log']->info("Total time to populate full system index queue: $totalTime (s)");
         $avgRecs = ($totalCount != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
-
-        $GLOBALS['log']->fatal("Total number of records queued: $totalCount , records per sec. $avgRecs");
+        $GLOBALS['log']->info("Total number of records queued: $totalCount , records per sec. $avgRecs");
 
         return $this;
-
 
     }
 
@@ -144,13 +156,14 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function populateIndexQueueForModule($module)
     {
-        $GLOBALS['log']->fatal("Going to populate index queue for module {$module} ");
+        $GLOBALS['log']->info("Going to populate index queue for module {$module} ");
         $db = DBManagerFactory::getInstance('fts');
         $obj = BeanFactory::getBean($module, null);
         $beanName = BeanFactory::getBeanName($module);
         $tableName = self::QUEUE_TABLE;
         $query = "INSERT INTO {$tableName} (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name}";
-        $result = $db->query($query, true, "Error populating index queue for fts");
+        $db->query($query, true, "Error populating index queue for fts");
+        //For each module we populate the fts queue with, create a consumer to digest the beans as well.
         $this->createJobQueueConsumerForModule($module);
     }
 
@@ -158,10 +171,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      * Create a job queue FTS consumer for a specific module
      *
      * @param $module
+     * @return String Id of newly created job
      */
     public function createJobQueueConsumerForModule($module)
     {
-        $GLOBALS['log']->fatal("Creating FTS Job queue consumer for: {$module} ");
+        $GLOBALS['log']->info("Creating FTS Job queue consumer for: {$module} ");
         $job = new SchedulersJob();
         $job->data = $module;
         $job->execute_time = TimeDate::getInstance()->nowDb();
@@ -170,6 +184,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $job->save();
         $queue = new SugarJobQueue();
         $queue->submitJob($job);
+
+        return $job->id;
     }
 
     public function __get($name)
@@ -181,7 +197,9 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     }
 
     /**
-     * Index the entire system. This should only be called from a worker process as this is a time intensive process.
+     * Index the entire system. This should only be called from a worker process as this is a time intensive process and
+     * does not take advantage of the job queue system.  Currently this call is only used when populating demo data and should be used
+     * sparingly.
      */
     public function performFullSystemIndex()
     {
@@ -191,43 +209,26 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $GLOBALS['log']->fatal("No FTS engine enabled, not doing anything");
             return $this;
         }
-        $this->populateIndexQueue();
+        $this->initiateFTSIndexer();
 
         require_once 'include/SugarQueue/SugarCronJobs.php';
         $jobq = new SugarCronJobs();
         $jobq->runCycle();
-
-        /*
-        //Create the necessary index server side.
-        $this->SSEngine->createIndex(TRUE);
-
-        $GLOBALS['log']->info("Performing Full System Index");
-        $startTime = microtime(true);
-        $allModules = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
-
-        $totalCount = 0;
-        foreach($allModules as $module => $fieldDefinitions)
-        {
-            $totalCount += $this->indexModule($module, $fieldDefinitions);
-
-        }
-
-        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
-        $this->results['totalTime'] = $totalTime;
-        $GLOBALS['log']->info("Total time to perform full system index: $totalTime (s)");
-        $avgRecs = number_format(round(($totalCount / $totalTime), 2), 2);
-        $GLOBALS['log']->info("Total number of records indexed: $totalCount , records per sec. $avgRecs");
-
-        return $this;
-         */
     }
 
+    /**
+     * Set the scheduler job that initiated the run call.
+     *
+     * @param SchedulersJob $job
+     */
     public function setJob(SchedulersJob $job)
     {
         $this->schedulerJob = $job;
     }
 
     /**
+     * Main function that handles the indexing of a bean and is called by the job queue system.
+     *
      * @param $data
      */
     public function run($module)
@@ -238,8 +239,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $db = DBManagerFactory::getInstance('fts');
         $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);
         $count = 0;
-        $selectAllQuery = "SELECT bean_id FROM {$queuTableName} WHERE bean_module='{$beanName}'";
 
+        $selectAllQuery = "SELECT bean_id FROM {$queuTableName} WHERE bean_module='{$beanName}'";
         $result = $db->limitQuery($selectAllQuery,0, self::MAX_BULK_THRESHOLD, true, "Unable to retrieve records from FTS queue");
         $processedBeans = array();
         $docs = array();
@@ -276,6 +277,9 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $this->markBeansProcessed($processedBeans);
         }
 
+        //Keep track of how many we've done
+        $this->schedulerJob->message += $count;
+
         //If no items were processed we've exhausted the list and can therefore succeed job.
         if( count($count) == 0)
         {
@@ -287,34 +291,54 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $this->schedulerJob->resolveJob(SchedulersJob::JOB_PENDING);
         }
 
-        $this->results[$module] = $count;
+        $GLOBALS['log']->info("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s)");
 
         return TRUE;
 
     }
 
+    /**
+     * Given a set of bean ids processed from the queue table, mark them as being processed.  We will
+     * throttle the update query as there is a limit on the size of records that can be passed to an in clause yet
+     * we don't want to update them individually for performance reasons.
+     *
+     * @param $beanIDs array of bean ids to delete
+     */
     protected function markBeansProcessed($beanIDs)
     {
+        $count = 0;
+        $deleteIDs = array();
+        foreach($beanIDs as $beanID)
+        {
+            $deleteIDs[] = $beanID;
+            $count++;
+            if($count != 0 && $count % self::MAX_BULK_DELETE_THRESHOLD == 0)
+            {
+                $this->setBeanIDsProcessed($deleteIDs);
+                $deleteIDs = array();
+            }
+        }
+
+        if( count($deleteIDs) > 0)
+            $this->setBeanIDsProcessed($deleteIDs);
+    }
+
+    /**
+     * Internal function to mark records within queue table as processed.
+     *
+     * @param $deleteIDs
+     */
+    private function setBeanIDsProcessed($deleteIDs)
+    {
         $tableName = self::QUEUE_TABLE;
-        $inClause = implode("','", $beanIDs);
+        $inClause = implode("','", $deleteIDs);
         $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
         $GLOBALS['log']->fatal("MARK BEAN QUERY IS: $query");
-    }
-    /**
-     * Index a single module
-     *
-     * @param $module Name of the module to be indexed
-     * @param $fieldDefinitions A list of field definitions for fields which should be indexed.
-     * @return int The total count of items indexed.
-     */
-    public function indexModule($module, $fieldDefinitions)
-    {
-
+        $GLOBALS['db']->query($query);
     }
 
-
-
     /**
+     * TODO: Need to update
      * Return statistics about how many records per module were indexed.
      *
      * @return array
@@ -325,39 +349,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     }
 
     /**
-     * Schedule a full system index.
-     *
-     * @static
-     *
-     */
-    public static function scheduleFullSystemIndex()
-    {
-        $previousSchedulerID = self::isFTSIndexScheduled();
-        //If there is an old scheduler, delete it. We only want to keep
-        //a single copy of the scheduler around so we can see if it has completed
-        //by examine the log history.
-        if($previousSchedulerID !== FALSE)
-        {
-            $oldSched = new Scheduler();
-            $oldSched->retrieve($previousSchedulerID);
-            $oldSched->deleted = 1;
-            $oldSched->save(FALSE);
-        }
-        $td = TimeDate::getInstance()->getNow(true)->modify("+5 min");
-        $before = TimeDate::getInstance()->getNow(true)->modify("-5 min");
-        $future = TimeDate::getInstance()->getNow(true)->modify("+5 year");
-        $sched = new Scheduler();
-        $sched->name = self::$schedulerName;
-        $sched->job = "function::performFullFTSIndex";
-        $sched->status = 'Active';
-        $sched->job_interval = $td->min."::".$td->hour."::".$td->day."::".$td->month."::".$td->day_of_week;
-        $sched->date_time_start = TimeDate::getInstance()->asUser($before, $GLOBALS['current_user']);
-        $sched->date_time_end = TimeDate::getInstance()->asUser($future, $GLOBALS['current_user']);
-        $sched->catch_up = 1;
-        $sched->save(); 
-    }
-
-    /**
+     * TODO: Need to update
      * Determine if a pre-existing scheduler for fts exists.  If so return the id, else false.
      *
      * @static
