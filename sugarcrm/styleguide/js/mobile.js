@@ -68,6 +68,8 @@
     })
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
 
     // fake phone for prototype
     $('#record-action').find('.icon-phone').on('click', function () {
@@ -79,6 +81,19 @@
       $(this).remove();
       return false;
     })
+>>>>>>> Nomad updates
+
+    // fake phone for prototype
+    $('#record-action').find('.icon-phone').on('click', function () {
+      $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
+      return false;
+    })
+    
+<<<<<<< HEAD
+    $('.over').find('#cancel').on('click', function () {
+      $(this).remove();
+      return false;
+    })
 
     $('a[title=Remove]').on('click', function () {
       //$(this).closest('article').hide();
@@ -86,6 +101,8 @@
       setTimeout(rmel,250);
 	  return false;
     })   
+=======
+>>>>>>> Nomad updates
 
   	$('.icon-star-empty, .icon-star').on('click', function () {
   	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
@@ -96,8 +113,11 @@
       $(this).remove();
     })
     
+<<<<<<< HEAD
 	function rmel(){
       $('.deleted').remove();
 	}
 
+=======
+>>>>>>> Nomad updates
 })(window.Zepto);
