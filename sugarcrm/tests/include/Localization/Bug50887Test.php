@@ -45,6 +45,3 @@ class Bug50887Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame('.', $this->loc->getDecimalSeparator($this->user));
     }
 }
-
-?>
- 

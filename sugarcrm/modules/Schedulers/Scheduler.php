@@ -68,37 +68,47 @@ class Scheduler extends SugarBean {
     public function __construct($init=true)
     {
         parent::SugarBean();
-        if($init) {
-            $user = new User();
-            //check is default admin exists
-            $adminId = $this->db->getOne(
-                'SELECT id FROM users WHERE id='.$this->db->quoted('1').' AND is_admin=1 AND deleted=0 AND status='.$this->db->quoted('Active'),
-                true,
-                'Error retrieving Admin account info'
-            );
-            if (false === $adminId) {//retrive another admin
-                $adminId = $this->db->getOne(
-                    'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status='.$this->db->quoted('Active'),
-                    true,
-                    'Error retrieving Admin account info'
-                );
-                if ($adminId) {
-                    $user->retrieve($adminId);
-                } else {
-                    $GLOBALS['log']->fatal('No Admin account found!');
-                    return false;
-                }
-
-            } else {
-                $user->retrieve('1'); // Scheduler jobs run as default Admin
-            }
-            $this->user = $user;
-        }
         $job = new SchedulersJob();
         $this->job_queue_table = $job->table_name;
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
+    }
+
+    protected function getUser()
+    {
+        if(empty($this->user)) {
+            $this->initUser();
+        }
+        return $this->user;
+    }
+
+    protected function initUser()
+    {
+        $user = new User();
+        //check is default admin exists
+        $adminId = $this->db->getOne(
+            'SELECT id FROM users WHERE id='.$this->db->quoted('1').' AND is_admin=1 AND deleted=0 AND status='.$this->db->quoted('Active'),
+            true,
+            'Error retrieving Admin account info'
+        );
+        if (false === $adminId) {//retrive another admin
+            $adminId = $this->db->getOne(
+                'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status='.$this->db->quoted('Active'),
+                true,
+                'Error retrieving Admin account info'
+            );
+            if ($adminId) {
+                $user->retrieve($adminId);
+            } else {
+                $GLOBALS['log']->fatal('No Admin account found!');
+                return false;
+            }
+
+        } else {
+            $user->retrieve('1'); // Scheduler jobs run as default Admin
+        }
+        $this->user = $user;
     }
 
 
@@ -138,7 +148,7 @@ class Scheduler extends SugarBean {
 	    $job->scheduler_id = $this->id;
         $job->name = $this->name;
         $job->execute_time = $GLOBALS['timedate']->nowDb();
-        $job->assigned_user_id = $this->user->id;
+        $job->assigned_user_id = $this->getUser()->id;
         $job->target = $this->job;
         return $job;
 	}
@@ -157,7 +167,7 @@ class Scheduler extends SugarBean {
 			foreach($allSchedulers as $focus) {
 				if($focus->fireQualified()) {
 				    $job = $focus->createJob();
-				    $queue->submitJob($job, $this->user);
+				    $queue->submitJob($job, $this->getUser());
 				}
 			}
 		} else {
