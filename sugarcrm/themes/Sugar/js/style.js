@@ -233,11 +233,11 @@ SUGAR.append(SUGAR.themes, {
                             menuItemsWidth += menuNode.width();
 	                    }
 				    );
-	                	                               
+	               	                               
 	                if(menuItemsWidth > maxMenuWidth){
 	                	while(menuItemsWidth > maxMenuWidth){
 	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
-	                		if(menuNode.hasClass("current")){
+	                		if(menuNode.hasClass("current") && !menuNode.hasClass("home")){
 	                			menuNode = menuNode.prev();
 	                		}
 	                		if(menuNode.hasClass("home")){
@@ -250,7 +250,7 @@ SUGAR.append(SUGAR.themes, {
 	                }
 	                else if(menuItemsWidth <= maxMenuWidth){
 	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
-	                	if(insertNode.prev().hasClass("current")){
+	                	if(insertNode.prev().hasClass("current") && !insertNode.prev().hasClass("home")){
 	                		insertNode = insertNode.prev();
                 		}
 	                	while(menuItemsWidth <= maxMenuWidth){
@@ -261,10 +261,10 @@ SUGAR.append(SUGAR.themes, {
 	                		   (menuItemsWidth + menuNode.width()) > maxMenuWidth){
 	                			break;	                			
 	                		}
-	                		menuItemsWidth += menuNode.width();
+	                		
 		                	menuNode.remove();
-		                	
 		                	insertNode.before(menuNode);
+		                	menuItemsWidth += menuNode.width();
 	                	}
 	                }
 				}
