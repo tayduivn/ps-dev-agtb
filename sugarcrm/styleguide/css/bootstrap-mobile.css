@@ -3970,6 +3970,12 @@ html {
 #listing > article:last-child {
   margin-bottom: 20px;
 }
+#listing article {
+  -webkit-transition: all 0.25s ease-in-out;
+}
+#listing article.deleted {
+  opacity: 0;
+}
 .navbar [class^="icon-"] {
   color: #ffffff;
   text-shadow: 0 -1px 0 #000000;
@@ -4427,29 +4433,3 @@ li.divider-horizontal {
 .invisible {
   visibility: hidden;
 }
-
-#listing article {
-	-webkit-transition: all .25s ease-in-out;
-}
-
-#listing article.deleted {
-    opacity:0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
