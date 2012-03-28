@@ -16,7 +16,7 @@
       $('html').find('body').removeClass('onR');
 		})
 		
-		$('#moduleList').bind('touchmove', function (e) {e.preventDefault();} );
+		/*$('#moduleList').bind('touchmove', function (e) {e.preventDefault();} );*/
 		$('#moduleList').swipeLeft(function () {
       $('html').find('body').removeClass('onL');
 		})
