@@ -326,26 +326,27 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_user_module_list');
 		global $app_list_strings, $current_language;
 		$app_list_strings = return_app_list_strings_language($current_language);
-		$modules = query_module_access_list($user);
-		ACLController :: filterModuleList($modules, false);
+		$modules = SugarACL::filterModuleList(query_module_access_list($user));
 		global $modInvisList;
 
 		foreach($modInvisList as $invis){
 			$modules[$invis] = 'read_only';
 		}
 
-		$actions = ACLAction::getUserActions($user->id,true);
-		foreach($actions as $key=>$value){
-			if(isset($value['module']) && $value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
-				if ($value['module']['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
-					unset($modules[$key]);
-				} else {
-					$modules[$key] = 'read_only';
-				} // else
-			} else {
-				$modules[$key] = '';
-			} // else
-		} // foreach
+		foreach($modules as $key=>$val) {
+		    if(!SugarACL::checkAccess($key, 'access')) {
+		        if(!SugarACL::checkAccess($key, 'access', array("owner_override" => true))) {
+		            // access available, but not to you
+		            $modules[$key] = 'read_only';
+		        } else {
+		            // access denied
+		            unset($modules[$key]);
+		        }
+		    } else {
+		        // access ok
+		        if($modules[$key] != 'read_only') $modules[$key] = '';
+		    }
+		}
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_user_module_list');
 		return $modules;
 

@@ -118,6 +118,8 @@ class VardefManager{
             if(!empty($templates[$template]['indices']))$GLOBALS['dictionary'][$object]['indices'] = array_merge($templates[$template]['indices'], $GLOBALS['dictionary'][$object]['indices']);
             //BEGIN SUGARCRM flav=pro ONLY
             if(!empty($templates[$template]['favorites']))$GLOBALS['dictionary'][$object]['favorites'] = $templates[$template]['favorites'];
+            if(empty($GLOBALS['dictionary'][$object]['visibility']))$GLOBALS['dictionary'][$object]['visibility'] = array();
+            if(!empty($templates[$template]['visibility'])) $GLOBALS['dictionary'][$object]['visibility'] = array_merge($templates[$template]['visibility'], $GLOBALS['dictionary'][$object]['visibility']);
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=following ONLY
             if(!empty($templates[$template]['followable']))$GLOBALS['dictionary'][$object]['followable'] = $templates[$template]['favorites'];

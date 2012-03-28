@@ -21,12 +21,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/ACLFields/actiondefs.php');
-class ACLField  extends ACLAction{
+/**
+ * Field-level ACLs
+ * @api
+ */
+class ACLField  extends ACLAction
+{
     var $module_dir = 'ACLFields';
     var $object_name = 'ACLField';
     var $table_name = 'acl_fields';
     var $disable_custom_fields = true;
     var $new_schema = true;
+
     function ACLField(){
         parent::SugarBean();
         //BEGIN SUGARCRM flav=pro ONLY
@@ -37,12 +43,10 @@ class ACLField  extends ACLAction{
     /**
     * static addActions($category, $type='module')
     * Adds all default actions for a category/type
-    *
+    * @internal
     * @param STRING $category - the category (e.g module name - Accounts, Contacts)
     * @param STRING $type - the type (e.g. 'module', 'field')
     */
-
-
     function getAvailableFields($module, $object=false){
         static $exclude = array('deleted', 'assigned_user_id');
         static $modulesAvailableFields = array();
@@ -94,6 +98,13 @@ class ACLField  extends ACLAction{
         return $modulesAvailableFields[$module];
     }
 
+    /**
+     * Get ACL fields
+     * @internal
+     * @param string $module
+     * @param string $user_id
+     * @param string $role_id
+     */
     function getFields($module,$user_id='',$role_id=''){
         static $userFields = array();
         $fields = ACLField::getAvailableFields($module, false);
@@ -125,6 +136,10 @@ class ACLField  extends ACLAction{
         return $fields;
     }
 
+    /**
+     * @internal
+     * @param string $role_id
+     */
     function getACLFieldsByRole($role_id){
         $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
         $query .=  " WHERE af.deleted = 0 ";
@@ -136,6 +151,14 @@ class ACLField  extends ACLAction{
         return $fields;
     }
 
+    /**
+     * Load user ACLs from the DB
+     * @internal
+     * @param string $category
+     * @param string $object
+     * @param string $user_id
+     * @param bool $refresh
+     */
     function loadUserFields($category,$object, $user_id, $refresh=false){
         if(!$refresh && isset($_SESSION['ACL'][$user_id][$category]['fields']))return $_SESSION['ACL'][$user_id][$category]['fields'];
         if(empty($_SESSION['ACL'][$user_id])) {
@@ -165,12 +188,25 @@ class ACLField  extends ACLAction{
 
     }
 
+    public static $field_cache = array();
 
-    function listFilter(&$list,$category, $user_id, $is_owner, $by_key=true, $min_access = 1, $blank_value=false, $addACLParam=false, $suffix=''){
-        static $cache = array();
-
+    /**
+     * Filter fields list by ACLs
+     * NOTE: works with global ACLs
+	 * @internal
+     * @param array $list Field list. Will be modified.
+     * @param string $category Module for ACL
+     * @param string $user_id
+     * @param bool $is_owner Should owner-only ACLs be counted?
+     * @param bool $by_key use list keys
+     * @param int $min_access Minimal access level to require
+     * @param bool $blank_value Put blank string in place of removed fields?
+     * @param bool $addACLParam Add 'acl' key with acl access value?
+     * @param string $suffix Field suffix to strip from the list.
+     */
+    function listFilter(&$list,$category, $user_id, $is_owner, $by_key=true, $min_access = 1, $blank_value=false, $addACLParam=false, $suffix='')
+    {
         foreach($list as $key=>$value){
-
             if($by_key){
                 $field = $key;
                 if(is_array($value) && !empty($value['group'])){
@@ -189,32 +225,34 @@ class ACLField  extends ACLAction{
                 }
                 $field = $value;
             }
-                        if(isset($cache['lower'][$field])){
-                            $field = $cache['lower'][$field];
-                        }else{
-                            $oField = $field;
-                            $field = strtolower($field);
-                            if(!empty($suffix))$field = str_replace($suffix, '', $field);
-                            $cache['lower'][$oField] = $field;
-                        }
-            if(!isset($cache[$is_owner][$field])){
-                $access = ACLField::hasAccess($field, $category, $user_id, $is_owner) ;
-                $cache[$is_owner][$field] = $access;
+            if(isset(self::$field_cache['lower'][$field])){
+                $field = self::$field_cache['lower'][$field];
+            } else {
+                $oField = $field;
+                $field = strtolower($field);
+                if(!empty($suffix))$field = str_replace($suffix, '', $field);
+                self::$field_cache['lower'][$oField] = $field;
+            }
+            if(!isset(self::$field_cache[$is_owner][$field])){
+                $context = array("user_id" => $user_id);
+                if($is_owner) {
+                    $context['owner_override'] = true;
+                }
+                $access = SugarACL::getFieldAccess($category, $field, $context);
+                self::$field_cache[$is_owner][$field] = $access;
             }else{
-                $access = $cache[$is_owner][$field];
+                $access = self::$field_cache[$is_owner][$field];
             }
             if($addACLParam){
                 $list[$key]['acl'] = $access;
             }else if($access< $min_access){
-            if($blank_value){
-                $list[$key] = '';
-            }else{
-                unset($list[$key]);
+                if($blank_value){
+                    $list[$key] = '';
+                }else{
+                    unset($list[$key]);
+                }
             }
-
         }
-
-    }
     }
 
 
@@ -228,22 +266,17 @@ class ACLField  extends ACLAction{
     * Returns 1 - for read access
     * returns 2 - for write access
     * returns 4 - for read/write access
-    *
+    * @internal
     * @param String $field The name of the field to retrieve ACL access for
     * @param String $module The name of the module that contains the field to lookup ACL access for
     * @param String $user_id The user id of the user instance to check ACL access for
     * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
     * @return Integer value indicating the ACL field level access
     */
-    function hasAccess($field, $module,$user_id, $is_owner){
-        static $is_admin = null;
-        if (is_null($is_admin)) {
-            $is_admin = is_admin($GLOBALS['current_user']);
-        }
-        if ($is_admin) {
-            return 4;
-        }
-        //if(is_admin($GLOBALS['current_user']))return 4;
+    function hasAccess($field, $module,$user_id, $is_owner)
+    {
+        if(is_admin($GLOBALS['current_user'])) return 4;
+
         if(!isset($_SESSION['ACL'][$user_id][$module]['fields'][$field])){
             return 4;
         }
@@ -257,7 +290,15 @@ class ACLField  extends ACLAction{
         return 0;
     }
 
-    function setAccessControl($module, $role_id, $field_id, $access){
+    /**
+     * @internal
+     * @param string $module
+     * @param string $role_id
+     * @param string $field_id
+     * @param string $access
+     */
+    function setAccessControl($module, $role_id, $field_id, $access)
+    {
         $acl = new ACLField();
         $id = md5($module. $role_id . $field_id);
         if(!$acl->retrieve($id) ){

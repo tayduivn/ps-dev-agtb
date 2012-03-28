@@ -20,7 +20,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('modules/ACLActions/actiondefs.php');
-class ACLAction  extends SugarBean{
+/**
+ * ACL actions
+ * @api
+ */
+class ACLAction  extends SugarBean
+{
     var $module_dir = 'ACLActions';
     var $object_name = 'ACLAction';
     var $table_name = 'acl_actions';
@@ -338,8 +343,8 @@ class ACLAction  extends SugarBean{
             ACLAction::getUserActions($user_id, false);
 
         }
-
         if(!empty($_SESSION['ACL'][$user_id][$category][$type][$action])){
+            if($action == 'access' && $_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess'] == ACL_ALLOW_ENABLED) return true;
             return ACLAction::hasAccess($is_owner, $_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess']);
         }
         return false;
