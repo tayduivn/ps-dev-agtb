@@ -101,6 +101,3 @@ class SearchForm2Wrap extends SearchForm {
         return $this->parseDateExpression($operator, $db_field, $field_type);
     }
 }
-
-?>
- 
