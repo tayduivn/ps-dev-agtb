@@ -94,7 +94,7 @@
     })
 
 	function rmel(){
-      $('.deleted').hide();
+      $('.deleted').remove();
 	}
 
 })(window.Zepto);
