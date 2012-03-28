@@ -32,12 +32,6 @@ class SugarACLStatic extends SugarACLStrategy
      */
     public function checkAccess($module, $action, $context)
     {
-        if($this->getCurrentUser($context)->isAdminForModule($module)) {
-            return true;
-        }
-
-        $action = strtolower($action);
-
         //BEGIN SUGARCRM flav=pro ONLY
         // Check if we have to apply team security based on ACLs
         // If user had admin rights then team security is disabled
@@ -52,12 +46,19 @@ class SugarACLStatic extends SugarACLStrategy
                         // disable team security for admins
                         return false;
                     }
+                return true;
             } else {
                 // True means team security is enabled and it's the default
                 return true;
             }
         }
         //END SUGARCRM flav=pro ONLY
+
+        if($this->getCurrentUser($context)->isAdminForModule($module)) {
+            return true;
+        }
+
+        $action = strtolower($action);
 
         if($action == "field") {
             return $this->fieldACL($module, $context['action'], $context);
