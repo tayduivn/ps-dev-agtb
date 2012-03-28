@@ -1940,8 +1940,8 @@ function save_relationship_changes($is_update, $exclude=array())
             $rel_id=isset($this->new_rel_id) ? $this->new_rel_id : '';
             $rel_link=isset($this->new_rel_relname) ? $this->new_rel_relname : '';
         }
-        else 
-        {  
+        else
+        {
             // if we should use relation data from REQUEST
             $rel_id=isset($_REQUEST['relate_id']) ? $_REQUEST['relate_id'] : '';
             $rel_link=isset($_REQUEST['relate_to']) ? $_REQUEST['relate_to'] : '';
@@ -5457,7 +5457,7 @@ function save_relationship_changes($is_update, $exclude=array())
             // BC hack to accept owner override
            $context = array('owner_override' => $context);
         }
-        if(empty($context)) {
+        if(empty($context) || $context == 'not_set') {
             $context = array();
         }
         if(!isset($context['bean'])) {
