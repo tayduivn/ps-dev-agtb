@@ -46,7 +46,7 @@
 <tr>
 <td class="buttons" align="left" NOWRAP width="20%">
 <div class="actionsContainer">
-<form action="index.php" method="post" name="DetailView" id="form">
+<form action="index.php" method="post" name="DetailView" id="formDetailView">
 <input type="hidden" name="module" value="{$module}">
 <input type="hidden" name="record" value="{$fields.id.value}">
 <input type="hidden" name="return_action">
@@ -62,37 +62,32 @@
         {{$field}}
     {{/foreach}}
 {{/if}}
-
+</form>
 {{if !isset($form.buttons)}}
-    {{sugar_button module="$module" id="EDIT" view="$view" appendTo="detail_header_buttons"}}
-    {{sugar_button module="$module" id="DUPLICATE" view="EditView" appendTo="detail_header_buttons"}}
-    {{sugar_button module="$module" id="DELETE" view="$view" appendTo="detail_header_buttons"}}
+    {{sugar_button module="$module" id="EDIT" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
+    {{sugar_button module="$module" id="DUPLICATE" view="EditView" form_id="formDetailView" appendTo="detail_header_buttons"}}
+    {{sugar_button module="$module" id="DELETE" view="$view" form_id="formDetailView" appendTo="detail_header_buttons"}}
 {{else}}
     {{counter assign="num_buttons" start=0 print=false}}
     {{foreach from=$form.buttons key=val item=button}}
         {{if !is_array($button) && in_array($button, $built_in_buttons)}}
         {{counter print=false}}
-        {{sugar_button module="$module" id="$button" view="EditView" appendTo="detail_header_buttons"}}
+        {{sugar_button module="$module" id="$button" view="EditView" form_id="formDetailView" appendTo="detail_header_buttons"}}
         {{/if}}
     {{/foreach}}
-    {{if isset($closeFormBeforeCustomButtons)}}
-        {{append var="detail_header_buttons" value="</form>"}}
-    {{/if}}
     {{if count($form.buttons) > $num_buttons}}
         {{foreach from=$form.buttons key=val item=button}}
             {{if is_array($button) && $button.customCode}}
-                {{sugar_button module="$module" id="$button" view="EditView" appendTo="detail_header_buttons"}}
+                {{sugar_button module="$module" id="$button" view="EditView" form_id="formDetailView" appendTo="detail_header_buttons"}}
             {{/if}}
         {{/foreach}}
     {{/if}}
     {{if empty($form.hideAudit) || !$form.hideAudit}}
-        {{sugar_button module="$module" id="Audit" view="EditView" appendTo="detail_header_buttons"}}
+        {{sugar_button module="$module" id="Audit" view="EditView" form_id="formDetailView" appendTo="detail_header_buttons"}}
     {{/if}}
 {{/if}}
 {{sugar_action_menu id="detail_header_action_menu" buttons=$detail_header_buttons class="fancymenu" }}
-{{if !isset($closeFormBeforeCustomButtons)}}
-</form>
-{{/if}}
+
 </div>
 
 </td>
