@@ -25,7 +25,7 @@ $dictionary['fts_queue'] = array('table' => 'fts_queue',
 			'type'		=>	'datetime'
 		),
 		array(
-			'name'		=> 'deleted',
+			'name'		=> 'processed',
 			'type'		=> 'bool',
 			'len'		=> '1',
 			'default'	=> '0',

@@ -22,12 +22,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+require_once('include/SugarQueue/SugarJobQueue.php');
+require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
  *
  */
-class SugarSearchEngineFullIndexer
+class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
 {
+
+    /**
+     * @var SchedulersJob
+     */
+    private $schedulerJob;
 
     /**
      * @var \SugarSearchEngineAbstractBase
@@ -68,12 +75,47 @@ class SugarSearchEngineFullIndexer
         $this->results = array();
     }
 
+    /**
+     * Remove all records that may be currently queued for FTS ingestion
+     */
+    protected function clearFTSIndexQueue()
+    {
+        $GLOBALS['log']->fatal("Clearing FTS Index Queue");
+        $truncateQuery = $GLOBALS['db']->truncateTableSQL('fts_queue');
+        $GLOBALS['db']->query($truncateQuery);
+    }
+
+    /**
+     * Remove existing FTS Consumers that may have been created by a previous scheduled index.
+     *
+     */
+    protected function removeExistingFTSConsumers()
+    {
+        $GLOBALS['log']->fatal("Removing existing FTS Consumers");
+
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
+
+        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0");
+        while($row = $GLOBALS['db']->fetchByAssoc($res))
+        {
+            $jobBean->mark_deleted($row["id"]);
+        }
+    }
+
     public function populateIndexQueue($modules = array())
     {
+        $GLOBALS['log']->fatal("Populating Full System Index Queue");
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
+        {
+            $GLOBALS['log']->fatal("No FTS engine enabled, not doing anything");
             return $this;
+        }
 
-        $GLOBALS['log']->info("Populating Full System Index Queue");
+        //Clear the existing queue
+        $this->clearFTSIndexQueue();
+        //Remove any consumers that may be set to run
+        $this->removeExistingFTSConsumers();
+
         $startTime = microtime(true);
         $allModules = !empty($modules) ? $modules : array_keys(SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules());
 
@@ -95,9 +137,14 @@ class SugarSearchEngineFullIndexer
 
     }
 
+    /**
+     * Populate the index queue with all records from a particular module
+     *
+     * @param $module
+     */
     public function populateIndexQueueForModule($module)
     {
-        $GLOBALS['log']->info("Going to populate index queue for module {$module} ");
+        $GLOBALS['log']->fatal("Going to populate index queue for module {$module} ");
         $db = DBManagerFactory::getInstance('fts');
         $obj = BeanFactory::getBean($module, null);
         $beanName = BeanFactory::getBeanName($module);
@@ -107,15 +154,22 @@ class SugarSearchEngineFullIndexer
         $this->createJobQueueConsumerForModule($module);
     }
 
+    /**
+     * Create a job queue FTS consumer for a specific module
+     *
+     * @param $module
+     */
     public function createJobQueueConsumerForModule($module)
     {
+        $GLOBALS['log']->fatal("Creating FTS Job queue consumer for: {$module} ");
         $job = new SchedulersJob();
-        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->data = $module;
         $job->execute_time = TimeDate::getInstance()->nowDb();
         $job->name = "FTSConsumer {$module}";
-        $job->target = "function::SugarSearchEngineFullIndexer::indexModule";
+        $job->target = "class::SugarSearchEngineFullIndexer";
         $job->save();
+        $queue = new SugarJobQueue();
+        $queue->submitJob($job);
     }
 
     public function __get($name)
@@ -131,9 +185,19 @@ class SugarSearchEngineFullIndexer
      */
     public function performFullSystemIndex()
     {
+        //Do nothing if no FTS has been setup.
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
+        {
+            $GLOBALS['log']->fatal("No FTS engine enabled, not doing anything");
             return $this;
+        }
+        $this->populateIndexQueue();
 
+        require_once 'include/SugarQueue/SugarCronJobs.php';
+        $jobq = new SugarCronJobs();
+        $jobq->runCycle();
+
+        /*
         //Create the necessary index server side.
         $this->SSEngine->createIndex(TRUE);
 
@@ -155,40 +219,47 @@ class SugarSearchEngineFullIndexer
         $GLOBALS['log']->info("Total number of records indexed: $totalCount , records per sec. $avgRecs");
 
         return $this;
+         */
+    }
+
+    public function setJob(SchedulersJob $job)
+    {
+        $this->schedulerJob = $job;
     }
 
     /**
-     * Index a single module
-     *
-     * @param $module Name of the module to be indexed
-     * @param $fieldDefinitions A list of field definitions for fields which should be indexed.
-     * @return int The total count of items indexed.
+     * @param $data
      */
-    public function indexModule($module, $fieldDefinitions)
+    public function run($module)
     {
-        $GLOBALS['log']->info("Going to index all records in module {$module} ");
+        $GLOBALS['log']->fatal("Going to index all records in module {$module} ");
+        $queuTableName = self::QUEUE_TABLE;
+        $beanName = BeanFactory::getBeanName($module);
         $db = DBManagerFactory::getInstance('fts');
+        $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);
         $count = 0;
-        $obj = BeanFactory::getBean($module, null);
-        $selectAllQuery = "SELECT id FROM {$obj->table_name} WHERE deleted='0'";
+        $selectAllQuery = "SELECT bean_id FROM {$queuTableName} WHERE bean_module='{$beanName}'";
 
-        $result = $db->query($selectAllQuery, true, "Error filling in team names: ");
-
+        $result = $db->limitQuery($selectAllQuery,0, self::MAX_BULK_THRESHOLD, true, "Unable to retrieve records from FTS queue");
+        $processedBeans = array();
         $docs = array();
         while ($row = $db->fetchByAssoc($result, FALSE) )
         {
-            $beanID = $row['id'];
+            $beanID = $row['bean_id'];
             $bean = BeanFactory::getBean($module, $beanID);
             if($bean !== FALSE)
             {
+                $GLOBALS['log']->fatal("About to index bean: $beanID");
                 $docs[] = $this->SSEngine->createIndexDocument($bean, $fieldDefinitions);
+                $processedBeans[] = $beanID;
                 $count++;
             }
 
             if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
             {
                 $this->SSEngine->bulkInsert($docs);
-                $docs = array();
+                $this->markBeansProcessed($processedBeans);
+                $docs = $processedBeans = array();
                 sugar_cache_reset();
                 gc_collect_cycles();
                 $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
@@ -202,11 +273,42 @@ class SugarSearchEngineFullIndexer
         if(count($docs) > 0)
         {
             $this->SSEngine->bulkInsert($docs);
+            $this->markBeansProcessed($processedBeans);
+        }
+
+        //If no items were processed we've exhausted the list and can therefore succeed job.
+        if( count($count) == 0)
+        {
+            $this->schedulerJob->succeedJob();
+        }
+        else
+        {
+            //Mark the job that as pending so we can be invoked later.
+            $this->schedulerJob->resolveJob(SchedulersJob::JOB_PENDING);
         }
 
         $this->results[$module] = $count;
 
-        return $count;
+        return TRUE;
+
+    }
+
+    protected function markBeansProcessed($beanIDs)
+    {
+        $tableName = self::QUEUE_TABLE;
+        $inClause = implode("','", $beanIDs);
+        $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
+        $GLOBALS['log']->fatal("MARK BEAN QUERY IS: $query");
+    }
+    /**
+     * Index a single module
+     *
+     * @param $module Name of the module to be indexed
+     * @param $fieldDefinitions A list of field definitions for fields which should be indexed.
+     * @return int The total count of items indexed.
+     */
+    public function indexModule($module, $fieldDefinitions)
+    {
 
     }
 
