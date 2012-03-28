@@ -67,6 +67,7 @@
       return false;
     })
 
+<<<<<<< HEAD
 
     // fake phone for prototype
     $('#record-action').find('.icon-phone').on('click', function () {
@@ -79,12 +80,12 @@
       return false;
     })
 
-    // fake hide of record for prototype
-    $('article').find('[class^=icon-remove]').on('click', function () {
-      $(this).parent().remove();
-      $('container-fluid').html('<div class="top alert alert-danger alert-block">Opportunity has been removed.</div>');
-    })
-    
+    $('a[title=Remove]').on('click', function () {
+      //$(this).closest('article').hide();
+      $(this).closest('article').addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+      setTimeout(rmel,250);
+	  return false;
+    })   
 
   	$('.icon-star-empty, .icon-star').on('click', function () {
   	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
@@ -95,4 +96,8 @@
       $(this).remove();
     })
     
+	function rmel(){
+      $('.deleted').remove();
+	}
+
 })(window.Zepto);
