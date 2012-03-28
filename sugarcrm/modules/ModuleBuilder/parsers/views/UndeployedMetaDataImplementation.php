@@ -164,6 +164,7 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
         }
         // END ASSERTIONS
 
+        // TODO: refactor this into parent class - duplicated code with DeployedMetaDataImplementation
         $filenames = array (  	MB_DASHLETSEARCH => 'dashletviewdefs',
         						MB_DASHLET => 'dashletviewdefs',
         						MB_LISTVIEW => 'listviewdefs' ,
@@ -181,7 +182,13 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
         						MB_WIRELESSBASICSEARCH => 'wireless.searchdefs' ,
         						MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
         						//END SUGARCRM flav=pro || flav=sales ONLY
-        						) ;
+                                //BEGIN SUGARCRM flav=ent ONLY
+                                MB_PORTALEDITVIEW => 'portal.editviewdefs',
+                                MB_PORTALDETAILVIEW => 'portal.detailviewdefs',
+                                MB_PORTALLISTVIEW => 'portal.listviewdefs',
+                                MB_PORTALSEARCHVIEW => 'portal.searchviewdefs',
+                                //END SUGARCRM flav=ent ONLY
+        ) ;
 
         switch ( $type)
         {
