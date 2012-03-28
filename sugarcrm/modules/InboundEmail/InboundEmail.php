@@ -869,7 +869,6 @@ class InboundEmail extends SugarBean {
 						case "mailsize":
 						case "senddate":
 						case "mbox":
-                        case "ie_id":
 						break;
 
 						default:
@@ -1647,7 +1646,6 @@ class InboundEmail extends SugarBean {
 		} else {
 			$this->connectMailserver();
 			$mailboxes = $this->getMailboxes(true);
-			$mailboxes[] = 'INBOX';
 			sort($mailboxes);
 
 			$GLOBALS['log']->info("INBOUNDEMAIL: checking account [ {$this->name} ]");
