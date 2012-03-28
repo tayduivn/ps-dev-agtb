@@ -2663,9 +2663,6 @@ function save_relationship_changes($is_update, $exclude=array())
         $this->addVisibilityWhere($where);
         $query = $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted, $offset);
 
-        //Add Limit and Offset to query
-        //$query .= " LIMIT 1 OFFSET $offset";
-
         return $this->process_detail_query($query, $row_offset, $limit, $max, $where, $offset);
     }
 
@@ -3172,6 +3169,12 @@ function save_relationship_changes($is_update, $exclude=array())
             }else{
                 $fields = 	$filter;
             }
+            /* add mandatory fields */
+            foreach($this->field_defs as $field=>$value) {
+                if(!empty($value['force_exists'])) {
+                    $fields[$field] = $value;
+                }
+            }
         }
         else
         {
@@ -3179,6 +3182,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
 
         $used_join_key = array();
+
 
         foreach($fields as $field=>$value)
         {
@@ -3490,7 +3494,16 @@ function save_relationship_changes($is_update, $exclude=array())
                     $jtcount++;
                 }
             }
+
+            if($data['type'] == 'custom_query' && !empty($data['query_function'])) {
+                $result = $this->callUserFunction($data['query_function'], $this, array($ret_array, $data));
+                if(!empty($result)) {
+                    $ret_array = $result;
+                    $selectedFields[$field] = true;
+                }
+            }
         }
+
         if(!empty($filter))
         {
             if(isset($this->field_defs['assigned_user_id']) && empty($selectedFields[$this->table_name.'.assigned_user_id']))
@@ -3511,7 +3524,6 @@ function save_relationship_changes($is_update, $exclude=array())
             $ret_array['select'] .= ", $this->table_name.team_set_id ";
             }
             //END SUGARCRM flav=pro ONLY
-
         }
 
 	if ($ifListForExport) {
@@ -3847,6 +3859,49 @@ function save_relationship_changes($is_update, $exclude=array())
     }
 
     /**
+     * Call function defined in the vardef field
+     * @param array $function
+     * @param SugarBean $current_bean Current bean, can be different from $this
+     * @param array $execute_params additional execute params, come before ones in the definition
+     */
+    protected function callUserFunction($function, $current_bean, $execute_params = array())
+    {
+        if(!empty($function['function_class'])) {
+            $execute_function = array($function['function_class'], $function['function_name']);
+        } else {
+            $execute_function	= $function['function_name'];
+        }
+        if(!empty($value['function_params'])) {
+            if (empty($function['function_params_source']) || $function['function_params_source']=='parent') {
+                $bean = $this;
+            } else if ($value['function_params_source']=='this') {
+                $bean = $current_bean;
+            } else if(!empty($function['function_params'])) {
+                return null;
+            }
+
+            foreach($function['function_params'] as $param ) {
+                if(empty($bean->$param)) {
+                    return null;
+                } else if($param == '$this') {
+                    $execute_params[] = $bean;
+                } else {
+                    $execute_params[] = $bean->$param;
+                }
+            }
+        }
+
+        if(!empty($function['function_require'])) {
+            require_once($function['function_require']);
+        }
+        if(!is_callable($execute_function)) {
+            $GLOBALS['log']->fatal("callUserFunction failed for: ".var_export($execute_function, true));
+            return null;
+        }
+        return call_user_func_array($execute_function, $execute_params);
+     }
+
+    /**
      * Applies pagination window to union queries used by list view and subpanels,
      * executes the query and returns fetched data.
      *
@@ -3999,61 +4054,9 @@ function save_relationship_changes($is_update, $exclude=array())
                         }
                         foreach($function_fields as $function_field)
                         {
-                            $value = $current_bean->field_defs[$function_field];
-                            $can_execute = true;
-                            $execute_params = array();
-                            $execute_function = array();
-                            if(!empty($value['function_class']))
-                            {
-                                $execute_function[] = 	$value['function_class'];
-                                $execute_function[] = 	$value['function_name'];
-                            }
-                            else
-                            {
-                                $execute_function	= $value['function_name'];
-                            }
-                            foreach($value['function_params'] as $param )
-                            {
-                                if (empty($value['function_params_source']) or $value['function_params_source']=='parent')
-                                {
-                                    if(empty($this->$param))
-                                    {
-                                        $can_execute = false;
-                                    } else if($param == '$this') {
-                                        $execute_params[] = $this;
-                                    }
-                                    else
-                                    {
-                                        $execute_params[] = $this->$param;
-                                    }
-                                } else if ($value['function_params_source']=='this')
-                                {
-                                    if(empty($current_bean->$param))
-                                    {
-                                        $can_execute = false;
-                                    } else if($param == '$this') {
-                                        $execute_params[] = $current_bean;
-                                    }
-                                    else
-                                    {
-                                        $execute_params[] = $current_bean->$param;
-                                    }
-                                }
-                                else
-                                {
-                                    $can_execute = false;
-                                }
-
-                            }
-                            if($can_execute)
-                            {
-                                if(!empty($value['function_require']))
-                                {
-                                    require_once($value['function_require']);
-                                }
-                                $current_bean->$function_field = call_user_func_array($execute_function, $execute_params);
-                            }
+                            $current_bean->$function_field = $this->callUserFunction($current_bean->field_defs[$function_field], $current_bean);
                         }
+
                         if(!empty($current_bean->parent_type) && !empty($current_bean->parent_id))
                         {
                             if(!isset($post_retrieve[$current_bean->parent_type]))
