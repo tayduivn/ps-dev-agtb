@@ -44,7 +44,9 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 	{
 		
 		global $app_strings;
-		$unique_id = $layout_def['subpanel_id']."_remove_".$_REQUEST['subpanel_item_count']; //bug 51512
+        global $subpanel_item_count;
+
+		$unique_id = $layout_def['subpanel_id']."_remove_".$subpanel_item_count; //bug 51512
 		
 		$parent_record_id = $_REQUEST['record'];
 		$parent_module = $_REQUEST['module'];

@@ -28,11 +28,12 @@ class SugarWidgetSubPanelDeleteButton extends SugarWidgetField
 	function displayList($layout_def)
 	{
 		global $app_strings;
+        global $subpanel_item_count;
 		$return_module = $_REQUEST['module'];
 		$return_id = $_REQUEST['record'];
 		$module_name = $layout_def['module'];
 		$record_id = $layout_def['fields']['ID'];
-        $unique_id = $layout_def['subpanel_id']."_delete_".$_REQUEST['subpanel_item_count']; //bug 51512
+        $unique_id = $layout_def['subpanel_id']."_delete_".$subpanel_item_count; //bug 51512
 
 		// calls and meetings are held.
 		$new_status = 'Held';
