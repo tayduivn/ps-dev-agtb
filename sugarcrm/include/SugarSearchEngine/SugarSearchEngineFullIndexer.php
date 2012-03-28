@@ -238,7 +238,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);
         $count = 0;
 
-        $selectAllQuery = "SELECT bean_id FROM {$queuTableName} WHERE bean_module='{$beanName}'";
+        $selectAllQuery = "SELECT bean_id FROM {$queuTableName} WHERE bean_module='{$beanName}' AND processed = 0";
         $result = $db->limitQuery($selectAllQuery,0, self::MAX_BULK_THRESHOLD, true, "Unable to retrieve records from FTS queue");
         $processedBeans = array();
         $docs = array();
@@ -336,21 +336,23 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     }
 
     /**
-     * TODO: Need to update
+
      * Return statistics about how many records per module were indexed.
      *
      * @return array
      */
     public function getStatistics()
     {
+        $results = array();
         $jobBean = BeanFactory::getBean('SchedulersJobs');
 
         $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0");
         while($row = $GLOBALS['db']->fetchByAssoc($res))
         {
-            $jobBean->mark_deleted($row["id"]);
+            $jobBean->retrieve($row["id"]);
+            $results[$jobBean->data] = $jobBean->message;
         }
-        return $this->results;
+        return $results;
     }
 
     /**

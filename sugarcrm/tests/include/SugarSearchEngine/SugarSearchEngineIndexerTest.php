@@ -49,6 +49,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestAccountUtilities::createAccount();
         SugarTestContactUtilities::createContact();
 
@@ -61,12 +62,14 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $GLOBALS['db'] = DBManagerFactory::getInstance();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
         $this->_db->query("TRUNCATE table {$this->indexer->table_name}");
         $jobQueue = BeanFactory::getBean('SchedulersJobs', null);
         $this->_db->query("DELETE FROM {$jobQueue->table_name} WHERE name like 'FTSConsumer%' ");
-        $GLOBALS['db'] = DBManagerFactory::getInstance();
+
+        unset($GLOBALS['current_user']);
     }
 
     /**
@@ -174,6 +177,15 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->indexer->performFullSystemIndex();
         $this->assertTrue($this->indexer->isFTSIndexScheduleCompleted());
     }
+
+    public function testGetStatistics()
+    {
+        $this->indexer->performFullSystemIndex();
+        $stats = $this->indexer->getStatistics();
+        $this->assertEquals(1, $stats['Accounts'], "Failed to retrieve account statistic");
+        $this->assertEquals(1, $stats['Contacts'], "Failed to retrieve contact statistic");
+    }
+
     public function markBeansProvider()
     {
         return array(
