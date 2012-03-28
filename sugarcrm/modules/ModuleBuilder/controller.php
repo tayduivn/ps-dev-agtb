@@ -649,6 +649,11 @@ class ModuleBuilderController extends SugarController
             {
                 require_once ('modules/DynamicFields/DynamicField.php') ;
                 $moduleName = $_REQUEST [ 'view_module' ] ;
+
+                // bug 51325 make sure we make this switch or delete will not work
+                if( $moduleName == 'Employees' )
+                    $moduleName = 'Users';
+                
                 $class_name = $GLOBALS [ 'beanList' ] [ $moduleName ] ;
                 require_once ($GLOBALS [ 'beanFiles' ] [ $class_name ]) ;
                 $seed = new $class_name ( ) ;
