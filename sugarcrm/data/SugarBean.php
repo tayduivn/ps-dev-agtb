@@ -5441,7 +5441,7 @@ function save_relationship_changes($is_update, $exclude=array())
             // BC hack to accept owner override
            $context = array('owner_override' => $context);
         }
-        if(empty($context)) {
+        if(empty($context) || $context == 'not_set') {
             $context = array();
         }
         if(!isset($context['bean'])) {

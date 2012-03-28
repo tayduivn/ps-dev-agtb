@@ -53,8 +53,8 @@ class SugarACLStatic extends SugarACLStrategy
             }
         }
         //END SUGARCRM flav=pro ONLY
-
-        if($this->getCurrentUser($context)->isAdminForModule($module)) {
+        $user = $this->getCurrentUser($context);
+        if($user && $user->isAdminForModule($module)) {
             return true;
         }
 
