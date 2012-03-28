@@ -2,7 +2,7 @@
     var sfid = 0;
 
     //Register Handlebars helper to create fields with unique id's
-    Handlebars.registerHelper('sugar_field', function (context, view, bean) {
+    Handlebars.registerHelper('sugar_field', function(context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>',
             name = this.name,
             label = this.label || this.name,
@@ -17,10 +17,10 @@
 
         sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
             def: def,
-            view : view,
-            context : context,
+            view: view,
+            context: context,
             label: label,
-            model : bean || context.get("model")
+            model: bean || context.get("model")
         }));
 
         sf.sfid = sfid;
@@ -75,7 +75,27 @@
      * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
      * Sugar JavaScript client.
      *
-     * ###Advanced Fields
+     * ###Advanced SugarFields
+     * Sometimes a SugarField needs to do more than just display a simple input element, other times input elements
+     * additional data such as drop down menu choices. To support advanced functionality, just add your additional
+     * controller logic to **`sugarField.js`** javascript file where sugarfield is the name of the SugarField.
+     * <pre><code>
+     * ({
+     *     events: {
+     *         handler: function() {
+     *             // Actions
+     *         }
+     *     },
+     *
+     *     initialize: function() {
+     *        this.parent.initialize();
+     *     },
+     *
+     *     format: function() {
+     *         return // Some formatted option;
+     *     }
+     * })
+     * </pre></code>
      *
      * @class SugarField
      */
@@ -86,6 +106,12 @@
              * @property {Object}
              */
             app: app,
+
+            /**
+             * Reference to the parent constructor
+             * @property {Object}
+             */
+            parent: this,
 
             /**
              * Id of the SugarField
@@ -160,17 +186,17 @@
                 Backbone.View.prototype.delegateEvents.call(this, events);
             },
 
-        /**
-         * Renders the SugarField widget
-         * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
-         * @method
-         * @return {Object} this Reference to the SugarField
-         */
-        render: function() {
-            // If we don't have any data in the model yet
-            if (!(this.model instanceof Backbone.Model)) {
-                return null;
-            }
+            /**
+             * Renders the SugarField widget
+             * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
+             * @method
+             * @return {Object} this Reference to the SugarField
+             */
+            render: function() {
+                // If we don't have any data in the model yet
+                if (!(this.model instanceof Backbone.Model)) {
+                    return null;
+                }
 
                 this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
                 this.$el.html(this.templateC(this));
@@ -178,21 +204,42 @@
                 var model = this.model;
                 var field = this.name;
                 var el = this.$el.find("input");
+                var self = this;
 
                 //Bind input to the model
                 el.on("change", function(ev) {
-                    model.set(field, el.val());
+                    model.set(field, self.unformat(el.val()));
                 });
 
                 //And bind the model to the input
                 model.on("change:" + field, function(model, value) {
                     if (el[0] && el[0].tagName.toLowerCase() == "input")
-                        el.val(value);
+                        el.val(self.format(value));
                     else
-                        el.html(value);
+                        el.html(self.format(value));
                 });
 
                 return this;
+            },
+
+            /**
+             * Formats values for display
+             * This function is meant to be overridden by a sugarFieldname.js controller class
+             * @param {Mixed} value
+             * @return {Mixed}
+             */
+            format: function(value) {
+                return value;
+            },
+
+            /**
+             * Unformats values for display
+             * This function is meant to be overridden by a sugarFieldname.js controller class
+             * @param {Mixed} value
+             * @return {Mixed} 
+             */
+            unformat: function(value) {
+                return value;
             },
 
             /**

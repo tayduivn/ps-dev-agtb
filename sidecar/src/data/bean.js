@@ -9,18 +9,18 @@
 
     app.augment("Bean", Backbone.Model.extend({
 
-        /**
-         * Bean initialization
-         * @method
-         * @private
-         */
-        initialize: function() {
-            _.each(this.fields , function(def){
-                if (def.calculated){
-                    //TODO: SugarLogic Code here
-                }
-            }, this);
-        },
+//        /**
+//         * Bean initialization
+//         * @method
+//         * @private
+//         */
+//        initialize: function() {
+//            _.each(this.fields , function(def){
+//                if (def.calculated){
+//                    //TODO: SugarLogic Code here
+//                }
+//            }, this);
+//        },
 
         /*
          * Updates a property of type 'relate'.

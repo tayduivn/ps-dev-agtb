@@ -66,49 +66,11 @@
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td>
-<ul class="clickMenu fancymenu" id="detailViewActions">
-    <li>
-        <input name="runReportButton" id="runReportButton" type="button" class="button" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
-        onclick="var _form = $('#EditView')[0]; _form.to_pdf.value='';_form.to_csv.value='';_form.save_report.value='';_form.submit();" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}">
-        <ul class="subnav multi">
-    {* //BEGIN SUGARCRM flav=sales ONLY*}
-<li><input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();"></li>
-{* //END SUGARCRM flav=sales ONLY*}
 
-{* //BEGIN SUGARCRM flav=pro ONLY*}
-{if ($report_edit_access)}
-<li><input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings.LBL_EDIT_BUTTON_KEY}" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
-	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';"></li>
-{/if}
-<li>{$duplicateButtons}</li>
-{if ($report_edit_access)}
-<li><input type="button" class="button"  name="scheduleReportButton" id="scheduleReportButton" value="{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}"
-	onclick="schedulePOPUP()"></li>
-{/if}
-{* //END SUGARCRM flav=pro ONLY*}
-{if ($report_export_access)}
-<li><input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
-	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'"></li>
-
-{/if}
-{if ($report_export_as_csv_access)}
-<li><input type="button" class="button"  name="exportReportButton" id="exportReportButton" value="{$mod_strings.LBL_EXPORT}" onclick="do_export();"></li>
-{/if}
-
-{* //BEGIN SUGARCRM flav=pro ONLY*}
-{if ($report_edit_access)}
-<li><input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings.LBL_DELETE_BUTTON_KEY}" value="{$app_strings.LBL_DELETE_BUTTON_LABEL}" title="{$app_strings.LBL_DELETE_BUTTON_TITLE}"
-	onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){literal}{{/literal}this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();{literal}}{/literal}">
-</li>
-{/if}
-{* //END SUGARCRM flav=pro ONLY*}
-        </ul>
-    </li>
-</ul>
+{sugar_action_menu buttons=$action_button class="clickMenu fancymenu"}
 </td>
 </tr>
 </table>
-
 <script language="javascript">
 var form_submit = "{$form_submit}";
 LBL_RELATED = '{$mod_strings.LBL_RELATED}';
@@ -119,93 +81,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 <BR>
 
 
-{php}
-	require_once('modules/Reports/templates/templates_reports.php');
-	global $mod_strings, $app_list_strings;
-	$reporter = $this->get_template_vars('reporter');
-	$args = $this->get_template_vars('reporterArgs');
-	$reportName =  $args['reporter']->saved_report->name;
-	$reportType = ($reporter->report_def['report_type'] == 'tabular' ? $mod_strings['LBL_ROWS_AND_COLUMNS_REPORT'] : $mod_strings['LBL_SUMMATION_REPORT']);
-	if (!empty($reporter->report_def['display_columns']) &&
-		!empty($reporter->report_def['group_defs'])) {
 
-		$reportType = $mod_strings['LBL_SUMMATION_WITH_DETAILS'];
-	} // if
-	if (isset($reporter->report_def['layout_options'])) {
-		$reportType = $mod_strings['LBL_MATRIX_REPORT'];
-	} // if
-	$fullTableList = $reporter->report_def['full_table_list'];
-	$fullTableListArray = array();
-	foreach($fullTableList as $key => $value) {
-		if (!isset($value['name'])) {
-            if (!isset($fullTableListArray[$value['module']])) {
-                $module_str = $value['module'];
-                if(isset($app_list_strings['moduleList'][$module_str]))
-                {
-                    $module_str = $app_list_strings['moduleList'][$module_str];
-                }
-                $fullTableListArray[$value['module']] = $module_str;
-            } // if
-		} else {
- 			if (!isset($fullTableListArray[$value['name']])) {
- 				$fullTableListArray[$value['name']] = $value['name'];
- 			} // if
-		} // else
-	} // foreach
-	$displayColumnsList = $reporter->report_def['display_columns'];
-	$displayColumnsArray = array();
-	foreach($displayColumnsList as $key => $value) {
-		$displayColumnsArray[] = $value['label'];
-	} // foreach
-	$group_defs = $reporter->report_def['group_defs'];
-	$group_defsArray = array();
-	if (!empty($group_defs)) {
-		foreach($group_defs as $key => $value) {
-			$group_defsArray[] = $value['label'];
-		} // foreach
-	} // if
-	$summary_columnsList = $reporter->report_def['summary_columns'];
-	$summaryColumnsArray = array();
-	if (!empty($summary_columnsList)) {
-		foreach($summary_columnsList as $key => $value) {
-			$summaryColumnsArray[] = $value['label'];
-		} // foreach
-	} // if
-	$summaryAndGroupDefData="";
-	if (!empty($group_defs) && !empty($summary_columnsList)) {
-		$summaryAndGroupDefData = '<tr><td wrap="true">';
-		$summaryAndGroupDefData = $summaryAndGroupDefData . "<b>" . $mod_strings['LBL_GROUP_BY'] . ": </b>" . implode(", ", $group_defsArray) . "</td><td wrap=\"true\">";
-		$summaryAndGroupDefData = $summaryAndGroupDefData . "<b>" . $mod_strings['LBL_SUMMARY_COLUMNS'] . ": </b>" . implode(", ", $summaryColumnsArray) . "</td></tr>";
-
-	} else if (!empty($group_defs) || !empty($summary_columnsList)) {
-		$summaryAndGroupDefData = '<tr><td wrap="true">';
-		if (!empty($group_defs)) {
-			$summaryAndGroupDefData = $summaryAndGroupDefData . "<b>" . $mod_strings['LBL_GROUP_BY'] . ": </b>" . implode(", ", $group_defsArray) . "</td><td wrap=\"true\">&nbsp;</td>";
-		} // if
-		if (!empty($summary_columnsList)) {
-			$summaryAndGroupDefData = $summaryAndGroupDefData . "<b>" . $mod_strings['LBL_SUMMARY_COLUMNS'] . ": </b>" . implode(", ", $summaryColumnsArray) . "</td><td wrap=\"true\">&nbsp;</td>";
-		} // if
-	} // else
-
-	$reportFilters = "";
-	if (isset($reporter->report_def['filters_def']) && !isset($reporter->report_def['filters_def']['Filter_1'][0])){
-		$reportFilters = " " . $mod_strings['LBL_NONE_STRING'];
-	} else {
-	    $reportFilters = "<span id=\"filter_results\" valign=\"bottom\">&nbsp;<img id=\"filter_results_image\" src=\"".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."\" width=\"8px\" height=\"10px\" onclick=\"showFilterString();\"></span><span id=\"filter_results_text\" style=\"visibility:hidden;\"></span>";
-	} // else
-
-	$this->assign('reportFilters', $reportFilters);
-	$this->assign('reportName', $reportName);
-	$this->assign('reportType', $reportType);
-	$this->assign('reportModuleList', implode(", ", $fullTableListArray));
-	$this->assign('reportDisplayColumnsList', implode(", ", $displayColumnsArray));
-	//BEGIN SUGARCRM flav=pro ONLY
-	require_once('modules/Teams/TeamSetManager.php');
-	$this->assign('reportTeam', TeamSetManager::getCommaDelimitedTeams($args['reporter']->saved_report->team_set_id, $args['reporter']->saved_report->team_id, true));
-	//END SUGARCRM flav=pro ONLY
-	$this->assign('reportAssignedToName', $args['reporter']->saved_report->assigned_user_name);
-	$this->assign('summaryAndGroupDefData', $summaryAndGroupDefData);
-{/php}
 
 
 {if ($warnningMessage neq '')}

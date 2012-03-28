@@ -227,11 +227,6 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
             $this->_originalViewdefs = $layout ;
           }
         }
-        //fixing bug #43787: check editview layout if default quickcreate.php doesn't have needed field
-        if ($view == MB_QUICKCREATE)
-        {
-            $this->_editViewDefs = $this->_loadFromFile($this->getFileName(MB_EDITVIEW, $moduleName, MB_BASEMETADATALOCATION));
-        }
         
 		$this->_fielddefs = $fielddefs ;
 		$this->_history = new History ( $this->getFileName ( $view, $moduleName, MB_HISTORYMETADATALOCATION ) ) ;
@@ -248,10 +243,6 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		return $this->_originalViewdefs;
 	}
 
-    function getEditViewDefs()
-    {
-        return $this->_editViewDefs;
-    }
 
 	/*
 	 * Save a draft layout
@@ -324,6 +315,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         ) ;
 		$type = strtolower ( $type ) ;
 
+        // TODO: refactor this into parent class - duplicated code with UndeployedMetaDataImplementation
 		$filenames = array (
             MB_DASHLETSEARCH => 'dashletviewdefs',
             MB_DASHLET => 'dashletviewdefs',
@@ -342,6 +334,12 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 			MB_WIRELESSBASICSEARCH => 'wireless.searchdefs' ,
 			MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
 			//END SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            MB_PORTALEDITVIEW => 'portal.editviewdefs',
+            MB_PORTALDETAILVIEW => 'portal.detailviewdefs',
+            MB_PORTALLISTVIEW => 'portal.listviewdefs',
+            MB_PORTALSEARCHVIEW => 'portal.searchviewdefs',
+            //END SUGARCRM flav=ent ONLY
 		) ;
 
         //In a deployed module, we can check for a studio module with file name overrides.

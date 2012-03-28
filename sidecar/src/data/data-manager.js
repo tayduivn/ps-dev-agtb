@@ -309,15 +309,19 @@
             app.logger.trace('remote-sync-' + method + ": " + model);
 
             options = options || {};
-            options.params = options.params || [];
+            options.params = options.params || {};
+
+            if (options.fields) {
+                options.params.fields = options.fields.join(",");
+            }
 
             if ((method == "read") && (model instanceof app.BeanCollection)) {
                 if (options.offset && options.offset !== 0) {
-                    options.params.push({key: "offset", value: options.offset});
+                    options.params.offset = options.offset;
                 }
 
                 if (app.config && app.config.maxQueryResult) {
-                    options.params.push({key: "maxresult", value: app.config.maxQueryResult});
+                    options.params.maxresult = app.config.maxQueryResult;
                 }
             }
 
@@ -353,7 +357,7 @@
         }
     };
 
-    app.augment("dataManager", _.extend(_dataManager, Backbone.Events), false);
+    app.augment("dataManager", _dataManager, false);
 
 })(SUGAR.App);
 

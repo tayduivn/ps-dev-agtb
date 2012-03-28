@@ -12,13 +12,14 @@ var SUGAR = SUGAR || {};
  * SugarCRM Javascript API allows users to interact direct with sugarCRM via its REST interface.
  */
 SUGAR.Api = (function() {
-    var instance;
-    var methodsToRequest = {
-        "read": "GET",
-        "update": "PUT",
-        "create": "POST",
-        "delete": "DELETE"
-    };
+    var _instance,
+        _methodsToRequest = {
+            "read": "GET",
+            "update": "PUT",
+            "create": "POST",
+            "delete": "DELETE"
+        },
+        _baseActions = ["read", "update", "create", "delete"];
 
     /**
      * Private method to retreive / insstantiate instance of sugar API
@@ -27,8 +28,8 @@ SUGAR.Api = (function() {
      * @return {Object} Instance
      */
     function init(args) {
-        instance = new SugarApi(args);
-        return instance;
+        _instance = new SugarApi(args);
+        return _instance;
     }
 
     /*
@@ -120,15 +121,15 @@ SUGAR.Api = (function() {
              *
              * @param  {String} method CRUD action to make (read, create, update, delete) are mapped to corresponding HTTP verb: GET, POST, PUT, DELETE.
              * @param  {String} url resource URL
-             * @param  {Object} attributes(optional) attributes will be stringified into JSON and set to data, e.g. {first_name:"bob", last_name:"saget"}
+             * @param  {Object} data(optional) data will be stringified into JSON and set to data, e.g. {first_name:"bob", last_name:"saget"}
              * @param  {Object} callbacks(optional) hash with callbacks of the format <code>{success: function(data){}, error: function(data){}}</code>
              * @param  {Array}  options(optional) options for request that map directly to the jquery.ajax options
              * @return {Object} Jquery request object
              * @private
              */
-            call: function(method, url, attributes, callbacks, options) {
+            call: function(method, url, data, callbacks, options) {
                 var i, server;
-                var type = methodsToRequest[method];
+                var type = _methodsToRequest[method];
 
                 // by default use json headers
                 var params = {type: type, dataType: 'json'};
@@ -155,9 +156,9 @@ SUGAR.Api = (function() {
                 }
 
                 // set data for create and update
-                if (attributes && (method == 'create' || method == 'update')) {
+                if (data && (method == 'create' || method == 'update')) {
                     params.contentType = 'application/json';
-                    params.data = JSON.stringify(attributes);
+                    params.data = JSON.stringify(data);
                 }
 
                 // Don't process data on a non-GET request.
@@ -169,12 +170,9 @@ SUGAR.Api = (function() {
                     console.log("====== Ajax Request Begin ======");
                     console.log("Request URL: " + url);
                     console.log("Request Type: " + type);
-                    console.log("Payload: ");
-                    console.log(attributes);
-                    console.log("options: ");
-                    console.log(params);
-                    console.log("callbacks: ");
-                    console.log(callbacks);
+                    console.log("Payload: ", data);
+                    console.log("options: ", params);
+                    console.log("callbacks: ", callbacks);
                     console.log("====== Request End ======");
                 }
 
@@ -219,34 +217,41 @@ SUGAR.Api = (function() {
              * @private
              */
             buildURL: function(module, action, attributes, params) {
-                var baseActions = ["read", "update", "create", "delete"];
                 var resultArray = [];
                 var result;
                 var plist = [];
-                var pIndex;
                 resultArray.push(this.baseUrl);
 
                 if (module) {
                     resultArray.push(module);
                 }
 
-                if (attributes && attributes.id) {
+                if ((action != "create") && attributes && attributes.id) {
                     resultArray.push(attributes.id);
                 }
 
-                if (action && baseActions.indexOf(action) == -1) {
+                if (action && _baseActions.indexOf(action) == -1) {
                     resultArray.push(action);
+                }
+
+                if (attributes && attributes.relatedId) {
+                    resultArray.push(attributes.relatedId);
                 }
 
                 result = resultArray.join("/");
 
                 // concat and add params
-                if (params && params.length > 0) {
-                    for (pIndex in params) {
-                        plist.push(params[pIndex].key + '=' + params[pIndex].value);
+                if (params) {
+                    for (var param in params) {
+                        if (params.hasOwnProperty(param)) {
+                            plist.push(param + '=' + encodeURIComponent(params[param]));
+                        }
                     }
-                    plist = plist.join("&");
-                    result += '?' + plist;
+
+                    if (plist.length > 0) {
+                        plist = plist.join("&");
+                        result += '?' + plist;
+                    }
                 }
 
                 return result;
@@ -260,12 +265,10 @@ SUGAR.Api = (function() {
              * @return {Object}  ajax request obj from this call
              */
             getMetadata: function(type, modules, callbacks) {
-                var modstring = modules.join(",");
-                var typestring = type.join(",");
-                var params = [
-                    {"key": "type", "value": typestring},
-                    {"key": "filter", "value": modstring}
-                ];
+                var params = {
+                    "type": type.join(","),
+                    "filter": modules.join(",")
+                };
                 var method = 'read';
                 var module = "metadata";
                 var url = this.buildURL(module, method, null, params);
@@ -282,9 +285,9 @@ SUGAR.Api = (function() {
             getSugarFields: function(hash, callbacks) {
                 var module = 'sugarFields';
                 var method = 'read';
-                var params = [
-                    {"key": "md5", "value": hash}
-                ];
+                var params = {
+                    "md5": hash
+                };
                 var url = this.buildURL(module, method, null, params);
 
                 return this.call(method, url, null, callbacks);
@@ -307,8 +310,9 @@ SUGAR.Api = (function() {
             /**
              * Relationship CRUD.
              */
-            relationships: function() {
-                // TODO: Implement
+            relationships: function(method, module, attributes, params, callbacks) {
+                var url =  this.buildURL(module, attributes.link, attributes, params);
+                return this.call(method, url, attributes.related, callbacks);
             },
 
             /**
@@ -319,10 +323,10 @@ SUGAR.Api = (function() {
              * @param {Object} callbacks hash with with callbacks of the format {Success: function(data){}, error: function(data){}}
              */
             search: function(module, query, fields, callbacks) {
-                var params = [
-                    {key: "q", value: query},
-                    {key: "fields", value: fields}
-                ];
+                var params = {
+                    "q": query,
+                    "fields": fields
+                };
                 var method = 'search';
                 var payload = {};
                 var url = this.buildURL(module, method, null, params);
@@ -385,14 +389,12 @@ SUGAR.Api = (function() {
             isAuthenticated: function() {
                 return isAuth;
             }
-
-
         };
     }
 
     return {
         getInstance: function(args) {
-            return instance || init(args);
+            return _instance || init(args);
         }
     };
 })();
