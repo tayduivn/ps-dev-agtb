@@ -78,7 +78,6 @@ class ListView
     var $force_mass_update=false;
     var $keep_mass_update_form_open=false;
     var $ignorePopulateOnly = false;
-    var $subpanel_item_count = 0; // keeps the count subpanel items - bug 51512
 
 function setDataArray($value) {
     $this->data_array = $value;
