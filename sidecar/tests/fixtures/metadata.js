@@ -21,9 +21,9 @@ fixtures.metadata = {
                     "name": "case_number",
                     "type": "float",
                     round: 2,
-                    precision:2,
-                    number_group_seperator:",",
-                    decimal_seperator:"."
+                    precision: 2,
+                    number_group_seperator: ",",
+                    decimal_seperator: "."
                 },
                 "name": {
                     "name": "name",
@@ -52,6 +52,10 @@ fixtures.metadata = {
                 "date_modified": {
                     "name": "date_modified",
                     "type": "datetime"
+                },
+                "datetest_c": {
+                    "name": "datetest_c",
+                    "type": "date"
                 },
                 "modified_user_id": {
                     "name": "modified_user_id",
@@ -103,6 +107,7 @@ fixtures.metadata = {
                                 {name: "description", label: "Description"},
                                 {name: "date_modified", label: "Modifed Date"},
                                 {name: "date_entered", label: "Date Entered"},
+                                {name: "datetest_c", label: "Date Test"},
                                 {name: "checkbox_c", label: "CheckBox"}
 
                             ]
@@ -132,6 +137,7 @@ fixtures.metadata = {
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
                                 {name: "date_modified", label: "Modifed Date"},
+                                {name: "datetest_c", label: "Date Entered"},
                                 {name: "checkbox_c", label: "CheckBox"}
                             ]
                         }
@@ -535,73 +541,114 @@ fixtures.metadata = {
                 }
             },
             "events": {},
-            controller : "{" +
+            controller: "{" +
                 "render : function(){" +
-                    "console.log('text rendered!');" +
-                    "this.app.sugarField.base.prototype.render.call(this);" +
+                "console.log('text rendered!');" +
+                "this.app.sugarField.base.prototype.render.call(this);" +
                 "}," +
                 "customCallback : function(){}" +
-            "}"
+                "}"
         },
-        "float":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+        "float": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
-                    "unformat:function(value){\n" +
+                "unformat:function(value){\n" +
                 "  value = SUGAR.App.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
-                        "return value\n" +
-                    "}," +
+                "return value\n" +
+                "}," +
                 "format:function(value){\n" +
                 " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
                 "return value\n" +
                 "}" +
                 "}"
         },
-        "datetime":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">"+
+        "date": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
                 "render:function(value){\n" +
                 "  console.log('calling datetime render'); console.log(app);\n" +
                 " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
-                "  	$(function() {"+
-                		"$( \".datepicker\" ).datepicker({"+
-                			"showOn: \"button\","+
-                			"buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\","+
-                			"buttoSUnImageOnly: true"+
-                		"});"+
-                	"});\n" +
+                "  	$(function() {" +
+                "$( \".datepicker\" ).datepicker({" +
+                "showOn: \"button\"," +
+                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
+                "buttoSUnImageOnly: true," +
+                "dateFormat: \"yy-mm-dd\"" +
+                "});" +
+                "});\n" +
                 "}," +
-                    "unformat:function(value){\n" +
+                "unformat:function(value){\n" +
+                "  console.log('calling datetime unformat0', value);\n" +
+                "  value = SUGAR.App.utils.date.format(SUGAR.App.utils.date.parse(value), 'Y-m-d');\n" +
+                "return value\n" +
+                "}," +
+                "format:function(value){\n" +
+                "  console.log('calling datetime format');\n" +
+                "  value = SUGAR.App.utils.date.format(SUGAR.App.utils.date.parse(value), 'Y-m-d');\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
+        "datetime": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
+                }
+            },
+            controller: "{" +
+                "render:function(value){\n" +
+                "  console.log('calling datetime render'); console.log(app);\n" +
+                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                "  	$(function() {" +
+                "$( \".datepicker\" ).datepicker({" +
+                "showOn: \"button\"," +
+                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
+                "buttoSUnImageOnly: true" +
+                "});" +
+                "});\n" +
+                "}," +
+                "unformat:function(value){\n" +
                 "  console.log('calling datetime unformat');\n" +
-                        "return value\n" +
-                    "}," +
+                "return value\n" +
+                "}," +
                 "format:function(value){\n" +
                 "  console.log('calling datetime format');\n" +
                 "return value\n" +

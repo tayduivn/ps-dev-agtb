@@ -190,7 +190,7 @@
 
                         var dateParts = date.split(dateSep);
                         var dateFormat = "";
-                        var jsDate = new Date("Jan 1, 1970 00:00:00");
+
                         if (dateParts[0].length == 4) {
                             dateFormat = "Y" + dateSep + "m" + dateSep + "d";
                         }
@@ -201,38 +201,64 @@
                             return false;
                         }
 
-                        //Detect the Time format
+                        var timeFormat = "";
+
+
+                        var timeParts = [];
+
+                        // Check for time
                         if (time != "") {
-                            var timeFormat = "";
+
+                            // start at the i, we always have minutes
+                            timeParts.push("i");
+
                             var timeSep = ":";
+
                             if (time.indexOf(".") == 2) {
                                 timeSep = ".";
                             }
-                            if (time.indexOf(" ") != -1) {
-                                var timeParts = time.split(" ");
-                                if (timeParts[1] == "am" || timeParts[1] == "pm") {
-                                    return dateFormat + " h" + timeSep + "i a";
-                                } else if (timeParts[1] == "AM" || timeParts[1] == "PM") {
-                                    return dateFormat + " h" + timeSep + "i A";
-                                }
-                            }
-                            else {
-                                var timeEnd = time.substring(time.length - 2, time.length);
-                                if (timeEnd == "AM" || timeEnd == "PM") {
-                                    return dateFormat + " h" + timeSep + "iA";
-                                }
-                                if (timeEnd == "am" || timeEnd == "pm") {
-                                    return dateFormat + " h" + timeSep + "iA";
-                                }
 
-                                return dateFormat + " H" + timeSep + "i";
+                            // if its long we have seconds
+                            if (time.split(timeSep).length == 3){
+                                timeParts.push("s");
                             }
+                            var ampmCase = '';
+
+                            // check for am/pm
+                            var timeEnd = time.substring(time.length - 2, time.length);
+                            if (timeEnd.toLowerCase() == "am" || timeEnd.toLowerCase() =="pm") {
+                                timeParts.unshift("h");
+                                if(timeEnd.toLowerCase() == timeEnd) {
+                                    ampmCase = 'lower';
+                                } else {
+                                    ampmCase = 'upper';
+                                }
+                            } else {
+                                timeParts.unshift("H");
+                            }
+
+                            timeFormat = timeParts.join(timeSep);
+
+                            // check for space between am/pm and time
+                            if (time.indexOf(" ") != -1) {
+                                timeFormat += " ";
+                            }
+
+                            // deal with upper and lowercase am pm
+                            if (ampmCase && ampmCase == 'upper') {
+                                timeFormat += "A";
+                            } else if (ampmCase && ampmCase == 'lower') {
+                                timeFormat += "a";
+                            }
+
+                            dateFormat = dateFormat + " " +timeFormat;
                         }
 
                         return dateFormat;
                     },
 
-                    formatDate: function(date, format) {
+                    format: function(date, format) {
+                        if(!date) return "";
                         // TODO: add support for userPrefs
                         var out = "";
                         for (var i = 0; i < format.length; i++) {
@@ -258,6 +284,10 @@
                                 case 'i':
                                     var m = date.getMinutes();
                                     out += m < 10 ? "0" + m : m;
+                                    break;
+                                case 's':
+                                    var s = date.getSeconds();
+                                    out += s < 10 ? "0" + s : s;
                                     break;
                                 case 'a':
                                     if (date.getHours() < 12)
