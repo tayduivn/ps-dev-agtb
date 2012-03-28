@@ -19,22 +19,32 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'modules/ModuleBuilder/parsers/views/PortalGridLayoutMetaDataParser.php' ;
 require_once "modules/ModuleBuilder/parsers/parser.portallayoutview.php";
 
 
-class PortalLayoutViewParserTest extends Sugar_PHPUnit_Framework_TestCase
+
+class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_parser;
 
     public function setUp()
     {
         //echo "Setup";
-        $this->_parser = new ParserPortalLayoutView();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = true;
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $GLOBALS['mod_strings'] = array();
+        $this->_parser = new PortalGridLayoutMetaDataParser(MB_PORTALEDITVIEW, 'Leads') ;
     }
 
     public function tearDown()
     {
         //echo "TearDown";
+        unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     protected function createRequestFromString($string)
@@ -82,7 +92,10 @@ class PortalLayoutViewParserTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testdoWeHasAParser()
     {
-        $this->assertInstanceOf('ParserPortalLayoutView',$this->_parser);
+        $this->assertInstanceOf('PortalGridLayoutMetaDataParser',$this->_parser);
+
+
+
     }
 
     public function testWTFDoesThisDo()
@@ -144,23 +157,27 @@ view	EditView
 view_module	Leads
 EOL;
 
-        $_POST = $_REQUEST = $this->createRequestFromString($postString);
-        $this->_parser->init('Leads',  $_REQUEST['view']);
+//        $_POST = $_REQUEST = $this->createRequestFromString($postString);
+        $oldParser = new ParserPortalLayoutView();
+        $oldParser->init('Leads', 'EditView');
 
-        print_r($this->_parser->getAvailableFields());
-        print_r($this->_parser->getFieldDefs());
-        print_r($this->_parser->getLayout());
-        print_r($this->_parser->getCalculatedFields());
-        print_r($this->_parser->maxColumns);
+
+
+//        $this->assertEquals($oldParser->getAvailableFields(), $this->_parser->getAvailableFields());
+//        $this->assertEquals($oldParser->getFieldDefs(), $this->_parser->getFieldDefs());
+//        $this->assertEquals($oldParser->getLayout(), $this->_parser->getLayout());
+        $this->assertEquals($oldParser->getCalculatedFields(), $this->_parser->getCalculatedFields());
+//        $this->assertEquals(print_r($this->_parser->);
     }
 }
 
-///**
-// * Using derived helper class from SearchViewMetaDataParser to avoid having to fully
-// * initialize the whole class and to give us the flexibility to replace the
-// * Deploy/Undeploy MetaDataImplementation
-// */
-//class SearchViewMetaDataParserTestDerivative extends SearchViewMetaDataParser
+/**
+ * Using derived helper class from PortalGridLayoutMetaDataParser to avoid having to fully
+ * initialize the whole class and to give us the flexibility to replace the
+ * Deploy/Undeploy MetaDataImplementation
+ * lifted from SearchViewMDPTest
+ */
+//class PortalGridLayoutMetaDataParserTestDerivative extends PortalGridLayoutMetaDataParser
 //{
 //    function __construct ($layout){
 //        $this->_searchLayout = $layout;
