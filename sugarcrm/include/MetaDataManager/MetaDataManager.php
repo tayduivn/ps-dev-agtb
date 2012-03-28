@@ -96,6 +96,7 @@ class MetaDataManager {
             $data['modStrings'][$modName]['_hash'] = md5(serialize($data['modStrings'][$modName]));
         }
 
+        $data['ACL'] = $this->getACL();
         $data['sugarFields'] = $this->getSugarFields();
         $data['viewTemplates'] = $this->getViewTemplates();
         $data['appStrings'] = $this->getAppStrings();
