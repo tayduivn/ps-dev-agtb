@@ -31,6 +31,19 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_AVAILABLE' => 'getAdditionalFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
     protected $labelIdentifier = 'label' ; // labels in the listviewdefs.php are tagged 'label' =>
     protected $allowParent = false;
+    protected $allowedViews = array(
+        MB_LISTVIEW,
+        MB_DASHLET,
+        MB_DASHLETSEARCH,
+        MB_POPUPLIST,
+        MB_POPUPSEARCH,
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+    	MB_WIRELESSLISTVIEW,
+    	//END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALLISTVIEW,
+        //END SUGARCRM flav=ent ONLY
+    );
 
     /*
      * Simple function for array_udiff_assoc function call in getAvailableFields()
@@ -58,17 +71,12 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": __construct()" ) ;
 
-        // BEGIN ASSERTIONS
-        $views = array ( MB_LISTVIEW, MB_DASHLET, MB_DASHLETSEARCH, MB_POPUPLIST, MB_POPUPSEARCH ) ;
-    	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
-    	$views [] = MB_WIRELESSLISTVIEW ;
-    	//END SUGARCRM flav=pro || flav=sales ONLY
-        if (! in_array ( $view , $views ) )
+        // Simple validation
+        if (!in_array($view, $this->allowedViews))
         {
             sugar_die ( "ListLayoutMetaDataParser: View $view is not supported" ) ;
         }
-        // END ASSERTIONS
-
+        
         if (empty ( $packageName ))
         {
             require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
