@@ -418,6 +418,8 @@ function login_user($portal_auth){
 
      if(!empty($user)) {
             global $current_user;
+            $bean = new User();
+            $bean->retrieve($user['id']);
             $current_user = $user;
             //BEGIN SUGARCRM flav=ent ONLY
             $sessionManager = new SessionManager();
