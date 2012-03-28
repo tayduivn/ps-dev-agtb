@@ -14,20 +14,20 @@
   <script src="../js/stal.js"></script>
 </head>
 <body id="nomad">
-  <div class="navbar navbar-fixed-top">    
+  <div class="navbar navbar-fixed-top">
+    <a href="dashboard.html" title="Dashboard" class="cube" id="logo"></a>
+    <a href="" title="Search" id="search"><i class="icon-search icon-md"></i></a>
+    <a href="" class="launch" id="create"><i class="icon-plus icon-md"></i></a>
     <div class="navbar-inner">
       <h1>SugarCRM</h1>
-      <a href="dashboard.html" title="Dashboard" class="cube" id="logo"></a>
-      <a href="" title="Search" id="search"><i class="icon-search icon-md"></i></a>
-      <a href="" class="launch" id="create"><i class="icon-plus icon-md"></i></a>
       <div class="nav-collapse">
         <ul class="nav" id="moduleList">
+          <li id="userAdmin"><a href="user" id="userTab"><i class="icon-user"></i> Mia Hamm</a></li>
           <li id="gen1"><a href="accounts.html" id="moduleTab_Accounts">Accounts</a></li>
           <li id="gen25"><a href="cases.html" id="moduleTab_Cases">Cases</a></li>             
           <li id="gen2"><a href="contacts.html" id="moduleTab_Contacts">Contacts</a></li>
           <li id="gen23"><a href="documents.html" id="moduleTab_Documents">Documents</a></li>                      
           <li id="gen3"><a href="opportunity.html" id="moduleTab_Opportunities">Opportunities</a></li>            
-          <li id="userAdmin"><a href="user" id="userTab"><i class="icon-user"></i> Mia Hamm</a></li>
           <li class="divider-vertical"></li>                       
           <li id="gen1"><a href="accounts.html" id="moduleTab_Accounts">Settings</a></li>
           <li id="gen25"><a href="cases.html" id="moduleTab_Cases">Quick View</a></li>  
@@ -36,10 +36,10 @@
           <li id="gen2"><a href="contacts.html" id="moduleTab_Contacts">Log Out</a></li>       
         </ul>       
         <ul class="nav" id="createList">
-          <li><a href="account_create.html">Account</a></li>
-          <li><a href="case_create.html">Case</a></li>
-          <li><a href="contact_create.html">Contact</a></li>
-          <li><a href="opportunity_create.html">Opportunity</a></li>
+          <li><a href="account_create.html">Create Account</a></li>
+          <li><a href="case_create.html">Create Case</a></li>
+          <li><a href="contact_create.html">Create Contact</a></li>
+          <li><a href="opportunity_create.html">Create Opportunity</a></li>
         </ul>
       </div><!-- /.nav-collapse -->
     </div><!-- /navbar-inner -->
@@ -56,7 +56,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            <a href="perkin_kleiners.html">Perkin Kleiners</a> is a 100 seat <a href="opportunity.html">opportunity</a> of 75K closing in 20 days at <a href="">quality</a>
+            <a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage
           </div>
           <span id="listing-action-item1">
             <i class="grip">|||</i>
@@ -68,7 +68,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            <a href="perkin_kleiners.html">Perkin Kleiners</a> is a new <a href="">account</a> assigned to <a href="contact.html">Sabra Kahn</a> with a <a href="lead.html">lead</a> 
+            <a href="perkin_kleiners.html">Perkin Kleiners</a> is a new <a href="">account</a> assigned to <a href="sabra_khan.html">Sabra Khan</a> with a <a href="lead.html">lead</a> 
           </div>
           <span id="listing-action-item2">
             <i class="grip">|||</i>
@@ -80,7 +80,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            <a href="contact.html">Sabra Kahn</a> is a converted <a href="lead.html">lead</a> for <a href="weyland.html">Weyland Corp.</a> for a <a href="">4 Seat Escape Pod</a>
+            <a href="sabra_khan.html">Sabra Khan</a> has a converted <a href="lead.html">lead</a> for <a href="weyland.html">Weyland Corp.</a> for a <a href="">4 Seat Escape Pod</a>
           </div>
           <span id="listing-action-item3">
             <i class="grip">|||</i>
@@ -92,7 +92,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            <a href="contact.html">Sabra Kahn</a> is a <a href="lead.html">contact</a>  for <a href="weyland.html">Weyland Corp.</a> with a <a href="">4 Seat Escape Pod opportunity</a>  
+            <a href="peter_weyland.html">Peter Weyland</a> is a <a href="lead.html">contact</a> for <a href="weyland.html">Weyland Corp.</a> with a <a href="">4 Seat Escape Pod opportunity</a>  
           </div>
           <span id="listing-action-item4">
             <i class="grip">|||</i>
@@ -116,7 +116,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            <a href="">Case #789</a> filed against <a href="weyland.html">Weyland Corp.</a>: status changed to <strong>High</strong>.
+            <a href="">Case #789</a> filed against <a href="weyland.html">Weyland Corp.</a> status changed to <strong>High</strong>.
           </div>
           <span id="listing-action-item6">
             <i class="grip">|||</i>
@@ -128,7 +128,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            (case number) Case #456 filed against (Account name) Weyland Corp. has been assigned to (assigned to) Jim.
+            <a href="">Case #456</a> filed against <a href="weyland.html">Weyland Corp.</a> has been assigned to <a href="mia_hamm.html">Mia Hamm</a>.
           </div>
           <span id="listing-action-item7">
             <i class="grip">|||</i>
@@ -140,7 +140,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            (Subject) Run Tests for (Oppy, Related To) Oppy, 400 Seat Deal is (Priority) High and (Status) Pending Input
+            <a href="">Run Tests</a> for <a href="">400 Seat Deal</a> is high priority and pending input
           </div>
           <span id="listing-action-item8">
             <i class="grip">|||</i>
@@ -152,7 +152,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            Document (Document Name) Foo was (Status) uploaded at (Date Created) 07/28/2011 19:57 for (Oppy Module relation/record) RFP Response
+            <a href="">Sales-Report33.doc</a> modified 3 days ago by <a href="sabra_khan.html">Sabra Khan</a> for <a href="">RFP Response</a>
           </div>
           <span id="listing-action-item9">
             <i class="grip">|||</i>
@@ -164,7 +164,7 @@
         <article>     
           <i class="icon-star-empty"></i>
           <div>
-            Document (Document Name) FooBar was (Status) modified at (Revision Date) 02/08/2012 16:09
+            <a href="">Sales-Report33.doc</a> uploaded 3 days ago by <a href="sabra_khan.html">Sabra Khan</a>
           </div>
           <span id="listing-action-item10">
             <i class="grip">|||</i>
@@ -175,7 +175,8 @@
         </article>                                                                              
       </div>
     </div>
-  </div>   
+  </div>
+  <div id="tour" class="hide"></div>  
   <script src="../js/zepto/zepto.js"></script>
   <script src="../js/zepto/event.js"></script>
   <script src="../js/zepto/touch.js"></script>

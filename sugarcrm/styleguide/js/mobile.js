@@ -1,8 +1,6 @@
 (function($) {
-  
     // swipe for top nav
-    $('.navbar').bind('touchmove', function (e) {e.preventDefault();} );
-
+    $('#logo').bind('touchmove', function (e) {e.preventDefault();} );
 		$('#logo').swipeRight(function () {
       $('html').find('body').addClass('onL');
 		})
@@ -10,6 +8,7 @@
       $('html').find('body').removeClass('onL');
 		})
 		
+		$('#create').bind('touchmove', function (e) {e.preventDefault();} );
 		$('#create').swipeLeft(function () {
       $('html').find('body').addClass('onR');
 		})  		
@@ -17,42 +16,31 @@
       $('html').find('body').removeClass('onR');
 		})
 		
+		$('#moduleList').bind('touchmove', function (e) {e.preventDefault();} );
 		$('#moduleList').swipeLeft(function () {
       $('html').find('body').removeClass('onL');
 		})
-		
+
+		$('#createList').bind('touchmove', function (e) {e.preventDefault();} );		
 		$('#createList').swipeRight(function () {
       $('html').find('body').removeClass('onR');
 		})  		
-		$('.navbar').swipeDown(function () {
+		$('#search').bind('touchmove', function (e) {e.preventDefault();} );
+		$('#search').swipeDown(function () {
       $('body').find('#searchForm').toggleClass('hide');
 		})
 		
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.cube').click(function () {
+    $('.cube').on('click', function () {
       $('html').find('body').toggleClass('onL');
       return false;
     })
 
-
-	$('article > .icon-star-empty, article > .icon-star').on('click', function () {
-	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
-	})
-
-/*
-    // toggle stars (needs tap logic for mobile)
-    $('article').find('[class^=icon-star]').on('click', function () {
-      $(this).toggleClass('icon-star icon-star-empty');
-    })
-*/
-
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.launch').click(function () {
+    $('.launch').on('click', function () {
       $('html').find('body').toggleClass('onR');
       return false;
     })
-
-    
 
 		$('article').swipeLeft(function () {
 		  $(this).find('.grip').addClass('on');
@@ -79,15 +67,32 @@
       return false;
     })
 
-    // fake hide of message for prototype
-    setTimeout(function() {
-      $(".alert").fadeOut();
-    }, 3600);
+
+    // fake phone for prototype
+    $('#record-action').find('.icon-phone').on('click', function () {
+      $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
+      return false;
+    })
+    
+    $('.over').find('#cancel').on('click', function () {
+      $(this).remove();
+      return false;
+    })
 
     // fake hide of record for prototype
     $('article').find('[class^=icon-remove]').on('click', function () {
       $(this).parent().remove();
       $('container-fluid').html('<div class="top alert alert-danger alert-block">Opportunity has been removed.</div>');
+    })
+    
+
+  	$('.icon-star-empty, .icon-star').on('click', function () {
+  	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
+  	      return false;
+  	})
+
+    $('#tour').on('click', function () {
+      $(this).remove();
     })
     
 })(window.Zepto);
