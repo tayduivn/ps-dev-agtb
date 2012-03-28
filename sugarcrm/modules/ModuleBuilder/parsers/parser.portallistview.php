@@ -45,24 +45,33 @@ class ParserPortalListView extends ParserModifyListView
 	var $available = array();
 	var $language_module;
     var $columns = array('LBL_DEFAULT' => 'getDefaultFields', 'LBL_AVAILABLE' => 'getAvailableFields');
+    var $customFile; // private
+    var $originalFile; // private
 	
 	function init ($module_name)
 	{
 		global $app_list_strings;
 		$this->module_name = $module_name;
 		$this->mod_strings = return_module_language($GLOBALS ['current_language'], $this->module_name);
+
+
+        // get our bean
 		$class = $GLOBALS ['beanList'] [$this->module_name];
 		require_once ($GLOBALS ['beanFiles'] [$class]);
 		$this->module = new $class();
 
-        // Set our def file 
+        // Set our def file
         $defFile = 'modules/' . $this->module_name . '/metadata/portal.listviewdefs.php';
+        $this->originalFile = $defFile;
 		include $defFile;
+
 		$this->originalListViewDefs = $viewdefs[$this->module_name]['listview'];
 		$this->fixKeys($this->originalListViewDefs);
 		$this->customFile = 'custom/' . $defFile;
+
+
 		if (file_exists($this->customFile)) {
-			include ($this->customFile);
+			include $this->customFile;
 			$this->listViewDefs = $viewdefs[$this->module_name]['listview'];
 			$this->fixKeys($this->listViewDefs);
 		} else
@@ -74,7 +83,7 @@ class ParserPortalListView extends ParserModifyListView
 
 		$this->language_module = $this->module_name;
 		
-		$this->_history = new History ($this->customFile) ;
+		$this->_history = new History ($this->customFile);
 	}
 	
 	function _fromNewToOldMetaData()
@@ -105,7 +114,7 @@ class ParserPortalListView extends ParserModifyListView
 	{
 		if (!file_exists($this->customFile)) {
 			//Backup the orginal layout to the history
-			$this->_history->append('modules/' . $this->module_name . '/metadata/portal.listviewdefs.php');
+			$this->_history->append($this->originalFile);
 		}
 		
 		$requestfields = $this->_loadLayoutFromRequest();
