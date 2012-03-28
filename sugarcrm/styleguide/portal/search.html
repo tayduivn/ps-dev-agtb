@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Bad links in Pitch - 20543 - SugarCRM</title>
+  <title>Bugs - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
-
-  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-
-  <!-- styles -->
   <link href="../css/bootstrap.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
@@ -61,90 +57,58 @@
         </div><!-- /.nav-collapse -->
       </div>
     </div><!-- /navbar-inner -->
-  </div>        
-  <div class="container-fluid" id="bugsDetailview">
-    <div class="thumbnail card">
-      <h1>Bad links in Pitch</h1>
-      <div class="row-fluid">
-         <div class="span2"><strong>Number:</strong></div>
-         <div class="span4">50296</div>
-         <div class="span2"><strong>Priority:</strong></div>
-         <div class="span4">Medium</div> 
+  </div>   
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="thumbnail">
+          <h4>Search for "Bugs with bad stuff" <small>(10 of 30)</small></h4>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th class="span1">Number</th>
+                <th class="span2">Subject</th>
+                <th class="span1">Category</th>
+                <th class="span1">Type</th>
+                <th class="span1">Priority</th>
+                <th class="span1">Resolution</th>
+                <th class="span1">Status</th>
+                <th class="span1">Created</th>
+                <th class="span1">Created By</th>
+                <th class="span1">Modified</th>
+                <th class="span1">Modified By</th>
+              </tr>
+            </thead>
+            <tbody id="listed">
+              <tr>
+                <td>20543</td>
+                <td><a href="detail.html">The footer overlaps with the main window</a></td>
+                <td>User Interface</td>
+                <td>Defect</td>
+                <td>Medium</td>
+                <td>Fixed</td>
+                <td>Open</td>
+                <td>02/29/2012 10:47</td>
+                <td><a href="">jcho</a></td>
+                <td>02/29/2012 10:47</td>
+                <td><a href="">jcho</a></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="block-footer">
+            <button data-loading-text="Loading..." class="btn">
+              Show more bugs
+            </button>
+          </div>
+          <ul class="nav nav-pills actions" id="bugsModuleActions">        
+            <li>  
+              <a href="#adminActivity" data-toggle="modal" rel="tooltip" title="Account options" id="bugsModuleActionsAdmin"><i class="icon-cog"></i></a>
+            </li>          
+          </ul>
+        </div>
       </div>
-      <div class="row-fluid">
-        <div class="span2"><strong>Category:</strong></div>
-        <div class="span4" id="product_category">User Interface</div>
-        <div class="span2"><strong>Status:</strong></div>
-        <div class="span4" id="status">Closed</div>   
-      </div>
-      <div class="row-fluid">
-        <div class="span2"><strong>Type:</strong></div>
-        <div class="span4 dblclick">Feature</div>  
-        <div class="span2"><strong>Resolution:</strong></div>
-        <div class="span4">Check Implementation</div>   
-      </div>    
-      <div class="row-fluid">
-        <div class="span2"><strong>Date Created:</strong></div>
-        <div class="span4" id="date_entered">02/08/2012 13:29</div>        
-         <div class="span2"><strong>Date Modified:</strong></div>
-         <div class="span4" id="date_modified">02/29/2012 10:47</div>
-      </div>
-      <div class="row-fluid">
-         <div class="span2"><strong>Subject:</strong></div>
-         <div class="span10 dblclick">The footer overlaps with the main window</div>
-      </div>    
-      <div class="row-fluid">
-         <div class="span2"><strong>Description:</strong></div>
-         <div class="span10">You have to hide the footer to see the "Print" and "Back to Top" links</div>
-      </div>  
-      <ul class="nav nav-pills actions pull-right" id="activityModuleActions">     
-        <li class="dropdown">  
-            <a href="#" data-toggle="dropdown" class="dropdown-toggle" rel="tooltip" title="Admin options for this bug"><i class="icon-cog"></i><i class="icon caret"></i></a>
-            <ul class="dropdown-menu menu">
-              <li><a href="edit.html">Edit</a></li>
-              <li><a href="#">Delete</a></li>
-            </ul>
-        </li>          
-      </ul>         
     </div>
-    <div class="block" id="sActivity">
-      <h4>Related Records</h4>         
-    <article>
-      <span class="label label-note">Note</span>
-      <span>
-        <a data-toggle="modal" href="#notesModal"><b>Admin Screenshot</b></a>, This is a screenshot I added to show the admin in all of it's glory. Added 2 hours ago by <a href="">Sabra Khan</a>
-      </span>
-      <ul class="nav nav-pills actions">
-        <li class="dropdown pull-right">  
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Delete</a></li>
-          </ul>
-        </li>
-      </ul>
-    </article>
-    <article>
-      <span class="label label-note">Note</span>
-      <span>
-        <a data-toggle="modal" href="#notesModal"><b>Dashboard Screenshot</b></a>, This is a screenshot I added to show the dashboard view. Added 3 hours ago by <a href="">Sabra Khan</a>
-      </span>
-      <ul class="nav nav-pills actions">
-        <li class="dropdown pull-right">  
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Delete</a></li>
-          </ul>
-        </li>
-      </ul>
-    </article>
-    <ul class="nav nav-pills actions">
-      <li class="dropdown pull-right">  
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Add a note"><i class="icon-plus"></i></a>
-      </li>
-    </ul>
-  </div>
-  </div>
-  </div>
+  </div>   
   <footer>
     <div class="row-fluid">
       <div class="span6"><a href="" class="logo">SugarCRM</a></div>        
@@ -160,35 +124,57 @@
       </div>
     </div>
   </footer>
-  
+
+
+  <!-- Tour Guide -->
+  <div class="modal hide" id="systemTour">
+  </div>
 
   <!-- dynamic generation -->
-  <div class="modal hide" id="addNote">
+  <div class="modal hide" id="adminAdd">
     <div class="modal-header">
       <a class="close" data-dismiss="modal">×</a>
-      <h3>Add a Note</h3>
+      <h3>Add a Bug</h3>
     </div>
     <div class="modal-body">
       <form class="form-horizontal">
         <fieldset>
           <div class="control-group">
-            <label for="input01" class="control-label">Subject</label>
+            <label for="input01" class="control-label">Number</label>
             <div class="controls">
               <input type="text" id="input01" class="input-xlarge">
             </div>
           </div>
           <div class="control-group">
-            <label for="description" class="control-label">Description</label>
+            <label for="input01" class="control-label">Name</label>
             <div class="controls">
-              <textarea rows="3" id="description" class="input-xlarge"></textarea>
+              <input type="text" id="input01" class="input-xlarge">
             </div>
           </div>
           <div class="control-group">
-            <label for="upload" class="control-label">Upload a File</label>
+            <label for="input01" class="control-label">Name</label>
             <div class="controls">
-              <input class="input-file" id="fileInput" type="file">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="input01" class="control-label">Name</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
             </div>
           </div>          
+          <div class="control-group">
+            <label for="input01" class="control-label">Label</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>                    
+          <div class="control-group">
+            <label for="textarea" class="control-label">Label</label>
+            <div class="controls">
+              <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+            </div>
+          </div>
         </fieldset>
       </form>
     </div>
@@ -199,8 +185,9 @@
       <button class="btn cancel" data-dismiss="modal">Cancel</button>
     </div>
   </div>
-  
+
   <script src="../js/jquery-1.7.2.min.js"></script>
+  <script src="../js/jquery.jeditable.js"></script>        
   <script src="../js/bootstrap-transition.js"></script>
   <script src="../js/bootstrap-alert.js"></script>
   <script src="../js/bootstrap-modal.js"></script>
@@ -213,7 +200,7 @@
   <script src="../js/bootstrap-button.js"></script>
   <script src="../js/bootstrap-typeahead.js"></script>
   <script src="../js/application.js"></script>
-	<script src="../js/jquery.jeditable.js"></script>        
-	<script src="../js/editable.js"></script>  
+  <script src="../js/jquery.jeditable.js"></script>        
+  <script src="../js/editable.js"></script>
 </body>
 </html>

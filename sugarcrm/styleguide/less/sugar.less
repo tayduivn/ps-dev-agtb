@@ -73,7 +73,7 @@ h1 {font-size: 26px !important;}
 article {
   position: relative;
 	display: block;
-  padding: 8px;
+  padding: 10px;
   line-height: @baseLineHeight;
   border-top: 1px solid darken(@grayLighter, 5%);
 }
@@ -96,9 +96,8 @@ article p:last-child {
 	background: @grayLighter;
 }
 #sActivity article {
-	padding: 5px 45px 5px 5px;
+	padding: 10px 45px 10px 0;
 	position: relative !important;
-	margin-bottom: 10px;
 }
 
 #sActivity article:hover {
@@ -278,7 +277,7 @@ article p:last-child {
   font-weight: 600;
 }
 
-.block .actions, article .actions, .subnav .actions, #portal .thumbnail .actions {
+.block .actions, article .actions, .subnav .actions {
   position: absolute;
   top: 5px;
   right: 0;
@@ -327,6 +326,56 @@ td .actions {
 
 #activity article {
 position: relative;
+}
+
+.btn-group .actions {
+  float: none;
+}
+
+.card input, .card select, .card textarea, .card .btn {
+  margin: -12px 0 -8px;
+}
+
+.card textarea {
+  margin: -9px 0 -8px;
+}
+.card form input {
+  width: inherit !important;
+  margin: 0 !important;
+  position: absolute;
+  top: 2px;
+}
+.card form {
+  width: inherit !important;
+  margin: 0 !important;
+  padding: 6px 0;
+}
+
+.card .span4 .btn {
+  margin: -12px 0 -8px -3px;
+}
+
+.card .span2 label {
+  color: @gray;
+  padding: 10px;
+  font-weight: bold;
+  margin: -12px 0;
+}
+
+.card [class^=span] {
+  position: relative;
+  padding: 10px 0;
+  border-bottom: darken(@grayLighter, 5%) solid 1px;
+}
+.card .row-fluid:last-child .span10 {
+  border-bottom: none !important;
+}
+.card .span2 {
+  text-align: right;
+  background: @grayLighter;
+}
+.card .span2 strong {
+  padding: 0 10px;
 }
 
 .actions li {
@@ -401,7 +450,7 @@ svg {
 }
 .block span.label {
 	width: 55px;
-	margin: 4px 10px 0 4px
+	margin: -2px 10px 0 4px
 }
 .vcard span.tel,
 .vcard span.url,
@@ -768,7 +817,9 @@ background: @grayLighter;
   margin: 0;
 }
 
-.thumbnail h4 {
+.thumbnail h4, .thumbnail h1 {
+  font-size: 14px !important;
+  line-height: @baseLineHeight;
   border-bottom: 2px solid @grayLight;
   padding: 7px 80px 7px 10px;
 }
@@ -1002,16 +1053,6 @@ body {
 
 footer {
 	display: none;
-}
-
-.tcenter {
-	text-align: center;
-}
-.tleft {
-	text-align: left;
-}
-.tright {
-	text-align: right;
 }
 
 // Hide everything in the navbar save .brand and toggle button */

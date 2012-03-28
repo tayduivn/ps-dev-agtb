@@ -42,7 +42,7 @@
 			delay: { show: 500, hide: 10 },
       selector: "[rel=tooltip]"
     })
-    $('.btn-group, .block').tooltip({
+    $('.btn-group, .block, .thumbnail').tooltip({
       selector: "a[rel=tooltip]",
 			placement: "bottom"
     })
@@ -80,16 +80,13 @@
     $('.close').on('click', function (e) {
 			$(this).parent().remove();
     })
+    
     // toggle stars (needs tap logic for mobile)
-    $('.icon-star-empty').on('click', function (e) {
-			$(this).removeClass('icon-star-empty')
-			$(this).addClass('icon-star')
-    })
-    $('.icon-star').on('click', function (e) {
-			$(this).removeClass('icon-star')
-			$(this).addClass('icon-star-empty')
-    })
-
+  	$('.icon-star-empty, .icon-star').on('click', function () {
+  	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
+  	      return false;
+  	})
+  	
     // toggle all checkboxes
     $('.toggle-all').on('click', function (e) {
       inputsComponent.attr('checked', !inputsComponent.is(':checked'))
