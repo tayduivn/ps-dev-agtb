@@ -56,7 +56,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_db = DBManagerFactory::getInstance();
 
         $this->engine = SugarSearchEngineFactory::getInstance('elastic');
-        $this->indexer = new SugarSearchEngineFullIndexer($this->engine);
+        $this->indexer = new TestSugarSearchEngineFullIndexer($this->engine);
     }
 
     public function tearDown()
@@ -99,6 +99,47 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
 
     /**
+     * Ensure the queue is cleared
+     *
+     */
+    public function testClearFTSQueue()
+    {
+        $this->indexer->populateIndexQueue(array('Accounts'));
+        $this->indexer->clearFTSIndexQueueStub();
+        $query = "SELECT bean_id FROM {$this->indexer->table_name}";
+        $recordExists = $this->_db->getOne($query);
+        $this->assertFalse($recordExists, "Unable to clean fts queue");
+    }
+
+    /**
+     * Test create consumers for a module
+     *
+     */
+    public function testCreateFTSConsumers()
+    {
+        $moduleName = 'Leads';
+        $jobID = $this->indexer->createJobQueueConsumerForModule($moduleName);
+        $jobBean = BeanFactory::getBean('SchedulersJobs',$jobID);
+        $this->assertEquals("class::SugarSearchEngineFullIndexer", $jobBean->target);
+        $this->assertEquals($moduleName, $jobBean->data);
+    }
+
+    /**
+     * Ensure consumers are cleared out
+     */
+    public function testRemoveExistinFTSConsumers()
+    {
+        $this->indexer->populateIndexQueue(array('Accounts'));
+        $this->indexer->removeExistingFTSConsumersStub();
+
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
+        $query = "SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0";
+        $recordExists = $this->_db->getOne($query);
+        $this->assertFalse($recordExists, "Unable to clean fts consumers");
+    }
+
+
+    /**
      * Ensure a record is not added to the queue
      *
      */
@@ -112,6 +153,20 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals($accountID, $actualID);
     }
 
+    public function testConsumerRuns()
+    {
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
+        //Mock object for SSEngine
+        $SSEngine = $this->getMock('SugarSearchEngineElastic');
+        $SSEngine->expects($this->once())->method('createIndexDocument');
+        $SSEngine->expects($this->once())->method('bulkInsert');
+
+        $indexer = new TestSugarSearchEngineFullIndexer($SSEngine);
+        $indexer->setJob($jobBean);
+        $indexer->populateIndexQueue(array('Accounts'));
+        $indexer->run('Accounts');
+
+    }
     /**
      * Helper function to see if a record is in the queue
      *
@@ -122,5 +177,30 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $query = "SELECT bean_id FROM {$this->indexer->table_name} WHERE bean_id='$record_id'";
         return $this->_db->getOne($query);
+    }
+}
+
+
+class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
+{
+
+    public function setEngine($engine)
+    {
+        $this->SSEngine = $engine;
+    }
+
+    public function getEngine()
+    {
+        return $this->SSEngine;
+    }
+
+    public function clearFTSIndexQueueStub()
+    {
+        $this->clearFTSIndexQueue();
+    }
+
+    public function removeExistingFTSConsumersStub()
+    {
+        $this->removeExistingFTSConsumers();
     }
 }
