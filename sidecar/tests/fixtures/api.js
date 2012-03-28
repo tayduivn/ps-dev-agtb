@@ -255,36 +255,47 @@ fixtures.api = {
     "rest/v10/opportunities/1/contacts" : {
         "GET": {
             "status": 200,
-            "response": [
-                {
-                    "id": "6beade8e-ea5c-1906-203f-4f501294939e",
-                    "first_name": "Darnell",
-                    "last_name": "Fossett",
-                    "opportunity_role": "Primary Decision Maker"
-                },
-                {
-                    "id": "877df603-25c8-a601-198c-4f50124b0366",
-                    "first_name": "Lee",
-                    "last_name": "Fredrick",
-                    "opportunity_role": "Business Evaluator"
-                },
-                {
-                    "id": "8c440c9c-7357-54d2-7b43-4f5012552ba9",
-                    "first_name": "Micheal",
-                    "last_name": "Seman",
-                    "opportunity_role": "Influencer"
-                }
-            ]
+            "response": {
+                "next_offset":2,
+                "records": [
+                    {
+                        "id": "6beade8e-ea5c-1906-203f-4f501294939e",
+                        "first_name": "Darnell",
+                        "last_name": "Fossett",
+                        "opportunity_role": "Primary Decision Maker"
+                    },
+                    {
+                        "id": "877df603-25c8-a601-198c-4f50124b0366",
+                        "first_name": "Lee",
+                        "last_name": "Fredrick",
+                        "opportunity_role": "Business Evaluator"
+                    },
+                    {
+                        "id": "8c440c9c-7357-54d2-7b43-4f5012552ba9",
+                        "first_name": "Micheal",
+                        "last_name": "Seman",
+                        "opportunity_role": "Influencer"
+                    }
+                ]
+            }
         },
         "POST": {
             "status": 200,
             "request": '{"first_name":"Ronald","last_name":"McDonald","opportunity_role":"Influencer"}',
             "response": {
+                "bean": {
+                    "id": "1",
+                    "name": "Cool Opportunity",
+                    "amount": "1000000",
+                    "date_modified": "2012-02-08 19:18:25"
+                },
+                "relatedBean": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
                     "opportunity_role": "Influencer",
                     "date_modified": "2012-02-08 19:18:25"
+                }
             }
         },
         "PUT": {
@@ -297,7 +308,7 @@ fixtures.api = {
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "realtedBean": {
+                "relatedBean": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
@@ -315,7 +326,7 @@ fixtures.api = {
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "realtedBean": {
+                "relatedBean": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
