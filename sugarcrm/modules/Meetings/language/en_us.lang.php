@@ -81,6 +81,7 @@ $mod_strings = array (
 	'LBL_SEQUENCE' => 'Meeting update sequence',
 	'LBL_PHONE' => 'Phone Office:',
 	'LBL_REMINDER_TIME'=>'Reminder Time',
+    'LBL_EMAIL_REMINDER_SENT' => 'Email reminder sent',
 	'LBL_REMINDER' => 'Reminders:',
 	'LBL_REMINDER_POPUP' => 'Popup',
 	'LBL_REMINDER_EMAIL' => 'Email',

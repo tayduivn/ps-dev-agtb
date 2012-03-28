@@ -87,6 +87,7 @@ $mod_strings = array (
 	'LBL_DATE_END'=>'End Date',
 	'LBL_TIME_END'=>'Time End',
 	'LBL_REMINDER_TIME'=>'Reminder Time',
+    'LBL_EMAIL_REMINDER_SENT' => 'Email reminder sent',
     'LBL_SEARCH_BUTTON'=> 'Search',
     'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
     'LBL_ADD_BUTTON'=> 'Add',
