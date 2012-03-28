@@ -392,6 +392,12 @@ class MetaDataManager {
             $moduleList = array_keys($controller->get_user_tabs($this->user));
         }
         
+        $oldModuleList = $moduleList;
+        $moduleList = array();
+        foreach ( $moduleList as $module ) {
+            $moduleList[$module] = $module;
+        }
+
         $moduleList['_hash'] = md5(serialize($moduleList));
         return $moduleList;
     }
