@@ -68,15 +68,19 @@ class DocumentsViewExtdoc extends SugarView
          $eapmBean = EAPM::getLoginInfo($apiName,true);
          $api = ExternalAPIFactory::loadAPI($apiName,true);
          $api->loadEAPM($eapmBean);
-         $validSession = false;
+         $validSession = true;
 
          if(!empty($eapmBean))
          {
              try {
                // $api->checkLogin() does the same thing as quickCheckLogin plus actually makes sure the user CAN log in to the API currently
                $loginCheck = $api->checkLogin($eapmBean);
-               $validSession = empty($loginCheck['success']) ? false : true;
+               if(isset($loginCheck['success']) && !$loginCheck['success'])
+               {
+                   $validSession = false;
+               }
              } catch(Exception $ex) {
+               $validSession = false;
                $GLOBALS['log']->error(string_format($mod_strings['ERR_INVALID_EXTERNAL_API_LOGIN'], array($apiName)));
              }
          }
