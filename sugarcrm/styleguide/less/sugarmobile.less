@@ -397,7 +397,7 @@ html {
   z-index: 2000;
 }
 
-.navbar #search {
+.navbar #search, .navbar #back .icon-chevron-left {
   position: absolute;
   top: 11px;
   left: 58px;
@@ -627,9 +627,9 @@ color: @gray;
 
 .modal .brand {
   background: url(../img/brand_256.png) 50% 50% no-repeat;
-  background-size: 50%;
+  background-size: 70%;
   text-indent: -7000px;
-  margin: 0 auto 20px;
+  margin: 15px auto 15px;
   width: 260px;
   height: auto;
   -webkit-transition: all .2s linear;
@@ -711,11 +711,19 @@ background: none;
 }
 #login input, #login .btn {
   width: 260px !important; 
-  margin: 4px auto !important;
-  padding: 8px !important; 
+  margin: 0 auto !important;
+  padding: 10px !important; 
   @shadow:  1px 2px 0 rgba(0,0,0,.2);
   .box-shadow(@shadow);
   border: none;
+}
+
+#login .btn {
+#gradient > .vertical( darken(@red, 15%), darken(@red, 35%));
+@shadow: 0 1px 0 rgba(0,0,0,.3), inset -1px -1px 0 rgba(0,0,0,.2), inset 1px 1px 0 rgba(0,0,0,.2);
+.box-shadow(@shadow);
+color: @white;
+text-shadow: 0 -1px 0 rgba(0,0,0,.6);
 }
 
 #login .modal input[type=submit] {  

@@ -9,6 +9,11 @@ body#login {
 	background: #333 url(../img/hixs_pattern_evolution.png);
 }
 
+.link {
+margin-top: 6px;
+display: inline-block;
+}
+
 footer {
 	position: fixed;
 	bottom: 0;
@@ -184,7 +189,7 @@ article p:last-child {
   height: 24px;
   width: 24px;
 }
-#activity .avatar {
+article .avatar {
   height: 32px;
   width: 32px;
 }
@@ -297,7 +302,7 @@ article p:last-child {
   .box-shadow(inset 0 1px 2px rgba(0,0,0,.1));
   .clearfix();
   .btn {
-    margin: 0 auto;
+    margin: 4px auto !important;
   }
 }
 
@@ -474,6 +479,10 @@ date {
 	font-size: 85%;
 	color: #888;
 }
+
+/* Search Module */
+
+
 
 /* Space out sub-sections more
 -------------------------------------------------- */
@@ -710,7 +719,6 @@ footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
   background-color: #ccc;
 }
 
-
 /* Popover docs
 -------------------------------------------------- */
 .popover-well {
@@ -755,7 +763,7 @@ footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
 
 /* Editable 
 --------------*/
-td.dblclick input {
+.editable input, .editable select, .editable textarea {
   width: auto;
   position: absolute;
   top: 4px;
@@ -805,6 +813,15 @@ background: @grayLighter;
   .buttonBackground(@white, @grayLight);
   .border-radius(3px 3px 0 0);
 }
+.form-search {
+position: relative;
+margin: 0;
+text-align: center;
+padding: 10px;
+background: @grayLighter;
+@shadow: inset 0 3px 5px rgba(0,0,0,.1), inset 2px 2px 0 rgba(0,0,0,.05), inset -2px -2px 0 rgba(0,0,0,.05);
+.box-shadow(@shadow);
+}
 
 .thumbnail {
   position: relative; 
@@ -822,6 +839,14 @@ background: @grayLighter;
   line-height: @baseLineHeight;
   border-bottom: 2px solid @grayLight;
   padding: 7px 80px 7px 10px;
+}
+
+.thumbnail h4 a, .thumbnail h1 a {
+  color: @grayDark;
+}
+
+.thumbnail h1 small{
+  font-size: 12px;
 }
 
 .thumbnail .btn.loading {
@@ -903,12 +928,19 @@ form.well {
 .actions [class^="icon-"] {
   .opacity(30);
 }
+
 a [class^="icon-"] {
   .opacity(80);
+  color: @gray !important;
 }
 a:hover [class^="icon-"]{
   .opacity(90);
 }
+
+a.active [class^="icon-"]{
+  .opacity(100);
+}
+
 .the-icons {
   margin-left: 0;
   list-style: none;
@@ -1504,9 +1536,7 @@ background: none;
   left: 22%;
 }
 #login .modal .btn {float: none !important;}
-#login .modal .pull-left {
-display: block;
-float: none !important;}
+
 
 /* Alert overrider */
 .alert-success {background: @green;} 

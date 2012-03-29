@@ -112,7 +112,7 @@
     <article>
       <span class="label label-note">Note</span>
       <span>
-        <a data-toggle="modal" href="#notesModal"><b>Admin Screenshot</b></a>, This is a screenshot I added to show the admin in all of it's glory. Added 2 hours ago by <a href="">Sabra Khan</a>
+        <a data-toggle="modal" href="#imgModal"><b>Admin Screenshot</b> <small>(.jpg)</small></a>, This is a screenshot I added to show the admin in all of it's glory. Added 2 hours ago by <a href="">Sabra Khan</a>
       </span>
       <ul class="nav nav-pills actions">
         <li class="dropdown pull-right">  
@@ -126,7 +126,7 @@
     <article>
       <span class="label label-note">Note</span>
       <span>
-        <a data-toggle="modal" href="#notesModal"><b>Dashboard Screenshot</b></a>, This is a screenshot I added to show the dashboard view. Added 3 hours ago by <a href="">Sabra Khan</a>
+        <a href="../img/word.doc"><b>Dashboard Screenshot</b> <small>(.doc)</small></a>, This is a detailed doc I added to explain the dashboard view. Added 3 hours ago by <a href="">Sabra Khan</a>
       </span>
       <ul class="nav nav-pills actions">
         <li class="dropdown pull-right">  
@@ -139,7 +139,7 @@
     </article>
     <ul class="nav nav-pills actions">
       <li class="dropdown pull-right">  
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" rel="tooltip" title="Add a note"><i class="icon-plus"></i></a>
+        <a data-toggle="modal" href="#addNote" title="Add a Note" id="bugsModuleNoteAdd"><i class="icon-plus"></i></a>
       </li>
     </ul>
   </div>
@@ -163,41 +163,89 @@
   
 
   <!-- dynamic generation -->
-  <div class="modal hide" id="addNote">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h3>Add a Note</h3>
-    </div>
-    <div class="modal-body">
-      <form class="form-horizontal">
-        <fieldset>
-          <div class="control-group">
-            <label for="input01" class="control-label">Subject</label>
-            <div class="controls">
-              <input type="text" id="input01" class="input-xlarge">
-            </div>
-          </div>
-          <div class="control-group">
-            <label for="description" class="control-label">Description</label>
-            <div class="controls">
-              <textarea rows="3" id="description" class="input-xlarge"></textarea>
-            </div>
-          </div>
-          <div class="control-group">
-            <label for="upload" class="control-label">Upload a File</label>
-            <div class="controls">
-              <input class="input-file" id="fileInput" type="file">
-            </div>
-          </div>          
-        </fieldset>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button data-loading-text="Saving..." class="btn loading btn-primary">
-        Save
-      </button>
-      <button class="btn cancel" data-dismiss="modal">Cancel</button>
-    </div>
+   <div class="modal hide" id="addNote">
+     <div class="modal-header">
+       <a class="close" data-dismiss="modal">×</a>
+       <h3>Add a Note</h3>
+     </div>
+     <div class="modal-body">
+       <form class="form-horizontal">
+         <fieldset>
+           <div class="control-group">
+             <label for="input01" class="control-label">Subject</label>
+             <div class="controls">
+               <input type="text" id="input01" class="input-xlarge">
+             </div>
+           </div>
+           <div class="control-group">
+             <label for="description" class="control-label">Description</label>
+             <div class="controls">
+               <textarea rows="3" id="description" class="input-xlarge"></textarea>
+             </div>
+           </div>
+           <div class="control-group">
+             <label for="upload" class="control-label">Upload a File</label>
+             <div class="controls">
+               <input class="input-file" id="fileInput" type="file">
+             </div>
+           </div>
+           <div class="control-group">
+             <label for="input01" class="control-label">Related Case Number</label>
+             <div class="controls">
+               <input type="text" id="input01" class="input-small">
+             </div>
+           </div>       
+         </fieldset>
+       </form>
+     </div>
+     <div class="modal-footer">
+       <button data-loading-text="Saving..." class="btn loading btn-primary">
+         Save
+       </button>
+       <button class="btn cancel" data-dismiss="modal">Cancel</button>
+     </div>
+   </div>
+  </div>
+  
+  <!-- dynamic generation -->
+   <div class="modal hide" id="imgModal">
+     <div class="modal-header">
+       <a class="close" data-dismiss="modal">×</a>
+       <h3>Attachment - Admin Screenshot</h3>
+     </div>
+     <div class="modal-body">
+       <div class="tcenter">
+         <img src="../img/Screenshot_33.png">
+       </div>
+       <h3>Comments</h3>
+         <article data-type="update" data-pubdate="2012-02-16">
+           <a href="users/toreilly" class="pull-left" data-author_id="toreilly">
+             <img src="../img/avatar_weyland.png" class="avatar" alt="avatar toreilly">
+           </a>
+           <p>
+             This is a nice shot of me!<br>
+             <date class="date">Posted 1 hour ago by <a href="">Peter Weyland</a></date>
+           </p>
+         </article>
+         <article data-type="update" data-pubdate="2012-02-16">
+           <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+             <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
+           </a>
+           <p>
+             That was from the fall video.
+             <br>
+             <date class="date">Posted 4 days ago by <a href="">Sabra Khan</a></date>
+           </p>
+         </article>
+       </div>
+       <div class="modal-footer">
+         <form class="">
+           <label>Post Comment</label>
+           <input type="text" class="span6">
+           <a href="#" class="btn"  data-dismiss="modal">Reply</a>
+         </form>
+       </div>
+   </div>
   </div>
   
   <script src="../js/jquery-1.7.2.min.js"></script>
