@@ -63,7 +63,7 @@ abstract class AbstractMetaDataImplementation
     //BEGIN SUGARCRM flav=ent ONLY
     MB_PORTALEDITVIEW 		    => 'viewdefs',
     MB_PORTALDETAILVIEW 		=> 'viewdefs',
-    MB_PORTALLISTVIEW 	 	    => 'listViewDefs',
+    MB_PORTALLISTVIEW 	 	    => 'viewdefs',
     MB_PORTALSEARCHVIEW 	 	=> 'searchdefs',
     //END SUGARCRM flav=ent ONLY
 	) ;
