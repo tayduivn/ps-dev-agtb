@@ -65,7 +65,7 @@ public function setUp()
 
 public function tearDown()
 {
-    $GLOBALS['db']->query("DELETE FROM upgrade_history WHERE id IN ('{$this->new_upgrade->id}', '{$this->new_upgrade2->id}'");
+    $GLOBALS['db']->query("DELETE FROM upgrade_history WHERE id IN ('{$this->new_upgrade->id}', '{$this->new_upgrade2->id}')");
 }
 
 public function testRepairUpgradeHistoryTable()
