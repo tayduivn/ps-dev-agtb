@@ -1906,6 +1906,8 @@ class SugarBean
     /**
      * Figure out the proper relationship info.
      *
+     * @api
+     * @see save_relationship_changes
      * @param array $exclude
      * @return array
      */
@@ -1948,6 +1950,8 @@ class SugarBean
      *
      * TODO: remove this mechanism and replace with mechanism exclusively based on the vardefs
      *
+     * @api
+     * @see save_relationship_changes
      * @param string|boolean $new_rel_id    String of the ID to add
      * @param array $exclude                any relationship's to exclude
      * @return string|boolean               Return the new_rel_id if it was not used.  False if it was used.
@@ -1988,6 +1992,8 @@ class SugarBean
      * If the vardef has entries for field <a> of type relate, where a->id_name = <b> and field <b> of type link
      * then we receive a value for b from the MVC in the _REQUEST, and it should be set in the bean as $this->$b
      *
+     * @api
+     * @see save_relationship_changes
      * @param array $exclude            any relationship's to exclude
      * @return array
      */
@@ -2048,6 +2054,8 @@ class SugarBean
     /**
      * Finally, we update a field listed in the _REQUEST['%/relate_id']/_REQUEST['relate_to'] mechanism (if it hasn't already been updated)
      *
+     * @api
+     * @see save_relationship_changes
      * @param string|boolean $new_rel_id
      * @param string $new_rel_link
      * @return boolean
