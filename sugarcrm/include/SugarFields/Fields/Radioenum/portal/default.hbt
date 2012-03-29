@@ -1,1 +1,1 @@
-<label class="control-label">{{label}}</label>{{value}}
+<h3>{{label}}</h3><span name="{{name}}">{{value}}</span>

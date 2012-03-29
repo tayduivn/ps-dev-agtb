@@ -1,4 +1,6 @@
-<label class="control-label">{{label}}</label>
-{{#each options}}
-    <input type="radio" name="{{name}}" {{#if value}}SELECTED{{/if}}>{{value}}
-{{/each}}
+<div class="controls">
+    <label class="control-label">{{label}}
+    {{#each options}}
+        <input type="radio" name="{{../name}}" value="{{this}}" {{#if this}}SELECTED{{/if}}>{{this}}</label>
+    {{/each}}
+</div>

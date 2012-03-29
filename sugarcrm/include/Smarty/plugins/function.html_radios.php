@@ -67,9 +67,6 @@ r8230 - 2005-10-03 17:47:19 -0700 (Mon, 03 Oct 2005) - majed - Added Sugar_Smart
  */
 function smarty_function_html_radios($params, &$smarty)
 {
-
-    var_dump($params);
-    die();
     require_once $smarty->_get_plugin_filepath('shared','escape_special_chars');
    
     $name = 'radio';

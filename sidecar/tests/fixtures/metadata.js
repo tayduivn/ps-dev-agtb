@@ -61,6 +61,11 @@ fixtures.metadata = {
                 "modified_user_id": {
                     "name": "modified_user_id",
                     "type": "varchar"
+                },
+                "leradio_c": {
+                    "name": "leradio_c",
+                    "type": "radioenum",
+                    "options": ["Option 1", "Option 2", "Option 3"]
                 }
             },
             "relationships": {
@@ -101,8 +106,8 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"}
-
+                                {name: "description", label: "Description"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -128,8 +133,8 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"}
-
+                                {name: "description", label: "Description"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -582,40 +587,52 @@ fixtures.metadata = {
                     "template":"<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
-            controller:"{render: function() {\n"+
-            "                \/\/ If we don't have any data in the model yet\n"+
-            "                if (!(this.model instanceof Backbone.Model)) {\n"+
-            "                    return null;\n"+
-            "                }\n"+
-            "\n"+
-            "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n"+
-            "                this.$el.html(this.templateC(this));\n"+
-            "\n"+
-            "                var model = this.model;\n"+
-            "                var field = this.name;\n"+
-            "                var el = this.$el.find(\"select\");\n"+
-            "                var self = this;\n"+
+            controller: "{render: function() {\n" +
+                "                \/\/ If we don't have any data in the model yet\n" +
+                "                if (!(this.model instanceof Backbone.Model)) {\n" +
+                "                    return null;\n" +
+                "                }\n" +
+                "\n" +
+                "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n" +
+                "                this.$el.html(this.templateC(this));\n" +
+                "\n" +
+                "                var model = this.model;\n" +
+                "                var field = this.name;\n" +
+                "                var el = this.$el.find(\"select\");\n" +
+                "                var self = this;\n" +
 
-            "console.log(this);\n"+
-            "                \/\/Bind input to the model\n"+
-            "                el.on(\"change\", function(ev) {\n"+
-            "                   model.set(field, self.unformat(el.val()));\n"+
-            "                });\n"+
-            "\n"+
-            "                \/\/And bind the model to the input\n"+
-            "                model.on(\"change:\" + field, function(model, value) {\n"+
-            "                   el.val(self.format(value));\n"+
-            "                   console.log(value);"+
-            "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");"+
-            "                });\n"+
-            "                $('select[name=' + this.name + ']').chosen();\n"+
-            "                return this;\n"+
-            "            },\n"+
-            "format:function(value){\n" +
-                              " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
-                              "return value\n" +
-                              "}" +
-            "}"
+                "console.log(this);\n" +
+                "                \/\/Bind input to the model\n" +
+                "                el.on(\"change\", function(ev) {\n" +
+                "                   model.set(field, self.unformat(el.val()));\n" +
+                "                });\n" +
+                "\n" +
+                "                \/\/And bind the model to the input\n" +
+                "                model.on(\"change:\" + field, function(model, value) {\n" +
+                "                   el.val(self.format(value));\n" +
+                "                   console.log(value);" +
+                "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");" +
+                "                });\n" +
+                "                $('select[name=' + this.name + ']').chosen();\n" +
+                "                return this;\n" +
+                "            },\n" +
+                "format:function(value){\n" +
+                " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
+
+        radioenum: {
+            views: {
+                detailView: {
+                    template: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n"
+                },
+                editView: {
+                    template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
+                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\">{{this}}</label>{{/each}}"
+                }
+            }
         },
 
         "checkbox": {
