@@ -145,6 +145,8 @@ class M2MRelationship extends SugarRelationship
         //BEGIN SUGARCRM flav=pro ONLY
         }
         //END SUGARCRM flav=pro ONLY
+
+        return true;
     }
 
     protected function getRowToInsert($lhs, $rhs, $additionalFields = array())
@@ -249,6 +251,8 @@ class M2MRelationship extends SugarRelationship
                 $this->callAfterDelete($rhs, $lhs, $rhsLinkName);
             }
         }
+
+        return true;
     }
 
     /**

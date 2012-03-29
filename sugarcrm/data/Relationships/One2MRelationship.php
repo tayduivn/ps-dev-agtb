@@ -139,8 +139,11 @@ class One2MRelationship extends M2MRelationship
             //In a one to many, any existing links from the many (right) side must be removed first
             $rhs->load_relationship($rhsLinkName);
             $this->removeAll($rhs->$rhsLinkName);
-            parent::add($lhs, $rhs, $additionalFields);
+            return parent::add($lhs, $rhs, $additionalFields);
         }
+
+        // data matched what was there so return false, since nothing happened
+        return false;
     }
 
     /**

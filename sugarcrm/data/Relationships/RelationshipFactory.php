@@ -145,7 +145,7 @@ class SugarRelationshipFactory {
         if ($buildingRelCache)
             return;
         $buildingRelCache = true;
-        include_once("modules/TableDictionary.php");
+        include("modules/TableDictionary.php");
 
         if (empty($beanList))
             include("include/modules.php");

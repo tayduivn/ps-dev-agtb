@@ -55,7 +55,7 @@ abstract class SugarRelationship
      * @abstract
      * @param  $lhs SugarBean
      * @param  $rhs SugarBean
-     * @return void
+     * @return boolean
      */
     public abstract function remove($lhs, $rhs);
 
@@ -99,7 +99,7 @@ abstract class SugarRelationship
 
     /**
      * @param  $link Link2 removes all the beans associated with this link from the relationship
-     * @return void
+     * @return boolean      true if it was successful, false if it was not
      */
     public function removeAll($link)
     {
@@ -112,10 +112,12 @@ abstract class SugarRelationship
             }
 
             if ($link->getSide() == REL_LHS)
-                $this->remove($focus, $relBean);
+                return $this->remove($focus, $relBean);
             else
-                $this->remove($relBean, $focus);
+                return $this->remove($relBean, $focus);
         }
+
+        return false;
     }
 
     /**
@@ -168,7 +170,7 @@ abstract class SugarRelationship
 
     /**
      * @param array $row values to be inserted into the relationship
-     * @return bool|void null if new row was inserted and true if an exesting row was updated
+     * @return bool|void null if new row was inserted and true if an existing row was updated
      */
     protected function addRow($row)
     {

@@ -65,6 +65,8 @@ class EmailAddressRelationship extends M2MRelationship
         //BEGIN SUGARCRM flav=pro ONLY
         }
         //END SUGARCRM flav=pro ONLY
+
+        return true;
     }
 
     public function remove($lhs, $rhs)
@@ -102,5 +104,7 @@ class EmailAddressRelationship extends M2MRelationship
                 $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
             }
         }
+
+        return true;
     }
 }
