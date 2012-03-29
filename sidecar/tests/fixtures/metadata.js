@@ -65,7 +65,7 @@ fixtures.metadata = {
                 "leradio_c": {
                     "name": "leradio_c",
                     "type": "radioenum",
-                    "options": ["Option 1", "Option 2", "Option 3"]
+                    "options": ["Option 1", "Option 2", "Option 3"] // Temporary, TODO: Pull from app list strings
                 }
             },
             "relationships": {
@@ -630,7 +630,7 @@ fixtures.metadata = {
                 },
                 editView: {
                     template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\">{{this}}</label>{{/each}}"
+                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eqEcho this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
                 }
             }
         },

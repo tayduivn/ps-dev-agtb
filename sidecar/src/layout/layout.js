@@ -36,14 +36,16 @@
                     return bean.get(field);
                 });
 
-                Handlebars.registerHelper('eqEcho', function(v1, v2, rt, rf) {
-                    console.log(v1);
-                    console.log(v2);
-                    if (v1 == v2)return rt;
-                    if (rf)return rf;
-                    return "";
+                Handlebars.registerHelper('eqEcho', function(val1, val2, retTrue, retFalse) {
+                    console.log(v1, v2);
+
+                    if (v1 == v2) {
+                        return retTrue;
+                    }
+
+                    return (retFalse) ? retTrue : "";
                 });
-                
+
                 Handlebars.registerHelper("handleBarsLog", function(value) {
                     console.log("*****Current Context*****");
                     console.log(this);
