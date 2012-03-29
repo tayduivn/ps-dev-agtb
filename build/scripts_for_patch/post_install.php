@@ -423,55 +423,40 @@ function post_install() {
     }
 
     if($origVersion < '640') {
-        // move uploads dir
-           if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
-               _logThis('Moving upload directory');
-               $sugar_config['upload_dir'] = 'upload/';
-               if(!file_exists("upload")) {
-                   if(!rename($sugar_config['cache_dir'].'upload', 'upload')) {
-                       _logThis("*** ERROR: failed to move uploaded files");
-                   } else {
-                       _logThis("Moved upload files by rename");
-                   }
-               } else {
-                   _logThis("Moving upload files by copy");
-                   copyRecursiveBetweenDirectories($sugar_config['cache_dir'].'upload', 'upload');
-                   deleteDirectory($sugar_config['cache_dir'].'upload');
-                   _logThis("Moved upload files by copy");
-               }
-               if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
-        	        _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
-        	   }else{
-        			_logThis('sugar_config array in config.php has been updated with upload config contents', $path);
-        	   }
-               mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
-               if(file_exists('upload/upgrades/temp')) {
-                   rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
-               }
+       // move uploads dir
+       if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
 
-               //Now uprade the upgrade_history table entries
-               $results = $GLOBALS['db']->query('SELECT id, filename FROM upgrade_history');
-               $upload_dir = $sugar_config['cache_dir'].'upload/';
-               //Create regular expression string
-               $match = '/^' . str_replace('/', '\/', $upload_dir) . '(.*?)$/';
-               while(($row = $GLOBALS['db']->fetchByAssoc($results)))
-               {
-               	    $file = str_replace('//', '/', $row['filename']); //Strip out double-paths (from modulebuilder)
-               	    $id = $row['id'];
+           $sugar_config['upload_dir'] = 'upload/';
 
-               		if(!empty($file) && preg_match($match, $file, $matches))
-               		{
-               			//Update new file location to use the new $sugar_config['upload_dir'] value
-               			$new_file_location = $sugar_config['upload_dir'] . $matches[1];
-               			_logThis("Updating filenmae for upgrade_history table entry [{$id}] from {$file} to {$new_file_location}", $path);
-               			$update_sql = "UPDATE upgrade_history SET filename = '{$new_file_location}' WHERE id = '{$id}'";
-               			$GLOBALS['db']->query($update_sql);
-               		}
-               }
+           if(file_exists('upload'))
+           {
+               _logThis("Renaming existing upload directory to upload_backup");
+               rename('upload', 'upload_backup');
            }
-    }
 
+           _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
+           rename($sugar_config['cache_dir'].'upload', 'upload');
+
+           if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
+           {
+              rename('upload_backup/index.html', 'upload/index.html');
+           }
+
+           if(!write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
+              _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
+           }else{
+              _logThis('sugar_config array in config.php has been updated with upload config contents', $path);
+           }
+
+           mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
+           if(file_exists('upload/upgrades/temp')) {
+              rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
+           }
+       }
+    }
 }
+
+
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.
  *
