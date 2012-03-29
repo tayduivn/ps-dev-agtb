@@ -35,16 +35,97 @@ class RestTestMetadataAcl extends RestTestBase {
     
     public function tearDown()
     {
+        global $db;
+
+        if ( !empty($this->aclRole) ) {
+            $db->query("DELETE FROM acl_roles_actions WHERE role_id = '{$this->aclRole->id}'");
+            $db->query("DELETE FROM acl_roles_users WHERE role_id = '{$this->aclRole->id}'");
+            $db->query("DELETE FROM acl_fields WHERE role_id = '{$this->aclRole->id}'");
+            $db->query("DELETE FROM acl_roles WHERE id = '{$this->aclRole->id}'");
+            $db->commit();
+        }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testFullMetadata() {
+    public function testMetadataAclBasic() {
         $restReply = $this->_restCall('metadata?metadataType=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
-
-    
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function testMetadataAclField() {
+
+        //Disable access to the website field.
+        $this->aclRole = new ACLRole();
+        $this->aclRole->name = "Unit Test";
+        $this->aclRole->save();
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+
+        $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+        $this->aclField = new ACLField();
+        $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', ACL_ALLOW_NONE);
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+        $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+        
+        // Need to re-login so it fetches a new set of ACL's
+        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        $restReply = $this->_restCall('metadata?metadataType=acl');
+
+        $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
+        $this->assertEquals('no',$restReply['reply']['acl']['Accounts']['fields']['website']['read']);
+        $this->assertEquals('no',$restReply['reply']['acl']['Accounts']['fields']['website']['write']);
+
+        $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', ACL_OWNER_READ_WRITE);
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+        $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+
+        // Need to re-login so it fetches a new set of ACL's
+        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        $restReply = $this->_restCall('metadata?metadataType=acl');
+
+        $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
+        $this->assertEquals('owner',$restReply['reply']['acl']['Accounts']['fields']['website']['read']);
+        $this->assertEquals('owner',$restReply['reply']['acl']['Accounts']['fields']['website']['write']);
+
+
+    }
+    //END SUGARCRM flav=pro ONLY
+ 
+    public function testMetadataAclModule() {
+
+        //Disable access to the website field.
+        $this->aclRole = new ACLRole();
+        $this->aclRole->name = "Unit Test";
+        $this->aclRole->save();
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+
+        $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+
+        // Find action id for Accounts edit
+        $ret = $GLOBALS['db']->query("SELECT id FROM acl_actions WHERE category = 'Cases' AND name = 'edit'",true);
+        $row = $GLOBALS['db']->fetchByAssoc($ret);
+        $this->aclRole->setAction($this->aclRole->id,$row['id'],ACL_ALLOW_OWNER);
+        $GLOBALS['db']->commit();
+        $this->aclAction = new ACLAction();
+        $this->aclAction->getUserActions($this->_user->id,true);
+        $GLOBALS['db']->commit();
+
+        // Need to re-login so it fetches a new set of ACL's
+        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        $restReply = $this->_restCall('metadata?metadataType=acl');
+
+        $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['acl']['Cases']['_hash']),'Cases module is missing.');
+        $this->assertEquals('owner',$restReply['reply']['acl']['Cases']['edit']);
+        
+        
+    }   
 }
