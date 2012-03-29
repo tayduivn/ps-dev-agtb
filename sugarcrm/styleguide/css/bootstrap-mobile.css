@@ -1338,13 +1338,6 @@ table td .btn-toolbar {
   font-weight: normal;
   font-style: normal;
 }
-@font-face {
-  font-family: 'Pictos';
-  src: url('/font/pictos-web.eot');
-  src: url('/font/pictos-web.eot?#iefix') format('embedded-opentype'), url('/font/pictos-web.woff') format('woff'), url('/font/pictos-web.ttf') format('truetype'), url('/font/pictos-web.svg#FontAwesome') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
 .the-icons li[class^="icon-"]::after,
 .the-icons li[class*=" icon-"]::after {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -3213,7 +3206,7 @@ input[type="submit"].btn.small {
 }
 .modal-header {
   padding: 9px 15px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f5f5f5;
 }
 .modal-header .close {
   margin-top: 2px;
@@ -4028,7 +4021,8 @@ html {
   right: 10px;
   z-index: 2000;
 }
-.navbar #search {
+.navbar #search,
+.navbar #back .icon-chevron-left {
   position: absolute;
   top: 11px;
   left: 58px;
@@ -4300,9 +4294,9 @@ html {
 }
 .modal .brand {
   background: url(../img/brand_256.png) 50% 50% no-repeat;
-  background-size: 50%;
+  background-size: 70%;
   text-indent: -7000px;
-  margin: 0 auto 20px;
+  margin: 15px auto 15px;
   width: 260px;
   height: auto;
   -webkit-transition: all .2s linear;
@@ -4391,12 +4385,28 @@ li.divider-horizontal {
 #login input,
 #login .btn {
   width: 260px !important;
-  margin: 4px auto !important;
-  padding: 8px !important;
+  margin: 0 auto !important;
+  padding: 10px !important;
   -webkit-box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
   border: none;
+}
+#login .btn {
+  background-color: #7b0c0d;
+  background-image: -moz-linear-gradient(top, #a01011, #440707);
+  background-image: -ms-linear-gradient(top, #a01011, #440707);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#a01011), to(#440707));
+  background-image: -webkit-linear-gradient(top, #a01011, #440707);
+  background-image: -o-linear-gradient(top, #a01011, #440707);
+  background-image: linear-gradient(top, #a01011, #440707);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a01011', endColorstr='#440707', GradientType=0);
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6);
 }
 #login .modal input[type=submit] {
   -webkit-box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);

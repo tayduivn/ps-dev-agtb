@@ -34,6 +34,10 @@
       }
     }
 
+    //chosen
+    $(".chzn-select").chosen({no_results_text: "No results matched"}); 
+    $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+
     // tooltip demo
     $('section').tooltip({
       selector: "a[rel=tooltip]"
@@ -93,6 +97,15 @@
 			$('.alert').show()
     })
   })
+
+  $('input#bugsSearchQuery').quicksearch('table.searchable tbody tr')
+  
+  // toggle module search (needs tap logic for mobile)
+	$('.search').on('click', function () {
+	    $(this).toggleClass('active');
+	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
+	    return false;
+	})
 
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
 $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
