@@ -35,7 +35,7 @@ describe("SugarField", function() {
         expect(field.$el.html()).toEqual('<span name="status">new</span>');
     });
 
-    it("should bind change on render", function() {
+    it("should bind bind model change on render", function() {
         var bean = new Backbone.Model(),
             view = {},
             context = {},
@@ -46,13 +46,11 @@ describe("SugarField", function() {
                 model: bean
             });
 
-
-        var modelOnSpy = sinon.spy(field.model, "on");
+        var spy = sinon.spy(field, 'bindDomChange');
 
         bean.set({status: "new", id: "anId"});
-        field.render();
 
-        expect(modelOnSpy).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
     });
 
     it("unbind events", function() {
@@ -75,7 +73,7 @@ describe("SugarField", function() {
     });
 
 
-    it("bind events", function() {
+    it("bind render to model change events", function() {
         var bean = new Backbone.Model(),
             secondBean = new Backbone.Model(),
             view = {},
@@ -93,11 +91,32 @@ describe("SugarField", function() {
         secondBean.set({status: "old", id: "anotherId"});
         field.render();
 
-        field.bind(secondContext,secondBean);
+        field.bindModelChange(secondContext,secondBean);
         secondBean.set("status","older");
 
         expect(field.$el.html()).toEqual('<span name="status">older</span>');
         expect(field.model).toEqual(secondBean);
         expect(field.context).toEqual(secondContext);
+    });
+
+    it("update model on dom input change", function() {
+        var id = _.uniqueId('sugarFieldTest');
+        $('body').append('<div id="'+id+'"></div>');
+        var bean = new Backbone.Model(),
+            view = {name:'editView'},
+            context = {bob:"bob"},
+            field = SUGAR.App.sugarFieldManager.get({
+                def: {name: "status", type: "varchar"},
+                view: view,
+                context: context,
+                model: bean,
+                el:$('#'+id)
+            });
+        bean.set({status: "new"});
+        var input = field.$el.find("input");
+        input.attr('value','bob');
+        input.trigger('change');
+        expect(bean.get('status')).toEqual('bob');
+        $('#'+id).remove();
     });
 });

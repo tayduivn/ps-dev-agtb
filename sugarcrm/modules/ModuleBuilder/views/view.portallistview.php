@@ -59,9 +59,9 @@ class ViewPortalListView extends ViewListView
     function display() 
     {
         require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
-        $parser = ParserFactory::getParser("PortalListView",$this->editModule);
+        $parser = ParserFactory::getParser(MB_PORTALLISTVIEW,$this->editModule);
 
-        $parser->init($this->editModule, $this->subpanel);
+//        $parser->init($this->editModule, $this->subpanel); // Using MetaDataParsers means no init
         $smarty = $this->constructSmarty($parser);
         $smarty->assign('fromPortal',true); // flag for form submittal - when the layout is submitted the actions are the same for layouts and portal layouts, but the parsers must be different...
         //Override the list view buttons to remove references to the history feature as the portal editors do not support it.

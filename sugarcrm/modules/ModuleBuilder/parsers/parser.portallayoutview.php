@@ -63,7 +63,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         $this->_workingFile = "custom/working/" . $file;
         $this->_sourceFile = $file;
         $this->_module = $module;
-        $this->_view = strtolower($view);
+        $this->_view = $view;
         $this->language_module = $module;
 
         // Choose our source file if there is a choice to be made
@@ -81,11 +81,10 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         $this->_fieldDefs = &$bean->field_defs;
 
         // This will load up the view defs into this parser
-        $this->loadModule($this->_module, $this->_view);
+        $this->loadModule($this->_module, $view);
 
         // now fix the layout so that it is compatible with the latest metadata definition = rename data section as a panel within a panel section
-        $defs =$this->_viewdefs['data'];
-        unset($this->_viewdefs['data']);
+        $defs =$this->_viewdefs['panels'];
         $this->_viewdefs['panels'] = array($this->_parseData($defs)); // put into a canonical format
         $this->maxColumns = $this->_viewdefs ['templateMeta'] ['maxColumns'];
 
@@ -197,7 +196,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         if (file_exists($this->_sourceFile))
         {
             include ($this->_sourceFile);
-            $origdefs = $viewdefs [$this->_module] [$this->_view]['data'];
+            $origdefs = $viewdefs [$this->_module] [$this->_view]['panels'];
             foreach ($origdefs as $row)
             {
                 foreach ($row as $fieldDef)

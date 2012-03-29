@@ -23,17 +23,29 @@
         },
 
         /**
-         * Fetches beans
+         * Fetches beans.
          *
-         * Overloaded fetch to trigger app:collection:fetch
-         * @param options(optional) standard options for fetch as outlined in the backbone docs
+         * Options:
+         *
+         * - relate: boolean flag indicating that relationships should be fetched.
+         * All other options are standard options outlined in the backbone docs.
+         * User {@link BeanCollection#paginate} to for details about pagination options.
+         *
+         * Triggers <code>app:collection:fetch</code> event.
+         * @param options(optional) fetch options
          */
         fetch: function(options) {
             options = options || {};
             var origSuccess = options.success;
             var that = this;
             options.success = function(args) {
-                that.trigger("app:collection:fetch");
+                that.trigger(
+                    /**
+                     * Fired when the collection fetch operataion succeeds.
+                     * @event
+                     */
+                    "app:collection:fetch"
+                );
                 if (origSuccess) {
                     origSuccess(args);
                 }
@@ -54,39 +66,35 @@
         },
 
         /**
-         * Paginates current collection.
-         * @param {Object} options(optional) options.page is the n page from the current to paginate to, options.add will append new records
+         * Paginates a collection.
+         *
+         * Options:
+         *
+         * - page: page index (integer) from the current page to paginate to.
+         * - relate: boolean flag indicating that relationships should be fetched.
+         * - add: boolean flag indicating if new records should be appended to the collection.
+         * - success: success callback.
+         * - error: error callback.
+         * All other options are standard options outlined in the backbone docs.
+         * @param options(optional) fetch options
          */
         paginate: function(options) {
-            var fetchOptions = {};
             options = options || {};
             options.page = options.page || 1;
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;
 
-            // can haz append?
-            if (options.add && options.add === true) {
-                fetchOptions.add = true;
+            if (app.config.maxQueryResult) {
+                options.offset = this.offset + (options.page * app.config.maxQueryResult);
             }
 
-            // set callbacks
-            if (options.success) {
-                fetchOptions.success = options.success;
-            }
-
-            // set offset index
-            if (app.config && app.config.maxQueryResult) {
-                fetchOptions.offset = this.offset + (options.page * app.config.maxQueryResult);
-            }
-
-            // get new records
-            this.fetch(fetchOptions);
-
+            this.fetch(options);
         },
+
         /**
-         * gets current page of collection being displayed depending on offset
-         * @return {Number} current ceil of offfset/maxQuery result default 1
+         * Gets the current page of collection being displayed depending on the offset.
+         * @return {Number} current page number.
          */
         getPageNumber: function() {
             var pageNumber = 1;

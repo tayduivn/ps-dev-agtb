@@ -19,18 +19,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Cases']['listview'] = array(
+$viewdefs['Cases'] = array(
 	'CASE_NUMBER' => array(
-		'width' => '10'),
+		'width' => '10',
+        'default' => true
+    ),
 	'NAME' => array(
 		'width' => '35',
-		'link' => true),
+		'link' => true,
+        'default' => true
+    ),
 	'ACCOUNT_NAME' => array(
 		'width' => '20',
-        'sortable' => false),
+        'sortable' => false,
+        'default' => true
+    ),
 	'PRIORITY' => array(
-		'width' => '15'),
+		'width' => '15',
+        'default' => true
+    ),
 	'STATUS' => array(
-		'width' => '15'),
+		'width' => '15',
+        'default' => true
+    ),
 );
 ?>
