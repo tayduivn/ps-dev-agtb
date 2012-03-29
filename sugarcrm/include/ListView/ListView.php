@@ -228,6 +228,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
  */
  function process_dynamic_listview_rows($data,$parent_data, $xtemplateSection, $html_varName, $subpanel_def)
  {
+    global $subpanel_item_count;
     global $odd_bg;
     global $even_bg;
     global $hilite_bg;
@@ -236,6 +237,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
     $this->xTemplate->assign("BG_HILITE", $hilite_bg);
     $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
+    $subpanel_item_count = 0;
     $oddRow = true;
     $count = 0;
     reset($data);
@@ -276,6 +278,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
     while(list($aVal, $aItem) = each($data))
     {
+        $subpanel_item_count++;
         $aItem->check_date_relationships_load();
         // TODO: expensive and needs to be removed and done better elsewhere
 
