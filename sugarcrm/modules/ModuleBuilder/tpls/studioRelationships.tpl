@@ -90,6 +90,10 @@ grid.subscribe("rowClickEvent", function(args){
     ModuleBuilder.moduleLoadRelationship2(name);
 });
 grid.render();
+
+//fix for YUI adding bad element styles in IE9 (it's happening in a callback somewhere)
+setTimeout(function(){$("div.yui-dt-bd").css("height", "auto");}, 1);	
+
 {/literal}
 ModuleBuilder.module = '{$view_module}';
 ModuleBuilder.MBpackage = '{$view_package}';
