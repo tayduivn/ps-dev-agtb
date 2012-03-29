@@ -5895,4 +5895,40 @@ function save_relationship_changes($is_update, $exclude=array())
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
 	}
+
+    /**
+     * Tells whether this bean has custom relationships associated with it
+     *
+     * @return bool
+     */
+    public function hasCustomRelationships() {
+        $rels = $this->getCustomRelationships();
+        return is_array($rels) && count($rels) > 0;
+    }
+
+    /**
+     * Gets an array of custom relationship defs if they exists for this bean
+     *
+     * @return array
+     */
+    public function getCustomRelationships() {
+        $cachekey = "customrelationships.{$this->module_dir}.{$this->module_name}.cache";
+        $return = sugar_cache_retrieve($cachekey);
+        if ($return !== null) {
+            return $return;
+        }
+
+        require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php';
+        $return = array();
+        $relationships = new DeployedRelationships($this->module_name);
+        foreach ($relationships->getRelationshipList() as $relationshipName) {
+            $rel = $relationships->get($relationshipName)->getDefinition();
+            if ($rel['is_custom'] && !empty($rel['from_studio'])) {
+            	$return[$relationshipName] = $rel;
+            }
+        }
+
+        sugar_cache_put($cachekey, $return);
+        return $return;
+    }
 }
