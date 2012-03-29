@@ -561,6 +561,33 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
+        "integer":{
+            "views" : {
+                "detailView":{
+                    "type":"basic",
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
+                "default":{
+                    "type":"basic",
+                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                }
+            },
+            controller: "{" +
+                "unformat:function(value){\n" +
+                " value = SUGAR.App.utils.formatNumber(value, 1, 0, \"\", \".\");\n" +
+                "return value\n" +
+                "}," +
+                "format:function(value){\n" +
+                " value = SUGAR.App.utils.formatNumber(value, 1, 0, this.number_group_seperator, \".\");\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
         "password": {
             "editView": {
                 "type": "basic",
