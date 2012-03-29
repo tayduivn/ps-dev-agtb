@@ -561,6 +561,29 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
+        "url": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><a href=\"{{value}}\" target=\"_self\">{{value}}</a></span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\"><a href=\"{{value}}\" target=\"_self\">{{value}}</a></span>"
+                }
+            },
+            controller: "{" +
+                "unformat:function(value){\n" +
+                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
         "password": {
             "editView": {
                 "type": "basic",
