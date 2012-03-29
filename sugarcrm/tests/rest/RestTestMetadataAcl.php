@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadata extends RestTestBase {
+class RestTestMetadataAcl extends RestTestBase {
     public function setUp()
     {
         //Create an anonymous user for login purposes/
@@ -39,13 +39,12 @@ class RestTestMetadata extends RestTestBase {
     }
 
     public function testFullMetadata() {
-        $restReply = $this->_restCall('metadata');
+        $restReply = $this->_restCall('metadata?metadataType=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
-        $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
+        $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
+
     
-        $this->assertTrue(isset($restReply['reply']['sugarFields']),'SugarFields are missing.');
-        $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
     }
 
 }
