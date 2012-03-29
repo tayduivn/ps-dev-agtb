@@ -181,8 +181,6 @@ describe("DataManager", function() {
         server.respond();
 
         expect(beans.offset).toEqual(2);
-
-        server.restore();
     });
 
 });

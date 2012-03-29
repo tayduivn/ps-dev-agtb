@@ -16,7 +16,7 @@ $includeFiles = array(
     'src/events/events.js',
     'src/cache/cache.js',
     'src/template/template.js',
-    'src/sugarfieldmanager/sugarfieldmanager.js',
+    'src/sugarfield/sugarfieldmanager.js',
     'src/context/context.js',
     'src/controller/controller.js',
     'src/controller/router.js',

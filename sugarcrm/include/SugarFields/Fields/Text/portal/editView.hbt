@@ -1,5 +1,1 @@
-<div class="controls">
-    <label class="control-label" for="input01">{{label}}</label>
-    <input type="text" class="input-xlarge" value="{{value}}">
-    <p class="help-block"></p>
-</div>
+<label class="control-label">{{label}}</label><textarea class="input-xlarge" id="textarea" rows="3">{{value}}</textarea>

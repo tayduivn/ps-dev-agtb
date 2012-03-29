@@ -156,7 +156,7 @@ fixtures.metadata = {
                             class: "loading wide",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");window.scrollTo(0,document.body.scrollHeight);}});" +
+                                    "this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");window.scrollTo(0,document.body.scrollHeight);}});" +
                                     "}"
                             }
                         }
@@ -179,7 +179,7 @@ fixtures.metadata = {
                             label: " ",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "console.log(this); this.context.state.collection.paginate({page:-1, success:function(){console.log(\"in paginate success\");}});" +
+                                    "this.context.state.collection.paginate({page:-1, success:function(){console.log(\"in paginate success\");}});" +
                                     "}"
                             }
                         },
@@ -653,6 +653,29 @@ fixtures.metadata = {
                 "  console.log('calling datetime format');\n" +
                 "return value\n" +
                 "}" +
+                "}"
+        },
+        "checkbox": {
+            "views" : {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                    }
+            },
+            controller: "{\n" +
+                "unformat:function(value){\n" +
+                "  value = this.el.children[0].children[1].checked ? \"1\" : \"0\";\n" +
+                "  return value\n" +
+                "},\n" +
+                "format:function(value){\n" +
+                "  value = (value==\"1\") ? true : false;\n" +
+                "  return value\n" +
+                "}\n" +
                 "}"
         },
         "password": {
