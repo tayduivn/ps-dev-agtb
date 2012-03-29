@@ -21,6 +21,24 @@ var SugarTest = {};
       return json;
     };
 
+    test.loadJsFile = function(jsFile) {
+        var json = null;
+        $.ajax({
+            async:    false, // must be synchronous to guarantee that a test doesn't run before the fixture is loaded
+            cache:    false,
+            dataType: 'text',
+            url:      "../" + jsFile + ".js",
+            success:  function(data) {
+                obj = eval("(" + data + ")");
+            },
+            failure:  function() {
+                console.log('Failed to load js file: ' + jsFile);
+            }
+        });
+
+        return obj;
+    };
+
     test.waitFlag = false;
     test.wait = function() { waitsFor(function() { return test.waitFlag; }); };
     test.resetWaitFlag = function() { this.waitFlag = false; };
