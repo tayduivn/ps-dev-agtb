@@ -44,9 +44,8 @@ class Bug46411Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->markTestIncomplete("Breaking unit test on CI");
-        return;
-
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        
         $this->importSource = new stdClass();
         $this->importSource->columncount = 2;
         $this->importSource->colnum_0 = 'date_entered';
@@ -66,6 +65,8 @@ class Bug46411Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
         SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
