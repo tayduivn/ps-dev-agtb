@@ -16,7 +16,7 @@
       $('html').find('body').removeClass('onR');
 		})
 		
-		$('#moduleList').bind('touchmove', function (e) {e.preventDefault();} );
+		/*$('#moduleList').bind('touchmove', function (e) {e.preventDefault();} );*/
 		$('#moduleList').swipeLeft(function () {
       $('html').find('body').removeClass('onL');
 		})
@@ -67,6 +67,7 @@
       return false;
     })
 
+<<<<<<< HEAD
 
     // fake phone for prototype
     $('#record-action').find('.icon-phone').on('click', function () {
@@ -74,10 +75,27 @@
       return false;
     })
     
+=======
+>>>>>>> 274ffbae7ee27975153f5dc420a82fd274190a18
     $('.over').find('#cancel').on('click', function () {
       $(this).remove();
       return false;
     })
+<<<<<<< HEAD
+=======
+
+    // fake phone for prototype
+    $('#record-action').find('.icon-phone').on('click', function () {
+      $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
+      return false;
+    })
+    
+
+    $('.over').find('#cancel').on('click', function () {
+      $(this).remove();
+      return false;
+    })
+>>>>>>> 274ffbae7ee27975153f5dc420a82fd274190a18
 
     $('a[title=Remove]').on('click', function () {
       //$(this).closest('article').hide();
@@ -85,6 +103,10 @@
       setTimeout(rmel,250);
 	  return false;
     })   
+<<<<<<< HEAD
+=======
+
+>>>>>>> 274ffbae7ee27975153f5dc420a82fd274190a18
 
   	$('.icon-star-empty, .icon-star').on('click', function () {
   	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
