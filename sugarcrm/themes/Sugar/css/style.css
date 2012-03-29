@@ -6606,8 +6606,8 @@ ul#selectLink.clickMenu {
 	height: 22px;
 	min-width: 20px;
 }
-td.paginationActionButtons ul.clickMenu #massall,
-ul#selectLink.clickMenu #massall{
+td.paginationActionButtons ul.clickMenu .massall,
+ul#selectLink.clickMenu .massall{
 	float: left;
 	margin: 4px 4px;
 }
@@ -6640,7 +6640,7 @@ ul.clickMenu.show {
     *zoom:1;
 }
 
-#selectActionsDisabled {
+.selectActionsDisabled {
 	display: inline-block;
 	background-color: #eee;
 	border: 1px solid #ddd;	
@@ -6654,7 +6654,7 @@ ul.clickMenu.show {
     *zoom:1;
 }
 
-#selectActionsDisabled span {
+.selectActionsDisabled span {
 	width: 17px;
 	height: 22px;
 	float: left;
@@ -6662,20 +6662,20 @@ ul.clickMenu.show {
 	opacity: .5;
 	}
 
-#selectActionsDisabled span.ab {
+.selectActionsDisabled span.ab {
     border-left: 1px #ccc solid;
     margin-left: 10px;
     padding-left: 5px;
 }
 
-#selectActionsDisabled a, #selectActionsDisabled a:hover {
+.selectActionsDisabled a, .selectActionsDisabled a:hover {
 	float: left;
 	display: block;
 	text-decoration: none !important;
 	color: #999 !important;
 	padding: 3px 0 3px 0px!important;
 	text-shadow: 1px 1px #FFFFFF;
-	font-weight: normal;
+	font-weight: normal !important;
 	font-size: 13px;
 }
 
