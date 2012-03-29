@@ -543,7 +543,6 @@ fixtures.metadata = {
             "events": {},
             controller: "{" +
                 "render : function(){" +
-                "console.log('text rendered!');" +
                 "this.app.sugarField.base.prototype.render.call(this);" +
                 "}," +
                 "customCallback : function(){}" +
