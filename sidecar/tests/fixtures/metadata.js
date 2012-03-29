@@ -688,8 +688,6 @@ fixtures.metadata = {
             "                var field = this.name;\n"+
             "                var el = this.$el.find(\"select\");\n"+
             "                var self = this;\n"+
-
-            "console.log(this);\n"+
             "                \/\/Bind input to the model\n"+
             "                el.on(\"change\", function(ev) {\n"+
             "                   model.set(field, self.unformat(el.val()));\n"+
@@ -698,7 +696,6 @@ fixtures.metadata = {
             "                \/\/And bind the model to the input\n"+
             "                model.on(\"change:\" + field, function(model, value) {\n"+
             "                   el.val(self.format(value));\n"+
-            "                   console.log(value);"+
             "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");"+
             "                });\n"+
             "                $('select[name=' + this.name + ']').chosen();\n"+

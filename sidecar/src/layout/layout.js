@@ -37,8 +37,6 @@
                 });
 
                 Handlebars.registerHelper('eqEcho', function(v1, v2,rt,rf) {
-                    console.log(v1);
-                        console.log(v2);
                                   if(v1 == v2)return rt;
                                   if(rf)return rf;
                                   return "";
