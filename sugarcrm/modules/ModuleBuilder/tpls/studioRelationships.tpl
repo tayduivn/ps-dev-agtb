@@ -78,7 +78,7 @@ var grid = new YAHOO.widget.ScrollingDataTable('relGrid',
 		   fields : [{key : "name"}, {key: "lhs_module"}, {key: "relationship_type"}, {key: "rhs_module"}]
 	    }
 	}),
-    {MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
+    {MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS'), height:"auto"}
 );
 grid.subscribe("rowMouseoverEvent", grid.onEventHighlightRow); 
 grid.subscribe("rowMouseoutEvent", grid.onEventUnhighlightRow); 
@@ -90,9 +90,6 @@ grid.subscribe("rowClickEvent", function(args){
     ModuleBuilder.moduleLoadRelationship2(name);
 });
 grid.render();
-
-//fix for YUI adding bad element styles in IE9 (it's happening in a callback somewhere)
-setTimeout(function(){$("div.yui-dt-bd").css("height", "auto");}, 1);	
 
 {/literal}
 ModuleBuilder.module = '{$view_module}';
