@@ -39,7 +39,12 @@ fixtures.metadata = {
                 },
                 "status": {
                     "name": "status",
-                    "type": "varchar"
+                    "type": "enum",
+                    "options": [
+                        {"key":"s1", "value":"s1"},
+                        {"key":"s2", "value":"s2"},
+                        {"key":"s3", "value":"s3"}
+                    ]
                 },
                 "date_entered": {
                     "name": "date_entered",
@@ -558,6 +563,82 @@ fixtures.metadata = {
                 " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
                 "return value\n" +
                 "}" +
+                "}"
+        },
+
+        "enum":{
+            "views" : {
+                "detailView":{
+                    "type":"basic",
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<select name=\"{{name}}\" >{{#each options}}<option value=\"{{{this.key}}}\" {{eqEcho this.key ..\/value \"selected\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
+                "default":{
+                    "type":"basic",
+                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                }
+            },
+            controller:"{render: function() {\n"+
+            "                \/\/ If we don't have any data in the model yet\n"+
+            "                if (!(this.model instanceof Backbone.Model)) {\n"+
+            "                    return null;\n"+
+            "                }\n"+
+            "\n"+
+            "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n"+
+            "                this.$el.html(this.templateC(this));\n"+
+            "\n"+
+            "                var model = this.model;\n"+
+            "                var field = this.name;\n"+
+            "                var el = this.$el.find(\"select\");\n"+
+            "                var self = this;\n"+
+
+            "console.log(this);\n"+
+            "                \/\/Bind input to the model\n"+
+            "                el.on(\"change\", function(ev) {\n"+
+            "                   model.set(field, self.unformat(el.val()));\n"+
+            "                });\n"+
+            "\n"+
+            "                \/\/And bind the model to the input\n"+
+            "                model.on(\"change:\" + field, function(model, value) {\n"+
+            "                   el.val(self.format(value));\n"+
+            "                   console.log(value);"+
+            "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");"+
+            "                });\n"+
+            "                $('select[name=' + this.name + ']').chosen();\n"+
+            "                return this;\n"+
+            "            },\n"+
+            "format:function(value){\n" +
+                              " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                              "return value\n" +
+                              "}" +
+            "}"
+        },
+
+        "checkbox": {
+            "views" : {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                    }
+            },
+            controller: "{\n" +
+                "unformat:function(value){\n" +
+                "  value = this.el.children[0].children[1].checked ? \"1\" : \"0\";\n" +
+                "  return value\n" +
+                "},\n" +
+                "format:function(value){\n" +
+                "  value = (value==\"1\") ? true : false;\n" +
+                "  return value\n" +
+                "}\n" +
                 "}"
         },
         "password": {
