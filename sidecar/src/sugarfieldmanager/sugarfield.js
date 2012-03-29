@@ -97,6 +97,9 @@
      * })
      * </pre></code>
      *
+     * ####SugarField Template Values
+     *
+     *
      * @class SugarField
      */
     app.augment('sugarField', {
