@@ -565,6 +565,7 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
+
         "enum":{
             "views" : {
                 "detailView":{
@@ -615,10 +616,30 @@ fixtures.metadata = {
                               "return value\n" +
                               "}" +
             "}"
+        },
 
-
-
-
+        "checkbox": {
+            "views" : {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                    }
+            },
+            controller: "{\n" +
+                "unformat:function(value){\n" +
+                "  value = this.el.children[0].children[1].checked ? \"1\" : \"0\";\n" +
+                "  return value\n" +
+                "},\n" +
+                "format:function(value){\n" +
+                "  value = (value==\"1\") ? true : false;\n" +
+                "  return value\n" +
+                "}\n" +
+                "}"
         },
         "password": {
             "editView": {

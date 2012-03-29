@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Leads']['editview'] = array(
+$viewdefs['Leads']['EditView'] = array(
     'templateMeta' => array('maxColumns' => '2', 
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 
@@ -13,7 +13,7 @@ $viewdefs['Leads']['editview'] = array(
                                                     'action' => 'Save',
                                                    )
                            ),
-    'data' => array(
+    'panels' => array(
         array('salutation'),
         array('first_name', 'last_name'),
         array('phone_work', 'phone_mobile'),
