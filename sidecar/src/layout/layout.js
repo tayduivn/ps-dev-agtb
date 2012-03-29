@@ -35,6 +35,22 @@
                 Handlebars.registerHelper('getfieldvalue', function(bean, field) {
                     return bean.get(field);
                 });
+
+                Handlebars.registerHelper('eqEcho', function(v1, v2,rt,rf) {
+                    console.log(v1);
+                        console.log(v2);
+                                  if(v1 == v2)return rt;
+                                  if(rf)return rf;
+                                  return "";
+                });
+                Handlebars.registerHelper("handleBarsLog", function(value) {
+                                  console.log("*****Current Context*****");
+                                  console.log(this);
+                                  console.log("*****Current Value*****");
+                                  console.log(value);
+                                  console.log("***********************");
+
+                                });
             },
 
             //All retreives of metadata should hit this function.
