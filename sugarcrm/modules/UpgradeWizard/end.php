@@ -306,7 +306,7 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 //Run repairUpgradeHistoryTable
 if($origVersion < '650' && function_exists('repairUpgradeHistoryTable'))
 {
-    repairSearchFields($path);
+    repairUpgradeHistoryTable();
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');
