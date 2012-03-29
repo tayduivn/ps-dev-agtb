@@ -34,7 +34,6 @@ array (
       'form' =>
       array (
         'enctype' => 'multipart/form-data',
-        'headerTpl' => 'modules/Notes/tpls/EditViewHeader.tpl',
       ),
       'maxColumns' => '2',
       'widths' =>
