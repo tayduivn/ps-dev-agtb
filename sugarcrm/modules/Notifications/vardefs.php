@@ -43,7 +43,6 @@ $dictionary['Notifications'] = array(
     'duplicate_merge_dom_value' => '0',
     'audited' => 0,
     'reportable' => 1,
-    'len' => '255',
   ),
 ),
 	'relationships'=>array (
