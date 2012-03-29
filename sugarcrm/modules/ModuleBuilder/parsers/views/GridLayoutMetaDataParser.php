@@ -37,6 +37,10 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	MB_WIRELESSEDITVIEW => 'EditView' ,
     	MB_WIRELESSDETAILVIEW => 'DetailView' ,
     	//END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALEDITVIEW => 'EditView' ,
+        MB_PORTALDETAILVIEW => 'DetailView' ,
+        //END SUGARCRM flav=ent ONLY
     	) ;
 
 	protected $FILLER ;
