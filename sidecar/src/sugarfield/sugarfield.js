@@ -100,7 +100,7 @@
 
                 this.view = options.view;
                 this.label = options.label;
-                this.bind(options.context, options.model || options.context.get("model"));
+                this.bindModelChange(options.context, options.model || options.context.get("model"));
                 this.viewName = this.view.name;
                 this.meta = app.metadata.get({sugarField: this});
 
@@ -162,7 +162,6 @@
 
             /**
              * Renders the SugarField widget
-             * TODO: Seems like we are rendering too many times, maybe add some checks for data / state before rendering
              * @method
              * @return {Object} this Reference to the SugarField
              */
@@ -177,23 +176,26 @@
 
                 var model = this.model;
                 var field = this.name;
-                var el = this.$el.find("input");
 
-                //Bind input to the model
-                el.on("change", function(ev) {
-                    model.set(field, self.unformat(el.val()));
-                });
-
-                //And bind the model to the input
-                model.on("change:" + field, function(model, value) {
-                    if (el[0] && el[0].tagName.toLowerCase() == "input")
-                        el.val(self.format(value));
-                    else
-                        el.html(self.format(value));
-                });
+                this.bindDomChange(model, field);
 
                 return this;
             },
+
+            /**
+             * Binds DOM changes to set field value on model
+             * @param {Object} model backbone model
+             * @param {String} fieldName
+             */
+            bindDomChange: function(model, fieldName) {
+                var self = this;
+                var el = this.$el.find("input");
+                // Bind input to the model
+                el.on("change", function(ev) {
+                    model.set(fieldName, self.unformat(el.val()));
+                });
+            },
+
             /**
              * Formats values for display
              * This function is meant to be overridden by a sugarFieldname.js controller class
@@ -203,11 +205,12 @@
             format: function(value) {
                 return value;
             },
+
             /**
              * Unformats values for display
              * This function is meant to be overridden by a sugarFieldname.js controller class
              * @param {Mixed} value
-             * @return {Mixed} 
+             * @return {Mixed}
              */
             unformat: function(value) {
                 return value;
@@ -218,7 +221,7 @@
              * @param {Context} context
              * @param {Bean} model Data to bind the sugarfield to
              */
-            bind: function(context, model) {
+            bindModelChange: function(context, model) {
                 this.unBind();
                 this.context = context;
                 this.model = model;
