@@ -23,7 +23,7 @@ describe("BeanCollection", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadJson("contacts");
+        var contacts = SugarTest.loadFixture("contacts");
 
         contacts.next_offset = 1;
         contacts.result_count = 1;
@@ -49,7 +49,7 @@ describe("BeanCollection", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadJson("contacts");
+        var contacts = SugarTest.loadFixture("contacts");
 
         contacts.next_offset = 1;
         contacts.result_count = 1;
@@ -79,7 +79,7 @@ describe("BeanCollection", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadJson("contacts");
+        var contacts = SugarTest.loadFixture("contacts");
         var subSetContacts = contacts;
         subSetContacts.next_offset = 1;
         subSetContacts.result_count = 1;
@@ -94,7 +94,7 @@ describe("BeanCollection", function() {
 
         server.respond();
         server.restore();
-        var contacts = SugarTest.loadJson("contacts");
+        var contacts = SugarTest.loadFixture("contacts");
 
         contacts.records.shift();
         server = sinon.fakeServer.create();
@@ -133,7 +133,7 @@ describe("BeanCollection", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadJson("contacts");
+        var contacts = SugarTest.loadFixture("contacts");
 
         contacts.next_offset = 1;
         contacts.result_count = 1;

@@ -3,41 +3,34 @@ var SugarTest = {};
 
 (function(test) {
 
-    test.loadJson = function(jsonFile) {
-      var json = null;
-      $.ajax({
-        async:    false, // must be synchronous to guarantee that a test doesn't run before the fixture is loaded
-        cache:    false,
-        dataType: 'json',
-        url:      "../fixtures/" + jsonFile + ".json",
-        success:  function(data) {
-          json = data;
-        },
-        failure:  function() {
-          console.log('Failed to load json fixture: ' + jsonFile);
-        }
-      });
+    test.loadFile = function(path, file, ext, parseData, dataType) {
+        dataType = dataType || 'text';
 
-      return json;
-    };
+        var fileContent = null;
 
-    test.loadJsFile = function(jsFile) {
-        var json = null;
         $.ajax({
             async:    false, // must be synchronous to guarantee that a test doesn't run before the fixture is loaded
             cache:    false,
-            dataType: 'text',
-            url:      "../" + jsFile + ".js",
+            dataType: dataType,
+            url:      path + "/" + file + "." + ext,
             success:  function(data) {
-                obj = eval("(" + data + ")");
+                fileContent = parseData(data);
             },
             failure:  function() {
-                console.log('Failed to load js file: ' + jsFile);
+                console.log('Failed to load file: ' + file);
             }
         });
 
-        return obj;
+        return fileContent;
     };
+
+    test.loadFixture = function(file) {
+        return test.loadFile("../fixtures", file, "json", function(data) { return data; }, "json");
+    }
+
+    test.loadSugarField = function(file) {
+        return test.loadFile("../../../sugarcrm/include/SugarFields/Fields", file, "js", function(data) { return eval("(" + data + ")"); });
+    }
 
     test.waitFlag = false;
     test.wait = function() { waitsFor(function() { return test.waitFlag; }); };

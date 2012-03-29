@@ -4,7 +4,7 @@ describe("Relationships", function() {
 
     beforeEach(function() {
         dm.reset();
-        metadata = SugarTest.loadJson("metadata");
+        metadata = SugarTest.loadFixture("metadata");
     });
 
     afterEach(function() {
@@ -87,7 +87,7 @@ describe("Relationships", function() {
         var opportunity = dm.createBean("Opportunities");
         opportunity.id = "opp-1";
 
-        var payload = SugarTest.loadJson("opportunity_contacts");
+        var payload = SugarTest.loadFixture("opportunity_contacts");
 
         server = sinon.fakeServer.create();
         server.respondWith("GET", "/rest/v10/Opportunities/opp-1/contacts?maxresult=20",
