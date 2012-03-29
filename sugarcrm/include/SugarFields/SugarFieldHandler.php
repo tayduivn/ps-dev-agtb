@@ -116,6 +116,9 @@ class SugarFieldHandler
 			$string = $field->$displayTypeFunc($parentFieldArray, $vardef, $displayParams, $tabindex);
 		}
 
+        var_dump($vardef);
+        die();
+
         return $string;
     }
 }
