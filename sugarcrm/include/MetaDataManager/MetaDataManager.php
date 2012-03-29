@@ -46,6 +46,7 @@ class MetaDataManager {
     protected $modules = null;
     protected $platform = 'base';
     protected $typeFilter = null;
+    protected $user;
 
     /**
      * The constructor for the class.
@@ -70,7 +71,12 @@ class MetaDataManager {
             $typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings');
         }
 
-        $this->modules = array_keys(get_user_module_list($GLOBALS['current_user']));
+        if ( isset($options['user']) ) {
+            $this->user = $options['user'];
+        } else {
+            $this->user = $GLOBALS['current_user'];
+        }
+        $this->modules = array_keys(get_user_module_list($this->user));
 
         $this->typeFilter = $typeFilter;
         if ( $platform == 'mobile' ) {
@@ -100,12 +106,13 @@ class MetaDataManager {
         $data['viewTemplates'] = $this->getViewTemplates();
         $data['appStrings'] = $this->getAppStrings();
         $data['appListStrings'] = $this->getAppListStrings();
-        
+        $data['moduleList'] = $this->getModuleList($platform);
+
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
         
-        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings');
+        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList');
         $perModuleChunks = array('modules','modStrings');
 
         if ( isset($options['onlyHash']) && $options['onlyHash'] ) {
@@ -339,5 +346,59 @@ class MetaDataManager {
         $appStrings = $GLOBALS['app_list_strings'];
         $appStrings['_hash'] = md5(serialize($appStrings));
         return $appStrings;
+    }
+
+    /**
+     * The method for getting the module list, can collect for base, portal and mobile
+     *
+     * @return array The list of modules that are supported by this platform
+     */
+    protected function getModuleList($platform = 'base') {
+        if ( $platform == 'portal' ) {
+            // Apparently this list is not stored anywhere, the module builder just uses a very
+            // complicated setup to do this glob
+            $portalFiles = glob('modules/*/metadata/portal.*.php',GLOB_NOSORT);
+            $customPortalFiles = glob('custom/modules/*/metadata/portal.*.php',GLOB_NOSORT);
+            if ( is_array($customPortalFiles) ) {
+                $portalFiles = $portalFiles + $customPortalFiles;
+            }
+            $portalModules = array();
+            foreach ( $portalFiles as $file ) {
+                $fileParts = explode('/',$file);
+                if ( $fileParts[0] == 'custom' ) {
+                    // 0 => custom, 1 => modules, 2 => Accounts, 3 => metadata, 4 => portal.editviewdefs.php
+                    $module = $fileParts[2];
+                } else {
+                    // 0 => modules, 1 => Accounts, 2 => metadata, 3 => portal.editviewdefs.php
+                    $module = $fileParts[1];
+                }
+                $portalModules[$module] = $module;
+            }
+            $moduleList = array_keys($portalModules);
+        } else if ( $platform == 'mobile' ) {
+            // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+            foreach ( array ( '','custom/') as $prefix) {
+                if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
+                    require($prefix.'include/MVC/Controller/wireless_module_registry.php');
+                }
+            }
+            
+            // $wireless_module_registry is defined in the file loaded above
+            $moduleList = array_keys($wireless_module_registry);
+        } else {
+            // Loading a standard module list
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $moduleList = array_keys($controller->get_user_tabs($this->user));
+        }
+        
+        $oldModuleList = $moduleList;
+        $moduleList = array();
+        foreach ( $moduleList as $module ) {
+            $moduleList[$module] = $module;
+        }
+
+        $moduleList['_hash'] = md5(serialize($moduleList));
+        return $moduleList;
     }
 }
