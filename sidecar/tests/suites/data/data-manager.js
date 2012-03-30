@@ -7,7 +7,6 @@ describe("DataManager", function() {
 
     beforeEach(function() {
         app.config.maxQueryResult = 2;
-        app.init({el: "body"});
         dm.reset();
         metadata = SugarTest.loadJson("metadata");
     });

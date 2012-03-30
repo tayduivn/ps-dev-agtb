@@ -7,7 +7,6 @@ describe("BeanCollection", function() {
     beforeEach(function() {
 
         app.config.maxQueryResult = 2;
-        app.init({el: "body"});
         dm.reset();
         metadata = fixtures.metadata;
     });

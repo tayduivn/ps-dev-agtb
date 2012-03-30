@@ -176,8 +176,8 @@
                     self = this,
                     state = this.get();
 
-                if (state.view) {
-                    fields = state.view.getFields();
+                if (state.layout) {
+                    fields = state.layout.getFields();
                     this.set({fields: fields});
 
                     options.fields = fields;
@@ -196,22 +196,22 @@
                 } else {
                     options.success = function() {
                         self.set({model: collection.models[0]});
-                        if (state.view) {
+                        if (state.layout) {
                             //state
-                            state.view.render();
+                            state.layout.render();
                         }
                     };
 
                     collection = app.dataManager.createBeanCollection(state.module);
-                    collection.on("app:collection:fetch", state.view.render, this);
+                    collection.on("app:collection:fetch", state.layout.render, this);
                     collection.fetch(options);
 
                     bean = collection.models[0] || {};
                 }
 
                 this.set({collection: collection, model: bean});
-                if ((state.id || state.create) && state.view) {
-                    state.view.render();
+                if ((state.id || state.create) && state.layout) {
+                    state.layout.render();
                 }
                 _.each(this.children, function(child) { //TODO optimize for batch
                     child.loadData();
