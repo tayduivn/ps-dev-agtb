@@ -56,8 +56,8 @@ class ViewPortalLayoutView extends ViewLayoutView
 
 	function display() 
 	{
-	    $this->parser = ParserFactory::getParser('portallayoutview',$this->editModule);
-		$this->parser->init($this->editModule,  $_REQUEST['view']);
+	    $this->parser = ParserFactory::getParser($this->_convertToViewConstant($this->editLayout),$this->editModule);
+		//$this->parser->init($this->editModule,  $_REQUEST['view']);
 		$smarty = new Sugar_Smarty();
 		
 		//Add in the module we are viewing to our current mod strings
@@ -109,7 +109,7 @@ class ViewPortalLayoutView extends ViewLayoutView
 		$smarty->assign('view_module', $this->editModule);
 		$smarty->assign('calc_field_list', json_encode($this->parser->getCalculatedFields()));
 		$smarty->assign('view', $this->editLayout);
-		$smarty->assign('maxColumns', $this->parser->maxColumns);
+        $smarty->assign('maxColumns', $this->parser->getMaxColumns());
 		$smarty->assign('fieldwidth', '150px');
 		$smarty->assign('translate',true);
 		$smarty->assign('fromPortal',true); // flag for form submittal - when the layout is submitted the actions are the same for layouts and portal layouts, but the parsers must be different...
@@ -136,4 +136,21 @@ class ViewPortalLayoutView extends ViewLayoutView
 		$ajax->addSection('center', $GLOBALS['mod_strings']['LBL_EDIT_LAYOUT'],$smarty->fetch('modules/ModuleBuilder/tpls/layoutView.tpl'));
 		echo $ajax->getJavascript();
 	}
+
+    /**
+     * @param $view
+     * hack to convert a view param to what is expected by ParserFactory
+     * there should be a better way to do this, how is wireless doing it???
+     */
+    protected function _convertToViewConstant($view)
+    {
+        $map = array(
+            'editview' => MB_PORTALEDITVIEW,
+            'detailview' => MB_PORTALDETAILVIEW,
+            'searchview' => MB_PORTALSEARCHVIEW,
+            'listview' => MB_PORTALLISTVIEW
+        );
+
+        return $map[strtolower($view)];
+    }
 }

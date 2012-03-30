@@ -76,12 +76,21 @@ class ParserFactory
             //BEGIN SUGARCRM flav=pro || flav=sales ONLY
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :
-            case MB_PORTALDETAILVIEW:
-            case MB_PORTALEDITVIEW:
                 require_once 'modules/ModuleBuilder/parsers/views/WirelessGridLayoutMetaDataParser.php' ;
                 return new WirelessGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+            //END SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            case MB_PORTALDETAILVIEW:
+            case MB_PORTALEDITVIEW:
+                require_once 'modules/ModuleBuilder/parsers/views/PortalGridLayoutMetaDataParser.php' ;
+                return new PortalGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+            //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
             case MB_WIRELESSLISTVIEW:
+            //END SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
+            //END SUGARCRM flav=ent ONLY
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
                 return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName);
             //END SUGARCRM flav=pro || flav=sales ONLY
