@@ -3871,10 +3871,10 @@ function save_relationship_changes($is_update, $exclude=array())
         } else {
             $execute_function	= $function['function_name'];
         }
-        if(!empty($value['function_params'])) {
+        if(!empty($function['function_params'])) {
             if (empty($function['function_params_source']) || $function['function_params_source']=='parent') {
                 $bean = $this;
-            } else if ($value['function_params_source']=='this') {
+            } else if ($function['function_params_source']=='this') {
                 $bean = $current_bean;
             } else if(!empty($function['function_params'])) {
                 return null;
