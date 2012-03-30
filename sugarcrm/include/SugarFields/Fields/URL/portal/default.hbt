@@ -1,1 +1,1 @@
-<span name="{{name}}"><a href="{{value}}" target="_self">{{value}}</a></span>
+<span name="{{name}}">{{#if value}}<a href="{{value}}" target="_self">{{value}}</a>{{/if}}</span>

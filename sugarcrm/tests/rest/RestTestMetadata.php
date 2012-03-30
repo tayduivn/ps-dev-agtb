@@ -41,8 +41,6 @@ class RestTestMetadata extends RestTestBase {
     public function testFullMetadata() {
         $restReply = $this->_restCall('metadata');
 
-        file_put_contents("/sugar/tmp/full_metadata.json",$restReply['replyRaw']);
-
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
     

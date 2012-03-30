@@ -40,6 +40,8 @@
                 formatNumber: function(value, round, precision, number_group_seperator, decimal_seperator) {
                     // TODO: ADD LOCALIZATION SUPPORT FOR CURRENT USER
 
+                    if (value=='') return null;
+
                     if (_.isString(value)) {
                         value = parseFloat(value, 10);
                     }

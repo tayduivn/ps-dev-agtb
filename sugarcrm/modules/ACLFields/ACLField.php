@@ -161,7 +161,9 @@ class ACLField  extends ACLAction{
                     }
                 }
             }
-            }
+        }
+        
+        return $_SESSION['ACL'][$user_id][$category]['fields'];
 
     }
 
