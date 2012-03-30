@@ -11,7 +11,6 @@
     },
 
     unformat:function(value) {
-        console.log('calling datetime unformat');
         return value
     },
 
