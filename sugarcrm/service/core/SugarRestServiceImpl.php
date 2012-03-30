@@ -30,64 +30,6 @@ class SugarRestServiceImpl extends SugarWebServiceImpl {
 	function md5($string){
 		return md5($string);
 	}
-
-    public function show(){
-        $GLOBALS['simple_name_value_list'] = true;
-        $sessionId = $this->getSession();
-        return $this->get_entry($sessionId, $this->getParamFromRequest($_REQUEST, 'module'), $this->getParamFromRequest($_REQUEST, 'id'), $this->getParamFromRequest($_REQUEST, 'fields', 'array', array()), array());
-    }
-
-    public function search(){
-       $GLOBALS['simple_name_value_list'] = true;
-       $sessionId = $this->getSession();
-       return $this->get_entry_list($sessionId, $this->getParamFromRequest($_REQUEST, 'module'), $this->getParamFromRequest($_REQUEST, 'query'), $this->getParamFromRequest($_REQUEST, 'orderBy'), $this->getParamFromRequest($_REQUEST, 'offset','', 0), $this->getParamFromRequest($_REQUEST, 'fields', 'array', array()), array(), $this->getParamFromRequest($_REQUEST, 'max_results','', 10), -1);
-    }
-
-    public function delete(){
-       $GLOBALS['simple_name_value_list'] = true;
-       $sessionId = $this->getSession();
-       $nameValueList = array(array('name' => 'id', 'value' => $this->getParamFromRequest($_REQUEST, 'id')),array('name' => 'deleted', 'value' => '1'));
-       return $this->set_entry($sessionId, $this->getParamFromRequest($_REQUEST, 'module'), $nameValueList);
-    }
-
-    public function edit($module_name = '', $name_value_list = array()){
-       $GLOBALS['simple_name_value_list'] = true;
-       $sessionId = $this->getSession();
-       return $this->set_entry($sessionId, $module_name, $name_value_list);
-    }
-    
-    private function getSession(){
-        if(!empty($_REQUEST['session'])){
-            return $_REQUEST['session'];
-        }elseif(can_start_session()){
-            session_start();
-            $session_id = session_id();
-            $this->validateSession();
-            return $session_id;
-        }else{
-            return null;
-        }
-    }
-
-    private function validateSession(){
-        $_SESSION['user_id']= $_SESSION['authenticated_user_id'];
-        $_SESSION['is_valid_session']= true;
-        $_SESSION['ip_address'] = query_client_ip();
-        $_SESSION['type'] = 'user';
-        $_SESSION['unique_key'] = $GLOBALS['sugar_config']['unique_key'];
-    }
-
-    private function getParamFromRequest($input, $name, $type = '', $default = ''){
-        if(empty($input[$name])){
-            return $default;
-        }else{
-            if($type == 'array'){
-                return explode(',', $input[$name]);
-            }else{
-                return $input[$name];
-            }
-        }
-    }
 }
 require_once('service/core/SugarRestUtils.php');
 SugarRestServiceImpl::$helperObject = new SugarRestUtils();

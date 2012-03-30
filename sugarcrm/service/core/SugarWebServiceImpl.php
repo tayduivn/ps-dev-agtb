@@ -144,7 +144,6 @@ function get_entries($session, $module_name, $ids, $select_fields, $link_name_to
 * @exception 'SoapFault' -- The SOAP error, if any
 */
 function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted ){
-
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
 	global  $beanList, $beanFiles;
 	$error = new SoapError();
@@ -170,6 +169,11 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
 
+    if (!self::$helperObject->checkQuery($error, $query, $order_by)) {
+		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+    	return;
+    } // if
+
     if (!self::$helperObject->checkACLAccess($seed, 'Export', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
     	return;
@@ -189,7 +193,8 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
-	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted);
+        /* @var $seed SugarBean */
+	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted, false, $select_fields);
     } // else
 	$list = $response['list'];
 
@@ -332,7 +337,7 @@ function set_relationships($session, $module_names, $module_ids, $link_field_nam
  * @param String $module_name -- The name of the module that the primary record is from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
  * @param String $module_id -- The ID of the bean in the specified module
  * @param String $link_field_name -- The name of the lnk field to return records from.  This name should be the name the relationship.
- * @param String $related_module_query -- A portion of the where clause of the SQL statement to find the related items.  The SQL query will already be filtered to only include the beans that are related to the specified bean.
+ * @param String $related_module_query -- A portion of the where clause of the SQL statement to find the related items.  The SQL query will already be filtered to only include the beans that are related to the specified bean. (IGNORED)
  * @param Array $related_fields - Array of related bean fields to be returned.
  * @param Array $related_module_link_name_to_fields_array - For every related bean returrned, specify link fields name to fields info for that bean to be returned. For ex.'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address'))).
  * @param Number $deleted -- false if deleted records should not be include, true if deleted records should be included.
@@ -355,7 +360,12 @@ function get_relationships($session, $module_name, $module_id, $link_field_name,
 	$mod = new $class_name();
 	$mod->retrieve($module_id);
 
-    if (!self::$helperObject->checkACLAccess($mod, 'DetailView', $error, 'no_access')) {
+    if (!self::$helperObject->checkQuery($error, $related_module_query)) {
+		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
+    	return;
+    } // if
+
+	if (!self::$helperObject->checkACLAccess($mod, 'DetailView', $error, 'no_access')) {
 		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
     	return;
     } // if
@@ -659,13 +669,13 @@ function get_user_id($session){
  * @exception 'SoapFault' -- The SOAP error, if any
  */
 function get_module_fields($session, $module_name, $fields = array()){
-	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields');
+	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields for ' . $module_name);
 	global  $beanList, $beanFiles;
 	$error = new SoapError();
 	$module_fields = array();
 
 	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
-		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_fields');
+		$GLOBALS['log']->error('End: SugarWebServiceImpl->get_module_fields FAILED on checkSessionAndModuleAccess for ' . $module_name);
 		return;
 	} // if
 
@@ -673,11 +683,13 @@ function get_module_fields($session, $module_name, $fields = array()){
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
 	if($seed->ACLAccess('ListView', true) || $seed->ACLAccess('DetailView', true) || 	$seed->ACLAccess('EditView', true) ) {
-    	return self::$helperObject->get_return_module_fields($seed, $module_name, $fields);
+    	$return = self::$helperObject->get_return_module_fields($seed, $module_name, $fields);
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_fields SUCCESS for ' . $module_name);
+        return $return;
     }
     $error->set_error('no_access');
 	self::$helperObject->setFaultObject($error);
-	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_fields');
+    $GLOBALS['log']->error('End: SugarWebServiceImpl->get_module_fields FAILED NO ACCESS to ListView, DetailView or EditView for ' . $module_name);
 }
 
 /**
@@ -828,7 +840,7 @@ function get_document_revision($session, $id) {
     $dr = new DocumentRevision();
     $dr->retrieve($id);
     if(!empty($dr->filename)){
-        $filename = $sugar_config['upload_dir']."/".$dr->id;
+        $filename = "upload://{$dr->id}";
         if (filesize($filename) > 0) {
         	$contents = sugar_file_get_contents($filename);
         } else {
@@ -854,7 +866,7 @@ function get_document_revision($session, $id) {
  * @param string[] $modules			- array of modules to query
  * @param int $offset				- a specified offset in the query
  * @param int $max_results			- max number of records to return
- * @return Array return_search_result 	- Array('Accounts' => array(array('name' => 'first_name', 'value' => 'John', 'name' => 'last_name', 'value' => 'Do')))
+ * @return Array 'entry_list' -- Array('Accounts' => array(array('name' => 'first_name', 'value' => 'John', 'name' => 'last_name', 'value' => 'Do')))
  * @exception 'SoapFault' -- The SOAP error, if any
  */
 function search_by_module($session, $search_string, $modules, $offset, $max_results){
@@ -877,11 +889,11 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 	require_once('modules/Home/UnifiedSearchAdvanced.php');
 	require_once 'include/utils.php';
 	$usa = new UnifiedSearchAdvanced();
-    if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
+    if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php'))) {
         $usa->buildCache();
     }
 
-	include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+	include($cachedfile);
 	$modules_to_search = array();
 	$unified_search_modules['Users'] =   array('fields' => array());
 
@@ -969,6 +981,7 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 				$main_query = $ret_array['select'] . $params['custom_select'] . $ret_array['from'] . $params['custom_from'] . $ret_array['where'] . $params['custom_where'] . $ret_array['order_by'] . $params['custom_order_by'];
 			} else {
 				if ($beanName == "User") {
+                    // $search_string gets cleaned above, so we can use it here
 					$filterFields = array('id', 'user_name', 'first_name', 'last_name', 'email_address');
 					$main_query = "select users.id, ea.email_address, users.user_name, first_name, last_name from users ";
 					$main_query = $main_query . " LEFT JOIN email_addr_bean_rel eabl ON eabl.bean_module = '{$seed->module_dir}'
@@ -977,6 +990,7 @@ LEFT JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
 				} // if
 				 //BEGIN SUGARCRM flav!=sales ONLY
 				if ($beanName == "ProjectTask") {
+                    // $search_string gets cleaned above, so we can use it here
 					$filterFields = array('id', 'name', 'project_id', 'project_name');
 					$main_query = "select {$seed->table_name}.project_task_id id,{$seed->table_name}.project_id, {$seed->table_name}.name, project.name project_name from {$seed->table_name} ";
 					$seed->add_team_security_where_clause($main_query);
@@ -1130,6 +1144,11 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
 
+    if (!self::$helperObject->checkQuery($error, $query)) {
+		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries_count');
+    	return;
+    } // if
+
     if (!self::$helperObject->checkACLAccess($seed, 'ListView', $error, 'no_access')) {
     	return;
     }
@@ -1143,7 +1162,7 @@ function get_entries_count($session, $module_name, $query, $deleted) {
 	// build WHERE clauses, if any
 	$where_clauses = array();
 	if (!empty($query)) {
-		$where_clauses[] = $query;
+	    $where_clauses[] = $query;
 	}
 	if ($deleted == 0) {
 		$where_clauses[] = $seed->table_name . '.deleted = 0';
