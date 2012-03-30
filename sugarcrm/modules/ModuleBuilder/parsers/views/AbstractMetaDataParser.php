@@ -27,7 +27,7 @@ abstract class AbstractMetaDataParser
 	//Make these properties public for now until we can create some usefull accessors
 	public $_fielddefs;
 	public $_viewdefs;
-    public $_paneldefs;
+    public $_paneldefs = array();
 	protected $_moduleName;
     protected $implementation; // the DeployedMetaDataImplementation or UndeployedMetaDataImplementation object to handle the reading and writing of files and field data
 

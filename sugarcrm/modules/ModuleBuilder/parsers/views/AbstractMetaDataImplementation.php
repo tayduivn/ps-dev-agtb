@@ -64,7 +64,7 @@ abstract class AbstractMetaDataImplementation
     //BEGIN SUGARCRM flav=ent ONLY
     MB_PORTALEDITVIEW 		    => 'viewdefs',
     MB_PORTALDETAILVIEW 		=> 'viewdefs',
-    MB_PORTALLISTVIEW 	 	    => 'viewdefs',
+    MB_PORTALLISTVIEW 	 	    => 'listViewDefs',
     MB_PORTALSEARCHVIEW 	 	=> 'searchdefs',
     //END SUGARCRM flav=ent ONLY
 	) ;
@@ -283,9 +283,11 @@ abstract class AbstractMetaDataImplementation
                 // If by some strange chance fields are immediately descendant from panels
                 $this->_mergeFielddefs($fielddefs, $layout['panels']['fields']);
             } else {
-                foreach ($layout['panels'] as $panel) {
-                    if (isset($panel['fields'])) {
-                        $this->_mergeFielddefs($fielddefs, $panel['fields']);
+                if (is_array($layout['panels'])) {
+                    foreach ($layout['panels'] as $panel) {
+                        if (isset($panel['fields'])) {
+                            $this->_mergeFielddefs($fielddefs, $panel['fields']);
+                        }
                     }
                 }
             }

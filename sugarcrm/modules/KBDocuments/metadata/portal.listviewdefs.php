@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
-$viewdefs['KBDocuments'] = array(
+$listViewDefs['KBDocuments'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',
