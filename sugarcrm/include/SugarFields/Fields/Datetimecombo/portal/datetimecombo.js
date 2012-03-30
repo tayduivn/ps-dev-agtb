@@ -30,7 +30,7 @@
         return value
     },
 
-    timeOptions:{
+    timeOptions:{  //TODO set this via a call to userPrefs in a overloaded initalize
         hours:[
             {key: "00", value: "00"},
             {key: "01", value: "01"},
@@ -75,6 +75,8 @@
 
         var hour = this.$el.find('.date_time_hours');
         var minute = this.$el.find('.date_time_minutes');
+
+        //TODO add AM PM support depending on user prefs
         date.on('change', function(ev) {
             model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
         });
