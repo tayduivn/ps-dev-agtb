@@ -58,8 +58,6 @@
                 });
 
                 Handlebars.registerHelper('eqEcho', function(val1, val2, retTrue, retFalse) {
-                    console.log(val1, val2);
-
                     if (val1 == val2) {
                         return retTrue;
                     }

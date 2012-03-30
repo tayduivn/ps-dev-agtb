@@ -200,7 +200,7 @@
                     return null;
                 }
 
-                this.value = this.model.has(this.name) ? this.model.get(this.name) : "";
+                this.value = this.format(this.model.has(this.name) ? this.model.get(this.name) : "");
                 this.$el.html(this.templateC(this));
 
                 var model = this.model;
