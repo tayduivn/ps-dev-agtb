@@ -2,7 +2,11 @@
     var contextCache = {};
 
     /**
-     * A state variable to hold the states of the current context.
+     * The Context object is a state variable to hold the states of the current context. The context contains various
+     * states of the current {@link Layout.View View} or {@link Layout.Layout Layout} -- this includes the current model and collection, as well as the current
+     * module focused and also possibly the url hash that was matched.
+     *
+     * ###Creating a Context Object
      *
      * Use the getContext method to get a new instance of a context.
      * <pre><code>
@@ -11,6 +15,23 @@
      *     url: "contacts/id"
      * });
      * </code></pre>
+     *
+     * ###Retrieving Data from the Context
+     *
+     * <pre><code>
+     * var module = myContext.get("module"); // module = "Contacts"
+     * </pre></code>
+     *
+     * ###Global Context Object
+     *
+     * The Application has a global context that applies to top level layer. Contexts used within
+     * nested {@link Layout.View Views} / {@link Layout.Layout Layouts} can be derived from the global context
+     * object.
+     *
+     *
+     * The global context object is stored in **`App.controller.context`**.
+     *
+     *
      * @class Context
      * @param {Object} obj Any parameters and state properties to attach to the context
      * @param {Object} data Hash of collection and or models to save to the context
@@ -43,7 +64,7 @@
             children: [],
 
             /**
-             * Returns a state on the context
+             * Returns a state on the context. If no properties are specified, the entire state is returned.
              * @method
              * @param {String} prop Requested state variable
              * @return {Object} val Value of retrieved key
@@ -146,10 +167,10 @@
             },
 
             /**
-             * Populates the data and stores it internally.
+             * Populates the data based on the state and stores it internally.
              * @method
              */
-            getData: function() {
+            loadData: function() {
                 var fields, bean, collection,
                     options = {},
                     self = this,
@@ -193,7 +214,7 @@
                     state.layout.render();
                 }
                 _.each(this.children, function(child) { //TODO optimize for batch
-                    child.getData();
+                    child.loadData();
                 });
             }
         }, Backbone.Events);

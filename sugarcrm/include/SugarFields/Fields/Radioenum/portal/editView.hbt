@@ -1,0 +1,6 @@
+<div class="controls">
+    <label class="control-label">{{label}}
+    {{#each options}}
+        <input type="radio" name="{{../name}}" value="{{this}}" {{eqEcho this ../value "SELECTED"}}>{{this}}</label>
+    {{/each}}
+</div>
