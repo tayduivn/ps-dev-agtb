@@ -48,7 +48,7 @@ fixtures.metadata = {
                 },
                 "date_entered": {
                     "name": "date_entered",
-                    "type": "datetime"
+                    "type": "datetimecombo"
                 },
                 "created_by": {
                     "name": "created_by",
@@ -56,11 +56,7 @@ fixtures.metadata = {
                 },
                 "date_modified": {
                     "name": "date_modified",
-                    "type": "datetime"
-                },
-                "datetest_c": {
-                    "name": "datetest_c",
-                    "type": "date"
+                    "type": "datetimecombo"
                 },
                 "modified_user_id": {
                     "name": "modified_user_id",
@@ -110,9 +106,7 @@ fixtures.metadata = {
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"},
-                                {name: "date_entered", label: "Date Entered"},
-                                {name: "datetest_c", label: "Date Test"}
+                                {name: "date_modified", label: "Modifed Date"}
                             ]
                         }
                     ]
@@ -139,8 +133,7 @@ fixtures.metadata = {
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"},
-                                {name: "datetest_c", label: "Date Entered"}
+                                {name: "date_modified", label: "Modifed Date"}
                             ]
                         }
                     ]
@@ -648,7 +641,6 @@ fixtures.metadata = {
                 "});\n" +
                 "}," +
                 "unformat:function(value){\n" +
-                "  console.log('calling datetime unformat');\n" +
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
