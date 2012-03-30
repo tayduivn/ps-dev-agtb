@@ -13,9 +13,34 @@ describe("Layout", function() {
             module: "Contacts"
         })).not.toBe(null);
     });
-    it('should register sugar_field Handlebars helper', function () {
-        expect(Handlebars.helpers.sugar_field).not.toBe(null);
+
+    it("should return a new View class when the View has a custom controller", function () {
+        var currMDM = SUGAR.App.metadata;
+        SUGAR.App.metadata = {
+            get : function(params){
+                if (params && params.type == "view" && params.view == "test"){
+                    return {
+                        "type": "basic",
+                        "template": "Test View",
+                        "controller" : "{customCallback : function(){return \"overridden\";}}"
+                    }
+                }
+                return currMDM.get(params);
+            }
+        };
+
+        var result = SUGAR.App.layout.get({
+            view : "test",
+            module: "TestModule"
+        });
+
+        expect(result).toBeDefined();
+        expect(result.customCallback).toBeDefined();
+        expect(SUGAR.App.layout.TestModuleTestView).toBeDefined();
+        SUGAR.App.metadata = currMDM;
     });
+
+
 });
 
 describe("Layout.View", function(){

@@ -65,7 +65,7 @@
      * }
      * </code></pre>
      *
-     * **`viewName.hbt`** contains your templates corresponding to the type of view the SugarField is to be displayed on.
+     * **`viewName.hbt`** contains your templates corresponding to the type of {{@link Layout.View View}} the SugarField is to be displayed on.
      * Sugar uses Handlebars.js as its client side template of choice. At this time no other templating engines are
      * supported. Sample:
      * <pre><code>
@@ -96,6 +96,9 @@
      *     }
      * })
      * </pre></code>
+     *
+     * ####SugarField Template Values
+     *
      *
      * @class SugarField
      */

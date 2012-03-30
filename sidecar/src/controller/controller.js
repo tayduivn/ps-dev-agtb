@@ -53,10 +53,12 @@
             this.layout = null;
 
             this.context.init(params);
+            params.context = this.context;
             this.layout = this.getLayout(params);
+            //A context needs to have a primary layout to render to the page
+            this.context.set({layout:this.layout});
 
-            this.context.getData(this);
-            this.context.set({layoutObj: this.layout});
+            this.context.loadData(this);
 
             // Render the rendered layout to the main element
             this.$el.html(this.layout.$el);

@@ -25,10 +25,11 @@ abstract class AbstractMetaDataParser
 {
 
 	//Make these properties public for now until we can create some usefull accessors
-	public $_fielddefs ;
-	public $_viewdefs ;
-	protected $_moduleName ;
-    protected $implementation ; // the DeployedMetaDataImplementation or UndeployedMetaDataImplementation object to handle the reading and writing of files and field data
+	public $_fielddefs;
+	public $_viewdefs;
+    public $_paneldefs;
+	protected $_moduleName;
+    protected $implementation; // the DeployedMetaDataImplementation or UndeployedMetaDataImplementation object to handle the reading and writing of files and field data
 
     function getLayoutAsArray ()
     {
@@ -48,6 +49,10 @@ abstract class AbstractMetaDataParser
     public function getFieldDefs()
     {
         return $this->_fielddefs;
+    }
+
+    public function getPanelDefs() {
+        return $this->_paneldefs;
     }
     
     function removeField ($fieldName)

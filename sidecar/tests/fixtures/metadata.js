@@ -62,9 +62,10 @@ fixtures.metadata = {
                     "name": "modified_user_id",
                     "type": "varchar"
                 },
-                "checkbox_c": {
-                    "name": "checkbox_c",
-                    "type": "varchar"
+                "leradio_c": {
+                    "name": "leradio_c",
+                    "type": "radioenum",
+                    "options": ["Option 1", "Option 2", "Option 3"] // Temporary, TODO: Pull from app list strings
                 }
             },
             "relationships": {
@@ -106,7 +107,8 @@ fixtures.metadata = {
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"}
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -133,7 +135,8 @@ fixtures.metadata = {
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"}
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -686,6 +689,33 @@ fixtures.metadata = {
                                 "}\n"+
             "}"
         },
+        "integer":{
+            "views" : {
+                "detailView":{
+                    "type":"basic",
+                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView":{
+                    "type":"basic",
+                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+                        "<\/p> <\/div>"
+                },
+                "default":{
+                    "type":"basic",
+                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                }
+            },
+            controller: "{" +
+                "unformat:function(value){\n" +
+                " value = SUGAR.App.utils.formatNumber(value, 1, 0, \"\", \".\");\n" +
+                "return value\n" +
+                "}," +
+                "format:function(value){\n" +
+                " value = SUGAR.App.utils.formatNumber(value, 1, 0, this.number_group_seperator, \".\");\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
         "enum":{
             "views" : {
                 "detailView":{
@@ -702,37 +732,52 @@ fixtures.metadata = {
                     "template":"<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
-            controller:"{render: function() {\n"+
-            "                \/\/ If we don't have any data in the model yet\n"+
-            "                if (!(this.model instanceof Backbone.Model)) {\n"+
-            "                    return null;\n"+
-            "                }\n"+
-            "\n"+
-            "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n"+
-            "                this.$el.html(this.templateC(this));\n"+
-            "\n"+
-            "                var model = this.model;\n"+
-            "                var field = this.name;\n"+
-            "                var el = this.$el.find(\"select\");\n"+
-            "                var self = this;\n"+
-            "                \/\/Bind input to the model\n"+
-            "                el.on(\"change\", function(ev) {\n"+
-            "                   model.set(field, self.unformat(el.val()));\n"+
-            "                });\n"+
-            "\n"+
-            "                \/\/And bind the model to the input\n"+
-            "                model.on(\"change:\" + field, function(model, value) {\n"+
-            "                   el.val(self.format(value));\n"+
-            "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");"+
-            "                });\n"+
-            "                $('select[name=' + this.name + ']').chosen();\n"+
-            "                return this;\n"+
-            "            },\n"+
-            "format:function(value){\n" +
-                              " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
-                              "return value\n" +
-                              "}" +
-            "}"
+            controller: "{render: function() {\n" +
+                "                \/\/ If we don't have any data in the model yet\n" +
+                "                if (!(this.model instanceof Backbone.Model)) {\n" +
+                "                    return null;\n" +
+                "                }\n" +
+                "\n" +
+                "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n" +
+                "                this.$el.html(this.templateC(this));\n" +
+                "\n" +
+                "                var model = this.model;\n" +
+                "                var field = this.name;\n" +
+                "                var el = this.$el.find(\"select\");\n" +
+                "                var self = this;\n" +
+
+                "console.log(this);\n" +
+                "                \/\/Bind input to the model\n" +
+                "                el.on(\"change\", function(ev) {\n" +
+                "                   model.set(field, self.unformat(el.val()));\n" +
+                "                });\n" +
+                "\n" +
+                "                \/\/And bind the model to the input\n" +
+                "                model.on(\"change:\" + field, function(model, value) {\n" +
+                "                   el.val(self.format(value));\n" +
+                "                   console.log(value);" +
+                "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");" +
+                "                });\n" +
+                "                $('select[name=' + this.name + ']').chosen();\n" +
+                "                return this;\n" +
+                "            },\n" +
+                "format:function(value){\n" +
+                " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
+
+        radioenum: {
+            views: {
+                detailView: {
+                    template: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n"
+                },
+                editView: {
+                    template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
+                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eqEcho this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
+                }
+            }
         },
         "checkbox": {
             "views" : {

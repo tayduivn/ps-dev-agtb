@@ -69,6 +69,15 @@ describe("utils", function() {
             var result = utils.unformatNumberString(value, number_group_seperator, decimal_seperator, toFloat);
             expect(result).toEqual(2123.3828);
         });
+
+        it("should return an empty value", function() {
+            var value = '';
+            var number_group_seperator = ",";
+            var decimal_seperator = " ";
+            var toFloat = true;
+            var result = utils.unformatNumberString(value, number_group_seperator, decimal_seperator, toFloat);
+            expect(result).toEqual('');
+        });
     });
 
     describe('date', function() {
