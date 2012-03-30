@@ -34,8 +34,10 @@ describe("Controller", function() {
                 }
             };
 
-            layout = { render: function() {
-            } };
+            layout = {
+                render: function() {},
+                getFields : function(){}
+            };
 
             layoutSpy = sinon.spy(layoutMan, "get");
             renderSpy = sinon.spy(layout, "render");
