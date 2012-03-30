@@ -34,8 +34,10 @@ describe("Controller", function() {
                 }
             };
 
-            layout = { render: function() {
-            } };
+            layout = {
+                render: function() {},
+                getFields : function(){}
+            };
 
             layoutSpy = sinon.spy(layoutMan, "get");
             renderSpy = sinon.spy(layout, "render");
@@ -70,9 +72,6 @@ describe("Controller", function() {
             // Check to make sure we have loaded a layout
             expect(controller.layout).toBeDefined();
             expect(layoutSpy).toHaveBeenCalled();
-
-            // Check to make sure layout's render function is called
-            expect(renderSpy).toHaveBeenCalled();
         });
     });
 });

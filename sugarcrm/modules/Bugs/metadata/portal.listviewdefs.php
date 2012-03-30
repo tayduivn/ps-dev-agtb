@@ -19,49 +19,56 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Bugs']['listview'] = array(
-	'BUG_NUMBER' => array(
-		'width' => '5',
-		//'label' => 'LBL_LIST_NUMBER',
-		'label' => 'LBL_BUG_NUMBER',
-        'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '30',
-		'label' => 'LBL_LIST_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_LIST_STATUS',
-        'default' => true),
-    'TYPE' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_TYPE',
-        'default' => true),
-    'PRIORITY' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_PRIORITY',
-        'default' => true),
-/*
-    'RELEASE_NAME' => array(
-        'width' => '10',
-        'label' => 'LBL_FOUND_IN_RELEASE',
-        'default' => false,
-        'related_fields' => array('found_in_release'),
-        'module' => 'Releases',
-        'id' => 'FOUND_IN_RELEASE',),
-    'FIXED_IN_RELEASE_NAME' => array(
-        'width' => '15',
-        'label' => 'LBL_LIST_FIXED_IN_RELEASE',
-        'default' => true,
-        'related_fields' => array('fixed_in_release'),
-        'module' => 'Releases',
-        'id' => 'FIXED_IN_RELEASE',),
-*/
-        'RESOLUTION' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_RESOLUTION',
-        'default' => false),
+$viewdefs['Bugs'] = array(
+    'panels' => array(
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'bug_number',
+                    'width' => '5',
+                    'label' => 'LBL_BUG_NUMBER',
+                    'link' => true,
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'name',
+                    'width' => '30',
+		            'label' => 'LBL_LIST_SUBJECT',
+                    'link' => true,
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'status',
+                    'width' => '10',
+		            'label' => 'LBL_LIST_STATUS',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'type',
+                    'width' => '10',
+                    'label' => 'LBL_LIST_TYPE',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'priority',
+                    'width' => '10',
+                    'label' => 'LBL_LIST_PRIORITY',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'resolution',
+                    'width' => '10',
+                    'label' => 'LBL_LIST_RESOLUTION',
+                    'enabled' => true,
+                    'default' => false,
+                ),
+            ),
+        ),
+    ),
 );
-?>

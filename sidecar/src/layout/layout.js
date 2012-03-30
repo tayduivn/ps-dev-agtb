@@ -7,6 +7,27 @@
         };
 
         /**
+         *  Create a new subclass of the given parent class based on the controller definition passed in and adds it to the layout namespace.
+         * @param parent
+         * @param className
+         * @param controller
+         *
+         * @private
+         */
+        var extendAndRegister = function(parent, className, controller){
+            try {
+                var obj = eval("(" + controller + ")");
+                if (typeof (obj) == "object"){
+                    app.layout[className] = app.layout[parent].extend(obj);
+                }
+            } catch(e) {
+                app.logger.error("invalid view controller " + className + " : " + controller);
+                return parent;
+            }
+            return className;
+        }
+
+        /**
          * Layout Manager is used to retrieve views and layouts based on metadata inputs.
          * @class LayoutManager
          * @alias SUGAR.App.layout
@@ -35,6 +56,25 @@
                 Handlebars.registerHelper('getfieldvalue', function(bean, field) {
                     return bean.get(field);
                 });
+
+                Handlebars.registerHelper('eqEcho', function(val1, val2, retTrue, retFalse) {
+                    console.log(val1, val2);
+
+                    if (val1 == val2) {
+                        return retTrue;
+                    }
+
+                    return (retFalse) ? retTrue : "";
+                });
+
+                Handlebars.registerHelper("handleBarsLog", function(value) {
+                    console.log("*****Current Context*****");
+                    console.log(this);
+                    console.log("*****Current Value*****");
+                    console.log(value);
+                    console.log("***********************");
+
+                });
             },
 
             //All retreives of metadata should hit this function.
@@ -46,10 +86,10 @@
              * component you are retreiving.
              */
             get: function(params) {
-                var meta = params.meta;
-                var layoutClass = "Layout";
-                var viewClass = "View";
-                var ucType;
+                var meta = params.meta,
+                    layoutClass = "Layout",
+                    viewClass = "View",
+                    ucType, controller, view;
 
                 if (!params.view && !params.layout)
                     return null;
@@ -62,8 +102,6 @@
                     meta.module = module;
                 }
 
-                var view = null;
-
                 if (params.view) {
                     meta = meta || app.metadata.get({
                         type: "view",
@@ -72,12 +110,20 @@
                     }) || {};
                     ucType = ucfirst(meta.view || params.type || params.view);
 
+                    //First check if this module has a custom view class
+                    if (meta && app.layout[module + ucType + "View"]) {
+                        viewClass = module + ucType + "View";
+                    }
+                    else if (meta && meta.controller) {
+                        //If we didn't find a view class override and a controller was defined in the metadata,
+                        //we need to define a new view class dynamically
+                        viewClass = extendAndRegister("View", module + ucType + "View", meta.controller);
+                    }
                     //Check if the view type has its own view subclass
-                    if (meta && app.layout[ucType + "View"]) {
+                    else if (meta && app.layout[ucType + "View"]) {
                         viewClass = ucType + "View";
                     }
-
-                    if (meta && app.layout[ucType]) {
+                    else if (meta && app.layout[ucType]) {
                         viewClass = ucType;
                     }
 
@@ -86,6 +132,7 @@
                         name: params.view,
                         meta: meta
                     });
+
                 } else if (params.layout) {
                     meta = params.meta || app.metadata.get({
                         type: "layout",
@@ -100,16 +147,19 @@
                         layoutClass = ucType + "Layout";
                     }
 
+                    controller = meta.controller;
+                    //If we didn't find a layout class override and a controller was defined in the metadata,
+                    //we need to define a new layout class dynamically
+                    if (layoutClass == "Layout" && controller) {
+                        layoutClass = extendAndRegister("Layout", ucType + "Layout", controller)
+                    }
+
                     view = new app.layout[layoutClass]({
                         context: params.context,
                         name: params.layout,
                         module: module,
                         meta: meta
                     });
-                }
-
-                if (view) {
-                    context.set({view: view});
                 }
 
                 return view;
@@ -251,7 +301,7 @@
             bind: function(context) {
                 var collection = context.get("collection");
                 _.each(collection.models, function(model) {
-                    var tr = this.$el.find('tr[name="' + model.beanType + '_' + model.get("id") + '"]');
+                    var tr = this.$el.find('tr[name="' + model.module + '_' + model.get("id") + '"]');
                     _.each(model.attributes, function(value, field) {
                         var el = tr.find('input[name="' + field + '"],span[name="' + field + '"]');
                         if (el.length > 0) {

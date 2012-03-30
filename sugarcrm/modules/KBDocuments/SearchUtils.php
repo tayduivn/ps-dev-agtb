@@ -803,15 +803,14 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         $qry_arr['custom_from'] = "INNER JOIN(
               SELECT kbdocument_id as id FROM kbdocument_revisions WHERE deleted = 0 and latest = 1 ";
 
-        // do not do full text search if $query_include[0] is '*' -bug 47789
-        if(isset($query_include) && $query_include[0] == '*'){
-           $qry_arr['custom_from']= $qry_arr['custom_from']. ") derived_table ON kbdocuments.id = derived_table.id ";
-        }else{
-
+        // do not do full text search if $query_include[0] is '*' or not defined -bug 47789
+        if(!empty($query_include) && $query_include[0] != '*'){
             $qry_arr['custom_from']= $qry_arr['custom_from']. "and kbcontent_id in (
-                     select id from kbcontents where deleted = 0 and ".$db->getFulltextQuery('kbdocument_body', $query_include, $query_must, $query_exclude).")) derived_table ON kbdocuments.id = derived_table.id";
-
+                 select id from kbcontents where deleted = 0 and ".$db->getFulltextQuery('kbdocument_body', $query_include, $query_must, $query_exclude).")";
         }
+
+        $qry_arr['custom_from'] .=  ") derived_table ON kbdocuments.id = derived_table.id ";
+
      
         $search_str = ' ';
 
@@ -905,6 +904,9 @@ function get_admin_fts_list($where,$isMultiSelect=false){
                         $search_str .= " kbdocuments.$key $op '".$constraint."%' ";
                     }
                 }else{
+                    if($search_str != ' '){
+                      $search_str .= " and "; //and is needed only if $search_str already has something bug 47789
+                    }
                         //set search string with like statement if no operator specified
                         $search_str .= " kbdocuments.$key $op '".$constraint."%' ";
                 }

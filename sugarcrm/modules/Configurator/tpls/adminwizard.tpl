@@ -487,7 +487,8 @@ var SugarWizard = new function()
         case 'system':
             document.getElementById('upload_panel').style.display="inline";
             document.getElementById('upload_panel').style.position="absolute";
-            YAHOO.util.Dom.setXY('upload_panel', YAHOO.util.Dom.getXY('container_upload'));
+            YAHOO.util.Dom.setX('upload_panel', YAHOO.util.Dom.getX('container_upload'));
+            YAHOO.util.Dom.setY('upload_panel', YAHOO.util.Dom.getY('container_upload')-10);
             break;
         case 'smtp':
             if ( !SUGAR.smtpButtonGroup ) {

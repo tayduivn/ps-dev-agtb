@@ -27,6 +27,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('soap/SoapHelperFunctions.php');
+
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modifiy any of the metadata using this
@@ -35,77 +37,140 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  * @method Array getData getData() gets all meta data.
  *
- * Notes:
- *  All data that is retuned for each data type such as vardefs, listviewdefs, etc... will
- * all have hash keys called "isMobile", "isCustom", "{moduleName}_md5".
  *
- *  "isMobile": is a bool value which lets you know if the data is for a mobile view or not.
- *  "isCustom": is a bool value which lets you know if the data is from the custom sugarcrm
- *      directory or not.
- *  "{moduleName}_md5": Is this an md5sum of the metadata for a given module.
+ *  "platform": is a bool value which lets you know if the data is for a mobile view, portal or not.
  *
  */
 class MetaDataManager {
 
-    private $modules = null;
-    private $mobile = false;
-    private $filter = null;
-    private $typeFilter = null;
-    private $filterVarDefs = false;
-    private $basePath = "modules";
+    protected $modules = null;
+    protected $platform = 'base';
+    protected $typeFilter = null;
+    protected $user;
 
     /**
      * The constructor for the class.
      *
-     * @param null $filter A list of modules to return, if null all modules are returned.
-     * @param bool $isMobile Will cause mobile metadata to be returned where it exists.
      */
-    function __construct ($filter = null, $type = null, $isMobile = false) {
-        $this->mobile = $isMobile;
-        $this->filter = $filter;
-        $this->typeFilter = $type;
-        $this->modules = $this->readModuleDir($this->basePath);
-
-        if ($this->typeFilter != null && in_array("vardefs", $this->typeFilter)) {
-            $this->filterVarDefs = true;
-        }
-
+    function __construct () {
     }
 
     /**
      * This function goes and collects the metadata for you.
      *
-     * @return array Retuns an array of module names and all of the metata for each module
-     * in hashes contained in the array.
+     * @param array $clientHashes A list provided by the client of the current hashes, any hash that matches will mean that the data for that section will not be returned.
+     * @param array $moduleFilter A list of modules to return, if null it will return data for all modules
+     * @param array $typeFilter A list of data types to return, if null all modules are returned.
+     * @param string $platform What platform to load metadata for: "base", "mobile", "portal" are likely options, defaults to "base"
+     * @param array $options An array of additional options to control the field, currently recognized options are: onlyHash: only return hashes of the metadata.
+     * @return array Retuns an array of module names and all of the metata for each module in hashes contained in the array.
      */
-    public function getData() {
-        $mods = null;
+    public function getData($clientHashes = array(), $moduleFilter = array(), $typeFilter = array(), $platform = 'base', $options = array()) {
+        // Default the type filter to everything
+        if ( empty($typeFilter) ) {
+            $typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings');
+        }
+
+        if ( isset($options['user']) ) {
+            $this->user = $options['user'];
+        } else {
+            $this->user = $GLOBALS['current_user'];
+        }
+        $this->modules = array_keys(get_user_module_list($this->user));
+
+        $this->typeFilter = $typeFilter;
+        if ( $platform == 'mobile' ) {
+            $this->platforms = array('mobile','portal','base');
+        } else if ( $platform == 'portal' ) {
+            $this->platforms = array('portal','base');
+        } else {
+            $this->platforms = array('base');
+        }
+
         $data = array();
 
-        // check to see if there is a list of mods to return other then all of them.
-        if ($this->filter != null) {
-            if (count($this->filter) < 1) {
-                $mods = $this->modules;
-            } else {
-                $mods = $this->filter;
-            }
-        } else {
-            $mods = $this->modules;
+        $data['modules'] = array();
+        foreach ($this->modules as $modName) {
+            $modData = $this->getModuleData($modName);
+            $data['modules'][$modName] = $modData;
         }
 
-        foreach ($mods as $modName) {
-            $data[$modName] = $this->getDataCollection($modName);
+        $data['modStrings'] = array();
+        foreach ($this->modules as $modName) {
+            $modData = $this->getModuleStrings($modName);
+            $data['modStrings'][$modName] = $modData;
+            $data['modStrings'][$modName]['_hash'] = md5(serialize($data['modStrings'][$modName]));
         }
 
-        $data['SugarFields'] = $this->getSugarFields();
+        $data['acl'] = array();
+        foreach ($this->modules as $modName) {
+            $data['acl'][$modName] = $this->getAclForModule($modName,$GLOBALS['current_user']->id);
+        }
+
+        $data['sugarFields'] = $this->getSugarFields();
+        $data['viewTemplates'] = $this->getViewTemplates();
+        $data['appStrings'] = $this->getAppStrings();
+        $data['appListStrings'] = $this->getAppListStrings();
+        $data['moduleList'] = $this->getModuleList($platform);
 
         $md5 = serialize($data);
         $md5 = md5($md5);
-        $data["md5"] = $md5;
+        $data["_hash"] = md5(serialize($data));
+        
+        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList');
+        $perModuleChunks = array('modules','modStrings','acl');
 
+        if ( isset($options['onlyHash']) && $options['onlyHash'] ) {
+            // The client only wants hashes
+            $hashesOnly = array();
+            $hashesOnly['_hash'] = $data['_hash'];
+            foreach ( $baseChunks as $chunk ) {
+                if (in_array($chunk,$this->typeFilter) ) {
+                    $hashesOnly[$chunk]['_hash'] = $data['_hash'];
+                }        
+            }
+            
+            foreach ( $perModuleChunks as $chunk ) {
+                if (in_array($chunk, $this->typeFilter)) {
+                    // We want modules, let's filter by the requested modules and by which hashes match.
+                    foreach($data[$chunk] as $modName => &$modData) {
+                        if (empty($moduleFilter) || in_array($modName,$moduleFilter)) {
+                            $hashesOnly[$chunk][$modName]['_hash'] = $data[$chunk][$modName]['_hash'];
+                        }
+                    }
+                }
+            }
+
+            $data = $hashesOnly;
+            
+        } else {
+            // The client is being bossy and wants some data as well.
+            foreach ( $baseChunks as $chunk ) {
+                if (!in_array($chunk,$this->typeFilter)
+                    || (isset($clientHashes[$chunk]) && $clientHashes[$chunk] == $data[$chunk]['_hash'])) {
+                    unset($data[$chunk]);
+                }        
+            }
+
+            foreach ( $perModuleChunks as $chunk ) {
+                if (!in_array($chunk, $this->typeFilter)) {
+                    unset($data[$chunk]);
+                } else {
+                    // We want modules, let's filter by the requested modules and by which hashes match.
+                    foreach($data[$chunk] as $modName => &$modData) {
+                        if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
+                            || (isset($clientHashes[$chunk][$modName]) && $clientHashes[$chunk][$modName] == $modData['_hash'])) {
+                            unset($data[$chunk][$modName]);
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        
         return $data;
     }
-
+        
     /**
      * This method collects all view data for the different types of views supported by
      * the SugarCRM app.
@@ -114,154 +179,32 @@ class MetaDataManager {
      *
      * @return Array A hash of all of the view data.
      */
-    private function getAllViewsData($moduleName) {
+    protected function getModuleViews($moduleName) {
         $data = array();
-
-        $types = array(
-            "detailviewdefs" => "viewdefs",
-            "editviewdefs" => "viewdefs",
-            "searchdefs" => "searchdefs",
-            "listviewdefs" => "listViewDefs"
-        );
-
-        /*
-         * filter out the unwanted views.
-         */
-        if ($this->typeFilter != null) {
-            $tmptypes = array();
-            foreach ($this->typeFilter as $userFilter) {
-                $userFilter = strtolower($userFilter);
-
-                if ($userFilter != "vardefs") {
-                    $tmptypes[$userFilter] = "{$types[$userFilter]}";
-                }
-            }
-
-            $types = $tmptypes;
-            $tmptypes = null;
-        }
-
-        foreach ($types as $viewType => $viewAccessor) {
-            $data[$viewType] = array();
-            $stdDel = "";
-            $cusDel = "";
-            $useFile = null;
-            $isCustom = false;
-            $defFile = "{$viewType}.php";
-
-            if ($this->mobile) {
-                $defFile = "wireless.{$defFile}";
-            }
-
-            $stdDef = "modules/{$moduleName}/metadata/{$defFile}";
-            $cusDef = "custom/modules/{$moduleName}/metadata/{$defFile}";
-
-            unset($$viewAccessor);
-
-            if (file_exists($stdDef)) {
-                include_once($stdDef);
-            }
-
-            if (file_exists($cusDef)) {
-                include_once($cusDef);
-                $isCustom = true;
-            }
-
-            if (!isset($$viewAccessor)) {
-                $data[$viewType] = array();
-                continue;
-            }
-
-            $tmp = $$viewAccessor;
-            $keys = array_keys($tmp);
-            $data[$viewType] = $tmp[$keys[0]];
-            $data[$viewType]['isCustom'] = $isCustom;
-            $data[$viewType]['isMobile'] = $this->mobile;
-            $md5 = serialize($data[$viewType]);
-            $md5 = md5($md5);
-            $data[$viewType]["{$viewType}_md5"] = $md5;
-            unset($$viewAccessor);
-        }
 
         return $data;
     }
 
     /**
-     * The master collector method.  Gets metadata for all of the known types.
+     * The collector method for modules.  Gets metadata for all of the module specific data
      *
      * @param $moduleName The name of the module to collect metadata about.
      * @return array An array of hashes containing the metadata.  Empty arrays are
      * returned in the case of no metadata.
      */
-    private function getDataCollection($moduleName) {
-        $data = array(
-            "views" => array()
-        );
-        $vardefs = null;
+    protected function getModuleData($moduleName) {
+        $vardefs = $this->getVarDef($moduleName);
 
-        $data["views"] = $this->getAllViewsData($moduleName);
-        $vardefs = $this->getVarDefs($moduleName);
-
-        foreach (array_keys($vardefs) as $key => $val) {
-            if (is_array($vardefs[$val])) {
-
-                global $beanList;
-                include_once("include/modules.php");
-
-                if (in_array($val, $beanList)) {
-                    $reverse_name = null;
-
-                    foreach ($beanList as $bName => $bValue) {
-                        if ($bValue == $val) {
-                            $reverse_name = $bName;
-                            break;
-                        }
-                    }
-
-                    if ($reverse_name != null) {
-                        $data['beans'][$val] = $this->getBeanInfo($reverse_name);
-                        $data['beans'][$val]['vardefs'] = $vardefs[$val];
-                    }
-                }
-            }
-        }
-
-        $keys = array_keys($vardefs);
-        if (count($keys) > 0) {
-            $data["beans"]["primary_bean"] = $keys[0];
-        }
+        $data['fields'] = $vardefs['fields'];
+        //FIXME: Need more relationshp data (all relationship data)
+        $data['relationships'] = $vardefs['relationships'];
+        $data['views'] = $this->getModuleViews($moduleName);
 
         $md5 = serialize($data);
         $md5 = md5($md5);
-        $data["{$moduleName}_md5"] = $md5;
+        $data["_hash"] = $md5;
 
         return $data;
-    }
-
-    /**
-     * Reads the directory passed to it, and generates a list of directories contained within
-     * the parent directory.  This method filters out the ".." & "." directories.
-     *
-     * @param $dir The directory to read modules directory's from.
-     * @return array An array of module names.
-     */
-    private function readModuleDir($dir) {
-        $dir = opendir($dir);
-        $modules = array();
-
-        if ($dir == FALSE) {
-            return $modules;
-        }
-
-        while (($file = readdir($dir)) != false) {
-            if ( $file === "." || $file  === "..") {
-                continue;
-            }
-
-            array_push($modules, $file);
-        }
-
-        return $modules;
     }
 
     /**
@@ -270,203 +213,284 @@ class MetaDataManager {
      * @param $moduleName The name of the module to collect vardef information about.
      * @return array The vardef's $dictonary array.
      */
-    private function getVarDefs($moduleName) {
-        $data = array();
-        $vdefFile = "vardefs.php";
-        $isCustom = false;
-        $stdVdef = "modules/{$moduleName}/{$vdefFile}";
-        $cusVdef = "custom/modules/{$moduleName}/{$vdefFile}";
-        $extVdef = "custom/modules/{$moduleName}/Ext/Vardefs/vardefs.ext.php";
-        $keys = null;
+    protected function getVarDef($moduleName) {
 
-        if ($this->filterVarDefs) {
-            return $data;
-        }
+        require_once("data/BeanFactory.php");
+        $obj = BeanFactory::getObjectName($moduleName);
 
-        // check to see if
-        if (file_exists($stdVdef)) {
-            include_once($stdVdef);
-        }
-
-        if (file_exists($cusVdef)) {
-            include_once($cusVdef);
-        }
-
-        if (file_exists($extVdef)) {
-            include_once($extVdef);
-        }
-
-        if (!isset($dictionary)) {
-            return $data;
-        }
-
-        // this is a hack, but for some reason php will choke and die on $dictionary unless this is all done
-        // before going and then setting up the global version.  Lame and needs debugging!
-        $keys = array_keys($dictionary);
-
+        require_once("include/SugarObjects/VardefManager.php");
         global $dictionary;
-        if (file_exists($stdVdef)) {
-            include_once($stdVdef);
+        VardefManager::loadVardef($moduleName, $obj);
+        if ( isset($dictionary[$obj]) ) {
+            $data = $dictionary[$obj];
         }
 
-        if (file_exists($cusVdef)) {
-            include_once($cusVdef);
+        // vardefs are missing something, for consistancy let's populate some arrays
+        if (!isset($data['fields']) ) {
+            $data['fields'] = array();
         }
-
-        if (file_exists($extVdef)) {
-            include_once($extVdef);
+        if (!isset($data['relationships'])) {
+            $data['relationships'] = array();
         }
-
-        if (!isset($dictionary)) {
-            return $data;
-        }
-
-        foreach ($keys as $key) {
-            if (array_key_exists($key, $dictionary)) {
-                require_once("data/BeanFactory.php");
-                $obj = BeanFactory::getObjectName($key);
-                require_once("include/SugarObjects/VardefManager.php");
-                global $dictionary;
-                VardefManager::loadVardef($key, $obj);
-                $data[$key] = $dictionary[$key];
-            }
-        }
-
-        $data['isCustom'] = $isCustom;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data['vardefs_md5'] = $md5;
 
         return $data;
     }
 
     /**
-     * Collects information from a bean after trying to create it using the bean factory.
+     * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *
-     *
-     * @param $name
-     * @return array
+     * @param $module The module we want to fetch the ACL for
+     * @param $user The user id for the ACL's we are retrieving.
+     * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    private function getBeanInfo($name) {
-        $data = array();
+    protected function getAclForModule($module,$userId) {
+        $aclAction = new ACLAction();
+        $aclField = new ACLField();
+        $acls = $aclAction->getUserActions($userId);
+        $obj = BeanFactory::getObjectName($module);
 
-        global $beanList;
-        //global $dictionary;
-
-        require_once("data/BeanFactory.php");
-
-        $bean = BeanFactory::newBean($name);
-
-        if ($bean != false) {
-            if (key_exists($name, $beanList)) {
-                $data["bean_name"] = $beanList[$name];
-            }
-
-            if (isset($bean->module_dir)) {
-                $mod_dir = $bean->module_dir;
+        $outputAcl = array('fields'=>array());
+        if ( isset($acls[$module]['module']) ) {
+            $moduleAcl = $acls[$module]['module'];
+            
+            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+                $outputAcl['admin'] = 'yes';
+                $isAdmin = true;
             } else {
-                $mod_dir = "";
+                $outputAcl['admin'] = 'no';
+                $isAdmin = false;
             }
-
-            if (isset($bean->module_name)) {
-                $mod_name = $bean->module_name;
+            
+            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+                $outputAcl['developer'] = 'yes';
             } else {
-                $mod_name = "";
+                $outputAcl['developer'] = 'no';
             }
+            
+            if ( ($moduleAcl['access']['aclaccess'] == ACL_ALLOW_ENABLED) || $isAdmin ) {
+                $outputAcl['access'] = 'yes';
+            } else {
+                $outputAcl['access'] = 'no';
+            }
+            
+            // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
+            if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
 
-            $data["module_dir"] = $mod_dir;
-            $data["module_name"] = $mod_name;
+                foreach ( array('view','list','edit','delete','import','export','massupdate') as $action ) {
+                    if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_ALL ) {
+                        $outputAcl[$action] = 'yes';
+                    } else if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER ) {
+                        $outputAcl[$action] = 'owner';
+                    } else {
+                        $outputAcl[$action] = 'no';
+                    }
+                }
+                
+                // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
+                $outputAcl['create'] = $outputAcl['edit'];
+                
+                // Now time to dig through the fields
+                $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
+                
+                foreach ( $fieldsAcl as $field => $fieldAcl ) {
+                    switch ( $fieldAcl ) {
+                        case ACL_READ_WRITE:
+                            // Default, don't need to send anything down
+                            break;
+                        case ACL_READ_OWNER_WRITE:
+                            // $outputAcl['fields'][$field]['read'] = 'yes';
+                            $outputAcl['fields'][$field]['write'] = 'owner';
+                            break;
+                        case ACL_READ_ONLY:
+                            // $outputAcl['fields'][$field]['read'] = 'yes';
+                            $outputAcl['fields'][$field]['write'] = 'no';
+                            break;
+                        case ACL_OWNER_READ_WRITE:
+                            $outputAcl['fields'][$field]['read'] = 'owner';
+                            $outputAcl['fields'][$field]['write'] = 'owner';
+                            break;
+                        case ACL_ALLOW_NONE:
+                        default:
+                            $outputAcl['fields'][$field]['read'] = 'no';
+                            $outputAcl['fields'][$field]['write'] = 'no';
+                            break;
+                    }
+                }
+                
+            }
         }
-
-        $md5 = json_encode($data);
-        $md5 = md5($md5);
-        $data["bean_md5"] = $md5;
-
-        return $data;
+        $outputAcl['_hash'] = md5(serialize($outputAcl));
+        return $outputAcl;
     }
-
-
+    
     /**
      * gets sugar fields
      *
-     * @return array array of sugarfields with
+     * @return array array of sugarfields with a hash
      */
     public function getSugarFields()
     {
-        $fieldFileTypes2meta = array('hbt'=>'template','js'=>'js');
         $result = array();
-        $fieldsDirectory = "include/SugarFields/PortalFields/";
-        // get list of portal fields
-        $portalFiles = $this->getFiles($fieldsDirectory);
 
-        foreach ($portalFiles as $finfo) {
-            $build = false;
-            $fieldMeta = '';
-
-            // get file info
-            $fieldName = array_pop(explode('/', $finfo['dirname']));
-            $fileExtension = $finfo['extension'];
-            $action=$finfo["filename"];
-
-            // check if we want this file
-            if (in_array($fileExtension, array_keys($fieldFileTypes2meta))) {
-                $build = true;
-                $fieldMeta = $fieldFileTypes2meta[$fileExtension];
-            }
-
-            // add it to result if we want it
-            if ($build) {
-                $fcontents = file_get_contents($finfo["dirname"]."/".$finfo["basename"]);
-                if (!isset($result[$fieldName])) {
-                    $result[$fieldName] = array('views'=>array());
-                }
-                if (!isset($result[$fieldName]['views'][$action]) && strtolower($action) != strtolower($fieldName)) {
-                    $result[$fieldName]['views'][$action] = array();
-                }
-
-                if (strtolower($action) != strtolower($fieldName)){
-                    $result[$fieldName]['views'][$action] = array_merge($result[$fieldName]['views'][$action], array($fieldMeta=>$fcontents)) ;
-                } else {
-                    $result[$fieldName]['handler'] = $fcontents ;
-                }
-
-            }
-
-            $result['md5'] = md5(serialize($result));
+        $baseFieldDirectory = "include/SugarFields/Fields/";        
+        $builtinSugarFields = glob($baseFieldDirectory."*",GLOB_ONLYDIR);
+        if ( is_dir('custom/'.$baseFieldDirectory) ) {
+            $customSugarFields = glob('custom/'.$baseFieldDirectory."*",GLOB_ONLYDIR);
+        } else {
+            $customSugarFields = array();
         }
+        $allSugarFieldDirs = $builtinSugarFields+$customSugarFields;
+        $allSugarFields = array();
+        foreach ( $allSugarFieldDirs as $fieldDir ) {
+            // To prevent doing the work twice, let's sort this out by basename
+            $field = basename($fieldDir);
+            $allSugarFields[$field] = $field;
+        }
+
+        foreach ( $allSugarFields as $fieldName ) {
+            $fieldData = array();
+            // Check each platform in order of precendence to find the "best" controller
+            foreach ( $this->platforms as $platform ) {
+                $controller = $baseFieldDirectory.$fieldName."/${platform}/${fieldName}.js";
+                if ( file_exists('custom/'.$controller) ) {
+                    $controller = 'custom/'.$controller;
+                }
+                if ( file_exists($controller) ) {
+                    $fieldData['controller'] = file_get_contents($controller);
+                    // We found a controller, let's get out of here!
+                    break;
+                }
+            }
+
+            $fieldData['templates'] = array();
+            // Reverse the platform order so that "better" templates override worse ones
+            $backwardsPlatforms = array_reverse($this->platforms);
+            foreach ( $backwardsPlatforms as $platform ) {
+                $templateDir = $baseFieldDirectory.$fieldName."/${platform}/";
+                $templates = array();
+                
+                if ( is_dir($templateDir) ) {
+                    $stdTemplates = glob($templateDir."*.hbt");
+                    if ( is_array($stdTemplates) ) {
+                        foreach ( $stdTemplates as $templateFile ) {
+                            $templateName = substr(basename($templateFile),0,-4);
+                            $fieldData['templates'][$templateName] = file_get_contents($templateFile);
+                        }
+                    }                    
+                }
+                // Do the custom directory last so it will override anything in the core product
+                if ( is_dir('custom/'.$templateDir) ) {
+                    $cstmTemplates = glob('custom/'.$templateDir."*.hbt");
+                    if ( is_array($cstmTemplates) ) {
+                        foreach ( $cstmTemplates as $templateFile ) {
+                            $templateName = substr(basename($templateFile),0,-4);
+                            $fieldData['templates'][$templateName] = file_get_contents($templateFile);
+                        }
+                    }
+                }
+                
+            }
+            
+            $result[$fieldName] = $fieldData;
+        }
+
+        $result['_hash'] = md5(serialize($result));
         return $result;
     }
 
-
     /**
-     * return files from a directory recursively
+     * The collector method for view templates
      *
-     * @param $directory
-     * @param array $exempt full file names to ignore
-     * @param array $files
-     * @param array $exempt_extensions file extensions to ignore
-     * @return array
+     * @return array A hash of the template name and the template contents
      */
-    private function getFiles($directory, $exempt = array('.', '..', '.ds_store', '.svn'), &$files = array(), $exempt_extensions = array('tpl', 'php'))
-    {
-        $handle = opendir($directory);
-        while (false !== ($resource = readdir($handle))) {
-            if (!in_array(strtolower($resource), $exempt)) {
-                if (is_dir($directory . $resource . '/')) {
-                    array_merge($files,
-                        $this->getFiles($directory . $resource . '/', $exempt, $files));
-                }
-                else {
-                    $resourceParts = explode('.', $resource);
-                    $extension = end($resourceParts);
-                    if ($extension && !in_array($extension, $exempt_extensions)) {
-                        $files[] = pathinfo($directory . $resource);
-                    }
-                }
-            }
-        }
-        closedir($handle);
-        return $files;
+    protected function getViewTemplates() {
+        $templates = array();
+        $templates['_hash'] = md5(serialize($templates));
+        return $templates;
     }
 
+    /**
+     * The collector method for the module strings
+     *
+     * @return array The module strings for the current language
+     */
+    protected function getModuleStrings( $moduleName ) {
+        return return_module_language($GLOBALS['current_language'],$moduleName);
+    }
+
+    /**
+     * The collector method for the app strings
+     *
+     * @return array The app strings for the current language, and a hash of the app strings
+     */
+    protected function getAppStrings() {
+        $appStrings = $GLOBALS['app_strings'];
+        $appStrings['_hash'] = md5(serialize($appStrings));
+        return $appStrings;
+    }
+
+    /**
+     * The collector method for the app strings
+     *
+     * @return array The app strings for the current language, and a hash of the app strings
+     */
+    protected function getAppListStrings() {
+        $appStrings = $GLOBALS['app_list_strings'];
+        $appStrings['_hash'] = md5(serialize($appStrings));
+        return $appStrings;
+    }
+
+    /**
+     * The method for getting the module list, can collect for base, portal and mobile
+     *
+     * @return array The list of modules that are supported by this platform
+     */
+    protected function getModuleList($platform = 'base') {
+        if ( $platform == 'portal' ) {
+            // Apparently this list is not stored anywhere, the module builder just uses a very
+            // complicated setup to do this glob
+            $portalFiles = glob('modules/*/metadata/portal.*.php',GLOB_NOSORT);
+            $customPortalFiles = glob('custom/modules/*/metadata/portal.*.php',GLOB_NOSORT);
+            if ( is_array($customPortalFiles) ) {
+                $portalFiles = $portalFiles + $customPortalFiles;
+            }
+            $portalModules = array();
+            foreach ( $portalFiles as $file ) {
+                $fileParts = explode('/',$file);
+                if ( $fileParts[0] == 'custom' ) {
+                    // 0 => custom, 1 => modules, 2 => Accounts, 3 => metadata, 4 => portal.editviewdefs.php
+                    $module = $fileParts[2];
+                } else {
+                    // 0 => modules, 1 => Accounts, 2 => metadata, 3 => portal.editviewdefs.php
+                    $module = $fileParts[1];
+                }
+                $portalModules[$module] = $module;
+            }
+            $moduleList = array_keys($portalModules);
+        } else if ( $platform == 'mobile' ) {
+            // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+            foreach ( array ( '','custom/') as $prefix) {
+                if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
+                    require($prefix.'include/MVC/Controller/wireless_module_registry.php');
+                }
+            }
+            
+            // $wireless_module_registry is defined in the file loaded above
+            $moduleList = array_keys($wireless_module_registry);
+        } else {
+            // Loading a standard module list
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $moduleList = array_keys($controller->get_user_tabs($this->user));
+        }
+        
+        $oldModuleList = $moduleList;
+        $moduleList = array();
+        foreach ( $moduleList as $module ) {
+            $moduleList[$module] = $module;
+        }
+
+        $moduleList['_hash'] = md5(serialize($moduleList));
+        return $moduleList;
+    }
 }

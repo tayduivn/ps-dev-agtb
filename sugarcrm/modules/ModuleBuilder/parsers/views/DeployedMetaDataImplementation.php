@@ -185,7 +185,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 				throw new Exception( get_class ( $this ) . ": view definitions for View $this->_view and Module $this->_moduleName are missing" ) ;
 		}
 
-		$this->_viewdefs = $loaded ;
+		$this->_viewdefs = $loaded;
 		// Set the original Viewdefs - required to ensure we don't lose fields from the base layout
 		// Check the base location first, then if nothing is there (which for example, will be the case for some QuickCreates, and some mobile layouts - see above)
 		// we need to check the custom location where the derived layouts will be
@@ -227,13 +227,17 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
             $this->_originalViewdefs = $layout ;
           }
         }
-        //fixing bug #43787: check editview layout if default quickcreate.php doesn't have needed field
-        if ($view == MB_QUICKCREATE)
-        {
-            $this->_editViewDefs = $this->_loadFromFile($this->getFileName(MB_EDITVIEW, $moduleName, MB_BASEMETADATALOCATION));
+        
+		$this->_fielddefs = $fielddefs;
+
+        // Set the panel defs (the old field defs)
+        $this->_paneldefs = !empty($this->_viewdefs['panels']) && is_array($this->_viewdefs['panels']) ? $this->_viewdefs['panels'] : array();
+
+        // Make sure they are proper
+        if (!is_numeric(key($this->_paneldefs))) {
+            $this->_paneldefs = array($this->_paneldefs);
         }
         
-		$this->_fielddefs = $fielddefs ;
 		$this->_history = new History ( $this->getFileName ( $view, $moduleName, MB_HISTORYMETADATALOCATION ) ) ;
 
 	}
@@ -248,10 +252,6 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		return $this->_originalViewdefs;
 	}
 
-    function getEditViewDefs()
-    {
-        return $this->_editViewDefs;
-    }
 
 	/*
 	 * Save a draft layout
@@ -279,31 +279,32 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	 * Deploy a layout
 	 * @param array defs    Layout definition in the same format as received by the constructor
 	 */
-	function deploy ($defs)
-	{
-		if ($this->_sourceFilename == $this->getFileName ( $this->_view, $this->_moduleName, MB_HISTORYMETADATALOCATION )) {
-			foreach ( array ( MB_WORKINGMETADATALOCATION , MB_CUSTOMMETADATALOCATION , MB_BASEMETADATALOCATION ) as $type ) {
-				if (file_exists($this->getFileName ( $this->_view, $this->_moduleName, $type ))) {
-					$this->_history->append ( $this->getFileName ( $this->_view, $this->_moduleName, $type )) ;
+	function deploy($defs) {
+		if ($this->_sourceFilename == $this->getFileName($this->_view, $this->_moduleName, MB_HISTORYMETADATALOCATION )) {
+			foreach (array(MB_WORKINGMETADATALOCATION, MB_CUSTOMMETADATALOCATION, MB_BASEMETADATALOCATION) as $type) {
+				if (file_exists($this->getFileName($this->_view, $this->_moduleName, $type))) {
+					$this->_history->append($this->getFileName($this->_view, $this->_moduleName, $type));
 					break;
 				}
 			}
 		} else {
-			$this->_history->append ( $this->_sourceFilename ) ;
+			$this->_history->append($this->_sourceFilename);
 		}
+
 		// when we deploy get rid of the working file; we have the changes in the MB_CUSTOMMETADATALOCATION so no need for a redundant copy in MB_WORKINGMETADATALOCATION
 		// this also simplifies manual editing of layouts. You can now switch back and forth between Studio and manual changes without having to keep these two locations in sync
-		$workingFilename = $this->getFileName ( $this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION ) ;
+		$workingFilename = $this->getFileName($this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION);
 
-		if (file_exists ( $workingFilename ))
-		unlink ( $this->getFileName ( $this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION ) ) ;
-		$filename = $this->getFileName ( $this->_view, $this->_moduleName, MB_CUSTOMMETADATALOCATION ) ;
-		$GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->deploy(): writing to " . $filename ) ;
-		$this->_saveToFile ( $filename, $defs ) ;
+		if (file_exists($workingFilename)) {
+		    unlink($this->getFileName($this->_view, $this->_moduleName, MB_WORKINGMETADATALOCATION));
+        }
+		$filename = $this->getFileName($this->_view, $this->_moduleName, MB_CUSTOMMETADATALOCATION);
+		$GLOBALS['log']->debug(get_class($this) . "->deploy(): writing to " . $filename);
+		$this->_saveToFile($filename, $defs);
 
 		// now clear the cache so that the results are immediately visible
 		include_once ('include/TemplateHandler/TemplateHandler.php') ;
-		TemplateHandler::clearCache ( $this->_moduleName ) ;
+		TemplateHandler::clearCache($this->_moduleName);
 	}
 
 	/*
@@ -324,6 +325,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         ) ;
 		$type = strtolower ( $type ) ;
 
+        // TODO: refactor this into parent class - duplicated code with UndeployedMetaDataImplementation
 		$filenames = array (
             MB_DASHLETSEARCH => 'dashletviewdefs',
             MB_DASHLET => 'dashletviewdefs',
@@ -342,6 +344,12 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 			MB_WIRELESSBASICSEARCH => 'wireless.searchdefs' ,
 			MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
 			//END SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            MB_PORTALEDITVIEW => 'portal.editviewdefs',
+            MB_PORTALDETAILVIEW => 'portal.detailviewdefs',
+            MB_PORTALLISTVIEW => 'portal.listviewdefs',
+            MB_PORTALSEARCHVIEW => 'portal.searchviewdefs',
+            //END SUGARCRM flav=ent ONLY
 		) ;
 
         //In a deployed module, we can check for a studio module with file name overrides.

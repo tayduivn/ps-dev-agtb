@@ -1,5 +1,5 @@
 /**
- SugarCRM Javascript API
+ * SugarCRM Javascript API
  * @ignore
  */
 
@@ -12,13 +12,14 @@ var SUGAR = SUGAR || {};
  * SugarCRM Javascript API allows users to interact direct with sugarCRM via its REST interface.
  */
 SUGAR.Api = (function() {
-    var instance;
-    var methodsToRequest = {
-        "get": "GET",
-        "update": "PUT",
-        "create": "POST",
-        "delete": "DELETE"
-    };
+    var _instance,
+        _methodsToRequest = {
+            "read": "GET",
+            "update": "PUT",
+            "create": "POST",
+            "delete": "DELETE"
+        },
+        _baseActions = ["read", "update", "create", "delete"];
 
     /**
      * Private method to retreive / insstantiate instance of sugar API
@@ -27,8 +28,8 @@ SUGAR.Api = (function() {
      * @return {Object} Instance
      */
     function init(args) {
-        instance = new SugarApi(args);
-        return instance;
+        _instance = new SugarApi(args);
+        return _instance;
     }
 
     /*
@@ -116,18 +117,19 @@ SUGAR.Api = (function() {
             debug: false,
 
             /**
-             * make ajax call via jquery ajax
+             * Makes AJAX call via jquery/zepto AJAX API.
              *
-             * @param  {String} method - request method to make, crud actions map above eg POST, GET, create,
-             * @param  {String} url
-             * @param  {Object} attributes - attributes will be stringified and set to data eg {first_name:"bob", last_name:"saget"}
-             * @param  {Array}  options - options for request that map directly to the jquery.ajax options
-             * @param  {Object} callbacks - with with callbacks of the format {Success: function(data){}, error: function(data){}} to be called
-             * @return object jquery Request object
+             * @param  {String} method CRUD action to make (read, create, update, delete) are mapped to corresponding HTTP verb: GET, POST, PUT, DELETE.
+             * @param  {String} url resource URL
+             * @param  {Object} data(optional) data will be stringified into JSON and set to data, e.g. {first_name:"bob", last_name:"saget"}
+             * @param  {Object} callbacks(optional) hash with callbacks of the format <code>{success: function(data){}, error: function(data){}}</code>
+             * @param  {Array}  options(optional) options for request that map directly to the jquery.ajax options
+             * @return {Object} Jquery request object
+             * @private
              */
-            call: function(method, url, attributes, options, callbacks) {
+            call: function(method, url, data, callbacks, options) {
                 var i, server;
-                var type = methodsToRequest[method];
+                var type = _methodsToRequest[method];
 
                 // by default use json headers
                 var params = {type: type, dataType: 'json'};
@@ -154,9 +156,9 @@ SUGAR.Api = (function() {
                 }
 
                 // set data for create and update
-                if (attributes && (method == 'create' || method == 'update')) {
+                if (data && (method == 'create' || method == 'update')) {
                     params.contentType = 'application/json';
-                    params.data = JSON.stringify(attributes);
+                    params.data = JSON.stringify(data);
                 }
 
                 // Don't process data on a non-GET request.
@@ -168,12 +170,9 @@ SUGAR.Api = (function() {
                     console.log("====== Ajax Request Begin ======");
                     console.log("Request URL: " + url);
                     console.log("Request Type: " + type);
-                    console.log("Payload: ");
-                    console.log(attributes);
-                    console.log("options: ");
-                    console.log(params);
-                    console.log("callbacks: ");
-                    console.log(callbacks);
+                    console.log("Payload: ", data);
+                    console.log("options: ", params);
+                    console.log("callbacks: ", callbacks);
                     console.log("====== Request End ======");
                 }
 
@@ -207,44 +206,52 @@ SUGAR.Api = (function() {
             },
 
             /**
-             * builds urls based on module name action and attributes of the format rooturl/module/id/action
+             * Builds URLs based on module name action and attributes of the format rooturl/module/id/action.
              *
-             * @param  {String} module - module name
-             * @param  {String} action
-             * @param  {Object} attributes - object of resource being saved eg {name: "bob", id:"123"} id will be taken from here if set
-             * @param  {Array}  params array of objects of the format below to be added as url params
-             *         [{key:"timestamp", value: "NOW"}{key:"fields",value:"first_name"}]
-             * @return {String} url for specified resource
+             * @param  {String} module module name
+             * @param  {String} action CRUD method
+             * @param  {Object} attributes(optional) object of resource being actioned upon, e.g. <code>{name: "bob", id:"123"}</code>. Resource ID will be taken from here if set.
+             * @param  {Array}  params(optional) array of objects of the format below to be added as url params
+             *         <code>[{key:"timestamp", value: "NOW"}{key:"fields",value:"first_name"}]</code>
+             * @return {String} url URL for specified resource
+             * @private
              */
             buildURL: function(module, action, attributes, params) {
-                var baseActions = ["get", "update", "create", "delete"];
                 var resultArray = [];
                 var result;
                 var plist = [];
-                var pIndex;
                 resultArray.push(this.baseUrl);
 
                 if (module) {
                     resultArray.push(module);
                 }
 
-                if (attributes && attributes.id) {
+                if ((action != "create") && attributes && attributes.id) {
                     resultArray.push(attributes.id);
                 }
 
-                if (action && baseActions.indexOf(action) == -1) {
+                if (action && _baseActions.indexOf(action) == -1) {
                     resultArray.push(action);
+                }
+
+                if (attributes && attributes.relatedId) {
+                    resultArray.push(attributes.relatedId);
                 }
 
                 result = resultArray.join("/");
 
                 // concat and add params
-                if (params && params.length > 0) {
-                    for (pIndex in params) {
-                        plist.push(params[pIndex].key + '=' + params[pIndex].value);
+                if (params) {
+                    for (var param in params) {
+                        if (params.hasOwnProperty(param)) {
+                            plist.push(param + '=' + encodeURIComponent(params[param]));
+                        }
                     }
-                    plist = plist.join("&");
-                    result += '?' + plist;
+
+                    if (plist.length > 0) {
+                        plist = plist.join("&");
+                        result += '?' + plist;
+                    }
                 }
 
                 return result;
@@ -258,16 +265,14 @@ SUGAR.Api = (function() {
              * @return {Object}  ajax request obj from this call
              */
             getMetadata: function(type, modules, callbacks) {
-                var modstring = modules.join(",");
-                var typestring = type.join(",");
-                var params = [
-                    {"key": "type", "value": typestring},
-                    {"key": "filter", "value": modstring}
-                ];
-                var method = 'get';
+                var params = {
+                    "type": type.join(","),
+                    "filter": modules.join(",")
+                };
+                var method = 'read';
                 var module = "metadata";
-                var url = this.buildURL(module, method, {}, params);
-                return this.call(method, url, {}, {}, callbacks);
+                var url = this.buildURL(module, method, null, params);
+                return this.call(method, url, null, callbacks);
             },
 
             /**
@@ -279,95 +284,51 @@ SUGAR.Api = (function() {
              */
             getSugarFields: function(hash, callbacks) {
                 var module = 'sugarFields';
-                var method = 'get';
-                var params = [
-                    {"key": "md5", "value": hash}
-                ];
-                var url = this.buildURL(module, method, {}, params);
+                var method = 'read';
+                var params = {
+                    "md5": hash
+                };
+                var url = this.buildURL(module, method, null, params);
 
-                return this.call(method, url, {}, {}, callbacks);
+                return this.call(method, url, null, callbacks);
             },
 
             /**
-             * Gets beans.
+             * Executes CRUD on beans.
              *
-             * @param  {String} module module name
-             * @param  {Object} attributes attribute object with id of bean being gotten eg {id:"123"}, no id will retrieve a list
-             * @param  {Array}  params parameter hash: <code>[{key:"timestamp", value: "NOW"}{key:"fields",value:"first_name"}]</code> to be added as url params
-             * @param  {Object} callbacks callbacks hash: <code>{ success: function(data){}, error: function(data){} }</code> in success data will the object being retrieved
-             * @return {Object} ajax request obj from this call
+             * @param {String} method operation type: create, read, update, or delete
+             * @param {String} module module name
+             * @param data object to pass in the request body
+             * @param params(optional) URL parameters
+             * @param callbacks(optional) object with <code>success</code> and <code>error</code> callback functions
              */
-            get: function(module, attributes, params, callbacks) {
-                var method = 'get';
-                var url = this.buildURL(module, method, attributes, params);
-
-                return this.call(method, url, attributes, {}, callbacks);
+            beans: function(method, module, data, params, callbacks) {
+                var url = this.buildURL(module, method, data, params);
+                return this.call(method, url, data, callbacks);
             },
 
             /**
-             * Gets related beans.
+             * Executes CRUD on relationships.
              *
-             * @param  {String} module module name
-             * @param  {String} id id of the parent bean
-             * @param  {String} link relationship link
-             * @param  {Array}  params of objects of the format [{key:"timestamp", value: "NOW"}{key:"fields",value:"first_name"}] to be added as url params
-             * @param  {Object} callbacks callbacks hash: <code>{ success: function(data){}, error: function(data){} }</code> in success data will the object being retrieved
-             * @return {Object} ajax request obj from this call
-             */
-            getRelations: function(module, id, link, params, callbacks) {
-                var url = this.buildURL(module, link, { id: id }, params);
-                return this.call('get', url, null, null, callbacks);
-            },
-
-            // TODO: Implement create/delete relationship once REST API is spec'ed out.
-
-            /**
-             * Creates a bean.
+             * The data paramerer represents relationship information:
+             * <pre>
+             * {
+             *    id: bean ID
+             *    link: relationship link name
+             *    relatedId: ID of the related bean
+             *    related: object that contains request payload (related bean or relationship fields)
+             * }
+             * </pre>
              *
-             * @param  {String} module module name
-             * @param  {Object} attributes attribute object with properties of bean being saved eg {first_name:"bob", last_name"saget"}
-             * @param  {Array}  params objects of the format [{key:"timestamp", value: "NOW"}{key:"fields",value:"first_name"}] to be added as url params
-             * @param  {Object} callbacks of the format {Success: function(data){}, error: function(data){}} in success data will be an object with an id of the object being created
-             * @return {Object} ajax request obj from this call
+             * @param {String} method operation type: create, read, update, or delete
+             * @param {String} module module name
+             * @param data object with relationship information
+             * @param params(optional) URL parameters
+             * @param callbacks(optional) object with <code>success</code> and <code>error</code> callback functions
              */
-            create: function(module, attributes, params, callbacks) {
-                var method = 'create';
-                var url = this.buildURL(module, method, attributes, params);
-
-                return this.call(method, url, attributes, {}, callbacks);
-            },
-
-            /**
-             * Updates a bean.
-             *
-             * @param  {String} module module name
-             * @param  {Object} attributes attribute object with properties of bean being updated eg {first_name:"george", last_name"saget"}
-             * @param  {Array}  params of objects of the format [{key:"timestamp", value: "NOW"}{key:"fields",value:"first_name"}] to be added as url params
-             * @param  {Object} with with callbacks of the format {Success: function(data){}, error: function(data){}} on success data will be an object with an id of the object being created
-             * @return {Object}ajax request obj from this call
-             */
-            update: function(module, attributes, params, callbacks) {
-                var method = 'update';
-                var url = this.buildURL(module, method, attributes, params);
-
-                return this.call(method, url, attributes, {}, callbacks);
-            },
-
-            /**
-             * Deletes a bean.
-             *
-             * @param  {String} module module name
-             * @param  {Object} attributes attribute object with id of bean being deleted eg {first_name:"george", last_name"saget"}
-             * @param  {Array} params  of objects of the format [{key:"timestamp", value: "NOW"}{key:"fields",value:"first_name"}]
-             *         to be added as url params
-             * @param  {Object} callbacks with with callbacks of the format {Success: function(data){}, error: function(data){}}
-             * @return {Object} ajax request obj from this call
-             */
-            "delete": function(module, attributes, params, callbacks) {
-                var method = 'delete';
-                var url = this.buildURL(module, method, attributes, params);
-
-                return this.call(method, url, attributes, {}, callbacks);
+            relationships: function(method, module, data, params, callbacks) {
+                var url =  this.buildURL(module, data.link, data, params);
+                return this.call(method, url, data.related, callbacks);
             },
 
             /**
@@ -375,18 +336,18 @@ SUGAR.Api = (function() {
              * @param {String} module
              * @param {String} query
              * @param {String} fields
-             * @param {Object} scallbacks with with callbacks of the format {Success: function(data){}, error: function(data){}}
+             * @param {Object} callbacks hash with with callbacks of the format {Success: function(data){}, error: function(data){}}
              */
             search: function(module, query, fields, callbacks) {
-                var params = [
-                    {key: "q", value: query},
-                    {key: "fields", value: fields}
-                ];
+                var params = {
+                    "q": query,
+                    "fields": fields
+                };
                 var method = 'search';
                 var payload = {};
-                var url = this.buildURL(module, method, {}, params);
+                var url = this.buildURL(module, method, null, params);
 
-                return this.call('get', url, payload, {}, callbacks);
+                return this.call('read', url, payload, callbacks);
             },
 
             /**
@@ -408,11 +369,11 @@ SUGAR.Api = (function() {
                 var payload = _.extend(attributes, {"username": username, "password": password});
                 var method = 'create';
                 var module = 'login';
-                var url = this.buildURL(module, method, attributes, {});
+                var url = this.buildURL(module, method, attributes);
                 // use our callbacks on success and error, they will call the stored ones
                 var callbacks = {success: handleLoginSuccess, error: handleLoginFailure};
 
-                this.call(method, url, payload, {}, callbacks);
+                this.call(method, url, payload, callbacks);
             },
 
             /**
@@ -429,11 +390,11 @@ SUGAR.Api = (function() {
                 var payload = {"token": token};
                 var method = 'create';
                 var module = 'logout';
-                var url = this.buildURL(module, method, payload, {});
+                var url = this.buildURL(module, method, payload);
                 // use our callbacks on success and error, they will call the stored ones
                 var callbacks = {success: handleLogoutSuccess, error: handleLogoutFailure};
 
-                return this.call(method, url, payload, {}, callbacks);
+                return this.call(method, url, payload, callbacks);
             },
 
             /**
@@ -444,14 +405,12 @@ SUGAR.Api = (function() {
             isAuthenticated: function() {
                 return isAuth;
             }
-
-
         };
     }
 
     return {
         getInstance: function(args) {
-            return instance || init(args);
+            return _instance || init(args);
         }
     };
 })();

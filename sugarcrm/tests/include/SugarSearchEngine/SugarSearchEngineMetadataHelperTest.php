@@ -96,8 +96,8 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
         return array(
             array('Accounts', true),
             array('Contacts', true),
-            array('BadModule', true),
-            array('Notifications', true),
+            array('BadModule', false),
+            array('Notifications', false),
         );
     }
 

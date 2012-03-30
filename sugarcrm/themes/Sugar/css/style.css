@@ -546,7 +546,7 @@ line-height: 16px;
 
 .moduleTitle span.utils
 {
-    display: block;
+    display: none;
     float: right;
     margin-top: 6px;
 }
@@ -787,7 +787,7 @@ border-radius: 6px;
 {
   
 }
-.list tr.pagination td table td a:link, 
+.list tr.pagination td table td a:link,
 .list tr.pagination td table td a:visited,
 .reportGroupByDataChildTablelistViewThS1 a:link,
 .reportGroupByDataChildTablelistViewThS1 a:visited
@@ -5660,7 +5660,6 @@ padding:0px;
 position: fixed;
 top: 0;
 width:100%;
-z-index:20;
 }
 #globalLinksSubnav, #quickCreateULSubnav {
     z-index: 20;
@@ -6062,6 +6061,7 @@ margin-left:10px;
     max-height: 600px;
     min-height: 30px;
     overflow: auto;
+    z-index:20;
 }
 
 #sugar_spot_search_results section {
@@ -6318,7 +6318,11 @@ ul.clickMenu {
 	   border: 1px solid #aaaaaa;
 	   display: inline-block;
 	    font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+    /*hack for IE7*/
+    *display:inline;
+    *zoom:1;
 }
+ul.clickMenu form, div.action_buttons form {float:left;}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
@@ -6343,7 +6347,7 @@ ul.clickMenu:hover {
 		color: #fff;	
 }
 ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
-ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a {
+ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a, ul.clickMenu:hover > li > form > a {
 	color: #fff !important;	
 }
 
@@ -6410,6 +6414,8 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 	padding: 8px 0px;
 	z-index: 10;
 	overflow:hidden;
+    /*css hack for IE7*/
+    *overflow:visible;
 }
 
 ul.clickMenu li ul.subnav li, ul.clickMenu ul.subnav-sub li, ul.SugarActionMenuIESub li{
@@ -6595,16 +6601,19 @@ ul#globalLinks.clickMenu > li > a {
     padding: 14px 7px !important;	
 }
 
+#contentTable .yui-nav, #contentTable .yui-nav * { position:static; }
+
 ul#selectLink.clickMenu {
 	height: 22px;
 	min-width: 20px;
 }
-
+td.paginationActionButtons ul.clickMenu #massall,
 ul#selectLink.clickMenu #massall{
 	float: left;
 	margin: 4px 4px;
 }
 
+td.paginationActionButtons ul.selectmenu > li > a,
 ul#selectLink.clickMenu > li > a{
 	padding: 0px !important;
 }
@@ -6621,8 +6630,15 @@ ul#detailViewActions.clickMenu {
 	margin-top: 2px !important;
 }
 
-#selectActions.clickMenu {
+.selectActions.clickMenu {
 	display: none;
+}
+
+ul.clickMenu.show {
+    display:inline-block;
+    /*css hack for IE*/
+    *display:inline;
+    *zoom:1;
 }
 
 #selectActionsDisabled {
@@ -6634,6 +6650,9 @@ ul#detailViewActions.clickMenu {
 	border-radius: 1px; 
 	vertical-align: bottom;
 	padding: 0 3px 0 10px;
+    /*css hack for IE*/
+    *display:inline;
+    *zoom:1;
 }
 
 #selectActionsDisabled span {
@@ -7037,6 +7056,8 @@ padding-top: 6px;
 font-weight: bold;
 color: #444;
 text-decoration: none;
+_height: 26px !important;
+padding-top: 0px !important\9;
 }
 
 

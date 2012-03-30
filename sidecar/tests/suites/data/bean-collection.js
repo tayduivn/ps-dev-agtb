@@ -7,7 +7,6 @@ describe("BeanCollection", function() {
     beforeEach(function() {
 
         app.config.maxQueryResult = 2;
-        app.init({el: "body"});
         dm.reset();
         metadata = fixtures.metadata;
     });
@@ -20,7 +19,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");
@@ -46,7 +45,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");
@@ -76,7 +75,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");
@@ -113,7 +112,7 @@ describe("BeanCollection", function() {
         app.config.maxQueryResult = 1;
 
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         beans.offset = 3;
@@ -130,7 +129,7 @@ describe("BeanCollection", function() {
                 });
         app.config.maxQueryResult = 1;
         var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata[moduleName]);
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
         var contacts = SugarTest.loadJson("contacts");

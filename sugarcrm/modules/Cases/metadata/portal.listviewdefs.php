@@ -19,18 +19,81 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Cases']['listview'] = array(
-	'CASE_NUMBER' => array(
-		'width' => '10'),
-	'NAME' => array(
-		'width' => '35',
-		'link' => true),
-	'ACCOUNT_NAME' => array(
-		'width' => '20',
-        'sortable' => false),
-	'PRIORITY' => array(
-		'width' => '15'),
-	'STATUS' => array(
-		'width' => '15'),
+$viewdefs['Cases'] = array(
+    'buttons' =>
+        array(
+            array(
+                'name' => 'show_more_button',
+                'type' => 'button',
+                'label' => 'Show More',
+                'class' => 'loading wide',
+                'events' =>
+                array(
+                    'click' => 'function(){ var self = this; console.log(this); this.context.state.collection.paginate({add:true, success:function(){console.log("in paginate success");self.context.state.layoutObj.render();window.scrollTo(0,document.body.scrollHeight);}});}',
+                ),
+            ),
+        ),
+    'listNav' => array(
+        array(
+            'name' => 'show_more_button_back',
+            'type' => 'navElement',
+            'icon' => 'icon-plus',
+            'label' => ' ',
+            'route' =>
+            array(
+                'action' => 'create',
+                'module' => 'Cases',
+            ),
+        ),
+        array(
+            'name' => 'show_more_button_back',
+            'type' => 'navElement',
+            'icon' => 'icon-chevron-left',
+            'label' => ' ',
+            'events' =>
+            array(
+                'click' => 'function(){ var self = this; console.log(this); this.context.state.collection.paginate({page:-1, success:function(){console.log("in paginate success");self.context.state.layoutObj.render()}});}',
+            ),
+        ),
+        array(
+            'name' => 'show_more_button_forward',
+            'type' => 'navElement',
+            'icon' => 'icon-chevron-right',
+            'label' => ' ',
+            'events' =>
+            array(
+                'click' => 'function(){ var self = this; console.log(this); this.context.state.collection.paginate({success:function(){console.log("in paginate success"); self.context.state.layoutObj.render(); console.log(self); }});}',
+            ),
+        ),
+    ),
+    'panels' => array(
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'case_number',
+                    'label' => 'LBL_CASE_NUMBER',
+                    'class' => 'foo',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
+                    'name' => 'name',
+                    'label' => 'LBL_NAME',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
+                    'name' => 'status',
+                    //'label' => 'Status',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
+                    'type' => 'sugarField_actionsLink',
+                    'label' => 'Actions',
+                ),
+            ),
+        ),
+    ),
 );
-?>

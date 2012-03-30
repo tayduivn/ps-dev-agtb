@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 
 require_once('modules/InboundEmail/InboundEmail.php');
 
@@ -68,6 +68,10 @@ $outStr=<<<EOS
 EOS;
 
 	    $actual = SugarCleaner::cleanHtml($inStr);
+
+	    // Normalize the line endings - Bug #51227
+	    $outStr = str_replace("\r\n", "\n", $outStr);
+	    $actual = str_replace("\r\n", "\n", $actual);
         $this->assertEquals(trim($outStr),trim($actual));
 	}
 }

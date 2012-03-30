@@ -13,9 +13,34 @@ describe("Layout", function() {
             module: "Contacts"
         })).not.toBe(null);
     });
-    it('should register sugar_field Handlebars helper', function () {
-        expect(Handlebars.helpers.sugar_field).not.toBe(null);
+
+    it("should return a new View class when the View has a custom controller", function () {
+        var currMDM = SUGAR.App.metadata;
+        SUGAR.App.metadata = {
+            get : function(params){
+                if (params && params.type == "view" && params.view == "test"){
+                    return {
+                        "type": "basic",
+                        "template": "Test View",
+                        "controller" : "{customCallback : function(){return \"overridden\";}}"
+                    }
+                }
+                return currMDM.get(params);
+            }
+        };
+
+        var result = SUGAR.App.layout.get({
+            view : "test",
+            module: "TestModule"
+        });
+
+        expect(result).toBeDefined();
+        expect(result.customCallback).toBeDefined();
+        expect(SUGAR.App.layout.TestModuleTestView).toBeDefined();
+        SUGAR.App.metadata = currMDM;
     });
+
+
 });
 
 describe("Layout.View", function(){
@@ -45,7 +70,7 @@ describe("Layout.View", function(){
             context : context,
             view:"editView"
         });
-        expect(view.meta).toEqual(fixtures.metadata.Contacts.views.editView);
+        expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.editView);
     });
 
     it('should accept metadata overrides', function(){
@@ -113,8 +138,8 @@ describe("Layout.Layout", function(){
     //Fake template manager
     SUGAR.App.template = SUGAR.App.template || {
         get:function (key) {
-            if (fixtures.templates[key])
-                return Handlebars.compile(fixtures.templates[key]);
+            if (fixtures.metadata.viewTemplates[key])
+                return Handlebars.compile(fixtures.metadata.viewTemplates[key]);
         }
     };
     //Fake a field list
@@ -141,7 +166,7 @@ describe("Layout.Layout", function(){
             context : context,
             layout: "edit"
         });
-        expect(layout.meta).toEqual(fixtures.metadata.Contacts.layouts.edit);
+        expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit);
     });
 
     it('should accept metadata overrides', function(){
