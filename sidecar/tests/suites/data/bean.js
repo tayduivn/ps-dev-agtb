@@ -4,7 +4,7 @@ describe("Bean", function() {
 
     beforeEach(function() {
         dm.reset();
-        metadata = SugarTest.loadJson("metadata");
+        metadata = SugarTest.loadFixture("metadata");
     });
 
     it("should be able to validate itself", function() {

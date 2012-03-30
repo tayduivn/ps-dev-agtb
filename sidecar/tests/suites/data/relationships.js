@@ -4,7 +4,7 @@ describe("Relationships", function() {
 
     beforeEach(function() {
         dm.reset();
-        metadata = SugarTest.loadJson("metadata");
+        metadata = SugarTest.loadFixture("metadata");
     });
 
     describe("Factory", function() {
