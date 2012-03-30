@@ -1967,11 +1967,12 @@ class SugarBean
                 if (!empty($this->$id)) {
                     $GLOBALS['log']->debug('save_relationship_changes(): From relationship_field array - adding a relationship record: ' . $rel_name . ' = ' . $this->$id);
                     //already related the new relationship id so let's set it to false so we don't add it again using the _REQUEST['relate_i'] mechanism in a later block
-                    if ($this->$id == $new_rel_id) {
+                    $this->load_relationship($rel_name);
+                    $rel_add = $this->$rel_name->add($this->$id);
+                    // move this around to only take out the id if it was save successfully
+                    if ($this->$id == $new_rel_id && $rel_add == true) {
                         $new_rel_id = false;
                     }
-                    $this->load_relationship($rel_name);
-                    $this->$rel_name->add($this->$id);
                 } else {
                     //if before value is not empty then attempt to delete relationship
                     if (!empty($this->rel_fields_before_value[$id])) {
@@ -2020,7 +2021,8 @@ class SugarBean
                             //if before value is not empty then attempt to delete relationship
                             $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
                             $success = $this->$def ['link']->delete($this->id, $this->rel_fields_before_value[$def ['id_name']]);
-                            if($success) {
+                            // just need to make sure it's true and not an array as it's possible to return an array
+                            if($success == true) {
                                 $modified_relationships['remove']['success'][] = $def['link'];
                             } else {
                                 $modified_relationships['remove']['failure'][] = $def['link'];
@@ -2033,7 +2035,8 @@ class SugarBean
 
                             $success = $this->$linkField->add($this->$idName);
 
-                            if($success) {
+                            // just need to make sure it's true and not an array as it's possible to return an array
+                            if($success == true) {
                                 $modified_relationships['add']['success'][] = $linkField;
                             } else {
                                 $modified_relationships['add']['failure'][] = $linkField;

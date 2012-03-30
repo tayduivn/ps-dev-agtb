@@ -171,7 +171,17 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         // create a test relationship
         // save cache reset value
         $_cacheResetValue = SugarCache::$isCacheReset;
-        $rel = $this->createRelationship('Accounts');
+        //$rel = $this->createRelationship('Accounts');
+
+        $rel = SugarTestRelationshipUtilities::createRelationship(array(
+                    'relationship_type' => 'one-to-many',
+                    'lhs_module' => 'Accounts',
+                    'rhs_module' => 'Accounts',
+                ));
+
+        if($rel == false) {
+            $this->fail('Relationship Not Created');
+        }
 
         $rel_name = $rel->getName();
         $id = $rel->getIDName('Accounts');
@@ -196,16 +206,13 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 
         // variable cleanup
         // delete the test relationship
-        $this->removeRelationship($rel_name, 'Accounts');
+        //$this->removeRelationship($rel_name, 'Accounts');
+        SugarTestRelationshipUtilities::removeAllCreatedRelationships();
+
         unset($macc);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         // reset the isCacheReset Value since this is all one request.
         SugarCache::$isCacheReset = $_cacheResetValue;
-        // if this is set, remove it as it shouldn't be set.
-        if(isset($GLOBALS['reload_vardefs'])) {
-            unset($GLOBALS['reload_vardefs']);
-        }
-
     }
 
     public function handleRequestRelateProvider()
@@ -238,46 +245,6 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         unset($macc);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
 
-    }
-
-    protected function createRelationship($module)
-    {
-        require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
-        $relationships = new DeployedRelationships ($module);
-
-        $_REQUEST = array(
-            'relationship_type' => 'one-to-many',
-            'lhs_module' => $module,
-            'rhs_module' => 'Accounts',
-            'rhs_label' => 'Accounts',
-            'rhs_subpanel' => 'default',
-            'view_module' => $module,
-        );
-
-        $relationship = $relationships->addFromPost();
-        $relationships->save();
-        $relationships->build();
-        LanguageManager::clearLanguageCache($module);
-
-        SugarRelationshipFactory::rebuildCache();
-
-        return $relationship;
-    }
-
-    protected function removeRelationship($name, $module)
-    {
-        require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
-        $relationships = new DeployedRelationships($module);
-
-        $relationships->delete($name);
-
-        $relationships->save();
-        $relationships->build();
-        LanguageManager::clearLanguageCache($module);
-        require_once("data/Relationships/RelationshipFactory.php");
-        SugarRelationshipFactory::deleteCache();
-
-        SugarRelationshipFactory::rebuildCache();
     }
 }
 

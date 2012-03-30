@@ -119,6 +119,7 @@ require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
 //END SUGARCRM flav=pro ONLY
+require_once 'SugarTestRelationshipUtilities.php';
 
 $GLOBALS['db']->commit();
 

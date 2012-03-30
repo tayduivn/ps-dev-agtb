@@ -383,13 +383,13 @@ class Link2 {
      * @param array $rel_keys array of ids or SugarBean objects. If you have the bean in memory, pass it in.
      * @param array $additional_values the values should be passed as key value pairs with column name as the key name and column value as key value.
      *
-     * @return boolean          Return True on Success if all are added or False if at least one fails
+     * @return boolean|array          Return true if all relationships were added.  Return an array with the failed keys if any of them failed.
      */
     function add($rel_keys,$additional_values=array()) {
         if (!is_array($rel_keys))
             $rel_keys = array($rel_keys);
 
-        $success = false;
+        $failures = array();
 
         foreach($rel_keys as $key)
         {
@@ -411,9 +411,17 @@ class Link2 {
             else {
                 $success = $this->relationship->add($key, $this->focus, $additional_values);
             }
+
+            if($success == false) {
+                $failures[] = $key->id;
+            }
         }
 
-        return $success;
+        if(!empty($failures)) {
+            return $failures;
+        }
+
+        return true;
     }
 
 
