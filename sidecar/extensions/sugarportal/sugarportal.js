@@ -126,7 +126,7 @@
     }
     if (_.isEmpty(app.metadata.get())) {
         app.metadata.set(base_metadata);
-        app.dataManager.declareModels(base_metadata);
+        app.data.declareModels(base_metadata);
     }
 })
     (SUGAR.App);

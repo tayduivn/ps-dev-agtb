@@ -50,9 +50,9 @@ describe("Layout.View", function(){
 
     var App = SUGAR.App.init({el: "#sidecar"});
 
-    App.dataManager.declareModels(fixtures.metadata);
+    App.data.declareModels(fixtures.metadata);
     //Need a sample Bean
-    var bean = App.dataManager.createBean("Contacts", {
+    var bean = App.data.createBean("Contacts", {
         first_name: "Foo",
         last_name: "Bar"
     });
@@ -146,9 +146,9 @@ describe("Layout.Layout", function(){
     SUGAR.App.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
 
     var App = SUGAR.App.init({el: "#sidecar"});
-    App.dataManager.declareModels(fixtures.metadata);
+    App.data.declareModels(fixtures.metadata);
     //Need a sample Bean
-    var bean = App.dataManager.createBean("Contacts", {
+    var bean = App.data.createBean("Contacts", {
         first_name: "Foo",
         last_name: "Bar"
     });

@@ -1,7 +1,7 @@
 describe("Controller", function() {
     var controller = SUGAR.App.controller,
         layoutManager = SUGAR.App.layout,
-        dataManager = SUGAR.App.dataManager;
+        dataManager = SUGAR.App.data;
 
     SUGAR.App.init({el: "body"});
 
@@ -45,7 +45,7 @@ describe("Controller", function() {
             collectionSpy = sinon.spy(dataMan, "createBeanCollection");
 
             SUGAR.App.layout = layoutMan;
-            SUGAR.App.dataManager = dataMan;
+            SUGAR.App.data = dataMan;
             //TODO dont pass in SUGAR.App
             controller.initialize(SUGAR.App);
             controller.setElement("body");
@@ -53,7 +53,7 @@ describe("Controller", function() {
 
         afterEach(function() {
             SUGAR.App.layout = layoutManager;
-            SUGAR.App.dataManager = dataManager;
+            SUGAR.App.data = dataManager;
         });
 
         it("should load the view properly", function() {

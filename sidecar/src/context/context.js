@@ -184,13 +184,13 @@
                 }
 
                 if (state.id) {
-                    bean = app.dataManager.createBean(state.module, { id: state.id });
-                    collection = app.dataManager.createBeanCollection(state.module, [bean]);
+                    bean = app.data.createBean(state.module, { id: state.id });
+                    collection = app.data.createBeanCollection(state.module, [bean]);
 
                     bean.fetch(options);
                 } else if (state.create) {
-                    bean = app.dataManager.createBean(state.module);
-                    collection = app.dataManager.createBeanCollection(state.module, [bean]);
+                    bean = app.data.createBean(state.module);
+                    collection = app.data.createBeanCollection(state.module, [bean]);
                 } else if (state.url) {
                     // TODO: Make this hit a custom url
                 } else {
@@ -202,7 +202,7 @@
                         }
                     };
 
-                    collection = app.dataManager.createBeanCollection(state.module);
+                    collection = app.data.createBeanCollection(state.module);
                     collection.on("app:collection:fetch", state.layout.render, this);
                     collection.fetch(options);
 
