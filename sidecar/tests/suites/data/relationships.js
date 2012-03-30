@@ -1,6 +1,6 @@
 describe("Relationships", function() {
 
-    var dm = SUGAR.App.dataManager, metadata;
+    var dm = SUGAR.App.data, metadata;
 
     beforeEach(function() {
         dm.reset();

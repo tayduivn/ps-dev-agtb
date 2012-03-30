@@ -2,7 +2,7 @@ describe("DataManager", function() {
 
     var metadata,
         app = SUGAR.App,
-        dm = SUGAR.App.dataManager,
+        dm = SUGAR.App.data,
         server;
 
     beforeEach(function() {

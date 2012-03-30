@@ -1,7 +1,7 @@
 /**
  * Manages bean model and collection classes.
  *
- * **DataManager provides:**
+ * **Data manager provides:**
  *
  * - Interface to declare bean model and collection classes from metadata.
  * - Factory methods for creating instances of beans and bean collections.
@@ -36,15 +36,15 @@
  * <pre><code>
  * // Declare bean classes from metadata payload.
  * // This method should be called at application start-up and whenever the metadata changes.
- * SUGAR.App.dataManager.declareModels(metadata);
+ * SUGAR.App.data.declareModels(metadata);
  * // You may now create bean instances using factory methods.
- * var opportunity = SUGAR.App.dataManager.createBean("Opportunities", { name: "Cool opportunity" });
+ * var opportunity = SUGAR.App.data.createBean("Opportunities", { name: "Cool opportunity" });
  * // You can save a bean using standard Backbone.Model.save method.
- * // The save method will use dataManager's sync method to communicate changes to the remote server.
+ * // The save method will use data manager's sync method to communicate changes to the remote server.
  * opportunity.save();
  *
  * // Create an empty collection of contacts.
- * var contacts = SUGAR.App.dataManager.createBeanCollection("Contacts");
+ * var contacts = SUGAR.App.data.createBeanCollection("Contacts");
  * // Fetch a list of contacts
  * contacts.fetch();
  * </code></pre>
@@ -71,7 +71,7 @@
  * </code></pre>
  *
  * @class DataManager
- * @alias SUGAR.App.dataManager
+ * @alias SUGAR.App.data
  * @singleton
  */
 (function(app) {
@@ -205,10 +205,10 @@
          * Creates instance of a bean.
          * <pre>
          * // Create an account bean. The account's name property will be set to "Acme".
-         * var account = SUGAR.App.dataManager.createBean("Accounts", { name: "Acme" });
+         * var account = SUGAR.App.data.createBean("Accounts", { name: "Acme" });
          *
          * // Create a team set bean with a given ID
-         * var teamSet = SUGAR.App.dataManager.createBean("TeamSets", { id: "xyz" });
+         * var teamSet = SUGAR.App.data.createBean("TeamSets", { id: "xyz" });
          * </pre>
          * @param {String} module Sugar module name.
          * @param attrs(optional) initial values of bean attributes, which will be set on the model.
@@ -222,7 +222,7 @@
          * Creates instance of a bean collection.
          * <pre><code>
          * // Create an empty collection of account beans.
-         * var accounts = SUGAR.App.dataManager.createBeanCollection("Accounts");
+         * var accounts = SUGAR.App.data.createBeanCollection("Accounts");
          * </code></pre>
          * @param {String} module Sugar module name.
          * @param {Bean[]} models(optional) initial array or collection of models.
@@ -238,7 +238,7 @@
          *
          * <pre><code>
          * // Create a new contact related to the given opportunity.
-         * var contact = SUGAR.App.dataManager.createRelatedBean(opportunity, "1", "contacts", {
+         * var contact = SUGAR.App.data.createRelatedBean(opportunity, "1", "contacts", {
          *    "first_name": "John",
          *    "last_name": "Smith",
          *    "contact_role": "Decision Maker"
@@ -294,7 +294,7 @@
          *
          * <pre><code>
          * // Create contacts collection for an existing opportunity.
-         * var contact = SUGAR.App.dataManager.createRelatedCollection(opportunity, "contacts");
+         * var contact = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
          * contacts.fetch({ relate: true });
          * </code></pre>
          *
@@ -418,7 +418,7 @@
         }
     };
 
-    app.augment("dataManager", _dataManager, false);
+    app.augment("data", _dataManager, false);
 
 })(SUGAR.App);
 
