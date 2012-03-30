@@ -315,6 +315,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
         ) ;
 		$type = strtolower ( $type ) ;
 
+        // TODO: refactor this into parent class - duplicated code with UndeployedMetaDataImplementation
 		$filenames = array (
             MB_DASHLETSEARCH => 'dashletviewdefs',
             MB_DASHLET => 'dashletviewdefs',
@@ -333,6 +334,12 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 			MB_WIRELESSBASICSEARCH => 'wireless.searchdefs' ,
 			MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
 			//END SUGARCRM flav=pro || flav=sales ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            MB_PORTALEDITVIEW => 'portal.editviewdefs',
+            MB_PORTALDETAILVIEW => 'portal.detailviewdefs',
+            MB_PORTALLISTVIEW => 'portal.listviewdefs',
+            MB_PORTALSEARCHVIEW => 'portal.searchviewdefs',
+            //END SUGARCRM flav=ent ONLY
 		) ;
 
         //In a deployed module, we can check for a studio module with file name overrides.

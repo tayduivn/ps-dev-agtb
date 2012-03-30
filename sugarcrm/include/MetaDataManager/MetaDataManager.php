@@ -46,6 +46,7 @@ class MetaDataManager {
     protected $modules = null;
     protected $platform = 'base';
     protected $typeFilter = null;
+    protected $user;
 
     /**
      * The constructor for the class.
@@ -70,7 +71,12 @@ class MetaDataManager {
             $typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings');
         }
 
-        $this->modules = array_keys(get_user_module_list($GLOBALS['current_user']));
+        if ( isset($options['user']) ) {
+            $this->user = $options['user'];
+        } else {
+            $this->user = $GLOBALS['current_user'];
+        }
+        $this->modules = array_keys(get_user_module_list($this->user));
 
         $this->typeFilter = $typeFilter;
         if ( $platform == 'mobile' ) {
@@ -96,17 +102,23 @@ class MetaDataManager {
             $data['modStrings'][$modName]['_hash'] = md5(serialize($data['modStrings'][$modName]));
         }
 
+        $data['acl'] = array();
+        foreach ($this->modules as $modName) {
+            $data['acl'][$modName] = $this->getAclForModule($modName,$GLOBALS['current_user']->id);
+        }
+
         $data['sugarFields'] = $this->getSugarFields();
         $data['viewTemplates'] = $this->getViewTemplates();
         $data['appStrings'] = $this->getAppStrings();
         $data['appListStrings'] = $this->getAppListStrings();
-        
+        $data['moduleList'] = $this->getModuleList($platform);
+
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
         
-        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings');
-        $perModuleChunks = array('modules','modStrings');
+        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList');
+        $perModuleChunks = array('modules','modStrings','acl');
 
         if ( isset($options['onlyHash']) && $options['onlyHash'] ) {
             // The client only wants hashes
@@ -225,6 +237,93 @@ class MetaDataManager {
     }
 
     /**
+     * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
+     *
+     * @param $module The module we want to fetch the ACL for
+     * @param $user The user id for the ACL's we are retrieving.
+     * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
+     */
+    protected function getAclForModule($module,$userId) {
+        $aclAction = new ACLAction();
+        $aclField = new ACLField();
+        $acls = $aclAction->getUserActions($userId);
+        $obj = BeanFactory::getObjectName($module);
+
+        $outputAcl = array('fields'=>array());
+        if ( isset($acls[$module]['module']) ) {
+            $moduleAcl = $acls[$module]['module'];
+            
+            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+                $outputAcl['admin'] = 'yes';
+                $isAdmin = true;
+            } else {
+                $outputAcl['admin'] = 'no';
+                $isAdmin = false;
+            }
+            
+            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+                $outputAcl['developer'] = 'yes';
+            } else {
+                $outputAcl['developer'] = 'no';
+            }
+            
+            if ( ($moduleAcl['access']['aclaccess'] == ACL_ALLOW_ENABLED) || $isAdmin ) {
+                $outputAcl['access'] = 'yes';
+            } else {
+                $outputAcl['access'] = 'no';
+            }
+            
+            // Only loop through the fields if we have a reason to, admins give full access on everything, no access gives no access to anything
+            if ( $outputAcl['access'] == 'yes' && $outputAcl['developer'] == 'no' ) {
+
+                foreach ( array('view','list','edit','delete','import','export','massupdate') as $action ) {
+                    if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_ALL ) {
+                        $outputAcl[$action] = 'yes';
+                    } else if ( $moduleAcl[$action]['aclaccess'] == ACL_ALLOW_OWNER ) {
+                        $outputAcl[$action] = 'owner';
+                    } else {
+                        $outputAcl[$action] = 'no';
+                    }
+                }
+                
+                // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
+                $outputAcl['create'] = $outputAcl['edit'];
+                
+                // Now time to dig through the fields
+                $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
+                
+                foreach ( $fieldsAcl as $field => $fieldAcl ) {
+                    switch ( $fieldAcl ) {
+                        case ACL_READ_WRITE:
+                            // Default, don't need to send anything down
+                            break;
+                        case ACL_READ_OWNER_WRITE:
+                            // $outputAcl['fields'][$field]['read'] = 'yes';
+                            $outputAcl['fields'][$field]['write'] = 'owner';
+                            break;
+                        case ACL_READ_ONLY:
+                            // $outputAcl['fields'][$field]['read'] = 'yes';
+                            $outputAcl['fields'][$field]['write'] = 'no';
+                            break;
+                        case ACL_OWNER_READ_WRITE:
+                            $outputAcl['fields'][$field]['read'] = 'owner';
+                            $outputAcl['fields'][$field]['write'] = 'owner';
+                            break;
+                        case ACL_ALLOW_NONE:
+                        default:
+                            $outputAcl['fields'][$field]['read'] = 'no';
+                            $outputAcl['fields'][$field]['write'] = 'no';
+                            break;
+                    }
+                }
+                
+            }
+        }
+        $outputAcl['_hash'] = md5(serialize($outputAcl));
+        return $outputAcl;
+    }
+    
+    /**
      * gets sugar fields
      *
      * @return array array of sugarfields with a hash
@@ -339,5 +438,59 @@ class MetaDataManager {
         $appStrings = $GLOBALS['app_list_strings'];
         $appStrings['_hash'] = md5(serialize($appStrings));
         return $appStrings;
+    }
+
+    /**
+     * The method for getting the module list, can collect for base, portal and mobile
+     *
+     * @return array The list of modules that are supported by this platform
+     */
+    protected function getModuleList($platform = 'base') {
+        if ( $platform == 'portal' ) {
+            // Apparently this list is not stored anywhere, the module builder just uses a very
+            // complicated setup to do this glob
+            $portalFiles = glob('modules/*/metadata/portal.*.php',GLOB_NOSORT);
+            $customPortalFiles = glob('custom/modules/*/metadata/portal.*.php',GLOB_NOSORT);
+            if ( is_array($customPortalFiles) ) {
+                $portalFiles = $portalFiles + $customPortalFiles;
+            }
+            $portalModules = array();
+            foreach ( $portalFiles as $file ) {
+                $fileParts = explode('/',$file);
+                if ( $fileParts[0] == 'custom' ) {
+                    // 0 => custom, 1 => modules, 2 => Accounts, 3 => metadata, 4 => portal.editviewdefs.php
+                    $module = $fileParts[2];
+                } else {
+                    // 0 => modules, 1 => Accounts, 2 => metadata, 3 => portal.editviewdefs.php
+                    $module = $fileParts[1];
+                }
+                $portalModules[$module] = $module;
+            }
+            $moduleList = array_keys($portalModules);
+        } else if ( $platform == 'mobile' ) {
+            // replicate the essential part of the behavior of the private loadMapping() method in SugarController
+            foreach ( array ( '','custom/') as $prefix) {
+                if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
+                    require($prefix.'include/MVC/Controller/wireless_module_registry.php');
+                }
+            }
+            
+            // $wireless_module_registry is defined in the file loaded above
+            $moduleList = array_keys($wireless_module_registry);
+        } else {
+            // Loading a standard module list
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $moduleList = array_keys($controller->get_user_tabs($this->user));
+        }
+        
+        $oldModuleList = $moduleList;
+        $moduleList = array();
+        foreach ( $moduleList as $module ) {
+            $moduleList[$module] = $module;
+        }
+
+        $moduleList['_hash'] = md5(serialize($moduleList));
+        return $moduleList;
     }
 }

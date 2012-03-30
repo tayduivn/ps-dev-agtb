@@ -60,6 +60,12 @@ abstract class AbstractMetaDataImplementation
 	MB_WIRELESSBASICSEARCH 	 	=> 'searchdefs',
 	MB_WIRELESSADVANCEDSEARCH 	=> 'searchdefs',
 	//END SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=ent ONLY
+    MB_PORTALEDITVIEW 		    => 'viewdefs',
+    MB_PORTALDETAILVIEW 		=> 'viewdefs',
+    MB_PORTALLISTVIEW 	 	    => 'viewdefs',
+    MB_PORTALSEARCHVIEW 	 	=> 'searchdefs',
+    //END SUGARCRM flav=ent ONLY
 	) ;
 
 	/*
