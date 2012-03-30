@@ -71,6 +71,7 @@ height: 43px\9;;
 	height: 100%;
 	background-color: transparent;
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#98bd38', endColorstr='#86a238')";
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#98bd38', endColorstr='#86a238');
 }
 
 .dcmenuDivider  {
