@@ -39,8 +39,7 @@ class OpportunitiesViewDetail extends ViewDetail {
  	}
  	
  	function display() {
-         print_r(strac_trace())
-	    die();
+
 	    $currency = new Currency();
 	    if(isset($this->bean->currency_id) && !empty($this->bean->currency_id))
 	    {
