@@ -21,24 +21,36 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 $viewdefs['KBDocuments'] = array(
-	'KBDOCUMENT_NAME' => array(
-		'width' => '45',
-		'label' => 'LBL_NAME',
-		'link' => true,
-		'sortable' => false,
-        'default' => true
-    ),
-	'ACTIVE_DATE' => array(
-		'width' => '20',
-		'label' => 'LBL_ACTIVE_DATE',
-		'sortable' => false,
-        'default' => true
-    ),
-	'CREATED_BY' => array(
-		'width' => '35',
-		'label' => 'LBL_ARTICLE_AUTHOR_LIST',
-		'sortable' => false,
-        'default' => true
+    'panels' => array(
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'kbdocument_name',
+                    'width' => '45',
+                    'label' => 'LBL_NAME',
+                    'link' => true,
+                    'sortable' => false,
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'active_date',
+                    'width' => '20',
+                    'label' => 'LBL_ACTIVE_DATE',
+                    'sortable' => false,
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'created_by',
+                    'width' => '35',
+                    'label' => 'LBL_ARTICLE_AUTHOR_LIST',
+                    'sortable' => false,
+                    'enabled' => true,
+                    'default' => true,
+                ),
+            ),
+        ),
     ),
 );
-?>
