@@ -36,21 +36,24 @@
                     return bean.get(field);
                 });
 
-                Handlebars.registerHelper('eqEcho', function(v1, v2,rt,rf) {
-                    console.log(v1);
-                        console.log(v2);
-                                  if(v1 == v2)return rt;
-                                  if(rf)return rf;
-                                  return "";
-                });
-                Handlebars.registerHelper("handleBarsLog", function(value) {
-                                  console.log("*****Current Context*****");
-                                  console.log(this);
-                                  console.log("*****Current Value*****");
-                                  console.log(value);
-                                  console.log("***********************");
+                Handlebars.registerHelper('eqEcho', function(val1, val2, retTrue, retFalse) {
+                    console.log(val1, val2);
 
-                                });
+                    if (val1 == val2) {
+                        return retTrue;
+                    }
+
+                    return (retFalse) ? retTrue : "";
+                });
+
+                Handlebars.registerHelper("handleBarsLog", function(value) {
+                    console.log("*****Current Context*****");
+                    console.log(this);
+                    console.log("*****Current Value*****");
+                    console.log(value);
+                    console.log("***********************");
+
+                });
             },
 
             //All retreives of metadata should hit this function.
@@ -62,10 +65,10 @@
              * component you are retreiving.
              */
             get: function(params) {
-                var meta = params.meta;
-                var layoutClass = "Layout";
-                var viewClass = "View";
-                var ucType;
+                var meta = params.meta,
+                    layoutClass = "Layout",
+                    viewClass = "View",
+                    ucType;
 
                 if (!params.view && !params.layout)
                     return null;

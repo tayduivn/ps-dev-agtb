@@ -79,12 +79,10 @@ var sugarFieldsFixtures = {
                 "template": ""
             }
         },
-        "radio": {
-            "detailView": {
-                "template": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n"
-            },
-            "editView": {
-                "template": "{{#each options}}{{this}}{{/each}}"
+        "radioenum": {
+            templates: {
+                detailView: "<label class=\"control-label\">{{label}}<\/label>{{value}}\n",
+                editView: "Mah Field{{value}}{{#each options}}<input type='radio' name='{{name}}' value='{{value}}'><label>{{value}}</label>{{/each}}"
             }
         },
         "image": {
