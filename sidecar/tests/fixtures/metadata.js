@@ -599,10 +599,6 @@ fixtures.metadata = {
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                },
-                "default": {
-                    "type": "basic",
-                    "template": "{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}"
                 }
             },
             controller: "{" +
