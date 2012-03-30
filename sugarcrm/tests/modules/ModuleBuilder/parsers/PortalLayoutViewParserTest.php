@@ -146,12 +146,12 @@ EOL;
 
         $_POST = $_REQUEST = $this->createRequestFromString($postString);
         $this->_parser->init('Leads',  $_REQUEST['view']);
-
-        print_r($this->_parser->getAvailableFields());
-        print_r($this->_parser->getFieldDefs());
-        print_r($this->_parser->getLayout());
-        print_r($this->_parser->getCalculatedFields());
-        print_r($this->_parser->maxColumns);
+        // Removed the print_r from the tests
+        //print_r($this->_parser->getAvailableFields());
+        //print_r($this->_parser->getFieldDefs());
+        //print_r($this->_parser->getLayout());
+        //print_r($this->_parser->getCalculatedFields());
+        //print_r($this->_parser->maxColumns);
     }
 }
 

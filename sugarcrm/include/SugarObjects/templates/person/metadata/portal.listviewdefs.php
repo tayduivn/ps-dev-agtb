@@ -30,99 +30,37 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: listviewdefs.php 16278 2006-08-22 19:09:18Z awu $
 
-$listViewDefs['Cases'] = array(
-    'panels' => array(
-        array(
+$module_name = '<module_name>';
+$listViewDefs[$module_name] = array(
+    array(
+        'panels' => array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'case_number',
-                    'label' => 'LBL_NUMBER',
-                    'link' => true,
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
                     'name' => 'name',
-                    'width' => '32',
-		            'label' => 'LBL_SUBJECT',
+                    'label' => 'LBL_NAME',
+                    'default' => true,
+                    'enabled' => true,
                     'link' => true,
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => 'status',
-                    'width' => '10',
-		            'label' => 'LBL_STATUS',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => 'priority',
-                    'width' => '10',
-                    'label' => 'LBL_PRIORITY',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => 'resolution',
-                    'width' => '10',
-                    'label' => 'LBL_RESOLUTION',
-                    'default' => true,
-                    'enabled' => true,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
-                    'width' => '9',
                     'label' => 'LBL_TEAM',
+                    'width' => 9,
                     'default' => true,
                     'enabled' => true,
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'assigned_user',
-                    'width' => '9',
-                    'label' => 'LBL_ASSIGNED_USER',
+                    'name' => 'assigned_user_name',
+                    'label' => 'LBL_ASSIGNED_TO_NAME',
+                    'width' => 9,
                     'default' => true,
                     'enabled' => true,
+                    'link' => true,
                 ),
             ),
         ),
     ),
-	/*
-    'CASE_NUMBER' => array(
-		'width' => '5',
-		'label' => 'LBL_NUMBER',
-		'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '32',
-		'label' => 'LBL_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_STATUS',
-        'default' => true),
-    'PRIORITY' => array(
-        'width' => '10',
-        'label' => 'LBL_PRIORITY',
-        'default' => true),
-    'RESOLUTION' => array(
-        'width' => '10',
-        'label' => 'LBL_RESOLUTION',
-        'default' => true),
-//BEGIN SUGARCRM flav=pro ONLY
-	'TEAM_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_TEAM',
-        'default' => true),
-//END SUGARCRM flav=pro ONLY
-	'ASSIGNED_USER_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_ASSIGNED_USER',
-        'default' => true),
-	*/
-
 );
