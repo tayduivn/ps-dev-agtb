@@ -1,6 +1,3 @@
-var hout = Mustache.render(header_template),
-    fout = Mustache.render(footer_template);
-
 (function($) {
     // swipe for top nav
     $('#logo').bind('touchmove', function (e) {e.preventDefault();} );
@@ -101,7 +98,5 @@ var hout = Mustache.render(header_template),
       $('.deleted').remove();
 	}
 
-	$('body').prepend(hout);
-	$('body').append(fout);
 
 })(window.Zepto);

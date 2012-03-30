@@ -20,3 +20,20 @@ var header_template = '\
 var footer_template = '\
 </html>\
 ';
+
+var stream_items_template = '\
+{{#aloop}}\
+<article>\
+  <i class="{{starred}}"></i>\
+  <div title="{{name}}">\
+    {{{content}}}\
+  </div>\
+  <span id="listing-action-item1">\
+    <i class="grip">|||</i>\
+    <span class="hide actions">\
+     {{{actions}}}\
+    </span>\
+  </span>\
+</article>\
+{{/aloop}}\
+';
