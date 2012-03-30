@@ -219,16 +219,16 @@
                             }
 
                             // if its long we have seconds
-                            if (time.split(timeSep).length == 3){
+                            if (time.split(timeSep).length == 3) {
                                 timeParts.push("s");
                             }
                             var ampmCase = '';
 
                             // check for am/pm
                             var timeEnd = time.substring(time.length - 2, time.length);
-                            if (timeEnd.toLowerCase() == "am" || timeEnd.toLowerCase() =="pm") {
+                            if (timeEnd.toLowerCase() == "am" || timeEnd.toLowerCase() == "pm") {
                                 timeParts.unshift("h");
-                                if(timeEnd.toLowerCase() == timeEnd) {
+                                if (timeEnd.toLowerCase() == timeEnd) {
                                     ampmCase = 'lower';
                                 } else {
                                     ampmCase = 'upper';
@@ -251,14 +251,14 @@
                                 timeFormat += "a";
                             }
 
-                            dateFormat = dateFormat + " " +timeFormat;
+                            dateFormat = dateFormat + " " + timeFormat;
                         }
 
                         return dateFormat;
                     },
 
                     format: function(date, format) {
-                        if(!date) return "";
+                        if (!date) return "";
                         // TODO: add support for userPrefs
                         var out = "";
                         for (var i = 0; i < format.length; i++) {
@@ -306,6 +306,29 @@
                             }
                         }
                         return out;
+                    },
+                    roundTime: function(date) {
+                        if (!date.getMinutes) return 0;
+                        var min = date.getMinutes();
+
+                        if (min < 1) {
+                            min = 0;
+                        }
+                        else if (min < 16) {
+                            min = 15;
+                        }
+                        else if (min < 31) {
+                            min = 30;
+                        }
+                        else if (min < 46) {
+                            min = 45;
+                        }
+                        else {
+                            min = 0;
+                            date.setHours(date.getHours() + 1)
+                        }
+
+                        return date;
                     }
                 }
             }

@@ -996,7 +996,7 @@ SUGAR.expressions.replaceAll = function(haystack, needle, rpl) {
 SUGAR.util.DateUtils = {
 	/**
  	 * Converts a date string to a new format.
- 	 * If no new format is passed in, the date is returnded as a Unix timestamp.
+ 	 * If no new format is passed in, the date is returned as a Unix timestamp.
  	 * If no old format is passed in, the old format is guessed.
  	 * @param {String} date String representing a date.
  	 * @param {String} oldFormat Optional: Current format of the date string.
