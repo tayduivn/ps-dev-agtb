@@ -3908,6 +3908,19 @@ ul.moduleTabMore, ul.moduleTabMore *, ul.sf-sub-modulelist, ul.sf-sub-modulelist
 	width: 10em;
 }
 
+#moduleList .sf-menu .listcontainer > ul,
+#moduleList .sf-menu li:hover .listcontainer > ul,
+#moduleList .sf-menu li.sfHover .listcontainer > ul  {
+	position: relative;	
+	box-shadow: none;
+    border: 0 none;
+    top: 0px;
+}
+
+#moduleList .sf-menu > li > ul {
+	
+}
+
 #moduleList .sf-menu ul.megamenu, ul.megamenu {
 	width: 600px;
 }
@@ -4045,6 +4058,7 @@ ul.megamenu .MMShortcuts li.sfHover a.sf-with-ul,
 ul.moduleTabMore li.sfHover a.sf-with-ul,
 ul.sf-sub-modulelist li.sfHover > a.sf-with-ul{
     color: #fff !important;
+    background:		#355B7E;
 }
 ul.megamenu .MMShortcuts li.sfHover,
 ul.moduleTabMore li.sfHover,
@@ -4199,8 +4213,13 @@ Mega Column Styles
 	font-size: 0;
 }
 
-#moduleList .sf-menu ul .megawrapper ul, ul.megamenu .megawrapper ul {
+#moduleList .sf-menu ul .megawrapper ul.MMShortcuts, 
+#moduleList .sf-menu ul .megawrapper ul.MMFavorites, 
+#moduleList .sf-menu ul .megawrapper ul.MMLastViewed,
+#moduleList .sf-menu ul .megawrapper ul.filterBy,
+#moduleList .sf-menu ul .megawrapper ul.moduleTabMore {
 	background-image: none;
+	background-color: transparent;
 	position: relative;
 	top: auto;
 	width: 100%;
@@ -4209,6 +4228,10 @@ Mega Column Styles
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
 	float: left;
+}
+
+#moduleList .sf-menu ul .megawrapper ul.filterBy li a {
+	width: auto;	
 }
 
 ul.megamenu .megawrapper ul li,
@@ -4240,6 +4263,20 @@ ul.megamenu .megawrapper ul li a,
     top: 0;
 }
 
+#moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper, 
+#moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn {
+	width: 225px;
+}
+
+#moduleList ul.sf-menu li.moduleTabExtraMenu ul.megamenu .megawrapper .megacolumn .megacolumn-content {
+	overflow: visible;	
+}
+
+#moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn > .megacolumn-content > ul > li > a,
+#moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn > .megacolumn-content > .hoverscroll > .listcontainer > ul > li > a {
+	width: 205px;
+}
+
 ul.megamenu .moduleTabExtraMenu, ul.megamenu .moduleTabGroupMenu
 #moduleList .moduleTabExtraMenu, #moduleList .moduleTabGroupMenu
 {
@@ -4269,16 +4306,21 @@ ul#quickCreateUL .showLess .moreOverflow,
 ul.moduleTabMore.showLess .moreOverflow,
 #moduleList .moduleTabExtraMenu.showLess .moreOverflow, #moduleList .moduleTabExtraMenu .flexMenuItems {
 	display: none;
+	visibility: hidden;
 }
 ul#quickCreateULSubnav.showMore .moreOverflow,
-ul.moduleTabMore.showMore li.moreOverflow, #moduleList ul.moduleTabMore.showMore li.moreOverflow { display:block; }
+ul.moduleTabMore.showMore li.moreOverflow, #moduleList ul.moduleTabMore.showMore li.moreOverflow, ul.moduleTabMore.showLess.hoverscroll .moreOverflow { 
+	display:block; 
+	visibility: visible;
+}
 
 ul.moduleTabMore.showMore .moduleMenuOverFlowMore, ul.moduleTabMore.showLess .moduleMenuOverFlowLess,
 ul#quickCreateUL .showMore .moduleMenuOverFlowMore, ul#quickCreateUL .showLess .moduleMenuOverFlowLess,
 ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
 #moduleList ul.moduleTabMore.showMore .moduleMenuOverFlowMore, #moduleList ul.moduleTabMore.showLess .moduleMenuOverFlowLess
 {
-display: none;	
+display: none;
+visibilility: hidden;	
 }
 
 #subModuleList 
@@ -7114,3 +7156,90 @@ padding-top: 0px !important\9;
     margin: 2px 6px 0px 0px;
     cursor: pointer;
 }
+
+/* Main container */
+div.hoverscroll {
+border: 0 none;
+position: relative;
+}
+
+
+/* List container */
+div.hoverscroll div.listcontainer {
+	overflow:hidden;
+}
+div.hoverscroll div.fixed-listcontainer {
+    overflow: hidden;
+    float: left;
+}
+
+/* Actual list containing items */
+div.hoverscroll ul.listitem {
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+
+/* Items contained in the list */
+div.hoverscroll ul.listitem li.item {
+	display:block;
+	padding:0;
+}
+div.hoverscroll.horizontal ul.listitem li.item {
+	float:left;
+}
+div.hoverscroll.horizontal.rtl ul.listitem li.item {
+	float: right;
+}
+
+
+
+/* Arrows */
+div.hoverscroll div.arrow {
+	position:absolute;
+	float:none;
+	background-color:#ccc;
+	background-position:center;
+	background-repeat:no-repeat;
+	opacity:0.8;
+	filter:alpha(opacity=80);
+	z-index: 20001;
+}
+div.hoverscroll div.fixed-arrow {
+    display: block;
+    float: left;
+    background-color: #ccc;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+div.hoverscroll div.arrow.left,
+div.hoverscroll div.arrow.right,
+div.hoverscroll div.fixed-arrow.left,
+div.hoverscroll div.fixed-arrow.right {
+	top:0px;
+	width:40px;
+	height:100%;
+}
+
+div.hoverscroll div.arrow.top,
+div.hoverscroll div.arrow.bottom,
+div.hoverscroll div.fixed-arrow.top,
+div.hoverscroll div.fixed-arrow.bottom {
+	left:0px;
+	width:100%;
+	height:40px;
+}
+div.hoverscroll div.arrow.top,
+div.hoverscroll div.fixed-arrow.top {
+	top:0px;
+	background-image:url('../../../../index.php?entryPoint=getImage&imageName=arrow-up-small.png');
+	
+}
+div.hoverscroll div.arrow.bottom,
+div.hoverscroll div.fixed-arrow.bottom {
+	bottom:0px;
+	background-image:url('../../../../index.php?entryPoint=getImage&imageName=arrow-down-small.png');
+}
+
+

@@ -27,6 +27,13 @@
  ********************************************************************************/
 *}
 {assign var='underscore' value='_'}
+{if $USE_GROUP_TABS}
+<script type="text/javascript">
+sugar_theme_gm_current = '{$currentGroupTab}';
+Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
+</script>
+{/if}
+
 {if $AJAX ne "1"}
 <div id="moduleList">
 {/if}
@@ -116,92 +123,97 @@ $this->assign('currentGroupTab', $currentGroupTab);
 	{* more menu items overlfow *}
 	
 		<li class="moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
-		<a href="javascript: void(0);" class="more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
-		
-		<ul id="moduleTabMore{$tabGroupName}" class="showLess moduleTabMore">
-			
-			{* visible overflow menu items *}
-			{foreach from=$tabGroup.extra item=name key=module name=moduleList}
-
-			<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module" module="$module" data="$name" class="sf-with-ul"}
-				{if $shortcutExtraMenu.$module}
-				<ul class="megamenu">
-				<li >
-					<div class="megawrapper">
-						<div class="megacolumn">
-							<div class="megacolumn-content divider">
-							<ul class="MMShortcuts">
-							<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
-							{foreach from=$shortcutExtraMenu.$module item=shortcut_item}
-							  {if $shortcut_item.URL == "-"}
-				              	<hr style="margin-top: 2px; margin-bottom: 2px" />
-							  {else}
-				                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
-							  {/if}
+		<a href="javascript: void(0);" class="sf-with-ul more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
+		<ul class="megamenu">
+		<li>
+			<div class="megawrapper">
+				<div class="megacolumn">
+					<div class="megacolumn-content">
+							<ul id="moduleTabMore{$tabGroupName}" class="showLess moduleTabMore megamenuSiblings">
+							
+							{* visible overflow menu items *}
+							{foreach from=$tabGroup.extra item=name key=module name=moduleList}
+				
+							<li {if $smarty.foreach.moduleList.index > 4}class="moreOverflow"{/if}>{sugar_link id="moduleTab_$tabGroupName$module" module="$module" data="$name" class="sf-with-ul"}
+								{if $shortcutExtraMenu.$module}
+								<ul class="megamenu">
+								<li >
+									<div class="megawrapper">
+										<div class="megacolumn">
+											<div class="megacolumn-content divider">
+											<ul class="MMShortcuts">
+											<li class="groupLabel">{$APP.LBL_LINK_ACTIONS}</li>
+											{foreach from=$shortcutExtraMenu.$module item=shortcut_item}
+											  {if $shortcut_item.URL == "-"}
+								              	<hr style="margin-top: 2px; margin-bottom: 2px" />
+											  {else}
+								                <li><a id="{$shortcut_item.LABEL|replace:' ':''}{$tabGroupName}" href="{sugar_ajax_url url=$shortcut_item.URL}">{$shortcut_item.LABEL}</a></li>
+											  {/if}
+											{/foreach}
+											</ul>
+											</div>
+										</div>
+										
+										<div class="megacolumn">
+											<div class="megacolumn-content divider">
+											<ul class="MMFavorites">
+												<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
+												<li><a href="#">&nbsp;</a></li>
+											</ul>
+											</div>
+										</div>
+										<div class="megacolumn">
+											<div class="megacolumn-content">
+											{if $groupTabId}
+											<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="MMLastViewed">
+												<li class="groupLabel">{$APP.LBL_LAST_VIEWED}</li>
+												<li id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#">&nbsp;</a></li>
+											</ul>
+											{else}
+											<ul id="lastViewedContainer{$name}" class="MMLastViewed">
+												<li class="groupLabel">{$APP.LBL_LAST_VIEWED}</li>
+												<li id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#">&nbsp;</a></li>
+											</ul>
+											{/if}
+											</div>
+										</div>
+									</div>
+								</li>
+								</ul>
+								{/if}
+								</li>
 							{/foreach}
-							</ul>
-							</div>
-						</div>
-						
-						<div class="megacolumn">
-							<div class="megacolumn-content divider">
-							<ul class="MMFavorites">
-								<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-								<li><a href="#">&nbsp;</a></li>
-							</ul>
-							</div>
-						</div>
-						<div class="megacolumn">
-							<div class="megacolumn-content">
-							{if $groupTabId}
-							<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="MMLastViewed">
-								<li class="groupLabel">{$APP.LBL_LAST_VIEWED}</li>
-								<li id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#">&nbsp;</a></li>
-							</ul>
-							{else}
-							<ul id="lastViewedContainer{$name}" class="MMLastViewed">
-								<li class="groupLabel">{$APP.LBL_LAST_VIEWED}</li>
-								<li id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#">&nbsp;</a></li>
-							</ul>
+							{if count($tabGroup.extra) > 5}
+							<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
+							<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowLess{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
 							{/if}
-							</div>
-						</div>
-					</div>
-				</li>
-				</ul>
-				{/if}
-				</li>
-			{/foreach}
-			{if count($tabGroup.extra) > 5}
-			<li class="moduleMenuOverFlowMore" id="moduleMenuOverFlowMore{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','more');">{$APP.LBL_SHOW_MORE} <div class="showMoreArrow"></div></a></li>
-			<li class="moduleMenuOverFlowLess" id="moduleMenuOverFlowLess{$currentGroupTab}"><a href="javascript: SUGAR.themes.toggleMenuOverFlow('moduleTabMore{$currentGroupTab}','less');">{$APP.LBL_SHOW_LESS} <div class="showLessArrow"></div></a></li>
-			{/if}
-			
-			{* group modules *}
-			{if $USE_GROUP_TABS}
-			 <script type="text/javascript">
-			sugar_theme_gm_current = '{$currentGroupTab}';
-			Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
-			</script>
-	 		{if count($tabGroup.extra) > 0}
-	 		<li class="menuHR"></li>
-	 		{/if}
-
-	 		<li id="moduleMenuOverFlowFilter{$currentGroupTab}"><a href="#" class="group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
-	
-				<ul>
-		          {foreach from=$groupTabs item=module key=group name=groupList}
-                      {php}
-                          $group = str_replace(" ", "_", $this->get_template_vars('group'));
-                          $this->assign('group_id', $group);
-                      {/php}
-		          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(SUGAR.themes.sugar_theme_gm_switch('{$group}', '{$group_id}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
-		          {/foreach}
-				</ul>
-        
-	 		{/if}
-		</ul>
-		
+							</ul>		
+							<ul class="filterBy megamenuSiblings">
+							{* group modules *}
+							{if $USE_GROUP_TABS}
+					 		{if count($tabGroup.extra) > 0}
+					 		<li class="menuHR"></li>
+					 		{/if}
+				
+					 		<li><a href="#" class="group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
+					
+								<ul>
+						          {foreach from=$groupTabs item=module key=group name=groupList}
+				                      {php}
+				                          $group = str_replace(" ", "_", $this->get_template_vars('group'));
+				                          $this->assign('group_id', $group);
+				                      {/php}
+						          <li {if $tabGroupName eq $group}class="selected"{/if}><a href="javascript:(SUGAR.themes.sugar_theme_gm_switch('{$group}', '{$group_id}') && false)" class="{if $tabGroupName eq $group}selected{/if}">{$group}</a></li>
+						          {/foreach}
+								</ul>
+				   				</li>
+				        	</ul>
+					 		{/if}
+					 		</div>
+				 		</div>
+			 		</div>
+		 		</li>
+			</ul>
 		</li>
 	
 	
