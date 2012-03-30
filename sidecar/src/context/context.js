@@ -3,7 +3,7 @@
 
     /**
      * The Context object is a state variable to hold the states of the current context. The context contains various
-     * states of the current View or Layout -- this includes the current model and collection, as well as the current
+     * states of the current {@link Layout.View View} or {@link Layout.Layout Layout} -- this includes the current model and collection, as well as the current
      * module focused and also possibly the url hash that was matched.
      *
      * ###Creating a Context Object
@@ -25,7 +25,7 @@
      * ###Global Context Object
      *
      * The Application has a global context that applies to top level layer. Contexts used within
-     * nested {@link Layout.View Views} / {@link Layout.Layout Layouts} are can be derived from the global context
+     * nested {@link Layout.View Views} / {@link Layout.Layout Layouts} can be derived from the global context
      * object.
      *
      *
@@ -170,7 +170,7 @@
              * Populates the data based on the state and stores it internally.
              * @method
              */
-            getData: function() {
+            loadData: function() {
                 var fields, bean, collection,
                     options = {},
                     self = this,
@@ -214,7 +214,7 @@
                     state.view.render();
                 }
                 _.each(this.children, function(child) { //TODO optimize for batch
-                    child.getData();
+                    child.loadData();
                 });
             }
         }, Backbone.Events);

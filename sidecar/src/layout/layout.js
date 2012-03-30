@@ -37,9 +37,9 @@
                 });
 
                 Handlebars.registerHelper('eqEcho', function(val1, val2, retTrue, retFalse) {
-                    console.log(v1, v2);
+                    console.log(val1, val2);
 
-                    if (v1 == v2) {
+                    if (val1 == val2) {
                         return retTrue;
                     }
 
@@ -65,10 +65,10 @@
              * component you are retreiving.
              */
             get: function(params) {
-                var meta = params.meta;
-                var layoutClass = "Layout";
-                var viewClass = "View";
-                var ucType;
+                var meta = params.meta,
+                    layoutClass = "Layout",
+                    viewClass = "View",
+                    ucType;
 
                 if (!params.view && !params.layout)
                     return null;
