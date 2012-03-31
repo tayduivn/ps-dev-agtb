@@ -1,10 +1,10 @@
 describe("Relationships", function() {
 
-    var dm = SUGAR.App.dataManager, metadata;
+    var dm = SUGAR.App.data, metadata;
 
     beforeEach(function() {
         dm.reset();
-        metadata = SugarTest.loadJson("metadata");
+        metadata = SugarTest.loadFixture("metadata");
     });
 
     describe("Factory", function() {
