@@ -116,6 +116,8 @@
              */
             parent: this,
 
+            fieldType:"input",
+
             /**
              * Id of the SugarField
              * TODO: This is a shared property on the SugarField
@@ -218,7 +220,7 @@
              */
             bindDomChange: function(model, fieldName) {
                 var self = this;
-                var el = this.$el.find("input");
+                var el = this.$el.find(this.fieldType);
                 // Bind input to the model
                 el.on("change", function(ev) {
                     model.set(fieldName, self.unformat(el.val()));

@@ -46,6 +46,17 @@ fixtures.metadata = {
                         {"key":"s3", "value":"s3"}
                     ]
                 },
+                "priority": {
+                     "name": "priority",
+                     "type": "enum",
+                     "multi":true,
+
+                     "options": [
+                        {"key":"c1", "value":"c1"},
+                        {"key":"c2", "value":"c2"},
+                        {"key":"c3", "value":"c3"}
+                      ]
+                                },
                 "date_entered": {
                     "name": "date_entered",
                     "type": "varchar"
@@ -106,8 +117,9 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"},
-                                {name: "leradio_c", label: "LeRadio"}
+                                {name: "priority", label: "Priority"},
+                                {name: "description", label: "Description"}
+                                //{name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -133,8 +145,9 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"},
-                                {name: "leradio_c", label: "LeRadio"}
+                                {name: "priority", label: "Priority"},
+                                {name: "description", label: "Description"}
+                                //{name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -198,6 +211,7 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+                                {name: "priority", label: "priority"},
                                 {type: "sugarField_actionsLink", label: "Actions"}
                             ]
                         }
@@ -605,7 +619,7 @@ fixtures.metadata = {
                 "editView":{
                     "type":"basic",
                     "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<select name=\"{{name}}\" >{{#each options}}<option value=\"{{{this.key}}}\" {{eqEcho this.key ..\/value \"selected\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">"+
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ..\/value \"SELECTED\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">"+
                         "<\/p> <\/div>"
                 },
                 "default":{
@@ -613,40 +627,25 @@ fixtures.metadata = {
                     "template":"<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
-            controller: "{render: function() {\n" +
-                "                \/\/ If we don't have any data in the model yet\n" +
-                "                if (!(this.model instanceof Backbone.Model)) {\n" +
-                "                    return null;\n" +
-                "                }\n" +
-                "\n" +
-                "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n" +
-                "                this.$el.html(this.templateC(this));\n" +
-                "\n" +
-                "                var model = this.model;\n" +
-                "                var field = this.name;\n" +
-                "                var el = this.$el.find(\"select\");\n" +
-                "                var self = this;\n" +
+            controller: "{" +
+                "fieldType:\"select\",\n" +
+                "render:function(){" +
+                "   var result = this.app.sugarField.base.prototype.render.call(this);" +
+                "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
+                "   $('select').chosen();" +
+                "   console.log(this.fieldType + \"[name=\" + this.name + \"]\");" +
+                "   return result;"+
 
-                "console.log(this);\n" +
-                "                \/\/Bind input to the model\n" +
-                "                el.on(\"change\", function(ev) {\n" +
-                "                   model.set(field, self.unformat(el.val()));\n" +
-                "                });\n" +
-                "\n" +
-                "                \/\/And bind the model to the input\n" +
-                "                model.on(\"change:\" + field, function(model, value) {\n" +
-                "                   el.val(self.format(value));\n" +
-                "                   console.log(value);" +
-                "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");" +
-                "                });\n" +
-                "                $('select[name=' + this.name + ']').chosen();\n" +
-                "                return this;\n" +
-                "            },\n" +
-                "format:function(value){\n" +
-                " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
-                "return value\n" +
                 "}" +
-                "}"
+                "" +
+                "\n}\n"
+
+
+
+
+
+
+
         },
 
         radioenum: {
@@ -656,7 +655,7 @@ fixtures.metadata = {
                 },
                 editView: {
                     template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eqEcho this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
+                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
                 }
             }
         },

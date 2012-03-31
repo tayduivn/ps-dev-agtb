@@ -57,14 +57,21 @@
                     return bean.get(field);
                 });
 
-                Handlebars.registerHelper('eqEcho', function(val1, val2, retTrue, retFalse) {
-                    console.log(val1, val2);
+                Handlebars.registerHelper('in',function(val, array, retTrue, retFalse) {
+                    //if it's not an object/array make it an one
+                    if(typeof(array) != 'object')array = [array];
+                    if (array.indexOf(val) > -1) {
+                        return retTrue;
+                    }
+                    return (retFalse != undefined) ? retFalse: "";
+                });
 
+                Handlebars.registerHelper('eq', function(val1, val2, retTrue, retFalse) {
                     if (val1 == val2) {
                         return retTrue;
                     }
 
-                    return (retFalse) ? retTrue : "";
+                    return (retFalse != undefined) ? retFalse: "";
                 });
 
                 Handlebars.registerHelper("handleBarsLog", function(value) {
