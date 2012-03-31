@@ -22,7 +22,6 @@
  ********************************************************************************/
 
 require_once 'modules/ModuleBuilder/parsers/views/PortalGridLayoutMetaDataParser.php' ;
-require_once "modules/ModuleBuilder/parsers/parser.portallayoutview.php";
 
 
 
@@ -37,7 +36,7 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
         $GLOBALS['current_user']->is_admin = true;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = array();
-        $this->_parser = new PortalGridLayoutMetaDataParser(MB_PORTALEDITVIEW, 'Leads') ;
+        $this->_parser = new PortalGridLayoutMetaDataParserTestDerivative(MB_PORTALEDITVIEW, 'Leads') ;
     }
 
     public function tearDown()
@@ -111,5 +110,146 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
             'view' => 'EditView',
             'view_module' => 'Leads',
         );
+    }
+
+    /*
+    * data provider for testing converting to and from canonical form
+    */
+    public function canonicalAndInternalForms() {
+        return array(
+            array(
+                // canonical panels
+                array(array('label' => 'Default', 'fields' => array())),
+                // internal panels
+                array('Default' => array())
+            ),
+            array(
+                // canonical panels
+                array(array('label' => 'Default', 'fields' => array(
+                    array(
+                        'name' => 'name',
+                        'label' => 'Name',
+                    ),
+                    array(
+                        'name' => 'status',
+                        'label' => 'Status',
+                    ),
+                    array(
+                        'name' => 'description',
+                        'label' => 'Description',
+                    ),
+                    ""
+                ))),
+                // internal panels
+                array('Default' => array(
+                    array( // row 1
+                        array(
+                            'name' => 'name',
+                            'label' => 'Name',
+                        ),
+                        array(
+                            'name' => 'status',
+                            'label' => 'Status',
+                        ),
+                    ),
+                    array( // row 2
+                        array(
+                            'name' => 'description',
+                            'label' => 'Description',
+                        ),
+                        MBConstants::$FILLER
+                    )
+
+                ))
+            ),
+            array(
+                // canonical panels
+                array(array('label' => 'Default', 'fields' => array(
+                    array(
+                        'name' => 'name',
+                        'label' => 'Name',
+                        'displayParams' => array('colspan' => 2)
+                    ),
+                    array(
+                        'name' => 'status',
+                        'label' => 'Status',
+                    ),
+                    array(
+                        'name' => 'description',
+                        'label' => 'Description',
+                    ),
+
+                ))),
+                // internal panels
+                array('Default' => array(
+                    array( //row 1
+                        array(
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'displayParams' => array('colspan' => 2)
+                        ),
+                        MBConstants::$EMPTY
+                    ),
+                    array( //row 2
+                        array(
+                            'name' => 'status',
+                            'label' => 'Status',
+                        ),
+                        array(
+                            'name' => 'description',
+                            'label' => 'Description',
+                        ),
+                    ),
+                ))
+            ),
+
+
+        );
+    }
+
+    /**
+     * @dataProvider canonicalAndInternalForms
+     * @param $input
+     * @param $expected
+     */
+    public function testConvertFromCanonicalForm($input, $expected) {
+
+        $output = $this->_parser->testConvertFromCanonicalForm($input, array());
+
+        $this->assertEquals($expected, $output);
+        //print_r($output);
+
+    }
+}
+
+
+
+/**
+ * Using derived helper class from PortalGridLayoutMetaDataParser to test canonical/internal
+ * format conversions without saving the file.
+ *
+ * lifted from SearchViewMDPTest
+ */
+class PortalGridLayoutMetaDataParserTestDerivative extends PortalGridLayoutMetaDataParser
+{
+    // dummy constructor for now
+    public function __construct($view, $moduleName) {
+        $view = strtolower ( $view ) ;
+
+        $this->FILLER = array ( 'name' => MBConstants::$FILLER['name'] , 'label' => translate ( MBConstants::$FILLER['label'] ) ) ;
+
+        $this->_moduleName = $moduleName ;
+        $this->_view = $view ;
+    }
+    public function testConvertFromCanonicalForm($panels , $fielddefs) {
+        return $this->_convertFromCanonicalForm($panels, $fielddefs);
+    }
+
+    public function testConvertToCanonicalForm($panels, $fielddefs) {
+        return $this->_convertToCanonicalForm($panels, $fielddefs);
+    }
+
+    public function testPopulateFromRequest(&$fielddefs) {
+        // ??
     }
 }
