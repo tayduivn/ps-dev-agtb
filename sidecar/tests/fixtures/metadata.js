@@ -21,9 +21,9 @@ fixtures.metadata = {
                     "name": "case_number",
                     "type": "float",
                     round: 2,
-                    precision:2,
-                    number_group_seperator:",",
-                    decimal_seperator:"."
+                    precision: 2,
+                    number_group_seperator: ",",
+                    decimal_seperator: "."
                 },
                 "name": {
                     "name": "name",
@@ -59,7 +59,7 @@ fixtures.metadata = {
                                 },
                 "date_entered": {
                     "name": "date_entered",
-                    "type": "varchar"
+                    "type": "datetimecombo"
                 },
                 "created_by": {
                     "name": "created_by",
@@ -67,7 +67,7 @@ fixtures.metadata = {
                 },
                 "date_modified": {
                     "name": "date_modified",
-                    "type": "varchar"
+                    "type": "datetimecombo"
                 },
                 "modified_user_id": {
                     "name": "modified_user_id",
@@ -117,9 +117,12 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+
                                 {name: "priority", label: "Priority"},
-                                {name: "description", label: "Description"}
+                                {name: "description", label: "Description"},
+                                {name: "date_modified", label: "Modifed Date"}
                                 //{name: "leradio_c", label: "LeRadio"}
+
                             ]
                         }
                     ]
@@ -145,9 +148,11 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+
                                 {name: "priority", label: "Priority"},
-                                {name: "description", label: "Description"}
-                                //{name: "leradio_c", label: "LeRadio"}
+                                {name: "description", label: "Description"},
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -212,6 +217,8 @@ fixtures.metadata = {
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
                                 {name: "priority", label: "priority"},
+                                {name: "date_modified", label: "Modifed Date"},
+
                                 {type: "sugarField_actionsLink", label: "Actions"}
                             ]
                         }
@@ -550,39 +557,155 @@ fixtures.metadata = {
                 }
             },
             "events": {},
-            controller : "{" +
+            controller: "{" +
                 "render : function(){" +
-                    "this.app.sugarField.base.prototype.render.call(this);" +
+                "this.app.sugarField.base.prototype.render.call(this);" +
                 "}," +
                 "customCallback : function(){}" +
-            "}"
+                "}"
         },
-        "float":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+        "float": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
-                    "unformat:function(value){\n" +
+                "unformat:function(value){\n" +
                 "  value = SUGAR.App.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
-                        "return value\n" +
-                    "}," +
+                "return value\n" +
+                "}," +
                 "format:function(value){\n" +
                 " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
                 "return value\n" +
                 "}" +
                 "}"
+        },
+        "datetime": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
+                },
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
+                }
+            },
+            controller: "{" +
+                "render:function(value){\n" +
+                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                "  	$(function() {" +
+                "$( \".datepicker\" ).datepicker({" +
+                "showOn: \"button\"," +
+                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
+                "buttonImageOnly: true," +
+                "dateFormat: \"yy-mm-dd\"" +
+                "});" +
+                "});\n" +
+                "}," +
+                "unformat:function(value){\n" +
+                "return value\n" +
+                "}," +
+                "format:function(value){\n" +
+                "return value\n" +
+                "},\n" +
+            "}"
+        },
+        "datetimecombo": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> "+
+                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{eqEcho this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        " : " +
+                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{eqEcho this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        " " +
+                        "{{#if value.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{eqEcho this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                        " <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value.dateTime}}</span>"
+                }
+            },
+            controller: "{" +
+                "render:function(value){\n" +
+                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                "  	$(function() {" +
+                "$( \".datepicker\" ).datepicker({" +
+                "showOn: \"button\"," +
+                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
+                "buttonImageOnly: true" +
+                "});" +
+                "});\n" +
+                "}," +
+                "unformat:function(value){\n" +
+                "return value\n" +
+                "}," +
+                "format:function(value){\n" +
+                "var jsDate = app.utils.date.parse(value);\n" +
+                "jsDate = app.utils.date.roundTime(jsDate);\n"+
+                "value = {\n"+
+                "dateTime: value,\n"+
+                "//TODO Account for user prefs\n"+
+                    "date: app.utils.date.format(jsDate, 'Y-m-d'),\n"+
+                    "time: app.utils.date.format(jsDate, 'h:i:s'),\n"+
+                "hours: app.utils.date.format(jsDate, 'H'),\n"+
+                "minutes: app.utils.date.format(jsDate, 'i'),\n"+
+                "seconds: app.utils.date.format(jsDate, 's'),\n"+
+                "amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm',\n"+
+                "};\n"+
+                "return value\n" +
+                "},\n" +
+                "timeOptions:{"+
+                            "    hours:[{key:\"00\",value:\"00\"},{key:\"01\",value:\"01\"},{key:\"02\",value:\"02\"},{key:\"03\",value:\"03\"},{key:\"04\",value:\"04\"},"+
+                            "        {key:\"05\",value:\"05\"},{key:\"06\",value:\"06\"},{key:\"07\",value:\"07\"},{key:\"08\",value:\"08\"},{key:\"09\",value:\"09\"},"+
+                            "        {key:\"10\",value:\"10\"},{key:\"11\",value:\"11\"},{key:\"12\",value:\"12\"},{key:\"13\",value:\"13\"},{key:\"14\",value:\"14\"},"+
+                            "        {key:\"15\",value:\"15\"},{key:\"16\",value:\"16\"},{key:\"17\",value:\"17\"},{key:\"18\",value:\"18\"},{key:\"19\",value:\"19\"},"+
+                            "        {key:\"20\",value:\"20\"},{key:\"21\",value:\"21\"},{key:\"22\",value:\"22\"},{key:\"23\",value:\"23\"},{key:\"24\",value:\"24\"}"+
+                            "            ],"+
+                            "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}],"+
+                            "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]"+
+                            "},"+
+                "bindDomChange: function (model, fieldName) {\n"+
+                "var self = this\n"+
+                                "var date = this.$el.find('input');\n"+
+
+                            "var hour = this.$el.find('.date_time_hours');\n"+
+                                "var minute = this.$el.find('.date_time_minutes');\n"+
+                            "date.on('change', function(ev) {\n"+
+                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
+                            "});\n"+
+                            " hour.on('change', function(ev) {\n"+
+                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
+                            "});\n"+
+                            "minute.on('change', function(ev) {\n"+
+                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
+                            "});\n"+
+                                "}\n"+
+            "}"
         },
         "integer":{
             "views" : {
@@ -611,6 +734,7 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
+
         "enum":{
             "views" : {
                 "detailView":{
@@ -627,6 +751,7 @@ fixtures.metadata = {
                     "template":"<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
+
             controller: "{" +
                 "fieldType:\"select\",\n" +
                 "render:function(){" +
@@ -639,12 +764,6 @@ fixtures.metadata = {
                 "}" +
                 "" +
                 "\n}\n"
-
-
-
-
-
-
 
         },
 

@@ -9,10 +9,10 @@ describe("SugarFieldManager", function () {
         var app = SUGAR.App;
         app.metadata.set(fixtures.metadata);
         app.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
-        app.dataManager.declareModels(fixtures.metadata);
+        app.data.declareModels(fixtures.metadata);
 
         //Need a sample Bean
-        var bean = app.dataManager.createBean("Contacts", {
+        var bean = app.data.createBean("Contacts", {
             first_name: "Foo",
             last_name: "Bar"
         });

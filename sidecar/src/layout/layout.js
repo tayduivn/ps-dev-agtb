@@ -57,6 +57,7 @@
                     return bean.get(field);
                 });
 
+
                 Handlebars.registerHelper('in',function(val, array, retTrue, retFalse) {
                     //if it's not an object/array make it an one
                     if(typeof(array) != 'object')array = [array];
@@ -67,6 +68,7 @@
                 });
 
                 Handlebars.registerHelper('eq', function(val1, val2, retTrue, retFalse) {
+
                     if (val1 == val2) {
                         return retTrue;
                     }

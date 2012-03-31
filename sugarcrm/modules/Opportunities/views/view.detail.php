@@ -39,7 +39,7 @@ class OpportunitiesViewDetail extends ViewDetail {
  	}
  	
  	function display() {
-	    
+
 	    $currency = new Currency();
 	    if(isset($this->bean->currency_id) && !empty($this->bean->currency_id))
 	    {

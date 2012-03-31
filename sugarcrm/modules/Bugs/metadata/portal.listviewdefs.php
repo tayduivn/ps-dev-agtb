@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Bugs'] = array(
+$listViewDefs['Bugs'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_1',

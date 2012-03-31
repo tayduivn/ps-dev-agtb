@@ -25,7 +25,7 @@ describe("Offline+DB+server", function() {
 
         app.dataManager.init();
         Backbone.sync = app.Offline.dataManager.sync;
-        metadata = SugarTest.loadJson("things-metadata");
+        metadata = SugarTest.loadFixture("things-metadata");
 
         SugarTest.resetWaitFlag();
 

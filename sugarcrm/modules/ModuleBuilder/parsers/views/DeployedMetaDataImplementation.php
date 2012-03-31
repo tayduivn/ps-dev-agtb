@@ -118,6 +118,10 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 				case MB_WIRELESSBASICSEARCH:
 				case MB_WIRELESSADVANCEDSEARCH:
 				case MB_WIRELESSLISTVIEW:
+                case MB_PORTALLISTVIEW:
+                    // Set a view type (ie, portal, wireless)
+                    $_viewtype =  in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALDETAILVIEW, MB_PORTALEDITVIEW, MB_PORTALSEARCHVIEW)) ? 'portal' : 'wireless';
+
 					// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
 					// First, need to identify which SugarObject template would be the best to use
 					$type = $module->getType () ;
@@ -127,7 +131,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/metadata/".basename ( $this->_sourceFilename ) ) ;
 
 					if ($loaded === null)
-						throw new Exception( get_class ( $this ) . ": cannot create wireless view for module $moduleName - definitions for $view are missing in the SugarObject template for type $type" ) ;
+						throw new Exception( get_class ( $this ) . ": cannot create $_viewtype view for module $moduleName - definitions for $view are missing in the SugarObject template for type $type" ) ;
 
 					$loaded = $this->replaceVariables($loaded, $module);
 					$this->_saveToFile ( $this->_sourceFilename, $loaded , false ) ; // write out without the placeholder module_name and object
