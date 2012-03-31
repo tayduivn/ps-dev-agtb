@@ -41,7 +41,6 @@ class Bug38100Test extends SOAPTestCase
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
 
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Reports');
         $this->useOutputBuffering = false;
 		parent::setUp();
     }
@@ -49,7 +48,6 @@ class Bug38100Test extends SOAPTestCase
     public function tearDown()
     {
 		unset($GLOBALS['app_list_strings']);
-        unset($GLOBALS['mod_strings']);
 		parent::tearDown();
     }
 
