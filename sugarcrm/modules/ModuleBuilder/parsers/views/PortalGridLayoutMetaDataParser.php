@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=ent ONLY
 if (! defined ( 'sugarEntry' ) || ! sugarEntry)
     die ( 'Not A Valid Entry Point' ) ;
 /*********************************************************************************
@@ -23,17 +23,15 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 
-require_once 'modules/ModuleBuilder/parsers/views/WirelessGridLayoutMetaDataParser.php' ;
+require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
-class  PortalGridLayoutMetaDataParser extends WirelessGridLayoutMetaDataParser
+class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 {
 
     static $variableMap = array (
-        //BEGIN SUGARCRM flav=ent ONLY
     	MB_PORTALEDITVIEW => 'EditView' ,
     	MB_PORTALDETAILVIEW => 'DetailView' ,
-        //END SUGARCRM flav=ent ONLY
     	) ;
 
     /**
@@ -50,87 +48,63 @@ class  PortalGridLayoutMetaDataParser extends WirelessGridLayoutMetaDataParser
      * here we convert from file (canonical) metadata => internal metadata format
      * @param $panels
      * @param $fielddefs
+     * @return array $internalPanels
      */
-//    protected function _convertFromCanonicalForm($panels , $fielddefs)
-//    {
-//
-//    }
-
-    /**
-     * here we go from POST vars => internal metadata format
-     * @param $fielddefs
-     */
-//    protected function _populateFromRequest(&$fielddefs)
-//    {
-//
-//    }
-
-    /**
-     * Checks for the existence of the view variable for portal metadata
-     *
-     * @param array $viewdefs The viewdef array
-     * @param string $view The view to check for
-     * @return bool
-     */
-    public function hasViewVariable($viewdefs, $view) {
-        $name = MetaDataFiles::getViewDefVar($view);
-        $client = MetaDataFiles::getViewClient($view);
-        return $name && $client && isset($viewdefs[$client]['view'][$name]);
-    }
-
-    /**
-     * Gets the viewdefs for portal from the entire viewdef array
-     *
-     * @param array $viewdefs The full viewdef collection below $viewdefs[$module]
-     * @param string $view The view to fetch the defs for
-     * @return array
-     */
-    public function getDefsFromArray($viewdefs, $view) {
-        return $this->hasViewVariable($viewdefs, $view) ? $viewdefs[MetaDataFiles::getViewClient($view)]['view'][MetaDataFiles::getViewDefVar($view)] : array();
-    }
-
-    /**
-     * Gets panel defs from the viewdef array
-     * @param array $viewdef The viewdef array
-     * @return array
-     */
-    protected function getPanelsFromViewDef($viewdef) {
-        $defs = $this->getDefsFromArray($viewdef, $this->_view);
-        if (isset($defs['panels'])) {
-    		return $defs['panels'];
-    	}
-
-        return array();
-    }
-
-    /*
-     * Save a draft layout
-     */
-    function writeWorkingFile ()
+    protected function _convertFromCanonicalForm($panels , $fielddefs)
     {
-        $this->_populateFromRequest ( $this->_fielddefs ) ;
-        $viewdefs = $this->_viewdefs ;
+        // canonical form has format:
+        // $panels[n]['label'] = label for panel n
+        //           ['fields'] = array of fields
 
-        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
-        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
-        $this->implementation->save ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
-    }
 
-    /*
-     * Deploy the layout
-     * @param boolean $populate If true (default), then update the layout first with new layout information from the $_REQUEST array
-     */
-    function handleSave ($populate = true)
-    {
-    	$GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->handleSave()" ) ;
+        // internally we want:
+        // $panels[label for panel] = fields of panel in rows,cols format
 
-        if ($populate)
-            $this->_populateFromRequest ( $this->_fielddefs ) ;
+        $internalPanels = array();
+        foreach ($panels as $n => $panel) {
+            $pLabel = !empty($panel['label']) ? $panel['label'] : $n;
 
-        $viewdefs = $this->_viewdefs ;
-        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
-        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
-        $this->implementation->deploy ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+            // going from a list of fields to putting them in rows,cols format.
+            $internalFieldRows = array();
+            $row = array();
+            foreach ($panel['fields'] as $field) {
+                // try to find the column span of the field. It can range from 1 to max columns of the panel.
+                $colspan = isset($field['displayParams']['colspan']) ? $field['displayParams']['colspan'] : 1;
+                $colspan = min($colspan, $this->getMaxColumns()); // we can't put in a field wider than the panel.
+                $cols_left = $this->getMaxColumns() - count($row);
+
+                if ($cols_left < $colspan) {
+                    // add $cols_left of (empty) to $row and put it in
+                   for($i=0; $i < $cols_left; $i++) {
+                       $row[] = MBConstants::$EMPTY;
+                   }
+                   $internalFieldRows[] = $row;
+                   $row = array();
+                }
+
+                // add field to row + enough (empty) to make it to colspan
+                $row[] = empty($field) ? $this->FILLER : $field;
+                for($i=0; $i < $colspan-1; $i++){
+                    $row[] = MBConstants::$EMPTY;
+                }
+            }
+
+            // add the last incomplete row if necessary
+            if (!empty($row)) {
+                $cols_left = $this->getMaxColumns() - count($row);
+                // add $cols_left of (empty) to $row and put it in
+                for($i=0; $i < $cols_left; $i++) {
+                    $row[] = MBConstants::$EMPTY;
+                }
+                $internalFieldRows[] = $row;
+            }
+            $internalPanels[$pLabel] = $internalFieldRows;
+        }
+
+
+
+
+        return $internalPanels;
     }
 
 }
