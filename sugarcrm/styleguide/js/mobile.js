@@ -87,7 +87,7 @@
 	  return false;
     })   
 
-  	$('.icon-star-empty, .icon-star').live('click', function () {
+  	$('.icon-star-empty, .icon-star').on('click', function () {
   	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
   	      return false;
   	})
@@ -95,22 +95,9 @@
     $('#tour').live('click', function () {
       $(this).remove();
     })
-	var hout = Mustache.render(header_template), fout = Mustache.render(footer_template), items;
-
-    // social stream
-	$.ajax({
-		url:'sample.json',
-		success:function(stream){
-		    var html = Mustache.render(stream_items_template, eval('('+stream+')'));
-		    $('#listing').html(html);
-		},
-		error:function(){alert('error');}
-	});
 
 	function rmel(){
       $('.deleted').remove();
 	}
-
-	$('body#nomad').prepend(hout).append(fout);
 
 })(window.Zepto);
