@@ -19,3 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+abstract class SugarApi {
+    // This class intentionally left blank.
+    // It primarialy serves as a way to flag which classes could be called from externally facing API's
+}

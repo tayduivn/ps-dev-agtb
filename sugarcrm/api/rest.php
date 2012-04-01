@@ -31,7 +31,7 @@ ob_start();
 chdir(dirname(__FILE__).'/../');
 
 require('include/entryPoint.php');
-include_once("include/api/service/RestService.php");
+include_once("include/api/SugarApi/RestService.php");
 
 $service = new RestService();
 $service->execute();

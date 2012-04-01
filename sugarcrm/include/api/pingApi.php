@@ -20,35 +20,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/service/ServiceBase.php');
-require_once('include/api/service/ServiceDictionaryRest.php');
+// A simple example class
+class pingApi extends SugarApi {
+    public function registerApiRest() {
+        return array(
+            array(
+                'reqType' => 'GET',
+                'path' => array('ping'),
+                'pathVars' => array(''),
+                'method' => 'ping',
+                'shortHelp' => 'An example API only responds with pong',
+                'longHelp' => 'include/api/html/ping_base_help.html',
+            ),
+            array(
+                'reqType' => 'GET',
+                'path' => array('ping', 'whattimeisit'),
+                'pathVars' => array('', 'subMethod'),
+                'method' => 'ping',
+                'shortHelp' => 'An example API only responds with the current time in server format.',
+                'longHelp' => 'include/api/html/ping_whattimeisit_help.html',
+            ),
+        );
+    }
 
-class RestService extends ServiceBase {
-
-    /**
-     * This function executes the current request and outputs the response directly.
-     */
-    public function execute() {
-        try {
-            $route = $this->findRoute();
-            
-            if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
-                $this->authenticateUser();
-            }
-        } catch ( SugarApiException $e ) {
-            $this->handleException($e);
-        } catch ( Exception $e ) {
-            // Unknown exception
-            $apiException = new SugarApiExceptionError('LBL_GENERIC_ERROR',0,$e);
-            $this->handleException($apiException);
+    public function ping($api, $args) {
+        if ( isset($args['subMethod']) && $args['subMethod'] == 'whattimeisit' ) {
+            require_once('include/SugarDateTime.php');
+            $dt = new SugarDateTime('now');
+            return array('ping'=>$dt->asDb());
         }
+
+        // Just a normal ping request
+        return array('ping'=>"pong");
     }
 
-    protected function findRoute() {
-        // Pull route from URL
-        
-        // Load service dictionary
-        $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');
-        $route = $this->
-    }
 }

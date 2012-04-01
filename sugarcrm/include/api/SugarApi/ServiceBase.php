@@ -21,17 +21,35 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/SugarApi/SugarApiException.php');
+require_once('include/api/SugarApi/SugarApi.php');
 
 abstract class ServiceBase {
     abstract public function execute();
+    abstract protected function handleException(SugarApiException $exception);
     
     protected function loadServiceDictionary($dictionaryName) {
-        require_once("include/api/service/{$dictionaryName}.php");
+        require_once("include/api/SugarApi/{$dictionaryName}.php");
         
         $dict = new $dictionaryName();
 
         // Load the dictionary, because if the dictionary isn't there it will generate it.
         $dict->loadDictionary();
         return $dict;
+    }
+
+    protected function loadApiClass($route) {
+        if ( ! file_exists($route['file']) ) {
+            throw SugarApiException('Missing API file.');
+        }
+        require_once($route['file']);
+
+        if ( ! class_exists($route['className']) ) {
+            throw SugarApiException('Missing API class.');
+        }
+
+        $apiClassName = $route['className'];
+        $apiClass = new $apiClassName();
+        
+        return $apiClass;
     }
 }
