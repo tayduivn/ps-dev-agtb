@@ -33,6 +33,7 @@
 function submitListViewDCMenu(submitElem) {
 var callback = {
 success: function(o) {
+
 var contentElem = document.getElementById('dcSearch');
 while ( typeof(contentElem) != 'undefined' && contentElem.className != 'dccontent' ) {
 contentElem = contentElem.parentNode;
@@ -45,7 +46,7 @@ window.history.go(0);
 }
 };
 {/literal}
-window.opener.YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents&action=extdoc&isPopup={$isPopup}&elemBaseName={$elemBaseName}&apiName={$apiName}&button=Search&name_basic="+document.getElementById('dcSearch').value);
+YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents&action=extdoc&isPopup={$isPopup}&elemBaseName={$elemBaseName}&apiName={$apiName}&button=Search&name_basic="+document.getElementById('dcSearch').value);
 {literal}
 }
 {/literal}
