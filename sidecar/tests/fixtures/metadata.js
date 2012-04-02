@@ -41,22 +41,22 @@ fixtures.metadata = {
                     "name": "status",
                     "type": "enum",
                     "options": [
-                        {"key":"s1", "value":"s1"},
-                        {"key":"s2", "value":"s2"},
-                        {"key":"s3", "value":"s3"}
+                        {"key": "s1", "value": "s1"},
+                        {"key": "s2", "value": "s2"},
+                        {"key": "s3", "value": "s3"}
                     ]
                 },
                 "priority": {
-                     "name": "priority",
-                     "type": "enum",
-                     "multi":true,
+                    "name": "priority",
+                    "type": "enum",
+                    "multi": true,
 
-                     "options": [
-                        {"key":"c1", "value":"c1"},
-                        {"key":"c2", "value":"c2"},
-                        {"key":"c3", "value":"c3"}
-                      ]
-                                },
+                    "options": [
+                        {"key": "c1", "value": "c1"},
+                        {"key": "c2", "value": "c2"},
+                        {"key": "c3", "value": "c3"}
+                    ]
+                },
                 "date_entered": {
                     "name": "date_entered",
                     "type": "datetimecombo"
@@ -626,7 +626,7 @@ fixtures.metadata = {
                 "format:function(value){\n" +
                 "return value\n" +
                 "},\n" +
-            "}"
+                "}"
         },
         "datetimecombo": {
             "views": {
@@ -636,12 +636,12 @@ fixtures.metadata = {
                 "editView": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> "+
-                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{eqEcho this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
+                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{in this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
                         " : " +
-                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{eqEcho this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{in this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
                         " " +
-                        "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{eqEcho this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                        "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{in this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
                         " <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
@@ -666,61 +666,61 @@ fixtures.metadata = {
                 "}," +
                 "format:function(value){\n" +
                 "var jsDate = app.utils.date.parse(value);\n" +
-                "jsDate = app.utils.date.roundTime(jsDate);\n"+
-                "value = {\n"+
-                "dateTime: value,\n"+
-                "//TODO Account for user prefs\n"+
-                    "date: app.utils.date.format(jsDate, 'Y-m-d'),\n"+
-                    "time: app.utils.date.format(jsDate, 'h:i:s'),\n"+
-                "hours: app.utils.date.format(jsDate, 'H'),\n"+
-                "minutes: app.utils.date.format(jsDate, 'i'),\n"+
-                "seconds: app.utils.date.format(jsDate, 's'),\n"+
-                "amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm',\n"+
-                "};\n"+
+                "jsDate = app.utils.date.roundTime(jsDate);\n" +
+                "value = {\n" +
+                "dateTime: value,\n" +
+                "//TODO Account for user prefs\n" +
+                "date: app.utils.date.format(jsDate, 'Y-m-d'),\n" +
+                "time: app.utils.date.format(jsDate, 'h:i:s'),\n" +
+                "hours: app.utils.date.format(jsDate, 'H'),\n" +
+                "minutes: app.utils.date.format(jsDate, 'i'),\n" +
+                "seconds: app.utils.date.format(jsDate, 's'),\n" +
+                "amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm',\n" +
+                "};\n" +
                 "return value\n" +
                 "},\n" +
-                "timeOptions:{"+
-                            "    hours:[{key:\"00\",value:\"00\"},{key:\"01\",value:\"01\"},{key:\"02\",value:\"02\"},{key:\"03\",value:\"03\"},{key:\"04\",value:\"04\"},"+
-                            "        {key:\"05\",value:\"05\"},{key:\"06\",value:\"06\"},{key:\"07\",value:\"07\"},{key:\"08\",value:\"08\"},{key:\"09\",value:\"09\"},"+
-                            "        {key:\"10\",value:\"10\"},{key:\"11\",value:\"11\"},{key:\"12\",value:\"12\"},{key:\"13\",value:\"13\"},{key:\"14\",value:\"14\"},"+
-                            "        {key:\"15\",value:\"15\"},{key:\"16\",value:\"16\"},{key:\"17\",value:\"17\"},{key:\"18\",value:\"18\"},{key:\"19\",value:\"19\"},"+
-                            "        {key:\"20\",value:\"20\"},{key:\"21\",value:\"21\"},{key:\"22\",value:\"22\"},{key:\"23\",value:\"23\"}"+
-                            "            ],"+
-                            "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}],"+
-                            "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]"+
-                            "},"+
-                "bindDomChange: function (model, fieldName) {\n"+
-                "var self = this\n"+
-                                "var date = this.$el.find('input');\n"+
+                "timeOptions:{" +
+                "    hours:[{key:\"00\",value:\"00\"},{key:\"01\",value:\"01\"},{key:\"02\",value:\"02\"},{key:\"03\",value:\"03\"},{key:\"04\",value:\"04\"}," +
+                "        {key:\"05\",value:\"05\"},{key:\"06\",value:\"06\"},{key:\"07\",value:\"07\"},{key:\"08\",value:\"08\"},{key:\"09\",value:\"09\"}," +
+                "        {key:\"10\",value:\"10\"},{key:\"11\",value:\"11\"},{key:\"12\",value:\"12\"},{key:\"13\",value:\"13\"},{key:\"14\",value:\"14\"}," +
+                "        {key:\"15\",value:\"15\"},{key:\"16\",value:\"16\"},{key:\"17\",value:\"17\"},{key:\"18\",value:\"18\"},{key:\"19\",value:\"19\"}," +
+                "        {key:\"20\",value:\"20\"},{key:\"21\",value:\"21\"},{key:\"22\",value:\"22\"},{key:\"23\",value:\"23\"}" +
+                "            ]," +
+                "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}]," +
+                "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]" +
+                "}," +
+                "bindDomChange: function (model, fieldName) {\n" +
+                "var self = this\n" +
+                "var date = this.$el.find('input');\n" +
 
-                            "var hour = this.$el.find('.date_time_hours');\n"+
-                                "var minute = this.$el.find('.date_time_minutes');\n"+
-                            "date.on('change', function(ev) {\n"+
-                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
-                            "});\n"+
-                            " hour.on('change', function(ev) {\n"+
-                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
-                            "});\n"+
-                            "minute.on('change', function(ev) {\n"+
-                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
-                            "});\n"+
-                                "}\n"+
-            "}"
+                "var hour = this.$el.find('.date_time_hours');\n" +
+                "var minute = this.$el.find('.date_time_minutes');\n" +
+                "date.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                " hour.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                "minute.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                "}\n" +
+                "}"
         },
-        "integer":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+        "integer": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
@@ -735,20 +735,20 @@ fixtures.metadata = {
                 "}"
         },
 
-        "enum":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ..\/value \"SELECTED\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">"+
+        "enum": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ..\/value \"SELECTED\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
 
@@ -759,7 +759,7 @@ fixtures.metadata = {
                 "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
                 "   $('select').chosen();" +
                 "   console.log(this.fieldType + \"[name=\" + this.name + \"]\");" +
-                "   return result;"+
+                "   return result;" +
 
                 "}" +
                 "" +
@@ -779,7 +779,7 @@ fixtures.metadata = {
             }
         },
         "checkbox": {
-            "views" : {
+            "views": {
                 "detailView": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
@@ -788,7 +788,7 @@ fixtures.metadata = {
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                    }
+                }
             },
             controller: "{\n" +
                 "unformat:function(value){\n" +
