@@ -224,15 +224,15 @@
             key = key || "metadata";
             if (data.modules) {
                 _.each(data.modules, function(entry, module) {
-                                    _metadata[module] = entry;
-                                app.cache.set(key + "." + module, entry);
-                            });
+                    _metadata[module] = entry;
+                    app.cache.set(key + "." + module, entry);
+                });
             }
             if (data.sugarFields) {
                 _.each(data.sugarFields, function(entry, module) {
-                                    _sugarFields[module] = entry;
-                                app.cache.set(key + "." + module, entry);
-                            });
+                    _sugarFields[module] = entry;
+                    app.cache.set(key + "." + module, entry);
+                });
             }
             //TODO add template support
         },
