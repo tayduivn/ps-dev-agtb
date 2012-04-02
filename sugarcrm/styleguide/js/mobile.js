@@ -92,14 +92,58 @@
 		    window.history.back(-1);		
 		}
 	});
-    $('#listing > article:last-child a.show_more_posts').on('click', function(e){
+    $('#listing > article:last-child a.show_more_posts').live('click', function(e){
 	    $(this).closest('article').remove();
-	    $('#listing').append(more_posts+more_posts+more_posts+more_posts+more_posts+more_posts_link);
+		inject_posts('append',$('#listing'),5);
+    	if($('#listing > article').size() > 25) {
+            $('#listing > article').slice(0,5).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+            $('#listing').prepend(more_posts_link);
+			setTimeout(rmel,250);
+		}
 		return false;
 	});
-	var more_posts = '<article><i class="icon-star-empty"></i><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i></a><a href="" title="Remove"><i class="icon-trash icon-md"></i></a></span></span></article>',
+
+    $('#listing > article:first-child a.show_more_posts').live('click', function(e){
+	    $(this).closest('article').remove();
+	    inject_posts('prepend',$('#listing'),5);
+		return false;
+	});
+
+	var post = '<article><i class="icon-star-empty"></i><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i></a><a href="" title="Remove"><i class="icon-trash icon-md"></i></a></span></span></article>',
 	    more_posts_link = '<article><div><a class="show_more_posts" href="">Show more posts...</a></div></article>';
+
+    function inject_posts(order,anchor,numberofrecords){
+	    var posts = '';
+        for(i=0;i<numberofrecords;i++){
+	        if(i===0 && order==='prepend') {
+		        posts = more_posts_link + posts;
+			}
+	        posts = posts+post;
+	        if(i===numberofrecords-1 && order==='append') {
+		        posts = posts+more_posts_link;
+			}
+		}
+	    if(order==='prepend'){
+		    anchor.prepend(posts);
+		} else if(order==="append") {
+		    anchor.append(posts);
+		}
+    }
+
 	function rmel(){
       $('.deleted').remove();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 })(window.Zepto);
