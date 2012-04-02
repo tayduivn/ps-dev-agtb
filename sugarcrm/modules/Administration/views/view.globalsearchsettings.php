@@ -69,14 +69,11 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         //BEGIN SUGARCRM flav=pro ONLY
         //FTS Options
         $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
-        $ftsScheduleEnabledText = '';
         if(isset($GLOBALS['sugar_config']['full_text_engine']))
         {
             $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
             $defaultEngine = $engines[0];
             $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
-            if(!empty($schedulerID))
-               $ftsScheduleEnabledText = string_format($mod_strings['LBL_FTS_SCHED_ENABLED'], array($schedulerID));
         }
         else
         {
@@ -97,7 +94,6 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign("fts_scheduled", !empty($schedulerID) && !$schedulerCompleted);
         $disableEdit = !empty($GLOBALS['sugar_config']['full_text_engine_disable_edit']) ? TRUE : FALSE;
         $sugar_smarty->assign('disableEdit',$disableEdit);
-        $sugar_smarty->assign('ftsScheduleEnabledText',$ftsScheduleEnabledText);
         $sugar_smarty->assign('justRequestedAScheduledIndex', $justRequestedAScheduledIndex);
         //End FTS
         //END SUGARCRM flav=pro ONLY

@@ -902,6 +902,8 @@
 
 	CAL.open_edit_dialog = function (params){
 						
+						document.getElementById("form_content").innerHTML = "";
+						
 						CAL.editDialog.center();						
 						CAL.editDialog.show();		
 						
@@ -946,7 +948,6 @@
 	CAL.reset_edit_dialog = function (){
 		var e;
 
-		document.getElementById("form_content").innerHTML = "";	
 		document.forms["CalendarEditView"].elements["current_module"].value = "Meetings";
 	
 		CAL.get("radio_call").removeAttribute("disabled");
