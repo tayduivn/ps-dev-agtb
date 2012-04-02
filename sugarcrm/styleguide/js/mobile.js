@@ -86,6 +86,13 @@
     $('#tour').on('click', function () {
       $(this).remove();
     });
+    $('#back .back').on('click', function(){	
+		if(history.length<=2) {
+			window.location="./";
+		}else{
+		    window.history.back(-1);		
+		}
+	});
 	function rmel(){
       $('.deleted').remove();
 	}
