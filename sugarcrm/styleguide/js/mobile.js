@@ -7,7 +7,7 @@
 		$('html').find('body').addClass('onL');
 	});
 	$('#logo').swipeLeft(function () {
-		$('html').find('body').removeClass('onL');
+		$('html').find('body').removeClassClass('onL');
 	});
 	$('#create').bind('touchmove', function (e) {
 		e.preventDefault();}
@@ -43,15 +43,15 @@
 		$('html').find('body').toggleClass('onR');
 		return false;
     });
-	$('article').swipeLeft(function () {
+	$('article').live('swipeLeft',function () {
 		$(this).find('.grip').addClass('on');
 		$(this).find('[id^=listing-action] span').removeClass('hide').addClass('on');
 	});	
-	$('article').swipeRight(function () {
+	$('article').live('swipeRight',function () {
 	    $(this).find('.grip').removeClass('on');
 	    $(this).find('[id^=listing-action] span').addClass('hide').removeClass('on');
 	});	
-    $('article .grip').on('click', function () {
+    $('article .grip').live('click', function () {
 	    $(this).next('.actions').toggleClass('hide');
 	    $(this).toggleClass('on');
     })
@@ -73,7 +73,7 @@
 		$(this).remove();
 		return false;
     });
-    $('a[title=Remove]').on('click', function () {
+    $('a[title=Remove]').live('click', function () {
 		$(this).closest('article').addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
 		setTimeout(rmel,250);
 		return false;
@@ -92,6 +92,13 @@
 		    window.history.back(-1);		
 		}
 	});
+    $('#listing > article:last-child a.show_more_posts').on('click', function(e){
+	    $(this).closest('article').remove();
+	    $('#listing').append(more_posts+more_posts+more_posts+more_posts+more_posts+more_posts_link);
+		return false;
+	});
+	var more_posts = '<article><i class="icon-star-empty"></i><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i></a><a href="" title="Remove"><i class="icon-trash icon-md"></i></a></span></span></article>',
+	    more_posts_link = '<article><div><a class="show_more_posts" href="">Show more posts...</a></div></article>';
 	function rmel(){
       $('.deleted').remove();
 	}
