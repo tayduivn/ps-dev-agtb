@@ -102,6 +102,7 @@ $sugar_smarty->assign("APP", $app_strings);
 $sugar_smarty->assign("LANG", $current_language);
 $sugar_smarty->assign("ACLAllowedModules", $ACLAllowedModules);
 $sugar_smarty->assign("USER_ID_MD5", md5($current_user->id));
+$sugar_smarty->assign("ENTROPY", mt_rand());
 $sugar_smarty->assign("BUTTONS", $buttons);
 $sugar_smarty->assign("IS_ADMIN", $current_user->is_admin);
 $sugar_smarty->assign("users_array", $user_array);

@@ -418,7 +418,9 @@ function login_user($portal_auth){
 
      if(!empty($user)) {
             global $current_user;
-            $current_user = $user;
+            $bean = new User();
+            $bean->retrieve($user['id']);
+            $current_user = $bean;
             //BEGIN SUGARCRM flav=ent ONLY
             $sessionManager = new SessionManager();
             if(!$sessionManager->canAddSession()){

@@ -67,6 +67,25 @@ $xtpl->assign("ID", $focus->id);
 $xtpl->assign("NAME", Team::getDisplayName($focus->name, $focus->name_2));
 $xtpl->assign("DESCRIPTION", $focus->description);
 
+$buttons = array(
+    <<<EOD
+            <input title="{APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="this.form.action.value='Save'; return check_form('EditView');" type="submit" id="btn_save2" value="{$app_strings['LBL_SAVE_BUTTON_LABEL']}" />
+EOD
+,
+    <<<EOD
+            <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" id="btn_cancel2" value="{$app_strings['LBL_CANCEL_BUTTON_LABEL']}" />
+EOD
+
+);
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$action_button = smarty_function_sugar_action_menu(array(
+    'id' => 'Teams_edit_action_buttons',
+    'buttons' => $buttons,
+    'class' => 'clickMenu fancymenu',
+), $xtpl);
+
+$xtpl->assign("ACTION_BUTTON", $action_button);
+
 
 global $current_user;
 if($current_user->isAdminForModule('Users') && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
