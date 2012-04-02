@@ -384,6 +384,20 @@ if( $memory_limit == "" ){          // memory_limit disabled at compile time, no
             <td  >'.$zlibStatus.'</td>
           </tr>';
 
+    // zip
+    if(class_exists("ZipArchive")) {
+        $zipStatus = "{$mod_strings['LBL_CHECKSYS_OK']}";
+    } else {
+        $zipStatus = "<span class='stop'><b>{$mod_strings['ERR_CHECKSYS_ZIP']}</b></span>";
+    }
+            $envString .='
+          <tr>
+            <td></td>
+            <td><strong>'.$mod_strings['LBL_CHECKSYS_ZIP'].'</strong></td>
+            <td  >'.$zipStatus.'</td>
+          </tr>';
+
+
 
     // imap
     if(function_exists('imap_open')) {
