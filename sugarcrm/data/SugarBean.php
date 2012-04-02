@@ -2048,7 +2048,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
 	function check_date_relationships_load()
 	{
-		global $disable_date_format;
+		$disable_date_format = true;
 		global $timedate;
 		if (empty($timedate))
 			$timedate=TimeDate::getInstance();
