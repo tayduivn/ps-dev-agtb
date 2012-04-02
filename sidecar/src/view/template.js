@@ -6,8 +6,10 @@
         sources,
 
         /**
-         * An abstraction of SugarField templates.
-         * @class Template
+         * Loads and compiles Handlebars templates.
+         * @class View.TemplateManager
+         * @singleton
+         * @alias SUGAR.App.template
          */
         module = {
             //Initialize will pull the compiled templates from local storage and populate Handlebars.templates
@@ -42,7 +44,7 @@
              * Retrieves a compiled handlebars template
              * @method
              * @param {String} key Identifier of the template to be retrieved
-             * @return {*}
+             * @return {Function} compiled Handlebars template
              */
             get: function(key) {
                 if (Handlebars.templates && Handlebars.templates[key])
