@@ -101,7 +101,8 @@
 	    return false;
 	})
 	
-  $('input#bugsSearchQuery').quicksearch('table.searchable tbody tr')
+  $('#moduleWidgetBugs .form-search input').quicksearch('#moduleWidgetBugs table.searchable tbody tr')
+  $('#moduleWidgetCases .form-search input').quicksearch('#moduleWidgetCases table.searchable tbody tr')
   $('input#activitySearchQuery').quicksearch('article')
 
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
