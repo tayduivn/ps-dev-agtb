@@ -50,10 +50,14 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
     private $prevMinCronInterval;
 
+    private $account;
+
     public function setUp()
     {
+        $GLOBALS['db']->query("TRUNCATE table accounts");
+        $GLOBALS['db']->query("TRUNCATE table contacts");
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        SugarTestAccountUtilities::createAccount();
+        $this->account = SugarTestAccountUtilities::createAccount();
         SugarTestContactUtilities::createContact();
 
         if(empty($this->_db))
@@ -85,9 +89,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFTSPopulateFullQueue()
     {
         $this->indexer->initiateFTSIndexer();
-
-        $ids = SugarTestAccountUtilities::getCreatedAccountIds();
-        $accountID = $ids[0];
+        $accountID = $this->account->id;
         $actualID = $this->recordExistInQueue($accountID);
         $this->assertEquals($accountID, $actualID);
     }
