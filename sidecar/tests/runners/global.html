@@ -9,33 +9,33 @@
     <script type="text/javascript" src='../../lib/jquery/jquery.min.js'></script>
     <script type="text/javascript" src='../../lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></script>
     <script type="text/javascript" src='../../lib/backbone/backbone.js'></script>
-	<script language="javascript" src="../../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+	<script type="text/javascript" src="../../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
 	<script type="text/javascript" src='../../lib/sugarapi/sugarapi.js'></script>
-	<script language="javascript" src="../../lib/stash/stash.js"></script>
-    <script language="javascript" src="../../lib/async/async.js"></script>
+	<script type="text/javascript" src="../../lib/stash/stash.js"></script>
+    <script type="text/javascript" src="../../lib/async/async.js"></script>
 
     <!-- app files -->
-    <script src='../../../sidecar/src/app.js'></script>
-    <script src='../../../sidecar/src/utils/utils.js'></script>
-    <script src="../../../sidecar/src/events/events.js"></script>
-    <script src='../../../sidecar/src/cache/cache.js'></script>
-    <script src='../../../sidecar/src/template/template.js'></script>
-    <script src='../../../sidecar/src/sugarfield/sugarfieldmanager.js'></script>
-    <script src='../../../sidecar/src/sugarfield/sugarfield.js'></script>
-    <script src='../../../sidecar/src/context/context.js'></script>
-    <script src='../../../sidecar/src/controller/controller.js'></script>
-    <script src='../../../sidecar/src/controller/router.js'></script>
-    <script src='../../../sidecar/src/metadata/metadata-manager.js'></script>
-    <script src='../../../sidecar/src/logger.js'></script>
-    <script src='../../../sidecar/src/config.js'></script>
-    <script src='../../../sidecar/src/data/validation.js'></script>
-    <script src='../../../sidecar/src/data/bean.js'></script>
-    <script src='../../../sidecar/src/data/bean-collection.js'></script>
-    <script src='../../../sidecar/src/data/data-manager.js'></script>
-    <script src='../../../sidecar/src/layout/layout.js'></script>
-    <script src="../../../sidecar/src/lang/language.js"></script>
-    <script src='../../src/cache/cache.js'></script>
-    <script type="text/javascript" src='../../../sidecar/src/sugarauth/sugarauth.js'></script>
+    <script src='../../src/app.js'></script>
+    <script src='../../src/utils/utils.js'></script>
+    <script src="../../src/core/events.js"></script>
+    <script src='../../src/core/cache.js'></script>
+    <script src='../../src/view/template.js'></script>
+    <script src='../../src/view/sugar-field-manager.js'></script>
+    <script src='../../src/view/sugar-field.js'></script>
+    <script src='../../src/core/context.js'></script>
+    <script src='../../src/core/controller.js'></script>
+    <script src='../../src/core/router.js'></script>
+    <script src='../../src/core/metadata-manager.js'></script>
+    <script src='../../src/utils/logger.js'></script>
+    <script src='../../src/config.js'></script>
+    <script src='../../src/data/validation.js'></script>
+    <script src='../../src/data/bean.js'></script>
+    <script src='../../src/data/bean-collection.js'></script>
+    <script src='../../src/data/data-manager.js'></script>
+    <script src='../../src/view/layout.js'></script>
+    <script src="../../src/core/language.js"></script>
+    <script src='../../src/core/cache.js'></script>
+    <script src='../../src/core/sugar-auth.js'></script>
 
     <link rel="stylesheet" href="../../../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="../../../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
@@ -58,31 +58,30 @@
 
 
     <!--tests suites--->
-    <script type="text/javascript" src='../suites/sugarapi/sugarapi.js'></script>
-    <script type="text/javascript" src='../suites/sugarauth/sugarauth.js'></script>
-    <script src='../spec_helper.js'></script>
+    <script src='../spec-helper.js'></script>
+    <script src='../suites/sugarapi/sugarapi.js'></script>
+    <script src='../suites/core/sugar-auth.js'></script>
     <script src='../suites/utils/logger.js'></script>
-    <script src='../suites/utils/config.js'></script>
+    <script src='../suites/app/config.js'></script>
     <script src='../suites/utils/utils.js'></script>
     <script src="../suites/app/app.js"></script>
-    <script src='../suites/sugarfield/sugarfieldmanager.js'></script>
-    <script src='../suites/sugarfield/sugarfield.js'></script>
-    <script src="../suites/router/router.js"></script>
-    <script src="../suites/controller/controller.js"></script>
+    <script src='../suites/view/sugarfieldmanager.js'></script>
+    <script src='../suites/view/sugarfield.js'></script>
+    <script src="../suites/core/router.js"></script>
+    <script src="../suites/core/controller.js"></script>
     <script src="../suites/data/data-manager.js"></script>
     <script src="../suites/data/bean.js"></script>
     <script src="../suites/data/bean-collection.js"></script>
     <script src="../suites/data/validation.js"></script>
     <script src="../suites/data/relationships.js"></script>
-    <script src="../suites/metadata/metadata-manager.js"></script>
-    <script src="../suites/layout/layout.js"></script>
-    <script src="../suites/context/context.js"></script>
-    <script src="../suites/events/events.js"></script>
-    <script src="../suites/lang/language.js"></script>
-    <script src="../suites/cache/cache.js"></script>
+    <script src="../suites/core/metadata-manager.js"></script>
+    <script src="../suites/view/layout.js"></script>
+    <script src="../suites/core/context.js"></script>
+    <script src="../suites/core/events.js"></script>
+    <script src="../suites/core/language.js"></script>
+    <script src="../suites/core/cache.js"></script>
     <script src="../suites/sugarfields/checkbox.js"></script>
-    <script src="../suites/template/template.js"></script>
-    <script src="../suites/utils/utils.js"></script>
+    <script src="../suites/view/template.js"></script>
 
     <!--init jasmine and exec suites--->
     <script type="text/javascript">
