@@ -14,9 +14,34 @@ array (
 //          0 => 'EDIT',
 //          1 => 'DUPLICATE',
 //          0 => 'DELETE',
-          array('customCode'=>'<input title="{$APP.LBL_DCERESTARTACTION_LABEL}" class="button" type="submit" name="DCERestartAction" value="{$APP.LBL_DCERESTARTACTION_LABEL}"  id="dcerestartaction_button" onclick="this.form.return_module.value=\'DCEActions\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'RestartAction\'">'),
-          array('customCode'=>'<input title="{$APP.LBL_DCERESTARTEMAIL_LABEL}" class="button"  type="submit" name="DCERestartEmail" value="{$APP.LBL_DCERESTARTEMAIL_LABEL}"  id="dcerestartemail_button" onclick="this.form.return_module.value=\'DCEActions\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'RestartEmail\'">'),
-            
+          array('customCode'=>'<input title="{$APP.LBL_DCERESTARTACTION_LABEL}" class="button" type="submit" name="DCERestartAction" value="{$APP.LBL_DCERESTARTACTION_LABEL}"  id="dcerestartaction_button" onclick="this.form.return_module.value=\'DCEActions\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'RestartAction\';">',
+              //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+              'sugar_html' => array(
+                  'type' => 'submit',
+                  'value' => '{$APP.LBL_DCERESTARTACTION_LABEL}',
+                  'htmlOptions' => array(
+                      'title' => '{$APP.LBL_DCERESTARTACTION_LABEL}',
+                      'class' => 'button',
+                      'name' => 'DCERestartAction',
+                      'id' => 'dcerestartaction_button',
+                      'onclick' => 'this.form.return_module.value=\'DCEActions\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'RestartAction\';',
+                  ),
+              ),
+          ),
+          array('customCode'=>'<input title="{$APP.LBL_DCERESTARTEMAIL_LABEL}" class="button"  type="submit" name="DCERestartEmail" value="{$APP.LBL_DCERESTARTEMAIL_LABEL}"  id="dcerestartemail_button" onclick="this.form.return_module.value=\'DCEActions\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'RestartEmail\';">',
+              //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+              'sugar_html' => array(
+                  'type' => 'submit',
+                  'value' => '{$APP.LBL_DCERESTARTEMAIL_LABEL}',
+                  'htmlOptions' => array(
+                      'title' => '{$APP.LBL_DCERESTARTEMAIL_LABEL}',
+                      'class' => 'button',
+                      'name' => 'DCERestartEmail',
+                      'id' => 'dcerestartemail_button',
+                      'onclick' => 'this.form.return_module.value=\'DCEActions\'; this.form.return_action.value=\'DetailView\';this.form.action.value=\'RestartEmail\';',
+                  ),
+              ),
+          ),
              
            
         ),
