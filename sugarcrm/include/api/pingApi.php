@@ -24,7 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class pingApi extends SugarApi {
     public function registerApiRest() {
         return array(
-            array(
+            'ping' => array(
                 'reqType' => 'GET',
                 'path' => array('ping'),
                 'pathVars' => array(''),
@@ -32,7 +32,7 @@ class pingApi extends SugarApi {
                 'shortHelp' => 'An example API only responds with pong',
                 'longHelp' => 'include/api/html/ping_base_help.html',
             ),
-            array(
+            'pingWithTime' => array(
                 'reqType' => 'GET',
                 'path' => array('ping', 'whattimeisit'),
                 'pathVars' => array('', 'subMethod'),
@@ -43,15 +43,46 @@ class pingApi extends SugarApi {
         );
     }
 
+    public function registerApiSoap() {
+        return array(
+            'functions' => array(
+                'ping' => array(
+                    'methodName' => 'ping',
+                    'requestVars' => array(
+                    ),
+                    'returnVars' => array(
+                        'xsd:string',
+                    ),
+                    'method' => 'ping',
+                    'shortHelp' => 'Sample/test API that only responds with pong',
+                ),
+                'pingWithTime' => array(
+                    'methodName' => 'pingTime',
+                    'requestVars' => array(
+                    ),
+                    'extraVars' => array(
+                        'subMethod' => 'whattimeisit',
+                    ),
+                    'returnVars' => array(
+                        'xsd:string',
+                    ),
+                    'method' => 'ping',
+                    'shortHelp' => 'Sample/test API that responds with the curernt date/time',
+                ),
+            ),
+            'types' => array(),
+        );
+    }
+
     public function ping($api, $args) {
         if ( isset($args['subMethod']) && $args['subMethod'] == 'whattimeisit' ) {
             require_once('include/SugarDateTime.php');
             $dt = new SugarDateTime('now');
-            return array('ping'=>$dt->asDb());
+            return $dt->asDb();
         }
 
         // Just a normal ping request
-        return array('ping'=>"pong");
+        return 'pong';
     }
 
 }

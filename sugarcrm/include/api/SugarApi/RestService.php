@@ -113,6 +113,7 @@ class RestService extends ServiceBase {
     }
 
     protected function handleException(SugarApiException $exception) {
+        // FIXME: Do something for real with the exceptions
         echo("ERROR: ".$exception->getMessage());
         die();
     }
