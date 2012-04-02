@@ -34,12 +34,8 @@
       }
     }
 
-    //chosen
-    $(".chzn-select").chosen({no_results_text: "No results matched"}); 
-    $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-
     // tooltip demo
-    $('section').tooltip({
+    $('body').tooltip({
       selector: "a[rel=tooltip]"
     })
     $('table').tooltip({
@@ -54,17 +50,12 @@
       selector: "a[rel=tooltip]",
 			placement: "bottom"
     })
-		// styleguide
-    $('.tooltip-test').tooltip()
-    $('.popover-test').popover()
 
-    // popover demo 
     $("a[rel=popover]")
       .popover()
       .click(function(e) {
         e.preventDefault()
       })
-
 
     // button state demo
     $('.loading')
@@ -97,15 +88,21 @@
 			$('.alert').show()
     })
   })
-
-  $('input#bugsSearchQuery').quicksearch('table.searchable tbody tr')
   
   // toggle module search (needs tap logic for mobile)
+	$('.addit').on('click', function () {
+	    $(this).toggleClass('active');
+	    $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
+	    return false;
+	})
 	$('.search').on('click', function () {
 	    $(this).toggleClass('active');
 	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
 	    return false;
 	})
+	
+  $('input#bugsSearchQuery').quicksearch('table.searchable tbody tr')
+  $('input#activitySearchQuery').quicksearch('article')
 
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
 $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
@@ -138,5 +135,4 @@ $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
     }
   }
 })
-
 }(window.jQuery)

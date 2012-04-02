@@ -14,35 +14,26 @@
 <body id="portal">
   <div class="container welcome">
     <div class="row">
-      <div class="span4 offset1 thumbnail">
+      <div class="span4 offset4 thumbnail">
         <div class="modal-header tcenter">
           <h2 class="brand">SugarCRM</h2>
-          <h3 class="sub-brand">Portal</h3>
         </div>
         <div class="modal-body tcenter">
           <div class="control-group">
-            <label for="input01" class="hide">Username</label>
-            <input type="text" class="center" id="input01" placeholder="Username">
+            <label for="loginUsername" class="hide">Username</label>
+            <input type="text" class="center" id="loginUsername" placeholder="Username" tabindex="1">
           </div>
           <div class="control-group">
-            <label for="input01" class="hide">Password</label>
-            <input type="text" class="center" id="input01" placeholder="Password">
+            <label for="loginPassword" class="hide">Password</label>
+            <input type="text" class="center" id="loginPassword" placeholder="Password" tabindex="2">
+            <p class="help-block"><a href="#" rel="popover" title="Forgot Your Password?" data-content="">Forgot password?</a></p>
           </div>                                       
         </div>                                                
         <div class="modal-footer">
-          <a href="dashboard.html" class="link">Forgot password?</a>
-          <a href="dashboard.html" class="btn btn-primary">Log In</a>
-          <a href="dashboard.html" class="btn">Register</a>
+          <a href="signup.html" class="btn pull-left" tabindex="4">Sign Up</a>
+          <a href="dashboard.html" class="btn btn-primary" tabindex="3">Log In</a>
         </div>
-      </div>
-      <div class="span6 well">
-        <div class="thumbnail">
-           <h4>Welcome to Portal</h4>
-           <article>
-             <p>Portal is a thing that does some stuff that is really cool.  You should learn more about portal.</p>
-           </article>
-        </div>
-      </div>                                     
+      </div>                             
     </div>
   </div>         
   <script src="../js/jquery-1.7.2.min.js"></script>

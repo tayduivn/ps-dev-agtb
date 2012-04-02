@@ -14,36 +14,29 @@
 <body id="portal">
   <div class="container welcome">
     <div class="row">
-      <div class="span4 offset1 thumbnail">
+      <div class="span4 offset4 thumbnail">
         <div class="modal-header tcenter">
-          <h2 class="brand">SUGARCRM</h2>
-          <h3 class="sub-brand">Portal</h3>
+          <h2 class="brand">SugarCRM</h2>
         </div>
-        <div class="modal-body tcenter">
-          <div class="control-group error input-append">
-            <div class="alert alert-error tleft"><i class="icon-exclamation-sign"></i> Username is not recognized!</div>
-              <label class="hide control-label" for="user_name">Username</label>
-              <input type="text" tabindex="1" id="user_name" name="user_name" placeholder="Username or Email" value="thfonz" class="center">
-              <span class="add-on alert-error"><i class="icon-exclamation-sign"></i></span>
-          </div>
+        <div class="modal-body tcenter"><div class="alert alert-error"><i class="icon-exclamation-sign"></i> Please correct the error</div>
+          <div class="control-group error">
+            <label class="hide" for="inputError">Username</label>
+            <div class="controls input-append">
+              <input type="text" id="inputError" value="theshadow">
+              <span class="add-on"><i class="icon-exclamation-sign"></i></span>
+            </div>
+          </div>          
           <div class="control-group">
             <label for="input01" class="hide">Password</label>
             <input type="text" class="center" id="input01" placeholder="Password">
+            <p class="help-block"><a href="#" rel="popover" title="Forgot Your Password?" data-content="">Forgot password?</a></p>
           </div>                                       
         </div>                                                
         <div class="modal-footer">
-          <a href="dashboard.html">Forgot password?</a>
+          <a href="signup.html" class="btn pull-left">Sign Up</a>
           <a href="dashboard.html" class="btn btn-primary">Log In</a>
         </div>
-      </div>
-      <div class="span6 well">
-        <div class="thumbnail">
-           <h4>Welcome to Portal</h4>
-           <article>
-             <p>Portal is a thing that does some stuff that is really cool.  You should learn more about portal.</p>
-           </article>
-        </div>
-      </div>                                     
+      </div>                             
     </div>
   </div>         
   <script src="../js/jquery-1.7.2.min.js"></script>
