@@ -29,7 +29,8 @@
 {if $AUTHENTICATED}
 {$DCSCRIPT}
 <div id='dcmenutop'></div>
-<div id='dcmenu' class='dcmenu dcmenuFloat'>
+<div id='dcmenu' class='dcmenu dcmenuFloat' style="z-index: 20;">
+<div id='ie8GradientFix'></div>
   {include file="_headerModuleList.tpl" theme_template=true}
     
     {if $AUTHENTICATED}

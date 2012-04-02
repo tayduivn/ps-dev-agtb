@@ -92,6 +92,7 @@ include("metadata/quotes_accountsMetaData.php");
 include("metadata/quotes_contactsMetaData.php");
 include("metadata/quotes_opportunitiesMetaData.php");
 include("metadata/products_categoryTreeMetaData.php");
+include("metadata/fts_queueMetaData.php");
 //END SUGARCRM flav=pro ONLY
 include("metadata/workflow_schedulesMetaData.php");
 //BEGIN SUGARCRM flav=pro ONLY

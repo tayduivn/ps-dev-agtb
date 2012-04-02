@@ -24,7 +24,7 @@ $dictionary['EmailTemplate'] = array(
 	'fields' => array(
 		'id' => array(
 			'name' => 'id',
-			'vname' => 'LBL_NAME',
+			'vname' => 'LBL_ID',
 			'type' => 'id',
 			'required' => true,
 			'reportable'=>false,
@@ -221,4 +221,3 @@ VardefManager::createVardef('EmailTemplates','EmailTemplate', array(
 'team_security',
 //END SUGARCRM flav=pro ONLY
 ));
-?>
