@@ -317,7 +317,7 @@ function smarty_function_sugar_button($params, &$smarty)
 			break;
 
 			case "DELETE":
-                $output = '{if $bean->aclAccess("delete")}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="'.$js_form.' _form.return_module.value=\'' . $module . '\'; _form.return_action.value=\'ListView\'; _form.action.value=\'Delete\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');" type="submit" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}" id="delete_button">{/if} ';
+                $output = '{if $bean->aclAccess("delete")}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="'.$js_form.' _form.return_module.value=\'' . $module . '\'; _form.return_action.value=\'ListView\'; _form.action.value=\'Delete\'; if(confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\')) SUGAR.ajaxUI.submitForm(_form);" type="submit" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}" id="delete_button">{/if} ';
             break;
 
 			case "DUPLICATE":
@@ -369,14 +369,14 @@ function smarty_function_sugar_button($params, &$smarty)
 				$view = ($view == 'QuickCreate') ? "form_QuickCreate_{$module}" : $view;
 				$output = '{if $bean->aclAccess("save")}<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" '
 					 . 'class="button primary" onclick="'.$js_form.' _form.action.value=\'Popup\';'
-					 . 'return check_form(\''.$view.'\')" type="submit" name="' . $params['module'] 
-					 . '_popupcreate_save_button" id="' . $params['module'] 
+					 . 'return check_form(\''.$view.'\')" type="submit" name="' . $params['module']
+					 . '_popupcreate_save_button" id="' . $params['module']
 					 . '_popupcreate_save_button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">{/if} ';
             break;
 			case "POPUPCANCEL":
                 $output = '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" '
-					 . 'class="button" onclick="toggleDisplay(\'addform\');return false;" ' 
-					 . 'name="' . $params['module'] . '_popup_cancel_button" type="submit"' 
+					 . 'class="button" onclick="toggleDisplay(\'addform\');return false;" '
+					 . 'name="' . $params['module'] . '_popup_cancel_button" type="submit"'
 					 . 'id="' . $params['module'] . '_popup_cancel_button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"> ';
             break;
 			case "AUDIT":
