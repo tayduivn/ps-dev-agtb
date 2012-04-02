@@ -462,7 +462,7 @@ $mod_strings = array(
 'LBL_SEARCH_FIELDS' => 'Search Fields...',
 'LBL_FORMULA' => 'Formula',
 'LBL_DYNAMIC_VALUES_CHECKBOX' => 'Dependent',
-'LBL_DEPENDENT_DROPDOWN_HELP' => 'Drag items from the list of available options on the left to one of the lists on the right to make that option available when the given parent option is selected.',
+'LBL_DEPENDENT_DROPDOWN_HELP' => 'Drag options from the list on the left of available options in the dependent dropdown to the lists on the right to make those options available when the parent option is selected. If no items are under a parent option, when the parent option is selected, the dependent dropdown will not be displayed.',
 'LBL_AVAILABLE_OPTIONS' => 'Available Options',
 'LBL_PARENT_DROPDOWN' => 'Parent Dropdown',
 'LBL_VISIBILITY_EDITOR' => 'Visibility Editor',
@@ -739,7 +739,7 @@ $mod_strings = array(
 
 //POPUP HELP
 'LBL_POPHELP_FIELD_DATA_TYPE'=>'Select the appropriate data type based on the type of data that will be entered into the field.',
-'LBL_POPHELP_SEARCHABLE'=>'You have to perform a full system index after you change boost level.',
+'LBL_POPHELP_SEARCHABLE'=>'Select the boost level for this field. Fields with a higher boost level will be given greater weight when the search is performed. When a search is performed, matching records containing fields with a greater weight will be appear higher in the search results. If you change the boost level for a field from one level to another, perform a full system index to apply the change.',
 'LBL_POPHELP_IMPORTABLE'=>'<b>Yes</b>: The field will be included in an import operation.<br><b>No</b>: The field will not be included in an import.<br><b>Required</b>: A value for the field must be provided in any import.',
 'LBL_POPHELP_IMAGE_WIDTH'=>'Enter a number for Width, as measured in pixels.<br> The uploaded image will be scaled to this Width.',
 'LBL_POPHELP_IMAGE_HEIGHT'=>'Enter a number for the Height, as measured in pixels.<br> The uploaded image will be scaled to this Height.',
@@ -753,7 +753,7 @@ $mod_strings = array(
    . "Workflow definitions containing an action that are set to update this field will no longer execute the action.<br>"
    . "Fields using formulas will not be calculated in real-time in "
    //BEGIN SUGARCRM flav=ent ONLY
-   . "the Sugar Self-Service Portal or " 
+   . "the Sugar Self-Service Portal or "
    //END SUGARCRM flav=ent ONLY
    . "Mobile EditView layouts.",
 
