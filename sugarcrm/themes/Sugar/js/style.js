@@ -110,7 +110,7 @@ SUGAR.append(SUGAR.themes, {
         }
     },
     
-    toggleQuickCreateOverFlow: function(maction) {
+    toggleQuickCreateOverFlow: function(menuName,maction) {
     	var menuName = "#quickCreateULSubnav"; 
     		if(maction == "more") {
 				$(menuName).addClass("showMore");
@@ -375,7 +375,6 @@ SUGAR.append(SUGAR.themes, {
 			$('#close_spot_search').css("display","inline-block");
 
 			 if(event.charCode == 0 && !firstHit) {
-			$('#sugar_spot_search_div').css("left",110);
 			$('#sugar_spot_search_div').css("width",344);
 			$('#sugar_spot_search').css("width",290);
 			firstHit = true;
