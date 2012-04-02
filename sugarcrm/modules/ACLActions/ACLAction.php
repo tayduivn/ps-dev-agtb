@@ -409,7 +409,9 @@ class ACLAction  extends SugarBean
         foreach($categories as $cat_name=>$category){
             foreach($category as $type_name=>$type){
                 foreach($type as $act_name=>$action){
-                    $names[$act_name] = translate($ACLActions[$type_name]['actions'][$act_name]['label'], 'ACLActions');
+                    $names[$act_name] = isset($ACLActions[$type_name]['actions'][$act_name])
+                        ? translate($ACLActions[$type_name]['actions'][$act_name]['label'], 'ACLActions')
+                        : $act_name;
                     $categories[$cat_name][$type_name][$act_name]['accessColor'] = ACLAction::AccessColor($action['aclaccess']);
                     if($type_name== 'module'){
 
