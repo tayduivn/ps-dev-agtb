@@ -56,7 +56,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db))
             $this->_db = DBManagerFactory::getInstance();
 
-        $this->engine = SugarSearchEngineFactory::getInstance('elastic');
+        $this->engine = SugarSearchEngineFactory::getInstance('Elastic');
         $this->indexer = new TestSugarSearchEngineFullIndexer($this->engine);
     }
 
