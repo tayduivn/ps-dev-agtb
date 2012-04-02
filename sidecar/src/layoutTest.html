@@ -45,9 +45,8 @@
 		<script src='../extensions/sugarportal/sugarportal.js'></script>
 
         <script language="javascript" src="../tests/fixtures/sugarFields.js"></script>
-      		<script language="javascript" src="../tests/fixtures/metadata.js"></script>
+        <script language="javascript" src="../tests/fixtures/metadata.js"></script>
 
-		<script language="javascript" src="../tests/fixtures/sugarFields.js"></script>
 		<script language="javascript" src="../tests/fixtures/metadata.js"></script>
 		<script language="javascript" src="../lib/sinon/sinon.js"></script>
 		<script language="javascript" src="../lib/sugarapi/demoServerData.js"></script>
@@ -56,7 +55,6 @@
 		<link rel="stylesheet" href="../lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="../lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
 		<script src="../lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
-
 
     </head>
     <body>
@@ -98,45 +96,6 @@
 			var App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl});
             App.api.debug = App.config.debugSugarApi;
             App.start();
-			//Initialize the data model
-//			App.dataManager.declareModels(fixtures.metadata);
-//			App.metadata.set(fixtures.metadata);
-
-			//Need a sample Bean
-//			this.collection = App.dataManager.fetchBeans('Contacts',{});
-//			this.bean = this.collection.models[0];
-
-//			App.controller.data = {"collection" : this.collection, "model" : this.bean};
-
-//			App.controller.start();
-
-			/*
-			var view = App.layout.get({
-				view:"listView"
-			});
-			$("#view").append(view.el);
-			view.render();
-
-			var layout = App.layout.get({
-				layout: "detailplus"
-				//view:"detailView"
-			});
-			$("#layout").append(layout.el);
-			layout.render();
-
-
-
-
-			var sublayout = App.layout.get({
-				context : context,
-				layout: "sublayout"
-				//view:"detailView"
-			});
-			$("#layout").append(sublayout.el);
-			sublayout.render();
-			*/
-
-			//console.log(bean.attributes.full_name2);
 		</script>
     </body>
 </html>
