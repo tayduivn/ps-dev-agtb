@@ -2519,14 +2519,14 @@ input[type="submit"].btn.small {
 }
 .alert-danger,
 .alert-error {
-  background-color: #f2dede;
-  border-color: #eed3d7;
+  background: #f2dede;
+  border-color: #b81213;
 }
 .alert-danger,
 .alert-error,
 .alert-danger .alert-heading,
 .alert-error .alert-heading {
-  color: #4d1e1e;
+  color: #b81213;
 }
 .alert-info {
   background-color: #d9edf7;
@@ -2557,7 +2557,7 @@ input[type="submit"].btn.small {
 }
 .nav > li > a:hover {
   text-decoration: none;
-  background-color: #f5f5f5;
+  background-color: #cdcccb;
 }
 .nav .nav-header {
   display: block;
@@ -2622,7 +2622,7 @@ input[type="submit"].btn.small {
   line-height: 14px;
 }
 .nav-tabs {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #cdcccb;
 }
 .nav-tabs > li {
   margin-bottom: -1px;
@@ -2636,13 +2636,13 @@ input[type="submit"].btn.small {
   border-radius: 4px 4px 0 0;
 }
 .nav-tabs > li > a:hover {
-  border-color: #f5f5f5 #f5f5f5 #dddddd;
+  border-color: #cdcccb #cdcccb #cdcccb;
 }
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover {
   color: #58595b;
   background-color: #ffffff;
-  border: 1px solid #ddd;
+  border: 1px solid #cdcccb;
   border-bottom-color: transparent;
   cursor: default;
 }
@@ -2670,7 +2670,7 @@ input[type="submit"].btn.small {
   border-bottom: 0;
 }
 .nav-tabs.nav-stacked > li > a {
-  border: 1px solid #ddd;
+  border: 1px solid #cdcccb;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
@@ -2686,7 +2686,7 @@ input[type="submit"].btn.small {
   border-radius: 0 0 4px 4px;
 }
 .nav-tabs.nav-stacked > li > a:hover {
-  border-color: #ddd;
+  border-color: #cdcccb;
   z-index: 2;
 }
 .nav-pills.nav-stacked > li > a {
@@ -2767,7 +2767,7 @@ input[type="submit"].btn.small {
   display: block;
 }
 .tabs-below .nav-tabs {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #cdcccb;
 }
 .tabs-below .nav-tabs > li {
   margin-top: -1px;
@@ -2780,11 +2780,11 @@ input[type="submit"].btn.small {
 }
 .tabs-below .nav-tabs > li > a:hover {
   border-bottom-color: transparent;
-  border-top-color: #ddd;
+  border-top-color: #cdcccb;
 }
 .tabs-below .nav-tabs .active > a,
 .tabs-below .nav-tabs .active > a:hover {
-  border-color: transparent #ddd #ddd #ddd;
+  border-color: transparent #cdcccb #cdcccb #cdcccb;
 }
 .tabs-left .nav-tabs > li,
 .tabs-right .nav-tabs > li {
@@ -2799,7 +2799,7 @@ input[type="submit"].btn.small {
 .tabs-left .nav-tabs {
   float: left;
   margin-right: 19px;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #cdcccb;
 }
 .tabs-left .nav-tabs > li > a {
   margin-right: -1px;
@@ -2808,17 +2808,17 @@ input[type="submit"].btn.small {
   border-radius: 4px 0 0 4px;
 }
 .tabs-left .nav-tabs > li > a:hover {
-  border-color: #f5f5f5 #dddddd #f5f5f5 #f5f5f5;
+  border-color: #cdcccb #cdcccb #cdcccb #cdcccb;
 }
 .tabs-left .nav-tabs .active > a,
 .tabs-left .nav-tabs .active > a:hover {
-  border-color: #ddd transparent #ddd #ddd;
+  border-color: #cdcccb transparent #cdcccb #cdcccb;
   *border-right-color: #ffffff;
 }
 .tabs-right .nav-tabs {
   float: right;
   margin-left: 19px;
-  border-left: 1px solid #ddd;
+  border-left: 1px solid #cdcccb;
 }
 .tabs-right .nav-tabs > li > a {
   margin-left: -1px;
@@ -2827,11 +2827,11 @@ input[type="submit"].btn.small {
   border-radius: 0 4px 4px 0;
 }
 .tabs-right .nav-tabs > li > a:hover {
-  border-color: #f5f5f5 #f5f5f5 #f5f5f5 #dddddd;
+  border-color: #cdcccb #cdcccb #cdcccb #cdcccb;
 }
 .tabs-right .nav-tabs .active > a,
 .tabs-right .nav-tabs .active > a:hover {
-  border-color: #ddd #ddd #ddd transparent;
+  border-color: #cdcccb #cdcccb #cdcccb transparent;
   *border-left-color: #ffffff;
 }
 .navbar {
@@ -3178,17 +3178,16 @@ input[type="submit"].btn.small {
   width: 560px;
   margin: -250px 0 0 -280px;
   background-color: #ffffff;
-  border: 1px solid #999;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid #cfcfcf;
   *border: 1px solid #999;
   /* IE6-7 */
 
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding-box;
   background-clip: padding-box;
@@ -3205,7 +3204,7 @@ input[type="submit"].btn.small {
   top: 50%;
 }
 .modal-header {
-  padding: 9px 15px;
+  padding: 10px 15px;
   border-bottom: 1px solid #f5f5f5;
 }
 .modal-header .close {
@@ -3229,7 +3228,7 @@ input[type="submit"].btn.small {
   background-image: linear-gradient(top, #f5f5f5, #ffffff);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#ffffff', GradientType=0);
-  border-top: 1px solid #b4b3b1;
+  border-top: 1px solid #cfcfcf;
   -webkit-border-radius: 0 0 6px 6px;
   -moz-border-radius: 0 0 6px 6px;
   border-radius: 0 0 6px 6px;
@@ -3251,6 +3250,11 @@ input[type="submit"].btn.small {
   margin-left: 8px;
   margin-bottom: 0;
 }
+.modal-footer .btn.pull-left {
+  float: left;
+  margin-left: 0;
+  margin-right: 8px;
+}
 .thumbnails {
   margin-left: -20px;
   list-style: none;
@@ -3271,9 +3275,9 @@ input[type="submit"].btn.small {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
-  -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
-  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.1), 1px 1px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.1), 1px 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.1), 1px 1px 2px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 a.thumbnail:hover {
