@@ -3541,12 +3541,12 @@ class InboundEmail extends SugarBean {
 				// we will take either 'attachments' or 'inline'
 				if(strtolower($part->disposition) == 'attachment' || ((strtolower($part->disposition) == 'inline') && $part->type != 0)) {
 					$attach = $this->getNoteBeanForAttachment($emailId);
-					$fname = $this->handleEncodedFilename($this->retrieveAttachmentNameFromStructure($part->dparameters));
+					$fname = $this->handleEncodedFilename($this->retrieveAttachmentNameFromStructure($part));
 
 					if(!empty($fname)) {//assign name to attachment
 						$attach->name = $fname;
 					} else {//if name is empty, default to filename
-						$attach->name = urlencode($this->retrieveAttachmentNameFromStructure($part->dparameters));
+						$attach->name = urlencode($this->retrieveAttachmentNameFromStructure($part));
 					}
 					$attach->filename = $attach->name;
 					if (empty($attach->filename)) {
@@ -3641,17 +3641,16 @@ class InboundEmail extends SugarBean {
 	}
 
 	/**
-	 * Return the filename of the attachment by examining the dparameters returned from imap_fetch_structure which
-	 * represet the content-disposition of the MIME header.
-	 *
-	 * @param array $dparamaters
+	 * Return the filename of the attachment by examining the dparameters or parameters returned from imap_fetch_structure
+     *
+	 * @param object $part
 	 * @return string
 	 */
-	function retrieveAttachmentNameFromStructure($dparamaters)
+	function retrieveAttachmentNameFromStructure($part)
 	{
 	   $result = "";
 
-	   foreach ($dparamaters as $k => $v)
+	   foreach ($part->dparamaters as $k => $v)
 	   {
 	       if( strtolower($v->attribute) == 'filename')
 	       {
@@ -3660,6 +3659,15 @@ class InboundEmail extends SugarBean {
 	       }
 	   }
 
+		if (empty($result)) {
+			foreach ($part->parameters as $k => $v) {
+				if (strtolower($v->attribute) == 'name') {
+					$result = $v->value;
+					break;
+				}
+			}
+		}
+		
 	   return $result;
 
     }
