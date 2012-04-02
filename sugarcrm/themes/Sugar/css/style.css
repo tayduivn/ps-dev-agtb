@@ -5746,7 +5746,7 @@ height: 43px\9;
 	width: 100%;
 	height: 100%;
 	background-color: transparent;
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#20517c', endColorstr='#0d3a62')";
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#20517c', endColorstr='#0d3a62');
 }
 #dcmenu ul.clickMenu { filter:none; }
 

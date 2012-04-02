@@ -74,7 +74,7 @@
 	</div>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
     <br>
-    {$MOD.LBL_FTS_PAGE_DESC} {$ftsScheduleEnabledText|default:''}
+    {$MOD.LBL_FTS_PAGE_DESC}
     <br><br>
     <table width="50%" border="0" cellspacing="1" cellpadding="0" class="edit view">
         <tbody>
