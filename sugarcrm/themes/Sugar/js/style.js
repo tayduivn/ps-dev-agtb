@@ -110,7 +110,7 @@ SUGAR.append(SUGAR.themes, {
         }
     },
     
-    toggleQuickCreateOverFlow: function(maction) {
+    toggleQuickCreateOverFlow: function(menuName,maction) {
     	var menuName = "#quickCreateULSubnav"; 
     		if(maction == "more") {
 				$(menuName).addClass("showMore");
