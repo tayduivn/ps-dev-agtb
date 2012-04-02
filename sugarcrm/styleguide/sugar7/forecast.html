@@ -171,23 +171,7 @@
           </div>
         </div>
         <div class="span10">
-      		<div class="tabbable">
-      		  <ul class="nav nav-tabs">
-              <li class="active"><a href="#opportunity" data-toggle="tab">Opportunities</a></li>
-              <li><a href="#quota" data-toggle="tab">Quota</a></li>
-              <li><a href="#products" data-toggle="tab">Products</a></li>
-              <li><a href="#productivity" data-toggle="tab">Productivity</a></li>
-            </ul>
-            
-            <div class="tab-content active">
-              <div class="tab-pane active" id="quota">
-                	<div id="chart"></div>
-              </div>
-              <div class="tab-pane active" id="opportunity">
-                	<div id="chart2"></div>
-              </div>
-        	  </div>
-          </div>
+          <div id="infovis"></div>
           <table class="table">
             <thead>
               <tr>
@@ -198,7 +182,6 @@
                 <th>Best Case</th>
                 <th>Worst Case</th>
                 <th>Likely Case</th>
-
               </tr>
             </thead>
             <tbody id="listed">
@@ -300,82 +283,151 @@
 		<script src="../js/editable.js"></script>        
 
 <!-- Charts -->
-<script src="../d3/d3.v2.min.js"></script>
+<script src="../js/jit-yc.js"></script>
 <script>
+var labelType, useGradients, nativeTextSupport, animate;
 
-var p = [20, 50, 30, 20],
-    w = 900 - p[1] - p[3],
-    h = 300 - p[0] - p[2],
-    x = d3.scale.ordinal().rangeRoundBands([0, w]),
-    y = d3.scale.linear().range([0, h]),
-    z = d3.scale.ordinal().range(["#A6CEE3", "#1F78B4", "#B2DF8A"]),
-    parse = d3.time.format("%m/%Y").parse,
-    format = d3.time.format("%b");
+(function() {
+  var ua = navigator.userAgent,
+      iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
+      typeOfCanvas = typeof HTMLCanvasElement,
+      nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
+      textSupport = nativeCanvasSupport 
+        && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
+  //I'm setting this based on the fact that ExCanvas provides text support for IE
+  //and that as of today iPhone/iPad current text support is lame
+  labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
+  nativeTextSupport = labelType == 'Native';
+  useGradients = nativeCanvasSupport;
+  animate = !(iStuff || !nativeCanvasSupport);
+})();
 
-var svg = d3.select("#chart").append("svg")
-    .attr("width", w)
-    .attr("height", h)
-  .append("g")
-    .attr("transform", "translate(" + p[3] + "," + (h + p[0]) + ")");
+var Log = {
+  elem: false,
+  write: function(text){
+    if (!this.elem) 
+      this.elem = document.getElementById('log');
+    this.elem.innerHTML = text;
+    this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
+  }
+};
 
-d3.csv("../d3/examples/crimea/crimea.csv", function(crimea) {
 
-  // Transpose the data into layers by cause.
-  var causes = d3.layout.stack()(["wounds", "other", "disease"].map(function(cause) {
-    return crimea.map(function(d) {
-      return {x: parse(d.date), y: +d[cause]};
+function init(){
+  //init data
+  var json = {
+      'label': ['label A', 'label B', 'label C', 'label D'],
+      'values': [
+      {
+        'label': 'date A',
+        'values': [20, 40, 15, 5]
+      }, 
+      {
+        'label': 'date B',
+        'values': [30, 10, 45, 10]
+      }, 
+      {
+        'label': 'date E',
+        'values': [38, 20, 35, 17]
+      }, 
+      {
+        'label': 'date F',
+        'values': [58, 10, 35, 32]
+      }, 
+      {
+        'label': 'date D',
+        'values': [55, 60, 34, 38]
+      }, 
+      {
+        'label': 'date C',
+        'values': [26, 40, 25, 40]
+      }]
+      
+  };
+  //end
+  var json2 = {
+      'values': [
+      {
+        'label': 'date A',
+        'values': [10, 40, 15, 7]
+      }, 
+      {
+        'label': 'date B',
+        'values': [30, 40, 45, 9]
+      }, 
+      {
+        'label': 'date D',
+        'values': [55, 30, 34, 26]
+      }, 
+      {
+        'label': 'date C',
+        'values': [26, 40, 85, 28]
+      }]
+      
+  };
+    //init BarChart
+    var barChart = new $jit.BarChart({
+      //id of the visualization container
+      injectInto: 'infovis',
+      //whether to add animations
+      animate: true,
+      //horizontal or vertical barcharts
+      orientation: 'vertical',
+      //bars separation
+      barsOffset: 20,
+      //visualization offset
+      Margin: {
+        top:5,
+        left: 5,
+        right: 5,
+        bottom:5
+      },
+      //labels offset position
+      labelOffset: 5,
+      //bars style
+      type: useGradients? 'stacked:gradient' : 'stacked',
+      //whether to show the aggregation of the values
+      showAggregates:true,
+      //whether to show the labels for the bars
+      showLabels:true,
+      //labels style
+      Label: {
+        type: labelType, //Native or HTML
+        size: 13,
+        family: 'Arial',
+        color: 'white'
+      },
+      //add tooltips
+      Tips: {
+        enable: true,
+        onShow: function(tip, elem) {
+          tip.innerHTML = "<b>" + elem.name + "</b>: " + elem.value;
+        }
+      }
     });
-  }));
-
-  // Compute the x-domain (by date) and y-domain (by top).
-  x.domain(causes[0].map(function(d) { return d.x; }));
-  y.domain([0, d3.max(causes[causes.length - 1], function(d) { return d.y0 + d.y; })]);
-
-  // Add a group for each cause.
-  var cause = svg.selectAll("g.cause")
-      .data(causes)
-    .enter().append("g")
-      .attr("class", "cause")
-      .style("fill", function(d, i) { return z(i); })
-      .style("stroke", function(d, i) { return d3.rgb(z(i)).darker(); });
-
-  // Add a rect for each date.
-  var rect = cause.selectAll("rect")
-      .data(Object)
-    .enter().append("rect")
-      .attr("x", function(d) { return x(d.x); })
-      .attr("y", function(d) { return -y(d.y0) - y(d.y); })
-      .attr("height", function(d) { return y(d.y); })
-      .attr("width", x.rangeBand());
-
-  // Add a label per date.
-  var label = svg.selectAll("text")
-      .data(x.domain())
-    .enter().append("text")
-      .attr("x", function(d) { return x(d) + x.rangeBand() / 2; })
-      .attr("y", 6)
-      .attr("text-anchor", "middle")
-      .attr("dy", ".71em")
-      .text(format);
-
-  // Add y-axis rules.
-  var rule = svg.selectAll("g.rule")
-      .data(y.ticks(5))
-    .enter().append("g")
-      .attr("class", "rule")
-      .attr("transform", function(d) { return "translate(0," + -y(d) + ")"; });
-
-  rule.append("line")
-      .attr("x2", w)
-      .style("stroke", function(d) { return d ? "#fff" : "#000"; })
-      .style("stroke-opacity", function(d) { return d ? .7 : null; });
-
-  rule.append("text")
-      .attr("x", w + 6)
-      .attr("dy", ".35em")
-      .text(d3.format(",d"));
-});
-
+    //load JSON data.
+    barChart.loadJSON(json);
+    //end
+    var list = $jit.id('id-list'),
+        button = $jit.id('update'),
+        orn = $jit.id('switch-orientation');
+    //update json on click 'Update Data'
+    $jit.util.addEvent(button, 'click', function() {
+      var util = $jit.util;
+      if(util.hasClass(button, 'gray')) return;
+      util.removeClass(button, 'white');
+      util.addClass(button, 'gray');
+      barChart.updateJSON(json2);
+    });
+    //dynamically add legend to list
+    var legend = barChart.getLegend(),
+        listItems = [];
+    for(var name in legend) {
+      listItems.push('<div class=\'query-color\' style=\'background-color:'
+          + legend[name] +'\'>&nbsp;</div>' + name);
+    }
+    list.innerHTML = '<li>' + listItems.join('</li><li>') + '</li>';
+}
 </script>
   </body>
 </html>
