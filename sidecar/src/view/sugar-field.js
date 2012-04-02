@@ -103,7 +103,7 @@
      * @class SugarField
      */
     app.augment('sugarField', {
-        base : Backbone.View.extend({
+        base: Backbone.View.extend({
             /**
              * Reference to the application
              * @property {Object}
@@ -115,6 +115,12 @@
              * @property {Object}
              */
             parent: this,
+
+            /**
+             * Type of sugarField
+             * @property {String}
+             */
+            fieldType: "input",
 
             /**
              * Id of the SugarField
@@ -131,12 +137,12 @@
                 this.label = options.label;
                 this.bindModelChange(options.context, options.model || options.context.get("model"));
                 this.viewName = this.view.name;
-                this.meta = app.metadata.get({sugarField:this});
+                this.meta = app.metadata.get({sugarField: this});
 
-            // this is experimental to try to see if we can have custom events on sugarfields themselves.
-            // the following line doesn't work, need to _.extend it or something.
-            // this.events = this.meta.events;
-            templateKey = "sugarField." + this.name + "." + this.view.name;
+                // this is experimental to try to see if we can have custom events on sugarfields themselves.
+                // the following line doesn't work, need to _.extend it or something.
+                // this.events = this.meta.events;
+                templateKey = "sugarField." + this.name + "." + this.view.name;
 
                 this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
             },
@@ -158,7 +164,7 @@
              * @private
              * @param {Object} events Hash of events and their handlers
              */
-            delegateEvents : function(events) {
+            delegateEvents: function(events) {
                 if (!(events || (events = this.events))) {
                     return;
                 }
@@ -178,7 +184,7 @@
                                 this["callback_" + handlerName] = callback;
                                 events[handlerName] = "callback_" + handlerName;
                             }
-                        } catch(e) {
+                        } catch (e) {
                             app.logger.error("invalid event callback " + handlerName + " : " + eventHandler);
                             delete events[handlerName];
                         }
@@ -218,7 +224,7 @@
              */
             bindDomChange: function(model, fieldName) {
                 var self = this;
-                var el = this.$el.find("input");
+                var el = this.$el.find(this.fieldType);
                 // Bind input to the model
                 el.on("change", function(ev) {
                     model.set(fieldName, self.unformat(el.val()));
@@ -255,7 +261,7 @@
                 this.context = context;
                 this.model = model;
 
-                if (this.model.on){
+                if (this.model.on) {
                     this.model.on("change:" + this.name, this.render, this);
                 }
             },
