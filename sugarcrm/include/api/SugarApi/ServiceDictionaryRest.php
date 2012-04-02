@@ -30,12 +30,13 @@ class ServiceDictionaryRest extends ServiceDictionary {
     public function lookupRoute($path, $version, $requestType) {
         $pathLength = count($path);
 
-        // The first one we can find on our own, but the request type will need to be hunted normally
+        // Put the request type on the front of the path, it is how it is indexed
         array_unshift($path,$requestType);
 
+        // The first element (path length) we can find on our own, but the request type will need to be hunted normally
         if ( !isset($this->dict[$pathLength]) ) {
             // There is no route with the same number of /'s as the requested route, send them on their way
-            throw SugarApiExceptionNoMethod('Could not find a route with '.$pathLength.' elements');
+            throw new SugarApiExceptionNoMethod('Could not find a route with '.$pathLength.' elements');
         }
 
         return $this->lookupChildRoute($this->dict[$pathLength], $path, $version);

@@ -30,16 +30,22 @@ class RestService extends ServiceBase {
      */
     public function execute() {
         try {
-            if ( !isset($_SERVER['PATH_INFO']) ) {
-                $rawPath = '/';
-            } else {
+            if ( !empty($_REQUEST['__sugar_url']) ) {
+                $rawPath = $_REQUEST['__sugar_url'];
+            } else if ( !empty($_SERVER['PATH_INFO']) ) {
                 $rawPath = $_SERVER['PATH_INFO'];
+            } else {
+                $rawPath = '/';
             }
-            list($version,$path) = $this->parsePath($_SERVER['PATH_INFO']);
+            list($version,$path) = $this->parsePath($rawPath);
             $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD']);
             
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 $this->authenticateUser();
+            }
+            
+            if ( $route == false ) {
+                throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$rawPath);
             }
 
             // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
@@ -113,13 +119,15 @@ class RestService extends ServiceBase {
     }
 
     protected function handleException(SugarApiException $exception) {
-        // FIXME: Do something for real with the exceptions
+        header("HTTP/1.1 {$exception->errorCode}");
+        
+        // TODO: Translate error messages
         echo("ERROR: ".$exception->getMessage());
         die();
     }
 
     protected function parsePath($rawPath) {
-        $pathBits = explode('/',$rawPath);
+        $pathBits = explode('/',trim($rawPath,'/'));
         
         $versionBit = array_shift($pathBits);
 
@@ -130,7 +138,27 @@ class RestService extends ServiceBase {
     }
 
     protected function authenticateUser() {
-        // FIXME: Actually authenticate
+        if ( !isset($this->helper) ) {
+            require_once('service/core/SoapHelperWebService.php');
+            $this->helper = new SoapHelperWebServices();
+        }
+        
+        $valid = false;
+        if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
+            $valid = $this->helper->validate_authenticated($_SERVER['HTTP_OAUTH_TOKEN']);
+        } else  {
+            if ( isset($_REQUEST[session_name()]) ) {
+                // They already have a web-session, let's let them use it
+                SugarApplication::startSession();
+                if ( isset($_SESSION['authenticated_user_id']) ) {
+                    $valid = true;
+                }
+            }
+        }
+        
+        if ( ! $valid ) {
+            throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
+        }
     }
 
 }
