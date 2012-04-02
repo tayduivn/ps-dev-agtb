@@ -349,8 +349,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0");
         while($row = $GLOBALS['db']->fetchByAssoc($res))
         {
-            $jobBean->retrieve($row["id"]);
-            $results[$jobBean->data] = $jobBean->message;
+            $tmpBean = BeanFactory::getBean('SchedulersJobs', $row["id"]);
+            $results[$tmpBean->data] = $tmpBean->message;
         }
         return $results;
     }

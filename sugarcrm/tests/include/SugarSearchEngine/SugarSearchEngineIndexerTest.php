@@ -48,6 +48,8 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     private $indexer;
 
+    private $prevMinCronInterval;
+
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -57,12 +59,15 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db))
             $this->_db = DBManagerFactory::getInstance();
 
+        $this->prevMinCronInterval = isset($GLOBALS['sugar_config']['cron']['min_cron_interval']) ? $GLOBALS['sugar_config']['cron']['min_cron_interval'] : 0;
+        $GLOBALS['sugar_config']['cron']['min_cron_interval'] = 0;
         $this->engine = SugarSearchEngineFactory::getInstance('Elastic');
         $this->indexer = new TestSugarSearchEngineFullIndexer($this->engine);
     }
 
     public function tearDown()
     {
+        $GLOBALS['sugar_config']['cron']['min_cron_interval'] = $this->prevMinCronInterval;
         $GLOBALS['db'] = DBManagerFactory::getInstance();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
