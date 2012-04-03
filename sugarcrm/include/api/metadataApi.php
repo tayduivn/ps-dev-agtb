@@ -86,7 +86,7 @@ class metadataApi extends SugarApi {
         $this->user = $GLOBALS['current_user'];
         
         if ( isset($args['platform']) ) {
-            $this->platforms = array(basename($args['platform'],'base'));
+            $this->platforms = array(basename($args['platform']),'base');
         } else {
             $this->platforms = array('base');
         }

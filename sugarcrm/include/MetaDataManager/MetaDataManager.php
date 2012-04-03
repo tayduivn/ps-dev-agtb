@@ -222,9 +222,9 @@ class MetaDataManager {
     {
         $result = array();
 
-        //Each platform can have a
+        //Each platform can have it's own set of sugar fields
         foreach ( $this->platforms as $platform ) {
-            $baseFieldDirectory = "clients/$platform/fields/";
+            $baseFieldDirectory = "clients/{$platform}/fields/";
             $builtinSugarFields = glob($baseFieldDirectory."*",GLOB_ONLYDIR);
             if ( is_dir('custom/'.$baseFieldDirectory) ) {
                 $customSugarFields = glob('custom/'.$baseFieldDirectory."*",GLOB_ONLYDIR);
@@ -245,8 +245,8 @@ class MetaDataManager {
         foreach ( $allSugarFields as $fieldName) {
             $fieldData = array('templates' => array());
             // Check each platform in order of precendence to find the "best" controller
-            foreach ( $this->platform as $platform ) {
-                $controller = "clients/{$platform}/{$fieldName}/{$fieldName}.js";
+            foreach ( $this->platforms as $platform ) {
+                $controller = "clients/{$platform}/fields/{$fieldName}/{$fieldName}.js";
                 if ( file_exists('custom/'.$controller) ) {
                     $controller = 'custom/'.$controller;
                 }
@@ -261,7 +261,7 @@ class MetaDataManager {
             $backwardsPlatforms = array_reverse($this->platforms);
             $templateDirs = array();
             foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "clients/{$platform}/{$fieldName}/";
+                $templateDirs[] = "clients/{$platform}/fields/{$fieldName}/";
             }
             $fieldData['templates'] = $this->fetchTemplates($templateDirs);
             
@@ -281,6 +281,7 @@ class MetaDataManager {
      */
     protected function fetchTemplates($searchDirs,$extension='.hbt') {
         $templates = array();
+
         foreach ( $searchDirs as $searchDir ) {
             if ( is_dir($searchDir) ) {
                 $stdTemplates = glob($searchDir."*".$extension);
@@ -311,7 +312,12 @@ class MetaDataManager {
      * @return array A hash of the template name and the template contents
      */
     public function getViewTemplates() {
-        $templates = $this->fetchTemplates('include/templates/'.$this->platforms[0]);
+        $backwardsPlatforms = array_reverse($this->platforms);
+        $templateDirs = array();
+        foreach ( $backwardsPlatforms as $platform ) {
+            $templateDirs[] = 'client/'.$platform.'/views/*/';
+        }
+        $templates = $this->fetchTemplates($templateDirs);
         $templates['_hash'] = md5(serialize($templates));
         return $templates;
     }
