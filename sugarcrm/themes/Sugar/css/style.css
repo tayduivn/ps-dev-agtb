@@ -37,7 +37,9 @@
 body 
 { 
 	margin: 0px;
+	padding-top: 50px;
 	font-family: Arial, Verdana, Helvetica, sans-serif;
+	line-height: 11px;
 	
 }
 
@@ -112,6 +114,11 @@ ul
 	margin-top: 2px;
     margin-right: 0;
 }
+
+li {
+	line-height: 15px;	
+}
+
 hr
 {
 	height:1px;
@@ -507,7 +514,7 @@ div.import_instruction
 /* module title */
 div.moduleTitle
 {
-    height:2em;
+    height:43px;
 	padding-bottom: 3px;
     padding-top: 0;
     margin-bottom: 10px;
@@ -778,6 +785,7 @@ border-radius: 6px;
     padding: 0;
     border: 0;
     margin: 0;
+    height: auto;
 }
 .list tr.pagination td table td
 {
@@ -1416,6 +1424,9 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 #footer img.logo {
     margin: 7px 10px;
+    height: auto;
+    width: auto;
+    background-image: none;
 }
 
 #footer #partner a {
@@ -3729,8 +3740,10 @@ button[disabled], input[type=submit][disabled], input[type=reset][disabled], inp
 	background-image: none;
 	padding: 0px;
 	position: relative;
-	height: 24px;
+	height: 30px;
 	filter: none;
+	width: 30px;
+	
 }
 
 .pagination button[name="listViewNextButton"],.pagination button[name="listViewPrevButton"] {
@@ -5710,13 +5723,6 @@ ul.megamenu, ul.moduleTabMore, ul.sf-sub-modulelist{
     z-index:20;
 }
 
-#dcmenutop{
-padding:0px;
-position:relative;
-height:50px;
-width:100%;
-}
-
 .dcmenu{
 color:blue;
 height:55px;
@@ -6422,6 +6428,9 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	padding: 3px 10px 3px 10px !important;
 	color: #000;
 	font-size: 12px;
+	border-radius: 0;
+    border: 0px;
+    line-height: 14px;
 }
 
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
@@ -6729,6 +6738,8 @@ ul.clickMenu.show {
 	text-shadow: 1px 1px #FFFFFF;
 	font-weight: normal !important;
 	font-size: 13px;
+	line-height: 15px;
+    border: 0px;
 }
 
 #quickCreate {
@@ -7103,7 +7114,7 @@ text-align: center;
 font-family: tahoma;
 font-size: 15px;
 text-shadow: 0px 1px #fff;
-padding-top: 6px;
+padding-top: 9px;
 font-weight: bold;
 color: #444;
 text-decoration: none;

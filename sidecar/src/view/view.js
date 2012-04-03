@@ -13,7 +13,7 @@
             /**
              * The context is used to determine what the current focus is
              * (includes a model, collection, and module)
-             * @cfg {Context}
+             * @cfg {Core.Context}
              */
             this.context = options.context || app.controller.context;
 
@@ -61,7 +61,7 @@
 
         /**
          * Bind this view to listen to the given context's event.
-         * @param {Context} context
+         * @param {Core.Context} context
          */
         bind: function(context) {
 

@@ -10,8 +10,9 @@
 
     /**
      * The metadata manager is responsible for parsing and returning various metadata to components that request it.
+     * @class Core.MetadataManager
      * @singleton
-     * @class MetadataManager
+     * @alias SUGAR.App.metadata
      */
     app.augment("metadata", {
         /**
@@ -31,7 +32,7 @@
          *          primary bean are returned.(Optional)</li>
          * </ul>
          * @method
-         * @member MetadataManager
+         * @member Core.MetadataManager
          * @return {Object} metadata
          */
         get: function(params) {
