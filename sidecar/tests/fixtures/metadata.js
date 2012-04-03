@@ -732,9 +732,6 @@ fixtures.metadata = {
                 }
             },
             controller: "{" +
-                "unformat:function(value){\n" +
-                    "return value;\n" +
-                "}," +
                 "format:function(value, fieldName){\n" +
                     "value = {\n" +
                     "street: this.model.get(this.name),\n" +
