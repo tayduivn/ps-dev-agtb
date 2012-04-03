@@ -41,9 +41,20 @@ fixtures.metadata = {
                     "name": "status",
                     "type": "enum",
                     "options": [
-                        {"key":"s1", "value":"s1"},
-                        {"key":"s2", "value":"s2"},
-                        {"key":"s3", "value":"s3"}
+                        {"key": "s1", "value": "s1"},
+                        {"key": "s2", "value": "s2"},
+                        {"key": "s3", "value": "s3"}
+                    ]
+                },
+                "priority": {
+                    "name": "priority",
+                    "type": "enum",
+                    "multi": true,
+
+                    "options": [
+                        {"key": "c1", "value": "c1"},
+                        {"key": "c2", "value": "c2"},
+                        {"key": "c3", "value": "c3"}
                     ]
                 },
                 "date_entered": {
@@ -106,9 +117,12 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+
+                                {name: "priority", label: "Priority"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"},
-                                {name: "leradio_c", label: "LeRadio"}
+                                {name: "date_modified", label: "Modifed Date"}
+                                //{name: "leradio_c", label: "LeRadio"}
+
                             ]
                         }
                     ]
@@ -134,6 +148,8 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+
+                                {name: "priority", label: "Priority"},
                                 {name: "description", label: "Description"},
                                 {name: "date_modified", label: "Modifed Date"},
                                 {name: "leradio_c", label: "LeRadio"}
@@ -200,7 +216,9 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+                                {name: "priority", label: "priority"},
                                 {name: "date_modified", label: "Modifed Date"},
+
                                 {type: "sugarField_actionsLink", label: "Actions"}
                             ]
                         }
@@ -608,7 +626,7 @@ fixtures.metadata = {
                 "format:function(value){\n" +
                 "return value\n" +
                 "},\n" +
-            "}"
+                "}"
         },
         "datetimecombo": {
             "views": {
@@ -618,12 +636,12 @@ fixtures.metadata = {
                 "editView": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> "+
-                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{eqEcho this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
+                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{in this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
                         " : " +
-                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{eqEcho this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{in this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
                         " " +
-                        "{{#if value.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{eqEcho this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                        "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{in this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
                         " <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
@@ -648,61 +666,61 @@ fixtures.metadata = {
                 "}," +
                 "format:function(value){\n" +
                 "var jsDate = app.utils.date.parse(value);\n" +
-                "jsDate = app.utils.date.roundTime(jsDate);\n"+
-                "value = {\n"+
-                "dateTime: value,\n"+
-                "//TODO Account for user prefs\n"+
-                    "date: app.utils.date.format(jsDate, 'Y-m-d'),\n"+
-                    "time: app.utils.date.format(jsDate, 'h:i:s'),\n"+
-                "hours: app.utils.date.format(jsDate, 'H'),\n"+
-                "minutes: app.utils.date.format(jsDate, 'i'),\n"+
-                "seconds: app.utils.date.format(jsDate, 's'),\n"+
-                "amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm',\n"+
-                "};\n"+
+                "jsDate = app.utils.date.roundTime(jsDate);\n" +
+                "value = {\n" +
+                "dateTime: value,\n" +
+                "//TODO Account for user prefs\n" +
+                "date: app.utils.date.format(jsDate, 'Y-m-d'),\n" +
+                "time: app.utils.date.format(jsDate, 'h:i:s'),\n" +
+                "hours: app.utils.date.format(jsDate, 'H'),\n" +
+                "minutes: app.utils.date.format(jsDate, 'i'),\n" +
+                "seconds: app.utils.date.format(jsDate, 's'),\n" +
+                "amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm',\n" +
+                "};\n" +
                 "return value\n" +
                 "},\n" +
-                "timeOptions:{"+
-                            "    hours:[{key:\"00\",value:\"00\"},{key:\"01\",value:\"01\"},{key:\"02\",value:\"02\"},{key:\"03\",value:\"03\"},{key:\"04\",value:\"04\"},"+
-                            "        {key:\"05\",value:\"05\"},{key:\"06\",value:\"06\"},{key:\"07\",value:\"07\"},{key:\"08\",value:\"08\"},{key:\"09\",value:\"09\"},"+
-                            "        {key:\"10\",value:\"10\"},{key:\"11\",value:\"11\"},{key:\"12\",value:\"12\"},{key:\"13\",value:\"13\"},{key:\"14\",value:\"14\"},"+
-                            "        {key:\"15\",value:\"15\"},{key:\"16\",value:\"16\"},{key:\"17\",value:\"17\"},{key:\"18\",value:\"18\"},{key:\"19\",value:\"19\"},"+
-                            "        {key:\"20\",value:\"20\"},{key:\"21\",value:\"21\"},{key:\"22\",value:\"22\"},{key:\"23\",value:\"23\"},{key:\"24\",value:\"24\"}"+
-                            "            ],"+
-                            "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}],"+
-                            "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]"+
-                            "},"+
-                "bindDomChange: function (model, fieldName) {\n"+
-                "var self = this\n"+
-                                "var date = this.$el.find('input');\n"+
+                "timeOptions:{" +
+                "    hours:[{key:\"00\",value:\"00\"},{key:\"01\",value:\"01\"},{key:\"02\",value:\"02\"},{key:\"03\",value:\"03\"},{key:\"04\",value:\"04\"}," +
+                "        {key:\"05\",value:\"05\"},{key:\"06\",value:\"06\"},{key:\"07\",value:\"07\"},{key:\"08\",value:\"08\"},{key:\"09\",value:\"09\"}," +
+                "        {key:\"10\",value:\"10\"},{key:\"11\",value:\"11\"},{key:\"12\",value:\"12\"},{key:\"13\",value:\"13\"},{key:\"14\",value:\"14\"}," +
+                "        {key:\"15\",value:\"15\"},{key:\"16\",value:\"16\"},{key:\"17\",value:\"17\"},{key:\"18\",value:\"18\"},{key:\"19\",value:\"19\"}," +
+                "        {key:\"20\",value:\"20\"},{key:\"21\",value:\"21\"},{key:\"22\",value:\"22\"},{key:\"23\",value:\"23\"}" +
+                "            ]," +
+                "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}]," +
+                "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]" +
+                "}," +
+                "bindDomChange: function (model, fieldName) {\n" +
+                "var self = this\n" +
+                "var date = this.$el.find('input');\n" +
 
-                            "var hour = this.$el.find('.date_time_hours');\n"+
-                                "var minute = this.$el.find('.date_time_minutes');\n"+
-                            "date.on('change', function(ev) {\n"+
-                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
-                            "});\n"+
-                            " hour.on('change', function(ev) {\n"+
-                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
-                            "});\n"+
-                            "minute.on('change', function(ev) {\n"+
-                                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n"+
-                            "});\n"+
-                                "}\n"+
-            "}"
+                "var hour = this.$el.find('.date_time_hours');\n" +
+                "var minute = this.$el.find('.date_time_minutes');\n" +
+                "date.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                " hour.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                "minute.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                "}\n" +
+                "}"
         },
-        "integer":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+        "integer": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
@@ -716,53 +734,37 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
-        "enum":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<select name=\"{{name}}\" >{{#each options}}<option value=\"{{{this.key}}}\" {{eqEcho this.key ..\/value \"selected\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">"+
+
+        "enum": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ..\/value \"SELECTED\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
-            controller: "{render: function() {\n" +
-                "                \/\/ If we don't have any data in the model yet\n" +
-                "                if (!(this.model instanceof Backbone.Model)) {\n" +
-                "                    return null;\n" +
-                "                }\n" +
-                "\n" +
-                "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n" +
-                "                this.$el.html(this.templateC(this));\n" +
-                "\n" +
-                "                var model = this.model;\n" +
-                "                var field = this.name;\n" +
-                "                var el = this.$el.find(\"select\");\n" +
-                "                var self = this;\n" +
-                "                \/\/Bind input to the model\n" +
-                "                el.on(\"change\", function(ev) {\n" +
-                "                   model.set(field, self.unformat(el.val()));\n" +
-                "                });\n" +
-                "\n" +
-                "                \/\/And bind the model to the input\n" +
-                "                model.on(\"change:\" + field, function(model, value) {\n" +
-                "                   el.val(self.format(value));\n" +
-                "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");" +
-                "                });\n" +
-                "                $('select[name=' + this.name + ']').chosen();\n" +
-                "                return this;\n" +
-                "            },\n" +
-                "format:function(value){\n" +
-                " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
-                "return value\n" +
+
+            controller: "{" +
+                "fieldType:\"select\",\n" +
+                "render:function(){" +
+                "   var result = this.app.sugarField.base.prototype.render.call(this);" +
+                "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
+                "   $('select').chosen();" +
+                "   console.log(this.fieldType + \"[name=\" + this.name + \"]\");" +
+                "   return result;" +
+
                 "}" +
-                "}"
+                "" +
+                "\n}\n"
+
         },
 
         radioenum: {
@@ -772,12 +774,12 @@ fixtures.metadata = {
                 },
                 editView: {
                     template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eqEcho this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
+                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
                 }
             }
         },
         "checkbox": {
-            "views" : {
+            "views": {
                 "detailView": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
@@ -786,7 +788,7 @@ fixtures.metadata = {
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                    }
+                }
             },
             controller: "{\n" +
                 "unformat:function(value){\n" +

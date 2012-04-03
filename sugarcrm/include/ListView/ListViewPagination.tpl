@@ -49,7 +49,7 @@
 
 						{sugar_action_menu id=$link_action_id params=$actionsLink theme="Sugar"}
 
-                        <div id='selectActionsDisabled' class='selectActionsDisabled'>{$actionsLink.buttons[0]}<span class='ab'></span></div>
+                        <div class='selectActionsDisabled'>{$actionDisabledLink}<span class='ab'></span></div>
 						<!--//BEGIN SUGARCRM flav=dce ONLY -->
 						{$DCEUpgradeLink}
 						{$DCEUpgradeButton}

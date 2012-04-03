@@ -113,11 +113,17 @@ class ListViewSmarty extends ListViewDisplay{
             $pageTotal = $this->data['pageData']['offsets']['total'] - $this->data['pageData']['offsets']['current'];
         }
 
-		if($this->select)$this->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
-		
-		if($this->show_action_dropdown)
+		if($this->select)$this->ss->assign('selectLinkTop', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
+        if($this->select)$this->ss->assign('selectLinkBottom', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
+
+        if($this->show_action_dropdown)
 		{
-			$this->ss->assign('actionsLink', $this->buildActionsLink());
+            $action_menu = $this->buildActionsLink();
+			$this->ss->assign('actionsLinkTop', $action_menu);
+            if(count($action_menu['buttons']) > 0) {
+                $this->ss->assign('actionDisabledLink', preg_replace("/id\s*\=(\"\w+\"|w+)/i", "", $action_menu['buttons'][0]));
+            }
+            $this->ss->assign('actionsLinkBottom', $this->buildActionsLink());
 		}
 		
 		$this->ss->assign('quickViewLinks', $this->quickViewLinks);
