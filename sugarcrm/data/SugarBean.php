@@ -2241,8 +2241,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
                     }
-                    $this->$field = (float)unformat_number($this->$field);
+                    if ( is_string($this->$field) ) {
+                        $this->$field = (float)unformat_number($this->$field);
                         $reformatted = true;
+                    }
                     break;
                case 'uint':
                case 'ulong':
@@ -2253,8 +2255,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
                     }
-                    $this->$field = (int)unformat_number($this->$field);
-                    $reformatted = true;
+                    if ( is_string($this->$field) ) {
+                        $this->$field = (int)unformat_number($this->$field);
+                        $reformatted = true;
+                    }
                    break;
                case 'bool':
                    if (empty($this->$field)) {
