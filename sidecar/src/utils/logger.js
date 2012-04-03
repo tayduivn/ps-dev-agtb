@@ -12,7 +12,7 @@
  * var a = 1;
  * SUGAR.App.logger.error(function() { return a; });
  * </code></pre>
- * @class Logger
+ * @class Utils.Logger
  * @alias SUGAR.App.logger
  * @singleton
  */
@@ -21,14 +21,14 @@
     app.augment("logger", {
 
         /**
-         * The different types of logging levels availabe
-         * @class Logger.levels
+         * Logging levels.
+         * @class Utils.Logger.levels
          * @singleton
          */
         levels: {
             /**
              * Trace log level
-             * @property {Logger.levels}
+             * @property {Utils.Logger.levels}
              */
             TRACE: {
                 value: 1,
@@ -36,7 +36,7 @@
             },
             /**
              * Debug log level
-             * @property {Logger.levels}
+             * @property {Utils.Logger.levels}
              */
             DEBUG: {
                 value: 2,
@@ -44,7 +44,7 @@
             },
             /**
              * Info log level
-             * @property {Logger.levels}
+             * @property {Utils.Logger.levels}
              */
             INFO: {
                 value: 3,
@@ -52,7 +52,7 @@
             },
             /**
              * Warn log level
-             * @property {Logger.levels}
+             * @property {Utils.Logger.levels}
              */
             WARN: {
                 value: 4,
@@ -60,7 +60,7 @@
             },
             /**
              * Error log level
-             * @property {Logger.levels}
+             * @property {Utils.Logger.levels}
              */
             ERROR: {
                 value: 5,
@@ -68,7 +68,7 @@
             },
             /**
              * Fatal log level
-             * @property {Logger.levels}
+             * @property {Utils.Logger.levels}
              */
             FATAL: {
                 value: 6,
@@ -78,18 +78,20 @@
 
         /**
          * Outputs messages onto browser's console object.
-         * @class Logger.ConsoleWriter
+         * @class Utils.Logger.ConsoleWriter
          * @singleton
-         * @member Logger
+         * @member Utils.Logger
          */
         ConsoleWriter: {
             /**
              * Outputs a message with the specified log level onto the browser's console.
-             * The writer uses
-             * <code>console.info</code> for <code>TRACE</code>, <code>DEBUG</code> and <code>INFO<code>,
-             * <code>console.warn</code> for <code>WARN</code>, and
-             * <code>console.error</code> for <code>ERROR</code> and <code>FATAL</code>.
-             * @param {Logger.levels} level A logger level from logger.levels
+             * The writer uses:
+             *
+             *  - <code>console.info</code>: <code>TRACE</code>, <code>DEBUG</code> and <code>INFO<code>.
+             *  - <code>console.warn</code>: <code>WARN</code>.
+             *  - <code>console.error</code>: <code>ERROR</code> and <code>FATAL</code>.
+             *
+             * @param {Utils.Logger.levels} level A logger level from logger.levels
              * @param {String} message
              * @method
              */
@@ -115,8 +117,8 @@
          * // Output
          * // TRACE[2012-1-26 2:38:23]: Blah-blah
          * </code></pre>
-         * @class Logger.SimpleFormatter
-         * @member Logger
+         * @class Utils.Logger.SimpleFormatter
+         * @member Utils.Logger
          * @singleton
          */
         SimpleFormatter: {
@@ -125,6 +127,7 @@
              * @param {Object} level logging level
              * @param {String} message log message
              * @param {Date} date logging timestamp
+             * @return {String} formatted log message
              * @method
              */
             format: function(level, message, date) {
@@ -137,7 +140,7 @@
         /**
          * Logs a message with a TRACE log level.
          * @param {String/Object/Function} message log message
-         * @member Logger
+         * @member Utils.Logger
          */
         trace: function(message) {
             this.log(this.levels.TRACE, message);
@@ -146,7 +149,7 @@
         /**
          * Logs a message with DEBUG log level.
          * @param {String/Object/Function} message log message
-         * @member Logger
+         * @member Utils.Logger
          */
         debug: function(message) {
             this.log(this.levels.DEBUG, message);
@@ -155,7 +158,7 @@
         /**
          * Logs a message with INFO log level.
          * @param {String/Object/Function} message log message
-         * @member Logger
+         * @member Utils.Logger
          */
         info: function(message) {
             this.log(this.levels.INFO, message);
@@ -164,7 +167,7 @@
         /**
          * Logs a message with WARN log level.
          * @param {String/Object/Function} message log message
-         * @member Logger
+         * @member Utils.Logger
          */
         warn: function(message) {
             this.log(this.levels.WARN, message);
@@ -173,7 +176,7 @@
         /**
          * Logs a message with ERROR log level.
          * @param {String/Object/Function} message log message
-         * @member Logger
+         * @member Utils.Logger
          */
         error: function(message) {
             this.log(this.levels.ERROR, message);
@@ -182,7 +185,7 @@
         /**
          * Logs a message with FATAL log level.
          * @param {String/Object/Function} message log message
-         * @member Logger
+         * @member Utils.Logger
          */
         fatal: function(message) {
             this.log(this.levels.FATAL, message);
@@ -190,12 +193,12 @@
 
         // TODO: We may want to add support for format strings like "Some message %s %d", params
         /**
-         * Logs a message with a given {@link Logger.levels} level.
+         * Logs a message with a given {@link Utils.Logger.levels} level.
          * If the message is an object, it will be serialized into a JSON string.
          * If the message is a function, it will eveluated in the logger's scope.
-         * @param {Logger.levels} level log level
+         * @param {Utils.Logger.levels} level log level
          * @param {String/Object/Function} message log message
-         * @member Logger
+         * @member Utils.Logger
          */
         log: function(level, message) {
             try {

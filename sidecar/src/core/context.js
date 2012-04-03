@@ -32,7 +32,7 @@
      * The global context object is stored in **`App.controller.context`**.
      *
      *
-     * @class Context
+     * @class Core.Context
      * @param {Object} obj Any parameters and state properties to attach to the context
      * @param {Object} data Hash of collection and or models to save to the context
      */
@@ -228,7 +228,7 @@
          * Returns a new instance of the context object
          * @param {Object} obj Any parameters and state properties to attach to the context
          * @param {Object} data Hash of collection and or models to save to the context
-         * @member Context
+         * @member Core.Context
          */
         getContext: function(obj, data) {
             return new Context(obj, data);

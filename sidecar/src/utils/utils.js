@@ -1,14 +1,14 @@
-/**
- * Utils
- * @ignore
- */
 (function(app) {
+
     /**
-     * @class utils
+     * Utils module provides several utility methods used throughout the app such as number formatting.
+     *
+     * @class Utils.Utils
      * @singleton
-     * utils provides several utility methods used throughout the app such as number formatting
+     * @alias SUGAR.App.utils
      */
     app.augment('utils', {
+
         /**
          * Formats Numbers
          *
