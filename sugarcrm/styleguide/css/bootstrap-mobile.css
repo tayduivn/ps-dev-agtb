@@ -3698,7 +3698,7 @@ h1 {
 article {
   position: relative;
   display: block;
-  padding: 8px 32px 8px 52px;
+  padding: 8px 32px;
   border-top: 1px solid #e8e8e8;
   min-height: 52px;
 }

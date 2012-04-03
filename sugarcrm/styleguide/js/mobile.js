@@ -80,10 +80,6 @@
 		}, 250);
 		return false;
     });
-  	$('.icon-star-empty, .icon-star').on('click', function () {
-	    $(this).toggleClass('icon-star-empty').addClass('icon-star');
-	    return false;
-  	});
     $('#tour').on('click', function () {
       $(this).remove();
     });
@@ -107,7 +103,7 @@
 		return false;
 	});
 
-	var post = '<article><i class="icon-star-empty"></i><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i></a><a href="" title="Remove"><i class="icon-trash icon-md"></i></a></span></span></article>',
+	var post = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i></a><a href="" title="Remove"><i class="icon-trash icon-md"></i></a></span></span></article>',
 	    more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more posts...</a></div></article>';
 
     function inject_posts(order,anchor,numberofrecords){
