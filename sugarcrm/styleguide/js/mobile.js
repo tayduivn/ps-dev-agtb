@@ -75,7 +75,9 @@
     });
     $('a[title=Remove]').live('click', function () {
 		$(this).closest('article').addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
-		setTimeout(rmel,250);
+		setTimeout(function () {
+		    $('.deleted').remove();
+		}, 250);
 		return false;
     });
   	$('.icon-star-empty, .icon-star').on('click', function () {
