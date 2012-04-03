@@ -69,7 +69,7 @@ class Bug46230Test extends Sugar_PHPUnit_Framework_TestCase
         $this->account->field_defs['industry']['dependency'] = $dependency;
         
         $res = $this->account->get_list_view_array();
-        
+
         if ($is_industry_hidden == '1')
         {
             $this->assertEmpty($res['INDUSTRY']);
