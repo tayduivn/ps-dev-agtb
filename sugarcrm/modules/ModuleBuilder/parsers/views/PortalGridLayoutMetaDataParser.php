@@ -108,6 +108,9 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 
     protected function _addCell($field, $colspan)
     {
+        if (!is_array($field) && $field !== '') {
+            $field = array('name' => $field);
+        }
         if ($colspan > 1 && is_array($field)) {
             $field['displayParams']['colspan'] = $colspan;
         }
