@@ -51,6 +51,7 @@ class ListViewSmarty extends ListViewDisplay{
 	var $mergeduplicates = true;
     var $contextMenus = true;
     var $showMassupdateFields = true;
+    var $menu_location = 'top';
     /**
      * Constructor, Smarty object immediately available after
      *
@@ -123,7 +124,8 @@ class ListViewSmarty extends ListViewDisplay{
             if(count($action_menu['buttons']) > 0) {
                 $this->ss->assign('actionDisabledLink', preg_replace("/id\s*\=(\"\w+\"|w+)/i", "", $action_menu['buttons'][0]));
             }
-            $this->ss->assign('actionsLinkBottom', $this->buildActionsLink());
+            $menu_location = 'bottom';
+            $this->ss->assign('actionsLinkBottom', $this->buildActionsLink('actions_link' ,$menu_location));
 		}
 		
 		$this->ss->assign('quickViewLinks', $this->quickViewLinks);
