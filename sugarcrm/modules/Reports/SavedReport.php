@@ -111,13 +111,13 @@ class SavedReport extends SugarBean
 			}
 		}
 
-		// cn: SECURITY bug 12272
-		$match = clean_xss(from_html($name));
-		if(!empty($match)) {
-			$name = str_replace($match, "", $name);
+        $json = getJSONobj();
+        // cn: SECURITY bug 12272
+        $match = clean_xss(from_html($name));
+        if(!empty($match)) {
+            $name = str_replace($match, "", $name);
 
-			$json = getJSONobj();
-			$tmpContent = $json->decode($content, false);
+            $tmpContent = $json->decode($content, false);
 
 			// clean stored report_name too
 			$tmpContent['report_name'] = str_replace($match, "", $tmpContent['report_name']);
@@ -128,7 +128,8 @@ class SavedReport extends SugarBean
 		$result = 1;
 		$this->assigned_user_id = $owner_id;
 		$this->name = $name;
-		$this->content = $content;
+        // Bug51621: Clean here, instead of in clean bean, and clean the individual pieces, rather than as a string.
+		$this->content = $json->encode(remove_xss_from_array($json->decode($content)));
 		$this->deleted = 0;
 		$this->report_type = $report_type;
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -424,6 +425,47 @@ class SavedReport extends SugarBean
  	{
 		return $this->create_new_list_query($order_by, $where);
   	}
+
+    /**
+    * @see SugarBean::cleanBean
+    */
+    function cleanBean() {
+        foreach($this->field_defs as $key => $def) {
+
+            if (isset($def['type'])) {
+                $type=$def['type'];
+            }
+            if(isset($def['dbType']))
+                $type .= $def['dbType'];
+
+            if((strpos($type, 'char') !== false ||
+                strpos($type, 'text') !== false ||
+                $type == 'enum') &&
+                !empty($this->$key)
+            ) {
+                // Bug51621: already clean the contents in SavedReport::save, so we don't need to repeat here
+                if ($key !== "content") {
+                    $str = from_html($this->$key);
+                } else {
+                    $str = $this->$key;
+                }
+                // Julian's XSS cleaner
+                $potentials = clean_xss($str, false);
+
+                if(is_array($potentials) && !empty($potentials)) {
+                    foreach($potentials as $bad) {
+                        $str = str_replace($bad, "", $str);
+                    }
+                    if ($key !== "content") {
+                        $this->$key = to_html($str);
+                    } else {
+                        $this->$key = $str;
+                    }
+                }
+            }
+        }
+    }
+
 }
 
   // returns the available modules for the specific user
@@ -481,4 +523,3 @@ class SavedReport extends SugarBean
      return $unallowed_modules;
   }
 
-?>
