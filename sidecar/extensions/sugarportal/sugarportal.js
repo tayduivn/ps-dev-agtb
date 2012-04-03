@@ -26,8 +26,8 @@
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
                                         "this.app.sugarAuth.login(args, {success:" +
-                                        "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
-                                        "function(){app.router.navigate('', {trigger:true})}); }" +
+                                        "function(){console.log(\"logged in successfully! dtam\");var app = self.app; app.sync(" +
+                                        "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
                                         "}"
                                 }

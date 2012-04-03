@@ -89,12 +89,7 @@
          * @method
          */
         syncComplete: function() {
-            // Check if we have an authenticated session
-            if (!(app.sugarAuth.isAuthenticated())) {
-              app.router.login();
-            } else {
                 app.router.start();
-            }
         }
     });
 

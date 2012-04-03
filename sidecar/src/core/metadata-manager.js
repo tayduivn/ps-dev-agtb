@@ -74,7 +74,8 @@
             if (typeof(_metadata[module]) == "undefined") {
                 _metadata[module] = app.cache.get("metadata." + module);
                 if (typeof(_metadata[module]) == "undefined") {
-                    app.sync();
+                  console.log("ERROR CALLING APP SYNC");
+                    //app.sync();
                     return null;
                 }
             }
@@ -83,7 +84,8 @@
                 return _metadata[module];
 
             if (typeof(_metadata[module][type]) == "undefined") {
-                app.sync();
+              console.log("ERROR CALLING APP SYNC");
+               // app.sync();
                 return null;
             }
 
@@ -138,7 +140,8 @@
             }
             //Could not get valid view data for this field
             else if (!result) {
-                app.Sync();
+              console.log("ERROR CALLING APP SYNC");
+               // app.Sync();
                 return null;
             }
 
