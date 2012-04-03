@@ -1,8 +1,9 @@
 (function(app) {
     /**
      * Controller manages the loading and unloading of Views within the app. It extends from a Backbone.View.
-     * @class Controller
+     * @class Core.Controller
      * @singleton
+     * @alias SUGAR.App.controller
      */
     var Controller = Backbone.View.extend({
         /**
@@ -90,18 +91,7 @@
         syncComplete: function() {
             // Check if we have an authenticated session
             if (!(app.sugarAuth.isAuthenticated())) {
-                app.sugarAuth.login({
-                    "username": "sally",
-                    "password": "sally"
-                }, {
-                    success: function(data) {
-                        console.log("login success");
-                        app.router.start();
-                    }, error: function(data) {
-                        console.log("login error");
-                        console.log(data);
-                    }
-                });
+              app.router.login();
             } else {
                 app.router.start();
             }

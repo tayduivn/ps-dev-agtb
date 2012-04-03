@@ -1,12 +1,10 @@
-/**
- SugarAuth
- * @ignore
- */
 (function(app) {
     /**
-     * @class SugarAuth
+     * Authentication manager provides the ability to login/logout and check for authentication status.
+     *
+     * @class Core.SugarAuth
      * @singleton
-     * SugarAuth provides the ability to login and authentication status
+     * @alias SUGAR.App.sugarAuth
      */
 
     app.augment('sugarAuth', (function() {
