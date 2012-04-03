@@ -495,6 +495,36 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
     }
 
+    /*
+    * Helper method for adding required fields back to the layout when they were
+    * removed.
+    */
+    protected function _restoreRequiredFields($fielddefs, $previousFields, $currentFields)
+    {
+        foreach($fielddefs as $field => $def)
+        {
+            if (self::fieldIsRequired($def) && !isset($currentFields[$field]))
+            {
+                //Use the previous viewdef if this field was on it.
+                if (isset($previousFields[$field]))
+                {
+                    $def = $previousFields[$field];
+                }
+                //next see if the field was on the original layout.
+                elseif (isset ($this->_originalViewDef [ $field ]))
+                {
+                    $def = $this->_originalViewDef [ $field ] ;
+                }
+                //Otherwise make up a viewdef for it from field_defs
+                else
+                {
+                    $def =  self::_trimFieldDefs( $def ) ;
+                }
+                $this->addField($def);
+            }
+        }
+    }
+
     /*  Convert our internal format back to the standard Canonical MetaData layout
      *  First non-(empty) field goes in at column 0; all other (empty)'s removed
      *  Studio required fields are also added to the layout.
@@ -503,30 +533,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     protected function _convertToCanonicalForm ( $panels , $fielddefs )
     {
         $previousViewDef = $this->getFieldsFromLayout($this->implementation->getViewdefs ());
-        $oldDefs = $this->implementation->getViewdefs ();
         $currentFields = $this->getFieldsFromLayout($this->_viewdefs);
-        foreach($fielddefs as $field => $def)
-        {
-        	if (self::fieldIsRequired($def) && !isset($currentFields[$field]))
-        	{
-                //Use the previous viewdef if this field was on it.
-                if (isset($previousViewDef[$field]))
-                {
-                    $def = $previousViewDef[$field];
-                }
-                //next see if the field was on the original layout.
-                else if (isset ($this->_originalViewDef [ $field ]))
-                {
-                    $def = $this->_originalViewDef [ $field ] ;   
-                }
-                //Otherwise make up a viewdef for it from field_defs
-                else
-                {
-                    $def =  self::_trimFieldDefs( $def ) ;
-                }
-                $this->addField($def);
-        	}
-        }
+        $this->_restoreRequiredFields($fielddefs, $previousViewDef, $currentFields);
         
         foreach ( $panels as $panelID => $panel )
         {
