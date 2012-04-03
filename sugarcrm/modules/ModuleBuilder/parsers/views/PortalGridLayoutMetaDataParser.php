@@ -106,15 +106,23 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
         return ($field == MBConstants::$EMPTY['name']);
     }
 
+    // return an array of cells to be appended to the fieldlist
     protected function _addCell($field, $colspan)
     {
-        if (!is_array($field) && $field !== '') {
+        // for fillers, if we ever have a 'filler' with colspan = n, just sub n 'fillers'
+        if ($field === '')
+        {
+            return array_fill(0,$colspan,'');
+        }
+
+        if (!is_array($field)) {
             $field = array('name' => $field);
         }
-        if ($colspan > 1 && is_array($field)) {
+
+        if ($colspan > 1) {
             $field['displayParams']['colspan'] = $colspan;
         }
-        return $field;
+        return array($field);
     }
 
     /**
@@ -125,6 +133,9 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
      */
     protected function _convertToCanonicalForm($panels , $fielddefs)
     {
+        //$previousViewDef = $this->getFieldsFromLayout($this->implementation->getViewDefs());
+        //$currentFields = $this->getFieldsFromLayout($this->_viewdefs);
+
         $canonicalPanels = array();
 
         foreach ($panels as $pName => $panel) {
@@ -133,8 +144,6 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
                 $offset = 1; // reset
                 $lastField = null; // holder for the field to put in
                 foreach ($row as $cell) {
-
-                    // leading empty => should not occur, but assign to next field as colspan
                     $fieldName = isset($cell['name']) ? $cell['name'] : $cell;
 
                     // empty => get rid of it, and assign to previous field as colspan
@@ -144,8 +153,9 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
                     }
 
                     // dump out the last field we stored and reset column count
+                    // leading empty => should not occur, but assign to next field as colspan
                     if ($lastField !== null) {
-                        $fields[] = $this->_addCell($lastField,$offset);
+                        $fields = array_merge($fields,$this->_addCell($lastField,$offset));
                         $offset = 1;
                     }
 
@@ -162,9 +172,8 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 
                 // dump out the last field we stored
                 if ($lastField !== null) {
-                    $fields[] = $this->_addCell($lastField,$offset);
+                    $fields = array_merge($fields,$this->_addCell($lastField,$offset));
                 }
-
 
             }
             $canonicalPanels[] = array('label' => $pName, 'fields' => $fields);
