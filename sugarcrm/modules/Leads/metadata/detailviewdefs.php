@@ -43,7 +43,8 @@ $viewdefs['Leads']['DetailView'] = array (
                             'accessKey' => '{$MOD.LBL_CONVERTLEAD_BUTTON_KEY}',
                             'class' => 'button',
                             'onClick' => 'document.location=\'index.php?module=Leads&action=ConvertLead&record={$fields.id.value}\'',
-                            'name' => 'convert'
+                            'name' => 'convert',
+                            'id' => 'convert_lead_button',
                         ),
                         'template' => '{if $bean->aclAccess("edit") && !$DISABLE_CONVERT_ACTION}[CONTENT]{/if}',
                     ),
@@ -58,6 +59,7 @@ $viewdefs['Leads']['DetailView'] = array (
                         'htmlOptions' => array(
                             'title' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
                             'class' => 'button',
+                            'id' => 'manage_subscriptions_button',
                             'onclick' => 'this.form.return_module.value=\'Leads\'; this.form.return_action.value=\'DetailView\';this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Leads\';',
                             'name' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
                         )
