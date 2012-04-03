@@ -75,7 +75,7 @@
             });
 
             Handlebars.registerHelper('eq', function(val1, val2, retTrue, retFalse) {
-
+                console.log("EQ", "val1", val1, "val2", val2, "retTrue", retTrue, "retFalse", retFalse);
                 if (val1 == val2) {
                     return retTrue;
                 }

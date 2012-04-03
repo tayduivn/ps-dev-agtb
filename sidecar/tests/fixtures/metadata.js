@@ -735,7 +735,7 @@ fixtures.metadata = {
                 "editView": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ..\/value \"SELECTED\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ../value \"selected\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
                 "default": {
@@ -765,7 +765,7 @@ fixtures.metadata = {
                 },
                 editView: {
                     template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
+                        "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
                 }
             }
         },

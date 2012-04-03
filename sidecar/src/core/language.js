@@ -87,6 +87,10 @@
             return this.appStrings[str] || false;
         },
 
+        getAppListStrings: function(str) {
+            return this.appListStrings[str] || false;
+        },
+
         // We shoudln't need this function :(
         /**
          * Sanitizes the label.

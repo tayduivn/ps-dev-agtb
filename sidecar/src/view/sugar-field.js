@@ -28,17 +28,16 @@
         return new Handlebars.SafeString(ret);
     });
 
-    Handlebars.registerHelper('eachOption', function(context, options) {
+    Handlebars.registerHelper('eachOptions', function(context, block) {
         // Retrieve app list strings
+        var options = app.lang.getAppListStrings(context),
+            ret = "";
 
-
-        var ret = "<ul>";
-
-        for (var i = 0, j = context.length; i < j; i++) {
-            ret = ret + "<li>" + block(context[i]) + "</li>";
+        for (var i = 0, j = options.length; i < j; i++) {
+            ret = ret + block(options[i]);
         }
 
-        return ret + "</ul>";
+        return ret;
     });
 
     /**
