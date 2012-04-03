@@ -3999,6 +3999,7 @@ html {
 }
 #listing > article:first-child {
   margin-top: 33px;
+  margin-bottom: 0;
 }
 #listing > article:last-child {
   margin-bottom: 20px;
