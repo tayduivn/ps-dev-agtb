@@ -239,13 +239,13 @@ fixtures.metadata = {
                         {view: "editView"}
                     ]
                 },
-                "detail": {
-                    "type": "rows",
-                    "components": [
-                        {view: "detailView"},
-                        {view: "subpanelView"}
-                    ]
-                },
+"detail": {
+    "type": "rows",
+    "components": [
+        {view: "detailView"},
+        {view: "subpanelView"}
+    ]
+},
                 "list": {
                     //Default layout is a single view
                     "type": "simple",

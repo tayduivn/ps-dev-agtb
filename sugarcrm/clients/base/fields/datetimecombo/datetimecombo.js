@@ -1,4 +1,4 @@
-{
+({
     render:function(value) {
         app.sugarField.base.prototype.render.call(this);//call proto render
         $(function() {
@@ -87,4 +87,4 @@
             model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
         });
     }
-}
+})

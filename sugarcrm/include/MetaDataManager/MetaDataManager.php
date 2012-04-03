@@ -332,26 +332,31 @@ class MetaDataManager {
     {
         $result = array();
 
-        $baseFieldDirectory = "include/SugarFields/Fields/";        
-        $builtinSugarFields = glob($baseFieldDirectory."*",GLOB_ONLYDIR);
-        if ( is_dir('custom/'.$baseFieldDirectory) ) {
-            $customSugarFields = glob('custom/'.$baseFieldDirectory."*",GLOB_ONLYDIR);
-        } else {
-            $customSugarFields = array();
-        }
-        $allSugarFieldDirs = $builtinSugarFields+$customSugarFields;
-        $allSugarFields = array();
-        foreach ( $allSugarFieldDirs as $fieldDir ) {
-            // To prevent doing the work twice, let's sort this out by basename
-            $field = basename($fieldDir);
-            $allSugarFields[$field] = $field;
+        //Each platform can have a
+        foreach ( $this->platforms as $platform ) {
+            $baseFieldDirectory = "clients/$platform/fields/";
+            $builtinSugarFields = glob($baseFieldDirectory."*",GLOB_ONLYDIR);
+            if ( is_dir('custom/'.$baseFieldDirectory) ) {
+                $customSugarFields = glob('custom/'.$baseFieldDirectory."*",GLOB_ONLYDIR);
+            } else {
+                $customSugarFields = array();
+            }
+            $allSugarFieldDirs = $builtinSugarFields+$customSugarFields;
+            $allSugarFields = array();
+            foreach ( $allSugarFieldDirs as $fieldDir ) {
+                // To prevent doing the work twice, let's sort this out by basename
+                $field = basename($fieldDir);
+                $allSugarFields[$field] = $field;
+            }
         }
 
-        foreach ( $allSugarFields as $fieldName ) {
-            $fieldData = array();
+
+
+        foreach ( $allSugarFields as $fieldName) {
+            $fieldData = array('templates' => array());
             // Check each platform in order of precendence to find the "best" controller
-            foreach ( $this->platforms as $platform ) {
-                $controller = $baseFieldDirectory.$fieldName."/${platform}/${fieldName}.js";
+            foreach ( $this->platform as $platform ) {
+                $controller = "clients/{$platform}/{$fieldName}/{$fieldName}.js";
                 if ( file_exists('custom/'.$controller) ) {
                     $controller = 'custom/'.$controller;
                 }
@@ -362,13 +367,11 @@ class MetaDataManager {
                 }
             }
 
-            $fieldData['templates'] = array();
             // Reverse the platform order so that "better" templates override worse ones
             $backwardsPlatforms = array_reverse($this->platforms);
+
             foreach ( $backwardsPlatforms as $platform ) {
-                $templateDir = $baseFieldDirectory.$fieldName."/${platform}/";
-                $templates = array();
-                
+                $templateDir = "clients/{$platform}/{$fieldName}/";
                 if ( is_dir($templateDir) ) {
                     $stdTemplates = glob($templateDir."*.hbt");
                     if ( is_array($stdTemplates) ) {
