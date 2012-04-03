@@ -61,7 +61,8 @@
         //If theres old data, clear it.
           if( $("#sugar_spot_search_results").find('section').length > 0 )
               $("#sugar_spot_search_results").html('');
-
+		$('#sugar_spot_search_div').css("width",344);
+		$('#sugar_spot_search').css("width",290);
         $("#sugar_spot_search_results").show();
     });
 

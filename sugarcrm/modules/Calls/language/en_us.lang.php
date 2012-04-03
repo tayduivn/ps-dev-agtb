@@ -80,13 +80,15 @@ $mod_strings = array (
     'LBL_REMINDER' => 'Reminders:',
     'LBL_REMINDER_POPUP' => 'Popup',
     'LBL_REMINDER_EMAIL' => 'Email',
+    'LBL_EMAIL_REMINDER' => 'Email Reminder',
     'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
-    'LBL_SEND_BUTTON_TITLE'=>'Send Invites [Alt+I]',
+    'LBL_SEND_BUTTON_TITLE'=>'Save & Send Invites [Alt+I]',
     'LBL_SEND_BUTTON_KEY'=>'I',
-    'LBL_SEND_BUTTON_LABEL'=>'Send Invites',
+    'LBL_SEND_BUTTON_LABEL'=>'Save & Send Invites',
 	'LBL_DATE_END'=>'End Date',
 	'LBL_TIME_END'=>'Time End',
 	'LBL_REMINDER_TIME'=>'Reminder Time',
+    'LBL_EMAIL_REMINDER_SENT' => 'Email reminder sent',
     'LBL_SEARCH_BUTTON'=> 'Search',
     'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
     'LBL_ADD_BUTTON'=> 'Add',
@@ -120,7 +122,7 @@ $mod_strings = array (
     'LBL_EXPORT_DATE_START' => 'Start Date and Time',
     'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
     'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
-    
+
     // create invitee functionallity
     'LBL_CREATE_INVITEE' => 'Create an invitee',
     'LBL_CREATE_CONTACT' => 'As Contact',

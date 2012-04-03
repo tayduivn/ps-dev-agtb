@@ -70,45 +70,16 @@ SUGAR.append(SUGAR.themes, {
         var moreItemsContainer = "#moduleTabMore"+sugar_theme_gm_current;
 
 		//Check if the menu we want to show is in the more menu
-		if($(el+"Overflow").parents().is(extraMenu)) {
-            var parent = $(el+"Overflow").parent();
+		if($(el).parents().is(extraMenu)) {
+            var menuNode = $(el).parent();
+            menuNode.remove();
+            $("#moduleTabExtraMenu" + sugar_theme_gm_current).before(menuNode);
+            
+            //kill menu and reload it so all events are assigned properly
 
-            //get the previous sibling of extraMenu
-            var $currRight = $(extraMenu).prev();
-            //add menu after prev sib
-
-             $(el+"Overflow").parent().insertAfter($currRight);
-             var newId = el.replace("#","");
-
-             var currRightId = $currRight.children("a:first-child").attr("id") + "OverflowHidden";
-             $(el+"Overflow").attr("id",newId);
-             $(el).parent().addClass("current");
-
-            var oldElement = $(el).parent().prev();
-            var oldID = oldElement.children("a:first-child").attr("id");
-            var possibleOverflowID = oldID + 'Overflow';
-            var possibleOverflowHiddenID = oldID + 'OverflowHidden';
-
-            //Check if the element previously existed in the overflow or hidden submenu.
-            if(  $('#' + possibleOverflowID).length == 0 && $('#' + possibleOverflowHiddenID).length == 0  )
-            {
-                //Add previous module in right hand position to be first in line in the more menu
-                oldElement.children("a:first-child").attr("id",possibleOverflowID);
-                oldElement.insertAfter($(moreItemsContainer).children(':first-child'));
-            }
-            else
-            {
-                //We have a dup in the overflow menu already so hide what's visible.
-                $(el).parent().prev().remove();
-            }
-
-			 $("#"+currRightId).parent().css("display","list-item");
-			 
-			 
-			 //kill menu and reload it so all events are assigned properly
-			 var moduleList = $("#moduleList");
-			 $("#moduleList").find("a").unbind();
-			 SUGAR.themes.loadModuleList();
+			$("#moduleList").find("a").unbind();
+			SUGAR.themes.loadModuleList();
+	
 		}
     },
     setCurrentTab: function(params) {
@@ -122,6 +93,7 @@ SUGAR.append(SUGAR.themes, {
             }
             $(el).parent().addClass("current");
         }
+        SUGAR.themes.resizeMenu();
         makeCall = true;
     },
     setModuleTabs: function(html) {
@@ -137,16 +109,61 @@ SUGAR.append(SUGAR.themes, {
             this.loadModuleList();
         }
     },
+    
+    toggleQuickCreateOverFlow: function(menuName,maction) {
+    	var menuName = "#quickCreateULSubnav"; 
+    		if(maction == "more") {
+				$(menuName).addClass("showMore");
+				$(menuName).removeClass("showLess");
+    		} else {
+    			$(menuName).addClass("showLess");
+				$(menuName).removeClass("showMore");
+    		}
+    },
     toggleMenuOverFlow: function(menuName,maction) {
 
     	var menuName = "#"+menuName;
 	    if(maction == "more") {
 			$(menuName).addClass("showMore");
 			$(menuName).removeClass("showLess");
+			
+		var viewPortHeight = $(window).height(),
+		    menuOffset = $(menuName).offset(),
+		    menuHeight = $(menuName).outerHeight(true),
+		    menuWidth = $(menuName).width(),
+		    footerHeight = $('#footer').height(),
+		    moduleListHeight = $('#moduleList').height(),
+		    filterByHeight = $(menuName).parent().find('ul.filterBy').outerHeight(true);
+			if(menuHeight + moduleListHeight > viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)) {
+				
+	    		$.fn.hoverscroll.params = $.extend($.fn.hoverscroll.params, {
+	    			vertical : true,
+	    			width: menuWidth,
+	    			hoverZone: 'instant',
+	    			height: viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)
+	    		});
+	    		$(menuName).hoverscroll();
+	    		$(menuName).width(menuWidth);
+	    		
+
+	    		$(menuName).find("> li").each(function() {
+					$(this).unbind('mouseover');
+					$(this).unbind('mouseout');
+				});
+    		
+		    }
 		} else {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
-		}
+			
+			$.fn.hoverscroll.destroy($(menuName));
+			$("#moduleList").find("a").unbind();
+			var moduleListHTML = $("#moduleList").html();
+			$("#moduleList").empty();
+			$("#moduleList").html(moduleListHTML);
+			this.loadModuleList();
+			$('#moduleMenuOverFlowMore'+sugar_theme_gm_current).children('a').focus().blur();
+		}	
     },
     switchMenuMode: function() {
     	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
@@ -178,7 +195,7 @@ SUGAR.append(SUGAR.themes, {
 			dropShadows: false,
             ignoreClass: 'megawrapper',
 			onBeforeShow: function() {
-				if($(this).attr("class") == "megamenu") {
+				if($(this).attr("class") == "megamenu" && $(this).prev().hasClass('more') != true) {
                     var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
 					var moduleName = $(this).prev().attr("module");
                     //Check if the menu we want to show is in the more menu
@@ -255,50 +272,49 @@ SUGAR.append(SUGAR.themes, {
 		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
 			$('ul.sf-menu').each(function(){
 				if($(this).attr("id") == ("themeTabGroupMenu_" + sugar_theme_gm_current)){
-	                $(this).children("li").each(
-	                    function(index) {
-                            menuItemsWidth += $(this).width();
+					var menuItems = $(this).children("li")
+					menuItems.each(
+	                    function(index) {                  
                             var menuNode = $(this);
-                            var menuActions = menuNode.find(".MMShortcuts").find("a");
-                            var menuLink = menuNode.children("a:first");
-                           
-                            if($.data(menuLink[0], "origID") == undefined){
-                            	$.data(menuLink[0], "origID", menuLink.attr("id"));
-                            	menuActions.each(function(index, node){
-                            		$.data(node, "origID", $(node).attr("id"));
-                            	});
-                            }
-                           
-                            var flexNode = $("#" + $.data(menuLink[0], "origID")+"_flex");
-                            var flexActions = flexNode.find(".MMShortcuts").find("a");
-                               
-	                        if(menuItemsWidth > maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) {
-	                            if(menuNode.css("display") != "none"){
-		                        	menuNode.css("display","none");
-		                            flexNode.css("display","list-item");
-		                            flexNode.children("a:first").attr("id", $.data(menuLink[0], "origID"));
-		                            menuNode.children("a:first").attr("id", "");
-		                            flexActions.each(function(index, node){
-		                            	$(node).attr("id", $.data(menuActions[index], "origID"));
-		                            	$(menuActions[index]).attr("id", "")
-		                            });
-	                            }
-	                        	
-	                        }  else if( (menuItemsWidth <= maxMenuWidth && $(this).attr("id") != "moduleTabExtraMenu" + sugar_theme_gm_current && !$(this).hasClass("current")) || $(this).hasClass("moduleTabExtraMenu") ) {
-	                            if(menuNode.css("display") != "list-item"){
-		                        	menuNode.css("display","list-item");
-		                            flexNode.css("display","none");
-		                            menuNode.children("a:first").attr("id", $.data(menuLink[0], "origID"));
-		                            flexNode.children("a:first").attr("id", "");
-		                            menuActions.each(function(index, node){
-		                            	$(node).attr("id", $.data(menuActions[index], "origID"));
-		                            	$(flexActions[index]).attr("id", "")
-		                            	
-		                            });
-	                            }	                        	
-	                        }
+                            menuItemsWidth += menuNode.width();
 	                    }
 				    );
+	                var menuLength = menuItems.length;
+	                
+	                if(menuItemsWidth > maxMenuWidth){
+	                	while(menuItemsWidth > maxMenuWidth){
+	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
+	                		if(menuNode.hasClass("current")){
+	                			menuNode = menuNode.prev();
+	                		}
+	                		if(menuNode.hasClass("home")){
+	                			break;
+	                		}
+	                		menuItemsWidth -= menuNode.width();
+	                		menuNode.remove();
+	                		$("#moduleTabMore" + sugar_theme_gm_current).prepend(menuNode);
+	                	}
+	                }
+	                else if(menuItemsWidth <= maxMenuWidth){
+	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
+	                	if(insertNode.prev().hasClass("current")){
+	                		insertNode = insertNode.prev();
+                		}	                
+	                	while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
+	                		var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first");
+	                		
+	                		if((menuNode.attr("id") != undefined && 
+	                		   menuNode.attr("id").match(/moduleMenuOverFlow[a-zA-Z]*/)) ||
+	                		   (menuItemsWidth + menuNode.width()) > maxMenuWidth){
+	                			break;	                			
+	                		}
+	                		menuLength++;
+	                		menuItemsWidth += menuNode.width();
+		                	menuNode.remove();
+		                	
+		                	insertNode.before(menuNode);
+	                	}
+	                }
 				}
             });
     },
@@ -359,7 +375,6 @@ SUGAR.append(SUGAR.themes, {
 			$('#close_spot_search').css("display","inline-block");
 
 			 if(event.charCode == 0 && !firstHit) {
-			$('#sugar_spot_search_div').css("left",110);
 			$('#sugar_spot_search_div').css("width",344);
 			$('#sugar_spot_search').css("width",290);
 			firstHit = true;

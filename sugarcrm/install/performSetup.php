@@ -478,7 +478,7 @@ createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
         {
             require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
             $indexer = new SugarSearchEngineFullIndexer();
-            $results = $indexer->performFullSystemIndex()->getStatistics();
+            $results = $indexer->performFullSystemIndex();
         }
         //END SUGARCRM flav=pro ONLY
     }

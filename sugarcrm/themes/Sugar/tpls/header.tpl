@@ -49,7 +49,9 @@ if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 }
 </script>
 {/literal}
-
+<script>
+var max_tabs = {$max_tabs};
+</script>
 
 <div id="main">
     <div id="content">
