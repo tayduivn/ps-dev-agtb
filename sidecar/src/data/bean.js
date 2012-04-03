@@ -1,12 +1,12 @@
 /**
- * Base bean class. Use {@link DataManager} to create instances of beans.
+ * Base bean class. Use {@link Data.DataManager} to create instances of beans.
  *
  * **CRUD on beans**
  *
  * Use standard Backbone's <code>fetch</code>, <code>save</code>, and <code>destroy</code>
- * methods to perform CRUD operations on beans. See {@link DataManager} class for details.
+ * methods to perform CRUD operations on beans. See {@link Data.DataManager} class for details.
  *
- * @class Bean
+ * @class Data.Bean
  * @extends Backbone.Model
  * @alias SUGAR.App.Bean
  */

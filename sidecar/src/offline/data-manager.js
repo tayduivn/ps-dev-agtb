@@ -41,6 +41,7 @@
          * @param method
          * @param model
          * @param options
+         * @ignore
          */
         sync: function(method, model, options) {
             options = options || {};

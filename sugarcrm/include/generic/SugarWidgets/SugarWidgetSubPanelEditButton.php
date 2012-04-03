@@ -46,7 +46,8 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 	function displayList($layout_def)
 	{
 		global $app_strings;
-		
+        global $subpanel_item_count;
+		$unique_id = $layout_def['subpanel_id']."_edit_".$subpanel_item_count; //bug 51512
         $onclick ='';
 //BEGIN SUGARCRM flav=pro ONLY
 		$formname = $this->getFormName($layout_def);
@@ -60,7 +61,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 
 		if($layout_def['EditView'] && $this->isQuickCreateValid($layout_def['module'],$layout_def['subpanel_id'])){
-			return '<a href="#" class="listViewTdToolsS1" id="edit_subpanel_item" onclick="' . $onclick . '">' .
+			return '<a href="#" class="listViewTdToolsS1" id="'.$unique_id .'" onclick="' . $onclick . '">' .
                       $app_strings['LNK_EDIT'] .'</a>';
 		}else
 //END SUGARCRM flav=pro ONLY
@@ -69,7 +70,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
 			. " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
-			. ' class="listViewTdToolsS1" id="edit_subpanel_item">'. $app_strings['LNK_EDIT'] .'</a>';
+			. " class='listViewTdToolsS1' id=\"$unique_id\">". $app_strings['LNK_EDIT'] .'</a>';
 		}
 
         return '';

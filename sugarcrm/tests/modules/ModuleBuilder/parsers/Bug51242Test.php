@@ -48,13 +48,13 @@ class Bug51242Test extends Sugar_PHPUnit_Framework_TestCase
     public function providerGetParser()
     {
         return array(
-            array('PortalListView', 'Cases'),
+            array(MB_PORTALLISTVIEW, 'Cases'),
             array('portallayoutview','Cases'),
-            array('PortalListView', 'Leads'),
+            array(MB_PORTALLISTVIEW, 'Leads'),
             array('portallayoutview','Leads'),
-            array('PortalListView', 'Bugs'),
+            array(MB_PORTALLISTVIEW, 'Bugs'),
             array('portallayoutview','Bugs'),
-            array('PortalListView', 'KBDocuments'),
+            array(MB_PORTALLISTVIEW, 'KBDocuments'),
             array('portallayoutview','KBDocuments'),
         );
     }

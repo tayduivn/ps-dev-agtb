@@ -34,6 +34,8 @@ global $sugar_config, $sugar_version, $sugar_flavor, $server_unique_key, $curren
 if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client']){
 	require_once('modules/Sync/headermenu.php');
 }
+
+//BEGIN SUGARCRM flav!=com ONLY
 //BEGIN SUGARCRM flav=sales ONLY
 if(!is_admin($GLOBALS['current_user']))
 //END SUGARCRM flav=sales ONLY
@@ -41,7 +43,7 @@ $global_control_links['profile'] = array(
 'linkinfo' => array($app_strings['LBL_PROFILE'] => 'index.php?module=Users&action=EditView&record='.$GLOBALS['current_user']->id),
 'submenu' => ''
 );
-
+//END SUGARCRM flav!=com ONLY
 
 $global_control_links['employees'] = array(
 'linkinfo' => array($app_strings['LBL_EMPLOYEES']=> 'index.php?module=Employees&action=index'),

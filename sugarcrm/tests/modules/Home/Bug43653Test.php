@@ -132,6 +132,3 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	}
     //END SUGARCRM flav=pro ONLY
 }
-
-?>
-
