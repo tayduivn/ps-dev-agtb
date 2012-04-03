@@ -24,7 +24,6 @@ var footer_template = '\
 var stream_items_template = '\
 {{#aloop}}\
 <article>\
-  <i class="{{starred}}"></i>\
   <div title="{{name}}">\
     {{{content}}}\
   </div>\
