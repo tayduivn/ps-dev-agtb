@@ -259,30 +259,11 @@ class MetaDataManager {
 
             // Reverse the platform order so that "better" templates override worse ones
             $backwardsPlatforms = array_reverse($this->platforms);
-
+            $templateDirs = array();
             foreach ( $backwardsPlatforms as $platform ) {
-                $templateDir = "clients/{$platform}/{$fieldName}/";
-                if ( is_dir($templateDir) ) {
-                    $stdTemplates = glob($templateDir."*.hbt");
-                    if ( is_array($stdTemplates) ) {
-                        foreach ( $stdTemplates as $templateFile ) {
-                            $templateName = substr(basename($templateFile),0,-4);
-                            $fieldData['templates'][$templateName] = file_get_contents($templateFile);
-                        }
-                    }                    
-                }
-                // Do the custom directory last so it will override anything in the core product
-                if ( is_dir('custom/'.$templateDir) ) {
-                    $cstmTemplates = glob('custom/'.$templateDir."*.hbt");
-                    if ( is_array($cstmTemplates) ) {
-                        foreach ( $cstmTemplates as $templateFile ) {
-                            $templateName = substr(basename($templateFile),0,-4);
-                            $fieldData['templates'][$templateName] = file_get_contents($templateFile);
-                        }
-                    }
-                }
-                
+                $templateDirs[] = "clients/{$platform}/{$fieldName}/";
             }
+            $fieldData['templates'] = $this->fetchTemplates($templateDirs);
             
             $result[$fieldName] = $fieldData;
         }
@@ -292,12 +273,45 @@ class MetaDataManager {
     }
 
     /**
+     * A method to collect templates and pass them back, shared between sugarfields, viewtemplates and per-module templates
+     *
+     * @param searchDirs array A list of directories to search, custom directories will be searched automatically, ordered by least to most important
+     * @param extension string A extension to search for, defaults to ".hbt"
+     * @return array An array of template file contents keyed by the template name.
+     */
+    protected function fetchTemplates($searchDirs,$extension='.hbt') {
+        $templates = array();
+        foreach ( $searchDirs as $searchDir ) {
+            if ( is_dir($searchDir) ) {
+                $stdTemplates = glob($searchDir."*".$extension);
+                if ( is_array($stdTemplates) ) {
+                    foreach ( $stdTemplates as $templateFile ) {
+                        $templateName = substr(basename($templateFile),0,-strlen($extension));
+                        $templates[$templateName] = file_get_contents($templateFile);
+                    }
+                }                    
+            }
+            // Do the custom directory last so it will override anything in the core product
+            if ( is_dir('custom/'.$searchDir) ) {
+                $cstmTemplates = glob('custom/'.$searchDir."*".$extension);
+                if ( is_array($cstmTemplates) ) {
+                    foreach ( $cstmTemplates as $templateFile ) {
+                        $templateName = substr(basename($templateFile),0,-strlen($extension));
+                        $templates[$templateName] = file_get_contents($templateFile);
+                    }
+                }
+            }
+        }
+        return $templates;
+    }
+    
+    /**
      * The collector method for view templates
      *
      * @return array A hash of the template name and the template contents
      */
     public function getViewTemplates() {
-        $templates = array();
+        $templates = $this->fetchTemplates('include/templates/'.$this->platforms[0]);
         $templates['_hash'] = md5(serialize($templates));
         return $templates;
     }
