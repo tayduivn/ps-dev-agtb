@@ -220,6 +220,112 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
         //print_r($output);
 
     }
+
+    public function canonicalAndInternalFieldList()
+    {
+        return array(
+            array(
+                // canonical panels
+                array(array('label' => 'Default', 'fields' => array(
+                    array(
+                        'name' => 'name',
+                        'label' => 'Name',
+                    ),
+                    array(
+                        'name' => 'status',
+                        'label' => 'Status',
+                    ),
+                    array(
+                        'name' => 'description',
+                        'label' => 'Description',
+                    ),
+                    ""
+                ))),
+                // internal fieldlist
+                array(
+                    'name' => array(
+                        'name' => 'name',
+                        'label' => 'Name',
+                    ),
+                    'status' => array(
+                        'name' => 'status',
+                        'label' => 'Status',
+                    ),
+                    'description' => array(
+                        'name' => 'description',
+                        'label' => 'Description',
+                    ),
+                    "" => null,
+
+                )
+            ),
+            array(
+                // internal panels
+                array('Default' => array(
+                    array( //row 1
+                        array(
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'displayParams' => array('colspan' => 2)
+                        ),
+                        MBConstants::$EMPTY
+                    ),
+                    array( //row 2
+                        array(
+                            'name' => 'status',
+                            'label' => 'Status',
+                        ),
+                        array(
+                            'name' => 'description',
+                            'label' => 'Description',
+                        ),
+                    ),
+                )),
+                // field list
+                array(
+                    'name' =>  array(
+                        'name' => 'name',
+                        'label' => 'Name',
+                        'displayParams' => array('colspan' => 2)
+                    ),
+                    '(empty)' => MBConstants::$EMPTY,
+                    'status' =>  array(
+                        'name' => 'status',
+                        'label' => 'Status',
+                    ),
+                    'description' => array(
+                        'name' => 'description',
+                        'label' => 'Description',
+                    ),
+
+                )
+            )
+        );
+    }
+
+    /**
+     * @dataProvider canonicalAndInternalFieldList
+     * @param input
+     * @param expected
+     */
+    public function testGetFieldsFromLayout($input, $expected)
+    {
+        $output = $this->_parser->testGetFieldsFromLayout(array('panels' => $input));
+        $this->assertEquals($expected, $output);
+    }
+
+    /**
+     * @dataProvider canonicalAndInternalForms
+     * @param $expected
+     * @param $input
+     */
+    public function testConvertToCanonicalForm($expected, $input)
+    {
+        $output = $this->_parser->testConvertToCanonicalForm($input);
+
+        $this->assertEquals($expected, $output);
+
+    }
 }
 
 
@@ -240,16 +346,32 @@ class PortalGridLayoutMetaDataParserTestDerivative extends PortalGridLayoutMetaD
 
         $this->_moduleName = $moduleName ;
         $this->_view = $view ;
+
+        $module = StudioModuleFactory::getStudioModule( $moduleName ) ;
+        $this->module_dir = $module->seed->module_dir;
+        $this->_fielddefs = $module->getFields();
+        $this->_standardizeFieldLabels( $this->_fielddefs );
     }
     public function testConvertFromCanonicalForm($panels , $fielddefs) {
-        return $this->_convertFromCanonicalForm($panels, $fielddefs);
+
+       return $this->_convertFromCanonicalForm($panels, $fielddefs);
     }
 
-    public function testConvertToCanonicalForm($panels, $fielddefs) {
+    public function testConvertToCanonicalForm($panels, $fielddefs=null) {
+        if ($fielddefs==null)
+        {
+            $fielddefs = $this->_fielddefs;
+        }
+
+
         return $this->_convertToCanonicalForm($panels, $fielddefs);
     }
 
     public function testPopulateFromRequest(&$fielddefs) {
         // ??
+    }
+
+    public function testGetFieldsFromLayout($viewdef) {
+        return $this->getFieldsFromLayout($viewdef);
     }
 }

@@ -34,15 +34,140 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
     	MB_PORTALDETAILVIEW => 'DetailView' ,
     	) ;
 
+
+    /*
+    * Return the layout, padded out with (empty) and (filler) fields ready for display
+    */
+    public function getLayout ()
+    {
+//        $viewdefs = array () ;
+//        $fielddefs = $this->_fielddefs;
+//        $fielddefs [ $this->FILLER [ 'name' ] ] = $this->FILLER ;
+//        $fielddefs [ MBConstants::$EMPTY [ 'name' ] ] = MBConstants::$EMPTY ;
+//
+//        foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel )
+//        {
+//            foreach ( $panel as $rowID => $row )
+//            {
+//                foreach ( $row as $colID => $fieldname )
+//                {
+//                    if (isset ($this->_fielddefs [ $fieldname ]))
+//                    {
+//                        $viewdefs [ $panelID ] [ $rowID ] [ $colID ] = self::_trimFieldDefs( $this->_fielddefs [ $fieldname ] ) ;
+//                    }
+//                    elseif (isset($this->_originalViewDef [ $fieldname ]) && is_array($this->_originalViewDef [ $fieldname ]))
+//                    {
+//                        $viewdefs [ $panelID ] [ $rowID ] [ $colID ] = self::_trimFieldDefs( $this->_originalViewDef [ $fieldname ] ) ;
+//                    }
+//                    else
+//                    {
+//                        $viewdefs [ $panelID ] [ $rowID ] [ $colID ] = array("name" => $fieldname, "label" => $fieldname);
+//                    }
+//                }
+//            }
+//        }
+        return $this->_viewdefs ;
+    }
+
+
+    /**
+     * helper to pack a row with $cols members of [empty]
+     * @param $row
+     * @param $cols
+     * @return void
+     *
+     */
+    protected function _packRowWithEmpty(&$row, $cols)
+    {
+        for ($i=0; $i<$cols; $i++) {
+            $row[] = MBConstants::$EMPTY;
+        }
+    }
+
+
+    /*
+     * helper methods for doing field comparisons
+     */
+    protected function isFiller($field)
+    {
+        if (is_array($field))  {
+            return ($field == MBConstants::$FILLER);
+        }
+
+        return ($field == $this->FILLER['name']);
+    }
+
+    protected function isEmpty($field)
+    {
+        if (is_array($field))  {
+            return ($field == MBConstants::$EMPTY);
+        }
+
+        return ($field == MBConstants::$EMPTY['name']);
+    }
+
+    protected function _addCell($field, $colspan)
+    {
+        if ($colspan > 1 && is_array($field)) {
+            $field['displayParams']['colspan'] = $colspan;
+        }
+        return $field;
+    }
+
     /**
      * here we convert from internal metadata format to file (canonical) metadata
      * @param $panels
      * @param $fielddefs
+     * @return array - viewdefs in canonical file format
      */
-//    protected function _convertToCanonicalForm($panels , $fielddefs)
-//    {
-//
-//    }
+    protected function _convertToCanonicalForm($panels , $fielddefs)
+    {
+        $canonicalPanels = array();
+
+        foreach ($panels as $pName => $panel) {
+            $fields = array();
+            foreach ($panel as $row) {
+                $offset = 1; // reset
+                $lastField = null; // holder for the field to put in
+                foreach ($row as $cell) {
+
+                    // leading empty => should not occur, but assign to next field as colspan
+                    $fieldName = isset($cell['name']) ? $cell['name'] : $cell;
+
+                    // empty => get rid of it, and assign to previous field as colspan
+                    if ($this->isEmpty($cell)) {
+                        $offset++; // count our columns
+                        continue;
+                    }
+
+                    // dump out the last field we stored and reset column count
+                    if ($lastField !== null) {
+                        $fields[] = $this->_addCell($lastField,$offset);
+                        $offset = 1;
+                    }
+
+                    // filler => ''
+                    if ($this->isFiller($cell)) {
+                        $lastField = '';
+                    }
+                    else {
+                        // field => add the field def.
+                        $lastField = $this->getNewRowItem($cell, $fielddefs[$fieldName]);
+                    }
+
+                }
+
+                // dump out the last field we stored
+                if ($lastField !== null) {
+                    $fields[] = $this->_addCell($lastField,$offset);
+                }
+
+
+            }
+            $canonicalPanels[] = array('label' => $pName, 'fields' => $fields);
+        }
+        return $canonicalPanels;
+    }
 
     /**
      * here we convert from file (canonical) metadata => internal metadata format
@@ -75,36 +200,65 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 
                 if ($cols_left < $colspan) {
                     // add $cols_left of (empty) to $row and put it in
-                   for($i=0; $i < $cols_left; $i++) {
-                       $row[] = MBConstants::$EMPTY;
-                   }
+                   $this->_packRowWithEmpty($row, $cols_left);
                    $internalFieldRows[] = $row;
                    $row = array();
                 }
 
                 // add field to row + enough (empty) to make it to colspan
                 $row[] = empty($field) ? $this->FILLER : $field;
-                for($i=0; $i < $colspan-1; $i++){
-                    $row[] = MBConstants::$EMPTY;
-                }
+                $this->_packRowWithEmpty($row, $colspan-1);
             }
 
             // add the last incomplete row if necessary
             if (!empty($row)) {
                 $cols_left = $this->getMaxColumns() - count($row);
                 // add $cols_left of (empty) to $row and put it in
-                for($i=0; $i < $cols_left; $i++) {
-                    $row[] = MBConstants::$EMPTY;
-                }
+                $this->_packRowWithEmpty($row, $cols_left);
                 $internalFieldRows[] = $row;
             }
             $internalPanels[$pLabel] = $internalFieldRows;
         }
 
-
-
-
         return $internalPanels;
+    }
+
+    /**
+     * here we go from POST vars => internal metadata format
+     * @param $fielddefs
+     */
+//    protected function _populateFromRequest(&$fielddefs)
+//    {
+//
+//    }
+
+    /**
+     * Returns a list of fields, generally from the original (not customized) viewdefs
+     * @param $viewdef
+     * @return array array of fields, indexed by field name
+     */
+    protected function getFieldsFromLayout($viewdef)
+    {
+        if (isset($viewdef['panels']))
+        {
+            $panels = $viewdef['panels'];
+        } else {
+            $panels = $viewdef[self::$variableMap [ $this->_view ] ]['panels'];
+        }
+
+        // not canonical form... try parent method
+        if (!isset($panels[0]['fields'])) {
+            return parent::getFieldsFromLayout($viewdef);
+        }
+
+        $out = array();
+        foreach ($panels as $panel) {
+            foreach($panel['fields'] as $field) {
+                $name = (isset($field['name'])) ? $field['name'] : $field; // we either have a name or a bare string
+                $out[$name] = $field;
+            }
+        }
+        return $out;
     }
 
 }
