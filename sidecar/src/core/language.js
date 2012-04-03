@@ -12,7 +12,11 @@
          * Language hash for labels
          * @property {Object}
          */
-        langmap: {},
+        modStrings: {},
+
+        appListStrings: {},
+        
+        appStrings: {},
 
         /**
          * Saves a set of labels to its internal cache.
@@ -22,10 +26,10 @@
          * @method
          */
         setLabel: function(module, data, bulk) {
-            this.langmap[module] = data || {};
+            this.modStrings[module] = data || {};
 
             if (!bulk) {
-                app.cache.set("language:labels", this.langmap);
+                app.cache.set("language:labels", this.modStrings);
             }
         },
 
@@ -38,7 +42,27 @@
                 this.setLabel(module, label, true);
             }, this);
 
-            app.cache.set("language:labels", this.langmap);
+            app.cache.set("language:labels", this.modStrings);
+        },
+
+        /**
+         * Sets app list strings (from metadata)
+         * @param {Object} data Object of app list strings
+         */
+        setAppListStrings: function(data) {
+            this.appListStrings = data;
+
+            app.cache.set("language:appListStrings", this.appListStrings);
+        },
+
+        /**
+         * Sets app strings (from metadata)
+         * @param {Object} data Object of app strings
+         */
+        setAppStrings: function(data) {
+            this.appStrings = data;
+
+            app.cache.set("language:appStrings", this.appStrings);
         },
 
         /**
@@ -50,7 +74,7 @@
          * @private
          */
         get: function(str, module) {
-            return this.sanitizeString(this.langmap[module][str]) || false;
+            return this.sanitizeString(this.modStrings[module][str]) || false;
         },
 
         /**

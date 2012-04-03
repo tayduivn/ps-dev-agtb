@@ -223,18 +223,29 @@
          */
         set: function(data, key) {
             key = key || "metadata";
+
             if (data.modules) {
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = entry;
                     app.cache.set(key + "." + module, entry);
                 });
             }
+
             if (data.sugarFields) {
                 _.each(data.sugarFields, function(entry, module) {
                     _sugarFields[module] = entry;
                     app.cache.set(key + "." + module, entry);
                 });
             }
+
+            if (data.appListStrings) {
+                app.lang.setAppListStrings(data.appListStrings);
+            }
+
+            if (data.appStrings) {
+                app.lang.setAppStrings(data.appStrings);
+            }
+
             //TODO add template support
         },
 

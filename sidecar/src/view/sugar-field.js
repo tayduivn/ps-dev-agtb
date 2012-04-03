@@ -28,6 +28,19 @@
         return new Handlebars.SafeString(ret);
     });
 
+    Handlebars.registerHelper('eachOption', function(context, options) {
+        // Retrieve app list strings
+
+
+        var ret = "<ul>";
+
+        for (var i = 0, j = context.length; i < j; i++) {
+            ret = ret + "<li>" + block(context[i]) + "</li>";
+        }
+
+        return ret + "</ul>";
+    });
+
     /**
      * SugarField widget. A sugarfield widget is a low level field widget. Some examples of sugarfields are
      * text boxes, date pickers, drop down menus.
