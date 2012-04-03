@@ -44,20 +44,22 @@
             if (!params || !params.module) {
                 return _metadata;
             }
-            if (!params.type)
+
+            if (!params.type){
                 return this._getModule(params.module);
+            }
 
-            if (params.type == "view")
-                return this._getView(params.module, params.view);
-
-            if (params.type == "layout")
-                return this._getLayout(params.module, params.layout);
-
-            if (params.type == "vardef")
-                return this._getVardef(params.module);
-
-            if (params.type == "fieldDef")
-                return this._getFieldDef(params.module, params.field);
+            switch(params.type) {
+                case "view":
+                    return this._getView(params.module, params.view);
+                case "layout":
+                    return this._getLayout(params.module, params.layout);
+                case "vardef":
+                    return this._getVardef(params.module);
+                case "fieldDef":
+                    return this._getFieldDef(params.module, params.field);
+                default:
+            }
         },
 
         /**
@@ -79,8 +81,9 @@
                 }
             }
 
-            if (!type)
+            if (!type) {
                 return _metadata[module];
+            }
 
             if (typeof(_metadata[module][type]) == "undefined") {
                 app.sync();
@@ -99,7 +102,6 @@
 
             // init results
             var result, views;
-
             var name = fieldTypeMap[field.type] || field.type;
 
             if (!name) {
@@ -116,11 +118,9 @@
                 views = _sugarFields[name].views || _sugarFields[name];
                 var viewName = field.viewName || field.view;
                 //No viewname means return the full metadata for this field
-                if (!viewName)
-                {
+                if (!viewName) {
                     result = _sugarFields[name];
-                }
-                else {
+                } else {
                     // assign fields to results if set
                     if (viewName && views[viewName]) {
                         result = views[viewName];
@@ -223,18 +223,29 @@
          */
         set: function(data, key) {
             key = key || "metadata";
+
             if (data.modules) {
                 _.each(data.modules, function(entry, module) {
-                                    _metadata[module] = entry;
-                                app.cache.set(key + "." + module, entry);
-                            });
+                    _metadata[module] = entry;
+                    app.cache.set(key + "." + module, entry);
+                });
             }
+
             if (data.sugarFields) {
                 _.each(data.sugarFields, function(entry, module) {
-                                    _sugarFields[module] = entry;
-                                app.cache.set(key + "." + module, entry);
-                            });
+                    _sugarFields[module] = entry;
+                    app.cache.set(key + "." + module, entry);
+                });
             }
+
+            if (data.appListStrings) {
+                app.lang.setAppListStrings(data.appListStrings);
+            }
+
+            if (data.appStrings) {
+                app.lang.setAppStrings(data.appStrings);
+            }
+
             //TODO add template support
         },
 

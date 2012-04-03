@@ -1,12 +1,5 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: dtam
- * Date: 1/31/12
- * Time: 12:26 PM
- * To change this template use File | Settings | File Templates.
- */
+var fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
-fixtures = typeof(fixtures) == "object" ? fixtures : {};
 fixtures.metadata = {
     _hash: '2q34aasdfwrasdfse',
     "modules": {
@@ -76,7 +69,7 @@ fixtures.metadata = {
                 "leradio_c": {
                     "name": "leradio_c",
                     "type": "radioenum",
-                    "options": ["Option 1", "Option 2", "Option 3"] // Temporary, TODO: Pull from app list strings
+                    "options": "Elastic_boost_options" // Temporary, TODO: Pull from app list strings
                 }
             },
             "relationships": {
@@ -120,9 +113,8 @@ fixtures.metadata = {
 
                                 {name: "priority", label: "Priority"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"}
-                                //{name: "leradio_c", label: "LeRadio"}
-
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -743,7 +735,7 @@ fixtures.metadata = {
                 "editView": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ..\/value \"SELECTED\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ../value \"selected\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
                 "default": {
@@ -773,7 +765,7 @@ fixtures.metadata = {
                 },
                 editView: {
                     template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
+                        "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
                 }
             }
         },
@@ -941,5 +933,117 @@ fixtures.metadata = {
             '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}' +
             '</ul>' +
             "</div>"
+    },
+    appListStrings: {
+        "campainglog_target_type_dom":{
+        "Contacts":"Contacts",
+        "Users":"Users",
+        "Prospects":"Targets",
+        "Leads":"Leads",
+        "Accounts":"Accounts"
+        },
+        "merge_operators_dom":{
+        "like":"Contains",
+        "exact":"Exactly",
+        "start":"Starts With"
+        },
+        "custom_fields_importable_dom":{
+        "true":"Yes",
+        "false":"No",
+        "required":"Required"
+        },
+        "Elastic_boost_options":[
+        "Disabled",
+        "Low Boost",
+        "Medium Boost",
+        "High Boost"
+        ],
+        "custom_fields_merge_dup_dom":[
+        "Disabled",
+        "Enabled",
+        "In Filter",
+        "Default Selected Filter",
+        "Filter Only"
+        ],
+        "navigation_paradigms":{
+        "m":"Modules",
+        "gm":"Grouped Modules"
+        },
+        "contract_status_dom":{
+        "notstarted":"Not Started",
+        "inprogress":"In Progress",
+        "signed":"Signed"
+        },
+        "contract_payment_frequency_dom":{
+        "monthly":"Monthly",
+        "quarterly":"Quarterly",
+        "halfyearly":"Half yearly",
+        "yearly":"Yearly"
+        },
+        "contract_expiration_notice_dom":{
+        "1":"1 Day",
+        "3":"3 Days",
+        "5":"5 Days",
+        "7":"1 Week",
+        "14":"2 Weeks",
+        "21":"3 Weeks",
+        "31":"1 Month"
+        },
+        "oc_status_dom":{
+        "":"",
+        "Active":"Active",
+        "Inactive":"Inactive"
+        },
+        "projects_priority_options":{
+        "high":"High",
+        "medium":"Medium",
+        "low":"Low"
+        },
+        "projects_status_options":{
+        "notstarted":"Not Started",
+        "inprogress":"In Progress",
+        "completed":"Completed"
+        },
+        "chart_strings":{
+        "expandlegend":"Expand Legend",
+        "collapselegend":"Collapse Legend",
+        "clickfordrilldown":"Click for Drilldown",
+        "drilldownoptions":"Drill Down Options",
+        "detailview":"More Details...",
+        "piechart":"Pie Chart",
+        "groupchart":"Group Chart",
+        "stackedchart":"Stacked Chart",
+        "barchart":"Bar Chart",
+        "horizontalbarchart":"Horizontal Bar Chart",
+        "linechart":"Line Chart",
+        "noData":"Data not available",
+        "print":"Print",
+        "pieWedgeName":"sections"
+        }
+    },
+    appStrings: {
+        DATA_TYPE_DUE: "Due:",
+        DATA_TYPE_MODIFIED: "Modified:",
+        DATA_TYPE_SENT: "Sent:",
+        DATA_TYPE_START: "Start:",
+        DEFAULT: "Basic",
+        ERROR_EXAMINE_MSG: "  Please examine the error message below:",
+        ERROR_FULLY_EXPIRED: "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
+        ERROR_JS_ALERT_SYSTEM_CLASS: "System",
+        ERROR_JS_ALERT_TIMEOUT_MSG_1: "Your session is about to timeout in 2 minutes. Please save your work.",
+        ERROR_JS_ALERT_TIMEOUT_MSG_2: "Your session has timed out.",
+        ERROR_JS_ALERT_TIMEOUT_TITLE: "Session Timeout",
+        ERROR_LICENSE_EXPIRED: "Your company's license for SugarCRM needs to be updated. Only admins may login",
+        ERROR_LICENSE_VALIDATION: "Your company's license for SugarCRM needs to be validated. Only admins may login",
+        ERROR_MISSING_COLLECTION_SELECTION: "Empty required field",
+        ERROR_NOTIFY_OVERRIDE: "Error: ResourceObserver->notify() needs to be overridden.",
+        ERROR_NO_RECORD: "Error retrieving record.  This record may be deleted or you may not be authorized to view it.",
+        ERROR_TYPE_NOT_VALID: "Error. This type is not valid.",
+        ERROR_UNABLE_TO_RETRIEVE_DATA: "Error: Unable to retrieve data for {0} Connector.  The service may currently be inaccessible or the configuration settings may be invalid.  Connector error message: ({1}).",
+        ERR_ADDRESS_KEY_NOT_SPECIFIED: "Please specify 'key' index in displayParams attribute for the Meta-Data definition",
+        ERR_AJAX_LOAD: "An error has occured:",
+        ERR_AJAX_LOAD_FAILURE: "There was an error processing your request, please try again at a later time.",
+        ERR_AJAX_LOAD_FOOTER: "If this error persists, please have your administrator disable Ajax for this module",
+        ERR_BLANK_PAGE_NAME: "Please enter a page name."
     }
 };
