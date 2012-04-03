@@ -254,7 +254,7 @@
             /**
              * Binds render to model changes
              * @param {Context} context
-             * @param {Bean} model Data to bind the sugarfield to
+             * @param {Data.Bean} model Data to bind the sugarfield to
              */
             bindModelChange: function(context, model) {
                 this.unBind();
