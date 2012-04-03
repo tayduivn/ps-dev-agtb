@@ -1591,7 +1591,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                 }
 
                 if($aItem->ACLAccess('Delete')) {
-                    $delete = '<a class="listViewTdToolsS1" onclick="return confirm(\''.$this->local_mod_strings['NTC_DELETE_CONFIRMATION'].'\')" href="'.'index.php?action=Delete&module='.$aItem->module_dir.'&record='.$fields['ID'].'&return_module='.$aItem->module_dir.'&return_action=index&return_id=">'.$this->local_app_strings['LBL_DELETE_INLINE'].'</a>';
+                    $delete = '<a class="listViewTdToolsS1" onclick="return confirm(\''.$app_strings['NTC_DELETE_CONFIRMATION'].'\')" href="'.'index.php?action=Delete&module='.$aItem->module_dir.'&record='.$fields['ID'].'&return_module='.$aItem->module_dir.'&return_action=index&return_id=">'.$this->local_app_strings['LBL_DELETE_INLINE'].'</a>';
                     require_once('include/Smarty/plugins/function.sugar_action_menu.php');
                     $fields['DELETE_BUTTON'] = smarty_function_sugar_action_menu(array(
                         'id' => $aItem->module_dir.'_'.$fields['ID'].'_create_button',
