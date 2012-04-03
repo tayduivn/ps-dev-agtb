@@ -111,13 +111,13 @@ class SavedReport extends SugarBean
 			}
 		}
 
-        $json = getJSONobj();
-        // cn: SECURITY bug 12272
-        $match = clean_xss(from_html($name));
-        if(!empty($match)) {
-            $name = str_replace($match, "", $name);
+		// cn: SECURITY bug 12272
+		$match = clean_xss(from_html($name));
+		if(!empty($match)) {
+			$name = str_replace($match, "", $name);
 
-            $tmpContent = $json->decode($content, false);
+			$json = getJSONobj();
+			$tmpContent = $json->decode($content, false);
 
 			// clean stored report_name too
 			$tmpContent['report_name'] = str_replace($match, "", $tmpContent['report_name']);
@@ -128,8 +128,7 @@ class SavedReport extends SugarBean
 		$result = 1;
 		$this->assigned_user_id = $owner_id;
 		$this->name = $name;
-        // Bug51621: Clean here, instead of in clean bean, and clean the individual pieces, rather than as a string.
-		$this->content = $json->encode(remove_xss_from_array($json->decode($content)));
+		$this->content = $content;
 		$this->deleted = 0;
 		$this->report_type = $report_type;
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -443,7 +442,8 @@ class SavedReport extends SugarBean
                 $type == 'enum') &&
                 !empty($this->$key)
             ) {
-                // Bug51621: already clean the contents in SavedReport::save, so we don't need to repeat here
+                // Bug51621: the report contents JSON string getting converted to html as a whole
+                //    breaks reports that get cleaned
                 if ($key !== "content") {
                     $str = from_html($this->$key);
                 } else {
