@@ -25,6 +25,10 @@ require_once('include/api/SugarApi/ServiceDictionaryRest.php');
 
 class RestService extends ServiceBase {
 
+    // Until we get rid of the old /service/core stuff, we need the session id around
+    public $sessionId;
+    public $user;
+
     /**
      * This function executes the current request and outputs the response directly.
      */
@@ -58,6 +62,7 @@ class RestService extends ServiceBase {
                 $getVars = array();
             }
             
+
             if ( count($_POST) > 0 ) {
                 // They have normal post arguments
                 $postVars = array();
@@ -66,13 +71,25 @@ class RestService extends ServiceBase {
                 // We just ignore it here, the function itself has to know how to deal with the raw post contents
                 // this will mostly be used for binary file uploads.
                 $postVars = array();
-            } else if ( $postContents = file_get_contents("php://input") ) {
-                // This looks like the post contents are JSON
-                // Note: If we want to support rest based XML, we will need to change this
-                $postVars = json_decode($postContents,true);
             } else {
-                // No posted variables
-                $postVars = array();
+                $postContents = null;
+                if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
+                    $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+                } else {
+                    $postContents = file_get_contents('php://input');
+                }
+                if ( !empty($postContents) ) {
+                    // This looks like the post contents are JSON
+                    // Note: If we want to support rest based XML, we will need to change this
+                    $postVars = json_decode($postContents,true);
+                    if ( !is_array($postVars) ) {
+                        // FIXME: Handle improperly encoded JSON
+                        $postVars = array();
+                    }
+                } else {
+                    // No posted variables
+                    $postVars = array();
+                }
             }
             
             // I know this looks a little weird, overriding post vars with get vars, but 
@@ -145,12 +162,15 @@ class RestService extends ServiceBase {
         
         $valid = false;
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
+            $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
             $valid = $this->helper->validate_authenticated($_SERVER['HTTP_OAUTH_TOKEN']);
         } else  {
             if ( isset($_REQUEST[session_name()]) ) {
                 // They already have a web-session, let's let them use it
                 SugarApplication::startSession();
                 if ( isset($_SESSION['authenticated_user_id']) ) {
+                    $this->sessionId = session_id();
+                    $this->helper->validate_authenticated(session_id());
                     $valid = true;
                 }
             }
@@ -159,6 +179,8 @@ class RestService extends ServiceBase {
         if ( ! $valid ) {
             throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
         }
+
+        $this->user = $GLOBALS['current_user'];
     }
 
 }

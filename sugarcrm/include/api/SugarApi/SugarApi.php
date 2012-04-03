@@ -23,4 +23,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 abstract class SugarApi {
     // This class intentionally left blank.
     // It primarialy serves as a way to flag which classes could be called from externally facing API's
+    function requireArgs(&$args,$requiredFields = array()) {
+        foreach ( $requiredFields as $fieldName ) {
+            if ( !isset($args[$fieldName]) ) {
+                throw new SugarApiExceptionMissingParameter('Missing parameter: '.$fieldName);
+            }
+        }
+    }
 }

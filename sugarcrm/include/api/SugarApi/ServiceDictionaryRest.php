@@ -74,7 +74,7 @@ class ServiceDictionaryRest extends ServiceDictionary {
         foreach ( $routeBase as $routeKey => $subRoute ) {
             $match = false;
             
-            if ( substr($routeKey,1) == '<' ) {
+            if ( substr($routeKey,0,1) == '<' ) {
                 // It's a data-specific function match
                 switch ( $routeKey ) {
                     case '<module>':
@@ -91,7 +91,7 @@ class ServiceDictionaryRest extends ServiceDictionary {
             
             if ( $match ) {
                 $route = $this->lookupChildRoute($subRoute, $path, $version);
-                if ( $route['score'] > $bestScore ) {
+                if ( $route != false && $route['score'] > $bestScore ) {
                     $bestRoute = $route;
                     $bestScore = $route['score'];
                 }

@@ -52,125 +52,15 @@ class MetaDataManager {
      * The constructor for the class.
      *
      */
-    function __construct () {
+    function __construct ($user, $platforms = null) {
+        if ( $platforms == null ) {
+            $platforms = array('base');
+        }
+
+        $this->user = $user;
+        $this->platforms = $platforms;
     }
 
-    /**
-     * This function goes and collects the metadata for you.
-     *
-     * @param array $clientHashes A list provided by the client of the current hashes, any hash that matches will mean that the data for that section will not be returned.
-     * @param array $moduleFilter A list of modules to return, if null it will return data for all modules
-     * @param array $typeFilter A list of data types to return, if null all modules are returned.
-     * @param string $platform What platform to load metadata for: "base", "mobile", "portal" are likely options, defaults to "base"
-     * @param array $options An array of additional options to control the field, currently recognized options are: onlyHash: only return hashes of the metadata.
-     * @return array Retuns an array of module names and all of the metata for each module in hashes contained in the array.
-     */
-    public function getData($clientHashes = array(), $moduleFilter = array(), $typeFilter = array(), $platform = 'base', $options = array()) {
-        // Default the type filter to everything
-        if ( empty($typeFilter) ) {
-            $typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings');
-        }
-
-        if ( isset($options['user']) ) {
-            $this->user = $options['user'];
-        } else {
-            $this->user = $GLOBALS['current_user'];
-        }
-        $this->modules = array_keys(get_user_module_list($this->user));
-
-        $this->typeFilter = $typeFilter;
-        if ( $platform == 'mobile' ) {
-            $this->platforms = array('mobile','portal','base');
-        } else if ( $platform == 'portal' ) {
-            $this->platforms = array('portal','base');
-        } else {
-            $this->platforms = array('base');
-        }
-
-        $data = array();
-
-        $data['modules'] = array();
-        foreach ($this->modules as $modName) {
-            $modData = $this->getModuleData($modName);
-            $data['modules'][$modName] = $modData;
-        }
-
-        $data['modStrings'] = array();
-        foreach ($this->modules as $modName) {
-            $modData = $this->getModuleStrings($modName);
-            $data['modStrings'][$modName] = $modData;
-            $data['modStrings'][$modName]['_hash'] = md5(serialize($data['modStrings'][$modName]));
-        }
-
-        $data['acl'] = array();
-        foreach ($this->modules as $modName) {
-            $data['acl'][$modName] = $this->getAclForModule($modName,$GLOBALS['current_user']->id);
-        }
-
-        $data['sugarFields'] = $this->getSugarFields();
-        $data['viewTemplates'] = $this->getViewTemplates();
-        $data['appStrings'] = $this->getAppStrings();
-        $data['appListStrings'] = $this->getAppListStrings();
-        $data['moduleList'] = $this->getModuleList($platform);
-
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data["_hash"] = md5(serialize($data));
-        
-        $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList');
-        $perModuleChunks = array('modules','modStrings','acl');
-
-        if ( isset($options['onlyHash']) && $options['onlyHash'] ) {
-            // The client only wants hashes
-            $hashesOnly = array();
-            $hashesOnly['_hash'] = $data['_hash'];
-            foreach ( $baseChunks as $chunk ) {
-                if (in_array($chunk,$this->typeFilter) ) {
-                    $hashesOnly[$chunk]['_hash'] = $data['_hash'];
-                }        
-            }
-            
-            foreach ( $perModuleChunks as $chunk ) {
-                if (in_array($chunk, $this->typeFilter)) {
-                    // We want modules, let's filter by the requested modules and by which hashes match.
-                    foreach($data[$chunk] as $modName => &$modData) {
-                        if (empty($moduleFilter) || in_array($modName,$moduleFilter)) {
-                            $hashesOnly[$chunk][$modName]['_hash'] = $data[$chunk][$modName]['_hash'];
-                        }
-                    }
-                }
-            }
-
-            $data = $hashesOnly;
-            
-        } else {
-            // The client is being bossy and wants some data as well.
-            foreach ( $baseChunks as $chunk ) {
-                if (!in_array($chunk,$this->typeFilter)
-                    || (isset($clientHashes[$chunk]) && $clientHashes[$chunk] == $data[$chunk]['_hash'])) {
-                    unset($data[$chunk]);
-                }        
-            }
-
-            foreach ( $perModuleChunks as $chunk ) {
-                if (!in_array($chunk, $this->typeFilter)) {
-                    unset($data[$chunk]);
-                } else {
-                    // We want modules, let's filter by the requested modules and by which hashes match.
-                    foreach($data[$chunk] as $modName => &$modData) {
-                        if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
-                            || (isset($clientHashes[$chunk][$modName]) && $clientHashes[$chunk][$modName] == $modData['_hash'])) {
-                            unset($data[$chunk][$modName]);
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return $data;
-    }
-        
     /**
      * This method collects all view data for the different types of views supported by
      * the SugarCRM app.
@@ -179,7 +69,7 @@ class MetaDataManager {
      *
      * @return Array A hash of all of the view data.
      */
-    protected function getModuleViews($moduleName) {
+    public function getModuleViews($moduleName) {
         $data = array();
 
         return $data;
@@ -192,7 +82,7 @@ class MetaDataManager {
      * @return array An array of hashes containing the metadata.  Empty arrays are
      * returned in the case of no metadata.
      */
-    protected function getModuleData($moduleName) {
+    public function getModuleData($moduleName) {
         $vardefs = $this->getVarDef($moduleName);
 
         $data['fields'] = $vardefs['fields'];
@@ -213,7 +103,7 @@ class MetaDataManager {
      * @param $moduleName The name of the module to collect vardef information about.
      * @return array The vardef's $dictonary array.
      */
-    protected function getVarDef($moduleName) {
+    public function getVarDef($moduleName) {
 
         require_once("data/BeanFactory.php");
         $obj = BeanFactory::getObjectName($moduleName);
@@ -243,7 +133,7 @@ class MetaDataManager {
      * @param $user The user id for the ACL's we are retrieving.
      * @return array Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    protected function getAclForModule($module,$userId) {
+    public function getAclForModule($module,$userId) {
         $aclAction = new ACLAction();
         $aclField = new ACLField();
         $acls = $aclAction->getUserActions($userId);
@@ -403,7 +293,7 @@ class MetaDataManager {
      *
      * @return array A hash of the template name and the template contents
      */
-    protected function getViewTemplates() {
+    public function getViewTemplates() {
         $templates = array();
         $templates['_hash'] = md5(serialize($templates));
         return $templates;
@@ -414,7 +304,7 @@ class MetaDataManager {
      *
      * @return array The module strings for the current language
      */
-    protected function getModuleStrings( $moduleName ) {
+    public function getModuleStrings( $moduleName ) {
         return return_module_language($GLOBALS['current_language'],$moduleName);
     }
 
@@ -423,7 +313,7 @@ class MetaDataManager {
      *
      * @return array The app strings for the current language, and a hash of the app strings
      */
-    protected function getAppStrings() {
+    public function getAppStrings() {
         $appStrings = $GLOBALS['app_strings'];
         $appStrings['_hash'] = md5(serialize($appStrings));
         return $appStrings;
@@ -434,7 +324,7 @@ class MetaDataManager {
      *
      * @return array The app strings for the current language, and a hash of the app strings
      */
-    protected function getAppListStrings() {
+    public function getAppListStrings() {
         $appStrings = $GLOBALS['app_list_strings'];
         $appStrings['_hash'] = md5(serialize($appStrings));
         return $appStrings;
@@ -445,7 +335,7 @@ class MetaDataManager {
      *
      * @return array The list of modules that are supported by this platform
      */
-    protected function getModuleList($platform = 'base') {
+    public function getModuleList($platform = 'base') {
         if ( $platform == 'portal' ) {
             // Apparently this list is not stored anywhere, the module builder just uses a very
             // complicated setup to do this glob
