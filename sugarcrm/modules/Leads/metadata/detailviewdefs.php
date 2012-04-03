@@ -45,7 +45,7 @@ $viewdefs['Leads']['DetailView'] = array (
                             'onClick' => 'document.location=\'index.php?module=Leads&action=ConvertLead&record={$fields.id.value}\'',
                             'name' => 'convert'
                         ),
-                        'template' => '{if $bean->aclAccess("edit") && !$DISABLE_CONVERT_ACTION}{/if}',
+                        'template' => '{if $bean->aclAccess("edit") && !$DISABLE_CONVERT_ACTION}[CONTENT]{/if}',
                     ),
 				),
 				'FIND_DUPLICATES',

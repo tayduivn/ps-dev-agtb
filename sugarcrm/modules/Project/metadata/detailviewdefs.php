@@ -129,6 +129,7 @@ $viewdefs['Project']['DetailView'] = array(
                                  '{/if}',
                          ),
                      ),
+                ),
 				//END SUGARCRM flav=com ONLY
 
 				//BEGIN SUGARCRM flav=pro ONLY
