@@ -66,6 +66,10 @@
 {{$field}}   
 {{/foreach}}
 {{/if}}
+{{if !empty($customTpl)}}
+	{{include file=$customTpl}}
+{{/if}}
+
 {{if empty($form.button_location) || $form.button_location == 'top'}}
 {{if !empty($form) && !empty($form.buttons)}}
    {{foreach from=$form.buttons key=val item=button}}

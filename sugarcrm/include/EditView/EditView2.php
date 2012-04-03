@@ -598,6 +598,7 @@ class EditView
         $this->th->ss->assign('module', $this->module);
         $this->th->ss->assign('headerTpl', isset($this->defs['templateMeta']['form']['headerTpl']) ? $this->defs['templateMeta']['form']['headerTpl'] : 'include/' . $this->view . '/header.tpl');
         $this->th->ss->assign('footerTpl', isset($this->defs['templateMeta']['form']['footerTpl']) ? $this->defs['templateMeta']['form']['footerTpl'] : 'include/' . $this->view . '/footer.tpl');
+        $this->th->ss->assign('customTpl', isset($this->defs['templateMeta']['form']['customTpl']) ? $this->defs['templateMeta']['form']['customTpl'] : '');
         $this->th->ss->assign('current_user', $current_user);
         $this->th->ss->assign('bean', $this->focus);
         $this->th->ss->assign('isAuditEnabled', $this->focus->is_AuditEnabled());
