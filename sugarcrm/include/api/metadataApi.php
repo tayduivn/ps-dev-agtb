@@ -59,7 +59,7 @@ class metadataApi extends SugarApi {
 
     public function getAllMetadata($api, $args) {
         // Default the type filter to everything
-        $this->typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl');
+        $this->typeFilter = array('modules','sugarFields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList');
         if ( !empty($args['typeFilter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['typeFilter']);
@@ -77,6 +77,11 @@ class metadataApi extends SugarApi {
             }
         }
 
+        $onlyHash = false;
+        if (!empty($args['onlyHash']) && ($args['onlyHash'] == 'true' || $args['onlyHash'] == '1')) {
+            $onlyHash = true;
+        }
+
 
         $this->user = $GLOBALS['current_user'];
         
@@ -86,7 +91,7 @@ class metadataApi extends SugarApi {
             $this->platforms = array('base');
         }
 
-        $mm = $this->getMetadataManager($args);
+        $mm = $this->getMetadataManager();
         
         $this->modules = array_keys(get_user_module_list($this->user));
 
@@ -124,7 +129,7 @@ class metadataApi extends SugarApi {
         $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList');
         $perModuleChunks = array('modules','modStrings','acl');
 
-        if ( isset($options['onlyHash']) && $options['onlyHash'] ) {
+        if ( $onlyHash ) {
             // The client only wants hashes
             $hashesOnly = array();
             $hashesOnly['_hash'] = $data['_hash'];
@@ -151,7 +156,7 @@ class metadataApi extends SugarApi {
             // The client is being bossy and wants some data as well.
             foreach ( $baseChunks as $chunk ) {
                 if (!in_array($chunk,$this->typeFilter)
-                    || (isset($clientHashes[$chunk]) && $clientHashes[$chunk] == $data[$chunk]['_hash'])) {
+                    || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
                     unset($data[$chunk]);
                 }        
             }
@@ -163,7 +168,7 @@ class metadataApi extends SugarApi {
                     // We want modules, let's filter by the requested modules and by which hashes match.
                     foreach($data[$chunk] as $modName => &$modData) {
                         if ((!empty($moduleFilter) && !in_array($modName,$moduleFilter))
-                            || (isset($clientHashes[$chunk][$modName]) && $clientHashes[$chunk][$modName] == $modData['_hash'])) {
+                            || (isset($args[$chunk][$modName]) && $args[$chunk][$modName] == $modData['_hash'])) {
                             unset($data[$chunk][$modName]);
                             continue;
                         }

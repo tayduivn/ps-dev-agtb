@@ -376,7 +376,7 @@ class MetaDataManager {
         
         $oldModuleList = $moduleList;
         $moduleList = array();
-        foreach ( $moduleList as $module ) {
+        foreach ( $oldModuleList as $module ) {
             $moduleList[$module] = $module;
         }
 

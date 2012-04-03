@@ -50,7 +50,7 @@ class RestTestMetadataSugarFields extends RestTestBase {
     }
 
     public function testMetadataSugarFields() {
-        $restReply = $this->_restCall('metadata?metadataTypes=sugarFields');
+        $restReply = $this->_restCall('metadata?typeFilter=sugarFields');
 
         $this->assertTrue(isset($restReply['reply']['sugarFields']['_hash']),'SugarField hash is missing.');
     }
@@ -89,40 +89,40 @@ class RestTestMetadataSugarFields extends RestTestBase {
         
         // Make sure we get it when we ask for mobile
         file_put_contents($basePath.'mobile/Address.js','MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is portal code there
         file_put_contents($basePath.'portal/Address.js','PORTAL CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't get mobile code when portal code was there.");
 
 
         // Make sure we get the portal code when we ask for it.
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't get portal code when it was the direct option");
 
 
         // Delete the mobile address and make sure it falls back to portal
         unlink($basePath.'mobile/Address.js');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't fall back to portal code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom portal code
         file_put_contents('custom/'.$basePath.'mobile/Address.js','CUSTOM MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't use the custom mobile code.");
 
         // Make sure custom portal code works
         file_put_contents('custom/'.$basePath.'portal/Address.js','CUSTOM PORTAL CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't use the custom portal code.");
 
         // Delete the custom mobile code, this should then fallback to the custom portal code, which should override the default portal code for the fallback
         unlink('custom/'.$basePath.'mobile/Address.js');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't use the custom portal code when the custom mobile code was deleted.");
 
     }
@@ -168,40 +168,40 @@ class RestTestMetadataSugarFields extends RestTestBase {
         
         // Make sure we get it when we ask for mobile
         file_put_contents($basePath.'mobile/editView.hbt','MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is portal code there
         file_put_contents($basePath.'portal/editView.hbt','PORTAL EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't get mobile code when portal code was there.");
 
 
         // Make sure we get the portal code when we ask for it.
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=portal');
         $this->assertEquals('PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't get portal code when it was the direct option");
 
 
         // Delete the mobile address and make sure it falls back to portal
         unlink($basePath.'mobile/editView.hbt');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't fall back to portal code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom portal code
         file_put_contents('custom/'.$basePath.'mobile/editView.hbt','CUSTOM MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't use the custom mobile code.");
 
         // Make sure custom portal code works
         file_put_contents('custom/'.$basePath.'portal/editView.hbt','CUSTOM PORTAL EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=portal');
         $this->assertEquals('CUSTOM PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't use the custom portal code.");
 
         // Delete the custom mobile code, this should then fallback to the custom portal code, which should override the default portal code for the fallback
         unlink('custom/'.$basePath.'mobile/editView.hbt');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
         $this->assertEquals('CUSTOM PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't use the custom portal code when the custom mobile code was deleted.");
 
     }
