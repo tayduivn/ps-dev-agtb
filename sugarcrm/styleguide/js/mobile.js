@@ -119,7 +119,7 @@
 		        posts = posts+more_posts_link;
 			}
 		}
-	    if(order==='prepend'){
+	    if(order==='prepend' || order==='update'){
 		    anchor.prepend(posts);
 	    	if(anchor.find('article:not(.nav)').size() > 25) {
 	            anchor.find('article:not(.nav)').slice(20,25).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
