@@ -1,4 +1,4 @@
-{
+({
     render: function(value) {
         app.sugarField.base.prototype.render.call(this);//call proto render
         $(function() {
@@ -16,4 +16,4 @@
     format:function(value) {
         return value
     }
-}
+})
