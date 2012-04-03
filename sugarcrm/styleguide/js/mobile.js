@@ -131,13 +131,11 @@
 	            $('#listing').prepend(more_posts_link);
 			}
 		}
-		setTimeout(rmel,250);
+		setTimeout(function () {
+		    $('.deleted').remove();
+		}, 250);
     }
 
-	function rmel(){
-      $('.deleted').remove();
-	}
-	
 	
 	
 	
