@@ -127,6 +127,10 @@
 		} else if(order==="append") {
 		    anchor.append(posts);
 	    	if(anchor.find('article:not(.nav)').size() > 25) {
+		        var rmnav = anchor.find('article').slice(0,1).hasClass('nav');
+		        if(rmnav===true) {
+                    anchor.find('article').slice(0,1).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+				}
 	            anchor.find('article:not(.nav)').slice(0,5).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
 	            $('#listing').prepend(more_posts_link);
 			}
