@@ -162,7 +162,7 @@ fixtures.metadata = {
                             class: "loading wide",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");window.scrollTo(0,document.body.scrollHeight);}});" +
+                                    "this.context.state.collection.paginate({add:true, success:function(){window.scrollTo(0,document.body.scrollHeight);}});" +
                                     "}"
                             }
                         }
@@ -185,7 +185,7 @@ fixtures.metadata = {
                             label: " ",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "this.context.state.collection.paginate({page:-1, success:function(){console.log(\"in paginate success\");}});" +
+                                    "this.context.state.collection.paginate({page:-1, success:function(){}});" +
                                     "}"
                             }
                         },
@@ -196,7 +196,7 @@ fixtures.metadata = {
                             label: " ",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "console.log(this); this.context.state.collection.paginate({success:function(){console.log(\"in paginate success\");}});" +
+                                    "this.context.state.collection.paginate({success:function(){}});" +
                                     "}"
                             }
                         }
@@ -231,13 +231,13 @@ fixtures.metadata = {
                         {view: "editView"}
                     ]
                 },
-                "detail": {
-                    "type": "rows",
-                    "components": [
-                        {view: "detailView"},
-                        {view: "subpanelView"}
-                    ]
-                },
+"detail": {
+    "type": "rows",
+    "components": [
+        {view: "detailView"},
+        {view: "subpanelView"}
+    ]
+},
                 "list": {
                     //Default layout is a single view
                     "type": "simple",
@@ -750,7 +750,6 @@ fixtures.metadata = {
                 "   var result = this.app.sugarField.base.prototype.render.call(this);" +
                 "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
                 "   $('select').chosen();" +
-                "   console.log(this.fieldType + \"[name=\" + this.name + \"]\");" +
                 "   return result;" +
 
                 "}" +
