@@ -1,8 +1,9 @@
 (function(app) {
     /**
      * Controller manages the loading and unloading of Views within the app. It extends from a Backbone.View.
-     * @class Controller
+     * @class Core.Controller
      * @singleton
+     * @alias SUGAR.App.controller
      */
     var Controller = Backbone.View.extend({
         /**
