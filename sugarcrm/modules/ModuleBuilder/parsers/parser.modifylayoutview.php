@@ -167,12 +167,19 @@ class ParserModifyLayoutView extends ModuleBuilderParser
 
     }
 
-    function loadModule ($module, $view)
-    {
+    /**
+     * Loads up the view defs into this parser
+     *
+     * @param string $module
+     * @param string $view
+     * @return void
+     */
+    function loadModule ($module, $view) {
         $this->_viewdefs = array();
-        $viewdefs = null;
+        //$viewdefs = null;
 
-        $loaded = $this->_loadFromFile($view,$this->_sourceFile,$module);
+        // Load the defs from the source file
+        $loaded = $this->_loadFromFile($view, $this->_sourceFile, $module);
         $this->_viewdefs = $loaded['viewdefs'][$module][$view];
         $this->_variables = $loaded['variables'];
     }
@@ -218,8 +225,8 @@ class ParserModifyLayoutView extends ModuleBuilderParser
             {
                 $slotNumber = $slotComponents ['2'];
                 $panelID = $panelMap [$slotComponents ['1']];
-                $rowID = floor($slotNumber / $this->maxColumns);
-                $colID = $slotNumber - ($rowID * $this->maxColumns);
+                $rowID = floor($slotNumber / $this->maxColumns); // This might be able to go away
+                $colID = $slotNumber - ($rowID * $this->maxColumns); // This is going to need to go away
                 //If the original editview defined this field, copy that over.
                 if ($slotComponents ['3'] == 'name' && isset($origFieldDefs [$value]) && is_array($origFieldDefs [$value]))
                 {

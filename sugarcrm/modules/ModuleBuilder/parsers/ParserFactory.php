@@ -76,9 +76,12 @@ class ParserFactory
             //BEGIN SUGARCRM flav=pro || flav=sales ONLY
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :
+            case MB_PORTALDETAILVIEW:
+            case MB_PORTALEDITVIEW:
                 require_once 'modules/ModuleBuilder/parsers/views/WirelessGridLayoutMetaDataParser.php' ;
                 return new WirelessGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
             case MB_WIRELESSLISTVIEW:
+            case MB_PORTALLISTVIEW:
                 require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' ;
                 return new ListLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
             //END SUGARCRM flav=pro || flav=sales ONLY
@@ -156,6 +159,7 @@ class ParserFactory
 
     protected static function checkForStudioParserOverride($view, $moduleName, $packageName)
     {
+        require_once('modules/ModuleBuilder/Module/StudioModuleFactory.php');
         $sm = StudioModuleFactory::getStudioModule($moduleName);
         foreach($sm->sources as $file => $def)
         {

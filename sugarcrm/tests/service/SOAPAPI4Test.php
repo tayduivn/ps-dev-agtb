@@ -52,7 +52,6 @@ class SOAPAPI4Test extends SOAPTestCase
             $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
             $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
             $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
-            $GLOBALS['db']->commit();
         }
         parent::tearDown();
     }

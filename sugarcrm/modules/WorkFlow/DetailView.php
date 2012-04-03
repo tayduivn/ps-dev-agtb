@@ -90,10 +90,10 @@ $xtpl->assign('ID', $focus->id);
 $xtpl->assign("DESCRIPTION", nl2br($focus->description));
 
 if ($focus->status==1){
-	$status = "Active";	
+	$status = "Active";
 } else {
 	$status = "Inactive";
-}	
+}
 //UI Parameters
 $xtpl->assign('FIRE_ORDER', $app_list_strings['wflow_fire_order_dom'][$focus->fire_order]);
 $xtpl->assign('STATUS', $app_list_strings['user_status_dom'][$status]);
@@ -105,9 +105,23 @@ $detailView->processListNavigation($xtpl, "WORKFLOW", $offset, $focus->is_AuditE
 global $current_user;
 
 
+
 // adding custom fields:
 require_once('modules/DynamicFields/templates/Files/DetailView.php');
 
+$buttons = array(
+    '<input title="'.$app_strings['LBL_EDIT_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_EDIT_BUTTON_KEY'].'" class="button" onclick="this.form.return_module.value=\'WorkFlow\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\''.$focus->id.'\'; this.form.action.value=\'EditView\'" type="submit" name="EditWorkFlow" id="EditWorkFlow" value="'.$app_strings['LBL_EDIT_BUTTON_LABEL'].'"> ',
+    '<input title="'.$app_strings['LBL_DUPLICATE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_DUPLICATE_BUTTON_KEY'].'" class="button" onclick="this.form.return_module.value=\'WorkFlow\'; this.form.return_action.value=\'index\'; this.form.isDuplicate.value=true; this.form.action.value=\'EditView\'" type="submit" name="DuplicateWorkFlow" id="DuplicateWorkFlow" value="'.$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'">',
+    '<input title="'.$app_strings['LBL_DELETE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_DELETE_BUTTON_KEY'].'" class="button" onclick="this.form.return_module.value=\'WorkFlow\'; this.form.return_action.value=\'ListView\'; this.form.action.value=\'Delete\'; return confirm(\''.$app_strings['NTC_DELETE_CONFIRMATION'].'\')" type="submit" name="DeleteWorkFlow" id="DeleteWorkFlow" value="'.$app_strings['LBL_DELETE_BUTTON_LABEL'].'">'
+);
+
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$action_buttons = smarty_function_sugar_action_menu(array(
+    'id' => 'ACLRoles_EditView_action_menu',
+    'buttons' => $buttons,
+), $xtpl);
+
+$xtpl->assign('ACTION_MENU', $action_buttons);
 
 $xtpl->parse("main");
 $xtpl->out("main");

@@ -35,6 +35,19 @@ $viewdefs['ProjectTask']['DetailView'] = array(
 				                            				array( 'customCode' => '{if $bean->aclAccess("edit")}<input type="submit" name="EditTaskInGrid" value=" {$MOD.LBL_EDIT_TASK_IN_GRID_TITLE} " '.
 																					'title="{$MOD.LBL_EDIT_TASK_IN_GRID_TITLE}"  '.
 																					'class="button" onclick="this.form.record.value=\'{$fields.project_id.value}\';prep_edit_task_in_grid(this.form);" />{/if}',
+                                                                //Bug#51778: The custom code will be replaced with sugar_html. customCode will be deplicated.
+                                                                'sugar_html' => array(
+                                                                    'type' => 'submit',
+                                                                    'value' => ' {$MOD.LBL_EDIT_TASK_IN_GRID_TITLE} ',
+                                                                    'htmlOptions' => array(
+                                                                        'title' => '{$MOD.LBL_EDIT_TASK_IN_GRID_TITLE}',
+                                                                        'class' => 'button',
+                                                                        'name' => 'EditTaskInGrid',
+                                                                        'onclick' => 'this.form.record.value=\'{$fields.project_id.value}\';prep_edit_task_in_grid(this.form);'
+                                                                    ),
+                                                                    'template' => '{if $bean->aclAccess("edit")}[CONTENT]{/if}'
+                                                                ),
+
 															),
 															//END SUGARCRM flav=pro ONLY
 															//BEGIN SUGARCRM flav=com ONLY

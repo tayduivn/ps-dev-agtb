@@ -76,7 +76,7 @@ SUGAR.append(SUGAR.themes, {
             $("#moduleTabExtraMenu" + sugar_theme_gm_current).before(menuNode);
             
             //kill menu and reload it so all events are assigned properly
-			var moduleList = $("#moduleList");
+
 			$("#moduleList").find("a").unbind();
 			SUGAR.themes.loadModuleList();
 	
@@ -109,16 +109,61 @@ SUGAR.append(SUGAR.themes, {
             this.loadModuleList();
         }
     },
+    
+    toggleQuickCreateOverFlow: function(menuName,maction) {
+    	var menuName = "#quickCreateULSubnav"; 
+    		if(maction == "more") {
+				$(menuName).addClass("showMore");
+				$(menuName).removeClass("showLess");
+    		} else {
+    			$(menuName).addClass("showLess");
+				$(menuName).removeClass("showMore");
+    		}
+    },
     toggleMenuOverFlow: function(menuName,maction) {
 
     	var menuName = "#"+menuName;
 	    if(maction == "more") {
 			$(menuName).addClass("showMore");
 			$(menuName).removeClass("showLess");
+			
+		var viewPortHeight = $(window).height(),
+		    menuOffset = $(menuName).offset(),
+		    menuHeight = $(menuName).outerHeight(true),
+		    menuWidth = $(menuName).width(),
+		    footerHeight = $('#footer').height(),
+		    moduleListHeight = $('#moduleList').height(),
+		    filterByHeight = $(menuName).parent().find('ul.filterBy').outerHeight(true);
+			if(menuHeight + moduleListHeight > viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)) {
+				
+	    		$.fn.hoverscroll.params = $.extend($.fn.hoverscroll.params, {
+	    			vertical : true,
+	    			width: menuWidth,
+	    			hoverZone: 'instant',
+	    			height: viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)
+	    		});
+	    		$(menuName).hoverscroll();
+	    		$(menuName).width(menuWidth);
+	    		
+
+	    		$(menuName).find("> li").each(function() {
+					$(this).unbind('mouseover');
+					$(this).unbind('mouseout');
+				});
+    		
+		    }
 		} else {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
-		}
+			
+			$.fn.hoverscroll.destroy($(menuName));
+			$("#moduleList").find("a").unbind();
+			var moduleListHTML = $("#moduleList").html();
+			$("#moduleList").empty();
+			$("#moduleList").html(moduleListHTML);
+			this.loadModuleList();
+			$('#moduleMenuOverFlowMore'+sugar_theme_gm_current).children('a').focus().blur();
+		}	
     },
     switchMenuMode: function() {
     	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
@@ -150,7 +195,7 @@ SUGAR.append(SUGAR.themes, {
 			dropShadows: false,
             ignoreClass: 'megawrapper',
 			onBeforeShow: function() {
-				if($(this).attr("class") == "megamenu") {
+				if($(this).attr("class") == "megamenu" && $(this).prev().hasClass('more') != true) {
                     var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
 					var moduleName = $(this).prev().attr("module");
                     //Check if the menu we want to show is in the more menu
@@ -227,13 +272,15 @@ SUGAR.append(SUGAR.themes, {
 		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
 			$('ul.sf-menu').each(function(){
 				if($(this).attr("id") == ("themeTabGroupMenu_" + sugar_theme_gm_current)){
-					$(this).children("li").each(
+					var menuItems = $(this).children("li")
+					menuItems.each(
 	                    function(index) {                  
                             var menuNode = $(this);
                             menuItemsWidth += menuNode.width();
 	                    }
 				    );
-	                	                               
+	                var menuLength = menuItems.length;
+	                
 	                if(menuItemsWidth > maxMenuWidth){
 	                	while(menuItemsWidth > maxMenuWidth){
 	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
@@ -252,8 +299,8 @@ SUGAR.append(SUGAR.themes, {
 	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
 	                	if(insertNode.prev().hasClass("current")){
 	                		insertNode = insertNode.prev();
-                		}
-	                	while(menuItemsWidth <= maxMenuWidth){
+                		}	                
+	                	while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
 	                		var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first");
 	                		
 	                		if((menuNode.attr("id") != undefined && 
@@ -261,6 +308,7 @@ SUGAR.append(SUGAR.themes, {
 	                		   (menuItemsWidth + menuNode.width()) > maxMenuWidth){
 	                			break;	                			
 	                		}
+	                		menuLength++;
 	                		menuItemsWidth += menuNode.width();
 		                	menuNode.remove();
 		                	
@@ -327,7 +375,6 @@ SUGAR.append(SUGAR.themes, {
 			$('#close_spot_search').css("display","inline-block");
 
 			 if(event.charCode == 0 && !firstHit) {
-			$('#sugar_spot_search_div').css("left",110);
 			$('#sugar_spot_search_div').css("width",344);
 			$('#sugar_spot_search').css("width",290);
 			firstHit = true;

@@ -558,8 +558,8 @@ function performFullFTSIndex()
 {
     require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
     $indexer = new SugarSearchEngineFullIndexer();
-    $results = $indexer->performFullSystemIndex()->getStatistics();
-    $GLOBALS['log']->info("FTS Indexer completed with the following results:" . var_export($results, TRUE));
+    $indexer->initiateFTSIndexer();
+    $GLOBALS['log']->info("FTS Indexer initiated.");
     return true;
 }
 //END SUGARCRM flav=pro ONLY

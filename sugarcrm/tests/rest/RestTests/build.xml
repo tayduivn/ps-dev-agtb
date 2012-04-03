@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="RestTest" default="default-build" basedir=".">
+
+   <!-- 
+   defining properties that should be able to be overwriten fromt he command line using
+   the following syntax:
+   CMD: ant build.xml -Dname="value"
+    -->
+   <property name="sugarinst" value="http://localhost:8888/sugar/ent/sugarcrm/rest" />
+   <property name="sugaruser" value="admin" />
+   <property name="sugarpass" value="admin" /> 
+   <property name="lib" location="./lib" />
+   <property name="test-srcs" value="src" />
+   <property name="test-bin" value="test-bin" />
+   <property name="junit-log-dir" value="/tmp" />
+   <property name="junit-cov-dir" value="/tmp" />
+
+	<path id="build.class.path">
+		<fileset dir="./bin/com/sugarcrm/rest/tests">
+		    <include name="*.class" />
+		</fileset>		
+	</path> 
+	
+	<target name="clean">
+	  <delete dir="${test-bin}" failonerror="false" />
+	</target>
+	
+	<target name="init" depends="clean">
+	  <mkdir dir="${test-bin}" />
+	</target>
+
+   <target name="build-tests" depends="init">
+      <javac srcdir="${test-srcs}" includeantruntime="false" destdir="${test-bin}" >
+         <classpath>
+            <pathelement path="${classpath}"/>
+            <fileset dir="lib">
+               <include name="**/*.jar"/>
+            </fileset>
+         </classpath>
+         <compilerarg value="-Xlint:unchecked"/>
+      </javac>
+   </target>
+
+   <path id="classpath.libs">
+      <fileset dir="lib">
+         <include name="**/*.jar"/>
+      </fileset>
+   </path>
+
+   <!-- <pathelement location="${test-bin}/com/sugarcrm/rest/tests" /> -->
+
+   <path id="classpath.tests">
+      <pathelement location="${test-bin}" />
+   </path>
+
+
+   <target name="default-build" depends="build-tests">
+      <junit printsummary="yes" haltonfailure="no" fork="no">
+         <formatter type="xml"/>
+         <sysproperty key="sugar-inst" value="${sugarinst}" />
+         <sysproperty key="sugar-username" value="${sugaruser}" />
+         <sysproperty key="sugar-password" value="${sugarpass}" />
+         <classpath refid="classpath.libs"/>
+         <classpath refid="classpath.tests"/>
+         <test name="com.sugarcrm.rest.tests.AllTests" haltonfailure="no" todir="${junit-log-dir}"/>
+      </junit>
+   </target>
+
+</project>

@@ -35,11 +35,12 @@ require_once 'modules/ModuleBuilder/parsers/views/History.php' ;
 
 abstract class AbstractMetaDataImplementation
 {
-	protected $_view ;
-	protected $_moduleName ;
-	protected $_viewdefs ;
+	protected $_view;
+	protected $_moduleName;
+	protected $_viewdefs;
 	protected $_originalViewdefs = array();
-	protected $_fielddefs ;
+	protected $_fielddefs;
+    protected $_paneldefs;
 	protected $_sourceFilename = '' ; // the name of the file from which we loaded the definition we're working on - needed when we come to write out the historical record
 	// would like this to be a constant, but alas, constants cannot contain arrays...
 	protected $_fileVariables = array (
@@ -60,6 +61,12 @@ abstract class AbstractMetaDataImplementation
 	MB_WIRELESSBASICSEARCH 	 	=> 'searchdefs',
 	MB_WIRELESSADVANCEDSEARCH 	=> 'searchdefs',
 	//END SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=ent ONLY
+    MB_PORTALEDITVIEW 		    => 'viewdefs',
+    MB_PORTALDETAILVIEW 		=> 'viewdefs',
+    MB_PORTALLISTVIEW 	 	    => 'listViewDefs',
+    MB_PORTALSEARCHVIEW 	 	=> 'searchdefs',
+    //END SUGARCRM flav=ent ONLY
 	) ;
 
 	/*
@@ -79,6 +86,10 @@ abstract class AbstractMetaDataImplementation
 	{
 		return $this->_fielddefs ;
 	}
+
+    public function getPanelDefs() {
+        return $this->_paneldefs;
+    }
 
 	/*
 	 * Obtain a new accessor for the history of this layout
@@ -217,14 +228,14 @@ abstract class AbstractMetaDataImplementation
 	 * @param array defs        	Array containing the layout definition; the top level should be the definition itself; not the modulename or viewdef= preambles found in the file definitions
 	 * @param boolean useVariables	Write out with placeholder entries for module name and object name - used by ModuleBuilder modules
 	 */
-	protected function _saveToFile ($filename , $defs , $useVariables = true, $forPopup = false )
-	{
-	    if(file_exists($filename))
+	protected function _saveToFile($filename ,$defs ,$useVariables = true, $forPopup = false) {
+	    if(file_exists($filename)) {
 	        unlink($filename);
+        }
 	    
-	    mkdir_recursive ( dirname ( $filename ) ) ;
+	    mkdir_recursive(dirname($filename));
 
-		$useVariables = (count ( $this->_variables ) > 0) && $useVariables ; // only makes sense to do the variable replace if we have variables to replace...
+		$useVariables = (count($this->_variables) > 0) && $useVariables; // only makes sense to do the variable replace if we have variables to replace...
 
 		// create the new metadata file contents, and write it out
 		$out = "<?php\n" ;
@@ -266,29 +277,41 @@ abstract class AbstractMetaDataImplementation
 	 */
 	function _mergeFielddefs ( &$fielddefs , $layout )
 	{
-		foreach ( $layout as $key => $def )
-		{
+		if (isset($layout['panels'])) {
+            // Do things the new way
+            if (isset($layout['panels']['fields'])) {
+                // If by some strange chance fields are immediately descendant from panels
+                $this->_mergeFielddefs($fielddefs, $layout['panels']['fields']);
+            } else {
+                if (is_array($layout['panels'])) {
+                    foreach ($layout['panels'] as $panel) {
+                        if (isset($panel['fields'])) {
+                            $this->_mergeFielddefs($fielddefs, $panel['fields']);
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($layout as $key => $def) {
+                if (is_string($key) && $key == 'templateMeta') {
+                    continue ;
+                }
 
-			if ( (string) $key == 'templateMeta' )
-			continue ;
-
-			if ( is_array ( $def ) )
-			{
-				if ( isset ( $def [ 'name' ] ) && ! is_array ( $def [ 'name' ] ) ) // found a 'name' definition, that is not the definition of a field called name :)
-				{
-					// if this is a module field, then merge in the definition, otherwise this is a new field defined in the layout, so just take the definition
-					$fielddefs [ $def [ 'name'] ] = ( isset ($fielddefs [ $def [ 'name' ] ] ) ) ? array_merge ( $fielddefs [ $def [ 'name' ] ], $def ) : $def ;
-				}
-				else if ( isset ( $def [ 'label' ] ) || isset ( $def [ 'vname' ] ) || isset($def ['widget_class']) ) // dealing with a listlayout which lacks 'name' keys, but which does have 'label' keys
-				{
-					$key = strtolower ( $key ) ;
-					$fielddefs [ $key ] = ( isset ($fielddefs [ $key ] ) ) ? array_merge ( $fielddefs [ $key ], $def ) : $def ;
-				}
-				else
-				$this->_mergeFielddefs( $fielddefs , $def ) ;
-			}
-		}
-
+                if (is_array($def)) {
+                    if (isset($def['name']) && !is_array($def['name'])) {
+                         // found a 'name' definition, that is not the definition of a field called name :)
+                        // if this is a module field, then merge in the definition, otherwise this is a new field defined in the layout, so just take the definition
+                        $fielddefs[$def['name']] = (isset($fielddefs[$def['name']])) ? array_merge($fielddefs[$def['name']], $def) : $def;
+                    } elseif ((isset($def['label']) || isset($def['vname']) || isset($def['widget_class'])) && !is_numeric($key)) {
+                        // dealing with a listlayout which lacks 'name' keys, but which does have 'label' keys
+                        $key = strtolower($key) ;
+                        $fielddefs[$key] = (isset($fielddefs[$key])) ? array_merge($fielddefs[$key], $def) : $def;
+                    } else {
+                        $this->_mergeFielddefs($fielddefs, $def);
+                    }
+                }
+            }
+        }
 	}
 
 }

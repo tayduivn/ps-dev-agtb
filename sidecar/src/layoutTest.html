@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+		<meta http-equiv="x-ua-compatible" content="IE=8">
+		<script language="javascript" src="../lib/jquery/jquery.min.js"></script>
+        <script language="javascript" src="../lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+		<script language="javascript" src="../lib/backbone/underscore.js"></script>
+		<script language="javascript" src="../lib/backbone/backbone.js"></script>
+        <script language="javascript" src="../lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+        <script language="javascript" src="../lib/stash/stash.js"></script>
+        <script language="javascript" src="../lib/async/async.js"></script>
+        <link rel="stylesheet" href="../lib/chosen/chosen.css"/>
+        <script language="javascript" src="../lib/chosen/chosen.jquery.js"></script>
+		<!-- App Scripts -->
+        <script src='../lib/sugarapi/sugarapi.js'></script>
+		<script src='app.js'></script>
+        <script src='utils/utils.js'></script>
+		<script src='core/cache.js'></script>
+        <script src="core/events.js"></script>
+		<script src='view/template.js'></script>
+		<script src='view/sugar-field-manager.js'></script>
+		<script src='view/sugar-field.js'></script>
+		<script src='core/context.js'></script>
+		<script src='core/controller.js'></script>
+		<script src='core/router.js'></script>
+		<script src='core/metadata-manager.js'></script>
+		<script src='utils/logger.js'></script>
+		<script src='config.js'></script>
+
+		<script src='data/bean.js'></script>
+		<script src='data/bean-collection.js'></script>
+        <script src='data/data-manager.js'></script>
+		<script src='data/validation.js'></script>
+
+        <script src='view/layout-manager.js'></script>
+        <script src='view/view.js'></script>
+        <script src='view/layout.js'></script>
+        <script src='view/views/list-view.js'></script>
+        <script src='view/layouts/columns-layout.js'></script>
+        <script src='view/layouts/fluid-layout.js'></script>
+
+        <script src='core/sugar-auth.js'></script>
+
+		<script src='../extensions/sugarportal/sugarportal.js'></script>
+
+        <script language="javascript" src="../tests/fixtures/sugarFields.js"></script>
+      	<script language="javascript" src="../tests/fixtures/metadata.js"></script>
+
+		<script language="javascript" src="../tests/fixtures/sugarFields.js"></script>
+		<script language="javascript" src="../tests/fixtures/metadata.js"></script>
+		<script language="javascript" src="../lib/sinon/sinon.js"></script>
+		<script language="javascript" src="../lib/sugarapi/demoServerData.js"></script>
+		<script language="javascript" src="../lib/sugarapi/demoRestServer.js"></script>
+        <!--SUGAR REST interface fakeserver + data-->
+		<link rel="stylesheet" href="../lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
+        <link rel="stylesheet" href="../lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
+		<script src="../lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
+
+
+    </head>
+    <body>
+    <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+
+            <div class="container-fluid">
+                <a class="cube" href="#" rel="tooltip" data-original-title="Dashboard"></a>
+              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </a>
+              <a class="brand" href="#">Sidecar</a>
+              <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="#">Browse</a></li>
+                    <li><a href="#Cases/create">Create</a></li>
+                </ul>
+                  <p class="navbar-text pull-right"></p>
+              </div><!--/.nav-collapse -->
+            </div>
+          </div>
+        </div>
+    	<div id="portal">
+			<div id="view" style="" class="container-fluid"></div>
+			<div id="sidecar" style="" ></div>
+			<div id="layout" style=""></div>
+		</div>
+
+		<script language="javascript">
+			var syncResult, view, layout, html;
+
+			//Fake a field list
+//            SUGAR.App.metadata.set({sugarFields:sugarFieldsFixtures.fieldsData});
+//			var i = SUGAR.Api.getInstance();
+//			i.debug = true;
+
+			var App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl});
+            App.api.debug = App.config.debugSugarApi;
+            App.start();
+			//Initialize the data model
+//			App.dataManager.declareModels(fixtures.metadata);
+//			App.metadata.set(fixtures.metadata);
+
+			//Need a sample Bean
+//			this.collection = App.dataManager.fetchBeans('Contacts',{});
+//			this.bean = this.collection.models[0];
+
+//			App.controller.data = {"collection" : this.collection, "model" : this.bean};
+
+//			App.controller.start();
+
+			/*
+			var view = App.layout.get({
+				view:"listView"
+			});
+			$("#view").append(view.el);
+			view.render();
+
+			var layout = App.layout.get({
+				layout: "detailplus"
+				//view:"detailView"
+			});
+			$("#layout").append(layout.el);
+			layout.render();
+
+
+
+
+			var sublayout = App.layout.get({
+				context : context,
+				layout: "sublayout"
+				//view:"detailView"
+			});
+			$("#layout").append(sublayout.el);
+			sublayout.render();
+			*/
+
+			//console.log(bean.attributes.full_name2);
+		</script>
+    </body>
+</html>
