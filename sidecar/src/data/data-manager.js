@@ -59,18 +59,18 @@
  *   opportunityRole: "Influencer"
  * }
  * // Create a new instance of a contact related to an existing opportunity
- * var contact = dm.createRelatedBean(opportunity, null, "contacts", attrs);
+ * var contact = SUGAR.App.data.createRelatedBean(opportunity, null, "contacts", attrs);
  * // This will save the contact and create the relationship
  * contact.save(null, { relate: true });
  *
  * // Create an instance of contact collection related to an existing opportunity
- * var contacts = dm.createRelatedCollection(opportunity, "contacts");
+ * var contacts = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
  * // This will fetch related contacts
  * contacts.fetch({ relate: true });
  *
  * </code></pre>
  *
- * @class DataManager
+ * @class Data.DataManager
  * @alias SUGAR.App.data
  * @singleton
  */
@@ -85,13 +85,13 @@
     var _dataManager = {
 
         /**
-         * Reference to the base bean model class. Defaults to {@link Bean}.
-         * @property {Bean}
+         * Reference to the base bean model class. Defaults to {@link Data.Bean}.
+         * @property {Data.Bean}
          */
         beanModel: app.Bean,
         /**
-         * Reference to the base bean collection class. Defaults to {@link BeanCollection}.
-         * @property {BeanCollection}
+         * Reference to the base bean collection class. Defaults to {@link Data.BeanCollection}.
+         * @property {Data.BeanCollection}
          */
         beanCollection: app.BeanCollection,
 
@@ -146,26 +146,26 @@
                 defaults: defaults,
                 /**
                  * TODO: Documentation required
-                 * @member Bean
+                 * @member Data.Bean
                  * @property {Object}
                  *
                  */
                 sugarFields: {},
                 /**
                  * Module name.
-                 * @member Bean
+                 * @member Data.Bean
                  * @property {String}
                  */
                 module: moduleName,
                 /**
                  * Vardefs metadata.
-                 * @member Bean
+                 * @member Data.Bean
                  * @property {Object}
                  */
                 fields: fields,
                 /**
                  * Relationships metadata.
-                 * @member Bean
+                 * @member Data.Bean
                  * @property {Object}
                  */
                 relationships: relationships
@@ -175,13 +175,13 @@
                 model: model,
                 /**
                  * Module name.
-                 * @member BeanCollection
+                 * @member Data.BeanCollection
                  * @property {String}
                  */
                 module: moduleName,
                 /**
                  * Pagination offset.
-                 * @member BeanCollection
+                 * @member Data.BeanCollection
                  * @property {Number}
                  */
                 offset: 0
@@ -212,7 +212,7 @@
          * </pre>
          * @param {String} module Sugar module name.
          * @param attrs(optional) initial values of bean attributes, which will be set on the model.
-         * @return {Bean} A new instance of bean model.
+         * @return {Data.Bean} A new instance of bean model.
          */
         createBean: function(module, attrs) {
             return new _models[module](attrs);
@@ -225,16 +225,16 @@
          * var accounts = SUGAR.App.data.createBeanCollection("Accounts");
          * </code></pre>
          * @param {String} module Sugar module name.
-         * @param {Bean[]} models(optional) initial array or collection of models.
+         * @param {Data.Bean[]} models(optional) initial array or collection of models.
          * @param {Object} options(optional) options hash.
-         * @return {BeanCollection} A new instance of bean collection.
+         * @return {Data.BeanCollection} A new instance of bean collection.
          */
         createBeanCollection: function(module, models, options) {
             return new _collections[module](models, options);
         },
 
         /**
-         * Creates an instance of related {@link Bean} or updates an existing bean with link information.
+         * Creates an instance of related {@link Data.Bean} or updates an existing bean with link information.
          *
          * <pre><code>
          * // Create a new contact related to the given opportunity.
@@ -246,11 +246,11 @@
          * contact.save();
          * </code></pre>
          *
-         * @param {Bean} bean1 instance of the first bean
-         * @param {Bean/String} beanOrId2 instance or ID of the second bean. A new instance is created if this parameter is <code>null</code>
+         * @param {Data.Bean} bean1 instance of the first bean
+         * @param {Data.Bean/String} beanOrId2 instance or ID of the second bean. A new instance is created if this parameter is <code>null</code>
          * @param {String} link relationship link name
          * @param {Object} attrs(optional) bean attributes hash
-         * @return {Bean} a new instance of the related bean or existing bean instance updated with relationship link information.
+         * @return {Data.Bean} a new instance of the related bean or existing bean instance updated with relationship link information.
          */
         createRelatedBean: function(bean1, beanOrId2, link, attrs) {
             var name = bean1.fields[link].relationship;
@@ -279,7 +279,7 @@
              * }
              * </pre>
              *
-             * @member Bean
+             * @member Data.Bean
              */
             beanOrId2.link = {
                 name: link,
@@ -298,9 +298,9 @@
          * contacts.fetch({ relate: true });
          * </code></pre>
          *
-         * @param {Bean} bean the related beans are linked to the specified bean
+         * @param {Data.Bean} bean the related beans are linked to the specified bean
          * @param {String} link relationship link name
-         * @return {BeanCollection} a new instance of the bean collection
+         * @return {Data.BeanCollection} a new instance of the bean collection
          */
         createRelatedCollection: function(bean, link) {
             var name = bean.fields[link].relationship;
@@ -317,7 +317,7 @@
                  * }
                  * </pre>
                  *
-                 * @member BeanCollection
+                 * @member Data.BeanCollection
                  */
                 link: {
                     name: link,
@@ -329,7 +329,7 @@
         /**
          * Custom implementation of <code>Backbone.sync</code> pattern. Syncs models with remote server using Sugar.Api lib.
          * @param {String} method the CRUD method (<code>"create", "read", "update", or "delete"</code>)
-         * @param {Bean/BeanCollection} model the model to be saved (or collection to be read)
+         * @param {Data.Bean/Data.BeanCollection} model the model to be synced (or collection to be read)
          * @param options(optional) standard Backbone options as well as Sugar specific options
          */
         sync: function(method, model, options) {

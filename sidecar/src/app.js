@@ -241,7 +241,7 @@ SUGAR.App = (function() {
          * Navigate to a new Layout / View convenience function.
          * @method
          * @param {Context} context Context object to extract module from.
-         * @param {Bean} model Model object to route with
+         * @param {Data.Bean} model Model object to route with
          * @param {String} action Desired action, leave blank if
          * @param {Object} params Additional parameters
          */

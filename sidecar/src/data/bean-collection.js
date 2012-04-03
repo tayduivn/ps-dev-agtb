@@ -1,8 +1,9 @@
 /**
  * Base bean collection class.
  *
- * @class BeanCollection
+ * @class Data.BeanCollection
  * @alias SUGAR.App.BeanCollection
+ * @extends Backbone.Collection
  */
 (function(app) {
 
@@ -29,7 +30,7 @@
          *
          * - relate: boolean flag indicating that relationships should be fetched.
          * All other options are standard options outlined in the backbone docs.
-         * User {@link BeanCollection#paginate} to for details about pagination options.
+         * User {@link Data.BeanCollection#paginate} for details about pagination options.
          *
          * Triggers <code>app:collection:fetch</code> event.
          * @param options(optional) fetch options
