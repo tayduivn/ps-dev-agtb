@@ -197,6 +197,7 @@
          * Helper class to build SQL statements and database schema for a given module/bean type.
          * @param name bean type
          * @param definition bean metadata
+         * @ignore
          */
         SqlHelper: function(name, definition) {
             this.name = name;

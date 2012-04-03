@@ -1,8 +1,9 @@
 (function(app) {
     /**
      * This manages the watching of the address hash and routes to the correct handler.
-     * @class Router
+     * @class Core.Router
      * @singleton
+     * @alias SUGAR.App.router
      */
     var Router = Backbone.Router.extend({
         /**

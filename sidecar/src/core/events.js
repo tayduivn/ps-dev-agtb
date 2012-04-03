@@ -25,7 +25,9 @@
      *     }
      * }
      * </pre></code>
-     * @class Events
+     * @class Core.Events
+     * @singleton
+     * @alias SUGAR.App.events
      */
     app.augment("events", _.extend({
         /**

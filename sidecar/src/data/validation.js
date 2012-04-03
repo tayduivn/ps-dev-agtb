@@ -1,13 +1,14 @@
 /**
  * Validation module.
  *
- * The validation module is used by {@link Bean#validate} method.
- * Each bean field is validated by each of the validators specified in the {@link Validation.validators} hash.
+ * The validation module is used by {@link Data.Bean#validate} method.
+ * Each bean field is validated by each of the validators specified in the {@link Data.Validation.validators} hash.
  *
- * The bean is also checked for required fields by {@link Validation#requiredValidator} method.
+ * The bean is also checked for required fields by {@link Data.Validation#requiredValidator} method.
  *
- * @class Validation
+ * @class Data.Validation
  * @singleton
+ * @alias SUGAR.App.validation
  */
 (function(app) {
 
@@ -18,9 +19,9 @@
          * Error definition could be a primitive value such as max length or an array, e.g. range's lower and upper limits.
          * Validator function accepts field metadata and the value to be validated.
          *
-         * @class Validation.validators
+         * @class Data.Validation.validators
          * @singleton
-         * @member Validation
+         * @member Data.Validation
          */
         validators: {
 
@@ -53,10 +54,10 @@
         /**
          * Validates if the required field is set on a bean or about to be set.
          *
-         * @member Validation
+         * @member Data.Validation
          * @param field field metadata
          * @param {String} fieldName bean field name
-         * @param {Bean} model bean instance
+         * @param {Data.Bean} model bean instance
          * @param {String} value value to be set
          * @return {Boolean} <code>true</code> if the validation passes, <code>false</code> otherwise
          * @method

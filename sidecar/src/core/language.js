@@ -3,8 +3,9 @@
      * Language Helper. Provides interface to pull language strings out of a language
      * label cache.
      *
-     * @class Lang
+     * @class Core.LanguageHelper
      * @singleton
+     * @alias SUGAR.App.lang
      */
     app.augment("lang", {
         /**
