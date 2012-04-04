@@ -54,12 +54,12 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     /**
      * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
      */
-    const MAX_BULK_QUERY_THRESHOLD = 10000;
+    const MAX_BULK_QUERY_THRESHOLD = 15000;
 
     /**
      * The max number of beans we delete at a time
      */
-    const MAX_BULK_DELETE_THRESHOLD = 100;
+    const MAX_BULK_DELETE_THRESHOLD = 3000;
 
     /**
      * Name of the scheduler to perform a full index
@@ -425,7 +425,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $tableName = self::QUEUE_TABLE;
         $inClause = implode("','", $deleteIDs);
         $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
-        $GLOBALS['log']->info("MARK BEAN QUERY IS: $query");
+        $GLOBALS['log']->debug("MARK BEAN QUERY IS: $query");
         $GLOBALS['db']->query($query);
     }
 
