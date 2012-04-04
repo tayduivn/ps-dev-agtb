@@ -61,18 +61,57 @@ class MetaDataManager {
         $this->platforms = $platforms;
     }
 
+    protected function getModuleViewdefs($moduleName, $viewdefTypeFile = 'View', $viewdefType = 'view') {
+        $data = array();
+        
+        $globPath = "modules/{$moduleName}/metadata/{$this->platforms[0]}/{$viewdefType}s/*{$viewdefTypeFile}.php";
+
+        $builtinFiles = glob($globPath,GLOB_NOSORT);
+        if ( !is_array($builtinFiles) ) {
+            $builtinFiles = array();
+        }
+        $customFiles = glob("custom/".$globPath,GLOB_NOSORT);
+        if ( !is_array($customFiles) ) {
+            $customFiles = array();
+        }
+
+
+        $files = array_merge($builtinFiles,$customFiles);
+
+        foreach ( $files as $viewFile ) {
+            $viewName = substr(basename($viewFile),0,-strlen($viewdefTypeFile.'.php'));
+            // Not require once, we need it to set some data
+            require($viewFile);
+
+            // Data in that file should look like: $viewdefs['Cases']['portal']['layout']['detail'] = array(...);
+            if ( isset($viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$viewName]) ) {
+                $data[$viewName] = $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$viewName];
+            }
+        }
+
+        return $data;
+    }
+
     /**
-     * This method collects all view data for the different types of views supported by
-     * the SugarCRM app.
+     * This method collects all view data for a module
      *
-     * @param $moduleName The name of the sugar modulde to collect info about.
+     * @param $moduleName The name of the sugar module to collect info about.
      *
      * @return Array A hash of all of the view data.
      */
     public function getModuleViews($moduleName) {
-        $data = array();
+        return $this->getModuleViewdefs($moduleName,'View','view');
+    }
 
-        return $data;
+    /**
+     * This method collects all view data for a module
+     *
+     * @param $moduleName The name of the sugar module to collect info about.
+     *
+     * @return Array A hash of all of the view data.
+     */
+    public function getModuleLayouts($moduleName) {
+        return $this->getModuleViewdefs($moduleName,'Layout','layout');
     }
 
     /**
@@ -89,6 +128,7 @@ class MetaDataManager {
         //FIXME: Need more relationshp data (all relationship data)
         $data['relationships'] = $vardefs['relationships'];
         $data['views'] = $this->getModuleViews($moduleName);
+        $data['layouts'] = $this->getModuleLayouts($moduleName);
 
         $md5 = serialize($data);
         $md5 = md5($md5);
