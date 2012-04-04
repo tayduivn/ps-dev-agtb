@@ -53,7 +53,7 @@ onclick='open_popup(document.{$form_name}.parent_type.value, 600, 400, "", true,
 <script type="text/javascript">
 if (typeof(changeParentQS) == 'undefined'){
 function changeParentQS(field) {
-    if(typeof sqs_objects == 'undefined') {
+    if(typeof sqs_objects == 'undefined' || typeof sqsId == 'undefined') {
        return;
     }
 	field = YAHOO.util.Dom.get(field);

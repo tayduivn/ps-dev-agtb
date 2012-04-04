@@ -29,8 +29,10 @@
 
 <script>
     {literal}
-    $("ul.clickMenu").each(function(index, node){
-        $(node).sugarActionMenu();
+    $(document).ready(function(){
+	    $("ul.clickMenu").each(function(index, node){
+	        $(node).sugarActionMenu();
+	    });
     });
     {/literal}
 </script>
