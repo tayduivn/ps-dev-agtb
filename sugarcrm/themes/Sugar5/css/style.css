@@ -3981,6 +3981,13 @@ ul#selectLink.clickMenu #massall{
     display: none;
 }
 
+ul.clickMenu.show {
+    display:inline-block;
+    /*css hack for IE*/
+    *display:inline;
+    *zoom:1;
+}
+
 ul#selectLink.clickMenu > li > a{
 	padding-left: 0px !important;
 }
