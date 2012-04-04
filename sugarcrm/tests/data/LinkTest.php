@@ -240,6 +240,13 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, sizeof($result));
         $this->assertEquals($bug3, $result[$bug3->id]);
 
+        //Test offset/pagination
+        $allIds = array_keys($accountsLink->getBeans());
+        $this->assertEquals(3, sizeof($allIds));
+        $result = $accountsLink->getBeans(array("limit" => 1, "offset" => 1));
+        $this->assertEquals(1, sizeof($result));
+        $this->assertArrayHasKey($allIds[1], $result);
+
 
 
         //Test a custom where on a One2M Relationship
@@ -251,7 +258,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $contract1->createdBeans[] = $contract1;
 
         $contract2 = BeanFactory::newBean("Contracts");
-        $contract2->name = "Contract 1";
+        $contract2->name = "Contract 2";
         $contract2->status = "inprogress";
         $contract2->account_id = $account->id;
         $contract2->save();
@@ -274,5 +281,12 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertEquals(1, sizeof($result));
         $this->assertEquals($contract2, $result[0]);
+
+        //Test offset/pagination on One2MBean
+        $allIds = array_keys($account->contracts->getBeans());
+        $this->assertEquals(2, sizeof($allIds));
+        $result = $account->contracts->getBeans(array("limit" => 1, "offset" => 1));
+        $this->assertEquals(1, sizeof($result));
+        $this->assertArrayHasKey($allIds[1], $result);
     }
 }
