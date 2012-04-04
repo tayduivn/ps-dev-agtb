@@ -113,13 +113,16 @@ function open_tag($tagName, $params = array(), $self_closing = false) {
     return "<{$tagName} {$options}{$self_closing_tag}>";
 }
 
-function parse_html_tag($code) {
+function parse_html_tag($code, $appendTo = array()) {
     $SINGLE_QUOTE = "'";
     $DOUBLE_QUOTE = '"';
     $ASSIGN_SIGN = "=";
     $TAG_BEGIN = "<";
     $TAG_END = ">";
+    $SMARTY_BEGIN = "{";
+    $SMARTY_END = "}";
     $quote_encoded = false;
+    $smarty_encoded = false;
     $cache = array();
     $var_name = '';
     $var_assign = false;
@@ -185,6 +188,12 @@ function parse_html_tag($code) {
             $var_name = $string;
             $var_assign = true;
             $cache = array();
+        } else if ( !$quote_encoded && $char == $SMARTY_BEGIN) {
+            $_str = ltrim(substr($code, $i + 1));
+            $_left = strpos($_str, ' ');
+
+            strpos($code, ' ',$i);
+
         } else if ( !$quote_encoded && $char == $TAG_END ) {
             break;
         } else {
@@ -194,5 +203,5 @@ function parse_html_tag($code) {
     if($output['self_closing'] === false) {
         $output['container'] = substr($code, $i + 1);
     }
-    return $output;
+    return (empty($appendTo)) ? $output : array_merge($output, $appendTo);
 }

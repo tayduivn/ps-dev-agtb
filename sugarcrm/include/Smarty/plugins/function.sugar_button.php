@@ -407,7 +407,7 @@ function smarty_function_sugar_button($params, &$smarty)
 					    		$source = SourceFactory::getSource($source_id);
 					    		if($source->isEnabledInWizard()) {
 					    			$output = '<input title="{$APP.LBL_MERGE_CONNECTORS}" type="button" class="button" onClick="document.location=\'index.php?module=Connectors&action=Step1&record={$fields.id.value}&merge_module={$module}\'" name="merge_connector" value="{$APP.LBL_MERGE_CONNECTORS}">';
-                                    if($params['appendTo']) {
+                                    if(isset($params['appendTo'])) {
                                         $smarty->append($params['appendTo'], $output);
                                         return;
                                     }
@@ -422,7 +422,7 @@ function smarty_function_sugar_button($params, &$smarty)
 			//END SUGARCRM flav=pro || flav=sales ONLY
 
    	  } //switch
-      if($params['appendTo']) {
+      if(isset($params['appendTo'])) {
           $smarty->append($params['appendTo'], $output);
           return;
       }
@@ -468,7 +468,7 @@ function smarty_function_sugar_button($params, &$smarty)
                    '[CONTENT]' => $output)
            );
        }
-       if($params['appendTo']) {
+       if(isset($params['appendTo'])) {
            $smarty->append($params['appendTo'], $output);
            return;
        }
@@ -493,7 +493,7 @@ function smarty_function_sugar_button($params, &$smarty)
        }
        */
 
-       if($params['appendTo']) {
+       if(isset($params['appendTo'])) {
            $smarty->append($params['appendTo'], $output);
            return;
        }
