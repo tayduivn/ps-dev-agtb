@@ -116,11 +116,11 @@
                 '<div class="{{../name}} panel">' +
                 "<h4>{{label}}</h4>" +
                 "{{#each fields}}" +
-                "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+                "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
                 "{{/each}}" +
                 "</div>" +
                 "{{/each}}" + "{{#each meta.buttons}}" +
-                "{{sugar_field ../context ../this ../model}}" +
+                "{{sugarField ../context ../this ../model}}" +
                 "{{/each}}" + "</form>"
         }
     }
