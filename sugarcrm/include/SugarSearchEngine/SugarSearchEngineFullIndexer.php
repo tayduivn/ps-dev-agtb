@@ -336,7 +336,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         if($custom_join)
             $ret_array['from'] .= ' ' . $custom_join['join'];
 
-        $ret_array['from'] .= " INNER JOIN {$queuTableName} AS queue on queue.bean_id = {$bean->table_name}.id AND queue.processed = 0 ";
+        $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
         $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";
 
         return  $ret_array['select'] . $ret_array['from'] . $ret_array['where'];
