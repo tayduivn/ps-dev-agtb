@@ -26,13 +26,7 @@ describe("sugarAuth", function () {
     afterEach(function () {
         this.server.restore();
 
-        var cName = "AuthToken";
-        var value = '';
-        var exdays = 1;
-        var exdate = new Date();
-        exdate.setDate(exdate.getDate() + exdays);
-        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-        document.cookie = cName + "=" + c_value;
+        SUGAR.App.cache.set("AuthToken",'');
     });
 
     it("should login successfully with correct passwords", function () {
@@ -60,9 +54,9 @@ describe("sugarAuth", function () {
         this.api.call.restore();
     });
 
-    it("should check auth cookie on isAuthenticated", function () {
+    it("should check auth token on isAuthenticated", function () {
 
-        var authTokenSpy = sinon.spy(this.auth, 'getAuthCookie')
+        var authTokenSpy = sinon.spy(this.auth, 'getAuthToken');
 
         this.auth.isAuthenticated()
         expect(authTokenSpy).toHaveBeenCalled();
@@ -113,17 +107,13 @@ describe("sugarAuth", function () {
         this.callbacks.success.restore();
     });
 
-    it("should get the authToken cookie", function () {
+    it("should get the authToken", function () {
         var result = "";
         var cName = "AuthToken";
         var value = 'asdfasdf';
-        var exdays = 1;
-        var exdate = new Date();
-        exdate.setDate(exdate.getDate() + exdays);
-        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-        document.cookie = cName + "=" + c_value;
+        SUGAR.App.cache.set("AuthToken",'asdfasdf');
 
-        var result = this.auth.getAuthCookie();
+        var result = this.auth.getAuthToken();
 
         expect(result).toEqual(value);
     });
