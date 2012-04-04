@@ -14,6 +14,11 @@
               return {id : 2};
             }
           })
+          $(".eStatus").editable('blah.php',{ 
+            indicator : 'Saving ...',
+            data      : "{'Urgent':'Urgent','High':'High','Medium':'Medium', 'selected':'Low'}",
+            type      : "select"
+          })
 
     	});
 }(window.jQuery)

@@ -89,6 +89,13 @@
     })
   })
   
+  $('.datatable').dataTable({
+    "bPaginate": false,
+    "bFilter": true,
+    "bInfo": false,
+    "bAutoWidth": true
+  })
+  
   // toggle module search (needs tap logic for mobile)
 	$('.addit').on('click', function () {
 	    $(this).toggleClass('active');
@@ -97,14 +104,25 @@
 	})
 	$('.search').on('click', function () {
 	    $(this).toggleClass('active');
+	    $(this).parent().parent().parent().find('.dataTables_filter').toggle();
+	    return false;
+	})
+	$('.filtered .search').on('click', function () {
+	    $(this).toggleClass('active');
 	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
 	    return false;
 	})
-	
-  $('#moduleWidgetBugs .form-search input').quicksearch('#moduleWidgetBugs table.searchable tbody tr')
-  $('#moduleWidgetCases .form-search input').quicksearch('#moduleWidgetCases table.searchable tbody tr')
-  $('input#activitySearchQuery').quicksearch('article')
+  $('#moduleLog.filtered input').quicksearch('#moduleLog article')
+  $('#moduleRelated.filtered input').quicksearch('#moduleRelated article')
+  $('#moduleActivity.filtered input').quicksearch('#moduleActivity article')
 
+
+	$('.block').hover( function () {
+	    $(this).find('.actions .btn').toggleClass('btn-success');
+	    $(this).find('.actions .btn.btn-success').css('color','#fff');
+	    return false;
+	})
+  
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
 $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
   var url = opts.url;

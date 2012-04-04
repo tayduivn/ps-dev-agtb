@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Perkin Kleiners - SugarCRM</title>
+  <title>Bad links in Pitch - 20543 - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
+
   <!-- HTML5 shim, for IE6-8 support of HTML elements -->
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
+
+  <!-- styles -->
   <link href="../css/bootstrap.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
@@ -19,53 +22,15 @@
       <div class="container-fluid">
         <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
         <div class="nav-collapse">
-          <ul class="nav">
+          <ul class="nav" id="moduleList">
             <li class="active">
-              <a href="#">Accounts</a>
+              <a href="bugs.html">Bugs</a>
             </li>
             <li class="">
-              <a href="#">Contacts</a>
-            </li>              
-            <li>
-              <a href="list.html">Opportunities</a>              
-            </li>              
-            <li class="">
-              <a href="#">Leads</a>
-            </li>
-            <li class="">
-              <a href="#">Reports</a>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-                <li id="gen20"><a href="#ajaxUILoc=index.php%3Fmodule%3DOpportunities%26action%3Dindex" id="moduleTab_Opportunities">Opportunities</a></li>
-                <li id="gen21"><a href="index.php?module=Forecasts&amp;action=index" id="moduleTab_Forecasts">Forecasts</a></li>
-                <li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Reports</a></li>
-                <li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
-                <li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
-                <li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
-                <li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
-                <li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
-                <li class="divider"></li>
-                <li><a href="#"><i class="icon-plus"></i> Filter Menu By</a></li>
-              </ul>
+              <a href="cases.html">Cases</a>
             </li>
           </ul>
-          <ul class="nav pull-right">
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
-              <ul class="dropdown-menu">
-                <li><a href="">System-wide maintenance &hellip;</a></li>
-                <li class="divider"></li>
-                <li><a href="">Upgrade to 7.0!</a></li>
-                <li class="divider"></li>                       
-                <li><a href="">Please take our survey.</a></li>
-              </ul>
-            </li>
+          <ul class="nav pull-right" id="userList">
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src=" https://lh5.googleusercontent.com/-tYj7_rm5E1w/AAAAAAAAAAI/AAAAAAAAAdM/DO9e_nVVDPw/s26-c-k/photo.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
@@ -79,85 +44,80 @@
               </ul>
             </li>
             <li class="divider-vertical"></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
+            <li class="dropdown" id="createList">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Account</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Opportunity</a></li>
-                <li><a href="#">Lead</a></li>
-                <li><a href="#">Case</a></li>
-                <li><a href="#">Report</a></li>
+                <li><a href="#">Create Account</a></li>
+                <li><a href="#">Create Lead</a></li>
+                <li><a href="#">Create Case</a></li>
               </ul>
             </li>              
           </ul>
-          <form class="navbar-search pull-right" action="">
-            <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
-          </form>
+          <div id="searchForm">        
+            <form class="navbar-search pull-right" action="">
+              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+            </form>
+          </div>
         </div><!-- /.nav-collapse -->
       </div>
     </div><!-- /navbar-inner -->
-  </div>
-  <!-- <ul class="breadcrumb">
-  <li>
-  <a href="#">Home</a> <span class="divider">/</span>
-  </li>
-  <li>
-  <a href="#">Accounts</a> <span class="divider">/</span>
-  </li>        
-  <li class="active">
-  <a href="#">User</a>
-  </li>
-  </ul> -->
+  </div>        
   <div class="subnav">
     <div class="btn-toolbar pull-left">
-      <h1>Uriah Welcome</h1>
+      <h1>Bad links in Pitch</h1>
     </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group">
         <div class="dropdown">
           <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
           <ul class="dropdown-menu menu">
-            <li><a href="#">Email</a></li>
-            <li><a href="edit_profile.html">Edit</a></li>
-            <li><a href="#">Export</a></li>
+            <li><a href="#">Duplicate</a></li>
+            <li><a href="edit.html">Edit</a></li>
+            <li><a href="#">Delete</a></li>
           </ul>
         </div>
       </div>
     </div>
   </div>         
-  <div class="container-fluid">     
+  <div class="container-fluid" id="bugsDetailview">
     <div class="row-fluid">
       <div class="span7">
-        <a href="" class="pull-right">
-          <img src="http://placehold.it/125x125" class="avatar" alt="avatar abcindustries">
-        </a>
-        <div class="vcard">
-          <address>
-            <p>
-              <span class="tel">Phone:</span> <div class="dblclick">(408) 555-5271</div>
-            </p>   
-            <p>
-              <span class="url">Website:</span> <a href="http://www.abcindustries.com">www.perkins.com</a>
-            </p>
-            <p>
-              <span class="email">Email:</span> <a href="mailto:sales@abcindustries.com">sales@perkins.com</a>
-            </p>
-            <p>
-              <span class="address">Address:</span> 
-              <span>
-                <a href="http://maps.google.com/maps?q=321+University+Way,+Cupertino,+CA&hl=en&sll=37.0625,-95.677068&sspn=39.780156,88.066406&oq=321+University+Ave,+cuper&t=v&hnear=University+Way,+Cupertino,+Santa+Clara,+California+95014&z=16">321 University Ave.<br>
-                  Cupertino, CA 49964</a>
-                </span>
-              </p>
-            </address>                
-            <br>                             
+         <div class="thumbnail card">
+            <div class="row-fluid">
+               <div class="span2"><strong>Number:</strong></div>
+               <div class="span4">50296</div>
+               <div class="span2"><strong>Priority:</strong></div>
+               <div class="span4">Medium</div> 
+            </div>
+            <div class="row-fluid">
+              <div class="span2"><strong>Category:</strong></div>
+              <div class="span4" id="product_category">User Interface</div>
+              <div class="span2"><strong>Status:</strong></div>
+              <div class="span4" id="status">Closed</div>   
+            </div>
+            <div class="row-fluid">
+              <div class="span2"><strong>Type:</strong></div>
+              <div class="span4 dblclick">Feature</div>  
+              <div class="span2"><strong>Resolution:</strong></div>
+              <div class="span4">Check Implementation</div>   
+            </div>    
+            <div class="row-fluid">
+              <div class="span2"><strong>Created:</strong></div>
+              <div class="span4" id="date_entered">02/08/2012 13:29</div>        
+               <div class="span2"><strong>Modified:</strong></div>
+               <div class="span4" id="date_modified">02/29/2012 10:47</div>
+            </div>
+            <div class="row-fluid">
+               <div class="span2"><strong>Subject:</strong></div>
+               <div class="span10 dblclick">The footer overlaps with the main window</div>
+            </div>    
+            <div class="row-fluid">
+               <div class="span2"><strong>Description:</strong></div>
+               <div class="span10">You have to hide the footer to see the "Print" and "Back to Top" links</div>
+            </div>       
           </div>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla suscipit elit vel dui ullamcorper porttitor. In at neque eu lacus vehicula pulvinar quis eget nisl. Vestibulum eget leo et massa ullamcorper laoreet nec ut eros. Nullam eu sapien metus. Cras varius pretium cursus. Sed et fermentum augue. Duis faucibus tristique lorem, et euismod diam lobortis eget. Morbi ut ligula massa. Aenean nisi purus, consectetur at tincidunt vitae, rutrum sit amet elit. Fusce orci dolor, sagittis sit amet commodo vel, gravida nec urna.
-          </p>
-          <div class="block">
-            <h4>My Activity <small>(10 of 30)</small></h4>
+          <div class="block filtered">
+            <h4>Activity Log</h4>
             <form class="form-addit form-horizontal hide" action="">
               <ul class="nav nav-tabs">
                 <li class="active"><a href="#note" data-toggle="tab">Note</a></li>
@@ -185,62 +145,27 @@
             <div id="activity">
               <article data-type="update" data-pubdate="2012-02-16">
                 <p>
-                  <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> as a <a href="">Lead</a>.<br>
+                  Assigned to changed from <a href="/users/mitani">Majed Itani</a> to <a href="/users/toreilly">Tim O'Reilly</a><br>
                   <date class="date">Posted just a second ago</date>
                 </p>
               </article> 
               <article data-type="update" data-pubdate="2012-02-16">
                 <p>
-                  <a href="/users/toreilly">Tim O'Reilly</a> made a <a href="">phone call</a> and <a href="">emailed</a> a <a href="">Purchase Order Statement</a>.<br>
+                  Priority changed from Urgent to High by <a href="/users/mitani">Majed Itani</a><br>
                   <date class="date">Posted 2 days ago</date>
                 </p>
               </article>
-              <article data-type="update" data-pubdate="2012-02-16">
-                <p>
-                  <a href="/users/mitani">Majed Itani</a> added <a href="">SugarCRM Pricing</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-                  <br>
-                  <date class="date">Posted 4 days ago</date>
-                </p>
-              </article>
-              <article data-type="update" data-pubdate="2012-02-16">
-                <p>
-                  <a href="/users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
-                  <date class="date">Posted 1 week ago</date>
-                </p>                   
-              </article>
-              <article data-type="update" data-pubdate="2012-02-16">
-                <p>
-                  <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-                  <br>
-                  <date class="date">Posted 4 days ago</date>
-                </p>
-              </article>               
-              <article data-type="update" data-pubdate="2012-02-16">
-                <p>
-                  <a href="/users/mitani">Omair Ali</a> added <a href="/users/toreilly">Tim O'Reilly</a> as a <a href="">contact</a> and a <a href="">lead</a>
-                  <br>
-                  <date class="date">Posted 1 week ago</date>
-                </p>
-              </article>
-              <div class="block-footer">
-                <button data-loading-text="Loading..." class="btn">
-                  Show more activity
-                </button>
-              </div>
-            </div>
-            <ul class="nav nav-pills actions" id="bugsModuleActions">
+            <ul class="nav nav-pills actions" id="">
               <li>  
-                <a href="" rel="tooltip" title="Add an Account" class="addit" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
-              </li>
-              <li>  
-                <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+                <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
               </li>        
             </ul>
           </div>
         </div>
+        </div>
         <div class="span5 divleft">
-          <div class="block">
-            <h4>My Activity <small>(10 of 30)</small></h4>
+          <div class="block filtered">
+            <h4>Related Records</h4>
             <form class="form-addit form-horizontal hide" action="">
               <ul class="nav nav-tabs">
                 <li class="active"><a href="#note" data-toggle="tab">Note</a></li>
@@ -265,33 +190,15 @@
             <form class="form-search hide" action="">
               <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
             </form>
-           <article>
-              <span class="label label-file">File</span>
-              <span>
-                Uploaded <a data-toggle="modal" href="#screenModal"><b>screenshot_766.png</b></a> added 2 hours ago by <a href="">Yancy Kim</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a data-toggle="modal" href="#share">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>          
             <article>
-              <span class="label label-document">Document</span>
+              <span class="label label-note">Note</span>
               <span>
-                <a data-toggle="modal" href="#screenModal"><b>Sales-document33.doc</b></a> added 6 hours ago by <a href="">Sabra Khan</a>
+                <a data-toggle="modal" href="#imgModal"><b>Admin Screenshot</b> <small>(.jpg)</small></a>, This is a screenshot I added to show the admin in all of it's glory. Added 2 hours ago by <a href="">Sabra Khan</a>
               </span>
-              <ul class="nav nav-pills actions">
+              <ul class="nav nav-pills actions hide">
                 <li class="dropdown pull-right">  
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
                     <li><a href="#">Delete</a></li>
                   </ul>
                 </li>
@@ -300,73 +207,17 @@
             <article>
               <span class="label label-note">Note</span>
               <span>
-                <a data-toggle="modal" href="#notesModal"><b>Note</b></a> added 3 hours ago by <a href="">Sabra Khan</a>
+                <a href="../img/word.doc"><b>Dashboard Screenshot</b> <small>(.doc)</small></a>, This is a detailed doc I added to explain the dashboard view. Added 3 hours ago by <a href="">Sabra Khan</a>
               </span>
-              <ul class="nav nav-pills actions">
+              <ul class="nav nav-pills actions hide">
                 <li class="dropdown pull-right">  
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
                     <li><a href="#">Delete</a></li>
                   </ul>
                 </li>
               </ul>
             </article>
-            <article>
-              <a data-toggle="modal" href="#leadModal"><span class="label label-lead">Lead</span></a>
-              <span>
-                <a data-toggle="modal" href="#screenModal"><b>100 seat plan</b></a> added 1 day ago by <a href="">Sabra Khan</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>
-            <article>
-              <span class="label label-contact">Contact</span>
-              <span>
-                <b>Mark Edwin</b>, CIO, added 3 days ago by <a href="">Sabra Khan</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>
-            <article>
-              <span class="label label-contact">Contact</span>
-              <span>
-                <b>Tony Scoot</b>, Sales Rep, added 3 days ago by <a href="">Mia Hamm</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>
-                <div class="block-footer">
-                  <button data-loading-text="Loading..." class="btn">
-                    Show more activity
-                  </button>
-                </div>
-              </div>
               <ul class="nav nav-pills actions" id="bugsModuleActions">
                 <li>  
                   <a href="" rel="tooltip" title="Add an Account" class="addit" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
@@ -375,6 +226,7 @@
                   <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
                 </li>        
               </ul>
+            </div>
             </div>
           </div>
         </div>
@@ -553,22 +405,22 @@
         </button>
         <button class="btn cancel" data-dismiss="modal">Cancel</button>
       </div>
-    </div>        
-    <script src="../js/jquery-1.7.2.min.js"></script>
-    <script src="../js/bootstrap-transition.js"></script>
-    <script src="../js/bootstrap-alert.js"></script>
-    <script src="../js/bootstrap-modal.js"></script>
-    <script src="../js/bootstrap-collapse.js"></script>
-    <script src="../js/bootstrap-dropdown.js"></script>
-    <script src="../js/bootstrap-scrollspy.js"></script>
-    <script src="../js/bootstrap-tab.js"></script>
-    <script src="../js/bootstrap-tooltip.js"></script>
-    <script src="../js/bootstrap-popover.js"></script>
-    <script src="../js/bootstrap-button.js"></script>
-    <script src="../js/bootstrap-typeahead.js"></script>
-    <script src="../js/wicked.js"></script>        
-    <script src="../js/jquery.jeditable.js"></script>        
-    <script src="../js/editable.js"></script>
-    <script src="../js/application.js"></script>
+      <script src="../js/jquery-1.7.2.min.js"></script>
+      <script src="../js/bootstrap-transition.js"></script>
+      <script src="../js/bootstrap-alert.js"></script>
+      <script src="../js/bootstrap-modal.js"></script>
+      <script src="../js/bootstrap-collapse.js"></script>
+      <script src="../js/bootstrap-dropdown.js"></script>
+      <script src="../js/bootstrap-scrollspy.js"></script>
+      <script src="../js/bootstrap-tab.js"></script>
+      <script src="../js/bootstrap-tooltip.js"></script>
+      <script src="../js/bootstrap-popover.js"></script>
+      <script src="../js/bootstrap-button.js"></script>
+      <script src="../js/bootstrap-typeahead.js"></script>
+      <script src="../js/jquery.datatables.js"></script>  
+      <script src="../js/wicked.js"></script>        
+      <script src="../js/jquery.jeditable.js"></script>        
+      <script src="../js/editable.js"></script>
+      <script src="../js/application.js"></script>
   </body>
   </html>
