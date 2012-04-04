@@ -31,11 +31,20 @@
     Handlebars.registerHelper('eachOptions', function(context, block) {
         // Retrieve app list strings
         var options = app.lang.getAppListStrings(context),
-            ret = "";
+            ret = "",
+            iterator;
 
-        for (var i = 0, j = options.length; i < j; i++) {
-            ret = ret + block(options[i]);
+        if (_.isArray(options)) {
+            iterator = function(element) {
+                ret = ret + block(element);
+            }
+        } else if (_.isObject(options)) { // Is object evaluates arrays to true, so put it second
+            iterator = function(value, key) {
+                ret = ret + block({key: key, value: value});
+            }
         }
+
+        _.each(options, iterator, this);
 
         return ret;
     });
