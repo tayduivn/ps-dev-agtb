@@ -112,4 +112,37 @@ describe("utils", function() {
             expect(result).toEqual('2012-03-27 01:48:00AM');
         });
     });
+    describe("cookie", function() {
+        it("should set cookie values", function() {
+            var result = "";
+            var cName = "sidecarCookie";
+            var value = 'asdf';
+            SUGAR.App.utils.cookie.setCookie(cName, value, 1);
+            var i, x, y, ARRcookies = document.cookie.split(";");
+            for (i = 0; i < ARRcookies.length; i++) {
+                x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                x = x.replace(/^\s+|\s+$/g, "");
+                if (x == cName) {
+                    result = unescape(y);
+                }
+            }
+            expect(result).toEqual(value);
+            SUGAR.App.utils.cookie.setCookie(cName, "", 1);
+        });
+        it("should get cookie values", function() {
+            var result = "";
+            var cName = "sidecarCookie";
+            var value = 'asdfasdf';
+            var exdays = 1;
+            var exdate = new Date();
+            exdate.setDate(exdate.getDate() + exdays);
+            var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+            document.cookie = cName + "=" + c_value;
+            result = SUGAR.App.utils.cookie.getCookie(cName);
+            expect(result).toEqual(value);
+            value = "";
+            c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        });
+    });
 });
