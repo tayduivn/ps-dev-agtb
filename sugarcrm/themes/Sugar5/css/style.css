@@ -4008,7 +4008,7 @@ ul#detailViewActions.clickMenu {
 	display: none;
 }
 
-#selectActionsDisabled {
+.selectActionsDisabled {
 	display: inline-block;
 	background-color: #eee;
 	border: 1px solid #ddd;	
@@ -4019,7 +4019,7 @@ ul#detailViewActions.clickMenu {
 	padding: 0 3px 0 10px;
 }
 
-#selectActionsDisabled span {
+.selectActionsDisabled span {
 	width: 17px;
 	height: 17px;
 	float: left;
@@ -4027,13 +4027,13 @@ ul#detailViewActions.clickMenu {
 	opacity: .5;
 	}
 
-#selectActionsDisabled span.ab {
+.selectActionsDisabled span.ab {
     border-left: 1px #ccc solid;
     margin-left: 10px;
     padding-left: 5px;
 }
 
-#selectActionsDisabled a, #selectActionsDisabled a:hover {
+.selectActionsDisabled a, #selectActionsDisabled a:hover {
 	float: left;
 	display: block;
 	text-decoration: none !important;
