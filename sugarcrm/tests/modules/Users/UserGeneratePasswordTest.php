@@ -88,11 +88,11 @@ class UserGeneratePasswordTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['sugar_config']['passwordsetting']['minpwdlength'] = 10;
         $password = User::generatePassword();
-        $this->assertTrue(strlen($password) >= 10, 'Assert that the password minimum length of 10 is respected');
+        $this->assertTrue(strlen($password) == 6, 'Assert that regardless of set length, system-generated passwords are only 6 characters in length');
 
         $GLOBALS['sugar_config']['passwordsetting']['minpwdlength'] = 5;
         $password = User::generatePassword();
-        $this->assertTrue(strlen($password) >= 6, 'Assert that the password minimum length is at least 6');
+        $this->assertTrue(strlen($password) == 6, 'Assert that regardless of set length, system-generated passwords are only 6 characters in length');
     }
 
     public function testAllCombinationsEnabled()
@@ -110,6 +110,6 @@ class UserGeneratePasswordTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/[a-z]/', $password, 'Assert that we have at least one lower case letter in the generated password');
         $this->assertRegExp('/[A-Z]/', $password, 'Assert that we have at least one upper case letter in the generated password');
         $this->assertRegExp('/[\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-\{\}\|]/', $password, 'Assert that we have at least one special letter in the generated password');
-        $this->assertTrue(strlen($password) >= 10, 'Assert that the password minimum length of 10 is respected');
+        $this->assertTrue(strlen($password) == 6, 'Assert that regardless of set length, system-generated passwords are only 6 characters in length');
     }
 }
