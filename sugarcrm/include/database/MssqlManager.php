@@ -1397,7 +1397,8 @@ SELECT LEFT(so.[name], 30) TableName,
 		isunique = CASE
             WHEN si.status & 2 = 2 AND so.xtype != 'PK' THEN 1
             ELSE 0
-        END
+        END,
+        LEFT(tc.CONSTRAINT_TYPE, 30) Type
     FROM sysindexes si
         INNER JOIN sysindexkeys sik
             ON (si.[id] = sik.[id] AND si.indid = sik.indid)
@@ -1407,6 +1408,9 @@ SELECT LEFT(so.[name], 30) TableName,
             ON (so.[id] = sc.[id] AND sik.colid = sc.colid)
         INNER JOIN sysfilegroups sfg
             ON si.groupid = sfg.groupid
+        LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS as tc
+            on tc.table_name = so.[name]
+            and tc.CONSTRAINT_NAME = si.[name]
     WHERE so.[name] = '$tablename'
     ORDER BY Key_name, Sequence, Column_name
 EOSQL;
@@ -1415,7 +1419,7 @@ EOSQL;
         $indices = array();
         while (($row=$this->fetchByAssoc($result)) != null) {
             $index_type = 'index';
-            if ($row['Key_name'] == 'PRIMARY')
+            if ($row['Type'] == "PRIMARY KEY")
                 $index_type = 'primary';
             elseif ($row['isunique'] == 1 )
                 $index_type = 'unique';
