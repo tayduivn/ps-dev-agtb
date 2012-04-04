@@ -35,7 +35,7 @@
             function handleLoginSuccess(data) {
                 if (data.token) {
                     token = data.token;
-                    app.utils.cookie.setCookie("AuthToken", token, 1);
+                    app.cache.set("AuthToken", token);
                 }
                 if (_userLoginCallbacks && _userLoginCallbacks.success) {
                     _userLoginCallbacks.success(data);
@@ -59,7 +59,7 @@
              * @param {Object} handles logout success currently data is null
              */
             function handleLogoutSuccess(data) {
-                app.utils.cookie.setCookie("AuthToken", "", 1);
+                app.cache.set("AuthToken", "");
                 if (_userLogoutCallbacks && _userLogoutCallbacks.success) {
                     _userLogoutCallbacks.success(data);
                 }
@@ -79,11 +79,11 @@
 
             return {
                 /**
-                 * Get string for Auth token cookie
+                 * Gets string for Auth token
                  * @return {String}
                  */
-                getAuthCookie: function() {
-                    var authToken = app.utils.cookie.getCookie("AuthToken");
+                getAuthToken: function() {
+                    var authToken = app.cache.get("AuthToken");
                     if (authToken != null && authToken != "") {
                         return  authToken;
                     }
@@ -97,7 +97,7 @@
                  * @return {Boolean} true if auth, false otherwise
                  */
                 isAuthenticated: function() {
-                    var authToken = this.getAuthCookie();
+                    var authToken = this.getAuthToken();
                     if (authToken != "") {
                         handleLoginSuccess({token: authToken})
                     }
