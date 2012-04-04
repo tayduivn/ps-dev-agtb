@@ -124,7 +124,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 	
 		<li class="moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
 		<a href="javascript: void(0);" class="sf-with-ul more"><span style="float: left;">{$APP.LBL_MORE}</span><em>&gt;&gt;</em></a>
-		<ul class="megamenu">
+		<ul class="megamenu moduleTabExtraMenu">
 		<li>
 			<div class="megawrapper">
 				<div class="megacolumn">
@@ -197,7 +197,7 @@ $this->assign('currentGroupTab', $currentGroupTab);
 				
 					 		<li><a href="#" class="group sf-with-ul" title="{$tabGroupName}">{$APP.LBL_FILTER_MENU_BY}</a>
 					
-								<ul>
+								<ul class="sf-menu">
 						          {foreach from=$groupTabs item=module key=group name=groupList}
 				                      {php}
 				                          $group = str_replace(" ", "_", $this->get_template_vars('group'));
