@@ -54,7 +54,4 @@ describe("SugarFieldManager", function() {
         expect(app.sugarField.text).toBeDefined();
     });
 
-    it('should register sugar_field Handlebars helper', function() {
-        expect(Handlebars.helpers.sugar_field).not.toBe(null);
-    });
 });

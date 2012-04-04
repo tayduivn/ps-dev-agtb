@@ -816,33 +816,33 @@ fixtures.metadata = {
         "sugarField_actionsLink": {
             "default": {
                 "template": "<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>" +
-                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
-                    "  <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
-                    " <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
+                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
+                    "  <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
+                    " <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
             }
         },
         "sugarField_fullName": {
             "default": {
-                "template": "{{{getfieldvalue model \"first_name\"}}} {{{getfieldvalue model \"last_name\"}}}"
+                "template": "{{{getFieldValue model \"first_name\"}}} {{{getFieldValue model \"last_name\"}}}"
             },
             "detailView": {
-                "template": "<h2>{{{getfieldvalue model \"first_name\"}}} {{{getfieldvalue model \"last_name\"}}}<\/h2>"
+                "template": "<h2>{{{getFieldValue model \"first_name\"}}} {{{getFieldValue model \"last_name\"}}}<\/h2>"
             }
         },
         "sugarField_primaryAddress": {
             "detailView": {
-                "template": "<h3>{{label}}<\/h3>{{{getfieldvalue model \"primary_address_street\"}}}<br> {{{getfieldvalue model \"primary_address_city\"}}}," +
-                    " {{{getfieldvalue model \"primary_address_postalcode\"}}} {{{getfieldvalue model \"primary_address_country\"}}}"
+                "template": "<h3>{{label}}<\/h3>{{{getFieldValue model \"primary_address_street\"}}}<br> {{{getFieldValue model \"primary_address_city\"}}}," +
+                    " {{{getFieldValue model \"primary_address_postalcode\"}}} {{{getFieldValue model \"primary_address_country\"}}}"
             }
         },
         "sugarField_buttonSave": {
             "default": {
-                "template": "<button class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\">{{label}}<\/button>"
+                "template": "<button class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/save\">{{label}}<\/button>"
             }
         },
         "sugarField_buttonCancelSave": {
             "default": {
-                "template": "<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\">Save<\/a><a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\">Cancel<\/a>"
+                "template": "<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/save\">Save<\/a><a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\">Cancel<\/a>"
             }
         }
 
@@ -851,26 +851,26 @@ fixtures.metadata = {
         "detailView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
         "editView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
@@ -880,11 +880,11 @@ fixtures.metadata = {
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}" + "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" + "</form>",
         "subpanelView": "",
         "listView": '<div class="span12 container-fluid subhead">' +
@@ -901,18 +901,18 @@ fixtures.metadata = {
             '{{#each ../fields}}' +
             // SugarField requires the current context, field name, and the current bean in the context
             // since we are pulling from the collection rather than the default bean in the context
-            '<td class="dblclick">{{sugar_field ../../../context ../../../this ../this}}</td>' +
+            '<td class="dblclick">{{sugarField ../../../context ../../../this ../this}}</td>' +
             '{{/each}}' +
             '</tr>' +
             '{{/each}}' +
             '</tbody></table>' +
             '{{/each}}' +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
             '<li>' +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             '</li>' +
             "{{/each}}" +
             '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}' +
