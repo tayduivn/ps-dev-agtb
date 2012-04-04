@@ -27,12 +27,12 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-    ob_start();
-    chdir(dirname(__FILE__).'/../');
+ob_start();
+chdir(dirname(__FILE__).'/../');
 
-    require('include/entryPoint.php');
-    include_once("include/rest/RestController.php");
+require('include/entryPoint.php');
+include_once("include/api/SugarApi/RestService.php");
 
-    $controller = new RestController();
-    $controller->execute();
+$service = new RestService();
+$service->execute();
 

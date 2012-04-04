@@ -35,7 +35,7 @@ class SoapHelperWebServices {
 			foreach($value->field_defs as $var){
 				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
 				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
-				if ($var['source'] == 'non_db' && (isset($var['type']) && $var['type'] != 'link')) {
+				if (isset($var['source']) && $var['source'] == 'non_db' && (isset($var['type']) && $var['type'] != 'link')) {
 					continue;
 				}
 				$required = 0;
@@ -582,11 +582,13 @@ function validate_user($user_name, $password){
 		if (isset($bean->$link_field_name)) {
 			//First get all the related beans
             $related_beans = $bean->$link_field_name->getBeans();
-			$filterFields = $this->filter_fields($submodule, $link_module_fields);
             //Create a list of field/value rows based on $link_module_fields
 			$list = array();
             foreach($related_beans as $id => $bean)
             {
+                if ( !isset($filterFields) ) {
+                    $filterFields = $this->filter_fields($bean, $link_module_fields);
+                }
                 $row = array();
                 foreach ($filterFields as $field) {
                     if (isset($bean->$field))
