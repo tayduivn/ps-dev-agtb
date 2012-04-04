@@ -31,7 +31,8 @@ require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' 
 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
-require_once 'modules/ModuleBuilder/parsers/constants.php' ;
+require_once 'modules/ModuleBuilder/parsers/constants.php';
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
 class DeployedMetaDataImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
@@ -52,7 +53,8 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		}
 		// END ASSERTIONS
 
-		$this->_view = strtolower ( $view ) ;
+		$this->_view = strtolower($view);
+        $this->setViewClientFromView();
 		$this->_moduleName = $moduleName ;
 
 		$module = StudioModuleFactory::getStudioModule( $moduleName ) ;
@@ -120,7 +122,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 				case MB_WIRELESSLISTVIEW:
                 case MB_PORTALLISTVIEW:
                     // Set a view type (ie, portal, wireless)
-                    $_viewtype =  in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALDETAILVIEW, MB_PORTALEDITVIEW, MB_PORTALSEARCHVIEW)) ? 'portal' : 'wireless';
+                    $_viewtype =  in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALDETAILVIEW, MB_PORTALEDITVIEW, MB_PORTALSEARCHVIEW)) ? 'portal' : 'mobile';
 
 					// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
 					// First, need to identify which SugarObject template would be the best to use
@@ -128,7 +130,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_sourceFilename = self::getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
 
 					// Now we can copy the wireless view from the template
-					$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/metadata/".basename ( $this->_sourceFilename ) ) ;
+					$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/metadata/$_viewtype/views/".basename ( $this->_sourceFilename ) ) ;
 
 					if ($loaded === null)
 						throw new Exception( get_class ( $this ) . ": cannot create $_viewtype view for module $moduleName - definitions for $view are missing in the SugarObject template for type $type" ) ;
@@ -235,10 +237,10 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 		$this->_fielddefs = $fielddefs;
 
         // Set the panel defs (the old field defs)
-        $this->_paneldefs = !empty($this->_viewdefs['panels']) && is_array($this->_viewdefs['panels']) ? $this->_viewdefs['panels'] : array();
+        $this->setPanelDefsFromViewDefs();
 
-        // Make sure they are proper
-        if (!is_numeric(key($this->_paneldefs))) {
+        // Make sure the paneldefs are proper if there are any
+        if (is_array($this->_paneldefs) && !is_numeric(key($this->_paneldefs))) {
             $this->_paneldefs = array($this->_paneldefs);
         }
         
@@ -318,8 +320,9 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 	 * @param string modulename     The name of the module that will use this layout
 	 * @param string type
 	 */
-	public static function getFileName ($view , $moduleName , $type = MB_CUSTOMMETADATALOCATION)
+	public static function getFileName($view , $moduleName , $type = MB_CUSTOMMETADATALOCATION)
 	{
+        /*
 
 		$pathMap = array (
             MB_BASEMETADATALOCATION => '' ,
@@ -356,31 +359,39 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
             //END SUGARCRM flav=ent ONLY
 		) ;
 
+
+        $type = strtolower($type);
+        $paths = MetaDataFiles::getFilePaths();
+        $names = MetaDataFiles::getFileNames();
+
         //In a deployed module, we can check for a studio module with file name overrides.
         $sm = StudioModuleFactory::getStudioModule($moduleName);
-        foreach($sm->sources as $file => $def)
-        {
+        foreach($sm->sources as $file => $def) {
             if (!empty($def['view'])) {
-                $filenames[$def['view']] = substr($file, 0, strlen($file) - 4);
+                $names[$def['view']] = substr($file, 0, strlen($file) - 4);
             }
-
         }
 
 		// BEGIN ASSERTIONS
-		if (! isset ( $pathMap [ $type ] ))
-		{
-			sugar_die ( "DeployedMetaDataImplementation->getFileName(): Type $type is not recognized" ) ;
+		if (!isset($paths[$type])) {
+			sugar_die("DeployedMetaDataImplementation->getFileName(): Type $type is not recognized");
 		}
-		if (! isset ( $filenames [ $view ] ))
-        {
-            sugar_die ( "DeployedMetaDataImplementation->getFileName(): View $view is not recognized" ) ;
+
+		if (!isset($names[$view])) {
+            sugar_die("DeployedMetaDataImplementation->getFileName(): View $view is not recognized");
         }
 		// END ASSERTIONS
 
-		
-
 		// Construct filename
-		return $pathMap [ $type ] . 'modules/' . $moduleName . '/metadata/' . $filenames [ $view ] . '.php' ;
+        $viewPath = 'views/';
+        if (($viewType = parent::getViewTypeRoute($view)) != '') {
+            $viewPath = $viewType . '/' . $viewPath;
+        } else {
+            $viewPath = '';
+        }
+		return $paths[$type] . 'modules/' . $moduleName . '/metadata/' . $viewPath . $names[$view] . '.php' ;
+        */
+        return MetaDataFiles::getDeployedFileName($view, $moduleName, $type);
 	}
 	
 	private function replaceVariables($defs, $module) {
