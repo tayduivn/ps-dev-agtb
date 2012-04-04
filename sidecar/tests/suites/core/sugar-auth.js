@@ -18,16 +18,21 @@ describe("sugarAuth", function () {
         }
 
         this.server = sinon.fakeServer.create();
+
+
     });
 
     // teardown to be run after every test
     afterEach(function () {
         this.server.restore();
-    });
 
-    it("should not be authenticated when initialized", function () {
-        //make expectations (then)
-        expect(this.auth.isAuthenticated()).toBeFalsy();
+        var cName = "AuthToken";
+        var value = '';
+        var exdays = 1;
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        document.cookie = cName + "=" + c_value;
     });
 
     it("should login successfully with correct passwords", function () {
@@ -48,10 +53,21 @@ describe("sugarAuth", function () {
 
         expect(apiCallSpy).toHaveBeenCalled();
         expect(callbacksSpy).toHaveBeenCalled();
+
         expect(this.auth.isAuthenticated()).toBeTruthy();
 
         this.callbacks.success.restore();
         this.api.call.restore();
+    });
+
+    it("should check auth cookie on isAuthenticated", function () {
+
+        var authTokenSpy = sinon.spy(this.auth, 'getAuthCookie')
+
+        this.auth.isAuthenticated()
+        expect(authTokenSpy).toHaveBeenCalled();
+
+        authTokenSpy.restore();
     });
 
     it("should not login successfully with incorrect passwords", function () {
@@ -74,6 +90,7 @@ describe("sugarAuth", function () {
 
         this.callbacks.error.restore();
         this.api.call.restore();
+
     });
 
     it("should logout", function () {
@@ -95,5 +112,21 @@ describe("sugarAuth", function () {
         this.api.call.restore();
         this.callbacks.success.restore();
     });
+
+    it("should get the authToken cookie", function () {
+        var result = "";
+        var cName = "AuthToken";
+        var value = 'asdfasdf';
+        var exdays = 1;
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        document.cookie = cName + "=" + c_value;
+
+        var result = this.auth.getAuthCookie();
+
+        expect(result).toEqual(value);
+    });
+
 
 });
