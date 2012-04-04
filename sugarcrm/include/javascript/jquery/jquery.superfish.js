@@ -225,7 +225,6 @@
                         _left = $$.offset().left - sf.cssValue.call($ul, "border-left-width"),
                         $menu = $('ul.' + sf.c.menuClass + ':visible');
                     //handling sub-sliding menu
-                    console.log($$);
                     if($$.css('position') == 'static' || $$.parent().hasClass('megamenuSiblings')) {
                         _left += $$.outerWidth() + sf.cssValue.call($ul, "border-right-width");
                         $ul.addClass('sf-sub-modulelist').on('mouseover', function(){
