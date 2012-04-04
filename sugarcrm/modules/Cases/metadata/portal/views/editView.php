@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Cases']['portal']['view']['editView'] = array(
+$viewdefs['Cases']['portal']['view']['edit'] = array(
         'buttons' =>
         array(
             0 =>
