@@ -3921,6 +3921,9 @@ ul.moduleTabMore, ul.moduleTabMore *, ul.sf-sub-modulelist, ul.sf-sub-modulelist
 	width: 10em;
 }
 
+.moduleTabExtraMenu .listcontainer > ul,
+.moduleTabExtraMenu li:hover .listcontainer > ul,
+.moduleTabExtraMenu li:sfHover .listcontainer > ul,
 #moduleList .sf-menu .listcontainer > ul,
 #moduleList .sf-menu li:hover .listcontainer > ul,
 #moduleList .sf-menu li.sfHover .listcontainer > ul  {
@@ -4226,6 +4229,8 @@ Mega Column Styles
 	font-size: 0;
 }
 
+ul.moduleTabExtraMenu .megawrapper ul.filterBy,
+ul.moduleTabExtraMenu .megawrapper ul.moduleTabMore,
 #moduleList .sf-menu ul .megawrapper ul.MMShortcuts, 
 #moduleList .sf-menu ul .megawrapper ul.MMFavorites, 
 #moduleList .sf-menu ul .megawrapper ul.MMLastViewed,
@@ -4260,13 +4265,18 @@ ul.megamenu .megawrapper ul li,
 	padding-left: 10px;
 	padding-bottom: 5px;
 }
+
 ul.megamenu .megawrapper ul li a,
 #moduleList .sf-menu ul .megawrapper ul li a{
 	font-weight: normal;
 	font-size: 13px;
 	padding: 4px 10px;
 	position: relative;
-	width: 180px;
+}
+
+ul.megamenu .megawrapper ul li.groupLabel a ,
+#moduleList .sf-menu ul .megawrapper ul li a{
+    width: 180px;
 }
 
 
@@ -4275,7 +4285,7 @@ ul.megamenu .megawrapper ul li a,
     left: 225px;
     top: 0;
 }
-
+ul.megamenu.moduleTabExtraMenu, ul.moduleTabExtraMenu > li > div.megawrapper, ul.moduleTabExtraMenu > li > div.megawrapper > .megacolumn,
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper, 
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn {
 	width: 225px;
@@ -4297,7 +4307,7 @@ height: 43px;
 }
 
 
-#moduleList .menuHR, ul.moduleTabMore .menuHR {
+#moduleList .menuHR, ul.moduleTabExtraMenu .menuHR {
    border-top: 1px solid #DDDDDD;
    margin: 10px 0;
 }
@@ -4332,8 +4342,8 @@ ul#quickCreateUL .showMore .moduleMenuOverFlowMore, ul#quickCreateUL .showLess .
 ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
 #moduleList ul.moduleTabMore.showMore .moduleMenuOverFlowMore, #moduleList ul.moduleTabMore.showLess .moduleMenuOverFlowLess
 {
-display: none;
-visibilility: hidden;	
+display: none !important;
+visibilility: hidden !important;
 }
 
 #subModuleList 
