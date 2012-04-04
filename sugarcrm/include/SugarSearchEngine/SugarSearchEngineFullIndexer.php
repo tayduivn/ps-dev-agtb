@@ -153,7 +153,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
         $this->results['totalTime'] = $totalTime;
         $GLOBALS['log']->info("Total time to populate full system index queue: $totalTime (s)");
-        $avgRecs = ($totalCount != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
+        $avgRecs = ($totalCount != 0 && $totalTime != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
         $GLOBALS['log']->info("Total number of records queued: $totalCount , records per sec. $avgRecs");
 
         return $this;
@@ -382,7 +382,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         }
 
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
-        $avgRecs = ($count != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
+        $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
 
         $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
         return TRUE;

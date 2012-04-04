@@ -212,10 +212,11 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     public function markBeansProvider()
     {
         return array(
-            array(range(0,299), 3),
+            array(range(0,2999), 1),
+            array(range(0,3002), 2),
             array(range(0,1), 1),
             array(array(), 0),
-            array(range(0,101), 2)
+            array(range(0,101), 1)
         );
     }
     /**
