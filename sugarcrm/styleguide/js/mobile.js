@@ -143,17 +143,4 @@
 		    $('.deleted').remove();
 		}, 250);
     }
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 })(window.Zepto);
