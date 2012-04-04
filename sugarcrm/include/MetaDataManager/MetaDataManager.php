@@ -355,7 +355,7 @@ class MetaDataManager {
         $backwardsPlatforms = array_reverse($this->platforms);
         $templateDirs = array();
         foreach ( $backwardsPlatforms as $platform ) {
-            $templateDirs[] = 'client/'.$platform.'/views/*/';
+            $templateDirs[] = 'clients/'.$platform.'/views/*/';
         }
         $templates = $this->fetchTemplates($templateDirs);
         $templates['_hash'] = md5(serialize($templates));
