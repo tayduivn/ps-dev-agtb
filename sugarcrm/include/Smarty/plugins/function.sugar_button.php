@@ -475,7 +475,24 @@ function smarty_function_sugar_button($params, &$smarty)
        return $output;
    } else if(is_array($type) && isset($type['customCode'])) {
 
-       $output = $type['customCode']; ;
+       $output = $type['customCode'];
+       /*
+       $attrs = parse_html_tag($type['customCode']);
+       //inspect parse html
+       foreach($attrs as $key => $value) {
+
+       }
+       */
+       /*
+       if(empty($params['module'])) {
+           $smarty->trigger_error("sugar_button: missing required param (module)");
+       } else if(empty($params['id'])) {
+           $smarty->trigger_error("sugar_button: missing required param (id)");
+       } else if(empty($params['view'])) {
+           $smarty->trigger_error("sugar_button: missing required param (view)");
+       }
+       */
+
        if($params['appendTo']) {
            $smarty->append($params['appendTo'], $output);
            return;
