@@ -1085,7 +1085,7 @@ function checkSystemCompliance() {
         $ret['ZipStatus'] = "<b><span class=stop>{$installer_mod_strings['ERR_CHECKSYS_ZIP']}</span></b>";
         $ret['error_found'] = true;
     } else {
-        $ret['safeModeStatus'] = "<b><span class=go>{$installer_mod_strings['LBL_CHECKSYS_OK']}</span></b>";
+        $ret['ZipStatus'] = "<b><span class=go>{$installer_mod_strings['LBL_CHECKSYS_OK']}</span></b>";
     }
 
 
