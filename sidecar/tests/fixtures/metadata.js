@@ -33,22 +33,13 @@ fixtures.metadata = {
                 "status": {
                     "name": "status",
                     "type": "enum",
-                    "options": [
-                        {"key": "s1", "value": "s1"},
-                        {"key": "s2", "value": "s2"},
-                        {"key": "s3", "value": "s3"}
-                    ]
+                    "options": "case_status_dom"
                 },
                 "priority": {
                     "name": "priority",
                     "type": "enum",
                     "multi": true,
-
-                    "options": [
-                        {"key": "c1", "value": "c1"},
-                        {"key": "c2", "value": "c2"},
-                        {"key": "c3", "value": "c3"}
-                    ]
+                    "options": "case_priority_dom"
                 },
                 "date_entered": {
                     "name": "date_entered",
@@ -730,16 +721,13 @@ fixtures.metadata = {
         "enum": {
             "views": {
                 "detailView": {
-                    "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
                 "editView": {
-                    "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ../value \"selected\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{in this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
                 "default": {
-                    "type": "basic",
                     "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
@@ -751,13 +739,10 @@ fixtures.metadata = {
                 "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
                 "   $('select').chosen();" +
                 "   return result;" +
-
                 "}" +
                 "" +
                 "\n}\n"
-
         },
-
         radioenum: {
             views: {
                 detailView: {
@@ -935,90 +920,93 @@ fixtures.metadata = {
             "</div>"
     },
     appListStrings: {
-        "campainglog_target_type_dom":{
-        "Contacts":"Contacts",
-        "Users":"Users",
-        "Prospects":"Targets",
-        "Leads":"Leads",
-        "Accounts":"Accounts"
+        "case_priority_default_key": "P2",
+        "case_priority_dom": {"P1": "High", "P2": "Medium", "P3": "Low"},
+        "case_status_dom": {"New": "New", "Assigned": "Assigned", "Closed": "Closed", "Pending Input": "Pending Input", "Rejected": "Rejected", "Duplicate": "Duplicate"},
+        "campainglog_target_type_dom": {
+            "Contacts": "Contacts",
+            "Users": "Users",
+            "Prospects": "Targets",
+            "Leads": "Leads",
+            "Accounts": "Accounts"
         },
-        "merge_operators_dom":{
-        "like":"Contains",
-        "exact":"Exactly",
-        "start":"Starts With"
+        "merge_operators_dom": {
+            "like": "Contains",
+            "exact": "Exactly",
+            "start": "Starts With"
         },
-        "custom_fields_importable_dom":{
-        "true":"Yes",
-        "false":"No",
-        "required":"Required"
+        "custom_fields_importable_dom": {
+            "true": "Yes",
+            "false": "No",
+            "required": "Required"
         },
-        "Elastic_boost_options":[
-        "Disabled",
-        "Low Boost",
-        "Medium Boost",
-        "High Boost"
+        "Elastic_boost_options": [
+            "Disabled",
+            "Low Boost",
+            "Medium Boost",
+            "High Boost"
         ],
-        "custom_fields_merge_dup_dom":[
-        "Disabled",
-        "Enabled",
-        "In Filter",
-        "Default Selected Filter",
-        "Filter Only"
+        "custom_fields_merge_dup_dom": [
+            "Disabled",
+            "Enabled",
+            "In Filter",
+            "Default Selected Filter",
+            "Filter Only"
         ],
-        "navigation_paradigms":{
-        "m":"Modules",
-        "gm":"Grouped Modules"
+        "navigation_paradigms": {
+            "m": "Modules",
+            "gm": "Grouped Modules"
         },
-        "contract_status_dom":{
-        "notstarted":"Not Started",
-        "inprogress":"In Progress",
-        "signed":"Signed"
+        "contract_status_dom": {
+            "notstarted": "Not Started",
+            "inprogress": "In Progress",
+            "signed": "Signed"
         },
-        "contract_payment_frequency_dom":{
-        "monthly":"Monthly",
-        "quarterly":"Quarterly",
-        "halfyearly":"Half yearly",
-        "yearly":"Yearly"
+        "contract_payment_frequency_dom": {
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "halfyearly": "Half yearly",
+            "yearly": "Yearly"
         },
-        "contract_expiration_notice_dom":{
-        "1":"1 Day",
-        "3":"3 Days",
-        "5":"5 Days",
-        "7":"1 Week",
-        "14":"2 Weeks",
-        "21":"3 Weeks",
-        "31":"1 Month"
+        "contract_expiration_notice_dom": {
+            "1": "1 Day",
+            "3": "3 Days",
+            "5": "5 Days",
+            "7": "1 Week",
+            "14": "2 Weeks",
+            "21": "3 Weeks",
+            "31": "1 Month"
         },
-        "oc_status_dom":{
-        "":"",
-        "Active":"Active",
-        "Inactive":"Inactive"
+        "oc_status_dom": {
+            "": "",
+            "Active": "Active",
+            "Inactive": "Inactive"
         },
-        "projects_priority_options":{
-        "high":"High",
-        "medium":"Medium",
-        "low":"Low"
+        "projects_priority_options": {
+            "high": "High",
+            "medium": "Medium",
+            "low": "Low"
         },
-        "projects_status_options":{
-        "notstarted":"Not Started",
-        "inprogress":"In Progress",
-        "completed":"Completed"
+        "projects_status_options": {
+            "notstarted": "Not Started",
+            "inprogress": "In Progress",
+            "completed": "Completed"
         },
-        "chart_strings":{
-        "expandlegend":"Expand Legend",
-        "collapselegend":"Collapse Legend",
-        "clickfordrilldown":"Click for Drilldown",
-        "drilldownoptions":"Drill Down Options",
-        "detailview":"More Details...",
-        "piechart":"Pie Chart",
-        "groupchart":"Group Chart",
-        "stackedchart":"Stacked Chart",
-        "barchart":"Bar Chart",
-        "horizontalbarchart":"Horizontal Bar Chart",
-        "linechart":"Line Chart",
-        "noData":"Data not available",
-        "print":"Print",
-        "pieWedgeName":"sections"
+        "chart_strings": {
+            "expandlegend": "Expand Legend",
+            "collapselegend": "Collapse Legend",
+            "clickfordrilldown": "Click for Drilldown",
+            "drilldownoptions": "Drill Down Options",
+            "detailview": "More Details...",
+            "piechart": "Pie Chart",
+            "groupchart": "Group Chart",
+            "stackedchart": "Stacked Chart",
+            "barchart": "Bar Chart",
+            "horizontalbarchart": "Horizontal Bar Chart",
+            "linechart": "Line Chart",
+            "noData": "Data not available",
+            "print": "Print",
+            "pieWedgeName": "sections"
         }
     },
     appStrings: {
