@@ -56,6 +56,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['db']->query("TRUNCATE table accounts");
         $GLOBALS['db']->query("TRUNCATE table contacts");
+
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->account = SugarTestAccountUtilities::createAccount();
         SugarTestContactUtilities::createContact();
@@ -176,7 +177,21 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $indexer->setJob($jobBean);
         $indexer->initiateFTSIndexer(array('Accounts'));
         $indexer->run('Accounts');
+    }
 
+    public function testConsumerRunsIndexByBean()
+    {
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
+        //Mock object for SSEngine
+        $SSEngine = $this->getMock('SugarSearchEngineElastic');
+        $SSEngine->expects($this->once())->method('createIndexDocument');
+        $SSEngine->expects($this->once())->method('bulkInsert');
+
+        $indexer = new TestSugarSearchEngineFullIndexer($SSEngine);
+        $indexer->setJob($jobBean);
+        $indexer->setShouldIndexViaBean(TRUE);
+        $indexer->initiateFTSIndexer(array('Accounts'));
+        $indexer->run('Accounts');
     }
 
     public function testIsFTSIndexScheduleCompleted()
@@ -233,6 +248,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
 class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
 {
+    private $shouldIndexViaBean;
 
     public function markBeansProcessedStub($ids)
     {
@@ -257,5 +273,18 @@ class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
     public function removeExistingFTSConsumersStub()
     {
         $this->removeExistingFTSConsumers();
+    }
+
+    public function setShouldIndexViaBean($should)
+    {
+        $this->shouldIndexViaBean = $should;
+    }
+
+    public function shouldIndexViaBean($module)
+    {
+        if(isset($this->shouldIndexViaBean))
+            return $this->shouldIndexViaBean;
+        else
+            return parent::shouldIndexViaBean($module);
     }
 }
