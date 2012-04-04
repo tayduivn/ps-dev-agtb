@@ -1823,8 +1823,27 @@ function get_mailmerge_document2($session, $file_name, $fields)
                     if($seed1->field_name_map[$master_field]['type'] == 'enum'){
                         //pull in the translated dom
                          $html .='<td>'.$app_list_strings[$seed1->field_name_map[$master_field]['options']][$seed1->$master_field].'</td>';
-                    }else{
-                        $html .='<td>'.$seed1->$master_field.'</td>';
+                    } else if ($seed1->field_name_map[$master_field]['type'] == 'multienum') {
+
+                        if(isset($app_list_strings[$seed1->field_name_map[$master_field]['options']]) )
+                        {
+                            $items = unencodeMultienum($seed1->$master_field);
+                            $output = array();
+                            foreach($items as $item) {
+                                if ( !empty($app_list_strings[$seed1->field_name_map[$master_field]['options']][$item]) )
+                                {
+                                    array_push($output, $app_list_strings[$seed1->field_name_map[$master_field]['options']][$item]);
+
+                                }
+
+                            } // foreach
+
+                            $encoded_output = encodeMultienumValue($output);
+                            $html .= "<td>$encoded_output</td>";
+
+                        }
+                    } else {
+                       $html .='<td>'.$seed1->$master_field.'</td>';
                     }
                 }
                 else{
@@ -1852,8 +1871,8 @@ function get_mailmerge_document2($session, $file_name, $fields)
         }
         $html .= "</table></body></html>";
      }
-
     $result = base64_encode($html);
+
     return array('html' => $result, 'name_value_list' => $resultIds, 'error' => $error);
 }
 
