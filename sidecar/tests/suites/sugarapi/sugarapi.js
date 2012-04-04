@@ -9,7 +9,7 @@ describe('SugarCRM Javascript API', function () {
         this.api = SUGAR.Api.getInstance({baseUrl:"/rest/v10"});
         //get fresh fixtures
         this.fixtures = fixtures.api;
-        this.fixtures.sugarFields = sugarFieldsFixtures;
+        this.fixtures.sugarFields = fixtures.metadata.sugarFields;
         //create fakeserver to make requests
         this.server = sinon.fakeServer.create();
         this.callbacks = {
@@ -35,6 +35,22 @@ describe('SugarCRM Javascript API', function () {
     it('should return an api instance', function () {
         expect(typeof(this.api)).toBe('object');
         expect(this.api.baseUrl).toEqual('/rest/v10');
+    });
+
+    it('should set oAuth Tokens', function () {
+        var token = "1234";
+        this.api.setToken(token);
+
+        expect(this.api.isAuthenticated()).toBeTruthy();
+        this.api.setToken("");
+    });
+
+    it('should get oAuth tokens', function () {
+        var token = "1234";
+        this.api.setToken(token);
+
+        expect(this.api.getToken()).toEqual(token);
+        this.api.setToken("");
     });
 
     describe('requestHandler', function () {

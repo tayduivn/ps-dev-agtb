@@ -26,8 +26,8 @@
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
                                         "this.app.sugarAuth.login(args, {success:" +
-                                        "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
-                                        "function(){app.router.navigate('', {trigger:true})}); }" +
+                                        "function(){console.log(\"logged in successfully! dtam\");var app = self.app; app.sync(" +
+                                        "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
                                         "}"
                                 }
@@ -116,11 +116,11 @@
                 '<div class="{{../name}} panel">' +
                 "<h4>{{label}}</h4>" +
                 "{{#each fields}}" +
-                "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+                "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
                 "{{/each}}" +
                 "</div>" +
                 "{{/each}}" + "{{#each meta.buttons}}" +
-                "{{sugar_field ../context ../this ../model}}" +
+                "{{sugarField ../context ../this ../model}}" +
                 "{{/each}}" + "</form>"
         }
     }

@@ -35,7 +35,7 @@ describe("Sugar App Language Manager", function() {
         var setData = fixtures.language.Accounts;
         lang.setLabel("Accounts", setData);
 
-        expect(lang.langmap.Accounts).toEqual(setData);
+        expect(lang.modStrings.Accounts).toEqual(setData);
     });
 
     it("should save a set of hashes to the language cache", function() {
@@ -46,8 +46,8 @@ describe("Sugar App Language Manager", function() {
 
         lang.setLabels(setData);
 
-        expect(lang.langmap.Contacts).toEqual(setData.Contacts);
-        expect(lang.langmap.Opportunities).toEqual(setData.Opportunities);
+        expect(lang.modStrings.Contacts).toEqual(setData.Contacts);
+        expect(lang.modStrings.Opportunities).toEqual(setData.Opportunities);
     });
 
     it("should have saved the changed language cache to app cache", function() {
@@ -62,5 +62,23 @@ describe("Sugar App Language Manager", function() {
         string = lang.get("LBL_ANNUAL_REVENUE", "Accounts");
 
         expect(string).toEqual("Annual Revenue");
+    });
+
+    it("should save app list strings to the language cache and app cache", function() {
+        var appListStrings = fixtures.metadata.appListStrings;
+
+        lang.setAppListStrings(appListStrings);
+
+        expect(lang.appListStrings).toEqual(appListStrings);
+        expect(appCache.cache["language:appListStrings"]).toEqual(fixtures.metadata.appListStrings);
+    });
+
+    it("should save app strings to the language cache and app cache", function() {
+        var appStrings = fixtures.metadata.appStrings;
+
+        lang.setAppStrings(appStrings);
+
+        expect(lang.appStrings).toEqual(appStrings);
+        expect(appCache.cache["language:appStrings"]).toEqual(fixtures.metadata.appStrings);
     });
 });

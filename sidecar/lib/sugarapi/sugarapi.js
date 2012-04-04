@@ -122,7 +122,7 @@ SUGAR.Api = (function() {
              * @param  {String} method CRUD action to make (read, create, update, delete) are mapped to corresponding HTTP verb: GET, POST, PUT, DELETE.
              * @param  {String} url resource URL
              * @param  {Object} data(optional) data will be stringified into JSON and set to data, e.g. {first_name:"bob", last_name:"saget"}
-             * @param  {Object} callbacks(optional) hash with callbacks of the format <code>{success: function(data){}, error: function(data){}}</code>
+             * @param  {Object} callbacks(optional) hash with callbacks of the format `{success: function(data){}, error: function(data){}}`
              * @param  {Array}  options(optional) options for request that map directly to the jquery.ajax options
              * @return {Object} Jquery request object
              * @private
@@ -327,7 +327,7 @@ SUGAR.Api = (function() {
              * @param callbacks(optional) object with <code>success</code> and <code>error</code> callback functions
              */
             relationships: function(method, module, data, params, callbacks) {
-                var url =  this.buildURL(module, data.link, data, params);
+                var url = this.buildURL(module, data.link, data, params);
                 return this.call(method, url, data.related, callbacks);
             },
 
@@ -404,6 +404,26 @@ SUGAR.Api = (function() {
              */
             isAuthenticated: function() {
                 return isAuth;
+            },
+
+            /**
+             * gets OAuth Token
+             *
+             * @return {String}
+             */
+            getToken: function() {
+                return token;
+            },
+
+            /**
+             * sets oAuth token
+             * 
+             * @param {String} value
+             */
+            setToken: function(value) {
+                if (value != "") {
+                    handleLoginSuccess({token: value});
+                }
             }
         };
     }

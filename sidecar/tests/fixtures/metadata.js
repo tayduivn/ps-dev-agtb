@@ -1,12 +1,5 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: dtam
- * Date: 1/31/12
- * Time: 12:26 PM
- * To change this template use File | Settings | File Templates.
- */
+var fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
-fixtures = typeof(fixtures) == "object" ? fixtures : {};
 fixtures.metadata = {
     _hash: '2q34aasdfwrasdfse',
     "modules": {
@@ -40,22 +33,13 @@ fixtures.metadata = {
                 "status": {
                     "name": "status",
                     "type": "enum",
-                    "options": [
-                        {"key": "s1", "value": "s1"},
-                        {"key": "s2", "value": "s2"},
-                        {"key": "s3", "value": "s3"}
-                    ]
+                    "options": "case_status_dom"
                 },
                 "priority": {
                     "name": "priority",
                     "type": "enum",
                     "multi": true,
-
-                    "options": [
-                        {"key": "c1", "value": "c1"},
-                        {"key": "c2", "value": "c2"},
-                        {"key": "c3", "value": "c3"}
-                    ]
+                    "options": "case_priority_dom"
                 },
                 "date_entered": {
                     "name": "date_entered",
@@ -76,7 +60,7 @@ fixtures.metadata = {
                 "leradio_c": {
                     "name": "leradio_c",
                     "type": "radioenum",
-                    "options": ["Option 1", "Option 2", "Option 3"] // Temporary, TODO: Pull from app list strings
+                    "options": "Elastic_boost_options" // Temporary, TODO: Pull from app list strings
                 }
             },
             "relationships": {
@@ -120,9 +104,8 @@ fixtures.metadata = {
 
                                 {name: "priority", label: "Priority"},
                                 {name: "description", label: "Description"},
-                                {name: "date_modified", label: "Modifed Date"}
-                                //{name: "leradio_c", label: "LeRadio"}
-
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -501,7 +484,7 @@ fixtures.metadata = {
                             events: {
                                 click: "function(){ var self = this; " +
                                     " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.sugarAuth.login(args, {success:" +
-                                    "function(){console.log(\"logged in successfully!\");self.app.navigate('', self.model); }" +
+                                    "function(){console.log(\"logged in successfully dtam!\");}" +
                                     "});" +
                                     "}"
                             }
@@ -738,16 +721,13 @@ fixtures.metadata = {
         "enum": {
             "views": {
                 "detailView": {
-                    "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
                 "editView": {
-                    "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#each options}}<option value=\"{{{this.key}}}\" {{in this.key ..\/value \"SELECTED\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">" +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{in this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
                 "default": {
-                    "type": "basic",
                     "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
@@ -759,13 +739,10 @@ fixtures.metadata = {
                 "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
                 "   $('select').chosen();" +
                 "   return result;" +
-
                 "}" +
                 "" +
                 "\n}\n"
-
         },
-
         radioenum: {
             views: {
                 detailView: {
@@ -773,7 +750,7 @@ fixtures.metadata = {
                 },
                 editView: {
                     template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                        "{{#each options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ..\/value \"SELECTED\"}}>{{this}}</label>{{/each}}"
+                        "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
                 }
             }
         },
@@ -839,33 +816,33 @@ fixtures.metadata = {
         "sugarField_actionsLink": {
             "default": {
                 "template": "<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>" +
-                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
-                    "  <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
-                    " <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
+                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
+                    "  <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
+                    " <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
             }
         },
         "sugarField_fullName": {
             "default": {
-                "template": "{{{getfieldvalue model \"first_name\"}}} {{{getfieldvalue model \"last_name\"}}}"
+                "template": "{{{getFieldValue model \"first_name\"}}} {{{getFieldValue model \"last_name\"}}}"
             },
             "detailView": {
-                "template": "<h2>{{{getfieldvalue model \"first_name\"}}} {{{getfieldvalue model \"last_name\"}}}<\/h2>"
+                "template": "<h2>{{{getFieldValue model \"first_name\"}}} {{{getFieldValue model \"last_name\"}}}<\/h2>"
             }
         },
         "sugarField_primaryAddress": {
             "detailView": {
-                "template": "<h3>{{label}}<\/h3>{{{getfieldvalue model \"primary_address_street\"}}}<br> {{{getfieldvalue model \"primary_address_city\"}}}," +
-                    " {{{getfieldvalue model \"primary_address_postalcode\"}}} {{{getfieldvalue model \"primary_address_country\"}}}"
+                "template": "<h3>{{label}}<\/h3>{{{getFieldValue model \"primary_address_street\"}}}<br> {{{getFieldValue model \"primary_address_city\"}}}," +
+                    " {{{getFieldValue model \"primary_address_postalcode\"}}} {{{getFieldValue model \"primary_address_country\"}}}"
             }
         },
         "sugarField_buttonSave": {
             "default": {
-                "template": "<button class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\">{{label}}<\/button>"
+                "template": "<button class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/save\">{{label}}<\/button>"
             }
         },
         "sugarField_buttonCancelSave": {
             "default": {
-                "template": "<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\">Save<\/a><a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\">Cancel<\/a>"
+                "template": "<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/save\">Save<\/a><a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\">Cancel<\/a>"
             }
         }
 
@@ -874,26 +851,26 @@ fixtures.metadata = {
         "detailView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
         "editView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
@@ -903,11 +880,11 @@ fixtures.metadata = {
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}" + "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" + "</form>",
         "subpanelView": "",
         "listView": '<div class="span12 container-fluid subhead">' +
@@ -924,22 +901,137 @@ fixtures.metadata = {
             '{{#each ../fields}}' +
             // SugarField requires the current context, field name, and the current bean in the context
             // since we are pulling from the collection rather than the default bean in the context
-            '<td class="dblclick">{{sugar_field ../../../context ../../../this ../this}}</td>' +
+            '<td class="dblclick">{{sugarField ../../../context ../../../this ../this}}</td>' +
             '{{/each}}' +
             '</tr>' +
             '{{/each}}' +
             '</tbody></table>' +
             '{{/each}}' +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
             '<li>' +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             '</li>' +
             "{{/each}}" +
             '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}' +
             '</ul>' +
             "</div>"
+    },
+    appListStrings: {
+        "case_priority_default_key": "P2",
+        "case_priority_dom": {"P1": "High", "P2": "Medium", "P3": "Low"},
+        "case_status_dom": {"New": "New", "Assigned": "Assigned", "Closed": "Closed", "Pending Input": "Pending Input", "Rejected": "Rejected", "Duplicate": "Duplicate"},
+        "campainglog_target_type_dom": {
+            "Contacts": "Contacts",
+            "Users": "Users",
+            "Prospects": "Targets",
+            "Leads": "Leads",
+            "Accounts": "Accounts"
+        },
+        "merge_operators_dom": {
+            "like": "Contains",
+            "exact": "Exactly",
+            "start": "Starts With"
+        },
+        "custom_fields_importable_dom": {
+            "true": "Yes",
+            "false": "No",
+            "required": "Required"
+        },
+        "Elastic_boost_options": [
+            "Disabled",
+            "Low Boost",
+            "Medium Boost",
+            "High Boost"
+        ],
+        "custom_fields_merge_dup_dom": [
+            "Disabled",
+            "Enabled",
+            "In Filter",
+            "Default Selected Filter",
+            "Filter Only"
+        ],
+        "navigation_paradigms": {
+            "m": "Modules",
+            "gm": "Grouped Modules"
+        },
+        "contract_status_dom": {
+            "notstarted": "Not Started",
+            "inprogress": "In Progress",
+            "signed": "Signed"
+        },
+        "contract_payment_frequency_dom": {
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "halfyearly": "Half yearly",
+            "yearly": "Yearly"
+        },
+        "contract_expiration_notice_dom": {
+            "1": "1 Day",
+            "3": "3 Days",
+            "5": "5 Days",
+            "7": "1 Week",
+            "14": "2 Weeks",
+            "21": "3 Weeks",
+            "31": "1 Month"
+        },
+        "oc_status_dom": {
+            "": "",
+            "Active": "Active",
+            "Inactive": "Inactive"
+        },
+        "projects_priority_options": {
+            "high": "High",
+            "medium": "Medium",
+            "low": "Low"
+        },
+        "projects_status_options": {
+            "notstarted": "Not Started",
+            "inprogress": "In Progress",
+            "completed": "Completed"
+        },
+        "chart_strings": {
+            "expandlegend": "Expand Legend",
+            "collapselegend": "Collapse Legend",
+            "clickfordrilldown": "Click for Drilldown",
+            "drilldownoptions": "Drill Down Options",
+            "detailview": "More Details...",
+            "piechart": "Pie Chart",
+            "groupchart": "Group Chart",
+            "stackedchart": "Stacked Chart",
+            "barchart": "Bar Chart",
+            "horizontalbarchart": "Horizontal Bar Chart",
+            "linechart": "Line Chart",
+            "noData": "Data not available",
+            "print": "Print",
+            "pieWedgeName": "sections"
+        }
+    },
+    appStrings: {
+        DATA_TYPE_DUE: "Due:",
+        DATA_TYPE_MODIFIED: "Modified:",
+        DATA_TYPE_SENT: "Sent:",
+        DATA_TYPE_START: "Start:",
+        DEFAULT: "Basic",
+        ERROR_EXAMINE_MSG: "  Please examine the error message below:",
+        ERROR_FULLY_EXPIRED: "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
+        ERROR_JS_ALERT_SYSTEM_CLASS: "System",
+        ERROR_JS_ALERT_TIMEOUT_MSG_1: "Your session is about to timeout in 2 minutes. Please save your work.",
+        ERROR_JS_ALERT_TIMEOUT_MSG_2: "Your session has timed out.",
+        ERROR_JS_ALERT_TIMEOUT_TITLE: "Session Timeout",
+        ERROR_LICENSE_EXPIRED: "Your company's license for SugarCRM needs to be updated. Only admins may login",
+        ERROR_LICENSE_VALIDATION: "Your company's license for SugarCRM needs to be validated. Only admins may login",
+        ERROR_MISSING_COLLECTION_SELECTION: "Empty required field",
+        ERROR_NOTIFY_OVERRIDE: "Error: ResourceObserver->notify() needs to be overridden.",
+        ERROR_NO_RECORD: "Error retrieving record.  This record may be deleted or you may not be authorized to view it.",
+        ERROR_TYPE_NOT_VALID: "Error. This type is not valid.",
+        ERROR_UNABLE_TO_RETRIEVE_DATA: "Error: Unable to retrieve data for {0} Connector.  The service may currently be inaccessible or the configuration settings may be invalid.  Connector error message: ({1}).",
+        ERR_ADDRESS_KEY_NOT_SPECIFIED: "Please specify 'key' index in displayParams attribute for the Meta-Data definition",
+        ERR_AJAX_LOAD: "An error has occured:",
+        ERR_AJAX_LOAD_FAILURE: "There was an error processing your request, please try again at a later time.",
+        ERR_AJAX_LOAD_FOOTER: "If this error persists, please have your administrator disable Ajax for this module",
+        ERR_BLANK_PAGE_NAME: "Please enter a page name."
     }
 };
