@@ -87,7 +87,7 @@
 
 		<script language="javascript">
 			var syncResult, view, layout, html;
-			var App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl});
+			var App = SUGAR.App.init({el: "#sidecar", rest:SUGAR.App.config.baseUrl, platform: SUGAR.App.config.platform});
             App.api.debug = App.config.debugSugarApi;
             App.start();
 		</script>

@@ -6,7 +6,7 @@ describe("SugarField", function() {
 
         var view = {};
         var context = {};
-        var inputEvents = fixtures.metadata.modules.Cases.views.editView.buttons[0].events;
+        var inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events;
         var field = SUGAR.App.sugarFieldManager.get({
             def: {name: "status", type: "varchar"},
             view: view,
@@ -57,7 +57,7 @@ describe("SugarField", function() {
         var bean = new Backbone.Model(),
             view = {},
             context = {bob: "bob"},
-            inputEvents = fixtures.metadata.modules.Cases.views.editView.buttons[0].events,
+            inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
             field = SUGAR.App.sugarFieldManager.get({
                 def: {name: "status", type: "varchar"},
                 view: view,
@@ -103,7 +103,7 @@ describe("SugarField", function() {
         var id = _.uniqueId('sugarFieldTest');
         $('body').append('<div id="'+id+'"></div>');
         var bean = new Backbone.Model(),
-            view = {name:'editView'},
+            view = {name:'edit'},
             context = {bob:"bob"},
             field = SUGAR.App.sugarFieldManager.get({
                 def: {name: "status", type: "varchar"},
