@@ -168,7 +168,7 @@ function checkACLForEachColInArr ($arr, $full_table_list, $is_owner = 1){
 	foreach ($arr as $column) {
 		$col_module = $full_table_list[$column['table_key']]['module'];
 		//todo: check the last param of this call (is_owner)
-		if(!SugarACL::checkAccess($col_module, $column['name'], $is_owner?array("onwer_override" => true):array())) {
+		if(!SugarACL::checkField($col_module, $column['name'], $is_owner?array("onwer_override" => true):array())) {
 			return false;
 		}
 	}
@@ -196,7 +196,7 @@ function checkACLForEachColForFilter($filters, $full_table_list, $is_owner, $has
 		else {
 			$col_module = $full_table_list[$current_filter['table_key']]['module'];
 			//BEGIN SUGARCRM flav!=sales ONLY
-			if(!SugarACL::checkAccess($col_module, $current_filter['name'], $is_owner?array("onwer_override" => true):array())) {
+			if(!SugarACL::checkField($col_module, $current_filter['name'], $is_owner?array("onwer_override" => true):array())) {
 				return false;
 			} // if
 			//END SUGARCRM flav!=sales ONLY
