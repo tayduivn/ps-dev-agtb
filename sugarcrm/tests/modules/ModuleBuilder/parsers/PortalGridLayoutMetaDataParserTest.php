@@ -352,6 +352,11 @@ class PortalGridLayoutMetaDataParserTestDerivative extends PortalGridLayoutMetaD
         $this->_fielddefs = $module->getFields();
         $this->_standardizeFieldLabels( $this->_fielddefs );
     }
+
+    public function testInstallPreviousViewdefs($viewdefs) {
+        $this->_originalViewDef = $this->getFieldsFromLayout($viewdefs);
+    }
+
     public function testConvertFromCanonicalForm($panels , $fielddefs) {
 
        return $this->_convertFromCanonicalForm($panels, $fielddefs);
