@@ -129,14 +129,13 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * testRetrieveModifiedRelationships
      * This test checks to make sure we can correctly retrieve related Meetings and Calls (see bugs 50092 & 50093)
+     * @outputBuffering disabled
      */
     public function testRetrieveModifiedRelationships()
     {
-        /*
         if($GLOBALS['db']->dbType != 'mysql' ) {
             $this->markTestIncomplete("Currently these queries don't work on non-mysql DBs, skip until query is fixed.");
         }
-        */
         foreach($this->testData as $data)
         {
             //retrieve_modified_relationships($module_name, $related_module, $relationship_query, $show_deleted, $offset, $max_results, $select_fields = array(), $relationship_name = '')
