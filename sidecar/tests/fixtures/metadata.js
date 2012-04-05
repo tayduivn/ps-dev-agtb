@@ -805,6 +805,25 @@ fixtures.metadata = {
                     "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
+        "iframe": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                }
+            },
+            controller: "{" +
+                "unformat:function(value){\n" +
+                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
         "textarea": {
             "detail": {
                 "type": "basic",
