@@ -212,7 +212,7 @@ date {
 }
 
 .navbar .container-fluid {margin-top: 0;}
-.container-fluid {margin-top: 16px;}
+/*.container-fluid {margin-top: 16px;}*/
 
 /* Icons
 ------------------------- */
@@ -357,18 +357,13 @@ html {
   display: block;
 }
 
+#listing>i {
+  height:45px;
+  display:inline-block;
+}
 
 #detailListing #listing {
   height: 40% !important;
-}
-
-#listing > article:first-child {
-	margin-top:33px;
-	margin-bottom:0;
-}
-
-#listing > article:last-child {
-	margin-bottom:20px;
 }
 
 #listing article {
@@ -377,6 +372,10 @@ html {
 
 #listing article.deleted {
     opacity:0;
+}
+
+#listing article.nav {
+    margin-bottom: 0;
 }
 
 .navbar [class^="icon-"] {
@@ -421,10 +420,6 @@ html {
   top: 202px; 
   padding-bottom: 190px;
 */
-}
-
-#detailListing #listing article:first-child {
-  margin-top:184px;
 }
 
 #searchForm {

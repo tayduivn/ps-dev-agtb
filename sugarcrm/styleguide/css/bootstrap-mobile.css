@@ -3851,9 +3851,7 @@ date {
 .navbar .container-fluid {
   margin-top: 0;
 }
-.container-fluid {
-  margin-top: 16px;
-}
+/*.container-fluid {margin-top: 16px;}*/
 /* Icons
 ------------------------- */
 [class^="icon-"] {
@@ -3994,21 +3992,21 @@ html {
   -webkit-overflow-scrolling: touch;
   display: block;
 }
+#listing > i {
+  height: 45px;
+  display: inline-block;
+}
 #detailListing #listing {
   height: 40% !important;
-}
-#listing > article:first-child {
-  margin-top: 33px;
-  margin-bottom: 0;
-}
-#listing > article:last-child {
-  margin-bottom: 20px;
 }
 #listing article {
   -webkit-transition: all 0.25s ease-in-out;
 }
 #listing article.deleted {
   opacity: 0;
+}
+#listing article.nav {
+  margin-bottom: 0;
 }
 .navbar [class^="icon-"] {
   color: #ffffff;
@@ -4050,9 +4048,6 @@ html {
   padding-bottom: 190px;
 */
 
-}
-#detailListing #listing article:first-child {
-  margin-top: 184px;
 }
 #searchForm {
   position: absolute;
