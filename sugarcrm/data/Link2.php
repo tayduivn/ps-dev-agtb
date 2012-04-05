@@ -161,6 +161,7 @@ class Link2 {
          )</pre>
      *  </li>
      * <li><b>limit:</b> The maximum number of rows</li>
+     * <li><b>offset:</b> Offset to pass to the database query when loading.</li>
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
      */
     public function query($params){
@@ -376,6 +377,7 @@ class Link2 {
          )</pre>
      *  </li>
      * <li><b>limit:</b> The maximum number of beans to load.</li>
+     * <li><b>offset:</b> Offset to pass to the database query when loading.</li>
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
      * @return array of SugarBeans related through this link.
      */
