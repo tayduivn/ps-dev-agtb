@@ -26,7 +26,7 @@
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
                                         "this.app.sugarAuth.login(args, {success:" +
-                                        "function(){console.log(\"logged in successfully! dtam\");var app = self.app; app.sync(" +
+                                        "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
                                         "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
                                         "}"
@@ -127,6 +127,7 @@
     if (_.isEmpty(app.metadata.get())) {
         app.metadata.set(base_metadata);
         app.data.declareModels(base_metadata);
+        app.template.load(base_metadata);
     }
 })
     (SUGAR.App);
