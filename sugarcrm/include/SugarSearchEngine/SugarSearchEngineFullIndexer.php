@@ -284,7 +284,9 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
                 $this->markBeansProcessed($processedBeans);
                 $docs = $processedBeans = array();
                 sugar_cache_reset();
-                gc_collect_cycles();
+                if( function_exists('gc_collect_cycles') )
+                    gc_collect_cycles();
+
                 $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
                 $currentMemUsage = memory_get_usage();
                 $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
