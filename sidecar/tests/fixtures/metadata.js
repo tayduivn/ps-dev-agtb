@@ -717,7 +717,6 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
-
         "enum": {
             "views": {
                 "detail": {
@@ -819,30 +818,6 @@ fixtures.metadata = {
                     "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
                     "  <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
                     " <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
-            }
-        },
-        "sugarField_fullName": {
-            "default": {
-                "template": "{{{getFieldValue model \"first_name\"}}} {{{getFieldValue model \"last_name\"}}}"
-            },
-            "detailView": {
-                "template": "<h2>{{{getFieldValue model \"first_name\"}}} {{{getFieldValue model \"last_name\"}}}<\/h2>"
-            }
-        },
-        "sugarField_primaryAddress": {
-            "detail": {
-                "template": "<h3>{{label}}<\/h3>{{{getFieldValue model \"primary_address_street\"}}}<br> {{{getFieldValue model \"primary_address_city\"}}}," +
-                    " {{{getFieldValue model \"primary_address_postalcode\"}}} {{{getFieldValue model \"primary_address_country\"}}}"
-            }
-        },
-        "sugarField_buttonSave": {
-            "default": {
-                "template": "<button class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/save\">{{label}}<\/button>"
-            }
-        },
-        "sugarField_buttonCancelSave": {
-            "default": {
-                "template": "<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/save\">Save<\/a><a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\">Cancel<\/a>"
             }
         }
 
