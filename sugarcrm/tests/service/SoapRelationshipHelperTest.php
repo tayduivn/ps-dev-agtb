@@ -129,7 +129,7 @@ class SoapRelationshipHelperTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * testRetrieveModifiedRelationships
      * This test checks to make sure we can correctly retrieve related Meetings and Calls (see bugs 50092 & 50093)
-     *
+     * @outputBuffering disabled
      */
     public function testRetrieveModifiedRelationships()
     {

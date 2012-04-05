@@ -204,11 +204,14 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
                     // special case for non-primary emails
                     // FIXME: This is not a DB-safe code. Does not work on SQL Server & Oracle.
                     // Using dirty hack here.
-                    $field_select .= "(SELECT email_addresses.email_address FROM {$mod->table_name}
-                    	LEFT JOIN  email_addr_bean_rel on {$mod->table_name}.id = email_addr_bean_rel.bean_id
-                    		AND email_addr_bean_rel.bean_module='{$mod->module_dir}' AND email_addr_bean_rel.deleted=0
-                    		AND email_addr_bean_rel.primary_address!=1
-                    	LEFT JOIN email_addresses ON email_addresses.id = email_addr_bean_rel.email_address_id Where {$mod->table_name}.id = m1.ID limit 1) email2";
+                    $field_select .=
+                        '(' . $GLOBALS['db']->limitQuerySql("SELECT email_addresses.email_address FROM {$mod->table_name}
+                                            	LEFT JOIN  email_addr_bean_rel on {$mod->table_name}.id = email_addr_bean_rel.bean_id
+                                            		AND email_addr_bean_rel.bean_module='{$mod->module_dir}' AND email_addr_bean_rel.deleted=0
+                                            		AND email_addr_bean_rel.primary_address!=1
+                                            	LEFT JOIN email_addresses ON email_addresses.id = email_addr_bean_rel.email_address_id Where {$mod->table_name}.id = m1.ID", 0, 1);
+                    $field_select .= ' ) email2';
+
 			    } else {
                     if(strpos($field, ".") == false) {
                         // no dot - field for m1
