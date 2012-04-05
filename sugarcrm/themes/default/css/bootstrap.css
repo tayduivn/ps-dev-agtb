@@ -4718,11 +4718,7 @@ article .avatar {
   padding: 3px 4px !important;
 }
 .logo {
-<<<<<<< HEAD
   background: url(../../../index.php?entryPoint=getImage&imageName=company_logo.png) 0 0 no-repeat;
-=======
-  background: url(../img/sugar-red-sm.png) 0 0 no-repeat;
->>>>>>> parent of 4331d89... Revert "styleguide resources"
   display: block;
   margin: 14px 0 0 10px;
   text-indent: -7000px;
