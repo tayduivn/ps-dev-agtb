@@ -1,1 +1,0 @@
-<h3>{{label}}</h3><span name="{{name}}">{{#if value}}<a href="{{value}}" target="_self">{{value}}</a>{{/if}}</span>
