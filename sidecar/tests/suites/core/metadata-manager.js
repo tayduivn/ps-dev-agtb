@@ -32,8 +32,8 @@ describe('metadata', function () {
         expect(SUGAR.App.metadata.get({
             type:"view",
             module:"Contacts",
-            view:"editView"
-        })).toBe(fixtures.metadata.modules.Contacts.views.editView);
+            view:"edit"
+        })).toBe(fixtures.metadata.modules.Contacts.views.edit);
     });
 
     it('gets layoutdefs', function () {
@@ -55,9 +55,9 @@ describe('metadata', function () {
         expect(SUGAR.App.metadata.get({
             sugarField:{
                 type:'varchar',
-                view:'editView'
+                view:'edit'
             }
-        })).toBe(fixtures.metadata.sugarFields.text.views.editView);
+        })).toBe(fixtures.metadata.sugarFields.text.views.edit);
     });
 
     it('gets a specific sugarfield defaulted to default if the view does not exist', function () {

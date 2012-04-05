@@ -81,6 +81,12 @@
 
 
         date: {
+            /**
+             * Parses date strings into js Date()s
+             * @param {String} date date string
+             * @param {String} oldFormat date format string. If not specified parse will guess the date format
+             * @return {Object} javascript date object
+             */
             parse: function(date, oldFormat) {
                 //if already a Date return it
                 if (date instanceof Date) return date;
@@ -152,6 +158,11 @@
                 return jsDate;
             },
 
+            /**
+             * Guesses format of date strings
+             * @param {String} date string
+             * @return {string}
+             */
             guessFormat: function(date) {
                 if (typeof date != "string")
                     return false;
@@ -245,6 +256,12 @@
                 return dateFormat;
             },
 
+            /**
+             * Formats javascript date objects into date strings
+             * @param {Object} date
+             * @param {String} format date format string such as "Y-m-d H:i:s"
+             * @return {String} formatted date string
+             */
             format: function(date, format) {
                 if (!date) return "";
                 // TODO: add support for userPrefs
@@ -295,6 +312,11 @@
                 }
                 return out;
             },
+            /**
+             * rounds javascrit date to the nearest 15 minutes
+             * @param {Object} date javascript Date
+             * @return {Object} javascript Date()
+             */
             roundTime: function(date) {
                 if (!date.getMinutes) return 0;
                 var min = date.getMinutes();
@@ -317,6 +339,37 @@
                 }
 
                 return date;
+            }
+        },
+        cookie: {
+            /**
+             * Sets a cookie
+             * @param {String} cName cookie name
+             * @param {String} value
+             * @param {Integer} exdays days until expiration
+             */
+            setCookie: function setCookie(cName, value, exdays) {
+                var exdate = new Date();
+                exdate.setDate(exdate.getDate() + exdays);
+                var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+                document.cookie = cName + "=" + c_value;
+            },
+
+            /**
+             * Gets a cookie
+             * @param {String} cName
+             * @return {String}
+             */
+            getCookie: function(cName) {
+                var i, x, y, ARRcookies = document.cookie.split(";");
+                for (i = 0; i < ARRcookies.length; i++) {
+                    x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                    y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                    x = x.replace(/^\s+|\s+$/g, "");
+                    if (x == cName) {
+                        return unescape(y);
+                    }
+                }
             }
         }
     });

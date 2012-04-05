@@ -1,3 +1,3 @@
 <?php
-$viewdefs['Cases']['portal']['view']['subpanelView'] = array (
+$viewdefs['Cases']['portal']['view']['subpanel'] = array (
 );

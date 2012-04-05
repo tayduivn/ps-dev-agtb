@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Cases']['portal']['view']['detailView'] = array(
+$viewdefs['Cases']['portal']['view']['detail'] = array(
     'buttons' =>
     array(
         0 =>
@@ -47,11 +47,6 @@ $viewdefs['Cases']['portal']['view']['detailView'] = array(
                 array(
                     'name' => 'date_modified',
                     'label' => 'Modifed Date',
-                ),
-                5 =>
-                array(
-                    'name' => 'leradio_c',
-                    'label' => 'LeRadio',
                 ),
             ),
         ),

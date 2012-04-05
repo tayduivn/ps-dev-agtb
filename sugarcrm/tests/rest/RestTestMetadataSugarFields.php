@@ -50,18 +50,18 @@ class RestTestMetadataSugarFields extends RestTestBase {
     }
 
     public function testMetadataSugarFields() {
-        $restReply = $this->_restCall('metadata?metadataTypes=sugarFields');
+        $restReply = $this->_restCall('metadata?typeFilter=sugarFields');
 
         $this->assertTrue(isset($restReply['reply']['sugarFields']['_hash']),'SugarField hash is missing.');
     }
     
     public function testMetadataSugarFieldsController() {
-        $filesToCheck = array('include/SugarFields/Fields/Address/mobile/Address.js',
-                              'include/SugarFields/Fields/Address/portal/Address.js',
-                              'include/SugarFields/Fields/Address/base/Address.js',
-                              'custom/include/SugarFields/Fields/Address/mobile/Address.js',
-                              'custom/include/SugarFields/Fields/Address/portal/Address.js',
-                              'custom/include/SugarFields/Fields/Address/base/Address.js',
+        $filesToCheck = array('clients/mobile/fields/address/address.js',
+                              'clients/portal/fields/address/address.js',
+                              'clients/base/fields/address/address.js',
+                              'custom/clients/mobile/fields/address/address.js',
+                              'custom/clients/portal/fields/address/address.js',
+                              'custom/clients/base/fields/address/address.js',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -72,12 +72,12 @@ class RestTestMetadataSugarFields extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('include/SugarFields/Fields/Address/mobile',
-                            'include/SugarFields/Fields/Address/portal',
-                            'include/SugarFields/Fields/Address/base',
-                            'custom/include/SugarFields/Fields/Address/mobile',
-                            'custom/include/SugarFields/Fields/Address/portal',
-                            'custom/include/SugarFields/Fields/Address/base',
+        $dirsToMake = array('clients/mobile/fields/address',
+                            'clients/portal/fields/address',
+                            'clients/base/fields/address',
+                            'custom/clients/mobile/fields/address',
+                            'custom/clients/portal/fields/address',
+                            'custom/clients/base/fields/address',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -85,62 +85,56 @@ class RestTestMetadataSugarFields extends RestTestBase {
                 mkdir($dir,0777,true);
             }
         }
-        $basePath = 'include/SugarFields/Fields/Address/';
         
         // Make sure we get it when we ask for mobile
-        file_put_contents($basePath.'mobile/Address.js','MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('MOBILE CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't get mobile code when that was the direct option");
+        file_put_contents('clients/mobile/fields/address/address.js','MOBILE CODE');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('MOBILE CODE',$restReply['reply']['sugarFields']['address']['controller'],"Didn't get mobile code when that was the direct option");
 
 
-        // Make sure we get it when we ask for mobile, even though there is portal code there
-        file_put_contents($basePath.'portal/Address.js','PORTAL CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('MOBILE CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't get mobile code when portal code was there.");
+        // Make sure we get it when we ask for mobile, even though there is base code there
+        file_put_contents('clients/base/fields/address/address.js','BASE CODE');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('MOBILE CODE',$restReply['reply']['sugarFields']['address']['controller'],"Didn't get mobile code when base code was there.");
 
 
-        // Make sure we get the portal code when we ask for it.
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
-        $this->assertEquals('PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't get portal code when it was the direct option");
+        // Make sure we get the base code when we ask for it.
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=base');
+        $this->assertEquals('BASE CODE',$restReply['reply']['sugarFields']['address']['controller'],"Didn't get base code when it was the direct option");
 
 
-        // Delete the mobile address and make sure it falls back to portal
-        unlink($basePath.'mobile/Address.js');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't fall back to portal code when mobile code wasn't there.");
+        // Delete the mobile address and make sure it falls back to base
+        unlink('clients/mobile/fields/address/address.js');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('BASE CODE',$restReply['reply']['sugarFields']['address']['controller'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
-        // Make sure the mobile code is loaded before the non-custom portal code
-        file_put_contents('custom/'.$basePath.'mobile/Address.js','CUSTOM MOBILE CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't use the custom mobile code.");
+        // Make sure the mobile code is loaded before the non-custom base code
+        file_put_contents('custom/clients/mobile/fields/address/address.js','CUSTOM MOBILE CODE');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['sugarFields']['address']['controller'],"Didn't use the custom mobile code.");
 
         // Make sure custom portal code works
-        file_put_contents('custom/'.$basePath.'portal/Address.js','CUSTOM PORTAL CODE');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
-        $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't use the custom portal code.");
-
-        // Delete the custom mobile code, this should then fallback to the custom portal code, which should override the default portal code for the fallback
-        unlink('custom/'.$basePath.'mobile/Address.js');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['sugarFields']['Address']['controller'],"Didn't use the custom portal code when the custom mobile code was deleted.");
+        file_put_contents('custom/clients/portal/fields/address/address.js','CUSTOM PORTAL CODE');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=portal');
+        $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['sugarFields']['address']['controller'],"Didn't use the custom portal code.");
 
     }
 
     public function testMetadataSugarFieldsTemplates() {
         $filesToCheck = array(
-            'include/SugarFields/Fields/Address/mobile/editView.hbt',
-            'include/SugarFields/Fields/Address/mobile/deatilView.hbt',
-            'include/SugarFields/Fields/Address/portal/editView.hbt',
-            'include/SugarFields/Fields/Address/portal/deatilView.hbt',
-            'include/SugarFields/Fields/Address/base/editView.hbt',
-            'include/SugarFields/Fields/Address/base/deatilView.hbt',
-            'custom/include/SugarFields/Fields/Address/mobile/editView.hbt',
-            'custom/include/SugarFields/Fields/Address/mobile/deatilView.hbt',
-            'custom/include/SugarFields/Fields/Address/portal/editView.hbt',
-            'custom/include/SugarFields/Fields/Address/portal/deatilView.hbt',
-            'custom/include/SugarFields/Fields/Address/base/editView.hbt',
-            'custom/include/SugarFields/Fields/Address/base/deatilView.hbt',
+            'clients/mobile/fields/address/editView.hbt',
+            'clients/mobile/fields/address/detailView.hbt',
+            'clients/portal/fields/address/editView.hbt',
+            'clients/portal/fields/address/detailView.hbt',
+            'clients/base/fields/address/editView.hbt',
+            'clients/base/fields/address/detailView.hbt',
+            'custom/clients/mobile/fields/address/editView.hbt',
+            'custom/clients/mobile/fields/address/detailView.hbt',
+            'custom/clients/portal/fields/address/editView.hbt',
+            'custom/clients/portal/fields/address/detailView.hbt',
+            'custom/clients/base/fields/address/editView.hbt',
+            'custom/clients/base/fields/address/detailView.hbt',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -151,12 +145,12 @@ class RestTestMetadataSugarFields extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('include/SugarFields/Fields/Address/mobile',
-                            'include/SugarFields/Fields/Address/portal',
-                            'include/SugarFields/Fields/Address/base',
-                            'custom/include/SugarFields/Fields/Address/mobile',
-                            'custom/include/SugarFields/Fields/Address/portal',
-                            'custom/include/SugarFields/Fields/Address/base',
+        $dirsToMake = array('clients/mobile/fields/address',
+                            'clients/portal/fields/address',
+                            'clients/base/fields/address',
+                            'custom/clients/mobile/fields/address',
+                            'custom/clients/portal/fields/address',
+                            'custom/clients/base/fields/address',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -164,46 +158,39 @@ class RestTestMetadataSugarFields extends RestTestBase {
                 mkdir($dir,0777,true);
             }
         }
-        $basePath = 'include/SugarFields/Fields/Address/';
-        
+
         // Make sure we get it when we ask for mobile
-        file_put_contents($basePath.'mobile/editView.hbt','MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
+        file_put_contents('clients/mobile/fields/address/editView.hbt','MOBILE EDITVIEW');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['sugarFields']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 
-        // Make sure we get it when we ask for mobile, even though there is portal code there
-        file_put_contents($basePath.'portal/editView.hbt','PORTAL EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't get mobile code when portal code was there.");
+        // Make sure we get it when we ask for mobile, even though there is base code there
+        file_put_contents('clients/base/fields/address/editView.hbt','BASE EDITVIEW');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['sugarFields']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
 
 
-        // Make sure we get the portal code when we ask for it.
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
-        $this->assertEquals('PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't get portal code when it was the direct option");
+        // Make sure we get the base code when we ask for it.
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=base');
+        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['sugarFields']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
 
 
-        // Delete the mobile address and make sure it falls back to portal
-        unlink($basePath.'mobile/editView.hbt');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't fall back to portal code when mobile code wasn't there.");
+        // Delete the mobile address and make sure it falls back to base
+        unlink('clients/mobile/fields/address/editView.hbt');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['sugarFields']['address']['templates']['editView'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
-        // Make sure the mobile code is loaded before the non-custom portal code
-        file_put_contents('custom/'.$basePath.'mobile/editView.hbt','CUSTOM MOBILE EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't use the custom mobile code.");
+        // Make sure the mobile code is loaded before the non-custom base code
+        file_put_contents('custom/clients/mobile/fields/address/editView.hbt','CUSTOM MOBILE EDITVIEW');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=mobile');
+        $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['sugarFields']['address']['templates']['editView'],"Didn't use the custom mobile code.");
 
-        // Make sure custom portal code works
-        file_put_contents('custom/'.$basePath.'portal/editView.hbt','CUSTOM PORTAL EDITVIEW');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=portal');
-        $this->assertEquals('CUSTOM PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't use the custom portal code.");
-
-        // Delete the custom mobile code, this should then fallback to the custom portal code, which should override the default portal code for the fallback
-        unlink('custom/'.$basePath.'mobile/editView.hbt');
-        $restReply = $this->_restCall('metadata/?metadataType=sugarFields&platform=mobile');
-        $this->assertEquals('CUSTOM PORTAL EDITVIEW',$restReply['reply']['sugarFields']['Address']['templates']['editView'],"Didn't use the custom portal code when the custom mobile code was deleted.");
-
+        // Make sure custom base code works
+        file_put_contents('custom/clients/base/fields/address/editView.hbt','CUSTOM BASE EDITVIEW');
+        $restReply = $this->_restCall('metadata/?typeFilter=sugarFields&platform=base');
+        $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['sugarFields']['address']['templates']['editView'],"Didn't use the custom base code.");
     }
 
 
