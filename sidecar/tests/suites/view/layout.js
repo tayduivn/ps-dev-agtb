@@ -46,7 +46,7 @@ describe("Layout", function() {
 describe("Layout.View", function(){
     var syncResult, view, layout, html;
     SUGAR.App.metadata.set(fixtures.metadata);
-    SUGAR.App.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
+    SUGAR.App.metadata.set(fixtures.metadata.sugarFields, "sugarFields");
 
     var App = SUGAR.App.init({el: "#sidecar"});
 
@@ -68,9 +68,9 @@ describe("Layout.View", function(){
     it('should get metadata from the manager', function(){
         view = App.layout.get({
             context : context,
-            view:"editView"
+            view:"edit"
         });
-        expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.editView);
+        expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit);
     });
 
     it('should accept metadata overrides', function(){
@@ -101,23 +101,24 @@ describe("Layout.View", function(){
     it('should render edit views', function(){
         view = App.layout.get({
             context : context,
-            view:"editView"
+            view:"edit"
         });
+        console.log("dtan", view.meta);
         expect(view.meta).toBeDefined();
         view.render();
         html = view.$el.html();
-        expect(html).toContain('editView');
+        expect(html).toContain('edit');
         expect(view.$el).toContain('input=[value="Foo"]');
     })
 
     it('should render detail views', function(){
         layout = App.layout.get({
             context : context,
-            view:"detailView"
+            view:"detail"
         });
         layout.render();
         html = layout.$el.html();
-        expect(html).toContain('detailView');
+        expect(html).toContain('detail');
     })
 
 })
@@ -143,7 +144,7 @@ describe("Layout.Layout", function(){
         }
     };
     //Fake a field list
-    SUGAR.App.metadata.set(sugarFieldsFixtures.fieldsData, "sugarFields");
+    SUGAR.App.metadata.set(fixtures.metadata.sugarFields, "sugarFields");
 
     var App = SUGAR.App.init({el: "#sidecar"});
     App.data.declareModels(fixtures.metadata);
@@ -166,6 +167,7 @@ describe("Layout.Layout", function(){
             context : context,
             layout: "edit"
         });
+        console.log("dtam",fixtures.metadata.modules.Contacts.layouts.edit);
         expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit);
     });
 

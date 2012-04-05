@@ -26,6 +26,7 @@
 
     /**
      * WebSQL wrapper.
+     * @ignore
      */
     app.augment("webSqlAdapter", {
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Modification to backbone events to allow unbinding by scope only
  * TODO: Don't put this here, it should be in its own file.
  */
@@ -88,7 +88,8 @@ SUGAR.App = (function() {
              * @property {Object}
              */
             api: SUGAR.Api.getInstance({
-                baseUrl: opts.rest || "/rest/v10" // TODO: Change this default
+                baseUrl: opts.rest || "/rest/v10", // TODO: Change this default
+                platform: opts.platform
             })
         }, this, Backbone.Events);
     }
@@ -240,8 +241,8 @@ SUGAR.App = (function() {
         /**
          * Navigate to a new Layout / View convenience function.
          * @method
-         * @param {Context} context Context object to extract module from.
-         * @param {Bean} model Model object to route with
+         * @param {Core.Context} context Context object to extract module from.
+         * @param {Data.Bean} model Model object to route with
          * @param {String} action Desired action, leave blank if
          * @param {Object} params Additional parameters
          */

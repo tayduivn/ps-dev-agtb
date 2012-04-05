@@ -107,41 +107,6 @@ class EditView
         {
             include($this->metadataFile);
         }
-        else
-        {
-            //If file doesn't exist we create a best guess
-            if (!file_exists("modules/$this->module/metadata/editviewdefs.php")
-                && file_exists("modules/$this->module/EditView.html"))
-            {
-                require_once('include/SugarFields/Parsers/EditViewMetaParser.php');
-
-                global $dictionary;
-
-                $htmlFile = "modules/" . $this->module . "/EditView.html";
-                $parser = new EditViewMetaParser();
-                if (!file_exists('modules/'.$this->module.'/metadata'))
-                {
-                   sugar_mkdir('modules/'.$this->module.'/metadata');
-                }
-
-                $fp = sugar_fopen('modules/'.$this->module.'/metadata/editviewdefs.php', 'w');
-                fwrite($fp, $parser->parse($htmlFile, $dictionary[$focus->object_name]['fields'], $this->module));
-                fclose($fp);
-            }
-
-            //Flag an error... we couldn't create the best guess meta-data file
-            if (!file_exists("modules/$this->module/metadata/editviewdefs.php"))
-            {
-                global $app_strings;
-
-                $error = str_replace("[file]", "modules/$this->module/metadata/editviewdefs.php", $app_strings['ERR_CANNOT_CREATE_METADATA_FILE']);
-                $GLOBALS['log']->fatal($error);
-                echo $error;
-                die();
-            }
-
-            require_once("modules/$this->module/metadata/editviewdefs.php");
-        }
 
         $this->defs = $viewdefs[$this->module][$this->view];
         $this->isDuplicate = isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $this->focus->aclAccess('edit');

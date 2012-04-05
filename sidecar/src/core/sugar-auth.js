@@ -1,16 +1,15 @@
-/**
- SugarAuth
- * @ignore
- */
 (function(app) {
     /**
-     * @class SugarAuth
+     * Authentication manager provides the ability to login/logout and check for authentication status.
+     *
+     * @class Core.SugarAuth
      * @singleton
-     * SugarAuth provides the ability to login and authentication status
+     * @alias SUGAR.App.sugarAuth
      */
 
     app.augment('sugarAuth', (function() {
 
+        var token = "";
         var instance;
         var api;
         var _userLoginCallbacks;
@@ -34,6 +33,10 @@
              * @param {Object} data contains token for current session
              */
             function handleLoginSuccess(data) {
+                if (data.token) {
+                    token = data.token;
+                    app.cache.set("AuthToken", token);
+                }
                 if (_userLoginCallbacks && _userLoginCallbacks.success) {
                     _userLoginCallbacks.success(data);
                 }
@@ -44,7 +47,7 @@
              * @private
              * @param {Object} data jquery ajax object from failure with codes
              */
-            function handleLoginFailure(data){
+            function handleLoginFailure(data) {
                 if (_userLoginCallbacks && _userLoginCallbacks.error) {
                     _userLoginCallbacks.error(data);
                 }
@@ -56,6 +59,7 @@
              * @param {Object} handles logout success currently data is null
              */
             function handleLogoutSuccess(data) {
+                app.cache.set("AuthToken", "");
                 if (_userLogoutCallbacks && _userLogoutCallbacks.success) {
                     _userLogoutCallbacks.success(data);
                 }
@@ -66,7 +70,7 @@
              * @private
              * @param {Object} data jquery ajax object from failure with codes
              */
-            function handleLogoutFailure(data){
+            function handleLogoutFailure(data) {
                 if (_userLogoutCallbacks && _userLogoutCallbacks.error) {
                     _userLogoutCallbacks.error(data);
                 }
@@ -75,11 +79,29 @@
 
             return {
                 /**
+                 * Gets string for Auth token
+                 * @return {String}
+                 */
+                getAuthToken: function() {
+                    var authToken = app.cache.get("AuthToken");
+                    if (authToken != null && authToken != "") {
+                        return  authToken;
+                    }
+                    else {
+                        return  "";
+                    }
+                },
+                /**
                  * checks if currently authenticated
                  *
                  * @return {Boolean} true if auth, false otherwise
                  */
-                isAuthenticated: function(){
+                isAuthenticated: function() {
+                    var authToken = this.getAuthToken();
+                    if (authToken != "") {
+                        handleLoginSuccess({token: authToken})
+                    }
+                    app.api.setToken(authToken);
                     return app.api.isAuthenticated();
                 },
 
@@ -90,8 +112,8 @@
                  * @param  {Object} {success: function(data){}, error: function(data){}}
                  * @return
                  */
-                login: function(args, callbacks){
-                    if(callbacks){
+                login: function(args, callbacks) {
+                    if (callbacks) {
                         _userLoginCallbacks = callbacks;
                     }
                     var options = args.options || {};
@@ -105,7 +127,7 @@
                  * @param {Object} callbacks {success: function(data){}, error: function(data){}}
                  * @return
                  */
-                logout: function(callbacks){
+                logout: function(callbacks) {
                     _userLogoutCallbacks = callbacks;
                     var myCallbacks = {success: handleLogoutSuccess, error: handleLogoutFailure};
                     app.api.logout(myCallbacks);

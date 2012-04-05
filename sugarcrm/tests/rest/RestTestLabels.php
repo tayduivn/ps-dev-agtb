@@ -39,15 +39,15 @@ class RestTestLabels extends RestTestBase {
     }
 
     public function testLabels() {
-        $restReply = $this->_restCall('metadata');
+        $restReply = $this->_restCall('metadata?typeFilter=modStrings,appStrings');
         
         $this->assertNotEmpty($restReply['reply']['appStrings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
         
-        $this->assertNotEmpty($restReply['reply']['modules']['Contacts']['labels']['LBL_ACCOUNT_NAME']);
+        $this->assertNotEmpty($restReply['reply']['modStrings']['Contacts']['LBL_ACCOUNT_NAME']);
     }
 
     public function testAppListLabels() {
-        $restReply = $this->_restCall('metadata');
+        $restReply = $this->_restCall('metadata?typeFilter=appListStrings');
         
         $this->assertNotEmpty($restReply['reply']['appListStrings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
 
