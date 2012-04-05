@@ -1,8 +1,8 @@
-{
-    unformat:function(value){
+({
+    unformat: function(value) {
         return value;
     },
-    format:function(value, fieldName){
+    format: function(value, fieldName) {
         value = {
             street: this.model.get(this.name),
             city: this.model.get(this.formatFieldName('city')),
@@ -12,35 +12,38 @@
         };
         return value;
     },
-    bindDomChange: function (model, fieldName) {
+    bindDomChange: function(model, fieldName) {
         var self = this;
         var street = this.$el.find('.address_street');
         var city = this.$el.find('.address_city');
         var country = this.$el.find('.address_country');
         var postalcode = this.$el.find('.address_postalcode');
         var state = this.$el.find('.address_state');
-        street.on('change', function(ev) {
+        street.on('change', function() {
             model.set(fieldName, self.unformat(street.val()));
         });
-        city.on('change', function(ev) {
+        city.on('change', function() {
             model.set(self.formatFieldName('city'), self.unformat(city.val()));
         });
-        postalcode.on('change', function(ev) {
+        postalcode.on('change', function() {
             model.set(self.formatFieldName('postalcode'), self.unformat(postalcode.val()));
         });
-        state.on('change', function(ev) {
+        state.on('change', function() {
             model.set(self.formatFieldName('state'), self.unformat(state.val()));
         });
-        country.on('change', function(ev) {
+        country.on('change', function() {
             model.set(self.formatFieldName('country'), self.unformat(country.val()));
         });
     },
-    formatFieldName:function(attribute){
+    formatFieldName: function(attribute) {
         var endFieldName = '';
         var arrFieldName = this.name.split('_');
-        if (arrFieldName[arrFieldName.length-1]=='c') { endFieldName='_c'; arrFieldName.pop(); }
-        if (arrFieldName[arrFieldName.length-1]=='street') arrFieldName.pop();
+        if (arrFieldName[arrFieldName.length - 1] == 'c') {
+            endFieldName = '_c';
+            arrFieldName.pop();
+        }
+        if (arrFieldName[arrFieldName.length - 1] == 'street') arrFieldName.pop();
         var rootFieldName = arrFieldName.join('_');
         return rootFieldName + "_" + attribute + endFieldName;
     }
-}
+})
