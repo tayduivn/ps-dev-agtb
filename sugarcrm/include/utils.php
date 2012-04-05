@@ -1116,7 +1116,8 @@ function return_application_language($language)
 	}
 
 	// If we are in debug mode for translating, turn on the prefix now!
-	if($sugar_config['translation_string_prefix']) {
+    if(!empty($sugar_config['translation_string_prefix']))
+    {
 		foreach($app_strings as $entry_key=>$entry_value) {
 			$app_strings[$entry_key] = $language.' '.$entry_value;
 		}

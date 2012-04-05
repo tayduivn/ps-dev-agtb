@@ -968,6 +968,7 @@ function checkSystemCompliance() {
 	global $current_language;
 	global $db;
 	global $mod_strings;
+    global $app_strings;
 
 	if(!defined('SUGARCRM_MIN_MEM')) {
 		define('SUGARCRM_MIN_MEM', 40);
@@ -1079,6 +1080,18 @@ function checkSystemCompliance() {
 			$ret['memory_msg'] = "<b><span class=\"go\">{$installer_mod_strings['LBL_CHECKSYS_OK']} ({$memory_limit})</span></b>";
 	    }
 	}
+
+    // Suhosin allow to use upload://
+    $ret['stream_msg'] = '';
+    if (UploadStream::getSuhosinStatus() == true)
+    {
+        $ret['stream_msg'] = "<b><span class=\"go\">{$installer_mod_strings['LBL_CHECKSYS_OK']}</span></b>";
+    }
+    else
+    {
+        $ret['stream_msg'] = "<b><span class=\"stop\">{$app_strings['ERR_SUHOSIN']}</span></b>";
+        $ret['error_found'] = true;
+    }
 
 	/* mbstring.func_overload
 	$ret['mbstring.func_overload'] = '';
