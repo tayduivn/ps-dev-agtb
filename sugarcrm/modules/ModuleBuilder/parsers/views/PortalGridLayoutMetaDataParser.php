@@ -46,8 +46,18 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
     protected function _packRowWithEmpty(&$row, $cols)
     {
         for ($i=0; $i<$cols; $i++) {
-            $row[] = MBConstants::$EMPTY;
+            $row[] = $this->_addInternalCell(MBConstants::$EMPTY);
         }
+    }
+
+    /**
+     * helper to add a field (name) to the internal formatted row
+     * used in case internal format goes to wanting arrays
+     * @param $field
+     * @return string value to add
+     */
+    protected function _addInternalCell($field) {
+        return is_array($field) ? $field['name'] : $field;
     }
 
 
@@ -110,7 +120,6 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
                 $offset = 1; // reset
                 $lastField = null; // holder for the field to put in
                 foreach ($row as $cell) {
-                    $fieldName = isset($cell['name']) ? $cell['name'] : $cell;
 
                     // empty => get rid of it, and assign to previous field as colspan
                     if ($this->isEmpty($cell)) {
@@ -131,6 +140,7 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
                     }
                     else {
                         // field => add the field def.
+                        $fieldName = is_array($cell) ? $cell['name'] : $cell;
                         if (isset($this->_originalViewDef[$fieldName]))  {
                             $source = $this->_originalViewDef[$fieldName];
                         }
@@ -194,7 +204,7 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
                 }
 
                 // add field to row + enough (empty) to make it to colspan
-                $row[] = empty($field) ? $this->FILLER : $field;
+                $row[] = $this->_addInternalCell(empty($field) ? $this->FILLER : $field);
                 $this->_packRowWithEmpty($row, $colspan-1);
             }
 
@@ -210,6 +220,7 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 
         return $internalPanels;
     }
+
 
     /**
      * Returns a list of fields, generally from the original (not customized) viewdefs
