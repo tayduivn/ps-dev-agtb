@@ -324,7 +324,7 @@ class MetaDataManager {
 
         foreach ( $searchDirs as $searchDir ) {
             if ( is_dir($searchDir) ) {
-                $stdTemplates = glob($searchDir."*".$extension);
+                $stdTemplates = glob($searchDir."/*".$extension);
                 if ( is_array($stdTemplates) ) {
                     foreach ( $stdTemplates as $templateFile ) {
                         $templateName = substr(basename($templateFile),0,-strlen($extension));
@@ -334,7 +334,7 @@ class MetaDataManager {
             }
             // Do the custom directory last so it will override anything in the core product
             if ( is_dir('custom/'.$searchDir) ) {
-                $cstmTemplates = glob('custom/'.$searchDir."*".$extension);
+                $cstmTemplates = glob('custom/'.$searchDir."/*".$extension);
                 if ( is_array($cstmTemplates) ) {
                     foreach ( $cstmTemplates as $templateFile ) {
                         $templateName = substr(basename($templateFile),0,-strlen($extension));
@@ -355,7 +355,8 @@ class MetaDataManager {
         $backwardsPlatforms = array_reverse($this->platforms);
         $templateDirs = array();
         foreach ( $backwardsPlatforms as $platform ) {
-            $templateDirs[] = 'clients/'.$platform.'/views/*/';
+            $moreTemplates = glob("clients/${platform}/views/*",GLOB_ONLYDIR);
+            $templateDirs = array_merge($templateDirs,$moreTemplates);
         }
         $templates = $this->fetchTemplates($templateDirs);
         $templates['_hash'] = md5(serialize($templates));
