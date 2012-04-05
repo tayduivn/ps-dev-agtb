@@ -38,7 +38,7 @@
         }));
 
         sf.sfid = sfid;
-        
+
         return new Handlebars.SafeString(ret);
     });
 
@@ -112,7 +112,7 @@
      * @param {Boolean} retFalse
      * @return {Boolean}
      */
-    Handlebars.registerHelper('contains', function(val, array, retTrue, retFalse) {
+    Handlebars.registerHelper('has', function(val, array, retTrue, retFalse) {
         // Since we need to check both just val = val 2 and also if val is in an array, we cast
         // non arrays into arrays
         if (!_.isArray(array) && !_.isObject(array)) {

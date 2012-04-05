@@ -72,14 +72,14 @@ describe("Handlebars Helpers", function() {
         });
     });
 
-    describe("contains", function() {
+    describe("has", function() {
         it("should return the true value if the first value is found in the second value (array)", function() {
             var val1 = "hello",
                 val2 = ["world", "fizz", "hello", "buzz"],
                 returnTrue = "Success!",
                 returnFalse = "Failure!";
 
-            expect(Handlebars.helpers.contains(val1, val2, returnTrue, returnFalse)).toEqual(returnTrue);
+            expect(Handlebars.helpers.has(val1, val2, returnTrue, returnFalse)).toEqual(returnTrue);
         });
 
         it("should return the false value if the first value is found in the second value (array)", function() {
@@ -88,7 +88,7 @@ describe("Handlebars Helpers", function() {
                 returnTrue = "Success!",
                 returnFalse = "Failure!";
 
-            expect(Handlebars.helpers.contains(val1, val2, returnTrue, returnFalse)).toEqual(returnFalse);
+            expect(Handlebars.helpers.has(val1, val2, returnTrue, returnFalse)).toEqual(returnFalse);
         });
 
         it("should return the true value if the first value is found in the second value (scalar)", function() {
@@ -97,7 +97,7 @@ describe("Handlebars Helpers", function() {
                 returnTrue = "Success!",
                 returnFalse = "Failure!";
 
-            expect(Handlebars.helpers.contains(val1, val2, returnTrue, returnFalse)).toEqual(returnTrue);
+            expect(Handlebars.helpers.has(val1, val2, returnTrue, returnFalse)).toEqual(returnTrue);
         });
     });
 
