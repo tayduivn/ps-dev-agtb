@@ -29,7 +29,7 @@ var SugarTest = {};
     }
 
     test.loadSugarField = function(file) {
-        return test.loadFile("../../../sugarcrm/include/SugarFields/Fields", file, "js", function(data) { return eval("(" + data + ")"); });
+        return test.loadFile("../../../sugarcrm/clients/base/fields", file, "js", function(data) { return eval("(" + data + ")"); });
     }
 
     test.waitFlag = false;
