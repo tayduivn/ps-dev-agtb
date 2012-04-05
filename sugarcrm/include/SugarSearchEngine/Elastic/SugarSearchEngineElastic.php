@@ -90,7 +90,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * @param $searchFields
      * @return Elastica_Document|null
      */
-    public function createIndexDocument(SugarBean $bean, $searchFields = null)
+    public function createIndexDocument($bean, $searchFields = null)
     {
         if($searchFields == null)
             $searchFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($bean);

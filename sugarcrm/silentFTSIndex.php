@@ -47,5 +47,4 @@ $current_user->getSystemUser();
 
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 $indexer = new SugarSearchEngineFullIndexer();
-$results = $indexer->performFullSystemIndex()->getStatistics();
-$GLOBALS['log']->info("FTS Indexer completed with the following results:" . var_export($results, TRUE));
+$results = $indexer->performFullSystemIndex();

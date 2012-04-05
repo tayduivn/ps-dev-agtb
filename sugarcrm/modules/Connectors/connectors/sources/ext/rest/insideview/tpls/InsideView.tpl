@@ -46,6 +46,8 @@ SUGAR.util.doWhen("typeof(markSubPanelLoaded) != 'undefined' && document.getElem
 	{rdelim}
     else
     {ldelim}
+        if(typeof(DCMenu) == 'undefined')
+            return;
         var cookieKey = DCMenu.module + '_divs';
         var tmpCookie = Get_Cookie(cookieKey);
         if(tmpCookie)

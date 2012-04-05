@@ -268,6 +268,59 @@ if(!empty($focus->reply_to_email)) {
  	$xtpl->assign("REPLY_TO", $replyTo);
 }
 
+
+
+//aaplying action menu (new UI) instead of buttons
+$buttons = array(
+    <<<EOD
+            <input	title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" class="button"
+                    id="edit_button"
+					onclick="	this.form.return_module.value='Emails';
+								this.form.return_action.value='DetailView';
+								this.form.return_id.value='{$focus->id}';
+								this.form.action.value='EditView'"
+					type="submit" name="Edit" value=" {$app_strings['LBL_EDIT_BUTTON_LABEL']}">
+EOD
+,
+    <<<EOD
+            <input title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}"
+					accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}"
+					class="button"
+					id="delete_button"
+					onclick="this.form.return_module.value='{$start['module']}';
+											this.form.return_action.value='{$start['action']}';
+											this.form.return_id.value='{$start['record']}';
+											this.form.type.value='{$start['type']}';
+											this.form.assigned_user_id.value='{$start['assigned_user_id']}';
+											this.form.action.value='Delete';
+											return confirm('{$app_strings['NTC_DELETE_CONFIRMATION']}')"
+					type="submit" name="button"
+					value="{$app_strings['LBL_DELETE_BUTTON_LABEL']}"
+			>
+EOD
+,
+
+<<<EOD
+            <input type="button" name="button" class="button"
+				style="display:none;"
+				id="rawButton"
+				title="{$mod_strings['LBL_BUTTON_RAW_TITLE']}"
+				value="{$mod_strings['LBL_RAW_BUTTON_LABEL']}"
+				onclick="open_popup('Emails', 800, 600, '', true, true, '', 'show_raw', '', '{$focus->id}');"
+			/>
+EOD
+
+);
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$action_button = smarty_function_sugar_action_menu(array(
+    'id' => 'archived_emails_edit_action_buttons',
+    'buttons' => $buttons,
+    'class' => 'clickMenu fancymenu',
+), $xtpl);
+
+$xtpl->assign("ACTION_BUTTON", $action_button);
+
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	JAVASCRIPT VARS
 $jsVars  = '';
