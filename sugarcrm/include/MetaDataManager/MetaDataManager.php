@@ -283,7 +283,7 @@ class MetaDataManager {
 
 
         foreach ( $allSugarFields as $fieldName) {
-            $fieldData = array('templates' => array());
+            $fieldData = array('views' => array());
             // Check each platform in order of precendence to find the "best" controller
             foreach ( $this->platforms as $platform ) {
                 $controller = "clients/{$platform}/fields/{$fieldName}/{$fieldName}.js";
@@ -303,7 +303,7 @@ class MetaDataManager {
             foreach ( $backwardsPlatforms as $platform ) {
                 $templateDirs[] = "clients/{$platform}/fields/{$fieldName}/";
             }
-            $fieldData['templates'] = $this->fetchTemplates($templateDirs);
+            $fieldData['views'] = $this->fetchTemplates($templateDirs);
             
             $result[$fieldName] = $fieldData;
         }

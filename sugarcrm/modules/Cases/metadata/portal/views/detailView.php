@@ -48,11 +48,6 @@ $viewdefs['Cases']['portal']['view']['detail'] = array(
                     'name' => 'date_modified',
                     'label' => 'Modifed Date',
                 ),
-                5 =>
-                array(
-                    'name' => 'leradio_c',
-                    'label' => 'LeRadio',
-                ),
             ),
         ),
     ),

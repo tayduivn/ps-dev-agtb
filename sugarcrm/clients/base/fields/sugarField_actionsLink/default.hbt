@@ -1,0 +1,4 @@
+<div class="btn-group pull-right"><a class="btn" href="#" data-toggle="dropdown">Actions<span class="caret"></span></a>
+<ul class="dropdown-menu"> <li><a href="#{{model.module}}/{{{getFieldValue model "id"}}}"><i class="icon-list-alt"></i>Details</a></li> 
+<li><a href="#{{model.module}}/{{{getFieldValue model "id"}}}/edit"><i class="icon-pencil"></i> Edit</a></li>  
+<li><a href="#{{model.module}}/{{{getFieldValue model "id"}}}/delete"><i class="icon-trash"></i> Delete</a></li> </ul>     </div>
