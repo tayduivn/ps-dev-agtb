@@ -335,7 +335,7 @@ html {
 }
 
 #scroll {
-  margin: 10px 0;
+  margin: 5px 0 10px;
   height: 80%;
   position: absolute;
   left: 0;
@@ -625,8 +625,8 @@ color: @gray;
   background: url(../img/brand_256.png) 50% 50% no-repeat;
   background-size: 70%;
   text-indent: -7000px;
-  margin: 15px auto 15px;
-  width: 260px;
+  margin: 5px auto 15px;
+  width: 220px;
   height: auto;
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
@@ -645,8 +645,7 @@ color: @gray;
 --------------*/
 .pad {
   background: @white;
-  margin: 10px 10px;
-	.border-radius(3px);
+  margin: 0;
 }
 #createRecord.form-horizontal .control-group > label  {
   width: 25% !important;
@@ -654,14 +653,15 @@ color: @gray;
   float: left !important;
   text-align: right !important;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
 }
 #createRecord input, #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
   width: 75% !important;
+  padding: 0;
+  height: 26px;
   border: none;
   background: none;
   box-shadow: none;
-  height: 26px;
   display: block;
 }
 #createRecord.form-horizontal .controls {
@@ -675,26 +675,26 @@ color: @gray;
 	display: block;
   padding: 10px;
   margin: 0;
-  border-top: 1px solid darken(@grayLighter, 5%);
+  border-top: 1px solid darken(@grayLighter, 1%);
 }
 #createRecord .avatar {
   height: 32px;
   width: 32px;
 }
 
-li.divider-horizontal {
+.onL .nav-collapse li.divider-horizontal {
   background: @black;
-  height: 10px;
+  #gradient > .vertical(lighten(@black, 25%), lighten(@black, 15%));
+  height: 20px;
   display: block;
-  line-height: 10px;
-  padding: 10px;
 }
+
 
 /* Log In
 ----------*/
 #login {
 	background: #E61718 url(../img/leather-red.png);
-  @shadow: inset 0 -4px 60px rgba(0,0,0,.8);
+  @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
 }
 #login .modal, #login .modal-header, #login .modal-footer, #login .modal-body {
@@ -706,7 +706,7 @@ background: none;
 .box-shadow(@shadow);
 }
 #login input, #login .btn {
-  width: 260px !important; 
+  width: 220px !important; 
   margin: 0 auto !important;
   padding: 10px !important; 
   @shadow:  1px 2px 0 rgba(0,0,0,.2);
@@ -715,17 +715,15 @@ background: none;
 }
 
 #login .btn {
-#gradient > .vertical( darken(@red, 15%), darken(@red, 35%));
 @shadow: 0 1px 0 rgba(0,0,0,.3), inset -1px -1px 0 rgba(0,0,0,.2), inset 1px 1px 0 rgba(0,0,0,.2);
 .box-shadow(@shadow);
-color: @white;
-text-shadow: 0 -1px 0 rgba(0,0,0,.6);
+text-shadow: 0 1px 0 rgba(255,255,255,.6);
+font-weight: 600;
 }
 
 #login .modal input[type=submit] {  
   @shadow:  1px 1px 0 rgba(0,0,0,.2);
   .box-shadow(@shadow);
-  width: 260px !important;
 }
 #login .modal input:focus {
   border: none;

@@ -73,12 +73,65 @@ h1 {font-size: 26px !important;}
   .border-radius(0px);
 }
 
+/* tour */
+.tourSee {
+  color: @white;
+  position: absolute;
+  .border-radius(15px);
+  height: 20px;
+  width: 20px;
+  border: 5px solid @white;
+  z-index: @zindexModal;
+}
+.tourSee span {
+  display: block;
+  margin-top: 25px;
+  margin-left: -30px;
+  text-align: center;
+  width: 80px;
+  font-size: 11px;
+  text-transform: Uppercase;
+}
+
+#tourCube {
+  top: 5px;
+  left: 25px;
+}
+#tourAdd {
+  top: 65px;
+  right: 60px;
+}
+#tourModules {
+  top: 5px;
+  left: 102px;
+}
+#tourUser {
+  top: 5px;
+  right: 122px;
+}
+#tourCreate {
+  top: 5px;
+  right: 30px;
+}
+#tourRefine {
+top: 65px;
+right: 20px;
+}
+#tourUSearch {
+top: 5px;
+right: 320px;
+}
+#tourSort {
+top: 100px;
+left: 58px;
+}
+
 /* activity and twitter */
 
 article {
   position: relative;
 	display: block;
-  padding: 10px;
+  padding: 10px 30px 10px 10px;
   line-height: @baseLineHeight;
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
@@ -99,15 +152,15 @@ article p {
 article p:last-child {
 	margin: 0;
 }
-#activity article:nth-child(even), #twitter article:nth-child(even), #sActivity article:nth-child(even), .modal article:nth-child(even) {
-	background: @grayLighter;
+article:nth-child(even) {
+	background-color: lighten(@grayLighter, 1%);
 }
 #sActivity article {
 	padding: 10px 45px 10px 0;
 	position: relative !important;
 }
 
-#sActivity article:hover {
+article:hover {
 	background: #e1f0fa;
 }
 
@@ -301,7 +354,7 @@ article .avatar {
 }
 
 .block-footer {
-  padding: 10px 15px;
+  padding: 10px;
   margin-bottom: 0;
   text-align: center;
   #gradient > .vertical(@grayLighter, @white);
@@ -354,7 +407,8 @@ position: relative;
 }
 
 .card2 .row-fluid {
-  padding: 5px 0;
+  position: relative;
+  padding: 6px 0 7px;
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
 .card2 .row-fluid:last-child {
@@ -363,6 +417,7 @@ position: relative;
 
 .card input, .card select, .card textarea, .card .btn {
   margin: -12px 0 -8px;
+  font-weight: 600;
 }
 
 .card textarea {
@@ -384,17 +439,35 @@ position: relative;
   margin: -12px 0 -8px -3px;
 }
 
-.card .span2 label {
-  color: @gray;
+.card .span2  {
   padding: 10px;
-  font-weight: bold;
-  margin: -12px 0;
+  margin: 0;
+}
+.card .span2 strong  {
+  color: @gray;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 400;
 }
 
 .card [class^=span] {
   position: relative;
   padding: 10px 0;
+  line-height: 14px;
   border-bottom: darken(@grayLighter, 5%) solid 1px;
+}
+.card .span4 {
+  margin-right: 10px;
+  margin-left: 5px;
+  padding: 10px 0 10px 5px;
+}
+.card .row-fluid .span4:last-child, .card .span10 {
+  margin-right: 0;
+  margin-left: 5px;
+  padding: 10px 0 10px 5px;
+}
+.card .row-fluid {
+  position: relative;
 }
 .card .row-fluid:last-child .span10 {
   border-bottom: none !important;
@@ -418,10 +491,10 @@ position: relative;
   border: none;
 }
 
-#sActivity article .actions,  #activity article .actions, #stream tr .actions {
+article .actions, #stream tr .actions {
   display: none;
 }
-#sActivity article:hover .actions, #twitter article:hover .actions, #activity article:hover .actions, #stream tr:hover .actions {
+article:hover .actions, #stream tr:hover .actions {
   display: inline-block;
 }
 
@@ -787,13 +860,15 @@ footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
 
 /* Editable 
 --------------*/
-.editable input, .editable select, .editable textarea {
-  width: auto;
-  position: absolute;
-  top: 4px;
-  left: 2px;
+.card2 .icon-pencil {position: absolute; left: 78px; top: 8px; padding: 0 2px !important;.opacity(60);}
+.card .icon-pencil {position: absolute; left: 121px; top: 11px; padding: 0 2px !important;.opacity(60);}
+
+.card2 form, .card2 input, .card2 select, .card2 textarea {
+  position: relative;
+  margin: -2px 0 -3px -2px !important;
   z-index: 1020;
 }
+.eSelect:hover {}
 
 /* Actions 
 --------------*/
@@ -983,12 +1058,13 @@ a.active [class^="icon-"]{
   background-color: rgba(255,0,0,.25);
 }
 
-.navbar [class^="icon-"] {
-  color: @white;
+.navbar a [class^="icon-"] {
+  color: @white !important;
 }
 .navbar .advanced {
-  padding: 12px;
+  padding: 6px 10px;
   margin-right: -10px;
+  margin-top: -30px;
   text-decoration: none;
 }
 
@@ -1208,9 +1284,6 @@ article p {
 }
 article p:last-child {
 	margin: 0;
-}
-#activity article:nth-child(odd), #twitter article:nth-child(odd), #sActivity article:nth-child(odd), .modal article:nth-child(odd) {
-	background: @grayLighter;
 }
 
 /* mobile menu foo */

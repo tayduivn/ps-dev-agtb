@@ -16,9 +16,13 @@
           })
           $(".eStatus").editable('blah.php',{ 
             indicator : 'Saving ...',
-            data      : "{'Urgent':'Urgent','High':'High','Medium':'Medium', 'selected':'Low'}",
+            data      : "{'New':'New','Open':'Open','Closed':'Closed','Pending':'Pending'}",
             type      : "select"
           })
-
+          $(".ePriority").editable('blah.php',{ 
+            indicator : 'Saving ...',
+            data      : "{'Urgent':'Urgent','High':'High','Medium':'Medium', 'Low':'Low'}",
+            type      : "select"
+          })
     	});
 }(window.jQuery)

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script type="text/javascript">document.write(unescape("%3Cscript src='" + (("https:" == document.location.protocol) ? "https" : "http") + "://c.mouseflow.com/projects/ebb434a0-064b-4a60-9162-caeccde19a7b.js' type='text/javascript'%3E%3C/script%3E"));</script>
   <meta charset="utf-8">
-  <title>Bad links in Pitch - 20543 - SugarCRM</title>
+  <title>Bad links in Pitch - 20508 - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -47,14 +48,15 @@
             <li class="dropdown" id="createList">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Create Bug</a></li>
+                <li><a href="create2.html">Create Bug</a></li>
                 <li><a href="#">Create Case</a></li>
               </ul>
             </li>              
           </ul>
-          <div id="searchForm">        
+          <div id="searchForm">    
             <form class="navbar-search pull-right" action="">
               <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+               <a href="#adminSearch" class="pull-right advanced" data-toggle="modal" rel="tooltip" title="Advanced Search Options" id="searchAdvanced"><i class="icon-cog"></i></a>
             </form>
           </div>
         </div><!-- /.nav-collapse -->
@@ -71,7 +73,7 @@
           <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
           <ul class="dropdown-menu menu">
             <li><a href="#">Duplicate</a></li>
-            <li><a href="edit.html">Edit</a></li>
+            <li><a href="edit2.html">Edit</a></li>
             <li><a href="#">Delete</a></li>
           </ul>
         </div>
@@ -123,51 +125,28 @@
             <div class="span10">You have to hide the footer to see the "Print" and "Back to Top" links</div>
           </div>       
         </div>
-        <div class="block filtered">
+        <div class="block filtered" id="moduleLog">
           <h4>Activity Log</h4>
-          <form class="form-addit form-horizontal hide" action="">
-            <ul class="nav nav-tabs">
-              <li class="active"><a href="#note" data-toggle="tab">Note</a></li>
-              <li><a href="#link" data-toggle="tab">Link</a></li>
-              <li><a href="#document" data-toggle="tab">Document</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="note">
-                <input id="addit" value="" class="span3" placeholder="Add a note ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-              <div class="tab-pane" id="link">
-                <input id="addit" value="" class="span3" placeholder="Add a link ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-              <div class="tab-pane" id="document">
-                <input id="addit" value="" class="span3" placeholder="Add a document ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-            </div>
-          </form> 
           <form class="form-search hide" action="">
-            <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
+            <input value="" class="span4" placeholder="Refine activity ...">
           </form> 
-          <div id="activity">
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                Assigned to changed from <a href="/users/mitani">Majed Itani</a> to <a href="/users/toreilly">Tim O'Reilly</a><br>
-                <date class="date">Posted just a second ago</date>
-              </p>
-            </article> 
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                Priority changed from Urgent to High by <a href="/users/mitani">Majed Itani</a><br>
-                <date class="date">Posted 2 days ago</date>
-              </p>
-            </article>
-            <ul class="nav nav-pills actions" id="">
-              <li>  
-                <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
-              </li>        
-            </ul>
-          </div>
+          <article data-type="update" data-pubdate="2012-02-16">
+            <p>
+              Assigned to changed from <a href="/users/mitani">Majed Itani</a> to <a href="/users/toreilly">Tim O'Reilly</a><br>
+              <date class="date">Posted just a second ago</date>
+            </p>
+          </article> 
+          <article data-type="update" data-pubdate="2012-02-16">
+            <p>
+              Priority changed from Urgent to High by <a href="/users/mitani">Majed Itani</a><br>
+              <date class="date">Posted 2 days ago</date>
+            </p>
+          </article>
+          <ul class="nav nav-pills actions">
+            <li>  
+              <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+            </li>        
+          </ul>
         </div>
       </div>
       <div class="span5 divleft">
@@ -198,9 +177,9 @@
             <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
           </form>
           <article>
-            <span class="label label-note">Note</span>
+            <span class="label label-document">Document</span>
             <span>
-              <a data-toggle="modal" href="#imgModal"><b>Admin Screenshot</b> <small>(.jpg)</small></a>, This is a screenshot I added to show the admin in all of it's glory. Added 2 hours ago by <a href="">Sabra Khan</a>
+              <a data-toggle="modal" href="#screenModal"><b>Admin Screenshot</b> <small>(.jpg)</small></a>, This is a screenshot I added to show the admin in all of it's glory. Added 2 hours ago by <a href="">Sabra Khan</a>
             </span>
             <ul class="nav nav-pills actions hide">
               <li class="dropdown pull-right">  
@@ -214,7 +193,7 @@
           <article>
             <span class="label label-note">Note</span>
             <span>
-              <a href="../img/word.doc"><b>Dashboard Screenshot</b> <small>(.doc)</small></a>, This is a detailed doc I added to explain the dashboard view. Added 3 hours ago by <a href="">Sabra Khan</a>
+              Call Wes to find out if this is intended behavior. Added 3 hours ago by <a href="">Sabra Khan</a>
             </span>
             <ul class="nav nav-pills actions hide">
               <li class="dropdown pull-right">  
@@ -248,8 +227,6 @@
       <div class="btn-toolbar pull-right">
         <div class="btn-group">
           <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
-          <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
-          <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
         </div>
         <div class="btn-group">
           <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
@@ -280,7 +257,7 @@
   <div class="modal-body">
     <article data-type="update" data-pubdate="2012-02-16">
       <a href="users/toreilly" class="pull-left" data-author_id="toreilly">
-        <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
+        <img src="../img/avatar_uwelcome.jpg" class="avatar" alt="avatar toreilly">
       </a>
       <p>
         <a href="users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
@@ -294,11 +271,10 @@
   </div>
 </div>
 
-
 <div class="modal hide" id="screenModal">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3><span class="label label-lead">Screenshot_776.png</span></h3>
+    <h3><span class="label label-document">Document</span> Admin Screenshot</h3>
   </div>
   <div class="modal-body">
     <img src="http://placehold.it/500x300" class="avatar" alt="avatar abcindustries">
@@ -332,50 +308,6 @@
   </div>
 </div>
 
-<div class="modal hide" id="leadModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3><span class="label label-lead">Lead</span></h3>
-  </div>
-  <div class="modal-body">
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/toreilly" class="pull-left" data-author_id="toreilly">
-        <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
-      </a>
-      <p>
-        <a href="users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
-        <date class="date">Posted 1 week ago</date>
-      </p>
-    </article>
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-        <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-      </a>
-      <p>
-        <a href="users/mitani">Majed Itani</a> added <a href="users/toreilly">Tim O'Reilly</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-        <br>
-        <date class="date">Posted 4 days ago</date>
-      </p>
-    </article>               
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-        <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-      </a>
-      <p>
-        <a href="users/mitani">Majed Itani</a> added <a href="users/toreilly">Tim O'Reilly</a> as a <a href="">contact</a> and a <a href="">lead</a>
-        <br>
-        <date class="date">Posted 1 week ago</date>
-      </p>
-    </article>
-  </div>
-  <div class="modal-footer">
-    <form class="">
-      <label>Post Comment</label>
-      <input type="text" class="wide">
-      <a href="#" class="btn"  data-dismiss="modal">Reply</a>
-    </form>
-  </div>
-</div>
 <!-- dynamic generation -->
 <div class="modal hide" id="adminAdd">
   <div class="modal-header">

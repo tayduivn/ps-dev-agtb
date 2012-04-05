@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script type="text/javascript">document.write(unescape("%3Cscript src='" + (("https:" == document.location.protocol) ? "https" : "http") + "://c.mouseflow.com/projects/ebb434a0-064b-4a60-9162-caeccde19a7b.js' type='text/javascript'%3E%3C/script%3E"));</script>
   <meta charset="utf-8">
   <title>Dashboard - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -41,15 +42,17 @@
             <li class="dropdown" id="createList">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Create Bug</a></li>
+                <li><a href="create2.html">Create Bug</a></li>
                 <li><a href="#">Create Case</a></li>
               </ul>
             </li>              
           </ul>
-          <div id="searchForm">        
+          <div id="searchForm">
             <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+                <a href="#adminSearch" class="pull-right advanced" data-toggle="modal" rel="tooltip" title="Advanced Search Options" id="searchAdvanced"><i class="icon-cog"></i></a>
             </form>
+
           </div>
         </div><!-- /.nav-collapse -->
       </div>
@@ -60,9 +63,6 @@
       <div class="span8">
         <div class="thumbnail" id="moduleWidgetBugs">
           <h1><a href="bugs.html">Bugs</a> <small>(5 of 30)</small></h1>
-          <form class="form-search hide" action="">
-              <input id="searchBugsQuery" value="" class="span6" placeholder="Refine this list ...">
-          </form>
           <table class="table table-striped datatable">
             <thead>
               <tr>
@@ -74,13 +74,13 @@
             </thead>
             <tbody>
               <tr>
-                <td>20543</td>
-                <td><a href="detail.html">Bad links in Pitch</a></td>
+                <td>20508</td>
+                <td><a href="detail2.html">Bad links in Pitch</a></td>
                 <td>High</td>
                 <td>Open</td>
               </tr>
               <tr>
-                <td>20546</td>
+                <td>20509</td>
                 <td><a href="">Broken images in pdf</a></td>
                 <td>High</td>
                 <td>Open</td>
@@ -112,7 +112,7 @@
           </div>
           <ul class="nav nav-pills actions" id="bugsModuleActions">
             <li>  
-              <a href="#adminAdd" data-toggle="modal" rel="tooltip" title="Add an Account" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
+              <a href="create2.html" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
             </li>
             <li>  
               <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
@@ -121,10 +121,6 @@
         </div>
         <div class="thumbnail" id="moduleWidgetCases">
           <h1><a href="cases.html">Cases</a> <small>(4 of 4)</small></h1>
-          <form class="form-search hide" action="">
-                <input id="searchCasesQuery" value="" class="span6" placeholder="Refine this list ...">
-          </form>
-          <div class="scroll">
             <table class="table table-striped datatable">
               <thead>
                 <tr>
@@ -166,10 +162,9 @@
                 </tr>              
               </tbody>
             </table>
-          </div>
           <ul class="nav nav-pills actions" id="casesModuleActions">
             <li>  
-              <a data-toggle="modal" href="#adminAdd" rel="tooltip" title="Add an Account" id="casesModuleActionsAdd"><i class="icon-plus"></i></a>
+              <a data-toggle="modal" href="#adminAdd" rel="tooltip" title="Add a Case" id="casesModuleActionsAdd"><i class="icon-plus"></i></a>
             </li>
             <li>  
               <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
@@ -178,7 +173,7 @@
         </div>
       </div>  
       <div class="span4">
-        <div class="thumbnail filtered" id="moduleWidgetActivity">
+        <div class="thumbnail filtered" id="moduleActivity">
           <h1>My Activity <small>(10 of 30)</small></h1>
           <form class="form-addit form-horizontal hide" action="">
             <ul class="nav nav-tabs">
@@ -252,9 +247,6 @@
           </div>
           <ul class="nav nav-pills actions" id="bugsModuleActions">
             <li>  
-              <a href="" rel="tooltip" title="Add an Account" class="addit" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
-            </li>
-            <li>  
               <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
             </li>        
           </ul>
@@ -268,7 +260,7 @@
       <div class="span9">
         <div class="btn-toolbar pull-right">
           <div class="btn-group">
-            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
+            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn" id="tour"><i class="icon-road"></i> Tour</a>
           </div>
           <div class="btn-group">
             <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
@@ -281,13 +273,69 @@
 
   <!-- Tour Guide -->
   <div class="modal hide" id="systemTour">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">×</a>
+      <h3>Tour the Portal</h3>
+    </div>
+    <div class="modal-body">
+      <p>The primary actions to get things done in the portal.</p>
+    </div>
+    <div class='pointsolight'>
+    <div id="tourCube" class="tourSee"><span>Dashboard</span></div>
+    <div id="tourCreate" class="tourSee"><span>Quick create</span></div>
+    <div id="tourUser" class="tourSee"><span>User admin</span></div>
+    <div id="tourModules" class="tourSee"><span>Modules</span></div>
+    <div id="tourUSearch" class="tourSee"><span>Universal search</span></div>
+    <div id="tourSort" class="tourSee"><span>Sort columns</span></div>
+    <div id="tourRefine" class="tourSee"><span>Filter<br>items</span></div>
+    <div id="tourAdd" class="tourSee"><span>Add<br>item</span></div>
+    </div>
   </div>
+
 
   <!-- dynamic generation -->
   <div class="modal hide" id="adminAdd">
     <div class="modal-header">
       <a class="close" data-dismiss="modal">×</a>
-      <h3>Add an Account</h3>
+      <h3>Add a Bug</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <fieldset>
+          <div class="control-group">
+            <label for="input01" class="control-label">Name</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="input01" class="control-label">Label</label>
+            <div class="controls">
+              <input type="text" id="input01" class="input-xlarge">
+            </div>
+          </div>                    
+          <div class="control-group">
+            <label for="textarea" class="control-label">Label</label>
+            <div class="controls">
+              <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button data-loading-text="Saving..." class="btn loading btn-primary">
+        Save
+      </button>
+      <button class="btn cancel" data-dismiss="modal">Cancel</button>
+    </div>
+  </div>
+
+  <!-- dynamic generation -->
+  <div class="modal hide" id="adminSearch">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">×</a>
+      <h3>Advanced Search Options</h3>
     </div>
     <div class="modal-body">
       <form class="form-horizontal">

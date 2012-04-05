@@ -1144,7 +1144,7 @@ table {
 .table th,
 .table td {
   position: relative;
-  padding: 8px;
+  padding: 6px 10px 7px;
   line-height: 18px;
   text-align: left;
   vertical-align: top;
@@ -1384,7 +1384,7 @@ a [class*=" icon-"] {
 /* makes the font 16px */
 .icon-sm:before {
   vertical-align: top;
-  font-size: 14px;
+  font-size: 12px;
 }
 /* makes the font 26px */
 .icon-md:before {
@@ -1964,6 +1964,8 @@ li[class*=" icon-"].icon-large:before {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+  z-index: 1030;
+  width: 230px;
 }
 .well {
   min-height: 20px;
@@ -2048,14 +2050,12 @@ li[class*=" icon-"].icon-large:before {
   border-color: #cdcccb #cdcccb #a8a6a4;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  border: 1px solid #a8a6a4;
-  border-bottom-color: #8f8c8a;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.075);
   cursor: pointer;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   *margin-left: .3em;
@@ -3972,7 +3972,7 @@ html {
   display: none;
 }
 #scroll {
-  margin: 10px 0;
+  margin: 5px 0 10px;
   height: 80%;
   position: absolute;
   left: 0;
@@ -4296,8 +4296,8 @@ html {
   background: url(../img/brand_256.png) 50% 50% no-repeat;
   background-size: 70%;
   text-indent: -7000px;
-  margin: 15px auto 15px;
-  width: 260px;
+  margin: 5px auto 15px;
+  width: 220px;
   height: auto;
   -webkit-transition: all .2s linear;
   -moz-transition: all .2s linear;
@@ -4314,10 +4314,7 @@ html {
 --------------*/
 .pad {
   background: #ffffff;
-  margin: 10px 10px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  margin: 0;
 }
 #createRecord.form-horizontal .control-group > label {
   width: 25% !important;
@@ -4325,17 +4322,18 @@ html {
   float: left !important;
   text-align: right !important;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
 }
 #createRecord input,
 #createRecord textarea,
 #createRecord select,
 #createRecord .uneditable-input {
   width: 75% !important;
+  padding: 0;
+  height: 26px;
   border: none;
   background: none;
   box-shadow: none;
-  height: 26px;
   display: block;
 }
 #createRecord.form-horizontal .controls {
@@ -4349,26 +4347,33 @@ html {
   display: block;
   padding: 10px;
   margin: 0;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid #f2f2f2;
 }
 #createRecord .avatar {
   height: 32px;
   width: 32px;
 }
-li.divider-horizontal {
+.onL .nav-collapse li.divider-horizontal {
   background: #000000;
-  height: 10px;
+  background-color: #363636;
+  background-image: -moz-linear-gradient(top, #404040, #262626);
+  background-image: -ms-linear-gradient(top, #404040, #262626);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#404040), to(#262626));
+  background-image: -webkit-linear-gradient(top, #404040, #262626);
+  background-image: -o-linear-gradient(top, #404040, #262626);
+  background-image: linear-gradient(top, #404040, #262626);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#404040', endColorstr='#262626', GradientType=0);
+  height: 20px;
   display: block;
-  line-height: 10px;
-  padding: 10px;
 }
 /* Log In
 ----------*/
 #login {
   background: #e61718 url(../img/leather-red.png);
-  -webkit-box-shadow: inset 0 -4px 60px rgba(0, 0, 0, 0.8);
-  -moz-box-shadow: inset 0 -4px 60px rgba(0, 0, 0, 0.8);
-  box-shadow: inset 0 -4px 60px rgba(0, 0, 0, 0.8);
+  -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
 }
 #login .modal,
 #login .modal-header,
@@ -4384,7 +4389,7 @@ li.divider-horizontal {
 }
 #login input,
 #login .btn {
-  width: 260px !important;
+  width: 220px !important;
   margin: 0 auto !important;
   padding: 10px !important;
   -webkit-box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
@@ -4393,26 +4398,16 @@ li.divider-horizontal {
   border: none;
 }
 #login .btn {
-  background-color: #7b0c0d;
-  background-image: -moz-linear-gradient(top, #a01011, #440707);
-  background-image: -ms-linear-gradient(top, #a01011, #440707);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#a01011), to(#440707));
-  background-image: -webkit-linear-gradient(top, #a01011, #440707);
-  background-image: -o-linear-gradient(top, #a01011, #440707);
-  background-image: linear-gradient(top, #a01011, #440707);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a01011', endColorstr='#440707', GradientType=0);
   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
-  color: #ffffff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  font-weight: 600;
 }
 #login .modal input[type=submit] {
   -webkit-box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
-  width: 260px !important;
 }
 #login .modal input:focus {
   border: none;

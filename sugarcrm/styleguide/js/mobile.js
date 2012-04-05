@@ -34,12 +34,12 @@
 		$('body').find('#searchForm').toggleClass('hide');
 	});	
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.cube').on('click', function () {
+    $('.cube').live('click', function () {
 	      $('html').find('body').toggleClass('onL');
 	      return false;
     });
     // trigger the module menu - this could be a tap function but zepto will not honor return false
-    $('.launch').on('click', function () {
+    $('.launch').live('click', function () {
 		$('html').find('body').toggleClass('onR');
 		return false;
     });

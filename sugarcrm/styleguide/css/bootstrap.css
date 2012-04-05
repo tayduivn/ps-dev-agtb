@@ -1144,7 +1144,7 @@ table {
 .table th,
 .table td {
   position: relative;
-  padding: 8px;
+  padding: 6px 10px 7px;
   line-height: 18px;
   text-align: left;
   vertical-align: top;
@@ -1572,7 +1572,7 @@ a [class*=" icon-"] {
 /* makes the font 16px */
 .icon-sm:before {
   vertical-align: top;
-  font-size: 14px;
+  font-size: 12px;
 }
 /* makes the font 26px */
 .icon-md:before {
@@ -2152,6 +2152,8 @@ li[class*=" icon-"].icon-large:before {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+  z-index: 1030;
+  width: 230px;
 }
 .well {
   min-height: 20px;
@@ -2236,14 +2238,12 @@ li[class*=" icon-"].icon-large:before {
   border-color: #cdcccb #cdcccb #a8a6a4;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  border: 1px solid #a8a6a4;
-  border-bottom-color: #8f8c8a;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.075);
   cursor: pointer;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   *margin-left: .3em;
@@ -3749,6 +3749,7 @@ input[type="submit"].btn.small {
   display: inline-block;
   zoom: 1;
   *display: inline;
+  text-align: left;
 }
 .chzn-container .chzn-drop {
   background: #fff;
@@ -4891,11 +4892,64 @@ h1 {
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
+/* tour */
+.tourSee {
+  color: #ffffff;
+  position: absolute;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  height: 20px;
+  width: 20px;
+  border: 5px solid #ffffff;
+  z-index: 1050;
+}
+.tourSee span {
+  display: block;
+  margin-top: 25px;
+  margin-left: -30px;
+  text-align: center;
+  width: 80px;
+  font-size: 11px;
+  text-transform: Uppercase;
+}
+#tourCube {
+  top: 5px;
+  left: 25px;
+}
+#tourAdd {
+  top: 65px;
+  right: 60px;
+}
+#tourModules {
+  top: 5px;
+  left: 102px;
+}
+#tourUser {
+  top: 5px;
+  right: 122px;
+}
+#tourCreate {
+  top: 5px;
+  right: 30px;
+}
+#tourRefine {
+  top: 65px;
+  right: 20px;
+}
+#tourUSearch {
+  top: 5px;
+  right: 320px;
+}
+#tourSort {
+  top: 100px;
+  left: 58px;
+}
 /* activity and twitter */
 article {
   position: relative;
   display: block;
-  padding: 10px;
+  padding: 10px 30px 10px 10px;
   line-height: 18px;
   border-bottom: 1px solid #e8e8e8;
 }
@@ -4914,17 +4968,14 @@ article p {
 article p:last-child {
   margin: 0;
 }
-#activity article:nth-child(even),
-#twitter article:nth-child(even),
-#sActivity article:nth-child(even),
-.modal article:nth-child(even) {
-  background: #f5f5f5;
+article:nth-child(even) {
+  background-color: #f8f8f8;
 }
 #sActivity article {
   padding: 10px 45px 10px 0;
   position: relative !important;
 }
-#sActivity article:hover {
+article:hover {
   background: #e1f0fa;
 }
 /* Activity streams */
@@ -5112,7 +5163,7 @@ article .actions,
   margin-bottom: 0px;
 }
 .block-footer {
-  padding: 10px 15px;
+  padding: 10px;
   margin-bottom: 0;
   text-align: center;
   background-color: #f9f9f9;
@@ -5176,7 +5227,8 @@ td .actions {
   margin: 0 0 20px;
 }
 .card2 .row-fluid {
-  padding: 5px 0;
+  position: relative;
+  padding: 6px 0 7px;
   border-bottom: 1px solid #e8e8e8;
 }
 .card2 .row-fluid:last-child {
@@ -5187,6 +5239,7 @@ td .actions {
 .card textarea,
 .card .btn {
   margin: -12px 0 -8px;
+  font-weight: 600;
 }
 .card textarea {
   margin: -9px 0 -8px;
@@ -5205,16 +5258,35 @@ td .actions {
 .card .span4 .btn {
   margin: -12px 0 -8px -3px;
 }
-.card .span2 label {
-  color: #58595b;
+.card .span2 {
   padding: 10px;
-  font-weight: bold;
-  margin: -12px 0;
+  margin: 0;
+}
+.card .span2 strong {
+  color: #58595b;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 400;
 }
 .card [class^=span] {
   position: relative;
   padding: 10px 0;
+  line-height: 14px;
   border-bottom: #e8e8e8 solid 1px;
+}
+.card .span4 {
+  margin-right: 10px;
+  margin-left: 5px;
+  padding: 10px 0 10px 5px;
+}
+.card .row-fluid .span4:last-child,
+.card .span10 {
+  margin-right: 0;
+  margin-left: 5px;
+  padding: 10px 0 10px 5px;
+}
+.card .row-fluid {
+  position: relative;
 }
 .card .row-fluid:last-child .span10 {
   border-bottom: none !important;
@@ -5236,14 +5308,11 @@ td .actions {
 .actions li:first-child {
   border: none;
 }
-#sActivity article .actions,
-#activity article .actions,
+article .actions,
 #stream tr .actions {
   display: none;
 }
-#sActivity article:hover .actions,
-#twitter article:hover .actions,
-#activity article:hover .actions,
+article:hover .actions,
 #stream tr:hover .actions {
   display: inline-block;
 }
@@ -5642,13 +5711,28 @@ footer .btn-toolbar.pull-left {
 }
 /* Editable 
 --------------*/
-.editable input,
-.editable select,
-.editable textarea {
-  width: auto;
+.card2 .icon-pencil {
   position: absolute;
-  top: 4px;
-  left: 2px;
+  left: 78px;
+  top: 8px;
+  padding: 0 2px !important;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+.card .icon-pencil {
+  position: absolute;
+  left: 121px;
+  top: 11px;
+  padding: 0 2px !important;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+.card2 form,
+.card2 input,
+.card2 select,
+.card2 textarea {
+  position: relative;
+  margin: -2px 0 -3px -2px !important;
   z-index: 1020;
 }
 /* Actions 
@@ -5881,12 +5965,13 @@ a.active [class^="icon-"] {
 .the-icons i:hover {
   background-color: rgba(255, 0, 0, 0.25);
 }
-.navbar [class^="icon-"] {
-  color: #ffffff;
+.navbar a [class^="icon-"] {
+  color: #ffffff !important;
 }
 .navbar .advanced {
-  padding: 12px;
+  padding: 6px 10px;
   margin-right: -10px;
+  margin-top: -30px;
   text-decoration: none;
 }
 .btn [class^="icon-"] {
@@ -6105,12 +6190,6 @@ a.active [class^="icon-"] {
   }
   article p:last-child {
     margin: 0;
-  }
-  #activity article:nth-child(odd),
-  #twitter article:nth-child(odd),
-  #sActivity article:nth-child(odd),
-  .modal article:nth-child(odd) {
-    background: #f5f5f5;
   }
   /* mobile menu foo */
   html {

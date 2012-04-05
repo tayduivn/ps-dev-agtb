@@ -34,6 +34,9 @@
       }
     }
 
+    // do this if greater than 960px page width
+    if ( $(window).width() > 768) {		
+
     // tooltip demo
     $('body').tooltip({
       selector: "a[rel=tooltip]"
@@ -56,7 +59,15 @@
       .click(function(e) {
         e.preventDefault()
       })
-
+    $("a[rel=popoverTop]")
+      .popover({
+        placement: "top"
+      })
+      .click(function(e) {
+        e.preventDefault()
+      })
+      
+    }
     // button state demo
     $('.loading')
       .click(function () {
@@ -70,6 +81,11 @@
 
     // javascript build logic
     var inputsComponent = $("#listed input");
+
+		// tour
+    $('#tour').on('click', function (e) {
+			$('.pointsolight').prependTo('body');
+    })
 
 		// remove a close item
     $('.close').on('click', function (e) {
@@ -105,10 +121,6 @@
 	$('.search').on('click', function () {
 	    $(this).toggleClass('active');
 	    $(this).parent().parent().parent().find('.dataTables_filter').toggle();
-	    return false;
-	})
-	$('.filtered .search').on('click', function () {
-	    $(this).toggleClass('active');
 	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
 	    return false;
 	})
@@ -122,6 +134,11 @@
 	    $(this).find('.actions .btn.btn-success').css('color','#fff');
 	    return false;
 	})
+  
+  $('.dblclick').hover( 
+    function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
+    function () {$('.icon-pencil').remove();}
+	)
   
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
 $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
