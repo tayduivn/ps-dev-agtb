@@ -1,3 +1,3 @@
 <div class="controls"><label class="control-label" for="input01">{{label}}</label>
-<select name="{{name}}" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value="{{{this.key}}}" {{in this.key ../value "selected"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class="help-block">
+<select name="{{name}}" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value="{{{this.key}}}" {{has this.key ../value "selected"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class="help-block">
 </p> </div>
