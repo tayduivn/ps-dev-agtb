@@ -795,7 +795,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     			if (!empty($def['studio'][$this->_view]) && $def['studio'][$this->_view] == "required")
     			{
     				return true;
-    }
+                }
     			else if (!empty($def['studio']['required']) && $def['studio']['required'] == true)
     			{
     				return true;
@@ -804,7 +804,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     		else if ($def['studio'] == "required" ){
     		  return true;
     		}
-    }
+         }
         return false;
     }
 

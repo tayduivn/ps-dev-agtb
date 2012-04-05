@@ -35,40 +35,6 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
     	) ;
 
 
-    /*
-    * Return the layout, padded out with (empty) and (filler) fields ready for display
-    */
-    public function getLayout ()
-    {
-//        $viewdefs = array () ;
-//        $fielddefs = $this->_fielddefs;
-//        $fielddefs [ $this->FILLER [ 'name' ] ] = $this->FILLER ;
-//        $fielddefs [ MBConstants::$EMPTY [ 'name' ] ] = MBConstants::$EMPTY ;
-//
-//        foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel )
-//        {
-//            foreach ( $panel as $rowID => $row )
-//            {
-//                foreach ( $row as $colID => $fieldname )
-//                {
-//                    if (isset ($this->_fielddefs [ $fieldname ]))
-//                    {
-//                        $viewdefs [ $panelID ] [ $rowID ] [ $colID ] = self::_trimFieldDefs( $this->_fielddefs [ $fieldname ] ) ;
-//                    }
-//                    elseif (isset($this->_originalViewDef [ $fieldname ]) && is_array($this->_originalViewDef [ $fieldname ]))
-//                    {
-//                        $viewdefs [ $panelID ] [ $rowID ] [ $colID ] = self::_trimFieldDefs( $this->_originalViewDef [ $fieldname ] ) ;
-//                    }
-//                    else
-//                    {
-//                        $viewdefs [ $panelID ] [ $rowID ] [ $colID ] = array("name" => $fieldname, "label" => $fieldname);
-//                    }
-//                }
-//            }
-//        }
-        return $this->_viewdefs ;
-    }
-
 
     /**
      * helper to pack a row with $cols members of [empty]
@@ -134,7 +100,7 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
     protected function _convertToCanonicalForm($panels , $fielddefs)
     {
         //$previousViewDef = $this->getFieldsFromLayout($this->implementation->getViewDefs());
-        //$currentFields = $this->getFieldsFromLayout($this->_viewdefs);
+        //$currentFields = $this->getFieldsFromLayout($panels);
 
         $canonicalPanels = array();
 
@@ -165,7 +131,17 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
                     }
                     else {
                         // field => add the field def.
-                        $lastField = $this->getNewRowItem($cell, $fielddefs[$fieldName]);
+                        if (isset($this->_originalViewDef[$fieldName]))  {
+                            $source = $this->_originalViewDef[$fieldName];
+                        }
+                        elseif (isset($fielddefs[$fieldName])) {
+                            $source = self::_trimFieldDefs($fielddefs[$fieldName]);
+                        }
+                        else {
+                            $source = $cell;
+                        }
+
+                        $lastField = $this->getNewRowItem($source, $fielddefs[$fieldName]);
                     }
 
                 }
@@ -234,15 +210,6 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 
         return $internalPanels;
     }
-
-    /**
-     * here we go from POST vars => internal metadata format
-     * @param $fielddefs
-     */
-//    protected function _populateFromRequest(&$fielddefs)
-//    {
-//
-//    }
 
     /**
      * Returns a list of fields, generally from the original (not customized) viewdefs
