@@ -354,6 +354,8 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testConvertToCanonicalForm($expected, $input)
     {
+        // need this to prime our viewdefs
+        $this->_parser->testInstallPreviousViewdefs(array('panels' => $expected));
         $output = $this->_parser->testConvertToCanonicalForm($input);
         //print_r($output);
         $this->assertEquals($expected, $output);
