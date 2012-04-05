@@ -60,7 +60,7 @@ fixtures.metadata = {
                 "leradio_c": {
                     "name": "leradio_c",
                     "type": "radioenum",
-                    "options": "Elastic_boost_options" // Temporary, TODO: Pull from app list strings
+                    "options": "Elastic_boost_options"
                 }
             },
             "relationships": {
@@ -222,13 +222,13 @@ fixtures.metadata = {
                         {view: "edit"}
                     ]
                 },
-"detail": {
-    "type": "rows",
-    "components": [
-        {view: "detail"},
-        {view: "subpanel"}
-    ]
-},
+                "detail": {
+                    "type": "rows",
+                    "components": [
+                        {view: "detail"},
+                        {view: "subpanel"}
+                    ]
+                },
                 "list": {
                     //Default layout is a single view
                     "type": "simple",

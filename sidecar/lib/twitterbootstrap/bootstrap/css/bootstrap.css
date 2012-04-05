@@ -3849,7 +3849,7 @@ article p {
 -------------------------------------------------- */
 a.cube {
   float: left;
-  background-image: url(/img/cube.png);
+  background-image: url(../img/cube.png);
   background-position: 0 7px;
   background-repeat: no-repeat;
   display: block;
