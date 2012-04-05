@@ -27,7 +27,7 @@ class moduleApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'create' => array(
-                'reqType' => 'PUT',
+                'reqType' => 'POST',
                 'path' => array('<module>'),
                 'pathVars' => array('module'),
                 'method' => 'createRecord',
@@ -43,7 +43,7 @@ class moduleApi extends SugarApi {
                 'longHelp' => 'include/api/html/module_retrieve_help.html',
             ),
             'update' => array(
-                'reqType' => 'POST',
+                'reqType' => 'PUT',
                 'path' => array('<module>','?'),
                 'pathVars' => array('module','record'),
                 'method' => 'updateRecord',
@@ -51,7 +51,7 @@ class moduleApi extends SugarApi {
                 'longHelp' => 'include/api/html/module_update_help.html',
             ),
             'delete' => array(
-                'reqType' => 'POST',
+                'reqType' => 'PUT',
                 'path' => array('<module>','?'),
                 'pathVars' => array('module','record'),
                 'method' => 'deleteRecord',
