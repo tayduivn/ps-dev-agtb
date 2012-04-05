@@ -620,11 +620,11 @@ fixtures.metadata = {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
-                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{in this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{has this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
                         " : " +
-                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{in this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{has this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
                         " " +
-                        "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{in this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                        "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{has this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
                         " <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
@@ -724,7 +724,7 @@ fixtures.metadata = {
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
                 "edit": {
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{in this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{has this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
                 "default": {
@@ -804,6 +804,25 @@ fixtures.metadata = {
                     "{{else}}javascript:void(0){{/if}}\" class=\"{{class}}\">" +
                     "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
+        },
+        "iframe": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                }
+            },
+            controller: "{" +
+                "unformat:function(value){\n" +
+                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
+                "return value\n" +
+                "}" +
+                "}"
         },
         "textarea": {
             "detail": {
