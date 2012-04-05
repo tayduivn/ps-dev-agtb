@@ -98,7 +98,8 @@ class moduleApi extends SugarApi {
             }
         }
 
-        return $bean->save();
+        $bean->save();
+        return $bean->id;
     }
 
     protected function loadBean($api, $args, $aclToCheck = 'read') {
@@ -188,6 +189,8 @@ class moduleApi extends SugarApi {
     public function deleteRecord($api, $args) {
         $bean = $this->loadBean($api, $args, 'delete');
         $bean->mark_deleted($args['record']);
+
+        return array('id'=>$bean->id);
     }
 
 }
