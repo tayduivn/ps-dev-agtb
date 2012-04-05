@@ -130,6 +130,7 @@ width:70%;
         currentOffset: 0,
         limit: 0,
         totalHits: 0,
+        showMore: true,
         addModuleFilterHandlers: function()
         {
             $('.ftsModuleFilter').bind('click', function(e)
@@ -198,6 +199,7 @@ width:70%;
                 SUGAR.FTS.currentOffset = 0;
             }
 
+            SUGAR.FTS.showMore = true;
             $('#sugar_full_search_results').showLoading();
             //TODO: Check if all modules are selected, then don't send anything down.
             var m = this.getSelectedModules();
@@ -245,13 +247,13 @@ width:70%;
         },
         toogleShowMore : function()
         {
-            if( SUGAR.FTS.currentOffset + SUGAR.FTS.limit >= SUGAR.FTS.totalHits)
+            if( (SUGAR.FTS.currentOffset + SUGAR.FTS.limit < SUGAR.FTS.totalHits) && SUGAR.FTS.showMore)
             {
-               $('#showMoreDiv').hide();
+                $('#showMoreDiv').show();
             }
             else
             {
-               $('#showMoreDiv').show();
+                $('#showMoreDiv').hide();
             }
         },
         toggleAdvancedOptions: function()
@@ -334,6 +336,7 @@ width:70%;
                 SUGAR.FTS.addModuleFilterHandlers();
             }
             this.pending--;
+            SUGAR.FTS.showMore = false;
             SUGAR.FTS.toogleShowMore();
             $('#sugar_full_search_results').hideLoading();
         };
