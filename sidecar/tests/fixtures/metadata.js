@@ -66,7 +66,7 @@ fixtures.metadata = {
             "relationships": {
             },
             "views": {
-                "editView": {
+                "edit": {
                     "buttons": [
                         {
                             name: "save_button",
@@ -111,7 +111,7 @@ fixtures.metadata = {
                     ]
 
                 },
-                "detailView": {
+                "detail": {
                     "buttons": [
                         {
                             name: "edit_button",
@@ -144,7 +144,7 @@ fixtures.metadata = {
 
                 },
                 //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
-                "listView": {
+                "list": {
                     "buttons": [
                         {
                             name: "show_more_button",
@@ -208,7 +208,7 @@ fixtures.metadata = {
                     ]
                 },
                 //Subpanel layout defs
-                "subpanelView": {
+                "subpanel": {
 
                 }
             },
@@ -219,21 +219,21 @@ fixtures.metadata = {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "editView"}
+                        {view: "edit"}
                     ]
                 },
 "detail": {
     "type": "rows",
     "components": [
-        {view: "detailView"},
-        {view: "subpanelView"}
+        {view: "detail"},
+        {view: "subpanel"}
     ]
 },
                 "list": {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "listView"}
+                        {view: "list"}
                     ]
                 },
                 //Example of a sublayout. Two columns on the top and one view below that
@@ -243,20 +243,20 @@ fixtures.metadata = {
                         {"layout": {
                             "type": "columns",
                             "components": [
-                                {view: "editView"},
-                                {view: "detailView"}
+                                {view: "edit"},
+                                {view: "detail"}
                             ]
                         }},
-                        {"view": "subpanelView"}
+                        {"view": "subpanel"}
                     ]
                 },
                 //Layout with context switch. Edit view with related detail view
                 "complexlayout": {
                     "type": "columns",
                     "components": [
-                        {"view": "editView"},
+                        {"view": "edit"},
                         {
-                            "view": "detailView",
+                            "view": "detail",
                             //Name of link to pull the new context from, In this case a single account
                             "context": "accounts"
                         }
@@ -266,7 +266,7 @@ fixtures.metadata = {
                 "detailplus": {
                     "type": "fluid",
                     "components": [
-                        {view: "subpanelView",
+                        {view: "subpanel",
                             size: 2},
                         {layout: "edit",
                             size: 6},
@@ -308,7 +308,7 @@ fixtures.metadata = {
             "relationships": {
             },
             "views": {
-                "editView": {
+                "edit": {
                     "buttons": [
                         {
                             name: "save_button",
@@ -347,7 +347,7 @@ fixtures.metadata = {
                     ]
 
                 },
-                "detailView": {
+                "detail": {
                     "buttons": [
                         {
                             name: "edit_button",
@@ -377,7 +377,7 @@ fixtures.metadata = {
 
                 },
                 //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
-                "listView": {
+                "list": {
                     "panels": [
                         {
                             "label": "LBL_PANEL_1",
@@ -392,7 +392,7 @@ fixtures.metadata = {
                     ]
                 },
                 //Subpanel layout defs
-                "subpanelView": {
+                "subpanel": {
 
                 }
             },
@@ -403,21 +403,21 @@ fixtures.metadata = {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "editView"}
+                        {view: "edit"}
                     ]
                 },
                 "detail": {
                     "type": "rows",
                     "components": [
-                        {view: "detailView"},
-                        {view: "subpanelView"}
+                        {view: "detail"},
+                        {view: "subpanel"}
                     ]
                 },
                 "list": {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "listView"}
+                        {view: "list"}
                     ]
                 },
                 //Example of a sublayout. Two columns on the top and one view below that
@@ -427,20 +427,20 @@ fixtures.metadata = {
                         {"layout": {
                             "type": "columns",
                             "components": [
-                                {view: "editView"},
-                                {view: "detailView"}
+                                {view: "edit"},
+                                {view: "detail"}
                             ]
                         }},
-                        {"view": "subpanelView"}
+                        {"view": "subpanel"}
                     ]
                 },
                 //Layout with context switch. Edit view with related detail view
                 "complexlayout": {
                     "type": "columns",
                     "components": [
-                        {"view": "editView"},
+                        {"view": "edit"},
                         {
-                            "view": "detailView",
+                            "view": "detail",
                             //Name of link to pull the new context from, In this case a single account
                             "context": "accounts"
                         }
@@ -450,7 +450,7 @@ fixtures.metadata = {
                 "detailplus": {
                     "type": "fluid",
                     "components": [
-                        {view: "subpanelView",
+                        {view: "subpanel",
                             size: 2},
                         {layout: "edit",
                             size: 6},
@@ -519,10 +519,10 @@ fixtures.metadata = {
     'sugarFields': {
         "text": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -549,10 +549,10 @@ fixtures.metadata = {
         },
         "float": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -576,11 +576,11 @@ fixtures.metadata = {
         },
         "datetime": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
                 },
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -613,10 +613,10 @@ fixtures.metadata = {
         },
         "datetimecombo": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
@@ -692,10 +692,10 @@ fixtures.metadata = {
         },
         "integer": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -720,9 +720,9 @@ fixtures.metadata = {
 
         "enum": {
             "views": {
-                "detailView": {
+                "detail": {
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView": {
+                "edit": {
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{in this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
@@ -745,10 +745,10 @@ fixtures.metadata = {
         },
         radioenum: {
             views: {
-                detailView: {
+                detail: {
                     template: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n"
                 },
-                editView: {
+                edit: {
                     template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
                         "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
                 }
@@ -756,10 +756,10 @@ fixtures.metadata = {
         },
         "checkbox": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
@@ -778,12 +778,12 @@ fixtures.metadata = {
                 "}"
         },
         "password": {
-            "editView": {
+            "edit": {
                 "type": "basic",
                 "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
                     "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
-            "loginView": {
+            "login": {
                 "type": "basic",
                 "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
@@ -806,10 +806,10 @@ fixtures.metadata = {
             }
         },
         "textarea": {
-            "detailView": {
+            "detail": {
                 "type": "basic",
                 "template": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n"},
-            "editView": {
+            "edit": {
                 "type": "basic",
                 "template": "<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"}
         },
@@ -830,7 +830,7 @@ fixtures.metadata = {
             }
         },
         "sugarField_primaryAddress": {
-            "detailView": {
+            "detail": {
                 "template": "<h3>{{label}}<\/h3>{{{getFieldValue model \"primary_address_street\"}}}<br> {{{getFieldValue model \"primary_address_city\"}}}," +
                     " {{{getFieldValue model \"primary_address_postalcode\"}}} {{{getFieldValue model \"primary_address_country\"}}}"
             }
@@ -848,7 +848,7 @@ fixtures.metadata = {
 
     },
     'viewTemplates': {
-        "detailView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "detail": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
             "{{sugarField ../context ../this ../model}}" +
@@ -861,7 +861,7 @@ fixtures.metadata = {
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
-        "editView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "edit": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
             "{{sugarField ../context ../this ../model}}" +
@@ -886,8 +886,8 @@ fixtures.metadata = {
             "{{/each}}" + "{{#each meta.buttons}}" +
             "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" + "</form>",
-        "subpanelView": "",
-        "listView": '<div class="span12 container-fluid subhead">' +
+        "subpanel": "",
+        "list": '<div class="span12 container-fluid subhead">' +
             '<h3>{{context.state.module}}</h3>' +
             "{{#each meta.panels}}" +
             '<div class="{{../name}}">' +

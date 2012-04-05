@@ -115,8 +115,11 @@
                 // the following line doesn't work, need to _.extend it or something.
                 // this.events = this.meta.events;
                 templateKey = "sugarField." + this.name + "." + this.view.name;
-
-                this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
+                var templateSource = this.meta;
+                if(this.meta.template) {
+                    templateSource = this.meta.template
+                }
+                this.templateC = app.template.get(templateKey) || app.template.compile(templateSource, templateKey);
             },
 
             /**

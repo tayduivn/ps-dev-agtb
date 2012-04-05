@@ -1,6 +1,0 @@
-<div class="controls">
-    <label class="control-label">{{label}}
-    {{#eachOptions options}}
-        <input type="radio" name="{{../name}}" value="{{this}}" {{eq this ../value "SELECTED"}}>{{this}}</label>
-    {{/each}}
-</div>
