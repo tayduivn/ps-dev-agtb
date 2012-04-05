@@ -27,12 +27,12 @@
  ********************************************************************************/
 *}
 {assign var='underscore' value='_'}
-{if $USE_GROUP_TABS}
+
 <script type="text/javascript">
 sugar_theme_gm_current = '{$currentGroupTab}';
 Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
 </script>
-{/if}
+
 
 {if $AJAX ne "1"}
 <div id="moduleList">
