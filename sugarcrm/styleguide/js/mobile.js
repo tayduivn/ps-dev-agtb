@@ -92,15 +92,15 @@
     });
 
     $('#listing > article:last-child a.show_more_posts').live('click', function(e){
-	    $(this).closest('article').remove();
-		inject_posts('append',$('#listing'),5);
-		return false;
+        $(this).closest('article').remove();
+	inject_posts('append',$('#listing'),5);
+	return false;
     });
 
-    $('#listing > article:first-child a.show_more_posts').live('click', function(e){
-	    $(this).closest('article').remove();
-	    inject_posts('prepend',$('#listing'),5);
-		return false;
+    $('#listing > article:nth-child(2) a.show_more_posts').live('click', function(e){
+	$(this).closest('article').remove();
+	inject_posts('prepend',$('#listing'),5);
+	return false;
     });
 
     if($('.alert').size()){
@@ -110,37 +110,39 @@
     }
 
     var post = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i></a><a href="" title="Remove"><i class="icon-trash icon-md"></i></a></span></span></article>',
-	    more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more posts...</a></div></article>';
+	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more posts...</a></div></article>';
 
     function inject_posts(order,anchor,numberofrecords){
-	    var posts = '';
+	var posts = '',
+	    topspacer = '<i></i>',
+	    domtopspacer = $('#listing > i');
         for(i=0;i<numberofrecords;i++){
-	        if(i===0 && order==='prepend') {
-		        posts = more_posts_link + posts;
-			}
-	        posts = posts + post;
-	        if(i===numberofrecords-1 && order==='append') {
-		        posts = posts+more_posts_link;
-			}
+		if(i===0 && order==='prepend') {
+		    posts = topspacer + more_posts_link + posts;
 		}
-	    if(order==='prepend' || order==='update'){
-		    anchor.prepend(posts);
-	    	if(anchor.find('article:not(.nav)').size() > 25) {
+		posts = posts + post;
+		if(i===numberofrecords-1 && order==='append') {
+		    posts = posts+more_posts_link;
+		}
+	}
+	if(order==='prepend' || order==='update'){
+	    anchor.children('i').remove();
+	    anchor.prepend(posts);
+	    if(anchor.find('article:not(.nav)').size() > 25) {
 	            anchor.find('article:not(.nav)').slice(20,25).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
-			}
-		} else if(order==="append") {
-		    anchor.append(posts);
-	    	if(anchor.find('article:not(.nav)').size() > 25) {
-		        var rmnav = anchor.find('article').slice(0,1).hasClass('nav');
-		        if(rmnav===true) {
-                    anchor.find('article').slice(0,1).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
-				}
-	            anchor.find('article:not(.nav)').slice(0,5).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
-	            $('#listing').prepend(more_posts_link);
-			}
-		}
-		setTimeout(function () {
-		    $('.deleted').remove();
-		}, 250);
+	    }
+        } else if(order==="append") {
+	    anchor.append(posts);
+	    if(anchor.find('article:not(.nav)').size() > 25) {
+                if(anchor.find('article:nth-child(2n)').hasClass('nav')===false) {
+		    anchor.children('i').remove();
+	            anchor.prepend(topspacer + more_posts_link);
+                }
+	        anchor.find('article:not(.nav)').slice(0,5).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+	    }
+	}
+	setTimeout(function () {
+	    $('.deleted').remove();
+	}, 250);
     }
 })(window.Zepto);
