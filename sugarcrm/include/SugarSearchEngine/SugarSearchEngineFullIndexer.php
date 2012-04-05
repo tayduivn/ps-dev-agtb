@@ -153,7 +153,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
         $this->results['totalTime'] = $totalTime;
         $GLOBALS['log']->info("Total time to populate full system index queue: $totalTime (s)");
-        $avgRecs = ($totalCount != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
+        $avgRecs = ($totalCount != 0 && $totalTime != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
         $GLOBALS['log']->info("Total number of records queued: $totalCount , records per sec. $avgRecs");
 
         return $this;
@@ -284,7 +284,9 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
                 $this->markBeansProcessed($processedBeans);
                 $docs = $processedBeans = array();
                 sugar_cache_reset();
-                gc_collect_cycles();
+                if( function_exists('gc_collect_cycles') )
+                    gc_collect_cycles();
+
                 $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
                 $currentMemUsage = memory_get_usage();
                 $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
@@ -336,7 +338,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         if($custom_join)
             $ret_array['from'] .= ' ' . $custom_join['join'];
 
-        $ret_array['from'] .= " INNER JOIN {$queuTableName} AS queue on queue.bean_id = {$bean->table_name}.id AND queue.processed = 0 ";
+        $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
         $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";
 
         return  $ret_array['select'] . $ret_array['from'] . $ret_array['where'];
@@ -382,7 +384,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         }
 
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
-        $avgRecs = ($count != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
+        $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
 
         $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
         return TRUE;

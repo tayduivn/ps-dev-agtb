@@ -144,25 +144,13 @@ SUGAR.append(SUGAR.themes, {
 	    		});
 	    		$(menuName).hoverscroll();
 	    		$(menuName).width(menuWidth);
-	    		
 
-	    		$(menuName).find("> li").each(function() {
-					$(this).unbind('mouseover');
-					$(this).unbind('mouseout');
-				});
-    		
 		    }
 		} else {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
-			
+
 			$.fn.hoverscroll.destroy($(menuName));
-			$("#moduleList").find("a").unbind();
-			var moduleListHTML = $("#moduleList").html();
-			$("#moduleList").empty();
-			$("#moduleList").html(moduleListHTML);
-			this.loadModuleList();
-			$('#moduleMenuOverFlowMore'+sugar_theme_gm_current).children('a').focus().blur();
 		}	
     },
     switchMenuMode: function() {
