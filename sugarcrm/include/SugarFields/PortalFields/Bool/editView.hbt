@@ -1,2 +1,0 @@
-<input type="hidden" name="{{name}}" value="0">
-<input type="checkbox" id="{{name}}" name="{{name}}" value="1" title='{{help}}' {{checked}}>

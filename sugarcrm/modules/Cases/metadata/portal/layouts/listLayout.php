@@ -5,7 +5,7 @@ $viewdefs['Cases']['portal']['layout']['list'] = array(
     array(
         0 =>
         array(
-            'view' => 'listView',
+            'view' => 'list',
         ),
     ),
 );

@@ -88,7 +88,8 @@ SUGAR.App = (function() {
              * @property {Object}
              */
             api: SUGAR.Api.getInstance({
-                baseUrl: opts.rest || "/rest/v10" // TODO: Change this default
+                baseUrl: opts.rest || "/rest/v10", // TODO: Change this default
+                platform: opts.platform
             })
         }, this, Backbone.Events);
     }
