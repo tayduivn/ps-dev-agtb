@@ -2228,6 +2228,8 @@ return str_replace(' > ','_',
 
         if (isset($extModule->field_defs['name']['db_concat_fields'])) {
             $select_piece = db_concat($secondaryTableAlias, $extModule->field_defs['name']['db_concat_fields']);
+        } else if(isset($field_def['rname']) && isset($extModule->field_defs[$field_def['rname']])) {
+         	$select_piece = $secondaryTableAlias . ".{$field_def['rname']}";
         } else {
             $select_piece = $secondaryTableAlias . '.name'; //. $secondaryTableAlias.'_name';
         }
