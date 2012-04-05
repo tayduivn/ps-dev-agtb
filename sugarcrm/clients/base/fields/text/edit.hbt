@@ -1,0 +1,1 @@
+<label class="control-label">{{label}}</label><textarea class="input-xlarge" id="textarea" rows="3">{{value}}</textarea>
