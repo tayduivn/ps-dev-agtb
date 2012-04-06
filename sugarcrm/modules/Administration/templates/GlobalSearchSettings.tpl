@@ -116,8 +116,6 @@
 <div id='selectFTSModules' class="yui-hidden">
     <div style="background-color: white; padding: 20px;">
         <div id='selectFTSModulesTable' ></div>
-        <br>
-        <span>{$MOD.LBL_SAVE_SCHED_WARNING}</span>
     </div>
 </div>
 <script type="text/javascript">
@@ -315,6 +313,9 @@
         },
         schedFullSystemIndex : function()
         {
+            if(!confirm(SUGAR.language.get('Administration','LBL_SAVE_SCHED_WARNING')))
+                return;
+
             var modules = SUGAR.getTranslatedEnabledModules();
             if(modules.length == 1)
             {
@@ -329,7 +330,7 @@
             };
 
             var buttons = [
-                { text: SUGAR.language.get('app_strings','LBL_SAVE_BUTTON_LABEL'), handler: handleSubmit, isDefault: true },
+                { text: SUGAR.language.get('Administration','LBL_FTS_INDEX_BUTTON'), handler: handleSubmit, isDefault: true },
                 { text: SUGAR.language.get('app_strings','LBL_CANCEL_BUTTON_LABEL'), handler: handleCancel }
             ];
 
