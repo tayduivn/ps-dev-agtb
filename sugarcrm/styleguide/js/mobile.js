@@ -39,13 +39,17 @@
 	});	
     // trigger the module menu - this could be a tap function but zepto will not honor return false
     $('.cube').live('click', function () {
-	      $('html').find('body').toggleClass('onL');
-	      return false;
+	$('#logo').trigger('swipeRight');
+	return false;
     });
     // trigger the module menu - this could be a tap function but zepto will not honor return false
     $('.launch').live('click', function () {
-		$('html').find('body').toggleClass('onR');
-		return false;
+	if($('body').hasClass('onR')===true){
+	    $('#create').trigger('swipeRight');
+	} else {
+	    $('#create').trigger('swipeLeft');
+	}
+	return false;
     });
 	$('article').live('swipeLeft',function () {
 		$(this).find('.grip').addClass('on');
@@ -56,8 +60,11 @@
 	    $(this).find('[id^=listing-action] span').addClass('hide').removeClass('on');
 	});	
     $('article .grip').live('click', function () {
-	    $(this).next('.actions').toggleClass('hide');
-	    $(this).toggleClass('on');
+	if($(this).hasClass('on')===false){
+	    $(this).closest('article').trigger('swipeLeft');
+	}else{
+	    $(this).closest('article').trigger('swipeRight');
+	}
     })
     // search toggle
     $('.navbar').find('#search').on('click', function () {
