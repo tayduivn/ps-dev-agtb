@@ -85,7 +85,9 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $scheduleDisableButton = empty($defaultEngine) ? 'disabled' : '';
         $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
         $schedulerCompleted = SugarSearchEngineFullIndexer::isFTSIndexScheduleCompleted($schedulerID);
+        $hide_fts_config = isset( $GLOBALS['sugar_config']['hide_full_text_engine_config'] ) ? $GLOBALS['sugar_config']['hide_full_text_engine_config'] : FALSE;
 
+        $sugar_smarty->assign("hide_fts_config", $hide_fts_config);
         $sugar_smarty->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
         $sugar_smarty->assign("fts_host", $config['host']);
         $sugar_smarty->assign("fts_port", $config['port']);
