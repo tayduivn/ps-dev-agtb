@@ -4,6 +4,14 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 class MetaDataFiles
 {
     /**
+     * Constants for this class, used for pathing metadata files
+     */
+    const PATHBASE    = '';
+    const PATHCUSTOM  = 'custom/';
+    const PATHWORKING = 'custom/working/';
+    const PATHHISTORY = 'custom/history/';
+
+    /**
      * Path prefixes for metadata files
      *
      * @var array
@@ -11,10 +19,10 @@ class MetaDataFiles
      * @static
      */
     public static $paths = array(
-        MB_BASEMETADATALOCATION => '' ,
-        MB_CUSTOMMETADATALOCATION => 'custom/' ,
-        MB_WORKINGMETADATALOCATION => 'custom/working/' ,
-        MB_HISTORYMETADATALOCATION => 'custom/history/',
+        MB_BASEMETADATALOCATION    => self::PATHBASE,
+        MB_CUSTOMMETADATALOCATION  => self::PATHCUSTOM,
+        MB_WORKINGMETADATALOCATION => self::PATHWORKING,
+        MB_HISTORYMETADATALOCATION => self::PATHHISTORY,
     );
 
     /**
@@ -64,20 +72,64 @@ class MetaDataFiles
         //END SUGARCRM flav=ent ONLY
     );
 
+    /**
+     * The path inside the $client directories to the views
+     *
+     * @var string
+     * @access public
+     * @static
+     */
     public static $viewsPath = 'views/';
 
+    /**
+     * Gets the file base names array
+     *
+     * @static
+     * @return array
+     */
     public static function getNames() {
         return self::$names;
     }
 
+    /**
+     * Gets the clients array
+     *
+     * @static
+     * @return array
+     */
     public static function getClients() {
         return self::$clients;
     }
 
+    /**
+     * Gets a particular client by name. $client should map to an index of the
+     * clients array.
+     *
+     * @static
+     * @param string $client The client to get
+     * @return string
+     */
+    public static function getClient($client) {
+        return empty(self::$clients[$client]) ? '' : self::$clients[$client];
+    }
+
+    /**
+     * Gets the file paths array
+     *
+     * @static
+     * @return array
+     */
     public static function getPaths() {
         return self::$paths;
     }
 
+    /**
+     * Gets the view type of a client based on the requested view
+     *
+     * @static
+     * @param string $view The requested view
+     * @return string
+     */
     public static function getViewClient($view) {
         if (!empty($view)) {
             if (strpos($view, 'portal') !== false) {
@@ -94,6 +146,16 @@ class MetaDataFiles
         return '';
     }
 
+    /**
+     * Gets a deployed metadata filename. This is generally called from a
+     * DeployedMetaDataImplementation instance.
+     *
+     * @static
+     * @param string $view The requested view type
+     * @param string $module The module for this metadata file
+     * @param string $type The type of metadata file location (custom, working, etc)
+     * @return string
+     */
     public static function getDeployedFileName($view, $module, $type = MB_CUSTOMMETADATALOCATION) {
         $type = strtolower($type);
         $paths = self::getPaths();
@@ -124,5 +186,38 @@ class MetaDataFiles
             $viewPath = '';
         }
 		return $paths[$type] . 'modules/' . $module . '/metadata/' . $viewPath . $names[$view] . '.php' ;
+    }
+
+    /**
+     * Gets an undeployed metadata filename. This is generally called from an
+     * UndeployedMetaDataImplementation instance.
+     *
+     * @static
+     * @param string $view The requested view
+     * @param string $module The module for this metadata file
+     * @param string $packageName The package for this metadata file
+     * @param string $type The type of metadata file to get (custom, working, etc)
+     * @return string
+     */
+    public static function getUndeployedFileName($view, $module, $packageName, $type = MB_BASEMETADATALOCATION) {
+        $type = strtolower($type);
+
+        // BEGIN ASSERTIONS
+        if ($type != MB_BASEMETADATALOCATION && $type != MB_HISTORYMETADATALOCATION) {
+            // just warn rather than die
+            $GLOBALS['log']->warning("UndeployedMetaDataImplementation->getFileName(): view type $type is not recognized");
+        }
+        // END ASSERTIONS
+
+        $names = self::getNames();
+
+        switch ($type) {
+            case MB_HISTORYMETADATALOCATION:
+                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/metadata/' . $names[$view] . '.php';
+            default:
+                // get the module again, all so we can call this method statically without relying on the module stored in the class variables
+                $mb = new ModuleBuilder();
+                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/metadata/' . $names[$view] . '.php';
+        }
     }
 }
