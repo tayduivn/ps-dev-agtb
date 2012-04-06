@@ -62,7 +62,7 @@ width:70%;
             <input type="hidden" name="module" value="Users">
             <input type="hidden" name="action" value="saveftsmodules">
             <input type="hidden" name="disabled_modules" value="" id="disabled_modules">
-
+            <input type="hidden" name="q" value="" id="save_q">
         <table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="30%">
             <tr>
                 <td colspan="2">
@@ -300,6 +300,8 @@ width:70%;
             }
             modules = modules == "" ? modules : modules.substr(1);
             document.getElementById('disabled_modules').value = modules;
+            document.getElementById('save_q').value = document.getElementById('ftsSearchField').value;
+
         },
         loadMore: function()
         {
@@ -363,7 +365,6 @@ width:70%;
     SUGAR.FTS.globalSearchEnabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchDisabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchEnabledTable.addRow({module: "", label: ""});
-    SUGAR.FTS.globalSearchDisabledTable.addRow({module: "", label: ""});
     SUGAR.FTS.globalSearchEnabledTable.render();
     SUGAR.FTS.globalSearchDisabledTable.render();
     {/literal}
