@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro
+//FILE SUGARCRM flav=pro ONLY
  if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User

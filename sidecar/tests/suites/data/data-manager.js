@@ -2,14 +2,13 @@ describe("DataManager", function() {
 
     var metadata,
         app = SUGAR.App,
-        dm = SUGAR.App.dataManager,
+        dm = SUGAR.App.data,
         server;
 
     beforeEach(function() {
         app.config.maxQueryResult = 2;
-        app.init({el: "body"});
         dm.reset();
-        metadata = SugarTest.loadJson("metadata");
+        metadata = SugarTest.loadFixture("metadata");
     });
 
     afterEach(function() {
@@ -78,7 +77,7 @@ describe("DataManager", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var bean = dm.createBean(moduleName, { id: "1234" });
 
-        var contact = SugarTest.loadJson("contact");
+        var contact = SugarTest.loadFixture("contact");
 
         server = sinon.fakeServer.create();
 
@@ -145,7 +144,7 @@ describe("DataManager", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadJson("contacts");
+        var contacts = SugarTest.loadFixture("contacts");
 
         server = sinon.fakeServer.create();
 
@@ -169,7 +168,7 @@ describe("DataManager", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadJson("contacts");
+        var contacts = SugarTest.loadFixture("contacts");
 
         server = sinon.fakeServer.create();
 

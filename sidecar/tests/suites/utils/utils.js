@@ -79,4 +79,70 @@ describe("utils", function() {
             expect(result).toEqual('');
         });
     });
+
+    describe('date', function() {
+        it("should guess date string formats with seconds", function() {
+            var value = '2012-03-27 01:48:00AM';
+            var result = utils.date.guessFormat(value);
+            expect(result).toEqual('Y-m-d h:i:sA');
+        });
+
+        it("should guess date string formats without seconds", function() {
+            var value = '2012-03-27 01:48 AM';
+            var result = utils.date.guessFormat(value);
+            expect(result).toEqual('Y-m-d h:i A');
+        });
+
+        it("should guess date string formats without ampm", function() {
+            var value = '2012-03-27 01:48:58';
+            var result = utils.date.guessFormat(value);
+            expect(result).toEqual('Y-m-d H:i:s');
+        });
+
+        it("should parse date strings into javascript date objects", function() {
+            var result = utils.date.parse('2012-03-27 01:48:32');
+            expect(result.toString()).toEqual('Tue Mar 27 2012 01:48:00 GMT-0700 (PDT)');
+
+        });
+
+        it("should format date objects into strings", function() {
+            var value = new Date(1332838080000);
+            var format = 'Y-m-d H:i:sA';
+            var result = utils.date.format(value, format);
+            expect(result).toEqual('2012-03-27 01:48:00AM');
+        });
+    });
+    describe("cookie", function() {
+        it("should set cookie values", function() {
+            var result = "";
+            var cName = "sidecarCookie";
+            var value = 'asdf';
+            SUGAR.App.utils.cookie.setCookie(cName, value, 1);
+            var i, x, y, ARRcookies = document.cookie.split(";");
+            for (i = 0; i < ARRcookies.length; i++) {
+                x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+                y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+                x = x.replace(/^\s+|\s+$/g, "");
+                if (x == cName) {
+                    result = unescape(y);
+                }
+            }
+            expect(result).toEqual(value);
+            SUGAR.App.utils.cookie.setCookie(cName, "", 1);
+        });
+        it("should get cookie values", function() {
+            var result = "";
+            var cName = "sidecarCookie";
+            var value = 'asdfasdf';
+            var exdays = 1;
+            var exdate = new Date();
+            exdate.setDate(exdate.getDate() + exdays);
+            var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+            document.cookie = cName + "=" + c_value;
+            result = SUGAR.App.utils.cookie.getCookie(cName);
+            expect(result).toEqual(value);
+            value = "";
+            c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+        });
+    });
 });

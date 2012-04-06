@@ -1,12 +1,5 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: dtam
- * Date: 1/31/12
- * Time: 12:26 PM
- * To change this template use File | Settings | File Templates.
- */
+var fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
-fixtures = typeof(fixtures) == "object" ? fixtures : {};
 fixtures.metadata = {
     _hash: '2q34aasdfwrasdfse',
     "modules": {
@@ -21,9 +14,9 @@ fixtures.metadata = {
                     "name": "case_number",
                     "type": "float",
                     round: 2,
-                    precision:2,
-                    number_group_seperator:",",
-                    decimal_seperator:"."
+                    precision: 2,
+                    number_group_seperator: ",",
+                    decimal_seperator: "."
                 },
                 "name": {
                     "name": "name",
@@ -40,15 +33,17 @@ fixtures.metadata = {
                 "status": {
                     "name": "status",
                     "type": "enum",
-                    "options": [
-                        {"key":"s1", "value":"s1"},
-                        {"key":"s2", "value":"s2"},
-                        {"key":"s3", "value":"s3"}
-                    ]
+                    "options": "case_status_dom"
+                },
+                "priority": {
+                    "name": "priority",
+                    "type": "enum",
+                    "multi": true,
+                    "options": "case_priority_dom"
                 },
                 "date_entered": {
                     "name": "date_entered",
-                    "type": "varchar"
+                    "type": "datetimecombo"
                 },
                 "created_by": {
                     "name": "created_by",
@@ -56,17 +51,22 @@ fixtures.metadata = {
                 },
                 "date_modified": {
                     "name": "date_modified",
-                    "type": "varchar"
+                    "type": "datetimecombo"
                 },
                 "modified_user_id": {
                     "name": "modified_user_id",
                     "type": "varchar"
+                },
+                "leradio_c": {
+                    "name": "leradio_c",
+                    "type": "radioenum",
+                    "options": "Elastic_boost_options" // Temporary, TODO: Pull from app list strings
                 }
             },
             "relationships": {
             },
             "views": {
-                "editView": {
+                "edit": {
                     "buttons": [
                         {
                             name: "save_button",
@@ -101,14 +101,17 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"}
 
+                                {name: "priority", label: "Priority"},
+                                {name: "description", label: "Description"},
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
 
                 },
-                "detailView": {
+                "detail": {
                     "buttons": [
                         {
                             name: "edit_button",
@@ -128,8 +131,11 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
-                                {name: "description", label: "Description"}
 
+                                {name: "priority", label: "Priority"},
+                                {name: "description", label: "Description"},
+                                {name: "date_modified", label: "Modifed Date"},
+                                {name: "leradio_c", label: "LeRadio"}
                             ]
                         }
                     ]
@@ -138,7 +144,7 @@ fixtures.metadata = {
 
                 },
                 //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
-                "listView": {
+                "list": {
                     "buttons": [
                         {
                             name: "show_more_button",
@@ -147,7 +153,7 @@ fixtures.metadata = {
                             class: "loading wide",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "this.context.state.collection.paginate({add:true, success:function(){console.log(\"in paginate success\");window.scrollTo(0,document.body.scrollHeight);}});" +
+                                    "this.context.state.collection.paginate({add:true, success:function(){window.scrollTo(0,document.body.scrollHeight);}});" +
                                     "}"
                             }
                         }
@@ -170,7 +176,7 @@ fixtures.metadata = {
                             label: " ",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "this.context.state.collection.paginate({page:-1, success:function(){console.log(\"in paginate success\");}});" +
+                                    "this.context.state.collection.paginate({page:-1, success:function(){}});" +
                                     "}"
                             }
                         },
@@ -181,7 +187,7 @@ fixtures.metadata = {
                             label: " ",
                             events: {
                                 click: "function(){ var self = this; " +
-                                    "console.log(this); this.context.state.collection.paginate({success:function(){console.log(\"in paginate success\");}});" +
+                                    "this.context.state.collection.paginate({success:function(){}});" +
                                     "}"
                             }
                         }
@@ -193,13 +199,16 @@ fixtures.metadata = {
                                 {name: "case_number", label: "Case Number", "class": "foo"},
                                 {name: "name", label: "Name"},
                                 {name: "status", label: "Status"},
+                                {name: "priority", label: "priority"},
+                                {name: "date_modified", label: "Modifed Date"},
+
                                 {type: "sugarField_actionsLink", label: "Actions"}
                             ]
                         }
                     ]
                 },
                 //Subpanel layout defs
-                "subpanelView": {
+                "subpanel": {
 
                 }
             },
@@ -210,21 +219,21 @@ fixtures.metadata = {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "editView"}
+                        {view: "edit"}
                     ]
                 },
-                "detail": {
-                    "type": "rows",
-                    "components": [
-                        {view: "detailView"},
-                        {view: "subpanelView"}
-                    ]
-                },
+"detail": {
+    "type": "rows",
+    "components": [
+        {view: "detail"},
+        {view: "subpanel"}
+    ]
+},
                 "list": {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "listView"}
+                        {view: "list"}
                     ]
                 },
                 //Example of a sublayout. Two columns on the top and one view below that
@@ -234,20 +243,20 @@ fixtures.metadata = {
                         {"layout": {
                             "type": "columns",
                             "components": [
-                                {view: "editView"},
-                                {view: "detailView"}
+                                {view: "edit"},
+                                {view: "detail"}
                             ]
                         }},
-                        {"view": "subpanelView"}
+                        {"view": "subpanel"}
                     ]
                 },
                 //Layout with context switch. Edit view with related detail view
                 "complexlayout": {
                     "type": "columns",
                     "components": [
-                        {"view": "editView"},
+                        {"view": "edit"},
                         {
-                            "view": "detailView",
+                            "view": "detail",
                             //Name of link to pull the new context from, In this case a single account
                             "context": "accounts"
                         }
@@ -257,7 +266,7 @@ fixtures.metadata = {
                 "detailplus": {
                     "type": "fluid",
                     "components": [
-                        {view: "subpanelView",
+                        {view: "subpanel",
                             size: 2},
                         {layout: "edit",
                             size: 6},
@@ -299,7 +308,7 @@ fixtures.metadata = {
             "relationships": {
             },
             "views": {
-                "editView": {
+                "edit": {
                     "buttons": [
                         {
                             name: "save_button",
@@ -338,7 +347,7 @@ fixtures.metadata = {
                     ]
 
                 },
-                "detailView": {
+                "detail": {
                     "buttons": [
                         {
                             name: "edit_button",
@@ -368,7 +377,7 @@ fixtures.metadata = {
 
                 },
                 //This is stored in a listviewdefs variable on the server, but its inconsistent with the rest of the app
-                "listView": {
+                "list": {
                     "panels": [
                         {
                             "label": "LBL_PANEL_1",
@@ -383,7 +392,7 @@ fixtures.metadata = {
                     ]
                 },
                 //Subpanel layout defs
-                "subpanelView": {
+                "subpanel": {
 
                 }
             },
@@ -394,21 +403,21 @@ fixtures.metadata = {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "editView"}
+                        {view: "edit"}
                     ]
                 },
                 "detail": {
                     "type": "rows",
                     "components": [
-                        {view: "detailView"},
-                        {view: "subpanelView"}
+                        {view: "detail"},
+                        {view: "subpanel"}
                     ]
                 },
                 "list": {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "listView"}
+                        {view: "list"}
                     ]
                 },
                 //Example of a sublayout. Two columns on the top and one view below that
@@ -418,20 +427,20 @@ fixtures.metadata = {
                         {"layout": {
                             "type": "columns",
                             "components": [
-                                {view: "editView"},
-                                {view: "detailView"}
+                                {view: "edit"},
+                                {view: "detail"}
                             ]
                         }},
-                        {"view": "subpanelView"}
+                        {"view": "subpanel"}
                     ]
                 },
                 //Layout with context switch. Edit view with related detail view
                 "complexlayout": {
                     "type": "columns",
                     "components": [
-                        {"view": "editView"},
+                        {"view": "edit"},
                         {
-                            "view": "detailView",
+                            "view": "detail",
                             //Name of link to pull the new context from, In this case a single account
                             "context": "accounts"
                         }
@@ -441,7 +450,7 @@ fixtures.metadata = {
                 "detailplus": {
                     "type": "fluid",
                     "components": [
-                        {view: "subpanelView",
+                        {view: "subpanel",
                             size: 2},
                         {layout: "edit",
                             size: 6},
@@ -475,7 +484,7 @@ fixtures.metadata = {
                             events: {
                                 click: "function(){ var self = this; " +
                                     " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.sugarAuth.login(args, {success:" +
-                                    "function(){console.log(\"logged in successfully!\");self.app.navigate('', self.model); }" +
+                                    "function(){console.log(\"logged in successfully dtam!\");}" +
                                     "});" +
                                     "}"
                             }
@@ -510,10 +519,10 @@ fixtures.metadata = {
     'sugarFields': {
         "text": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -531,36 +540,59 @@ fixtures.metadata = {
                 }
             },
             "events": {},
-            controller : "{" +
+            controller: "{" +
                 "render : function(){" +
-                    "this.app.sugarField.base.prototype.render.call(this);" +
+                "this.app.sugarField.base.prototype.render.call(this);" +
                 "}," +
                 "customCallback : function(){}" +
-            "}"
+                "}"
         },
-        "float":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+        "float": {
+            "views": {
+                "detail": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "edit": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
-                    "unformat:function(value){\n" +
+                "unformat:function(value){\n" +
                 "  value = SUGAR.App.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
-                        "return value\n" +
-                    "}," +
+                "return value\n" +
+                "}," +
                 "format:function(value){\n" +
                 " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
+        "url": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{#if value}}<a href=\"{{value}}\" target=\"_self\">{{value}}</a>{{/if}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{#if value}}<a href=\"{{value}}\" target=\"_self\">{{value}}</a>{{/if}}</span>"
+                }
+            },
+            controller: "{" +
+                "unformat:function(value){\n" +
+                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
                 "return value\n" +
                 "}" +
                 "}"
@@ -576,9 +608,82 @@ fixtures.metadata = {
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value.dateTime}}</span>"
+                }
+            },
+            controller: "{" +
+                "render:function(value){\n" +
+                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                "  	$(function() {" +
+                "$( \".datepicker\" ).datepicker({" +
+                "showOn: \"button\"," +
+                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
+                "buttonImageOnly: true" +
+                "});" +
+                "});\n" +
+                "}," +
+                "unformat:function(value){\n" +
+                "return value\n" +
+                "}," +
+                "format:function(value){\n" +
+                "var jsDate = app.utils.date.parse(value);\n" +
+                "jsDate = app.utils.date.roundTime(jsDate);\n" +
+                "value = {\n" +
+                "dateTime: value,\n" +
+                "//TODO Account for user prefs\n" +
+                "date: app.utils.date.format(jsDate, 'Y-m-d'),\n" +
+                "time: app.utils.date.format(jsDate, 'h:i:s'),\n" +
+                "hours: app.utils.date.format(jsDate, 'H'),\n" +
+                "minutes: app.utils.date.format(jsDate, 'i'),\n" +
+                "seconds: app.utils.date.format(jsDate, 's'),\n" +
+                "amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm',\n" +
+                "};\n" +
+                "return value\n" +
+                "},\n" +
+                "timeOptions:{" +
+                "    hours:[{key:\"00\",value:\"00\"},{key:\"01\",value:\"01\"},{key:\"02\",value:\"02\"},{key:\"03\",value:\"03\"},{key:\"04\",value:\"04\"}," +
+                "        {key:\"05\",value:\"05\"},{key:\"06\",value:\"06\"},{key:\"07\",value:\"07\"},{key:\"08\",value:\"08\"},{key:\"09\",value:\"09\"}," +
+                "        {key:\"10\",value:\"10\"},{key:\"11\",value:\"11\"},{key:\"12\",value:\"12\"},{key:\"13\",value:\"13\"},{key:\"14\",value:\"14\"}," +
+                "        {key:\"15\",value:\"15\"},{key:\"16\",value:\"16\"},{key:\"17\",value:\"17\"},{key:\"18\",value:\"18\"},{key:\"19\",value:\"19\"}," +
+                "        {key:\"20\",value:\"20\"},{key:\"21\",value:\"21\"},{key:\"22\",value:\"22\"},{key:\"23\",value:\"23\"}" +
+                "            ]," +
+                "    minutes:[{key:\"00\",value:\"00\"},{key:\"15\",value:\"15\"},{key:\"30\",value:\"30\"},{key:\"45\",value:\"45\"}]," +
+                "    amPm:[{key:\"am\",value:\"am\"}, {key:\"pm\",value:\"pm\"}]" +
+                "}," +
+                "bindDomChange: function (model, fieldName) {\n" +
+                "var self = this\n" +
+                "var date = this.$el.find('input');\n" +
+
+                "var hour = this.$el.find('.date_time_hours');\n" +
+                "var minute = this.$el.find('.date_time_minutes');\n" +
+                "date.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                " hour.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                "minute.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() +':'+ minute.val()+':00'));\n" +
+                "});\n" +
+                "}\n" +
+                "}"
+        },
+        "integer": {
+            "views": {
+                "detail": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "edit": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
@@ -592,68 +697,53 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
-        "enum":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<select name=\"{{name}}\" >{{#each options}}<option value=\"{{{this.key}}}\" {{eqEcho this.key ..\/value \"selected\"}}>{{this.value}}</option>{{/each}}</select>  <p class=\"help-block\">"+
+        "enum": {
+            "views": {
+                "detail": {
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "edit": {
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{has this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "default":{
-                    "type":"basic",
-                    "template":"<span name=\"{{name}}\">{{value}}</span>"
+                "default": {
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
-            controller:"{render: function() {\n"+
-            "                \/\/ If we don't have any data in the model yet\n"+
-            "                if (!(this.model instanceof Backbone.Model)) {\n"+
-            "                    return null;\n"+
-            "                }\n"+
-            "\n"+
-            "                this.value = this.model.has(this.name) ? this.model.get(this.name) : \"\";\n"+
-            "                this.$el.html(this.templateC(this));\n"+
-            "\n"+
-            "                var model = this.model;\n"+
-            "                var field = this.name;\n"+
-            "                var el = this.$el.find(\"select\");\n"+
-            "                var self = this;\n"+
 
-            "console.log(this);\n"+
-            "                \/\/Bind input to the model\n"+
-            "                el.on(\"change\", function(ev) {\n"+
-            "                   model.set(field, self.unformat(el.val()));\n"+
-            "                });\n"+
-            "\n"+
-            "                \/\/And bind the model to the input\n"+
-            "                model.on(\"change:\" + field, function(model, value) {\n"+
-            "                   el.val(self.format(value));\n"+
-            "                   console.log(value);"+
-            "                   $(\"select[name=\" + self.name + \"]\").trigger(\"liszt:updated\");"+
-            "                });\n"+
-            "                $('select[name=' + this.name + ']').chosen();\n"+
-            "                return this;\n"+
-            "            },\n"+
-            "format:function(value){\n" +
-                              " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
-                              "return value\n" +
-                              "}" +
-            "}"
+            controller: "{" +
+                "fieldType:\"select\",\n" +
+                "render:function(){" +
+                "   var result = this.app.sugarField.base.prototype.render.call(this);" +
+                "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
+                "   $('select').chosen();" +
+                "   return result;" +
+                "}" +
+                "" +
+                "\n}\n"
+        },
+        radioenum: {
+            views: {
+                detail: {
+                    template: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n"
+                },
+                edit: {
+                    template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
+                        "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
+                }
+            }
         },
         "checkbox": {
-            "views" : {
-                "detailView": {
+            "views": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
                         "<\/p> <\/div>"
-                    }
+                }
             },
             controller: "{\n" +
                 "unformat:function(value){\n" +
@@ -667,12 +757,12 @@ fixtures.metadata = {
                 "}"
         },
         "password": {
-            "editView": {
+            "edit": {
                 "type": "basic",
                 "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
                     "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
-            "loginView": {
+            "login": {
                 "type": "basic",
                 "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
@@ -768,72 +858,67 @@ fixtures.metadata = {
                     "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
+        "iframe": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                }
+            },
+            controller: "{" +
+                "unformat:function(value){\n" +
+                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
+                "return value\n" +
+                "}" +
+                "}"
+        },
         "textarea": {
-            "detailView": {
+            "detail": {
                 "type": "basic",
                 "template": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n"},
-            "editView": {
+            "edit": {
                 "type": "basic",
                 "template": "<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"}
         },
         "sugarField_actionsLink": {
             "default": {
                 "template": "<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>" +
-                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
-                    "  <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
-                    " <li><a href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
-            }
-        },
-        "sugarField_fullName": {
-            "default": {
-                "template": "{{{getfieldvalue model \"first_name\"}}} {{{getfieldvalue model \"last_name\"}}}"
-            },
-            "detailView": {
-                "template": "<h2>{{{getfieldvalue model \"first_name\"}}} {{{getfieldvalue model \"last_name\"}}}<\/h2>"
-            }
-        },
-        "sugarField_primaryAddress": {
-            "detailView": {
-                "template": "<h3>{{label}}<\/h3>{{{getfieldvalue model \"primary_address_street\"}}}<br> {{{getfieldvalue model \"primary_address_city\"}}}," +
-                    " {{{getfieldvalue model \"primary_address_postalcode\"}}} {{{getfieldvalue model \"primary_address_country\"}}}"
-            }
-        },
-        "sugarField_buttonSave": {
-            "default": {
-                "template": "<button class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\">{{label}}<\/button>"
-            }
-        },
-        "sugarField_buttonCancelSave": {
-            "default": {
-                "template": "<a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\/save\">Save<\/a><a class=\"btn btn-primary\" href=\"#{{model.module}}\/{{{getfieldvalue model \"id\"}}}\">Cancel<\/a>"
+                    "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
+                    "  <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
+                    " <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
             }
         }
 
     },
     'viewTemplates': {
-        "detailView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "detail": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
-        "editView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
+        "edit": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
@@ -843,14 +928,14 @@ fixtures.metadata = {
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugar_field ../../context ../../this ../../model}}</div>" +
+            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}" + "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" + "</form>",
-        "subpanelView": "",
-        "listView": '<div class="span12 container-fluid subhead">' +
+        "subpanel": "",
+        "list": '<div class="span12 container-fluid subhead">' +
             '<h3>{{context.state.module}}</h3>' +
             "{{#each meta.panels}}" +
             '<div class="{{../name}}">' +
@@ -864,22 +949,137 @@ fixtures.metadata = {
             '{{#each ../fields}}' +
             // SugarField requires the current context, field name, and the current bean in the context
             // since we are pulling from the collection rather than the default bean in the context
-            '<td class="dblclick">{{sugar_field ../../../context ../../../this ../this}}</td>' +
+            '<td class="dblclick">{{sugarField ../../../context ../../../this ../this}}</td>' +
             '{{/each}}' +
             '</tr>' +
             '{{/each}}' +
             '</tbody></table>' +
             '{{/each}}' +
             "{{#each meta.buttons}}" +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             "{{/each}}" +
             "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
             '<li>' +
-            "{{sugar_field ../context ../this ../model}}" +
+            "{{sugarField ../context ../this ../model}}" +
             '</li>' +
             "{{/each}}" +
             '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}' +
             '</ul>' +
             "</div>"
+    },
+    appListStrings: {
+        "case_priority_default_key": "P2",
+        "case_priority_dom": {"P1": "High", "P2": "Medium", "P3": "Low"},
+        "case_status_dom": {"New": "New", "Assigned": "Assigned", "Closed": "Closed", "Pending Input": "Pending Input", "Rejected": "Rejected", "Duplicate": "Duplicate"},
+        "campainglog_target_type_dom": {
+            "Contacts": "Contacts",
+            "Users": "Users",
+            "Prospects": "Targets",
+            "Leads": "Leads",
+            "Accounts": "Accounts"
+        },
+        "merge_operators_dom": {
+            "like": "Contains",
+            "exact": "Exactly",
+            "start": "Starts With"
+        },
+        "custom_fields_importable_dom": {
+            "true": "Yes",
+            "false": "No",
+            "required": "Required"
+        },
+        "Elastic_boost_options": [
+            "Disabled",
+            "Low Boost",
+            "Medium Boost",
+            "High Boost"
+        ],
+        "custom_fields_merge_dup_dom": [
+            "Disabled",
+            "Enabled",
+            "In Filter",
+            "Default Selected Filter",
+            "Filter Only"
+        ],
+        "navigation_paradigms": {
+            "m": "Modules",
+            "gm": "Grouped Modules"
+        },
+        "contract_status_dom": {
+            "notstarted": "Not Started",
+            "inprogress": "In Progress",
+            "signed": "Signed"
+        },
+        "contract_payment_frequency_dom": {
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "halfyearly": "Half yearly",
+            "yearly": "Yearly"
+        },
+        "contract_expiration_notice_dom": {
+            "1": "1 Day",
+            "3": "3 Days",
+            "5": "5 Days",
+            "7": "1 Week",
+            "14": "2 Weeks",
+            "21": "3 Weeks",
+            "31": "1 Month"
+        },
+        "oc_status_dom": {
+            "": "",
+            "Active": "Active",
+            "Inactive": "Inactive"
+        },
+        "projects_priority_options": {
+            "high": "High",
+            "medium": "Medium",
+            "low": "Low"
+        },
+        "projects_status_options": {
+            "notstarted": "Not Started",
+            "inprogress": "In Progress",
+            "completed": "Completed"
+        },
+        "chart_strings": {
+            "expandlegend": "Expand Legend",
+            "collapselegend": "Collapse Legend",
+            "clickfordrilldown": "Click for Drilldown",
+            "drilldownoptions": "Drill Down Options",
+            "detailview": "More Details...",
+            "piechart": "Pie Chart",
+            "groupchart": "Group Chart",
+            "stackedchart": "Stacked Chart",
+            "barchart": "Bar Chart",
+            "horizontalbarchart": "Horizontal Bar Chart",
+            "linechart": "Line Chart",
+            "noData": "Data not available",
+            "print": "Print",
+            "pieWedgeName": "sections"
+        }
+    },
+    appStrings: {
+        DATA_TYPE_DUE: "Due:",
+        DATA_TYPE_MODIFIED: "Modified:",
+        DATA_TYPE_SENT: "Sent:",
+        DATA_TYPE_START: "Start:",
+        DEFAULT: "Basic",
+        ERROR_EXAMINE_MSG: "  Please examine the error message below:",
+        ERROR_FULLY_EXPIRED: "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
+        ERROR_JS_ALERT_SYSTEM_CLASS: "System",
+        ERROR_JS_ALERT_TIMEOUT_MSG_1: "Your session is about to timeout in 2 minutes. Please save your work.",
+        ERROR_JS_ALERT_TIMEOUT_MSG_2: "Your session has timed out.",
+        ERROR_JS_ALERT_TIMEOUT_TITLE: "Session Timeout",
+        ERROR_LICENSE_EXPIRED: "Your company's license for SugarCRM needs to be updated. Only admins may login",
+        ERROR_LICENSE_VALIDATION: "Your company's license for SugarCRM needs to be validated. Only admins may login",
+        ERROR_MISSING_COLLECTION_SELECTION: "Empty required field",
+        ERROR_NOTIFY_OVERRIDE: "Error: ResourceObserver->notify() needs to be overridden.",
+        ERROR_NO_RECORD: "Error retrieving record.  This record may be deleted or you may not be authorized to view it.",
+        ERROR_TYPE_NOT_VALID: "Error. This type is not valid.",
+        ERROR_UNABLE_TO_RETRIEVE_DATA: "Error: Unable to retrieve data for {0} Connector.  The service may currently be inaccessible or the configuration settings may be invalid.  Connector error message: ({1}).",
+        ERR_ADDRESS_KEY_NOT_SPECIFIED: "Please specify 'key' index in displayParams attribute for the Meta-Data definition",
+        ERR_AJAX_LOAD: "An error has occured:",
+        ERR_AJAX_LOAD_FAILURE: "There was an error processing your request, please try again at a later time.",
+        ERR_AJAX_LOAD_FOOTER: "If this error persists, please have your administrator disable Ajax for this module",
+        ERR_BLANK_PAGE_NAME: "Please enter a page name."
     }
 };

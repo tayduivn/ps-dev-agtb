@@ -34,7 +34,7 @@ describe("Offline", function() {
 
         beforeEach(function() {
             app.init({el: "body"});
-            metadata = SugarTest.loadJson("things-metadata");
+            metadata = SugarTest.loadFixture("things-metadata");
             sqlHelper = new app.Offline.SqlHelper("Thing", metadata["Things"].beans["Thing"]);
         });
 
@@ -73,7 +73,7 @@ describe("Offline", function() {
             app.webSqlAdapter = db;
             app.dataManager.beanModel = app.Offline.Bean;
 
-            var metadata = SugarTest.loadJson("things-metadata");
+            var metadata = SugarTest.loadFixture("things-metadata");
             sa.open();
             sa.migrate(metadata);
             dm.declareModels(metadata);
@@ -247,7 +247,7 @@ describe("Offline", function() {
         var dm = app.dataManager;
 
         beforeEach(function() {
-            metadata = SugarTest.loadJson("metadata");
+            metadata = SugarTest.loadFixture("metadata");
             app.webSqlAdapter = db;
             dm.init();
             dbSpy = sinon.spy(db, "executeStatements");

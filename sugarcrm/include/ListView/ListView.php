@@ -228,6 +228,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
  */
  function process_dynamic_listview_rows($data,$parent_data, $xtemplateSection, $html_varName, $subpanel_def)
  {
+    global $subpanel_item_count;
     global $odd_bg;
     global $even_bg;
     global $hilite_bg;
@@ -236,6 +237,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
     $this->xTemplate->assign("BG_HILITE", $hilite_bg);
     $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
+    $subpanel_item_count = 0;
     $oddRow = true;
     $count = 0;
     reset($data);
@@ -276,6 +278,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
     while(list($aVal, $aItem) = each($data))
     {
+        $subpanel_item_count++;
         $aItem->check_date_relationships_load();
         // TODO: expensive and needs to be removed and done better elsewhere
 
@@ -467,22 +470,27 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
             }
         }
 
-        // this is for inline buttons on listviews
-        // bug#51275: smarty widget to help provide the action menu functionality as it is currently sprinkled throughout the app with html
-        require_once('include/Smarty/plugins/function.sugar_action_menu.php');
-        $tempid = create_guid();
-        $button_contents[0] = "<div style='display: inline' id='$tempid'>".$button_contents[0]."</div>";
-        $action_button = smarty_function_sugar_action_menu(array(
-            'id' => $tempid,
-            'buttons' => $button_contents,
-            'class' => 'clickMenu subpanel records fancymenu button',
-            'theme' => 'Sugar' //assign theme value to display dropdown menu on class theme
-        ), $this->xTemplate);
-        $this->xTemplate->assign('CLASS', "inlineButtons");
-        $this->xTemplate->assign('CELL_COUNT', ++$count);
-        //Bug#51275 for beta3 pre_script is not required any more
-        $this->xTemplate->assign('CELL', $action_button);
-        $this->xTemplate->parse($xtemplateSection.".row.cell");
+
+        // Make sure we have at least one button before rendering a column for
+        // the action buttons in a list view. Relevant bugs: #51647 and #51640.
+        if(isset($button_contents[0])) {
+            // this is for inline buttons on listviews
+            // bug#51275: smarty widget to help provide the action menu functionality as it is currently sprinkled throughout the app with html
+            require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+            $tempid = create_guid();
+            $button_contents[0] = "<div style='display: inline' id='$tempid'>".$button_contents[0]."</div>";
+            $action_button = smarty_function_sugar_action_menu(array(
+                'id' => $tempid,
+                'buttons' => $button_contents,
+                'class' => 'clickMenu subpanel records fancymenu button',
+                'theme' => 'Sugar' //assign theme value to display dropdown menu on class theme
+            ), $this->xTemplate);
+            $this->xTemplate->assign('CLASS', "inlineButtons");
+            $this->xTemplate->assign('CELL_COUNT', ++$count);
+            //Bug#51275 for beta3 pre_script is not required any more
+            $this->xTemplate->assign('CELL', $action_button);
+            $this->xTemplate->parse($xtemplateSection.".row.cell");
+        }
 
 
         $aItem->setupCustomFields($aItem->module_dir);
@@ -574,7 +582,7 @@ function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
     $orderByColumn = $this->getSessionVariableName($varName, "ORDER_BY");
     $lastEqualsSortBy = false;
     $defaultOrder = false; //ascending
-    
+
     if(empty($sortBy)) {
         $this->setUserVariable($varName, "ORDER_BY", $defaultOrderBy);
         $sortBy = $defaultOrderBy;
@@ -1450,7 +1458,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             }
         }
         //bug43465 end
-        
+
         $sort_URL_base = $this->base_URL. "&".$this->getSessionVariableName($html_varName,"ORDER_BY")."=";
 
         if($sort_URL_base !== "")
@@ -1485,8 +1493,6 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
         global $hilite_bg;
         global $app_strings, $sugar_version, $sugar_config;
         global $currentModule;
-
-
 
         $this->xTemplate->assign('BG_HILITE', $hilite_bg);
         $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
@@ -1583,6 +1589,17 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                     if(trim($results['string']) == '') $results['string'] = $app_strings['LBL_NONE'];
                     $fields[$results['fieldToAddTo']] = $fields[$results['fieldToAddTo']].'</a>';
                 }
+
+                if($aItem->ACLAccess('Delete')) {
+                    $delete = '<a class="listViewTdToolsS1" onclick="return confirm(\''.$app_strings['NTC_DELETE_CONFIRMATION'].'\')" href="'.'index.php?action=Delete&module='.$aItem->module_dir.'&record='.$fields['ID'].'&return_module='.$aItem->module_dir.'&return_action=index&return_id=">'.$this->local_app_strings['LBL_DELETE_INLINE'].'</a>';
+                    require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+                    $fields['DELETE_BUTTON'] = smarty_function_sugar_action_menu(array(
+                        'id' => $aItem->module_dir.'_'.$fields['ID'].'_create_button',
+                        'buttons' => array($delete),
+                    ), $this);
+
+                }
+
                 $this->xTemplate->assign($html_varName, $fields);
                 $aItem->setupCustomFields($aItem->module_dir);
                 $aItem->custom_fields->populateAllXTPL($this->xTemplate, 'detail', $html_varName, $fields);

@@ -47,7 +47,7 @@ class RestTestMetadataModuleList extends RestTestBase {
     }
 
     public function testMetadataGetModuleListPortal() {
-        $restReply = $this->_restCall('metadata?metadataType=moduleList&platform=portal');
+        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
@@ -61,14 +61,14 @@ class RestTestMetadataModuleList extends RestTestBase {
         
         // Now add an extra file and make sure it gets picked up
         file_put_contents('modules/Opportunities/metadata/portal.unittest.php','UNIT TEST DATA');
-        $restReply = $this->_restCall('metadata?metadataType=moduleList&platform=portal');
+        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
 
         $this->assertTrue(in_array('Opportunities',$restReply['reply']['moduleList']),'The new Opportunities module did not appear in the portal list');
         
     }
     
     public function testMetadataGetModuleListMobile() {
-        $restReply = $this->_restCall('metadata?metadataType=moduleList&platform=mobile');
+        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=mobile');
 
         foreach ( array ( '','custom/') as $prefix) {
             if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
@@ -96,7 +96,7 @@ class RestTestMetadataModuleList extends RestTestBase {
         
         $enabledMobile = array('Accounts','Contacts','Opportunities');
 
-        $restReply = $this->_restCall('metadata?metadataType=moduleList&platform=mobile');
+        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=mobile');
         $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no mobile module list on the second pass');
         $restModules = $restReply['reply']['moduleList'];
         unset($restModules['_hash']);
@@ -109,7 +109,7 @@ class RestTestMetadataModuleList extends RestTestBase {
     }
 
     public function testMetadataGetModuleListBase() {
-        $restReply = $this->_restCall('metadata?metadataType=moduleList');
+        $restReply = $this->_restCall('metadata?typeFilter=moduleList');
 
         $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no base module list');
         $restModules = $restReply['reply']['moduleList'];

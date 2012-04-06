@@ -21,19 +21,19 @@
 
         /**
          * Logging level.
-         * @cfg {Object} [logLevel=logger.Levels.DEBUG]
+         * @cfg {Object} [logLevel=Utils.Logger.Levels.DEBUG]
          */
         logLevel: app.logger.levels.DEBUG,
 
         /**
          * Logging writer.
-         * @cfg [logWrtiter=logger.ConsoleWriter]
+         * @cfg [logWrtiter=Utils.Logger.ConsoleWriter]
          */
         logWriter: app.logger.ConsoleWriter,
 
         /**
          * Logging formatter.
-         * @cfg [logFormatter=logger.SimpleFormatter]
+         * @cfg [logFormatter=Utils.Logger.SimpleFormatter]
          */
         logFormatter: app.logger.SimpleFormatter,
 
@@ -41,12 +41,19 @@
          * Sugar REST server URL.
          * @cfg {String}
          */
-        baseUrl: '../sugarcrm/rest',
+        baseUrl: '../../sugarcrm/rest/v10',
 
         /**
-         * Max Query Result Set size
+         * Max query result set size.
+         * @cfg {Number}
          */
-        maxQueryResult: 20
+        maxQueryResult: 20,
+
+        /**
+         * Platform name.
+         * @cfg {String}
+         */
+        platform: "portal"
 
     }, false);
 
