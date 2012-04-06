@@ -114,7 +114,7 @@
   function hideModal( that ) {
     this.$element
       .hide()
-      .trigger('hidden')
+      .trigger('hide')
 
     backdrop.call(this)
   }
