@@ -106,6 +106,7 @@ class RestService extends ServiceBase {
             if ( isset($route['rawReply']) && $route['rawReply']) {
                 echo $output;
             } else {
+                header('Content-type: application/json');
                 echo json_encode($output);
             }
 

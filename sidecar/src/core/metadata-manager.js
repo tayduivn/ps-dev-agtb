@@ -5,7 +5,9 @@
     var fieldTypeMap = {
         varchar: "text",
         name: "text",
-        text: "textarea"
+        text: "textarea",
+        decimal: "float",
+        currency: "text"
     };
 
     /**
