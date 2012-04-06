@@ -66,7 +66,7 @@ class SugarSearchEngineFactory
             if(!empty($GLOBALS['sugar_config']['full_text_engine']))
             {
                 $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
-                $name = $keys[0];
+                $name = array_pop($keys);
                 $config = !empty($config) ? $config : $GLOBALS['sugar_config']['full_text_engine'][$name];
             }
         }

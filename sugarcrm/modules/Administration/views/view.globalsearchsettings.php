@@ -72,7 +72,7 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         if(isset($GLOBALS['sugar_config']['full_text_engine']))
         {
             $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
-            $defaultEngine = $engines[0];
+            $defaultEngine = array_pop($engines);
             $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
         }
         else
