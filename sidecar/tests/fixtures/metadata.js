@@ -818,7 +818,7 @@ fixtures.metadata = {
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
+                "  value = (value!='' && value!='http://') ? value : \"\";\n" +
                 "return value\n" +
                 "}" +
                 "}"
