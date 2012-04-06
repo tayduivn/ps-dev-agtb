@@ -21,7 +21,7 @@ class Latin{
 
 		passthru("git fetch -a");
 		passthru("git reset --hard");
-		if(preg_match("/(\d+)\.(\d+)\.\(d+)/", $this->ver, $matchesVer)){
+		if(preg_match("/(\d+).(\d+).(\d+)(.*)/", $this->ver, $matchesVer)){
 			$translationBranch = $matchesVer[1] . "_" . $matchesVer[2];
 			exec("git branch -r", $remoteBranches);
 
@@ -31,7 +31,7 @@ class Latin{
 				passthru("git checkout origin/" . "master");
 			} 
 		}else{
-			passthru("git checkout master");
+		    passthru("git checkout master");
 		    passthru("git pull origin master");
 		}
 	}
