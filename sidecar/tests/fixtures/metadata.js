@@ -776,6 +776,80 @@ fixtures.metadata = {
                 "}\n" +
                 "}"
         },
+        "addresscombo": {
+            "default": {
+                "type": "basic",
+                "template": ""
+            }
+        },
+        "address": {
+            "views" : {
+                "detail": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3>" +
+                        "{{value.street}}<br>" +
+                        "{{value.city}}<br>" +
+                        "{{value.postalcode}}<br>" +
+                        "{{value.state}}<br>" +
+                        "{{value.country}}<br>" +
+                        "{{#if gmap}}{{#if value.city}}{{#if value.street}}" +
+                        "<iframe width=\"{{gmap_width}}\" height=\"{{gmap_height}}\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?f=q&q={{value.street}} {{value.city}} {{value.postalcode}} {{value.state}} {{value.country}}&output=embed\"></iframe>" +
+                        "{{/if}}{{/if}}{{/if}}"
+                },
+                "edit": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3>" +
+                        "<input type=\"text\" class=\"input-xlarge address_street\" value=\"{{value.street}}\"><br>" +
+                        "<input type=\"text\" class=\"input-xlarge address_city\" value=\"{{value.city}}\"><br>" +
+                        "<input type=\"text\" class=\"input-xlarge address_postalcode\" value=\"{{value.postalcode}}\"><br>" +
+                        "<input type=\"text\" class=\"input-xlarge address_state\" value=\"{{value.state}}\"><br>" +
+                        "<input type=\"text\" class=\"input-xlarge address_country\" value=\"{{value.country}}\"><br>"
+                }
+            },
+            controller: "{" +
+                "format:function(value, fieldName){\n" +
+                    "value = {\n" +
+                    "street: this.model.get(this.name),\n" +
+                    "city: this.model.get(this.formatFieldName('city')),\n" +
+                    "postalcode: this.model.get(this.formatFieldName('postalcode')),\n" +
+                    "state: this.model.get(this.formatFieldName('state')),\n" +
+                    "country: this.model.get(this.formatFieldName('country'))\n" +
+                    "};\n" +
+                    "return value;\n" +
+                "},\n" +
+                "bindDomChange: function (model, fieldName) {\n" +
+                    "var self = this;\n" +
+                    "var street = this.$el.find('.address_street');\n" +
+                    "var city = this.$el.find('.address_city');\n" +
+                    "var country = this.$el.find('.address_country');\n" +
+                    "var postalcode = this.$el.find('.address_postalcode');\n" +
+                    "var state = this.$el.find('.address_state');\n" +
+                    "street.on('change', function(ev) {\n" +
+                    "model.set(fieldName, self.unformat(street.val()));\n" +
+                    "});\n" +
+                    "city.on('change', function(ev) {\n" +
+                    "model.set(self.formatFieldName('city'), self.unformat(city.val()));\n" +
+                    "});\n" +
+                    "postalcode.on('change', function(ev) {\n" +
+                    "model.set(self.formatFieldName('postalcode'), self.unformat(postalcode.val()));\n" +
+                    "});\n" +
+                    "state.on('change', function(ev) {\n" +
+                    "model.set(self.formatFieldName('state'), self.unformat(state.val()));\n" +
+                    "});\n" +
+                    "country.on('change', function(ev) {\n" +
+                    "model.set(self.formatFieldName('country'), self.unformat(country.val()));\n" +
+                    "});\n" +
+                "},\n" +
+                "formatFieldName:function(attribute){\n" +
+                    "var endFieldName = '';\n" +
+                    "var arrFieldName = this.name.split('_');\n" +
+                    "if (arrFieldName[arrFieldName.length-1]=='c') { endFieldName='_c'; arrFieldName.pop(); }\n" +
+                    "if (arrFieldName[arrFieldName.length-1]=='street') arrFieldName.pop();\n" +
+                    "var rootFieldName = arrFieldName.join('_');\n" +
+                    "return rootFieldName + \"_\" + attribute + endFieldName;\n" +
+                "}\n" +
+                "}"
+        },
         "password": {
             "edit": {
                 "type": "basic",
