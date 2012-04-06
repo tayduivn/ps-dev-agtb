@@ -34,64 +34,6 @@
     };
 
     var _layoutManager = {
-        init: function(args) {
-            Handlebars.registerHelper('get_field_value', function(bean, field) {
-                return bean.get(field);
-            });
-
-            Handlebars.registerHelper('buildRoute', function(context, model, action, options) {
-                var id = model.id,
-                    route;
-
-                options = options || {};
-
-                if (action == 'create') {
-                    id = '';
-                }
-
-                route = app.router.buildRoute(context.get("module"), id, action, options);
-                return new Handlebars.SafeString(route);
-            });
-
-            Handlebars.registerHelper('getfieldvalue', function(bean, field) {
-                return bean.get(field);
-            });
-
-
-            Handlebars.registerHelper('in', function(val, array, retTrue, retFalse) {
-                // Since we need to check both just val = val 2 and also if val is in an array, we cast
-                // non arrays into arrays
-                if (!_.isArray(array) && !_.isObject(array)) {
-                    array = [array];
-                }
-
-                if (_.find(array, function(item) {
-                    return item === val;
-                })) {
-                    return retTrue;
-                }
-
-                return (!_.isUndefined(retFalse)) ? retFalse : "";
-            });
-
-            Handlebars.registerHelper('eq', function(val1, val2, retTrue, retFalse) {
-                console.log("EQ", "val1", val1, "val2", val2, "retTrue", retTrue, "retFalse", retFalse);
-                if (val1 == val2) {
-                    return retTrue;
-                }
-
-                return (retFalse != undefined) ? retFalse : "";
-            });
-
-            Handlebars.registerHelper("handleBarsLog", function(value) {
-                app.logger.debug("*****Current Context*****");
-                app.logger.debug(this);
-                app.logger.debug("*****Current Value*****");
-                app.logger.debug(value);
-                app.logger.debug("***********************");
-
-            });
-        },
 
         //All retreives of metadata should hit this function.
         //TODO: Probably refactor this function, it's quite large

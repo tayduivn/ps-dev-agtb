@@ -1,44 +1,4 @@
 (function(app) {
-    var sfid = 0;
-
-    //Register Handlebars helper to create fields with unique id's
-    Handlebars.registerHelper('sugar_field', function(context, view, bean) {
-        var ret = '<span sfuuid="' + (++sfid) + '"></span>',
-            name = this.name,
-            label = this.label || this.name,
-            def = this,
-            sf;
-
-        bean = bean || context.get("model");
-
-        if (bean.fields && bean.fields[name]) {
-            def = bean.fields[name];
-        }
-
-        sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
-            def: def,
-            view: view,
-            context: context,
-            label: label,
-            model: bean || context.get("model")
-        }));
-
-        sf.sfid = sfid;
-
-        return new Handlebars.SafeString(ret);
-    });
-
-    Handlebars.registerHelper('eachOptions', function(context, block) {
-        // Retrieve app list strings
-        var options = app.lang.getAppListStrings(context),
-            ret = "";
-
-        for (var i = 0, j = options.length; i < j; i++) {
-            ret = ret + block(options[i]);
-        }
-
-        return ret;
-    });
 
     /**
      * SugarField widget. A sugarfield widget is a low level field widget. Some examples of sugarfields are
@@ -155,8 +115,11 @@
                 // the following line doesn't work, need to _.extend it or something.
                 // this.events = this.meta.events;
                 templateKey = "sugarField." + this.name + "." + this.view.name;
-
-                this.templateC = app.template.get(templateKey) || app.template.compile(this.meta.template, templateKey);
+                var templateSource = this.meta;
+                if(this.meta.template) {
+                    templateSource = this.meta.template
+                }
+                this.templateC = app.template.get(templateKey) || app.template.compile(templateSource, templateKey);
             },
 
             /**

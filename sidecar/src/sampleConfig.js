@@ -41,13 +41,19 @@
          * Sugar REST server URL.
          * @cfg {String}
          */
-        baseUrl: '../sugarcrm/rest',
+        baseUrl: '../../sugarcrm/rest/v10',
 
         /**
-         * Max Query Result Set size
+         * Max query result set size.
          * @cfg {Number}
          */
-        maxQueryResult: 20
+        maxQueryResult: 20,
+
+        /**
+         * Platform name.
+         * @cfg {String}
+         */
+        platform: "portal"
 
     }, false);
 
