@@ -49,8 +49,13 @@ class Bug46898Test extends Sugar_PHPUnit_Framework_TestCase
         $savedReports->save();
 
         $reportSchedule = new ReportSchedule();
+<<<<<<< HEAD
+        $schedule1 = $reportSchedule->save_schedule(false, $user1->id, $savedReports->id, false, 1, true, 'bug');
+        $schedule2 = $reportSchedule->save_schedule(false, $user2->id, $savedReports->id, false, 1, true, 'bug');
+=======
         $schedule1 = $reportSchedule->save_schedule(false, $user1->id, $savedReports->id, false, 0, true, 'bug');
         $schedule2 = $reportSchedule->save_schedule(false, $user2->id, $savedReports->id, false, 0, true, 'bug');
+>>>>>>> 37120fb... bug50768: in Studio once set the visibility function for currency field will miss the currency_Id
         $GLOBALS['db']->query("UPDATE {$reportSchedule->table_name} SET next_run='2001-01-01 00:00:00' WHERE id='{$schedule1}'");
         $GLOBALS['db']->query("UPDATE {$reportSchedule->table_name} SET next_run='2001-01-01 00:00:00' WHERE id='{$schedule2}'");
 
