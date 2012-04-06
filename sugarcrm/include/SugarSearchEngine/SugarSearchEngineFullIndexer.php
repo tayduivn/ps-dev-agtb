@@ -128,7 +128,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function initiateFTSIndexer($modules = array())
     {
-        $GLOBALS['log']->info("Populating Full System Index Queue");
+        $startTime = microtime(true);
+        $GLOBALS['log']->fatal("Populating Full System Index Queue at $startTime");
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
         {
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
@@ -143,7 +144,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         //Remove any consumers that may be set to run
         $this->removeExistingFTSConsumers();
 
-        $startTime = microtime(true);
+
         $allModules = !empty($modules) ? $modules : array_keys(SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules());
 
         $totalCount = 0;
@@ -370,12 +371,20 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);
 
         $count = $this->indexRecords($module, $fieldDefinitions);
+        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
+
+        $messagePacket = unserialize($this->schedulerJob->message);
+        if($messagePacket === FALSE)
+            $messagePacket = array('count' => 0, 'time' => 0);
+
+        $messagePacket['count'] += $count;
+        $messagePacket['time'] += $totalTime;
 
         //Keep track of how many we've done
-        $this->schedulerJob->message += $count;
+        $this->schedulerJob->message = serialize($messagePacket);
 
         //If no items were processed we've exhausted the list and can therefore succeed job.
-        if( count($count) == 0)
+        if( $count == 0)
         {
             $this->schedulerJob->succeedJob();
         }
@@ -385,10 +394,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $this->schedulerJob->resolveJob(SchedulersJob::JOB_PENDING);
         }
 
-        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
+
         $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
 
         $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
+
         return TRUE;
 
     }
