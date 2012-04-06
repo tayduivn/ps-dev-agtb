@@ -9,6 +9,10 @@
 	$('#logo').swipeLeft(function () {
 		$('html').find('body').removeClassClass('onL');
 	});
+	$('.cube').swipeLeft(function () {
+	      $('html').find('body').toggleClass('onL');
+	      return false;
+	});
 	$('#create').bind('touchmove', function (e) {
 		e.preventDefault();}
 	);
