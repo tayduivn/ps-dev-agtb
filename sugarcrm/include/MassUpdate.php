@@ -289,7 +289,7 @@ eoq;
 					////////////////////////
 					//END SUGARCRM flav=pro ONLY
 
-					if($this->sugarbean->ACLAccess('Save')){
+					if($this->sugarbean->ACLAccess('Save', array("massupdate" => true))) {
 						$_POST['record'] = $id;
 						$_GET['record'] = $id;
 						$_REQUEST['record'] = $id;
