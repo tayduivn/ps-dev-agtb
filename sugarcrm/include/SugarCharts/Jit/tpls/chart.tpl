@@ -48,7 +48,7 @@
 			loadCustomChartForReports = function(){ldelim}
 				loadSugarChart('{$chartId}','{$filename}',css,chartConfig);
 			{rdelim};
-			if (document.getElementById('showHideChartButton').value != 'Show Chart')
+			if (document.getElementById('showHideChartButton').title != 'Show Chart')
 				loadCustomChartForReports();
 			{literal}
 		}
