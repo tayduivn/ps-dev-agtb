@@ -177,7 +177,12 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         $invalid_file_suffix = "%d_y%s";
         $this->assertArrayNotHasKey($invalid_file_suffix, SugarLogger::$filename_suffix, 'invalid format is included in the SugarLogger');
 
-        $suffix_date_part = "_" . date(str_replace("%", "", $file_suffix));
+        $suffix_date_part = "";
+        // IF there has been a suffix manually entered, let's include it,
+        // otherwise this should be empty so we get "sugarcrm.log" in the full_path
+        if( !empty( $file_suffix ) )
+            $suffix_date_part = "_" . date(str_replace("%", "", $file_suffix));
+
         $full_path = $log_dir . $file_name . $suffix_date_part . $ext;
         $logger = new SugarLogger;
         //Asserting the file format the tester expects with the file format from the SugarLogger
