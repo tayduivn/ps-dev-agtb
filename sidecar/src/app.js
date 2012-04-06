@@ -223,6 +223,7 @@ SUGAR.App = (function() {
                 app.metadata.sync(callback);
             }, function(metadata, callback) {
                 app.data.declareModels(metadata);
+                app.template.load(metadata);
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {
