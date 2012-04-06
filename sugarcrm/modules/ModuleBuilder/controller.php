@@ -234,11 +234,11 @@ class ModuleBuilderController extends SugarController
             require_once ('ModuleInstall/PackageManager/PackageManager.php') ;
             $pm = new PackageManager ( ) ;
             $info = $mb->packages [ $load ]->build ( false ) ;
-            $cachedir = sugar_cached('/upload/upgrades/module/');
-            mkdir_recursive ($cachedir) ;
-            rename ( $info [ 'zip' ], $cachedir . $info [ 'name' ] . '.zip' ) ;
-            copy ( $info [ 'manifest' ], $cachedir . $info [ 'name' ] . '-manifest.php' ) ;
-            $_REQUEST [ 'install_file' ] = $cachedir. $info [ 'name' ] . '.zip' ;
+            $uploadDir = $pm->upload_dir.'/upgrades/module/';
+            mkdir_recursive ($uploadDir) ;
+            rename ( $info [ 'zip' ], $uploadDir . $info [ 'name' ] . '.zip' ) ;
+            copy ( $info [ 'manifest' ], $uploadDir . $info [ 'name' ] . '-manifest.php' ) ;
+            $_REQUEST [ 'install_file' ] = $uploadDir. $info [ 'name' ] . '.zip' ;
             $GLOBALS [ 'mi_remove_tables' ] = false ;
             $pm->performUninstall ( $load ) ;
             //#23177 , js cache clear
