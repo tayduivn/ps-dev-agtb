@@ -57,6 +57,12 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("TRUNCATE table accounts");
         $GLOBALS['db']->query("TRUNCATE table contacts");
 
+        $beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->account = SugarTestAccountUtilities::createAccount();
         SugarTestContactUtilities::createContact();
