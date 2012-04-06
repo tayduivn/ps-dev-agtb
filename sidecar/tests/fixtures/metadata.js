@@ -823,6 +823,23 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
+        "phone": {
+            "views": {
+                "detailView": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
+                "editView": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"tel\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                        "<\/p> <\/div>"
+                },
+                "default": {
+                    "type": "basic",
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
+                }
+            }
+        },
         "textarea": {
             "detail": {
                 "type": "basic",

@@ -6,7 +6,8 @@
         varchar: "text",
         name: "text",
         text: "textarea",
-        decimal: "float"
+        decimal: "float",
+        currency: "text"
     };
 
     /**
