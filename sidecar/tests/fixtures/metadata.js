@@ -574,38 +574,58 @@ fixtures.metadata = {
                 "}" +
                 "}"
         },
-        "url": {
+        "datetime": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{#if value}}<a href=\"{{value}}\" target=\"_self\">{{value}}</a>{{/if}}</span>\n"},
-                "editView": {
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
+                },
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
                 "default": {
                     "type": "basic",
-                    "template": "<span name=\"{{name}}\">{{#if value}}<a href=\"{{value}}\" target=\"_self\">{{value}}</a>{{/if}}</span>"
+                    "template": "<span name=\"{{name}}\">{{value}}</span>"
                 }
             },
             controller: "{" +
+                "render:function(value){\n" +
+                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                "  	$(function() {" +
+                "$( \".datepicker\" ).datepicker({" +
+                "showOn: \"button\"," +
+                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
+                "buttonImageOnly: true," +
+                "dateFormat: \"yy-mm-dd\"" +
+                "});" +
+                "});\n" +
+                "}," +
                 "unformat:function(value){\n" +
-                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
                 "return value\n" +
-                "}" +
+                "}," +
+                "format:function(value){\n" +
+                "return value\n" +
+                "},\n" +
                 "}"
         },
-        "integer":{
-            "views" : {
-                "detailView":{
-                    "type":"basic",
-                    "template":"<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView":{
-                    "type":"basic",
-                    "template":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> "+
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">"+
+        "datetimecombo": {
+            "views": {
+                "detail": {
+                    "type": "basic",
+                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n"},
+                "edit": {
+                    "type": "basic",
+                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
+                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{has this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        " : " +
+                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{has this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                        " " +
+                        "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{has this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                        " <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
                 "default": {
@@ -756,18 +776,6 @@ fixtures.metadata = {
                 "}\n" +
                 "}"
         },
-        "password": {
-            "edit": {
-                "type": "basic",
-                "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                    "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
-            "login": {
-                "type": "basic",
-                "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                    "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}
-        },
         "addresscombo": {
             "default": {
                 "type": "basic",
@@ -776,7 +784,7 @@ fixtures.metadata = {
         },
         "address": {
             "views" : {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3>" +
                         "{{value.street}}<br>" +
@@ -788,7 +796,7 @@ fixtures.metadata = {
                         "<iframe width=\"{{gmap_width}}\" height=\"{{gmap_height}}\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?f=q&q={{value.street}} {{value.city}} {{value.postalcode}} {{value.state}} {{value.country}}&output=embed\"></iframe>" +
                         "{{/if}}{{/if}}{{/if}}"
                 },
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3>" +
                         "<input type=\"text\" class=\"input-xlarge address_street\" value=\"{{value.street}}\"><br>" +
@@ -841,6 +849,18 @@ fixtures.metadata = {
                     "return rootFieldName + \"_\" + attribute + endFieldName;\n" +
                 "}\n" +
                 "}"
+        },
+        "password": {
+            "edit": {
+                "type": "basic",
+                "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                    "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
+            "login": {
+                "type": "basic",
+                "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                    "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}
         },
         "button": {
             "default": {
