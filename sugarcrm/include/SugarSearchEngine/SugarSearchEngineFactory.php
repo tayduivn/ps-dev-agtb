@@ -52,6 +52,16 @@ class SugarSearchEngineFactory
        return self::$_instance[$name];
     }
 
+    public static function getFTSEngineNameFromConfig()
+    {
+        $name = "";
+        if(!empty($GLOBALS['sugar_config']['full_text_engine']))
+        {
+            $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
+            $name = array_pop($keys);
+        }
+        return $name;
+    }
     /**
      * @static
      * @param string $name
@@ -65,8 +75,7 @@ class SugarSearchEngineFactory
             //if the name is empty then let's try to see if we have one configured in the config
             if(!empty($GLOBALS['sugar_config']['full_text_engine']))
             {
-                $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
-                $name = array_pop($keys);
+                $name = self::getFTSEngineNameFromConfig();
                 $config = !empty($config) ? $config : $GLOBALS['sugar_config']['full_text_engine'][$name];
             }
         }

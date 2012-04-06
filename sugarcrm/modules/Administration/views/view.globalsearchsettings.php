@@ -71,8 +71,7 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $schedulerID = SugarSearchEngineFullIndexer::isFTSIndexScheduled();
         if(isset($GLOBALS['sugar_config']['full_text_engine']))
         {
-            $engines = array_keys($GLOBALS['sugar_config']['full_text_engine']);
-            $defaultEngine = array_pop($engines);
+            $defaultEngine = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
             $config = $GLOBALS['sugar_config']['full_text_engine'][$defaultEngine];
         }
         else
