@@ -155,20 +155,30 @@ if (isset($_REQUEST['return_id'])) { // coming from a subpanel, return_module|ac
 }
 
 if(isset($start['action']) && !empty($start['action'])) {
-	$xtpl->assign('DELETE_RETURN_ACTION', $start['action']);
+    $xtpl->assign('DELETE_RETURN_ACTION', $start['action']);
+} else {
+    $start['action'] = '';
 }
 if(isset($start['module']) && !empty($start['module'])) {
-	$xtpl->assign('DELETE_RETURN_MODULE', $start['module']);
+    $xtpl->assign('DELETE_RETURN_MODULE', $start['module']);
+} else {
+    $start['module'] = '';
 }
 if(isset($start['record']) && !empty($start['record'])) {
-	$xtpl->assign('DELETE_RETURN_ID', $start['record']);
+    $xtpl->assign('DELETE_RETURN_ID', $start['record']);
+} else {
+    $start['record'] = '';
 }
 // this is to support returning to My Inbox
 if(isset($start['type']) && !empty($start['type'])) {
-	$xtpl->assign('DELETE_RETURN_TYPE', $start['type']);
+    $xtpl->assign('DELETE_RETURN_TYPE', $start['type']);
+} else {
+    $start['type'] = '';
 }
 if(isset($start['assigned_user_id']) && !empty($start['assigned_user_id'])) {
-	$xtpl->assign('DELETE_RETURN_ASSIGNED_USER_ID', $start['assigned_user_id']);
+    $xtpl->assign('DELETE_RETURN_ASSIGNED_USER_ID', $start['assigned_user_id']);
+} else {
+    $start['assigned_user_id'] = '';
 }
 
 
@@ -305,7 +315,7 @@ EOD
 				style="display:none;"
 				id="rawButton"
 				title="{$mod_strings['LBL_BUTTON_RAW_TITLE']}"
-				value="{$mod_strings['LBL_RAW_BUTTON_LABEL']}"
+				value="{$mod_strings['LBL_BUTTON_RAW_LABEL']}"
 				onclick="open_popup('Emails', 800, 600, '', true, true, '', 'show_raw', '', '{$focus->id}');"
 			/>
 EOD
