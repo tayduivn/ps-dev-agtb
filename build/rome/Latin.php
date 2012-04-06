@@ -19,10 +19,17 @@ class Latin{
          }
         chdir(realpath($this->cwd ."/". $this->translationPath));
 
-		if(preg_match("/6\.2\.\d/", $this->ver)){
-			passthru("git branch --track 6_2 origin/6_2");
-			passthru("git checkout 6_2");
-			passthru("git pull origin 6_2");
+		passthru("git fetch -a");
+		passthru("git reset --hard");
+		if(preg_match("/(\d+)\.(\d+)\.\(d+)/", $this->ver, $matchesVer)){
+			$translationBranch = $matchesVer[1] . "_" . $matchesVer[2];
+			exec("git branch -r", $remoteBranches);
+
+			if (preg_grep($translationBranch, $remoteBranches)) {
+				passthru("git checkout origin/" . $translationBranch);
+			} else {
+				passthru("git checkout origin/" . "master");
+			} 
 		}else{
 			passthru("git checkout master");
 		    passthru("git pull origin master");
