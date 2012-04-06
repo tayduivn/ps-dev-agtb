@@ -134,6 +134,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
             return $this;
         }
+        //Create the index on the server side
+        $this->SSEngine->createIndex(TRUE);
 
         //Clear the existing queue
         $this->clearFTSIndexQueue();
