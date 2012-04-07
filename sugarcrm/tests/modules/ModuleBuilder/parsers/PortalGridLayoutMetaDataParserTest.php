@@ -332,7 +332,8 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
                     ),
 
                 )
-            )
+            ),
+
         );
     }
 
@@ -346,6 +347,20 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
         $output = $this->_parser->testGetFieldsFromLayout(array('panels' => $input));
         $this->assertEquals($expected, $output);
     }
+
+    /**
+     * @dataProvider canonicalAndInternalFieldList
+     * @param input
+     * @param expected
+     */
+    public function testGetFieldsFromLayoutUsingFullViewdef($input, $expected)
+    {
+        // put on the additional array path on the input
+        $canonical_input['portal']['view']['edit']['panels'] = $input;
+        $output = $this->_parser->testGetFieldsFromLayout($canonical_input);
+        $this->assertEquals($expected, $output);
+    }
+
 
     /**
      * @dataProvider canonicalAndInternalForms
