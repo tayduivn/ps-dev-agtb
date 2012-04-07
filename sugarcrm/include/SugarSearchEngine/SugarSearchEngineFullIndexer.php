@@ -373,7 +373,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $count = $this->indexRecords($module, $fieldDefinitions);
         $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
 
-        $messagePacket = unserialize($this->schedulerJob->message);
+        $messagePacket = unserialize(from_html($this->schedulerJob->message));
         if($messagePacket === FALSE)
             $messagePacket = array('count' => 0, 'time' => 0);
 
@@ -395,6 +395,12 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         {
             //Mark the job that as pending so we can be invoked later.
             $this->schedulerJob->postponeJob('', 20);
+        }
+
+        if(self::isFTSIndexScheduleCompleted())
+        {
+            $stats = self::getStatistics();
+            $GLOBALS['log']->fatal("FTS Indexing completed with the following statistcis: " . var_export($stats, TRUE));
         }
 
         return TRUE;
@@ -456,7 +462,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         while($row = $GLOBALS['db']->fetchByAssoc($res))
         {
             $tmpBean = BeanFactory::getBean('SchedulersJobs', $row["id"]);
-            $results[$tmpBean->data] = $tmpBean->message;
+            $messagePacket = from_html($tmpBean->message);
+            $results[$tmpBean->data] = unserialize($messagePacket);
         }
         return $results;
     }
