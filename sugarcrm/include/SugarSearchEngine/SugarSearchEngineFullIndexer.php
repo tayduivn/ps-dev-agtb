@@ -383,6 +383,9 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         //Keep track of how many we've done
         $this->schedulerJob->message = serialize($messagePacket);
 
+        $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
+        $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
+
         //If no items were processed we've exhausted the list and can therefore succeed job.
         if( $count == 0)
         {
@@ -391,13 +394,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         else
         {
             //Mark the job that as pending so we can be invoked later.
-            $this->schedulerJob->resolveJob(SchedulersJob::JOB_PENDING);
+            $this->schedulerJob->postponeJob('', 20);
         }
-
-
-        $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
-
-        $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
 
         return TRUE;
 
