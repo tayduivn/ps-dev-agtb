@@ -473,7 +473,7 @@ fixtures.metadata = {
                 }
             },
             "views": {
-                "loginView": {
+                "login": {
                     "buttons": [
                         {
                             name: "login_button",
@@ -498,8 +498,8 @@ fixtures.metadata = {
                                 {name: "password", label: "Password"}
                             ]
                         }
-                    ]
-
+                    ],
+                    "controller": "{customCallback : function(){return \"overridden\";}}"
                 }
 
             },
@@ -510,7 +510,7 @@ fixtures.metadata = {
                     //Default layout is a single view
                     "type": "simple",
                     "components": [
-                        {view: "loginView"}
+                        {view: "login"}
                     ]
                 }
             }
@@ -528,7 +528,7 @@ fixtures.metadata = {
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                         "<\/p> <\/div>"
                 },
-                "loginView": {
+                "login": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -880,10 +880,10 @@ fixtures.metadata = {
         },
         "iframe": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
@@ -899,10 +899,10 @@ fixtures.metadata = {
         },
         "phone": {
             "views": {
-                "detailView": {
+                "detail": {
                     "type": "basic",
                     "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "editView": {
+                "edit": {
                     "type": "basic",
                     "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                         "<input type=\"tel\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
@@ -959,7 +959,7 @@ fixtures.metadata = {
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
-        "loginView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
+        "login": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
