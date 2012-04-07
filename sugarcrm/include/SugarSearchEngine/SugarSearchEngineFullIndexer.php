@@ -214,7 +214,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      * does not take advantage of the job queue system.  Currently this call is only used when populating demo data and should be used
      * sparingly.
      */
-    public function performFullSystemIndex()
+    public function performFullSystemIndex($modules = array())
     {
         //Do nothing if no FTS has been setup.
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
@@ -222,7 +222,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
             return $this;
         }
-        $this->initiateFTSIndexer();
+        $this->initiateFTSIndexer($modules);
         require_once 'include/SugarQueue/SugarCronJobs.php';
         $jobq = new SugarCronJobs();
         $jobq->runCycle();
