@@ -115,7 +115,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
     public function hasViewVariable($viewdefs, $view) {
         $name = MetaDataFiles::getViewDefVar($view);
-        return $name && isset($viewdefs[$name]);    
+        return $name && isset($viewdefs[$name]);
     }
 
     public function getDefsFromArray($viewdefs, $view) {
@@ -756,7 +756,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      */
     protected function getFieldsFromLayout($viewdef) {
     	$panels = $this->getPanelsFromViewDef($viewdef);
-    	
+
         $ret = array();
         if (is_array($panels)) 
         {       
