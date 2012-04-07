@@ -25,7 +25,7 @@
                                 events: {
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                        "this.app.sugarAuth.login(args, {success:" +
+                                        "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
                                         "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
                                         "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
