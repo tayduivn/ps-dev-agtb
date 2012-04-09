@@ -1750,9 +1750,9 @@ function initEditView(theForm) {
 }
 
 function onUnloadEditView(theForm) {
-
+	
 	var dataHasChanged = false;
-
+	console.log("onUnloadEditView: " + theForm);
     if ( typeof editViewSnapshots == 'undefined' ) {
         // No snapshots, move along
         return;
