@@ -45,11 +45,12 @@ array(array('label' => 'Default',
 
 ))),
 
-
-
-
-
-
-
-
+array(array('label' => 'Default',
+            'fields' => array(
+                'name',
+                'status',
+                'description',
+                ''
+))),
+// end
 );
