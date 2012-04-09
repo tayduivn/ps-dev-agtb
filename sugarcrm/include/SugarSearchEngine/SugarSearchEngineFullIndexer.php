@@ -128,7 +128,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      */
     public function initiateFTSIndexer($modules = array())
     {
-        $GLOBALS['log']->info("Populating Full System Index Queue");
+        $startTime = microtime(true);
+        $GLOBALS['log']->fatal("Populating Full System Index Queue at $startTime");
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
         {
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
@@ -143,7 +144,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         //Remove any consumers that may be set to run
         $this->removeExistingFTSConsumers();
 
-        $startTime = microtime(true);
+
         $allModules = !empty($modules) ? $modules : array_keys(SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules());
 
         $totalCount = 0;
@@ -213,7 +214,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      * does not take advantage of the job queue system.  Currently this call is only used when populating demo data and should be used
      * sparingly.
      */
-    public function performFullSystemIndex()
+    public function performFullSystemIndex($modules = array())
     {
         //Do nothing if no FTS has been setup.
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
@@ -221,7 +222,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
             return $this;
         }
-        $this->initiateFTSIndexer();
+        $this->initiateFTSIndexer($modules);
         require_once 'include/SugarQueue/SugarCronJobs.php';
         $jobq = new SugarCronJobs();
         $jobq->runCycle();
@@ -370,25 +371,38 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         $fieldDefinitions = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($module);
 
         $count = $this->indexRecords($module, $fieldDefinitions);
+        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
+
+        $messagePacket = unserialize(from_html($this->schedulerJob->message));
+        if($messagePacket === FALSE)
+            $messagePacket = array('count' => 0, 'time' => 0);
+
+        $messagePacket['count'] += $count;
+        $messagePacket['time'] += $totalTime;
 
         //Keep track of how many we've done
-        $this->schedulerJob->message += $count;
+        $this->schedulerJob->message = serialize($messagePacket);
+
+        $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
+        $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
 
         //If no items were processed we've exhausted the list and can therefore succeed job.
-        if( count($count) == 0)
+        if( $count == 0)
         {
             $this->schedulerJob->succeedJob();
         }
         else
         {
             //Mark the job that as pending so we can be invoked later.
-            $this->schedulerJob->resolveJob(SchedulersJob::JOB_PENDING);
+            $this->schedulerJob->postponeJob('', 20);
         }
 
-        $totalTime = number_format(round(microtime(true) - $startTime, 2), 2);
-        $avgRecs = ($count != 0 && $totalTime != 0) ? number_format(round(($count / $totalTime), 2), 2) : 0;
+        if(self::isFTSIndexScheduleCompleted())
+        {
+            $stats = self::getStatistics();
+            $GLOBALS['log']->fatal("FTS Indexing completed with the following statistcis: " . var_export($stats, TRUE));
+        }
 
-        $GLOBALS['log']->fatal("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
         return TRUE;
 
     }
@@ -448,7 +462,8 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         while($row = $GLOBALS['db']->fetchByAssoc($res))
         {
             $tmpBean = BeanFactory::getBean('SchedulersJobs', $row["id"]);
-            $results[$tmpBean->data] = $tmpBean->message;
+            $messagePacket = from_html($tmpBean->message);
+            $results[$tmpBean->data] = unserialize($messagePacket);
         }
         return $results;
     }
