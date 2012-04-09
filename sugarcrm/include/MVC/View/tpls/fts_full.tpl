@@ -218,9 +218,9 @@ width:70%;
                         'offset': SUGAR.FTS.currentOffset, 'refreshModList': rml},
                 success: function(o)
                 {
+                    SUGAR.FTS.totalHits = o.totalHits;
                     if(typeof(append) != 'undefined' && append)
                     {
-                        SUGAR.FTS.totalHits = o.totalHits;
                         $("#sugar_full_search_results").append(o.results);
 
                     }
