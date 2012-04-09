@@ -264,7 +264,7 @@ function getClassicModuleTitle($module, $params, $show_create=false, $index_url_
 
 	$new_params = array();
 	$i = 0;
-    if(count($params) > 1 && $_REQUEST['action']=='DetailView') {
+    if(count($params) > 1) {
 			array_shift($params);
 		}
 	foreach ($params as $value) {
