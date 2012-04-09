@@ -62,7 +62,7 @@
   , hide: function () {
       var dimension = this.dimension()
       this.reset(this.$element[dimension]())
-      this.transition('removeClass', 'hide', 'hidden')
+      this.transition('removeClass', 'hide', 'hide')
       this.$element[dimension](0)
     }
 

@@ -61,11 +61,7 @@
             }
 
             if (params.view) {
-                meta = meta || app.metadata.get({
-                    type: "view",
-                    module: module,
-                    view: params.view
-                }) || {};
+                meta = meta || app.metadata.getView(module, params.view) || {};
                 ucType = _ucfirst(meta.view || params.type || params.view);
 
                 //First check if this module has a custom view class
@@ -92,12 +88,7 @@
                 });
 
             } else if (params.layout) {
-                meta = params.meta || app.metadata.get({
-                    type: "layout",
-                    module: module,
-                    layout: params.layout
-                });
-
+                meta = params.meta || app.metadata.getLayout(module, params.layout);
                 ucType = _ucfirst(meta.type);
 
                 //Check if the layout type has its own layout subclass

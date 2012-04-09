@@ -74,23 +74,16 @@ SUGAR.App = (function() {
             appId: appId,
 
             /**
-             * Base element to use as the root of the App. This will typically be a jQuery Node.
+             * Base element to use as the root of the app. This will typically be a jQuery/Zepto node.
              * @property {Object}
              */
             rootEl: rootEl,
 
             /**
-             * Base url to use to build rest calls
-             * @cfg {String} rest
-             */
-            /**
              * Alias to SUGAR.Api
              * @property {Object}
              */
-            api: SUGAR.Api.getInstance({
-                baseUrl: opts.rest || "/rest/v10", // TODO: Change this default
-                platform: opts.platform
-            })
+            api: null
         }, this, Backbone.Events);
     }
 
@@ -108,6 +101,12 @@ SUGAR.App = (function() {
              */
             opts.modules = opts.modules || {};
             app = app || _.extend(this, new App(opts));
+
+            app.api = SUGAR.Api.getInstance({
+                            serverUrl: app.config.serverUrl,
+                            platform: app.config.platform,
+                            keyValueStore: app.cache
+            });
 
             // Register app specific events
             app.events.register(
@@ -170,7 +169,7 @@ SUGAR.App = (function() {
          * @method
          */
         start: function() {
-            if (!(app.sugarAuth.isAuthenticated()))
+            if (!(app.api.isAuthenticated()))
             {
                 app.router.login();
             }
@@ -223,6 +222,7 @@ SUGAR.App = (function() {
                 app.metadata.sync(callback);
             }, function(metadata, callback) {
                 app.data.declareModels(metadata);
+                app.template.load(metadata);
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {

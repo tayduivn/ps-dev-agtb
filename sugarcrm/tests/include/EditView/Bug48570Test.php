@@ -75,7 +75,7 @@ class Bug48570Test extends Sugar_PHPUnit_Framework_TestCase
         $editView = new EditView();
         $editView->showVCRControl = false;
         $editView->view = 'EditView';
-        $editView->setup('Opportunities', $focus);
+        $editView->setup('Opportunities', $focus, 'modules/Opportunities/metadata/editviewdefs.php');
         $editView->process();
 
         $currency->mark_deleted($currency->id);

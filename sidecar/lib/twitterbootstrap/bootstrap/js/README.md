@@ -58,7 +58,7 @@ examples:
 All events should have an infinitive and past participle form. The infinitive is fired just before an action takes place, the past participle on completion of the action.
 
     show | shown
-    hide | hidden
+    hide | hide
 
 ---
 

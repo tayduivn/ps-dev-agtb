@@ -217,8 +217,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             }
         }
 
-    	$origDefs = $this->getOriginalViewDefs();
-        $origPanels = $origDefs['panels'];
+    	$origPanels = $this->getOriginalPanelDefs();
         foreach ($origPanels as $panel) {
             if (isset($panel['fields'])) {
                 foreach ($panel['fields'] as $field) {
@@ -228,14 +227,6 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 }
             }
         }
-        /*
-        foreach($origDefs as $key => $def)
-        {
-        	if (!isset($this->_viewdefs[$key]) || 
-        		(isset($this->_viewdefs[$key]['enabled']) && $this->_viewdefs[$key]['enabled'] == false))
-        	$availableFields [ $key ] = $def;
-        }
-        */
 
         return $availableFields;
     }
@@ -360,7 +351,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 //if (isset ($this->_viewdefs[$fieldname])) {
                 if ($f = $this->panelGetField($fieldname)) {
                 	$newPaneldefs[$newPaneldefIndex] = $f['field'];
-				} else if ($f = $this->panelGetField($fieldname, $originalViewDefs['panels'])) { // Check if the original view def contained it
+				} else if ($f = $this->panelGetField($fieldname, $this->getOriginalPanelDefs())) { // Check if the original view def contained it
                     $newPaneldefs[$newPaneldefIndex] = $f['field'];
                 } else {
                     // Create a definition from the fielddefs
@@ -394,10 +385,6 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
                     $newPaneldefs[$newPaneldefIndex] = $panelfield;
                 }
-                /*
-                if (isset($newViewdefs [ $fieldname ]['enabled']))
-                		$newViewdefs [ $fieldname ]['enabled'] = true;
-                */
 
                 if (isset($_REQUEST[strtolower($fieldname) . 'width'])) {
                     $width = substr($_REQUEST[$fieldname . 'width'], 6, 3);
@@ -429,9 +416,20 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 }
             }
         }
-        
-        $this->_viewdefs['panels'][0]['fields'] = $newPaneldefs;
-        $this->_paneldefs = $this->_viewdefs['panels'];
+
+        // We need to add panels back into the viewdefs at the point where we got them
+        $panelDefsPath = $this->implementation->getPanelDefsPath();
+        $stack = &$this->_viewdefs;
+        foreach ($panelDefsPath as $path) {
+            if (isset($stack[$path])) {
+                $stack = &$stack[$path];
+            }
+        }
+        if (isset($stack['panels'])) {
+            $stack['panels'][0]['fields'] = $newPaneldefs;
+        }
+
+        $this->_paneldefs[0]['fields'] = $newPaneldefs;
     }
 
     /*
@@ -458,6 +456,18 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	}
 
     	return $out;
+    }
+
+    public function getOriginalPanelDefs() {
+        $defs = $this->getOriginalViewDefs();
+        $viewType = ($viewType = MetaDataFiles::getViewClient($this->view)) == '' ? 'base' : $viewType;
+        if (isset($defs[$viewType]) && is_array($defs[$viewType]) && isset($defs[$viewType]['view']) && is_array($defs[$viewType]['view'])) {
+            $index = key($defs[$viewType]['view']);
+            if (isset($defs[$viewType]['view'][$index]['panels'])) {
+                $defs = $defs[$viewType]['view'][$index]['panels'];
+            }
+        }
+        return $defs;
     }
 
     /**

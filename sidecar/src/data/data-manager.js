@@ -374,6 +374,25 @@
                 }
             };
 
+            var error = function(xhr, error) {
+                var statusCodes = {
+                    400: function() {},
+                    401: function() {},
+                    403: function() {},
+                    404: function() {},
+                    405: function() {},
+                    500: function() {}
+                }
+
+                if (options.error) {
+                    options.error(error);
+                }
+
+                // Handle error codes
+                statusCodes[xhr.status]();
+
+            };
+
             var callbacks = {
                 success: success,
                 error: options.error

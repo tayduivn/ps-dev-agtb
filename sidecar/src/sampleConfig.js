@@ -39,9 +39,11 @@
 
         /**
          * Sugar REST server URL.
+         *
+         * The URL can relative or absolute.
          * @cfg {String}
          */
-        baseUrl: '../sugarcrm/rest',
+        serverUrl: '../../sugarcrm/rest/v10',
 
         /**
          * Max query result set size.
