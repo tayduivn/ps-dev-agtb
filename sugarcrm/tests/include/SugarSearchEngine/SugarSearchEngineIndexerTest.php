@@ -211,8 +211,10 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->indexer->performFullSystemIndex();
         $stats = $this->indexer->getStatistics();
-        $this->assertEquals(1, $stats['Accounts'], "Failed to retrieve account statistic");
-        $this->assertEquals(1, $stats['Contacts'], "Failed to retrieve contact statistic");
+        $this->assertEquals(1, $stats['Accounts']['count'], "Failed to retrieve account statistic");
+        $this->assertEquals(1, $stats['Contacts']['count'], "Failed to retrieve contact statistic");
+        $this->assertArrayHasKey('count', $stats);
+        $this->assertArrayHasKey('time', $stats);
     }
 
     public function markBeansProvider()
