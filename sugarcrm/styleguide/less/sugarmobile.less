@@ -371,6 +371,24 @@ html {
 
 #listing article.nav {
     margin-bottom: 0;
+    #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+    padding-top:0;
+    padding-bottom:0;
+    min-height:42px;
+}
+
+#listing article.nav:last-child {
+    border-top: 1px solid darken(@grayLighter, 25%);
+}
+
+#listing article.nav:first-child,
+#listing article.nav:nth-child(2),
+#listing article.nav:nth-child(3) {
+    border-bottom: 1px solid darken(@grayLighter, 25%);
+}
+
+#listing article.nav div {
+    height:42px;
 }
 
 #listing > i {
