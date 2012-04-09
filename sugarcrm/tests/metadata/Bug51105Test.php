@@ -53,17 +53,5 @@ class Bug51105Test extends Sugar_PHPUnit_Framework_TestCase
         $module = 'Employees';
         $sqc = new SubpanelQuickCreate($module, $view, true);
         $this->assertEquals('modules/Users/tpls/EditViewHeader.tpl', $sqc->ev->defs['templateMeta']['form']['headerTpl'], $error);
-
-        // Mock a custom relationship
-        $cachekey = "customrelationships.Employees.Employees.cache";
-        sugar_cache_put($cachekey, array('mockrel' => true));
-
-        // Rerun the Meetings module quickcreate and test the Meetings headerTpl
-        $module = 'Employees';
-        $sqc = new SubpanelQuickCreate($module, $view, true);
-        $this->assertEquals($default, $sqc->ev->defs['templateMeta']['form']['headerTpl'], $error);
-
-        // Clear the cached mock
-        sugar_cache_clear($cachekey);
     }
 }

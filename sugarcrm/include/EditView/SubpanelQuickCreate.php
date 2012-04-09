@@ -80,16 +80,7 @@ class SubpanelQuickCreate{
 
 
 		// Bug 49219 - Check empty before set defaults, or the settings from viewdefs above will be overridden.
-        // Bug 51105 - For Subpanel quick creates with a custom relationship 
-        // we NEED to use the EditView/header.tpl and NOT the module EditViewHeader.tpl to enforce proper
-        // relate_to value passing
-		if (
-            // Bug 49219
-            !isset($this->ev->defs['templateMeta']['form']['headerTpl'])
-            ||
-            // Bug 51105
-            $this->ev->focus->hasCustomRelationships()
-        )
+        if (!isset($this->ev->defs['templateMeta']['form']['headerTpl']))
         {
             $this->ev->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
         }
