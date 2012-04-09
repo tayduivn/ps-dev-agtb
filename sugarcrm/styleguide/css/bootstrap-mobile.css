@@ -3732,15 +3732,15 @@ article [id^="listing-action"] i.grip {
 }
 article [id^="listing-action"] i.on {
   left: 0;
-  background-color: #2c2c2b;
-  background-image: -moz-linear-gradient(left, #1d1d1c, #2c2c2b);
-  background-image: -ms-linear-gradient(left, #1d1d1c, #2c2c2b);
-  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#1d1d1c), to(#2c2c2b));
-  background-image: -webkit-linear-gradient(left, #1d1d1c, #2c2c2b);
-  background-image: -o-linear-gradient(left, #1d1d1c, #2c2c2b);
-  background-image: linear-gradient(left, #1d1d1c, #2c2c2b);
+  background-color: #656563;
+  background-image: -moz-linear-gradient(left, #343433, #656563);
+  background-image: -ms-linear-gradient(left, #343433, #656563);
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#343433), to(#656563));
+  background-image: -webkit-linear-gradient(left, #343433, #656563);
+  background-image: -o-linear-gradient(left, #343433, #656563);
+  background-image: linear-gradient(left, #343433, #656563);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1d1d1c', endColorstr='#2c2c2b', GradientType=1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#343433', endColorstr='#656563', GradientType=1);
   color: #000000;
   text-shadow: -1px 0 0 #343433;
   -webkit-box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
