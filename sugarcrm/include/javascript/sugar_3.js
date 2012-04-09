@@ -1744,7 +1744,7 @@ function initEditView(theForm) {
     if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
     	SUGAR.loadedForms = new Object();
     }
-
+    
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
 }
@@ -1752,7 +1752,6 @@ function initEditView(theForm) {
 function onUnloadEditView(theForm) {
 	
 	var dataHasChanged = false;
-	console.log("onUnloadEditView: " + theForm);
     if ( typeof editViewSnapshots == 'undefined' ) {
         // No snapshots, move along
         return;
