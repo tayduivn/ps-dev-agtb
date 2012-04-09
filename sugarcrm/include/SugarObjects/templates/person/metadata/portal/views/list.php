@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -26,59 +27,37 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
- // $Id: listviewdefs.php 16292 2006-08-22 20:57:23 +0000 (Tue, 22 Aug 2006) awu $
-
-$listViewDefs['Users'] = array(
-    'NAME' => array(
-        'width' => '30', 
-        'label' => 'LBL_LIST_NAME', 
-        'link' => true,
-        'related_fields' => array('last_name', 'first_name'),
-        'orderBy' => 'last_name',
-        'default' => true),
-    'USER_NAME' => array(
-        'width' => '5', 
-        'label' => 'LBL_USER_NAME', 
-        'link' => true,
-        'default' => true),
-    'TITLE' => array(
-        'width' => '15', 
-        'label' => 'LBL_TITLE', 
-        'link' => true,
-        'default' => true),        
-    'DEPARTMENT' => array(
-        'width' => '15', 
-        'label' => 'LBL_DEPARTMENT', 
-        'link' => true,
-        'default' => true),
-    'EMAIL1' => array(
-        'width' => '30',
-        'sortable' => false, 
-        'label' => 'LBL_LIST_EMAIL', 
-        'link' => true,
-        'default' => true),
-    'PHONE_WORK' => array(
-        'width' => '25', 
-        'label' => 'LBL_LIST_PHONE', 
-        'link' => true,
-        'default' => true),
-    'STATUS' => array(
-        'width' => '10', 
-        'label' => 'LBL_STATUS', 
-        'link' => false,
-        'default' => true),
-    'IS_ADMIN' => array(
-        'width' => '10', 
-        'label' => 'LBL_ADMIN', 
-        'link' => false,
-        'default' => true),
-    //BEGIN SUGARCRM flav!=sales ONLY
-    'IS_GROUP' => array(
-        'width' => '10', 
-        'label' => 'LBL_LIST_GROUP', 
-        'link' => true,
-        'default' => false),
-    //END SUGARCRM flav!=sales ONLY
+$module_name = '<module_name>';
+$viewdefs[$module_name]['portal']['view']['list'] = array(
+    array(
+        'panels' => array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'name',
+                    'label' => 'LBL_NAME',
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => true,
+                ),
+                //BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'team_name',
+                    'label' => 'LBL_TEAM',
+                    'width' => 9,
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                //END SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'assigned_user_name',
+                    'label' => 'LBL_ASSIGNED_TO_NAME',
+                    'width' => 9,
+                    'default' => true,
+                    'enabled' => true,
+                    'link' => true,
+                ),
+            ),
+        ),
+    ),
 );
-?>

@@ -27,7 +27,7 @@
                         if (type && app.sugarField[fClass])
                             return new app.sugarField[fClass](params);
 
-                        meta = app.metadata.get({sugarField:{type: type}});
+                        meta = app.metadata.getField({type: type});
                         controller = meta.controller;
                         if (controller) {
                             try {
