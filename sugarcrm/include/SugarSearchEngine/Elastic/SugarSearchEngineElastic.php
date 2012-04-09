@@ -346,20 +346,22 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function createIndex($recreate = false)
     {
-        // create an elastic index
         try
         {
+            // create an elastic index
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $index->create(array(), $recreate);
+
+             // create field mappings
+            require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
+            $elasticMapping = new SugarSearchEngineElasticMapping($this);
+            $elasticMapping->setFullMapping();
         }
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to create index with error: {$e->getMessage()}");
         }
-        // create field mappings
-        require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
-        $elasticMapping = new SugarSearchEngineElasticMapping($this);
-        $elasticMapping->setFullMapping();
+
     }
 
     public function getClient()
