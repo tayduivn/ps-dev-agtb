@@ -29,13 +29,6 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 {
 
-    static $variableMap = array (
-    	MB_PORTALEDITVIEW => 'EditView' ,
-    	MB_PORTALDETAILVIEW => 'DetailView' ,
-    	) ;
-
-
-
     /**
      * helper to pack a row with $cols members of [empty]
      * @param $row
@@ -91,11 +84,12 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
             return array_fill(0,$colspan,'');
         }
 
-        if (!is_array($field)) {
-            $field = array('name' => $field);
-        }
-
+        // add the displayParam field if necessary
         if ($colspan > 1) {
+            if (!is_array($field)) {
+                $field = array('name' => $field);
+            }
+
             $field['displayParams']['colspan'] = $colspan;
         }
         return array($field);
@@ -229,12 +223,7 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
      */
     protected function getFieldsFromLayout($viewdef)
     {
-        if (isset($viewdef['panels']))
-        {
-            $panels = $viewdef['panels'];
-        } else {
-            $panels = $viewdef[self::$variableMap [ $this->_view ] ]['panels'];
-        }
+        $panels = $this->getPanelsFromViewDef($viewdef);
 
         // not canonical form... try parent method
         if (!isset($panels[0]['fields'])) {
@@ -244,7 +233,7 @@ class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
         $out = array();
         foreach ($panels as $panel) {
             foreach($panel['fields'] as $field) {
-                $name = (isset($field['name'])) ? $field['name'] : $field; // we either have a name or a bare string
+                $name = (is_array($field)) ? $field['name'] : $field; // we either have a name or a bare string
                 $out[$name] = $field;
             }
         }
