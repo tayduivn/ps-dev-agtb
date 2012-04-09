@@ -1925,10 +1925,16 @@ EOQ;
         {
             $condition+=1;
         }
-        //END SUGARCRM flav=pro ONLY
 
-        // bug51664 system-generated passwords must be 6 characters
-        $length = 6;
+        // if there is more requirements than the minimum length, minimum length= number of requirements
+        $length = $res['minpwdlength'] <= $condition ? $condition : $res['minpwdlength'];
+        if ($length < 6)
+        {
+		//END SUGARCRM flav=pro ONLY
+            $length = '6';
+		//BEGIN SUGARCRM flav=pro ONLY
+        }
+		//END SUGARCRM flav=pro ONLY
 
         // Create random characters for the ones that doesnt have requirements
         for ($i=0; $i < $length - $condition; $i ++)  // loop and create password
