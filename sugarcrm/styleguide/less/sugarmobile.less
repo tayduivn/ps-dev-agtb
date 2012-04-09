@@ -357,10 +357,6 @@ html {
   display: block;
 }
 
-#listing > i {
-  height:45px;
-  display:inline-block;
-}
 
 #listing article {
 	-webkit-transition: all .25s ease-in-out;
@@ -384,6 +380,28 @@ html {
   display: inline-block;
 }
 
+#listing .form-search {
+  margin:0;
+}
+
+#listing .search {
+  height:40px;
+  padding:8px 32px 8px 8px;
+}
+
+#listing .icon-search {
+  position:absolute;
+  margin:8px 0 0 8px;
+  color:darken(@grayLighter, 20%);
+}
+
+#listing .search-query {
+  width:98.5%;
+  height:26px;
+  .border-radius(18px);
+  text-indent:16px;
+}
+
 .navbar [class^="icon-"] {
   color: @white;
   text-shadow: 0 -1px 0 @black;
@@ -403,7 +421,7 @@ html {
   z-index: 2000;
 }
 
-.navbar #search, .navbar #back .icon-chevron-left {
+.navbar #back .icon-chevron-left {
   position: absolute;
   top: 11px;
   left: 58px;
@@ -426,35 +444,6 @@ html {
   top: 202px; 
   padding-bottom: 190px;
 */
-}
-
-#searchForm {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2000;
-  width: 100%;
-  height: 44px !important;
-  background: @grayDarker url(../img/black_linen_v2.png);
-}
-#searchForm .btn {
-  position: absolute;
-  top:1px;
-  right: 0px;
-  width: inherit;
-  }
-  
-.search-query {
-  border-color: #000;
-  color: @grayDarker;
-  position: absolute;
-  padding: 0 4px;
-  left: 10px;
-  top: 9px;
-  height: 28px;
-  width: 70% !important;
-  .border-radius(4px);
-  z-index: 1080;
 }
 
 .navbar h1 {
@@ -836,8 +825,7 @@ float: none !important;}
     display: none;
   }
   // Forms in navbar
-  .navbar-form,
-  .navbar-search {
+  .navbar-form{
     float: none;
     padding: (@baseLineHeight / 2) 15px;
     margin: (@baseLineHeight / 2) 0;
