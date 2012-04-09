@@ -483,7 +483,7 @@ fixtures.metadata = {
                             primary: true,
                             events: {
                                 click: "function(){ var self = this; " +
-                                    " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.sugarAuth.login(args, {success:" +
+                                    " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; this.app.api.login(args, {success:" +
                                     "function(){console.log(\"logged in successfully dtam!\");}" +
                                     "});" +
                                     "}"
