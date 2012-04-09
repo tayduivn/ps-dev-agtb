@@ -153,7 +153,7 @@ if(!isset($sugar_config['logger'])){
 		      'dateFormat' => '%c',
 		      'maxSize' => '10MB',
 		      'maxLogs' => 10,
-		      'suffix' => '%m_%Y',
+		      'suffix' => '', // bug51583, change default suffix to blank for backwards comptability
 	  	  ),
 	);
 }
@@ -303,10 +303,10 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
     rebuildSprites(true);
 }
 
-//Run RepairSearchFields.php file
-if($_SESSION['current_db_version'] < '620' && function_exists('repairSearchFields'))
+//Run repairUpgradeHistoryTable
+if($_SESSION['current_db_version'] < '650' && function_exists('repairUpgradeHistoryTable'))
 {
-    repairSearchFields($path);
+    repairUpgradeHistoryTable();
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');

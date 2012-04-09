@@ -21,7 +21,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 function perform_save(&$focus){
-	
+    //BEGIN SUGARCRM flav=pro ONLY
+    // Bug49495: amount may be a calculated field
+    $focus->updateCalculatedFields();
+    //END SUGARCRM flav=pro ONLY
 	//US DOLLAR
 	if(isset($focus->amount) && !number_empty($focus->amount)){
 		$currency = new Currency();

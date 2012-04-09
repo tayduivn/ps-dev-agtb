@@ -72,7 +72,7 @@ function checkLoggerSettings(){
 		      'dateFormat' => '%c',
 		      'maxSize' => '10MB',
 		      'maxLogs' => 10,
-		      'suffix' => '%m_%Y',
+		      'suffix' => '', // bug51583, change default suffix to blank for backwards comptability
 		    ),
 		  );
 		 ksort($sugar_config);
@@ -547,10 +547,10 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
     rebuildSprites(true);
 }
 
-//Run RepairSearchFields.php file
-if($origVersion < '620' && function_exists('repairSearchFields'))
+//Run repairUpgradeHistoryTable
+if($origVersion < '650' && function_exists('repairUpgradeHistoryTable'))
 {
-    repairSearchFields($path);
+    repairUpgradeHistoryTable();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

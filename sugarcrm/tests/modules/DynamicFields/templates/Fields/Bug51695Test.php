@@ -21,55 +21,29 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
 
-require_once('modules/InboundEmail/InboundEmail.php');
+require_once("modules/DynamicFields/templates/Fields/TemplateCurrency.php");
 
-/**
- * @ticket 50241
- */
-class Bug50241Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug51695Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
-	protected $ie = null;
-
-	public function setUp()
+    public function setUp()
     {
-		$this->ie = new InboundEmail();
-	}
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+    }
 
-	function testEmailCleanup()
-	{
-	    $inStr=<<<EOS
-<head>
-<style><!--
-.hmmessage P
-{
-margin:0px;
-padding:0px
-}
-body.hmmessage
-{
-font-size: 10pt;
-font-family:Tahoma
-}
---></style></head>
-<body class='hmmessage'><div dir='ltr'>
-<SPAN style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">hello, <o:p></o:p></SPAN><BR>
-<SPAN style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">i recently got Batman Arkham City and tried to get catwoman as an add-on character but when i put the code in it said that my code had already been used. <o:p></o:p></SPAN><BR>
-<SPAN style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">what can i do, so that i can play catwoman?<o:p></o:p></SPAN><BR>
- <BR> </div></body>
-</html>
-EOS;
+    public function tearDown()
+    {
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
 
-	    $outStr=<<<EOS
-<div dir="ltr">
-<span style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">hello, </span><br />
-<span style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">i recently got Batman Arkham City and tried to get catwoman as an add-on character but when i put the code in it said that my code had already been used. </span><br />
-<span style="FONT-FAMILY: 'Tahoma','sans-serif'; FONT-SIZE: 10pt">what can i do, so that i can play catwoman?</span><br />
- <br /> </div>
-EOS;
-	    
-        $this->assertEquals(trim($outStr),trim($this->ie->cleanContent($inStr)));
-	}
+    public function testGetFieldDefsForCurrencyTemplateHasPrecision() {
+        $template = new TemplateCurrency();
+
+        $this->assertArrayHasKey('precision', $template->get_field_def());
+    }
+
 }
