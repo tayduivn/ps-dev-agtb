@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticResultSet.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
 
 class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 {
@@ -232,6 +233,85 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return array('valid' => $isValid, 'status' => $displayText);
     }
 
+    protected function getSearchFields($options)
+    {
+        $fields = array();
+        if(!empty($options['moduleFilter'])) {
+            foreach ($options['moduleFilter'] as $mod) {
+                $fieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($mod);
+                foreach ($fieldDef as $fieldName => $def) {
+                    if (!in_array($fieldName, $fields)) {
+                        $fields[] = $fieldName;
+                    }
+                }
+            }
+        } else {
+            $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
+            foreach ($allFieldDef as $fieldDef) {
+                foreach ($fieldDef as $fieldName => $def) {
+                    if (!in_array($fieldName, $fields)) {
+                        $fields[] = $fieldName;
+                    }
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    protected function constructHighlightArray($fields, $options)
+    {
+        if (isset($options['preTags']))
+        {
+            $preTags = $options['preTags'];
+        }
+        else
+        {
+            $preTags = SugarSearchEngineHighlighter::$preTag;
+        }
+
+        if (isset($options['postTags']))
+        {
+            $postTags = $options['postTags'];
+        }
+        else
+        {
+            $postTags = SugarSearchEngineHighlighter::$postTag;
+        }
+
+        $fieldArray = array();
+        $highlightProperties = new stdClass();
+        if (isset($options['fragmentSize']))
+        {
+            $highlightProperties->fragment_size = $options['fragmentSize'] + strlen($preTags) + strlen($postTags);
+        }
+        else
+        {
+            $highlightProperties->fragment_size = SugarSearchEngineHighlighter::$fragmentSize + strlen($preTags) + strlen($postTags);
+        }
+
+        if (isset($options['fragmentNumber']))
+        {
+            $highlightProperties->number_of_fragments = $options['fragmentNumber'];
+        }
+        else
+        {
+            $highlightProperties->number_of_fragments = SugarSearchEngineHighlighter::$fragmentNumber;
+        }
+
+        foreach ($fields as $field)
+        {
+            $fieldArray[$field] = $highlightProperties;
+        }
+
+        $highlighArray = array('fields'=>$fieldArray,
+            'order'=>'score',
+            'pre_tags'=>array($preTags),
+            'post_tags'=>array($postTags));
+
+        return $highlighArray;
+    }
+
     /**
      * @param $queryString
      * @param int $offset
@@ -255,11 +335,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         {
             $qString = html_entity_decode($queryString, ENT_QUOTES);
             $queryObj = new Elastica_Query_QueryString($qString);
-            $queryObj->setAnalyzeWildcard(false);
+            $queryObj->setAnalyzeWildcard(true);
             $queryObj->setAutoGeneratePhraseQueries(false);
             if( !empty($options['append_wildcard']) )
                 $queryObj->setRewrite('top_terms_boost_5');
             
+            // set query string fields
+            $fields = $this->getSearchFields($options);
+            $queryObj->setFields($fields);
+
             if( !is_admin($GLOBALS['current_user']) )
             {
                 $teamFilter = new Elastica_Filter_Or();
@@ -281,6 +365,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $query = new Elastica_Query($queryObj);
             }
             $query->setParam('from',$offset);
+
+            // set query highlight
+            $fields = $this->getSearchFields($options);
+            $highlighArray = $this->constructHighlightArray($fields, $options);
+            $query->setHighlight($highlighArray);
 
             //Add a type facet so we can see how our results are grouped.
             if( !empty($options['apply_module_facet']) )
@@ -346,20 +435,22 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function createIndex($recreate = false)
     {
-        // create an elastic index
         try
         {
+            // create an elastic index
             $index = new Elastica_Index($this->_client, $this->_indexName);
             $index->create(array(), $recreate);
+
+             // create field mappings
+            require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
+            $elasticMapping = new SugarSearchEngineElasticMapping($this);
+            $elasticMapping->setFullMapping();
         }
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to create index with error: {$e->getMessage()}");
         }
-        // create field mappings
-        require_once('include/SugarSearchEngine/Elastic/SugarSearchEngineElasticMapping.php');
-        $elasticMapping = new SugarSearchEngineElasticMapping($this);
-        $elasticMapping->setFullMapping();
+
     }
 
     public function getClient()

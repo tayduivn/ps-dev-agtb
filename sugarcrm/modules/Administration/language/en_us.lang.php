@@ -1203,7 +1203,8 @@ $mod_strings = array (
     'LBL_FTS_HOST_HELP' => 'Enter the name of the host where the full text search engine resides.',
     'LBL_FTS_PORT_HELP' => 'Enter the number of the port where the full text search engine resides.',
 
-    'LBL_AVAILABLE_FTS_MODULES' => 'Available Modules',
+    'LBL_AVAILABLE_FTS_MODULES' => 'Select the module(s) for indexing.',
+    'LBL_FTS_INDEX_BUTTON' => 'Index',
     'LBL_CONNECT_STATUS' => 'Connection Status',
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
     'LBL_FTS_TEST' => 'Connect',

@@ -56,6 +56,13 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['db']->query("TRUNCATE table accounts");
         $GLOBALS['db']->query("TRUNCATE table contacts");
+
+        $beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->account = SugarTestAccountUtilities::createAccount();
         SugarTestContactUtilities::createContact();
@@ -176,7 +183,21 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $indexer->setJob($jobBean);
         $indexer->initiateFTSIndexer(array('Accounts'));
         $indexer->run('Accounts');
+    }
 
+    public function testConsumerRunsIndexByBean()
+    {
+        $jobBean = BeanFactory::getBean('SchedulersJobs');
+        //Mock object for SSEngine
+        $SSEngine = $this->getMock('SugarSearchEngineElastic');
+        $SSEngine->expects($this->once())->method('createIndexDocument');
+        $SSEngine->expects($this->once())->method('bulkInsert');
+
+        $indexer = new TestSugarSearchEngineFullIndexer($SSEngine);
+        $indexer->setJob($jobBean);
+        $indexer->setShouldIndexViaBean(TRUE);
+        $indexer->initiateFTSIndexer(array('Accounts'));
+        $indexer->run('Accounts');
     }
 
     public function testIsFTSIndexScheduleCompleted()
@@ -190,17 +211,20 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->indexer->performFullSystemIndex();
         $stats = $this->indexer->getStatistics();
-        $this->assertEquals(1, $stats['Accounts'], "Failed to retrieve account statistic");
-        $this->assertEquals(1, $stats['Contacts'], "Failed to retrieve contact statistic");
+        $this->assertEquals(1, $stats['Accounts']['count'], "Failed to retrieve account statistic");
+        $this->assertEquals(1, $stats['Contacts']['count'], "Failed to retrieve contact statistic");
+        $this->assertArrayHasKey('count', $stats);
+        $this->assertArrayHasKey('time', $stats);
     }
 
     public function markBeansProvider()
     {
         return array(
-            array(range(0,299), 3),
+            array(range(0,2999), 1),
+            array(range(0,3002), 2),
             array(range(0,1), 1),
             array(array(), 0),
-            array(range(0,101), 2)
+            array(range(0,101), 1)
         );
     }
     /**
@@ -233,6 +257,7 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
 class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
 {
+    private $shouldIndexViaBean;
 
     public function markBeansProcessedStub($ids)
     {
@@ -257,5 +282,18 @@ class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
     public function removeExistingFTSConsumersStub()
     {
         $this->removeExistingFTSConsumers();
+    }
+
+    public function setShouldIndexViaBean($should)
+    {
+        $this->shouldIndexViaBean = $should;
+    }
+
+    public function shouldIndexViaBean($module)
+    {
+        if(isset($this->shouldIndexViaBean))
+            return $this->shouldIndexViaBean;
+        else
+            return parent::shouldIndexViaBean($module);
     }
 }

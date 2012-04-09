@@ -65,14 +65,18 @@ var $dialog = $('<div class="open"></div>')
 
 $dialog.dialog('open');
 $(".ui-dialog").appendTo("#content");
-					
+
 setTimeout('SUGAR.util.buildAccessKeyLabels()',500);
 }
 </script>
 {/literal}
 
+<script>
+var max_tabs = {$max_tabs};
+</script>
+
 <div id='shortcuts' class='accessKeyHelp' style="float: right; margin-right: 10px;" onclick="javascript: keyboardShortcuts();">{$APP.LBL_KEYBOARD_SHORTCUTS_HELP_TITLE}</div>
 <div id="main">
     <div id="content">
-    
+
         <table style="width:100%" id="contentTable"><tr><td>

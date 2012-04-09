@@ -62,7 +62,7 @@ width:70%;
             <input type="hidden" name="module" value="Users">
             <input type="hidden" name="action" value="saveftsmodules">
             <input type="hidden" name="disabled_modules" value="" id="disabled_modules">
-
+            <input type="hidden" name="q" value="" id="save_q">
         <table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="30%">
             <tr>
                 <td colspan="2">
@@ -130,6 +130,7 @@ width:70%;
         currentOffset: 0,
         limit: 0,
         totalHits: 0,
+        showMore: true,
         addModuleFilterHandlers: function()
         {
             $('.ftsModuleFilter').bind('click', function(e)
@@ -198,6 +199,7 @@ width:70%;
                 SUGAR.FTS.currentOffset = 0;
             }
 
+            SUGAR.FTS.showMore = true;
             $('#sugar_full_search_results').showLoading();
             //TODO: Check if all modules are selected, then don't send anything down.
             var m = this.getSelectedModules();
@@ -245,13 +247,13 @@ width:70%;
         },
         toogleShowMore : function()
         {
-            if( SUGAR.FTS.currentOffset + SUGAR.FTS.limit >= SUGAR.FTS.totalHits)
+            if( (SUGAR.FTS.currentOffset + SUGAR.FTS.limit < SUGAR.FTS.totalHits) && SUGAR.FTS.showMore)
             {
-               $('#showMoreDiv').hide();
+                $('#showMoreDiv').show();
             }
             else
             {
-               $('#showMoreDiv').show();
+                $('#showMoreDiv').hide();
             }
         },
         toggleAdvancedOptions: function()
@@ -298,6 +300,8 @@ width:70%;
             }
             modules = modules == "" ? modules : modules.substr(1);
             document.getElementById('disabled_modules').value = modules;
+            document.getElementById('save_q').value = document.getElementById('ftsSearchField').value;
+
         },
         loadMore: function()
         {
@@ -334,6 +338,7 @@ width:70%;
                 SUGAR.FTS.addModuleFilterHandlers();
             }
             this.pending--;
+            SUGAR.FTS.showMore = false;
             SUGAR.FTS.toogleShowMore();
             $('#sugar_full_search_results').hideLoading();
         };
@@ -360,7 +365,6 @@ width:70%;
     SUGAR.FTS.globalSearchEnabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchDisabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchEnabledTable.addRow({module: "", label: ""});
-    SUGAR.FTS.globalSearchDisabledTable.addRow({module: "", label: ""});
     SUGAR.FTS.globalSearchEnabledTable.render();
     SUGAR.FTS.globalSearchDisabledTable.render();
     {/literal}
