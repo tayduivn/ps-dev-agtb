@@ -2,7 +2,6 @@ describe("sugarfields", function() {
 
     describe("integer", function() {
         it("should format the value", function() {
-
             var app = SUGAR.App;
             var field = app.sugarFieldManager.get({
                 def: {

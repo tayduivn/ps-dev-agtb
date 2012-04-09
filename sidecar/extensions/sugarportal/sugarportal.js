@@ -25,7 +25,7 @@
                                 events: {
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                        "this.app.sugarAuth.login(args, {success:" +
+                                        "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
                                         "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
                                         "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
@@ -87,25 +87,29 @@
                 }
             },
             "password": {
-                "editView": {
-                    "type": "basic",
-                    "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                        "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
-                },
-                "loginView": {
-                    "type": "basic",
-                    "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                        "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                "views": {
+                    "editView": {
+                        "type": "basic",
+                        "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                    },
+                    "loginView": {
+                        "type": "basic",
+                        "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                    }
                 }
             },
             "button": {
-                "default": {
-                    "type": "basic",
-                    "template": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
-                        "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
-                        "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+                "views": {
+                    "default": {
+                        "type": "basic",
+                        "template": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+                            "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
+                            "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+                    }
                 }
             }
         },
@@ -124,10 +128,10 @@
                 "{{/each}}" + "</form>"
         }
     }
-    if (_.isEmpty(app.metadata.get())) {
+    //if (_.isEmpty(app.metadata.get())) {
         app.metadata.set(base_metadata);
         app.data.declareModels(base_metadata);
         app.template.load(base_metadata);
-    }
+    //}
 })
     (SUGAR.App);

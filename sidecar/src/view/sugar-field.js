@@ -109,7 +109,7 @@
                 this.label = options.label;
                 this.bindModelChange(options.context, options.model || options.context.get("model"));
                 this.viewName = this.view.name;
-                this.meta = app.metadata.get({sugarField: this});
+                this.meta = app.metadata.getField(this);
 
                 // this is experimental to try to see if we can have custom events on sugarfields themselves.
                 // the following line doesn't work, need to _.extend it or something.
