@@ -263,10 +263,11 @@ $xtpl->assign('MODIFIED_BY', $focus->modified_by_name);
 $xtpl->assign('DATE_SENT', $focus->date_entered);
 $xtpl->assign('EMAIL_NAME', 'RE: '.$focus->name);
 $xtpl->assign("TAG", $focus->listviewACLHelper());
+
+$show_raw = FALSE;
 if(!empty($focus->raw_source)) {
-	$xtpl->assign("RAW_METADATA", $focus->id);
-} else {
-	$xtpl->assign("DISABLE_RAW_BUTTON", 'none');
+    $xtpl->assign("RAW_METADATA", $focus->id);
+    $show_raw = TRUE;
 }
 
 if(!empty($focus->reply_to_email)) {
@@ -280,7 +281,7 @@ if(!empty($focus->reply_to_email)) {
 
 
 
-//aaplying action menu (new UI) instead of buttons
+// Using action menu (new UI) instead of buttons.
 $buttons = array(
     <<<EOD
             <input	title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" class="button"
@@ -308,19 +309,20 @@ EOD
 					value="{$app_strings['LBL_DELETE_BUTTON_LABEL']}"
 			>
 EOD
-,
-
-<<<EOD
-            <input type="button" name="button" class="button"
-				style="display:none;"
-				id="rawButton"
-				title="{$mod_strings['LBL_BUTTON_RAW_TITLE']}"
-				value="{$mod_strings['LBL_BUTTON_RAW_LABEL']}"
-				onclick="open_popup('Emails', 800, 600, '', true, true, '', 'show_raw', '', '{$focus->id}');"
-			/>
-EOD
-
 );
+
+// Bug #52046: Disable the 'Show Raw' link where it does not need to be shown.
+if($show_raw) {
+    $buttons[] = <<<EOD
+        <input type="button" name="button" class="button"
+            id="rawButton"
+            title="{$mod_strings['LBL_BUTTON_RAW_TITLE']}"
+            value="{$mod_strings['LBL_BUTTON_RAW_LABEL']}"
+            onclick="open_popup('Emails', 800, 600, '', true, true, '', 'show_raw', '', '{$focus->id}');"
+        />
+EOD;
+}
+
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'archived_emails_edit_action_buttons',
