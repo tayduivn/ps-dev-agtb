@@ -90,6 +90,7 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
 //        //echo "Done";
 //    }
 
+
     public function testdoWeHasAParser()
     {
         $this->assertInstanceOf('PortalGridLayoutMetaDataParser',$this->_parser);
@@ -97,7 +98,8 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
 
 
     }
-
+}
+/*
     public function testWTFDoesThisDo()
     {
         $postString = <<<EOL
@@ -170,7 +172,7 @@ EOL;
 //        $this->assertEquals(print_r($this->_parser->);
     }
 }
-
+*/
 /**
  * Using derived helper class from PortalGridLayoutMetaDataParser to avoid having to fully
  * initialize the whole class and to give us the flexibility to replace the

@@ -58,14 +58,14 @@ class MetaDataFiles
         MB_DETAILVIEW             => 'detailviewdefs' ,
         MB_QUICKCREATE            => 'quickcreatedefs',
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-        MB_WIRELESSEDITVIEW       => 'editView' ,
+        MB_WIRELESSEDITVIEW       => 'edit' ,
         MB_WIRELESSDETAILVIEW     => 'detailView' ,
         MB_WIRELESSLISTVIEW       => 'list' ,
         MB_WIRELESSBASICSEARCH    => 'searchView' ,
         MB_WIRELESSADVANCEDSEARCH => 'searchView' ,
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW         => 'editView',
+        MB_PORTALEDITVIEW         => 'edit',
         MB_PORTALDETAILVIEW       => 'detailView',
         MB_PORTALLISTVIEW         => 'list',
         MB_PORTALSEARCHVIEW       => 'searchView',
