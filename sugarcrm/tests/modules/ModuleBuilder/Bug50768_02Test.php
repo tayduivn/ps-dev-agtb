@@ -115,7 +115,7 @@ class Bug50768_02Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $mbc = new ModuleBuilderController();
+      /*  $mbc = new ModuleBuilderController();
         $this->currencyFieldDef1['name'] = 'c1_c';
         $_REQUEST = $this->currencyFieldDef1;
         $mbc->action_DeleteField();
@@ -129,7 +129,7 @@ class Bug50768_02Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['app_list_strings']);
-        unset($_REQUEST);
+        unset($_REQUEST);*/
 
     }
 
