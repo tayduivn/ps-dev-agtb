@@ -47,6 +47,8 @@
 
             //TODO probably need to check if we can sort this field from metadata
             var collection = this.context.get('collection');
+            console.log("this", this);
+            console.log("asdf", this.$(event.target));
             var fieldName = this.$(event.target).data('fieldname');
 
             if (!collection.orderBy) {
@@ -54,8 +56,7 @@
                     field: "",
                     direction: ""
                 };
-            }
-            ;
+            };
 
             var nOrder = "desc";
 

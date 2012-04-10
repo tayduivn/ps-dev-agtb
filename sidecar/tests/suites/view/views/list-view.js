@@ -17,8 +17,8 @@ describe("listView", function() {
 
 
             var view = new SUGAR.App.layout.ListView(options);
-            $(view.el).data('fieldname', 'bob');
-            var event = {target: view.el};
+            view.$el.html('<div id="test" data-fieldname="bob"></div>');
+            var event = {target: view.$el.$("#test")};
             view.context.get = function(args) {
                 return collection;
             };
