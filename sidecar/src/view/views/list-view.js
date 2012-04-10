@@ -49,6 +49,13 @@
             var collection = this.context.get('collection');
             var fieldName = $(event.target).data('fieldname');
 
+            if (!collection.orderBy){
+                collection.orderBy={
+                    field: "",
+                        direction:""
+                };
+            };
+
             var nOrder = "desc";
 
             // if same field just flip

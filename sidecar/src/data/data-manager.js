@@ -351,7 +351,7 @@
                     options.params.maxresult = app.config.maxQueryResult;
                 }
 
-                if (model.orderBy.field) {
+                if (model.orderBy && model.orderBy.field) {
                     options.params.orderBy = model.orderBy.field + ":" + model.orderBy.direction;
                 }
             }
