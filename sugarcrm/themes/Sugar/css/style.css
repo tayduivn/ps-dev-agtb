@@ -6775,7 +6775,7 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 	left: auto;
 	padding: 10px 0px;
 	border: 1px solid #999;
-	width: 100%;
+	width: auto;
 }
 
 #quickCreate ul.clickMenu li ul.subnav {
