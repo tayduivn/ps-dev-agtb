@@ -56,8 +56,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
     }
     
     public function testMetadataModuleLayout() {
-        $filesToCheck = array('modules/Bugs/metadata/portal/layouts/editLayout.php',
-                              'custom/modules/Bugs/metadata/portal/layouts/editLayout.php',
+        $filesToCheck = array('modules/Bugs/metadata/portal/layouts/edit.php',
+                              'custom/modules/Bugs/metadata/portal/layouts/edit.php',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -95,8 +95,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
     }
 
     public function testMetadataModuleViews() {
-        $filesToCheck = array('modules/Bugs/metadata/portal/views/editView.php',
-                              'custom/modules/Bugs/metadata/portal/views/editView.php',
+        $filesToCheck = array('modules/Bugs/metadata/portal/views/edit.php',
+                              'custom/modules/Bugs/metadata/portal/views/edit.php',
         );
         
         foreach ( $filesToCheck as $filename ) {
