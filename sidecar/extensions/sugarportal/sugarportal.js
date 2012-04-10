@@ -26,7 +26,7 @@
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
                                         "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
-                                        "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); var app = self.app; app.sync(" +
+                                        "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); $(\"body\").attr(\"id\", \"\"); var app = self.app; app.sync(" +
                                         "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
                                         "}"
@@ -74,9 +74,10 @@
                     },
                     "loginView": {
                         "type": "basic",
-                        "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                            "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                            "<\/p> <\/div>"
+                        "template": "<div class=\"controls\">" +
+                            "<label for=\"loginUsername\" class=\"hide\">{{label}}</label>" +
+                            "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"><p class=\"help-block\">{{help}}</p>" +
+                        "</div>"
                     },
                     "default": {
                         "type": "basic",
@@ -88,7 +89,7 @@
                 controller: "{" +
                     "render : function(){" +
                     "this.app.sugarField.base.prototype.render.call(this);" +
-                    "if (!SUGAR.App.api.isAuthenticated()) $(\".navbar\").hide();" +
+                    "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"portal\"); }" +
                     "}}"
             },
             "password": {
@@ -101,9 +102,11 @@
                     },
                     "loginView": {
                         "type": "basic",
-                        "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                        "template":  "<div class=\"control-group\">" +
+                            "<label class=\"hide\">{{label}}</label>" +
+                            "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">" +
+                            "<p class=\"help-block\"><a href=\"#\">Forgot password?</a></p>" +
+                            "</div>"
                     }
                 }
             },
@@ -119,7 +122,7 @@
             }
         },
         'viewTemplates': {
-            "loginView": "<form name='{{name}}' class='well'>" +
+            "loginView": "<form name='{{name}}'>" +
                 "<div class=\"container welcome\">\n" +
                 "<div class=\"row\">\n" +
                 "<div class=\"span4 offset4 thumbnail\">\n" +
