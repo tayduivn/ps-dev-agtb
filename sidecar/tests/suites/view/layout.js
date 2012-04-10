@@ -1,4 +1,4 @@
-describe("Layout.Layout", function(){
+describe("View.Layout", function(){
     var app = SUGAR.App;
     var context, bean, collection;
 
@@ -18,9 +18,9 @@ describe("Layout.Layout", function(){
     });
 
     it('should get metadata from the manager', function(){
-        var layout = app.layout.get({
+        var layout = app.view.createLayout({
             context : context,
-            layout: "edit"
+            name: "edit"
         });
         expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit);
     });
@@ -33,9 +33,9 @@ describe("Layout.Layout", function(){
                 {view : "testComp"}
             ]
         }
-        var layout = app.layout.get({
+        var layout = app.view.createLayout({
             context : context,
-            layout: "edit",
+            name: "edit",
             meta: testMeta
         });
         expect(layout.meta).toEqual(testMeta);

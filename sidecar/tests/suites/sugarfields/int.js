@@ -3,7 +3,7 @@ describe("sugarfields", function() {
     describe("integer", function() {
         it("should format the value", function() {
             var app = SUGAR.App;
-            var field = app.sugarFieldManager.get({
+            var field = app.view.createField({
                 def: {
                     type: "integer",
                     number_group_seperator: ","

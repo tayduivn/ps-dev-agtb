@@ -6,7 +6,7 @@
      * @alias SUGAR.App.layout.ColumnsLayout
      * @extends View.Layout
      */
-    app.layout.ColumnsLayout = app.layout.Layout.extend({
+    app.view.layouts.ColumnsLayout = app.view.Layout.extend({
         //column layout uses a table for columns and prevent wrapping
         /**
          * Add a view (or layout) to this layout.

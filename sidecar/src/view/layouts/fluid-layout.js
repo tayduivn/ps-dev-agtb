@@ -5,7 +5,7 @@
      * @class View.Layouts.FluidLayout
      * @extends View.Layout
      */
-    app.layout.FluidLayout = app.layout.Layout.extend({
+    app.view.layouts.FluidLayout = app.view.Layout.extend({
         /**
          * Places a view's element on the page. This shoudl be overriden by any custom layout types.
          * @param {View.View} comp
