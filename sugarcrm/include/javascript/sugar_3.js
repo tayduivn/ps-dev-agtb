@@ -1744,15 +1744,14 @@ function initEditView(theForm) {
     if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
     	SUGAR.loadedForms = new Object();
     }
-
+    
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
 }
 
 function onUnloadEditView(theForm) {
-
+	
 	var dataHasChanged = false;
-
     if ( typeof editViewSnapshots == 'undefined' ) {
         // No snapshots, move along
         return;

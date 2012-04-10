@@ -38,6 +38,9 @@
 </div>
 
 <div style="float:left; text-align: right; width: 50%; font-size: 12px;">
+	{if $view == "shared"}
+		<button id="userListButtonId" type="button" class="button" onclick="javascript: CAL.toggle_shared_edit('shared_cal_edit');">{$MOD.LBL_EDIT_USERLIST}</button>
+	{/if}
 	{if $view != 'year'}
 	<span class="dateTime">
 					<img border="0" src="{$cal_img}" alt="{$APP.LBL_ENTER_DATE}" id="goto_date_trigger" align="absmiddle">					
