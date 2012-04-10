@@ -32,12 +32,23 @@ require_once('modules/Administration/views/view.globalsearchsettings.php');
 
 class Bug50781Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
+<<<<<<< HEAD
     public function setUp()
     {
         global $beanFiles, $beanList;
         include('include/modules.php');
     }
 
+=======
+    public function setup()
+    {
+        $beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+    }
+>>>>>>> caramel
     /**
     * @group 50781
     */

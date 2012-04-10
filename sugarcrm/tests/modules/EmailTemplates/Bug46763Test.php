@@ -48,7 +48,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
         'Accounts' => 'Test1Account',
         'Contacts' => 'Test2Contact',
         'Leads'    => 'Test3Lead',
-        'Tasks'    => 'Test4Task',
+        'Prospects'    => 'Test4Target',
     );
 
     /**

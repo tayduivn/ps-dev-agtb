@@ -32,7 +32,6 @@ $themedef = array(
     'description' => "A Right to Left Theme",
     'directionality' => 'rtl',
     'parentTheme' => 'Sugar',
-    'ignoreParentFiles' => array('style.js'),
     'version' => array(
         'regex_matches' => array('6\.*.*'),
         ),

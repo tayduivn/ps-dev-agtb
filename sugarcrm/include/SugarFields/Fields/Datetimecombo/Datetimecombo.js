@@ -105,7 +105,7 @@ function Datetimecombo (datetime, field, timeformat, tabindex, showCheckbox, che
 				}
 			}
 		}
-		if (this.hrs > 12) {
+		if (this.hasMeridiem && this.hrs > 12) {
 			this.hrs = this.hrs - 12;
 		}
 	} //if-else

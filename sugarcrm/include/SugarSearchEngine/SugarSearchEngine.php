@@ -66,7 +66,7 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
     /**
      * No-op
      */
-    public function createIndexDocument(SugarBean $bean, $searchFields = null) {}
+    public function createIndexDocument($bean, $searchFields = null) {}
 
     /**
      * No-op
