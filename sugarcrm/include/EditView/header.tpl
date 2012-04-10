@@ -30,9 +30,9 @@
 <script>
     {literal}
     $(document).ready(function(){
-        $("ul.clickMenu").each(function(index, node){
-            $(node).sugarActionMenu();
-        });
+	    $("ul.clickMenu").each(function(index, node){
+	        $(node).sugarActionMenu();
+	    });
     });
     {/literal}
 </script>
