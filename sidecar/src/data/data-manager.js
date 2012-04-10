@@ -375,14 +375,7 @@
             };
 
             var error = function(xhr, error) {
-                var statusCodes = {
-                    400: function() {},
-                    401: function() {},
-                    403: function() {},
-                    404: function() {},
-                    405: function() {},
-                    500: function() {}
-                }
+                var statusCodes = app.error.statusCodes;
 
                 if (options.error) {
                     options.error(error);
