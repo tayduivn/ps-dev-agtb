@@ -35,6 +35,7 @@ $viewdefs['Contacts']['DetailView'] = array(
                                                                  'value' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
                                                                  'htmlOptions' => array(
                                                                      'class' => 'button',
+                                                                     'id' => 'manage_subscriptions_button',
                                                                      'title' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
                                                                      'onclick' => 'this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Contacts\';',
                                                                      'name' => 'Manage Subscriptions',

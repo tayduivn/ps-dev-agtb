@@ -1,6 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
- if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,29 +21,29 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-//change directories to where this file is located.
-//this is to make sure it can find dce_config.php
-chdir(dirname(__FILE__));
 
-require_once('include/entryPoint.php');
+require_once("modules/DynamicFields/templates/Fields/TemplateCurrency.php");
 
-$sapi_type = php_sapi_name();
-if (substr($sapi_type, 0, 3) != 'cli') {
-    sugar_die("cron.php is CLI only.");
+class Bug51695Test extends Sugar_PHPUnit_Framework_TestCase
+{
+
+    public function setUp()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+    }
+
+    public function tearDown()
+    {
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+
+    public function testGetFieldDefsForCurrencyTemplateHasPrecision() {
+        $template = new TemplateCurrency();
+
+        $this->assertArrayHasKey('precision', $template->get_field_def());
+    }
+
 }
-
-if(empty($current_language)) {
-	$current_language = $sugar_config['default_language'];
-}
-
-$app_list_strings = return_app_list_strings_language($current_language);
-$app_strings = return_application_language($current_language);
-
-global $current_user;
-$current_user = new User();
-$current_user->getSystemUser();
-
-$moules = ($argc > 1) ?  array($argv[1]) : array();
-require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-$indexer = new SugarSearchEngineFullIndexer();
-$results = $indexer->performFullSystemIndex($moules);

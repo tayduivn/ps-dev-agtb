@@ -14,6 +14,7 @@
             "": "index",
             "login": "login",
             ":module": "index",
+            ":module/layout/:view": "layout",
             ":module/list": "index",
             ":module/create": "create",
             ":module/:id/:action": "record",
@@ -96,6 +97,18 @@
             this.controller.loadView({
                 module: module,
                 layout: "list"
+            });
+        },
+
+        /**
+         *  The layout route/callback is used to load an arbitrary layout for a module that doesn't have a record associated with the layout.
+         * @param module
+         * @param layout
+         */
+        layout: function(module, layout) {
+            this.controller.loadView({
+                module: module,
+                layout: layout
             });
         },
 

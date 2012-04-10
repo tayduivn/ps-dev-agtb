@@ -52,6 +52,11 @@ class SugarSearchEngineMappingHelper
      */
     private static $typeMap = array(
         'Elastic' => array (
+            // searching string in non string types seems to cause elastic to return 500 error
+            // for example, search 'aaa' in case_number field (type=long) when no data indexed causes error
+            // we also need to figure out how date works with date format
+            // so use only strings for now
+            /*
             'type' => array(
                 'bool' => 'boolean',
                 'int' => 'long',
@@ -62,6 +67,7 @@ class SugarSearchEngineMappingHelper
             'dbType' => array(
                 'decimal' => 'double',
             ),
+            */
         ),
     );
 
