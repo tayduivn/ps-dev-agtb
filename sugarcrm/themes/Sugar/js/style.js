@@ -144,13 +144,16 @@ SUGAR.append(SUGAR.themes, {
 	    		});
 	    		$(menuName).hoverscroll();
 	    		$(menuName).width(menuWidth);
+                $(menuName).addClass("hs-active");
 
 		    }
 		} else {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
-
-			$.fn.hoverscroll.destroy($(menuName));
+            if( $(menuName).hasClass("hs-active") ) {
+                $(menuName).removeClass("hs-active");
+			    $.fn.hoverscroll.destroy($(menuName));
+            }
 		}	
     },
     switchMenuMode: function() {

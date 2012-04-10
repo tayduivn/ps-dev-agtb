@@ -36,7 +36,7 @@
             menu = getMenu($$),
             o = sf.op;
 
-            if($$.parent().hasClass("showMore")) {
+            if($$.parent().hasClass("hs-active")) {
                 //Bug#51993: deactive submenu while hoverscroll is activated
                 return;
             }
