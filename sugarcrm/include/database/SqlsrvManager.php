@@ -398,15 +398,6 @@ class SqlsrvManager extends MssqlManager
         return $columns;
     }
 
-
-    /**
-     * @see DBManager::get_indices()
-     */
-    public function get_indices($tableName)
-    {
-        return parent::get_indices($tableName);
-    }
-
     /**
      * protected function to return true if the given tablename has any clustered indexes defined.
      *
