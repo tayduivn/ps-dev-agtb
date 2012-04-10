@@ -142,7 +142,7 @@ class ViewQuickcreate extends ViewAjax
 	            	
 	            	//Check if we shold use the module's QuickCreate.tpl file
 	            	if($view->useModuleQuickCreateTemplate && file_exists('modules/'.$module.'/tpls/QuickCreate.tpl')) {
-	            	  $this->ev->defs['templateMeta']['form']['customTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl';
+	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl'; 
 	            	}
 	            	
 		            $view->ev = & $this->ev;

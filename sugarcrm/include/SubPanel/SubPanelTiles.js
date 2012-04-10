@@ -497,8 +497,6 @@ SUGAR.subpanelUtils = function() {
 				// Grab the buttons from the subpanel and hide them
 				var button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
 				YAHOO.util.Dom.setStyle(button_elements, 'display', 'none');
-				button_elements = YAHOO.util.Selector.query('ul.SugarActionMenu', theDiv, false);
-				YAHOO.util.Dom.setStyle(button_elements, 'display', 'none');
 
                 // Add the form object to the DOM
 				theDivObj.parentNode.insertBefore(subpanelContents[theDiv]['newDiv'], theDivObj);
@@ -564,8 +562,6 @@ SUGAR.subpanelUtils = function() {
 
             SUGAR.subpanelUtils.removeSubPanel();
             var button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
-            YAHOO.util.Dom.setStyle(button_elements, 'display', '');
-            button_elements = YAHOO.util.Selector.query('ul.SugarActionMenu', theDiv, false);
             YAHOO.util.Dom.setStyle(button_elements, 'display', '');
             
 			return false;
