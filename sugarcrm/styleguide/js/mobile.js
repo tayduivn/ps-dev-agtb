@@ -110,7 +110,7 @@
 	return false;
     });
 
-    $('#listing > article:nth-child(2) a.show_more_posts').live('click', function(e){
+    $('#listing > article:nth-child(3) a.show_more_posts').live('click', function(e){
 	$(this).closest('article').remove();
 	inject_posts('prepend',$('#listing'),5);
 	return false;
@@ -122,37 +122,45 @@
         }, 3000);
     }
 
-    var post = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i><br>Reply</a><a href="" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a></span></span></article>',
-	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more activity...</a></div></article>';
+    var post_template = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i><br>Reply</a><a href="" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a></span></span></article>',
+	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more activity...</a></div></article>',
+	listing_spacer = '<i></i>',
+	posts_search_template = '\
+	<section class="search">\
+          <i class="icon-search"></i>\
+          <form class="form-search row-fluid" action="" _lpchecked="1">\
+            <input type="text" class="search-query" placeholder="Search all activity">\
+          </form>\
+        </section>';
 
     function inject_posts(order,anchor,numberofrecords){
 	var posts = '',
 	    topspacer = '<i></i>',
 	    domtopspacer = $('#listing > i');
         for(i=0;i<numberofrecords;i++){
-		if(i===0 && order==='prepend') {
-		    posts = topspacer + more_posts_link + posts;
-		}
-		posts = posts + post;
+		posts = posts + post_template;
 		if(i===numberofrecords-1 && order==='append') {
 		    posts = posts+more_posts_link;
 		}
 	}
 	if(order==='prepend' || order==='update'){
-	    anchor.children('i').remove();
-	    anchor.prepend(posts);
+	    anchor.children("section.search").remove();
+	    anchor.children("i").remove();
+	    anchor.children("article.nav").remove();
 	    if(anchor.find('article:not(.nav)').size() > 25) {
-	            anchor.find('article:not(.nav)').slice(20,25).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+	        anchor.find('article:not(.nav)').slice(20,25).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
 	    }
+	    anchor.prepend(listing_spacer + posts_search_template + more_posts_link + posts).append(more_posts_link);
         } else if(order==="append") {
-	    anchor.append(posts);
+	    anchor.find('article.nav:last-child').remove();
 	    if(anchor.find('article:not(.nav)').size() > 25) {
-                if(anchor.find('article:nth-child(2n)').hasClass('nav')===false) {
-		    anchor.children('i').remove();
-	            anchor.prepend(topspacer + more_posts_link);
-                }
+		anchor.children("section.search").remove();
+		anchor.children("i").remove();
+		anchor.children("article.nav").remove();
 	        anchor.find('article:not(.nav)').slice(0,5).addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
+		anchor.prepend(listing_spacer + posts_search_template + more_posts_link);
 	    }
+	    anchor.append(posts);
 	}
 	setTimeout(function () {
 	    $('.deleted').remove();
