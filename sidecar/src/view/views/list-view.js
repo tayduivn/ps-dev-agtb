@@ -37,7 +37,7 @@
          */
         setOrderBy: function(event) {
             //set on this obj and not the prototype
-            this.orderBy = {};
+            this.orderBy = this.orderBy || {};
 
             //mapping for css
             var orderMap = {
