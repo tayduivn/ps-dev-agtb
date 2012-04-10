@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -38,7 +38,7 @@ class Bug51980Test extends Sugar_PHPUnit_Framework_OutputTestCase {
         $this->user->is_admin = 1;
         $this->user->save();
         $this->user->retrieve($this->user->id);
-
+        $GLOBALS['current_user'] = $this->user;
         //set some global values that will help with the view
         $_REQUEST['action'] = $GLOBALS['action'] = 'DetailView';
         $_REQUEST['module'] = $GLOBALS['module'] = 'Opportunities';
@@ -68,6 +68,7 @@ class Bug51980Test extends Sugar_PHPUnit_Framework_OutputTestCase {
         unset($GLOBALS['app_strings']);
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
+        unset($GLOBALS['current_user']);
     }
 
      /**
