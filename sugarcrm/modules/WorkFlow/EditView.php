@@ -137,7 +137,7 @@ if(isset($_REQUEST['return_action'])) {
     if(isset($_REQUEST['return_module'])) {
         $cancel .= "this.form.module.value=\"".$_REQUEST['return_module']."\";";
         if(isset($_REQUEST['return_id'])) {
-            $cancel .= "this.form.record.value=\"".$_REQUEST['return_record']."\";";
+            $cancel .= "this.form.record.value=\"".$_REQUEST['return_id']."\";";
         }
     }
     $cancel .= "'";
