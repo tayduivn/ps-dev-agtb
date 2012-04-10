@@ -1,1 +1,4 @@
-<h3>{{label}}</h3><span name="{{name}}">{{value}}</span>
+<div class="row-fluid">
+    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span4" name="{{name}}">{{value}}</div>
+</div>

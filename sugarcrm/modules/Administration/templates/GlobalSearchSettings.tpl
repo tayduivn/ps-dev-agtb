@@ -73,45 +73,53 @@
 		</table>
 	</div>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
-    <br>
-    {$MOD.LBL_FTS_PAGE_DESC}
-    <br><br>
-    <table width="50%" border="0" cellspacing="1" cellpadding="0" class="edit view">
-        <tbody>
-            <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_FTS_SETTINGS_TITLE}</h4></th></tr>
+    {if !$hide_fts_config}
+        <br>
+        {$MOD.LBL_FTS_PAGE_DESC}
+        <br><br>
+        <table width="50%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+            <tbody>
+                <tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_FTS_SETTINGS_TITLE}</h4></th></tr>
 
-            <tr>
-                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}:&nbsp;{sugar_help text=$MOD.LBL_FTS_TYPE_HELP}</td>
-                <td width="25%" align="left" valign="middle"><select name="fts_type" id="fts_type">{$fts_type}</select></td>
-                <td width="60%">&nbsp;</td>
-            </tr>
-            <tr class="shouldToggle">
-                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}:&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
-                <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
-                <td width="60%" valign="bottom">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.testSettings();" style="text-decoration: none;">{$MOD.LBL_FTS_TEST}</a></td>
-            </tr>
-            <tr class="shouldToggle">
-                <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}:&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
-                <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
-                <td width="60%"></td>
-            </tr>
-            <tr class="shouldToggle">
-                <td colspan="2">&nbsp;</td>
-            </tr>
-        </tbody>
-    </table>
+                <tr>
+                    <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_TYPE}:&nbsp;{sugar_help text=$MOD.LBL_FTS_TYPE_HELP}</td>
+                    <td width="25%" align="left" valign="middle"><select name="fts_type" id="fts_type">{$fts_type}</select></td>
+                    <td width="60%">&nbsp;</td>
+                </tr>
+                <tr class="shouldToggle">
+                    <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}:&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
+                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
+                    <td width="60%" valign="bottom">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.testSettings();" style="text-decoration: none;">{$MOD.LBL_FTS_TEST}</a></td>
+                </tr>
+                <tr class="shouldToggle">
+                    <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}:&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
+                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
+                    <td width="60%"></td>
+                </tr>
+                <tr class="shouldToggle">
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+    {/if}
+
 {* //END SUGARCRM flav=pro ONLY *}
 	<table border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>
 				<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button primary" onclick="SUGAR.saveGlobalSearchSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
-                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="display: none;text-decoration: none;" id='schedFullSystemIndex' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
+                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="display:none;text-decoration: none;" id='schedFullSystemIndex' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
                 <input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" class="button" onclick="document.GlobalSearchSettings.action.value='';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
 			</td>
 		</tr>
 	</table>
 </form>
 
+<div id='selectFTSModules' class="yui-hidden">
+    <div style="background-color: white; padding: 20px;">
+        <div id='selectFTSModulesTable' ></div>
+    </div>
+</div>
 <script type="text/javascript">
 (function(){ldelim}
     var Connect = YAHOO.util.Connect;
@@ -151,6 +159,47 @@
 	SUGAR.globalSearchEnabledTable.render();
 	SUGAR.globalSearchDisabledTable.render();
 
+    SUGAR.getEnabledModules = function()
+    {
+        var enabledTable = SUGAR.globalSearchEnabledTable;
+        var modules = "";
+        for(var i=0; i < enabledTable.getRecordSet().getLength(); i++)
+        {
+            var data = enabledTable.getRecord(i).getData();
+            if (data.module && data.module != '')
+                modules += "," + data.module;
+        }
+        return modules;
+    }
+    SUGAR.getEnabledModulesForFTSSched = function()
+    {
+        var enabledTable = SUGAR.FTS.selectedDataTable;
+        var modules = [];
+        var selectedIDs = enabledTable.getSelectedRows();
+        for(var i=0; i < selectedIDs.length; i++)
+        {
+            var data = enabledTable.getRecord(selectedIDs[i]).getData();
+            modules.push(data.module);
+        }
+
+        return modules;
+    }
+    SUGAR.getTranslatedEnabledModules = function()
+    {
+        var enabledTable = SUGAR.globalSearchEnabledTable;
+        var modules = [{module:'', label: SUGAR.language.get('Administration', 'LBL_ALL')}];
+        for(var i=0; i < enabledTable.getRecordSet().getLength(); i++)
+        {
+            var data = enabledTable.getRecord(i).getData();
+            if (data.module && data.module != '')
+            {
+                var tmp = {'module' : data.module, 'label' : data.label};
+                modules.push(tmp);
+            }
+        }
+
+        return modules;
+    }
 	SUGAR.saveGlobalSearchSettings = function()
 	{
         {* //BEGIN SUGARCRM flav=pro ONLY *}
@@ -166,12 +215,7 @@
         }
         {* //END SUGARCRM flav=pro ONLY *}
 		var enabledTable = SUGAR.globalSearchEnabledTable;
-		var modules = "";
-		for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
-			var data = enabledTable.getRecord(i).getData();
-			if (data.module && data.module != '')
-			    modules += "," + data.module;
-		}
+		var modules = SUGAR.getEnabledModules();
 		modules = modules == "" ? modules : modules.substr(1);
 
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
@@ -223,24 +267,33 @@
     });
 
     SUGAR.FTS = {
-        schedFullSystemIndex : function()
-        {
-            if( confirm(SUGAR.language.get('Administration','LBL_SAVE_SCHED_WARNING')) )
-            {
-                var host = document.getElementById('fts_host').value;
-                var port = document.getElementById('fts_port').value;
-                var typeEl = document.getElementById('fts_type');
-                var type = typeEl.options[typeEl.selectedIndex].value;
-                if(host == "" || port == "" || type == "")
-                {
-                    check_form('GlobalSearchSettings');
-                    return
-                }
-                var sUrl = 'index.php?to_pdf=1&module=Administration&action=ScheduleFTSIndex&sched=true&type='
-                                + encodeURIComponent(type) + '&host=' + encodeURIComponent(host) + '&port=' + encodeURIComponent(port);
 
-                var callback = {
-                success: function(o) {
+        saveFullSysIndexSched: function()
+        {
+            var host = document.getElementById('fts_host').value;
+            var port = document.getElementById('fts_port').value;
+            var typeEl = document.getElementById('fts_type');
+            var type = typeEl.options[typeEl.selectedIndex].value;
+            var modules = SUGAR.getEnabledModulesForFTSSched();
+            if(modules.length == 0)
+            {
+                alert(SUGAR.language.get('app_strings','LBL_FTS_NO_MODULES_FOR_SCHED'));
+                return;
+            }
+            modules = modules.join(",");
+            if(host == "" || port == "" || type == "")
+            {
+                SUGAR.FTS.selectFTSModulesDialog.cancel();
+                check_form('GlobalSearchSettings');
+                return;
+            }
+            var sUrl = 'index.php?to_pdf=1&module=Administration&action=ScheduleFTSIndex&sched=true&type='
+                            + encodeURIComponent(type) + '&host=' + encodeURIComponent(host) + '&port=' + encodeURIComponent(port)
+                            + '&modules=' + encodeURIComponent(modules);
+
+            var callback = {
+                success: function(o)
+                {
                     var r = YAHOO.lang.JSON.parse(o.responseText);
                     if(r.success)
                     {
@@ -250,14 +303,78 @@
                     {
                         alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
                     }
-
+                    SUGAR.FTS.selectFTSModulesDialog.cancel();
                 },
-                failure: function(o) {
+                failure: function(o)
+                {
                     alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
+                    SUGAR.FTS.selectFTSModulesDialog.cancel();
                 }
             }
-                var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback, null);
+            var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback, null);
+        },
+        schedFullSystemIndex : function()
+        {
+            if(!confirm(SUGAR.language.get('Administration','LBL_SAVE_SCHED_WARNING')))
+                return;
+
+            var modules = SUGAR.getTranslatedEnabledModules();
+            if(modules.length == 1)
+            {
+                alert(SUGAR.language.get('app_strings','LBL_FTS_NO_MODULES_FOR_SCHED'));
+                return;
             }
+            var handleCancel = function() {
+                this.cancel();
+            };
+            var handleSubmit = function() {
+                SUGAR.FTS.saveFullSysIndexSched();
+            };
+
+            var buttons = [
+                { text: SUGAR.language.get('Administration','LBL_FTS_INDEX_BUTTON'), handler: handleSubmit, isDefault: true },
+                { text: SUGAR.language.get('app_strings','LBL_CANCEL_BUTTON_LABEL'), handler: handleCancel }
+            ];
+
+            if(!SUGAR.FTS.selectFTSModulesDialog)
+            {
+                SUGAR.FTS.selectFTSModulesDialog = new YAHOO.widget.Dialog("selectFTSModules", {
+                    modal:true,
+                    visible:true,
+                    fixedcenter:true,
+                    constraintoviewport: true,
+                    width	: '300px',
+                    shadow	: false,
+                    buttons : buttons
+                });
+            }
+            SUGAR.FTS.selectFTSModulesDialog.setHeader(SUGAR.language.get('Administration','LBL_SAVE_SCHED_BUTTON'));
+            YAHOO.util.Dom.removeClass("selectFTSModules", "yui-hidden");
+            SUGAR.FTS.selectFTSModulesDialog.render();
+            SUGAR.FTS.selectFTSModulesDialog.show();
+
+            var enabledModules = {'modules': modules};
+
+            var myColumnDefs = [{key:"label",label:SUGAR.language.get('Administration','LBL_AVAILABLE_FTS_MODULES'), sortable:false, width:200}];
+
+            this.myDataSource = new YAHOO.util.DataSource(enabledModules);
+            this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+            this.myDataSource.responseSchema = {
+                resultsList: "modules",
+                fields: ["label","module"]
+            };
+
+            SUGAR.FTS.selectedDataTable = new YAHOO.widget.DataTable("selectFTSModulesTable",myColumnDefs, this.myDataSource, {});
+
+            // Subscribe to events for row selection
+            SUGAR.FTS.selectedDataTable.subscribe("rowMouseoverEvent", SUGAR.FTS.selectedDataTable.onEventHighlightRow);
+            SUGAR.FTS.selectedDataTable.subscribe("rowMouseoutEvent", SUGAR.FTS.selectedDataTable.onEventUnhighlightRow);
+            SUGAR.FTS.selectedDataTable.subscribe("rowClickEvent", SUGAR.FTS.selectedDataTable.onEventSelectRow);
+
+            // Programmatically select the first row
+            SUGAR.FTS.selectedDataTable.selectRow(SUGAR.FTS.selectedDataTable.getTrEl(0));
+            // Programmatically bring focus to the instance so arrow selection works immediately
+            SUGAR.FTS.selectedDataTable.focus();
 
         },
         testSettings : function()
@@ -323,8 +440,8 @@
         }
     });
     {/literal}
-addForm('GlobalSearchSettings');
-addToValidateMoreThan('GlobalSearchSettings', 'fts_port', 'int', true, '{$MOD.LBL_FTS_PORT}', 1);
-addToValidate('GlobalSearchSettings', 'fts_host', 'varchar', 'true', '{$MOD.LBL_FTS_URL}');
+    addForm('GlobalSearchSettings');
+    addToValidateMoreThan('GlobalSearchSettings', 'fts_port', 'int', true, '{$MOD.LBL_FTS_PORT}', 1);
+    addToValidate('GlobalSearchSettings', 'fts_host', 'varchar', 'true', '{$MOD.LBL_FTS_URL}');
     {* //END SUGARCRM flav=pro ONLY *}
 </script>

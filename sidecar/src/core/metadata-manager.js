@@ -1,14 +1,24 @@
 (function(app) {
-    //Metadata that has been loaded from offline storage
+    // Key prefix used to identify metadata in the local storage.
+    var _keyPrefix;
+    // Metadata that has been loaded from offline storage (memory cache)
     var _metadata = {};
     var _sugarFields = {};
-    var fieldTypeMap = {
+    var _fieldTypeMap = {
         varchar: "text",
         name: "text",
         text: "textarea",
         decimal: "float",
         currency: "text"
     };
+
+    function _get(key) {
+        return app.cache.get(_keyPrefix + key);
+    }
+
+    function _set(key, value) {
+        app.cache.set(_keyPrefix + key, value);
+    }
 
     /**
      * The metadata manager is responsible for parsing and returning various metadata to components that request it.
@@ -17,229 +27,156 @@
      * @alias SUGAR.App.metadata
      */
     app.augment("metadata", {
+
         /**
-         * The Metadata Manager get method should be the be the only accessor for metadata.
-         *
-         * @param {Object} params. Params can have the following properties.
-         * <ul>
-         *      <li>String module : Module to retrieve metadata for</li>
-         *      <li>String type : Type of metadata to retrieve, possible values are
-         *          "view", "layout", and "vardef". If not specified, all the metadata
-         *          for the given module is returned (Optional)</li>
-         *      <li>String view : Specific view to retrieve. If not specified, all views for the given
-         *          module are returned.(Optional)</li>
-         *      <li>String layout : Specific layout to retrieve. If not specified, all layouts for the
-         *          given module are returned.(Optional)</li>
-         *      <li>String bean : Specific bean to retrieve. If not specified, the vardefs for the
-         *          primary bean are returned.(Optional)</li>
-         * </ul>
-         * @method
-         * @member Core.MetadataManager
-         * @return {Object} metadata
+         * Gets metadata for all modules.
+         * @return {Object} Metadata for all modules.
          */
-        get: function(params) {
-            if (params && params.sugarField) {
-                return this._getSugarField(params.sugarField);
+        getModules: function() {
+            var s = _get("modules");
+            if (s) {
+                var modules = s.split(",");
+                _.each(modules, function(module) {
+                    if (!_metadata[module]) {
+                        _metadata[module] = _get("m." + module);
+                    }
+                });
             }
-
-            // If no parameters are passed in, we return the whole metadata
-            if (!params || !params.module) {
-                return _metadata;
-            }
-
-            if (!params.type){
-                return this._getModule(params.module);
-            }
-
-            switch(params.type) {
-                case "view":
-                    return this._getView(params.module, params.view);
-                case "layout":
-                    return this._getLayout(params.module, params.layout);
-                case "vardef":
-                    return this._getVardef(params.module);
-                case "fieldDef":
-                    return this._getFieldDef(params.module, params.field);
-                default:
-            }
+            return _metadata;
         },
 
         /**
-         * Function that attempts to retrieve sugarFields from offline caches
-         * If its not there, it will make a server call to start a sync
-         * The sync will block the app
-         * TODO add infinite loop prevetion in sync
-         * @param {String} module of metadata
-         * @param {String} type of metadata
-         * @return {Object} metadata
-         * @private
+         * Gets module metadata.
+         * @param {String} module Module name.
+         * @param {String} type(optional) Metdata type.
+         * @return {Object} Module metadata of specific type if type is specified. Otherwise, module's overall metadata.
          */
-        _getModule: function(module, type) {
-            if (typeof(_metadata[module]) == "undefined") {
-                _metadata[module] = app.cache.get("metadata." + module);
-                if (typeof(_metadata[module]) == "undefined") {
-                  console.log("ERROR CALLING APP SYNC");
-                    app.sync();
-                    return null;
-                }
+        getModule: function(module, type) {
+            var metadata = _metadata[module];
+
+            // Load metadata in memory if it's not there yet
+            if (!metadata) {
+                _metadata[module] = _get(module);
+                metadata = _metadata[module];
             }
 
-            if (!type) {
-                return _metadata[module];
+            if (metadata && type) {
+                metadata = metadata[type];
             }
-
-            if (typeof(_metadata[module][type]) == "undefined") {
-              console.log("ERROR CALLING APP SYNC");
-               app.sync();
-                return null;
-            }
-
-            return _metadata[module][type];
+            return metadata;
         },
 
         /**
-         * @param {String} field Name of field metadata
+         * Gets field widget metadata.
+         * @param {Object} field Field definition.
          * @return {Object} metadata
          * @private
          */
-        _getSugarField: function(field) {
-
-            // init results
-            var result, views;
-            var name = fieldTypeMap[field.type] || field.type;
+        getField: function(field) {
+            var metadata;
+            var name = _fieldTypeMap[field.type] || field.type;
+            var viewName = field.viewName || field.view;
 
             if (!name) {
-                app.logger.error("No field name provided to getSugarField");
+                app.logger.error("Unknown sugar field type");
                 return null;
             }
 
+            metadata = _sugarFields[name];
             // get sugarfield from app cache if we dont have it in memory
-            if (typeof(_sugarFields[name]) == "undefined") {
-                _sugarFields[name] = app.cache.get("sugarFields." + name);
+            if (!metadata) {
+                _sugarFields[name] = _get("f." + name);
+                metadata = _sugarFields[name];
             }
 
-            if (_sugarFields[name]) {
-                views = _sugarFields[name].views || _sugarFields[name];
-                var viewName = field.viewName || field.view;
-                //No viewname means return the full metadata for this field
-                if (!viewName) {
-                    result = _sugarFields[name];
-                } else {
-                    // assign fields to results if set
-                    if (viewName && views[viewName]) {
-                        result = views[viewName];
-                        // fall back to detailview if field for this view doesnt exist
-                    } else if (views && views['default']) {
-                        result = views['default'];
-                        //fall back to base field detailview if none of the above exist
+            if (metadata) {
+                var views = metadata.views;
+                if (views && viewName) {
+                    metadata = views[viewName];
+                    if (!metadata) {
+                        // fall back to default view if view for this field doesnt exist
+                        metadata = views['default'];
+                    }
+                }
+                // TODO: This is temp hack for metadata that doesn't contain 'views' section
+                else if (viewName) {
+                    var t = metadata[viewName];
+                    if (t) {
+                        metadata = t;
+                    }
+                    else {
+                        // fall back to default view if view for this field doesnt exist
+                        metadata = metadata['default'];
                     }
                 }
 
             }
 
-            if (!result && _sugarFields.text && _sugarFields.text.views['default']) {
-                result = _sugarFields.text.views['default'];
-            }
-            //Could not get valid view data for this field
-            else if (!result) {
-              console.log("ERROR CALLING APP SYNC");
-               app.Sync();
-                return null;
+            if (!metadata && _sugarFields.text && _sugarFields.text.views['default']) {
+                metadata = _sugarFields.text.views['default'];
             }
 
-            return result;
+            return metadata;
         },
 
         /**
-         * Returns metadata for Views
-         * @private
-         * @param {String} module Name of module to retrieve from
-         * @param {String} view Optional name of view to get
-         * @return {Object} metadata
+         * Gets view metadata.
+         * @param {String} module Module name.
+         * @param {String} view(optional) View name.
+         * @return {Object} View metadata if view name is specified. Otherwise, metadata for all views of the given module.
          */
-        _getView: function(module, view) {
-            var views = this._getModule(module, "views");
-            if (views !== null) {
-                if (view) {
-                    if (typeof(views[view]) != "undefined")
-                        return views[view];
-                } else {
-                    return views;
-                }
-            }
-            return null;
-        },
-
-        /**
-         * Returns metadat for Layouts
-         * @private
-         * @param {String} module Name of module to retrieve from
-         * @param {String} layout Name of layout to retrieve from
-         * @return {Object} metadata
-         */
-        _getLayout: function(module, layout) {
-            var layouts = this._getModule(module, "layouts");
-
-            if (layouts !== null) {
-                if (layout) {
-                    if (typeof(layouts[layout]) != "undefined")
-                        return layouts[layout];
-                } else {
-                    return layouts;
-                }
+        getView: function(module, view) {
+            var metadata = this.getModule(module, "views");
+            if (metadata && view) {
+                metadata = metadata[view];
             }
 
-            return null;
+            return metadata;
         },
 
         /**
-         * Returns vardef
-         * @private
-         * @param {String} module Module name
-         * @return {Object} vardef
+         * Gets layout metadata.
+         * @param {String} module Module name.
+         * @param {String} layout(optional) Layout name.
+         * @return {Object} Layout metadata if layout name is specified. Otherwise, metadata for all layouts of the given module.
          */
-        _getVardef: function(module) {
-            return this._getModule(module, "fields");
-        },
+        getLayout: function(module, layout) {
+            var metadata = this.getModule(module, "layouts");
+            if (metadata && layout) {
+                metadata = metadata[layout];
+            }
 
-        /**
-         * Returns Fielddef metadata
-         * @param {String} module Module name
-         * @param {String} field Name of field
-         * @return {Object} metadata
-         * @private
-         * @method
-         */
-        _getFieldDef: function(module, field) {
-            var vardef = this._getVardef(module);
-            return vardef ? vardef[field] : null;
+            return metadata;
         },
 
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
 
         /**
-         * Set the metadata.
+         * Sets the metadata.
+         *
          * By default this function is used by MetadataManager to translate server responses into metadata
-         * useable internally.
-         * @param {Object} data Metadata
-         * @param {String} key Metadata identifier
-         * @method
+         * usable internally.
+         * @param {Object} data Metadata payload returned by the server.
+         * @param {String} key(optional) Metadata identifier prefix.
          */
         set: function(data, key) {
-            key = key || "metadata";
+            _keyPrefix = (key || "md") + ".";
 
             if (data.modules) {
+                var modules = [];
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = entry;
-                    app.cache.set(key + "." + module, entry);
+                    _set("m." + module, entry);
+                    modules.push(module);
                 });
+                _set("modules", modules.join(","));
             }
 
             if (data.sugarFields) {
                 _.each(data.sugarFields, function(entry, module) {
                     _sugarFields[module] = entry;
-                    app.cache.set(key + "." + module, entry);
+                    _set("f." + module, entry);
                 });
             }
 
@@ -255,9 +192,8 @@
         },
 
         /**
-         * Syncs metadata from server using the Api wrapper. Saves the metadata to the manager.
-         * @method
-         * @param {Function} callback Callback function to be executed after a sync
+         * Syncs metadata from the server. Saves the metadata to the local cache.
+         * @param {Function} callback Callback function to be executed after sync completes.
          */
         sync: function(callback) {
             var self = this;
@@ -267,11 +203,12 @@
                     callback.call(self, null, metadata);
                 },
                 error: function(error) {
-                    console.log("Error fetching metadata");
-                    console.log(error);
+                    app.logger.error("Error fetching metadata");
+                    app.logger.error(error);
                     callback.call(self, error);
                 }
             });
         }
     });
+
 })(SUGAR.App);

@@ -35,6 +35,7 @@ $viewdefs['Prospects']['DetailView'] = array(
                                                              'htmlOptions' => array(
                                                                  'class' => 'button',
                                                                  'name' => 'CONVERT_LEAD_BTN',
+                                                                 'id' => 'convert_target_button',
                                                                  'title' => '{$MOD.LBL_CONVERT_BUTTON_TITLE}',
                                                                  'onclick' => 'this.form.return_module.value=\'Prospects\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\';this.form.module.value=\'Leads\';this.form.action.value=\'EditView\';',
                                                              ),
@@ -47,6 +48,7 @@ $viewdefs['Prospects']['DetailView'] = array(
                                                              'value' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
                                                              'htmlOptions' => array(
                                                                  'class' => 'button',
+                                                                 'id' => 'manage_subscriptions_button',
                                                                  'name' => 'Manage Subscriptions',
                                                                  'title' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
                                                                  'onclick' => 'this.form.return_module.value=\'Prospects\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\';',

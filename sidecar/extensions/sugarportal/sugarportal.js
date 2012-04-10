@@ -25,8 +25,8 @@
                                 events: {
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                        "this.app.sugarAuth.login(args, {success:" +
-                                        "function(){console.log(\"logged in successfully!\");var app = self.app; app.sync(" +
+                                        "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
+                                        "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); var app = self.app; app.sync(" +
                                         "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
                                         "}"
@@ -84,50 +84,70 @@
                     }
                 },
                 "events": {
-                }
+                },
+                controller: "{" +
+                    "render : function(){" +
+                    "this.app.sugarField.base.prototype.render.call(this);" +
+                    "if (!SUGAR.App.api.isAuthenticated()) $(\".navbar\").hide();" +
+                    "}}"
             },
             "password": {
-                "editView": {
-                    "type": "basic",
-                    "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                        "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
-                },
-                "loginView": {
-                    "type": "basic",
-                    "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                        "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                        "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                "views": {
+                    "editView": {
+                        "type": "basic",
+                        "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                    },
+                    "loginView": {
+                        "type": "basic",
+                        "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
+                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                    }
                 }
             },
             "button": {
-                "default": {
-                    "type": "basic",
-                    "template": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
-                        "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
-                        "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+                "views": {
+                    "default": {
+                        "type": "basic",
+                        "template": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+                            "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
+                            "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
+                    }
                 }
             }
         },
         'viewTemplates': {
-            "loginView": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a>&nbsp</h3>" +
-                "<form name='{{name}}' class='well'>" +
+            "loginView": "<form name='{{name}}' class='well'>" +
+                "<div class=\"container welcome\">\n" +
+                "<div class=\"row\">\n" +
+                "<div class=\"span4 offset4 thumbnail\">\n" +
+                "<div class=\"modal-header tcenter\">\n" +
+                "<h2 class=\"brand\">SugarCRM</h2>\n" +
+                "</div>\n" +
                 "{{#each meta.panels}}" +
-                '<div class="{{../name}} panel">' +
-                "<h4>{{label}}</h4>" +
-                "{{#each fields}}" +
+                "<div class=\"modal-body tcenter\">\n" +
+                "{{#each fields}}\n" +
                 "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
                 "{{/each}}" +
-                "</div>" +
-                "{{/each}}" + "{{#each meta.buttons}}" +
+                "</div>          \n" +
+                "{{/each}}" +
+                "<div class=\"modal-footer\">\n" +
+                "{{#each meta.buttons}}" +
                 "{{sugarField ../context ../this ../model}}" +
-                "{{/each}}" + "</form>"
+                "{{/each}}" +
+                "</div>\n" +
+                "</div>                             \n" +
+                "</div>\n" +
+                "</div>         \n" +
+                "</form>"
         }
     }
-    if (_.isEmpty(app.metadata.get())) {
-        app.metadata.set(base_metadata);
-        app.data.declareModels(base_metadata);
-        app.template.load(base_metadata);
-    }
+    //if (_.isEmpty(app.metadata.get())) {
+    app.metadata.set(base_metadata);
+    app.data.declareModels(base_metadata);
+    app.template.load(base_metadata);
+    //}
 })
     (SUGAR.App);
