@@ -62,6 +62,11 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
     const MAX_BULK_DELETE_THRESHOLD = 3000;
 
     /**
+     * Number of time to postpone a job by so it's not executed twice during the same request.
+     */
+    const POSTPONE_JOB_TIME = 20;
+
+    /**
      * Name of the scheduler to perform a full index
      * @var string
      */
@@ -394,7 +399,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
         else
         {
             //Mark the job that as pending so we can be invoked later.
-            $this->schedulerJob->postponeJob('', 20);
+            $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
         }
 
         if(self::isFTSIndexScheduleCompleted())
