@@ -41,20 +41,21 @@
 
             //mapping for css
             var orderMap = {
-                "desc":"down",
-                "asc":"up"
+                "desc": "down",
+                "asc": "up"
             }
 
             //TODO probably need to check if we can sort this field from metadata
             var collection = this.context.get('collection');
-            var fieldName = $(event.target).data('fieldname');
+            var fieldName = this.$(event.target).data('fieldname');
 
-            if (!collection.orderBy){
-                collection.orderBy={
+            if (!collection.orderBy) {
+                collection.orderBy = {
                     field: "",
-                        direction:""
+                    direction: ""
                 };
-            };
+            }
+            ;
 
             var nOrder = "desc";
 
