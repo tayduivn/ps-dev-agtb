@@ -350,9 +350,9 @@ $xtpl->assign("ACTION_BUTTON", $action_button);
 
 /////////
 ///Using action menu (new UI) instead of buttons for Sent Email DetailView.
-$buttons = array();
+$buttons_sent_email = array();
 if($show_forward){
-$buttons[] = <<<EOD
+$buttons_sent_email[] = <<<EOD
             <input title="{$mod_strings['LBL_BUTTON_FORWARD']}"
 					class="button" onclick="this.form.return_module.value='{$ret_mod}';
 											this.form.return_action.value='{$ret_action}';
@@ -365,7 +365,7 @@ $buttons[] = <<<EOD
 			>
 EOD;
 }
-$buttons[] = <<<EOD
+$buttons_sent_email[] = <<<EOD
             <input title="{$mod_strings['LBL_BUTTON_REPLY_TITLE']}"
 					class="button" onclick="this.form.return_module.value='{$ret_mod}';
 											this.form.return_action.value='{$ret_action}';
@@ -375,7 +375,7 @@ $buttons[] = <<<EOD
 					value="  {$mod_strings['LBL_BUTTON_REPLY']}  "
 			>
 EOD;
-$buttons[] = <<<EOD
+$buttons_sent_email[] = <<<EOD
             <input title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}"
 					accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}"
 					class="button" onclick="this.form.return_module.value='{$start['module']}';
@@ -391,7 +391,7 @@ $buttons[] = <<<EOD
 EOD;
 
 if($show_raw) {
-    $buttons[] = <<<EOD
+    $buttons_sent_email[] = <<<EOD
             <input type="button" name="button" class="button"
 				id="rawButton"
 				title="{$mod_strings['LBL_BUTTON_RAW_TITLE']}"
@@ -402,13 +402,13 @@ EOD;
 }
 
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');
-$action_button = smarty_function_sugar_action_menu(array(
+$action_button_sent_email = smarty_function_sugar_action_menu(array(
     'id' => 'sent_emails_edit_action_buttons',
-    'buttons' => $buttons,
+    'buttons' => $buttons_sent_email,
     'class' => 'clickMenu fancymenu',
 ), $xtpl);
 
-$xtpl->assign("ACTION_BUTTON", $action_button);
+$xtpl->assign("ACTION_BUTTON_SENT_EMAIL", $action_button_sent_email);
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	JAVASCRIPT VARS
