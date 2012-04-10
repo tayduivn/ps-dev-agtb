@@ -82,8 +82,8 @@ class ParserFactory
                 return new WirelessGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
             case MB_WIRELESSLISTVIEW:
             case MB_PORTALLISTVIEW:
-                require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' ;
-                return new ListLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
+                return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName);
             //END SUGARCRM flav=pro || flav=sales ONLY
             case MB_BASICSEARCH :
             case MB_ADVANCEDSEARCH :
