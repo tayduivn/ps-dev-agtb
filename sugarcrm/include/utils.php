@@ -783,6 +783,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 		}
 
 		if (!empty($user_name_filter)) {
+		    $user_name_filter = $db->quote($user_name_filter);
 			$query .= " AND user_name LIKE '$user_name_filter%' ";
 		}
 		if (!empty($user_id)) {
@@ -824,6 +825,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 
 /**
  * uses a different query to return a list of users than get_user_array()
+ * Used from QuickSearch.php
  * @param args string where clause entry
  * @return array Array of Users' details that match passed criteria
  */
@@ -832,26 +834,28 @@ function getUserArrayFromFullName($args, $hide_portal_users = false) {
 	$db = DBManagerFactory::getInstance();
 
 	// jmorais@dri - Bug #51411
-	// 
-    // Refactor the code responsible for parsing supplied $args, this way we 
-    // ensure that if $args has at least one space (after trim), the $inClause 
-    // will be composed by several clauses ($inClauses) inside parenthesis. 
+	//
+    // Refactor the code responsible for parsing supplied $args, this way we
+    // ensure that if $args has at least one space (after trim), the $inClause
+    // will be composed by several clauses ($inClauses) inside parenthesis.
     //
-    // Ensuring that operator precedence is respected, and avoiding 
+    // Ensuring that operator precedence is respected, and avoiding
     // inactive/deleted users to be retrieved.
     //
     $args = trim($args);
     if (strpos($args, ' ')) {
         $inClauses = array();
-        
+
         $argArray = explode(' ', $args);
         foreach ($argArray as $arg) {
+            $arg = $db->quote($arg);
             $inClauses[] = "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
         }
-        
+
         $inClause = '(' . implode('OR ', $inClauses) . ')';
-        
+
     } else {
+        $args = $db->quote($args);
         $inClause = "(first_name LIKE '{$args}%' OR last_name LIKE '{$args}%')";
     }
     // ~jmorais@dri
