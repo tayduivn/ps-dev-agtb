@@ -123,6 +123,7 @@ if (!empty($focus->status)) {
 ///////////////////////////////////////////////////////////////////////////////
 echo "\n<p>\n";
 $GLOBALS['log']->info("Email detail view");
+$show_forward = true;
 if ($email_type == 'archived') {
 	echo getClassicModuleTitle('Emails', array($mod_strings['LBL_ARCHIVED_EMAIL'],$focus->name), true);
 	$xtpl=new XTemplate ('modules/Emails/DetailView.html');
@@ -133,6 +134,7 @@ if ($email_type == 'archived') {
 		//$xtpl->assign('DISABLE_REPLY_BUTTON', 'NONE');
 	} elseif ($focus->type == 'draft') {
 		$xtpl->assign('DISABLE_FORWARD_BUTTON', 'NONE');
+        $show_forward = false;
 		echo getClassicModuleTitle('Emails', array($mod_strings['LBL_LIST_FORM_DRAFTS_TITLE'],$focus->name), true);
 	} elseif($focus->type == 'inbound') {
 		echo getClassicModuleTitle('Emails', array($mod_strings['LBL_INBOUND_TITLE'],$focus->name), true);
@@ -146,12 +148,26 @@ echo "\n</p>\n";
 ////	RETURN NAVIGATION
 $uri = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php';
 $start = $focus->getStartPage($uri);
+$ret_mod = '';
+$ret_action = '';
 if (isset($_REQUEST['return_id'])) { // coming from a subpanel, return_module|action is not set
 	$xtpl->assign('RETURN_ID', $_REQUEST['return_id']);
-	if (isset($_REQUEST['return_module']))	$xtpl->assign('RETURN_MODULE', $_REQUEST['return_module']);
-	else $xtpl->assign('RETURN_MODULE', 'Emails');
-	if (isset($_REQUEST['return_action']))	$xtpl->assign('RETURN_ACTION', $_REQUEST['return_action']);
-	else $xtpl->assign('RETURN_ACTION', 'DetailView');
+	if (isset($_REQUEST['return_module'])){
+        $xtpl->assign('RETURN_MODULE', $_REQUEST['return_module']);
+        $ret_mod = $_REQUEST['return_module'];
+    }
+	else {
+        $xtpl->assign('RETURN_MODULE', 'Emails');
+        $ret_mod = 'Emails';
+    }
+	if (isset($_REQUEST['return_action'])){
+        $xtpl->assign('RETURN_ACTION', $_REQUEST['return_action']);
+        $ret_action = $_REQUEST['return_action'];
+    }
+	else {
+        $xtpl->assign('RETURN_ACTION', 'DetailView');
+        $ret_action = 'DetailView';
+    }
 }
 
 if(isset($start['action']) && !empty($start['action'])) {
@@ -281,7 +297,7 @@ if(!empty($focus->reply_to_email)) {
 
 
 
-// Using action menu (new UI) instead of buttons.
+// Using action menu (new UI) instead of buttons for Archived Email DetailView.
 $buttons = array(
     <<<EOD
             <input	title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" class="button"
@@ -332,6 +348,67 @@ $action_button = smarty_function_sugar_action_menu(array(
 
 $xtpl->assign("ACTION_BUTTON", $action_button);
 
+/////////
+///Using action menu (new UI) instead of buttons for Sent Email DetailView.
+$buttons = array();
+if($show_forward){
+$buttons[] = <<<EOD
+            <input title="{$mod_strings['LBL_BUTTON_FORWARD']}"
+					class="button" onclick="this.form.return_module.value='{$ret_mod}';
+											this.form.return_action.value='{$ret_action}';
+											this.form.return_id.value='{$focus->id}';
+											this.form.action.value='EditView';
+											this.form.type.value='forward'"
+					type="submit" name="button"
+					value="  {$mod_strings['LBL_BUTTON_FORWARD']}  "
+					style="display:{DISABLE_FORWARD_BUTTON};"
+			>
+EOD;
+}
+$buttons[] = <<<EOD
+            <input title="{$mod_strings['LBL_BUTTON_REPLY_TITLE']}"
+					class="button" onclick="this.form.return_module.value='{$ret_mod}';
+											this.form.return_action.value='{$ret_action}';
+											this.form.return_id.value='{$focus->id}';
+											this.form.action.value='EditView'"
+					type="submit" name="button"
+					value="  {$mod_strings['LBL_BUTTON_REPLY']}  "
+			>
+EOD;
+$buttons[] = <<<EOD
+            <input title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}"
+					accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}"
+					class="button" onclick="this.form.return_module.value='{$start['module']}';
+											this.form.return_action.value='{$start['action']}';
+											this.form.return_id.value='{$start['record']}';
+											this.form.type.value='{$start['type']}';
+											this.form.assigned_user_id.value='{$start['assigned_user_id']}';
+											this.form.action.value='Delete';
+											return confirm('{$app_strings['NTC_DELETE_CONFIRMATION']}')"
+					type="submit" name="button"
+					value="    {$app_strings['LBL_DELETE_BUTTON']}    "
+			>
+EOD;
+
+if($show_raw) {
+    $buttons[] = <<<EOD
+            <input type="button" name="button" class="button"
+				id="rawButton"
+				title="{$mod_strings['LBL_BUTTON_RAW_TITLE']}"
+				value=" {$mod_strings['LBL_BUTTON_RAW_LABEL']} "
+				onclick="open_popup('Emails', 800, 600, '', true, true, '', 'show_raw', '', '{$focus->id}');"
+			/>
+EOD;
+}
+
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$action_button = smarty_function_sugar_action_menu(array(
+    'id' => 'sent_emails_edit_action_buttons',
+    'buttons' => $buttons,
+    'class' => 'clickMenu fancymenu',
+), $xtpl);
+
+$xtpl->assign("ACTION_BUTTON", $action_button);
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	JAVASCRIPT VARS
