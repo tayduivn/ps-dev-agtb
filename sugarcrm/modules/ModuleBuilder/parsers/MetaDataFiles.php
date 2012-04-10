@@ -59,17 +59,30 @@ class MetaDataFiles
         MB_QUICKCREATE            => 'quickcreatedefs',
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
         MB_WIRELESSEDITVIEW       => 'edit' ,
-        MB_WIRELESSDETAILVIEW     => 'detailView' ,
+        MB_WIRELESSDETAILVIEW     => 'detail' ,
         MB_WIRELESSLISTVIEW       => 'list' ,
         MB_WIRELESSBASICSEARCH    => 'searchView' ,
         MB_WIRELESSADVANCEDSEARCH => 'searchView' ,
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW         => 'edit',
-        MB_PORTALDETAILVIEW       => 'detailView',
+        MB_PORTALDETAILVIEW       => 'detail',
         MB_PORTALLISTVIEW         => 'list',
         MB_PORTALSEARCHVIEW       => 'searchView',
         //END SUGARCRM flav=ent ONLY
+    );
+
+    /**
+     * List of metadata def array vars
+     *
+     * @static
+     * @access public
+     * @var array
+     */
+    public static $viewDefVars = array(
+        MB_EDITVIEW    => 'EditView' ,
+    	MB_DETAILVIEW  => 'DetailView' ,
+    	MB_QUICKCREATE => 'QuickCreate',
     );
 
     /**
@@ -89,6 +102,16 @@ class MetaDataFiles
      */
     public static function getNames() {
         return self::$names;
+    }
+
+    /**
+     * Gets the file/variable name for a given view
+     *
+     * @param string $name The name of the view to get the variable/file name for
+     * @return string The name of the file/variable
+     */
+    public static function getName($name) {
+        return empty(self::$names[$name]) ? null : self::$names[$name];
     }
 
     /**
@@ -144,6 +167,42 @@ class MetaDataFiles
         }
 
         return '';
+    }
+
+    /**
+     * Gets the list of view def array variable names
+     *
+     * @static
+     * @return array
+     */
+    public static function getViewDefVars() {
+        return self::$viewDefVars;
+    }
+
+    /**
+     * Gets a single view def variable name
+     *
+     * This checks the def vars array first then the file name arrays. This
+     * fallback allows for the use of the more standard naming for sidecar stuff
+     * without having to redefine a bunch of vars that are the exact same as their
+     * filename counterparts
+     *
+     * @static
+     * @param string $view The name of the view to get the def var for
+     * @return string The def variable name
+     */
+    public static function getViewDefVar($view) {
+        // Try the view def var array first
+        if (isset(self::$viewDefVars[$view])) {
+            return self::$viewDefVars[$view];
+        }
+
+        // try the file name array second
+        return self::getName($view);
+    }
+
+    public static function setViewDefVar($view, $defVar) {
+        
     }
 
     /**
