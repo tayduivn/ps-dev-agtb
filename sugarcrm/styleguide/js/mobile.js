@@ -118,7 +118,7 @@
 
     if($('.alert').size()){
 	setTimeout(function(ia){
-            $('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').remove() });
+            //$('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').remove() });
         }, 3000);
     }
 
@@ -158,8 +158,9 @@
 	    $('.deleted').remove();
 	}, 250);
     }
-    
+
     function parseQueryString(){
+	alert('d');
 	var qs = location.search.substring(1);
 	qs = qs.split("&");
 	if(qs.length === 2){

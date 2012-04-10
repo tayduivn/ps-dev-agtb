@@ -589,17 +589,17 @@ color: @gray;
  z-index: 2000;
  position: absolute;
  width: 100%;
- height: 20px;
+ height: 42px;
+ line-height: 42px;
  bottom: -1px;
  left: -1px;
  .border-radius(0px);
- padding: 5px 10px;
+ padding: 0 10px;
  .opacity(94);
  color: @white;
  text-shadow: none;
- font-weight: bold;
  margin: 0;
- font-size: 11px;
+ font-size: 12px;
  background: @black;
 }
 
@@ -766,9 +766,12 @@ float: none !important;}
 #login .btn.btn-sugar {width: 140px!important;}
 
 /* Alert overrider */
-.alert-success {background: darken(@green, 20%); color: #fff; text-shadow: none;} 
-.alert-danger, .alert-error {background: @red;  color: #fff;} 
-
+.alert-warning {background: lighten(@yellow, 40%); color: darken(desaturate(@yellow,10%),28%); border-top:1px solid fade(darken(@yellow,50%),25%);}
+.alert-general {background: lighten(@blue, 46%); color: darken(@blue,20%); border-top:1px solid fade(darken(@blue,10%),25%);}
+.alert-success {background: lighten(@green, 60%); color: darken(@green,20%); border-top:1px solid fade(darken(@green,10%),25%);}
+.alert-error {background: lighten(@red,47%); color: @red; border-top:1px solid fade(darken(@red,10%),25%);}
+.alert[id^="demo-"] {  display:none;}
+.alert:target {  display:inline-block !important;}
 
 /* TOUR */
 #tour {
