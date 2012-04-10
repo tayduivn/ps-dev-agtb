@@ -5226,12 +5226,12 @@ td .actions {
 .card2 {
   margin: 0 0 20px;
 }
-.card2 .row-fluid {
+.card2 span .row-fluid {
   position: relative;
   padding: 6px 0 7px;
   border-bottom: 1px solid #e8e8e8;
 }
-.card2 .row-fluid:last-child {
+.card2 span:last-child .row-fluid {
   border-bottom: none;
 }
 .card input,
