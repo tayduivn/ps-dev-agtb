@@ -66,7 +66,7 @@ h1 {font-size: 26px !important;}
 article {
   position: relative;
 	display: block;
-  padding: 8px 44px;
+  padding: 8px 32px 8px 12px;
   border-top: 1px solid darken(@grayLighter, 5%);
   min-height: 52px;
 }
@@ -103,7 +103,7 @@ article [id^="listing-action"] i.grip {
 }
 article [id^="listing-action"] i.on {
   left: 0;
-  #gradient > .horizontal( lighten(@black, 25%), lighten(@black, 20%));
+  #gradient > .horizontal( lighten(@grayDarker, 1%), lighten(@grayDarker, 20%));
   color: @black;
   text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
   @shadow: 1px 0 4px rgba(0,0,0,.4);
@@ -126,15 +126,18 @@ article [id^="listing-action"] span {
 article [id^="listing-action"] a, #record-action a {
 padding: 4px 6%;
  display: inline-block;
- width: 26px;
+ /*width: 26px;*/
+ width:auto;
  height: 26px;
  color: @white;
  text-shadow: 0 1px 0 @black, 0 1px 4px @black;
  text-decoration: none;
  text-align: center;
+ font-size:12px;
+ letter-spacing:0px;
 }
 article [id^="listing-action"] a {
-  padding: 26px 0 0 5%;
+  padding: 18px 0 0 5%;
 }
 
 article p {
@@ -371,14 +374,6 @@ html {
   display: block;
 }
 
-#listing>i {
-  height:45px;
-  display:inline-block;
-}
-
-#detailListing #listing {
-  height: 40% !important;
-}
 
 #listing article {
 	-webkit-transition: all .25s ease-in-out;
@@ -390,6 +385,57 @@ html {
 
 #listing article.nav {
     margin-bottom: 0;
+    #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+    padding-top:0;
+    padding-bottom:0;
+    min-height:42px;
+}
+
+#listing article.nav:last-child {
+    border-top: 1px solid darken(@grayLighter, 25%);
+}
+
+#listing article.nav:first-child,
+#listing article.nav:nth-child(2),
+#listing article.nav:nth-child(3) {
+    border-bottom: 1px solid darken(@grayLighter, 25%);
+}
+
+#listing article.nav div {
+    height:42px;
+}
+
+#listing > i {
+  height: 45px;
+  display: inline-block;
+}
+
+#detailListing #listing > i {
+  height: 218px;
+  display: inline-block;
+}
+
+#listing .form-search {
+  margin:0;
+}
+
+#listing .search {
+  height:34px;
+  padding:8px 32px 8px 8px;
+  #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+}
+
+#listing .icon-search {
+  position:absolute;
+  margin:8px 0 0 8px;
+  color:darken(@grayLighter, 20%);
+}
+
+#listing .search-query {
+  width:98.5%;
+  height:26px;
+  .border-radius(18px);
+  text-indent:16px;
 }
 
 .navbar [class^="icon-"] {
@@ -411,7 +457,7 @@ html {
   z-index: 2000;
 }
 
-.navbar #search, .navbar #back .icon-chevron-left {
+.navbar #back .icon-chevron-left {
   position: absolute;
   top: 11px;
   left: 58px;
@@ -435,7 +481,6 @@ html {
   padding-bottom: 190px;
 */
 }
-
 
 .navbar h1 {
   font-size: 16px !important;
@@ -543,17 +588,17 @@ color: @gray;
  z-index: 2000;
  position: absolute;
  width: 100%;
- height: 20px;
+ height: 42px;
+ line-height: 42px;
  bottom: -1px;
  left: -1px;
  .border-radius(0px);
- padding: 5px 10px;
+ padding: 0 10px;
  .opacity(94);
  color: @white;
  text-shadow: none;
- font-weight: bold;
  margin: 0;
- font-size: 11px;
+ font-size: 12px;
  background: @black;
 }
 
@@ -713,9 +758,12 @@ float: none !important;}
 #login .btn.btn-sugar {width: 140px!important;}
 
 /* Alert overrider */
-.alert-success {background: darken(@green, 20%); color: #fff; text-shadow: none;} 
-.alert-danger, .alert-error {background: @red;  color: #fff;} 
-
+.alert-warning {background: lighten(@yellow, 40%); color: darken(desaturate(@yellow,10%),28%); border-top:1px solid fade(darken(@yellow,50%),25%);}
+.alert-general {background: lighten(@blue, 46%); color: darken(@blue,20%); border-top:1px solid fade(darken(@blue,10%),25%);}
+.alert-success {background: lighten(@green, 60%); color: darken(@green,20%); border-top:1px solid fade(darken(@green,10%),25%);}
+.alert-error {background: lighten(@red,47%); color: @red; border-top:1px solid fade(darken(@red,10%),25%);}
+.alert[id^="demo-"] {  display:none;}
+.alert:target {  display:inline-block !important;}
 
 /* TOUR */
 #tour {
@@ -794,8 +842,7 @@ float: none !important;}
     display: none;
   }
   // Forms in navbar
-  .navbar-form,
-  .navbar-search {
+  .navbar-form{
     float: none;
     padding: (@baseLineHeight / 2) 15px;
     margin: (@baseLineHeight / 2) 0;
