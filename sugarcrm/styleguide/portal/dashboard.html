@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/javascript">document.write(unescape("%3Cscript src='" + (("https:" == document.location.protocol) ? "https" : "http") + "://c.mouseflow.com/projects/ebb434a0-064b-4a60-9162-caeccde19a7b.js' type='text/javascript'%3E%3C/script%3E"));</script>
   <meta charset="utf-8">
   <title>Dashboard - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
@@ -13,8 +12,7 @@
   <link href="../css/bootstrap.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
-<body>
-
+<body id="portal">
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
@@ -42,7 +40,7 @@
             <li class="dropdown" id="createList">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="create2.html">Create Bug</a></li>
+                <li><a href="create.html">Create Bug</a></li>
                 <li><a href="#">Create Case</a></li>
               </ul>
             </li>              
@@ -62,7 +60,7 @@
     <div class="row-fluid">
       <div class="span8">
         <div class="thumbnail" id="moduleWidgetBugs">
-          <h1><a href="bugs.html">Bugs</a> <small>(5 of 30)</small></h1>
+          <h1><a href="bugs.html">Bugs</a></h1>
           <table class="table table-striped datatable">
             <thead>
               <tr>
@@ -75,7 +73,7 @@
             <tbody>
               <tr>
                 <td>20508</td>
-                <td><a href="detail2.html">Bad links in Pitch</a></td>
+                <td><a href="detail.html">Bad links in Pitch</a></td>
                 <td>High</td>
                 <td>Open</td>
               </tr>
@@ -106,13 +104,13 @@
             </tbody>
           </table>
           <div class="block-footer">
-            <button data-loading-text="Loading..." class="btn">
+            <a href="" data-loading-text="Loading...">
               Show more bugs
-            </button>
+            </a>
           </div>
           <ul class="nav nav-pills actions" id="bugsModuleActions">
             <li>  
-              <a href="create2.html" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
+              <a href="create.html" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
             </li>
             <li>  
               <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
@@ -120,7 +118,7 @@
           </ul>
         </div>
         <div class="thumbnail" id="moduleWidgetCases">
-          <h1><a href="cases.html">Cases</a> <small>(4 of 4)</small></h1>
+          <h1><a href="cases.html">Cases</a></h1>
             <table class="table table-striped datatable">
               <thead>
                 <tr>
@@ -174,7 +172,7 @@
       </div>  
       <div class="span4">
         <div class="thumbnail filtered" id="moduleActivity">
-          <h1>My Activity <small>(10 of 30)</small></h1>
+          <h1>My Activity</h1>
           <form class="form-addit form-horizontal hide" action="">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#note" data-toggle="tab">Note</a></li>
@@ -240,9 +238,9 @@
               </p>
             </article>
             <div class="block-footer">
-              <button data-loading-text="Loading..." class="btn">
+              <a href="" data-loading-text="Loading...">
                 Show more activity
-              </button>
+              </a>
             </div>
           </div>
           <ul class="nav nav-pills actions" id="bugsModuleActions">

@@ -185,6 +185,57 @@ article:hover {
  background: url(../img/snow.png);
 }
 
+#portal .navbar-inner {
+  background: #fff !important;
+  color: #444;
+  @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @grayLight;
+  .box-shadow(@shadow);
+}
+
+#portal .navbar-inner a, #portal .navbar a [class^="icon-"], #portal .navbar a .caret  {
+  color: @gray !important;
+  text-shadow: none;
+}
+#portal .navbar .dropdown-menu li:hover a {color: @white !important;}
+#portal .navbar a .caret  {
+ border-top-color: @gray;
+}
+
+#portal .navbar .divider-vertical {
+background-color: @grayLight;
+border-right: 1px solid @grayLighter;
+}
+
+#portal .cube {
+    background: url(../img/badge_256g.png) 50% 50% no-repeat;
+    @shadow: inset -1px 0 0 @grayLight, 1px 0 0 @grayLighter;
+    .box-shadow(@shadow);
+}
+#portal .container-fluid {position: relative;}
+#colright { position: absolute; top: 0; right: -2px; 
+  background: @grayLight;
+}
+#colleft { position: absolute; top: 0; left: -2px; }
+
+#portal .search-query { border-color: @grayLight;}
+
+#portal .navbar .nav > li > a:hover {
+  background-color:  @grayLighter;
+  color: @gray;
+  text-decoration: none;
+  text-shadow: none;
+}
+
+#portal .navbar .nav .active > a,
+#portal .navbar .nav .active > a:hover {
+  color: @gray;
+  text-decoration: none;
+  background-color: @grayLighter;
+  @shadow: inset -1px 0 0 @grayLight;
+  .box-shadow(@shadow);
+  text-shadow: none;
+}
+
 #portal .welcome {
  margin-top: 5%;
 }
@@ -234,6 +285,7 @@ article:hover {
      -moz-transition: all .2s linear;
           transition: all .2s linear;
   }
+
 .navbar .navbar-inner {
   height: 44px;
 }
@@ -315,6 +367,8 @@ article .avatar {
 	margin-bottom: 15px;
   position: relative;
 	display: block;
+}
+.span2 .block {
 	padding-right: 10px;
 }
 .block:first-child {border-top: none;}
@@ -347,8 +401,6 @@ article .avatar {
   right: 0;
 }
 
-.block:hover 
-
 .thumbnail .table {
   margin-bottom: 0px;
 }
@@ -364,6 +416,14 @@ article .avatar {
   .clearfix();
   .btn {
     margin: 0 auto !important;
+  }
+  a {
+    margin: 0 auto !important;
+    display: block;
+    cursor: pointer;
+    color: @gray;
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -390,8 +450,8 @@ article .avatar {
 
 td .actions {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  top: 5px !important;
+  right: 5px !important;
 }
 
 #activity article {
@@ -408,77 +468,13 @@ position: relative;
 
 .card2 .row-fluid {
   position: relative;
-  padding: 6px 0 7px;
+  padding: 10px 0 11px;
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
 .card2 .row-fluid:last-child {
   border-bottom: none;
 }
 
-.card input, .card select, .card textarea, .card .btn {
-  margin: -12px 0 -8px;
-  font-weight: 600;
-}
-
-.card textarea {
-  margin: -9px 0 -8px;
-}
-.card form input {
-  width: inherit !important;
-  margin: 0 !important;
-  position: absolute;
-  top: 2px;
-}
-.card form {
-  width: inherit !important;
-  margin: 0 !important;
-  padding: 6px 0;
-}
-
-.card .span4 .btn {
-  margin: -12px 0 -8px -3px;
-}
-
-.card .span2  {
-  padding: 10px;
-  margin: 0;
-}
-.card .span2 strong  {
-  color: @gray;
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: 400;
-}
-
-.card [class^=span] {
-  position: relative;
-  padding: 10px 0;
-  line-height: 14px;
-  border-bottom: darken(@grayLighter, 5%) solid 1px;
-}
-.card .span4 {
-  margin-right: 10px;
-  margin-left: 5px;
-  padding: 10px 0 10px 5px;
-}
-.card .row-fluid .span4:last-child, .card .span10 {
-  margin-right: 0;
-  margin-left: 5px;
-  padding: 10px 0 10px 5px;
-}
-.card .row-fluid {
-  position: relative;
-}
-.card .row-fluid:last-child .span10 {
-  border-bottom: none !important;
-}
-.card .span2 {
-  text-align: right;
-  background: @grayLighter;
-}
-.card .span2 strong {
-  padding: 0 10px;
-}
 
 .actions li {
   border-left: darken(@grayLighter, 5%) solid 1px;
@@ -491,11 +487,11 @@ position: relative;
   border: none;
 }
 
-article .actions, #stream tr .actions {
+article .actions, tr .actions {
   display: none;
 }
-article:hover .actions, #stream tr:hover .actions {
-  display: inline-block;
+article:hover .actions,  tr:hover .actions {
+  display: block;
 }
 
 .divleft {
@@ -514,14 +510,9 @@ article:hover .actions, #stream tr:hover .actions {
   .border-radius(4px);
 }
 
-/* charts */
-svg {
-  width: 900px;
-  height: 300px;
-  font: 11px sans-serif;
-  shape-rendering: crispEdges;
+.block ul.list {
+  margin-top: 10px;
 }
-
 
 .block ul.list ul {
   margin: 10px 0 10px 20px;
@@ -625,9 +616,7 @@ hr.soften {
   margin: 10px 0;
 }
 .subhead table {margin-top: -18px;}
-.subhead .subnav {
-  .border-radius(4px);
-}
+
 .subhead th {
 	border-right: 1px solid #e7e7e7;
 	padding-top: 10px;
@@ -649,6 +638,8 @@ padding-bottom: 15px;
   #gradient > .vertical(@subnavbarBackgroundHighlight, @subnavbarBackground);
   border: 1px solid darken(@grayLight, 10%);
   position: relative;
+  @shadow: 0 1px 0 rgb(255,255,255);
+  .box-shadow(@shadow);
 }
 .subnav h1 {
   color: @gray;
@@ -860,9 +851,8 @@ footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
 
 /* Editable 
 --------------*/
-.card2 .icon-pencil {position: absolute; left: 78px; top: 8px; padding: 0 2px !important;.opacity(60);}
-.card .icon-pencil {position: absolute; left: 121px; top: 11px; padding: 0 2px !important;.opacity(60);}
-
+.card2 div [class^="span"]  {position: relative;}
+.card2 .icon-pencil {position: absolute; left: -16px; top: 0px; padding: 0 2px !important;.opacity(60);}
 .card2 form, .card2 input, .card2 select, .card2 textarea {
   position: relative;
   margin: -2px 0 -3px -2px !important;

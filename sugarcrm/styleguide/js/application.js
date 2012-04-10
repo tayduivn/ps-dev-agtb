@@ -68,6 +68,21 @@
       })
       
     }
+    $('.btn-left').toggle(
+    function () {
+      $(this).html('<i class="icon-chevron-right icon-sm"></i>');
+      $('#colright').addClass('span4');
+      $('#colcenter').removeClass('span12').addClass('span8'); 
+      return false;
+    },
+    function () {
+      $(this).html('<i class="icon-chevron-left icon-sm"></i>');
+      $('#colright').removeClass('span4');
+      $('#colcenter').addClass('span12').removeClass('span8'); 
+      return false;
+    }
+    )
+    
     // button state demo
     $('.loading')
       .click(function () {
@@ -135,11 +150,12 @@
 	    return false;
 	})
   
-  $('.dblclick').hover( 
-    function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
+  $('.dblclick, .ePriority, .eStatus').hover( 
+    function () {$(this).before('<span class="span2"><i class="icon-pencil icon-sm"></i></span>');},
     function () {$('.icon-pencil').remove();}
 	)
   
+
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
 $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
   var url = opts.url;

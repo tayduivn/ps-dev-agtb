@@ -130,260 +130,223 @@
   </div>         
   <div class="container-fluid">     
     <div class="row-fluid">
-      <div class="span2">
-        <div class="bordered">        
-          <div class="block">
-            <ul class="list">
-              <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
-              <li><a href="#contacts" data-toggle="tab">Contacts</a></li>
-              <li><a href="#inside" data-toggle="tab">Inside View</a></li>
-              <li><a href="#activity" data-toggle="tab">Activities</a></li>
-              <li><a href="#twitter" data-toggle="tab">Twitter</a></li>
-              <li><a href="#add" data-toggle="tab"> </a></li>
+      <div class="span7">
+        <a href="" class="pull-right">
+          <img src="http://placehold.it/125x125" class="avatar" alt="avatar abcindustries">
+        </a>
+        <div class="vcard">
+          <address>
+            <p>
+              <span class="tel">Phone:</span> <a href="">(408) 555-5271</a>
+            </p>   
+            <p>
+              <span class="url">Website:</span> <a href="http://www.abcindustries.com">www.perkins.com</a>
+            </p>
+            <p>
+              <span class="email">Email:</span> <a href="mailto:sales@abcindustries.com">sales@perkins.com</a>
+            </p>
+            <p>
+              <span class="address">Address:</span> 
+              <span>
+                <a href="http://maps.google.com/maps?q=321+University+Way,+Cupertino,+CA&hl=en&sll=37.0625,-95.677068&sspn=39.780156,88.066406&oq=321+University+Ave,+cuper&t=v&hnear=University+Way,+Cupertino,+Santa+Clara,+California+95014&z=16">321 University Ave.<br>
+                  Cupertino, CA 49964</a>
+                </span>
+              </p>
+            </address>                
+            <br>                             
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla suscipit elit vel dui ullamcorper porttitor. In at neque eu lacus vehicula pulvinar quis eget nisl. Vestibulum eget leo et massa ullamcorper laoreet nec ut eros. Nullam eu sapien metus. Cras varius pretium cursus. Sed et fermentum augue. Duis faucibus tristique lorem, et euismod diam lobortis eget. Morbi ut ligula massa. Aenean nisi purus, consectetur at tincidunt vitae, rutrum sit amet elit. Fusce orci dolor, sagittis sit amet commodo vel, gravida nec urna.
+          </p>
+          <a href="">More ...</a>
+          <div class="block filtered" id="moduleLog">
+            <h4>Activity</h4>
+            <form class="form-search hide" action="">
+              <input value="" class="span4" placeholder="Refine activity ...">
+            </form> 
+            <article data-type="update" data-pubdate="2012-02-16">
+              <a href="users/toreilly" class="pull-left" data-author_id="toreilly">
+                <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
+              </a>
+              <p>
+                <a href="users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
+                <date class="date">Posted 1 week ago</date>
+              </p>
+            </article>
+            <article data-type="update" data-pubdate="2012-02-16">
+              <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
+              </a>
+              <p>
+                <a href="users/mitani">Majed Itani</a> added <a href="users/toreilly">Tim O'Reilly</a> to an <a href="">opportunity</a> with <a href="">Perkin Kleiners</a>.
+                <br>
+                <date class="date">Posted 4 days ago</date>
+              </p>
+            </article>               
+            <article data-type="update" data-pubdate="2012-02-16">
+              <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
+              </a>
+              <p>
+                <a href="users/mitani">Majed Itani</a> added <a href="users/toreilly">Tim O'Reilly</a> as a <a href="">contact</a> and a <a href="">lead</a>
+                <br>
+                <date class="date">Posted 1 week ago</date>
+              </p>
+            </article>
+            <ul class="nav nav-pills actions">
+              <li>  
+                <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+              </li>        
             </ul>
           </div>
-          <div class="block">
-            <h4>Recently Viewed:</h4>
-            <ul class="list">
-              <li><a href="">Chis Lowery</a></li>
-              <li><a href="">Tina Fae</a></li>
-              <li><a href="">Mike Jones</a></li>
-              <li><a href="">Seeing it the right way</a></li>
-            </ul>
-            <ul class="nav nav-pills actions"><li><a data-toggle="modal" href="#adminActivity"><i class="icon-cog"></i></a></li></ul>               
-          </div>
-          <div class="block">
-              <h4>Tasks:</h4>
-              <ul class="list">
-                <li><a href="">Check opportunities</a></li>
-                <li><a href="">Review leads</a></li>
-                <li><a href="">Read email</a></li>
+        </div>
+        <div class="span5 divleft">
+          <div class="block filtered" id="moduleRelated">
+            <h4>Related Records</h4>
+            <form class="form-search hide" action="">
+              <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
+            </form>
+            <article>
+              <span class="label label-file">File</span>
+              <span>
+                Uploaded <a data-toggle="modal" href="#screenModal"><b>screenshot_766.png</b></a> added 2 hours ago by <a href="">Yancy Kim</a>
+              </span>
+              <ul class="nav nav-pills actions">
+                <li class="dropdown pull-right">  
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Edit</a></li>
+                    <li><a data-toggle="modal" href="#share">Share</a></li>
+                    <li><a href="#">Delete</a></li>
+                  </ul>
+                </li>
               </ul>
-              <ul class="nav nav-pills actions"><li><a data-toggle="modal" href="#adminActivity"><i class="icon-cog"></i></a></li></ul>
+            </article>          
+            <article>
+              <span class="label label-document">Document</span>
+              <span>
+                <a data-toggle="modal" href="#screenModal"><b>Sales-document33.doc</b></a> added 6 hours ago by <a href="">Sabra Khan</a>
+              </span>
+              <ul class="nav nav-pills actions">
+                <li class="dropdown pull-right">  
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Edit</a></li>
+                    <li><a href="#">Share</a></li>
+                    <li><a href="#">Delete</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </article>
+            <article>
+              <span class="label label-note">Note</span>
+              <span>
+                <a data-toggle="modal" href="#notesModal"><b>Note</b></a> added 3 hours ago by <a href="">Sabra Khan</a>
+              </span>
+              <ul class="nav nav-pills actions">
+                <li class="dropdown pull-right">  
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Edit</a></li>
+                    <li><a href="#">Share</a></li>
+                    <li><a href="#">Delete</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </article>
+            <article>
+              <a data-toggle="modal" href="#leadModal"><span class="label label-lead">Lead</span></a>
+              <span>
+                <a data-toggle="modal" href="#screenModal"><b>100 seat plan</b></a> added 1 day ago by <a href="">Sabra Khan</a>
+              </span>
+              <ul class="nav nav-pills actions">
+                <li class="dropdown pull-right">  
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Edit</a></li>
+                    <li><a href="#">Share</a></li>
+                    <li><a href="#">Delete</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </article>
+            <article>
+              <span class="label label-contact">Contact</span>
+              <span>
+                <b>Mark Edwin</b>, CIO, added 3 days ago by <a href="">Sabra Khan</a>
+              </span>
+              <ul class="nav nav-pills actions">
+                <li class="dropdown pull-right">  
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Edit</a></li>
+                    <li><a href="#">Share</a></li>
+                    <li><a href="#">Delete</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </article>
+            <article>
+              <span class="label label-contact">Contact</span>
+              <span>
+                <b>Tony Scoot</b>, Sales Rep, added 3 days ago by <a href="">Mia Hamm</a>
+              </span>
+              <ul class="nav nav-pills actions">
+                <li class="dropdown pull-right">  
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Edit</a></li>
+                    <li><a href="#">Share</a></li>
+                    <li><a href="#">Delete</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </article>
+
+            <ul class="nav nav-pills actions">
+              <li>  
+                <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+              </li>
+              <li>  
+                <a data-toggle="modal" href="#adminActivity"><i class="icon-cog"></i></a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-      <div class="span6">
-    <a href="" class="pull-right">
-      <img src="http://placehold.it/125x125" class="avatar" alt="avatar abcindustries">
-    </a>
-    <div class="vcard">
-      <address>
-        <p>
-          <span class="tel">Phone:</span> <a href="">(408) 555-5271</a>
-        </p>   
-        <p>
-          <span class="url">Website:</span> <a href="http://www.abcindustries.com">www.perkins.com</a>
-        </p>
-        <p>
-          <span class="email">Email:</span> <a href="mailto:sales@abcindustries.com">sales@perkins.com</a>
-        </p>
-        <p>
-          <span class="address">Address:</span> 
-          <span>
-            <a href="http://maps.google.com/maps?q=321+University+Way,+Cupertino,+CA&hl=en&sll=37.0625,-95.677068&sspn=39.780156,88.066406&oq=321+University+Ave,+cuper&t=v&hnear=University+Way,+Cupertino,+Santa+Clara,+California+95014&z=16">321 University Ave.<br>
-              Cupertino, CA 49964</a>
-          </span>
-        </p>
-      </address>                
-      <br>                             
     </div>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla suscipit elit vel dui ullamcorper porttitor. In at neque eu lacus vehicula pulvinar quis eget nisl. Vestibulum eget leo et massa ullamcorper laoreet nec ut eros. Nullam eu sapien metus. Cras varius pretium cursus. Sed et fermentum augue. Duis faucibus tristique lorem, et euismod diam lobortis eget. Morbi ut ligula massa. Aenean nisi purus, consectetur at tincidunt vitae, rutrum sit amet elit. Fusce orci dolor, sagittis sit amet commodo vel, gravida nec urna.
-    </p>
-    <a href="">More ...</a>
-  </div>
-      <div class="span4 divleft">
-    Modules
-  </div>
-    </div>
-  </div>
-<footer>
-  <div class="row-fluid">
-    <div class="span6">
-      <a href="" class="logo">SugarCRM</a> 
-    </div>        
-    <div class="span6">
-      <div class="btn-toolbar pull-right">
-        <div class="btn-group">
-          <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
-          <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
-          <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
-        </div>
-        <div class="btn-group">
-          <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
+    <footer>
+      <div class="row-fluid">
+        <div class="span6">
+          <a href="" class="logo">SugarCRM</a> 
+        </div>        
+        <div class="span6">
+          <div class="btn-toolbar pull-right">
+            <div class="btn-group">
+              <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
+              <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
+              <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
+            </div>
+            <div class="btn-group">
+              <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</footer>
-<div class="modal hide" id="adminActivity">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>Manage Activity</h3>
-  </div>
-  <div class="modal-body">
-    <p>One fine body…</p>
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn btn-primary">Save changes</a>
-    <a href="#" class="btn">Close</a>
-  </div>
-</div>
-
-<div class="modal hide" id="share">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>Share</h3>
-  </div>
-  <div class="modal-body">
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/toreilly" class="pull-left" data-author_id="toreilly">
-        <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
-      </a>
-      <p>
-        <a href="users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
-        <date class="date">Posted 1 week ago</date>
-      </p>
-    </article>
-  </div>
-  <div class="modal-footer tleft">
-    <a href="#" class="btn"><i class="icon-envelope"></i> Email</a>
-    <a href="#" class="btn"><i class="icon-retweet"></i> Tweet</a>
-  </div>
-</div>
-
-
-<div class="modal hide" id="screenModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3><span class="label label-lead">Screenshot_776.png</span></h3>
-  </div>
-  <div class="modal-body">
-    <img src="http://placehold.it/500x300" class="avatar" alt="avatar abcindustries">
-    <h4>Comments</h4>
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/toreilly" class="pull-left" data-author_id="toreilly">
-        <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
-      </a>
-      <p>
-        <a href="users/toreilly">Tim O'Reilly</a> commented: This is splendid work.<br>
-        <date class="date">Posted 1 week ago</date>
-      </p>
-    </article>
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-        <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-      </a>
-      <p>
-        <a href="users/mitani">Majed Itani</a> commented: Thanks I tried to capture the full product. 
-        <br>
-        <date class="date">Posted 4 days ago</date>
-      </p>
-    </article>
-  </div>
-  <div class="modal-footer">
-    <form class="">
-      <label>Post Comment</label>
-      <input type="text" class="wide">
-      <a href="#" class="btn"  data-dismiss="modal">Reply</a>
-    </form>
-  </div>
-</div>
-
-<div class="modal hide" id="leadModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3><span class="label label-lead">Lead</span></h3>
-  </div>
-  <div class="modal-body">
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/toreilly" class="pull-left" data-author_id="toreilly">
-        <img src="https://lh3.googleusercontent.com/-J8nmMwIhpiA/AAAAAAAAAAI/AAAAAAAAAAA/egIWpcXy33A/s48-c-k/photo.jpg" class="avatar" alt="avatar toreilly">
-      </a>
-      <p>
-        <a href="users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
-        <date class="date">Posted 1 week ago</date>
-      </p>
-    </article>
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-        <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-      </a>
-      <p>
-        <a href="users/mitani">Majed Itani</a> added <a href="users/toreilly">Tim O'Reilly</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-        <br>
-        <date class="date">Posted 4 days ago</date>
-      </p>
-    </article>               
-    <article data-type="update" data-pubdate="2012-02-16">
-      <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-        <img src="https://lh5.googleusercontent.com/-axK7YncPcqg/AAAAAAAAAAI/AAAAAAAAAAA/WrcvSQgYcK4/s48-c-k/photo.jpg" class="avatar" alt="mitani avatar">
-      </a>
-      <p>
-        <a href="users/mitani">Majed Itani</a> added <a href="users/toreilly">Tim O'Reilly</a> as a <a href="">contact</a> and a <a href="">lead</a>
-        <br>
-        <date class="date">Posted 1 week ago</date>
-      </p>
-    </article>
-  </div>
-  <div class="modal-footer">
-    <form class="">
-      <label>Post Comment</label>
-      <input type="text" class="wide">
-      <a href="#" class="btn"  data-dismiss="modal">Reply</a>
-    </form>
-  </div>
-</div>
-<!-- dynamic generation -->
-<div class="modal hide" id="adminAdd">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>Add an Account</h3>
-  </div>
-  <div class="modal-body">
-    <form class="form-horizontal">
-      <fieldset>
-        <div class="control-group">
-          <label for="input01" class="control-label">Name</label>
-          <div class="controls">
-            <input type="text" id="input01" class="input-xlarge">
-          </div>
-        </div>
-        <div class="control-group">
-          <label for="input01" class="control-label">Label</label>
-          <div class="controls">
-            <input type="text" id="input01" class="input-xlarge">
-          </div>
-        </div>                    
-        <div class="control-group">
-          <label for="textarea" class="control-label">Label</label>
-          <div class="controls">
-            <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-          </div>
-        </div>
-      </fieldset>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button data-loading-text="Saving..." class="btn loading btn-primary">
-      Save
-    </button>
-    <button class="btn cancel" data-dismiss="modal">Cancel</button>
-  </div>
-</div>        
-<script src="../js/jquery-1.7.2.min.js"></script>
-<script src="../js/bootstrap-transition.js"></script>
-<script src="../js/bootstrap-alert.js"></script>
-<script src="../js/bootstrap-modal.js"></script>
-<script src="../js/bootstrap-collapse.js"></script>
-<script src="../js/bootstrap-dropdown.js"></script>
-<script src="../js/bootstrap-scrollspy.js"></script>
-<script src="../js/bootstrap-tab.js"></script>
-<script src="../js/bootstrap-tooltip.js"></script>
-<script src="../js/bootstrap-popover.js"></script>
-<script src="../js/bootstrap-button.js"></script>
-<script src="../js/bootstrap-typeahead.js"></script>
-<script src="../js/application.js"></script>
-</body>
-</html>
+    </footer>
+  
+    <script src="../js/jquery-1.7.2.min.js"></script>
+    <script src="../js/bootstrap-transition.js"></script>
+    <script src="../js/bootstrap-alert.js"></script>
+    <script src="../js/bootstrap-modal.js"></script>
+    <script src="../js/bootstrap-collapse.js"></script>
+    <script src="../js/bootstrap-dropdown.js"></script>
+    <script src="../js/bootstrap-scrollspy.js"></script>
+    <script src="../js/bootstrap-tab.js"></script>
+    <script src="../js/bootstrap-tooltip.js"></script>
+    <script src="../js/bootstrap-popover.js"></script>
+    <script src="../js/bootstrap-button.js"></script>
+    <script src="../js/bootstrap-typeahead.js"></script>
+    <script src="../js/application.js"></script>
+  </body>
+  </html>

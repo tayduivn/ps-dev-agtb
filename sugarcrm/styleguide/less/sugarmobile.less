@@ -66,7 +66,7 @@ h1 {font-size: 26px !important;}
 article {
   position: relative;
 	display: block;
-  padding: 8px 32px;
+  padding: 8px 44px;
   border-top: 1px solid darken(@grayLighter, 5%);
   min-height: 52px;
 }
@@ -79,7 +79,7 @@ article [class^="icon-star"] {
 position: absolute;
 top: 24px;
 left: 16px;
-font-size: 24px;
+font-size: 18px;
 }
 
 #detailListing article {
@@ -103,7 +103,7 @@ article [id^="listing-action"] i.grip {
 }
 article [id^="listing-action"] i.on {
   left: 0;
-  #gradient > .horizontal( darken(@grayDarker, 8%), darken(@grayDarker, 2%));
+  #gradient > .horizontal( lighten(@black, 25%), lighten(@black, 20%));
   color: @black;
   text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
   @shadow: 1px 0 4px rgba(0,0,0,.4);
@@ -283,28 +283,20 @@ html {
   height: 100%;
   overflow: hidden;
 }
-.onL .navbar {
+.onL .navbar, .onR .navbar {
   position: absolute;
   left: 86%;
   top: 0px;
   width: 100%;
   height: 100%;
-  @shadow: -1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
 }
 .onR .navbar {
-  position: absolute;
   left: -86%;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  @shadow: -1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
 }
 .onL #listing *, .onL .bizcard *, .onR #listing *, .onR .bizcard * {
   display: none;
 }
-.onL .navbar .nav-collapse  {
+.onL .navbar .nav-collapse {
   float: none;
   position: absolute;
   top: 0;
@@ -314,7 +306,7 @@ html {
   height: 100%;
   background: @grayDarker url(../img/black_linen_v2.png);
 }
-.onR .navbar .nav-collapse {
+ .onR .navbar .nav-collapse  {
   float: none;
   position: absolute;
   top: 0;
@@ -324,7 +316,6 @@ html {
   height: 100%;
   background: @grayDarker url(../img/black_linen_v2.png);
 }
-
 .onL .navbar .nav-collapse #moduleList, .onR .navbar .nav-collapse #createList {
   overflow: scroll;
   -webkit-overflow-scrolling:touch;
@@ -333,6 +324,29 @@ html {
 .onR .navbar .nav-collapse #moduleList, .onL .navbar .nav-collapse #createList {
   display: none;
 }
+
+.onL .nav-collapse li, .onR .nav-collapse li {
+  .border-radius(0px);
+  #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
+  border-bottom: 1px solid #000;
+  @shadow: 0 1px 4px rgba(0,0,0,.2),  inset -2px 0 4px rgba(0,0,0,.3);
+  .box-shadow(@shadow);
+}
+
+.onR .nav-collapse li {
+  @shadow: 0 1px 4px rgba(0,0,0,.2),  inset 2px 0 4px rgba(0,0,0,.3);
+  .box-shadow(@shadow);
+}
+
+.onL .nav-collapse li.divider-horizontal,.onL .nav-collapse li#userAdmin {
+  #gradient > .vertical(lighten(@black, 30%), lighten(@black, 20%));
+}
+
+.onL .nav-collapse li.divider-horizontal {
+  height: 5px;
+  display: block;
+}
+
 
 #scroll {
   margin: 5px 0 10px;
@@ -422,34 +436,6 @@ html {
 */
 }
 
-#searchForm {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2000;
-  width: 100%;
-  height: 44px !important;
-  background: @grayDarker url(../img/black_linen_v2.png);
-}
-#searchForm .btn {
-  position: absolute;
-  top:1px;
-  right: 0px;
-  width: inherit;
-  }
-  
-.search-query {
-  border-color: #000;
-  color: @grayDarker;
-  position: absolute;
-  padding: 4px;
-  left: 10px;
-  top: 9px;
-  height: 28px;
-  width: 70% !important;
-  .border-radius(4px);
-  z-index: 1080;
-}
 
 .navbar h1 {
   font-size: 16px !important;
@@ -525,21 +511,6 @@ html {
   @shadow: inset 0 -1px 0 @black, inset 0 1px 0 lighten(@black, 20%);
   .box-shadow(@shadow);  
 }
-
-.onL .nav-collapse li {
-  .border-radius(0px);
-  background: @grayDarker url(../img/black_linen_v2.png);
-  @shadow: inset -2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
-  .box-shadow(@shadow);  
-}
-
-.onR .nav-collapse li {
-  .border-radius(0px);
-  background: @grayDarker url(../img/black_linen_v2.png);
-  @shadow: inset 2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
-  .box-shadow(@shadow);  
-}
-
 
 .navbar a {text-decoration: none;}
 
@@ -682,13 +653,6 @@ color: @gray;
   width: 32px;
 }
 
-.onL .nav-collapse li.divider-horizontal {
-  background: @black;
-  #gradient > .vertical(lighten(@black, 25%), lighten(@black, 15%));
-  height: 20px;
-  display: block;
-}
-
 
 /* Log In
 ----------*/
@@ -784,7 +748,7 @@ float: none !important;}
     float: none;
   }
   .navbar .nav > li > a {
-    margin-bottom: 2px;
+    margin-bottom: 0;
   }
   .navbar .nav > .divider-vertical {
     display: none;
@@ -796,8 +760,8 @@ float: none !important;}
   // Nav and dropdown links in navbar
   .navbar .nav > li > a,
   .navbar .dropdown-menu a {
-    padding: 12px 15px;
-    font-weight: bold;
+    padding: 13px 15px;
+    height: 19px;
     color: @navbarLinkColor;
   }
   .navbar .dropdown-menu li + li a {
