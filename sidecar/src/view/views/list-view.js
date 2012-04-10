@@ -33,24 +33,36 @@
         },
 
         setOrderBy: function(event) {
+            //set on this obj and not the prototype
+            this.orderBy = {};
+
+            //mapping for css
+            var orderMap = {
+                "desc":"down",
+                "asc":"up"
+            }
+
             //TODO probably need to check if we can sort this field from metadata
-            console.log("calling sort callback,", event);
             var collection = this.context.get('collection');
             var fieldName = $(event.target).data('fieldname');
             var nOrder = "desc";
-            if (fieldName == collection.orderBy.field) {
 
+            // if same field just flip
+            if (fieldName == collection.orderBy.field) {
                 if (collection.orderBy.direction == "desc") {
-                    console.log("Asdf", collection);
                     nOrder = "asc";
                 }
-
                 collection.orderBy.direction = nOrder;
             } else {
                 collection.orderBy.field = fieldName;
                 collection.orderBy.direction = "desc";
             }
 
+            // set it on the view
+            this.orderBy.field = fieldName;
+            this.orderBy.direction = orderMap[collection.orderBy.direction];
+
+            // refetch the collection
             collection.fetch();
         }
     });
