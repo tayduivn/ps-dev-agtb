@@ -6,7 +6,11 @@
             <thead>
             <tr>
             {{#each fields}}
-                <th width="{{width}}%">{{label}}</th>
+                <th width="{{width}}%" data-fieldname="{{name}}" class="orderBy{{name}}">
+                {{label}}
+                {{eq ../../context.state.collection.orderBy.field name ../../context.state.collection.orderBy.direction ""}}
+                    <i class="{{eq ../../context.state.collection.orderBy.field.name name ../../context.state.collection.orderBy.field.direction}}"></i>
+                </th>
             {{/each}}
             </tr>
             </thead>

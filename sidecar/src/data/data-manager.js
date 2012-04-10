@@ -350,6 +350,10 @@
                 if (app.config && app.config.maxQueryResult) {
                     options.params.maxresult = app.config.maxQueryResult;
                 }
+
+                if (model.orderBy.field) {
+                    options.params.orderBy = model.orderBy.field + ":" + model.orderBy.direction;
+                }
             }
 
             var success = function(data) {

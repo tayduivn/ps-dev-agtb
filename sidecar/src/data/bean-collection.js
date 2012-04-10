@@ -8,7 +8,10 @@
 (function(app) {
 
     app.augment("BeanCollection", Backbone.Collection.extend({
-
+        orderBy: {
+            field: "",
+            direction: ""
+        },
         constructor: function(models, options) {
             if (options && options.link) {
                 this.link = options.link;
@@ -104,6 +107,7 @@
             }
             return pageNumber;
         }
+
     }), false);
 
 })(SUGAR.App);

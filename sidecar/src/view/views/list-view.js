@@ -7,6 +7,9 @@
      * @extends View.View
      */
     app.layout.ListView = app.layout.View.extend({
+        events: {
+            'click [class*="orderBy"]': 'setOrderBy'
+        },
         bind: function(context) {
             var collection = context.get("collection");
             _.each(collection.models, function(model) {
@@ -27,6 +30,28 @@
                     }
                 }, this);
             }, this);
+        },
+
+        setOrderBy: function(event) {
+            //TODO probably need to check if we can sort this field from metadata
+            console.log("calling sort callback,", event);
+            var collection = this.context.get('collection');
+            var fieldName = $(event.target).data('fieldname');
+            var nOrder = "desc";
+            if (fieldName == collection.orderBy.field) {
+
+                if (collection.orderBy.direction == "desc") {
+                    console.log("Asdf", collection);
+                    nOrder = "asc";
+                }
+
+                collection.orderBy.direction = nOrder;
+            } else {
+                collection.orderBy.field = fieldName;
+                collection.orderBy.direction = "desc";
+            }
+
+            collection.fetch();
         }
     });
 
