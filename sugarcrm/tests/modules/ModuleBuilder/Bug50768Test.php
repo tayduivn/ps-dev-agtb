@@ -108,11 +108,11 @@ class Bug50768Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
-        unset($GLOBALS['current_user']);
+     /*   unset($GLOBALS['current_user']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['app_list_strings']);
-        unset($_REQUEST);
+        unset($_REQUEST);*/
 
     }
 
@@ -131,10 +131,10 @@ class Bug50768Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->currencyFieldDef1['name'] = 'c1_c';
         $_REQUEST = $this->currencyFieldDef1;
-        $mbc->action_DeleteField();
+      //  $mbc->action_DeleteField();
         $this->currencyFieldDef2['name'] = 'c2_c';
         $_REQUEST = $this->currencyFieldDef2;
-        $mbc->action_DeleteField();
+       // $mbc->action_DeleteField();
 
         $count = 0;
         $query = "SELECT * FROM fields_meta_data WHERE custom_module='Accounts' AND type='currency_id' AND deleted = 0";
