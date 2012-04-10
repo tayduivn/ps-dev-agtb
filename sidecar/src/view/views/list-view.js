@@ -31,7 +31,10 @@
                 }, this);
             }, this);
         },
-
+        /**
+         * Sets order by on collection and view
+         * @param {Object} event jquery event object
+         */
         setOrderBy: function(event) {
             //set on this obj and not the prototype
             this.orderBy = {};
@@ -45,6 +48,7 @@
             //TODO probably need to check if we can sort this field from metadata
             var collection = this.context.get('collection');
             var fieldName = $(event.target).data('fieldname');
+
             var nOrder = "desc";
 
             // if same field just flip

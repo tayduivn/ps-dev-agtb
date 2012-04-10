@@ -103,7 +103,6 @@ describe("Layout.View", function(){
             context : context,
             view:"edit"
         });
-        console.log("dtan", view.meta);
         expect(view.meta).toBeDefined();
         view.render();
         html = view.$el.html();
@@ -167,7 +166,6 @@ describe("Layout.Layout", function(){
             context : context,
             layout: "edit"
         });
-        console.log("dtam",fixtures.metadata.modules.Contacts.layouts.edit);
         expect(layout.meta).toEqual(fixtures.metadata.modules.Contacts.layouts.edit);
     });
 
