@@ -54,6 +54,7 @@ class Bug51980Test extends Sugar_PHPUnit_Framework_OutputTestCase {
         $this->opp->amount = '1000000';
         $this->opp->account_id = '1';
         $this->opp->team_id = '1';
+        $this->opp->currency_id = -99;
         $this->opp->save();
 
 	}
