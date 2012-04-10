@@ -63,7 +63,11 @@
 					newItemA.html(jNode.val());
                     if(!disabled )
                     {
-                        newItemA.click(function(event){ if($(this).hasClass("void") === false )jNode.click(); });
+                        newItemA.click(function(event){ 
+                        	if($(this).hasClass("void") === false ){
+                        		jNode.click(); 
+                        	}
+                        });
                     }
                     else
                     {
