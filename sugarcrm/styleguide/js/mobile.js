@@ -87,7 +87,6 @@
 		return false;
     });
     $('a[title=Remove]').live('click', function () {
-	alert('f');
 		$(this).closest('article').addClass('deleted').anim({ translateX: window.innerWidth + 'px', opacity: '0'}, .5, 'ease-out');
 		setTimeout(function () {
 		    $('.deleted').remove();
