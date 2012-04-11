@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/SugarApi/ServiceBase.php');
 require_once('include/api/SugarApi/ServiceDictionaryRest.php');
+require_once('include/SugarSecurity/SugarSecurityFactory.php');
 
 class RestService extends ServiceBase {
 
@@ -106,8 +107,27 @@ class RestService extends ServiceBase {
             if ( isset($route['rawReply']) && $route['rawReply']) {
                 echo $output;
             } else {
-                header('Content-type: application/json');
-                echo json_encode($output);
+                if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) ) {
+                    $httpAccept = $_SERVER['HTTP_ACCEPT_ENCODING'];
+                }
+                if( headers_sent() || empty($httpAccept) ) {
+                    $encoding = false;
+                } else if( strpos($httpAccept,'x-gzip') !== false ) {
+                    $encoding = 'x-gzip';
+                } else if( strpos($httpAccept,'gzip') !== false ) {
+                    $encoding = 'gzip';
+                } else {
+                    $encoding = false;
+                }
+                header('Content-Type: application/json');
+                if ( $encoding !== false ) {
+                    header('Content-Encoding: '.$encoding);
+                    $gzData = gzencode(json_encode($output));
+                    header('Content-Length: '.strlen($gzData));
+                    echo $gzData;
+                } else {
+                    echo json_encode($output);
+                }
             }
 
         } catch ( SugarApiException $e ) {
@@ -156,28 +176,30 @@ class RestService extends ServiceBase {
     }
 
     protected function authenticateUser() {
-        if ( !isset($this->helper) ) {
-            require_once('service/core/SoapHelperWebService.php');
-            $this->helper = new SoapHelperWebServices();
+        $valid = false;
+        
+        
+
+        if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
+            // Passing a session id claiming to be an oauth token
+            $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
+        } else if ( isset($_REQUEST[session_name()]) ) {
+            // They just have a regular web session
+            $this->sessionId = $_REQUEST[session_name()];
         }
         
-        $valid = false;
-        if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
-            $this->sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
-            $valid = $this->helper->validate_authenticated($_SERVER['HTTP_OAUTH_TOKEN']);
-        } else  {
-            if ( isset($_REQUEST[session_name()]) ) {
-                // They already have a web-session, let's let them use it
-                SugarApplication::startSession();
-                if ( isset($_SESSION['authenticated_user_id']) ) {
-                    $this->sessionId = session_id();
-                    $this->helper->validate_authenticated(session_id());
-                    $valid = true;
-                }
+        if ( !empty($this->sessionId) ) {
+            session_id($this->sessionId);
+            session_start();
+            
+            $this->security = SugarSecurityFactory::loadClassFromSession();
+            if ( $this->security != null ) {
+                $valid = true;
             }
         }
-        
-        if ( ! $valid ) {
+
+
+        if ( $valid === false ) {
             throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
         }
 
