@@ -10,7 +10,7 @@
         events: {
         },
       render: function(){
-          console.log("overloading views");
+            this.moduleList = this.moduleList || _.toArray(app.metadata.getModuleList());
            app.view.View.prototype.render.call(this);
       }
     });

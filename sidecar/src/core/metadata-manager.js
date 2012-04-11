@@ -2,6 +2,7 @@
     // Key prefix used to identify metadata in the local storage.
     var _keyPrefix;
     // Metadata that has been loaded from offline storage (memory cache)
+    var _app = {};
     var _metadata = {};
     var _sugarFields = {};
     var _fieldTypeMap = {
@@ -149,6 +150,25 @@
             return metadata;
         },
 
+        /**
+         * Gets module list
+         */
+        getModuleList: function() {
+           var result =  {};
+            if (_app.moduleList) {
+                result = _app.moduleList;
+            } else {
+                _app.moduleList=_get("moduleList");
+                result = _app.moduleList;
+            }
+
+            if(result._hash) {
+                delete result._hash;
+            }
+
+            return result;
+        },
+
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
 
@@ -178,6 +198,11 @@
                     _sugarFields[module] = entry;
                     _set("f." + module, entry);
                 });
+            }
+
+            if (data.moduleList) {
+                _app.moduleList = data.moduleList;
+                _set("moduleList", data.moduleList);
             }
 
             if (data.appListStrings) {
