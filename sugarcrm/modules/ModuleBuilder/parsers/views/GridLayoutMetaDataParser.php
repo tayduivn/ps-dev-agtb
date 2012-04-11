@@ -25,6 +25,7 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
 require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/parsers/views/MetaDataParserInterface.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php' ;
 
 class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDataParserInterface
 {
@@ -104,7 +105,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     }
 
     public function getDefsFromArray($viewdefs, $view) {
-        return MetaDataFiles::mapArrayToPath($viewdefs, MetaDataFiles::getViewDefVar($view));
+        return MetaDataFiles::mapArrayToPath(MetaDataFiles::getViewDefVar($view),$viewdefs);
     }
 
     /*

@@ -115,7 +115,6 @@ class ParserFactory
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro || flav=sales ONLY
             case MB_WIRELESSLISTVIEW:
-            //END SUGARCRM flav=pro || flav=sales ONLY
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
             //END SUGARCRM flav=ent ONLY

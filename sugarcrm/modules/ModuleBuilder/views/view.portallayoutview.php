@@ -127,7 +127,7 @@ class ViewPortalLayoutView extends ViewLayoutView
         $ajax->addCrumb(ucwords($this->editLayout), '');
 
 		// set up language files
-		$smarty->assign('language',$this->parser->language_module);	// for sugar_translate in the smarty template
+		$smarty->assign('language',$this->parser->getLanguage());	// for sugar_translate in the smarty template
 
 		//navjeet- assistant logic has changed
 		//include('modules/ModuleBuilder/language/en_us.lang.php');
