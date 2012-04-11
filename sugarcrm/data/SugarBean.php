@@ -3068,7 +3068,7 @@ function save_relationship_changes($is_update, $exclude=array())
      *
      * @param string $order_by custom order by clause
      * @param string $where custom where clause
-     * @param array $filter Optional
+     * @param array $filter Optioanal
      * @param array $params Optional     *
      * @param int $show_deleted Optional, default 0, show deleted records is set to 1.
      * @param string $join_type

@@ -20,6 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once("service/core/SugarWebServiceImpl.php");
 require_once('soap/SoapError.php');
 require_once('include/api/SugarApi/ServiceCoreHelper.php');
 
@@ -57,26 +58,16 @@ class loginApi extends SugarApi {
             $encryption = 'MD5';
         }
 
-        // Default type for Sugar users (not Portal)
-        $userType = 'User';
-        if ( isset($args['userType']) ) {
-            $userType = $args['userType'];
+        $serviceImpl = new SugarWebServiceImpl();
+        $result = $serviceImpl->login(array('user_name'=>$args['username'], 'password'=>$args['password'], 'encryption'=>$encryption,), 'none', array());
+
+
+        if ( isset($result['id']) ) {
+            $data = array('token'=>$result['id'],'success'=>true);
+        } else {
+            $data = array('success'=>false);
         }
 
-        $api->security = SugarSecurityFactory::loadClassFromType($userType);
-        
-        if ( $api->security == null ) {
-            throw new SugarApiExceptionError('Could not find a security model for users of type: '.$userType);
-        }
-        
-        if ( ! $api->security->loginUserPass($args['username'],$args['password'],$encryption) ) {
-            // Login failed
-            $data = array('success'=>false);
-        } else {
-            $data = array('token'=>$api->security->sessionId,
-                          'success'=>true);
-        }
-        
         return $data;
     }
 

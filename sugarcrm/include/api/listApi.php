@@ -20,7 +20,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('data/BeanFactory.php');
+require_once("service/core/SoapHelperWebService.php");
+require_once("service/core/SugarWebServiceImpl.php");
+require_once("soap/SoapError.php");
+require_once("include/api/SugarApi/ServiceCoreHelper.php");
 
 class listApi extends SugarApi {
     public function registerApiRest() {
@@ -36,7 +39,7 @@ class listApi extends SugarApi {
             'searchModules' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>','search','?'),
-                'pathVars' => array('module','','basicSearch'),
+                'pathVars' => array('module','','query'),
                 'method' => 'listModule',
                 'shortHelp' => 'Searches records in this module',
                 'longHelp' => 'include/api/html/module_list_search_help.html',
@@ -44,187 +47,85 @@ class listApi extends SugarApi {
         );
     }
 
+    public function __construct() {
+        // Until we get rid of the service/core/*.php, we need to keep this around
+    }
+
     public function listModule($api, $args) {
         global $current_user;
-
-        $this->requireArgs($args,array('module'));
-
-        // Load up a seed bean
-        $seed = BeanFactory::getBean($args['module']);
-        if ( ! $api->security->canAccessModule($seed,'view') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
-        }
 
         $deleted = false;
         if ( isset($args['deleted']) && ( strtolower($args['deleted']) == 'true' || $args['deleted'] == '1' ) ) {
             $deleted = true;
         }
-
-        $maxResults = $GLOBALS['sugar_config']['list_max_entries_per_page'];
+        $maxResult = 0;
         if ( isset($args['maxResult']) ) {
-            $maxResults = (int)$args['maxResult'];
+            $maxResult = (int)$args['maxResult'];
         }
-
         $offset = 0;
         if ( isset($args['offset']) ) {
-            if ( $args['offset'] === 'end' ) {
-                $offset = 'end';
+            $offset = (int)$args['offset'];
+        }
+        
+        $userFields = array();
+        if (array_key_exists("fields", $args)) {
+            $tmpfields = explode(",", $args["fields"]);
+            foreach ($tmpfields as $f) {
+                array_push($userFields, $f);
+            }
+        }
+
+        $helper = new SoapHelperWebServices();
+
+        $userModList = $helper->get_user_module_list($current_user);
+        $tmp = $helper->get_user_module_list($current_user);
+        $UserModulList = array_keys($tmp);
+        $tmp = null;
+
+        if (!in_array($args['module'], $UserModulList)) {
+            throw new SugarApiExceptionNotAuthorized("Current user does not have access to this resource!");
+        }
+
+        $obj = new SugarWebServiceImpl();
+        $fields = $obj->get_module_fields($api->sessionId, $args['module'], array());
+        $modFieldNames = array_keys($fields["module_fields"]);
+
+        // check to make sure all requested fields by the user are valid for this object //
+        foreach ($userFields as $ufield) {
+            if (!in_array($ufield, $modFieldNames)) {
+                throw new SugarApiExceptionInvalidParameter("Request field: '{$ufield}' is not a valid field name for the '{$args['module']}' module!");
+            }
+        }
+
+        $entryList = $obj->get_entry_list($api->sessionId, $args['module'], (isset($args['query'])?$args['query']:''), (isset($args['offset'])?$args['offset']:''), $offset, $userFields, array(), $maxResult, $deleted);
+
+        if (isset($entryList['error']) && $entryList["error"] != 0) {
+            throw new SugarApiExceptionError($entryList["err_msg"]);
+        }
+
+        $ids = array();
+
+        foreach ($entryList["entry_list"] as $dhash) {
+            if (array_key_exists("name_value_list", $dhash)) {
+                $fieldsData = array();
+                foreach (array_keys($dhash["name_value_list"]) as $dkey) {
+                    $fieldsData[$dkey] = $dhash["name_value_list"][$dkey]["value"];
+                }
+
+                $fieldsData["id"] = $dhash["id"];
+                $ids[] = $fieldsData;
             } else {
-                $offset = (int)$args['offset'];
-            }
-        }
-        
-        $userFields = null;
-        if ( isset($args['fields'])) {
-            $userFields = explode(",", $args["fields"]);
-            
-            foreach ( $userFields as $field ) {
-                if ( !$api->security->canAccessField($seed,$field,'list') || !isset($seed->field_defs[$column]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
-                }
-            }
-            
-            if ( ! in_array('date_modified',$userFields) ) {
-                $userFields[] = 'date_modified';
-            }
-
-        }
-
-
-        $orderBy = '';
-        if ( isset($args['orderBy']) ) {
-            if ( strpos($args['orderBy'],',') !== 0 ) {
-                // There is a comma, we are ordering by more than one thing
-                $orderBys = explode(',',$args['orderBy']);
-            } else {
-                $orderBys = array($args['orderBy']);
-            }
-            $orderByArray = array();
-            foreach ( $orderBys as $order ) {
-                if ( strpos($order,':') ) {
-                    // It has a :, it's specifying ASC / DESC
-                    list($column,$direction) = explode(':',$order);
-                } else {
-                    // No direction specified, let's let it fly free
-                    $column = $order;
-                    $direction = 'ASC';
-                }
-                if ( !$api->security->canAccessField($seed,$column,'list') || !isset($seed->field_defs[$column]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
-                }
-                
-                $orderByArray[] = $column.' '.$direction;
-            }
-            
-            $orderBy = implode(',',$orderByArray);
-        }
-
-        $where = '';
-        // TODO: Upgrade this to use the full-text search for basic searches
-        if ( isset($args['basicSearch']) ) {
-            $tableName = $seed->table_name;
-            $basicSearch = $GLOBALS['db']->quote($args['basicSearch']);
-            if ( is_a($seed,'Person') ) {
-                // Search by first_name, last_name
-                if ( strpos($args['basicSearch'],' ') !== false ) {
-                    // There is a space in there, search by first name and last name
-                    list($leftPart,$rightPart) = explode(' ',$args['basicSearch']);
-                    $leftPart = $GLOBALS['db']->quote($leftPart);
-                    $rightPart = $GLOBALS['db']->quote($rightPart);
-                    
-                    $where = "( {$tableName}.first_name LIKE '{$leftPart}%' AND {$tableName}.last_name LIKE '{$rightPart}%' ) OR ( {$tableName}.last_name LIKE '{$leftPart}%' AND {$tableName}.first_name LIKE '{$right_part}%' )";
-                } else {
-                    // No space, search by first name or last name
-                    $where = "{$tableName}.first_name LIKE '{$basicSearch}%' OR {$tableName}.last_name LIKE '{$basicSearch}%' ";
-                }
-            } else {
-                // Search by name
-                $where = "{$tableName}.name LIKE '{$basicSearch}%' ";
+                $ids[] = $dhash["id"];
             }
         }
 
-        $params = array();
-        if ( isset($args['favorites']) && $args['favorites'] ) {
-            $params['favorites'] = true;
-        }
-        
-        $listQueryParts = $seed->create_new_list_query($orderBy, $where, $userFields, $params, $deleted, '', true, null, false, false);
 
-        if ( $api->security->hasExtraSecurity($seed,'list') ) {
-            $api->security->addExtraSecurityList($seed,$listQueryParts);
-        }
-        
-        $reply = $this->performQuery($api, $args, $seed, $listQueryParts, $maxResults, $offset);
-        if ( $reply['count'] > $maxResults ) {
-            $nextOffset = $offset + $maxResults;
-        } else {
-            $nextOffset = 0;
-        }
-        
         $response = array();
-        $response["next_offset"] = $nextOffset;
-        $response["result_count"] = $reply['count'];
-        $response["records"] = $reply['records'];
+        $response["next_offset"] = $entryList["next_offset"];
+        $response["result_count"] = $entryList["result_count"];
+        $response["records"] = $ids;
 
         return $response;
     }
 
-
-    protected function performQuery($api, $args, $seed, $queryParts, $maxResults, $offset) {
-        $query = $queryParts['select'] . $queryParts['from'] . $queryParts['where'] . $queryParts['order_by'];
-
-        // If we want the last page, here is the magic to get there.
-        if($offset === 'end'){
-            $countQuery = $seed->create_list_count_query($query);
-            $ret = $GLOBALS['db']->query($countQuery);
-            if ( $row = $GLOBALS['db']->fetchByAssoc($ret) ) {
-                $totalCount = $row['c'];
-            } else {
-                $totalCount = 0;
-            }
-            $offset = (floor(($totalCount -1) / $limit)) * $limit;
-        }
-        
-        $ret = $GLOBALS['db']->limitQuery($query, $offset, $maxResults + 1);
-        
-        $records = array();
-        $count = 0;
-
-        while($row = $GLOBALS['db']->fetchByAssoc($ret)) {
-            if ( $count < $maxResults ) {
-                $records[$row['id']] = $seed->convertRow($row);
-            }
-            $count++;
-        }
-
-        if ( $count == 0 ) {
-            // Empty query
-            return array('count' => 0, 'records' => array());
-        }
-
-        if ( !empty($queryParts['secondary_select']) ) {
-            // There are some secondary selects we need to run to get the whole dataset
-            $idList = "('".implode("','",array_keys($records))."')";
-            
-            $secondaryQuery = $queryParts['secondary_select'] . $queryParts['secondary_from'] . ' WHERE '.$seed->table_name.'.id IN ' .$idList;
-            
-            $ret = $GLOBALS['db']->query($secondaryQuery);
-            while ( $row = $GLOBALS['db']->fetchByAssoc($ret) ) {
-                foreach( $row as $name => $value ) {
-                    if ( $name == 'ref_id' ) {
-                        // It's the record id, we already have that bit.
-                        continue;
-                    }
-                    $records[$row['ref_id']][$name] = $value;
-                    if ( isset($records[$row['ref_id']]['secondary_select_count']) ) {
-                        $records[$row['ref_id']]['secondary_select_count']++;
-                    } else {
-                        $records[$row['ref_id']]['secondary_select_count'] = 1;
-                    }
-                }
-            }
-        }
-        
-        return array('count' => $count, 'records' => $records );
-    }
 }
