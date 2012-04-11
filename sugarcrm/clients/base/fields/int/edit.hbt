@@ -1,7 +1,11 @@
 <div class="row-fluid">
     <div class="span2"><strong>{{label}}</strong></div>
-    <div class="span4">
-        <input type="text" name="{{name}}" value="{{value}}" class="input-large">
+    <div class="span4">{{auto_increment}}
+        {{#if auto_increment}}
+            {{value}}
+        {{else}}
+            <input type="text" class="input-xlarge" value="{{value}}">
+        {{/if}}
         <p class="help-block"></p>
     </div>
 </div>
