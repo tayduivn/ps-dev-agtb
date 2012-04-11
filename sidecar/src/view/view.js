@@ -105,15 +105,31 @@
          */
         getFields: function() {
             var fields = [];
+            var module = this.context.get('module');
+            var fieldMetadata;
+
             if (this.meta && this.meta.panels) {
                 _.each(this.meta.panels, function(panel) {
                     fields = fields.concat(_.pluck(panel.fields, 'name'));
                 });
             }
 
-            return _.filter(_.uniq(fields), function(value) {
+            var result = _.filter(_.uniq(fields), function(value) {
                 return value;
             });
+
+            // we need to find the relates and add the actual id fields
+            fieldMetadata = app.metadata.getModule(module, 'fields');
+            if (fieldMetadata) {
+                _.each(result, function(entry) {
+                    if (fieldMetadata[entry] && fieldMetadata[entry].type == 'relate') {
+                        result.push(fieldMetadata[entry].id_name);
+                    }
+                });
+            }
+
+
+            return result;
         },
 
         /**

@@ -61,6 +61,11 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
                         'name' => 'date_modified',
                         'label' => 'Modifed Date',
                     ),
+                    5 =>
+                    array(
+                        'name' => 'assigned_user_name',
+                        'label' => 'Assigned User Name',
+                    ),
                 ),
             ),
         ),
