@@ -57,12 +57,12 @@ class SugarSearchEngineMappingHelperTest extends Sugar_PHPUnit_Framework_TestCas
     public function mappingTypeProvider()
     {
         return array(
-            array('Elastic', array('type'=>'datetime'), 'date'),
-            array('Elastic', array('type'=>'date'), 'date'),
-            array('Elastic', array('type'=>'int'), 'long'),
-            array('Elastic', array('type'=>'currency'), 'double'),
-            array('Elastic', array('type'=>'bool'), 'boolean'),
-            array('Elastic', array('dbType'=>'decimal'), 'double'),
+            array('Elastic', array('type'=>'datetime'), 'string'),
+            array('Elastic', array('type'=>'date'), 'string'),
+            array('Elastic', array('type'=>'int'), 'string'),
+            array('Elastic', array('type'=>'currency'), 'string'),
+            array('Elastic', array('type'=>'bool'), 'string'),
+            array('Elastic', array('dbType'=>'decimal'), 'string'),
         );
     }
 
@@ -71,7 +71,6 @@ class SugarSearchEngineMappingHelperTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testGetMappingType($searchEngineName, $fieldDef, $expectedType)
     {
-        $this->markTestSkipped("using strings only for now");
         $newType = SugarSearchEngineMappingHelper::getTypeFromSugarType($searchEngineName, $fieldDef);
 
         $this->assertEquals($expectedType, $newType, 'not expected type');
