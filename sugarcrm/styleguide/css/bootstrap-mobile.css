@@ -4095,13 +4095,17 @@ html {
   margin: 8px 0 0 14px;
   color: #c2c2c2;
 }
+.search-query[placeholder] {
+  text-indent: 30px;
+}
 #listing .search-query {
+  width: 98.75%;
   height: 26px;
-  width: 83%;
-  padding-left: 38px;
   -webkit-border-radius: 18px;
   -moz-border-radius: 18px;
   border-radius: 18px;
+  padding-left: 0;
+  padding-right: 0;
 }
 .navbar [class^="icon-"] {
   color: #ffffff;
