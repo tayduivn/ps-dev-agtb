@@ -85,6 +85,12 @@ class SugarBean
 	//END SUGARCRM flav=pro ONLY
 
 	/**
+	 * How deep logic hooks can go
+	 * @var int
+	 */
+	protected $max_logic_depth = 10;
+
+	/**
 	 * Disble vardefs.  This should be set to true only for beans that do not have varders.  Tracker is an example
 	 *
 	 * @var BOOL -- default false
@@ -5264,7 +5270,7 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!isset($this->processed) || $this->processed == false){
             //add some logic to ensure we do not get into an infinite loop
             if(!empty($this->logicHookDepth[$event])) {
-                if($this->logicHookDepth[$event] > 10)
+                if($this->logicHookDepth[$event] > $this->max_logic_depth)
                     return;
             }else
                 $this->logicHookDepth[$event] = 0;
@@ -5282,6 +5288,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook = new LogicHook();
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
+            $this->logicHookDepth[$event]--;
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
             if ($event == "after_relationship_add" || $event == "after_relationship_delete" || $event == "before_delete")
