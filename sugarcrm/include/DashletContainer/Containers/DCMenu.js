@@ -337,6 +337,9 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             }
     }
 	Y.spot = function(q){
+        var q = $.trim(q);
+        if(q == '')
+            return;
         DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);

@@ -67,32 +67,21 @@ class SugarSeachEngineElasticResult extends SugarSearchEngineAbstractResult
     /**
      * This function returns an array of highlighted key-value pairs.
      *
-     * @param maxLen integer the maximum length of string in the returned array values
-     * @param maxHits integer the maximum number of matched keywords to be highlighted in a long string
-     * @param preTag string the tag to be used in front of the highlighted strings
-     * @param postTag string the tag to be used after the highlighted strings
-     * @param partialMatch boolean partial match such as wild card search
      * @param maxFields integer the maximum number of fields to return for each hit
      *
      * @return array of key value pairs
      */
-    public function getHighlightedHitText($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>', $partialMatch = true, $maxFields = 1)
+    public function getHighlightedHitText($maxFields = 1)
     {
         $ret = array();
-        $hit = $this->elasticaResult->getHit();
 
-        // this is the word to be searched
-        if (!isset($_REQUEST['q'])) {
-            $GLOBALS['log']->error('Query string q not found.');
-            return $ret;
-        }
-        // looks like this is encoded, so decode it first
-        $q = html_entity_decode(trim($_REQUEST['q']), ENT_QUOTES);
+        $highlights = $this->elasticaResult->getHighlights();
 
-        if (isset($hit['_source']) && is_array($hit['_source'])) {
-            $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
+        if (!empty($highlights) && is_array($highlights))
+        {
+            $highlighter = new SugarSearchEngineHighlighter();
             $highlighter->setModule($this->getModule());
-            $ret = $highlighter->getHighlightedHitText($hit['_source'], $q, $partialMatch);
+            $ret = $highlighter->processHighlightText($highlights);
             $ret = array_slice($ret, 0, $maxFields);
         }
 

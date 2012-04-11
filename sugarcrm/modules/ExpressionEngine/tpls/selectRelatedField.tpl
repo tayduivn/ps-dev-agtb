@@ -35,7 +35,7 @@
     <button class='button' name='selrf_cancelbtn' onclick="SUGAR.formulaRelFieldWin.hide()" >
         {sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}
     </button>
-    <button class='button' name='selrf_insertbtn' onclick="$.markItUp({ldelim}closeWith:'$' + $('#selrf_rmodule').val() + '.' + $('#selrf_rfield').val(){rdelim});SUGAR.formulaRelFieldWin.hide()" >
+    <button class='button' name='selrf_insertbtn' onclick='$.markItUp({ldelim}closeWith:"related($" + $("#selrf_rmodule").val() + ",\"" + $("#selrf_rfield").val() + "\")"{rdelim});SUGAR.formulaRelFieldWin.hide()' >
         {sugar_translate module="ModuleBuilder" label="LBL_BTN_INSERT"}
     </button>
 </div>
