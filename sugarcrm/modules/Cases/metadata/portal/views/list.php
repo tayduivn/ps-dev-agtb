@@ -89,7 +89,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 ),
                 4 =>
                 array(
-                    'type' => 'actionsLink',
+                    'type' => 'actionslink',
                     'label' => 'Actions',
                 ),
             ),
