@@ -123,10 +123,18 @@ SUGAR.append(SUGAR.themes, {
     toggleMenuOverFlow: function(menuName,maction) {
 
     	var menuName = "#"+menuName;
+        //Bug#52141: Prevent hiding the menu after expanding with more modules
+        var retainItem = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
+            retainClass = $.fn.superfish.defaults['retainClass'];
+        retainItem.addClass(retainClass);
+        $(menuName).off("mouseout.retain").on("mouseout.retain", function(){
+            retainItem.removeClass(retainClass);
+        });
+
 	    if(maction == "more") {
 			$(menuName).addClass("showMore");
 			$(menuName).removeClass("showLess");
-			
+
 		var viewPortHeight = $(window).height(),
 		    menuOffset = $(menuName).offset(),
 		    menuHeight = $(menuName).outerHeight(true),
