@@ -102,8 +102,10 @@
                     "loginView": {
                         "type": "basic",
                         "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">" +
+                            "<p class=\"help-block\">" +
+                            "<a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a>\n\n" +
+                            "</p>\n        </div>\n    </div>"
                     }
                 }
             },
