@@ -51,16 +51,16 @@
 	}
 	return false;
     });
-	$('article').live('swipeLeft',function () {
-		var anchor=$(this);
-		anchor.closest('#listing').find("article span[id^=listing-action] .grip.on").closest('article').trigger('swipeRight');
-		anchor.find('.grip').addClass('on');
-		anchor.find('[id^=listing-action] span').removeClass('hide').addClass('on');
-	});	
-	$('article').live('swipeRight',function () {
-		$(this).find('.grip').removeClass('on');
-		$(this).find('[id^=listing-action] span').addClass('hide').removeClass('on');
-	});	
+    $('article').live('swipeLeft',function () {
+	var anchor=$(this);
+	anchor.closest('#listing').find("article span[id^=listing-action] .grip.on").closest('article').trigger('swipeRight');
+	anchor.find('.grip').addClass('on');
+	anchor.find('[id^=listing-action] span').removeClass('hide').addClass('on');
+    });	
+    $('article').live('swipeRight',function () {
+	$(this).find('.grip').removeClass('on');
+	$(this).find('[id^=listing-action] span').addClass('hide').removeClass('on');
+    });	
     $('article .grip').live('click', function () {
 	if($(this).hasClass('on')===false){
 	    $(this).closest('article').trigger('swipeLeft');
