@@ -8,6 +8,12 @@
 
     app.augment("config", {
         /**
+         * Application identifier.
+         * @cfg {String}
+         */
+        appId: 'portal',
+
+        /**
          * Application environment. Possible values: 'dev', 'test', 'prod'
          * @cfg {String}
          */
