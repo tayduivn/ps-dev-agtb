@@ -42,7 +42,7 @@
                     <span class="spot_fts_summary"><a href="{sugar_ajax_url url=$url}">{$result->getSummaryText()}</a></span>
                     <br>
                     <span class="details">
-                            {foreach from=$result->getHighlightedHitText(80, 1, '<span class="highlight">', '</span>') key=k item=v}
+                            {foreach from=$result->getHighlightedHitText() key=k item=v}
                                 {$k}: {$v}
                             {/foreach}
                     </span>

@@ -221,11 +221,11 @@
                     var $$ = $(this),
                         o = sf.op,
                         _id = $$.attr("ul-child-id") ? $$.attr("ul-child-id") : ($ul.attr('id')) ? $ul.attr('id') : o.megamenuID ? o.megamenuID + ++sf.counter : 'megamenu' + ++sf.counter,
-                        _top = $$.position().top + $$.outerHeight() + 1,
+                        _top = $$.position().top + $$.parent().position().top,
                         _left = $$.offset().left - sf.cssValue.call($ul, "border-left-width"),
                         $menu = $('ul.' + sf.c.menuClass + ':visible');
                     //handling sub-sliding menu
-                    if($$.css('position') == 'static') {
+                    if($$.css('position') == 'static' || $$.parent().hasClass('megamenuSiblings')) {
                         _left += $$.outerWidth() + sf.cssValue.call($ul, "border-right-width");
                         $ul.addClass('sf-sub-modulelist').on('mouseover', function(){
                                 $$.addClass(sf.defaults['retainClass']);
@@ -236,6 +236,8 @@
                                     $('ul.' + sf.c.menuClass + ':visible > li').hideSuperfishUl();
                                 }, o.delay);
                             });
+                    } else {
+                        _top += $$.outerHeight();
                     }
 
                     //append the item into the body element, and then save the id to restore back later

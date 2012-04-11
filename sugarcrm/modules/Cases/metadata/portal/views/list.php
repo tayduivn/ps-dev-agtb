@@ -89,7 +89,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 ),
                 4 =>
                 array(
-                    'type' => 'sugarField_actionsLink',
+                    'type' => 'actionslink',
                     'label' => 'Actions',
                 ),
             ),

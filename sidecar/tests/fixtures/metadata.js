@@ -312,7 +312,7 @@ fixtures.metadata = {
                     "buttons": [
                         {
                             name: "save_button",
-                            type: "button_save",
+                            type: "button",
                             label: "Save",
                             value: "save",
                             primary: true
@@ -892,7 +892,7 @@ fixtures.metadata = {
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
+                "  value = (value!='' && value!='http://') ? value : \"\";\n" +
                 "return value\n" +
                 "}" +
                 "}"
