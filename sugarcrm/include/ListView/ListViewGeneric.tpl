@@ -96,6 +96,7 @@
     {assign var="link_action_id" value="actionLinkTop"}
     {assign var="actionsLink" value=$actionsLinkTop}
     {assign var="selectLink" value=$selectLinkTop}
+    {assign var="action_menu_location" value="top"}
 	{include file='include/ListView/ListViewPagination.tpl'}
 	<tr height='20'>
 			{if $prerow}
@@ -241,6 +242,7 @@
     {assign var="link_action_id" value="actionLinkBottom"}
     {assign var="selectLink" value=$selectLinkBottom}
     {assign var="actionsLink" value=$actionsLinkBottom}
+    {assign var="action_menu_location" value="bottom"}
     {include file='include/ListView/ListViewPagination.tpl'}
 	</table>
 {/if}

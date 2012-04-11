@@ -38,7 +38,7 @@ class SugarWidgetSubPanelTopCreateLeadNameButton extends SugarWidgetSubPanelTopB
 
     public function getWidgetId()
     {
-        return parent::getWidgetId() . '_create_button';
+        return parent::getWidgetId();
     }
 
 	function display($defines)

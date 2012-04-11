@@ -65,6 +65,44 @@ class  PortalGridLayoutMetaDataParser extends WirelessGridLayoutMetaDataParser
 //
 //    }
 
+    /**
+     * Checks for the existence of the view variable for portal metadata
+     *
+     * @param array $viewdefs The viewdef array
+     * @param string $view The view to check for
+     * @return bool
+     */
+    public function hasViewVariable($viewdefs, $view) {
+        $name = MetaDataFiles::getViewDefVar($view);
+        $client = MetaDataFiles::getViewClient($view);
+        return $name && $client && isset($viewdefs[$client]['views'][$name]);
+    }
+
+    /**
+     * Gets the viewdefs for portal from the entire viewdef array
+     *
+     * @param array $viewdefs The full viewdef collection below $viewdefs[$module]
+     * @param string $view The view to fetch the defs for
+     * @return array
+     */
+    public function getDefsFromArray($viewdefs, $view) {
+        return $this->hasViewVariable($viewdefs, $view) ? $viewdefs[MetaDataFiles::getViewClient($view)]['views'][MetaDataFiles::getViewDefVar($view)] : array();
+    }
+
+    /**
+     * Gets panel defs from the viewdef array
+     * @param array $viewdef The viewdef array
+     * @return array
+     */
+    protected function getPanelsFromViewDef($viewdef) {
+        $defs = $this->getDefsFromArray($viewdef, $this->_view);
+        if (isset($defs['panels'])) {
+    		return $defs['panels'];
+    	}
+
+        return array();
+    }
+
     /*
      * Save a draft layout
      */

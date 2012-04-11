@@ -312,7 +312,7 @@ fixtures.metadata = {
                     "buttons": [
                         {
                             name: "save_button",
-                            type: "button_save",
+                            type: "button",
                             label: "Save",
                             value: "save",
                             primary: true

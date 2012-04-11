@@ -31,6 +31,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_AVAILABLE' => 'getAdditionalFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
     protected $labelIdentifier = 'label' ; // labels in the listviewdefs.php are tagged 'label' =>
     protected $allowParent = false;
+    protected $requestRejectTypes = array('html'=>'html', 'text'=>'text', 'encrypt'=>'encrypt');
     protected $allowedViews = array(
         MB_LISTVIEW,
         MB_DASHLET,
@@ -89,7 +90,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $this->view = $view;
 
         $this->_fielddefs = $this->implementation->getFielddefs();
-        $this->_paneldefs = $this->implementation->getPanelDefs();
+        //$this->_paneldefs = $this->implementation->getPanelDefs();
         $this->_standardizeFieldLabels( $this->_fielddefs );
         $this->_viewdefs = array_change_key_case ( $this->implementation->getViewdefs () ) ; // force to lower case so don't have problems with case mismatches later
 
@@ -115,117 +116,73 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      * Return a list of the default fields for a listview
      * @return array    List of default fields as an array, where key = value = <field name>
      */
-    function getDefaultFields()
+    function getDefaultFields ()
     {
-        $defaultFields = array();
-            foreach ($this->_paneldefs as $def) {
-                if (isset($def['fields'])) {
-                    foreach ($def['fields'] as $field) {
-                        if (!empty($field['name'])) {
-                            if (
-                                !empty($field['default']) && !empty($field['enabled']) &&
-                                //(!isset($field['enabled']) || $field['enabled'] != false) &&
-                                (!isset($field['studio']) || ($field['studio'] !== false && $field['studio'] != 'false'))
-                            ) {
-                                if (isset($this->_fielddefs[$field['name']])) {
-                                    $defaultFields[$field['name']] = self::_trimFieldDefs($this->_fielddefs[$field['name']]);
-                                    if (!empty($field['label'])) {
-                                        $defaultFields[$field['name']]['label'] = $field['label'];
-                                    }
-                                } else {
-                                    $defaultFields[$field['name']] = $field;
-                                }
-                            }
-                        }
-                    }
+        $defaultFields = array ( ) ;
+        foreach ( $this->_viewdefs as $key => $def )
+        {
+            // add in the default fields from the listviewdefs but hide fields disabled in the listviewdefs.
+            if (! empty ( $def [ 'default' ] ) && (!isset($def['enabled']) || $def['enabled'] != false)
+            	&& (!isset($def [ 'studio' ]) || ($def [ 'studio' ] !== false && $def [ 'studio' ] != "false")))
+            {
+                if (isset($this->_fielddefs [ $key ] )) {
+					$defaultFields [ $key ] = self::_trimFieldDefs ( $this->_fielddefs [ $key ] ) ;
+					if (!empty($def['label']))
+					   $defaultFields [ $key ]['label'] = $def['label'];
                 }
-                /*
-                // add in the default fields from the listviewdefs but hide fields disabled in the listviewdefs.
-                if (!empty($def['default']) && (!isset($def['enabled']) || $def['enabled'] != false) && (!isset($def['studio']) || ($def['studio'] !== false && $def['studio'] != 'false'))) {
-                    if (isset($this->_fielddefs [ $key ] )) {
-                        $defaultFields [ $key ] = self::_trimFieldDefs ( $this->_fielddefs [ $key ] ) ;
-                        if (!empty($def['label']))
-                           $defaultFields [ $key ]['label'] = $def['label'];
-                    }
-                    else {
-                        $defaultFields [ $key ] = $def;
-                    }
-                }
-                */
+				else {
+					$defaultFields [ $key ] = $def;
+				}
             }
-        
+        }
+
         return $defaultFields ;
     }
 
     /**
      * Returns additional fields available for users to create fields
-      @return array    List of additional fields as an array, where key = value = <field name>
+     * @return array    List of additional fields as an array, where key = value = <field name>
      */
-    function getAdditionalFields()
+    function getAdditionalFields ()
     {
-        $additionalFields = array();
-        foreach ($this->_paneldefs as $def) {
-            if (isset($def['fields'])) {
-                foreach ($def['fields'] as $field) {
-                    if (!empty($field['name'])) {
-                        // Bug #25322
-                        if (strtolower($field['name']) == 'email_opt_out') {
-                            continue;
-                        }
-
-                        if (empty($field['default'])) {
-                            if (isset($this->_fielddefs[$field['name']])) {
-                                $additionalFields[$field['name']] = self::_trimFieldDefs($this->_fielddefs[$field['name']]);
-                            } else {
-                                $additionalFields[$field['name']] = $field;
-                            }
-                        }
-                    }
-                }
+        $additionalFields = array ( ) ;
+        foreach ( $this->_viewdefs as $key => $def )
+        {
+            //#25322
+            if(strtolower ( $key ) == 'email_opt_out'){
+                continue;
             }
-            /*
-        	//#25322 
-        	if(strtolower ( $key ) == 'email_opt_out'){
-        		continue;
-        	}
-        	
+
             if (empty ( $def [ 'default' ] ))
             {
                 if (isset($this->_fielddefs [ $key ] ))
-					$additionalFields [ $key ] = self::_trimFieldDefs ( $this->_fielddefs [ $key ] ) ;
-				else
-					$additionalFields [ $key ] = $def;
+                    $additionalFields [ $key ] = self::_trimFieldDefs ( $this->_fielddefs [ $key ] ) ;
+                else
+                    $additionalFields [ $key ] = $def;
             }
-            */
         }
         return $additionalFields ;
     }
 
-    /**
+        /**
      * Returns unused fields that are available for use in either default or additional list views
      * @return array    List of available fields as an array, where key = value = <field name>
      */
     function getAvailableFields ()
     {
-        $availableFields = array();
+        $availableFields = array ( ) ;
         // Select available fields from the field definitions - don't need to worry about checking if ok to include as the Implementation has done that already in its constructor
-        foreach ($this->_fielddefs as $key => $def)
+        foreach ( $this->_fielddefs as $key => $def )
         {
-            //if ($this->isValidField($key, $def) && !isset($this->_viewdefs[$key]))
-            if ($this->isValidField($key, $def) && !$this->panelHasField($key)) {
-        	    $availableFields[$key] = self::_trimFieldDefs($this->_fielddefs[$key]) ;
-            }
+            if ($this->isValidField($key, $def) && !isset($this->_viewdefs[$key]))
+        	    $availableFields [ $key ] = self::_trimFieldDefs( $this->_fielddefs [ $key ] ) ;
         }
-
-    	$origPanels = $this->getOriginalPanelDefs();
-        foreach ($origPanels as $panel) {
-            if (isset($panel['fields'])) {
-                foreach ($panel['fields'] as $field) {
-                    if (isset($field['name']) && !$this->panelHasField($field['name']) || (isset($field['enabled']) && $field['enabled'] == false)) {
-                        $availableFields[$field['name']] = $field;
-                    }
-                }
-            }
+    	$origDefs = $this->getOriginalViewDefs();
+        foreach($origDefs as $key => $def)
+        {
+        	if (!isset($this->_viewdefs[$key]) ||
+        		(isset($this->_viewdefs[$key]['enabled']) && $this->_viewdefs[$key]['enabled'] == false))
+        	$availableFields [ $key ] = $def;
         }
 
         return $availableFields;
@@ -299,137 +256,99 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     protected function _populateFromRequest() {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->populateFromRequest() - fielddefs = ".print_r($this->_fielddefs, true));
         // Transfer across any reserved fields, that is, any where studio !== true, which are not editable but must be preserved
-        $newViewdefs = array();
-        $newPaneldefs = array();
-        $newPaneldefIndex = 0;
-        $newPanelFieldMonitor = array();
-        $rejectTypes = array('html'=>'html', 'text'=>'text', 'encrypt'=>'encrypt');
+        $newViewdefs = array ( ) ;
 
         $originalViewDefs = $this->getOriginalViewDefs();
 
-    	//foreach ($this->_viewdefs as $key => $def) {
-        foreach ($this->_paneldefs as $index => $panel) {
-            if (isset($panel['fields'])) {
-                foreach ($panel['fields'] as $field) {
-                    // Build out the massive conditional structure
-                    $studio  = isset($field['studio']);
-                    $studioa = $studio && is_array($field['studio']);
-                    $studioa = $studioa && isset($field['studio']['listview']) &&
-                               ($field['studio']['listview'] === false || ($slv = strtolower($field['studio']['listview'])) == 'false' || $slv == 'required');
-                    $studion = $studio && !is_array($field['studio']);
-                    $studion = $studion && ($field['studio'] === false || ($slv = strtolower($field['studio'])) == 'false' || $slv == 'required');
-                    
-                    $studio  = $studio && ($studioa || $studion);
-                    if (isset($field['name']) && $studio) {
-                        $newPaneldefs[$newPaneldefIndex++] = $field;
-                        $newPanelFieldMonitor[$field['name']] = true;
-                    }
-                }
-            }
-            /*
+    	foreach ( $this->_viewdefs as $key => $def )
+        {
             //If the field is on the layout, but studio disabled, put it back on the layout at the front
         	if (isset ($def['studio']) && (
-        		(is_array($def['studio']) && isset($def['studio']['listview']) && 
-            		($def['studio']['listview'] === false || strtolower($def['studio']['listview']) == 'false' 
+        		(is_array($def['studio']) && isset($def['studio']['listview']) &&
+            		($def['studio']['listview'] === false || strtolower($def['studio']['listview']) == 'false'
             		|| strtolower($def['studio']['listview']) == 'required')
             	)
-         		|| (!is_array($def['studio']) && 
+         		|| (!is_array($def['studio']) &&
          			($def [ 'studio' ] === false || strtolower($def['studio']) == 'false' || strtolower($def['studio']) == 'required'))
          		))
          	{
                 $newViewdefs [ $key ] = $def ;
          	}
-            */
         }
         // only take items from group_0 for searchviews (basic_search or advanced_search) and subpanels (which both are missing the Available column) - take group_0, _1 and _2 for all other list views
-        $lastGroup = isset($this->columns['LBL_AVAILABLE']) ? 2 : 1;
+        $lastGroup = (isset ( $this->columns [ 'LBL_AVAILABLE' ] )) ? 2 : 1 ;
 
-        for ($i = 0; isset($_POST['group_' . $i]) && $i < $lastGroup; $i ++) {
-            foreach ($_POST['group_' . $i] as $fieldname) {
-                $fieldname = strtolower($fieldname);
+        for ( $i = 0 ; isset ( $_POST [ 'group_' . $i ] ) && $i < $lastGroup ; $i ++ )
+        {
+            foreach ( $_POST [ 'group_' . $i ] as $fieldname )
+            {
+                $fieldname = strtolower ( $fieldname ) ;
                 //Check if the field was previously on the layout
-                //if (isset ($this->_viewdefs[$fieldname])) {
-                if ($f = $this->panelGetField($fieldname)) {
-                	$newPaneldefs[$newPaneldefIndex] = $f['field'];
-				} else if ($f = $this->panelGetField($fieldname, $this->getOriginalPanelDefs())) { // Check if the original view def contained it
-                    $newPaneldefs[$newPaneldefIndex] = $f['field'];
-                } else {
-                    // Create a definition from the fielddefs
+                if (isset ($this->_viewdefs[$fieldname])) {
+                	$newViewdefs [ $fieldname ] = $this->_viewdefs[$fieldname];
+                   // print_r($this->_viewdefs[ $fieldname ]);
+				}
+                //Next check if the original view def contained it
+                else if (isset($originalViewDefs[ $fieldname ]))
+                {
+                	$newViewdefs [ $fieldname ] =  $originalViewDefs[ $fieldname ];
+                }
+                //create a definition from the fielddefs
+                else
+                {
 	                // if we don't have a valid fieldname then just ignore it and move on...
-					if (!isset($this->_fielddefs[$fieldname])) {
-						continue;
-                    }
+					if ( ! isset ( $this->_fielddefs [ $fieldname ] ) )
+						continue ;
 
-	                $def = $this->_trimFieldDefs($this->_fielddefs[$fieldname]);
-                    $label = isset($def['label']) ? $def['label'] : '';
-                    if (empty($label)) {
-                        $label = isset($def['vname']) ? $def['vname'] : $def['name'];
-                    }
-                    $panelfield = array('name' => $fieldname, 'label' => $label, 'enabled' => true);
-                    
+	                $newViewdefs [ $fieldname ] = $this->_trimFieldDefs($this->_fielddefs [ $fieldname ]) ;
+
                     // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
                     // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
-                    if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'relate') {
-                        $panelfield['id'] = strtoupper($this->_fielddefs[$fieldname]['id_name']);
-                        $panelfield['link'] = true;
+                    if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'relate')
+                    {
+                        $newViewdefs[$fieldname]['id'] = strtoupper($this->_fielddefs[$fieldname]['id_name']);
+                        $newViewdefs[$fieldname]['link'] = true;
                     }
                     // sorting fields of certain types will cause a database engine problems
-	                if (isset($this->_fielddefs[$fieldname]['type']) && isset($rejectTypes[$this->_fielddefs[$fieldname]['type']])) {
-	                    $panelfield['sortable'] = false;
+	                if ( isset($this->_fielddefs[$fieldname]['type']) &&
+	                		isset ( $this->requestRejectTypes [ $this->_fielddefs [ $fieldname ] [ 'type' ] ] ))
+	                {
+	                    $newViewdefs [ $fieldname ] [ 'sortable' ] = false ;
 	                }
 
 	                // Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
-	                if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'currency') {
-	                    $panelfield['currency_format'] = true;
+	                if (isset ( $this->_fielddefs [ $fieldname ] [ 'type' ]) && $this->_fielddefs [ $fieldname ] [ 'type' ] == 'currency')
+	                {
+	                    $newViewdefs [ $fieldname ] [ 'currency_format' ] = true;
 	                }
-
-                    $newPaneldefs[$newPaneldefIndex] = $panelfield;
                 }
+                if (isset($newViewdefs [ $fieldname ]['enabled']))
+                		$newViewdefs [ $fieldname ]['enabled'] = true;
 
-                if (isset($_REQUEST[strtolower($fieldname) . 'width'])) {
-                    $width = substr($_REQUEST[$fieldname . 'width'], 6, 3);
-                    if (strpos($width, "%") != false) {
-                        $width = substr($width, 0, 2);
+                if (isset ( $_REQUEST [ strtolower ( $fieldname ) . 'width' ] ))
+                {
+                    $width = substr ( $_REQUEST [ $fieldname . 'width' ], 6, 3 ) ;
+                    if (strpos ( $width, "%" ) != false)
+                    {
+                        $width = substr ( $width, 0, 2 ) ;
                     }
-
-					if (!($width < 101 && $width > 0)) {
+					if (!($width < 101 && $width > 0))
+                    {
                         $width = 10;
                     }
-
-                    $newPaneldefs[$newPaneldefIndex]['width'] = $width."%";
-                } elseif (($def = $this->panelGetField($fieldname)) && isset($def['field']['width'])) {
-                    $newPaneldefs[$newPaneldefIndex]['width'] = $def['field']['width'];
-                } else {
-                	$newPaneldefs[$newPaneldefIndex]['width'] = "10%";
+                    $newViewdefs [ $fieldname ] [ 'width' ] = $width."%" ;
+                } else if (isset ( $this->_viewdefs [ $fieldname ] [ 'width' ] ))
+                {
+                    $newViewdefs [ $fieldname ] [ 'width' ] = $this->_viewdefs [ $fieldname ] [ 'width' ] ;
+                }
+                else {
+                	$newViewdefs [ $fieldname ] [ 'width' ] = "10%";
                 }
 
-                $newPaneldefs[$newPaneldefIndex]['default'] = ($i == 0);
-                $newPaneldefIndex++;
+                $newViewdefs [ $fieldname ] [ 'default' ] = ($i == 0) ;
             }
         }
-
-        // Add in the non named field meta
-        foreach ($this->_paneldefs as $panel) {
-            foreach ($panel['fields'] as $field) {
-                if (!isset($field['name'])) {
-                    $newPaneldefs[$newPaneldefIndex++] = $field;
-                }
-            }
-        }
-
-        // We need to add panels back into the viewdefs at the point where we got them
-        $panelDefsPath = $this->implementation->getPanelDefsPath();
-        $stack = &$this->_viewdefs;
-        foreach ($panelDefsPath as $path) {
-            if (isset($stack[$path])) {
-                $stack = &$stack[$path];
-            }
-        }
-        if (isset($stack['panels'])) {
-            $stack['panels'][0]['fields'] = $newPaneldefs;
-        }
-
-        $this->_paneldefs[0]['fields'] = $newPaneldefs;
+        $this->_viewdefs = $newViewdefs ;
     }
 
     /*
