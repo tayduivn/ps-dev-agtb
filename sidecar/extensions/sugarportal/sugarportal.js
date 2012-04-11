@@ -105,7 +105,7 @@
                         "template":  "<div class=\"control-group\">" +
                             "<label class=\"hide\">{{label}}</label>" +
                             "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">" +
-                            "<p class=\"help-block\"><a href=\"#\">Forgot password?</a></p>" +
+                            "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
                             "</div>"
                     }
                 }
