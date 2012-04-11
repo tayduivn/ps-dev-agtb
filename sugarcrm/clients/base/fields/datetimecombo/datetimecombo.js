@@ -15,17 +15,17 @@
     },
 
     format:function(value) {
-        var jsDate = app.utils.date.parse(value);
-        jsDate = app.utils.date.roundTime(jsDate);
+        var jsDate = SUGAR.App.utils.date.parse(value);
+        jsDate = SUGAR.App.utils.date.roundTime(jsDate);
         value = {
             dateTime: value,
             //TODO Account for user prefs
-            date: app.utils.date.format(jsDate, 'Y-m-d'),
-            time: app.utils.date.format(jsDate, 'h:i:s'),
-            hours: app.utils.date.format(jsDate, 'H'),
-            minutes: app.utils.date.format(jsDate, 'i'),
-            seconds: app.utils.date.format(jsDate, 's'),
-            amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+            date: SUGAR.App.utils.date.format(jsDate, 'Y-m-d'),
+            time: SUGAR.App.utils.date.format(jsDate, 'h:i:s'),
+            hours: SUGAR.App.utils.date.format(jsDate, 'H'),
+            minutes: SUGAR.App.utils.date.format(jsDate, 'i'),
+            seconds: SUGAR.App.utils.date.format(jsDate, 's'),
+            amPm: SUGAR.App.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
         return value
     },

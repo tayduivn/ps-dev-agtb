@@ -3,8 +3,7 @@ describe("sugarfields", function() {
     describe("datetime", function() {
         it("should format the value", function() {
 
-            var app = SUGAR.App;
-            var field = app.sugarFieldManager.get({
+            var field = SUGAR.App.sugarFieldManager.get({
                 def: {
                     type: "datetimecombo"
                 },
