@@ -63,25 +63,33 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                     'name' => 'case_number',
                     'label' => 'Case Number',
                     'class' => 'foo',
+                    'default' => true,
+                    'enabled' => true,
                 ),
                 1 =>
                 array(
                     'name' => 'name',
                     'label' => 'Name',
+                    'default' => true,
+                    'enabled' => true,
                 ),
                 2 =>
                 array(
                     'name' => 'status',
                     'label' => 'Status',
+                    'default' => true,
+                    'enabled' => true,
                 ),
                 3 =>
                 array(
                     'name' => 'date_modified',
                     'label' => 'Modifed Date',
+                    'default' => true,
+                    'enabled' => true,
                 ),
                 4 =>
                 array(
-                    'type' => 'sugarField_actionsLink',
+                    'type' => 'actionsLink',
                     'label' => 'Actions',
                 ),
             ),

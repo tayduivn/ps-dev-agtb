@@ -3,6 +3,22 @@ var SugarTest = {};
 
 (function(test) {
 
+    test.storage = {};
+    test.keyValueStore = {
+        set: function(key, value) {
+            test.storage[key] = value;
+        },
+        get: function(key) {
+            return test.storage[key];
+        },
+        cut: function(key) {
+            delete test.storage[key];
+        },
+        cutAll: function() {
+            test.storage = {};
+        }
+    };
+
     test.loadFile = function(path, file, ext, parseData, dataType) {
         dataType = dataType || 'text';
 
@@ -45,6 +61,8 @@ beforeEach(function(){
         SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
         SUGAR.App.config.env = "test";
         SUGAR.App.config.maxQueryResult = 20;
+        SugarTest.storage = {};
+        SUGAR.App.cache = SugarTest.keyValueStore;
     }
 });
 

@@ -25,6 +25,7 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestTestMetadataModuleList extends RestTestBase {
+    public $oppTestPath = 'modules/Opportunities/metadata/portal/views/list.php';
     public function setUp()
     {
         //Create an anonymous user for login purposes/
@@ -35,12 +36,12 @@ class RestTestMetadataModuleList extends RestTestBase {
     
     public function tearDown()
     {
-        $unitTestFiles = array('modules/Opportunities/metadata/portal.unittest.php',
+        $unitTestFiles = array($this->oppTestPath,
                                'custom/include/MVC/Controller/wireless_module_registry.php');
         foreach($unitTestFiles as $unitTestFile ) {
             if ( file_exists($unitTestFile) ) {
-                // Ignore the warning on this, the file stat cache causses the file_exist to trigger even when it's not really there
-                @unlink('modules/Opportunities/metadata/portal.unittest.php');
+                // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
+                @unlink($this->oppTestPath);
             }
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -60,7 +61,10 @@ class RestTestMetadataModuleList extends RestTestBase {
         $this->assertEquals(4,count($restModules),'There are extra modules in the portal module list');
         
         // Now add an extra file and make sure it gets picked up
-        file_put_contents('modules/Opportunities/metadata/portal.unittest.php','UNIT TEST DATA');
+        if (is_dir($dir = dirname($this->oppTestPath)) === false) {
+            sugar_mkdir($dir, null, true);
+        }
+        sugar_file_put_contents($this->oppTestPath, "<?php\n\$viewdefs['Opportunities'] = array();");
         $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
 
         $this->assertTrue(in_array('Opportunities',$restReply['reply']['moduleList']),'The new Opportunities module did not appear in the portal list');

@@ -108,6 +108,31 @@ describe("BeanCollection", function() {
         expect(beans.models.length).toEqual(2);
     });
 
+    it("should get records by order by", function() {
+        app.config.maxQueryResult = 1;
+        var ajaxSpy = sinon.spy(jQuery, 'ajax');
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+        var beans = dm.createBeanCollection(moduleName);
+
+        var contacts = SugarTest.loadFixture("contacts");
+        var subSetContacts = contacts;
+        beans.orderBy = {
+            field: "bob",
+            direction: "asc"
+        };
+
+        server = sinon.fakeServer.create();
+        server.respondWith("GET", "/rest/v10/Contacts?maxresult=1&orderBy=bob%3Aasc",
+            [200, {  "Content-Type": "application/json"},
+                JSON.stringify(subSetContacts)]);
+        beans.fetch();
+        server.respond();
+        server.restore();
+        expect(ajaxSpy.getCall(1).args[0].url).toEqual("/rest/v10/Contacts?maxresult=1&orderBy=bob%3Aasc");
+        ajaxSpy.restore();
+    });
+
     it("should get the current page number", function() {
         app.config.maxQueryResult = 1;
 
@@ -123,10 +148,10 @@ describe("BeanCollection", function() {
     });
 
     it("should trigger app:collection:fetch on fetch", function() {
-        var triggerFuncSpy = sinon.spy(function(data){
-                    var x = 2;
-                    return x;
-                });
+        var triggerFuncSpy = sinon.spy(function(data) {
+            var x = 2;
+            return x;
+        });
         app.config.maxQueryResult = 1;
         var moduleName = "Contacts";
         dm.declareModel(moduleName, metadata.modules[moduleName]);

@@ -1,4 +1,4 @@
-describe('cache', function () {
+xdescribe('cache', function () {
     var app = SUGAR.App;
     beforeEach(function () {
     });

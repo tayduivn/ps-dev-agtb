@@ -27,47 +27,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class SugarSearchEngineHighlighter
 {
-    protected $_maxLen;
-    protected $_maxHits;
-    protected $_preTag;
-    protected $_postTag;
     protected $_module;
-    private $_currentCount;
-    protected static $operatorMap = array (
-        'and', 'or',
-    );
-    // these are English stop words, perhaps we should include stop words of other languages as well
-    protected static $stopWords = array (
-        'a', 'an', 'and', 'as', 'at',
-        'be', 'but', 'by',
-        'for',
-        'if', 'in', 'into', 'is', 'it',
-        'no', 'not',
-        'of', 'on', 'or',
-        'such',
-        'that', 'the', 'their', 'then', 'there', 'these', 'they', 'this', 'to',
-        'was', 'will', 'with',
-    );
 
-    public function __construct($maxLen=80, $maxHits=2, $preTag = '<em>', $postTag = '</em>')
+    public static $preTag = '<span class="highlight">';
+    public static $postTag = '</span>';
+    public static $fragmentSize = 20;
+    public static $fragmentNumber = 2;
+
+    public function __construct()
     {
-        $this->_maxLen = $maxLen;
-        $this->_maxHits = $maxHits;
-        $this->_preTag = $preTag;
-        $this->_postTag = $postTag;
-    }
-
-    public function setMaxLen($maxLen) {
-        $this->_maxLen = $maxLen;
-    }
-
-    public function setMaxHits($maxHits) {
-        $this->_maxHits = $maxHits;
-    }
-
-    public function setTags($preTag, $postTag) {
-        $this->_preTag = $preTag;
-        $this->_postTag = $postTag;
     }
 
     /**
@@ -80,232 +48,27 @@ class SugarSearchEngineHighlighter
         $this->_module = $module;
     }
 
-    protected function castrate($string, $maxLen) {
-
-        // length is ok, no further process needed
-        $len = mb_strlen($string, 'UTF-8');
-        if ($len <= $maxLen) {
-            return $string;
-        }
-
-        // not much room left, just return ...
-        if ($maxLen <= 10) {
-            return ' ... ';
-        }
-
-        // when a string truncate is to happen, this is the length remained on both sides of the string
-        // for example, "this is a very long string" becomes
-        // "this ... string" if $remainder is 3 (try not to cut in the middle of a word
-        $remainder = round(($maxLen - 5) / 2);
-
-        $front = mb_substr($string, 0, $remainder, 'UTF-8');
-        $middle = mb_substr($string, $remainder, $len-$remainder*2, 'UTF-8');
-        $rear = mb_substr($string, -$remainder, $remainder, 'UTF-8');
-
-        // In order not to cut in the middle of words, we search for space before/after the cutting point,
-        // but if the space is too far from the cutting point, we may still just cut the words.
-        // This is necessary especially for languages like CJK, which do not have space between characters
-        // so the nearest space could be one paragraph away.
-        $maxDistance = 10;
-        if ($string[$remainder] != ' ' && $string[$remainder] != ' ')
-        {
-            // search for space between $string[0] and $string[$remainder-1]
-            $pos = mb_strrpos($front, ' ', 0, 'UTF-8');
-            if ($pos && (mb_strlen($front, 'UTF-8') - $pos < $maxDistance)) // found a space
-            {
-                $front = mb_substr($front, 0, $pos, 'UTF-8');
-            }
-            else
-            {
-                // search space in $middle
-                $pos = mb_strpos($middle, ' ', 0, 'UTF-8');
-                if ($pos && $pos < $maxDistance)
-                {
-                    $front .= mb_substr($middle, 0, $pos, 'UTF-8');
-                }
-            }
-        }
-        $toCheck = mb_strlen($string, 'UTF-8') - $remainder;
-        if ($string[$toCheck] != ' ' && $string[$toCheck-1] != ' ')
-        {
-            // search for space in $rear
-            $pos = mb_strpos($rear, ' ', 0, 'UTF-8');
-            if ($pos && $pos < $maxDistance) // found a space
-            {
-                $i = mb_strlen($rear, 'UTF-8') - $pos - 1;
-                $rear = mb_substr($rear, -$i, $i, 'UTF-8');
-            }
-            else
-            {
-                $pos = mb_strrpos($middle, ' ', 0, 'UTF-8');
-                if ($pos && (mb_strlen($middle, 'UTF-8') - $pos < $maxDistance))
-                {
-                    $i = mb_strlen($middle, 'UTF-8') - $pos - 1;
-                    $rear = mb_substr($middle, -$i, $i, 'UTF-8') . $rear;
-                }
-            }
-        }
-        return $front . ' ... ' . $rear;
-    }
-
-    protected function postProcessHighlights($original) {
-
-        // subtract the tag length when calculating the total length
-        $tagLength = strlen($this->_preTag) + strlen($this->_postTag);
-        $totalTagLen = $this->_currentCount * $tagLength;
-
-        // length is ok, no further process needed
-        if (strlen($original) - $totalTagLen <= $this->_maxLen) {
-            return $original;
-        }
-
-        $pattern = "(" . $this->_preTag . ".*?" . $this->_postTag . ")";
-        $pattern = str_replace('/', '\/', $pattern); //escaping
-        $pattern = '/' . $pattern . '/';
-
-        // this breaks down the string and the odd indexed elements will be
-        // highlighted strings and the even ones are non-highlighted
-        $a = preg_split($pattern, $original, -1, PREG_SPLIT_OFFSET_CAPTURE|PREG_SPLIT_DELIM_CAPTURE);
-
-        $hitCount = (count($a) - 1) / 2;
-
-        // hit count already under limit, need to trim some fat
-        if ($hitCount <= $this->_maxHits) {
-
-            // the total length of highlighted words
-            $len = 0;
-            for ($i=1; $i<=count($a)-1; $i=$i+2) {
-                $len += strlen($a[$i][0]) - $tagLength;
-            }
-
-            // available length for the non-highlighted strings
-            $availableLen = $this->_maxLen - $len;
-            if ($availableLen < 0) {
-                // this should not happen, unless a very tiny maxLen is given
-                return $a[1][0];
-            }
-
-            // available length for each non-highlighted string
-            $availPerStr = $availableLen / ($hitCount+1);
-
-            // shorten the non-highlighted strings if needed
-            for ($i=0; $i<count($a); $i=$i+2) {
-                if (strlen($a[$i][0]) > $availPerStr) {
-                    $a[$i][0] = $this->castrate($a[$i][0], $availPerStr);
-                }
-            }
-
-            // final string
-            $final = '';
-            foreach ($a as $hit) {
-                $final .= $hit[0];
-            }
-
-            return $final;
-        }
-        // hit count over the limit, try removing extra hits first then process again
-        else {
-            $newStr = substr($original, 0, $a[($this->_maxHits*2)+1][1]);
-
-            return $this->postProcessHighlights($newStr);
-        }
-    }
-
-    protected function highlightCallback($matches) {
-        // escape user input before display to avoid XSS
-        return $this->_preTag . htmlspecialchars(trim($matches[0])) . $this->_postTag;
-    }
-
-    protected function isOperator($search)
-    {
-        $search = strtolower($search);
-
-        return in_array($search, self::$operatorMap);
-    }
-
-    protected function isStopWord($search)
-    {
-        $search = strtolower($search);
-
-        return in_array($search, self::$stopWords);
-    }
-
-    protected function constructPattern($searchString, $partialMatch)
-    {
-        $infront = '';
-        if (isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
-            $GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
-            $infront = '\S*';
-        }
-
-        // handle special characters
-        $toSearch = array('.', '?', '*', "\\", '+', '/', '|', '(', ')', '[', ']', '{', '}');
-        $replace = array('\.', '.', '.*?', "\\"."\\", '\+', '\/', '\|', '\(', '\)', '\[', '\]', '\{', '\}');
-        $searchString = str_replace($toSearch, $replace, $searchString);
-
-        // it may contain multiple words
-        $searches = preg_split("/[\s,-]+/", $searchString);
-
-        $tokenCount = count($searches);
-        $patterns = array();
-        for ($i=0; $i<$tokenCount; $i++)
-        {
-            $search = $searches[$i];
-
-            $begin = '(';
-            if ($i == 0 && !empty($infront)) {
-                $begin .= $infront;
-            } else {
-                $begin .= '\b';
-            }
-
-            if (empty($search) || $this->isOperator($search) || $this->isStopWord($search))
-            {
-                continue;
-            }
-
-            if ($i == $tokenCount-1 && $partialMatch)
-            {
-                $patterns[] = $begin . $search . ')';
-            }
-            else
-            {
-                $patterns[] = $begin . $search . '\b)';
-            }
-        }
-        $final = '/' . implode('|', $patterns) . '/i';
-        return $final;
-    }
-
-    /**
-     *
-     * This function returns an array of highlighted strings.
-     *
-     * @param $resultArray array returned from search engine
-     * @param $searchString string the string to be searched and highlighted
-     *
-     * @return array of key value pairs
-     */
-    public function getHighlightedHitText($resultArray, $searchString, $partialMatch = true)
+    public function processHighlightText($resultArray)
     {
         $ret = array();
-
-        $pattern = $this->constructPattern($searchString, $partialMatch);
-
-        foreach ($resultArray as $field=>$value)
+        foreach ($resultArray as $field=>$fragments)
         {
-            $this->_currentCount = 0;
-
-            $value = preg_replace_callback($pattern, array($this, 'highlightCallback'), $value, -1, $count);
-            if ($count > 0)
+            $field = $this->translateFieldName($field);
+            $first = true;
+            foreach ($fragments as $frament)
             {
-                $this->_currentCount += $count;
-                $field = $this->translateFieldName($field);
-                $ret[$field] = $this->postProcessHighlights($value);
+                if (!$first)
+                {
+                    $ret[$field] .= '...' . $frament;
+                }
+                else
+                {
+                    $ret[$field] = $frament;
+                }
+                $first = false;
             }
         }
 
-        $GLOBALS['log']->debug('FTS highligh: ' . print_r($ret,true));
         return $ret;
     }
 

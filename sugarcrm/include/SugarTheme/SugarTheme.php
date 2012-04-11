@@ -548,7 +548,6 @@ class SugarTheme
     {
         // include style.css file
         $html = '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('yui.css').'" />';
-        $html .= '<link rel="stylesheet" type="text/css" href="themes/default/css/bootstrap.css" />';
         $html .= '<link rel="stylesheet" type="text/css" href="include/javascript/jquery/themes/base/jquery.ui.all.css" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('deprecated.css').'" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('style.css').'" />';
@@ -976,7 +975,7 @@ EOHTML;
         $defaultFileName = $this->getDefaultJSPath().'/'.$jsFileName;
         if (isset($this->parentTheme)
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
-                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '') {
+                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != ''    && !in_array($jsFileName,$this->ignoreParentFiles)) {
            $jsFileContents .= file_get_contents($filename);
        } else {
             if (sugar_is_file($defaultFileName))
