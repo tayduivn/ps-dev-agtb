@@ -3882,15 +3882,18 @@ function save_relationship_changes($is_update, $exclude=array())
                 $bean = $this;
             } else if ($function['function_params_source']=='this') {
                 $bean = $current_bean;
-            } else if(!empty($function['function_params'])) {
-                return null;
+            } else {
+                $bean = null;
             }
 
             foreach($function['function_params'] as $param ) {
-                if(empty($bean->$param)) {
-                    return null;
-                } else if($param == '$this') {
+                if($param == '$this') {
+                    if(empty($bean)) {
+                        return null;
+                    }
                     $execute_params[] = $bean;
+                } else if(empty($bean->$param)) {
+                    return null;
                 } else {
                     $execute_params[] = $bean->$param;
                 }
