@@ -5,7 +5,6 @@ describe("View Manager", function() {
         var app = SUGAR.App;
 
         app.metadata.set(fixtures.metadata);
-        app.metadata.set(fixtures.metadata.sugarFields, "sugarFields");
         app.data.declareModels(fixtures.metadata);
 
         //Need a sample Bean
