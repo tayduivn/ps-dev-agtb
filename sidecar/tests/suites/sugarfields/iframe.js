@@ -1,21 +1,20 @@
 describe("sugarfields", function() {
 
-    describe("integer", function() {
+    describe("iframe", function() {
         it("should format the value", function() {
             var app = SUGAR.App;
             var field = app.sugarFieldManager.get({
                 def: {
-                    type: "integer",
-                    number_group_seperator: ","
+                    type: "iframe"
                 },
                 view: "detail",
                 label: "",
                 model: { "Contacts": { fields: { }}}
             });
-            var controller = SugarTest.loadSugarField('int/int');
+            var controller = SugarTest.loadSugarField('iframe/iframe');
             field = _.extend(field, controller);
-            expect(field.format("123456.502")).toEqual("123,457");
-            expect(field.unformat("123456.498")).toEqual("123456");
+            expect(field.unformat("http://")).toEqual("");
+            expect(field.unformat("http://www.google.com")).toEqual("http://www.google.com");
         });
 
     });
