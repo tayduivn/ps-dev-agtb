@@ -28,12 +28,57 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 abstract class SugarSecurity {
+	/**
+     * This function logs a user in via username and password
+     *
+	 * @param string $username Username
+	 * @param string $password Password
+	 * @param string $passwordType How is the password being passed, recognized values are PLAIN and MD5
+	 * @return bool Was the login successful
+	 */
     abstract function loginUserPass($username, $password, $passwordType = 'PLAIN' );
+    /**
+     * This function logs a user in via an OAuth2 token.
+     * @param string $token OAuth Token
+     * @return bool Was the login successful
+     */
     abstract function loginOAuth2Token($token);
+    /**
+     * This function logs a user in via a single sign on token.
+     * @param string $token Single Sign On Token
+     * @return bool Was the login successful
+     */
     abstract function loginSingleSignOnToken($token);
+    /**
+     * This function loads a user from the current session. This allows for existing Sugar User sessions to use this authentication system.
+     * @return bool Was a user successfully loaded from the session
+     */
     abstract function loadFromSession();
-    abstract function canAccessModule($bean,$accessType='view');
-    abstract function canAccessField($bean,$fieldName,$accessType);
-    abstract function hasExtraSecurity($bean,$action='list');
+    /**
+     * Can the user access this module
+     * @param SugarBean $bean The bean that you want to check the access against
+     * @param string $accessType What type of access are you checking, supported types are: view, edit, list, delete, create, import, export
+     * @return bool Is the user allowed to perform that action on that bean
+     */
+    abstract function canAccessModule(SugarBean $bean,$accessType='view');
+    /**
+     * Can the user access this field in this module
+     * @param SugarBean $bean The bean that you want to check the access against
+     * @param string $fieldName The name of the field in this module
+     * @param string $accessType What type of access are you checking, supported types are: view, edit, list, create, import, export
+     * @return bool Is the user allowed to perform that action on that field
+     */
+    abstract function canAccessField(SugarBean $bean,$fieldName,$accessType);
+    /**
+     * Does this security model need to add additional security restrictions for this action
+     * @param SugarBean $bean The bean that you want to check the security against
+     * @param string $action What action are you checking for extra security, supported types are: view, edit, list, delete, create, import, export
+     * @return bool Is extra security required for this action on this bean
+     */
+    abstract function hasExtraSecurity(SugarBean $bean,$action='list');
+    /**
+     * Is this user a Sugar user, or a Portal/lesser user
+     * @return bool Is the user a full SugarCRM user?
+     */
     abstract function isSugarUser();
 }

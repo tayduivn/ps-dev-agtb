@@ -128,12 +128,12 @@ class SugarSecurityUser extends SugarSecurity {
         return true;
                     
     }
-    function canAccessModule($bean,$accessType='view') {
+    function canAccessModule( SugarBean $bean,$accessType='view') {
         return $bean->ACLAccess($accessType);
         
     }
     //BEGIN SUGARCRM flav=pro ONLY
-    function canAccessField($bean,$fieldName,$accessType) {
+    function canAccessField( SugarBean $bean,$fieldName,$accessType) {
         $isOwner = false;
         if ( empty($bean->id) || $bean->new_with_id ) {
             // It's new
@@ -153,7 +153,7 @@ class SugarSecurityUser extends SugarSecurity {
         }
     }
     //END SUGARCRM flav=pro ONLY
-    function hasExtraSecurity($bean,$action='list') {
+    function hasExtraSecurity( SugarBean $bean,$action='list') {
         // This is used to add extra security for limited access users (such as portal users)
         return false;
         
