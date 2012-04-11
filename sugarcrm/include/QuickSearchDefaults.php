@@ -59,7 +59,7 @@ class QuickSearchDefaults
 	function setFormName($name = 'EditView') {
 		$this->form_name = $name;
 	}
-	
+
     function getQSParent($parent = 'Accounts') {
         global $app_strings;
 
@@ -152,8 +152,8 @@ class QuickSearchDefaults
                            'limit'=>'30',
                            'no_match_text'=> $app_strings['ERR_SQS_NO_MATCH']);
         return $qsContact;
-    }    
-    
+    }
+
     function getQSUser($p_name = 'assigned_user_name', $p_id ='assigned_user_id') {
         global $app_strings;
 
@@ -198,14 +198,13 @@ class QuickSearchDefaults
                     'field_list' => array('name', 'id'),
                     'populate_list' => array($t_name, $t_id),
                     'required_list' => array('team_id'),
-                    'whereExtra'=> "( teams.associated_user_id IS NULL OR teams.associated_user_id NOT IN ( SELECT id FROM users WHERE status = 'Inactive' OR portal_only = '1' ))",
                     'conditions' => array(array('name'=>'name','op'=>'like_custom','end'=>'%','value'=>''),
                                                  array('name'=>'name','op'=>'like_custom','begin'=>'(','end'=>'%','value'=>'')),
                     'order' => 'name', 'limit' => '30', 'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
         return $qsTeam;
     }
     //END SUGARCRM flav=pro ONLY
-    
+
     //BEGIN SUGARCRM flav!=sales ONLY
     /**
      * Loads Quick Search Object for any object (if suitable method is defined)

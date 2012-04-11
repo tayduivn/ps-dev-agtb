@@ -80,10 +80,10 @@ interface SugarSearchEngineInterface{
      * Create the index document that will be sent to the IR System.
      *
      * @abstract
-     * @param SugarBean $bean
+     * @param SugarBean}stdClass $bean
      * @param array|null $searchFields
      */
-    public function createIndexDocument(SugarBean $bean, $searchFields = null);
+    public function createIndexDocument($bean, $searchFields = null);
 
     /**
      * Return info about the server status.

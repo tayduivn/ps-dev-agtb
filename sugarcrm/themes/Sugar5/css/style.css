@@ -3918,7 +3918,11 @@ border-radius: 0px;
 
 }
 
-
+td.paginationActionButtons ul.clickMenu .massall,
+ul#selectLink.clickMenu .massall{
+    float: left;
+    margin:2px 0 0 4px;
+}
 ul.clickMenu.showLess .moreOverflow , ul.clickMenu.showLess .moduleMenuOverFlowLess, ul.clickMenu.showMore .moduleMenuOverFlowMore {
 	display:none;
 }
@@ -3981,6 +3985,13 @@ ul#selectLink.clickMenu #massall{
     display: none;
 }
 
+ul.clickMenu.show {
+    display:inline-block;
+    /*css hack for IE*/
+    *display:inline;
+    *zoom:1;
+}
+
 ul#selectLink.clickMenu > li > a{
 	padding-left: 0px !important;
 }
@@ -4001,7 +4012,7 @@ ul#detailViewActions.clickMenu {
 	display: none;
 }
 
-#selectActionsDisabled {
+.selectActionsDisabled {
 	display: inline-block;
 	background-color: #eee;
 	border: 1px solid #ddd;	
@@ -4012,7 +4023,7 @@ ul#detailViewActions.clickMenu {
 	padding: 0 3px 0 10px;
 }
 
-#selectActionsDisabled span {
+.selectActionsDisabled span {
 	width: 17px;
 	height: 17px;
 	float: left;
@@ -4020,13 +4031,13 @@ ul#detailViewActions.clickMenu {
 	opacity: .5;
 	}
 
-#selectActionsDisabled span.ab {
+.selectActionsDisabled span.ab {
     border-left: 1px #ccc solid;
     margin-left: 10px;
     padding-left: 5px;
 }
 
-#selectActionsDisabled a, #selectActionsDisabled a:hover {
+.selectActionsDisabled a, #selectActionsDisabled a:hover {
 	float: left;
 	display: block;
 	text-decoration: none !important;
