@@ -67,7 +67,7 @@
 	}else{
 	    $(this).closest('article').trigger('swipeRight');
 	}
-    })
+    });
     // search toggle
     $('.navbar').find('#search').on('click', function () {
     	$('body').find('#searchForm').toggleClass('hide');
@@ -103,19 +103,19 @@
 		    window.history.back(-1);		
 		}
     });
-    
     $('#listing > article:last-child a.show_more_posts').live('click', function(e){
         $(this).closest('article').remove();
 	inject_posts('append',$('#listing'),5);
 	return false;
     });
-
     $('#listing > article:nth-child(3) a.show_more_posts').live('click', function(e){
 	$(this).closest('article').remove();
 	inject_posts('prepend',$('#listing'),5);
 	return false;
     });
-
+    $('#listing > article.nav').live('click', function(e){
+        $(this).find('a').first().css('border','1px solid red').trigger('click');
+    });
     if($('.alert').size()){
 	setTimeout(function(ia){
             $('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').hide() });
