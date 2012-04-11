@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -18,23 +18,39 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-$viewdefs['Cases']['detailview'] = array(
-    'templateMeta' => array('maxColumns' => '2',
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'),
-                                            array('label' => '10', 'field' => '30')
-                                            ),
-                            'extraFields' => array('date_modified'),
-                           ),
-    'data' => array(
-        array('case_number', 'assigned_user_name'),
-        array('created_by_name', 'date_entered'),
-        array('modified_by_name', 'date_modified'),
-        array('priority', 'status'),
-        array('name'),
-        array(array('field' => 'description', 'nl2br' => true)),
-        array('resolution'),
-    )
+ *********************************************************************************/
+$viewdefs['KBDocuments']['portal']['view']['detail'] = array(
+    'templateMeta' =>
+    array(
+        'maxColumns' => '2',
+        'widths' =>
+        array(
+            array(
+                'label' => '10',
+                'field' => '30',
+            ),
+            array(
+                'label' => '10',
+                'field' => '30',
+            ),
+        ),
+    ),
+    'panels' =>
+    array(
+        array(
+            'label' => 'Details',
+            'fields' => array(
+                'kbdocument_name',
+                'active_date',
+                array(
+                    'field' => 'description',
+                    'displayParams' => array(
+                        'colspan' => 2,
+                        'nl2br' => true
+                    )
+                )
+            )
+        )
+    ),
 );
 ?>
