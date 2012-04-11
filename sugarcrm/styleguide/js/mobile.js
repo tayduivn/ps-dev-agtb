@@ -118,7 +118,7 @@
 
     if($('.alert').size()){
 	setTimeout(function(ia){
-            //$('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').remove() });
+            $('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').hide() });
         }, 3000);
     }
 
