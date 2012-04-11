@@ -112,17 +112,7 @@ class SavedReport extends SugarBean
 		}
 
 		// cn: SECURITY bug 12272
-		$match = clean_xss(from_html($name));
-		if(!empty($match)) {
-			$name = str_replace($match, "", $name);
-
-			$json = getJSONobj();
-			$tmpContent = $json->decode($content, false);
-
-			// clean stored report_name too
-			$tmpContent['report_name'] = str_replace($match, "", $tmpContent['report_name']);
-			$content = $json->encode($tmpContent, false);
-		}
+		$name = strip_tags(from_html($name));
 		// end SECURITY
 
 		$result = 1;

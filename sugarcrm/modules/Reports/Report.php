@@ -155,6 +155,8 @@ class Report
             $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));
         }
 
+        $this->cleanLabels();
+
         if (!empty($this->report_def['report_name'])) {
             $this->name = $this->report_def['report_name'];
         }
@@ -177,6 +179,7 @@ class Report
         if (!empty($this->report_def['chart_description'])) {
             $this->chart_description = $this->report_def['chart_description'];
         }
+
 
         //Upgrade the pre-5.1 reports that had a summary column field that wasn't in the group by or an aggregate field.
         if (!empty ($this->report_def['summary_columns'])) {
@@ -422,6 +425,25 @@ class Report
         $this->report_def_str = $json->encode($this->report_def);
 
 
+    }
+
+    /**
+     * Ensure that report labels do not have HTML inside
+     */
+    protected function cleanLabels()
+    {
+        foreach(array('summary_columns', 'display_columns', 'group_defs', 'full_table_list') as $def) {
+            if (!empty ($this->report_def[$def])) {
+                foreach ($this->report_def[$def] as &$column) {
+                    if(!empty($column['label'])) {
+                        // clean up the label
+                        $column['label'] = strip_tags($column['label']);
+                    }
+                }
+            }
+        }
+        $this->report_def['report_name'] = strip_tags($this->report_def['report_name']);
+        $this->report_def['chart_description'] = strip_tags($this->report_def['chart_description']);
     }
 
     // gets rid of fields that user shouldn't see
@@ -877,13 +899,13 @@ class Report
         if (!empty($layout_def['name']) && ($layout_def['name'] == 'weighted_amount' || $layout_def['name'] == 'weighted_sum')) {
             $field_def['type'] = 'currency';
         }
-        
+
         // Bug 32799
-        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also 
+        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also
         if (strtolower($layout_def['name']) == 'document_name') {
         	$field_def['type'] = 'name';
         }
-        
+
         $layout_def['type'] = $field_def['type'];
         if (isset($field_def['rel_field'])) {
             $layout_def['rel_field'] = $field_def['rel_field'];
