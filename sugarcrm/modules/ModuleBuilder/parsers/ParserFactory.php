@@ -33,6 +33,24 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ParserFactory
 {
+    // BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @param $view
+     * @return mixed
+     * hack for portal to use its own constants
+     */
+    protected static function _helperConvertToViewConstant($view)
+    {
+        $map = array(
+            'editview' => MB_PORTALEDITVIEW,
+            'detailview' => MB_PORTALDETAILVIEW,
+            'searchview' => MB_PORTALSEARCHVIEW,
+            'listview' => MB_PORTALLISTVIEW
+        );
+
+        return $map[strtolower($view)];
+    }
+    //END SUGARCRM flav=ent ONLY
 
     /*
      * Create a new parser
@@ -40,12 +58,13 @@ class ParserFactory
      * @param string $view          The view, for example EditView or ListView. For search views, use advanced_search or basic_search
      * @param string $moduleName    Module name
      * @param string $packageName   Package name. If present implies that we are being called from ModuleBuilder
+     * @param string $client        The view client (e.g. portal, wireless, etc.)
      * @return AbstractMetaDataParser
      */
 
-    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null )
+    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = null )
     {
-        $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName )" ) ;
+        $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
 		$sm = null;
         $lView = strtolower ( $view );
         if ( empty ( $packageName ) || ( $packageName == 'studio' ) )
@@ -65,6 +84,15 @@ class ParserFactory
                 }
             }
         }
+
+        // BEGIN SUGARCRM flav=ent ONLY
+        // eventually we should make better use of the client param, but for now keep this ugly hack in
+        // the factory where it can cause as little confusion as possible.
+        if ($client == 'portal') {
+            $lView = self::_helperConvertToViewConstant($lView);
+            $view = $lView; // so the Parser can find the portal files - pass the portalview constant to its ctor
+        }
+        //END SUGARCRM flav=ent ONLY
 
         switch ( $lView)
         {

@@ -748,22 +748,7 @@ class ModuleBuilderController extends SugarController
         $this->view = 'wizard' ;
     }
 
-    /**
-     * @param $view
-     * @return mixed
-     * hack for portal to use its own constants
-     */
-    protected function _helperConvertToViewConstant($view)
-    {
-        $map = array(
-            'editview' => MB_PORTALEDITVIEW,
-            'detailview' => MB_PORTALDETAILVIEW,
-            'searchview' => MB_PORTALSEARCHVIEW,
-            'listview' => MB_PORTALLISTVIEW
-        );
 
-        return $map[strtolower($view)];
-    }
 
     /**
      * Receive a layout through $_REQUEST and save it out to the working files directory
@@ -773,20 +758,26 @@ class ModuleBuilderController extends SugarController
     function action_saveLayout ()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (isset ( $_REQUEST [ 'PORTAL' ] ))
+        if (isset($_REQUEST['PORTAL']))
         {
-            $parser_type = $this->_helperConvertToViewConstant($_REQUEST['view']); // hack to get portal to use its view constants instead of what it passes.
+            $client = 'portal';
             $this->view = 'portallayoutview' ;
         }
         else
         {
         //END SUGARCRM flav=ent ONLY
-            $parser_type = $_REQUEST['view'];
             $this->view = 'layoutview' ;
+            $client = null;
         //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser = ParserFactory::getParser ( $parser_type, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+
+
+        $parser = ParserFactory::getParser ( $_REQUEST['view'],
+                                             $_REQUEST['view_module'],
+                                             isset( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
+                                             null,
+                                             $client) ;
         $parser->writeWorkingFile () ;
 
     	if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
@@ -801,20 +792,24 @@ class ModuleBuilderController extends SugarController
     function action_saveAndPublishLayout ()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (isset ( $_REQUEST [ 'PORTAL' ] ))
+        if (isset($_REQUEST['PORTAL']))
         {
-            $parser_type = $this->_helperConvertToViewConstant($_REQUEST['view']); // hack to get portal to use its view constants instead of what it passes.
+            $client = 'portal';
             $this->view = 'portallayoutview' ;
         }
         else
         {
             //END SUGARCRM flav=ent ONLY
-            $parser_type = $_REQUEST['view'];
+            $client = null;
             $this->view = 'layoutview' ;
             //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
-        $parser = ParserFactory::getParser ( $parser_type, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+        $parser = ParserFactory::getParser ( $_REQUEST['view'],
+                                             $_REQUEST['view_module'],
+                                             isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
+                                             null,
+                                             $client);
         $parser->handleSave () ;
 
         if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
