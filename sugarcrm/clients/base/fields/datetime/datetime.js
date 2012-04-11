@@ -1,6 +1,6 @@
 ({
     render: function(value) {
-        this.prototype.render.call(this);//call proto render
+        this.app.sugarField.base.prototype.render.call(this);//call proto render
         $(function() {
             $(".datepicker").datepicker({
                 showOn: "button",
