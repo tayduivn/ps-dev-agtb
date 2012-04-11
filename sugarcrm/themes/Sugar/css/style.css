@@ -5818,8 +5818,9 @@ top:0px;
 }
 
 #glblSearchBtn {
-    display:inline-block;
+    display:none;
 float: right;
+margin-top: 7px;
 margin-right: 10px;
 }
 
@@ -6080,7 +6081,6 @@ margin-left:10px;
 	width: 174px;
 	display: inline-block;
 	position: relative;
-    float:left;
 }
 #sugar_spot_search {
 	border: 0;
