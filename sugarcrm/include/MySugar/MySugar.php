@@ -734,7 +734,7 @@ EOJS;
 
 							$chartsArray[$id] = array();
 							$chartsArray[$id]['id'] = $id;
-							$chartsArray[$id]['xmlFile'] = $sugar_config['tmp_dir'] . $dashlets[$id]['reportId'] . '_saved_chart.xml';
+							$chartsArray[$id]['xmlFile'] = sugar_cached("xml/") . $dashlets[$id]['reportId'] . '_saved_chart.xml';
 							$chartsArray[$id]['width'] = '100%';
 							$chartsArray[$id]['height'] = '480';
 							$chartsArray[$id]['styleSheet'] = $chartStyleCSS;
