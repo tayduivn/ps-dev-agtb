@@ -39,7 +39,11 @@
 	});	
     // trigger the module menu - this could be a tap function but zepto will not honor return false
     $('.cube').live('click', function () {
-	$('#logo').trigger('swipeRight');
+	if($('body').hasClass('onL')){
+	    $('#logo').trigger('swipeLeft');
+	}else{
+	    $('#logo').trigger('swipeRight');
+	}
 	return false;
     });
     // trigger the module menu - this could be a tap function but zepto will not honor return false
