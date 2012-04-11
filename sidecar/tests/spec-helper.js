@@ -8,6 +8,9 @@ var SugarTest = {};
         set: function(key, value) {
             test.storage[key] = value;
         },
+        add: function(key, value) {
+            test.storage[key] += value;
+        },
         get: function(key) {
             return test.storage[key];
         },
@@ -16,6 +19,9 @@ var SugarTest = {};
         },
         cutAll: function() {
             test.storage = {};
+        },
+        getAll: function() {
+            return test.storage;
         }
     };
 
@@ -60,9 +66,11 @@ beforeEach(function(){
     if (SUGAR.App) {
         SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
         SUGAR.App.config.env = "test";
+        SUGAR.App.config.appId = "portal";
         SUGAR.App.config.maxQueryResult = 20;
+
         SugarTest.storage = {};
-        SUGAR.App.cache = SugarTest.keyValueStore;
+        SUGAR.App.cache.store = SugarTest.keyValueStore;
     }
 });
 

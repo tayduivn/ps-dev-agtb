@@ -53,12 +53,12 @@ describe('Metadata Manager', function () {
         app.metadata.sync();
         server.respond();
 
-        expect(SugarTest.storage["md.modules"]).toEqual("Cases,Contacts,Home");
-        expect(SugarTest.storage["md.m.Cases"]).toBeDefined();
-        expect(SugarTest.storage["md.m.Contacts"]).toBeDefined();
-        expect(SugarTest.storage["md.m.Home"]).toBeDefined();
-        expect(SugarTest.storage["md.f.integer"]).toBeDefined();
-        expect(SugarTest.storage["md.f.password"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:modules"]).toEqual("Cases,Contacts,Home");
+        expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
 
     });
 

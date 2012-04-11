@@ -1,11 +1,13 @@
-xdescribe('cache', function () {
+describe('app.cache', function () {
     var app = SUGAR.App;
+
     beforeEach(function () {
+        app.cache.store = stash;
+        app.cache.cutAll();
     });
 
     afterEach(function () {
-        //Reset the cache after every test
-        app.cache.cutAll()
+        app.cache.cutAll();
     });
 
     it('should store strings', function () {

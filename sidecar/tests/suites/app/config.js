@@ -1,12 +1,17 @@
-describe("Config", function() {
+describe("Application configuration", function() {
 
-  var config = SUGAR.App.config;
+    it("should have all properties defined", function() {
+        var config = SUGAR.App.config;
 
-  it("should provide default configuration", function() {
-    expect(config.env).toBeDefined();
-    expect(config.logLevel).toBeDefined();
-    expect(config.logFormatter).toBeDefined();
-    expect(config.logWriter).toBeDefined();
-  });
+        expect(config.appId).toBeDefined();
+        expect(config.env).toBeDefined();
+        expect(config.logLevel).toBeDefined();
+        expect(config.logFormatter).toBeDefined();
+        expect(config.logWriter).toBeDefined();
+        expect(config.platform).toBeDefined();
+        expect(config.maxQueryResult).toBeDefined();
+        expect(config.serverUrl).toBeDefined();
+        expect(config.debugSugarApi).toBeDefined();
+    });
 
 });
