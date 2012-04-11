@@ -327,7 +327,7 @@ fixtures.metadata = {
                                 module: "Contacts"
                             },
                             events: {
-                                //click : "SUGAR.App.myExtension.callback",
+                                //click : "this.app.myExtension.callback",
                                 //drag: "",
                                 foo: 'function(e){console.log(this)}'
                             },
@@ -367,8 +367,7 @@ fixtures.metadata = {
                                 {name: "first_name", label: "First Name"},
                                 {name: "last_name", label: "Last Name"},
                                 {name: "phone_work", label: "Phone"},
-                                {name: "email1", label: "Email"},
-                                {type: "sugarField_primaryAddress", label: "Address"}
+                                {name: "email1", label: "Email"}
                             ]
                         }
                     ]
@@ -385,8 +384,7 @@ fixtures.metadata = {
                                 {name: "first_name", label: "First Name"},
                                 {name: "last_name", label: "Last Name"},
                                 {name: "email1", label: "Email"},
-                                {name: "phone_work", label: "Phone"},
-                                {type: "sugarField_actionsLink", label: "Actions"}
+                                {name: "phone_work", label: "Phone"}
                             ]
                         }
                     ]
@@ -519,81 +517,53 @@ fixtures.metadata = {
     'sugarFields': {
         "text": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "login": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "default": {
-                    "type": "basic",
-                    "template": "<span name=\"{{name}}\">{{value}}</span>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "login": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "default": "<span name=\"{{name}}\">{{value}}</span>"
             },
             "events": {},
             controller: "{" +
                 "render : function(){" +
-                "this.app.sugarField.base.prototype.render.call(this);" +
+                "this.app.view.Field.prototype.render.call(this);" +
                 "}," +
                 "customCallback : function(){}" +
                 "}"
         },
         "float": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "default": {
-                    "type": "basic",
-                    "template": "<span name=\"{{name}}\">{{value}}</span>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "default": "<span name=\"{{name}}\">{{value}}</span>"
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                "  value = SUGAR.App.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
+                "  value = this.app.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = SUGAR.App.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                " value = this.app.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
                 "return value\n" +
                 "}" +
                 "}"
         },
         "datetime": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
-                },
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "default": {
-                    "type": "basic",
-                    "template": "<span name=\"{{name}}\">{{value}}</span>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "default": "<span name=\"{{name}}\">{{value}}</span>"
             },
             controller: "{" +
                 "render:function(value){\n" +
-                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                " app.view.Field.prototype.render.call(this);//call proto render\n" +
                 "  	$(function() {" +
                 "$( \".datepicker\" ).datepicker({" +
                 "showOn: \"button\"," +
@@ -613,29 +583,21 @@ fixtures.metadata = {
         },
         "datetimecombo": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n"},
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
-                        "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{has this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
-                        " : " +
-                        "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{has this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
-                        " " +
-                        "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{has this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
-                        " <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "default": {
-                    "type": "basic",
-                    "template": "<span name=\"{{name}}\">{{value.dateTime}}</span>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value.dateTime}}</span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"text\" class=\"input-xlarge datepicker\" value=\"{{value.date}}\"> " +
+                    "<select class=\"date_time_hours\">{{#each timeOptions.hours}}<option value=\"{{this.value}}\" {{has this.key ..\/value.hours \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                    " : " +
+                    "<select class=\"date_time_minutes\">{{#each timeOptions.minutes}}<option value=\"{{this.value}}\"{{has this.key ..\/value.minutes \"selected\"}}>{{this.key}}</option>{{/each}}</select>" +
+                    " " +
+                    "{{#if this.amPm}}<select class=\"date_time_ampm\">{{#each timeOptions.amPm}}<option value=\"{{this.value}}\" {{has this.key ..\/value.amPm \"selected\"}}>{{this.key}}</option>{{/each}}</select>{{/if}}" +
+                    " <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "default": "<span name=\"{{name}}\">{{value.dateTime}}</span>"
             },
             controller: "{" +
                 "render:function(value){\n" +
-                " app.sugarField.base.prototype.render.call(this);//call proto render\n" +
+                " app.view.Field.prototype.render.call(this);//call proto render\n" +
                 "  	$(function() {" +
                 "$( \".datepicker\" ).datepicker({" +
                 "showOn: \"button\"," +
@@ -692,49 +654,36 @@ fixtures.metadata = {
         },
         "integer": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "default": {
-                    "type": "basic",
-                    "template": "<span name=\"{{name}}\">{{value}}</span>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "default": "<span name=\"{{name}}\">{{value}}</span>"
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                " value = SUGAR.App.utils.formatNumber(value, 1, 0, \"\", \".\");\n" +
+                " value = this.app.utils.formatNumber(value, 1, 0, \"\", \".\");\n" +
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = SUGAR.App.utils.formatNumber(value, 1, 0, this.number_group_seperator, \".\");\n" +
+                " value = this.app.utils.formatNumber(value, 1, 0, this.number_group_seperator, \".\");\n" +
                 "return value\n" +
                 "}" +
                 "}"
         },
         "enum": {
             "views": {
-                "detail": {
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "edit": {
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{has this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "default": {
-                    "template": "<span name=\"{{name}}\">{{value}}</span>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<select name=\"{{name}}\" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value=\"{{{this.key}}}\" {{has this.key ../value \"selected\"}}>{{this.value}}</option>{{/eachOptions}}</select>  <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "default": "<span name=\"{{name}}\">{{value}}</span>"
             },
 
             controller: "{" +
                 "fieldType:\"select\",\n" +
                 "render:function(){" +
-                "   var result = this.app.sugarField.base.prototype.render.call(this);" +
+                "   var result = this.app.view.Field.prototype.render.call(this);" +
                 "   $(this.fieldType + \"[name=\" + this.name + \"]\").chosen();" +
                 "   $('select').chosen();" +
                 "   return result;" +
@@ -744,26 +693,17 @@ fixtures.metadata = {
         },
         radioenum: {
             views: {
-                detail: {
-                    template: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n"
-                },
-                edit: {
-                    template: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
-                        "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
-                }
+                detail: "<h3>{{label}}</h3><span name=\"{{name}}\">{{value}}</span>\n",
+                edit: "<div class=\"controls\"><label class=\"control-label\">{{label}}<\/label>" +
+                    "{{#eachOptions options}}<label><input type=\"radio\" name=\"{{../name}}\" value=\"{{this}}\" {{eq this ../value \"checked\"}}>{{this}}</label>{{/eachOptions}}"
             }
         },
         "checkbox": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n"},
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\"><input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}} disabled></span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"checkbox\" class=\"checkbox\"{{#if value}} checked{{/if}}> <p class=\"help-block\">" +
+                    "<\/p> <\/div>"
             },
             controller: "{\n" +
                 "unformat:function(value){\n" +
@@ -777,185 +717,158 @@ fixtures.metadata = {
                 "}"
         },
         "addresscombo": {
-            "default": {
-                "type": "basic",
-                "template": ""
+            "views": {
+                "default": "<span>Address Combo!</span>"
             }
         },
         "address": {
-            "views" : {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3>" +
-                        "{{value.street}}<br>" +
-                        "{{value.city}}<br>" +
-                        "{{value.postalcode}}<br>" +
-                        "{{value.state}}<br>" +
-                        "{{value.country}}<br>" +
-                        "{{#if gmap}}{{#if value.city}}{{#if value.street}}" +
-                        "<iframe width=\"{{gmap_width}}\" height=\"{{gmap_height}}\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?f=q&q={{value.street}} {{value.city}} {{value.postalcode}} {{value.state}} {{value.country}}&output=embed\"></iframe>" +
-                        "{{/if}}{{/if}}{{/if}}"
-                },
-                "edit": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3>" +
-                        "<input type=\"text\" class=\"input-xlarge address_street\" value=\"{{value.street}}\"><br>" +
-                        "<input type=\"text\" class=\"input-xlarge address_city\" value=\"{{value.city}}\"><br>" +
-                        "<input type=\"text\" class=\"input-xlarge address_postalcode\" value=\"{{value.postalcode}}\"><br>" +
-                        "<input type=\"text\" class=\"input-xlarge address_state\" value=\"{{value.state}}\"><br>" +
-                        "<input type=\"text\" class=\"input-xlarge address_country\" value=\"{{value.country}}\"><br>"
-                }
+            "views": {
+                "detail": "<h3>{{label}}<\/h3>" +
+                    "{{value.street}}<br>" +
+                    "{{value.city}}<br>" +
+                    "{{value.postalcode}}<br>" +
+                    "{{value.state}}<br>" +
+                    "{{value.country}}<br>" +
+                    "{{#if gmap}}{{#if value.city}}{{#if value.street}}" +
+                    "<iframe width=\"{{gmap_width}}\" height=\"{{gmap_height}}\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?f=q&q={{value.street}} {{value.city}} {{value.postalcode}} {{value.state}} {{value.country}}&output=embed\"></iframe>" +
+                    "{{/if}}{{/if}}{{/if}}",
+                "edit": "<h3>{{label}}<\/h3>" +
+                    "<input type=\"text\" class=\"input-xlarge address_street\" value=\"{{value.street}}\"><br>" +
+                    "<input type=\"text\" class=\"input-xlarge address_city\" value=\"{{value.city}}\"><br>" +
+                    "<input type=\"text\" class=\"input-xlarge address_postalcode\" value=\"{{value.postalcode}}\"><br>" +
+                    "<input type=\"text\" class=\"input-xlarge address_state\" value=\"{{value.state}}\"><br>" +
+                    "<input type=\"text\" class=\"input-xlarge address_country\" value=\"{{value.country}}\"><br>"
             },
             controller: "{" +
                 "format:function(value, fieldName){\n" +
-                    "value = {\n" +
-                    "street: this.model.get(this.name),\n" +
-                    "city: this.model.get(this.formatFieldName('city')),\n" +
-                    "postalcode: this.model.get(this.formatFieldName('postalcode')),\n" +
-                    "state: this.model.get(this.formatFieldName('state')),\n" +
-                    "country: this.model.get(this.formatFieldName('country'))\n" +
-                    "};\n" +
-                    "return value;\n" +
+                "value = {\n" +
+                "street: this.model.get(this.name),\n" +
+                "city: this.model.get(this.formatFieldName('city')),\n" +
+                "postalcode: this.model.get(this.formatFieldName('postalcode')),\n" +
+                "state: this.model.get(this.formatFieldName('state')),\n" +
+                "country: this.model.get(this.formatFieldName('country'))\n" +
+                "};\n" +
+                "return value;\n" +
                 "},\n" +
                 "bindDomChange: function (model, fieldName) {\n" +
-                    "var self = this;\n" +
-                    "var street = this.$el.find('.address_street');\n" +
-                    "var city = this.$el.find('.address_city');\n" +
-                    "var country = this.$el.find('.address_country');\n" +
-                    "var postalcode = this.$el.find('.address_postalcode');\n" +
-                    "var state = this.$el.find('.address_state');\n" +
-                    "street.on('change', function(ev) {\n" +
-                    "model.set(fieldName, self.unformat(street.val()));\n" +
-                    "});\n" +
-                    "city.on('change', function(ev) {\n" +
-                    "model.set(self.formatFieldName('city'), self.unformat(city.val()));\n" +
-                    "});\n" +
-                    "postalcode.on('change', function(ev) {\n" +
-                    "model.set(self.formatFieldName('postalcode'), self.unformat(postalcode.val()));\n" +
-                    "});\n" +
-                    "state.on('change', function(ev) {\n" +
-                    "model.set(self.formatFieldName('state'), self.unformat(state.val()));\n" +
-                    "});\n" +
-                    "country.on('change', function(ev) {\n" +
-                    "model.set(self.formatFieldName('country'), self.unformat(country.val()));\n" +
-                    "});\n" +
+                "var self = this;\n" +
+                "var street = this.$el.find('.address_street');\n" +
+                "var city = this.$el.find('.address_city');\n" +
+                "var country = this.$el.find('.address_country');\n" +
+                "var postalcode = this.$el.find('.address_postalcode');\n" +
+                "var state = this.$el.find('.address_state');\n" +
+                "street.on('change', function(ev) {\n" +
+                "model.set(fieldName, self.unformat(street.val()));\n" +
+                "});\n" +
+                "city.on('change', function(ev) {\n" +
+                "model.set(self.formatFieldName('city'), self.unformat(city.val()));\n" +
+                "});\n" +
+                "postalcode.on('change', function(ev) {\n" +
+                "model.set(self.formatFieldName('postalcode'), self.unformat(postalcode.val()));\n" +
+                "});\n" +
+                "state.on('change', function(ev) {\n" +
+                "model.set(self.formatFieldName('state'), self.unformat(state.val()));\n" +
+                "});\n" +
+                "country.on('change', function(ev) {\n" +
+                "model.set(self.formatFieldName('country'), self.unformat(country.val()));\n" +
+                "});\n" +
                 "},\n" +
                 "formatFieldName:function(attribute){\n" +
-                    "var endFieldName = '';\n" +
-                    "var arrFieldName = this.name.split('_');\n" +
-                    "if (arrFieldName[arrFieldName.length-1]=='c') { endFieldName='_c'; arrFieldName.pop(); }\n" +
-                    "if (arrFieldName[arrFieldName.length-1]=='street') arrFieldName.pop();\n" +
-                    "var rootFieldName = arrFieldName.join('_');\n" +
-                    "return rootFieldName + \"_\" + attribute + endFieldName;\n" +
+                "var endFieldName = '';\n" +
+                "var arrFieldName = this.name.split('_');\n" +
+                "if (arrFieldName[arrFieldName.length-1]=='c') { endFieldName='_c'; arrFieldName.pop(); }\n" +
+                "if (arrFieldName[arrFieldName.length-1]=='street') arrFieldName.pop();\n" +
+                "var rootFieldName = arrFieldName.join('_');\n" +
+                "return rootFieldName + \"_\" + attribute + endFieldName;\n" +
                 "}\n" +
                 "}"
         },
         "password": {
-            "edit": {
-                "type": "basic",
-                "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+            "views": {
+                "edit": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"},
-            "login": {
-                "type": "basic",
-                "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>",
+                "login": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                     "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"}
+                    "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+            }
         },
         "button": {
-            "default": {
-                "type": "basic",
-                "template": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+            "views": {
+                "default": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
                     "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "navElement": {
-            "default": {
-                "type": "basic",
-                "template": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+            "views": {
+                "default": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"{{class}}\">" +
                     "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "iframe": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}\n"},
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                }
+                "detail": "<h3>{{label}}<\/h3>{{#if value}}<iframe src=\"{{value}}\" height=\"{{height}}\" width=\"{{width}}\"</iframe>{{/if}}\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"text\" class=\"input-xlarge\" value=\"{{#if value}}{{value}}{{else}}http://{{/if}}\">  <p class=\"help-block\">" +
+                    "<\/p> <\/div>"
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                "  value = (value!='' || value=='http://') ? value : \"\";\n" +
+                "  value = (value!='' && value!='http://') ? value : \"\";\n" +
                 "return value\n" +
                 "}" +
                 "}"
         },
         "phone": {
             "views": {
-                "detail": {
-                    "type": "basic",
-                    "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"},
-                "edit": {
-                    "type": "basic",
-                    "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                        "<input type=\"tel\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                        "<\/p> <\/div>"
-                },
-                "default": {
-                    "type": "basic",
-                    "template": "<span name=\"{{name}}\">{{value}}</span>"
-                }
+                "detail": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
+                "edit": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "<input type=\"tel\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                    "<\/p> <\/div>",
+                "default": "<span name=\"{{name}}\">{{value}}</span>"
             }
         },
         "textarea": {
-            "detail": {
-                "type": "basic",
-                "template": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n"},
-            "edit": {
-                "type": "basic",
-                "template": "<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"}
+            "views": {
+                "detail": "<label class=\"control-label\">{{label}}<\/label>{{value}}\n",
+                "edit": "<label class=\"control-label\">{{label}}<\/label><textarea class=\"input-xlarge\" id=\"textarea\" rows=\"3\">{{value}}</textarea>"
+            }
         },
         "sugarField_actionsLink": {
-            "default": {
-                "template": "<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>" +
+            "views": {
+                "default": "<div class=\"btn-group pull-right\"><a class=\"btn\" href=\"#\" data-toggle=\"dropdown\">Actions<span class=\"caret\"><\/span><\/a>" +
                     "<ul class=\"dropdown-menu\"> <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\"><i class=\"icon-list-alt\"><\/i>Details<\/a><\/li> " +
                     "  <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/edit\"><i class=\"icon-pencil\"><\/i> Edit<\/a><\/li>  " +
                     " <li><a href=\"#{{model.module}}\/{{{getFieldValue model \"id\"}}}\/delete\"><i class=\"icon-trash\"><\/i> Delete<\/a><\/li> <\/ul>     <\/div>"
             }
         }
-
     },
     'viewTemplates': {
         "detail": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugarField ../context ../this ../model}}" +
+            "{{field ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
+            "<div>{{field ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
         "edit": "<h3 class=\"view_title\"><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h3>" +
             "<form name='{{name}}' class='well'>" +
             "{{#each meta.buttons}}" +
-            "{{sugarField ../context ../this ../model}}" +
+            "{{field ../context ../this ../model}}" +
             "{{/each}}" +
             "{{#each meta.panels}}" +
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
+            "<div>{{field ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}</form>",
@@ -965,11 +878,11 @@ fixtures.metadata = {
             '<div class="{{../name}} panel">' +
             "<h4>{{label}}</h4>" +
             "{{#each fields}}" +
-            "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
+            "<div>{{field ../../context ../../this ../../model}}</div>" +
             "{{/each}}" +
             "</div>" +
             "{{/each}}" + "{{#each meta.buttons}}" +
-            "{{sugarField ../context ../this ../model}}" +
+            "{{field ../context ../this ../model}}" +
             "{{/each}}" + "</form>",
         "subpanel": "",
         "list": '<div class="span12 container-fluid subhead">' +
@@ -986,18 +899,18 @@ fixtures.metadata = {
             '{{#each ../fields}}' +
             // SugarField requires the current context, field name, and the current bean in the context
             // since we are pulling from the collection rather than the default bean in the context
-            '<td class="dblclick">{{sugarField ../../../context ../../../this ../this}}</td>' +
+            '<td class="dblclick">{{field ../../../context ../../../this ../this}}</td>' +
             '{{/each}}' +
             '</tr>' +
             '{{/each}}' +
             '</tbody></table>' +
             '{{/each}}' +
             "{{#each meta.buttons}}" +
-            "{{sugarField ../context ../this ../model}}" +
+            "{{field ../context ../this ../model}}" +
             "{{/each}}" +
             "<ul class=\"nav nav-pills pull-right actions\">{{#each meta.listNav}}" +
             '<li>' +
-            "{{sugarField ../context ../this ../model}}" +
+            "{{field ../context ../this ../model}}" +
             '</li>' +
             "{{/each}}" +
             '{{#if context.state.collection.page}}<li><div class=\"page_counter\"><small>Page {{context.state.collection.page}}</small></div></li>{{/if}}' +

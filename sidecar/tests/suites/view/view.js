@@ -21,9 +21,9 @@ describe("Layout.View", function() {
     });
 
     it('should get metadata from the metdata manager', function() {
-        var view = app.layout.get({
+        var view = app.view.createView({
             context: context,
-            view: "edit"
+            name: "edit"
         });
         expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit);
     });
@@ -38,28 +38,18 @@ describe("Layout.View", function() {
             ]
         };
 
-        var view = app.layout.get({
+        var view = app.view.createView({
             context: context,
-            view: "edit",
+            name: "edit",
             meta: testMeta
         });
         expect(view.meta).toEqual(testMeta);
     });
 
-    it('should retrieve the default context', function() {
-        app.controller.context = context;
-        var view = app.layout.get({
-            view: "edit"
-        });
-        expect(view.context).not.toBe(null);
-        expect(view.context).toEqual(app.controller.context);
-    });
-
-
     it('should render edit views', function() {
-        var view = app.layout.get({
+        var view = app.view.createView({
             context: context,
-            view: "edit"
+            name: "edit"
         });
 
         expect(view.meta).toBeDefined();
@@ -70,12 +60,12 @@ describe("Layout.View", function() {
     });
 
     it('should render detail views', function() {
-        var layout = app.layout.get({
+        var view = app.view.createView({
             context: context,
-            view: "detail"
+            name: "detail"
         });
-        layout.render();
-        var html = layout.$el.html();
+        view.render();
+        var html = view.$el.html();
         expect(html).toContain('detail');
     });
 

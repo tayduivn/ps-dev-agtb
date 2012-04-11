@@ -7,7 +7,7 @@
      * @alias SUGAR.App.layout.Layout
      * @extends View.View
      */
-    app.layout.Layout = app.layout.View.extend({
+    app.view.Layout = app.view.View.extend({
         initialize: function() {
             _.bindAll(this, 'render', 'bindData');
 
@@ -53,26 +53,25 @@
                     module = this.module;
 
                 if (def.view) {
-                    this.addComponent(app.layout.get({
+                    this.addComponent(app.view.createView({
                         context: context,
-                        view: def.view,
+                        name: def.view,
                         module: module
                     }), def);
                 }
                 //Layouts can either by referenced by name or defined inline
                 else if (def.layout) {
                     if (typeof def.layout == "string") {
-                        this.addComponent(app.layout.get({
+                        this.addComponent(app.view.createLayout({
                             context: context,
-                            layout: def.layout,
+                            name: def.layout,
                             module: module
                         }), def);
                     } else if (typeof def.layout == "object") {
                         //Inline definition of a sublayout
-                        this.addComponent(app.layout.get({
+                        this.addComponent(app.view.createLayout({
                             context: context,
                             module: module,
-                            layout: true,
                             meta: def.layout
                         }), def);
                     }
