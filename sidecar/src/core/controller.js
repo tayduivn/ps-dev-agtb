@@ -76,8 +76,8 @@
          * @return {Object} obj Layout obj
          */
         getLayout: function(opts) {
-            return SUGAR.App.layout.get({
-                layout: opts.layout,
+            return app.view.createLayout({
+                name: opts.layout,
                 module: opts.module
             });
         },

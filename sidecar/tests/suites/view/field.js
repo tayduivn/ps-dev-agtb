@@ -1,4 +1,6 @@
-describe("SugarField", function() {
+describe("Field", function() {
+    var app = SUGAR.App;
+
     it("should delegate events", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents');
         var events = {"click": "callback_click"};
@@ -7,12 +9,13 @@ describe("SugarField", function() {
         var view = {};
         var context = {};
         var inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events;
-        var field = SUGAR.App.sugarFieldManager.get({
-            def: {name: "status", type: "varchar"},
+        var field = app.view.createField({
+            def: { name: "status", type: "varchar" },
             view: view,
             context: context,
             model: bean
         });
+
         field.delegateEvents(inputEvents);
         expect(delegateSpy).toHaveBeenCalledWith(events);
         delegateSpy.restore();
@@ -22,7 +25,7 @@ describe("SugarField", function() {
         var bean = new Backbone.Model(),
             view = {},
             context = {},
-            field = SUGAR.App.sugarFieldManager.get({
+            field = app.view.createField({
                 def: {name: "status", type: "varchar"},
                 view: view,
                 context: context,
@@ -39,7 +42,7 @@ describe("SugarField", function() {
         var bean = new Backbone.Model(),
             view = {},
             context = {},
-            field = SUGAR.App.sugarFieldManager.get({
+            field = app.view.createField({
                 def: {name: "status", type: "varchar"},
                 view: view,
                 context: context,
@@ -58,7 +61,7 @@ describe("SugarField", function() {
             view = {},
             context = {bob: "bob"},
             inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
-            field = SUGAR.App.sugarFieldManager.get({
+            field = app.view.createField({
                 def: {name: "status", type: "varchar"},
                 view: view,
                 context: context,
@@ -79,7 +82,7 @@ describe("SugarField", function() {
             view = {},
             context = {bob:"bob"},
             secondContext = {rob:"rob"},
-            field = SUGAR.App.sugarFieldManager.get({
+            field = app.view.createField({
                 def: {name: "status", type: "varchar"},
                 view: view,
                 context: context,
@@ -105,7 +108,7 @@ describe("SugarField", function() {
         var bean = new Backbone.Model(),
             view = {name:'edit'},
             context = {bob:"bob"},
-            field = SUGAR.App.sugarFieldManager.get({
+            field = app.view.createField({
                 def: {name: "status", type: "varchar"},
                 view: view,
                 context: context,

@@ -2,11 +2,11 @@ describe('Metadata Manager', function () {
     var app = SUGAR.App;
     var server;
     //Preload the templates
-    SUGAR.App.template.load(fixtures.metadata.viewTemplates);
+    app.template.load(fixtures.metadata.viewTemplates);
 
     beforeEach(function () {
         //Load the metadata
-        SUGAR.App.metadata.set(fixtures.metadata);
+        app.metadata.set(fixtures.metadata);
     });
 
     afterEach(function () {
@@ -44,10 +44,11 @@ describe('Metadata Manager', function () {
     });
 
     it ('should sync metadata', function (){
+        SugarTest.storage = {};
         server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=Contacts",
+        server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=",
                         [200, {  "Content-Type":"application/json"},
-                            JSON.stringify(fixtures.metadata.modules)]);
+                            JSON.stringify(fixtures.metadata)]);
 
         app.metadata.sync();
         server.respond();

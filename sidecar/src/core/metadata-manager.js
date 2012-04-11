@@ -78,7 +78,7 @@
             var viewName = field.viewName || field.view;
 
             if (!name) {
-                app.logger.error("Unknown sugar field type");
+                app.logger.warn("Unknown sugar field type: " + field.type);
                 return null;
             }
 
@@ -113,7 +113,7 @@
             }
 
             if (!metadata && _sugarFields.text && _sugarFields.text.views['default']) {
-                metadata = _sugarFields.text.views['default'];
+                metadata = _sugarFields.text;
             }
 
             return metadata;
@@ -193,19 +193,19 @@
 
         /**
          * Syncs metadata from the server. Saves the metadata to the local cache.
-         * @param {Function} callback Callback function to be executed after sync completes.
+         * @param {Function} callback(optional) Callback function to be executed after sync completes.
          */
         sync: function(callback) {
             var self = this;
             app.api.getMetadata([], [], {
                 success: function(metadata) {
                     self.set(metadata);
-                    callback.call(self, null, metadata);
+                    if (callback) callback.call(self, null, metadata);
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata");
                     app.logger.error(error);
-                    callback.call(self, error);
+                    if (callback) callback.call(self, error);
                 }
             });
         }
