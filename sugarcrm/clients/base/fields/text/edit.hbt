@@ -2,6 +2,6 @@
     <div class="span2"><strong>{{label}}</strong></div>
     <div class="span10">
         <input type="text" name="{{name}}" class="input-xlarge wide tleft" value="{{value}}">
-        text<p class="help-block"></p>
+        <p class="help-block"></p>
     </div>
 </div>
