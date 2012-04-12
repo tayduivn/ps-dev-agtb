@@ -43,6 +43,11 @@ class Bug45686Test extends Sugar_PHPUnit_Framework_TestCase
 "report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"<s>Accounts</s>"}},
 "filters_def":{"Filter_1":{"operator":"AND"}}}
 DEFS;
+    	$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
     }
 
     public function tearDown()
@@ -50,7 +55,8 @@ DEFS;
         $GLOBALS['db']->query("DELETE FROM saved_reports WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-
+	    unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
     }
 
     /**

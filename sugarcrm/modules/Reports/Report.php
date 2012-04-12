@@ -442,8 +442,12 @@ class Report
                 }
             }
         }
-        $this->report_def['report_name'] = strip_tags($this->report_def['report_name']);
-        $this->report_def['chart_description'] = strip_tags($this->report_def['chart_description']);
+        if(!empty($this->report_def['report_name'])) {
+            $this->report_def['report_name'] = strip_tags($this->report_def['report_name']);
+        }
+        if(!empty($this->report_def['chart_description'])) {
+            $this->report_def['chart_description'] = strip_tags($this->report_def['chart_description']);
+        }
     }
 
     // gets rid of fields that user shouldn't see
