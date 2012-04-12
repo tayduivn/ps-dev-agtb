@@ -19,11 +19,11 @@
 <div class="container-fluid">
     <div class="row-fluid">
       <div class="span7">
-        <form name='{{name}}' class='well'>
+        <form name='{{name}}'>
         {{#each meta.panels}}
                 <div class="card2">
                     {{#each fields}}
-                        <div>{{field ../../context ../../this ../../model}}</div>
+                        {{field ../../context ../../this ../../model}}
                     {{/each}}
                 </div>
         {{/each}}
