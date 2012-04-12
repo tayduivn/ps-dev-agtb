@@ -67,7 +67,7 @@
                             "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                             "<\/p> <\/div>",
                     "loginView":"<div class=\"controls\"><label class=\"hide\">{{label}}<\/label> " +
-                            "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"Username\">  <p class=\"help-block\">" +
+                            "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">  <p class=\"help-block\">" +
                             "<\/p> <\/div>",
                     "default": "<span name=\"{{name}}\">{{value}}</span>"
                 },

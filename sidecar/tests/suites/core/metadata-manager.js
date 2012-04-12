@@ -17,6 +17,13 @@ describe('Metadata Manager', function () {
         expect(app.metadata.getView("Contacts")).toBe(fixtures.metadata.modules.Contacts.views);
     });
 
+    it('should get moduleList', function () {
+        var result = fixtures.metadata.moduleList;
+        delete result._hash;
+
+        expect(app.metadata.getModuleList()).toBe(result);
+    });
+
     it('should get definition for a specific view', function () {
         expect(app.metadata.getView("Contacts", "edit")).toBe(fixtures.metadata.modules.Contacts.views.edit);
     });
