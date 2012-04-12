@@ -6096,7 +6096,7 @@ margin-left:10px;
     background: #fff url(../../../../index.php?entryPoint=getImage&imageName=search.png) 5px 6px no-repeat;
 }
 
-#sugar_spot_search:focus {
+input#sugar_spot_search:focus {
     box-shadow:0 -1px 1px #98C6EA,1px -1px 1px #98C6EA,-1px -1px 1px #98C6EA;
 	-moz-box-shadow:0 -1px 1px #98C6EA,1px -1px 1px #98C6EA,-1px -1px 1px #98C6EA;
 	box-shadow:0 -1px 1px #98C6EA,1px -1px 1px #98C6EA,-1px -1px 1px #98C6EA;
@@ -6105,6 +6105,9 @@ margin-left:10px;
     -ms-transition: border linear 0.2s, box-shadow linear 0.2s;
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
+    border-radius: 0px;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
 }
 
 #sugar_spot_search.searching {
