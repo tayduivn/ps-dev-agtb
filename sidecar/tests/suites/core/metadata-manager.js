@@ -29,18 +29,16 @@ describe('Metadata Manager', function () {
         expect(app.metadata.getLayout("Contacts", "detail")).toBe(fixtures.metadata.modules.Contacts.layouts.detail);
     });
 
-    it('should get a specific sugarfield', function () {
-        expect(app.metadata.getField({
-                type:'varchar',
-                view:'edit'
-        })).toBe(fixtures.metadata.sugarFields.text.views.edit);
+    it('should get a varchar sugarfield', function () {
+        expect(app.metadata.getField('varchar')).toBe(fixtures.metadata.sugarFields.text);
     });
 
-    it('should get a specific sugarfield defaulted to default if the view does not exist', function () {
-        expect(app.metadata.getField({
-                type:'varchar',
-                view:'thisViewDoesntExist'
-        })).toBe(fixtures.metadata.sugarFields.text.views["default"]);
+    it('should get a specific sugarfield', function () {
+        expect(app.metadata.getField('phone')).toBe(fixtures.metadata.sugarFields.phone);
+    });
+
+    it('should get a undefined sugarfield as text', function () {
+        expect(app.metadata.getField('doesntexist')).toBe(fixtures.metadata.sugarFields.text);
     });
 
     it ('should sync metadata', function (){

@@ -34,7 +34,7 @@
             view: view,
             context: context,
             label: label,
-            model: bean || context.get("model")
+            model: bean
         }));
 
         sf.sfid = sfid;
