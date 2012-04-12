@@ -66,8 +66,8 @@
                 cache[customClassName] ||
                 // Otherwise, create custom class if the metadata has a controller
                 _declareClass(cache, baseClass, customClassName, controller) ||
-                // Fall back to regular view class (ListView, EditView, etc.)
-                cache[params.className] ||
+                // Fall back to regular view class (ListView, FluidLayout, etc.)
+                cache[className] ||
                 // Fall back to base class (View, Layout, or Field)
                 baseClass;
 
