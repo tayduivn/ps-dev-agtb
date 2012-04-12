@@ -243,7 +243,6 @@ function getClassicModuleTitle($module, $params, $show_create=false, $index_url_
     global $app_strings;
 
 	$module_title = '';
-	$count = count($params);
 	$index = 0;
 
     $module = preg_replace("/ /","",$module);
@@ -263,7 +262,7 @@ function getClassicModuleTitle($module, $params, $show_create=false, $index_url_
 	}
 
 	$new_params = array_pop($params);
-    $module_title = $new_params;
+    if(!is_null($new_params) && ($new_params !== "")) $module_title = $new_params;
     if(!empty($module_title)){
         $the_title .= "<h2>".$module_title."</h2>\n";//removing empty H2 tag for 508 compliance
     }
