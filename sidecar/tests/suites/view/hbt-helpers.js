@@ -66,8 +66,6 @@ describe("Handlebars Helpers", function() {
 
             model.id = "1245";
 
-            console.log("DSL:KF");
-            console.log(Handlebars.helpers.buildRoute(context, model, action, params));
             expect(Handlebars.helpers.buildRoute(context, model, action, params).toString()).toEqual("Cases/1245");
         });
     });
