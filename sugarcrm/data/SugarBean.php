@@ -3248,6 +3248,9 @@ function save_relationship_changes($is_update, $exclude=array())
             {
                 $ret_array['select'] .= ", $this->table_name.$field $alias";
                 $selectedFields["$this->table_name.$field"] = true;
+            } else if(  (!isset($data['source']) || $data['source'] == 'custom_fields') && (!empty($alias) || !empty($filter) )) {
+                $ret_array['select'] .= ", $this->table_name"."_cstm".".$field $alias";
+                $selectedFields["$this->table_name.$field"] = true;
             }
 
 
