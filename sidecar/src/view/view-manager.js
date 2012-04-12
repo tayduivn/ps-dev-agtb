@@ -7,8 +7,8 @@
  */
 (function(app) {
 
-    // Create a new subclass of the given parent class based on the controller definition passed in and adds it to the layout namespace.
-    var _extendAndRegister = function(cache, parent, className, controller) {
+    // Create a new subclass of the given parent class based on the controller definition passed.
+    var _declareClass = function(cache, parent, className, controller) {
         var klass = null;
         if (controller) {
             try {
@@ -65,7 +65,7 @@
                 // First check if custom class already exists
                 cache[customClassName] ||
                 // Otherwise, create custom class if the metadata has a controller
-                _extendAndRegister(cache, baseClass, customClassName, controller) ||
+                _declareClass(cache, baseClass, customClassName, controller) ||
                 // Fall back to regular view class (ListView, EditView, etc.)
                 cache[params.className] ||
                 // Fall back to base class (View, Layout, or Field)
