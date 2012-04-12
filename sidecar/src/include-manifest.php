@@ -17,7 +17,6 @@ $includeFiles = array(
     'src/core/cache.js',
     'src/core/error.js',
     'src/view/template.js',
-    'src/view/sugar-field-manager.js',
     'src/core/context.js',
     'src/core/controller.js',
     'src/core/router.js',

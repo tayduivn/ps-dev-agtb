@@ -124,6 +124,7 @@
         }
     }
     //if (_.isEmpty(app.metadata.get())) {
+    app.cache.init();
     app.metadata.set(base_metadata);
     app.data.declareModels(base_metadata);
     app.template.load(base_metadata);
