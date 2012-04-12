@@ -63,7 +63,7 @@ describe('app.cache', function () {
         expect(app.cache.get(key)).toEqual(value);
 
         app.cache.cut(key);
-        expect(app.cache.get(key)).toBeUndefined();
+        expect(app.cache.get(key)).toBeFalsy();
     });
 
 
@@ -77,8 +77,8 @@ describe('app.cache', function () {
         expect(app.cache.get(key2)).toEqual(value);
 
         app.cache.cutAll();
-        expect(app.cache.get(key)).toBeUndefined();
-        expect(app.cache.get(key2)).toBeUndefined();
+        expect(app.cache.get(key)).toBeFalsy();
+        expect(app.cache.get(key2)).toBeFalsy();
     });
 
 
