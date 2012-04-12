@@ -86,9 +86,9 @@
 
         // Routes
 
-        index: function() {
+        index: function(module) {
             this.controller.loadView({
-                module: "Cases", //TODO: This shoudl probably not be Casess
+                module: module || "Cases", //TODO: This shoudl probably not be Casess
                 layout: "list"
             });
         },
