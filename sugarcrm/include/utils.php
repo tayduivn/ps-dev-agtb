@@ -3124,10 +3124,12 @@ function sugar_cleanup($exit = false) {
 	Tracker::logPage();
 	// Now write the cached tracker_queries
     //BEGIN SUGARCRM flav=pro ONLY
-    $trackerManager = TrackerManager::getInstance();
-    if($monitor = $trackerManager->getMonitor('tracker_queries')){
-    	$trackerManager->saveMonitor($monitor, true);
-	}
+    if(class_exists("TrackerManager")) {
+        $trackerManager = TrackerManager::getInstance();
+        if($monitor = $trackerManager->getMonitor('tracker_queries')){
+        	$trackerManager->saveMonitor($monitor, true);
+    	}
+    }
     //END SUGARCRM flav=pro ONLY
 	if(!empty($GLOBALS['savePreferencesToDB']) && $GLOBALS['savePreferencesToDB']) {
 	    if ( isset($GLOBALS['current_user']) && $GLOBALS['current_user'] instanceOf User )
