@@ -90,6 +90,7 @@ class SqlsrvManager extends MssqlManager
         'limit_subquery' => true,
         'create_user' => true,
         "create_db" => true,
+        "recursive_query" => true,
     );
 
     protected $type_map = array(

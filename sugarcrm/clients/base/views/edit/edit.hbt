@@ -23,12 +23,12 @@
                 <div class="card2">
                      {{#each meta.panels}}
                     {{#each fields}}
-                        {{sugarField ../../context ../../this ../../model}}
+                        {{field ../../context ../../this ../../model}}
                     {{/each}}
                     {{/each}}
                     <div class="form-actions">
                     {{#each meta.buttons}}
-                        {{sugarField ../context ../this ../model}}
+                        {{field ../context ../this ../model}}
                     {{/each}}
                     </div>
                 </div>

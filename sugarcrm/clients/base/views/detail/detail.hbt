@@ -23,7 +23,7 @@
         {{#each meta.panels}}
                 <div class="card2">
                     {{#each fields}}
-                        {{sugarField ../../context ../../this ../../model}}
+                        {{field ../../context ../../this ../../model}}
                     {{/each}}
                 </div>
         {{/each}}
