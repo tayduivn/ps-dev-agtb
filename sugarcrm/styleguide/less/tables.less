@@ -23,7 +23,7 @@ table {
   th,
   td {
     position: relative;
-    padding: 6px 10px 7px;
+    padding: 10px;
     line-height: @baseLineHeight;
     text-align: left;
     vertical-align: top;
@@ -45,6 +45,9 @@ table {
   // Account for multiple tbody instances
   tbody + tbody {
     border-top: 2px solid #ddd;
+  }
+  tfoot {
+    font-weight: 600;
   }
 }
 

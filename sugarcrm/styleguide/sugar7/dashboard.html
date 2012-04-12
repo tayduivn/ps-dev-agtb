@@ -6,17 +6,13 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
-
-  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-
-  <!-- styles -->
   <link href="../css/bootstrap.css" rel="stylesheet">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
-<body id="portal">
+<body>
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
@@ -30,13 +26,7 @@
               <a href="contacts.html">Contacts</a>
             </li>              
             <li>
-              <a href="list.html">Opportunities</a>
-            </li>              
-            <li class="">
-              <a href="#">Leads</a>
-            </li>
-            <li class="">
-              <a href="#">Reports</a>
+              <a href="opportunity.html">Opportunities</a>
             </li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
@@ -53,7 +43,7 @@
                 <li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
                 <li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
                 <li class="divider"></li>
-                <li><a href="#"><i class="icon-plus"></i> Filter Menu By</a></li>
+                <li><a href="#">Filter Menu By</a></li>
               </ul>
             </li>
           </ul>
@@ -71,9 +61,9 @@
             </li>
             <li class="divider-vertical"></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_uwelcome.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Profile</a></li>
+                <li><a href="profile_skhan.html">Profile</a></li>
                 <li><a href="#">Password</a></li>
                 <li><a href="#">Advanced</a></li>
                 <li><a href="#">External Accounts</a></li>
@@ -84,16 +74,16 @@
             <li class="divider-vertical"></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu quick">
                 <li><a href="#">Create Account</a></li>
-                <li><a href="#">Create Contact</a></li>
+                <li><a  data-toggle="modal" href="#contactModal">Create Contact</a></li>
                 <li><a href="#">Create Opportunity</a></li>
               </ul>
             </li>              
           </ul>
           <div id="searchForm">
             <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Sabra Khan&quot;,&quot;Perkin Kleiners&quot;,&quot;Underwater Mining Inc&quot;,&quot;Mark Edwin&quot;,&quot;Perkin Kleiners - 100 Seats&quot;]">
               <a href="#adminSearch" class="pull-right advanced" data-toggle="modal" rel="tooltip" title="Advanced Search Options" id="searchAdvanced"><i class="icon-cog"></i></a>
             </form>
           </div>
@@ -105,47 +95,168 @@
     <div class="row-fluid">
       <div class="span8">
         <div class="thumbnail" id="moduleWidgetBugs">
-          <h1><a href="bugs.html">Bugs</a></h1>
+          <h1><a href="accounts.html">Accounts</a></h1>
           <table class="table table-striped datatable">
             <thead>
               <tr>
-                <th class="span1">ID</th>
-                <th class="span7">Title</th>
-                <th class="span2">Priority</th>
-                <th class="span2">Status</th>
+                <th  style="width: 1%" class="nosort">
+                    <i class="icon-star-empty"></i>
+                </th>
+                <th  style="width: 30%" class="">Name</th>
+                <th  style="width: 20%" class="">City</th>
+                <th  style="width: 20%" class="">Phone</th>
+                <th style="width: 10%">Email</th>
+                <th  style="width: 1%" class="nosort"></th>
+              </tr>
+            </thead>
+            <tbody id="listed">
+              <tr>
+                <td><i class="icon-star-empty"></i></td>
+                <td><a href="detail_perkin_kleiners.html">Perkin Kleiners</a></td>
+                <td><span class="dblclick">Cupertino</span></td>
+                <td><span class="dblclick">(408) 555-5271</span></td>
+                <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                <td>
+                  <span class="hide actions dropdown pull-right">
+                    <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="detail_perkin_kleiners_edit.html">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </span>
+                </td>
+              </tr>   
+              <tr>
+                <td><i class="icon-star-empty"></i></td>
+                <td><a href="detail_underwater.html">Underwater Mining Inc.</a></td>
+                <td><span class="dblclick">San Francisco</span></td>
+                 <td><span class="dblclick">	(202) 312-5472</span></td>
+                <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
+                <td>
+                  <span class="hide actions dropdown pull-right">
+                    <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="contact_will_westin.html">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </span>
+                </td>
+              </tr>                                                                                                                                                                                                                                                                                                                                                                           
+            </tbody>
+          </table>
+          <ul class="nav nav-pills actions" id="bugsModuleActions">
+            <li>  
+              <a href="create.html" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
+            </li>
+            <li>  
+              <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+            </li>          
+          </ul>
+        </div>
+        <div class="thumbnail" id="moduleWidgetCases">
+          <h1><a href="contacts.html">Contacts</a></h1>
+          <table class="table table-striped datatable">
+            <thead>
+              <tr>
+                <th  style="width: 1%" class="nosort">
+                    <i class="icon-star-empty"></i>
+                </th>
+                <th  style="width: 30%" class="">Name</th>
+                <th  style="width: 20%" class="">Title</th>
+                <th  style="width: 20%" class="">Phone</th>
+                <th style="width: 10%">Email</th>
+                <th style="width: 20%">Account</th>
+                <th  style="width: 1%" class="nosort"></th>
+              </tr>
+            </thead>
+            <tbody id="listed">
+              <tr>
+                <td><i class="icon-star-empty"></i></td>
+                <td><a href="contact_mark.html">Mark Edwin</a></td>
+                <td>CIO</td>
+                <td><a href="mailto:mark@nono.com">(408) 555-5271</a></td>
+                <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
+                <td><a href="detail_perkin_kleiners.html">Perkin Kleiners</a></td>
+                <td>
+                  <span class="hide actions dropdown pull-right">
+                    <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="contact_will_westin.html">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </span>
+                </td>
+              </tr>                                                                                                                                                                                                                                                                                                                                                                           
+            </tbody>
+          </table>
+          <ul class="nav nav-pills actions" id="casesModuleActions">
+            <li>  
+              <a data-toggle="modal" href="#adminAdd" rel="tooltip" title="Add a Case" id="casesModuleActionsAdd"><i class="icon-plus"></i></a>
+            </li>
+            <li>  
+              <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+            </li>
+          </ul>
+        </div>
+        <div class="thumbnail" id="moduleWidgetBugs">
+          <h1><a href="opportunity.html">Opportunities</a></h1>
+          <table class="table table-striped datatable">
+            <thead>
+              <tr>
+                <th class="nosort">
+                    <i class="icon-star-empty"></i>
+                </th>
+                <th class="">Opportunity</th>
+                <th class="">Sales Stage</th>
+                <th class="">Amount (USD)</th>
+                <th class="">Closing</th>
+                <th class="primary">Next Steps</th>
+                <th class="nosort"></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>20508</td>
-                <td><a href="detail.html">Bad links in Pitch</a></td>
-                <td>High</td>
-                <td>Open</td>
+                <td><i class="icon-star-empty"></i></td>
+                <td><a href="100seat.html">Perkin Kleiners - 100 Seats</a></td>
+                <td rel="tooltip" title="60% Negotiation">
+                  <div class="progress progress-mid">
+                    <div class="bar" style="width: 60%;"></div>
+                  </div>
+                </td>
+                <td><span class="dblclick">75,000</span></td>
+                <td>20 days</td>
+                <td>Call <a href="user.html">Chris Lottery</a> to ask how to import his ...</td>
+                <td>
+                  <span class="hide actions dropdown pull-right">
+                    <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </span>
+                </td>
               </tr>
               <tr>
-                <td>20509</td>
-                <td><a href="">Broken images in pdf</a></td>
-                <td>High</td>
-                <td>Open</td>
-              </tr>
-              <tr>
-                <td>20550</td>
-                <td><a href="">Misspellings everywhere</a></td>
-                <td>Medium</td>
-                <td>Closed</td>
-              </tr>
-              <tr>
-                <td>20554</td>
-                <td><a href="">404 on faq</a></td>
-                <td>Medium</td>
-                <td>Pending</td>
-              </tr>
-              <tr>
-                <td>20555</td>
-                <td><a href="">Problem revalidating the key</a></td>
-                <td>Low</td>
-                <td>Pending</td>
-              </tr>               
+                <td><i class="icon-star-empty"></i></td>
+                <td><a href="instance.html">Weyland Corp.</a></td>
+                <td rel="tooltip" title="25% Discovery">
+                  <div class="progress progress-min">
+                    <div class="bar" style="width: 25%;"></div>
+                  </div>
+                </td>
+                <td>175,000</td>
+                <td>40 days</td>
+                <td>Call <a href="user.html">Peter Weyland</a> to ask how ...</td>
+                <td>
+                  <span class="hide actions dropdown pull-right">
+                    <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Edit</a></li>
+                      <li><a href="#">Delete</a></li>
+                    </ul>
+                  </span>
+                </td>
+              </tr>             
             </tbody>
           </table>
           <div class="block-footer">
@@ -160,58 +271,6 @@
             <li>  
               <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
             </li>          
-          </ul>
-        </div>
-        <div class="thumbnail" id="moduleWidgetCases">
-          <h1><a href="cases.html">Cases</a></h1>
-          <table class="table table-striped datatable">
-            <thead>
-              <tr>
-                <th class="span1">ID</th>
-                <th class="span5">Title</th>
-                <th class="span2">Priority</th>
-                <th class="span2">Support Team</th>
-                <th class="span2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>102339</td>
-                <td><a href="">Bad links in Pitch</a></td>
-                <td>High</td>
-                <td>Team Edward</td>  
-                <td>Open</td>
-              </tr>
-              <tr>
-                <td>102339</td>
-                <td><a href="">Broken images in pdf</a></td>
-                <td>High</td>
-                <td>Team Jacob</td>  
-                <td>Open</td>
-              </tr>
-              <tr>
-                <td>102339</td>
-                <td><a href="">Misspellings everywhere</a></td>
-                <td>Medium</td>
-                <td>Team Jacob</td>
-                <td>Closed</td>
-              </tr>
-              <tr>
-                <td>102339</td>
-                <td><a href="">404 on faq</a></td>
-                <td>Medium</td>
-                <td>Team Force5</td>
-                <td>Pending</td>
-              </tr>              
-            </tbody>
-          </table>
-          <ul class="nav nav-pills actions" id="casesModuleActions">
-            <li>  
-              <a data-toggle="modal" href="#adminAdd" rel="tooltip" title="Add a Case" id="casesModuleActionsAdd"><i class="icon-plus"></i></a>
-            </li>
-            <li>  
-              <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
-            </li>
           </ul>
         </div>
       </div>  
@@ -243,12 +302,6 @@
             <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
           </form> 
           <div id="activity">
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> as a <a href="">Lead</a>.<br>
-                <date class="date">Posted just a second ago</date>
-              </p>
-            </article> 
             <article data-type="update" data-pubdate="2012-02-16">
               <p>
                 <a href="/users/toreilly">Tim O'Reilly</a> made a <a href="">phone call</a> and <a href="">emailed</a> a <a href="">Purchase Order Statement</a>.<br>
@@ -352,7 +405,9 @@
     <script src="../js/bootstrap-popover.js"></script>
     <script src="../js/bootstrap-button.js"></script>
     <script src="../js/bootstrap-typeahead.js"></script>
-    <script src="../js/application.js"></script>
-    <script src="../js/sortable.js"></script>    
+    <script src="../js/jquery.dataTables.js"></script>  
+    <script src="../js/jquery.jeditable.js"></script>        
+    <script src="../js/editable.js"></script>
+    <script src="../js/application.js"></script>  
   </body>
   </html>

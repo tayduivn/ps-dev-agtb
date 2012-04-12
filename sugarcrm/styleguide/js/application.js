@@ -2,6 +2,15 @@
 
   $(function(){
 
+    // editable
+    $('td .dblclick').hover( 
+      function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
+      function () {$('.icon-pencil').remove();}
+  	)
+    
+    // Select widget
+    $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+    
     // make code pretty (styleguide only)
     window.prettyPrint && prettyPrint()
 
@@ -34,7 +43,7 @@
       }
     }
 
-    // do this if greater than 960px page width
+    // do this if greater than 768px page width
     if ( $(window).width() > 768) {		
 
     // tooltip demo
@@ -154,7 +163,6 @@
     function () {$(this).before('<span class="span2"><i class="icon-pencil icon-sm"></i></span>');},
     function () {$('.icon-pencil').remove();}
 	)
-  
 
 // Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
 $.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {

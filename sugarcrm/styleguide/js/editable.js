@@ -4,6 +4,7 @@
           $(".dblclick").editable('blah.php',{ 
             indicator : 'Saving ...',
             cssclass   : "editable",
+            tooltip   : 'Click to edit...'
           })
           $(".edit_select").editable('blah.php',{ 
             indicator : 'Saving ...',

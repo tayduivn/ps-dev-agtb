@@ -33,9 +33,9 @@
           <ul class="nav pull-right" id="userList">
             <li class="divider-vertical"></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_uwelcome.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Profile</a></li>
+                <li><a href="profile_skhan.html">Profile</a></li>
                 <li class="divider"></li>
                 <li><a href="#">Log Out</a></li>
               </ul>
@@ -65,13 +65,7 @@
     </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group">
-        <div class="dropdown">
-          <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-          <ul class="dropdown-menu menu">
-            <li><a href="#">Duplicate</a></li>
-            <li><a href="edit.html">Edit</a></li>
-          </ul>
-        </div>
+          <a href="edit.html" data-toggle="dropdown" class="dropdown-toggle btn btn-success"><i class="icon-pencil"></i> Edit</a>
       </div>
     </div>
   </div>         
@@ -148,29 +142,30 @@
         </div>
       </div>
       <div class="span5 divleft">
+        <form class=" form-horizontal" action="">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#note" data-toggle="tab">Note</a></li>
+            <li><a href="#link" data-toggle="tab">Link</a></li>
+            <li><a href="#document" data-toggle="tab">Document</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="note">
+              <input id="addit" value="" class="span3" placeholder="Add a note ...">
+              <input id="additSubmit" type="submit" value="Add" class="btn">
+            </div>
+            <div class="tab-pane" id="link">
+              <input id="addit" value="" class="span3" placeholder="Add a link ...">
+              <input id="additSubmit" type="submit" value="Add" class="btn">
+            </div>
+            <div class="tab-pane" id="document">
+              <input id="addit" value="" class="span3" placeholder="Add a document ...">
+              <input id="additSubmit" type="submit" value="Add" class="btn">
+            </div>
+          </div>
+        </form>
+        
         <div class="block filtered" id="moduleRelated">
           <h4>Related Records</h4>
-          <form class="form-addit form-horizontal" action="">
-            <ul class="nav nav-tabs">
-              <li class="active"><a href="#note" data-toggle="tab">Note</a></li>
-              <li><a href="#link" data-toggle="tab">Link</a></li>
-              <li><a href="#document" data-toggle="tab">Document</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="note">
-                <input id="addit" value="" class="span3" placeholder="Add a note ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-              <div class="tab-pane" id="link">
-                <input id="addit" value="" class="span3" placeholder="Add a link ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-              <div class="tab-pane" id="document">
-                <input id="addit" value="" class="span3" placeholder="Add a document ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-            </div>
-          </form> 
           <form class="form-search hide" action="">
             <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
           </form>

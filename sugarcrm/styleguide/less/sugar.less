@@ -292,19 +292,27 @@ border-right: 1px solid @grayLighter;
 .navbar-fixed-top .cube:hover {
   text-decoration: none;
 }
+.avatar {
+	.border-radius(3px);
+}
+
 .navbar .avatar, .block .avatar {
   height: 24px;
   width: 24px;
+  	.border-radius(3px);
 }
 article .avatar {
-  height: 32px;
-  width: 32px;
+  height: 32px !important;
+  width: 32px !important;
+  margin-bottom: 12px;
+  	.border-radius(3px);
 }
+.pull-left .avatar {margin-right: 20px;}
 .navbar .avatar {
   margin-right: 10px;
 	margin-top: -3px;
 	float: left;
-	.border-radius(2px);
+	.border-radius(3px);
 }
 
 .navbar .btn {
@@ -378,6 +386,18 @@ article .avatar {
   margin: 0 0 15px;
   position: relative;
 }
+.block .list li.active a {
+  background: @grayLighter;
+  color: @gray;
+  display: block;
+  padding: 4px;
+  margin: 0 0 0 -4px;
+} 
+.block.tabs-left .nav-tabs {
+  float: none;
+  margin: 0 -11px 0 0;
+  border-color: @grayLight;
+}
 .block .list li .btn {
   position: absolute;
   right: 10px;
@@ -385,12 +405,28 @@ article .avatar {
   padding: 1px 4px;
   width: 20px;
 }
+.block .nav-tabs li .btn {
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  padding: 1px 4px;
+  width: 20px;
+}
+.block .nav-tabs li {
+  list-style: none;
+  position: relative;
+}
 .block h4 {
   padding: 10px 0 10px;
   font-weight: 600;
   border-bottom: 1px solid @grayLight;
 }
 
+.span2 .block .actions {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
 .block .actions, article .actions, .subnav .actions {
   position: absolute;
   top: 5px;
@@ -490,6 +526,10 @@ article:hover .actions,  tr:hover .actions {
   display: block;
 }
 
+.subnav .span2 .btn-group {margin: 8px 0 0 18px;}
+.subnav .span2 .btn-group .btn {float: none;}
+.subnav .span5 h1 {margin: 4px 0 0 16px;}
+
 .divleft {
 	border-left: 1px solid #e7e7e7;
 	padding-left: 2%;
@@ -499,14 +539,14 @@ article:hover .actions,  tr:hover .actions {
 	margin-right: 15px;
 }
 .bordered {
-	box-shadow: #e7e7e7 1px 0 0;
+	box-shadow: @grayLight 1px 0 0;
 }
 
 .search-query {
   .border-radius(4px);
 }
 
-.block ul.list {
+.block h4+ul.list {
   margin-top: 10px;
 }
 
@@ -527,9 +567,7 @@ article:hover .actions,  tr:hover .actions {
 .vcard span {
 	margin-left: 70px;
 }
-.block span {
-	margin-left: 75px;
-}
+
 .block span.add-on {margin-left:0 !important;}
 .span2 .input-prepend input {width: inherit;}
 
@@ -611,8 +649,7 @@ hr.soften {
   padding-bottom: 0;
   margin: 10px 0;
 }
-.subhead table {margin-top: -18px;}
-
+.subhead table {margin-top: -16px;}
 .subhead th {
 	border-right: 1px solid #e7e7e7;
 	padding-top: 10px;
@@ -638,7 +675,7 @@ padding-bottom: 15px;
   .box-shadow(@shadow);
 }
 .subnav h1 {
-  color: @gray;
+  color: @grayDark;
   text-shadow: 0 -1px 1px rbga(255,255,255,.1);
   font-size: 20px !important;
   font-weight: 500;
@@ -849,12 +886,20 @@ footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
 --------------*/
 .card2 div [class^="span"]  {position: relative;}
 .card2 .icon-pencil {position: absolute; left: -16px; top: 0px; padding: 0 2px !important;.opacity(60);}
+tr .icon-pencil {position: absolute; left: -5px; top: 10px; padding: 0 2px !important;.opacity(60);}
+
 .card2 form, .card2 input, .card2 select, .card2 textarea {
   position: relative;
   margin: -2px 0 -3px -2px !important;
   z-index: 1020;
 }
+table input {
+  position: relative;
+  margin: -6px 0 -5px -2px !important;
+  z-index: 1020;
+}
 .eSelect:hover {}
+.editable {margin: 0;}
 
 /* Actions 
 --------------*/
@@ -908,7 +953,11 @@ padding: 5px;
 @shadow: inset 0 1px 0 rgba(0,0,0,.1), inset 0 1px 3px rgba(0,0,0,.1), inset 1px 0 0 rgba(0,0,0,.1), inset -1px -1px 0 rgba(0,0,0,.1);
 .box-shadow(@shadow);
 }
-.form-addit .tab-content {
+.form-addit{
+padding: 0;
+}
+
+.block .tab-content {
   margin-top: -18px;
   padding: 10px;
   background: @white;
@@ -1026,7 +1075,6 @@ form.well {
 
 a [class^="icon-"] {
   .opacity(80);
-  color: @gray !important;
 }
 a:hover [class^="icon-"]{
   .opacity(90);
@@ -1172,7 +1220,7 @@ body {
   display: block;
   height: 44px;
   width: 44px;
-  @shadow: inset -1px 0 0 @black, 1px 0 0 lighten(@black, 20%);
+  @shadow: inset -1px 0 0 @black, inset 1px 0 0 @black;
   .box-shadow(@shadow);
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
@@ -1188,6 +1236,7 @@ footer {
   overflow: hidden;
   height: 0;
 }
+
 
 
 /* Typography */
