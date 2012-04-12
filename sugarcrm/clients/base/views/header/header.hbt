@@ -5,7 +5,7 @@
         <div class="nav-collapse">
           <ul class="nav" id="moduleList">
               {{#each moduleList}}
-              <li>
+              <li {{{eq this ../currentModule "class=\"active\"" ""}}}>
                 <a href="#{{this}}">{{this}}</a>
               </li>
               {{/each}}

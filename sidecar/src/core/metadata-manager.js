@@ -153,6 +153,7 @@
 
         /**
          * Gets module list
+         * @return {Object}
          */
         getModuleList: function() {
            var result =  {};
