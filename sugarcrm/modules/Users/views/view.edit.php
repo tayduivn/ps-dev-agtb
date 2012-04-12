@@ -188,9 +188,9 @@ var $useForSubpanel = true;
              //END SUGARCRM flav=ent ONLY
             )) {
             $this->ev->formName = 'EditViewGroup';
-            
+
             $processSpecial = true;
-            $processFormName = 'EditViewGroup';            
+            $processFormName = 'EditViewGroup';
         }
         //END SUGARCRM flav!=sales ONLY
 
@@ -225,7 +225,7 @@ EOD
         $this->ev->process($processSpecial,$processFormName);
 
 		echo $this->ev->display($this->showTitle);
-        
+
     }
 
 
