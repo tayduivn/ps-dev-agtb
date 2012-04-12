@@ -33,7 +33,7 @@ describe("Handlebars Helpers", function() {
                     }
                 },
                 field = new Backbone.View(),
-                view = {sugarFields: [null, field]},
+                view = {sugarFields: [null, field], name: "detail"},
                 sugarField = {name: "TestName", label: "TestLabel", type: "text"};
 
             expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toEqual('<span sfuuid="1"></span>');
