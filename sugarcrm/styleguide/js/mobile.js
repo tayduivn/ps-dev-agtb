@@ -36,7 +36,22 @@
 	});
 	$('#search').swipeDown(function () {
 		$('body').find('#searchForm').toggleClass('hide');
-	});	
+	});
+	$('.thrhld').click(function () {
+		if($(this).parent().hasClass('teaser')) {
+			$(this).parent().removeClass('teaser');
+		} else {
+			$(this).parent().toggleClass('exposed');
+			//.css('height',window.innerWidth);
+		}
+	});
+	$('.navbar-bottom .thrhld').swipeDown(function(){
+	        $(this).parent().removeClass('exposed teaser');
+	});
+	$('.navbar-bottom .thrhld').swipeUp(function(){
+	        $(this).parent().addClass('exposed teaser');
+	});
+
     // trigger the module menu - this could be a tap function but zepto will not honor return false
     $('.cube').live('click', function () {
 	if($('body').hasClass('onL')){

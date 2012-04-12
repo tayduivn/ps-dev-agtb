@@ -4629,9 +4629,30 @@ html {
   background: #313130 url(../img/black_linen_v2.png);
   width: 100%;
   height: 100%;
-  z-index: 10 !important;
   position: absolute;
-  bottom: -76%;
+}
+.navbar-bottom {
+  bottom: 0px;
+  height: 22px;
+  overflow: hidden;
+}
+.navbar-bottom .row-fluid {
+  display: none;
+}
+.navbar-bottom.teaser {
+  height: 90px;
+}
+.navbar-bottom.teaser .row-fluid {
+  display: block;
+}
+.navbar-bottom.exposed {
+  top: 50px;
+  height: auto;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.navbar-bottom.exposed .row-fluid {
+  display: block;
 }
 .navbar-bottom .thrhld {
   background-color: #383838;
@@ -4695,6 +4716,17 @@ html {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0px;
+}
+.navbar-bottom button:hover {
+  background-color: #3e3e3e;
+  background-image: -moz-linear-gradient(top, #4d4d4d, #292929);
+  background-image: -ms-linear-gradient(top, #4d4d4d, #292929);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4d4d4d), to(#292929));
+  background-image: -webkit-linear-gradient(top, #4d4d4d, #292929);
+  background-image: -o-linear-gradient(top, #4d4d4d, #292929);
+  background-image: linear-gradient(top, #4d4d4d, #292929);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d4d4d', endColorstr='#292929', GradientType=0);
 }
 .pull-right {
   float: right;
