@@ -137,6 +137,7 @@ class MysqlManager extends DBManager
 	    "collation" => true,
 	    "create_db" => true,
 	    "disable_keys" => true,
+        "recursive_query" => true,
 	);
 
 	/**
@@ -1382,7 +1383,7 @@ class MysqlManager extends DBManager
 	{
 		$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8", true);
 		$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci", true);
-
+        $this->createRecursiveQuerySPs();
 	}
 
 	/**
@@ -1455,4 +1456,106 @@ class MysqlManager extends DBManager
 	{
 	    return $this->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
 	}
+
+
+    /**
+     * Create or updates the stored procedures for the recursive query capabilities
+     * @return resource
+     */
+    public function createRecursiveQuerySPs()
+    {
+
+        $dropRecursiveQuerySPs_statement = "DROP   PROCEDURE IF EXISTS _hierarchy";
+        $this->query($dropRecursiveQuerySPs_statement);
+
+        $createRecursiveQuerySPs_statement = "
+            CREATE PROCEDURE _hierarchy(node INT, mode CHAR(1))
+            BEGIN
+
+              DECLARE _level    INT;
+
+              DROP TABLE IF EXISTS _hierarchy_data;
+              CREATE TABLE _hierarchy_data (
+                id       INT
+               ,parent   INT
+               ,level    INT
+              )ENGINE=MEMORY;
+
+              SET _level = 1;
+
+              INSERT
+                INTO  _hierarchy_data
+                     ( id, parent, level )
+              SELECT  id, mgr_id, _level
+                FROM  employees
+               WHERE  id = node;       -- The START WITH data
+
+              WHILE  (ROW_COUNT() > 0)
+              DO
+                 SET _level = _level+1;
+
+                 IF mode = 'D' THEN
+                    INSERT
+                      INTO  _hierarchy_data
+                           ( id, parent, level )
+                    SELECT  e.id, e.mgr_id, _level
+                      FROM  employees e, _hierarchy_data hd
+                     WHERE  e.mgr_id = hd.id       -- The Parent - Child equijoin
+                       AND  hd.level = _level - 1
+                    ;
+                 ELSEIF mode = 'U' THEN
+                    INSERT
+                      INTO  _hierarchy_data
+                           ( id, parent, level )
+                    SELECT  e.id, e.mgr_id, _level
+                      FROM  employees e, _hierarchy_data hd
+                     WHERE  e.id = hd.parent       -- The Parent - Child equijoin
+                       AND  hd.level = _level - 1
+                    ;
+
+                 ELSE  -- Unknown mode
+                    DELETE FROM _hierarchy_data;
+
+                 END IF;
+
+              END WHILE;
+
+              SELECT id, parent, level FROM _hierarchy_data;  -- This returns the results
+
+              DROP TABLE IF EXISTS _hierarchy_data;  -- oddly this does get executed
+
+            END;
+        ";
+
+        return $this->query($createRecursiveQuerySPs_statement);
+    }
+
+
+    /**
+     * Generates the a recursive SQL query or equivalent stored procedure implementation.
+     * The DBManager's default implementation is based on SQL-99's recursive commmon table expressions.
+     * Databases supporting recursive CTEs only need to set the recursive_query capability to true
+     * @param string    $tablename       table name
+     * @param string    $key             primary key field name
+     * @param string    $parent_key      foreign key field name self referencing the table
+     * @param bool      $lineage         find the lineage, if false, find the children
+     * @param string    $startWith       identifies strarting element(s) as in a where clause
+     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
+     * @param string    $fields          list of fields that should be returned
+     * @return string               Recursive SQL query or equivalent representation.
+     */
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $lineage = false, $startWith = null, $level = null, $fields = null)
+    {
+        $mode = ($lineage) ? 'U' : 'D';
+
+        // TODO NOTE to Jim:
+        // Please review the parameters above and how we can best handle this in the stored procedure
+        // use the DBManager implementation as an example of what is expected to come out as a result.
+        // For now I just passed most parameter straight into the stored procedure as strings, but I
+        // figure you may want to manipulate these in PHP so they are in the most convenient form for
+        // use in the stored procedure.
+
+        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '$startWith', '$level', '$fields');";
+        return $sql;
+    }
 }
