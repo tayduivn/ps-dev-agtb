@@ -113,6 +113,10 @@ class Bug51617Test extends SOAPTestCase
             )
         );
 
+        $this->assertTrue($result['result_count'] > 0,
+            'Get_entry_list failed: Fault code: '.$this->_soapClient->faultcode.', fault string:'.$this->_soapClient->faultstring.', fault detail: '.$this->_soapClient->faultdetail);
+
+        $row = array();
         $row = $result['entry_list'][0]['name_value_list'];
 
         // find the custom field
