@@ -4625,6 +4625,77 @@ html {
   overflow: hidden;
   height: 0;
 }
+.navbar-bottom {
+  background: #313130 url(../img/black_linen_v2.png);
+  width: 100%;
+  height: 100%;
+  z-index: 10 !important;
+  position: absolute;
+  bottom: -76%;
+}
+.navbar-bottom .thrhld {
+  background-color: #383838;
+  background-image: -moz-linear-gradient(top, #2e2e2e, #474747);
+  background-image: -ms-linear-gradient(top, #2e2e2e, #474747);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#2e2e2e), to(#474747));
+  background-image: -webkit-linear-gradient(top, #2e2e2e, #474747);
+  background-image: -o-linear-gradient(top, #2e2e2e, #474747);
+  background-image: linear-gradient(top, #2e2e2e, #474747);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2e2e2e', endColorstr='#474747', GradientType=0);
+  width: 100%;
+  -webkit-box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 1px 0 4px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  padding: 0px 0 6px;
+  border-bottom: 1px solid #080808;
+}
+.navbar-bottom .row-fluid {
+  width: 90%;
+  margin-left: 5%;
+}
+.navbar-bottom i.grip {
+  color: #000000;
+  text-shadow: 1px 0 0 #6f6f6d;
+  vertical-align: middle;
+  letter-spacing: -4px;
+  z-index: 1;
+  font-style: normal;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+  display: inline-block;
+}
+.navbar-bottom button strong {
+  font-size: 12px;
+}
+.navbar-bottom button {
+  margin-top: 20px;
+  padding: 0;
+  width: 78px;
+  height: 48px;
+  color: #ffffff;
+  background-color: #434343;
+  background-image: -moz-linear-gradient(top, #525252, #2e2e2e);
+  background-image: -ms-linear-gradient(top, #525252, #2e2e2e);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#525252), to(#2e2e2e));
+  background-image: -webkit-linear-gradient(top, #525252, #2e2e2e);
+  background-image: -o-linear-gradient(top, #525252, #2e2e2e);
+  background-image: linear-gradient(top, #525252, #2e2e2e);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#525252', endColorstr='#2e2e2e', GradientType=0);
+  border-color: #262626 !important;
+  border-width: 1px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0px;
+}
 .pull-right {
   float: right;
 }
