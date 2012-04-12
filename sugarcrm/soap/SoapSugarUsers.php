@@ -2153,7 +2153,8 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 			}
 
             //Apply the non-empty values now since this will be used for duplicate checks
-            if(!empty($val))
+            //allow string or int of 0 to be updated if set.
+            if(!empty($val) || ($val==='0' || $val===0))
             {
                 $seed->$value['name'] = $val;
             }
