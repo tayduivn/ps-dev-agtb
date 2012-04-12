@@ -15,10 +15,11 @@ describe("listView", function() {
                 template: "asdf"
             };
 
-
-            var view = new SUGAR.App.layout.ListView(options);
+            var view = new SUGAR.App.view.views.ListView(options);
             view.$el.html('<div id="test" data-fieldname="bob"></div>');
-            var event = {target: view.$el.("#test")};
+            //var x = view.$el.("#test");
+            var x = view.$el.children('#test');
+            var event = {target:x};
             view.context.get = function(args) {
                 return collection;
             };

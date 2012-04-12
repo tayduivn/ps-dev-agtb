@@ -1,1 +1,7 @@
-<label class="control-label">{{label}}</label><textarea class="input-xlarge" id="textarea" rows="3">{{value}}</textarea>
+<div class="row-fluid">
+    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span10">
+        <textarea rows="2" name="{{name}}" class="input-xlarge wide tleft">{{value}}</textarea>
+        <p class="help-block"></p>
+    </div>
+</div>
