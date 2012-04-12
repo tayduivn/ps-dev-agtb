@@ -2057,7 +2057,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetIndicesContainsPrimary()
     {
-        $indices = $this->_db->get_indices('Accounts');
+        $indices = $this->_db->get_indices('accounts');
 
         // find if any are primary
         $found = false;
