@@ -4833,13 +4833,18 @@ function verify_image_file($path, $jpeg = false)
         }
 	} else {
 	    // check image manually
-	    $fp = fopen($path, "r");
-	    if(!$fp) return false;
-	    $data = fread($fp, 4096);
+        $fp = fopen($path, "rb");
+        if(!$fp) return false;
+        $data = '';
+        // read the whole file in chunks
+        while(!feof($fp)) {
+            $data .= fread($fp,8192);
+        }
+
 	    fclose($fp);
-	    if(preg_match("/<(html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+	    if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
 	         $data, $m)) {
-	        $GLOBALS['log']->info("Found {$m[0]} in $path, not allowing upload");
+	        $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
 	        return false;
 	    }
 	    return true;
