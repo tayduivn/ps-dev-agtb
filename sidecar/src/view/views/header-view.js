@@ -1,7 +1,7 @@
 (function(app) {
 
     /**
-     * View that displays a list of models pulled from the context's collection.
+     * View that displays header for current app
      * @class View.Views.ListView
      * @alias SUGAR.App.layout.ListView
      * @extends View.View
