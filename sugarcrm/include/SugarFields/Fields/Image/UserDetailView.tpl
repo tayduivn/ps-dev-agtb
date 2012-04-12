@@ -30,7 +30,7 @@
 	{if empty($picture_value)}
 	   src='' 	
 	{else}
-	   src='index.php?entryPoint=download&id={$picture_value}&type=SugarFieldImage&isTempFile=1'
+	   src='index.php?entryPoint=download&id={$picture_value}&type=SugarFieldImage&isTempFile=1&isProfile=1'
 	{/if}	
 	style='
 		{if empty($picture_value)}
