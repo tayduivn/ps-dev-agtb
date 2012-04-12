@@ -62,62 +62,40 @@
         'sugarFields': {
             "text": {
                 "views": {
-                    "detailView": {
-                        "type": "basic",
-                        "template": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n"
-                    },
-                    "editView": {
-                        "type": "basic",
-                        "template": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                    "detailView": "<h3>{{label}}<\/h3><span name=\"{{name}}\">{{value}}</span>\n",
+                    "editView": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                             "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
-                            "<\/p> <\/div>"
-                    },
-                    "loginView": {
-                        "type": "basic",
-                        "template": "<div class=\"controls\">" +
-                            "<label for=\"loginUsername\" class=\"hide\">{{label}}</label>" +
-                            "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\"><p class=\"help-block\">{{help}}</p>" +
-                        "</div>"
-                    },
-                    "default": {
-                        "type": "basic",
-                        "template": "<span name=\"{{name}}\">{{value}}</span>"
-                    }
+                            "<\/p> <\/div>",
+                    "loginView":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
+                            "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                            "<\/p> <\/div>",
+                    "default": "<span name=\"{{name}}\">{{value}}</span>"
                 },
                 "events": {
                 },
                 controller: "{" +
                     "render : function(){" +
-                    "this.app.sugarField.base.prototype.render.call(this);" +
+                    "this.app.view.Field.prototype.render.call(this);" +
                     "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"portal\"); }" +
                     "}}"
             },
             "password": {
                 "views": {
-                    "editView": {
-                        "type": "basic",
-                        "template": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
+                    "editView":"\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                             "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
-                    },
-                    "loginView": {
-                        "type": "basic",
-                        "template":  "<div class=\"control-group\">" +
-                            "<label class=\"hide\">{{label}}</label>" +
-                            "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">" +
-                            "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
-                            "</div>"
-                    }
+                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>",
+                    "loginView": "<div class=\"control-group\">" +
+                                                "<label class=\"hide\">{{label}}</label>" +
+                                                "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">" +
+                                                "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
+                                                "</div>"
                 }
             },
             "button": {
                 "views": {
-                    "default": {
-                        "type": "basic",
-                        "template": "<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
+                    "default":"<a href=\"{{#if route}}#{{buildRoute context model route.action route.options}}" +
                             "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if primary}}btn-primary{{/if}}\">" +
                             "{{#if icon}}<i class=\"{{icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
-                    }
                 }
             }
         },
@@ -132,13 +110,13 @@
                 "{{#each meta.panels}}" +
                 "<div class=\"modal-body tcenter\">\n" +
                 "{{#each fields}}\n" +
-                "<div>{{sugarField ../../context ../../this ../../model}}</div>" +
+                "<div>{{field ../../context ../../this ../../model}}</div>" +
                 "{{/each}}" +
                 "</div>          \n" +
                 "{{/each}}" +
                 "<div class=\"modal-footer\">\n" +
                 "{{#each meta.buttons}}" +
-                "{{sugarField ../context ../this ../model}}" +
+                "{{field ../context ../this ../model}}" +
                 "{{/each}}" +
                 "</div>\n" +
                 "</div>                             \n" +

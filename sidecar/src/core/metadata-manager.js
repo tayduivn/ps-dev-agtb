@@ -1,6 +1,8 @@
 (function(app) {
     // Key prefix used to identify metadata in the local storage.
-    var _keyPrefix;
+    var _keyPrefix = "md:";
+    var _modulePrefix = "m:";
+    var _fieldPrefix = "f:";
     // Metadata that has been loaded from offline storage (memory cache)
     var _metadata = {};
     var _sugarFields = {};
@@ -38,7 +40,7 @@
                 var modules = s.split(",");
                 _.each(modules, function(module) {
                     if (!_metadata[module]) {
-                        _metadata[module] = _get("m." + module);
+                        _metadata[module] = _get(_modulePrefix + module);
                     }
                 });
             }
@@ -70,7 +72,6 @@
          * Gets field widget metadata.
          * @param {Object} field Field definition.
          * @return {Object} metadata
-         * @private
          */
         getField: function(field) {
             var metadata;
@@ -78,14 +79,14 @@
             var viewName = field.viewName || field.view;
 
             if (!name) {
-                app.logger.error("Unknown sugar field type");
+                app.logger.warn("Unknown sugar field type: " + field.type);
                 return null;
             }
 
             metadata = _sugarFields[name];
             // get sugarfield from app cache if we dont have it in memory
             if (!metadata) {
-                _sugarFields[name] = _get("f." + name);
+                _sugarFields[name] = _get(_fieldPrefix + name);
                 metadata = _sugarFields[name];
             }
 
@@ -113,7 +114,7 @@
             }
 
             if (!metadata && _sugarFields.text && _sugarFields.text.views['default']) {
-                metadata = _sugarFields.text.views['default'];
+                metadata = _sugarFields.text;
             }
 
             return metadata;
@@ -158,16 +159,13 @@
          * By default this function is used by MetadataManager to translate server responses into metadata
          * usable internally.
          * @param {Object} data Metadata payload returned by the server.
-         * @param {String} key(optional) Metadata identifier prefix.
          */
-        set: function(data, key) {
-            _keyPrefix = (key || "md") + ".";
-
+        set: function(data) {
             if (data.modules) {
                 var modules = [];
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = entry;
-                    _set("m." + module, entry);
+                    _set(_modulePrefix + module, entry);
                     modules.push(module);
                 });
                 _set("modules", modules.join(","));
@@ -176,7 +174,7 @@
             if (data.sugarFields) {
                 _.each(data.sugarFields, function(entry, module) {
                     _sugarFields[module] = entry;
-                    _set("f." + module, entry);
+                    _set(_fieldPrefix + module, entry);
                 });
             }
 
@@ -193,19 +191,23 @@
 
         /**
          * Syncs metadata from the server. Saves the metadata to the local cache.
-         * @param {Function} callback Callback function to be executed after sync completes.
+         * @param {Function} callback(optional) Callback function to be executed after sync completes.
          */
         sync: function(callback) {
             var self = this;
             app.api.getMetadata([], [], {
                 success: function(metadata) {
                     self.set(metadata);
-                    callback.call(self, null, metadata);
+                    if (callback) {
+                        callback.call(self, null, metadata);
+                    }
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata");
                     app.logger.error(error);
-                    callback.call(self, error);
+                    if (callback) {
+                        callback.call(self, error);
+                    }
                 }
             });
         }

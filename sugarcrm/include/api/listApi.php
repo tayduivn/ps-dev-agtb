@@ -79,8 +79,8 @@ class listApi extends SugarApi {
             $userFields = explode(",", $args["fields"]);
             
             foreach ( $userFields as $field ) {
-                if ( !$api->security->canAccessField($seed,$field,'list') || !isset($seed->field_defs[$column]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
+                if ( !$api->security->canAccessField($seed,$field,'list') || !isset($seed->field_defs[$field]) ) {
+                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
                 }
             }
             
@@ -164,7 +164,7 @@ class listApi extends SugarApi {
         $response = array();
         $response["next_offset"] = $nextOffset;
         $response["result_count"] = $reply['count'];
-        $response["records"] = $reply['records'];
+        $response["records"] = array_values($reply['records']);
 
         return $response;
     }

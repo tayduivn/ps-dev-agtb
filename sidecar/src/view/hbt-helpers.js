@@ -16,7 +16,7 @@
      * @param {Data.Bean} bean
      * @return {String}
      */
-    Handlebars.registerHelper('sugarField', function(context, view, bean) {
+    Handlebars.registerHelper('field', function(context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>',
             name = this.name,
             label = this.label || this.name,
@@ -29,7 +29,7 @@
             def = bean.fields[name];
         }
 
-        sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
+        sf = (view.sugarFields[sfid] = app.view.createField({
             def: def,
             view: view,
             context: context,

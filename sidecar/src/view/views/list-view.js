@@ -6,7 +6,7 @@
      * @alias SUGAR.App.layout.ListView
      * @extends View.View
      */
-    app.layout.ListView = app.layout.View.extend({
+    app.view.views.ListView = app.view.View.extend({
         events: {
             'click [class*="orderBy"]': 'setOrderBy'
         },

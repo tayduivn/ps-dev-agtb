@@ -6,7 +6,7 @@
      * @class View.View
      * @alias SUGAR.App.layout.View
      */
-    app.layout.View = Backbone.View.extend({
+    app.view.View = app.view.Component.extend({
         initialize: function(options) {
             _.bindAll(this, 'render', 'bindData');
 

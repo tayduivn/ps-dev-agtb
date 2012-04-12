@@ -8,7 +8,7 @@
           <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
           <ul class="dropdown-menu menu">
             {{#each meta.buttons}}
-                <li>{{sugarField ../context ../this ../model}}</li>
+                <li>{{field ../context ../this ../model}}</li>
             {{/each}}
           </ul>
         </div>
