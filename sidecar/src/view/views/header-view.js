@@ -7,6 +7,9 @@
      * @extends View.View
      */
     app.view.views.HeaderView = app.view.View.extend({
+        /**
+         * Renders Header view
+         */
         render: function() {
             this.currentModule = this.context.get('module');
             this.moduleList = this.moduleList || _.toArray(app.metadata.getModuleList());
