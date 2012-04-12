@@ -120,14 +120,17 @@ class Bug51617Test extends SOAPTestCase
         $row = $result['entry_list'][0]['name_value_list'];
 
         // find the custom field
-        foreach($row as $r) {
-            // just make sure they are all not empty
-            $this->assertNotEmpty($r['value']);
-            // make sure that the test field has our value in it
-            if($r['name'] == "test_custom_c") {
-                $this->assertEquals("Custom Field", $r['value']);
+        if (!empty($row))
+        {
+            foreach($row as $r) {
+                // just make sure they are all not empty
+                $this->assertNotEmpty($r['value']);
+                // make sure that the test field has our value in it
+                if($r['name'] == "test_custom_c") {
+                    $this->assertEquals("Custom Field", $r['value']);
+                }
             }
-        }
+        } // if
 
     } // fn
 }
