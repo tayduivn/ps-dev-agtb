@@ -26,7 +26,7 @@
                                     click: "function(){ var self = this; " +
                                         " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
                                         "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
-                                        "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); var app = self.app; app.sync(" +
+                                        "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); $(\"body\").attr(\"id\", \"\"); var app = self.app; app.sync(" +
                                         "function(){console.log(\"sync success firing\");}); }" +
                                         "});" +
                                         "}"
@@ -66,8 +66,8 @@
                     "editView": "<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
                             "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
                             "<\/p> <\/div>",
-                    "loginView":"<div class=\"controls\"><label class=\"control-label\" for=\"input01\">{{label}}<\/label> " +
-                            "<input type=\"text\" class=\"input-xlarge\" value=\"{{value}}\">  <p class=\"help-block\">" +
+                    "loginView":"<div class=\"controls\"><label class=\"hide\">{{label}}<\/label> " +
+                            "<input type=\"text\" class=\"center\" value=\"{{value}}\" placeholder=\"Username\">  <p class=\"help-block\">" +
                             "<\/p> <\/div>",
                     "default": "<span name=\"{{name}}\">{{value}}</span>"
                 },
@@ -76,7 +76,7 @@
                 controller: "{" +
                     "render : function(){" +
                     "this.app.view.Field.prototype.render.call(this);" +
-                    "if (!SUGAR.App.api.isAuthenticated()) $(\".navbar\").hide();" +
+                    "if (!SUGAR.App.api.isAuthenticated()) { $(\".navbar\").hide(); $(\"body\").attr(\"id\", \"portal\"); }" +
                     "}}"
             },
             "password": {
@@ -84,9 +84,11 @@
                     "editView":"\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
                             "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
                             "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>",
-                    "loginView": "\n    <div class=\"control-group\">\n        <label class=\"control-label\" for=\"input02\">{{label}}<\/label>\n\n" +
-                            "        <div class=\"controls\">\n            <input type=\"password\" class=\"input-xlarge\" id=\"\" value=\"{{value}}\">\n\n" +
-                            "            <p class=\"help-block\">{{help}}<\/p>\n        <\/div>\n    <\/div>"
+                    "loginView": "<div class=\"control-group\">" +
+                                                "<label class=\"hide\">{{label}}</label>" +
+                                                "<input type=\"password\" class=\"center\" value=\"{{value}}\" placeholder=\"{{label}}\">" +
+                                                "<p class=\"help-block\"><a href=\"#\" rel=\"popoverTop\" data-content=\"You need to contact your Sugar Admin to reset your password.\" data-original-title=\"Forgot Your Password?\">Forgot password?</a></p>" +
+                                                "</div>"
                 }
             },
             "button": {
@@ -98,7 +100,7 @@
             }
         },
         'viewTemplates': {
-            "loginView": "<form name='{{name}}' class='well'>" +
+            "loginView": "<form name='{{name}}'>" +
                 "<div class=\"container welcome\">\n" +
                 "<div class=\"row\">\n" +
                 "<div class=\"span4 offset4 thumbnail\">\n" +
@@ -124,7 +126,6 @@
         }
     }
     //if (_.isEmpty(app.metadata.get())) {
-    app.cache.init();
     app.metadata.set(base_metadata);
     app.data.declareModels(base_metadata);
     app.template.load(base_metadata);

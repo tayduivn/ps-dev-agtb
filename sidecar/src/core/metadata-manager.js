@@ -3,17 +3,12 @@
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
     var _fieldPrefix = "f:";
+    var _appPrefix = "a:";
+
     // Metadata that has been loaded from offline storage (memory cache)
     var _app = {};
     var _metadata = {};
-    var _sugarFields = {};
-    var _fieldTypeMap = {
-        varchar: "text",
-        name: "text",
-        text: "textarea",
-        decimal: "float",
-        currency: "text"
-    };
+    var _fields = {};
 
     function _get(key) {
         return app.cache.get(_keyPrefix + key);
@@ -71,51 +66,19 @@
 
         /**
          * Gets field widget metadata.
-         * @param {Object} field Field definition.
-         * @return {Object} metadata
+         * @param {Object} type Field type.
+         * @return {Object} Metadata for the specified field type.
          */
-        getField: function(field) {
-            var metadata;
-            var name = _fieldTypeMap[field.type] || field.type;
-            var viewName = field.viewName || field.view;
-
-            if (!name) {
-                app.logger.warn("Unknown sugar field type: " + field.type);
-                return null;
-            }
-
-            metadata = _sugarFields[name];
-            // get sugarfield from app cache if we dont have it in memory
+        getField: function(type) {
+            var metadata = _fields[type];
             if (!metadata) {
-                _sugarFields[name] = _get(_fieldPrefix + name);
-                metadata = _sugarFields[name];
+                _fields[type] = _get(_fieldPrefix + type);
+                metadata = _fields[type];
             }
 
-            if (metadata) {
-                var views = metadata.views;
-                if (views && viewName) {
-                    metadata = views[viewName];
-                    if (!metadata) {
-                        // fall back to default view if view for this field doesnt exist
-                        metadata = views['default'];
-                    }
-                }
-                // TODO: This is temp hack for metadata that doesn't contain 'views' section
-                else if (viewName) {
-                    var t = metadata[viewName];
-                    if (t) {
-                        metadata = t;
-                    }
-                    else {
-                        // fall back to default view if view for this field doesnt exist
-                        metadata = metadata['default'];
-                    }
-                }
-
-            }
-
-            if (!metadata && _sugarFields.text && _sugarFields.text.views['default']) {
-                metadata = _sugarFields.text;
+            // Fall back to plain text field
+            if (!metadata) {
+                metadata = _fields.text;
             }
 
             return metadata;
@@ -160,7 +123,7 @@
             if (_app.moduleList) {
                 result = _app.moduleList;
             } else {
-                _app.moduleList=_get("moduleList");
+                _app.moduleList=_get(_appPrefix+"moduleList");
                 result = _app.moduleList;
             }
 
@@ -194,14 +157,14 @@
 
             if (data.sugarFields) {
                 _.each(data.sugarFields, function(entry, module) {
-                    _sugarFields[module] = entry;
+                    _fields[module] = entry;
                     _set(_fieldPrefix + module, entry);
                 });
             }
 
             if (data.moduleList) {
                 _app.moduleList = data.moduleList;
-                _set("moduleList", data.moduleList);
+                _set(_appPrefix+"moduleList", data.moduleList);
             }
 
             if (data.appListStrings) {

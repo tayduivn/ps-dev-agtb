@@ -11,6 +11,7 @@
          * Renders Header view
          */
         render: function() {
+            console.log("in headerview render", this);
             this.currentModule = this.context.get('module');
             this.moduleList = this.moduleList || _.toArray(app.metadata.getModuleList());
             app.view.View.prototype.render.call(this);
