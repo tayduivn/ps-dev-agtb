@@ -80,7 +80,7 @@
             if (this.modStrings && this.modStrings[module] && this.modStrings[module][str]) {
                 label = this.sanitizeString(this.modStrings[module][str]);
             } else if (this.appStrings && this.appStrings[str]) {
-                label = this.appStrings[str];
+                label = this.sanitizeString(this.appStrings[str]);
             }
             return label;
         },
