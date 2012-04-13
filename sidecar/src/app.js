@@ -221,8 +221,20 @@ SUGAR.App = (function() {
             async.waterfall([function(callback) {
                 app.metadata.sync(callback);
             }, function(metadata, callback) {
+                // declare models
                 app.data.declareModels(metadata);
+                // load viewTemplates
                 app.template.load(metadata);
+                // load language strings
+                if (metadata.appListStrings) {
+                    app.lang.setAppListStrings(metadata.appListStrings);
+                }
+                if (metadata.appStrings) {
+                    app.lang.setAppStrings(metadata.appStrings);
+                }
+                if (metadata.modStrings) {
+                    app.lang.setLabels(metadata.modStrings);
+                }
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {

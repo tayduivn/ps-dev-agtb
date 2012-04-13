@@ -64,6 +64,30 @@ describe("Sugar App Language Manager", function() {
         expect(string).toEqual("Annual Revenue");
     });
 
+    it("should retreive the label from app strings if its not set in mod strings", function() {
+        var setData = fixtures.language.Accounts,
+            string;
+        var appStrings = fixtures.metadata.appStrings;
+
+        lang.setAppStrings(appStrings);
+
+        string = lang.get("DATA_TYPE_DUE", "Accounts");
+
+        expect(string).toEqual("Due:");
+    });
+
+    it("should return the input if its not set at all", function() {
+        var setData = fixtures.language.Accounts,
+            string;
+        var appStrings = fixtures.metadata.appStrings;
+
+        lang.setAppStrings(appStrings);
+
+        string = lang.get("THIS_LABEL_DOES_NOT_EXIST");
+
+        expect(string).toEqual("THIS_LABEL_DOES_NOT_EXIST");
+    });
+
     it("should save app list strings to the language cache and app cache", function() {
         var appListStrings = fixtures.metadata.appListStrings;
 

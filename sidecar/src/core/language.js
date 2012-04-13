@@ -67,6 +67,8 @@
 
         /**
          * Retreives a language label
+         * This function searches the module strings first and falls back to the app strings.
+         * If no label is found it returns the str arg.
          * @method
          * @param {String} str Label to retreive
          * @param {String} module Module the label belongs to
@@ -74,7 +76,13 @@
          * @private
          */
         get: function(str, module) {
-            return this.sanitizeString(this.modStrings[module][str]) || false;
+            var label= str;
+            if (this.modStrings && this.modStrings[module] && this.modStrings[module][str]) {
+                label = this.sanitizeString(this.modStrings[module][str]);
+            } else if (this.appStrings && this.appStrings[str]) {
+                label = this.appStrings[str];
+            }
+            return label;
         },
 
         /**

@@ -6,7 +6,7 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
             array(
                 'name' => 'save_button',
                 'type' => 'button',
-                'label' => 'Save',
+                'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
                 'primary' => true,
                 'events' =>
@@ -18,7 +18,7 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
             array(
                 'name' => 'cancel_button',
                 'type' => 'button',
-                'label' => 'Cancel',
+                'label' => 'LBL_CANCEL_BUTTON_LABEL',
                 'value' => 'cancel',
                 'route' =>
                 array(
@@ -38,28 +38,28 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
                     0 =>
                     array(
                         'name' => 'case_number',
-                        'label' => 'Case Number',
+                        'label' => 'LBL_CASE_NUMBER',
                         'class' => 'foo',
                     ),
                     1 =>
                     array(
                         'name' => 'name',
-                        'label' => 'Name',
+                        'label' => 'LBL_SUBJECT',
                     ),
                     2 =>
                     array(
                         'name' => 'status',
-                        'label' => 'Status',
+                        'label' => 'LBL_LIST_STATUS',
                     ),
                     3 =>
                     array(
                         'name' => 'description',
-                        'label' => 'Description',
+                        'label' => 'LBL_DESCRIPTION',
                     ),
                     4 =>
                     array(
                         'name' => 'date_modified',
-                        'label' => 'Modifed Date',
+                        'label' => 'LBL_LAST_MODIFIED',
                     ),
                 ),
             ),
