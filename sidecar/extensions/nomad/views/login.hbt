@@ -1,0 +1,25 @@
+<div id="login">
+    <div class="container">
+        <div class="row">
+            <div class="span4">
+                <div class="modal">
+                    <div class="modal-header tcenter">
+                        <h3 class="brand">SugarCRM</h3>
+                    </div>
+                    <div class="modal-body">
+                        {{#each meta.panels}}
+                        {{#each fields}}
+                        <div class="control-group">
+                            {{field ../../context ../../this ../../model}}
+                        </div>
+                        {{/each}}
+                        {{/each}}
+                    </div>
+                    <div class="modal-footer">
+                        {{button "loginButton" "Login"}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
