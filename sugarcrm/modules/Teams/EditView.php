@@ -86,6 +86,7 @@ $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'Teams_edit_action_buttons',
     'buttons' => $buttons,
     'class' => 'clickMenu fancymenu',
+    'theme' => 'Classic'
 ), $xtpl);
 
 $xtpl->assign("ACTION_BUTTON", $action_button);
