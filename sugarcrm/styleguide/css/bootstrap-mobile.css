@@ -4090,6 +4090,7 @@ html {
 .topelbar a.btn {
   min-height: 20px;
   min-width: 50px;
+  margin-top: 2px;
 }
 .topelbar i.opt {
   font-style: normal;
