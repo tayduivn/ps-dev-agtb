@@ -3688,6 +3688,15 @@ h6 {
 h1 {
   font-size: 26px !important;
 }
+.fno {
+  float: none !important;
+}
+.fleft {
+  float: left !important;
+}
+.fright {
+  float: right !important;
+}
 /* activity and twitter */
 article {
   position: relative;
@@ -4446,6 +4455,11 @@ html {
 #createRecord .avatar {
   height: 32px;
   width: 32px;
+}
+.control-group .btn.fright {
+  min-width: 20px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 /* Log In
 ----------*/
