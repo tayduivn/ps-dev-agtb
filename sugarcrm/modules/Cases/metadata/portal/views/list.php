@@ -61,7 +61,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 0 =>
                 array(
                     'name' => 'case_number',
-                    'label' => 'Case Number',
+                    'label' => 'LBL_LIST_NUMBER',
                     'class' => 'foo',
                     'default' => true,
                     'enabled' => true,
@@ -69,21 +69,21 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 1 =>
                 array(
                     'name' => 'name',
-                    'label' => 'Name',
+                    'label' => 'LBL_LIST_SUBJECT',
                     'default' => true,
                     'enabled' => true,
                 ),
                 2 =>
                 array(
                     'name' => 'status',
-                    'label' => 'Status',
+                    'label' => 'LBL_LIST_STATUS',
                     'default' => true,
                     'enabled' => true,
                 ),
                 3 =>
                 array(
                     'name' => 'date_modified',
-                    'label' => 'Modifed Date',
+                    'label' => 'LBL_DATE_MODIFIED',
                     'default' => true,
                     'enabled' => true,
                 ),
