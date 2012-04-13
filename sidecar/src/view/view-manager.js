@@ -62,8 +62,10 @@
             var controller = params.meta ? params.meta.controller : null;
             var baseClass = app.view[type];
             var klass =
-                // First check if custom class already exists
+                // First check if custom class per module already exists
                 cache[customClassName] ||
+                // Fall back to base views
+                cache[className] ||
                 // Otherwise, create custom class if the metadata has a controller
                 _declareClass(cache, baseClass, customClassName, controller) ||
                 // Fall back to regular view class (ListView, FluidLayout, etc.)

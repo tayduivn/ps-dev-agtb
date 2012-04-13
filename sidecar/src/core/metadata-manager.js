@@ -3,8 +3,10 @@
     var _keyPrefix = "md:";
     var _modulePrefix = "m:";
     var _fieldPrefix = "f:";
+    var _appPrefix = "a:";
 
     // Metadata that has been loaded from offline storage (memory cache)
+    var _app = {};
     var _metadata = {};
     var _fields = {};
 
@@ -112,6 +114,26 @@
             return metadata;
         },
 
+        /**
+         * Gets module list
+         * @return {Object}
+         */
+        getModuleList: function() {
+           var result =  {};
+            if (_app.moduleList) {
+                result = _app.moduleList;
+            } else {
+                _app.moduleList=_get(_appPrefix+"moduleList");
+                result = _app.moduleList;
+            }
+
+            if(result._hash) {
+                delete result._hash;
+            }
+
+            return result;
+        },
+
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
 
@@ -138,6 +160,11 @@
                     _fields[module] = entry;
                     _set(_fieldPrefix + module, entry);
                 });
+            }
+
+            if (data.moduleList) {
+                _app.moduleList = data.moduleList;
+                _set(_appPrefix+"moduleList", data.moduleList);
             }
 
             if (data.appListStrings) {

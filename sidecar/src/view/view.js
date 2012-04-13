@@ -8,7 +8,7 @@
      */
     app.view.View = app.view.Component.extend({
         initialize: function(options) {
-            _.bindAll(this, 'render', 'bindData');
+            _.bindAll(this);
 
             /**
              * The context is used to determine what the current focus is
