@@ -1,19 +1,14 @@
 /**
- * Layout Manager is used to retrieve views and layouts based on metadata inputs.
- * @class View.LayoutManager
- * @alias SUGAR.App.layout
+ * Layout Manager is used to create views, layouts, and fields based on metadata inputs.
+ *
+ * @class View.ViewManager
+ * @alias SUGAR.App.view
  * @singleton
  */
 (function(app) {
 
-    var _ucfirst = function(str) {
-        if (_.isString(str)) {
-            return str.charAt(0).toUpperCase() + str.substr(1);
-        }
-    };
-
-    // Create a new subclass of the given parent class based on the controller definition passed in and adds it to the layout namespace.
-    var _extendAndRegister = function(cache, parent, className, controller) {
+    // Create a new subclass of the given parent class based on the controller definition passed.
+    var _declareClass = function(cache, parent, className, controller) {
         var klass = null;
         if (controller) {
             try {
@@ -28,66 +23,80 @@
         return klass;
     };
 
-    var _fieldTypeMap = {
-        varchar: "text",
-        name: "text",
-        text: "textarea"
-    };
-
-    var _createComponent = function(params) {
-        var customClassName = params.module + params.className;
-        var cache = params.cache;
-        var klass =
-            // first check if custom class already exists
-            cache[customClassName] ||
-            // create a custom class if the metadata has a controller
-            _extendAndRegister(cache, params.base, customClassName, params.meta.controller) ||
-            // fall back to regular view class (ListView, EditView, etc.)
-            cache[params.className] ||
-            params.base;  // fall back to our default View implementation
-
-        return new klass(params);
-    };
-
     var _viewManager = {
 
+        /**
+         * Map of fields types.
+         *
+         * Specifies correspondence between module field types and field widget types.
+         *
+         * - `varchar`, `name`, `currency` are mapped to `text` widget
+         * - `text` - `textarea`
+         * - `decimal` - `float`
+         */
+        fieldTypeMap: {
+            varchar: "text",
+            name: "text",
+            text: "textarea",
+            decimal: "float",
+            currency: "text"
+        },
+
+        /**
+         * Hash of view classes.
+         */
         views: {},
+        /**
+         * Hash of layout classes.
+         */
         layouts: {},
+        /**
+         * Hash of field classes.
+         */
         fields: {},
+
+        _createComponent: function(type, name, params) {
+            var className = app.utils.capitalize(name) + type;
+            var customClassName = (params.module || "") + className;
+            var cache = this[type.toLowerCase() + "s"];
+            var controller = params.meta ? params.meta.controller : null;
+            var baseClass = app.view[type];
+            var klass =
+                // First check if custom class per module already exists
+                cache[customClassName] ||
+                // Fall back to base views
+                cache[className] ||
+                // Otherwise, create custom class if the metadata has a controller
+                _declareClass(cache, baseClass, customClassName, controller) ||
+                // Fall back to regular view class (ListView, FluidLayout, etc.)
+                cache[className] ||
+                // Fall back to base class (View, Layout, or Field)
+                baseClass;
+
+            return new klass(params);
+        },
 
         createView: function(params) {
             var options = _.clone(params);
             options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getView(options.module, params.name) || {};
-            options.className = _ucfirst(params.name) + "View";
-            options.cache = this.views;
-            options.base = app.view.View;
-            return _createComponent(options);
+            options.meta = params.meta || app.metadata.getView(options.module, params.name);
+            return this._createComponent("View", params.name, options);
         },
 
         createLayout: function(params) {
             var options = _.clone(params);
             options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getLayout(options.module, params.name) || {};
-            options.className = _ucfirst(options.meta.type) + "Layout";
-            options.cache = this.layouts;
-            options.base = app.view.Layout;
+            options.meta = params.meta || app.metadata.getLayout(options.module, params.name);
             options.name = options.name || options.meta.type;
-            return _createComponent(options);
+            return this._createComponent("Layout", options.meta.type, options);
         },
 
         createField: function(params) {
             var options = _.clone(params);
             var type = params.def.type;
-
-            options.module = ""; // fields are not customizable per module
-            options.meta = params.meta || app.metadata.getField({ type: type }) || {};
-
-            var fClass = _fieldTypeMap[type] ? _fieldTypeMap[type] : type;
-            options.className = _ucfirst(fClass) + "Field";
-            options.cache = this.fields;
-            options.base = app.view.Field;
-            return _createComponent(options);
+            var name = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;
+            options.meta = params.meta || app.metadata.getField(type);
+            return this._createComponent("Field", name, options);
         }
 
     };

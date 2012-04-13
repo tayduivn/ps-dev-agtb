@@ -102,12 +102,6 @@ SUGAR.App = (function() {
             opts.modules = opts.modules || {};
             app = app || _.extend(this, new App(opts));
 
-            app.api = SUGAR.Api.getInstance({
-                            serverUrl: app.config.serverUrl,
-                            platform: app.config.platform,
-                            keyValueStore: app.cache
-            });
-
             // Register app specific events
             app.events.register(
                 /**
@@ -161,6 +155,12 @@ SUGAR.App = (function() {
                 }
             }, this);
 
+            app.api = SUGAR.Api.getInstance({
+                serverUrl: app.config.serverUrl,
+                platform: app.config.platform,
+                keyValueStore: app.cache
+            });
+
             return app;
         },
 
@@ -169,12 +169,12 @@ SUGAR.App = (function() {
          * @method
          */
         start: function() {
-            if (!(app.api.isAuthenticated()))
-            {
+            if (!(app.api.isAuthenticated())) {
                 app.router.login();
             }
-            else
+            else {
                 this.sync();
+            }
         },
 
         /**

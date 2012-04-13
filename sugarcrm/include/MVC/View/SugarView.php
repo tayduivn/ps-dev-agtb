@@ -1362,7 +1362,7 @@ EOHTML;
         // Default anonymous pages to be under Home
         elseif ( !isset($app_list_strings['moduleList'][$this->module]) )
             return $defaultTab;
-        elseif ( $_REQUEST['action'] == "ajaxui" )
+        elseif ( isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui" )
         	return $defaultTab;
         else
             return $this->module;

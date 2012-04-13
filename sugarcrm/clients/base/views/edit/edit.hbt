@@ -28,7 +28,9 @@
                     {{/each}}
                     <div class="form-actions">
                     {{#each meta.buttons}}
-                        {{field ../context ../this ../model}}
+                        <a class="btn" href="{{#if route}}#{{buildRoute ../../context ../../this ../route ../route.options}}
+                        {{else}}javascript:void(0){{/if}}">
+                        {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{label}}</a>
                     {{/each}}
                     </div>
                 </div>

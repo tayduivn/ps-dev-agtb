@@ -81,7 +81,6 @@
     // Bean collection class cache
     var _collections = {};
 
-    var _serverProxy;
     var _dataManager = {
 
         /**
@@ -100,7 +99,6 @@
          * @method
          */
         init: function() {
-            _serverProxy = app.api;
             Backbone.sync = this.sync;
         },
 
@@ -408,7 +406,7 @@
                     relatedData = model.attributes;
                 }
 
-                _serverProxy.relationships(
+                app.api.relationships(
                     method,
                     model.link.bean.module,
                     {
@@ -422,7 +420,7 @@
                 );
             }
             else {
-                _serverProxy.beans(
+                app.api.beans(
                     method,
                     model.module,
                     model.attributes,

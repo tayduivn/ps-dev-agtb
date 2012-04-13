@@ -112,6 +112,7 @@ class IBMDB2Manager  extends DBManager
 		"fulltext" => true, // DB2 supports this though it needs to be initialized and we are currently not capable of doing though through code. Pending request to IBM
 		"auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
 		"limit_subquery" => true,
+        "recursive_query" => true,
 	);
 
 	/**

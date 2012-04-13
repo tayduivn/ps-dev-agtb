@@ -33,7 +33,7 @@ describe("Handlebars Helpers", function() {
                     }
                 },
                 field = new Backbone.View(),
-                view = {sugarFields: [null, field]},
+                view = {sugarFields: [null, field], name: "detail"},
                 sugarField = {name: "TestName", label: "TestLabel", type: "text"};
 
             expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toEqual('<span sfuuid="1"></span>');
@@ -66,8 +66,6 @@ describe("Handlebars Helpers", function() {
 
             model.id = "1245";
 
-            console.log("DSL:KF");
-            console.log(Handlebars.helpers.buildRoute(context, model, action, params));
             expect(Handlebars.helpers.buildRoute(context, model, action, params).toString()).toEqual("Cases/1245");
         });
     });

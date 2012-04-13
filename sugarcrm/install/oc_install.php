@@ -29,15 +29,15 @@ if(!isset($_SESSION['oc_server_url'])){
     $_SESSION['oc_server_url'] = (isset($sugar_config['sync_site_url']) ? $sugar_config['sync_site_url'] : "http://");
 }
 if(!isset($_SESSION['oc_password'])){
-     $_SESSION['oc_password'] = "";    
+     $_SESSION['oc_password'] = "";
 }
 if(!isset($_SESSION['oc_username'])){
-   $_SESSION['oc_username'] = ""; 
+   $_SESSION['oc_username'] = "";
 }
 
 // should this be moved to install.php?
 if( is_file("config.php") ){
-    
+
 
 	if(empty($_SESSION['oc_server_url']) && !empty($sugar_config['sync_site_url']))
       $_SESSION['oc_server_url'] = $sugar_config['sync_site_url'];
@@ -83,7 +83,7 @@ $out =<<<EOQ
 		</p>
    {$mod_strings['LBL_STEP']} {$next_step}: {$mod_strings['LBL_OC_INSTALL_TITLE']}</th>
    <th width="200" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank">
-		<IMG src="include/images/sugarcrm_login.png" width="145" height="30" alt="SugarCRM" border="0"></a></th>
+		<IMG src="include/images/sugarcrm_login.png" alt="SugarCRM" border="0"></a></th>
    </tr>
 <tr>
     <td colspan="2">
@@ -93,7 +93,7 @@ $out =<<<EOQ
    <table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
    <tr><th colspan="3" align="left">{$mod_strings['LBL_OC_INSTALL_TITLE']}</td></tr>
 EOQ;
-	    
+
 $out3 =<<<EOQ2
    <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_OC_INSTALL_SERVER_URL']}</td>
@@ -105,7 +105,7 @@ $out3 =<<<EOQ2
        <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_OC_INSTALL_PASS']}</b></td>
        <td align="left"><input type="password" name="oc_password" value="{$_SESSION['oc_password']}" size="20" /></td></tr>
-   
+
 </table>
 </td>
 </tr>

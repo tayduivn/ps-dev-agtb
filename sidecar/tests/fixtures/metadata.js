@@ -1031,5 +1031,10 @@ fixtures.metadata = {
         ERR_AJAX_LOAD_FAILURE: "There was an error processing your request, please try again at a later time.",
         ERR_AJAX_LOAD_FOOTER: "If this error persists, please have your administrator disable Ajax for this module",
         ERR_BLANK_PAGE_NAME: "Please enter a page name."
+    },
+    'moduleList': {
+        'Cases':'Cases',
+        'Bugs':'Bugs',
+        '_hash':'dfl23asfd'
     }
 };
