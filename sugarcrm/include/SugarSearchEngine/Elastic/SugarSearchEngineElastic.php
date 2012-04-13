@@ -102,15 +102,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             //All fields have already been formatted to db values at this point so no further processing necessary
             if( !empty($bean->$fieldName) )
             {
-                if (isset($fieldDef['type']) && ($fieldDef['type']=='datetime' || $fieldDef['type']=='date'))
-                {
-                    $elasticDate = str_replace(' ', 'T', $bean->$fieldName);
-                    $keyValues[$fieldName] = $elasticDate;
-                }
-                else
-                {
-                    $keyValues[$fieldName] = $bean->$fieldName;
-                }
+                // elasticsearch does not handle multiple types in a query very well
+                // so let's use only strings so it won't be indexed as other types
+                $keyValues[$fieldName] = strval($bean->$fieldName);
             }
         }
 

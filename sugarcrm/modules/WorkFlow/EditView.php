@@ -137,7 +137,7 @@ if(isset($_REQUEST['return_action'])) {
     if(isset($_REQUEST['return_module'])) {
         $cancel .= "this.form.module.value=\"".$_REQUEST['return_module']."\";";
         if(isset($_REQUEST['return_id'])) {
-            $cancel .= "this.form.record.value=\"".$_REQUEST['return_record']."\";";
+            $cancel .= "this.form.record.value=\"".$_REQUEST['return_id']."\";";
         }
     }
     $cancel .= "'";
@@ -158,6 +158,7 @@ require_once('include/Smarty/plugins/function.sugar_action_menu.php');
 $action_buttons = smarty_function_sugar_action_menu(array(
     'id' => 'ACLRoles_EditView_action_menu',
     'buttons' => $buttons,
+    'theme' => 'Classic'
 ), $xtpl);
 
 $xtpl->assign('ACTION_MENU', $action_buttons);
