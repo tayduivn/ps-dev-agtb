@@ -3885,10 +3885,17 @@ a:hover [class^="icon-"] {
 }
 .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
-  background-size: 80%;
-  height: 26px;
-  width: 26px;
-  margin-bottom: -22px;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
+.icon-phone-black {
+  background: url('../img/phone-black.png') no-repeat 50% 0;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
 }
 .navbar [class^="icon-"] {
   margin-top: 2px;
@@ -4074,10 +4081,7 @@ html {
   height: 218px;
   display: inline-block;
 }
-#listing .form-search {
-  margin: 0;
-}
-#listing .search {
+.topelbar {
   height: 34px;
   padding: 5px;
   background-color: #f5f5f5;
@@ -4089,6 +4093,12 @@ html {
   background-image: linear-gradient(top, #fcfcfc, #ebebeb);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#ebebeb', GradientType=0);
+}
+.tcenter > .btn-group {
+  display: inline-block;
+}
+#listing .form-search {
+  margin: 0;
 }
 #listing .icon-search {
   position: absolute;
