@@ -1,0 +1,15 @@
+(function(app) {
+
+    app.augment("config", {
+        appId: 'nomad',
+        env: 'dev',
+        debugSugarApi: true,
+        logLevel: app.logger.levels.DEBUG,
+        logWriter: app.logger.ConsoleWriter,
+        logFormatter: app.logger.SimpleFormatter,
+        serverUrl: 'http://localhost:8888/sugar-sidecar/rest/v10',
+        maxQueryResult: 20,
+        platform: "mobile"
+    }, false);
+
+})(SUGAR.App);

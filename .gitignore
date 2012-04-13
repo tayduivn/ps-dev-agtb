@@ -7,6 +7,7 @@ build/rome/builds/
 sidecar/src/config.js
 sidecar/build
 sidecar/docs
+sidecar/extensions/nomad/compiled/*.js
 sugarcrm/config_si.php
 *~
 translations/

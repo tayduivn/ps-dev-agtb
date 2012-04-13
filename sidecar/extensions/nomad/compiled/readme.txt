@@ -1,0 +1,1 @@
+Pre-compiled handlebars templates are stored here.
