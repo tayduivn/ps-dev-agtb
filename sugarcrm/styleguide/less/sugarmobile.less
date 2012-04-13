@@ -241,16 +241,20 @@ a:hover [class^="icon-"]{
 .the-icons i:hover {
   background-color: rgba(255,0,0,.25);
 }
-
 .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
-  background-size: 80%;
-  height: 26px;
-  width: 26px;
-  margin-bottom: -22px;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
 }
-
-
+.icon-phone-black {
+  background: url('../img/phone-black.png') no-repeat 50% 0;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
 .navbar [class^="icon-"] {
   margin-top: 2px;
 }
@@ -420,14 +424,39 @@ html {
   display: inline-block;
 }
 
+
+.topelbar {
+  height:34px;
+  padding:5px;
+  #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+  a.btn {
+    min-height:20px;
+    min-width:50px;
+  }
+  i.opt {
+    font-style: normal;
+  }
+}
+
+
+@media (max-width: 479px) {
+  .topelbar {
+    i.opt {
+      display:none !important;
+    }
+  }
+}
+
+.tcenter > .btn-group {
+  display:inline-block;
+}
+
 #listing .form-search {
   margin:0;
 }
 
 #listing .search {
-  height:34px;
-  padding:5px;
-  #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+
 }
 
 #listing .icon-search {
@@ -972,3 +1001,4 @@ float: none !important;}
 .navbar-bottom button:hover {
   #gradient > .vertical(lighten(@black, 30%), lighten(@black, 16%));
 }
+
