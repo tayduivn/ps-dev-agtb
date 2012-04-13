@@ -50,10 +50,11 @@
     {/foreach}
 
      </div>
-    
-{if $smarty.request.module != "Emails" && $smarty.request.module != "Users"}     
+<script>
+ 	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}";
+</script>       
+{if $smarty.request.module != "Emails" && $smarty.request.module != "Users"}
 {literal}
-
 
 <script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script>
 <style type="text/css" media="screen, projection">
