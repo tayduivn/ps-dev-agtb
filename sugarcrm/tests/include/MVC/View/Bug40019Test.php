@@ -75,7 +75,7 @@ class Bug40019Test extends Sugar_PHPUnit_Framework_TestCase
 	    $expected = $max > 10 ? 10 : $max;
         $history_count = count($history);
 
-        $this->assertTrue($history_count == $expected,
+        $this->assertTrue($history_count <= $expected,
             "Recently viewed list is not as expected: History count = $history_count, and expected = $expected");
 	}
     
@@ -94,7 +94,7 @@ class Bug40019Test extends Sugar_PHPUnit_Framework_TestCase
 	    $expected = $max > 10 ? 10 : $max;
 	    $history_count = count($history);
 
-        $this->assertTrue($history_count == $expected,
+        $this->assertTrue($history_count <= $expected,
             "Recently viewed list is not as expected: History count = $history_count, and expected = $expected");
 	}
 }
