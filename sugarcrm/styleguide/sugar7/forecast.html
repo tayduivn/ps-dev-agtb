@@ -1,433 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Forecast - Worksheet - SugarCRM</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+  <meta charset="utf-8">
+  <title>Forecast - Worksheet - SugarCRM</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
 
-    <!-- styles -->
-    <link href="../css/bootstrap.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
-    <link href="http://jqueryui.com/themes/base/jquery.ui.all.css">
-    
-  	<link type="text/css" rel="stylesheet" href="../rickshaw/src/css/graph.css">
-  	<link type="text/css" rel="stylesheet" href="../rickshaw/src/css/lines.css">
-  	<style>
-
-    path.area {
-      fill: '#A6CEE3';
-    }
-
-    .axis text {
-      font: 10px sans-serif;
-    }
-
-    .axis path, .axis line {
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }
-
-    </style>
-  </head>
-  <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li>
-                <a href="#">Accounts</a>
-              </li>
-              <li class="">
-                <a href="#">Contacts</a>
-              </li>              
-              <li>
-                <a href="list.html">Opportunities</a>
-              </li>              
-              <li class="">
-                <a href="#">Leads</a>
-              </li>
-              <li class="active">
-                <a href="#">Forecasts</a>
-              </li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-          				<li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-          				<li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-          				<li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-          				<li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
-          				<li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
-          				<li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
-          				<li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
-          				<li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
-                  <li class="divider"></li>
-                  <li><a href="#"><i class="icon-plus"></i> Filter Menu By</a></li>
-                </ul>
-              </li>
-            </ul>
-            <ul class="nav pull-right">
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
-                <ul class="dropdown-menu">
-                  <li><a href="">System-wide maintenance &hellip;</a></li>
-                  <li class="divider"></li>
-                  <li><a href="">Upgrade to 7.0!</a></li>
-                  <li class="divider"></li>                       
-                  <li><a href="">Please take our survey.</a></li>
-                </ul>
-              </li>
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src=" https://lh5.googleusercontent.com/-tYj7_rm5E1w/AAAAAAAAAAI/AAAAAAAAAdM/DO9e_nVVDPw/s26-c-k/photo.jpg" alt="uwelcome avatar" class="avatar">uwelcome <b class="caret"></b></a>
-                 <ul class="dropdown-menu">
-                   <li><a href="#">Profile</a></li>
-                   <li><a href="#">Password</a></li>
-                   <li><a href="#">Advanced</a></li>
-                   <li><a href="#">External Accounts</a></li>
-                   <li class="divider"></li>
-                   <li><a href="#">Log Out</a></li>
-                 </ul>
-               </li>
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Account</a></li>
-                  <li><a href="#">Contact</a></li>
-                  <li><a href="#">Opportunity</a></li>
-                  <li><a href="#">Lead</a></li>
-                  <li><a href="#">Case</a></li>
-                  <li><a href="#">Report</a></li>
-                </ul>
-              </li>              
-            </ul>
-            <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
-            </form>
-          </div><!-- /.nav-collapse -->
-        </div>
-      </div><!-- /navbar-inner -->
-    </div>
-         <!-- <ul class="breadcrumb">
-           <li>
-             <a href="#">Home</a> <span class="divider">/</span>
-           </li>
-           <li>
-             <a href="#">Accounts</a> <span class="divider">/</span>
-           </li>        
-           <li class="active">
-             <a href="#">User</a>
-           </li>
-         </ul> -->
-    <div class="subnav">
-      <div class="btn-toolbar pull-left">
-        <h1>Worksheet</h1>
-      </div>
-        <div class="btn-toolbar pull-right">
-          <div class="dropdown">
-            <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-            <ul class="dropdown-menu menu">
-              <li><a href="#">Duplicate</a></li>
-              <li><a href="#">Save</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Note</a></li>                           
-              <li><a href="#">Email</a></li>
-              <li><a href="#">PDF</a></li>
-              <li><a href="#">CSV</a></li>
-            </ul>
-        </div>
-      </div>
-    </div>         
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span2">
-          <div class="bordered">
-            <div class="block">
-                <h4>Filters:</h4>
-                <a  data-toggle="modal"href="#adminFilter" title="Admin options" class="btn btn-primary">Create Filter <i class="icon-plus icon-sm"></i></a>
-            </div>
-            <div class="block">
-              <h4>People:</h4>
-              <ul class="list">
-                <li><i class="icon-folder-open"></i> Manager
-                    <ul>
-                      <li><i class="icon-folder-close"></i> Erik Dugger</li>
-                      <li><i class="icon-folder-close"></i> Randy Zane</li>
-                    </ul>
-                </li>
+  <!-- styles -->
+  <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+</head>
+<body id="forecast">
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li>
+              <a href="accounts.html">Accounts</a>
+            </li>
+            <li class="">
+              <a href="contacts.html">Contacts</a>
+            </li>              
+            <li>
+              <a href="opportunity.html">Opportunities</a>
+            </li>              
+            <li class="active">
+              <a href="#">Forecasts</a>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+                <li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
+                <li id="gen24"><a href="index.php?module=P1_Partners&amp;action=index" id="moduleTab_P1_Partners">oppQ</a></li>
+                <li id="gen25"><a href="index.php?module=Emails&amp;action=index" id="moduleTab_Emails">Emails</a></li>
+                <li id="gen26"><a href="index.php?module=Products&amp;action=index" id="moduleTab_Products">Products</a></li>
+                <li id="gen27"><a href="#ajaxUILoc=index.php%3Fmodule%3DCases%26action%3Dindex" id="moduleTab_Cases">Cases</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Filter Menu By</a></li>
               </ul>
-            </div>               
-          </div>
-        </div>
-        <div class="span10">
-          <div id="infovis"></div>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Report <a href=""><b class="caret"></b></th>
-                <th>Opportunity</th>
-                <th>Probability</th>
-                <th>Amount</th>
-                <th>Best Case</th>
-                <th>Worst Case</th>
-                <th>Likely Case</th>
-              </tr>
-            </thead>
-            <tbody id="listed">
-              <tr>
-                <td class="dblclick">Erik Dugger</td>
-                <td class="dblclick">Opp A</td>                
-                <td><div class="btn-group" data-toggle="buttons-radio">
-                  <button class="btn" title="Low">L</button>
-                  <button class="btn" title="Middle">M</button>
-                  <button class="btn" title="High">H</button>
-                </div></td>
-                <td class="dblclick">20,000</td>
-                <td class="dblclick">20,000</td>
-                <td class="dblclick">10,000</td>
-                <td class="dblclick">15,000</td>               
-              </tr>
-              <tr>
-                <td class="dblclick">Randy Zane</td>
-                <td class="dblclick">Opp B</td>                
-                <td><div class="btn-group" data-toggle="buttons-radio">
-                  <button class="btn" title="Low">L</button>
-                  <button class="btn" title="Middle">M</button>
-                  <button class="btn" title="High">H</button>
-                </div></td>
-                <td class="dblclick">20,000</td>
-                <td class="dblclick">20,000</td>
-                <td class="dblclick">10,000</td>
-                <td class="dblclick">15,000</td>               
-              </tr>
-            </tbody>                                                                     
-          </table>
-
-   
-            </div>
-          </div>
-        </div>                         
+            </li>
+          </ul>
+          <ul class="nav pull-right">
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
+              <ul class="dropdown-menu">
+                <li><a href="">System-wide maintenance &hellip;</a></li>
+                <li class="divider"></li>
+                <li><a href="">Upgrade to 7.0!</a></li>
+                <li class="divider"></li>                       
+                <li><a href="">Please take our survey.</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="profile_skhan.html">Profile</a></li>
+                <li><a href="#">Password</a></li>
+                <li><a href="#">Advanced</a></li>
+                <li><a href="#">External Accounts</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Log Out</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Create Account</a></li>
+                <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
+                <li><a href="#">Create Opportunity</a></li>
+              </ul>
+            </li>              
+          </ul>
+          <form class="navbar-search pull-right" action="">
+            <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]">
+          </form>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
+  <!-- <ul class="breadcrumb">
+  <li>
+  <a href="#">Home</a> <span class="divider">/</span>
+  </li>
+  <li>
+  <a href="#">Accounts</a> <span class="divider">/</span>
+  </li>        
+  <li class="active">
+  <a href="#">User</a>
+  </li>
+  </ul> -->
+  <div class="subnav">
+    <div class="btn-toolbar pull-left">
+      <h1>Worksheet</h1>
+    </div>
+    <div class="btn-toolbar pull-right">
+      <div class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
+        <ul class="dropdown-menu menu">
+          <li><a href="#">Duplicate</a></li>
+          <li><a href="#">Save</a></li>
+          <li class="divider"></li>
+          <li><a href="#">Note</a></li>                           
+          <li><a href="#">Email</a></li>
+          <li><a href="#">PDF</a></li>
+          <li><a href="#">CSV</a></li>
+        </ul>
       </div>
     </div>
-    <div class="modal hide" id="adminFilter">
-    <div class="modal-header">
+  </div>         
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span2">
+        <div class="bordered">
+          <div class="block">
+            <h4>Filters:</h4>
+            <br>
+            <p>
+            <a data-toggle="modal"href="#adminFilter" title="Admin options" class="btn btn-primary"><i class="icon-plus icon-sm"></i> Create Filter</a>
+            </p>
+            <ul class="list">
+              <li>
+                <a href="">Default Filter</a> <a href="" class="btn btn-mini"><i class="icon-remove icon-sm"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="block">
+            <h4>Chart Type:</h4>
+            <br>
+            <div class="btn-group">
+              <a href="" class="btn"><i class="icon-signal"></i></a>
+              <a href="" class="btn"><i class="icon-align-left"></i></a>
+            </div>
+          </div>
+          <div class="block">
+            <h4>Configuration:</h4>
+            <br>
+            <div class="control-group">
+              <label for="select01" class="control-label">Horizontal (x):</label>
+              <div class="controls ">
+                <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
+                  <option value="pk" selected="selected">Months</option> 
+                  <option value="pk">x</option>
+                  <option value="pk">x</option>
+                  <option value="pk">x</option> 
+                </select>
+              </div>
+            </div>  
+            <div class="control-group">
+              <label for="select01" class="control-label">Vertical (y):</label>
+              <div class="controls">
+                <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
+                  <option value="pk" selected="selected">Revenue</option> 
+                  <option value="pk">x</option>
+                  <option value="pk">x</option>
+                  <option value="pk">x</option> 
+                </select>
+              </div>
+            </div>  
+            <div class="control-group">
+              <label for="select01" class="control-label">Group By:</label>
+              <div class="controls">
+                <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
+                  <option value="pk" selected="selected">Sales stage</option> 
+                  <option value="pk">x</option>
+                  <option value="pk">x</option>
+                  <option value="pk">x</option> 
+                </select>
+              </div>
+            </div>  
+          </div>            
+          <div class="block">
+            <h4>People:</h4>
+            <ul class="list">
+              <li><i class="icon-folder-open"></i> Manager
+                <ul>
+                  <li><i class="icon-folder-close"></i> Erik Dugger</li>
+                  <li><i class="icon-folder-close"></i> Randy Zane</li>
+                </ul>
+              </li>
+            </ul>
+          </div>               
+        </div>
+      </div>
+      <div class="span10">
+        <div id="chart" class="tcenter">
+          <img src="http://placehold.it/600x300">
+        </div>
+        <hr>
+        <table class="table table-striped datatable">
+          <thead>
+            <tr>
+              <th class="nosort">Commit</th>
+              <th>Opportunity</th>
+              <th>Stage</th>
+              <th>Probability</th>
+              <th>Expected Close</th>
+              <th>Chance to Close</th>
+              <th>Amount</th>
+              <th class="nosort"><i class="icon-cog pull-right"></i></th>
+            </tr>
+          </thead>
+          <tbody id="listed">
+            <tr>
+              <td class="tcenter">
+                <input type="checkbox">
+              </td>
+              <td>Opp A</td>
+              <td>Proposed</td>                
+              <td>10%</td>
+              <td>2012/1/12</td>
+              <td>75%</td>
+              <td><span class="dblclick">150,000</span></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td class="tcenter">
+                <input type="checkbox">
+              </td>
+              <td>Opp B</td>                
+              <td>Quotes</td>
+              <td>80%</td>
+              <td>2012/1/19</td>
+              <td>20%</td>
+              <td>75,000</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td class="tcenter">
+                <input type="checkbox">
+              </td>
+              <td>Opp B</td>
+              <td>Closed</td>               
+              <td>100%</td>
+              <td>2012/2/21</td>
+              <td>100%</td>
+              <td>85,000</td>
+              <td></td>
+            </tr>              
+          </tbody> 
+          <tfoot>
+            <tr>
+              <td colspan="6" class="tright">Total:</td>
+              <td colspan="2">310,000</td>
+            </tr>
+          </tfoot>                                                                     
+        </table>
+      </div>
+    </div>
+  </div>                         
+</div>
+</div>
+<div class="modal hide" id="adminFilter">
+  <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
     <h3>Manage Filters</h3>
-    </div>
-    <div class="modal-body">
-      <form class="form-horizontal">
-              <fieldset>
-                <div class="control-group">
-                  <label for="input01" class="control-label">Filter Name</label>
-                  <div class="controls">
-                    <input type="text" id="input01" class="input-xlarge">
-                  </div>
-                </div>
-                <div class="control-group">
-                  <label for="input01" class="control-label">Account</label>
-                  <div class="controls">
-                    <input type="text" id="input01" class="input-xlarge">
-                  </div>
-                </div>                    
-                <div class="control-group">
-                  <label for="select01" class="control-label">Result Amount</label>
-                  <div class="controls">
-                    <select id="select01">
-                      <option>something</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="control-group">
-                  <label for="textarea" class="control-label">Keywords</label>
-                  <div class="controls">
-                    <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-                  </div>
-                </div>
-              </fieldset>
-            </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-primary">Save</a>
-        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-      </div>
-    </div>   
-    
-    <script src="../js/jquery-1.7.2.min.js"></script>
-    <script src="../js/bootstrap-transition.js"></script>
-    <script src="../js/bootstrap-alert.js"></script>
-    <script src="../js/bootstrap-modal.js"></script>
-    <script src="../js/bootstrap-dropdown.js"></script>
-    <script src="../js/bootstrap-scrollspy.js"></script>
-    <script src="../js/bootstrap-tab.js"></script>
-    <script src="../js/bootstrap-tooltip.js"></script>
-    <script src="../js/bootstrap-popover.js"></script>
-    <script src="../js/bootstrap-button.js"></script>
-    <script src="../js/bootstrap-typeahead.js"></script>
-    <script src="../js/application.js"></script>
-		<script src="../js/jquery.jeditable.js"></script>        
-		<script src="../js/editable.js"></script>        
+  </div>
+  <div class="modal-body">
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn btn-primary">Save</a>
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+  </div>
+</div>   
 
-<!-- Charts -->
-<script src="../js/jit-yc.js"></script>
-<script>
-var labelType, useGradients, nativeTextSupport, animate;
-
-(function() {
-  var ua = navigator.userAgent,
-      iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-      typeOfCanvas = typeof HTMLCanvasElement,
-      nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-      textSupport = nativeCanvasSupport 
-        && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-  //I'm setting this based on the fact that ExCanvas provides text support for IE
-  //and that as of today iPhone/iPad current text support is lame
-  labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
-  nativeTextSupport = labelType == 'Native';
-  useGradients = nativeCanvasSupport;
-  animate = !(iStuff || !nativeCanvasSupport);
-})();
-
-var Log = {
-  elem: false,
-  write: function(text){
-    if (!this.elem) 
-      this.elem = document.getElementById('log');
-    this.elem.innerHTML = text;
-    this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
-  }
-};
-
-
-function init(){
-  //init data
-  var json = {
-      'label': ['label A', 'label B', 'label C', 'label D'],
-      'values': [
-      {
-        'label': 'date A',
-        'values': [20, 40, 15, 5]
-      }, 
-      {
-        'label': 'date B',
-        'values': [30, 10, 45, 10]
-      }, 
-      {
-        'label': 'date E',
-        'values': [38, 20, 35, 17]
-      }, 
-      {
-        'label': 'date F',
-        'values': [58, 10, 35, 32]
-      }, 
-      {
-        'label': 'date D',
-        'values': [55, 60, 34, 38]
-      }, 
-      {
-        'label': 'date C',
-        'values': [26, 40, 25, 40]
-      }]
-      
-  };
-  //end
-  var json2 = {
-      'values': [
-      {
-        'label': 'date A',
-        'values': [10, 40, 15, 7]
-      }, 
-      {
-        'label': 'date B',
-        'values': [30, 40, 45, 9]
-      }, 
-      {
-        'label': 'date D',
-        'values': [55, 30, 34, 26]
-      }, 
-      {
-        'label': 'date C',
-        'values': [26, 40, 85, 28]
-      }]
-      
-  };
-    //init BarChart
-    var barChart = new $jit.BarChart({
-      //id of the visualization container
-      injectInto: 'infovis',
-      //whether to add animations
-      animate: true,
-      //horizontal or vertical barcharts
-      orientation: 'vertical',
-      //bars separation
-      barsOffset: 20,
-      //visualization offset
-      Margin: {
-        top:5,
-        left: 5,
-        right: 5,
-        bottom:5
-      },
-      //labels offset position
-      labelOffset: 5,
-      //bars style
-      type: useGradients? 'stacked:gradient' : 'stacked',
-      //whether to show the aggregation of the values
-      showAggregates:true,
-      //whether to show the labels for the bars
-      showLabels:true,
-      //labels style
-      Label: {
-        type: labelType, //Native or HTML
-        size: 13,
-        family: 'Arial',
-        color: 'white'
-      },
-      //add tooltips
-      Tips: {
-        enable: true,
-        onShow: function(tip, elem) {
-          tip.innerHTML = "<b>" + elem.name + "</b>: " + elem.value;
-        }
-      }
-    });
-    //load JSON data.
-    barChart.loadJSON(json);
-    //end
-    var list = $jit.id('id-list'),
-        button = $jit.id('update'),
-        orn = $jit.id('switch-orientation');
-    //update json on click 'Update Data'
-    $jit.util.addEvent(button, 'click', function() {
-      var util = $jit.util;
-      if(util.hasClass(button, 'gray')) return;
-      util.removeClass(button, 'white');
-      util.addClass(button, 'gray');
-      barChart.updateJSON(json2);
-    });
-    //dynamically add legend to list
-    var legend = barChart.getLegend(),
-        listItems = [];
-    for(var name in legend) {
-      listItems.push('<div class=\'query-color\' style=\'background-color:'
-          + legend[name] +'\'>&nbsp;</div>' + name);
-    }
-    list.innerHTML = '<li>' + listItems.join('</li><li>') + '</li>';
-}
+<script src="../js/jquery-1.7.2.min.js"></script>
+<script src="../js/bootstrap-transition.js"></script>
+<script src="../js/bootstrap-alert.js"></script>
+<script src="../js/bootstrap-modal.js"></script>
+<script src="../js/bootstrap-dropdown.js"></script>
+<script src="../js/bootstrap-scrollspy.js"></script>
+<script src="../js/bootstrap-tab.js"></script>
+<script src="../js/bootstrap-tooltip.js"></script>
+<script src="../js/bootstrap-popover.js"></script>
+<script src="../js/bootstrap-button.js"></script>
+<script src="../js/bootstrap-typeahead.js"></script>
+<script src="../js/chosen.jquery.min.js"></script>
+<script src="../js/jquery.datatables.js"></script> 
+<script src="../js/jquery.jeditable.js"></script>        
+<script src="../js/editable.js"></script>
+<script src="../js/application.js"></script>      
 </script>
-  </body>
+</body>
 </html>

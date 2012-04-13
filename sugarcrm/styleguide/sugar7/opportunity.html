@@ -94,17 +94,7 @@
   </div>
   <div class="subnav">
     <div class="btn-toolbar pull-left">
-      <div class="btn-group"> 
-        <div class="dropdown">
-          <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-          <ul class="dropdown-menu menu">
-            <li><a href="#">Delete</a></li>
-            <li><a href="#">Mass Update</a></li>
-            <li><a href="#">Merge</a></li>
-            <li><a href="#">Export</a></li>
-          </ul>
-        </div>
-      </div>
+      <h1>Opportunities</h1>
     </div>  
     <div class="btn-toolbar pull-right">
       <div class="btn-group"> 
@@ -160,7 +150,16 @@
           <thead>
             <tr>
               <th class="nosort">
-                  <input type="checkbox" class="toggle-all"> <i class="icon-star-empty"></i>
+                <div class="btn-group">
+                  <b class="btn" rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Email</a></li>
+                    <li><a href="#">Mass Update</a></li>
+                    <li><a href="#">Merge</a></li>
+                    <li><a href="#">Export</a></li>
+                  </ul>
+                </div>
               </th>
               <th class="">Opportunity</th>
               <th class="">Sales Stage</th>
@@ -172,7 +171,7 @@
           </thead>
           <tbody id="listed">
             <tr>
-              <td><input type="checkbox"> <i class="icon-star-empty"></i></td>
+              <td><input type="checkbox"> <a href=""><i class="icon-star"></i></a></td>
               <td><a href="100seat.html">Perkin Kleiners - 100 Seats</a></td>
               <td rel="tooltip" title="60% Negotiation">
                 <div class="progress progress-mid">
@@ -193,7 +192,7 @@
               </td>
             </tr>
             <tr>
-              <td><input type="checkbox"> <i class="icon-star-empty"></i></td>
+              <td><input type="checkbox"> <a href=""><i class="icon-star"></i></a></td>
               <td><a href="instance.html">Weyland Corp.</a></td>
               <td rel="tooltip" title="25% Discovery">
                 <div class="progress progress-min">

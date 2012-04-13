@@ -2,6 +2,18 @@
 
   $(function(){
 
+
+    // toggle all checkboxes
+    $('.toggle-all').on('click', function (e) {
+    		$('table').find(':checkbox').attr('checked', this.checked);      
+    })
+
+    // toggle star
+    $('.icon-star').on('click', function (e) {
+    		$(this).parent().toggleClass('active');
+    		return false;  
+    })
+
     // editable
     $('td .dblclick').hover( 
       function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
@@ -48,7 +60,7 @@
 
     // tooltip demo
     $('body').tooltip({
-      selector: "a[rel=tooltip]"
+      selector: "[rel=tooltip]"
     })
     $('table').tooltip({
 			delay: { show: 500, hide: 10 },
@@ -115,18 +127,9 @@
     $('.close').on('click', function (e) {
 			$(this).parent().remove();
     })
-    
-    // toggle stars (needs tap logic for mobile)
-  	$('.icon-star-empty, .icon-star').on('click', function () {
-  	      $(this).toggleClass('icon-star-empty').addClass('icon-star');
-  	      return false;
-  	})
+    $('.btngroup .btn').button();
   	
-    // toggle all checkboxes
-    $('.toggle-all').on('click', function (e) {
-      inputsComponent.attr('checked', !inputsComponent.is(':checked'))
-			$('.alert').show()
-    })
+
   })
   
   $('.datatable').dataTable({

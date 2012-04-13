@@ -560,6 +560,11 @@ article:hover .actions,  tr:hover .actions {
   margin-right: 5px;
 }
 
+.control-group .btn-toolbar {
+  margin: -4px 0 0 !important;
+  display: inline;
+}
+
 /* vcard */
 .vcard {
 	display: inline-block;
@@ -895,8 +900,7 @@ tr .icon-pencil {position: absolute; left: -5px; top: 10px; padding: 0 2px !impo
 }
 table input {
   position: relative;
-  margin: -6px 0 -5px -2px !important;
-  z-index: 1020;
+  margin: -5px 0 0 0px !important;
 }
 .eSelect:hover {}
 .editable {margin: 0;}
@@ -1084,12 +1088,40 @@ a.active [class^="icon-"]{
   .opacity(100);
 }
 
+table [class^="icon-star"] {
+  margin: 0 16px
+}
+
+.icon-star {
+  color: @grayLight;
+}
+.active .icon-star {
+  color: @orange;
+}
+/*
+.active .icon-ban-circle, .active .icon-exclamation-sign {
+color: @red;
+} */
+
 .the-icons {
   margin-left: 0;
   list-style: none;
 }
 .the-icons i:hover {
   background-color: rgba(255,0,0,.25);
+}
+
+.control-group {
+    clear: both;
+}
+
+.icon-phone {
+  background: url('../img/phone.png') no-repeat 50% 50%;
+  background-size: 80%;
+  height: 26px;
+  width: 26px;
+  display: block;
+  margin-bottom: -22px;
 }
 
 .navbar a [class^="icon-"] {
@@ -1108,10 +1140,6 @@ a.active [class^="icon-"]{
 
 .btn-small .caret  {
   margin-top: 6px;
-}
-
-.icon-star {
-  color: @orange;
 }
 
 .btn-fixed {
@@ -1152,12 +1180,6 @@ table th:gt(3), table td:gt(3)  {
     border-bottom: 1px solid darken(@white, 10%);
     vertical-align: middle;
   }
-
-  #stream table [class^="icon-star"] {
-    margin: 0 10px 0;
-    .opacity(40);
-  }
-
 
   /* Change up some type stuff */
   h2 {
