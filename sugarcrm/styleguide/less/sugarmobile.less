@@ -429,6 +429,22 @@ html {
   height:34px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+  a.btn {
+    min-height:20px;
+    min-width:50px;
+  }
+  i.opt {
+    font-style: normal;
+  }
+}
+
+
+@media (max-width: 479px) {
+  .topelbar {
+    i.opt {
+      display:none !important;
+    }
+  }
 }
 
 .tcenter > .btn-group {
@@ -985,3 +1001,4 @@ float: none !important;}
 .navbar-bottom button:hover {
   #gradient > .vertical(lighten(@black, 30%), lighten(@black, 16%));
 }
+

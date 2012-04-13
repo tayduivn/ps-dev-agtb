@@ -4094,6 +4094,18 @@ html {
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#ebebeb', GradientType=0);
 }
+.topelbar a.btn {
+  min-height: 20px;
+  min-width: 50px;
+}
+.topelbar i.opt {
+  font-style: normal;
+}
+@media (max-width: 479px) {
+  .topelbar i.opt {
+    display: none !important;
+  }
+}
 .tcenter > .btn-group {
   display: inline-block;
 }
