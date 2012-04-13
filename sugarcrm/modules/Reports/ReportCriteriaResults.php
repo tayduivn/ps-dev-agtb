@@ -192,7 +192,8 @@ else if (isset($_REQUEST['record'])){
 }
 
 if(! empty($_REQUEST['to_pdf'])){
-	template_handle_pdf($args['reporter']);
+    if (isset($args['reporter']))
+        template_handle_pdf($args['reporter']);
 	return;
 } // if
 if(! empty($_REQUEST['to_csv'])){
@@ -220,7 +221,8 @@ if(!empty($args['reporter']->saved_report->id)){
     $star = SugarFavorites::generateStar(SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id), 'Reports', $args['reporter']->saved_report->id);
 }
 //END SUGARCRM flav=pro ONLY
-$params[] = "{$args['reporter']->name}&nbsp;{$star}";
+if (!empty($args['reporter']->name))
+    $params[] = "{$args['reporter']->name}&nbsp;{$star}";
 
 //Override the create url
 $createURL = 'index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report';
