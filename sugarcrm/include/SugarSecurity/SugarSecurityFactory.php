@@ -32,10 +32,10 @@ class SugarSecurityFactory {
      * @return SugarSecurity -- A SugarSecurity object of the requested type.
      */
     static public function loadClassFromType($type = 'User' ) {
-        $cleanType = ucfirst(strtolower(basename($type)));
+        $cleanType = basename($type);
         
         $className = 'SugarSecurity'.$cleanType;
-        
+
         if ( file_exists('custom/include/SugarSecurity/'.$className.'Cstm.php') ) {
             $className = $className.'Cstm';
             require_once('custom/include/SugarSecurity/'.$className.'Cstm.php');
@@ -61,8 +61,8 @@ class SugarSecurityFactory {
      * @return SugarSecurity -- A SugarSecurity object
      */
     static public function loadClassFromSession() {
-        if ( isset($_SESSION['SugarSec']['type']) ) {
-            $type = $_SESSION['SugarSec']['type'];
+        if ( isset($_SESSION['sugarSec']['type']) ) {
+            $type = $_SESSION['sugarSec']['type'];
         } else {
             // No type set in the session, probably a normal user
             $type = 'User';
