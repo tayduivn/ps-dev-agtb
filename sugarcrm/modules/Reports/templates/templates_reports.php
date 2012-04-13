@@ -108,12 +108,12 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-	} 
+	}
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'matrix\');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-	} 
+	}
 
 	// Summation
 	else if ($report_type == 'summary') {
@@ -122,7 +122,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
-	} 	
+	}
 
     $smarty->assign('duplicateButtons', $duplicateButtons);
 	$smarty->assign('mod_strings', $mod_strings);
@@ -188,30 +188,26 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	if (isset($args['warnningMessage'])) {
 		$smarty->assign('warnningMessage', $args['warnningMessage']);
 	} // if
-	$is_owner =  true;
-	if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
-		$is_owner = false;
-	} // if
-	$report_edit_access = false;
-	if(ACLController::checkAccess('Reports', 'edit', $is_owner)) {
-		$report_edit_access = true;
-	} // if
-	$smarty->assign('report_edit_access', $report_edit_access);
-	$report_export_access = false;
-	if(ACLController::checkAccess('Reports', 'export', $is_owner)) {
-		$report_export_access = true;
-	} // if
-
-	$isExportAccess = false;
-	if(!ACLController::checkAccess('Reports', 'export', $is_owner) || $sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin($current_user) || (ACLController::moduleSupportsACL($reporter->module) && ACLAction::getUserAccessLevel($current_user->id,$reporter->module, 'access') == ACL_ALLOW_ENABLED && ACLAction::getUserAccessLevel($current_user->id, $reporter->module, 'admin') == ACL_ALLOW_ADMIN)))){
-		// no op
+	if(!empty($args['reporter']->saved_report)) {
+	    $context = array("bean" => $args['reporter']->saved_report);
 	} else {
-		if ($reporter->report_def['report_type'] == 'tabular') {
-			$isExportAccess = true;
-		}
-	} // else
-
+	    $context = array();
+	}
+	$report_edit_access = SugarACL::checkAccess('Reports', 'edit', $context);
+	$smarty->assign('report_edit_access', $report_edit_access);
+	$report_delete_access = SugarACL::checkAccess('Reports', 'delete', $context);
+	$smarty->assign('report_delete_access', $report_delete_access);
+	$report_export_access = SugarACL::checkAccess('Reports', 'export', $context);
 	$smarty->assign('report_export_access', $report_export_access);
+
+    if($report_export_access && empty($sugar_config['disable_export'])
+        && SugarACL::checkAccess($reporter->module, 'export')
+        && $reporter->report_def['report_type'] == 'tabular') {
+        $isExportAccess = true;
+    } else {
+        $isExportAccess = false;
+    }
+
 	$smarty->assign('report_export_as_csv_access', $isExportAccess);
 	$smarty->assign('form_submit', empty($_REQUEST['form_submit']) ? false : $_REQUEST['form_submit']);
 
@@ -570,19 +566,16 @@ function template_reports_report(&$reporter,&$args) {
 	$smarty->assign('to_pdf', isset($_REQUEST['to_pdf']) ? $_REQUEST['to_pdf'] : "");
 	$smarty->assign('to_csv', isset($_REQUEST['to_csv']) ? $_REQUEST['to_csv'] : "");
 
-	$is_owner =  true;
-	if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
-		$is_owner = false;
-	} // if
-	$report_edit_access = false;
-	if(ACLController::checkAccess('Reports', 'edit', $is_owner)) {
-		$report_edit_access = true;
-	} // if
+	if(!empty($args['reporter']->saved_report)) {
+	    $context = array("bean" => $args['reporter']->saved_report);
+	} else {
+	    $context = array();
+	}
+	$report_edit_access = SugarACL::checkAccess('Reports', 'edit', $context);
 	$smarty->assign('report_edit_access', $report_edit_access);
-	$report_export_access = false;
-	if(ACLController::checkAccess('Reports', 'export', $is_owner)) {
-		$report_export_access = true;
-	} // if
+	$report_delete_access = SugarACL::checkAccess('Reports', 'delete', $context);
+	$smarty->assign('report_delete_access', $report_delete_access);
+	$report_export_access = SugarACL::checkAccess('Reports', 'export', $context);
 	$smarty->assign('report_export_access', $report_export_access);
 	$smarty->assign('form_submit', empty($_REQUEST['form_submit']) ? false : $_REQUEST['form_submit']);
 
@@ -789,11 +782,11 @@ function reportResults(&$reporter, &$args) {
 
 if (isset($reporter->saved_report->id) )
     $report_id = $reporter->saved_report->id;
-elseif(!empty($_REQUEST['record'])) 
+elseif(!empty($_REQUEST['record']))
     $report_id = $_REQUEST['record'];
-else  
-    $report_id = 'unsavedReport'; 
-    
+else
+    $report_id = 'unsavedReport';
+
 	echo "<div class='reportChartContainer' id='{$report_id}_div' style='{$reportChartDivStyle}'>";
 	 template_chart($reporter, $reportChartDivStyle);
 	 echo "</div>";
@@ -801,371 +794,6 @@ else
 
 	print $contents;
 } // fn
-
-/*
-function template_reports_report1(&$reporter,&$args)
-{
-global $current_user;
-global $current_language;
-global $mod_strings, $app_strings;
-
-$sort_by = '';
-$sort_dir = '';
-$summary_sort_by = '';
-$summary_sort_dir = '';
-$report_type = '';
-
-if (isset($reporter->report_def['order_by'][0]['name']) && isset($reporter->report_def['order_by'][0]['table_key']))
-{
-	$sort_by = $reporter->report_def['order_by'][0]['table_key'].":".$reporter->report_def['order_by'][0]['name'];
-}
-if ( isset($reporter->report_def['order_by'][0]['sort_dir']))
-{
-	$sort_dir = $reporter->report_def['order_by'][0]['sort_dir'];
-}
-
-if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function']) && $reporter->report_def['summary_order_by'][0]['group_function'] == 'count')
-{
-  $summary_sort_by = 'count';
-} else if ( isset($reporter->report_def['summary_order_by'][0]['name']))
-{
-	$summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".$reporter->report_def['summary_order_by'][0]['name'];
-
-	if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function'])) {
-		$summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['group_function'];
-	} else if ( ! empty($reporter->report_def['summary_order_by'][0]['column__function'])) {
-
-                $summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['column_function'];
-        }
-}
-
-if ( isset($reporter->report_def['summary_order_by'][0]['sort_dir']))
-{
-	$summary_sort_dir = $reporter->report_def['summary_order_by'][0]['sort_dir'];
-}
-if ( isset($reporter->report_def['report_type']))
-{
-	$report_type = $reporter->report_def['report_type'];
-}
-
-
-?>
-
-<?php
-
-if (isset($args['save_result']))
-{
-	if ($args['save_result'])
-	{
-?>
-<p>	<span><b><?php echo $mod_strings['LBL_SUCCESS_REPORT']; ?> "<?php echo $_REQUEST['save_report_as']; ?>" <?php echo $mod_strings['LBL_WAS_SAVED']; ?></b></span></p>
-<?php
-	}
-	else
-	{
-?>
-	<span><b><?php echo $mod_strings['LBL_FAILURE_REPORT']; ?> "<?php echo $_REQUEST['save_report_as']; ?>" <?php echo $mod_strings['LBL_WAS_NOT_SAVED']; ?></b></span></p>
-<?php
-	}
-
-}
-
-?><p>
-<?php echo get_form_header( $mod_strings['LBL_TITLE'].": ".$reporter->name, "", false); ?>
-<form action="index.php#main" method="post" name="EditView" onSubmit="return fill_form();">
-<input type="hidden" name='report_offset' value ="<?php echo $reporter->report_offset; ?>">
-<input type="hidden" name='sort_by' value ="<?php echo $sort_by; ?>">
-<input type="hidden" name='sort_dir' value ="<?php echo $sort_dir; ?>">
-<input type="hidden" name='summary_sort_by' value ="<?php echo $summary_sort_by; ?>">
-<input type="hidden" name='summary_sort_dir' value ="<?php echo $summary_sort_dir; ?>">
-<input type="hidden" name='expanded_combo_summary_divs' id='expanded_combo_summary_divs' value=''>
-<input type="hidden" name="action" value="index">
-<input type="hidden" name="module" value="Reports">
-<?php
-
-
-if (isset($_REQUEST['save_as']) &&  $_REQUEST['save_as'] == 'true')
-    $report_id = '';
-else if (isset($reporter->saved_report->id) )
-    $report_id = $reporter->saved_report->id;
-elseif(!empty($_REQUEST['record']))
-    $report_id = $_REQUEST['record'];
-else
-    $report_id = '';
-?>
-<input type="hidden" name="record" value="<?php echo $report_id;?>">
-<input type="hidden" name='report_def' value ="">
-<input type="hidden" name='save_as' value ="">
-<input type="hidden" name="page" value="report">
-<input type="hidden" name="to_pdf" value="<?php if ( isset($_REQUEST['to_pdf'])) { echo $_REQUEST['to_pdf']; } ?>"/>
-<input type="hidden" name="to_csv" value="<?php if ( isset($_REQUEST['to_csv'])) { echo $_REQUEST['to_csv']; } ?>"/>
-<input type="hidden" name="save_report" value=""/>
-<!--
-<input type="hidden" name="report_module" value="<?php echo $reporter->module; ?>">
--->
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td style="padding-bottom: 2px;"">
-<?php
-$is_owner =  true;
-if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id)
-	$is_owner = false;
-
-if(ACLController::checkAccess('Reports', 'edit', $is_owner))
-{?>
-<input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>"
-    value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>"
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>"
-    value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>"
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>"
-    value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>"
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
-<?php }?>
-<?php
-if(ACLController::checkAccess('Reports', 'export', $is_owner))
-{
-?>
-<input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>"
-    value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>"
-    onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
-<?php }?>
-</td>
-</tr>
-</table>
-<script>
-var form_submit = "<?php echo (empty($_REQUEST['form_submit']) ? false : $_REQUEST['form_submit']);?>";
-var tab_keys = new Array('module_join_tab','filters_tab','columns_tab','group_by_tab','chart_options_tab');
-LBL_RELATED = '<?php echo $mod_strings['LBL_RELATED'] ?>';
-function showReportTab(show_key)
-{
- for(var i in tab_keys)
- {
-	document.getElementById(tab_keys[i]).style.display='none';
- }
- document.getElementById(show_key).style.display='block';
-}
-<?php
-$global_json = getJSONobj();
-global $ACLAllowedModules;
-$ACLAllowedModules = getACLAllowedModules();
-echo 'ACLAllowedModules = ' . $global_json->encode(array_keys($ACLAllowedModules));
-?>
-
-</script>
-<?php
-
-
-require_once('include/tabs.php');
-
-$tabs = array();
-
-array_push($tabs,array('title'=>$mod_strings['LBL_1_REPORT_ON'],'link'=>'module_join_tab','key'=>'module_join_tab'));
-array_push($tabs,array('title'=>$mod_strings['LBL_2_FILTER'],'link'=>'filters_tab','key'=>'filters_tab'));
-//array_push($tabs,array('title'=>$mod_strings['LBL_3_GROUP'],'link'=>'group_by_tab','key'=>'group_by_tab'));
-//array_push($tabs,array('title'=>$mod_strings['LBL_3_CHOOSE'],'link'=>'columns_tab','key'=>'columns_tab'));
-if ( $args['reporter']->report_type == 'tabular')
-{
-  array_push($tabs,array('title'=>$mod_strings['LBL_3_GROUP'],'hidden'=>true,'link'=>'group_by_tab','key'=>'group_by_tab'));
-  array_push($tabs,array('title'=>$mod_strings['LBL_3_CHOOSE'],'link'=>'columns_tab','key'=>'columns_tab'));
-  array_push($tabs,array('title'=>$mod_strings['LBL_5_CHART_OPTIONS'],'hidden'=>true,'link'=>'chart_options_tab','key'=>'chart_options_tab'));
-} else {
-  array_push($tabs,array('title'=>$mod_strings['LBL_3_GROUP'],'link'=>'group_by_tab','key'=>'group_by_tab'));
-  array_push($tabs,array('title'=>$mod_strings['LBL_4_CHOOSE'],'link'=>'columns_tab','key'=>'columns_tab'));
-  array_push($tabs,array('title'=>$mod_strings['LBL_5_CHART_OPTIONS'],'link'=>'chart_options_tab','key'=>'chart_options_tab'));
-}
-
-$current_key = 'module_join_tab';
-$tab_panel= new SugarWidgetTabs($tabs,$current_key,'showReportTab');
-echo "<BR>".$tab_panel->display();
-?>
-
-<table width="100%" border="0" cellspacing=0 cellpadding=0 class="edit view" style="border-top: 0px;">
-<tr>
-<td valign="top" width="100%">
-<?php template_reports_tables1($smarty, $args); ?>
-
-
-<?php
-if( $reporter->report_type=='summary')
-{
- $summary_display = '';
-
- if ( $reporter->show_columns)
- {
- $column_display = '';
- }
- else
- {
-  $column_display = 'none';
- }
-}
-else
-{
- $summary_display = 'none';
- $column_display = '';
-}
-
-$summary_join_selector = '&nbsp;<div style="padding-bottom:2px">'.$mod_strings['LBL_MODULE'].': <select onChange="viewJoinChanged(this);" id="view_join_summary" name="view_join_summary"></select></div>';
-
-$chooser_args_summary = array('id'=>'summary_table','title'=>$mod_strings['LBL_CHOOSE_SUMMARIES'].':','left_name'=>'display_summary','right_name'=>'hidden_summary','left_label'=>$mod_strings['LBL_DISPLAY_SUMMARIES'],'right_label'=>$summary_join_selector,'display'=>$summary_display,'onmoveleft'=>'reload_columns(\'join\')','onmoveright'=>'reload_columns(\'join\')');
-
-
-$join_selector = '&nbsp;<div style="padding-bottom:2px">'.$mod_strings['LBL_MODULE'].': <select onChange="viewJoinChanged(this);" id="view_join" name="view_join"></select></div>';
-
-$chooser_args = array('id'=>'columns_table','title'=>$mod_strings['LBL_CHOOSE_COLUMNS'].':','left_name'=>'display_columns','right_name'=>'hidden_columns','left_label'=>$mod_strings['LBL_DISPLAY_COLUMNS'],'right_label'=>$join_selector,'display'=>$column_display,'topleftcontent'=>$join_selector,'onmoveleft'=>'reload_columns(\'join\')','onmoveright'=>'reload_columns(\'join\')');
-
-
-?>
-<div id="columns_tab" style="display: none">
-<?php template_groups_chooser1($chooser_args_summary); ?>
-<div id="summary_more_div" <?php if ( $summary_display == 'none') { echo "style=\"display: none\"";};?>>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $mod_strings['LBL_LABEL'];?>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type='text' name='detailsummary_label_editor' id='detailsummary_label_editor' value='' onchange='saveLabel("detailsummary",this )'>
-<div scope="row">
-
-<input type="checkbox" class="checkbox" name="show_details" id="show_details" onclick="showDetailsClicked(this);" <?php if ( $reporter->show_columns) { echo "CHECKED"; } ?>>&nbsp;
-<?php echo $mod_strings['LBL_SHOW_DETAILS']; ?></div>
-<br>
-</div>
-
-<?php template_groups_chooser1($chooser_args);  ?>
-<div id="columns_more_div"  <?php if ( $column_display == 'none') { echo "style=\"display: none\"";};?>>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $mod_strings['LBL_LABEL'];?>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type='text' name='column_label_editor' id='column_label_editor' value='' size=25 onchange='saveLabel("column", this)'>
-</div>
-
-</div>
-
-<?php template_reports_filters1($smarty, $args); ?>
-<div id='group_by_tab' style="display: none"
-<?php if ( $args['reporter']->report_type == 'tabular') { ?>
-style="display: none"
-<?php } ?>>
-<?php  template_reports_group_by1($smarty, $args); ?>
-</div>
-<div id='chart_options_tab' style="display: none">
-<?php  template_reports_chart_options1($smarty, $args); ?>
-</div>
-
-</td>
-</tr>
-</table></p>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td style="padding-bottom: 2px;"">
-<?if(ACLController::checkAccess('Reports', 'edit', $is_owner))
-{?>
-<input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>"
-    value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>"
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>"
-    value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>"
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>"
-    value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>"
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
-<?}?>
-<?if(ACLController::checkAccess('Reports', 'export', $is_owner))
-{?>
-<input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>"
-    value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>"
-    onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
-<?}?>
-
-</td>
-</tr>
-</table>
-</form>
-</p>
-<?php
-// template_module_defs_js($args);
-?>
-<script type="text/javascript" src="cache/modules/modules_def_<?php echo $current_language; ?>_<?php echo md5($current_user->id) ?>.js"></script>
-<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
-<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
-<script>
-
-var visible_modules;
-var report_def;
-var current_module;
-var visible_fields = new Array();
-var visible_fields_map =  new Object();
-var visible_summary_fields = new Array();
-var visible_summary_field_map =  new Object();
-var current_report_type;
-var display_columns_ref = 'display';
-var hidden_columns_ref = 'hidden';
-var field_defs;
-var previous_links_map = new Object();
-var previous_links =  new Array();
-var display_summary_ref = 'display';
-var hidden_summary_ref = 'hidden';
-var users_array = new Array();
-
-</script>
-<?php template_reports_functions_js($args); ?>
-<?php template_reports_request_vars_js($reporter,$args); ?>
-<?php
-ob_start();
-?>
-<script language="javascript">
-if(typeof YAHOO != 'undefined') YAHOO.util.Event.addListener(window, 'load', load_page);
-</script>
-<div id="report_results">
-<?php
-$do_chart = false;
-
-if ($reporter->report_type == 'summary' &&
-     ! empty($reporter->report_def['summary_columns']))
-{
-
-		if ( $reporter->show_columns &&
-			!empty($reporter->report_def['display_columns']) &&
-          ! empty($reporter->report_def['group_defs']))
-	{
-
-		template_summary_combo_view($reporter,$args);
-			$do_chart = true;
-	} else if ($reporter->show_columns &&
-	             	!empty($reporter->report_def['display_columns']) &&
-          empty($reporter->report_def['group_defs']))
-	{
-
-		template_detail_and_total_list_view($reporter,$args);
-	} else if (! empty($reporter->report_def['group_defs']))
-	{
-		template_summary_list_view($reporter,$args);
-			$do_chart = true;
-	} else
-	{
-		template_total_view($reporter,$args);
-		}
-} else if (! empty($reporter->report_def['display_columns']) )
-{
-	template_list_view($reporter,$args);
-		}
-
-if ($reporter->report_def['chart_type']== 'none')
-{
-		$do_chart = false;
-	}
-?>
-</div>
-<?php
-	$contents = ob_get_contents();
-	ob_end_clean();
-
-	if ($do_chart)
-	{
-   template_chart($reporter);
-	}
-
-	print $contents;
-}
-
-*/
 
 //////////////////////////////////////////////
 // TEMPLATE:
@@ -1201,46 +829,6 @@ function template_reports_filters(&$smarty, &$args) {
 
 } // fn
 
-/*
-function template_reports_filters(&$args)
-{
-$reporter =$args['reporter'];
-global $mod_strings;
-?>
-<div id="filters_tab" style="display: none">
-<span scope="row"><h5><?php echo $mod_strings['LBL_FILTERS']; ?>:</h5></span>
-<?php echo $mod_strings['LBL_FILTER_CONDITIONS']; ?>
- <select name='filters_combiner' id='filters_combiner'>
-   <option value='AND' <?php if(!empty($reporter->report_def['filters_combiner']) && $reporter->report_def['filters_combiner'] == 'AND') echo ' selected '; ?>><?php echo $mod_strings['LBL_FILTER_AND']; ?></option>
-   <option value='OR' <?php if(!empty($reporter->report_def['filters_combiner']) && $reporter->report_def['filters_combiner'] == 'OR') echo ' selected '; ?>><?php echo $mod_strings['LBL_FILTER_OR']; ?></option>
-</select>
-<?php echo $mod_strings['LBL_FILTERS_END']; ?>
-<br><br>
-<input class=button type=button onClick='window.addFilter()' name='<?php echo $mod_strings['LBL_ADD_NEW_FILTER']; ?>' value='<?php echo $mod_strings['LBL_ADD_NEW_FILTER']; ?>'>
-&nbsp;&nbsp;<?php echo $mod_strings['LBL_DATE_BASED_FILTERS']; ?>
-<input type=hidden name='filters_def' value ="">
-<?php
-$sort_by ="";
-$sort_dir ="";
-if ( isset($reporter->report_def['sort_by']))
-{
-	$sort_dir = $reporter->report_def['sort_by'];
-}
-
-if ( isset($reporter->report_def['sort_dir']))
-{
-	$sort_dir = $reporter->report_def['sort_dir'];
-}
-?>
-<table id='filters_top' border=0 cellpadding="0" cellspacing="0">
-<tbody id='filters'></tbody>
-</table>
-</div>
-
-<?php
-}
-*/
-
 //////////////////////////////////////////////
 // TEMPLATE:
 //////////////////////////////////////////////
@@ -1252,30 +840,6 @@ function template_reports_group_by(&$smarty, &$args) {
 	//echo $smarty->fetch("modules/Reports/templates/_template_reports_group_by.tpl");
 
 } // fn
-
-/*
-function template_reports_group_by(&$args)
-{
-global $mod_strings;
-?>
-<span scope="row"><h5><?php echo $mod_strings['LBL_GROUP_BY'];?>:</h5></span>
-<table width="100%" cellpadding=0 cellspacing=0>
-<tr id="group_by_button">
-<td align=left>
-<input class=button type=button onClick='addGroupByFromButton()' name='Add Column' value='<?php echo $mod_strings['LBL_ADD_COLUMN'];?>'>
-</td>
-</tr>
-</table>
-<input type=hidden name='group_by_def' value =""/>
-<div id='group_by_div'>
-<table id='group_by_table' border="0" cellpadding="0" cellspacing="0">
-<tbody id='group_by_tbody'></tbody>
-</table>
-</div>
-
-<?php
-}
-*/
 
 //////////////////////////////////////////////
 // TEMPLATE:
@@ -1302,61 +866,6 @@ function template_reports_chart_options(&$smarty, &$args) {
 	//echo $smarty->fetch("modules/Reports/templates/_template_reports_chart_options.tpl");
 
 } // fn
-
-/*
-function template_reports_chart_options(&$args)
-{
-$reporter = $args['reporter'];
-global $mod_strings;
-$chart_types = array(
-'none'=>$mod_strings['LBL_NO_CHART'],
-'hBarF'=>$mod_strings['LBL_HORIZ_BAR'],
-'vBarF'=>$mod_strings['LBL_VERT_BAR'],
-'pieF'=>$mod_strings['LBL_PIE'],
-'funnelF'=>$mod_strings['LBL_FUNNEL'],
-'lineF'=>$mod_strings['LBL_LINE'],
-);
-
-$is_chart_dashlet = false;
-if (isset($reporter->saved_report->is_chart_dashlet) && $reporter->saved_report->is_chart_dashlet == 1){
-	$is_chart_dashlet = true;
-}
-?>
-<span id="no_chart_text"><?php echo $mod_strings['LBL_GROUP_BY_REQUIRED']; ?></span>
-<span scope="row"><h5><?php echo $mod_strings['LBL_CHART_TYPE'];?>:</h5></span>
-<table width="100%" cellpadding=0 cellspacing=0>
-<tr>
-<td align=left>
-<select name='chart_type'>
-<?php foreach ($chart_types as $thekey=>$theval) { ?>
-<option value="<?php echo $thekey; ?>" <?php if ($reporter->report_def['chart_type'] == $thekey) { echo "SELECTED"; } ?>><?php echo $theval;?></option>
-<?php } ?>
-</select>
-</td>
-</tr>
-</table>
-<P/>
-<span scope="row"><h5><?php echo $mod_strings['LBL_USE_COLUMN_FOR'];?>:</h5></span>
-<table width="100%" cellpadding=0 cellspacing=0>
-<tr>
-<td align=left>
-<select name='numerical_chart_column'>
-</select>
-</td>
-</tr>
-</table>
-<P/>
-<span scope="row"><h5><?php echo $mod_strings['LBL_CHART_DESCRIPTION'];?>:</h5></span>
-<table width="100%" cellpadding=0 cellspacing=0>
-<tr>
-<td align=left>
-<input name='chart_description' size='50' value="<?php echo htmlentities($reporter->chart_description, ENT_QUOTES, 'UTF-8');?>" maxsize="255"/>
-</td>
-</tr>
-</table>
-<?php
-}
-*/
 
 //////////////////////////////////////////////
 // TEMPLATE:
@@ -1508,192 +1017,3 @@ function template_reports_tables(&$smarty, &$args) {
 	$smarty->assign('reporter_report_def_report_type', $reporter->report_def['report_type']);
 	js_setup($smarty);
 } // fn
-
-/*
-function template_reports_tables(&$args)
-{
-global $report_modules;
-global $mod_strings;
-global $app_list_strings;
-$reporter =$args['reporter'];
-
-$classname = "dataLabel";
-
-
-?>
-<div id="module_join_tab">
-<div>
-&nbsp;<span id='checkGroups' style='display: none; color: red'><i><?php echo $mod_strings['LBL_TABLE_CHANGED']; ?></i></span>
-</div>
-<table border=0 width="100%" cellspacing="0" cellpadding="0">
-<tr class="<?php echo $classname; ?>">
-<td class="<?php echo $classname; ?>" width="50%">
-<table border=0 width="100%" cellspacing="0" cellpadding="3">
-<tr class="<?php echo $classname; ?>">
-<td class="<?php echo $classname; ?>">
-<h5><?php echo $mod_strings['LBL_MODULE']; ?>:</h5><!--<span ><em>Select the root module to report on</em></span><br>-->
-<select id='self' name="self" onChange="table_changed(this);">
-<?php
-// initial hardcoded SELECTED setting from php
-// loop thru supported module tables
-
-
-global $ACLAllowedModules;
-uksort($ACLAllowedModules,"juliansort");
-
-
-foreach ($ACLAllowedModules as $module=>$bean_name)
-{
-
-		if ($module == 'Reports') continue;
-        // if module has been requested
-        if ($module == $reporter->module)
-        {
-                $module_selected = ' SELECTED';
-        }
-        else
-        {
-                $module_selected = '';
-        }
-?>
-<option value="<?php echo $module; ?>" <?php echo $module_selected; ?>><?php echo $app_list_strings['moduleList'][$module]; ?></option>
-<?php } ?>
-</select>
-<a href="" class="button" style="padding: 2px; text-decoration: none;" onClick="add_related('self'); return(false);"><?php echo $mod_strings['LBL_ADD_RELATE']; ?></a>
-
-</td>
-</tr>
-</table>
-<input type=hidden name='links_def' value ="">
-<div style="border-left: 2px dotted #000000; padding-left: 5px;" id="self_children"></div>
-<table id='joins_table' cellpadding=0 cellspacing=0 border=0>
-</table>
-</td>
-<td align="left" width="50%">
-<br>
-<table border=0 width="100%" cellspacing="0" cellpadding="0">
-<tr class="<?php echo $classname; ?>">
-<td class="<?php echo $classname; ?>"><?php echo $mod_strings['LBL_REPORT_NAME'];?>:</td>
-<?php
- $save_report_as = $mod_strings['LBL_UNTITLED'];
-if (! empty($reporter->name))
-{
- $save_report_as = $reporter->name;
-}
-?>
-<td class="<?php echo $classname; ?>"><input type="text" size="30" value="<?php echo $save_report_as; ?>" name="save_report_as"/></td>
-</tr>
-<?php
-global $current_user;
-if ($current_user->is_admin) { ?>
-<tr class="<?php echo $classname; ?>">
-<td class="<?php echo $classname; ?>"><?php echo $mod_strings['LBL_SHOW_QUERY']; ?>:</td>
-<td class="<?php echo $classname; ?>" style="vertical-align : middle;"><input type="checkbox" class="checkbox" name="show_query" <?php if ( ! empty($_REQUEST['show_query'])) { echo "CHECKED"; } ?>/></td>
-</tr>
-<?php } ?>
-<?php
-$focus = null;
-if (! empty($reporter->saved_report))
-{
-	$focus = & $reporter->saved_report;
-} else {
-	$focus = new SavedReport();
-	$focus->assigned_user_name = (empty($_REQUEST['assigned_user_name']) ? '' : $_REQUEST['assigned_user_name']);
-	$focus->assigned_user_id = (empty($_REQUEST['assigned_user_id']) ? '' : $_REQUEST['assigned_user_id']);
-	$focus->team_name = (empty($_REQUEST['team_name']) ? '' : $_REQUEST['team_name']);
-	$focus->team_id = (empty($_REQUEST['team_id']) ? '' : $_REQUEST['team_id']);
-}
-global $current_user;
-
-if (empty($focus->assigned_user_id) && empty($focus->id))  $focus->assigned_user_id = $current_user->id;
-if (empty($focus->assigned_user_name) && empty($focus->id))  $focus->assigned_user_name = $current_user->user_name;
-
-  $assigned_user_html_def = array(
-    'parent_id'=>'assigned_user_id',
-    'parent_id_value'=>$focus->assigned_user_id,
-    'parent_name'=>'assigned_user_name',
-    'parent_name_value'=>$focus->assigned_user_name,
-    'real_parent_name'=>'user_name',
-    'module'=>'Users',
-  );
-
-  $assigned_user_html = get_select_related_html($assigned_user_html_def);
-
-?>
-<tr class="<?php echo $classname; ?>">
-<td class="<?php echo $classname; ?>"><?php echo $mod_strings['LBL_OWNER']; ?>:</td>
-<td class="<?php echo $classname; ?>" style="vertical-align : middle;"><?php echo $assigned_user_html; ?></td>
-</tr>
-<?php
-
-if (empty($focus->id) && empty($_REQUEST['team_name'])) {
-  $focus->team_name = $current_user->default_team_name;
-  $focus->team_id =  $current_user->default_team;
-}
-
-  $team_html_def = array(
-    'parent_id'=>'team_id',
-    'parent_id_value'=>$focus->team_id,
-    'parent_name'=>'team_name',
-    'parent_name_value'=>$focus->team_name,
-    'real_parent_name'=>'name',
-    'module'=>'Teams',
-  );
-
-  $team_html = get_select_related_html($team_html_def);
-
-?>
-<tr class="<?php echo $classname; ?>">
-<td class="<?php echo $classname; ?>"><?php echo $mod_strings['LBL_TEAM']; ?>:</td>
-<td class="<?php echo $classname; ?>" style="vertical-align : middle;"><?php echo $team_html; ?></td>
-</table>
-
-</td>
-</tr>
-<tr><td colspan="2">
-<p/>
-<p/>
-<table>
-<tr>
-<?php
-
-if ( empty( $reporter->report_def['report_type'] ))
-{
-        $reporter->report_def['report_type']='tabular';
-}
-?>
-<td  width="1%" align=center valign=middle><input type="radio" class="radio" onClick="reportTypeChanged();" id="report_type" name="report_type" value="tabular" <?php if (  $reporter->report_def['report_type'] == 'tabular') { ?> CHECKED<?php } ?>></td>
-<td align="left" scope="row" style="vertical-align : middle;"><?php echo $mod_strings['LBL_ROWS_AND_COLUMNS_REPORT']; ?></td>
-</tr>
-<tr>
-<td width="1%" align=center valign=middle><input type="radio" class="radio" name="report_type" id="report_type" onclick="reportTypeChanged();" value="summary" <?php if ( $reporter->report_def['report_type'] == 'summary') { ?> CHECKED<?php } ?>></td>
-<td align="left" scope="row" style="vertical-align : middle;"><?php echo $mod_strings['LBL_SUMMATION_REPORT']; ?></td>
-</tr>
-<!--
-<tr>
-<td width="1%" align=center valign=middle>&nbsp;</td>
-<td align="left" scope="row" style="vertical-align : middle;"><input
-                onclick="reportTypeChanged();"
-                type="checkbox"
-                name="show_columns"
-                class="checkbox"
-                style="vertical-align: middle;"
-                <?php if ( $reporter->show_columns) { echo "CHECKED"; } ?>
-                <?php if ( $reporter->report_def['report_type'] != 'summary') { echo "DISABLED"; } ?>
-                >&nbsp;<?php echo $mod_strings['LBL_WITH_DETAILS'];?></td>
-</tr>
--->
-
-</table>
-
-</td>
-</tr>
-</table>
-</div>
-<P/>
-<?php
-print js_setup($smarty);
-}
-*/
-
-?>
