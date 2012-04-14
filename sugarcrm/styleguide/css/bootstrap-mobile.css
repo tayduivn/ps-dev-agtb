@@ -3697,6 +3697,9 @@ h1 {
 .fright {
   float: right !important;
 }
+.altview {
+  display: none;
+}
 /* activity and twitter */
 article {
   position: relative;
@@ -4341,26 +4344,6 @@ html {
   background: none;
   margin: 0;
 }
-.alert {
-  z-index: 2000;
-  position: absolute;
-  width: 100%;
-  height: 42px;
-  line-height: 42px;
-  bottom: -1px;
-  left: -1px;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  padding: 0 10px;
-  opacity: 0.94;
-  filter: alpha(opacity=94);
-  color: #ffffff;
-  text-shadow: none;
-  margin: 0;
-  font-size: 12px;
-  background: #000000;
-}
 .over {
   z-index: 2000;
   position: absolute;
@@ -4538,6 +4521,26 @@ html {
 }
 #login .btn.btn-sugar {
   width: 140px!important;
+}
+.alert {
+  z-index: 2000;
+  position: absolute;
+  width: 100%;
+  height: 42px;
+  line-height: 42px;
+  bottom: -1px;
+  left: -1px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  padding: 0 10px;
+  opacity: 0.94;
+  filter: alpha(opacity=94);
+  color: #ffffff;
+  text-shadow: none;
+  margin: 0;
+  font-size: 12px;
+  background: #000000;
 }
 /* Alert overrider */
 .alert-warning {

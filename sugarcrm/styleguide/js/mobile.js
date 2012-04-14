@@ -197,7 +197,6 @@ function closeBottomMenu() {
 }
 
 function parseQueryString(){
-    alert('d');
     var qs = location.search.substring(1);
     qs = qs.split("&");
     if(qs.length === 2){
