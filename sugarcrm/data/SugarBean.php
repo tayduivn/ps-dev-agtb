@@ -1937,6 +1937,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
                 if(!empty($this->$id))
                 {
+                    // Bug #44930 We do not need to update main related field if it is changed from sub-panel.
+                    if ($rel_name == $new_rel_link && $this->$id != $new_rel_id)
+                    {
+                        $new_rel_id = '';
+                    }
                     $GLOBALS['log']->debug('save_relationship_changes(): From relationship_field array - adding a relationship record: '.$rel_name . ' = ' . $this->$id);
                     //already related the new relationship id so let's set it to false so we don't add it again using the _REQUEST['relate_i'] mechanism in a later block
                     if($this->$id == $new_rel_id){
