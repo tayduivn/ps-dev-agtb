@@ -37,7 +37,7 @@ require_once 'include/utils.php';
 class Bug47522Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    var $orig_ini_encoding_val = '1';
+    var $orig_ini_encoding_val;
     	public function setUp()
 	{
         $this->orig_ini_encoding_val = ini_get('mbstring.encoding_translation');
@@ -60,7 +60,8 @@ class Bug47522Test extends Sugar_PHPUnit_Framework_TestCase
 
         //assert that encoding is set to true.  ini_get returns a string, so cannot use assertTrue()
         $this->assertSame(ini_get('mbstring.encoding_translation'), '1', 'mbstring encoding translation is turned off, the rest of the test is invalid');
-
+	
+	//continue this test only if encoding_translation is turned on.
         if(ini_get('mbstring.encoding_translation')==='1'){
             //inject bad string into request
             $key = "'you'shall'not'pass!";
