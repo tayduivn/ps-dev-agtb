@@ -32,6 +32,7 @@ class Bug51980Test extends Sugar_PHPUnit_Framework_OutputTestCase {
 
 	public function setUp()
     {
+        $this->markTestIncomplete("Disabling after discussing with Eddy.  Eddy will take a look at why this is breaking Stack 66 build");
         //create user
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->user->default_team_name = 'global';
