@@ -22,13 +22,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id$
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
  
-$viewdefs['Accounts']['DetailView'] = array(
+$viewdefs['Accounts']['mobile']['view']['detail'] = array(
 	'templateMeta' => array(
                             'maxColumns' => '1', 
                             'widths' => array(
@@ -36,20 +35,34 @@ $viewdefs['Accounts']['DetailView'] = array(
                             ),                                  
                            ),
     'panels' => array(
-    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
-	    array('phone_office'),
-		array(array('name'=>'website', 'displayParams'=>array('type'=>'link'))),
-		array('email1'),
-		array('billing_address_street'),
-		array('billing_address_city'),
-		array('billing_address_state'),
-		array('billing_address_postalcode'),
-		array('billing_address_country'),
-		array('assigned_user_name'),
-		//BEGIN SUGARCRM flav=pro ONLY
-		array('team_name'),
-		//END SUGARCRM flav=pro ONLY
-
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name'=>'name',
+                    'displayParams'=>array(
+                        'required'=>true,
+                        'wireless_edit_only'=>true,
+                    ),
+                ),
+                'phone_office',
+                array(
+                    'name'=>'website',
+                    'displayParams'=>array(
+                        'type'=>'link',
+                    ),
+                ),
+                'email1',
+                'billing_address_street',
+                'billing_address_city',
+                'billing_address_state',
+                'billing_address_postalcode',
+                'billing_address_country',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            ),
+        ),
 	),
 );
-?>

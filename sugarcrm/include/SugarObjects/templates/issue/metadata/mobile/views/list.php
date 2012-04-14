@@ -27,38 +27,65 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
-// $Id: listviewdefs.php 16278 2006-08-22 19:09:18Z awu $
-
 $module_name = '<module_name>';
-$listViewDefs[$module_name] = array(
-    array(
-        'panels' => array(
+$OBJECT_NAME = '<_object_name>';
+$viewdefs[$module_name]['mobile']['view']['list'] = array(
+    'panels' => array(
+        array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'name',
-                    'label' => 'LBL_NAME',
+                    'name' => $OBJECT_NAME . '_number',
+                    'width' => '5',
+                    'label' => 'LBL_NUMBER',
+                    'link' => true,
                     'default' => true,
                     'enabled' => true,
+                ),
+                array(
+                    'name' => 'name',
+                    'width' => '32',
+                    'label' => 'LBL_SUBJECT',
                     'link' => true,
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
+                    'name' => 'status',
+                    'width' => '10',
+		            'label' => 'LBL_STATUS',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
+                    'name' => 'priority',
+                    'width' => '10',
+                    'label' => 'LBL_PRIORITY',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array(
+                    'name' => 'resolution',
+                    'width' => '10',
+                    'label' => 'LBL_RESOLUTION',
+                    'default' => true,
+                    'enabled' => true,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
-                    'label' => 'LBL_TEAM',
-                    'width' => 9,
+                    'width' => '9',
+		            'label' => 'LBL_TEAM',
                     'default' => true,
                     'enabled' => true,
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
-                    'label' => 'LBL_ASSIGNED_TO_NAME',
-                    'width' => 9,
+                    'width' => '9',
+		            'label' => 'LBL_ASSIGNED_USER',
                     'default' => true,
                     'enabled' => true,
-                    'link' => true,
                 ),
             ),
         ),

@@ -26,7 +26,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Calls']['DetailView'] = array(
+$viewdefs['Calls']['mobile']['view']['edit'] = array(
 	'templateMeta' => array(
                             'maxColumns' => '1', 
                             'widths' => array(
@@ -34,18 +34,27 @@ $viewdefs['Calls']['DetailView'] = array(
                             ),                                  
                            ),
     'panels' => array(
-    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
-		array('date_start'),
-		array('direction'),
-	    array('status'),
-	    array('duration_hours'),
-		array('duration_minutes'),
-        array('description'),
-		array('assigned_user_name'),
-		//BEGIN SUGARCRM flav=pro ONLY
-		array('team_name'),
-		//END SUGARCRM flav=pro ONLY
-        
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name'=>'name',
+                    'displayParams'=>array(
+                        'required'=>true,
+                        'wireless_edit_only'=>true,
+                    ),
+                ),
+                'date_start',
+                'direction',
+                'status',
+                'duration_hours',
+                'duration_minutes',
+                'description',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            ),
+        ),
 	),
 );
-?>
