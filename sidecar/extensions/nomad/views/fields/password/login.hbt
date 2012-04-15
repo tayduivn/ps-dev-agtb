@@ -1,0 +1,1 @@
+<input type="password" size="26" tabindex="2" id="password" name="password" placeholder="Password" value="{{value}}">

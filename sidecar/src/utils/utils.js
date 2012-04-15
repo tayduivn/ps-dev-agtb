@@ -10,6 +10,15 @@
     app.augment('utils', {
 
         /**
+         * Capitalizes a string.
+         * @param {String} s The string to capitalize.
+         * @return {String} Capitalized string or an empty string if `s` is undefined or null.
+         */
+        capitalize: function(s) {
+            return s ? (s.charAt(0).toUpperCase() + (s.length > 1 ? s.substr(1) : "")) : "";
+        },
+
+        /**
          * Formats Numbers
          *
          * @param {Number} value number to be formatted eg 2.134

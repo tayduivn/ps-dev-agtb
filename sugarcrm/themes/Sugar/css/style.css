@@ -37,9 +37,7 @@
 body 
 { 
 	margin: 0px;
-	padding-top: 50px;
 	font-family: Arial, Verdana, Helvetica, sans-serif;
-	line-height: 11px;
 	
 }
 
@@ -114,11 +112,6 @@ ul
 	margin-top: 2px;
     margin-right: 0;
 }
-
-li {
-	line-height: 15px;	
-}
-
 hr
 {
 	height:1px;
@@ -514,7 +507,7 @@ div.import_instruction
 /* module title */
 div.moduleTitle
 {
-    height:43px;
+    height:2em;
 	padding-bottom: 3px;
     padding-top: 0;
     margin-bottom: 10px;
@@ -785,7 +778,6 @@ border-radius: 6px;
     padding: 0;
     border: 0;
     margin: 0;
-    height: auto;
 }
 .list tr.pagination td table td
 {
@@ -1424,9 +1416,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 #footer img.logo {
     margin: 7px 10px;
-    height: auto;
-    width: auto;
-    background-image: none;
 }
 
 #footer #partner a {
@@ -3740,10 +3729,8 @@ button[disabled], input[type=submit][disabled], input[type=reset][disabled], inp
 	background-image: none;
 	padding: 0px;
 	position: relative;
-	height: 30px;
+	height: 24px;
 	filter: none;
-	width: 30px;
-	
 }
 
 .pagination button[name="listViewNextButton"],.pagination button[name="listViewPrevButton"] {
@@ -3921,6 +3908,9 @@ ul.moduleTabMore, ul.moduleTabMore *, ul.sf-sub-modulelist, ul.sf-sub-modulelist
 	width: 10em;
 }
 
+.moduleTabExtraMenu .listcontainer > ul,
+.moduleTabExtraMenu li:hover .listcontainer > ul,
+.moduleTabExtraMenu li:sfHover .listcontainer > ul,
 #moduleList .sf-menu .listcontainer > ul,
 #moduleList .sf-menu li:hover .listcontainer > ul,
 #moduleList .sf-menu li.sfHover .listcontainer > ul  {
@@ -4226,6 +4216,8 @@ Mega Column Styles
 	font-size: 0;
 }
 
+ul.moduleTabExtraMenu .megawrapper ul.filterBy,
+ul.moduleTabExtraMenu .megawrapper ul.moduleTabMore,
 #moduleList .sf-menu ul .megawrapper ul.MMShortcuts, 
 #moduleList .sf-menu ul .megawrapper ul.MMFavorites, 
 #moduleList .sf-menu ul .megawrapper ul.MMLastViewed,
@@ -4260,13 +4252,18 @@ ul.megamenu .megawrapper ul li,
 	padding-left: 10px;
 	padding-bottom: 5px;
 }
+
 ul.megamenu .megawrapper ul li a,
 #moduleList .sf-menu ul .megawrapper ul li a{
 	font-weight: normal;
 	font-size: 13px;
 	padding: 4px 10px;
 	position: relative;
-	width: 180px;
+}
+
+ul.megamenu .megawrapper ul li.groupLabel a ,
+#moduleList .sf-menu ul .megawrapper ul li a{
+    width: 180px;
 }
 
 
@@ -4275,7 +4272,7 @@ ul.megamenu .megawrapper ul li a,
     left: 225px;
     top: 0;
 }
-
+ul.megamenu.moduleTabExtraMenu, ul.moduleTabExtraMenu > li > div.megawrapper, ul.moduleTabExtraMenu > li > div.megawrapper > .megacolumn,
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper, 
 #moduleList ul.sf-menu li.moduleTabExtraMenu > ul.megamenu > li > .megawrapper > .megacolumn {
 	width: 225px;
@@ -4297,7 +4294,7 @@ height: 43px;
 }
 
 
-#moduleList .menuHR, ul.moduleTabMore .menuHR {
+#moduleList .menuHR, ul.moduleTabExtraMenu .menuHR {
    border-top: 1px solid #DDDDDD;
    margin: 10px 0;
 }
@@ -4332,8 +4329,8 @@ ul#quickCreateUL .showMore .moduleMenuOverFlowMore, ul#quickCreateUL .showLess .
 ul#quickCreateULSubnav.showMore .moduleMenuOverFlowMore, ul#quickCreateULSubnav.showLess .moduleMenuOverFlowLess,
 #moduleList ul.moduleTabMore.showMore .moduleMenuOverFlowMore, #moduleList ul.moduleTabMore.showLess .moduleMenuOverFlowLess
 {
-display: none;
-visibilility: hidden;	
+display: none !important;
+visibilility: hidden !important;
 }
 
 #subModuleList 
@@ -5723,6 +5720,13 @@ ul.megamenu, ul.moduleTabMore, ul.sf-sub-modulelist{
     z-index:20;
 }
 
+#dcmenutop{
+padding:0px;
+position:relative;
+height:50px;
+width:100%;
+}
+
 .dcmenu{
 color:blue;
 height:55px;
@@ -5875,7 +5879,7 @@ cursor: default;
 	display: inline-block;
 	background-repeat: no-repeat;
 	background-size: 24px 24px;
-    margin-top: 9px;
+    margin: 9px 5px 0px 5px;
     border-radius: 2px;
 }
 
@@ -6074,7 +6078,7 @@ margin-left:10px;
 		
 #sugar_spot_search_div {
 	height: 26px;
-	width: 174px;
+	width: 190px;
 	display: inline-block;
 	position: relative;
 }
@@ -6090,9 +6094,19 @@ margin-left:10px;
 	-moz-box-shadow:inset 0 1px 1px #999;
 	box-shadow:inset 0 1px 1px #999;
     background: #fff url(../../../../index.php?entryPoint=getImage&imageName=search.png) 5px 6px no-repeat;
+    left: -10px;
 }
 
-#sugar_spot_search:focus {
+#spot_search_btn {
+    width: 10px;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block;
+    left: 20px;
+    position: relative;
+}
+
+input#sugar_spot_search:focus {
     box-shadow:0 -1px 1px #98C6EA,1px -1px 1px #98C6EA,-1px -1px 1px #98C6EA;
 	-moz-box-shadow:0 -1px 1px #98C6EA,1px -1px 1px #98C6EA,-1px -1px 1px #98C6EA;
 	box-shadow:0 -1px 1px #98C6EA,1px -1px 1px #98C6EA,-1px -1px 1px #98C6EA;
@@ -6101,6 +6115,9 @@ margin-left:10px;
     -ms-transition: border linear 0.2s, box-shadow linear 0.2s;
     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
     transition: border linear 0.2s, box-shadow linear 0.2s;
+    border-radius: 0px;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
 }
 
 #sugar_spot_search.searching {
@@ -6164,7 +6181,7 @@ margin-left:10px;
 }
 
 #sugar_spot_search_results section ul, #sugar_full_search_results section ul {
-    width:175px;
+    width:155px;
     line-height:20px;
     padding:0 0 25px 10px;
     float:left;
@@ -6187,7 +6204,7 @@ margin-left:10px;
 
 #sugar_spot_search_results p.fullResults {
 text-align: right;
-
+margin-top: 14px;
 }
 
 #sugar_spot_search_results p.fullResults a {
@@ -6428,9 +6445,6 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 	padding: 3px 10px 3px 10px !important;
 	color: #000;
 	font-size: 12px;
-	border-radius: 0;
-    border: 0px;
-    line-height: 14px;
 }
 
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
@@ -6738,8 +6752,6 @@ ul.clickMenu.show {
 	text-shadow: 1px 1px #FFFFFF;
 	font-weight: normal !important;
 	font-size: 13px;
-	line-height: 15px;
-    border: 0px;
 }
 
 #quickCreate {
@@ -6776,7 +6788,7 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 	left: auto;
 	padding: 10px 0px;
 	border: 1px solid #999;
-	width: 100%;
+	width: auto;
 }
 
 #quickCreate ul.clickMenu li ul.subnav {
@@ -7114,7 +7126,7 @@ text-align: center;
 font-family: tahoma;
 font-size: 15px;
 text-shadow: 0px 1px #fff;
-padding-top: 9px;
+padding-top: 6px;
 font-weight: bold;
 color: #444;
 text-decoration: none;

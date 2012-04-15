@@ -6,7 +6,10 @@
      * @alias SUGAR.App.layout.ListView
      * @extends View.View
      */
-    app.layout.ListView = app.layout.View.extend({
+    app.view.views.ListView = app.view.View.extend({
+        events: {
+            'click [class*="orderBy"]': 'setOrderBy'
+        },
         bind: function(context) {
             var collection = context.get("collection");
             _.each(collection.models, function(model) {
@@ -27,6 +30,51 @@
                     }
                 }, this);
             }, this);
+        },
+        /**
+         * Sets order by on collection and view
+         * @param {Object} event jquery event object
+         */
+        setOrderBy: function(event) {
+            //set on this obj and not the prototype
+            this.orderBy = this.orderBy || {};
+
+            //mapping for css
+            var orderMap = {
+                "desc": "down",
+                "asc": "up"
+            }
+
+            //TODO probably need to check if we can sort this field from metadata
+            var collection = this.context.get('collection');
+            var fieldName = this.$(event.target).data('fieldname');
+
+            if (!collection.orderBy) {
+                collection.orderBy = {
+                    field: "",
+                    direction: ""
+                };
+            };
+
+            var nOrder = "desc";
+
+            // if same field just flip
+            if (fieldName == collection.orderBy.field) {
+                if (collection.orderBy.direction == "desc") {
+                    nOrder = "asc";
+                }
+                collection.orderBy.direction = nOrder;
+            } else {
+                collection.orderBy.field = fieldName;
+                collection.orderBy.direction = "desc";
+            }
+
+            // set it on the view
+            this.orderBy.field = fieldName;
+            this.orderBy.direction = orderMap[collection.orderBy.direction];
+
+            // refetch the collection
+            collection.fetch();
         }
     });
 

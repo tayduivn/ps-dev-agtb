@@ -851,7 +851,7 @@ class SugarApplication
      * table to record a login session.
      *
      */
-    protected function trackLogin() {
+    public static function trackLogin() {
         $trackerManager = TrackerManager::getInstance();
         if($monitor = $trackerManager->getMonitor('tracker_sessions')){
             $db = DBManagerFactory::getInstance();

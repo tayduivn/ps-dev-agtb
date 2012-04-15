@@ -3,8 +3,7 @@ describe("App", function() {
 
     beforeEach(function() {
         isGetMetadataSucceeded = true;
-        // Replace sugarauth isAuthenticated method with fake
-        authStub = sinon.stub(SUGAR.App.sugarAuth, "isAuthenticated", function() {
+        authStub = sinon.stub(SUGAR.App.api, "isAuthenticated", function() {
             return true;
         });
 

@@ -6,7 +6,10 @@
             <thead>
             <tr>
             {{#each fields}}
-                <th width="{{width}}%">{{label}}</th>
+                <th width="{{width}}%" data-fieldname="{{name}}" class="orderBy{{name}}">
+                {{label}}
+                    <i class="icon-chevron-{{eq ../../context.state.collection.orderBy.field name ../../this.orderBy.direction ""}}"></i>
+                </th>
             {{/each}}
             </tr>
             </thead>
@@ -14,7 +17,7 @@
             {{#each ../context.state.collection.models}}
             <tr name="{{module}}_{{attributes.id}}">
             {{#each ../fields}}
-                <td class="dblclick">{{sugarField ../../../context ../../../this ../this}}</td>
+                <td class="dblclick">{{field ../../../context ../../../this ../this}}</td>
             {{/each}}
             </tr>
             {{/each}}
@@ -22,11 +25,11 @@
         </table>
     {{/each}}
     {{#each meta.buttons}}
-    {{sugarField ../context ../this ../model}}
+    {{field ../context ../this ../model}}
     {{/each}}
         <ul class="nav nav-pills pull-right actions">{{#each meta.listNav}}
             <li>
-            {{sugarField ../context ../this ../model}}
+            {{field ../context ../this ../model}}
             </li>
         {{/each}}
         {{#if context.state.collection.page}}

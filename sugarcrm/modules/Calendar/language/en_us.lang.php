@@ -110,7 +110,7 @@ $mod_strings = array (
 
 
 	'LBL_SETTINGS_TITLE' => 'Settings',
-	'LBL_SETTINGS_CALENDAR_STYLE' => 'Calendar Style:',
+	'LBL_SETTINGS_DISPLAY_TIMESLOTS' => 'Display time slots in Day and Week views:',
 	'LBL_SETTINGS_TIME_STARTS'=>'Start time:', 
 	'LBL_SETTINGS_TIME_ENDS'=>'End time:', 
 	'LBL_SETTINGS_CALLS_SHOW' => 'Show Calls:',
@@ -139,7 +139,7 @@ $mod_strings = array (
 	'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
 	
 	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Occurrences',
-	'LBL_REMOVE_ALL_RECURRENCES' => 'Remove All Occurrences',
+	'LBL_REMOVE_ALL_RECURRENCES' => 'Delete All Occurrences',
 	
 	'LBL_DATE_END_ERROR' => 'End date is before start date',
 

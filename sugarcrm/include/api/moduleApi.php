@@ -103,6 +103,7 @@ class moduleApi extends SugarApi {
     }
 
     protected function loadBean($api, $args, $aclToCheck = 'read') {
+
         $bean = BeanFactory::getBean($args['module'],$args['record']);
         
         if ( $bean == FALSE ) {
@@ -118,6 +119,8 @@ class moduleApi extends SugarApi {
     }
 
     public function createRecord($api, $args) {
+        $this->requireArgs($args,array('module'));
+
         $bean = BeanFactory::newBean($args['module']);
         
         // TODO: When the create ACL goes in to effect, add it here.
@@ -130,6 +133,8 @@ class moduleApi extends SugarApi {
     }
 
     public function updateRecord($api, $args) {
+        $this->requireArgs($args,array('module','record'));
+
         $bean = $this->loadBean($api, $args, 'save');
 
         $id = $this->updateBean($bean, $api, $args);
@@ -138,6 +143,8 @@ class moduleApi extends SugarApi {
     }
 
     public function retrieveRecord($api, $args) {
+        $this->requireArgs($args,array('module','record'));
+
         $bean = $this->loadBean($api, $args, 'view');
 
         $sfh = new SugarFieldHandler();
@@ -187,6 +194,8 @@ class moduleApi extends SugarApi {
     }
 
     public function deleteRecord($api, $args) {
+        $this->requireArgs($args,array('module','record'));
+
         $bean = $this->loadBean($api, $args, 'delete');
         $bean->mark_deleted($args['record']);
 

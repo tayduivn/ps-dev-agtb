@@ -1,1 +1,6 @@
-<h3>{{label}}</h3>{{#if value}}<iframe src="{{value}}" height="{{height}}" width="{{width}}"</iframe>{{/if}}
+<div class="row-fluid">
+    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span4" name="{{name}}">
+        {{#if value}}<iframe src="{{value}}" height="{{height}}" width="{{width}}"</iframe>{{/if}}
+    </div>
+</div>

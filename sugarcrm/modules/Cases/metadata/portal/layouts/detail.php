@@ -1,0 +1,19 @@
+<?php
+$viewdefs['Cases']['portal']['layout']['detail'] = array(
+    'type' => 'rows',
+    'components' =>
+    array(
+        0 =>
+        array(
+            'view' => 'header',
+        ),
+        1 =>
+        array(
+            'view' => 'detail',
+        ),
+        2 =>
+        array(
+            'view' => 'subpanel',
+        ),
+    ),
+);

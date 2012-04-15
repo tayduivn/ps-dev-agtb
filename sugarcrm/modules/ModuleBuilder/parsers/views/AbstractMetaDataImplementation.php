@@ -36,11 +36,14 @@ require_once 'modules/ModuleBuilder/parsers/views/History.php' ;
 abstract class AbstractMetaDataImplementation
 {
 	protected $_view;
+    protected $_viewClient; // base, portal, mobile
+    protected $_viewType; // list, edit, search, detail
 	protected $_moduleName;
-	protected $_viewdefs;
+	protected $_viewdefs; // Raw $viewdefs from the metadata file
 	protected $_originalViewdefs = array();
 	protected $_fielddefs;
     protected $_paneldefs;
+    protected $_paneldefsPath = array();
 	protected $_sourceFilename = '' ; // the name of the file from which we loaded the definition we're working on - needed when we come to write out the historical record
 	// would like this to be a constant, but alas, constants cannot contain arrays...
 	protected $_fileVariables = array (
@@ -57,14 +60,14 @@ abstract class AbstractMetaDataImplementation
 	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 	MB_WIRELESSEDITVIEW 		=> 'viewdefs',
 	MB_WIRELESSDETAILVIEW 		=> 'viewdefs',
-	MB_WIRELESSLISTVIEW 	 	=> 'listViewDefs',
+	MB_WIRELESSLISTVIEW 	 	=> 'viewdefs',
 	MB_WIRELESSBASICSEARCH 	 	=> 'searchdefs',
 	MB_WIRELESSADVANCEDSEARCH 	=> 'searchdefs',
 	//END SUGARCRM flav=pro || flav=sales ONLY
     //BEGIN SUGARCRM flav=ent ONLY
     MB_PORTALEDITVIEW 		    => 'viewdefs',
     MB_PORTALDETAILVIEW 		=> 'viewdefs',
-    MB_PORTALLISTVIEW 	 	    => 'listViewDefs',
+    MB_PORTALLISTVIEW 	 	    => 'viewdefs',
     MB_PORTALSEARCHVIEW 	 	=> 'searchdefs',
     //END SUGARCRM flav=ent ONLY
 	) ;
@@ -91,7 +94,60 @@ abstract class AbstractMetaDataImplementation
         return $this->_paneldefs;
     }
 
-	/*
+    public function getPanelDefsPath() {
+        return $this->_paneldefsPath;
+    }
+    /**
+     * Sets the view client for the metadata
+     *
+     * @return void
+     */
+    public function setViewClientFromView() {
+        if (!empty($this->_view)) {
+            /*
+            if (strpos($this->_view, 'portal') !== false) {
+                $this->_viewClient = 'portal';
+            } elseif (strpos($this->_view, 'wireless') !== false || strpos($this->_view, 'mobile') !== false) {
+                $this->_viewClient = 'mobile';
+            } else {
+                $this->_viewClient = 'base';
+            }
+            */
+            $this->_viewClient = MetaDataFiles::getViewClient($this->_view);
+        }
+    }
+
+    /**
+     * Sets the panel defs from the view defs
+     * 
+     * @return void
+     */
+    public function setPanelDefsFromViewDefs() {
+        $client = empty($this->_viewClient) ? 'base' : $this->_viewClient;
+        if (isset($this->_viewdefs[$client]) && is_array($this->_viewdefs[$client]) && isset($this->_viewdefs[$client]['view']) && is_array($this->_viewdefs[$client]['view'])) {
+            $this->_paneldefsPath = array($client, 'view');
+            $viewType = key($this->_viewdefs[$client]['view']);
+            if (isset($this->_viewdefs[$client]['view'][$viewType]['panels'])) {
+                $this->_paneldefsPath[] = $viewType;
+                $this->_paneldefs = $this->_viewdefs[$client]['view'][$viewType]['panels'];
+
+                // Use $view type to set our type - NOT SURE THIS IS THE BEST WAY TO DO THIS
+                $this->setViewType($viewType);
+            }
+        }
+    }
+
+    public function setViewType($type) {
+        if (empty($this->_viewType)) {
+            $this->_viewType = $type;
+        }
+    }
+
+    public function getViewType() {
+        return $this->_viewType;
+    }
+
+    /*
 	 * Obtain a new accessor for the history of this layout
 	 * Ideally the History object would be a singleton; however given the use case (modulebuilder/studio) it's unlikely to be an issue
 	 */
@@ -252,13 +308,15 @@ abstract class AbstractMetaDataImplementation
 		if($forPopup){
 			$out .= "\$$viewVariable = \n" . var_export_helper ( $defs ) ;
 		}else{
-		$out .= "\$$viewVariable [".(($useVariables) ? '$module_name' : "'$this->_moduleName'")."] = \n" . var_export_helper ( $defs ) ;
+            $moduleIndex = $useVariables ? '$module_name' : "'$this->_moduleName'";
+		    $out .= '$' . $viewVariable . "[$moduleIndex] = \n" . var_export_helper($defs);
 		}
 		
-		$out .= ";\n?>\n" ;
+		$out .= ";\n"; // Leaving off the closing PHP tag
 
-		if ( sugar_file_put_contents ( $filename, $out ) === false)
-			$GLOBALS [ 'log' ]->fatal ( get_class($this).": could not write new viewdef file " . $filename ) ;
+		if (sugar_file_put_contents($filename, $out) === false) {
+			$GLOBALS['log']->fatal(get_class($this).": could not write new viewdef file " . $filename);
+        }
 	}
 
 	/*
@@ -274,9 +332,23 @@ abstract class AbstractMetaDataImplementation
 	 * The complication is that although generating these merged fielddefs is naturally a method of the implementation, not the parser,
 	 * we therefore lack knowledge as to which type of layout we are merging - EditView or ListView. So we can't use internal knowledge of the
 	 * layout to locate the field definitions. Instead, we need to look for sections of the layout that match the template for a field definition...
+	 *
+	 * Something to note, the arrangement of the defs inside of $layout, for new
+	 * metadata implementations, will be in an array path like:
+	 * $viewdefs[$module][$viewClient]['view'][$viewType]
+	 *
+	 * $viewClient will be portal|mobile|base
+	 * $viewType will be list|edit|detail|search
 	 */
 	function _mergeFielddefs ( &$fielddefs , $layout )
 	{
+        $viewClient = empty($this->_viewClient) ? 'base' : $this->_viewClient;
+        if (isset($layout[$viewClient]) && is_array($layout[$viewClient]) && isset($layout[$viewClient]['view']) && is_array($layout[$viewClient]['view'])) {
+            $viewType = key($layout[$viewClient]['view']);
+            $layout = $layout[$viewClient]['view'][$viewType];
+            $this->setViewType($viewType);
+        }
+        
 		if (isset($layout['panels'])) {
             // Do things the new way
             if (isset($layout['panels']['fields'])) {

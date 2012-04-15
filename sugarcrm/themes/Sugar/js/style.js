@@ -123,10 +123,18 @@ SUGAR.append(SUGAR.themes, {
     toggleMenuOverFlow: function(menuName,maction) {
 
     	var menuName = "#"+menuName;
+        //Bug#52141: Prevent hiding the menu after expanding with more modules
+        var retainItem = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
+            retainClass = $.fn.superfish.defaults['retainClass'];
+        retainItem.addClass(retainClass);
+        $(menuName).off("mouseout.retain").on("mouseout.retain", function(){
+            retainItem.removeClass(retainClass);
+        });
+
 	    if(maction == "more") {
 			$(menuName).addClass("showMore");
 			$(menuName).removeClass("showLess");
-			
+
 		var viewPortHeight = $(window).height(),
 		    menuOffset = $(menuName).offset(),
 		    menuHeight = $(menuName).outerHeight(true),
@@ -144,25 +152,16 @@ SUGAR.append(SUGAR.themes, {
 	    		});
 	    		$(menuName).hoverscroll();
 	    		$(menuName).width(menuWidth);
-	    		
+                $(menuName).addClass("hs-active");
 
-	    		$(menuName).find("> li").each(function() {
-					$(this).unbind('mouseover');
-					$(this).unbind('mouseout');
-				});
-    		
 		    }
 		} else {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
-			
-			$.fn.hoverscroll.destroy($(menuName));
-			$("#moduleList").find("a").unbind();
-			var moduleListHTML = $("#moduleList").html();
-			$("#moduleList").empty();
-			$("#moduleList").html(moduleListHTML);
-			this.loadModuleList();
-			$('#moduleMenuOverFlowMore'+sugar_theme_gm_current).children('a').focus().blur();
+            if( $(menuName).hasClass("hs-active") ) {
+                $(menuName).removeClass("hs-active");
+			    $.fn.hoverscroll.destroy($(menuName));
+            }
 		}	
     },
     switchMenuMode: function() {
@@ -188,8 +187,11 @@ SUGAR.append(SUGAR.themes, {
 
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
-			//delay:     100,
-			speed: 'fast',
+			delay: 50,
+			speed: 0,
+            animation: {
+                display: 'show'
+            },
 			firstOnClick: SUGAR.themes.getMenuMode(),
 			autoArrows: false,
 			dropShadows: false,
@@ -263,7 +265,7 @@ SUGAR.append(SUGAR.themes, {
     },
     resizeSearch: function() {
     	searchWidth = .16;
-    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
+    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 70);
 		$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
     },
     resizeMenu: function () {
@@ -375,7 +377,7 @@ SUGAR.append(SUGAR.themes, {
 			$('#close_spot_search').css("display","inline-block");
 
 			 if(event.charCode == 0 && !firstHit) {
-			$('#sugar_spot_search_div').css("width",344);
+			$('#sugar_spot_search_div').css("width",360);
 			$('#sugar_spot_search').css("width",290);
 			firstHit = true;
 			 	}
@@ -391,7 +393,7 @@ SUGAR.append(SUGAR.themes, {
 		$("#sugar_spot_search").val("");
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
-		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
+		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 70);
 	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
 	  	firstHit = false;
    	},

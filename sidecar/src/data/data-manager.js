@@ -81,7 +81,6 @@
     // Bean collection class cache
     var _collections = {};
 
-    var _serverProxy;
     var _dataManager = {
 
         /**
@@ -100,7 +99,6 @@
          * @method
          */
         init: function() {
-            _serverProxy = app.api;
             Backbone.sync = this.sync;
         },
 
@@ -350,6 +348,10 @@
                 if (app.config && app.config.maxQueryResult) {
                     options.params.maxresult = app.config.maxQueryResult;
                 }
+
+                if (model.orderBy && model.orderBy.field) {
+                    options.params.orderBy = model.orderBy.field + ":" + model.orderBy.direction;
+                }
             }
 
             var success = function(data) {
@@ -392,7 +394,7 @@
                     relatedData = model.attributes;
                 }
 
-                _serverProxy.relationships(
+                app.api.relationships(
                     method,
                     model.link.bean.module,
                     {
@@ -406,7 +408,7 @@
                 );
             }
             else {
-                _serverProxy.beans(
+                app.api.beans(
                     method,
                     model.module,
                     model.attributes,
