@@ -5,11 +5,11 @@ $viewdefs['Bugs']['portal']['layout']['detail'] = array(
     array(
         0 =>
         array(
-            'view' => 'detail',
+            'view' => 'header',
         ),
         1 =>
         array(
-            'view' => 'subpanel',
+            'view' => 'detail',
         ),
     ),
 );
