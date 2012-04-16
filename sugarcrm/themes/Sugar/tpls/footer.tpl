@@ -42,7 +42,7 @@
 <div class="clear"></div>
 <div id="arrow" title="Show" class="up"></div>
 <div id="footer">
-    <img src="{$COMPANY_LOGO_URL}" width="{$COMPANY_LOGO_WIDTH}" class="logo" id="logo" height="{$COMPANY_LOGO_HEIGHT}"
+    <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" 
         title="&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/>
     <div id="partner">
     {foreach from=$DYNAMICDCACTIONS item=action}

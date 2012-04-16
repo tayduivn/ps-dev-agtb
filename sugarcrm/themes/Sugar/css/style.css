@@ -1416,6 +1416,9 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 #footer img.logo {
     margin: 7px 10px;
+    max-width:450px;
+    max-height:17px;
+    
 }
 
 #footer #partner a {
