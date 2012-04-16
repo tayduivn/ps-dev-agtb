@@ -3708,6 +3708,9 @@ article {
   border-top: 1px solid #e8e8e8;
   min-height: 52px;
 }
+article {
+  padding-left: 44px;
+}
 article div {
   display: table-cell;
   vertical-align: middle;
@@ -3909,6 +3912,12 @@ a:hover [class^="icon-"] {
   width: 18px;
   margin-bottom: -20%;
 }
+.icon-account-black {
+  background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
 .navbar [class^="icon-"] {
   margin-top: 2px;
 }
@@ -4094,6 +4103,7 @@ html {
   display: inline-block;
 }
 .topelbar {
+  position: relative;
   height: 34px;
   padding: 5px;
   background-color: #f5f5f5;
@@ -4113,6 +4123,21 @@ html {
 }
 .topelbar i.opt {
   font-style: normal;
+}
+.topelbar form aside {
+  display: inline-block;
+  width: 85px;
+  height: 16px;
+  position: absolute;
+  right: 0px;
+  top: 4px;
+}
+.topelbar form aside a.btn {
+  min-width: 18px;
+  min-height: 22px;
+}
+.accounts .topelbar {
+  padding-right: 94px;
 }
 @media (max-width: 479px) {
   .topelbar i.opt {
