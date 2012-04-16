@@ -322,7 +322,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                     array('module' => 'Accounts','type' => 'default', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/editviewdefs.php' ),
                     array('module' => 'Accounts','type' => 'default', 'view' => 'detail','expected_file' => 'modules/Accounts/metadata/detailviewdefs.php' ),
                     //BEGIN SUGARCRM flav=pro ONLY
-                    array('module' => 'Accounts','type' => 'wireless', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/wireless.editviewdefs.php' ),
+                    array('module' => 'Accounts','type' => 'wireless', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/mobile/views/edit.php' ),
                     //END SUGARCRM flav=pro ONLY
         );
     }
@@ -348,10 +348,15 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         else
             require($expected_file);
 
-        if($view == 'list')
+        if($view == 'list') {
             $expectedResults = $listViewDefs[$module];
-        else
-            $expectedResults = $viewdefs[$module][ucfirst($view) .'View' ];
+        } else {
+            if ($type == 'wireless') {
+                $expectedResults = $viewdefs[$module]['mobile']['view'][$view];
+            } else {
+                $expectedResults = $viewdefs[$module][ucfirst($view) .'View' ];
+            }
+        }
 
         $a_expectedResults = array();
         $a_expectedResults[$module][$type][$view] = $expectedResults;
@@ -380,10 +385,15 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         else
             require($expected_file);
 
-        if($view == 'list')
+        if($view == 'list') {
             $expectedResults = $listViewDefs[$module];
-        else
-            $expectedResults = $viewdefs[$module][ucfirst($view) .'View' ];
+        } else {
+            if ($type == 'wireless') {
+                $expectedResults = $viewdefs[$module]['mobile']['view'][$view];
+            } else {
+                $expectedResults = $viewdefs[$module][ucfirst($view) .'View' ];
+            }
+        }
 
         $a_expectedResults = array();
         $a_expectedResults[$module][$type][$view] = $expectedResults;
