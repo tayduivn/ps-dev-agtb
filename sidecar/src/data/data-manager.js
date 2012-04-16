@@ -408,7 +408,7 @@
                 );
             }
             else {
-                app.api.beans(
+                app.api.records(
                     method,
                     model.module,
                     model.attributes,
