@@ -67,7 +67,7 @@ class Bug51723Test extends SOAPTestCase
 
     public function tearDown()
     {
-        $this->_contact->mark_deleted($this->_contact->id);
+        //$this->_contact->mark_deleted($this->_contact->id);
         parent::tearDown();
 
         $administration = new Administration();
