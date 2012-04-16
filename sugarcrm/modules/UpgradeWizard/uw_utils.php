@@ -219,12 +219,13 @@ function removeFileFromPath($file,$path, $deleteNot=array()){
 		}
 		if(!file_exists($path))return $removed;
 		$d = dir($path);
-		while($e = $d->read()){
+		while(false !== ($e = $d->read())){  // Fixed bug. !== is required to literally match the type and value of false, so that a filename that could evaluate and cast to false, ie "false" or "0", still allows the while loop to continue.  From example at http://www.php.net/manual/en/function.dir.php
 			$next = $path . '/'. $e;
 			if(substr($e, 0, 1) != '.' && is_dir($next)){
 				$removed += removeFileFromPath($file, $next, $deleteNot);
 			}
 		}
+		$d->close();  // from example at http://www.php.net/manual/en/function.dir.php
 		return $removed;
 	}
 
