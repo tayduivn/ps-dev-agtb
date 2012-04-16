@@ -58,9 +58,7 @@ class Bug47522Test extends Sugar_PHPUnit_Framework_TestCase
     public function testEncodedKeyCleaning()
     {
 
-        //assert that encoding is set to true.  ini_get returns a string, so cannot use assertTrue()
-        $this->assertSame(ini_get('mbstring.encoding_translation'), '1', 'mbstring encoding translation is turned off, the rest of the test is invalid');
-	
+
 	//continue this test only if encoding_translation is turned on.
         if(ini_get('mbstring.encoding_translation')==='1'){
             //inject bad string into request
@@ -78,6 +76,9 @@ class Bug47522Test extends Sugar_PHPUnit_Framework_TestCase
             //assert the key is no longer in request
             $this->assertNotContains($key,$_REQUEST,'Key should not hav passed xss security check, but still exists in request, this is wrong.');
 
+        }else{
+            //encoding_translation is turned off, this test will not work, so let's skip it
+    	    $this->markTestSkipped('mbstring.encoding_translation is turned off, mark as skipped for now.');
         }
 
 
