@@ -4,6 +4,22 @@ var compiled_path = "./extensions/nomad/compiled/"; // directory where the compi
 var fs = require('fs');
 var handlebars = require('handlebars');
 var watcher = require('watch-tree-maintained').watchTree(src_path, {'sample-rate': 500})
+var fstools = require('fs-tools');
+
+
+fstools.walk(src_path, '\.hbt$',
+    function(path, stats, callback) {
+        compileTemplate(path, callback);
+    },
+    function(err) {
+        if (err) {
+            console.error(err);
+        }
+    });
+
+watcher.on('fileModified', function(path, stats) {
+    compileTemplate(path);
+});
 
 var start =
     "(function() {\n" +
@@ -11,9 +27,14 @@ var start =
         "templates['{tpl-name}'] = template(";
 var end = "\n)})();";
 
-watcher.on('fileModified', function(path, stats) {
+// Template compiler
+var compileTemplate = function(path, callback) {
     fs.readFile(path, 'ascii', function(err, data) {
-        if (err) throw err;
+        if (err) {
+            console.log(err);
+            if (callback) callback(err);
+            return;
+        }
 
         if (path.length - path.lastIndexOf(".hbt") == 4) {
 
@@ -50,7 +71,12 @@ watcher.on('fileModified', function(path, stats) {
             }
             catch (e) {
                 console.log('Failed to compile template "' + filename + '": ' + e);
+                if (callback) callback(err);
+                return;
             }
+
+            if (callback) callback();
         }
     });
-});
+
+};
