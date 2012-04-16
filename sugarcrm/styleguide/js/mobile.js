@@ -189,7 +189,7 @@
         }, 3000);
     }
 
-    $(".icon-star-empty, .icon-star, a[title=Remove]").live('click',function(){
+    $(".icon-star-empty, .icon-star, a[title=Remove]").live('click tap',function(){
 	var rn=Math.floor(Math.random()*100);
 	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-general" style="display:block;"><strong>Loading...</strong></div>');
 	setTimeout(function(ia){
@@ -197,7 +197,7 @@
         }, 3000);
     });
 
-    $('.icon-star, .icon-star-empty').live('click',function(){
+    $('.icon-star, .icon-star-empty').live('click tap',function(){
         $(this).toggleClass('icon-star-empty').toggleClass('icon-star');
     });
 
