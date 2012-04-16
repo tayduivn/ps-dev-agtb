@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -19,61 +19,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *********************************************************************************/
-$viewdefs['Leads']['portal']['view']['edit'] = array(
-    'templateMeta' => array('maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30'),
+$viewdefs['KBDocuments']['portal']['view']['detail'] = array(
+    'templateMeta' =>
+    array(
+        'maxColumns' => '2',
+        'widths' =>
+        array(
+            array(
+                'label' => '10',
+                'field' => '30',
+            ),
+            array(
+                'label' => '10',
+                'field' => '30',
+            ),
         ),
-        'formId' => 'CaseEditView',
-        'formName' => 'CaseEditView',
-        'hiddenInputs' => array('module' => 'Cases',
-            'returnmodule' => 'Cases',
-            'returnaction' => 'DetailView',
-            'action' => 'Save',
-        )
     ),
-    'panels' => array(
+    'panels' =>
+    array(
         array(
             'label' => 'Details',
             'fields' => array(
+                'kbdocument_name',
+                'active_date',
                 array(
-                    'name' => 'salutation',
-                    'displayParams' => array(
-                        'colspan' => 2
-                    )
-                ),
-                'first_name',
-                'last_name',
-                'phone_work',
-                'phone_mobile',
-                'phone_home',
-                'do_not_call',
-                'email1',
-                'email2',
-                'email_opt_out',
-                '',
-                'title',
-                'department',
-                array(
-                    'name' => 'account_name',
-                    'displayParams' => array(
-                        'colspan' => 2
-                    )
-                ),
-                array(
-                    'name' => 'primary_address_street',
+                    'field' => 'description',
                     'displayParams' => array(
                         'colspan' => 2,
-                        'size' => 100
+                        'nl2br' => true
                     )
-                ),
-                'primary_address_city',
-                'primary_address_state',
-                'primary_address_postalcode',
-                'primary_address_country',
+                )
             )
         )
-    )
+    ),
 );
 ?>

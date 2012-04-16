@@ -68,27 +68,22 @@ class SugarPortalBrowser
     }
 
     /**
-     * Runs through the PHP files in a directory and checks for files prefixed
-     * with "portal." to determine if the module is a portal module. This replaces
-     * the old file path checker that looked for portal/modules/$module/metadata
+     * Runs through the PHP files in a directory and checks for directories named
+     * portal to determine if the module is a portal module. This replaces
+     * the old file path checker that looked for portal/modules/$module/metadata.
+     * We are now looking for modules/$module/metadata/portal/(views|layouts)/*.php
      *
      * @param string $dir The directory to scan
-     * @return bool True if a portal.*.php file was found
+     * @return bool True if a portal/$type/*.php file was found
      */
     function isPortalModule($dir) {
         // Standardize the directory path
-        $path = rtrim($dir, '/') . '/';
-
-        // Get our glob pattern
-        $glob = $path . '*.php';
-
-        // Set our search string
-        $find = $path . 'portal.';
+        $path = rtrim($dir, '/') . '/portal/';
 
         // Handle it
-        $files = glob($glob);
-        foreach ($files as $file) {
-            if (strpos($file, $find) !== false) {
+        foreach (array('views', 'layouts') as $type) {
+            $files = glob($path . $type . '/*.php');
+            if (!empty($files)) {
                 return true;
             }
         }

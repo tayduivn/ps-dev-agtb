@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -25,51 +26,38 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+$module_name = '<module_name>';
+$viewdefs[$module_name]['mobile']['view']['detail'] = array(
+	'templateMeta' => array('maxColumns' => '1',
+                            'widths' => array(
+                                            array('label' => '10', 'field' => '30'),
+                                            array('label' => '10', 'field' => '30')
+                                            ),
+                            ),
 
-//FILE SUGARCRM flav=ent ONLY
 
-class SugarPortalModule{
-	var $name;
-	
-	function SugarPortalModule($module)
-	{
-	    global $app_list_strings;
-        $moduleNames = array_change_key_case($app_list_strings['moduleList']);
-		$this->name = $moduleNames[strtolower($module)];
-		$this->module = $module;
-		
-		$views = array('edit.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_EDITVIEW'] , 'type'=>'edit'),
-					   'detail.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_DETAILVIEW'] , 'type'=>'detail'),
-					   'list.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_LISTVIEW'] , 'type'=>'list'),);
-		$path = 'modules/'.$this->module.'/metadata/portal/views/';
-		foreach($views as $file => $def) {
-			if(file_exists($path . $file)){
-				$this->views[$file] = $def;
-			}
-		}		
-	}
-	
-
-	function getNodes()
-	{
-		$layouts = array();
-		
-		foreach($this->views as $file=>$def){
-			   $file = str_replace($file, '.php', '');
-			   $viewType = ($def['type'] == 'list')?"ListView":ucfirst($def['type']);
-			   $layouts[] = array('name'=>$def['name'], 'module'=>$this->module, 'action'=>"module=ModuleBuilder&action=editPortal&view=${viewType}&view_module=".$this->module);
-		}
-		$nodes =  array(
-		            'name'=>$this->name, 'module'=>$this->module, 'type'=>'SugarPortalModule', 'action'=>"module=ModuleBuilder&action=wizard&portal=1&view_module=".$this->module, 
-		            'children'=>$layouts,
-			        );
-		return $nodes;
-	}
-	
-	
-	
-	
-	
-	
-}
-?>
+	'panels' => array (
+		array (
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array (
+                    'name' => 'first_name',
+                    'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="25" maxlength="25" type="text" value="{$fields.first_name.value}">',
+                    'displayParams'=>array('wireless_edit_only'=>true,),
+                ),
+                array(
+                    'name' => 'last_name',
+                    'displayParams' => array('wireless_edit_only'=>true,),
+                ),
+                array (
+                    'name' => 'phone_work',
+                ),
+                'email1',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+			    'team_name',
+		        //END SUGARCRM flav=pro ONLY
+            ),
+	    ),
+	),
+);

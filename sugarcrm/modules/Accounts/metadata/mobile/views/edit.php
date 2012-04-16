@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -6,6 +7,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
  *not use this file except in compliance with the License. Under the terms of the license, You
  *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
@@ -18,62 +20,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- *********************************************************************************/
-$viewdefs['Leads']['portal']['view']['edit'] = array(
-    'templateMeta' => array('maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30'),
-        ),
-        'formId' => 'CaseEditView',
-        'formName' => 'CaseEditView',
-        'hiddenInputs' => array('module' => 'Cases',
-            'returnmodule' => 'Cases',
-            'returnaction' => 'DetailView',
-            'action' => 'Save',
-        )
-    ),
+ ********************************************************************************/
+/*********************************************************************************
+ * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
+ * All Rights Reserved.
+ * Contributor(s): ______________________________________..
+ ********************************************************************************/
+
+$viewdefs['Accounts']['mobile']['view']['edit'] = array(
+	'templateMeta' => array(
+                            'maxColumns' => '1',
+                            'widths' => array(
+								array('label' => '10', 'field' => '30'),
+                            ),
+                           ),
     'panels' => array(
-        array(
-            'label' => 'Details',
+    	array(
+            'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'salutation',
+                    'name'=>'name',
                     'displayParams' => array(
-                        'colspan' => 2
-                    )
+                        'required' => true,
+                        'wireless_edit_only' => true,
+                    ),
                 ),
-                'first_name',
-                'last_name',
-                'phone_work',
-                'phone_mobile',
-                'phone_home',
-                'do_not_call',
+                'phone_office',
+                array(
+                    'name'=>'website',
+                    'displayParams'=>array(
+                        'type'=>'link',
+                    ),
+                ),
                 'email1',
-                'email2',
-                'email_opt_out',
-                '',
-                'title',
-                'department',
-                array(
-                    'name' => 'account_name',
-                    'displayParams' => array(
-                        'colspan' => 2
-                    )
-                ),
-                array(
-                    'name' => 'primary_address_street',
-                    'displayParams' => array(
-                        'colspan' => 2,
-                        'size' => 100
-                    )
-                ),
-                'primary_address_city',
-                'primary_address_state',
-                'primary_address_postalcode',
-                'primary_address_country',
-            )
-        )
-    )
+                'billing_address_street',
+                'billing_address_city',
+                'billing_address_state',
+                'billing_address_postalcode',
+                'billing_address_country',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            ),
+        ),
+	),
 );
-?>

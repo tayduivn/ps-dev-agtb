@@ -270,13 +270,20 @@ class MetaDataFiles
 
         $names = self::getNames();
 
+        // Get final filename path part
+        if (($viewType = self::getViewClient($view)) != '' && $viewType != 'base') {
+            $viewPath = $viewType . '/' . self::$viewsPath;
+        } else {
+            $viewPath = '';
+        }
+
         switch ($type) {
             case MB_HISTORYMETADATALOCATION:
-                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/metadata/' . $names[$view] . '.php';
+                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/metadata/' . $viewPath . $names[$view] . '.php';
             default:
                 // get the module again, all so we can call this method statically without relying on the module stored in the class variables
                 $mb = new ModuleBuilder();
-                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/metadata/' . $names[$view] . '.php';
+                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/metadata/' . $viewPath . $names[$view] . '.php';
         }
     }
 }
