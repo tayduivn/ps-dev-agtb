@@ -197,6 +197,10 @@
         }, 3000);
     });
 
+    $('.icon-star, .icon-star-empty').live('click',function(){
+        $(this).toggleClass('icon-star-empty').toggleClass('icon-star');
+    });
+
 })(window.Zepto);
 
 function closeBottomMenu() {
