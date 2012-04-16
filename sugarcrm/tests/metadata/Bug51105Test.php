@@ -26,17 +26,19 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-// Setup current_user in the global space
-$user = new User(); // Admin user
-$current_user = $user->getSystemUser(); // Used as a global in the quick create
-$current_user->default_team_name = 'Global';
-
-// Get the app_list_strings
-require_once 'include/utils.php';
-$app_list_strings = return_app_list_strings_language('en_us');
-
 class Bug51105Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    }
+
+    public function tearDown()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
+
     public function testCheckEditViewHeaderTpl()
     {
         require_once 'include/EditView/SubpanelQuickCreate.php';
