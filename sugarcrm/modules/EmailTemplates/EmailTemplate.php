@@ -217,7 +217,8 @@ class EmailTemplate extends SugarBean {
 	function fill_in_additional_detail_fields() {
 	    if (empty($this->body) && !empty($this->body_html))
         {
-            $this->body = strip_tags(html_entity_decode($this->body_html));
+            global $sugar_config;
+            $this->body = strip_tags(html_entity_decode($this->body_html, ENT_COMPAT, $sugar_config['default_charset']));
         }
 		$this->created_by_name = get_assigned_user_name($this->created_by);
 		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
@@ -587,17 +588,13 @@ class EmailTemplate extends SugarBean {
 		    $repl_arr['contact_alt_address_street'] = nl2br($repl_arr['contact_alt_address_street']);	
 		}
 
-        // bug 48641
-		foreach ($repl_arr as $name=>$value) {			
-            if($value != '' && is_string($value)) {
-                if ( $field_def['type'] == 'multienum' ) {
-                    $value =  implode(',', unencodeMultienum( $value ));
-                }
-                $string = str_replace("\$$name", $value, $string);
-            } else {
-                $string = str_replace("\$$name", ' ', $string);
-            }
-		}			
+		foreach ($repl_arr as $name=>$value) {
+			if($value != '' && is_string($value)) {
+				$string = str_replace("\$$name", $value, $string);
+			} else {
+				$string = str_replace("\$$name", ' ', $string);
+			}
+		}
 
 		return $string;
 	}

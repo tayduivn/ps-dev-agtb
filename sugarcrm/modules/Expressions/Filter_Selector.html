@@ -96,8 +96,10 @@ function return_filter_values(){
 	var windowOpenerOperator = window.opener.document.getElementById(return_prefix + '_operator');
         var operatorValue = get_value(parent_type + '__operator');
         windowOpenerOperator.value = operatorValue;
-        
-        if (field_value_inner_text.length == 0) 
+
+        // Added time type checking to allow for flow continuation for empty field values
+        // in time based workflow triggers
+        if (field_value_inner_text.length == 0 && get_value('time_int') == null)
         {
             var label = "LBL_IS_EMPTY";
             if (operatorValue != "Equals")

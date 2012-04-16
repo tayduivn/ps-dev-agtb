@@ -783,6 +783,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 		}
 
 		if (!empty($user_name_filter)) {
+		    $user_name_filter = $db->quote($user_name_filter);
 			$query .= " AND user_name LIKE '$user_name_filter%' ";
 		}
 		if (!empty($user_id)) {
@@ -824,6 +825,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 
 /**
  * uses a different query to return a list of users than get_user_array()
+ * Used from QuickSearch.php
  * @param args string where clause entry
  * @return array Array of Users' details that match passed criteria
  */
@@ -832,26 +834,28 @@ function getUserArrayFromFullName($args, $hide_portal_users = false) {
 	$db = DBManagerFactory::getInstance();
 
 	// jmorais@dri - Bug #51411
-	// 
-    // Refactor the code responsible for parsing supplied $args, this way we 
-    // ensure that if $args has at least one space (after trim), the $inClause 
-    // will be composed by several clauses ($inClauses) inside parenthesis. 
+	//
+    // Refactor the code responsible for parsing supplied $args, this way we
+    // ensure that if $args has at least one space (after trim), the $inClause
+    // will be composed by several clauses ($inClauses) inside parenthesis.
     //
-    // Ensuring that operator precedence is respected, and avoiding 
+    // Ensuring that operator precedence is respected, and avoiding
     // inactive/deleted users to be retrieved.
     //
     $args = trim($args);
     if (strpos($args, ' ')) {
         $inClauses = array();
-        
+
         $argArray = explode(' ', $args);
         foreach ($argArray as $arg) {
+            $arg = $db->quote($arg);
             $inClauses[] = "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
         }
-        
+
         $inClause = '(' . implode('OR ', $inClauses) . ')';
-        
+
     } else {
+        $args = $db->quote($args);
         $inClause = "(first_name LIKE '{$args}%' OR last_name LIKE '{$args}%')";
     }
     // ~jmorais@dri
@@ -3121,10 +3125,12 @@ function sugar_cleanup($exit = false) {
 	Tracker::logPage();
 	// Now write the cached tracker_queries
     //BEGIN SUGARCRM flav=pro ONLY
-    $trackerManager = TrackerManager::getInstance();
-    if($monitor = $trackerManager->getMonitor('tracker_queries')){
-    	$trackerManager->saveMonitor($monitor, true);
-	}
+    if(class_exists("TrackerManager")) {
+        $trackerManager = TrackerManager::getInstance();
+        if($monitor = $trackerManager->getMonitor('tracker_queries')){
+        	$trackerManager->saveMonitor($monitor, true);
+    	}
+    }
     //END SUGARCRM flav=pro ONLY
 	if(!empty($GLOBALS['savePreferencesToDB']) && $GLOBALS['savePreferencesToDB']) {
 	    if ( isset($GLOBALS['current_user']) && $GLOBALS['current_user'] instanceOf User )
@@ -4830,13 +4836,18 @@ function verify_image_file($path, $jpeg = false)
         }
 	} else {
 	    // check image manually
-	    $fp = fopen($path, "r");
-	    if(!$fp) return false;
-	    $data = fread($fp, 4096);
+        $fp = fopen($path, "rb");
+        if(!$fp) return false;
+        $data = '';
+        // read the whole file in chunks
+        while(!feof($fp)) {
+            $data .= fread($fp,8192);
+        }
+
 	    fclose($fp);
-	    if(preg_match("/<(html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+	    if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
 	         $data, $m)) {
-	        $GLOBALS['log']->info("Found {$m[0]} in $path, not allowing upload");
+	        $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
 	        return false;
 	    }
 	    return true;

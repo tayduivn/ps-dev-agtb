@@ -841,6 +841,12 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 		return new SUGAR.StringLiteralExpression( expr );
 	}
 
+    // empty string
+    if (expr == '')
+    {
+        return new SUGAR.StringLiteralExpression( expr );
+    }
+
 	// a boolean
 	if ( expr == "true" ) {
 		return new SUGAR.TrueExpression();
