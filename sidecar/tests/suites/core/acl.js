@@ -33,13 +33,14 @@ describe("ACLs", function() {
 
     it("should check access to fields for read, edit", function() {
         var module = 'Cases';
+        var fieldName = 'status';
         var action = 'edit';
         var model = new Backbone.Model();
         var access = this.acl.hasFieldAccess(module, fieldName, action, model);
         expect(access).toBeFalsy();
     });
 
-    it("should check access to fields for owner", function() {
+    it("should check access to fields for owner", function() {1
         var module = 'Cases';
         var fieldName = 'name';
         var action = 'edit';
