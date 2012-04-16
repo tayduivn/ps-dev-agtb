@@ -1210,6 +1210,7 @@ $mod_strings = array (
 
     'LBL_AVAILABLE_FTS_MODULES' => 'Select the module(s) for indexing.',
     'LBL_FTS_INDEX_BUTTON' => 'Index',
+    'LBL_DELETE_FTS_DATA' => 'Delete existing data and index data in the selected modules only?',
     'LBL_CONNECT_STATUS' => 'Connection Status',
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
     'LBL_FTS_TEST' => 'Connect',
