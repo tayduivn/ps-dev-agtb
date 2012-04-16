@@ -136,6 +136,8 @@
             {foreach from=$child_list_options key=val item=label}
                 {if $val==""}
                     {assign var=val value='--blank--'}
+                {/if}
+                {if $label==""}
                     {assign var=label value='--blank--'}
                 {/if}
                 <li class="ui-state-default" val="{$val}">{$label}</li>
