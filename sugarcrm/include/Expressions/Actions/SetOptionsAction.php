@@ -46,7 +46,6 @@ class SetOptionsAction extends AbstractAction{
 				
 		SUGAR.util.extend(SUGAR.forms.SetOptionsAction, SUGAR.forms.AbstractAction, {
 			exec: function(context) {
-			    console.log('set Options start!');
 			    if (typeof(context) == 'undefined')
                     context = this.context;
 				var field = SUGAR.forms.AssignmentHandler.getElement(this.target);
@@ -131,7 +130,6 @@ class SetOptionsAction extends AbstractAction{
 				    var va = new SUGAR.forms.VisibilityAction(this.target, 'false', '');
 				    va.exec(context);
 				}
-				console.log('set Options done!');
 			}
 		});";
 	}
