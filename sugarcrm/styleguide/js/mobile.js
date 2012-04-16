@@ -137,11 +137,6 @@
     $('#listing > article.nav').live('click', function(e){
         $(this).find('a').first().css('border','1px solid red').trigger('click');
     });
-    if($('.alert').size()){
-	setTimeout(function(ia){
-            $('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').hide() });
-        }, 3000);
-    }
 
     var post_template = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i><br>Reply</a><a href="" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a></span></span></article>',
 	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more activity...</a></div></article>',
@@ -187,6 +182,20 @@
 	    $('.deleted').remove();
 	}, 250);
     }
+
+    if($('.alert').size()){
+	setTimeout(function(ia){
+            $('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').hide() });
+        }, 3000);
+    }
+
+    $(".icon-star-empty, .icon-star, a[title=Remove]").live('click',function(){
+	var rn=Math.floor(Math.random()*100);
+	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-general" style="display:block;"><strong>Loading...</strong></div>');
+	setTimeout(function(ia){
+            $('.alert.tmp-'+rn).anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert.tmp-'+rn).remove() });
+        }, 3000);
+    });
 
 })(window.Zepto);
 
