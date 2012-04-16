@@ -1,6 +1,6 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -28,40 +28,47 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Contacts']['DetailView'] = array(
-	'templateMeta' => array(
-                            'maxColumns' => '1', 
-                            'widths' => array(
-								array('label' => '10', 'field' => '30'), 
-                            ),                                  
-                           ),
+$viewdefs['Contacts']['mobile']['view']['edit'] = array(
+    'templateMeta' => array(
+        'maxColumns' => '1',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+        ),
+    ),
     'panels' => array(
-    	array (
-	    	array (
-		        'name' => 'first_name',
-		        'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
-		        'displayParams'=>array('wireless_edit_only'=>true,),
-	      	),
-	    ),
-	    array (
-	      	array('name'=>'last_name',
-	            'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,),
-	      	),  
-	    ),  
-	    array('title'),
-		array('account_name'),
-		array('phone_work'),
-	    array('phone_mobile'),
-		array('email1'),
-		array('primary_address_street'),
-		array('primary_address_city'),
-		array('primary_address_state'),
-		array('primary_address_postalcode'),
-		array('primary_address_country'),		
-		array('assigned_user_name'),
-		//BEGIN SUGARCRM flav=pro ONLY
-		array('team_name'),
-		//END SUGARCRM flav=pro ONLY
-	),
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'first_name',
+                    'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
+                    'displayParams' => array(
+                        'wireless_edit_only' => true,
+                    ),
+                ),
+                array(
+                    'name' => 'last_name',
+                    'displayParams' => array(
+                        'required' => true,
+                        'wireless_edit_only' => true,
+                    ),
+                ),
+                'title',
+                'account_name',
+                'phone_work',
+                'phone_mobile',
+                'email1',
+                'primary_address_street',
+                'primary_address_city',
+                'primary_address_state',
+                'primary_address_postalcode',
+                'primary_address_country',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            ),
+        )
+    )
 );
 ?>

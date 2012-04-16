@@ -1,6 +1,6 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -27,27 +27,40 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
-$viewdefs['Cases']['EditView'] = array(
-	'templateMeta' => array(
-                            'maxColumns' => '1', 
-                            'widths' => array(
-								array('label' => '10', 'field' => '30'), 
-                            ),                                  
-                           ),
+
+$viewdefs['Cases']['mobile']['view']['edit'] = array(
+    'templateMeta' => array(
+        'maxColumns' => '1',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+        ),
+    ),
     'panels' => array(
-		array(array('name'=>'case_number', 'displayParams'=>array('required'=>false,'wireless_detail_only'=>true,)),),                           
-    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
-		array('account_name'),
-    	array('priority'),
-		array('status'),
-		array('description'),
-		array('resolution'),		
-		array('assigned_user_name'),
-		//BEGIN SUGARCRM flav=pro ONLY
-		array('team_name'),
-		//END SUGARCRM flav=pro ONLY
-		
-	),
+        'label' => 'LBL_PANEL_1',
+        'fields' => array(
+            array(
+                'name' => 'case_number',
+                'displayParams' => array(
+                    'required' => false,
+                    'wireless_detail_only' => true,
+                )
+            ),
+            array('name' => 'name',
+                'displayParams' => array(
+                    'required' => true,
+                    'wireless_edit_only' => true,
+                )
+            ),
+            'account_name',
+            'priority',
+            'status',
+            'description',
+            'resolution',
+            'assigned_user_name',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'team_name',
+            //END SUGARCRM flav=pro ONLY
+        ),
+    )
 );
 ?>
