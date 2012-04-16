@@ -7,17 +7,34 @@
         initialize: function(opts) {
             console.log("initing");
             console.log(this);
-            // Enable remote error logging
+
+            opts = opts || {};
+
+            /**
+             * Set to true to enable remote logging to server [NOT IMPLEMENTED]
+             * @cfg {Boolean}
+             */
             this.remoteLogging = opts.remoteLogging || false;
 
-            // Inject status code handler
-            this.statusCodes = opts.statusCodes || this.statusCodes;
+            /**
+             * Inject a hash of status code handlers to override defaults
+             * @cfg {Object}
+             */
+            this.statusCodes = (opts.statusCodes) ? _.extend(this.statusCodes, opts.statusCodes) : this.statusCodes;
 
+            /**
+             * Set to true to disable onError overloading
+             * @cfg {Boolean}
+             */
             if (!opts.disableOnError) {
-                this.onError();
+                this.enableOnError();
             }
         },
 
+        /**
+         * An object of status code error handlers.
+         * @property {Object}
+         */
         statusCodes: {
             400: function() {
             },
@@ -39,11 +56,11 @@
 
         },
 
-        onError: function(handler, context) {
-            console.log("On Error");
+        enableOnError: function(handler, context) {
+            console.log("On Error", this.overloaded);
             var originalHandler;
 
-            if (!window.onerror) {
+            if (this.overloaded) {
                 return false;
             }
 
@@ -60,6 +77,8 @@
                     originalHandler();
                 }
             }
+
+            this.overloaded = true;
         }
     };
 
