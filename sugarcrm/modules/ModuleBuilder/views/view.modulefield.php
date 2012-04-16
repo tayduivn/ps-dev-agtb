@@ -182,7 +182,7 @@ class ViewModulefield extends SugarView
             {
             	if (!empty($def['type']) && $def['type'] == "int" && !empty($def['auto_increment'])) {
             	   $allowAutoInc = false;
-            	   break;
+            	   continue;
             	}
                 if (!empty($def['type']) && $def['type'] == "enum" && $field != $vardef['name'])
                 {
