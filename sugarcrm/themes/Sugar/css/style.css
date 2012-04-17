@@ -6084,7 +6084,7 @@ margin-left:10px;
 }
 #sugar_spot_search {
 	border: 0;
-	width:131px;
+	width:120px;
 	font-size: 12px;
     padding:5px 20px 5px 20px;
     border-radius: 2px;
@@ -6126,7 +6126,7 @@ input#sugar_spot_search:focus {
 }
 
 #sugar_spot_search_results {
-	width:290px;
+
     box-shadow:0 1px 1px #999;
     padding: 20px;
     background:#fff;
