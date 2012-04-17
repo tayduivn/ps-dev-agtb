@@ -70,6 +70,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * </pre>
  * * @author Justin Park (jpark@sugarcrm.com)
  */
+require_once('include/SugarHtml/SugarHtml.php');
 function smarty_function_sugar_menu($params, &$smarty)
 {
     $root_options = array(
@@ -80,35 +81,22 @@ function smarty_function_sugar_menu($params, &$smarty)
             $root_options[$attr] = $value;
         }
     }
-    $output = open_tag("ul", $root_options);
+    $output = SugarHtml::createOpenTag("ul", $root_options);
     foreach($params['items'] as $item) {
         if(strpos($item['html'], "</") === 0) {
             $output .= $item['html'];
             continue;
         }
-        $output .= open_tag('li', !empty($params['itemOptions']) ? $params['itemOptions'] : array()).$item['html'];
+        $output .= SugarHtml::createOpenTag('li', !empty($params['itemOptions']) ? $params['itemOptions'] : array())
+            .$item['html'];
         if(isset($item['items']) && count($item['items'])) {
             $output .= smarty_function_sugar_menu(array(
                 'items' => $item['items'],
                 'htmlOptions' => !empty($params['submenuHtmlOptions']) ? $params['submenuHtmlOptions'] : array()
             ), $smarty);
         }
-        $output .= "</li>";
+        $output .= SugarHtml::createCloseTag("li");
     }
-    $output .= '</ul>';
+    $output .= SugarHtml::createCloseTag("ul");
     return $output;
-}
-
-function open_tag($tagName, $params = array()) {
-
-    $options = "";
-
-    if(empty($params))
-        return "<{$tagName}>";
-
-    foreach($params as $attr => $value) {
-        if($value)
-            $options .= $attr.'="'.$value.'" ';
-    }
-    return "<{$tagName} {$options}>";
 }

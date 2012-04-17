@@ -44,6 +44,7 @@ $mod_strings = array (
 	'LBL_DEL'=> 'Del',
 	'LBL_DESCRIPTION_INFORMATION' => 'Description Information',
 	'LBL_DESCRIPTION' => 'Description:',
+    'LBL_DIRECTION' => 'Direction:',
 	'LBL_DURATION_HOURS' => 'Duration Hours:',
 	'LBL_DURATION_MINUTES' => 'Duration Minutes:',
 	'LBL_DURATION' => 'Duration:',
@@ -85,6 +86,7 @@ $mod_strings = array (
 	'LBL_REMINDER' => 'Reminders:',
 	'LBL_REMINDER_POPUP' => 'Popup',
 	'LBL_REMINDER_EMAIL' => 'Email',
+    'LBL_EMAIL_REMINDER' => 'Email Reminder',
     'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
     'LBL_REMOVE' => 'rem',
 	'LBL_SCHEDULING_FORM_TITLE' => 'Scheduling',
@@ -147,7 +149,7 @@ $mod_strings = array (
     'LBL_EXPORT_PARENT_TYPE' => 'Related Type',
     'LBL_EXPORT_PARENT_ID' => 'Parent ID',
     'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
-    
+
     // create invitee functionallity
     'LBL_CREATE_INVITEE' => 'Create an invitee',
     'LBL_CREATE_CONTACT' => 'As Contact',

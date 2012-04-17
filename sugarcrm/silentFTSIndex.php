@@ -31,7 +31,7 @@ require_once('include/entryPoint.php');
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
-    sugar_die("cron.php is CLI only.");
+    sugar_die("silentFTSIndex.php is CLI only.");
 }
 
 if(empty($current_language)) {
@@ -45,7 +45,8 @@ global $current_user;
 $current_user = new User();
 $current_user->getSystemUser();
 
+$moules = ($argc > 1) ?  array($argv[1]) : array();
+$clearData = ($argc == 2) ?  $argv[2] : TRUE;
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 $indexer = new SugarSearchEngineFullIndexer();
-$results = $indexer->performFullSystemIndex()->getStatistics();
-$GLOBALS['log']->info("FTS Indexer completed with the following results:" . var_export($results, TRUE));
+$results = $indexer->performFullSystemIndex($moules, $clearData);

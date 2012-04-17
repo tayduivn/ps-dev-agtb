@@ -42,7 +42,7 @@ if(!isset($_SESSION['oc_server_url']) || $_SESSION['oc_server_url'] == 'http://'
          !isset($_SESSION['oc_username']) || empty($_SESSION['oc_username']) ||
          !isset($_SESSION['oc_password']) || empty($_SESSION['oc_password'])
   ){
-  $convert = false; 
+  $convert = false;
 }
 ///////////////////////////////////////////////////////////////////////////////
 ////    START OUTPUT
@@ -69,13 +69,13 @@ $out =<<<EOQ
 		<p>
 		<img src="{$sugar_md}" alt="SugarCRM" border="0">
 		</p>{$mod_strings['LBL_OC_INSTALL_TITLE']}</th>
-		
+
    <th width="200" style="text-align: right;"><a href="http://www.sugarcrm.com" target="_blank">
-        <IMG src="include/images/sugarcrm_login.png" width="145" height="30" alt="SugarCRM" border="0"></a></th>
+        <IMG src="include/images/sugarcrm_login.png" alt="SugarCRM" border="0"></a></th>
    </tr>
 EOQ;
 if($convert){
-    $errors = convert_disc_client(); 
+    $errors = convert_disc_client();
     $converted = true;
     if(!empty($errors)){
 $out2 =<<<EOQ2
@@ -88,7 +88,7 @@ $out2 =<<<EOQ2
    <tr><td colspan="3"><div class="required">{$mod_strings['LBL_OC_ADMIN']}</div></td></tr>
  </table>
 </td>
-</tr>  
+</tr>
 EOQ2;
 $out3 = "</table>
 </form>
@@ -105,7 +105,7 @@ $out2 =<<<EOQ5
    <tr><td colspan="3">{$mod_strings['LBL_OC_SUCCESS']}</td></tr>
  </table>
 </td>
-</tr>  
+</tr>
 EOQ5;
 $out3 =<<<EOQ3
 <tr>
@@ -145,10 +145,10 @@ $out2 =<<<EOQ2
        <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_OC_INSTALL_PASS']}</b></td>
        <td align="left"><input type="password" name="oc_password" value="{$_SESSION['oc_password']}" size="20" /></td></tr>
-   
+
 </table>
 </td>
-</tr>  
+</tr>
 
 EOQ2;
 $out3 =<<<EOQ3

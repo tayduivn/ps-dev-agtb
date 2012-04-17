@@ -42,7 +42,7 @@
                             <a href="{sugar_ajax_url url=$url}"> <span>{$result->getSummaryText()}</span></a>
                         <br>
                         <span class="details">
-                                {assign var="resultHits" value=$result->getHighlightedHitText(100, 1, '<span class="highlight">', '</span>')}
+                                {assign var="resultHits" value=$result->getHighlightedHitText()}
                                 {foreach from=$resultHits key=k item=v}
                                 {$k}: {$v}
                             {/foreach}

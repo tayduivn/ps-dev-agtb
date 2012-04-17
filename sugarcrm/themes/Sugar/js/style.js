@@ -76,7 +76,7 @@ SUGAR.append(SUGAR.themes, {
             $("#moduleTabExtraMenu" + sugar_theme_gm_current).before(menuNode);
             
             //kill menu and reload it so all events are assigned properly
-			var moduleList = $("#moduleList");
+
 			$("#moduleList").find("a").unbind();
 			SUGAR.themes.loadModuleList();
 	
@@ -109,16 +109,60 @@ SUGAR.append(SUGAR.themes, {
             this.loadModuleList();
         }
     },
+    
+    toggleQuickCreateOverFlow: function(menuName,maction) {
+    	var menuName = "#quickCreateULSubnav"; 
+    		if(maction == "more") {
+				$(menuName).addClass("showMore");
+				$(menuName).removeClass("showLess");
+    		} else {
+    			$(menuName).addClass("showLess");
+				$(menuName).removeClass("showMore");
+    		}
+    },
     toggleMenuOverFlow: function(menuName,maction) {
 
     	var menuName = "#"+menuName;
+        //Bug#52141: Prevent hiding the menu after expanding with more modules
+        var retainItem = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
+            retainClass = $.fn.superfish.defaults['retainClass'];
+        retainItem.addClass(retainClass);
+        $(menuName).off("mouseout.retain").on("mouseout.retain", function(){
+            retainItem.removeClass(retainClass);
+        });
+
 	    if(maction == "more") {
 			$(menuName).addClass("showMore");
 			$(menuName).removeClass("showLess");
+
+		var viewPortHeight = $(window).height(),
+		    menuOffset = $(menuName).offset(),
+		    menuHeight = $(menuName).outerHeight(true),
+		    menuWidth = $(menuName).width(),
+		    footerHeight = $('#footer').height(),
+		    moduleListHeight = $('#moduleList').height(),
+		    filterByHeight = $(menuName).parent().find('ul.filterBy').outerHeight(true);
+			if(menuHeight + moduleListHeight > viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)) {
+				
+	    		$.fn.hoverscroll.params = $.extend($.fn.hoverscroll.params, {
+	    			vertical : true,
+	    			width: menuWidth,
+	    			hoverZone: 'instant',
+	    			height: viewPortHeight-(moduleListHeight+filterByHeight+footerHeight+2+20)
+	    		});
+	    		$(menuName).hoverscroll();
+	    		$(menuName).width(menuWidth);
+                $(menuName).addClass("hs-active");
+
+		    }
 		} else {
 			$(menuName).addClass("showLess");
 			$(menuName).removeClass("showMore");
-		}
+            if( $(menuName).hasClass("hs-active") ) {
+                $(menuName).removeClass("hs-active");
+			    $.fn.hoverscroll.destroy($(menuName));
+            }
+		}	
     },
     switchMenuMode: function() {
     	if(Get_Cookie("sugar_theme_menu_mode") == 'click') {
@@ -143,14 +187,17 @@ SUGAR.append(SUGAR.themes, {
 
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
-			//delay:     100,
-			speed: 'fast',
+			delay: 50,
+			speed: 0,
+            animation: {
+                display: 'show'
+            },
 			firstOnClick: SUGAR.themes.getMenuMode(),
 			autoArrows: false,
 			dropShadows: false,
             ignoreClass: 'megawrapper',
 			onBeforeShow: function() {
-				if($(this).attr("class") == "megamenu") {
+				if($(this).attr("class") == "megamenu" && $(this).prev().hasClass('more') != true) {
                     var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
 					var moduleName = $(this).prev().attr("module");
                     //Check if the menu we want to show is in the more menu
@@ -217,23 +264,39 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeSearch: function() {
-    	searchWidth = .16;
-    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
-		$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
+
+        $('#moduleList').attr("width", $('#moduleList').attr("width") || $('#moduleList').css("width").replace("px",""));
+
+        var searchWidth = $("#dcmenu").width() - 200
+            - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#moduleList").attr("width");
+        //maximize the proportion of the searchbox size as three quarter of the empty space among the module list and right-hand side menus
+        searchWidth *= .75;
+
+        $('#sugar_spot_search').attr("width", $('#sugar_spot_search').attr("width") || $('#sugar_spot_search').css("width").replace("px",""));
+        var originalSearchWidth = parseInt($('#sugar_spot_search').attr("width"));
+        searchWidth = (searchWidth >= originalSearchWidth) ? searchWidth : originalSearchWidth;
+        $('#sugar_spot_search_div').width(searchWidth + 70);
+        $('#sugar_spot_search').width(searchWidth);
+        $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
+
     },
     resizeMenu: function () {
-	    var maxMenuWidth = Math.round($(window).width()*.45);
+	    var maxMenuWidth = $("#dcmenu").width() - 10
+            - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#dcmenuSearchDiv").width();
 		var menuWidth = $('#moduleList').width();
 		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
+        var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current);
 			$('ul.sf-menu').each(function(){
 				if($(this).attr("id") == ("themeTabGroupMenu_" + sugar_theme_gm_current)){
-					$(this).children("li").each(
+					var menuItems = $(this).children("li")
+					menuItems.each(
 	                    function(index) {                  
                             var menuNode = $(this);
                             menuItemsWidth += menuNode.width();
 	                    }
 				    );
-	               	                               
+	                var menuLength = menuItems.length;
+
 	                if(menuItemsWidth > maxMenuWidth){
 	                	while(menuItemsWidth > maxMenuWidth){
 	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
@@ -243,8 +306,7 @@ SUGAR.append(SUGAR.themes, {
 	                		if(menuNode.hasClass("home")){
 	                			break;
 	                		}
-	                		menuItemsWidth -= menuNode.width();
-	                		menuNode.remove();
+                            menuItemsWidth = currentModuleList.width();
 	                		$("#moduleTabMore" + sugar_theme_gm_current).prepend(menuNode);
 	                	}
 	                }
@@ -252,8 +314,8 @@ SUGAR.append(SUGAR.themes, {
 	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
 	                	if(insertNode.prev().hasClass("current") && !insertNode.prev().hasClass("home")){
 	                		insertNode = insertNode.prev();
-                		}
-	                	while(menuItemsWidth <= maxMenuWidth){
+                		}	                
+	                	while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
 	                		var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first");
 	                		
 	                		if((menuNode.attr("id") != undefined && 
@@ -261,7 +323,8 @@ SUGAR.append(SUGAR.themes, {
 	                		   (menuItemsWidth + menuNode.width()) > maxMenuWidth){
 	                			break;	                			
 	                		}
-	                		
+	                		menuLength++;
+	            
 		                	menuNode.remove();
 		                	insertNode.before(menuNode);
 		                	menuItemsWidth += menuNode.width();
@@ -324,12 +387,12 @@ SUGAR.append(SUGAR.themes, {
     	firstHit = false;
     	$("#sugar_spot_search").keypress(function(event) {
 			DCMenu.startSearch(event);
+            SUGAR.util.doWhen(function(){
+                return document.getElementById('SpotResults') != null;
+            }, SUGAR.themes.resizeSearch);
 			$('#close_spot_search').css("display","inline-block");
 
 			 if(event.charCode == 0 && !firstHit) {
-			$('#sugar_spot_search_div').css("left",110);
-			$('#sugar_spot_search_div').css("width",344);
-			$('#sugar_spot_search').css("width",290);
 			firstHit = true;
 			 	}
 			$('#close_spot_search').click(function() {
@@ -340,12 +403,11 @@ SUGAR.append(SUGAR.themes, {
     },
     clearSearch: function() {
    		$("div#sugar_spot_search_results").hide();
+        $("#SpotResults").remove();
 		$('#close_spot_search').css("display","none");
 		$("#sugar_spot_search").val("");
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
-		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 54);
-	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
 	  	firstHit = false;
    	},
    	actionMenu: function() {

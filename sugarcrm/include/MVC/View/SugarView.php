@@ -628,8 +628,12 @@ class SugarView
             }
             $ss->assign("shortcutExtraMenu",$shortcutExtraMenu);
         }
-        
-        
+       
+       if(!empty($current_user)){
+       	$ss->assign("max_tabs", $current_user->getPreference("max_tabs"));
+       } 
+      
+       
         $imageURL = SugarThemeRegistry::current()->getImageURL("dashboard.png");
         $homeImage = "<img src='$imageURL'>";
 		$ss->assign("homeImage",$homeImage);
@@ -1358,7 +1362,7 @@ EOHTML;
         // Default anonymous pages to be under Home
         elseif ( !isset($app_list_strings['moduleList'][$this->module]) )
             return $defaultTab;
-        elseif ( $_REQUEST['action'] == "ajaxui" )
+        elseif ( isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui" )
         	return $defaultTab;
         else
             return $this->module;

@@ -228,6 +228,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
  */
  function process_dynamic_listview_rows($data,$parent_data, $xtemplateSection, $html_varName, $subpanel_def)
  {
+    global $subpanel_item_count;
     global $odd_bg;
     global $even_bg;
     global $hilite_bg;
@@ -236,6 +237,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
     $this->xTemplate->assign("BG_HILITE", $hilite_bg);
     $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
+    $subpanel_item_count = 0;
     $oddRow = true;
     $count = 0;
     reset($data);
@@ -276,6 +278,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
     while(list($aVal, $aItem) = each($data))
     {
+        $subpanel_item_count++;
         $aItem->check_date_relationships_load();
         // TODO: expensive and needs to be removed and done better elsewhere
 
@@ -1491,8 +1494,6 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
         global $app_strings, $sugar_version, $sugar_config;
         global $currentModule;
 
-
-
         $this->xTemplate->assign('BG_HILITE', $hilite_bg);
         $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
@@ -1588,6 +1589,17 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                     if(trim($results['string']) == '') $results['string'] = $app_strings['LBL_NONE'];
                     $fields[$results['fieldToAddTo']] = $fields[$results['fieldToAddTo']].'</a>';
                 }
+
+                if($aItem->ACLAccess('Delete')) {
+                    $delete = '<a class="listViewTdToolsS1" onclick="return confirm(\''.$this->local_app_strings['NTC_DELETE_CONFIRMATION'].'\')" href="'.'index.php?action=Delete&module='.$aItem->module_dir.'&record='.$fields['ID'].'&return_module='.$aItem->module_dir.'&return_action=index&return_id=">'.$this->local_app_strings['LBL_DELETE_INLINE'].'</a>';
+                    require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+                    $fields['DELETE_BUTTON'] = smarty_function_sugar_action_menu(array(
+                        'id' => $aItem->module_dir.'_'.$fields['ID'].'_create_button',
+                        'buttons' => array($delete),
+                    ), $this);
+
+                }
+
                 $this->xTemplate->assign($html_varName, $fields);
                 $aItem->setupCustomFields($aItem->module_dir);
                 $aItem->custom_fields->populateAllXTPL($this->xTemplate, 'detail', $html_varName, $fields);

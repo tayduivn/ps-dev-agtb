@@ -53,6 +53,11 @@ $the_title .= "<tr><td valign='top'><h3>".$current_module_strings['LBL_MODULE_SE
 $the_title .= "</tr></table>\n";
 echo $the_title;
 
+$buttons = array(
+    "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' type='submit' name='NewWorkFlowAlertShells' id='NewWorkFlowAlertShells' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '>\n",
+    "<input type='button' name='SelectWorkFlowAlertShells' id='SelectWorkFlowAlertShells' class='button' title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' onclick='window.open(\"index.php?module=WorkFlowAlertShells&action=Popup&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'/>",
+);
+
 $button  = "<form  action='index.php' method='post' name='form' id='form'>\n";
 $button .= "<input type='hidden' name='module' value='WorkFlowAlertShells'>\n";
 $button .= "<input type='hidden' name='module_tab' value='WorkFlow'>\n";
@@ -61,22 +66,27 @@ $button .= "<input type='hidden' name='return_module' value='".$currentModule."'
 $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='action' value='EditView';>\n";
-$button .= "<input title='".$app_strings['LBL_NEW_BUTTON_TITLE']."' class='button' type='submit' name='NewWorkFlowAlertShells' id='NewWorkFlowAlertShells' value='  ".$app_strings['LBL_NEW_BUTTON_LABEL']."  '>\n";
-$button .= "<input type='button' name='SelectWorkFlowAlertShells' id='SelectWorkFlowAlertShells' class='button' title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']."' onclick='window.open(\"index.php?module=WorkFlowAlertShells&action=Popup&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'/>";
+
+require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+$button .= smarty_function_sugar_action_menu(array(
+    'id' => 'ACLRoles_EditView_action_menu',
+    'buttons' => $buttons,
+), $xtpl);
+
 //$button .= "<input title='".$current_module_strings['LBL_NEW_BUTTON_TITLE_ACTION']."' class='button' type='button' name='New' value='  ".$current_module_strings['LBL_NEW_BUTTON_LABEL_ACTION']."'";
 //$button .= "LANGUAGE=javascript onclick='window.open(\"index.php?module=WorkFlowActionShells&action=CreateStep1&html=CreateStep1&form=ComponentView&form_submit=false&query=true&sugar_body_only=true&workflow_id=$focus->id\",\"new\",\"width=400,height=500,resizable=1,scrollbars=1\");'";
 //$button .= ">\n";
 $button .= "</form>";
 
-	
+
 	$admin = new Administration();
 	$admin->retrieveSettings();
 	$mail_server = trim($admin->settings['mail_smtpserver']);
 
 	if (empty($mail_server) && !empty($focus_alerts_list)) {
-		
+
 		echo "<BR><font color='red'><b>".$mod_strings['LBL_LACK_OF_NOTIFICATIONS_ON']."</b></font><BR>";
-	}	
+	}
 
 
 //ALERT SUBPANEL
