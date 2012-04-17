@@ -143,20 +143,7 @@ describe("Handlebars Helpers", function() {
 
     describe("getLabel", function() {
         it("should get a label", function() {
-            var lang = SUGAR.App.lang,
-                appCache,
-                appCacheInstance;
-            appCache = {
-                cache: {},
-                get: function(key) {
-                    return this.cache[key];
-                },
-
-                set: function(key, val) {
-                    this.cache[key] = val;
-                }
-            };
-
+            var lang = SUGAR.App.lang;
             var setData = fixtures.language.Accounts,
                 string;
 
@@ -165,11 +152,8 @@ describe("Handlebars Helpers", function() {
 
             expect(string).toEqual("Annual Revenue");
             // Save instance of app cache
-            appCacheInstance = SUGAR.App.cache;
-            SUGAR.App.cache = appCache;
             expect(Handlebars.helpers.getLabel("LBL_ANNUAL_REVENUE", "Accounts")).toEqual("Annual Revenue");
             // Restore cache
-            SUGAR.App.cache = appCacheInstance;
         });
     });
 
