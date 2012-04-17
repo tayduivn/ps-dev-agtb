@@ -298,7 +298,8 @@ SUGAR.append(SUGAR.themes, {
 	                var menuLength = menuItems.length;
 
 	                if(menuItemsWidth > maxMenuWidth){
-	                	while(menuItemsWidth > maxMenuWidth){
+                        var looping = 0;
+	                	while(menuItemsWidth > maxMenuWidth && looping++ <= max_tabs){
 	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
                             if(menuNode.hasClass("current")){
 	                			menuNode = menuNode.prev();
