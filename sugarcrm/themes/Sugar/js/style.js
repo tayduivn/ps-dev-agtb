@@ -281,58 +281,68 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeMenu: function () {
-	    var maxMenuWidth = $("#dcmenu").width() - 10
+	    var maxMenuWidth = $("#dcmenu").width() - 40 //40px: misc. padding and border lines
             - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#dcmenuSearchDiv").width();
-		var menuWidth = $('#moduleList').width();
-		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
-        var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current);
-			$('ul.sf-menu').each(function(){
-				if($(this).attr("id") == ("themeTabGroupMenu_" + sugar_theme_gm_current)){
-					var menuItems = $(this).children("li")
-					menuItems.each(
-	                    function(index) {                  
-                            var menuNode = $(this);
-                            menuItemsWidth += menuNode.width();
-	                    }
-				    );
-	                var menuLength = menuItems.length;
+		var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
+            menuItemsWidth = SUGAR.themes.menuItemsWidth || currentModuleList.width();
+        SUGAR.themes.menuItemsWidth = menuItemsWidth;
 
-	                if(menuItemsWidth > maxMenuWidth){
-                        var looping = 0;
-	                	while(menuItemsWidth > maxMenuWidth && looping++ <= max_tabs){
-	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
-                            if(menuNode.hasClass("current")){
-	                			menuNode = menuNode.prev();
-	                		}
-	                		if(menuNode.hasClass("home")){
-	                			break;
-	                		}
-                            menuItemsWidth = currentModuleList.width();
-	                		$("#moduleTabMore" + sugar_theme_gm_current).prepend(menuNode);
-	                	}
-	                }
-	                else if(menuItemsWidth <= maxMenuWidth){
-	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
-	                	if(insertNode.prev().hasClass("current")){
-	                		insertNode = insertNode.prev();
-                		}	                
-	                	while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
-	                		var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first");
-	                		
-	                		if((menuNode.attr("id") != undefined && 
-	                		   menuNode.attr("id").match(/moduleMenuOverFlow[a-zA-Z]*/)) ||
-	                		   (menuItemsWidth + menuNode.width()) > maxMenuWidth){
-	                			break;	                			
-	                		}
-	                		menuLength++;
-	                		menuItemsWidth += menuNode.width();
-		                	menuNode.remove();
-		                	
-		                	insertNode.before(menuNode);
-	                	}
-	                }
-				}
-            });
+        var menuItems = currentModuleList.children("li");
+        var menuLength = menuItems.length;
+
+        if(menuItemsWidth > maxMenuWidth){
+            var moreNode = $("#moduleTabMore" + sugar_theme_gm_current);
+            while(menuItemsWidth >= maxMenuWidth && menuLength-- > 0){
+                var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
+                if(menuNode.hasClass("current")){
+                    menuNode = menuNode.prev();
+                }
+                if(menuNode.hasClass("home")){
+                    menuNode = menuNode.prev();
+                }
+                if($.browser.msie) {
+                    menuNode.attr("width", menuNode.width());
+                    menuItemsWidth -= menuNode.width();
+                    moreNode.prepend(menuNode);
+                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
+                } else {
+                    moreNode.prepend(menuNode);
+                    menuItemsWidth = currentModuleList.width();
+                    SUGAR.themes.menuItemsWidth = false;
+                }
+            }
+
+        }
+        else {
+
+            var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
+            if(insertNode.prev().hasClass("current")){
+                insertNode = insertNode.prev();
+            }
+            while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
+                var menuNode = $("#moduleTabMore" + sugar_theme_gm_current).children("li:first"),
+                    menuNodeWidth = ($.browser.msie) ? (menuNode.attr("width") || menuNode.width()) : menuNode.width();
+
+                if((menuNode.attr("id") != undefined &&
+                    menuNode.attr("id").match(/moduleMenuOverFlow[a-zA-Z]*/)) ||
+                    (menuItemsWidth + parseInt(menuNodeWidth)) > maxMenuWidth){
+                    break;
+                }
+                menuLength++;
+
+                if($.browser.msie) {
+                    menuItemsWidth += parseInt(menuNodeWidth);
+                    insertNode.before(menuNode);
+                    SUGAR.themes.menuItemsWidth = menuItemsWidth;
+                } else {
+                    insertNode.before(menuNode);
+                    menuItemsWidth = currentModuleList.width();
+                    SUGAR.themes.menuItemsWidth = false;
+                }
+            }
+        }
+
+
     },
     globalToolTips: function () {
     	$("#moduleList .home a").tipTip({maxWidth: "auto", edgeOffset: 10});
