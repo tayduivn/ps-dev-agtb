@@ -3315,7 +3315,9 @@ SUGAR.util = function () {
                             context = item.overrideContext;
                         }
                     }
-                    item.fn.call(context, item.obj);
+                    if(item.fn) {
+                        item.fn.call(context, item.obj);
+                    }
                 };
 
                 var i, len, item, test;

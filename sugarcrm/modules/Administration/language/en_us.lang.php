@@ -183,7 +183,7 @@ $mod_strings = array (
 	'LBL_CONFIGURATOR_DESC'=>'Set up Config.php',
     'LBL_CONFIGURATOR_TITLE'=>'Configurator',
     'LBL_CONFIGURE_GROUP_TABS_DESC' => 'Create and edit the grouping of navigation tabs',
-    'LBL_CONFIGURE_GROUP_TABS' => 'Configure Grouped Modules',
+    'LBL_CONFIGURE_GROUP_TABS' => 'Configure Module Menu Filters',
     'LBL_CONFIGURE_SETTINGS_TITLE' => 'System Settings',
     'LBL_CONFIGURE_SETTINGS' => 'Configure system-wide settings',
     'LBL_CONFIGURE_TABS_AND_SUBPANELS' => 'Display Module Tabs and Subpanels',
@@ -1210,6 +1210,7 @@ $mod_strings = array (
 
     'LBL_AVAILABLE_FTS_MODULES' => 'Select the module(s) for indexing.',
     'LBL_FTS_INDEX_BUTTON' => 'Index',
+    'LBL_DELETE_FTS_DATA' => 'Delete existing data and index data in the selected modules only?',
     'LBL_CONNECT_STATUS' => 'Connection Status',
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
     'LBL_FTS_TEST' => 'Connect',

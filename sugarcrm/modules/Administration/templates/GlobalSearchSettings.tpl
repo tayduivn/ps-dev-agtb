@@ -118,6 +118,7 @@
 <div id='selectFTSModules' class="yui-hidden">
     <div style="background-color: white; padding: 20px;">
         <div id='selectFTSModulesTable' ></div>
+        <div style="padding-top: 10px"><input type="checkbox" name="clearDataOnIndex" id="clearDataOnIndex" >&nbsp;{$MOD.LBL_DELETE_FTS_DATA}</div>
     </div>
 </div>
 <script type="text/javascript">
@@ -274,6 +275,8 @@
             var port = document.getElementById('fts_port').value;
             var typeEl = document.getElementById('fts_type');
             var type = typeEl.options[typeEl.selectedIndex].value;
+            var clearData = $('#clearDataOnIndex').attr('checked') ? true : false;
+
             var modules = SUGAR.getEnabledModulesForFTSSched();
             if(modules.length == 0)
             {
@@ -289,7 +292,7 @@
             }
             var sUrl = 'index.php?to_pdf=1&module=Administration&action=ScheduleFTSIndex&sched=true&type='
                             + encodeURIComponent(type) + '&host=' + encodeURIComponent(host) + '&port=' + encodeURIComponent(port)
-                            + '&modules=' + encodeURIComponent(modules);
+                            + "&clearData=" + clearData + '&modules=' + encodeURIComponent(modules);
 
             var callback = {
                 success: function(o)

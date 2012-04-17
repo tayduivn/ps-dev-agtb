@@ -1416,6 +1416,9 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 #footer img.logo {
     margin: 7px 10px;
+    max-width:450px;
+    max-height:17px;
+    
 }
 
 #footer #partner a {
@@ -6078,13 +6081,13 @@ margin-left:10px;
 		
 #sugar_spot_search_div {
 	height: 26px;
-	width: 190px;
+	width: 240px;
 	display: inline-block;
 	position: relative;
 }
 #sugar_spot_search {
 	border: 0;
-	width:131px;
+	width:170px;
 	font-size: 12px;
     padding:5px 20px 5px 20px;
     border-radius: 2px;
@@ -6126,7 +6129,7 @@ input#sugar_spot_search:focus {
 }
 
 #sugar_spot_search_results {
-	width:290px;
+
     box-shadow:0 1px 1px #999;
     padding: 20px;
     background:#fff;
