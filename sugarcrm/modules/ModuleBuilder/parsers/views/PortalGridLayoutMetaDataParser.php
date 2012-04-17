@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=ent ONLY
 if (! defined ( 'sugarEntry' ) || ! sugarEntry)
     die ( 'Not A Valid Entry Point' ) ;
 /*********************************************************************************
@@ -23,114 +23,221 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 
-require_once 'modules/ModuleBuilder/parsers/views/WirelessGridLayoutMetaDataParser.php' ;
+require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
-class  PortalGridLayoutMetaDataParser extends WirelessGridLayoutMetaDataParser
+class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 {
 
-    static $variableMap = array (
-        //BEGIN SUGARCRM flav=ent ONLY
-    	MB_PORTALEDITVIEW => 'EditView' ,
-    	MB_PORTALDETAILVIEW => 'DetailView' ,
-        //END SUGARCRM flav=ent ONLY
-    	) ;
+    /**
+     * helper to pack a row with $cols members of [empty]
+     * @param $row
+     * @param $cols
+     * @return void
+     *
+     */
+    protected function _packRowWithEmpty(&$row, $cols)
+    {
+        for ($i=0; $i<$cols; $i++) {
+            $row[] = $this->_addInternalCell(MBConstants::$EMPTY);
+        }
+    }
+
+    /**
+     * helper to add a field (name) to the internal formatted row
+     * used in case internal format goes to wanting arrays
+     * @param $field
+     * @return string value to add
+     */
+    protected function _addInternalCell($field) {
+        return is_array($field) ? $field['name'] : $field;
+    }
+
+
+    /*
+     * helper methods for doing field comparisons
+     */
+    protected function isFiller($field)
+    {
+        if (is_array($field))  {
+            return ($field == MBConstants::$FILLER);
+        }
+
+        return ($field == $this->FILLER['name']);
+    }
+
+    protected function isEmpty($field)
+    {
+        if (is_array($field))  {
+            return ($field == MBConstants::$EMPTY);
+        }
+
+        return ($field == MBConstants::$EMPTY['name']);
+    }
+
+    // return an array of cells to be appended to the fieldlist
+    protected function _addCell($field, $colspan)
+    {
+        // for fillers, if we ever have a 'filler' with colspan = n, just sub n 'fillers'
+        if ($field === '')
+        {
+            return array_fill(0,$colspan,'');
+        }
+
+        // add the displayParam field if necessary
+        if ($colspan > 1) {
+            if (!is_array($field)) {
+                $field = array('name' => $field);
+            }
+
+            $field['displayParams']['colspan'] = $colspan;
+        }
+        return array($field);
+    }
 
     /**
      * here we convert from internal metadata format to file (canonical) metadata
      * @param $panels
      * @param $fielddefs
+     * @return array - viewdefs in canonical file format
      */
-//    protected function _convertToCanonicalForm($panels , $fielddefs)
-//    {
-//
-//    }
+    protected function _convertToCanonicalForm($panels , $fielddefs)
+    {
+        //$previousViewDef = $this->getFieldsFromLayout($this->implementation->getViewDefs());
+        //$currentFields = $this->getFieldsFromLayout($panels);
+
+        $canonicalPanels = array();
+
+        foreach ($panels as $pName => $panel) {
+            $fields = array();
+            foreach ($panel as $row) {
+                $offset = 1; // reset
+                $lastField = null; // holder for the field to put in
+                foreach ($row as $cell) {
+
+                    // empty => get rid of it, and assign to previous field as colspan
+                    if ($this->isEmpty($cell)) {
+                        $offset++; // count our columns
+                        continue;
+                    }
+
+                    // dump out the last field we stored and reset column count
+                    // leading empty => should not occur, but assign to next field as colspan
+                    if ($lastField !== null) {
+                        $fields = array_merge($fields,$this->_addCell($lastField,$offset));
+                        $offset = 1;
+                    }
+
+                    // filler => ''
+                    if ($this->isFiller($cell)) {
+                        $lastField = '';
+                    }
+                    else {
+                        // field => add the field def.
+                        $fieldName = is_array($cell) ? $cell['name'] : $cell;
+                        if (isset($this->_originalViewDef[$fieldName]))  {
+                            $source = $this->_originalViewDef[$fieldName];
+                        }
+                        elseif (isset($fielddefs[$fieldName])) {
+                            $source = self::_trimFieldDefs($fielddefs[$fieldName]);
+                        }
+                        else {
+                            $source = $cell;
+                        }
+
+                        $lastField = $this->getNewRowItem($source, $fielddefs[$fieldName]);
+                    }
+
+                }
+
+                // dump out the last field we stored
+                if ($lastField !== null) {
+                    $fields = array_merge($fields,$this->_addCell($lastField,$offset));
+                }
+
+            }
+            $canonicalPanels[] = array('label' => $pName, 'fields' => $fields);
+        }
+        return $canonicalPanels;
+    }
 
     /**
      * here we convert from file (canonical) metadata => internal metadata format
      * @param $panels
      * @param $fielddefs
+     * @return array $internalPanels
      */
-//    protected function _convertFromCanonicalForm($panels , $fielddefs)
-//    {
-//
-//    }
-
-    /**
-     * here we go from POST vars => internal metadata format
-     * @param $fielddefs
-     */
-//    protected function _populateFromRequest(&$fielddefs)
-//    {
-//
-//    }
-
-    /**
-     * Checks for the existence of the view variable for portal metadata
-     *
-     * @param array $viewdefs The viewdef array
-     * @param string $view The view to check for
-     * @return bool
-     */
-    public function hasViewVariable($viewdefs, $view) {
-        $name = MetaDataFiles::getViewDefVar($view);
-        $client = MetaDataFiles::getViewClient($view);
-        return $name && $client && isset($viewdefs[$client]['view'][$name]);
-    }
-
-    /**
-     * Gets the viewdefs for portal from the entire viewdef array
-     *
-     * @param array $viewdefs The full viewdef collection below $viewdefs[$module]
-     * @param string $view The view to fetch the defs for
-     * @return array
-     */
-    public function getDefsFromArray($viewdefs, $view) {
-        return $this->hasViewVariable($viewdefs, $view) ? $viewdefs[MetaDataFiles::getViewClient($view)]['view'][MetaDataFiles::getViewDefVar($view)] : array();
-    }
-
-    /**
-     * Gets panel defs from the viewdef array
-     * @param array $viewdef The viewdef array
-     * @return array
-     */
-    protected function getPanelsFromViewDef($viewdef) {
-        $defs = $this->getDefsFromArray($viewdef, $this->_view);
-        if (isset($defs['panels'])) {
-    		return $defs['panels'];
-    	}
-
-        return array();
-    }
-
-    /*
-     * Save a draft layout
-     */
-    function writeWorkingFile ()
+    protected function _convertFromCanonicalForm($panels , $fielddefs)
     {
-        $this->_populateFromRequest ( $this->_fielddefs ) ;
-        $viewdefs = $this->_viewdefs ;
+        // canonical form has format:
+        // $panels[n]['label'] = label for panel n
+        //           ['fields'] = array of fields
 
-        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
-        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
-        $this->implementation->save ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+
+        // internally we want:
+        // $panels[label for panel] = fields of panel in rows,cols format
+
+        $internalPanels = array();
+        foreach ($panels as $n => $panel) {
+            $pLabel = !empty($panel['label']) ? $panel['label'] : $n;
+
+            // going from a list of fields to putting them in rows,cols format.
+            $internalFieldRows = array();
+            $row = array();
+            foreach ($panel['fields'] as $field) {
+                // try to find the column span of the field. It can range from 1 to max columns of the panel.
+                $colspan = isset($field['displayParams']['colspan']) ? $field['displayParams']['colspan'] : 1;
+                $colspan = min($colspan, $this->getMaxColumns()); // we can't put in a field wider than the panel.
+                $cols_left = $this->getMaxColumns() - count($row);
+
+                if ($cols_left < $colspan) {
+                    // add $cols_left of (empty) to $row and put it in
+                   $this->_packRowWithEmpty($row, $cols_left);
+                   $internalFieldRows[] = $row;
+                   $row = array();
+                }
+
+                // add field to row + enough (empty) to make it to colspan
+                $row[] = $this->_addInternalCell(empty($field) ? $this->FILLER : $field);
+                $this->_packRowWithEmpty($row, $colspan-1);
+            }
+
+            // add the last incomplete row if necessary
+            if (!empty($row)) {
+                $cols_left = $this->getMaxColumns() - count($row);
+                // add $cols_left of (empty) to $row and put it in
+                $this->_packRowWithEmpty($row, $cols_left);
+                $internalFieldRows[] = $row;
+            }
+            $internalPanels[$pLabel] = $internalFieldRows;
+        }
+
+        return $internalPanels;
     }
 
-    /*
-     * Deploy the layout
-     * @param boolean $populate If true (default), then update the layout first with new layout information from the $_REQUEST array
+
+    /**
+     * Returns a list of fields, generally from the original (not customized) viewdefs
+     * @param $viewdef
+     * @return array array of fields, indexed by field name
      */
-    function handleSave ($populate = true)
+    protected function getFieldsFromLayout($viewdef)
     {
-    	$GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->handleSave()" ) ;
+        $panels = $this->getPanelsFromViewDef($viewdef);
 
-        if ($populate)
-            $this->_populateFromRequest ( $this->_fielddefs ) ;
+        // not canonical form... try parent method
+        if (!isset($panels[0]['fields'])) {
+            return parent::getFieldsFromLayout($viewdef);
+        }
 
-        $viewdefs = $this->_viewdefs ;
-        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
-        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
-        $this->implementation->deploy ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+        $out = array();
+        foreach ($panels as $panel) {
+            foreach($panel['fields'] as $field) {
+                $name = (is_array($field)) ? $field['name'] : $field; // we either have a name or a bare string
+                $out[$name] = $field;
+            }
+        }
+        return $out;
     }
 
 }

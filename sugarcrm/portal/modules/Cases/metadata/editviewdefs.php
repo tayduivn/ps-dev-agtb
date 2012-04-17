@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Cases']['editview']  = array(
+$viewdefs['Cases']['EditView']  = array(
     'templateMeta' => array('maxColumns' => '2',
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'),
@@ -47,11 +47,11 @@ $viewdefs['Cases']['editview']  = array(
 						    ),
 						    //END SUGARCRM flav=pro ONLY
                            ),
-    'data' => array(
-        array(array('field' => 'case_number', 'readOnly' => true)),
+    'panels' => array(
+        array(array('name' => 'case_number', 'readOnly' => true)),
         array('priority', 'status'),
-        array(array('field' => 'name', 'displayParams' => array('size' => 60), 'required'=>true)),
-        array(array('field' => 'description', 'displayParams' => array('rows' => '15', 'cols' => '100'))),
+        array(array('name' => 'name', 'displayParams' => array('size' => 60), 'required'=>true)),
+        array(array('name' => 'description', 'displayParams' => array('rows' => '15', 'cols' => '100'))),
     )
 );
 ?>

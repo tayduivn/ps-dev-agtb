@@ -56,8 +56,7 @@ class ViewPortalLayoutView extends ViewLayoutView
 
 	function display() 
 	{
-	    $this->parser = ParserFactory::getParser('portallayoutview',$this->editModule);
-		$this->parser->init($this->editModule,  $_REQUEST['view']);
+	    $this->parser = ParserFactory::getParser($this->editLayout,$this->editModule,null,null,'portal');
 		$smarty = new Sugar_Smarty();
 		
 		//Add in the module we are viewing to our current mod strings
@@ -109,7 +108,7 @@ class ViewPortalLayoutView extends ViewLayoutView
 		$smarty->assign('view_module', $this->editModule);
 		$smarty->assign('calc_field_list', json_encode($this->parser->getCalculatedFields()));
 		$smarty->assign('view', $this->editLayout);
-		$smarty->assign('maxColumns', $this->parser->maxColumns);
+        $smarty->assign('maxColumns', $this->parser->getMaxColumns());
 		$smarty->assign('fieldwidth', '150px');
 		$smarty->assign('translate',true);
 		$smarty->assign('fromPortal',true); // flag for form submittal - when the layout is submitted the actions are the same for layouts and portal layouts, but the parsers must be different...
@@ -128,7 +127,7 @@ class ViewPortalLayoutView extends ViewLayoutView
         $ajax->addCrumb(ucwords($this->editLayout), '');
 
 		// set up language files
-		$smarty->assign('language',$this->parser->language_module);	// for sugar_translate in the smarty template
+		$smarty->assign('language',$this->parser->getLanguage());	// for sugar_translate in the smarty template
 
 		//navjeet- assistant logic has changed
 		//include('modules/ModuleBuilder/language/en_us.lang.php');
