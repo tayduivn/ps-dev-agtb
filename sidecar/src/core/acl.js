@@ -41,12 +41,12 @@
 
             var hasAccess = true;
             var access = "yes";
-
+            // if we have a field check field level access
             if (fieldName && this.acls && this.acls[module] && this.acls[module].fields[fieldName] && this.action2acl[action]) {
                 access = this.acls[module].fields[fieldName][this.action2acl[action]];
             }
-
-            if(!fieldName && this.acls && this.acls[module] && this.acls[module][action]) {
+            // check if just a module view
+            if (!fieldName && this.acls && this.acls[module] && this.acls[module][action]) {
                 access = this.acls[module][action];
             }
 
@@ -57,8 +57,8 @@
             if (access == "owner" && model && model.get('assigned_user_id') != myID) {
                 hasAccess = false;
             }
-
-            if(this.acls && this.acls[module] && this.acls[module].admin && this.acls[module].admin=="yes") {
+            // if module admin they have full access
+            if (this.acls && this.acls[module] && this.acls[module].admin && this.acls[module].admin == "yes") {
                 hasAccess = true;
             }
 
