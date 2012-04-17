@@ -1051,7 +1051,7 @@ fixtures.metadata = {
                 "access": "yes",
                 "view": "yes",
                 "list": "yes",
-                "edit": "yes",
+                "edit": "no",
                 "delete": "yes",
                 "import": "yes",
                 "export": "yes",

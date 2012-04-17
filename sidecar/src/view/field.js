@@ -124,7 +124,7 @@
                 'detail': 'none'
             };
 
-            if (!(app.acl.hasFieldAccess(this.model.module, this.name, this.viewName, this.model))) {
+            if (!(app.acl.hasAccess(this.model.module, this.viewName, this.model, this.name))) {
                 this.viewName = viewFallbackMap[this.viewName];
                 // falling back, but now we need to check your access to the fallback view
                 this.loadTemplate();
