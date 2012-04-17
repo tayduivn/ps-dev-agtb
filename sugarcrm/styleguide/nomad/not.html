@@ -23,16 +23,17 @@
   </div>
   <div class="dialogdark">
   <p>This page is not included in the prototype.  Please go back to whence you came.</p>
-  <p><a href="" class="back btn">Go Back</a></p>
+  <p><a onclick="javascript:goback();return false;" href="" class="back btn">Go Back</a></p>
   </div>
-  <script src="../js/jquery-1.7.2.min.js"></script>
   <script>
-  $(document).ready(function(){
-      $('a.back').click(function(){
-          parent.history.back();
-          return false;
-      });
-  });
+    function goback(){
+        if(history.length<=2) {
+                window.location="./";
+        }else{
+            window.history.back(-1);		
+        }
+        return false;
+    }
   </script>
 </body>
 </html>

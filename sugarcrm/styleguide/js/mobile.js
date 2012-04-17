@@ -118,7 +118,7 @@
     $('#tour').on('click', function () {
       $(this).remove();
     });
-    $('#back .back, #back .back').on('click', function(){
+    $('#back .back, .back.btn').on('click', function(){
 		if(history.length<=2) {
 			window.location="./";
 		}else{
