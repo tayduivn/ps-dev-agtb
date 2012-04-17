@@ -26,7 +26,7 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
 require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
-class  PortalGridLayoutMetaDataParser extends GridLayoutMetaDataParser
+class  SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser
 {
 
     /**

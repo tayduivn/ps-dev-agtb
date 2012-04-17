@@ -85,8 +85,8 @@ class MetaDataFiles
     	MB_QUICKCREATE => 'QuickCreate',
 
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-        MB_WIRELESSEDITVIEW => 'EditView' ,
-        MB_WIRELESSDETAILVIEW => 'DetailView' ,
+        MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
+        MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW => array('portal','view','edit'),

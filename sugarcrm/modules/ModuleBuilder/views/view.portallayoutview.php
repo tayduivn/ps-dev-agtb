@@ -113,7 +113,7 @@ class ViewPortalLayoutView extends ViewLayoutView
 		$smarty->assign('translate',true);
 		$smarty->assign('fromPortal',true); // flag for form submittal - when the layout is submitted the actions are the same for layouts and portal layouts, but the parsers must be different...
 
-		if ($this->parser->usingWorkingFile) {
+		if (!empty($this->parser->usingWorkingFile)) {
 			$smarty->assign('layouttitle',$GLOBALS['mod_strings']['LBL_LAYOUT_PREVIEW']);
 		} else {
 			$smarty->assign('layouttitle',$GLOBALS['mod_strings']['LBL_CURRENT_LAYOUT']);

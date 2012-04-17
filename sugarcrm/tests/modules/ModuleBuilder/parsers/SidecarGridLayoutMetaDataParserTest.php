@@ -21,11 +21,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/ModuleBuilder/parsers/views/PortalGridLayoutMetaDataParser.php' ;
+require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
 
 
 
-class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_parser;
 
@@ -386,7 +386,7 @@ class PortalGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCas
  *
  * lifted from SearchViewMDPTest
  */
-class PortalGridLayoutMetaDataParserTestDerivative extends PortalGridLayoutMetaDataParser
+class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMetaDataParser
 {
     // dummy constructor for now
     public function __construct($view, $moduleName) {
