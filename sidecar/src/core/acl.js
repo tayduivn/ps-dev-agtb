@@ -17,11 +17,22 @@
             "detail": "read",
             "list": "read"
         },
+        /**
+         * Sets acls
+         * @param {Object} acls
+         */
         set: function(acls) {
             if (acls) {
                 this.acls = acls;
             }
         },
+        /**
+         * Checks acls to see if the current user has access to module views and fields
+         * @param {String} module
+         * @param {String} action
+         * @param {Object} model
+         * @param {String} [fieldName]
+         */
         hasAccess: function(module, action, model, fieldName) {
             //TODO Update this to get apps current user id
             //TODO Also add override for app full admins remember to add a test this means you
