@@ -28,6 +28,64 @@ describe("Application context manager", function() {
             });
         });
 
+        describe("when creating a context", function() {
+            var getFieldsSpy = sinon.spy(function() { return [1,2]; });
+            var renderSpy    = sinon.spy();
+            var context      = SUGAR.App.context.getContext();
+
+            it("should load the context for layout path", function() {
+                var params = {
+                    id: 123,
+                    layout: {
+                        getFields: getFieldsSpy,
+                        render: renderSpy
+                    },
+                    module: 'Home'
+                };
+
+                context.init(params);
+                context.loadData();
+
+                expect(getFieldsSpy).toHaveBeenCalled();
+                expect(renderSpy).toHaveBeenCalled();
+                expect(context.get('fields')).toEqual([1,2]);
+            });
+
+            it("should load the context for create path", function() {
+                var stub = sinon.spy();
+                var params = {
+                    create: stub,
+                    module: 'Home'
+                };
+
+                context.init(params);
+                context.loadData();
+                expect(context.get().module).toEqual('Home');
+            });
+
+            it("should always load bean for context", function() {
+                var params = {
+                    module: "Home",
+                    layout: {
+                        getFields: getFieldsSpy,
+                        render: renderSpy
+                    }
+                };
+                context.init(params);
+                context.loadData();
+                expect(context.state.collection).toBeDefined();
+                expect(context.state.model).toBeDefined();
+            });
+            it("should trigger context:focus when focus called", function() {
+                var onFocusSpy = sinon.spy();
+                var context = SUGAR.App.context.getContext();
+                context.bind("context:focus", onFocusSpy);
+                context.init({});
+                context.focus(onFocusSpy);
+                expect(onFocusSpy).toHaveBeenCalled();
+            });
+        });
+
         describe("when a new state is required", function() {
             var obj = {
                 url: "someurl",
