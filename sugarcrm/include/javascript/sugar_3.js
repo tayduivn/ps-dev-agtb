@@ -2416,6 +2416,7 @@ sugarListView.prototype.check_boxes = function() {
 		if (theForm.select_entire_list.value == 1) {
 			document.MassUpdate.massall.disabled = true;
             sugarListView.prototype.toggleSelected();
+            $("#button_select_all_top").click();
         }
 
 		for(var wp = 0 ; wp < inputs_array.length; wp++) {
@@ -3314,7 +3315,9 @@ SUGAR.util = function () {
                             context = item.overrideContext;
                         }
                     }
-                    item.fn.call(context, item.obj);
+                    if(item.fn) {
+                        item.fn.call(context, item.obj);
+                    }
                 };
 
                 var i, len, item, test;
