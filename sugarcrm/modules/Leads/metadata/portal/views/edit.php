@@ -19,32 +19,61 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *********************************************************************************/
-$viewdefs['Leads']['portal']['views']['edit'] = array(
-    'templateMeta' => array('maxColumns' => '2', 
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'), 
-                                            array('label' => '10', 'field' => '30'),
-                                            ),
-                            'formId' => 'CaseEditView',
-                            'formName' => 'CaseEditView',
-                            'hiddenInputs' => array('module' => 'Cases',
-                                                    'returnmodule' => 'Cases',
-                                                    'returnaction' => 'DetailView',
-                                                    'action' => 'Save',
-                                                   )
-                           ),
-    'panels' => array(
-        array('salutation'),
-        array('first_name', 'last_name'),
-        array('phone_work', 'phone_mobile'),
-        array('phone_home', 'do_not_call'),
-        array('email1', 'email2'),
-        array('email_opt_out', ''),
-        array('title', 'department'),
-        array('account_name'),
-        array(array('field' => 'primary_address_street', 'displayParams' => array('size' => 100))),
-        array('primary_address_city', 'primary_address_state'),
-        array('primary_address_postalcode', 'primary_address_country'),
+$viewdefs['Leads']['portal']['view']['edit'] = array(
+    'templateMeta' => array('maxColumns' => '2',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30'),
+        ),
+        'formId' => 'CaseEditView',
+        'formName' => 'CaseEditView',
+        'hiddenInputs' => array('module' => 'Cases',
+            'returnmodule' => 'Cases',
+            'returnaction' => 'DetailView',
+            'action' => 'Save',
+        )
     ),
+    'panels' => array(
+        array(
+            'label' => 'Details',
+            'fields' => array(
+                array(
+                    'name' => 'salutation',
+                    'displayParams' => array(
+                        'colspan' => 2
+                    )
+                ),
+                'first_name',
+                'last_name',
+                'phone_work',
+                'phone_mobile',
+                'phone_home',
+                'do_not_call',
+                'email1',
+                'email2',
+                'email_opt_out',
+                '',
+                'title',
+                'department',
+                array(
+                    'name' => 'account_name',
+                    'displayParams' => array(
+                        'colspan' => 2
+                    )
+                ),
+                array(
+                    'name' => 'primary_address_street',
+                    'displayParams' => array(
+                        'colspan' => 2,
+                        'size' => 100
+                    )
+                ),
+                'primary_address_city',
+                'primary_address_state',
+                'primary_address_postalcode',
+                'primary_address_country',
+            )
+        )
+    )
 );
 ?>

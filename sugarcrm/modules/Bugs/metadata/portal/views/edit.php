@@ -1,67 +1,79 @@
 <?php
-$viewdefs['Bugs']['portal']['view']['edit'] = array(
-        'buttons' =>
+$viewdefs['Bugs']['portal']['view']['edit'] =
+    array(
+        'templateMeta' =>
         array(
-            0 =>
+            'maxColumns' => '2',
+            'widths' =>
             array(
-                'name' => 'save_button',
-                'type' => 'button',
-                'label' => 'Save',
-                'value' => 'save',
-                'primary' => true,
-                'events' =>
                 array(
-                    'click' => 'function(){ var self = this; this.model.save(null, {success:function(){self.app.navigate(self.context, self.model, \'detail\');}});}',
+                    'label' => '10',
+                    'field' => '30',
+                ),
+                array(
+                    'label' => '10',
+                    'field' => '30',
                 ),
             ),
-            1 =>
+            'formId' => 'BugEditView',
+            'formName' => 'BugEditView',
+            'hiddenInputs' =>
             array(
-                'name' => 'cancel_button',
-                'type' => 'button',
-                'label' => 'Cancel',
-                'value' => 'cancel',
-                'route' =>
-                array(
-                    'action' => 'detail',
-                    'module' => 'Cases',
-                ),
-                'primary' => false,
+                'module' => 'Bugs',
+                'returnmodule' => 'Bugs',
+                'returnaction' => 'DetailView',
+                'action' => 'Save',
             ),
+            'hiddenFields' =>
+            array(
+                array(
+                    'name' => 'portal_viewable',
+                    'operator' => '=',
+                    'value' => '1',
+                ),
+            ),
+            'useTabs' => false,
         ),
         'panels' =>
         array(
-            0 =>
             array(
-                'label' => 'Details',
+                'label' => 'default',
                 'fields' =>
                 array(
-                    0 =>
+                    'priority',
+                    'status',
+                    'source',
+                    'product_category',
                     array(
-                        'name' => 'bug_number',
-                        'label' => 'Bug Number',
-                        'class' => 'foo',
+                        'name' => 'resolution',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
                     ),
-                    1 =>
                     array(
                         'name' => 'name',
-                        'label' => 'Name',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
                     ),
-                    2 =>
-                    array(
-                        'name' => 'status',
-                        'label' => 'Status',
-                    ),
-                    3 =>
                     array(
                         'name' => 'description',
-                        'label' => 'Description',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
                     ),
-                    4 =>
                     array(
-                        'name' => 'date_modified',
-                        'label' => 'Modifed Date',
+                        'name' => 'work_log',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
                     ),
                 ),
             ),
         ),
-);
+    );
+?>

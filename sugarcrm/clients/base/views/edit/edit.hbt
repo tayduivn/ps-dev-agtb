@@ -21,14 +21,14 @@
       <div class="span7">
         <form name='{{name}}'>
                 <div class="card2">
-                     {{#each meta.panels}}
-                    {{#each fields}}
-                        {{field ../../context ../../this ../../model}}
-                    {{/each}}
+                    {{#each meta.panels}}
+                        {{#each fields}}
+                            {{field ../../context ../../this ../../model}}
+                        {{/each}}
                     {{/each}}
                     <div class="form-actions">
                     {{#each meta.buttons}}
-                        <a class="btn" href="{{#if route}}#{{buildRoute ../../context ../../this ../route ../route.options}}
+                        <a class="btn {{#if primary}}btn-primary{{/if}}" href="{{#if route}}#{{buildRoute ../../context ../../model ../route.action ../route.options}}
                         {{else}}javascript:void(0){{/if}}">
                         {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{label}}</a>
                     {{/each}}

@@ -286,6 +286,12 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     $meta = $v->getMetaDataFile('Wireless' . $fullView);
                     $metadataFile = $meta['filename'];
                     require_once($metadataFile);
+
+                    // Handle found view defs
+                    if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)]) {
+                        return $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)];
+                    }
+                    
                     //Wireless detail metadata may actually be just edit metadata.
                     $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
                 }
