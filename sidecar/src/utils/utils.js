@@ -347,6 +347,8 @@
                     date.setHours(date.getHours() + 1)
                 }
 
+                date.setMinutes(min);
+
                 return date;
             }
         },

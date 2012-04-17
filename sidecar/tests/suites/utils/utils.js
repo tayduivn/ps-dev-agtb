@@ -110,10 +110,71 @@ describe("utils", function() {
             var format = 'Y-m-d H:i:sA';
             var result = utils.date.format(value, format);
             expect(result).toEqual('2012-03-27 01:48:00AM');
+            
+            format = 'Y-m-d H:i:sa';
+            result = utils.date.format(value, format);
+            expect(result).toEqual('2012-03-27 01:48:00am');
         });
-    });
-    describe("cookie", function() {
-        it("should set cookie values", function() {
+
+        it("should format date objects into strings", function() {
+            var value = '2012-03-27 01:48:32';
+            var format = 'Y-m-d h:i a';
+            var result = utils.date.parse(value, format);
+            expect(result.toString()).toEqual('Tue Mar 27 2012 01:48:00 GMT-0700 (PDT)');
+        });
+
+        it("should format date objects given timestamp and no format", function() {
+            var result = utils.date.parse(1332838080000);
+            expect(result.getTime()).toEqual(1332838080000);
+        });
+
+        it("should return false if bogus inputs", function() {
+            var result = utils.date.parse('XyXyZyW');
+            expect(result).toEqual(false);
+        });
+
+        it("should round time to nearest fifteen minutes", function() {
+            var ts     = Date.parse("April 1, 2012 10:01:50");
+            var date   = new Date(ts)
+            var result = utils.date.roundTime(date);
+            expect(result.getMinutes()).toEqual(15);
+
+            ts     = Date.parse("April 1, 2012 10:16:50");
+            date   = new Date(ts)
+            result = utils.date.roundTime(date);
+            expect(result.getMinutes()).toEqual(30);
+
+            ts     = Date.parse("April 1, 2012 10:29:50");
+            date   = new Date(ts)
+            result = utils.date.roundTime(date);
+            expect(result.getMinutes()).toEqual(30);
+
+            ts     = Date.parse("April 1, 2012 10:30:50");
+            date   = new Date(ts)
+            result = utils.date.roundTime(date);
+            expect(result.getMinutes()).toEqual(30);
+
+            ts     = Date.parse("April 1, 2012 10:31:50");
+            date   = new Date(ts)
+            result = utils.date.roundTime(date);
+            expect(result.getMinutes()).toEqual(45);
+
+            ts     = Date.parse("April 1, 2012 10:44:50");
+            date   = new Date(ts)
+            result = utils.date.roundTime(date);
+            expect(result.getHours()).toEqual(10);
+            expect(result.getMinutes()).toEqual(45);
+
+            ts     = Date.parse("April 1, 2012 10:46:00");
+            date   = new Date(ts)
+            result = utils.date.roundTime(date);
+            expect(result.getMinutes()).toEqual(0);
+            expect(result.getHours()).toEqual(11);
+        });
+   });
+
+   describe("cookie", function() {
+       it("should set cookie values", function() {
             var result = "";
             var cName = "sidecarCookie";
             var value = 'asdf';
