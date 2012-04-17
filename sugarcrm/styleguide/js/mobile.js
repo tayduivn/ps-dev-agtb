@@ -143,7 +143,7 @@
 	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more activity...</a></div></article>',
 	listing_spacer = '<i></i>',
 	posts_search_template = '\
-	<section class="search">\
+	<section class="search topelbar">\
           <i class="icon-search"></i>\
           <form class="form-search row-fluid" action="" _lpchecked="1">\
             <input type="text" class="search-query" placeholder="Search all activity">\
