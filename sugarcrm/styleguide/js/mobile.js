@@ -201,6 +201,12 @@
     $('.icon-star, .icon-star-empty').live('click tap',function(){
         $(this).toggleClass('icon-star-empty').toggleClass('icon-star');
     });
+    
+    $('form input').on('focus',function(){
+	if($('.navbar-bottom').hasClass('teaser')) {
+	    $('.navbar-bottom').removeClass('teaser');
+	}
+    });
 
 })(window.Zepto);
 
