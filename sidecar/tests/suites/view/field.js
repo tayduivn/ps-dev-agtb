@@ -38,6 +38,19 @@ describe("Field", function() {
         expect(field.$el.html()).toEqual('<span name="status">new</span>');
     });
 
+    it("should fall labels back to vname", function() {
+        var bean = new Backbone.Model(),
+            view = {},
+            context = {},  field = app.view.createField({
+                def: {name: "status", type: "varchar", vname: "TEST LABEL"},
+                view: view,
+                context: context,
+                model: bean
+            });
+        bean.set({status: "new", id: "anId"});
+        expect(field.label).toEqual("TEST LABEL");
+    });
+
     it("should bind bind model change on render", function() {
         var bean = new Backbone.Model(),
             view = {},

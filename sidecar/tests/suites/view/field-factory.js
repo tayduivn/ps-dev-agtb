@@ -45,6 +45,21 @@ describe("View Manager", function() {
             expect(result instanceof app.view.Field).toBeTruthy();
         });
 
+        it("with def of a string", function() {
+            var model = app.data.createBean("Contacts", {
+                first_name: "Foo",
+                last_name: "Bar"
+            });
+            var result = app.view.createField({
+                def: "first_name",
+                context: context,
+                view: view,
+                model: model
+            });
+            expect(result).toBeDefined();
+            expect(result.type).toEqual("varchar");
+        });
+
         it("with custom controller", function() {
             var result = app.view.createField({
                 def: {
