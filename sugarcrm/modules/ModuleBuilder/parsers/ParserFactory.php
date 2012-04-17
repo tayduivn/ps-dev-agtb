@@ -42,13 +42,19 @@ class ParserFactory
     protected static function _helperConvertToViewConstant($view)
     {
         $map = array(
-            'editview' => MB_PORTALEDITVIEW,
-            'detailview' => MB_PORTALDETAILVIEW,
-            'searchview' => MB_PORTALSEARCHVIEW,
-            'listview' => MB_PORTALLISTVIEW
+            'edit' => MB_PORTALEDITVIEW,
+            'detail' => MB_PORTALDETAILVIEW,
+            'search' => MB_PORTALSEARCHVIEW,
+            'list' => MB_PORTALLISTVIEW
         );
 
-        return $map[strtolower($view)];
+        // view variable sent to the factory has changed: remove 'view' suffix
+        // in case of further change
+        $view = strtolower($view);
+        if (substr_compare($view,'view',-4) === 0) {
+            $view = substr($view,0,-4);
+        }
+        return $map[$view];
     }
     //END SUGARCRM flav=ent ONLY
 

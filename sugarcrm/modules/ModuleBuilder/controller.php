@@ -956,16 +956,23 @@ class ModuleBuilderController extends SugarController
     //BEGIN SUGARCRM flav=ent ONLY
     function action_editPortal ()
     {
-        switch ( strtolower ( $_REQUEST [ 'view' ] ))
+        // when the file names changed, the request variable (which was tied to them in SugarPortalModule.php)
+        // changed. hence, chop off the 'view' suffix in case it appears.
+        $view = strtolower($_REQUEST['view']);
+        if (substr_compare($view,'view',-4) === 0) {
+            $view = substr($view,0,-4);
+        }
+
+        switch ($view)
         {
-            case 'editview' :
-            case 'detailview' :
+            case 'edit' :
+            case 'detail' :
                 $this->view = 'portallayoutView' ;
                 break ;
-            case 'listview' :
+            case 'list' :
                 $this->view = 'portallistView' ;
                 break ;
-            case 'searchview' :
+            case 'search' :
                 $this->view = 'portalsearchView' ;
                 break ;
             default :
