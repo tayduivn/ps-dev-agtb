@@ -24,6 +24,11 @@ describe('Metadata Manager', function () {
         expect(app.metadata.getModuleList()).toBe(result);
     });
 
+    it('should get all modules', function () {
+        expect(app.metadata.getModules()['Cases']).toBeDefined(); 
+        expect(app.metadata.getModules()['BOGUS']).not.toBeDefined(); 
+    });
+
     it('should get definition for a specific view', function () {
         expect(app.metadata.getView("Contacts", "edit")).toBe(fixtures.metadata.modules.Contacts.views.edit);
     });
