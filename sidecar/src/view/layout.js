@@ -14,7 +14,7 @@
             /**
              * The context is used to determine what the current focus is
              * (includes a model, collection, and module)
-             * @cfg {Core.Context}gith
+             * @cfg {Core.Context}
              */
             this.context = options.context || app.controller.context;
 
