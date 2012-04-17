@@ -1,31 +1,7 @@
 describe("Sugar App Language Manager", function() {
     var lang = SUGAR.App.lang,
-        appCache,
         appCacheInstance;
-
-    appCache = {
-        cache: {},
-        get: function(key) {
-            return this.cache[key];
-        },
-
-        set: function(key, val) {
-            this.cache[key] = val;
-        }
-    };
-
-    beforeEach(function() {
-        // Save instance of app cache
-        appCacheInstance = SUGAR.App.cache;
-        SUGAR.App.cache = appCache;
-    });
-
-    afterEach(function() {
-        // Restore cache
-        SUGAR.App.cache = appCacheInstance;
-    });
-
-    lecache = appCache;
+    var appCache = SUGAR.App.cache;
 
     it("exist in sugar App Instance", function() {
         expect(lang).toBeDefined();
@@ -50,10 +26,6 @@ describe("Sugar App Language Manager", function() {
         expect(lang.modStrings.Opportunities).toEqual(setData.Opportunities);
     });
 
-    it("should have saved the changed language cache to app cache", function() {
-        expect(appCache.cache["language:labels"]).toEqual(fixtures.language);
-    });
-
     it("should retreive the label from the language string store according to the module and label name", function() {
         var setData = fixtures.language.Accounts,
             string;
@@ -73,7 +45,7 @@ describe("Sugar App Language Manager", function() {
 
         string = lang.get("DATA_TYPE_DUE", "Accounts");
 
-        expect(string).toEqual("Due:");
+        expect(string).toEqual("Due");
     });
 
     it("should return the input if its not set at all", function() {
@@ -92,9 +64,8 @@ describe("Sugar App Language Manager", function() {
         var appListStrings = fixtures.metadata.appListStrings;
 
         lang.setAppListStrings(appListStrings);
-
         expect(lang.appListStrings).toEqual(appListStrings);
-        expect(appCache.cache["language:appListStrings"]).toEqual(fixtures.metadata.appListStrings);
+        expect(appCache.get("language:appListStrings")).toEqual(fixtures.metadata.appListStrings);
     });
 
     it("should save app strings to the language cache and app cache", function() {
@@ -103,6 +74,6 @@ describe("Sugar App Language Manager", function() {
         lang.setAppStrings(appStrings);
 
         expect(lang.appStrings).toEqual(appStrings);
-        expect(appCache.cache["language:appStrings"]).toEqual(fixtures.metadata.appStrings);
+        expect(appCache.get("language:appStrings")).toEqual(fixtures.metadata.appStrings);
     });
 });
