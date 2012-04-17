@@ -1,8 +1,15 @@
 describe("Error module", function() {
-    var app = SUGAR.App;
+    var app = SUGAR.App,
+        server = sinon.fakeServer.create();
+
+    beforeEach();
+
+    afterEach(function() {
+        server.restore();
+    });
 
     xit("should handle http code errors", function() {
-
+        server.respondWith([]);
     });
 
     xit("should inject custom http error handlers", function() {

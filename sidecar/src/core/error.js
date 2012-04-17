@@ -52,13 +52,14 @@
 
         remoteLogging: false,
 
-        handleError: function(e) {
-
+        handleError: function(mesg, url, line) {
+            app.logger.error(mesg + " at " + " on line " + line);
         },
 
         enableOnError: function(handler, context) {
             console.log("On Error", this.overloaded);
-            var originalHandler;
+            var originalHandler,
+                self = this;
 
             if (this.overloaded) {
                 return false;
@@ -70,7 +71,7 @@
                 if (handler) {
                     handler.call(context);
                 } else {
-                    alert(arguments);
+                    self.handleError(mesg, url, line);
                 }
 
                 if (originalHandler) {
