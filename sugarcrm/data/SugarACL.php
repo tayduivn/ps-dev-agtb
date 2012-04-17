@@ -42,18 +42,22 @@ class SugarACL
      * @param string $module
      * @return array ACLs list
      */
-    public static function loadACLs($module)
+    public static function loadACLs($module, $context = array())
     {
         if(!isset(self::$acls[$module])) {
             self::$acls[$module] = array();
-            $bean = BeanFactory::newBean($module);
-
-            // Be sure we got a SugarBean:
-            // Some modules do not extend SugarBean (ie DynamicFields)
-			// FIXME: see how we can support ACLs for those too
-            if(! $bean instanceof SugarBean) {
-				return array();
+            if(isset($context['bean']) && $context['bean'] instanceof SugarBean && $context['bean']->module_dir == $module) {
+                $bean = $context['bean'];
+            } else {
+                $bean = BeanFactory::newBean($module);
+                // Be sure we got a SugarBean:
+                // Some modules do not extend SugarBean (ie DynamicFields)
+    			// TODO: see how we can support ACLs for those too
+                if(! $bean instanceof SugarBean) {
+    				return array();
+                }
             }
+
             if(isset($GLOBALS['dictionary'][$bean->object_name]['acls'])) {
                 $acl_list = $GLOBALS['dictionary'][$bean->object_name]['acls'];
             } else {
@@ -127,7 +131,7 @@ class SugarACL
      */
     public static function checkAccess($module, $action, $context = array())
     {
-        foreach(self::loadACLs($module) as $acl) {
+        foreach(self::loadACLs($module, $context) as $acl) {
             if(!$acl->checkAccess($module, $action, $context)) {
                 return false;
             }
