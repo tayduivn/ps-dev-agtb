@@ -25,7 +25,7 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
         array(
             'name' => 'save_button',
             'type' => 'button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
+            'label' => 'Save',
             'value' => 'save',
             'primary' => true,
             'events' =>
@@ -36,7 +36,7 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
         array(
             'name' => 'cancel_button',
             'type' => 'button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'label' => 'Cancel',
             'value' => 'cancel',
             'route' =>
             array(
@@ -46,39 +46,48 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
             'primary' => false,
         ),
     ),
+    'templateMeta' => array('maxColumns' => '2',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
+        ),
+        'formId' => 'CaseEditView',
+        'formName' => 'CaseEditView',
+        'hiddenInputs' => array('module' => 'Cases',
+            'returnmodule' => 'Cases',
+            'returnaction' => 'DetailView',
+            'contact_id' => '{$fields.contact_id.value}',
+            'bug_id' => '{$fields.bug_id.value}',
+            'email_id' => '{$fields.email_id.value}',
+            'action' => 'Save',
+            'type' => '{$fields.type.value}',
+            'status' => 'New',
+        ),
+        //BEGIN SUGARCRM flav=pro ONLY
+        'hiddenFields' => array(
+            array(
+                'name' => 'portal_viewable',
+                'operator' => '=',
+                'value' => '1',
+            ),
+        ),
+        //END SUGARCRM flav=pro ONLY
+    ),
     'panels' => array(
         array(
             'label' => 'default',
             'fields' => array(
                 array(
-                    0 =>
-                    array(
-                        'name' => 'case_number',
-                        'label' => 'LBL_CASE_NUMBER',
-                        'class' => 'foo',
+                    'name' => 'case_number',
+                'priority',
+                'status',
                     ),
-                    1 =>
-                    array(
-                        'name' => 'name',
-                        'label' => 'LBL_SUBJECT',
-                    ),
-                    2 =>
-                    array(
-                        'name' => 'status',
-                        'label' => 'LBL_LIST_STATUS',
-                    ),
-                    3 =>
-                    array(
-                        'name' => 'description',
-                        'label' => 'LBL_DESCRIPTION',
-                    ),
-                    4 =>
-                    array(
-                        'name' => 'date_modified',
-                        'label' => 'LBL_LAST_MODIFIED',
-                    )
+                array(
+                    'name' => 'name',
+                    'required' => true),
+                array('name' => 'description',
                 )
             )
-        ),
-    )
+        )
+    ),
 );
