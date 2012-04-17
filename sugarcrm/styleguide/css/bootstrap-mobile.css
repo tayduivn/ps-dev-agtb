@@ -4240,9 +4240,10 @@ html {
 .dialogdark {
   position: fixed;
   top: 146px;
-  padding: 20px;
+  padding: 20px 0;
   text-align: center;
-  left: 7%;
+  left: 12.5%;
+  margin: 0 auto;
   width: 75%;
   z-index: 1000;
   display: block;
@@ -4263,6 +4264,9 @@ html {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+}
+.dialogdark p {
+  margin: 0 18px;
 }
 .bizcard {
   position: fixed;
