@@ -2211,8 +2211,15 @@ function clean_incoming_data() {
 	foreach($get  as $k => $v) { $_GET[$k] = $v; }
 	foreach($req  as $k => $v) {
 		 $_REQUEST[$k] = $v;
-		 //ensure the keys are safe as well
-		 securexsskey($k);
+
+	    //ensure the keys are safe as well.  If mbstring encoding translation is on, the post keys don't
+        //get translated, so scrub the data but don't die
+	    if(ini_get('mbstring.encoding_translation')==='1'){
+            securexsskey($k,false);
+        }else{
+		    securexsskey($k,true);
+        }
+
 	}
 	// Any additional variables that need to be cleaned should be added here
 	if (isset($_REQUEST['login_theme'])) clean_string($_REQUEST['login_theme']);
