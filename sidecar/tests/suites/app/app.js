@@ -36,6 +36,15 @@ describe("App", function() {
             expect(app2).toEqual(app);
         });
 
+        it("should fire a app:init event when initialized", function() {
+            var cbSpy = sinon.spy(function() {});
+            var app = SUGAR.App.init({el: "body"});
+
+            app.events.on("app:init", cbSpy);
+            app.trigger("app:init", this, {modules: cbSpy});
+            expect(cbSpy).toHaveBeenCalled();
+        });
+
         SUGAR.App.destroy();
     });
 
@@ -75,6 +84,16 @@ describe("App", function() {
             runs(function() {
                 expect(cbSpy).toHaveBeenCalled();
             });
+        });
+
+        it('should start and call sync if authenticated', function() {
+            var app     = SUGAR.App.init({el: "body", silent: true});
+            var syncSpy = sinon.spy(SUGAR.App, 'sync');
+
+            app.start();
+            expect(syncSpy.called).toBeTruthy();
+
+            SUGAR.App.sync.restore();
         });
 
         it("should fire a sync:error event when one of the sync jobs have failed", function() {
