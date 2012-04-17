@@ -3723,6 +3723,9 @@ article [class^="icon-star"] {
   left: 16px;
   font-size: 18px;
 }
+article > input[type=checkbox] {
+  margin-top: 20px;
+}
 #detailListing article {
   padding: 8px 32px 8px 16px !important;
 }
