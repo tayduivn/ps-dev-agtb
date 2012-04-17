@@ -8,27 +8,27 @@
      * @extends View.View
      */
     app.view.Layout = app.view.View.extend({
-        initialize: function() {
+        initialize: function(options) {
             _.bindAll(this, 'render', 'bindData');
 
             /**
              * The context is used to determine what the current focus is
              * (includes a model, collection, and module)
-             * @cfg {Core.Context}
+             * @cfg {Core.Context}gith
              */
-            this.context = this.options.context || app.controller.context;
+            this.context = options.context || app.controller.context;
 
             /**
              * Module
              * @cfg {String}
              */
-            this.module = this.options.module || this.context.module;
+            this.module = options.module || this.context.module;
 
             /**
              * Metadata
              * @cfg {Object}
              */
-            this.meta = this.options.meta;
+            this.meta = options.meta;
 
             /**
              * Components array
@@ -41,7 +41,7 @@
              * Classname of the View
              * @cfg {String} className
              */
-            this.$el.addClass("layout " + (this.options.className || this.meta.type));
+            this.$el.addClass("layout " + (options.className || this.meta.type));
 
             _.each(this.meta.components, function(def) {
                 var context = def.context ? this.context.getRelatedContext(def.context) : this.context,

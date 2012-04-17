@@ -113,7 +113,7 @@
             // this is experimental to try to see if we can have custom events on sugarfields themselves.
             // the following line doesn't work, need to _.extend it or something.
             // this.events = this.meta.events;
-            templateKey = "sugarField." + (this.name || this.type) + "." + this.view.name;
+            templateKey = "sugarField." + this.type + "." + this.view.name;
 
             var templateSource = null;
             if (this.meta) {
