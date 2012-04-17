@@ -44,7 +44,7 @@
          * @param {String} key Item key.
          */
         has: function(key) {
-            return this.store.has(_buildKey(key));
+            return window.localStorage.getItem(_buildKey(key)) !== null;
         },
 
         /**
