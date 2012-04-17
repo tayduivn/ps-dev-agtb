@@ -79,12 +79,12 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
             'fields' => array(
                 array(
                     'name' => 'case_number',
-                'priority',
-                'status',
                     ),
                 array(
                     'name' => 'name',
                     'required' => true),
+                'priority',
+                'status',
                 array('name' => 'description',
                 )
             )
