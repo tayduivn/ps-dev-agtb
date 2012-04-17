@@ -46,6 +46,7 @@
      *
      */
     Handlebars.registerHelper('button', function(type, label) {
+
         var ret = '<span sfuuid="' + (++sfid) + '"></span>',
             def = { type: type, name: type },
             sf;
@@ -103,6 +104,8 @@
      * @return {String}
      */
     Handlebars.registerHelper('buildRoute', function(context, model, action, params) {
+        model = model || context.get("model");
+
         var id = model.id,
             route;
 
