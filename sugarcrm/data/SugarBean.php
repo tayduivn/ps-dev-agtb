@@ -1904,12 +1904,12 @@ class SugarBean
     }
 
     /**
-     * Figure out the proper relationship info.
+     * Look in the bean for the new relationship_id and relationship_name if $this->not_use_rel_in_req is set to true,
+     * otherwise check the $_REQUEST param for a relate_id and relate_to field.  Once we have that make sure that it's
+     * not excluded from the passed in array of relationships to exclude
      *
-     * @api
-     * @see save_relationship_changes
-     * @param array $exclude
-     * @return array
+     * @param array $exclude        any relationship's to exclude
+     * @return array                The relationship_id and relationship_name in an array
      */
     protected function set_relationship_info($exclude = array())
     {
@@ -1917,7 +1917,7 @@ class SugarBean
         $new_rel_id = false;
         $new_rel_link = false;
         // check incoming data
-        if (isset($this->not_use_rel_in_req) && $this->not_use_rel_in_req) {
+        if (isset($this->not_use_rel_in_req) && $this->not_use_rel_in_req == true) {
             // if we should use relation data from properties (for REQUEST-independent calls)
             $rel_id = isset($this->new_rel_id) ? $this->new_rel_id : '';
             $rel_link = isset($this->new_rel_relname) ? $this->new_rel_relname : '';
@@ -1996,7 +1996,7 @@ class SugarBean
      * @api
      * @see save_relationship_changes
      * @param array $exclude            any relationship's to exclude
-     * @return array
+     * @return array                    the list of relationships that were added or removed successfully or if they were a failure
      */
     protected function handle_remaining_relate_fields($exclude = array())
     {
@@ -2055,7 +2055,7 @@ class SugarBean
     }
 
     /**
-     * Finally, we update a field listed in the _REQUEST['%/relate_id']/_REQUEST['relate_to'] mechanism (if it hasn't already been updated)
+     * Finally, we update a field listed in the _REQUEST['%/relate_id']/_REQUEST['relate_to'] mechanism (if it has not already been updated)
      *
      * @api
      * @see save_relationship_changes
@@ -2076,7 +2076,7 @@ class SugarBean
 
                 } else {
                     require_once('data/Link2.php');
-                    $rel = Relationship::retrieve_by_modules($new_rel_link, $this->module_dir, $GLOBALS['db'], 'many-to-many');
+                    $rel = Relationship::retrieve_by_modules($new_rel_link, $this->module_dir, $this->db, 'many-to-many');
 
                     if (!empty($rel)) {
                         foreach ($this->field_defs as $field => $def) {
