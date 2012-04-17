@@ -44,7 +44,13 @@
          * @param {String} key Item key.
          */
         has: function(key) {
-            return window.localStorage.getItem(_buildKey(key)) !== null;
+            // Only if we're in fact using the stash.js lib do we directly shim the has method. 
+            // Otherwise, we delegate out to whatever this.store.has is.
+            if(this.store === stash) {
+                return window.localStorage.getItem(_buildKey(key)) !== null;
+            } else {
+                this.store.has(_buildKey(key));
+            }
         },
 
         /**
