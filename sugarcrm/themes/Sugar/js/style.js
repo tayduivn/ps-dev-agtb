@@ -269,16 +269,15 @@ SUGAR.append(SUGAR.themes, {
 
         var searchWidth = $("#dcmenu").width() - 200
             - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#moduleList").attr("width");
-        //maximize the proportion of the searchbox size as half of the empty space among the module list and right-hand side menus
-        searchWidth *= .5;
+        //maximize the proportion of the searchbox size as three quarter of the empty space among the module list and right-hand side menus
+        searchWidth *= .75;
 
         $('#sugar_spot_search').attr("width", $('#sugar_spot_search').attr("width") || $('#sugar_spot_search').css("width").replace("px",""));
-
-        if(searchWidth >= $('#sugar_spot_search').attr("width")) {
-            $('#sugar_spot_search_div').width(searchWidth + 70);
-            $('#sugar_spot_search').width(searchWidth);
-            $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
-        }
+        var originalSearchWidth = parseInt($('#sugar_spot_search').attr("width"));
+        searchWidth = (searchWidth >= originalSearchWidth) ? searchWidth : originalSearchWidth;
+        $('#sugar_spot_search_div').width(searchWidth + 70);
+        $('#sugar_spot_search').width(searchWidth);
+        $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
 
     },
     resizeMenu: function () {
@@ -394,7 +393,6 @@ SUGAR.append(SUGAR.themes, {
 			$('#close_spot_search').css("display","inline-block");
 
 			 if(event.charCode == 0 && !firstHit) {
-
 			firstHit = true;
 			 	}
 			$('#close_spot_search').click(function() {
