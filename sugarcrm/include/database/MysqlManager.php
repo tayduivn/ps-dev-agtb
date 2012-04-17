@@ -1469,60 +1469,118 @@ class MysqlManager extends DBManager
         $this->query($dropRecursiveQuerySPs_statement);
 
         $createRecursiveQuerySPs_statement = "
-            CREATE PROCEDURE _hierarchy(node INT, mode CHAR(1))
-            BEGIN
+            CREATE PROCEDURE _hierarchy( p_tablename              VARCHAR(100)
+                                       , p_key_column             VARCHAR(100)
+                                       , p_parent_key_column      VARCHAR(100)
+                                       , p_mode                   VARCHAR(100)
+                                       , p_startWith              VARCHAR(250)
+                                       , p_level                  VARCHAR(100)    -- not used
+                                       , p_fields                 VARCHAR(250)
+                                       )
+            root:BEGIN
 
-              DECLARE _level    INT;
+               DECLARE _level             INT;
+               DECLARE _last_row_count    INT;
 
-              DROP TABLE IF EXISTS _hierarchy_data;
-              CREATE TABLE _hierarchy_data (
-                id       INT
-               ,parent   INT
-               ,level    INT
-              )ENGINE=MEMORY;
+               DROP TABLE IF EXISTS   _hierarchy_return_set;
 
-              SET _level = 1;
+               CREATE TEMPORARY TABLE _hierarchy_return_set (
+                      _id          INT 
+                    , _parent_id   INT
+                    , _level       INT
+               );
 
-              INSERT
-                INTO  _hierarchy_data
-                     ( id, parent, level )
-              SELECT  id, mgr_id, _level
-                FROM  employees
-               WHERE  id = node;       -- The START WITH data
+               DROP TABLE IF EXISTS   _hierarchy_current_set;
+            
+               CREATE TEMPORARY TABLE _hierarchy_current_set (
+                      _id          INT 
+                    , _parent_id   INT
+                    , _level       INT
+               );
 
-              WHILE  (ROW_COUNT() > 0)
-              DO
-                 SET _level = _level+1;
+               SET _level := 1;
 
-                 IF mode = 'D' THEN
-                    INSERT
-                      INTO  _hierarchy_data
-                           ( id, parent, level )
-                    SELECT  e.id, e.mgr_id, _level
-                      FROM  employees e, _hierarchy_data hd
-                     WHERE  e.mgr_id = hd.id       -- The Parent - Child equijoin
-                       AND  hd.level = _level - 1
-                    ;
-                 ELSEIF mode = 'U' THEN
-                    INSERT
-                      INTO  _hierarchy_data
-                           ( id, parent, level )
-                    SELECT  e.id, e.mgr_id, _level
-                      FROM  employees e, _hierarchy_data hd
-                     WHERE  e.id = hd.parent       -- The Parent - Child equijoin
-                       AND  hd.level = _level - 1
-                    ;
+               -- Get StartWith records
+               SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set( _id, _parent_id, _level ) '
+                                 ,'     SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', _level 
+                                 ,'       FROM  ', p_tablename
+                                 ,'      WHERE  ', p_startWith 
+                                );
+               PREPARE stmt FROM @_sql;
+               EXECUTE stmt;
+               SET _last_row_count = ROW_COUNT();
+   
 
-                 ELSE  -- Unknown mode
-                    DELETE FROM _hierarchy_data;
+               -- Create the statement to get the next set of data
+               IF p_mode = 'D' THEN -- Down the tree
 
-                 END IF;
+                  SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
+                                     ,'            ( _id, _parent_id, _level )'
+                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'    -- ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' ?'
+                                     ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
+                                     ,'     WHERE  t.', p_parent_key_column, ' = hrs._id '                -- The Parent - Child equijoin
+                                     ,'       AND  hrs._level = @_last_level'    -- ,'       AND  hrs._level = ?'
+                                     ,';'
+                                    );
+                  SELECT 'Down Tree Insert: ', @_sql;
 
-              END WHILE;
+               ELSEIF p_mode = 'U' THEN
+                  SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
+                                     ,'            ( _id, _parent_id, _level )'    -- ,'            ( _id, _parent_id, _level )'
+                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'
+                                     ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
+                                     ,'     WHERE  t.', p_key_column, ' = hrs._parent_id '                -- The Parent - Child equijoin
+                                     ,'       AND  hrs._level = @_last_level'     -- ,'       AND  hrs._level = ?'
+                                     ,';'
+                                    );
 
-              SELECT id, parent, level FROM _hierarchy_data;  -- This returns the results
+                  SELECT 'Up Tree Insert: ', @_sql;
 
-              DROP TABLE IF EXISTS _hierarchy_data;  -- oddly this does get executed
+               ELSE  -- Unknown mode, abort
+                  LEAVE root;
+               END IF;
+
+               PREPARE next_recs_stmt FROM @_sql;
+
+               -- loop recursively finding parents/children
+               WHILE  ( _last_row_count > 0) 
+               DO
+                  SET _level = _level+1;
+
+                  INSERT INTO _hierarchy_return_set
+                       SELECT *
+                         FROM _hierarchy_current_set; 
+
+                  TRUNCATE TABLE _hierarchy_current_set;
+
+                  SET @_last_level := _level-1;
+                  SET @_curr_level := _level;
+
+                  EXECUTE next_recs_stmt; 
+                  SET _last_row_count := ROW_COUNT();
+
+               END WHILE;
+
+               INSERT INTO _hierarchy_return_set
+                    SELECT *
+                      FROM _hierarchy_current_set; 
+
+               -- This returns the results
+               SET @_sql = CONCAT( 'SELECT hrs.*, ', p_fields 
+                                  ,' FROM _hierarchy_return_set hrs '
+                                  ,' INNER JOIN ', p_tableName, ' t ' 
+                                  ,'          ON hrs._id = t.', p_key_column
+                                  ,';'  
+                                 );
+   
+               SELECT 'Final result query: ', @_sql;
+
+               PREPARE stmt FROM @_sql;
+               EXECUTE stmt;
+   
+               DROP TABLE IF EXISTS _hierarchy_return_set;  -- oddly this does get executed
+            
+               DROP TABLE IF EXISTS _hierarchy_current_set;  -- oddly this does get executed
 
             END;
         ";

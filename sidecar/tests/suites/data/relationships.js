@@ -20,6 +20,7 @@ describe("Relationships", function() {
             expect(contact.link).toBeDefined();
             expect(contact.link.name).toEqual("contacts");
             expect(contact.link.bean).toEqual(opportunity);
+            expect(contact.link.isNew).toBeTruthy();
             expect(contact.id).toEqual("contact-1");
             expect(contact.get("first_name")).toEqual("John");
             expect(contact.get("last_name")).toEqual("Smith");
@@ -107,6 +108,7 @@ describe("Relationships", function() {
 
             expect(server.requests[0].requestBody).toBeNull();
             expect(contacts.length).toEqual(3);
+            expect(contacts.link.isNew).toBeFalsy();
             _.each([
                 "6beade8e-ea5c-1906-203f-4f501294939e",
                 "877df603-25c8-a601-198c-4f50124b0366",
@@ -118,6 +120,7 @@ describe("Relationships", function() {
                 expect(contact.get("last_name")).toBeDefined();
                 expect(contact.get("opportunity_role")).toBeDefined();
                 expect(contact.link).toEqual(contacts.link);
+                expect(contact.link.isNew).toBeFalsy();
             });
         });
 
@@ -142,6 +145,7 @@ describe("Relationships", function() {
             expect(server.requests[0].requestBody).toEqual('{"field_0":100,"first_name":"John","last_name":"Smith","opportunity_role":"Influencer"}');
             expect(contact.id).toEqual("2");
             expect(contact.get("date_modified")).toBeDefined();
+            expect(contact.link.isNew).toBeFalsy();
             expect(opportunity.get("date_modified")).toBeDefined();
         });
 
@@ -162,6 +166,7 @@ describe("Relationships", function() {
             expect(server.requests[0].requestBody).toBeNull();
             expect(opportunity.get("date_modified")).toBeDefined();
             expect(contact.get("date_modified")).toBeDefined();
+            expect(contact.link).toBeUndefined();
         });
 
         it("should be able to update a relationship", function() {
@@ -169,8 +174,10 @@ describe("Relationships", function() {
 
             var opportunity = dm.createBean("Opportunities");
             opportunity.id = "1";
-            var contact = dm.createRelatedBean(opportunity, null, "contacts", { id: "2" });
-            contact.set({ opportunity_role: "Primary Decision Maker" })
+            var contact = dm.createRelatedBean(opportunity, null, "contacts",
+                { id: "2", opportunity_role: "Primary Decision Maker" });
+            // Indicate that this relationship is an existing one
+            contact.link.isNew = false;
 
             server.respondWith("PUT", /\/Opportunities\/1\/contacts\/2/,
                 [200, {  "Content-Type":"application/json"},
@@ -182,6 +189,27 @@ describe("Relationships", function() {
             expect(server.requests[0].requestBody).toEqual('{"field_0":100,"id":"2","opportunity_role":"Primary Decision Maker"}');
             expect(opportunity.get("date_modified")).toBeDefined();
             expect(contact.get("date_modified")).toBeDefined();
+        });
+
+        it("should be able to create a relationship for two existing beans", function() {
+            dm.declareModels(metadata);
+
+            var opportunity = dm.createBean("Opportunities");
+            opportunity.id = "1";
+            var contact = dm.createRelatedBean(opportunity, null, "contacts",
+                { id: "2", opportunity_role: "Influencer" });
+
+            server.respondWith("POST", /\/Opportunities\/1\/contacts\/2/,
+                [200, {  "Content-Type":"application/json"},
+                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/contacts"].POST.response)]);
+
+            contact.save(null, { relate: true });
+            server.respond();
+
+            expect(server.requests[0].requestBody).toEqual('{"field_0":100,"id":"2","opportunity_role":"Influencer"}');
+            expect(opportunity.get("date_modified")).toBeDefined();
+            expect(contact.get("date_modified")).toBeDefined();
+            expect(contact.link.isNew).toBeFalsy();
         });
 
     });

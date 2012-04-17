@@ -50,10 +50,6 @@ var SugarTest = {};
         return test.loadFile("../fixtures", file, "json", function(data) { return data; }, "json");
     }
 
-    test.loadSugarField = function(file) {
-        return test.loadFile("../../../sugarcrm/clients/base/fields", file, "js", function(data) { return eval("(" + data + ")"); });
-    }
-
     test.waitFlag = false;
     test.wait = function() { waitsFor(function() { return test.waitFlag; }); };
     test.resetWaitFlag = function() { this.waitFlag = false; };

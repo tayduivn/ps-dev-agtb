@@ -50,7 +50,7 @@ width:70%;
     <div id="ftsAutoCompleteResult" style="width:100%;!important"></div>
     <input type="text" placeholder="{$APP.LBL_SEARCH}" name="ftsSearchField" id="ftsSearchField" value="{$smarty.request.q}"  style="width: 70%!important" >
     <input type="button" class="button primary"value="{$APP.LBL_SEARCH}" onclick="SUGAR.FTS.search();" style="vertical-align: bottom;">
-    <a id='advanced_search_ahref' class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();' style="font-size: 10px;vertical-align: bottom; height: inherit;">
+    <a id='advanced_search_ahref' href='javascript:SUGAR.FTS.toggleAdvancedOptions();' style="font-size:12px; font-weight:bold; text-decoration:none; text-shadow:0 1px #FFFFFF;">
         {$APP.LBL_ADVANCED}
     </a>
 </div>

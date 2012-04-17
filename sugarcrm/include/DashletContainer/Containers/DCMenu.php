@@ -73,7 +73,7 @@ class DCMenu extends DashletContainer
     {
 		global $current_user;
 
-        $iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1";
+        $iconImage = "index.php?entryPoint=download&id=".$current_user->picture."&type=SugarFieldImage&isTempFile=1&isProfile=1";
         $code = '';
         $class = ' class="none"';
 		if( is_admin($current_user) )
