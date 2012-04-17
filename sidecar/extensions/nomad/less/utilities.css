@@ -1,0 +1,24 @@
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
+.invisible {
+  visibility: hidden;
+}
+.tcenter {
+  text-align: center !important;
+}
+.tleft {
+  text-align: left !important;
+}
+.tright {
+  text-align: right !important;
+}

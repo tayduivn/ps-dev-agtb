@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: EditView.php 53116 2009-12-10 01:24:37Z mitani $
@@ -54,14 +54,18 @@ $xtpl = new XTemplate("modules/Teams/EditView.html");
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 
+$return_id = isset($_REQUEST['return_id']) ?  $_REQUEST['return_id'] : '';
+$return_module = isset($_REQUEST['return_module']) ?  $_REQUEST['return_module'] : '';
+$return_action= isset($_REQUEST['return_action']) ?  $_REQUEST['return_action'] : '';
+    if (empty($return_id)) {
+        $return_action = 'index';
+    }
 if (isset($_REQUEST['error_string'])) $xtpl->assign("ERROR_STRING", "<span class='error'>Error: ".$_REQUEST['error_string']."</span>");
-if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
-if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
-if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
-// handle Create $module then Cancel
-if (empty($_REQUEST['return_id'])) {
-	$xtpl->assign("RETURN_ACTION", 'index');
-}if (isset($_REQUEST['isDuplicate'])) $xtpl->assign("IS_DUPLICATE", $_REQUEST['isDuplicate']);
+$xtpl->assign("RETURN_MODULE",$return_module);
+$xtpl->assign("RETURN_ID", $return_id);
+$xtpl->assign("RETURN_ACTION", $return_action);
+
+if (isset($_REQUEST['isDuplicate'])) $xtpl->assign("IS_DUPLICATE", $_REQUEST['isDuplicate']);
 $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("NAME", Team::getDisplayName($focus->name, $focus->name_2));
@@ -69,11 +73,11 @@ $xtpl->assign("DESCRIPTION", $focus->description);
 
 $buttons = array(
     <<<EOD
-            <input title="{APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="this.form.action.value='Save'; return check_form('EditView');" type="submit" id="btn_save2" value="{$app_strings['LBL_SAVE_BUTTON_LABEL']}" />
+            <input title="{$app_strings['LBL_SAVE_BUTTON_TITLE']}" class="button primary" onclick="this.form.action.value='Save'; return check_form('EditView');" type="submit" id="btn_save2" value="{$app_strings['LBL_SAVE_BUTTON_LABEL']}" />
 EOD
 ,
     <<<EOD
-            <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" id="btn_cancel2" value="{$app_strings['LBL_CANCEL_BUTTON_LABEL']}" />
+            <input title="{$app_strings['LBL_CANCEL_BUTTON_TITLE']}" class="button" onclick="this.form.action.value='{$return_action}'; this.form.module.value='{$return_module}'; this.form.record.value='{$return_id}'" type="submit" id="btn_cancel2" value="{$app_strings['LBL_CANCEL_BUTTON_LABEL']}" />
 EOD
 
 );
@@ -82,13 +86,14 @@ $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'Teams_edit_action_buttons',
     'buttons' => $buttons,
     'class' => 'clickMenu fancymenu',
+    'theme' => 'Classic'
 ), $xtpl);
 
 $xtpl->assign("ACTION_BUTTON", $action_button);
 
 
 global $current_user;
-if($current_user->isAdminForModule('Users') && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
+if($current_user->isAdminForModule('Users') && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
 	$record = '';
 	if(!empty($_REQUEST['record'])){
 		$record = 	$_REQUEST['record'];
