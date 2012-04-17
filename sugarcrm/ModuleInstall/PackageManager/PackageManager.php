@@ -41,6 +41,7 @@ class PackageManager{
      */
     function PackageManager(){
         $this->db = DBManagerFactory::getInstance();
+        $this->upload_dir = empty($GLOBALS['sugar_config']['upload_dir']) ? 'upload' : rtrim($GLOBALS['sugar_config']['upload_dir'], '/\\');
     }
 
     function initializeComm(){
@@ -347,7 +348,7 @@ class PackageManager{
 
     function extractManifest( $zip_file,$base_tmp_upgrade_dir ) {
         global $sugar_config;
-        $base_upgrade_dir       = sugar_cached("/upgrades");
+        $base_upgrade_dir       = $this->upload_dir."/upgrades";
         $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
         return $this->extractFile( $zip_file, "manifest.php",$base_tmp_upgrade_dir );
     }
@@ -423,10 +424,10 @@ class PackageManager{
     }
 
     function performSetup($tempFile, $view = 'module', $display_messages = true){
-        global $sugar_config;
+        global $sugar_config,$mod_strings;
         $base_filename = urldecode($tempFile);
         $GLOBALS['log']->debug("BaseFileName: ".$base_filename);
-        $base_upgrade_dir       = sugar_cached("/upgrades");
+        $base_upgrade_dir       = $this->upload_dir.'/upgrades';
         $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
         $manifest_file = $this->extractManifest( $base_filename,$base_tmp_upgrade_dir);
          $GLOBALS['log']->debug("Manifest: ".$manifest_file);
@@ -493,7 +494,7 @@ class PackageManager{
         global $sugar_config;
         global $mod_strings;
         global $current_language;
-        $base_upgrade_dir       = sugar_cached("/upgrades");
+        $base_upgrade_dir       = $this->upload_dir.'/upgrades';
         $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
         if(!file_exists($base_tmp_upgrade_dir)){
             mkdir_recursive($base_tmp_upgrade_dir, true);
@@ -559,7 +560,7 @@ class PackageManager{
     		global $sugar_config;
 	        global $mod_strings;
 	        global $current_language;
-	        $base_upgrade_dir       = sugar_cached("/upgrades");
+	        $base_upgrade_dir       = $this->upload_dir.'/upgrades';
 	        $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
 	    	if(!isset($GLOBALS['mi_remove_tables']))$GLOBALS['mi_remove_tables'] = true;
 	    	$unzip_dir = mk_temp_dir( $base_tmp_upgrade_dir );
@@ -626,7 +627,6 @@ class PackageManager{
         global $current_language;
         $uh = new UpgradeHistory();
         $base_upgrade_dir       = "upload://upgrades";
-        $base_tmp_upgrade_dir   = sugar_cached("upgrades/temp");
         $uContent = findAllFiles( $base_upgrade_dir, array() , false, 'zip');
         $upgrade_contents = array();
         $content_values = array_values($uContent);
@@ -707,7 +707,7 @@ class PackageManager{
 
     function getLicenseFromFile($file){
         global $sugar_config;
-        $base_upgrade_dir       = sugar_cached("/upgrades");
+        $base_upgrade_dir       = $this->upload_dir.'/upgrades';
         $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
         $license_file = $this->extractFile($file, 'LICENSE.txt', $base_tmp_upgrade_dir);
         if(is_file($license_file)){
@@ -745,7 +745,7 @@ class PackageManager{
     	$packages = array();
     	$upgrades_installed = 0;
     	$uh = new UpgradeHistory();
-        $base_upgrade_dir       = sugar_cached("/upgrades");
+        $base_upgrade_dir       = $this->upload_dir.'/upgrades';
         $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
     	foreach($installeds as $installed)
 		{

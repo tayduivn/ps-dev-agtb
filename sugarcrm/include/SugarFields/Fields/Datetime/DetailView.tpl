@@ -1,4 +1,4 @@
-<?php
+{*
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -26,53 +26,25 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+*}
+{*
+    check to see if 'date_formatted_value' has been added to the vardefs, and use it if it has, otherwise use the normal sugarvar function
+*}
+{{if !empty($vardef.date_formatted_value) }}
+    {assign var="value" value={{$vardef.date_formatted_value}} }
+{{else}}
+    {if strlen({{sugarvar key='value' string=true}}) <= 0}
+        {assign var="value" value={{sugarvar key='default_value' string=true}} }
+    {else}
+        {assign var="value" value={{sugarvar key='value' string=true}} }
+    {/if}
+{{/if}}
 
-/**
- * CallsController.php
- *
- * This is the controller file to handle the Calls module specific actions
- */
 
-require_once('include/MVC/Controller/SugarController.php');
-class CallsController extends SugarController
-{
 
-    /**
-     * action_DisplayInline
-     *
-     * This method handles the request to display an Ajax view of related many to many records.  It expects a bean_id
-     * $_REQUEST parameter and an option related_id $_REQUEST parameter from the request.
-     */
-	public function action_DisplayInline()
-    {
-		$this->view = 'ajax';
-		$body = '';
-		$bean_id = isset($_REQUEST['bean_id']) ? $_REQUEST['bean_id'] : '';
-		$caption = '';
-		if(!empty($bean_id))
-        {
-            global $locale;
-            $query = "SELECT c.first_name, c.last_name, c.salutation, c.title FROM contacts c LEFT JOIN calls_contacts mc ON c.id = mc.contact_id WHERE mc.call_id = '{$bean_id}'";
-            if(!empty($_REQUEST['related_id']))
-            {
-                $query .= " AND c.id != '{$_REQUEST['related_id']}' AND c.deleted=0";
-            }
-
-            $result = $GLOBALS['db']->query($query);
-            while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
-            {
-				$body .=  $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']) . '<br/>';
-			}
-		}
-
-		global $theme;
-		$json = getJSONobj();
-		$retArray = array();
-		$retArray['body'] = $body;
-		$retArray['caption'] = $caption;
-	    $retArray['width'] = '100';
-	    $retArray['theme'] = $theme;
-	    echo 'result = ' . $json->encode($retArray);
-	}
-}
-?>
+<span class="sugar_field" id="{{sugarvar key='name'}}">{$value}</span>
+{{if !empty($displayParams.enableConnectors)}}
+{if !empty($value)}
+{{sugarvar_connector view='DetailView'}}
+{/if}
+{{/if}}

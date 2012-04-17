@@ -25,15 +25,15 @@ require_once('include/SugarFields/Fields/Collection/ViewSugarFieldCollection.php
 
 
 class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
-	
+
 	var $add_user_private_team = true;
 	var $team_set_id = null;
 	var $team_id = null;
-	
+
 	function ViewSugarFieldTeamsetCollection($fill_data=false){
     	parent::ViewSugarFieldCollection($fill_data);
     }
-    
+
     function populate(){
     	$this->name = $this->vardef['name'];
         $this->value_name = $this->name . '_values';
@@ -44,7 +44,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         $this->extra_var = array();
         $this->field_to_name_array = array();
     }
-    
+
     function init_tpl(){
         foreach($this->extra_var as $k=>$v){
             $this->ss->assign($k,$v);
@@ -64,7 +64,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                $this->tpl_path = $this->findTemplate('TeamsetCollectionEditView');
             }
             $this->ss->assign('quickSearchCode',$this->createQuickSearchCode());
-            $this->createPopupCode();      	
+            $this->createPopupCode();
         }
 
         $this->ss->assign('displayParams',$this->displayParams);
@@ -75,23 +75,23 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         }
         $this->ss->assign('showSelectButton',$this->showSelectButton);
         $this->ss->assign('APP',$GLOBALS['app_strings']);
-    }       
-    
-    
+    }
+
+
     /**
      * display
-     * 
+     *
      * Overrides the display method from ViewSugarFieldCollection to simply invoke Smarty instance
      * to fetch the appropriate template.
      */
 	function display() {
         return $this->ss->fetch($this->tpl_path);
     }
-     
-    
+
+
     /*
      * setup
-     * 
+     *
      * Retrieve the related module and load the bean and the relationship
      * call retrieve values()
      */
@@ -105,10 +105,10 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 		        	$this->bean = loadBean($this->module_dir);
 					$secondaries = array();
 					$primary = false;
-					
+
 			        $this->bean->{$this->value_name} = array('role_field'=>'team_name');
-					
-			        if(!empty($this->team_id)){	
+
+			        if(!empty($this->team_id)){
 			        	$this->bean->team_id = $this->team_id;
 			        	if(!empty($this->team_set_id)){
 			        		$this->bean->team_set_id = $this->team_set_id;
@@ -116,18 +116,18 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 			        }else if(!empty($_REQUEST['record'])){
 		            	$this->bean->retrieve($_REQUEST['record']);
 			        }
-			        
+
 			        if(!empty($this->bean->team_set_id)) {
 			        	require_once('modules/Teams/TeamSetManager.php');
 			        	$teams = TeamSetManager::getTeamsFromSet($this->bean->team_set_id);
 			        	foreach($teams as $row){
 			        		if(empty($primary) && $this->bean->team_id == $row['id']){
 								$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$row['id'], 'name'=>$row['display_name'])));
-			        			$primary = true; 
+			        			$primary = true;
 			        		}else{
 			        			$secondaries['secondaries'][]=array('id'=>$row['id'], 'name'=>$row['display_name']);
 			        		}
-			        	} //foreach		  			        	
+			        	} //foreach
 			        }elseif(!empty($this->bean->team_id)){
 			        	//since the team_set_id is not set, but the team_id is.
 			        	$focus = new Team();
@@ -136,7 +136,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 			        	$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$focus->id, 'name'=>$display_name)));
 			        }
                     // fixing bug #40003: Teams revert to self when Previewing a report
-                    // when report isn't saved yet and team set isn't created and stored in db 
+                    // when report isn't saved yet and team set isn't created and stored in db
                     // we should get teams from POST while preview report
                     elseif(empty($this->bean->team_id) && empty($this->bean->team_set_id))
                     {
@@ -157,14 +157,14 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                         }
                     }
 					$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $secondaries);
-	            } 
+	            }
         	}
 
         	$this->skipModuleQuickSearch = true;
 			$this->showSelectButton = false;
-    }    
+    }
 
-    
+
     /**
      * process
      *
@@ -173,7 +173,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
     function process() {
         if($this->action_type == 'editview') {
         	$this->pre_process_editview();
-        	$this->process_editview();            	
+        	$this->process_editview();
         } else if($this->action_type == 'detailview') {
             $this->process_detailview();
         } else if($this->action_type == 'search_form' || $this->action_type == 'popup_query_form') {
@@ -184,45 +184,45 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         	$this->process_editview();
         }
     }
-  
-    
-    /** 
+
+
+    /**
      * process_searchform
-     * 
+     *
      * This method handles rendering the widget for the advanced search form tab.  Most of the logic
      * involves retrieving the teams set from the $_REQUEST as well as the search type (any, all, exact)
-     * 
+     *
      */
     private function process_searchform() {
         require_once('include/SugarFields/SugarFieldHandler.php');
-        $sfh = new SugarFieldHandler();  
-        $sf = $sfh->getSugarField('Teamset', true);    					
+        $sfh = new SugarFieldHandler();
+        $sf = $sfh->getSugarField('Teamset', true);
         $teams = $sf->getTeamsFromRequest($this->name);
 		$full_form_values = array();
         if(!empty($teams)) {
             //If a primary team is selected, adjust the appropriate settings; otherwise use the first
         	//team from the $_REQUEST
-	    	if(isset($_REQUEST["primary_{$this->name}_collection"])){	    		
+	    	if(isset($_REQUEST["primary_{$this->name}_collection"])){
 	    		$this->ss->assign('hasPrimaryTeam', true);
 	    		$primary = $_REQUEST["primary_{$this->name}_collection"];
 	    		$key = "id_{$this->name}_collection_{$primary}"; //Get the $_REQUEST index key
-	    		$primary = $_REQUEST[$key];	    
+	    		$primary = $_REQUEST[$key];
 	    		$primaryTeam = array('id' => $primary, 'name'=>$teams[$primary]);
 	    		$full_form_values['primary'] = $primaryTeam;
-	    		unset($teams[$primary]); //Unset the primary team	    		
+	    		unset($teams[$primary]); //Unset the primary team
 	    	} else {
 	    	    foreach($teams as $team_id=>$team_name) {
 	    		   $full_form_values['primary'] = array('id'=>$team_id, 'name'=>$team_name);
 	    		   unset($teams[$team_id]);
 	    		   break;
-	    	    }	    		
+	    	    }
 	    	}
-	    	
+
         	foreach($teams as $team_id=>$team_name) {
 	    			$full_form_values['secondaries'][] = array('id'=>$team_id, 'name'=>$team_name);
 	    	}
-        	
-	    	$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);		        	
+
+	    	$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);
 
 	    	//Save the search type (any, all, exact)
 	        if(isset($_REQUEST["{$this->name}_type"])) {
@@ -230,20 +230,20 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 	        }
         } else {
             //Don't pre-populate the search form
-			$this->bean->{$this->value_name} = array();	
+			$this->bean->{$this->value_name} = array();
 		}
 
     }
-    
-    
+
+
     /**
      * pre_process_editview
-     * 
-     * This method handles three editview scenarios: 
+     *
+     * This method handles three editview scenarios:
      * 1) rendering the widget when creating a duplicate
      * 2) rendering the widget when going from a subpanel quick create form to a full form
      * 3) rendering the widget on a regular edit view of an existing record
-     * 
+     *
      */
     private function pre_process_editview() {
 
@@ -262,20 +262,20 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 		        		if($dupBean->team_id != $row['id']) {
 		        		   $full_form_values['secondaries'][] = array('id'=>$row['id'], 'name'=>$row['display_name']);
 		        		}
-		        } //foreach  
-	          
-	            $this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);  	
+		        } //foreach
+
+	            $this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);
 	            //If this request is coming from a subpanel quick create, we have to store the selected values
 	       } else if(isset($_REQUEST['full_form'])) {
 		        require_once('include/SugarFields/SugarFieldHandler.php');
-		        $sfh = new SugarFieldHandler();  
-		        $sf = $sfh->getSugarField('Teamset', true);      	
+		        $sfh = new SugarFieldHandler();
+		        $sf = $sfh->getSugarField('Teamset', true);
 	            $teams = $sf->getTeamsFromRequest('team_name');
 	            $full_form_values = array();
 	            if(!empty($teams)){
 		    	    $primary = $_REQUEST["primary_team_name_collection"];
 		    	    $key = 'id_team_name_collection_' . $primary; //Get the $_REQUEST index key
-		    	    $primary = $_REQUEST[$key];	    
+		    	    $primary = $_REQUEST[$key];
 		    		$primaryTeam = array('id' => $primary, 'name'=>$teams[$primary]);
 		    		unset($teams[$primary]); //Unset the primary team
 		    		$full_form_values['primary'] = $primaryTeam;
@@ -283,7 +283,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 		    			$full_form_values['secondaries'][] = array('id'=>$team_id, 'name'=>$team_name);
 		    		}
 	            }
-				$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);  	
+				$this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, $full_form_values);
             } else if (!empty($this->bean) && $this->add_user_private_team)
             {
                 // fixing bug #40003: Teams revert to self when Previewing a report
@@ -304,18 +304,18 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                         {
                             $secondaries['secondaries'][] = array('id' => $row['id'], 'name' => $row['display_name']);
                         }
-                    } //foreach		  			        	
+                    } //foreach
                     $this->bean->{$this->value_name} = array_merge($this->bean->{$this->value_name}, $secondaries);
                 }
             } //if-else
-        } 	
-    } 
-    
-    
+        }
+    }
+
+
     /*
-     * Create the quickSearch code for the collection field. 
+     * Create the quickSearch code for the collection field.
      * return the javascript code which define sqs_objects.
-     */  
+     */
     function createQuickSearchCode($returnAsJavascript = true){
         $fieldName = empty($this->displayParams['idName']) ? $this->name : $this->displayParams['idName'];
 		$sqs_objects = array();
@@ -339,8 +339,8 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                          * "primary_populate_list" and "primary_field_list" are used when the field is selected as a primary.
                          * At this time the JS function changePrimary() will copy "primary_populate_list" and "primary_field_list"
                          * into "populate_list" and "field_list" and remove the values from all the others which are secondaries.
-                         * "primary_populate_list" and "primary_field_list" contain the fields which has to be populated outside of 
-                         * the collection field. For example the "Address Information" are populated with the "billing address" of the 
+                         * "primary_populate_list" and "primary_field_list" contain the fields which has to be populated outside of
+                         * the collection field. For example the "Address Information" are populated with the "billing address" of the
                          * selected account in a contact editview.
                          */
                         $sqs_objects[$name1]['primary_populate_list'][] = $v;
@@ -353,9 +353,8 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                     $sqs_objects[$name1]['primary_populate_list'] = array();
                     $sqs_objects[$name1]['primary_field_list'] = array();
                 }
-                $sqs_objects[$name1]['whereExtra'] = "( teams.associated_user_id IS NULL OR teams.associated_user_id NOT IN ( SELECT id FROM users WHERE status = 'Inactive' OR portal_only = '1' ))";
         }
-        
+
         $id = "{$this->form_name}_{$fieldName}_collection_0";
 
         if(!empty($sqs_objects) && count($sqs_objects) > 0) {
@@ -365,7 +364,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
             if($returnAsJavascript){
 	            $quicksearch_js = '<script language="javascript">';
 	            $quicksearch_js.= "if(typeof sqs_objects == 'undefined'){var sqs_objects = new Array;}";
-	            
+
 	            foreach($sqs_objects as $sqsfield=>$sqsfieldArray){
 	               $quicksearch_js .= "sqs_objects['$sqsfield']={$this->json->encode($sqsfieldArray)};";
 	            }
@@ -387,7 +386,7 @@ function findTemplate($view){
 
         $lastClass = get_class($this);
         $classList = array('Teamset');
-        
+
         $tplName = '';
         foreach ( $classList as $className ) {
             global $current_language;
@@ -414,6 +413,6 @@ function findTemplate($view){
         $tplCache['TeamsetCollection'][$view] = $tplName;
 
         return $tplName;
-    }    
+    }
 }
 ?>

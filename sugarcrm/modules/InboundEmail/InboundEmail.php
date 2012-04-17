@@ -1649,7 +1649,6 @@ class InboundEmail extends SugarBean {
 		} else {
 			$this->connectMailserver();
 			$mailboxes = $this->getMailboxes(true);
-			$mailboxes[] = 'INBOX';
 			sort($mailboxes);
 
 			$GLOBALS['log']->info("INBOUNDEMAIL: checking account [ {$this->name} ]");
@@ -3249,6 +3248,9 @@ class InboundEmail extends SugarBean {
 		} // end else clause
 
 		$msgPart = $this->customGetMessageText($msgPart);
+		// Bug 50241: can't process <?xml:namespace .../> properly. Strip <?xml ...> tag first.
+		$msgPart = preg_replace("/<\?xml[^>]*>/","",$msgPart);
+				
 		/* cn: bug 9176 - htmlEntitites hide XSS attacks.
 		 * decode to pass refreshed HTML to HTML_Safe */
 		if ($type == 'PLAIN')
@@ -3872,8 +3874,6 @@ class InboundEmail extends SugarBean {
 	 * @return string
 	 */
 	function cleanContent($str) {
-	    // Bug 50241: HTML_Safe can't process <?xml:namespace .../> properly. Strip <?xml ...> tag first.
-	    $str = preg_replace("/<\?xml[^>]*>/","",$str);	    
 		// Safe_HTML
 		$this->safe->clear();
 		$this->safe->setUrlCallback(array($this, "urlCleaner"));

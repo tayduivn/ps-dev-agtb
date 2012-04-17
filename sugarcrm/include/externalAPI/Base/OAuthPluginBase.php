@@ -78,16 +78,13 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
     public function checkLogin($eapmBean = null)
     {
         $reply = parent::checkLogin($eapmBean);
-        if (!empty($reply['success']))
-        {
+        if ( !$reply['success'] ) {
             return $reply;
         }
 
         if ( $this->checkOauthLogin() ) {
             return array('success' => true);
         }
-
-        return array('success' => false);
     }
 
     public function quickCheckLogin()

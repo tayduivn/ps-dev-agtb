@@ -203,7 +203,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 	} catch (e) {
 			Msg.show({
                 title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
-                msg: e.message ? e.message : e
+                msg: YAHOO.lang.escapeHTML(e.message ? e.message : e)
             });
 		return false;
 	}

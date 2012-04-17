@@ -107,7 +107,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         // set the contact id from the bean.
         $macc->contact_id = $contact->id;
 
-        $new_rel_id = $macc->handle_preset_relationships($contact->id);
+        $new_rel_id = $macc->handle_preset_relationships($contact->id, 'contacts');
 
         $this->assertFalse($new_rel_id);
 
@@ -147,7 +147,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         // set the contact id from the bean.
         $macc->rel_fields_before_value['contact_id'] = $contact->id;
 
-        $new_rel_id = $macc->handle_preset_relationships($contact->id);
+        $new_rel_id = $macc->handle_preset_relationships($contact->id, 'contacts');
 
         $this->assertEquals($contact->id, $new_rel_id);
 
@@ -255,9 +255,9 @@ class MockAccountSugarBean extends Account
         return parent::set_relationship_info($exclude);
     }
 
-    public function handle_preset_relationships($new_rel_id, $exclude = array())
+    public function handle_preset_relationships($new_rel_id, $new_rel_name, $exclude = array())
     {
-        return parent::handle_preset_relationships($new_rel_id, $exclude);
+        return parent::handle_preset_relationships($new_rel_id, $new_rel_name, $exclude);
     }
 
     public function handle_remaining_relate_fields($exclude = array())

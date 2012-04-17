@@ -1953,10 +1953,11 @@ class SugarBean
      * @api
      * @see save_relationship_changes
      * @param string|boolean $new_rel_id    String of the ID to add
+     * @param string                        Relationship Name
      * @param array $exclude                any relationship's to exclude
      * @return string|boolean               Return the new_rel_id if it was not used.  False if it was used.
      */
-    protected function handle_preset_relationships($new_rel_id, $exclude = array())
+    protected function handle_preset_relationships($new_rel_id, $new_rel_link, $exclude = array())
     {
         if (isset($this->relationship_fields) && is_array($this->relationship_fields)) {
             foreach ($this->relationship_fields as $id => $rel_name)
@@ -1964,8 +1965,14 @@ class SugarBean
 
                 if (in_array($id, $exclude)) continue;
 
-                if (!empty($this->$id)) {
-                    $GLOBALS['log']->debug('save_relationship_changes(): From relationship_field array - adding a relationship record: ' . $rel_name . ' = ' . $this->$id);
+                if(!empty($this->$id))
+                {
+                    // Bug #44930 We do not need to update main related field if it is changed from sub-panel.
+                    if ($rel_name == $new_rel_link && $this->$id != $new_rel_id)
+                    {
+                        $new_rel_id = '';
+                    }
+                    $GLOBALS['log']->debug('save_relationship_changes(): From relationship_field array - adding a relationship record: '.$rel_name . ' = ' . $this->$id);
                     //already related the new relationship id so let's set it to false so we don't add it again using the _REQUEST['relate_i'] mechanism in a later block
                     $this->load_relationship($rel_name);
                     $rel_add = $this->$rel_name->add($this->$id);
@@ -3309,6 +3316,9 @@ class SugarBean
             if(  (!isset($data['source']) || $data['source'] == 'db') && (!empty($alias) || !empty($filter) ))
             {
                 $ret_array['select'] .= ", $this->table_name.$field $alias";
+                $selectedFields["$this->table_name.$field"] = true;
+            } else if(  (!isset($data['source']) || $data['source'] == 'custom_fields') && (!empty($alias) || !empty($filter) )) {
+                $ret_array['select'] .= ", $this->table_name"."_cstm".".$field $alias";
                 $selectedFields["$this->table_name.$field"] = true;
             }
 

@@ -215,9 +215,7 @@ class MssqlManager extends DBManager
         //mssql db maximum number of 5 times at the interval of .2 second. If can not connect
         //it will throw an Unable to select database message.
 
-        //bug 50024: install breaks at db config, due to installer calling connect without a $configOptions['db_name']
-        // rbacon 20120130
-        if(!empty($configOptions['db_name']) && !@mssql_select_db($configOptions['db_name'], $this->database)){
+        if(!@mssql_select_db($configOptions['db_name'], $this->database)){
 			$connected = false;
 			for($i=0;$i<5;$i++){
 				usleep(200000);
@@ -1383,46 +1381,36 @@ class MssqlManager extends DBManager
         return $result;
     }
 
-   	/**
+    /**
      * @see DBManager::get_indices()
      */
-    public function get_indices($tablename)
+    public function get_indices($tableName)
     {
         //find all unique indexes and primary keys.
         $query = <<<EOSQL
-SELECT LEFT(so.[name], 30) TableName,
-        LEFT(si.[name], 50) 'Key_name',
-        LEFT(sik.[keyno], 30) Sequence,
-        LEFT(sc.[name], 30) Column_name,
-		isunique = CASE
-            WHEN si.status & 2 = 2 AND so.xtype != 'PK' THEN 1
-            ELSE 0
-        END
-    FROM sysindexes si
-        INNER JOIN sysindexkeys sik
-            ON (si.[id] = sik.[id] AND si.indid = sik.indid)
-        INNER JOIN sysobjects so
-            ON si.[id] = so.[id]
-        INNER JOIN syscolumns sc
-            ON (so.[id] = sc.[id] AND sik.colid = sc.colid)
-        INNER JOIN sysfilegroups sfg
-            ON si.groupid = sfg.groupid
-    WHERE so.[name] = '$tablename'
-    ORDER BY Key_name, Sequence, Column_name
+SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as column_name,
+                sys.indexes.name as index_name, sys.indexes.is_unique, sys.indexes.is_primary_key
+            FROM sys.tables, sys.indexes, sys.index_columns, sys.columns
+            WHERE (sys.tables.object_id = sys.indexes.object_id
+                    AND sys.tables.object_id = sys.index_columns.object_id
+                    AND sys.tables.object_id = sys.columns.object_id
+                    AND sys.indexes.index_id = sys.index_columns.index_id
+                    AND sys.index_columns.column_id = sys.columns.column_id)
+                AND sys.tables.name = '$tableName'
 EOSQL;
         $result = $this->query($query);
 
         $indices = array();
         while (($row=$this->fetchByAssoc($result)) != null) {
             $index_type = 'index';
-            if ($row['Key_name'] == 'PRIMARY')
+            if ($row['is_primary_key'] == '1')
                 $index_type = 'primary';
-            elseif ($row['isunique'] == 1 )
+            elseif ($row['is_unique'] == 1 )
                 $index_type = 'unique';
-            $name = strtolower($row['Key_name']);
+            $name = strtolower($row['index_name']);
             $indices[$name]['name']     = $name;
             $indices[$name]['type']     = $index_type;
-            $indices[$name]['fields'][] = strtolower($row['Column_name']);
+            $indices[$name]['fields'][] = strtolower($row['column_name']);
         }
         return $indices;
     }
