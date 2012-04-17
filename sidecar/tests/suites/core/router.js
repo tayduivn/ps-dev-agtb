@@ -43,6 +43,70 @@ describe("Router", function() {
         expect(route).toEqual("Contacts/create");
     });
 
+    it("should create list view taking module arg", function() {
+        var mock = sinon.mock(controller);
+        mock.expects("loadView").once().withArgs({
+            module:'Contacts',
+            layout:'list'
+        });
+
+        SUGAR.App.router.initialize({controller: controller});
+        SUGAR.App.router.list('Contacts');
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should create layout view", function() {
+        var mock = sinon.mock(controller);
+        mock.expects("loadView").once().withArgs({
+            module:'Cases',
+            layout:'list'
+        });
+
+        SUGAR.App.router.initialize({controller: controller});
+        SUGAR.App.router.layout('Cases', 'list');
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should create a create view", function() {
+        var mock = sinon.mock(controller);
+        mock.expects("loadView").once().withArgs({
+            module: 'Cases',
+            create: true,
+            layout: 'edit'
+        });
+
+        SUGAR.App.router.initialize({controller: controller});
+        SUGAR.App.router.create('Cases');
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should load view and record", function() {
+        var mock = sinon.mock(controller);
+        mock.expects("loadView").once().withArgs({
+            module: 'Cases',
+            id: 123,
+            action: 'edit',
+            layout: 'edit'
+        });
+
+        SUGAR.App.router.initialize({controller: controller});
+        SUGAR.App.router.record('Cases', 123, 'edit');
+        expect(mock.verify()).toBeTruthy();
+    });
+
+    it("should create login view", function() {
+        var mock = sinon.mock(controller);
+        mock.expects("loadView").once().withArgs({
+            module:'Home',
+            layout:'login',
+            create: true
+        });
+
+        SUGAR.App.router.initialize({controller: controller});
+        SUGAR.App.router.login();
+        expect(mock.verify()).toBeTruthy();
+    });
+
     // TODO: This test has been disabled, as the paramters don't work properly. Need to add supporting routes
     xit("should add params to a route if given in options ", function(){
         var route,
