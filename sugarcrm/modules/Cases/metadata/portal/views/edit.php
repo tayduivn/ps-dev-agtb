@@ -20,11 +20,10 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
                 'type' => 'button',
                 'label' => 'Cancel',
                 'value' => 'cancel',
-                'route' =>
-                array(
-                    'action' => 'detail',
-                    'module' => 'Cases',
-                ),
+                'events' =>
+                 array(
+                    'click' => 'function(){ window.history.back(); }',
+                 ),
                 'primary' => false,
             ),
         ),
