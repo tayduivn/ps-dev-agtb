@@ -172,47 +172,6 @@ class Account extends Company {
 		return $this->name;
 	}
 
-//BEGIN SUGARCRM flav=pro ONLY
-	/** Returns a list of the associated products
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved..
-	 * Contributor(s): ______________________________________..
-	*/
-	function get_products()
-	{
-
-
-		$product = new Product();
-
-		// First, get the list of IDs.
-		$query = $this->get_products_query();
-		return $this->build_related_list($query, new Product());
-	}
-
-	/**
-	 * Returns the SELECT query that will get the list of associated Products.
-	 */
-	function get_products_query()
-	{
-
-		$product = new Product();
-
-		if($GLOBALS['db']->tableExists($product->table_name . "_cstm")){
-		    return "SELECT 'Products' module, products.*, products_cstm.*"
-                . " FROM $product->table_name "
-                . " LEFT JOIN quotes ON products.quote_id = quotes.id"
-                . " LEFT JOIN $product->table_name"."_cstm ON products_cstm.id_c = products.id"
-                . " WHERE products.account_id='$this->id' AND products.deleted=0 AND (quotes.quote_stage IS NULL OR quotes.quote_stage NOT IN ('Closed Lost', 'Closed Dead'))";
-		} else {
-		    return "SELECT 'Products' module, products.*"
-                . " FROM $product->table_name "
-                . " LEFT JOIN quotes ON products.quote_id = quotes.id"
-                . " WHERE products.account_id='$this->id' AND products.deleted=0 AND (quotes.quote_stage IS NULL OR quotes.quote_stage NOT IN ('Closed Lost', 'Closed Dead'))";
-		}
-
-	}
-
-//END SUGARCRM flav=pro ONLY
 	function get_contacts() {
 		return $this->get_linked_beans('contacts','Contact');
 	}

@@ -214,20 +214,25 @@ $layout_defs['Accounts'] = array(
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav=pro ONLY
-		'products' => array(
-			'order' => 60,
-			'module' => 'Products',
-			'sort_order' => 'desc',
-			'sort_by' => 'date_purchased',
-			'subpanel_name' => 'ForAccounts',
-			'get_subpanel_data' => 'function:get_products_query',
-			'add_subpanel_data' => 'product_id',
-			'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopCreateButton'),
-			),
+        'products' => array(
+            'order' => 60,
+            'module' => 'Products',
+            'subpanel_name' => 'ForAccounts',
+            'sort_order' => 'desc',
+            'sort_by' => 'date_purchased',
+            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'products',
+            'top_buttons' => array(
+                array(
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                ),
+                array(
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                ),
+            ),
 
-		),
+        ),
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 		'quotes' => array(
