@@ -29,7 +29,11 @@
 {if $FTS_AUTOCOMPLETE_ENABLE}
 {literal}
 <script>
-
+    $("#spot_search_btn").click(function(){
+        SUGAR.util.doWhen(function(){
+            return document.getElementById('SpotResults') != null;
+        }, SUGAR.themes.resizeSearch);
+    });
     var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
     var autoCom = $( "#sugar_spot_search" ).autocomplete({
         source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&append_wildcard=true&data='+data,

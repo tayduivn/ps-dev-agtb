@@ -54,6 +54,9 @@ class ViewDepDropdown extends SugarView
         $this->ss->assign("parent_list_options", translate($this->parentList));
         $parentOptions = translate($this->parentList);
         $parentOptionsArray = array();
+        if(!is_array($parentOptions)) {
+            $parentOptions = array();
+        }
         foreach($parentOptions as $value => $label)
         {
             $parentOptionsArray[] = array("value" => $value, "label" => $label);

@@ -498,6 +498,15 @@ EOSQL;
         return $sql;
     }
 
+    /**
+     * Truncate table
+     * @param  $name
+     * @return string
+     */
+    public function truncateTableSQL($name)
+    {
+        return "TRUNCATE TABLE $name";
+    }
 
 	/**
 	 * (non-PHPdoc)

@@ -131,7 +131,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      * @param array $modules
      * @return SugarSearchEngineFullIndexer
      */
-    public function initiateFTSIndexer($modules = array())
+    public function initiateFTSIndexer($modules = array(), $deleteExistingData = TRUE)
     {
         $startTime = microtime(true);
         $GLOBALS['log']->fatal("Populating Full System Index Queue at $startTime");
@@ -141,7 +141,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             return $this;
         }
         //Create the index on the server side
-        $this->SSEngine->createIndex(TRUE);
+        $this->SSEngine->createIndex($deleteExistingData);
 
         //Clear the existing queue
         $this->clearFTSIndexQueue();
@@ -219,7 +219,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
      * does not take advantage of the job queue system.  Currently this call is only used when populating demo data and should be used
      * sparingly.
      */
-    public function performFullSystemIndex($modules = array())
+    public function performFullSystemIndex($modules = array(), $clearExistingData = TRUE)
     {
         //Do nothing if no FTS has been setup.
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
@@ -227,7 +227,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
             return $this;
         }
-        $this->initiateFTSIndexer($modules);
+        $this->initiateFTSIndexer($modules, $clearExistingData);
         require_once 'include/SugarQueue/SugarCronJobs.php';
         $jobq = new SugarCronJobs();
         $jobq->runCycle();
