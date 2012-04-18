@@ -60,23 +60,6 @@
       <header class="jumbotron subhead" id="overview">
         <h1>Javascript</h1>
         <p class="lead">Dynamic widgets for the front end</p>
-        <div class="subnav">
-          <ul class="nav nav-pills">
-            <li><a href="#javascript">All plugins</a></li>
-            <li><a href="#modals">Modal</a></li>
-            <li><a href="#dropdowns">Dropdown</a></li>
-            <li><a href="#scrollspy">Scrollspy</a></li>
-            <li><a href="#tabs">Tab</a></li>
-            <li><a href="#tooltips">Tooltip</a></li>
-            <li><a href="#popovers">Popover</a></li>
-            <li><a href="#alerts">Alert</a></li>
-            <li><a href="#buttons">Button</a></li>
-            <li><a href="#chosen">Chosen</a></li>
-            <li><a href="#collapse">Collapse</a></li>
-            <li><a href="#carousel">Carousel</a></li>
-            <li><a href="#typeahead">Typeahead</a></li>
-          </ul>
-        </div>
       </header>
 
 
@@ -171,6 +154,12 @@
           <label>
             <h3><a href="./widgets.html#chosen">Chosen Inputs</a></h3>
             <p>Lightweight and user friendly select boxes for streamlined data selection. Great for dropdowns, single- and multi-selects.</p>
+          </label>
+        </div>
+        <div class="span3">
+          <label>
+            <h3><a href="./widgets.html#datepicker">Datepicker</a></h3>
+            <p>Lightweight datepicker</p>
           </label>
         </div>
       </div> <!-- /row -->
@@ -1739,7 +1728,7 @@ $('#my-alert').bind('closed', function () {
             </div>
             <div class="btn-toolbar pull-left">                   
               <div class="btn-group btn-mini" data-toggle="buttons-checkbox">
-                <button class="btn" rel="tooltip" data-original-title="Primary"><i class="icon-flag"></i></button>
+                <button class="btn" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
               </div>
               <div class="btn-group btn-mini">
                 <a href="" class="btn" rel="tooltip" data-original-title="Remove team"><i class="icon-minus"></i></a>
@@ -1759,7 +1748,7 @@ $('#my-alert').bind('closed', function () {
             </div>
             <div class="btn-toolbar pull-left">                   
               <div class="btn-group btn-mini" data-toggle="buttons-checkbox">
-                <button class="btn" rel="tooltip" data-original-title="Primary"><i class="icon-flag"></i></button>
+                <button class="btn" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
               </div>
               <div class="btn-group btn-mini">
                 <a href="" class="btn" rel="tooltip" data-original-title="Add another team"><i class="icon-plus"></i></a>
@@ -1778,7 +1767,7 @@ $('#my-alert').bind('closed', function () {
             </div>
             <div class="btn-toolbar pull-left">                   
               <div class="btn-group btn-mini" data-toggle="buttons-checkbox">
-                <button class="btn" rel="tooltip" data-original-title="Primary"><i class="icon-flag"></i></button>
+                <button class="btn" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
                 <button class="btn" rel="tooltip" data-original-title="Opt Out"><i class="icon-ban-circle"></i></button>
                 <button class="btn" rel="tooltip" data-original-title="Invalid"><i class="icon-exclamation-sign"></i></button>
               </div>
@@ -2066,8 +2055,243 @@ $('.myCarousel').carousel({
         </div>
       </div>
     </section>
+    <section id="colorpicker">
+          <div class="page-header">
+            <h1>Colorpicker for Bootstrap <small>bootstrap-colorpicker.js</small></h1>
+          </div>
+          <div class="row">
+            <div class="span3 columns">
+              <h3>About</h3>
+              <p>Add color picker to field or to any other element.</p>
+    		  <ul>
+    			<li>can be used as a component</li>
+    			<li>alpha picker</li>
+    			<li>multiple formats: hex, rgb, rgba, hsl, hsla</li>
+    		  </ul>
+              <p><a href="http://www.eyecon.ro/bootstrap-colorpicker/colorpicker.zip" target="_blank" class="btn">Download</a></p>
+            </div>
+            <div class="span9 columns">
+              <h2>Example</h2>
+              <p>Attached to a field with hex format specified via options.</p>
+              <div class="well">
+                <input type="text" class="span1" value="#8fff00" id="cp1" rel="colorpicker" >
+              </div>
+              <p>Attachet to a field with the rgba format specified via data tag.</p>
+              <div class="well">
+                <input type="text" class="span3" value="rgb(0,194,255,0.78)" id="cp2" data-color-format="rgba"  rel="colorpicker">
+              </div>
+              <p>As component.</p>
+              <div class="well">
+    			<div class="input-append color" data-color="rgb(255, 146, 180)" data-color-format="rgb" id="cp3" rel="colorpicker">
+    				<input type="text" class="span2" value="" readonly >
+    				<span class="add-on"><i style="background-color: rgb(255, 146, 180)"></i></span>
+    			</div>
+              </div>
+              <p>Using events to work with the color.</p>
+              <div class="well">
+                <a href="#" class="btn small" id="cp4" data-color-format="hex" data-color="rgb(255, 255, 255)"  rel="colorpicker">Change background color</a>
+              </div>
+              <hr>
+              <h2>Using bootstrap-colorpicker.js</h2>
+              <p>Call the colopicker via javascript:</p>
+              <pre class="prettyprint linenums">$('[rel=colorpicker]').colorpicker()</pre>
+              <h3>Options</h3>
+              <table class="table table-bordered table-striped">
+                <thead>
+                 <tr>
+                   <th style="width: 100px;">Name</th>
+                   <th style="width: 50px;">type</th>
+                   <th style="width: 100px;">default</th>
+                   <th>description</th>
+                 </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                   <td>format</td>
+                   <td>string</td>
+                   <td>'hex'</td>
+                   <td>the color format - hex | rgb | rgba.</td>
+                 </tr>
+                </tbody>
+              </table>
+
+              <h3>Markup</h3>
+              <p>Format a component.</p>
+    <pre class="prettyprint linenums">
+    &lt;div class=&quot;input-append color&quot; data-color=&quot;rgb(255, 146, 180)&quot; data-color-format=&quot;rgb&quot;&gt;
+      &lt;input type=&quot;text&quot; class=&quot;span2&quot; value=&quot;&quot; &gt;
+      &lt;span class=&quot;add-on&quot;&gt;&lt;i style=&quot;background-color: rgb(255, 146, 180)&quot;&gt;&lt;/i&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    </pre>
+              <h3>Methods</h3>
+              <h4>.colorpicker(options)</h4>
+              <p>Initializes an colorpicker.</p>
 
 
+              <h3>Events</h3>
+              <p>Colopicker class exposes a few events for manipulating the colors.</p>
+              <table class="table table-bordered table-striped">
+                <thead>
+                 <tr>
+                   <th style="width: 150px;">Event</th>
+                   <th>Description</th>
+                 </tr>
+                </thead>
+                <tbody>
+                 <tr>
+                   <td>show</td>
+                   <td>This event fires immediately when the color picker is displayed.</td>
+                 </tr>
+                 <tr>
+                   <td>hide</td>
+                   <td>This event is fired immediately when the color picker is hidden.</td>
+                 </tr>
+                 <tr>
+                   <td>changeColor</td>
+                   <td>This event is fired when the color is changed.</td>
+                 </tr>
+                </tbody>
+              </table>
+    <pre class="prettyprint linenums">
+    $(&#039;.colorpicker&#039;).colorpicker().on(&#039;changeColor&#039;, function(ev){
+      bodyStyle.backgroundColor = ev.color.toHex();
+    });
+    </pre>
+            </div>
+          </div>
+        </section>
+    <section id="datepicker">
+          <div class="page-header">
+            <h1>Datepicker for Bootstrap <small>bootstrap-datepicker.js</small></h1>
+          </div>
+          <div class="row">
+            <div class="span3 columns">
+              <h3>About</h3>
+              <p>Add datepicker picker to field or to any other element.</p>
+    		  <ul>
+    			<li>can be used as a component</li>
+    			<li>formats: dd, d, mm, m, yyyy, yy</li>
+    			<li>separators: -, /, .</li>
+    		  </ul>
+              <p><a href="http://www.eyecon.ro/bootstrap-datepicker/datepicker.zip" target="_blank" class="btn">Download</a></p>
+            </div>
+            <div class="span9 columns">
+              <h2>Example</h2>
+              <p>Attached to a field with the format specified via options.</p>
+              <div class="well">
+                <input type="text" class="span2" value="" placeholder="mm-dd-yyyy" id="dp1" rel="datepicker">
+              </div>
+              <p>Attachet to a field with the format specified via data tag.</p>
+              <div class="well">
+                <input type="text" class="span2" value="" placeholder="mm-dd-yyyy" data-date-format="mm/dd/yy" id="dp2" rel="datepicker">
+              </div>
+              <p>As component.</p>
+              <div class="well">
+    			  <div class="input-append date" id="dp3" data-date="12-02-2012" data-date-format="mm-dd-yyyy" rel="datepicker">
+    				<input class="span2" size="16" type="text" value="" placeholder="mm-dd-yyyy">
+    				<span class="add-on"><i class="icon-calendar"></i></span>
+    			  </div>
+              </div>
+              <p>Attached to other element then field and using events to work with the date values.</p>
+              <div class="well">
+
+
+    			<div class="alert alert-error" id="alert">
+    				<strong>Oh snap!</strong>
+    			  </div>
+    			<table class="table">
+    				<thead>
+    					<tr>
+    						<th>Start date<a href="#" class="btn small" id="dp4" data-date-format="yyyy-mm-dd" data-date="2012-02-20">Change</a></th>
+    						<th>End date<a href="#" class="btn small" id="dp5" data-date-format="yyyy-mm-dd" data-date="2012-02-25">Change</a></th>
+    					</tr>
+    				</thead>
+    				<tbody>
+    					<tr>
+    						<td id="startDate">2012-02-20</td>
+    						<td id="endDate">2012-02-25</td>
+    					</tr>
+    				</tbody>
+    			</table>
+              </div>
+              <hr>
+              <h2>Using bootstrap-datepicker.js</h2>
+              <p>Call the datepicker via javascript:</p>
+              <pre class="prettyprint linenums">$('[rel=datepicker]').datepicker()</pre>
+              <h3>Options</h3>
+              <table class="table table-bordered table-striped">
+                <thead>
+                 <tr>
+                   <th style="width: 100px;">Name</th>
+                   <th style="width: 50px;">type</th>
+                   <th style="width: 100px;">default</th>
+                   <th>description</th>
+                 </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                   <td>format</td>
+                   <td>string</td>
+                   <td>'mm/dd/yyyy'</td>
+                   <td>the date format, combination of  d, dd, m, mm, yy, yyy.</td>
+                 </tr>
+                  <tr>
+                   <td>weekStart</td>
+                   <td>integer</td>
+                   <td>0</td>
+                   <td>day of the week start. 0 for Sunday -  6 for Saturday</td>
+                 </tr>
+                </tbody>
+              </table>
+
+              <h3>Markup</h3>
+              <p>Format a component.</p>
+    <pre class="prettyprint linenums">
+    &lt;div class=&quot;input-append date&quot; id=&quot;dp3&quot; data-date=&quot;12-02-2012&quot; data-date-format=&quot;dd-mm-yyyy&quot; rel=&quot; datepicker&quot;&gt;
+      &lt;input class=&quot;span2&quot; size=&quot;16&quot; type=&quot;text&quot; value=&quot;12-02-2012&quot;&gt;
+      &lt;span class=&quot;add-on&quot;&gt;&lt;i class=&quot;icon-th&quot;&gt;&lt;/i&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    </pre>
+              <h3>Methods</h3>
+              <h4>.datepicker(options)</h4>
+              <p>Initializes an datepicker.</p>
+
+
+              <h3>Events</h3>
+              <p>Datepicker class exposes a few events for manipulating the dates.</p>
+              <table class="table table-bordered table-striped">
+                <thead>
+                 <tr>
+                   <th style="width: 150px;">Event</th>
+                   <th>Description</th>
+                 </tr>
+                </thead>
+                <tbody>
+                 <tr>
+                   <td>show</td>
+                   <td>This event fires immediately when the date picker is displayed.</td>
+                 </tr>
+                 <tr>
+                   <td>hide</td>
+                   <td>This event is fired immediately when the date picker is hidden.</td>
+                 </tr>
+                 <tr>
+                   <td>changeDate</td>
+                   <td>This event is fired when the date is changed.</td>
+                 </tr>
+                </tbody>
+              </table>
+    <pre class="prettyprint linenums">
+    $(&#039;#dp5&#039;).datepicker()
+      .on(&#039;changeDate&#039;, function(ev){
+        if (ev.date.valueOf() &lt; startDate.valueOf()){
+          ....
+        }
+      });
+    </pre>
+            </div>
+          </div>
+        </section>
 
     <!-- Typeahead
     ================================================== -->
@@ -2148,7 +2372,7 @@ $('.myCarousel').carousel({
     </section>
     </div>
     <script src="js/jquery-1.7.2.min.js"></script>
-    <script src="js/google-code-prettify/prettify.js"></script>
+    <script src="js/google-code-prettify/prettify.js"></script>    
     <script src="js/bootstrap-transition.js"></script>
     <script src="js/bootstrap-alert.js"></script>
     <script src="js/bootstrap-modal.js"></script>
@@ -2161,7 +2385,49 @@ $('.myCarousel').carousel({
     <script src="js/bootstrap-collapse.js"></script>
     <script src="js/bootstrap-carousel.js"></script>
     <script src="js/bootstrap-typeahead.js"></script>
+    <script src="js/bootstrap-colorpicker.js"></script>
+    <script src="js/bootstrap-datepicker.js"></script>
     <script src="js/chosen.jquery.min.js"></script>
     <script src="js/application.js"></script>
+    
+    <script>
+    		$(function(){
+    		  
+    		  //Color picker
+    			var bodyStyle = $('body')[0].style;
+    			$('#cp4').colorpicker().on('changeColor', function(ev){
+    				bodyStyle.backgroundColor = ev.color.toHex();
+    			});
+    		
+    		  // Calendar 
+    			var startDate = new Date(2012,1,20);
+    			var endDate = new Date(2012,1,25);
+    			$('#dp4').datepicker()
+    				.on('changeDate', function(ev){
+    					if (ev.date.valueOf() > endDate.valueOf()){
+    						$('#alert').show().find('strong').text('The start date can not be greater then the end date');
+    					} else {
+    						$('#alert').hide();
+    						startDate = new Date(ev.date);
+    						$('#startDate').text($('#dp4').data('date'));
+    					}
+    					$('#dp4').datepicker('hide');
+    				});
+    				
+    			// datepicker	
+    			$('#dp5').datepicker()
+    				.on('changeDate', function(ev){
+    					if (ev.date.valueOf() < startDate.valueOf()){
+    						$('#alert').show().find('strong').text('The end date can not be less then the start date');
+    					} else {
+    						$('#alert').hide();
+    						endDate = new Date(ev.date);
+    						$('#endDate').text($('#dp5').data('date'));
+    					}
+    					$('#dp5').datepicker('hide');
+    				});
+    		});
+    	</script>
+    
   </body>
 </html>
