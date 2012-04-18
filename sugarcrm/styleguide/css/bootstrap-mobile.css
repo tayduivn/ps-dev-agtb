@@ -3688,6 +3688,18 @@ h6 {
 h1 {
   font-size: 26px !important;
 }
+.fno {
+  float: none !important;
+}
+.fleft {
+  float: left !important;
+}
+.fright {
+  float: right !important;
+}
+.altview {
+  display: none;
+}
 /* activity and twitter */
 article {
   position: relative;
@@ -3695,6 +3707,9 @@ article {
   padding: 8px 32px 8px 12px;
   border-top: 1px solid #e8e8e8;
   min-height: 52px;
+}
+.accounts article {
+  padding-left: 44px;
 }
 article div {
   display: table-cell;
@@ -3707,6 +3722,9 @@ article [class^="icon-star"] {
   top: 24px;
   left: 16px;
   font-size: 18px;
+}
+article > input[type=checkbox] {
+  margin-top: 20px;
 }
 #detailListing article {
   padding: 8px 32px 8px 16px !important;
@@ -3876,12 +3894,32 @@ a:hover [class^="icon-"] {
 .the-icons i:hover {
   background-color: rgba(255, 0, 0, 0.25);
 }
-.icon-phone {
+#record-action .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
   background-size: 80%;
   height: 26px;
   width: 26px;
   margin-bottom: -22px;
+}
+.icon-phone {
+  background: url('../img/phone.png') no-repeat 50% 50%;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
+.icon-phone-black {
+  background: url('../img/phone-black.png') no-repeat 50% 0;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
+.icon-account-black {
+  background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
 }
 .navbar [class^="icon-"] {
   margin-top: 2px;
@@ -4067,10 +4105,8 @@ html {
   height: 218px;
   display: inline-block;
 }
-#listing .form-search {
-  margin: 0;
-}
-#listing .search {
+.topelbar {
+  position: relative;
   height: 34px;
   padding: 5px;
   background-color: #f5f5f5;
@@ -4082,6 +4118,56 @@ html {
   background-image: linear-gradient(top, #fcfcfc, #ebebeb);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#ebebeb', GradientType=0);
+}
+.topelbar a.btn {
+  min-height: 20px;
+  min-width: 50px;
+  margin-top: 2px;
+}
+.topelbar i.opt {
+  font-style: normal;
+}
+.topelbar aside {
+  display: inline-block;
+  width: 85px;
+  height: 16px;
+  position: absolute;
+  right: 0px;
+  top: 4px;
+}
+.topelbar aside a.btn {
+  min-width: 18px;
+  min-height: 22px;
+}
+.accounts .topelbar {
+  padding-right: 94px;
+}
+@media (max-width: 479px) {
+  .topelbar i.opt {
+    display: none !important;
+  }
+}
+.tcenter > .btn-group {
+  display: inline-block;
+}
+.topelbar.search .btn-group .btn:last-child {
+  -webkit-border-top-right-radius: 18px;
+  -moz-border-radius-topright: 18px;
+  border-top-right-radius: 18px;
+  -webkit-border-bottom-right-radius: 18px;
+  -moz-border-radius-bottomright: 18px;
+  border-bottom-right-radius: 18px;
+}
+.topelbar.search .btn-group .btn:first-child {
+  -webkit-border-top-left-radius: 18px;
+  -moz-border-radius-topleft: 18px;
+  border-top-left-radius: 18px;
+  -webkit-border-bottom-left-radius: 18px;
+  -moz-border-radius-bottomleft: 18px;
+  border-bottom-left-radius: 18px;
+}
+#listing .form-search {
+  margin: 0;
 }
 #listing .icon-search {
   position: absolute;
@@ -4154,9 +4240,10 @@ html {
 .dialogdark {
   position: fixed;
   top: 146px;
-  padding: 20px;
+  padding: 20px 0;
   text-align: center;
-  left: 7%;
+  left: 12.5%;
+  margin: 0 auto;
   width: 75%;
   z-index: 1000;
   display: block;
@@ -4177,6 +4264,9 @@ html {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+}
+.dialogdark p {
+  margin: 0 18px;
 }
 .bizcard {
   position: fixed;
@@ -4302,26 +4392,6 @@ html {
   background: none;
   margin: 0;
 }
-.alert {
-  z-index: 2000;
-  position: absolute;
-  width: 100%;
-  height: 42px;
-  line-height: 42px;
-  bottom: -1px;
-  left: -1px;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  padding: 0 10px;
-  opacity: 0.94;
-  filter: alpha(opacity=94);
-  color: #ffffff;
-  text-shadow: none;
-  margin: 0;
-  font-size: 12px;
-  background: #000000;
-}
 .over {
   z-index: 2000;
   position: absolute;
@@ -4386,6 +4456,7 @@ html {
 .pad {
   background: #ffffff;
   margin: 0;
+  min-height: 300px;
 }
 #createRecord.form-horizontal .control-group > label {
   width: 25% !important;
@@ -4423,6 +4494,11 @@ html {
 #createRecord .avatar {
   height: 32px;
   width: 32px;
+}
+.control-group .btn.fright {
+  min-width: 20px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 /* Log In
 ----------*/
@@ -4493,6 +4569,26 @@ html {
 }
 #login .btn.btn-sugar {
   width: 140px!important;
+}
+.alert {
+  z-index: 2000;
+  position: absolute;
+  width: 100%;
+  height: 42px;
+  line-height: 42px;
+  bottom: -1px;
+  left: -1px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  padding: 0 10px;
+  opacity: 0.94;
+  filter: alpha(opacity=94);
+  color: #ffffff;
+  text-shadow: none;
+  margin: 0;
+  font-size: 12px;
+  background: #000000;
 }
 /* Alert overrider */
 .alert-warning {
@@ -4622,11 +4718,11 @@ html {
   background: #313130 url(../img/black_linen_v2.png);
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
 }
 .navbar-bottom {
   bottom: 0px;
-  height: 22px;
+  height: 24px;
   overflow: hidden;
 }
 .navbar-bottom .row-fluid {

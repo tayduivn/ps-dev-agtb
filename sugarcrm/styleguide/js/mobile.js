@@ -99,12 +99,13 @@
 	    return false;
     });
     // fake phone for prototype
-    $('#record-action').find('.icon-phone').on('click', function () {
-	    $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
+    $('#record-action .icon-phone, .btn-group .btn.call, .controls .btn.call').on('click tap', function () {
+	
+	    $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="javascript:return false;" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
 	    return false;
     });
-    $('.over').find('#cancel').on('click', function () {
-		$(this).remove();
+    $('.over #cancel').live('click tap', function () {
+		$(this).closest('.over').remove();
 		return false;
     });
     $('a[title=Remove]').live('click', function () {
@@ -117,7 +118,7 @@
     $('#tour').on('click', function () {
       $(this).remove();
     });
-    $('#back .back').on('click', function(){	
+    $('#back .back, .back.btn').on('click', function(){
 		if(history.length<=2) {
 			window.location="./";
 		}else{
@@ -137,21 +138,16 @@
     $('#listing > article.nav').live('click', function(e){
         $(this).find('a').first().css('border','1px solid red').trigger('click');
     });
-    if($('.alert').size()){
-	setTimeout(function(ia){
-            $('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').hide() });
-        }, 3000);
-    }
 
     var post_template = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i><br>Reply</a><a href="" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a></span></span></article>',
 	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more activity...</a></div></article>',
 	listing_spacer = '<i></i>',
 	posts_search_template = '\
-	<section class="search">\
+	<section class="search topelbar">\
           <i class="icon-search"></i>\
-          <form class="form-search row-fluid" action="" _lpchecked="1">\
+          <div class="form-search row-fluid" action="" _lpchecked="1">\
             <input type="text" class="search-query" placeholder="Search all activity">\
-          </form>\
+          </div>\
         </section>';
 
     function inject_posts(order,anchor,numberofrecords){
@@ -188,6 +184,30 @@
 	}, 250);
     }
 
+    if($('.alert').size()){
+	setTimeout(function(ia){
+            $('.alert').anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert').hide() });
+        }, 3000);
+    }
+
+    $(".icon-star-empty, .icon-star, a[title=Remove]").live('click tap',function(){
+	var rn=Math.floor(Math.random()*100);
+	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-general" style="display:block;"><strong>Loading...</strong></div>');
+	setTimeout(function(ia){
+            $('.alert.tmp-'+rn).anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert.tmp-'+rn).remove() });
+        }, 3000);
+    });
+
+    $('.icon-star, .icon-star-empty').live('click tap',function(){
+        $(this).toggleClass('icon-star-empty').toggleClass('icon-star');
+    });
+    
+    $('form input').on('focus',function(){
+	if($('.navbar-bottom').hasClass('teaser')) {
+	    $('.navbar-bottom').removeClass('teaser');
+	}
+    });
+
 })(window.Zepto);
 
 function closeBottomMenu() {
@@ -197,7 +217,6 @@ function closeBottomMenu() {
 }
 
 function parseQueryString(){
-    alert('d');
     var qs = location.search.substring(1);
     qs = qs.split("&");
     if(qs.length === 2){

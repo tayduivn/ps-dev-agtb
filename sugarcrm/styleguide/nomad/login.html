@@ -20,14 +20,15 @@
     <div class="row">
       <div class="span4">
         <div class="modal">
-          <form action="index.html">
+          <div>
             <div class="modal-header tcenter">
               <h3 class="brand">SugarCRM</h3>
             </div>
             <div class="modal-body">
               <div class="control-group">
                 <label for="user_name" class="hide">Username</label>
-                <input type="text" size="35" tabindex="1" id="user_name" name="user_name" placeholder="Username or Email">
+                <input class="unaltview" type="text" size="35" tabindex="1" id="user_name" name="user_name" placeholder="Username or Email">
+                <input class="altview" style="color:red;background:#fff url(../img/exclamation.png) 97% 50% no-repeat" type="text" size="35" tabindex="1" id="user_name" name="user_name" value="Bobsyouruncle">
               </div>
               <div class="control-group">
                 <label for="input01" class="hide">Password</label>
@@ -41,15 +42,18 @@
             <div class="modal-footer">
               <a href="index.html" class="btn" type="submit" tabindex="4" id="login_button" name="Login" value="Log In">Log In</a>
             </div>
-          </form>              
+          </div>              
         </div>
         <!-- <a href="" class="btn btn-sugar btn-small" id="signup_button">Sign Up for SugarCRM</a> -->
       </div>
     </div>
-  </div>  
+  </div>
+  <div id="demo-error" class="altview alert alert-error"><strong>Error!</strong> You broke the internet.</div>
   <script src="../js/zepto/zepto.js"></script>
   <script src="../js/zepto/event.js"></script>
   <script src="../js/zepto/touch.js"></script>
+  <script src="../js/zepto/fx.js"></script>
   <script src="../js/mobile.js"></script>
+  <script>var el=parseQueryString();(function($){if(el){$("."+el).show();$(".un"+el).hide();}})(window.Zepto);</script>
 </body>
 </html>

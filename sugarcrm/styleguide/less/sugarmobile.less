@@ -1,4 +1,3 @@
-
 .navbar .nav-collapse {height: 0}
 
 /* Body and structure
@@ -61,6 +60,11 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {font-size: 26px !important;}
 
+.fno {float:none !important}
+.fleft {float: left !important}
+.fright {float: right !important}
+.altview {display:none;}
+
 /* activity and twitter */
 
 article {
@@ -70,6 +74,11 @@ article {
   border-top: 1px solid darken(@grayLighter, 5%);
   min-height: 52px;
 }
+
+.accounts article {
+  padding-left: 44px;
+}
+
 article div {
   display: table-cell;
   vertical-align: middle;
@@ -82,6 +91,10 @@ position: absolute;
 top: 24px;
 left: 16px;
 font-size: 18px;
+}
+
+article > input[type=checkbox] {
+  margin-top:20px;
 }
 
 #detailListing article {
@@ -242,12 +255,36 @@ a:hover [class^="icon-"]{
   background-color: rgba(255,0,0,.25);
 }
 
-.icon-phone {
+#record-action .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
   background-size: 80%;
   height: 26px;
   width: 26px;
   margin-bottom: -22px;
+
+}
+
+.icon-phone {
+  background: url('../img/phone.png') no-repeat 50% 50%;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
+.icon-phone-black {
+  background: url('../img/phone-black.png') no-repeat 50% 0;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
+
+
+.icon-account-black {
+  background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
 }
 
 
@@ -420,14 +457,69 @@ html {
   display: inline-block;
 }
 
-#listing .form-search {
-  margin:0;
-}
-
-#listing .search {
+.topelbar {
+  position:relative;
   height:34px;
   padding:5px;
   #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+  a.btn {
+    min-height:20px;
+    min-width:50px;
+    margin-top:2px;
+  }
+  i.opt {
+    font-style: normal;
+  }
+  aside {
+    display:inline-block;
+    width:85px;
+    height:16px;
+    position:absolute;
+    right:0px;
+    top:4px;
+    a.btn {
+      min-width:18px;
+      min-height:22px;
+    }
+  }
+}
+
+.accounts .topelbar {
+  padding-right:94px;
+}
+
+@media (max-width: 479px) {
+  .topelbar {
+    i.opt {
+      display:none !important;
+    }
+  }
+}
+
+.tcenter > .btn-group {
+  display:inline-block;
+}
+
+.topelbar.search .btn-group .btn:last-child {
+     -webkit-border-top-right-radius: 18px;
+         -moz-border-radius-topright: 18px;
+             border-top-right-radius: 18px;
+  -webkit-border-bottom-right-radius: 18px;
+      -moz-border-radius-bottomright: 18px;
+          border-bottom-right-radius: 18px;
+}
+
+.topelbar.search .btn-group .btn:first-child {
+     -webkit-border-top-left-radius: 18px;
+         -moz-border-radius-topleft: 18px;
+             border-top-left-radius: 18px;
+  -webkit-border-bottom-left-radius: 18px;
+      -moz-border-radius-bottomleft: 18px;
+          border-bottom-left-radius: 18px;
+}
+
+#listing .form-search {
+  margin:0;
 }
 
 #listing .icon-search {
@@ -508,9 +600,10 @@ html {
 .dialogdark {
 position: fixed;
 top: 146px;
-padding: 20px;
+padding: 20px 0;
 text-align: center;
-left: 7%;
+left: 12.5%;
+margin:0 auto;
 width: 75%;
 z-index: 1000;
 display: block;
@@ -520,6 +613,9 @@ text-shadow: 0 -1px 0 @black;
 @shadow: 0 1px 4px rgba(0,0,0,.6);
 .box-shadow(@shadow);
 .border-radius(4px);
+    p {
+      margin:0 18px;
+    }
 }
 
 .bizcard {
@@ -610,24 +706,6 @@ color: @gray;
 .nav-collapse li li a {
  background: none;
  margin: 0;
-} 
-
-.alert {
- z-index: 2000;
- position: absolute;
- width: 100%;
- height: 42px;
- line-height: 42px;
- bottom: -1px;
- left: -1px;
- .border-radius(0px);
- padding: 0 10px;
- .opacity(94);
- color: @white;
- text-shadow: none;
- margin: 0;
- font-size: 12px;
- background: @black;
 }
 
 .over {
@@ -690,6 +768,7 @@ color: @gray;
 .pad {
   background: @white;
   margin: 0;
+  min-height:300px;
 }
 #createRecord.form-horizontal .control-group > label  {
   width: 25% !important;
@@ -726,6 +805,13 @@ color: @gray;
   width: 32px;
 }
 
+.control-group {
+  .btn.fright {
+    min-width: 20px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}
 
 /* Log In
 ----------*/
@@ -785,6 +871,24 @@ float: none !important;}
 
 #login .btn.btn-sugar {width: 140px!important;}
 
+.alert {
+ z-index: 2000;
+ position: absolute;
+ width: 100%;
+ height: 42px;
+ line-height: 42px;
+ bottom: -1px;
+ left: -1px;
+ .border-radius(0px);
+ padding: 0 10px;
+ .opacity(94);
+ color: @white;
+ text-shadow: none;
+ margin: 0;
+ font-size: 12px;
+ background: @black;
+}
+
 /* Alert overrider */
 .alert-warning {background: lighten(@yellow, 40%); color: darken(desaturate(@yellow,10%),28%); border-top:1px solid fade(darken(@yellow,50%),25%);}
 .alert-general {background: lighten(@blue, 46%); color: darken(@blue,20%); border-top:1px solid fade(darken(@blue,10%),25%);}
@@ -792,6 +896,8 @@ float: none !important;}
 .alert-error {background: lighten(@red,47%); color: @red; border-top:1px solid fade(darken(@red,10%),25%);}
 .alert[id^="demo-"] {  display:none;}
 .alert:target {  display:inline-block !important;}
+
+
 
 /* TOUR */
 #tour {
@@ -902,12 +1008,12 @@ float: none !important;}
       background: @grayDarker url(../img/black_linen_v2.png);
       width: 100%;
       height: 100%;
-      position: absolute;
+      position: fixed;
   }
 
 .navbar-bottom {
   bottom:0px;
-  height:22px;
+  height:24px;
   overflow:hidden;
   .row-fluid {
     display: none;
