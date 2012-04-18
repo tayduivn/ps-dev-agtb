@@ -153,6 +153,7 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
      */
     public static function getFileName ($view , $moduleName , $packageName , $type = MB_BASEMETADATALOCATION)
     {
+        /*
 
         $type = strtolower ( $type ) ;
 
@@ -200,7 +201,8 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
                 $module = & $mb->getPackageModule ( $packageName, $moduleName ) ;
                 return $module->getModuleDir () . '/metadata/' . $filenames [ $view ] . '.php' ;
         }
-
+        */
+        return MetaDataFiles::getUndeployedFileName($view, $moduleName, $packageName, $type);
     }
     
     public function getModuleDir(){

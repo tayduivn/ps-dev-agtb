@@ -283,13 +283,13 @@ fixtures.api = {
             "status": 200,
             "request": '{"first_name":"Ronald","last_name":"McDonald","opportunity_role":"Influencer"}',
             "response": {
-                "bean": {
+                "record": {
                     "id": "1",
                     "name": "Cool Opportunity",
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "relatedBean": {
+                "relatedRecord": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
@@ -302,13 +302,13 @@ fixtures.api = {
             "status": 200,
             "request": '{"opportunity_role":"Primary Decision Maker"}',
             "response": {
-                "bean": {
+                "record": {
                     "id": "1",
                     "name": "Cool Opportunity",
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "relatedBean": {
+                "relatedRecord": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
@@ -320,13 +320,13 @@ fixtures.api = {
         "DELETE": {
             "status": 200,
             "response": {
-                "bean": {
+                "record": {
                     "id": "1",
                     "name": "Cool Opportunity",
                     "amount": "1000000",
                     "date_modified": "2012-02-08 19:18:25"
                 },
-                "relatedBean": {
+                "relatedRecord": {
                     "id": "2",
                     "first_name": "Ronald",
                     "last_name": "McDonald",
