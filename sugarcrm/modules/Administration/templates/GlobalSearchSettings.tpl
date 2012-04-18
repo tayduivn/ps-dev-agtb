@@ -294,27 +294,10 @@
                             + encodeURIComponent(type) + '&host=' + encodeURIComponent(host) + '&port=' + encodeURIComponent(port)
                             + "&clearData=" + clearData + '&modules=' + encodeURIComponent(modules);
 
-            var callback = {
-                success: function(o)
-                {
-                    var r = YAHOO.lang.JSON.parse(o.responseText);
-                    if(r.success)
-                    {
-                        alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
-                    }
-                    else
-                    {
-                        alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
-                    }
-                    SUGAR.FTS.selectFTSModulesDialog.cancel();
-                },
-                failure: function(o)
-                {
-                    alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
-                    SUGAR.FTS.selectFTSModulesDialog.cancel();
-                }
-            }
-            var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback, null);
+            var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, null, null);
+            alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
+            SUGAR.FTS.selectFTSModulesDialog.cancel();
+
         },
         schedFullSystemIndex : function()
         {

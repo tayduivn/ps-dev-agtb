@@ -281,11 +281,9 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeMenu: function () {
-	    var maxMenuWidth = $("#dcmenu").width() - 10
-            - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#dcmenuSearchDiv").width();
+    	var maxMenuWidth = Math.round($(window).width()*.45);
 		var menuWidth = $('#moduleList').width();
 		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
-        var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current);
 			$('ul.sf-menu').each(function(){
 				if($(this).attr("id") == ("themeTabGroupMenu_" + sugar_theme_gm_current)){
 					var menuItems = $(this).children("li")
@@ -296,23 +294,24 @@ SUGAR.append(SUGAR.themes, {
 	                    }
 				    );
 	                var menuLength = menuItems.length;
-
+	                
 	                if(menuItemsWidth > maxMenuWidth){
 	                	while(menuItemsWidth > maxMenuWidth){
 	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
-                            if(menuNode.hasClass("current")){
+	                		if(menuNode.hasClass("current") && !menuNode.hasClass("home")){
 	                			menuNode = menuNode.prev();
 	                		}
 	                		if(menuNode.hasClass("home")){
 	                			break;
 	                		}
-                            menuItemsWidth = currentModuleList.width();
+	                		menuItemsWidth -= menuNode.width();
+	                		menuNode.remove();
 	                		$("#moduleTabMore" + sugar_theme_gm_current).prepend(menuNode);
 	                	}
 	                }
 	                else if(menuItemsWidth <= maxMenuWidth){
 	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
-	                	if(insertNode.prev().hasClass("current")){
+	                	if(insertNode.prev().hasClass("current") && !insertNode.prev().hasClass("home")){
 	                		insertNode = insertNode.prev();
                 		}	                
 	                	while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
@@ -326,8 +325,8 @@ SUGAR.append(SUGAR.themes, {
 	                		menuLength++;
 	                		menuItemsWidth += menuNode.width();
 		                	menuNode.remove();
-		                	
 		                	insertNode.before(menuNode);
+		                	menuItemsWidth += menuNode.width();
 	                	}
 	                }
 				}
