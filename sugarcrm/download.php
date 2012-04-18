@@ -181,7 +181,7 @@ else {
 		    }
 		} else {
 						
-			if(preg_match("/\.jpg|\.gif|\.png|\.jpeg/", $name)){
+			if(preg_match("/\.jpg|\.gif|\.png|\.jpeg/i", $name)){
 				$mime = getimagesize($download_location);
 				if(!empty($mime)) {
 			   		header("Content-Type: {$mime['mime']}");
