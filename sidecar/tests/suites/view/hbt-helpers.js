@@ -40,7 +40,7 @@ describe("Handlebars Helpers", function() {
                 view = {sugarFields: [null, field], name: "detail"},
                 sugarField = {name: "TestName", label: "TestLabel", type: "text"};
 
-            expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toEqual('<span sfuuid="1"></span>');
+            expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toMatch(/<span sfuuid=.*(\d+).*/);
         })
     });
 
