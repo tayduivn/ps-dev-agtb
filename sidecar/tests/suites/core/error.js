@@ -1,15 +1,22 @@
 describe("Error module", function() {
     var app = SUGAR.App,
-        server = sinon.fakeServer.create();
+        server;
 
-    beforeEach();
+    beforeEach(function() {
+        server = sinon.fakeServer.create();
+    });
 
     afterEach(function() {
         server.restore();
     });
 
-    xit("should handle http code errors", function() {
-        server.respondWith([]);
+    it("should handle http code errors", function() {
+        var bean = app.data.createBean("Cases");
+        server.respondWith([404, {}, ""]);
+
+        bean.save();
+        server.respond();
+        expect(sinon.assert.calledWith(callback, [{ id: 12, comment: "Hey there" }])).toEqual();
     });
 
     xit("should inject custom http error handlers", function() {

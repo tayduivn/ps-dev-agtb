@@ -399,7 +399,6 @@
 
                 // Handle error codes
                 statusCodes[xhr.status]();
-
             };
 
             var callbacks = {

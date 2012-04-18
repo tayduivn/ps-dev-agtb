@@ -5,9 +5,6 @@
          * @param opts
          */
         initialize: function(opts) {
-            console.log("initing");
-            console.log(this);
-
             opts = opts || {};
 
             /**
@@ -57,7 +54,6 @@
         },
 
         enableOnError: function(handler, context) {
-            console.log("On Error", this.overloaded);
             var originalHandler,
                 self = this;
 
