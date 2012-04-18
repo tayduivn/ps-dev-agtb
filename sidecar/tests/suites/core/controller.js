@@ -20,7 +20,7 @@ describe("when a route is matched", function() {
             var mock = sinon.mock(app.controller.$el);
             var expection = mock.expects("html");
 
-            server.respondWith("GET", "/rest/v10/Contacts",
+            server.respondWith("GET", /\/rest\/v10\/Contacts/,
                 [200, {  "Content-Type":"application/json"},
                     JSON.stringify(fixtures.api["rest/v10/contact"].GET.response)]);
 
@@ -31,6 +31,7 @@ describe("when a route is matched", function() {
             expect(app.controller.layout).toBeDefined();
             expect(app.controller.layout instanceof Backbone.View).toBeTruthy();
             expect(app.controller.context.get().collection).toBeDefined();
+            expect(app.controller.context.get().collection.models.length).toEqual(2);
 
             mock.verify();
         });
