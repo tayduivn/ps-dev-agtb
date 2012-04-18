@@ -83,7 +83,7 @@
          * @return {Object} this
          */
         render: function() {
-            var renderFlag = app.acl.hasAccess(this.context.get("model").module, this.name, this.context.get("model"));
+            var renderFlag = app.acl.hasAccess(this.name, this.context.get("model"));
             if (renderFlag) {
                 //Bad templates can cause a JS error that we want to catch here
                 try {
