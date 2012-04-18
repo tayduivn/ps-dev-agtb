@@ -4127,7 +4127,7 @@ html {
 .topelbar i.opt {
   font-style: normal;
 }
-.topelbar form aside {
+.topelbar aside {
   display: inline-block;
   width: 85px;
   height: 16px;
@@ -4135,7 +4135,7 @@ html {
   right: 0px;
   top: 4px;
 }
-.topelbar form aside a.btn {
+.topelbar aside a.btn {
   min-width: 18px;
   min-height: 22px;
 }

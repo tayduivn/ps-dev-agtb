@@ -101,11 +101,11 @@
     // fake phone for prototype
     $('#record-action .icon-phone, .btn-group .btn.call, .controls .btn.call').on('click tap', function () {
 	
-	    $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
+	    $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="javascript:return false;" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
 	    return false;
     });
-    $('.over').find('#cancel').on('click', function () {
-		$(this).remove();
+    $('.over #cancel').live('click tap', function () {
+		$(this).closest('.over').remove();
 		return false;
     });
     $('a[title=Remove]').live('click', function () {
@@ -145,9 +145,9 @@
 	posts_search_template = '\
 	<section class="search topelbar">\
           <i class="icon-search"></i>\
-          <form class="form-search row-fluid" action="" _lpchecked="1">\
+          <div class="form-search row-fluid" action="" _lpchecked="1">\
             <input type="text" class="search-query" placeholder="Search all activity">\
-          </form>\
+          </div>\
         </section>';
 
     function inject_posts(order,anchor,numberofrecords){
