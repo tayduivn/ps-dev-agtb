@@ -894,6 +894,14 @@ $cache_headers = <<<EOQ
         ExpiresByType image/jpg "access plus 1 month"
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    Options +FollowSymLinks
+    RewriteEngine On
+    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+</IfModule>
 EOQ;
     if(file_exists($htaccess_file)){
         $fp = fopen($htaccess_file, 'r');
@@ -906,24 +914,6 @@ EOQ;
         }
     }
     $status =  file_put_contents($htaccess_file, $contents . $restrict_str . $cache_headers);
-    if( !$status ) {
-        echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
-        echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";
-        echo $restrict_str;
-    }
-
-$restHtaccess = <<<HTACCCESS
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    Options +FollowSymLinks
-    RewriteEngine On
-    RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
-</IfModule>
-HTACCCESS;
-
-    $status =  sugar_file_put_contents("rest/{$htaccess_file}", $restHtaccess);
     if( !$status ) {
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";
