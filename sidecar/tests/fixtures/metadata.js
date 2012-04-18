@@ -1036,5 +1036,28 @@ fixtures.metadata = {
         'Cases':'Cases',
         'Bugs':'Bugs',
         '_hash':'dfl23asfd'
-    }
+    },
+  'acl': {
+      "Cases":{
+          "fields": {
+                    "name": {
+                        "write": "owner"
+                    }, "status": {
+                        "write": "no"
+                    }
+                },
+                "admin": "no",
+                "developer": "no",
+                "access": "yes",
+                "view": "yes",
+                "list": "yes",
+                "edit": "no",
+                "delete": "yes",
+                "import": "yes",
+                "export": "yes",
+                "massupdate": "yes",
+                "create": "yes",
+                "_hash": "c2dd34be3e193dd127eb7ab69d413cc6"
+      }
+  }
 };
