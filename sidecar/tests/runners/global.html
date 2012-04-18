@@ -20,8 +20,6 @@
     <script src="../../src/core/events.js"></script>
     <script src='../../src/core/cache.js'></script>
     <script src='../../src/view/template.js'></script>
-    <script src='../../src/view/sugar-field-manager.js'></script>
-    <script src='../../src/view/sugar-field.js'></script>
     <script src='../../src/core/context.js'></script>
     <script src='../../src/core/controller.js'></script>
     <script src='../../src/core/router.js'></script>
@@ -33,15 +31,17 @@
     <script src='../../src/data/bean-collection.js'></script>
     <script src='../../src/data/data-manager.js'></script>
     <script src='../../src/view/hbt-helpers.js'></script>
-    <script src='../../src/view/layout-manager.js'></script>
+    <script src='../../src/view/view-manager.js'></script>
+    <script src='../../src/view/component.js'></script>
+    <script src='../../src/view/field.js'></script>
     <script src='../../src/view/view.js'></script>
     <script src='../../src/view/layout.js'></script>
     <script src='../../src/view/views/list-view.js'></script>
+    <script src='../../src/view/views/header-view.js'></script>
     <script src='../../src/view/layouts/columns-layout.js'></script>
     <script src='../../src/view/layouts/fluid-layout.js'></script>
     <script src="../../src/core/language.js"></script>
     <script src='../../src/core/cache.js'></script>
-    <script src='../../src/core/sugar-auth.js'></script>
 
     <link rel="stylesheet" href="../../../sidecar/lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="../../../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
@@ -65,13 +65,10 @@
     <!--tests suites--->
     <script src='../spec-helper.js'></script>
     <script src='../suites/sugarapi/sugarapi.js'></script>
-    <script src='../suites/core/sugar-auth.js'></script>
     <script src='../suites/utils/logger.js'></script>
     <script src='../suites/app/config.js'></script>
     <script src='../suites/utils/utils.js'></script>
     <script src="../suites/app/app.js"></script>
-    <script src='../suites/view/sugarfieldmanager.js'></script>
-    <script src='../suites/view/sugarfield.js'></script>
     <script src="../suites/core/router.js"></script>
     <script src="../suites/core/controller.js"></script>
     <script src="../suites/data/data-manager.js"></script>
@@ -81,13 +78,27 @@
     <script src="../suites/data/relationships.js"></script>
     <script src="../suites/core/metadata-manager.js"></script>
     <script src="../suites/view/hbt-helpers.js"></script>
+    <script src='../suites/view/layout-factory.js'></script>
+    <script src='../suites/view/field-factory.js'></script>
+    <script src="../suites/view/view-factory.js"></script>
+    <script src="../suites/view/view.js"></script>
+    <script src='../suites/view/field.js'></script>
     <script src="../suites/view/layout.js"></script>
+    <script src='../suites/view/views/list-view.js'></script>
+    <script src='../suites/view/views/header-view.js'></script>
     <script src="../suites/core/context.js"></script>
     <script src="../suites/core/events.js"></script>
     <script src="../suites/core/language.js"></script>
     <script src="../suites/core/cache.js"></script>
-    <script src="../suites/sugarfields/checkbox.js"></script>
     <script src="../suites/view/template.js"></script>
+
+    <!-- Widget specs -->
+    <script src='../suites/fields/field-helper.js'></script>
+    <script src="../suites/fields/checkbox.js"></script>
+    <script src="../suites/fields/int.js"></script>
+    <script src="../suites/fields/float.js"></script>
+    <script src="../suites/fields/iframe.js"></script>
+    <script src="../suites/fields/datetimecombo.js"></script>
 
     <!--init jasmine and exec suites--->
     <script type="text/javascript">

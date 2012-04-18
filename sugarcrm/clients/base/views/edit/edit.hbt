@@ -1,0 +1,44 @@
+<div class="subnav">
+    <div class="btn-toolbar pull-left">
+      <h1><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h1>
+    </div>
+    <div class="btn-toolbar pull-right">
+      <div class="btn-group">
+        <div class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
+          <ul class="dropdown-menu menu">
+            {{#each meta.buttons}}
+                <li>{{field ../context ../this ../model}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span7">
+        <form name='{{name}}'>
+                <div class="card2">
+                    {{#each meta.panels}}
+                        {{#each fields}}
+                            {{field ../../context ../../this ../../model}}
+                        {{/each}}
+                    {{/each}}
+                    <div class="form-actions">
+                    {{#each meta.buttons}}
+                        <a class="btn {{#if primary}}btn-primary{{/if}}" href="{{#if route}}#{{buildRoute ../../context ../../model ../route.action ../route.options}}
+                        {{else}}javascript:void(0){{/if}}">
+                        {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{label}}</a>
+                    {{/each}}
+                    </div>
+                </div>
+        </form>
+        <div class="block filtered" id="moduleLog">
+        </div>
+      </div>
+      <div class="span5 divleft">
+      </div>
+    </div>
+  </div>

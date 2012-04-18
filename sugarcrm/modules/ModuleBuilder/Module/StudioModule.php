@@ -337,7 +337,8 @@ class StudioModule
     	$nodes = array ( ) ;
         foreach ( $this->sources as $file => $def )
         {
-            if (file_exists ( "modules/{$this->module}/metadata/portal.$file" ))
+            $file = str_replace('viewdefs', '', $file);
+            if (file_exists ( "modules/{$this->module}/metadata/portal/views/$file" ))
             {
             	//$file = str_replace ( $file, '.php', '' ) ;
             	$nodes [] = array ( 

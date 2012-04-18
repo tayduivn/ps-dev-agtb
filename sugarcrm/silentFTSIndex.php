@@ -45,6 +45,7 @@ global $current_user;
 $current_user = new User();
 $current_user->getSystemUser();
 
+$moules = ($argc > 1) ?  array($argv[1]) : array();
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 $indexer = new SugarSearchEngineFullIndexer();
-$results = $indexer->performFullSystemIndex();
+$results = $indexer->performFullSystemIndex($moules);

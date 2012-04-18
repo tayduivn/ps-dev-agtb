@@ -37,10 +37,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
 
 	function setUp()
 	{
-        if(!function_exists('is_soap_fault'))
-        {
             $this->markTestSkipped('soap extension is not loaded');
-        }
 
         parent::setUp();
     	ConnectorFactory::$source_map = array();

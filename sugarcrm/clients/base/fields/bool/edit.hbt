@@ -1,0 +1,7 @@
+<div class="row-fluid">
+    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span4">
+        <input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}>
+        <p class="help-block"></p>
+    </div>
+</div>

@@ -1,93 +1,70 @@
-describe('metadata', function () {
+describe('Metadata Manager', function () {
+    var app = SUGAR.App;
+    var server;
     //Preload the templates
-    SUGAR.App.template.load(fixtures.metadata.viewTemplates);
+    app.template.load(fixtures.metadata.viewTemplates);
 
     beforeEach(function () {
         //Load the metadata
-        SUGAR.App.metadata.set(fixtures.metadata);
+        app.metadata.set(fixtures.metadata);
     });
 
     afterEach(function () {
+        if (server && server.restore) server.restore();
     });
 
-    it('exists', function () {
-        expect(typeof(SUGAR.App.metadata)).toBe('object');
+    it('should get view definitions', function () {
+        expect(app.metadata.getView("Contacts")).toBe(fixtures.metadata.modules.Contacts.views);
     });
 
-    it('gets vardefs for a bean', function () {
-        expect(SUGAR.App.metadata.get({
-            type:"vardef",
-            module:"Contacts"
-        })).toBe(fixtures.metadata.modules.Contacts.fields);
+    it('should get moduleList', function () {
+        var result = fixtures.metadata.moduleList;
+        delete result._hash;
+
+        expect(app.metadata.getModuleList()).toBe(result);
     });
 
-    it('gets viewdefs', function () {
-        expect(SUGAR.App.metadata.get({
-            type:"view",
-            module:"Contacts"
-        })).toBe(fixtures.metadata.modules.Contacts.views);
+    it('should get definition for a specific view', function () {
+        expect(app.metadata.getView("Contacts", "edit")).toBe(fixtures.metadata.modules.Contacts.views.edit);
     });
 
-    it('gets defs for a specific view', function () {
-        expect(SUGAR.App.metadata.get({
-            type:"view",
-            module:"Contacts",
-            view:"edit"
-        })).toBe(fixtures.metadata.modules.Contacts.views.edit);
+    it('should get layout definitions', function () {
+        expect(app.metadata.getLayout("Contacts")).toBe(fixtures.metadata.modules.Contacts.layouts);
     });
 
-    it('gets layoutdefs', function () {
-        expect(SUGAR.App.metadata.get({
-            type:"layout",
-            module:"Contacts"
-        })).toBe(fixtures.metadata.modules.Contacts.layouts);
+    it('should get a specific layout', function () {
+        expect(app.metadata.getLayout("Contacts", "detail")).toBe(fixtures.metadata.modules.Contacts.layouts.detail);
     });
 
-    it('gets a specific layout', function () {
-        expect(SUGAR.App.metadata.get({
-            type:"layout",
-            module:"Contacts",
-            layout:'detail'
-        })).toBe(fixtures.metadata.modules.Contacts.layouts.detail);
+    it('should get a varchar sugarfield', function () {
+        expect(app.metadata.getField('varchar')).toBe(fixtures.metadata.sugarFields.text);
     });
 
-    it('gets a specific sugarfield', function () {
-        expect(SUGAR.App.metadata.get({
-            sugarField:{
-                type:'varchar',
-                view:'edit'
-            }
-        })).toBe(fixtures.metadata.sugarFields.text.views.edit);
+    it('should get a specific sugarfield', function () {
+        expect(app.metadata.getField('phone')).toBe(fixtures.metadata.sugarFields.phone);
     });
 
-    it('gets a specific sugarfield defaulted to default if the view does not exist', function () {
-        expect(SUGAR.App.metadata.get({
-            sugarField:{
-                type:'varchar',
-                view:'thisViewDoesntExist'
-            }
-        })).toBe(fixtures.metadata.sugarFields.text.views["default"]);
+    it('should get a undefined sugarfield as text', function () {
+        expect(app.metadata.getField('doesntexist')).toBe(fixtures.metadata.sugarFields.text);
     });
 
     it ('should sync metadata', function (){
-        //Spy on API
-        SUGAR.App.api = {
-            getMetadata:function(modules, filters, callbacks){
-                var metadata = fixtures.metadata.modules
-                callbacks.success(metadata);
-            }
-        };
+        SugarTest.storage = {};
+        server = sinon.fakeServer.create();
+        server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=",
+                        [200, {  "Content-Type":"application/json"},
+                            JSON.stringify(fixtures.metadata)]);
 
-        var apiSpy = sinon.spy(SUGAR.App.api, "getMetadata");
-        var setSpy = sinon.spy(SUGAR.App.metadata, "set");
-        var cbSpy = sinon.spy();
+        app.metadata.sync();
+        server.respond();
 
-        SUGAR.App.metadata.sync(cbSpy);
+        expect(SugarTest.storage["test:portal:md:modules"]).toEqual("Cases,Contacts,Home");
+        expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:m:Contacts"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:m:Home"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:f:integer"]).toBeDefined();
+        expect(SugarTest.storage["test:portal:md:f:password"]).toBeDefined();
 
-        expect(apiSpy).toHaveBeenCalled();
-        expect(setSpy).toHaveBeenCalled();
-        expect(cbSpy).toHaveBeenCalled()
-
-        SUGAR.App.api.getMetadata.restore();
     });
+
 });

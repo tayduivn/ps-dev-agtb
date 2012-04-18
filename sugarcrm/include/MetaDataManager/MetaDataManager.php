@@ -28,7 +28,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  ********************************************************************************/
 
 require_once('soap/SoapHelperFunctions.php');
-
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modifiy any of the metadata using this
@@ -61,16 +61,24 @@ class MetaDataManager {
         $this->platforms = $platforms;
     }
 
-    protected function getModuleViewdefs($moduleName, $viewdefTypeFile = 'View', $viewdefType = 'view') {
+    /**
+     * Gets the view defs for a module for a given view|layout
+     *
+     * @param string $moduleName The name of the module
+     * @param string $viewdefType The type of def (layout or view)
+     * @return array
+     */
+    protected function getModuleViewdefs($moduleName, $viewdefType = 'view') {
         $data = array();
-        
-        $globPath = "modules/{$moduleName}/metadata/{$this->platforms[0]}/{$viewdefType}s/*{$viewdefTypeFile}.php";
+
+        // TODO: Consider adding a platform to the arg list or iterating over all platforms
+        $globPath = "modules/{$moduleName}/metadata/{$this->platforms[0]}/{$viewdefType}s/*.php";
 
         $builtinFiles = glob($globPath,GLOB_NOSORT);
         if ( !is_array($builtinFiles) ) {
             $builtinFiles = array();
         }
-        $customFiles = glob("custom/".$globPath,GLOB_NOSORT);
+        $customFiles = glob(MetaDataFiles::PATHCUSTOM . $globPath, GLOB_NOSORT);
         if ( !is_array($customFiles) ) {
             $customFiles = array();
         }
@@ -79,7 +87,7 @@ class MetaDataManager {
         $files = array_merge($builtinFiles,$customFiles);
 
         foreach ( $files as $viewFile ) {
-            $viewName = substr(basename($viewFile),0,-strlen($viewdefTypeFile.'.php'));
+            $viewName = basename($viewFile, '.php');
             // Not require once, we need it to set some data
             require($viewFile);
 
@@ -100,7 +108,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleViews($moduleName) {
-        return $this->getModuleViewdefs($moduleName,'View','view');
+        return $this->getModuleViewdefs($moduleName, 'view');
     }
 
     /**
@@ -111,7 +119,7 @@ class MetaDataManager {
      * @return Array A hash of all of the view data.
      */
     public function getModuleLayouts($moduleName) {
-        return $this->getModuleViewdefs($moduleName,'Layout','layout');
+        return $this->getModuleViewdefs($moduleName, 'layout');
     }
 
     /**
@@ -324,7 +332,7 @@ class MetaDataManager {
 
         foreach ( $searchDirs as $searchDir ) {
             if ( is_dir($searchDir) ) {
-                $stdTemplates = glob($searchDir."*".$extension);
+                $stdTemplates = glob($searchDir."/*".$extension);
                 if ( is_array($stdTemplates) ) {
                     foreach ( $stdTemplates as $templateFile ) {
                         $templateName = substr(basename($templateFile),0,-strlen($extension));
@@ -334,7 +342,7 @@ class MetaDataManager {
             }
             // Do the custom directory last so it will override anything in the core product
             if ( is_dir('custom/'.$searchDir) ) {
-                $cstmTemplates = glob('custom/'.$searchDir."*".$extension);
+                $cstmTemplates = glob('custom/'.$searchDir."/*".$extension);
                 if ( is_array($cstmTemplates) ) {
                     foreach ( $cstmTemplates as $templateFile ) {
                         $templateName = substr(basename($templateFile),0,-strlen($extension));
@@ -355,7 +363,8 @@ class MetaDataManager {
         $backwardsPlatforms = array_reverse($this->platforms);
         $templateDirs = array();
         foreach ( $backwardsPlatforms as $platform ) {
-            $templateDirs[] = 'clients/'.$platform.'/views/*/';
+            $moreTemplates = glob("clients/${platform}/views/*",GLOB_ONLYDIR);
+            $templateDirs = array_merge($templateDirs,$moreTemplates);
         }
         $templates = $this->fetchTemplates($templateDirs);
         $templates['_hash'] = md5(serialize($templates));
@@ -402,19 +411,35 @@ class MetaDataManager {
         if ( $platform == 'portal' ) {
             // Apparently this list is not stored anywhere, the module builder just uses a very
             // complicated setup to do this glob
-            $portalFiles = glob('modules/*/metadata/portal.*.php',GLOB_NOSORT);
-            $customPortalFiles = glob('custom/modules/*/metadata/portal.*.php',GLOB_NOSORT);
-            if ( is_array($customPortalFiles) ) {
-                $portalFiles = $portalFiles + $customPortalFiles;
+            $defaultPortalViewsPath = 'modules/*/metadata/portal/views/*.php';
+            $defaultPortalLayoutsPath = 'modules/*/metadata/portal/layouts/*.php';
+            $customPortalViewsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalViewsPath;
+            $customPortalLayoutsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalLayoutsPath;
+
+            $portalFiles = glob($defaultPortalViewsPath);
+            $portalLayouts = glob($defaultPortalLayoutsPath);
+            if (is_array($portalLayouts)) {
+                $portalFiles = array_merge($portalFiles, $portalLayouts);
             }
+
+            $customPortalViews = glob($customPortalViewsPath);
+            if (is_array($customPortalViews)) {
+                $portalFiles = array_merge($portalFiles, $customPortalViews);
+            }
+
+            $customPortalLayouts = glob($customPortalLayoutsPath);
+            if (is_array($customPortalLayouts)) {
+                $portalFiles = array_merge($portalFiles, $customPortalLayouts);
+            }
+
             $portalModules = array();
             foreach ( $portalFiles as $file ) {
                 $fileParts = explode('/',$file);
                 if ( $fileParts[0] == 'custom' ) {
-                    // 0 => custom, 1 => modules, 2 => Accounts, 3 => metadata, 4 => portal.editviewdefs.php
+                    // 0 => custom, 1 => modules, 2 => Accounts, 3 => metadata, 4 => portal, 5 => views, 6 => edit.php
                     $module = $fileParts[2];
                 } else {
-                    // 0 => modules, 1 => Accounts, 2 => metadata, 3 => portal.editviewdefs.php
+                    // 0 => modules, 1 => Accounts, 2 => metadata, 3 => portal, 4 => views, 5 => edit.php
                     $module = $fileParts[1];
                 }
                 $portalModules[$module] = $module;

@@ -50,7 +50,7 @@ width:70%;
     <div id="ftsAutoCompleteResult" style="width:100%;!important"></div>
     <input type="text" placeholder="{$APP.LBL_SEARCH}" name="ftsSearchField" id="ftsSearchField" value="{$smarty.request.q}"  style="width: 70%!important" >
     <input type="button" class="button primary"value="{$APP.LBL_SEARCH}" onclick="SUGAR.FTS.search();" style="vertical-align: bottom;">
-    <a id='advanced_search_ahref' class='tabFormAdvLink' href='javascript:SUGAR.FTS.toggleAdvancedOptions();' style="font-size: 10px;vertical-align: bottom; height: inherit;">
+    <a id='advanced_search_ahref' href='javascript:SUGAR.FTS.toggleAdvancedOptions();' style="font-size:12px; font-weight:bold; text-decoration:none; text-shadow:0 1px #FFFFFF;">
         {$APP.LBL_ADVANCED}
     </a>
 </div>
@@ -62,7 +62,7 @@ width:70%;
             <input type="hidden" name="module" value="Users">
             <input type="hidden" name="action" value="saveftsmodules">
             <input type="hidden" name="disabled_modules" value="" id="disabled_modules">
-
+            <input type="hidden" name="q" value="" id="save_q">
         <table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="30%">
             <tr>
                 <td colspan="2">
@@ -218,9 +218,9 @@ width:70%;
                         'offset': SUGAR.FTS.currentOffset, 'refreshModList': rml},
                 success: function(o)
                 {
+                    SUGAR.FTS.totalHits = o.totalHits;
                     if(typeof(append) != 'undefined' && append)
                     {
-                        SUGAR.FTS.totalHits = o.totalHits;
                         $("#sugar_full_search_results").append(o.results);
 
                     }
@@ -300,6 +300,8 @@ width:70%;
             }
             modules = modules == "" ? modules : modules.substr(1);
             document.getElementById('disabled_modules').value = modules;
+            document.getElementById('save_q').value = document.getElementById('ftsSearchField').value;
+
         },
         loadMore: function()
         {
@@ -363,7 +365,6 @@ width:70%;
     SUGAR.FTS.globalSearchEnabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchDisabledTable.disableEmptyRows = true;
     SUGAR.FTS.globalSearchEnabledTable.addRow({module: "", label: ""});
-    SUGAR.FTS.globalSearchDisabledTable.addRow({module: "", label: ""});
     SUGAR.FTS.globalSearchEnabledTable.render();
     SUGAR.FTS.globalSearchDisabledTable.render();
     {/literal}

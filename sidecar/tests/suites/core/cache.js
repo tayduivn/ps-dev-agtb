@@ -1,11 +1,13 @@
-describe('cache', function () {
+describe('app.cache', function () {
     var app = SUGAR.App;
+
     beforeEach(function () {
+        app.cache.store = stash;
+        app.cache.cutAll();
     });
 
     afterEach(function () {
-        //Reset the cache after every test
-        app.cache.cutAll()
+        app.cache.cutAll();
     });
 
     it('should store strings', function () {
@@ -61,7 +63,7 @@ describe('cache', function () {
         expect(app.cache.get(key)).toEqual(value);
 
         app.cache.cut(key);
-        expect(app.cache.get(key)).toBeUndefined();
+        expect(app.cache.get(key)).toBeFalsy();
     });
 
 
@@ -75,8 +77,8 @@ describe('cache', function () {
         expect(app.cache.get(key2)).toEqual(value);
 
         app.cache.cutAll();
-        expect(app.cache.get(key)).toBeUndefined();
-        expect(app.cache.get(key2)).toBeUndefined();
+        expect(app.cache.get(key)).toBeFalsy();
+        expect(app.cache.get(key2)).toBeFalsy();
     });
 
 

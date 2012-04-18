@@ -224,6 +224,7 @@ abstract class DBManager
 	 * create_db		Can create databases
 	 * collation		Supports setting collations
 	 * disable_keys     Supports temporarily disabling keys (for upgrades, etc.)
+     * recursive_query  Supports recursive queries
 	 *
 	 * @abstract
 	 * Special cases:
@@ -2734,9 +2735,9 @@ protected function checkQuery($sql, $object_name = false)
 		        if(count($parts) > 2) {
 		            // some weird name, cut to table.name
 		            array_splice($parts, 0, count($parts)-2);
-		            $parts = $this->getValidDBName($parts, $ensureUnique, $type, $force);
-                    return join(".", $parts);
 		        }
+		        $parts = $this->getValidDBName($parts, $ensureUnique, $type, $force);
+                return join(".", $parts);
 		    }
 			// first strip any invalid characters - all but word chars (which is alphanumeric and _)
 			$name = preg_replace( '/[^\w]+/i', '', $name ) ;
@@ -3847,4 +3848,55 @@ protected function checkQuery($sql, $object_name = false)
 	 * @return array
 	 */
 	abstract public function installConfig();
+
+    /**
+     * Generates the a recursive SQL query or equivalent stored procedure implementation.
+     * The DBManager's default implementation is based on SQL-99's recursive commmon table expressions.
+     * Databases supporting recursive CTEs only need to set the recursive_query capability to true
+     * @param string    $tablename       table name
+     * @param string    $key             primary key field name
+     * @param string    $parent_key      foreign key field name self referencing the table
+     * @param bool      $lineage         find the lineage, if false, find the children
+     * @param string    $startWith       identifies strarting element(s) as in a where clause
+     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
+     * @param string    $fields          list of fields that should be returned
+     * @return string               Recursive SQL query or equivalent representation.
+     */
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $lineage = false, $startWith = null, $level = null, $fields = null) {
+
+        if($lineage) {
+            $connectWhere = "e.$key = sg.$parent_key";  // Search up the tree to get lineage
+        } else {
+            $connectWhere = "sg.$key = e.$parent_key";  // Search down the tree to find children
+        }
+
+        if(!empty($startWith)) {
+            $startWith = 'WHERE ' . $startWith;
+        } else {
+            $startWith = '';
+        }
+
+        if(empty($fields)) { $fields = '*'; }
+
+        if(!empty($level)) {
+            $fieldsTop = "$fields, 1 as $level";
+            $fieldsBottom = "$fields, sg.$level + 1";
+        } else {
+            $fieldsTop = $fieldsBottom = $fields;
+        }
+        // XXX NOTE need to verify if we can do the WITH without specifying the output fields
+        // if not we need to add that too.
+        $sql = "WITH RECURSIVE search_graph AS (
+                   SELECT $fieldsTop
+                   FROM $tablename e
+                   $startWith
+                 UNION ALL
+                   SELECT $fieldsBottom
+                   FROM $tablename e, search_graph sg
+                   WHERE $connectWhere
+                )
+                SELECT * FROM search_graph";
+
+        return $sql;
+    }
 }

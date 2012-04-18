@@ -16,7 +16,7 @@
      * @param {Data.Bean} bean
      * @return {String}
      */
-    Handlebars.registerHelper('sugarField', function(context, view, bean) {
+    Handlebars.registerHelper('field', function(context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>',
             name = this.name,
             label = this.label || this.name,
@@ -29,12 +29,38 @@
             def = bean.fields[name];
         }
 
-        sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
+        sf = (view.sugarFields[sfid] = app.view.createField({
             def: def,
             view: view,
             context: context,
             label: label,
-            model: bean || context.get("model")
+            model: bean
+        }));
+
+        sf.sfid = sfid;
+
+        return new Handlebars.SafeString(ret);
+    });
+
+    /**
+     *
+     */
+    Handlebars.registerHelper('button', function(type, label) {
+
+        var ret = '<span sfuuid="' + (++sfid) + '"></span>',
+            def = { type: type, name: type },
+            sf;
+
+        var context = this.context;
+        var bean = context.get("model");
+        var view = this;
+
+        sf = (view.sugarFields[sfid] = app.view.createField({
+            def: def,
+            view: view,
+            context: context,
+            label: label,
+            model: bean
         }));
 
         sf.sfid = sfid;
@@ -78,6 +104,8 @@
      * @return {String}
      */
     Handlebars.registerHelper('buildRoute', function(context, model, action, params) {
+        model = model || context.get("model");
+
         var id = model.id,
             route;
 
@@ -105,14 +133,14 @@
 
 
     /**
-     * @method in
+     * @method contains
      * @param val
      * @param {Object/Array} array
      * @param {Boolean} retTrue
      * @param {Boolean} retFalse
      * @return {Boolean}
      */
-    Handlebars.registerHelper('in', function(val, array, retTrue, retFalse) {
+    Handlebars.registerHelper('has', function(val, array, retTrue, retFalse) {
         // Since we need to check both just val = val 2 and also if val is in an array, we cast
         // non arrays into arrays
         if (!_.isArray(array) && !_.isObject(array)) {
@@ -137,7 +165,6 @@
      * @return {String}
      */
     Handlebars.registerHelper('eq', function(val1, val2, retTrue, retFalse) {
-        console.log("EQ", "val1", val1, "val2", val2, "retTrue", retTrue, "retFalse", retFalse);
         if (val1 == val2) {
             return retTrue;
         }

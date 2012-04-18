@@ -178,6 +178,7 @@ $app_list_strings = array (
     'TimePeriods'=>'Time Period',
     'Project'=>'Project',
     'ProjectTask'=>'Project Task',
+    'Prospects' => 'Target',
     'Campaigns'=>'Campaign',
     'Documents'=>'Document',
     //END SUGARCRM flav!=sales ONLY
@@ -1483,7 +1484,7 @@ $app_list_strings = array (
 	'Monthly' => 'Monthly',
 	'Yearly' => 'Yearly',
     ),
-    
+
     'repeat_intervals' => array(
         '' => '',
         'Daily' => 'day(s)',
@@ -1491,7 +1492,7 @@ $app_list_strings = array (
         'Monthly' => 'month(s)',
         'Yearly' => 'year(s)',
     ),
-    
+
     'duration_dom' => array(
     	'' => 'None',
     	'900' => '15 minutes',
@@ -2662,7 +2663,7 @@ $app_strings = array (
     'LBL_PRIMARY_ADDRESS_STREET_3' => 'Primary Address Street 3:',
     'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street:',
     'LBL_PRIMARY_ADDRESS' => 'Primary Address:',
-	
+
 	'LBL_BILLING_STREET'=> 'Street:',
 	'LBL_SHIPPING_STREET'=> 'Street:',
 
@@ -2846,6 +2847,8 @@ $app_strings = array (
     'LNK_ABOUT' => 'About',
     'LNK_ADVANCED_SEARCH' => 'Advanced Search',
     'LNK_BASIC_SEARCH' => 'Basic Search',
+    'LNK_SEARCH_FTS_VIEW_ALL' => 'View all results',
+    'LNK_SEARCH_NONFTS_VIEW_ALL' => 'Show All',
     'LNK_CLOSE' => 'close',
     'LBL_MODIFY_CURRENT_SEARCH'=> 'Modify current search',
     'LNK_SAVED_VIEWS' => 'Layout Options',
@@ -2946,10 +2949,10 @@ $app_strings = array (
   	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
  	'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
 	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
- 	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",    
+ 	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
 	'MSG_EMPTY_LIST_VIEW_NO_RESULTS' => "You currently have no records saved. <item2> or <item3> one now.",
 	'MSG_EMPTY_LIST_VIEW_NO_RESULTS_SUBMSG' =>	"<item4> to learn more about the <item1> module. In order to access more information, use the user menu drop down located on the main navigation bar to access Help.",
-   
+
     'LBL_CLICK_HERE' => "Click here",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
@@ -3220,7 +3223,7 @@ $app_strings = array (
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
-    
+
     'LBL_DURATION_DAY' => 'day',
     'LBL_DURATION_HOUR' => 'hour',
     'LBL_DURATION_MINUTE' => 'minute',

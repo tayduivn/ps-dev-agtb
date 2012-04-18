@@ -31,8 +31,10 @@ require_once ('modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php');
 
 class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $parser;
-    var $fields;
+    public $parser;
+    public $fields;
+    public $accountsFile;
+    public $prospectsFile;
 
     function setUp()
     {
@@ -50,17 +52,19 @@ class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['beanList'] = $beanList;
 		$GLOBALS['beanFiles'] = $beanFiles;
     	$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $this->accountsFile = 'custom/modules/Accounts/metadata/popupdefs.php';
+        $this->prospectsFile = 'custom/modules/Prospects/metadata/popupdefs.php'; // Add in base/views when ready
     }
 
     function tearDown()
     {
-        if (is_file('custom/modules/Accounts/metadata/popupdefs.php'))
+        if (is_file($this->accountsFile))
         {
-            unlink('custom/modules/Accounts/metadata/popupdefs.php');
+            unlink($this->accountsFile);
         }
-        if (is_file('custom/modules/Prospects/metadata/popupdefs.php'))
+        if (is_file($this->prospectsFile))
         {
-            unlink('custom/modules/Prospects/metadata/popupdefs.php');
+            unlink($this->prospectsFile);
         }
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
@@ -75,7 +79,7 @@ class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
         $this->parser = new PopupMetaDataParser('popuplist', 'Accounts');
         $this->parser->_viewdefs = $this->fields;
         $this->parser->handleSave(false);
-        require('custom/modules/Accounts/metadata/popupdefs.php');
+        require $this->accountsFile;
         $this->assertEquals('LNK_NEW_ACCOUNT', $popupMeta['create']['createButton']);
         unset($popupMeta);
         unset($this->parser);
@@ -90,7 +94,7 @@ class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
         $this->parser = new PopupMetaDataParser('popuplist', 'Prospects');
         $this->parser->_viewdefs = $this->fields;
         $this->parser->handleSave(false);
-        require('custom/modules/Prospects/metadata/popupdefs.php');
+        require $this->prospectsFile;
         $this->assertEquals('LNK_NEW_PROSPECT', $popupMeta['create']['createButton']);
         unset($popupMeta);
         unset($this->parser);

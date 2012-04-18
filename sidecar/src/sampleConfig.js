@@ -8,6 +8,12 @@
 
     app.augment("config", {
         /**
+         * Application identifier.
+         * @cfg {String}
+         */
+        appId: 'portal',
+
+        /**
          * Application environment. Possible values: 'dev', 'test', 'prod'
          * @cfg {String}
          */
@@ -39,9 +45,11 @@
 
         /**
          * Sugar REST server URL.
+         *
+         * The URL can relative or absolute.
          * @cfg {String}
          */
-        baseUrl: '../sugarcrm/rest',
+        serverUrl: '../../sugarcrm/rest/v10',
 
         /**
          * Max query result set size.

@@ -1,0 +1,42 @@
+<div class="span12 container-fluid subhead">
+    <h3>{{context.state.module}}</h3>
+{{#each meta.panels}}
+    <div class="{{../name}}">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            {{#each fields}}
+                <th width="{{width}}%" data-fieldname="{{name}}" class="orderBy{{name}}">
+                {{label}}
+                    <i class="icon-chevron-{{eq ../../context.state.collection.orderBy.field name ../../this.orderBy.direction ""}}"></i>
+                </th>
+            {{/each}}
+            </tr>
+            </thead>
+            <tbody>
+            {{#each ../context.state.collection.models}}
+            <tr name="{{module}}_{{attributes.id}}">
+            {{#each ../fields}}
+                <td class="dblclick">{{field ../../../context ../../../this ../this}}</td>
+            {{/each}}
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    {{/each}}
+    {{#each meta.buttons}}
+    {{field ../context ../this ../model}}
+    {{/each}}
+        <ul class="nav nav-pills pull-right actions">{{#each meta.listNav}}
+            <li>
+            {{field ../context ../this ../model}}
+            </li>
+        {{/each}}
+        {{#if context.state.collection.page}}
+            <li>
+                <div class="page_counter">
+                    <small>Page {{context.state.collection.page}}</small>
+                </div>
+            </li>{{/if}}
+        </ul>
+    </div>

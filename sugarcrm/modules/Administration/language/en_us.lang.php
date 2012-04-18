@@ -1164,7 +1164,12 @@ $mod_strings = array (
    'LBL_SAML_LOGIN_URL' => 'Login URL',
    'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
-   'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. If full-text searching is enabled, perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
+    //BEGIN SUGARCRM flav=com ONLY
+    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
+    //END SUGARCRM flav=com ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search. If full-text searching is enabled, perform a full system index after enabling modules for the Global Search. To enable module fields for full text searching, use <a href="index.php?module=ModuleBuilder&action=index&type=studio">Studio</a>.',
+    //END SUGARCRM flav=pro ONLY
    'LBL_SELECT_MODULES' => 'Advanced',
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
    'LBL_EAPM_SETTINGS' => 'External Accounts',
@@ -1203,7 +1208,8 @@ $mod_strings = array (
     'LBL_FTS_HOST_HELP' => 'Enter the name of the host where the full text search engine resides.',
     'LBL_FTS_PORT_HELP' => 'Enter the number of the port where the full text search engine resides.',
 
-    'LBL_AVAILABLE_FTS_MODULES' => 'Available Modules',
+    'LBL_AVAILABLE_FTS_MODULES' => 'Select the module(s) for indexing.',
+    'LBL_FTS_INDEX_BUTTON' => 'Index',
     'LBL_CONNECT_STATUS' => 'Connection Status',
     'LBL_FTS_SETTINGS_TITLE' => 'Full Text Search Settings',
     'LBL_FTS_TEST' => 'Connect',
@@ -1213,7 +1219,7 @@ $mod_strings = array (
     'LBL_FTS_NO_MODULES_FOR_SCHED' => 'Select at least one module to schedule.',
     'LBL_FTS_ADVANCED_LINK' => 'Enable Modules',
     'LBL_FTS_ADVANCED_LINK_HELP' => 'Select the module(s) that users will be able to search against using the Full Text Search.',
-    'LBL_FTS_CONN_SUCCESS' => 'The connection was successfully made. You will need to perform a full system index for full-text searching to work for the enabled modules and module fields.',
+    'LBL_FTS_CONN_SUCCESS' => 'The connection was successfully made. You will need to perform a system index for full-text searching to work for the enabled modules and module fields.',
 	'LBL_FTS_CONN_SUCCESS_SHORT' => 'A full system index operation has been scheduled to run within the next several minutes.',
     'LBL_FTS_CONN_FAILURE_SHORT' => 'Unable to schedule an index operation.',
     'LBL_FTS_PAGE_DESC' => 'To enable full text searching, select the search engine that will be used and enter the host and port of the search engine. To complete the setup, connect to the engine and perform a full system index.'

@@ -38,7 +38,8 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $GLOBALS['module'] = $moduleName; //WirelessView keys off global variable not instance variable...
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
-                    $results = self::formatWirelessListViewResultsToArray($results);
+                    //$results = self::formatWirelessListViewResultsToArray($results);
+                    $results = $results['panels'][0]['fields'];
 
                 }
                 elseif ($view == 'subpanel')
@@ -51,8 +52,14 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $meta = $v->getMetaDataFile('Wireless' . $fullView);
                     $metadataFile = $meta['filename'];
                     require($metadataFile);
-                    //Wireless detail metadata may actually be just edit metadata.
-                    $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
+
+                    // Handle found view defs
+                    if (isset($viewdefs) && isset($viewdefs[$meta['module_name']]['mobile']) && $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)]) {
+                        $results = $viewdefs[$meta['module_name']]['mobile']['view'][strtolower($view)];
+                    } else {
+                        //Wireless detail metadata may actually be just edit metadata.
+                        $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
+                    }
                 }
 
                 break;
@@ -193,7 +200,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    foreach ($metadata['panels'] as $row)
 	    {
 	        $aclRow = array();
-	        foreach ($row as $field)
+	        foreach ($row['fields'] as $field)
 	        {
 	            $aclField = array();
 	            if( is_string($field) )

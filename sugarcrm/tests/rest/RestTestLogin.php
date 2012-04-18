@@ -38,7 +38,7 @@ class RestTestLogin extends Sugar_PHPUnit_Framework_TestCase
 
     protected function _restCall($urlPart,$postBody,$httpAction='')
     {
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
         
         $ch = curl_init($urlBase.$urlPart);
         if (!empty($postBody)) {

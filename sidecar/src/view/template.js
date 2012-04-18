@@ -52,16 +52,20 @@
             },
 
             /**
-             * load is used to compile a set of templates sources
-             * @param {Object} templates A key => source set of templates to load into memory. Templates that were not previously loaded will be precompiled
+             * load is used to compile a set of templates sources from metadata
+             * @param {Object} metadata an metadata response object with a an object.viewTemplates which is a key => source set of templates to load into memory. Templates that were not previously loaded will be precompiled
              * @param {Boolean} force If true, the cache is ignored and the templates are all recompiled
              * @method
              */
-            load: function(templates, force) {
-                _.each(templates, function(src, key) {
-                    if (!this.get(key) || force);
-                    this.compile(src, key);
-                }, this);
+            load: function(metadata, force) {
+                if(metadata.viewTemplates) {
+                    var templates = metadata.viewTemplates;
+                    _.each(templates, function(src, key) {
+                                        if (!this.get(key) || force);
+                                        this.compile(src, key);
+                                    }, this);
+                }
+
             },
 
             /**
@@ -71,7 +75,7 @@
              * @method
              */
             initTemplate: function(instance) {
-                this.load(fixtures.metadata.viewTemplates);
+                //this.load(fixtures.metadata.viewTemplates);
             }
         };
 

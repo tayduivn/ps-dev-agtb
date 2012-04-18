@@ -93,6 +93,7 @@ class MssqlManager extends DBManager
         "fix:expandDatabase" => true, // Support expandDatabase fix
         "create_user" => true,
         "create_db" => true,
+        "recursive_query" => true,
     );
 
     /**

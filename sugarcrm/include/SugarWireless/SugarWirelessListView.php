@@ -75,6 +75,19 @@ class SugarWirelessListView extends SugarWirelessView{
     	require_once 'modules/ModuleBuilder/parsers/constants.php';
 		require $this->wl_get_metadata_location( MB_WIRELESSLISTVIEW );
 
+        // Get our module from the globals array
+        $module = $GLOBALS['module'];
+        // Handle new format
+        if (isset($viewdefs)) {
+            if (isset($viewdefs[$module])) {
+                return $viewdefs[$module]['mobile']['view']['list'];
+            } else {
+                if (isset($viewdefs['<module_name>'])) {
+                    return $viewdefs['<module_name>']['mobile']['view']['list'];
+                }
+            }
+        }
+
 		// if we loaded the metadata from a SugarObjects template, then switch the template modulename to this module
 		if ( !isset ( $listViewDefs [ $GLOBALS['module'] ] ) &&  isset ( $listViewDefs [ '<module_name>' ] ) )
 			$listViewDefs [ $GLOBALS['module'] ] = $listViewDefs [ '<module_name>' ] ;

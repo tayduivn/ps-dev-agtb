@@ -102,7 +102,7 @@ class SugarWirelessView extends SugarView
 				$module = new StudioModule ( $GLOBALS['module'] ) ;
 
  	    		// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
-				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/' . basename( $filename ) ;
+				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/mobile/views/' . basename( $filename ) ;
  			}
  		}
 
@@ -291,7 +291,7 @@ class SugarWirelessView extends SugarView
 				$module = new StudioModule ( $this->module ) ;
 
  	    		// If we're missing a wireless view we fallback on a template, sourced from SugarObjects
-				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/' . basename( $filename ) ;
+				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/mobile/views/' . basename( $filename ) ;
 				$module_name = '<module_name>' ;
  	    	}
  	    }
