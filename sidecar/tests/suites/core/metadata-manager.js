@@ -1,11 +1,12 @@
 describe('Metadata Manager', function () {
-    var app = SUGAR.App;
+    var app;
     var server;
     //Preload the templates
-    app.template.load(fixtures.metadata.viewTemplates);
 
     beforeEach(function () {
         //Load the metadata
+        app = sugarApp; // from spec-helper
+        app.template.load(fixtures.metadata.viewTemplates);
         app.metadata.set(fixtures.metadata);
     });
 

@@ -1,6 +1,10 @@
 describe("Handlebars Helpers", function() {
 
-    var app = SUGAR.App;
+    var app;
+
+    beforeEach(function() {
+        app = sugarApp;
+    });
 
     // TODO: Create test for each helper
 

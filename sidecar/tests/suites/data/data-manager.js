@@ -1,11 +1,11 @@
 describe("DataManager", function() {
 
-    var metadata,
-        app = SUGAR.App,
+    var metadata, app,
         dm = SUGAR.App.data,
         server;
 
     beforeEach(function() {
+        app = sugarApp;
         app.config.maxQueryResult = 2;
         dm.reset();
         metadata = SugarTest.loadFixture("metadata");

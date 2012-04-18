@@ -1,8 +1,9 @@
 describe("View.Layout", function(){
-    var app = SUGAR.App;
+    var app;
     var context, bean, collection;
 
     beforeEach(function() {
+        app = sugarApp;
         app.metadata.set(fixtures.metadata);
         bean = app.data.createBean("Contacts", {
             first_name: "Foo",

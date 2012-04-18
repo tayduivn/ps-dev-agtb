@@ -1,7 +1,8 @@
 describe('app.cache', function () {
-    var app = SUGAR.App;
+    var app;
 
     beforeEach(function () {
+        app = sugarApp; // from spec-helper
         app.cache.store = stash;
         app.cache.cutAll();
     });

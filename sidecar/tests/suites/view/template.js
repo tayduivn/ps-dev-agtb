@@ -1,5 +1,9 @@
 describe('template', function() {
-    var app = SUGAR.App;
+    var app;
+
+    beforeEach(function() {
+        app = sugarApp;
+    });
 
     afterEach(function() {
         //Reset the cache after every test

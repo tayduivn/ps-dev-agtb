@@ -1,10 +1,9 @@
 describe("Controller", function() {
-    var app = SUGAR.App;
-    var server;
-
 describe("when a route is matched", function() {
+    var app, server;
 
     beforeEach(function() {
+        app = sugarApp;
         server = sinon.fakeServer.create();
     });
 

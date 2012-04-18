@@ -1,8 +1,9 @@
 describe("Field", function() {
-    var app = SUGAR.App;
-    var bean;
+
+    var app, bean;
 
     beforeEach(function() {
+        app = sugarApp;
         app.data.declareModel("Cases", fixtures.metadata.modules.Cases);
         bean = app.data.createBean("Cases");
     });
