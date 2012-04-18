@@ -59,7 +59,9 @@ var SugarTest = {};
 
 beforeEach(function(){
     SugarTest.resetWaitFlag();
+
     if (SUGAR.App) {
+        window.sugarApp = SUGAR.App.init({el: "body", silent: true});
         SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
         SUGAR.App.config.env = "test";
         SUGAR.App.config.appId = "portal";
@@ -71,5 +73,6 @@ beforeEach(function(){
 });
 
 afterEach(function() {
+    window.sugarApp.destroy();
     if (typeof Backbone != "undefined" && !_.isUndefined(Backbone.history)) Backbone.history.stop();
 });
