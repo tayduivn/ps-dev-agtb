@@ -1,35 +1,52 @@
-<div class="span12 container-fluid subhead">
-    <h3>{{context.state.module}}</h3>
-{{#each meta.panels}}
-    <div class="{{../name}}">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-            {{#each fields}}
-                <th width="{{width}}%" data-fieldname="{{name}}" class="orderBy{{name}}">
-                {{label}}
-                    <i class="icon-chevron-{{eq ../../context.state.collection.orderBy.field name ../../this.orderBy.direction ""}}"></i>
-                </th>
-            {{/each}}
-            </tr>
-            </thead>
-            <tbody>
-            {{#each ../context.state.collection.models}}
-            <tr name="{{module}}_{{attributes.id}}">
-            {{#each ../fields}}
-                <td class="dblclick">{{field ../../../context ../../../this ../this}}</td>
-            {{/each}}
-            </tr>
-            {{/each}}
-            </tbody>
-        </table>
-    {{/each}}
-    {{#each meta.buttons}}
-    {{field ../context ../this ../model}}
-    {{/each}}
-        <ul class="nav nav-pills pull-right actions">{{#each meta.listNav}}
+<div class="container-fluid">
+<div class="row-fluid">
+    <div class="span12">
+        <div class="thumbnail">
+            <h1><a href='#{{context.state.module}}'>{{context.state.module}}</a></h1>
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper {{name}}" role="grid">
+                <div class="dataTables_filter" id="DataTables_Table_0_filter">
+                    <label class="hide">Search:</label> <input class="span4" placeholder="Refine list ..." type="text" aria-controls="DataTables_Table_0">
+                </div>
+                {{#each meta.panels}}
+                <table class="table table-striped">
+                    <thead>
+                      <tr role="row">
+                        {{#each fields}}
+                            <th class="span1 {{#if sorting}}sorting{{eq ../../../context.state.collection.orderBy.field name ../../../this.orderBy.direction ""}} orderBy{{name}}{{/if}}" role="columnheader" {{#if width}}style="width: {{width}}%"{{/if}} data-fieldname="{{name}}">
+                            {{label}}
+                            </th>
+                        {{/each}}
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {{#each ../context.state.collection.models}}
+                        <tr name="{{module}}_{{attributes.id}}">
+                        {{#each ../fields}}
+                            <td>{{field ../../../context ../../../this ../this}}</td>
+                        {{/each}}
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+                {{/each}}
+            </div>
+            <div class="block-footer">
+                {{#each meta.buttons}}
+                    {{field ../context ../this ../model}}
+                {{/each}}
+            </div>
+            <ul class="nav nav-pills actions" id="bugsModuleActions">
+                <li>
+                    <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+                </li>
+            </ul>
+        </div>
+        <ul class="nav nav-pills pull-right actions hide">{{#each meta.listNav}}
             <li>
-            {{field ../context ../this ../model}}
+                {{field ../context ../this ../model}}
             </li>
         {{/each}}
         {{#if context.state.collection.page}}
@@ -37,6 +54,9 @@
                 <div class="page_counter">
                     <small>Page {{context.state.collection.page}}</small>
                 </div>
-            </li>{{/if}}
+            </li>
+        {{/if}}
         </ul>
     </div>
+</div>
+</div>
