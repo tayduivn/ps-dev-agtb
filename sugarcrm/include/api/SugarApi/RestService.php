@@ -188,13 +188,8 @@ class RestService extends ServiceBase {
             $this->sessionId = $_REQUEST[session_name()];
         }
         
-        if ( !empty($this->sessionId) ) {
-            if ( !$this->sessionId != session_id() ) {
-                session_id($this->sessionId);
-            }
-            session_start();
-            
-            $this->security = SugarSecurityFactory::loadClassFromSession();
+        if ( !empty($this->sessionId) ) {            
+            $this->security = SugarSecurityFactory::loadClassFromSession($this->sessionId);
             if ( $this->security != null ) {
                 $valid = true;
             }
