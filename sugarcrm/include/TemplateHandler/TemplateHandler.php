@@ -217,7 +217,7 @@ class TemplateHandler {
                 $mod = 'Case';
             $defs = $dictionary[$mod]['fields'];
             $contents .= "{literal}\n";
-            $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view);
+            $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view, $module);
             $contents .= "{/literal}\n";
         }//if
 		//END SUGARCRM flav=pro ONLY
@@ -505,7 +505,11 @@ class TemplateHandler {
         foreach($dependencies as $dep) {
             $js .= $dep->getJavascript($view);
         }
-        $js .= "\nYAHOO.util.Event.onContentReady('$view', SUGAR.forms.AssignmentHandler.loadComplete);";
+
+        //Detail views do not use the view name as the input ID.
+        $viewId = $view == "DetailView" ? "{$module}_detailview_tabs" : $view;
+
+        $js .= "\nYAHOO.util.Event.onContentReady('$viewId', SUGAR.forms.AssignmentHandler.loadComplete);";
         $js .= "});</script>";
 
         return $js;

@@ -264,12 +264,24 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeSearch: function() {
-    	searchWidth = .16;
-    	$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 70);
-		$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
+
+        $('#moduleList').attr("width", $('#moduleList').attr("width") || $('#moduleList').css("width").replace("px",""));
+
+        var searchWidth = $("#dcmenu").width() - 200
+            - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#moduleList").attr("width");
+        //maximize the proportion of the searchbox size as three quarter of the empty space among the module list and right-hand side menus
+        searchWidth *= .75;
+
+        $('#sugar_spot_search').attr("width", $('#sugar_spot_search').attr("width") || $('#sugar_spot_search').css("width").replace("px",""));
+        var originalSearchWidth = parseInt($('#sugar_spot_search').attr("width"));
+        searchWidth = (searchWidth >= originalSearchWidth) ? searchWidth : originalSearchWidth;
+        $('#sugar_spot_search_div').width(searchWidth + 70);
+        $('#sugar_spot_search').width(searchWidth);
+        $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
+
     },
     resizeMenu: function () {
-	    var maxMenuWidth = Math.round($(window).width()*.45);
+    	var maxMenuWidth = Math.round($(window).width()*.45);
 		var menuWidth = $('#moduleList').width();
 		var menuItemsWidth = $('#moduleTabExtraMenuAll').width();
 			$('ul.sf-menu').each(function(){
@@ -286,7 +298,7 @@ SUGAR.append(SUGAR.themes, {
 	                if(menuItemsWidth > maxMenuWidth){
 	                	while(menuItemsWidth > maxMenuWidth){
 	                		var menuNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current).prev();
-	                		if(menuNode.hasClass("current")){
+	                		if(menuNode.hasClass("current") && !menuNode.hasClass("home")){
 	                			menuNode = menuNode.prev();
 	                		}
 	                		if(menuNode.hasClass("home")){
@@ -299,7 +311,7 @@ SUGAR.append(SUGAR.themes, {
 	                }
 	                else if(menuItemsWidth <= maxMenuWidth){
 	                	var insertNode = $("#moduleTabExtraMenu" + sugar_theme_gm_current);
-	                	if(insertNode.prev().hasClass("current")){
+	                	if(insertNode.prev().hasClass("current") && !insertNode.prev().hasClass("home")){
 	                		insertNode = insertNode.prev();
                 		}	                
 	                	while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
@@ -313,8 +325,8 @@ SUGAR.append(SUGAR.themes, {
 	                		menuLength++;
 	                		menuItemsWidth += menuNode.width();
 		                	menuNode.remove();
-		                	
 		                	insertNode.before(menuNode);
+		                	menuItemsWidth += menuNode.width();
 	                	}
 	                }
 				}
@@ -374,11 +386,12 @@ SUGAR.append(SUGAR.themes, {
     	firstHit = false;
     	$("#sugar_spot_search").keypress(function(event) {
 			DCMenu.startSearch(event);
+            SUGAR.util.doWhen(function(){
+                return document.getElementById('SpotResults') != null;
+            }, SUGAR.themes.resizeSearch);
 			$('#close_spot_search').css("display","inline-block");
 
 			 if(event.charCode == 0 && !firstHit) {
-			$('#sugar_spot_search_div').css("width",360);
-			$('#sugar_spot_search').css("width",290);
 			firstHit = true;
 			 	}
 			$('#close_spot_search').click(function() {
@@ -389,12 +402,11 @@ SUGAR.append(SUGAR.themes, {
     },
     clearSearch: function() {
    		$("div#sugar_spot_search_results").hide();
+        $("#SpotResults").remove();
 		$('#close_spot_search').css("display","none");
 		$("#sugar_spot_search").val("");
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
-		$('#sugar_spot_search_div').css("width",Math.round($(window).width()*searchWidth) + 70);
-	  	$('#sugar_spot_search').css("width",Math.round($(window).width()*searchWidth));
 	  	firstHit = false;
    	},
    	actionMenu: function() {
