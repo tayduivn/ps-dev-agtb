@@ -86,12 +86,19 @@
         createLayout: function(params) {
             var options = _.clone(params);
             options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getLayout(options.module, params.name);
+            options.meta = params.meta || app.metadata.getLayout(options.module, params.name) || {};
+
+            options.meta.type = options.meta.type || options.name;
             options.name = options.name || options.meta.type;
+
             return this._createComponent("Layout", options.meta.type, options);
         },
 
         createField: function(params) {
+            // adds support for fields just defined by single strings in metadata
+            if(params.def && _.isString(params.def) && params.model){
+                params.def = params.model.fields[params.def];
+            }
             var options = _.clone(params);
             var type = params.def.type;
             var name = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;

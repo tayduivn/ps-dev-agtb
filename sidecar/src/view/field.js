@@ -105,7 +105,7 @@
             _.extend(this, options.def);
 
             this.view = options.view;
-            this.label = options.label;
+            this.label = options.label || options.def.vname;
             this.bindModelChange(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = options.meta;
@@ -113,7 +113,7 @@
             // this is experimental to try to see if we can have custom events on sugarfields themselves.
             // the following line doesn't work, need to _.extend it or something.
             // this.events = this.meta.events;
-            templateKey = "sugarField." + (this.name || this.type) + "." + this.view.name;
+            templateKey = "sugarField." + this.type + "." + this.view.name;
 
             var templateSource = null;
             if (this.meta) {
