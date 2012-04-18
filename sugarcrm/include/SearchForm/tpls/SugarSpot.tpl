@@ -56,11 +56,7 @@
     </section>
     {/foreach}
     <a href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$queryEncoded}' class="resultAll">
-        {if !empty($ftsEnabled)}
-            {$appStrings.LNK_SEARCH_FTS_VIEW_ALL}
-        {else}
-            {$appStrings.LNK_SEARCH_NONFTS_VIEW_ALL}
-        {/if}
+        {$appStrings.LNK_SEARCH_NONFTS_VIEW_ALL}
     </a>
 {else}
     <section class="resultNull">

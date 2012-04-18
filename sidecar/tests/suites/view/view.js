@@ -47,6 +47,7 @@ describe("Layout.View", function() {
     });
 
     it('should render edit views', function() {
+        var aclSpy = sinon.spy(app.acl,'hasAccess');
         var view = app.view.createView({
             context: context,
             name: "edit"
@@ -56,7 +57,10 @@ describe("Layout.View", function() {
         view.render();
         var html = view.$el.html();
         expect(html).toContain('edit');
+
         expect(view.$el).toContain('input=[value="Foo"]');
+        expect(aclSpy).toHaveBeenCalled();
+        aclSpy.restore();
     });
 
     it('should render detail views', function() {

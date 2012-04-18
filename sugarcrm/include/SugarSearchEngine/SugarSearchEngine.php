@@ -40,11 +40,6 @@ class SugarSearchEngine implements SugarSearchEngineInterface{
 
     /**
      * No-op
-     */
-    public function flush() {}
-
-    /**
-     * No-op
      *
      * @param $bean
      */
