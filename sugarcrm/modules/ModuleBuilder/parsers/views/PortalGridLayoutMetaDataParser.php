@@ -75,7 +75,7 @@ class  PortalGridLayoutMetaDataParser extends WirelessGridLayoutMetaDataParser
     public function hasViewVariable($viewdefs, $view) {
         $name = MetaDataFiles::getViewDefVar($view);
         $client = MetaDataFiles::getViewClient($view);
-        return $name && $client && isset($viewdefs[$client]['views'][$name]);
+        return $name && $client && isset($viewdefs[$client]['view'][$name]);
     }
 
     /**
@@ -86,7 +86,7 @@ class  PortalGridLayoutMetaDataParser extends WirelessGridLayoutMetaDataParser
      * @return array
      */
     public function getDefsFromArray($viewdefs, $view) {
-        return $this->hasViewVariable($viewdefs, $view) ? $viewdefs[MetaDataFiles::getViewClient($view)]['views'][MetaDataFiles::getViewDefVar($view)] : array();
+        return $this->hasViewVariable($viewdefs, $view) ? $viewdefs[MetaDataFiles::getViewClient($view)]['view'][MetaDataFiles::getViewDefVar($view)] : array();
     }
 
     /**

@@ -105,7 +105,7 @@
             _.extend(this, options.def);
 
             this.view = options.view;
-            this.label = options.label;
+            this.label = options.label || options.def.vname;
             this.bindModelChange(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = options.meta;
@@ -130,7 +130,7 @@
                 this.loadTemplate();
             }
 
-            var templateKey = "sugarField." + (this.name || this.type) + "." + this.viewName;
+            var templateKey = "sugarField." + this.type + "." + this.view.name;
 
             var templateSource = null;
 
