@@ -139,8 +139,8 @@
         $(this).find('a').first().css('border','1px solid red').trigger('click');
     });
 
-    var post_template = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="" title="Log"><i class="icon-share icon-md"></i><br>Reply</a><a href="" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a></span></span></article>',
-	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="">Show more activity...</a></div></article>',
+    var post_template = '<article><div title="Perkin Kleiners"><a href="perkin_kleiners.html">Perkin Kleiners</a> is a <a href="100seat.html">100 seat plan</a> of 75K closing in 20 days at <a href="">quality</a> stage  </div><span id="listing-action-item1"><i class="grip">|||</i><span class="hide actions"><a href="#l" title="Log"><i class="icon-share icon-md"></i><br>Reply</a><a href="#r" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a></span></span></article>',
+	more_posts_link = '<article class="nav"><div><a class="show_more_posts" href="#more">Show more activity...</a></div></article>',
 	listing_spacer = '<i></i>',
 	posts_search_template = '\
 	<section class="search topelbar">\
