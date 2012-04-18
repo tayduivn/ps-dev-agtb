@@ -38,7 +38,6 @@
                 <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
                 <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
                 <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-                <li id="gen20"><a href="#ajaxUILoc=index.php%3Fmodule%3DOpportunities%26action%3Dindex" id="moduleTab_Opportunities">Opportunities</a></li>
                 <li id="gen21"><a href="index.php?module=Forecasts&amp;action=index" id="moduleTab_Forecasts">Forecasts</a></li>
                 <li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Reports</a></li>
                 <li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
@@ -94,25 +93,18 @@
   </div>
   <div class="subnav">
     <div class="btn-toolbar pull-left">
-      <div class="btn-group"> 
-        <div class="dropdown">
-          <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-          <ul class="dropdown-menu menu">
-            <li><a href="#">Delete</a></li>
-            <li><a href="#">Mass Update</a></li>
-            <li><a href="#">Merge</a></li>
-            <li><a href="#">Export</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>  
+      <h1>Accounts</h1>
+    </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group"> 
-        <a class="btn active" href="opportunity_a.html" rel="tooltip" title="List view"><i class="icon-align-justify"></i></a>
-        <a class="btn" href="activity.html" rel="tooltip" title="Activity view"><i class="icon-th-list"></i></a>
+        <a class="btn" href="create.html" rel="tooltip" title="Create Account"><i class="icon-plus-sign"></i></a>
+      </div>
+      <div class="btn-group"> 
+        <a class="btn active" href="accounts.html" rel="tooltip" title="List view"><i class="icon-align-justify"></i></a>
+        <a class="btn" href="accounts_activity.html" rel="tooltip" title="Activity view"><i class="icon-th-list"></i></a>
       </div>    
     </div>
-  </div>    
+  </div>  
   <div class="container-fluid subhead">
     <div class="row-fluid">
       <div class="span2">
@@ -159,21 +151,30 @@
         <table class="table datatable">
           <thead>
             <tr>
-              <th  style="width: 1%" class="nosort">
-                  <input type="checkbox" class="toggle-all"> <i class="icon-star-empty"></i>
+              <th class="nosort">
+                <div class="btn-group">
+                  <b class="btn" rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Email</a></li>
+                    <li><a href="#">Mass Update</a></li>
+                    <li><a href="#">Merge</a></li>
+                    <li><a href="#">Export</a></li>
+                  </ul>
+                </div>
               </th>
-              <th  style="width: 30%" class="">Name</th>
-              <th  style="width: 20%" class="">City</th>
-              <th  style="width: 10%" class="">Country</th>
-              <th  style="width: 20%" class="">Phone</th>
-              <th  style="width: 10%" class="primary">User</th>
-              <th style="width: 10%">Email</th>
-              <th  style="width: 1%" class="nosort"></th>
+              <th>Name</th>
+              <th>City</th>
+              <th>Country</th>
+              <th>Phone</th>
+              <th>User</th>
+              <th>Email</th>
+              <th class="nosort"></th>
             </tr>
           </thead>
           <tbody id="listed">
             <tr>
-              <td><input type="checkbox"> <i class="icon-star-empty"></i></td>
+              <td><input type="checkbox"> <i class="icon-star"></i></td>
               <td><a href="detail_perkin_kleiners.html">Perkin Kleiners</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
@@ -191,7 +192,7 @@
               </td>
             </tr>   
             <tr>
-              <td><input type="checkbox"> <i class="icon-star-empty"></i></td>
+              <td><input type="checkbox"> <i class="icon-star"></i></td>
               <td><a href="detail_underwater.html">Underwater Mining Inc.</a></td>
               <td><span class="dblclick">San Francisco</span></td>
               <td><span class="dblclick">USA</span></td>

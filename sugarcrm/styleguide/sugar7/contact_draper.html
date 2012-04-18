@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Sabra Khan - SugarCRM</title>
+  <title>Mark Edwin - Contact - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -23,7 +23,7 @@
             <li>
               <a href="accounts.html">Accounts</a>
             </li>
-            <li class="">
+            <li class="active">
               <a href="contacts.html">Contacts</a>
             </li>              
             <li>
@@ -60,7 +60,7 @@
               </ul>
             </li>
             <li class="divider-vertical"></li>
-            <li class="active dropdown">
+            <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="profile_skhan.html">Profile</a></li>
@@ -77,12 +77,7 @@
               <ul class="dropdown-menu quick">
                 <li><a href="#">Create Account</a></li>
                 <li><a  data-toggle="modal" href="#contactModal">Create Contact</a></li>
-                <li><a href="#">Create Opportunity</a></li>
-                <li class="divider"></li>
-                <li><a  data-toggle="modal" href="#taskModal">Add a task</a></li>
-                <li><a href="#">Log Call</a></li>
-                <li><a href="#">Schedule Meeting</a></li>
-                <li><a href="#">Email</a></li>
+                <li><a href="#">Opportunity</a></li>
               </ul>
             </li>              
           </ul>
@@ -105,25 +100,22 @@
   </li>
   </ul> -->
   <div class="subnav row-fluid">
-    <div class="btn-toolbar pull-left">
-      <h1>Sabra Khan <i class="icon-star"></i></h1>
-    </div>
-    <div class="btn-toolbar pull-right">
-      <div class="dropdown">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-        <ul class="dropdown-menu menu">
-          <li><a href="#">Edit</a></li>
-          <li><a href="#">Duplicate</a></li>
-          <li><a href="#">Delete</a></li>
-          <li class="divider"></li>
-          <li><a href="#">Add Note</a></li>                           
-          <li><a href="#">Compose Email</a></li>
-          <li><a href="#">Log Call</a></li>
-          <li><a href="#">Schedule Meeting</a></li>
-        </ul>
+    <div class="span2">
+      <div class="btn-group">
+        <div class="dropdown">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
+          <ul class="dropdown-menu menu">
+            <li><a href="#">Edit</a></li>
+            <li><a href="#">Duplicate</a></li>
+            <li><a href="#">Reset Password</a></li>
+          </ul>
+        </div>
       </div>
+    </div>    
+    <div class="span5">
+      <h1>Mark Edwin  <i class="icon-star-empty"></i></h1>
     </div>
-  </div>       
+  </div>         
   <div class="container-fluid">     
     <div class="row-fluid">
       <div class="span2">
@@ -131,77 +123,38 @@
            <div class="block tabbable tabs-left">
              <ul class="nav nav-tabs">
                <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
-               <li><a href="#messages" data-toggle="tab" >Messages <span class="btn btn-danger">3</span></a></li>
-               <li><a href="#twitter" data-toggle="tab" >Twitter</a></li>
+               <li><a href="#inside" data-toggle="tab">Inside View</a></li>
+               <li><a href="#twitter" data-toggle="tab">Twitter</a></li>
              </ul>
            </div>
-           <div class="block">
-             <h4>Following:</h4>
-             <br>
-             <p>
-               <a href="#"><img src="../img/avatar_weyland.png" class="avatar" alt="avatar uwelcome avatar" class="avatar"></a>
-              <a href="#"><img src=" ../img/avatar_uwelcome.jpg" class="avatar"></a>               
-              </p>
-              <ul class="nav nav-pills actions">
-                <li>  
-                 <a data-toggle="modal" href="#adminActivity"><i class="icon-cog"></i></a>
-                 </span>
-                </li>
-              </ul>
-           </div>
-           <div class="block">
-              <h4>Recently Viewed:</h4>
-              <ul class="list">
-                 <li><a href="">Chis Lowery</a></li>
-                 <li><a href="">Tina Fae</a></li>
-                 <li><a href="">Mike Jones</a></li>
-                 <li><a href="">Seeing it the right way</a></li>
-              </ul>
-              <ul class="nav nav-pills actions">
-                <li>  
-                 <a data-toggle="modal" href="#adminActivity"><i class="icon-cog"></i></a>
-                 </span>
-                </li>
-              </ul>               
-           </div>
-           <div class="block">
-              <h4>Tasks:</h4>
-              <ul class="list">
-                <li><a href="">Check opportunities</a></li>
-                <li><a href="">Review leads</a></li>
-                <li><a href="">Read email</a></li>
-              </ul>
-              <ul class="nav nav-pills actions">
-                <li>  
-                 <a data-toggle="modal" href="#taskModal"><i class="icon-plus"></i></a>
-                </li>
-              </ul>
-           </div>
-          </div>
-          
+          </div>      
         </div>
       <div class="span6">
         <div class="tab-content">
           <div class="tab-pane active" id="overview">
           <a href="" class="pull-right">
-            <img src="../img/avatar_sabra.jpg" class="avatar" alt="avatar abcindustries">
+            <img src="../img/avatar_weyland.png" class="avatar" alt="avatar medwin">
           </a>
           <div class="vcard">
             <address> 
               <p>
                 <span class="address">Address:</span> 
                 <span>
-                  <a href="http://maps.google.com/maps?q=321+University+Way,+Cupertino,+CA&hl=en&sll=37.0625,-95.677068&sspn=39.780156,88.066406&oq=321+University+Ave,+cuper&t=v&hnear=University+Way,+Cupertino,+Santa+Clara,+California+95014&z=16">One Loop<br>
-                    Cupertino, CA 49964</a>
+                  <a href="http://g.co/maps/u45p4">9 IBM Path<br>
+                  Poughkeepsie, Dutchess, New York 12601<br>
+                  USA</a>
                   </span>
                 </p> 
                 <p>
-                  <span class="tel">Phone:</span> (123) 566-3321 <small>(Primary)</small><br>
-                  <span class="tel">Phone:</span> (123) 234-3464
-
+                  <span class="tel">Phone:</span> (408) 555-5271
                 </p>
               <p>
-                <span class="email">Email:</span> <a href="mailto:sales@perkins.com">skhan@rawr.com</a> <small>(Primary)</small><br>
+                <span class="url">Website:</span> <a href="http://www.perkins.com">www.perkins.com</a>
+              </p>
+              <p>
+                <span class="email">Email:</span> <a href="mailto:sales@perkins.com">sales@perkins.com</a> <small>(Primary)</small><br>
+                <span class="email">&nbsp;</span> <a href="mailto:support@perkins.com">support@perkins.com</a>
+
               </p>
 
               </address>                
@@ -227,7 +180,7 @@
                   <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
                 </a>
                 <p>
-                  <a href="profile_sabra.html">Sabra Khan</a> made an planned outbound call to <a href="contact_mark.html">Mark Edwin</a> for 30 mins.
+                  <a href="profile_sabra.html">Sabra Khan</a> made an planned outbound call to <a href="users/toreilly">Mark Edwin</a> for 30 mins.
                   <br>
                   <date class="date">Posted 2 days ago at 1:20 pm EST - <a href="">Reply</a></date>
                 </p>
@@ -291,21 +244,6 @@
                     <tr>
                       <td><input type="checkbox"> <i class="icon-star-empty"></i></td>
                       <td><a href="contact_sarah.html">Sarah Connor</a></td>
-                      <td>You need to follow up with kelly</td>
-                      <td>4/3/12</td>
-                      <td>
-                        <span class="hide actions dropdown pull-right">
-                          <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">Actions <span class="caret"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="contact_mark.html">Edit</a></li>
-                            <li><a href="#">Delete</a></li>
-                          </ul>
-                        </span>
-                      </td>
-                    </tr>  
-                    <tr>
-                      <td><input type="checkbox"> <i class="icon-star-empty"></i></td>
-                      <td><a href="contact_sarah.html">Sarah Connor</a></td>
                       <td>Mark Edwin seems like a wonderful contact for Perkins</td>
                       <td>4/1/12</td>
                       <td>
@@ -328,6 +266,26 @@
                   <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
                 </li>     
               </ul>
+            </div>
+            <div class="tab-pane" id="inside">
+                  <h2>InsideView</h2>
+                  <br>
+                  <div class="row-fluid">
+                  <div class="span4">
+                    <h3>Find Opportunities</h3>
+                    <p>to reach out to customers</p>
+                  </div>
+                  <div class="span4">
+                    <h3>Get Referrals</h3>
+                    <p>to key decision makers</p>
+                  </div>
+                  <div class="span4">
+                    <h3>Engage Customers</h3>
+                    <p>with conversation starters</p>
+                  </div>
+                  </div>
+                  <br>
+                  <a href="" class="btn btn-large btn-danger">Get Started</a>
             </div>
             <div class="tab-pane" id="twitter">
             <div class="block filtered" id="moduleTwitter">
@@ -359,6 +317,7 @@
                 </li>        
               </ul>
             </div>
+            
             </div>
             <div class="tab-pane" id="screenshot1">
               <div class="block" id="">
@@ -476,7 +435,6 @@
               <li class="active"><a href="#note" data-toggle="tab"><i class="icon-comments"></i> Note</a></li>
               <li><a href="#link" data-toggle="tab"><i class="icon-screenshot"></i> Link</a></li>
               <li><a href="#file" data-toggle="tab"><i class="icon-file"></i> File</a></li>
-              <li><a href="#document" data-toggle="tab"><i class="icon-list-alt"></i> Document</a></li>
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="note">
@@ -489,11 +447,7 @@
               </div>
               <div class="tab-pane" id="file">
                 <input id="addit" value="" class="span4" placeholder="Add a file ...">
-                <input id="additSubmit" type="submit" value="Upload" class="btn">
-              </div>
-              <div class="tab-pane" id="document">
-                <input id="addit" value="" class="span4" placeholder="Add a file ...">
-                <input id="additSubmit" type="submit" value="Upload" class="btn">
+                <input id="additSubmit" type="submit" value="Add" class="btn">
               </div>
             </div>
           </form>
@@ -507,7 +461,7 @@
               <a href="#screenshot1" data-toggle="tab"><span class="label label-file">File</span></a>
               <span>
                 Uploaded <a href="#screenshot1" data-toggle="tab"><b>screenshot_766.png</b></a> to <a href="profile_skhan.html">Perkin Kleins</a><br>
-                <date>Posted 2 hours ago | 1 comments</date>
+                <date>Posted 2 hours ago | 3 comments</date>
               </span>
               <ul class="nav nav-pills actions">
                 <li class="dropdown pull-right">  
@@ -523,8 +477,7 @@
             <article>
               <a href="#doc1" data-toggle="tab"><span class="label label-document">Document</span></a>
               <span>
-                Uploaded <a href="#doc1" data-toggle="tab"><b>Sales-document33.doc</b></a> to <a href="profile_skhan.html">Perkin Kleins</a><br>
-                <date>Posted 6 hours ago | 1 comments</date>
+                <a href="#doc1" data-toggle="tab"><b>Sales-document33.doc</b></a> added 6 hours ago by <a href="profile_skhan.html">Sabra Khan</a>
               </span>
               <ul class="nav nav-pills actions">
                 <li class="dropdown pull-right">  
@@ -540,8 +493,7 @@
             <article>
               <a href="#note1" data-toggle="tab"><span class="label label-note">Note</span></a>
               <span>
-                Added a <a href="#note1" data-toggle="tab"><b>Note</b></a> to <a href="profile_skhan.html">Perkin Kleins</a><br>
-                <date>Posted 1 day ago | 1 comments</date>
+                <a href="#note1" data-toggle="tab"><b>Note</b></a> added 3 hours ago by <a href="profile_skhan.html">Sabra Khan</a>
               </span>
               <ul class="nav nav-pills actions">
                 <li class="dropdown pull-right">  
@@ -805,5 +757,6 @@
     <script src="../js/editable.js"></script>
     <script src="../js/chosen.jquery.min.js"></script>
     <script src="../js/application.js"></script>
+    <script>$(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});</script>
   </body>
   </html>

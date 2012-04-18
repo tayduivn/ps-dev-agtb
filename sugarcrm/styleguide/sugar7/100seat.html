@@ -35,7 +35,6 @@
                 <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
                 <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
                 <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-                <li id="gen20"><a href="#ajaxUILoc=index.php%3Fmodule%3DOpportunities%26action%3Dindex" id="moduleTab_Opportunities">Opportunities</a></li>
                 <li id="gen21"><a href="index.php?module=Forecasts&amp;action=index" id="moduleTab_Forecasts">Forecasts</a></li>
                 <li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Reports</a></li>
                 <li id="gen23"><a href="index.php?module=Documents&amp;action=index" id="moduleTab_Documents">Documents</a></li>
@@ -102,306 +101,175 @@
   </ul> -->
   <div class="subnav row-fluid">
     <div class="btn-toolbar pull-left">
-      <h1>Perkin Kleiners - 100 Seats <i class="icon-star-empty"></i></h1>
+      <h1>Perkin Kleiners - 100 Seats <i class="icon-star"></i></h1>
     </div>
     <div class="btn-toolbar pull-right">
       <div class="dropdown">
         <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
         <ul class="dropdown-menu menu">
           <li><a href="#">Duplicate</a></li>
-          <li><a href="#">Save</a></li>
+          <li><a href="#">Delete</a></li>
           <li class="divider"></li>
-          <li><a href="#">Note</a></li>                           
-          <li><a href="#">Email</a></li>
-          <li><a href="#">PDF</a></li>
-          <li><a href="#">CSV</a></li>
+          <li><a href="#">Add Note</a></li>                           
+          <li><a href="#">Compose Email</a></li>
+          <li><a href="#">Log Call</a></li>
+          <li><a href="#">Schedule Meeting</a></li>
         </ul>
       </div>
     </div>
   </div>        
   <div class="container-fluid">     
     <div class="row-fluid">
-      <div class="span2">
-         <div class="bordered">        
-           <div class="block tabbable tabs-left">
-             <ul class="nav nav-tabs">
-                 <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
-                 <li><a href="#inside" data-toggle="tab">Inside View</a></li>
-                 <li><a href="#twitter" data-toggle="tab">Twitter</a></li>
-             </ul>
-           </div>
-           <div class="block">
-             <h4>My Tasks:</h4>
-             <ul class="list">
-               <li><a href="">Forecast trends</a></li>
-               <li><a href="">Close bad leads</a></li>
-               <li><a href="">Update contacts</a></li>
-               <li><a href="">Adjust accounts for new channel</a></li>
-               <li><a href="">Share reports with Tina</a></li>
-             </ul>
-             <a href="" class="btn"><i class="icon-plus"></i> Add Task</a>
-             <ul class="nav nav-pills actions">
-               <li>  
-                <a data-toggle="modal" rel="tooltip" title="Admin options for tasks" href="#adminTasks"><i class="icon-cog"></i></a>
-               </li>
-               <li>  
-                <a data-toggle="modal" rel="popover" title="Admin options for tasks" data-content="Your tasks list out the things you want to get done or automated tasks that SugarCRM determins you need to do. To add a new task click on the plus sign."><i class="icon-info-sign"></i></a>
-               </li>
-             </ul> 
-           </div>  
-           <div class="block">         
-             <h4>History:</h4>
-             <ul class="list">
-               <li>Updated <a href="">IBM</a> Account</li>
-               <li>Removed TYCO Account</li>
-               <li>Added IBM Account</li>
-               <li>Added Sam Walton as a lead</li>
-               <li>Updated <a href="">SugarCRM</a> account with <a herf="user.html">Majed Itani</a></li>
-             </ul>
-             <ul class="nav nav-pills actions">
-               <li>  
-                <a data-toggle="modal" title="Admin options for History" href="#adminHistory"><i class="icon-cog"></i></a>
-               </li>
-             </ul>            
-           </div>
+      <div class="span7">
+        <div class="card2">
+          <div class="row-fluid">
+            <div class="span2">Account:</div>
+            <div class="span4">
+              <a href="detail_perkin_kleiners.html">Perkin Kleiners</a>
+              <div class="hide">
+                <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+                  <option value="pk"><a href="detail_perkin_kleiners.html">Perkin Kleiners</a></option> 
+                  <option value="pk"><a href="detail_weyland.html">Weyland</a></option> 
+                </select>
+              </div>
+            </div>  
           </div>
-        </div>
-      <div class="span6">
-          <div class="card2">
+          <div class="row-fluid">
+              <div class="span2">Sales Stage:</div>
+              <div class="span4">60% - Negotiation</div>
+          </div>
+          <div class="row-fluid">
+            <div class="span2">Amount:</div>
+            <div class="span4 dblclick">$50,000.00 (USD)</div>
+          </div>
+          <div class="row-fluid">
+            <div class="span2">Close:</div>
+            <div class="span4 dblclick">05/13/2012 (20 days)</div>     
+          </div>
+          <div class="row-fluid">     
+            <div class="span2">Type:</div>
+            <div class="span4 dblclick">Existing Business</div>
+          </div>
+          <div class="row-fluid">
+            <div class="span2">Lead Source:</div>
+            <div class="span10 dblclick">Word of mouth</div>
+          </div>    
+          <div class="row-fluid">
+            <div class="span2">Next Step:</div>
+            <div class="span10 dblclick">Call Chris Lottery to ask how to import his files</div>
+          </div>
+          <div class="extend hide">
             <div class="row-fluid">
-              <div class="span2"><strong>Account:</strong></div>
-              <div class="span4">
-                <a href="detail_perkin_kleiners.html">Perkin Kleiners</a>
-                <div class="hide">
-                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
-                    <option value="pk"><a href="detail_perkin_kleiners.html">Perkin Kleiners</a></option> 
-                    <option value="pk"><a href="detail_weyland.html">Weyland</a></option> 
-                  </select>
-                </div>
-              </div>  
+              <div class="span2">Partner Assigned:</div>
+              <div class="span4"><a href="">Weyland</a></div>
             </div>
             <div class="row-fluid">
-              <div class="span2"><strong>Sales Stage:</strong></div>
-              <div class="span4">60% - Negotiation</div>     
-            </div>
-            <div class="row-fluid">
-              <div class="span2"><strong>Amount:</strong></div>
-              <div class="span4 dblclick">$50,000.00 (USD)</div>
-            </div>
-            <div class="row-fluid">
-              <div class="span2"><strong>Close:</strong></div>
-              <div class="span4 dblclick">05/13/2012 (20 days)</div>     
+              <div class="span2">Date Modified:</div>
+              <div class="span4">01/30/2012 02:54 by portal</div>     
             </div>
             <div class="row-fluid">     
-              <div class="span2"><strong>Type:</strong></div>
-              <div class="span4 dblclick">Existing Business</div>
+              <div class="span2">Date Created:</div>
+              <div class="span4 ">1/22/2012 08:01 by Sabra Khan</div>
             </div>
             <div class="row-fluid">
-              <div class="span2"><strong>Lead Source:</strong></div>
-              <div class="span10 dblclick">Word of mouth</div>
+              <div class="span2">Partner Contact:</div>
+              <div class="span4"><a href="">Sabra Khan</a></div>
             </div>    
             <div class="row-fluid">
-              <div class="span2"><strong>Next Step:</strong></div>
-              <div class="span10 dblclick">Call Chris Lottery to ask how to import his files</div>
+              <div class="span2">Assigned User:</div>
+              <div class="span4">Liz Smith</div>
             </div>
-            <div class="row-fluid">
-              <div class="span12"><a href="" class="">More detail ...</a></div>
-            </div>       
           </div>
-          <div class="block filtered" id="moduleRelated">
-            <h4>Related Records</h4>
-            <form class="form-search hide" action="">
-              <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
-            </form>
-            <article>
-              <a href="#screenshot1" data-toggle="tab"><span class="label label-file">File</span></a>
-              <span>
-                Uploaded <a href="#screenshot1" data-toggle="tab">screenshot_766.png</a> added 2 hours ago by <a href="profile_skhan.html">Sabra Khan</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a data-toggle="modal" href="#share">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>      
-            <article>
-              <a href="#doc1" data-toggle="tab"><span class="label label-document">Document</span></a>
-              <span>
-                <a href="#doc1" data-toggle="tab">Sales-document33.doc</a> added 6 hours ago by <a href="profile_skhan.html">Sabra Khan</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>
-            <article>
-              <a href="#note1" data-toggle="tab"><span class="label label-note">Note</span></a>
-              <span>
-                <a href="#note1" data-toggle="tab">Note</a> added 1 day ago by <a href="profile_skhan.html">Sabra Khan</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>  
-            <article>
-              <a data-toggle="modal" href="#leadModal"><span class="label label-lead">Lead</span></a>
-              <span>
-                <a data-toggle="modal" href="#screenModal">100 seat plan</a> added 2 days ago by <a href="profile_skhan.html">Sabra Khan</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>  
-            <article>
-              <span class="label label-contact">Contact</span>
-              <span>
-                <a href="contact_mark.html">Mark Edwin</a>, CIO, added 3 days ago by <a href="profile_skhan.html">Sabra Khan</a>
-              </span>
-              <ul class="nav nav-pills actions">
-                <li class="dropdown pull-right">  
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Share</a></li>
-                    <li><a href="#">Delete</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </article>
-            <article>
-              <a href="">Show more related ...</a>
-            </article>
-            <ul class="nav nav-pills actions">
-              <li class="dropdown">  
-                <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-plus"></i><i class="icon caret"></i></a>
-                <ul class="dropdown-menu menu">
-                  <li><a href="#">Add a campaign</a></li>
-                  <li><a href="#">Add a case</a></li>
-                  <li><a href="#">Add a contact</a></li>
-                  <li><a href="#">Add a case</a></li>
-                  <li><a href="#">Add a document</a></li>
-                  <li><a href="#">Add a lead</a></li>
-                  <li><a href="#">Add a quote</a></li>
-                  <li><a href="#">Add a opportunity</a></li>
-                  <li class="divider"></li>
-                  <li><a href="#">Log Call</a></li>
-                  <li><a href="#">Schedule Meeting</a></li>
-                  <li><a href="#">Email</a></li>
-                </ul>
-              </li>
-              <li>  
-                <a href="" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
-              </li>
-              <li>  
-                <a data-toggle="modal" href="#adminActivity"><i class="icon-cog"></i></a>
-              </li>
-            </ul>
-          </div>
-      </div>
-      <div class="span4 divleft tab-content">
-        <div class="tab-pane active" id="overview">
-          <div class="block filtered " id="moduleAddRelated">
-            <form class=" form-horizontal" action="">
-              <ul class="nav nav-tabs">
-                <li class="active"><a href="#note" data-toggle="tab"><i class="icon-comments"></i> Comment</a></li>
-                <li><a href="#link" data-toggle="tab"><i class="icon-screenshot"></i> Link</a></li>
-              </ul>
-              <div class="tab-content">
-                <div class="tab-pane active" id="note">
-                  <input id="addit" value="" class="span4" placeholder="Add a note ...">
-                  <input id="additSubmit" type="submit" value="Add" class="btn">
-                </div>
-                <div class="tab-pane" id="link">
-                  <input id="addit" value="" class="span4" placeholder="Add a link ...">
-                  <input id="additSubmit" type="submit" value="Add" class="btn">
-                </div>
-                <div class="tab-pane" id="file">
-                  <input id="addit" value="" class="span4" placeholder="Add a file ...">
-                  <input id="additSubmit" type="submit" value="Upload" class="btn">
-                </div>
-                <div class="tab-pane" id="document">
-                  <input id="addit" value="" class="span4" placeholder="Add a file ...">
-                  <input id="additSubmit" type="submit" value="Upload" class="btn">
-                </div>
-              </div>
-            </form>
-          </div>
-        <div class="block filtered" id="moduleLog">
+          <div class="row-fluid">
+            <a href="" class="more">More  <i class="icon-chevron-down"></i></a>
+          </div>              
+        </div>
+        <div class="block filtered tabbable tabs-left" id="moduleActivity">
           <h4>Activity</h4>
           <form class="form-search hide" action="">
             <input value="" class="span4" placeholder="Refine activity ...">
           </form> 
-          <article data-type="update" data-pubdate="2012-02-16">
-            <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-              <img src="../img/avatar_weyland.png" class="avatar" alt="mitani avatar">
-            </a>
-            <p>
-              <a href="contact_mark.html">Mark Edwin</a> sent a message, <a href="">Would love to talk more about fuel options</a> to <a href="profile_sabra.html">Sabra Khan</a>.
-              <br>
-              <date class="date">Posted 1 day ago at 3:00 pm EST - <a href="">Reply</a></date>
-            </p>
-          </article>
-          <article data-type="update" data-pubdate="2012-02-16">
-            <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-              <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
-            </a>
-            <p>
-              <a href="profile_sabra.html">Sabra Khan</a> made an planned outbound call to <a href="contact_mark.html">Mark Edwin</a> for 30 mins.
-              <br>
-              <date class="date">Posted 2 days ago at 1:20 pm EST - <a href="">Reply</a></date>
-            </p>
-          </article>   
-          <article data-type="update" data-pubdate="2012-02-16">
-            <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-              <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
-            </a>
-            <p>
-              <a href="profile_sabra.html">Sabra Khan</a> updated <a href="users/toreilly">Mark Edwin</a> as the primary contact.
-              <br>
-              <date class="date">Posted 3 days ago at 4:20 pm EST - <a href="">Reply</a></date>
-            </p>
-          </article>            
+          <ul class="nav nav-tabs results">
+            <li>
+              <a href="#file1" data-toggle="tab"><span class="label label-file">File</span></a>
+              <p>
+                Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                <br>
+                <date class="date">Posted 1 day ago at 3:00 pm EST</date>
+              </p>
+              <ul class="nav nav-pills actions">
+                <li class="dropdown pull-right">  
+                  <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-plus"></i><i class="icon caret"></i></a>
+                  <ul class="dropdown-menu menu">
+                    <li><a href="index.html">Add Related Item</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Add Note</a></li>                           
+                    <li><a href="#">Compose Email</a></li>
+                    <li><a href="#">Log Call</a></li>
+                    <li><a href="#">Schedule Meeting</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="#log1" data-toggle="tab"><span class="label label-log">Log</span></a>
+              <p>
+                <a href=" profile_skhan.html">Sabra Khan</a> sent an email to <a href="users/toreilly">Mark Edwin</a> titled <a href="">Let's do lunch</a>.
+                <br>
+                <date class="date">Posted 1 day ago at 3:00 pm EST</date>
+              </p>
+            </li>
+            <li>
+              <a href="#doc1" data-toggle="tab"><span class="label label-document">Document</span></a>
+              <p>
+                <a href="#doc1" data-toggle="tab">Sales-document33.doc</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                <br>
+                <date class="date">Posted 6 hours ago at 3:00 pm EST</date>
+              </p>
+            </li>
+            <li>
+              <a href="#note1" data-toggle="tab"><span class="label label-note">Note</span></a>
+              <p>
+                <a href="#note1" data-toggle="tab">Note</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                <br>
+                <date class="date">Posted 2 days ago at 3:00 pm EST</date>
+              </p>
+            </li>
+            <li>
+              <a href="#lead1"><span class="label label-lead">Lead</span></a>
+              <p>
+                <a data-toggle="modal" href="#screenModal">100 seat plan</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                <br>
+                <date class="date">Posted 3 days ago at 3:00 pm EST</date>
+              </p>
+            </li>
+            <li>
+              <a href="#lead1"><span class="label label-contact">Contact</span></a>
+              <p>
+                <a href="contact_mark.html">Mark Edwin</a>, CIO, added by <a href="profile_skhan.html">Sabra Khan</a>
+                <br>
+                <date class="date">Posted 3 days ago at 6:00 pm EST</date>
+              </p>
+            </li>   
+            <li>
+              <a href="#log2" data-toggle="tab"><span class="label label-log">Log</span></a>
+              <p>
+                <a href=" profile_skhan.html">Sabra Khan</a> made an planned outbound call to <a href="users/toreilly">Mark Edwin</a> for 30 mins.
+                <br>
+                <date class="date">Posted 2 days ago at 1:20 pm EST</date>
+              </p>
+            </li>
+          </ul>                    
           <ul class="nav nav-pills actions">
             <li class="dropdown pull-right">  
               <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-plus"></i><i class="icon caret"></i></a>
               <ul class="dropdown-menu menu">
-                <li><a href="#">Add a campaign</a></li>
-                <li><a href="#">Add a case</a></li>
-                <li><a href="#">Add a contact</a></li>
-                <li><a href="#">Add a case</a></li>
-                <li><a href="#">Add a document</a></li>
-                <li><a href="#">Add a lead</a></li>
-                <li><a href="#">Add a quote</a></li>
-                <li><a href="#">Add a opportunity</a></li>
+                <li><a href="index.html">Add Related Item</a></li>
                 <li class="divider"></li>
+                <li><a href="#">Add Note</a></li>                           
+                <li><a href="#">Compose Email</a></li>
                 <li><a href="#">Log Call</a></li>
                 <li><a href="#">Schedule Meeting</a></li>
-                <li><a href="#">Email</a></li>
               </ul>
             </li>    
             <li>  
@@ -409,160 +277,368 @@
             </li>    
           </ul>
         </div>
-      </div>  
-      <div class="tab-pane" id="inside">
-        <h2>InsideView</h2>
-        <br>
-        <div class="row-fluid">
-          <div class="span4">
-            <h3>Find Opportunities</h3>
-            <p>to reach out to customers</p>
-          </div>
-          <div class="span4">
-            <h3>Get Referrals</h3>
-            <p>to key decision makers</p>
-          </div>
-          <div class="span4">
-            <h3>Engage Customers</h3>
-            <p>with conversation starters</p>
-          </div>
-        </div>
-        <br>
-        <a href="" class="btn btn-large btn-danger">Get Started</a>
       </div>
-      <div class="tab-pane" id="twitter">
-        <div class="block filtered" id="moduleTwitter">
-          <h4><a href="http://twitter.com/firedupsky">Twitter @firedupsky</a></h4>
-          <form class="form-search hide" action="">
-            <input value="" class="span4" placeholder="Refine activity ...">
-          </form> 
-          <article data-type="update" data-pubdate="2012-02-16">
-            <p>
-              Tax time again make sure you follow these tips <a href="http://so.short">http://so.short</a><br>
-              <date class="date">Posted 1 day ago - Retweet - Reply</date>
-            </p>
-          </article>
-          <article data-type="update" data-pubdate="2012-02-16">
-            <p>
-              Engines looking solid for May launch <a href="http://so.short">http://so.short</a><br>
-              <date class="date">Posted 4 days ago - Retweet - Reply</date>
-            </p>
-          </article>               
-          <article data-type="update" data-pubdate="2012-02-16">
-            <p>
-              New engine <a href="http://so.short">http://so.short</a> clears launch readiness<br>
-              <date class="date">Posted 1 week ago - Retweet - Reply</date>
-            </p>
-          </article>
-          <ul class="nav nav-pills actions">
-            <li>  
-              <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
-            </li>        
-          </ul>
-        </div>
-      </div>
-      <div class="tab-pane" id="screenshot1">
-        <div class="block" id="">
-          <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
-          <br>
-          <img src="http://placehold.it/400x300">
-          <ul class="nav nav-pills actions">  
-            <li>  
-              <a href="#overview"  data-toggle="tab"><i class="icon-remove"></i></a>
-            </li>    
-          </ul>
-        </div>
-        <div class="block filtered" id="moduleLog">
-          <h4>Comments</h4>
-          <form class="form-search hide" action="">
-            <input value="" class="span4" placeholder="Refine activity ...">
-          </form> 
-          <article data-type="update" data-pubdate="2012-02-16">
-            <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-              <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
-            </a>
-            <p>
-              <a href=" profile_skhan.html">Sabra Khan</a> commented: This is a solid flow chart<br>
-              <date class="date">Posted 1 day ago at 3:00 pm EST - <a href="">Reply</a></date>
-            </p>
-          </article>            
-          <ul class="nav nav-pills actions">
-            <li>  
-              <a href="#"><i class="icon-plus"></i></a>
-            </li>    
-            <li>  
-              <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
-            </li>    
-          </ul>
-        </div>
-      </div>
-      <div class="tab-pane" id="doc1">
-        <div class="block" id="">
-          <h4><span class="label label-document">Document</span> Sales-document33.doc</h4>
-          <br>
-          <div class="row">
-            <div class="span3"><img src="http://placehold.it/200x250"></div>
-          </div>
-        </div>
-        <div class="block filtered" id="moduleLog">
-          <h4>Comments</h4>
-          <form class="form-search hide" action="">
-            <input value="" class="span4" placeholder="Refine activity ...">
-          </form> 
-          <article data-type="update" data-pubdate="2012-02-16">
-            <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-              <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
-            </a>
-            <p>
-              <a href=" profile_skhan.html">Sabra Khan</a> commented: The latest sales forecast<br>
-              <date class="date">Posted 6 hours ago at 3:00 pm EST - <a href="">Reply</a></date>
-            </p>
-          </article>            
-          <ul class="nav nav-pills actions">
-            <li>  
-              <a href="#"><i class="icon-plus"></i></a>
-            </li>    
-            <li>  
-              <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
-            </li>    
-          </ul>
-        </div>
-      </div>
-      <div class="tab-pane" id="note1">
-        <div class="block" id="">
-          <h4><span class="label label-note">Note</span> Follow up with Mark</h4>
-          <br>
-          <p>Mark had mentioned fuel as a critical value in our previous phone call.</p>
-        </div>
-        <div class="block filtered" id="moduleLog">
-          <h4>Comments</h4>
-          <form class="form-search hide" action="">
-            <input value="" class="span4" placeholder="Refine activity ...">
-          </form> 
-          <article data-type="update" data-pubdate="2012-02-16">
-            <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
-              <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
-            </a>
-            <p>
-              <a href=" profile_skhan.html">Sabra Khan</a> commented: Fuel is best utilized in initial stage.<br>
-              <date class="date">Posted 1 hours ago at 4:00 pm EST - <a href="">Reply</a></date>
-            </p>
-          </article>            
-          <ul class="nav nav-pills actions">
-            <li>  
-              <a href="#"><i class="icon-plus"></i></a>
-            </li>    
-            <li>  
-              <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
-            </li>    
-          </ul>
-        </div>
-      </div>
+        <div class="span5 tab-content" id="folded">
+          <div class="tab-pane active" id="overview">
+            <div class="block" id="moduleTwitter">
+              <h4>InsideView</h4>
+              <br>
+              <div class="row-fluid">
+                <div class="span6">
+                  Find Opportunities, Get Referrals, Engage Customers
+                </div>
+                <div class="span4 offset2 tright"><a href="" class="btn  btn-danger">Get Started</a></div>
+              </div>
+              <br>
 
-        
+            </div>
+            <div class="block filtered" id="moduleTwitter">
+              <h4><a href="http://twitter.com/firedupsky">Twitter @firedupsky</a></h4>
+              <form class="form-search hide" action="">
+                <input value="" class="span4" placeholder="Refine activity ...">
+              </form> 
+              <article data-type="update" data-pubdate="2012-02-16">
+                <p>
+                  Tax time again make sure you follow these tips <a href="http://so.short">http://so.short</a><br>
+                  <date class="date">Posted 1 day ago - Retweet - Reply</date>
+                </p>
+              </article>
+              <article data-type="update" data-pubdate="2012-02-16">
+                <p>
+                  Engines looking solid for May launch <a href="http://so.short">http://so.short</a><br>
+                  <date class="date">Posted 4 days ago - Retweet - Reply</date>
+                </p>
+              </article>               
+              <article data-type="update" data-pubdate="2012-02-16">
+                <p>
+                  New engine <a href="http://so.short">http://so.short</a> clears launch readiness<br>
+                  <date class="date">Posted 1 week ago - Retweet - Reply</date>
+                </p>
+              </article>
+              <ul class="nav nav-pills actions">
+                <li>  
+                  <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                </li>        
+              </ul>
+            </div>
+          </div>
+          <div class="tab-pane" id="file1">
+            <div class="block" id="">
+              <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+              <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
+              <br>
+              <img src="http://placehold.it/400x300">
+            </div>
+            <div class="block filtered" id="moduleLog">
+              <h4>Comments</h4>
+              <form class="form-search hide" action="">
+                <input value="" class="span4" placeholder="Refine activity ...">
+              </form>
+              <form class="form-addit form-horizontal hide" action="">
+                <input id="addit" value="" class="span4" placeholder="Add a comment ...">
+                <input id="additSubmit" type="submit" value="Comment" class="btn">
+              </form>
+              <article data-type="update" data-pubdate="2012-02-16">
+                <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                  <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
+                </a>
+                <p>
+                  <a href=" profile_skhan.html">Sabra Khan</a> commented: This is a solid flow chart for figuring out our goals<br>
+                  <date class="date">Posted 1 hour ago at 3:00 pm EST - <a href="" class="reply">Reply</a></date>
+                </p>
+              </article>            
+              <ul class="nav nav-pills actions">
+                <li>  
+                  <a href="#" class="addit"><i class="icon-plus"></i></a>
+                </li>    
+                <li>  
+                  <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                </li>    
+              </ul>
+            </div>
+          </div>
+          <div class="tab-pane" id="lead1">
+            <div class="block" id="">
+              <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+
+              <h4><span class="label label-lead">Lead</span> Perkin Kleiners - 100 Seats</h4>
+              <br>
+              <div class="row">
+                <div class="card2" style="margin-left: 20px;">
+                  <div class="row-fluid">
+                    <div class="span3">Account:</div>
+                    <div class="span9">
+                      <a href="detail_perkin_kleiners.html">Perkin Kleiners</a>
+                      <div class="hide">
+                        <select data-placeholder="Choose a account..." class="chzn-select chzn-done" tabindex="-1" id="selNCF" style="display: none; ">
+                          <option value="pk">Perkin Kleiners</option> 
+                          <option value="pk">Weyland</option> 
+                        </select><div id="selNCF_chzn" class="chzn-container chzn-container-single" style="width: 222px; "><a href="javascript:void(0)" class="chzn-single" tabindex="2"><span>Perkin Kleiners</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 220px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 185px; " tabindex="-1"></div><ul class="chzn-results"><li id="selNCF_chzn_o_0" class="active-result result-selected" style="">Perkin Kleiners</li><li id="selNCF_chzn_o_1" class="active-result" style="">Weyland</li></ul></div></div>
+                      </div>
+                    </div>  
+                  </div>
+                  <span>            
+                    <div class="row-fluid">
+                      <div class="span3">Sales Stage:</div>
+                      <div class="span9">60% - Negotiation</div>
+                    </div>
+                  </span> 
+                  <div class="row-fluid">
+                    <div class="span3">Amount:</div>
+                    <div class="span9" title="Click to edit...">$50,000.00 (USD)</div>
+                  </div>
+                  <div class="row-fluid">
+                    <div class="span3">Close:</div>
+                    <div class="span9" title="Click to edit...">05/13/2012 (20 days)</div>     
+                  </div>
+                  <div class="row-fluid">     
+                    <div class="span3">Type:</div>
+                    <div class="span9" title="Click to edit...">Existing Business</div>
+                  </div>
+                  <div class="row-fluid">
+                    <div class="span3">Lead Source:</div>
+                    <div class="span9" title="Click to edit...">Word of mouth</div>
+                  </div>    
+                  <div class="row-fluid">
+                    <div class="span3">Next Step:</div>
+                    <div class="span9" title="Click to edit...">Call Chris Lottery to ask how to import his files</div>
+                  </div>
+                  <div class="row-fluid">
+                    <div class="span5"><a href="" class="">More detail ...</a></div>
+                  </div>       
+                </div>
+              </div>
+            </div>
+            <div class="block filtered" id="moduleLog">
+              <h4>Comments</h4>
+              <form class="form-search hide" action="">
+                <input value="" class="span4" placeholder="Refine activity ...">
+              </form>
+              <form class="form-addit form-horizontal hide" action="">
+                <input id="addit" value="" class="span4" placeholder="Add a comment ...">
+                <input id="additSubmit" type="submit" value="Comment" class="btn">
+              </form>
+              <article data-type="update" data-pubdate="2012-02-16">
+                <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                  <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
+                </a>
+                <p>
+                  <a href=" profile_skhan.html">Sabra Khan</a> commented: The latest sales forecast<br>
+                  <date class="date">Posted 6 hours ago at 3:00 pm EST - <a href="">Reply</a></date>
+                </p>
+              </article>            
+              <ul class="nav nav-pills actions">
+                <li>  
+                  <a href="#" class="addit"><i class="icon-plus"></i></a>
+                </li>    
+                <li>  
+                  <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                </li>    
+              </ul>
+            </div>
+          </div>
+          <div class="tab-pane" id="doc1">
+            <div class="block" id="">
+              <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+              <h4><span class="label label-document">Document</span> Sales-document33.doc</h4>
+              <br>
+              <div class="row">
+                <div class="span3"><img src="http://placehold.it/200x250"></div>
+              </div>
+            </div>
+            <div class="block filtered" id="moduleLog">
+              <h4>Comments</h4>
+              <form class="form-search hide" action="">
+                <input value="" class="span4" placeholder="Refine activity ...">
+              </form>
+              <form class="form-addit form-horizontal hide" action="">
+                <input id="addit" value="" class="span4" placeholder="Add a comment ...">
+                <input id="additSubmit" type="submit" value="Comment" class="btn">
+              </form>
+              <article data-type="update" data-pubdate="2012-02-16">
+                <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                  <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
+                </a>
+                <p>
+                  <a href=" profile_skhan.html">Sabra Khan</a> commented: The latest sales forecast<br>
+                  <date class="date">Posted 6 hours ago at 3:00 pm EST - <a href="">Reply</a></date>
+                </p>
+              </article>            
+              <ul class="nav nav-pills actions">
+                <li>  
+                  <a href="#" class="addit"><i class="icon-plus"></i></a>
+                </li>    
+                <li>  
+                  <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                </li>    
+              </ul>
+            </div>
+          </div>
+          <div class="tab-pane" id="log1">
+            <div class="block" id="">
+              <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+              <h4><span class="label label-log">Log</span> Sent Email</h4>
+              <br>
+              <p>Sent an email to <a href="contact_mark.html">Mark Edwin</a> titled Let's do lunch. </p>
+            </div>
+            <div class="block filtered" id="moduleLog">
+              <h4>Comments</h4>
+              <form class="form-search hide" action="">
+                <input value="" class="span4" placeholder="Refine activity ...">
+              </form>
+              <form class="form-addit form-horizontal hide" action="">
+                <input id="addit" value="" class="span4" placeholder="Add a comment ...">
+                <input id="additSubmit" type="submit" value="Comment" class="btn">
+              </form> 
+              <article data-type="update" data-pubdate="2012-02-16">
+                <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                  <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
+                </a>
+                <p>
+                  <a href=" profile_skhan.html">Sabra Khan</a> commented: Lunch with Mark hope he likes sushi<br>
+                  <date class="date">Posted 1 hours ago at 3:00 pm EST - <a href="">Reply</a></date>
+                </p>
+              </article>            
+              <ul class="nav nav-pills actions">
+                <li>  
+                  <a href="#" class="addit"><i class="icon-plus"></i></a>
+                </li>    
+                <li>  
+                  <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                </li>    
+              </ul>
+            </div>
+          </div>  
+          <div class="tab-pane" id="contact1">
+            <div class="block" id="">
+              <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+              <h4><span class="label label-contact">Contact</span> Mark Edwin</a>, CIO</h4>
+              <br>
+              <div class="row">
+                <div class="span1"><img src="http://suga.site/img/avatar_weyland.png"></div>
+                <div class="vcard span4">
+                  <address> 
+                    <p>
+                      <span class="address">Address:</span> 
+                      <span>
+                        <a href="http://g.co/maps/u45p4">9 IBM Path<br>
+                          Poughkeepsie, Dutchess, New York 12601<br>
+                          USA</a>
+                        </span>
+                      </p> 
+                      <p>
+                        <span class="tel">Phone:</span> (408) 555-5271
+                      </p>
+                      <p>
+                        <span class="url">Website:</span> <a href="http://www.perkins.com">www.perkins.com</a>
+                      </p>
+                      <p>
+                        <span class="email">Email:</span> <a href="mailto:sales@perkins.com">sales@perkins.com</a> <small>(Primary)</small><br>
+                        <span class="email">&nbsp;</span> <a href="mailto:support@perkins.com">support@perkins.com</a>
+
+                      </p>
+
+                    </address>                
+                    <br>                             
+                  </div>
+                </div>
+              </div>
+              <div class="block filtered" id="moduleLog">
+                <h4>Comments</h4>
+                <form class="form-search hide" action="">
+                  <input value="" class="span4" placeholder="Refine activity ...">
+                </form> 
+                <form class="form-addit form-horizontal hide" action="">
+                  <input id="addit" value="" class="span4" placeholder="Add a comment ...">
+                  <input id="additSubmit" type="submit" value="Comment" class="btn">
+                </form>
+                <article data-type="update" data-pubdate="2012-02-16">
+                  <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                    <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
+                  </a>
+                  <p>
+                    <a href=" profile_skhan.html">Sabra Khan</a> commented: The pivot man<br>
+                    <date class="date">Posted 3 days ago at 3:00 pm EST - <a href="">Reply</a></date>
+                  </p>
+                </article>            
+                <ul class="nav nav-pills actions">
+                  <li>  
+                    <a href="#" class="addit"><i class="icon-plus"></i></a>
+                  </li>    
+                  <li>  
+                    <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                  </li>    
+                </ul>
+              </div>
+            </div>
+            <div class="tab-pane" id="note1">
+              <div class="block" id="">
+                <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+                <h4><span class="label label-note">Note</span> Follow up with Mark</h4>
+                <br>
+                <p>Mark had mentioned fuel as a critical value in our previous phone call.</p>
+              </div>
+              <div class="block filtered" id="moduleLog">
+                <h4>Comments</h4>
+                <form class="form-search hide" action="">
+                  <input value="" class="span4" placeholder="Refine activity ...">
+                </form>
+                <form class="form-addit form-horizontal hide" action="">
+                  <input id="addit" value="" class="span4" placeholder="Add a comment ...">
+                  <input id="additSubmit" type="submit" value="Comment" class="btn">
+                </form>
+                <article data-type="update" data-pubdate="2012-02-16">
+                  <a href="users/tdetalus" class="pull-left" data-author_id="mitani">
+                    <img src="../img/avatar_sabra.jpg" class="avatar" alt="mitani avatar">
+                  </a>
+                  <p>
+                    <a href=" profile_skhan.html">Sabra Khan</a> commented: Fuel is best utilized in initial stage.<br>
+                    <date class="date">Posted 1 hours ago at 4:00 pm EST - <a href="">Reply</a></date>
+                  </p>
+                </article>            
+                <ul class="nav nav-pills actions">
+                  <li>  
+                    <a href="#" class="addit"><i class="icon-plus"></i></a>
+                  </li>    
+                  <li>  
+                    <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                  </li>    
+                </ul>
+              </div>
+            </div>
+            <div class="tab-pane" id="log2">
+              <div class="block" id="">
+                <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+                <h4><span class="label label-log">Log</span> Planned Outbound Call</h4>
+                <br>
+                <p>
+                  <a href=" profile_skhan.html">Sabra Khan</a> made an planned outbound call to <a href="contact_mark.html">Mark Edwin</a> for 30 mins.
+                  <br>
+                  <date class="date">Posted 2 days ago at 1:20 pm EST</date>
+                </p>
+              </div>
+              <div class="block filtered" id="moduleLog">
+                <h4>Comments</h4>
+                <form class="form-search hide" action="">
+                  <input value="" class="span4" placeholder="Refine activity ...">
+                </form> 
+                <form class="form-addit form-horizontal" action="">
+                  <input id="addit" value="" class="span4" placeholder="Add a comment ...">
+                  <input id="additSubmit" type="submit" value="Comment" class="btn">
+                </form>          
+                <ul class="nav nav-pills actions">
+                  <li>  
+                    <a href="#" class="addit"><i class="icon-plus"></i></a>
+                  </li>    
+                  <li>  
+                    <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
+                  </li>    
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
   <footer>
     <div class="row-fluid">
       <div class="span6">

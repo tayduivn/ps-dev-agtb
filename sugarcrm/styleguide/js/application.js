@@ -1,27 +1,5 @@
 !function ($) {
-
   $(function(){
-
-
-    // toggle all checkboxes
-    $('.toggle-all').on('click', function (e) {
-    		$('table').find(':checkbox').attr('checked', this.checked);      
-    })
-
-    // toggle star
-    $('.icon-star').on('click', function (e) {
-    		$(this).parent().toggleClass('active');
-    		return false;  
-    })
-
-    // editable
-    $('td .dblclick').hover( 
-      function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
-      function () {$('.icon-pencil').remove();}
-  	)
-    
-    // Select widget
-    $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});
     
     // make code pretty (styleguide only)
     window.prettyPrint && prettyPrint()
@@ -33,6 +11,48 @@
         , title: function () { return $(this).width() + 'px' }
       })
     }
+    
+    // toggle all stars
+    $('.toggle-all-stars').on('click', function (e) {
+    		$(this).closest('table').toggleClass('active'); 
+    		return false;
+    })
+
+    // toggle all checkboxes
+    $('.toggle-all').on('click', function (e) {
+    		$('table').find(':checkbox').attr('checked', this.checked);      
+    })
+    
+    // timeout the alerts
+    setTimeout(function(){$('.alert').fadeOut().remove();},9000);
+
+    // toggle star
+    $('.icon-star').on('click', function (e) {
+    		$(this).parent().toggleClass('active');
+    		return false;  
+    })
+
+    // toggle more hide
+    $('.more').toggle(
+      function (e) {
+    		$(this).parent().prev('.extend').removeClass('hide');
+    		$(this).html('Less &nbsp;<i class="icon-chevron-up"></i>');
+    		return false;  
+      },
+      function (e) {
+      		$(this).parent().prev('.extend').addClass('hide');
+      		$(this).html('More &nbsp;<i class="icon-chevron-down"></i>');
+      		return false;  
+    })
+
+    // editable
+    $('td .dblclick').hover( 
+      function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
+      function () {$('.icon-pencil').remove();}
+  	)
+    
+    // Select widget
+    $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});
 
     // fix sub nav on scroll
     var $win = $(window)
@@ -66,7 +86,7 @@
 			delay: { show: 500, hide: 10 },
       selector: "[rel=tooltip]"
     })
-    $('.btn-group, .block, .thumbnail').tooltip({
+    $('.block, .thumbnail').tooltip({
       selector: "a[rel=tooltip]",
 			placement: "bottom"
     })
@@ -89,6 +109,8 @@
       })
       
     }
+    
+    // column collapse
     $('.btn-left').toggle(
     function () {
       $(this).html('<i class="icon-chevron-right icon-sm"></i>');
@@ -115,28 +137,55 @@
         }, 2000)
       })
 
-    // javascript build logic
-    var inputsComponent = $("#listed input");
-
 		// tour
     $('#tour').on('click', function (e) {
 			$('.pointsolight').prependTo('body');
     })
-
-		// remove a close item
-    $('.close').on('click', function (e) {
-			$(this).parent().remove();
+    
+    // add a comment
+    $('#folded').find('.reply').on('click', function (e) {
+			$(this).parent().after('<form class="form-horizontal tcenter"><hr><textarea class="span4"></textarea><input type="submit" class="btn pull-right" value="Reply"></form>');
+			return false;
     })
-    $('.btngroup .btn').button();
-  	
+    
+    
+    // remove a close item
+    $('#folded').find('[data-toggle=tab]').on('click', function (e) {
+			$('.nav-tabs').find('li').removeClass('active');
+    })
+    
+    $('.btngroup .btn').button()
 
-  })
-  
-  $('.datatable').dataTable({
-    "bPaginate": false,
-    "bFilter": true,
-    "bInfo": false,
-    "bAutoWidth": true
+    // datepicker
+    $('[rel=datepicker]').datepicker({
+      format: 'mm-dd-yyyy'
+    })
+
+    // colorpicker
+    $('[rel=colorpicker]').colorpicker({
+  		format: 'hex'
+  	})
+
+    // datagrid
+    $('table.datatable').dataTable({
+      "bPaginate": false,
+      "bFilter": true,
+      "bInfo": false,
+      "bAutoWidth": true
+    })
+
+  	$('.block').hover( function () {
+  	    $(this).find('.actions .btn').toggleClass('btn-success');
+  	    $(this).find('.actions .btn.btn-success').css('color','#fff');
+  	    return false;
+  	})
+
+    // editable example
+    $('.dblclick, .ePriority, .eStatus').hover( 
+      function () {$(this).before('<span class="span2"><i class="icon-pencil icon-sm"></i></span>');},
+      function () {$('.icon-pencil').remove();}
+  	)
+  	
   })
   
   // toggle module search (needs tap logic for mobile)
@@ -151,51 +200,10 @@
 	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
 	    return false;
 	})
+  $('#moduleTwitter.filtered input').quicksearch('#moduleTwitter article')
   $('#moduleLog.filtered input').quicksearch('#moduleLog article')
   $('#moduleRelated.filtered input').quicksearch('#moduleRelated article')
   $('#moduleActivity.filtered input').quicksearch('#moduleActivity article')
-
-
-	$('.block').hover( function () {
-	    $(this).find('.actions .btn').toggleClass('btn-success');
-	    $(this).find('.actions .btn.btn-success').css('color','#fff');
-	    return false;
-	})
+  $('#moduleActivity.filtered input').quicksearch('#moduleActivity .results li')
   
-  $('.dblclick, .ePriority, .eStatus').hover( 
-    function () {$(this).before('<span class="span2"><i class="icon-pencil icon-sm"></i></span>');},
-    function () {$('.icon-pencil').remove();}
-	)
-
-// Modified from the original jsonpi https://github.com/benvinegar/jquery-jsonpi
-$.ajaxTransport('jsonpi', function(opts, originalOptions, jqXHR) {
-  var url = opts.url;
-
-  return {
-    send: function(_, completeCallback) {
-      var name = 'jQuery_iframe_' + jQuery.now()
-        , iframe, form
-
-      iframe = $('<iframe>')
-        .attr('name', name)
-        .appendTo('head')
-
-      form = $('<form>')
-        .attr('method', opts.type) // GET or POST
-        .attr('action', url)
-        .attr('target', name)
-
-      $.each(opts.params, function(k, v) {
-
-        $('<input>')
-          .attr('type', 'hide')
-          .attr('name', k)
-          .attr('value', typeof v == 'string' ? v : JSON.stringify(v))
-          .appendTo(form)
-      })
-
-      form.appendTo('body').submit()
-    }
-  }
-})
 }(window.jQuery)
