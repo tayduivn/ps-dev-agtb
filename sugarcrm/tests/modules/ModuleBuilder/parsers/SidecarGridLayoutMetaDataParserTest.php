@@ -36,7 +36,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $GLOBALS['current_user']->is_admin = true;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = array();
-        $this->_parser = new PortalGridLayoutMetaDataParserTestDerivative(MB_PORTALEDITVIEW, 'Leads') ;
+        $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(MB_PORTALEDITVIEW, 'Leads') ;
     }
 
     public function tearDown()
@@ -261,7 +261,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 
 
 /**
- * Using derived helper class from PortalGridLayoutMetaDataParser to test canonical/internal
+ * Using derived helper class from SidecarGridLayoutMetaDataParser to test canonical/internal
  * format conversions without saving the file.
  *
  * lifted from SearchViewMDPTest
