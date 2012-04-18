@@ -99,6 +99,9 @@ SUGAR.ajaxUI = {
                 if(rt != null){
                     rt.innerHTML = r.responseTime;
                 }
+                else if(typeof(logoStats) != "undefined"){
+                	$("#logo").attr("title", logoStats.replace(/[\d]+\.[\d]+/, r.responseTime)).tipTip({maxWidth: "auto", edgeOffset: 10});
+                }
             }
         } catch (e){
             SUGAR.ajaxUI.showErrorMessage(o.responseText);

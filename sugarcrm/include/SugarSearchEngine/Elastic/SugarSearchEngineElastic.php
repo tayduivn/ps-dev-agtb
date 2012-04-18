@@ -136,11 +136,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     }
 
-    public function flush()
-    {
-
-    }
-
     public function delete(SugarBean $bean)
     {
         if(empty($bean->id))

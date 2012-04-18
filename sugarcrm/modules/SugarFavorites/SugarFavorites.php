@@ -95,10 +95,7 @@ class SugarFavorites extends Basic
 		return !empty($focus->id);
 	}
 
-	public static function getUserFavoritesByModule(
-	    $module = '',
-	    User $user = null
-	    )
+	public static function getUserFavoritesByModule($module = '', User $user = null, $orderBy = "", $limit = -1)
 	{
 	    if ( empty($user) )
 	        $where = " sugarfavorites.assigned_user_id = '{$GLOBALS['current_user']->id}' ";
@@ -112,7 +109,7 @@ class SugarFavorites extends Basic
                 $where .= " AND sugarfavorites.module = '$module' ";
         
         $focus = new SugarFavorites;
-		$response = $focus->get_list("",$where);
+		$response = $focus->get_list($orderBy,$where,0,$limit);
 	    
 	    return $response['list'];
 	}
