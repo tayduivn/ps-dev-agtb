@@ -354,6 +354,8 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
   'products' => array(
       'name' => 'products',
       'type' => 'link',
+      'link_file' => 'modules/Products/AccountLink.php',
+      'link_class' => 'AccountLink',
       'relationship' => 'products_accounts',
       'source' => 'non-db',
       'vname' => 'LBL_PRODUCTS',
