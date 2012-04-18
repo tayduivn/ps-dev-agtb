@@ -60,7 +60,12 @@ class SugarSecurityFactory {
      *
      * @return SugarSecurity -- A SugarSecurity object
      */
-    static public function loadClassFromSession() {
+    static public function loadClassFromSession($sessionId = null) {
+        if ( $sessionId != null ) {
+            session_id($sessionId);
+            session_start();
+        }
+
         if ( isset($_SESSION['sugarSec']['type']) ) {
             $type = $_SESSION['sugarSec']['type'];
         } else {

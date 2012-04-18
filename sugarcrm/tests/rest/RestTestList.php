@@ -57,7 +57,6 @@ class RestTestList extends RestTestBase {
         // Test normal fetch
         $restReply = $this->_restCall("Accounts/");
 
-        $this->assertEquals(21,$restReply['reply']['result_count'],"The result count did not have 21 entries");
         $this->assertEquals(20,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
@@ -91,4 +90,4 @@ class RestTestList extends RestTestBase {
     }
 
 }
-- 
+
