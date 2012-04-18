@@ -1,85 +1,39 @@
 describe("Controller", function() {
-    var controller = SUGAR.App.controller,
-        layoutManager = SUGAR.App.layout,
-        dataManager = SUGAR.App.data;
+    var app = SUGAR.App;
     var server;
 
-    SUGAR.App.init({el: "body"});
+describe("when a route is matched", function() {
 
-    describe("when a route is matched", function() {
-        var params, layout, dataMan, layoutMan, layoutSpy, dataSpy, layoutMock, collectionSpy;
+    beforeEach(function() {
+        server = sinon.fakeServer.create();
+    });
 
-        beforeEach(function() {
-            params = {
-                module: "main",
-                url: "test/url",
-                id: "1234"
+    afterEach(function() {
+        if (server && server.restore) server.restore();
+    });
+
+    it("should load the view properly", function() {
+            var params = {
+                module: "Contacts",
+                layout: "list"
             };
 
-            // Overload the data manager
-            dataMan = {
-                createBean: function() {
-                    return new SUGAR.App.Bean;
-                },
-                createBeanCollection: function() {
-                    return new SUGAR.App.BeanCollection;
-                }
-            };
+            var mock = sinon.mock(app.controller.$el);
+            var expection = mock.expects("html");
 
-            // Overload the layout manager
-            layoutMan = {
-                get: function() {
-                    return layout;
-                },
-                render: function() {
-                }
-            };
+            server.respondWith("GET", "/rest/v10/Contacts",
+                [200, {  "Content-Type":"application/json"},
+                    JSON.stringify(fixtures.api["rest/v10/contact"].GET.response)]);
 
-            layout = {
-                render: function() {},
-                getFields : function(){}
-            };
 
-            layoutSpy = sinon.spy(layoutMan, "get");
-            layoutMock = sinon.mock(layout);
-            dataSpy = sinon.spy(dataMan, "createBean");
-            collectionSpy = sinon.spy(dataMan, "createBeanCollection");
-
-            SUGAR.App.layout = layoutMan;
-            SUGAR.App.data = dataMan;
-            //TODO dont pass in SUGAR.App
-            controller.initialize(SUGAR.App);
-            controller.setElement("body");
-        });
-
-        afterEach(function() {
-            SUGAR.App.layout = layoutManager;
-            SUGAR.App.data = dataManager;
-            if (server && server.restore) server.restore();
-        });
-
-        xit("should load the view properly", function() {
-            server = sinon.fakeServer.create();
-            layoutMock.expects("render");
-
-            controller.loadView(params);
+            app.controller.loadView(params);
             server.respond();
-            // Check to make sure it loads the proper data
-            expect(dataSpy).toHaveBeenCalled();
-            expect(collectionSpy).toHaveBeenCalled();
-            //expect(_.isEmpty(controller.context.get("model"))).toBeFalsy();
 
-            // Check to make sure we have set the context
-            expect(controller.context).toBeDefined();
-            expect(controller.context.get("module")).toEqual("main");
-            expect(controller.context.get("url")).toEqual("test/url");
+            expect(app.controller.layout).toBeDefined();
+            expect(app.controller.layout instanceof Backbone.View).toBeTruthy();
+            expect(app.controller.context.get().collection).toBeDefined();
 
-            // Check to make sure we have loaded a layout
-            expect(controller.layout).toBeDefined();
-            expect(layoutSpy).toHaveBeenCalled();
-            layoutMock.verify();
-
-
+            mock.verify();
         });
     });
 });
