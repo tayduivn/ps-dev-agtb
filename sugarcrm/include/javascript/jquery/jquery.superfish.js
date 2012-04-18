@@ -38,7 +38,10 @@
 
             if($$.parent().hasClass("hs-active")) {
                 //Bug#51993: deactive submenu while hoverscroll is activated
-                return;
+                //return;
+                $$.addClass("iefix");
+            } else {
+                $$.removeClass("iefix");
             }
 
             if (!o.firstOnClick || menuActive || $$.parent()[0] != menu)
@@ -219,7 +222,7 @@
      *              if $ul is not given, it will restore back to the original structure
      */
     sf.IEfix = function($ul) {
-        if ($.browser.msie && $.browser.version > 6) {
+        if ( ($.browser.msie && $.browser.version > 6) || $(this).hasClass("iefix") ) {
             if($ul) {
                 //Take out the element out of the fixed box model,
                 //and then append it into the end of body container
