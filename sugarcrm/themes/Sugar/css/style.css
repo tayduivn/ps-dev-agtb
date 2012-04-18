@@ -6097,16 +6097,17 @@ margin-left:10px;
 	-moz-box-shadow:inset 0 1px 1px #999;
 	box-shadow:inset 0 1px 1px #999;
     background: #fff url(../../../../index.php?entryPoint=getImage&imageName=search.png) 5px 6px no-repeat;
-    left: -10px;
+    float:right;
+    margin:0 10px 0 0;
 }
 
 #spot_search_btn {
-    width: 10px;
+    width: 12px;
     height: 20px;
     cursor: pointer;
     display: block;
     top:5px;
-    left: 5px;
+    left: 24px;
     position: absolute;
     *font-size:30px;
 }
@@ -6141,16 +6142,21 @@ input#sugar_spot_search:focus {
     max-height: 600px;
     min-height: 30px;
     overflow: auto;
+    width:360px;
+    /*IE hack since box-shadow is not supported*/
+    border-color:#999\9;
+    border-style:solid\9;
+    border-width:1px\9;
 }
 
 #sugar_spot_search_results section {
 
 }
 
-#sugar_full_search_results section.odd {
+#sugar_full_search_results .odd {
 	background-color: #efefef;	
 }
-
+#sugar_spot_search_results .resultTitle, #sugar_full_search_results .resultTitle,
 #sugar_spot_search_results section .resultTitle, #sugar_full_search_results section .resultTitle{
     float:left;
     color:#666;
@@ -6164,45 +6170,48 @@ input#sugar_spot_search:focus {
 
 
 
-#sugar_spot_search_results section .desc, #sugar_full_search_results section .desc {
+#sugar_spot_search_results .desc, #sugar_full_search_results .desc {
 	color: #aaa;
 }
 
 
-#sugar_spot_search_results section.resultNull {   
+#sugar_spot_search_results .resultNull {
 	 text-align:center;
 	 color: #666;
 }
 
-#sugar_spot_search_results section.resultNull h1 {
+#sugar_spot_search_results .resultNull h1 {
     font-weight:normal;
     margin-bottom:5px;
 }
 
 
 
-#sugar_spot_search_results section.resultNull a {
+#sugar_spot_search_results .resultNull a {
     text-decoration:none;
 }
-
+#sugar_spot_search_results ul,#sugar_full_search_results ul,
 #sugar_spot_search_results section ul, #sugar_full_search_results section ul {
-    width:155px;
+    width:230px;
     line-height:20px;
     padding:0 0 25px 10px;
     float:left;
 	margin: 0px;
 }
 
+#sugar_spot_search_results ul li, #sugar_full_search_results ul li,
 #sugar_spot_search_results section ul li, #sugar_full_search_results section ul li  {
     list-style: none;
     margin-bottom:7px;
 }
 
+#sugar_spot_search_results ul li a, #sugar_full_search_results ul li a,
 #sugar_spot_search_results section ul li a, #sugar_full_search_results section ul li a {
     color:#006BB9;
     text-decoration:none;
 }
 
+#sugar_spot_search_results ul li a:hover, #sugar_full_search_results ul li a:hover,
 #sugar_spot_search_results section ul li a:hover, #sugar_full_search_results section ul li a:hover {
     text-decoration:underline;
 }
@@ -6225,10 +6234,10 @@ margin-top: 14px;
 }
 
 #close_spot_search {
-display: inline-block;	
-position: relative;
-left: -18px;
-top: 1px;
+display: block;
+position: absolute;
+right: 12px;
+top: 6px;
 display: none;
 cursor: pointer;
 }
