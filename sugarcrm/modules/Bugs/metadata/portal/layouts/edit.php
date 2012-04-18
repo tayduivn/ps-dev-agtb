@@ -5,6 +5,10 @@ $viewdefs['Bugs']['portal']['layout']['edit'] = array(
     array(
         0 =>
         array(
+            'view' => 'header',
+        ),
+        1 =>
+        array(
             'view' => 'edit',
         ),
     ),

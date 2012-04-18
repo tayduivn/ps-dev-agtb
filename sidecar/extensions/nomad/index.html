@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="shortcut icon" href="images/avatar_16.png">
-    <link rel="apple-touch-icon" href="images/badge.png">
-    <link rel="apple-touch-icon-precomposed" href="images/badge.png">
+    <!--<link rel="shortcut icon" href="img/avatar_16.png">-->
+    <link rel="apple-touch-icon" href="img/badge.png">
+    <link rel="apple-touch-icon-precomposed" href="img/badge.png">
 
     <script src="../../lib/zepto/zepto.js"></script>
     <script src="../../lib/zepto/event.js"></script>
@@ -48,19 +48,26 @@
     <script src='../../src/view/view.js'></script>
     <script src='../../src/view/layout.js'></script>
     <script src='../../src/view/field.js'></script>
-    <!--<script src='../../src/view/views/list-view.js'></script>-->
-    <!--<script src='../../src/view/layouts/columns-layout.js'></script>-->
-    <!--<script src='../../src/view/layouts/fluid-layout.js'></script>-->
+
+    <script src='layouts/list-layout.js'></script>
+    <script src='views/list-view.js'></script>
 
     <!-- Pre-compiled templates -->
-    <script src='compiled/login.js'></script>
+    <!-- Fields -->
     <script src='compiled/login-username.js'></script>
     <script src='compiled/login-password.js'></script>
     <script src='compiled/login-url.js'></script>
+    <script src='compiled/list-text.js'></script>
+    <script src='compiled/list-int.js'></script>
+    <script src='compiled/list-name.js'></script>
+    <!-- Buttons -->
     <script src='compiled/login-loginButton.js'></script>
+    <!-- Views -->
+    <script src='compiled/login.js'></script>
+    <script src='compiled/list.js'></script>
 
     <!-- Controllers for views and fields -->
-    <script src='views/login.js'></script>
+    <script src='templates/login.js'></script>
 
     <script src='nomad.js'></script>
     <script src='meta-bootstrap.js'></script>
@@ -71,8 +78,8 @@
     <!--<script language="javascript" src="../../lib/sugarapi/demoServerData.js"></script>-->
     <!--<script language="javascript" src="../../lib/sugarapi/demoRestServer.js"></script>-->
 
-    <link href="css/mobile.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
+    <link href="css/bootstrap-mobile.css" rel="stylesheet">
+    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>-->
     <!--<script src="../js/stal.js"></script>-->
 
     <script language="javascript">

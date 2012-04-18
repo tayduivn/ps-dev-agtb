@@ -1,54 +1,68 @@
 <?php
-$viewdefs['Bugs']['portal']['view']['detail'] = array(
-    'buttons' =>
+$viewdefs ['Bugs']['portal']['view']['detail'] =
     array(
-        0 =>
+        'templateMeta' =>
         array(
-            'name' => 'edit_button',
-            'type' => 'button',
-            'label' => 'Edit',
-            'value' => 'edit',
-            'route' =>
+            'maxColumns' => '2',
+            'widths' =>
             array(
-                'action' => 'edit',
-            ),
-            'primary' => true,
-        ),
-    ),
-    'panels' =>
-    array(
-        0 =>
-        array(
-            'label' => 'Details',
-            'fields' =>
-            array(
-                0 =>
                 array(
-                    'name' => 'bug_number',
-                    'label' => 'Bug Number',
-                    'class' => 'foo',
+                    'label' => '10',
+                    'field' => '30',
                 ),
-                1 =>
                 array(
-                    'name' => 'name',
-                    'label' => 'Name',
-                ),
-                2 =>
-                array(
-                    'name' => 'status',
-                    'label' => 'Status',
-                ),
-                3 =>
-                array(
-                    'name' => 'description',
-                    'label' => 'Description',
-                ),
-                4 =>
-                array(
-                    'name' => 'date_modified',
-                    'label' => 'Modifed Date',
+                    'label' => '10',
+                    'field' => '30',
                 ),
             ),
+            'useTabs' => false,
         ),
-    ),
-);
+        'panels' =>
+        array(
+            array(
+                'label' => 'default',
+                'fields' =>
+                array(
+                    array(
+                        'name' => 'bug_number',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                    'status',
+                    'priority',
+                    'source',
+                    'product_category',
+                    'resolution',
+                    'type',
+                    'date_modified',
+                    'modified_by_name',
+                    'created_by_name',
+                    'date_entered',
+                    array(
+                        'name' => 'name',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                    array(
+                        'name' => 'description',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                    array(
+                        'name' => 'work_log',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    );
+?>

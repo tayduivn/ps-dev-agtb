@@ -96,7 +96,7 @@ $buttons = array(
 	"<input title=".$app_strings['LBL_CANCEL_BUTTON_TITLE']."
 		class='button cancel_button' accessKey=".$app_strings['LBL_CANCEL_BUTTON_KEY']."
 		type='submit' name='save' value=".$app_strings['LBL_CANCEL_BUTTON_LABEL']."
-		onclick=\"document.EditView.action.value='".$return['action']."';document.EditView.module.value='".$return['module']."';document.EditView.record.value='".$return['module']."';document.EditView.submit();\">",
+		onclick=\"document.EditView.action.value='".$return['action']."';document.EditView.module.value='".$return['module']."';document.EditView.record.value='".$return['record']."';document.EditView.submit();\">",
 );
 
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');

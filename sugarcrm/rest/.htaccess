@@ -1,8 +1,0 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    Options +FollowSymLinks
-    RewriteEngine On
-    RewriteRule ^(.*)$ ../api/rest.php?__sugar_url=$1 [L,QSA]
-</IfModule>

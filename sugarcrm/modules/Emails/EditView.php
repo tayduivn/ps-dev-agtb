@@ -568,19 +568,19 @@ if(!ACLController::checkAccess('Contacts', 'list', true)){
 
 $change_to_addrs_button = '<input type="button" name="to_button" tabindex="3" class="button" '
 	. 'title="' . $app_strings['LBL_SELECT_BUTTON_TITLE'] . '" '
-	. 'value="'	. $mod_strings['LBL_EMAIL_SELECTOR'] . '" '
+	. 'value="'	. $mod_strings['LBL_EMAIL_SELECTOR_SELECT'] . '" '
 	. "onclick='button_change_onclick(this);' $button_attr />\n";
 $xtpl->assign("CHANGE_TO_ADDRS_BUTTON", $change_to_addrs_button);
 
 $change_cc_addrs_button = '<input type="button" name="cc_button" tabindex="3" class="button" '
 	. 'title="' . $app_strings['LBL_SELECT_BUTTON_TITLE'] . '" '
-	. 'value="'	. $mod_strings['LBL_EMAIL_SELECTOR'] . '" '
+	. 'value="'	. $mod_strings['LBL_EMAIL_SELECTOR_SELECT'] . '" '
 	. "onclick='button_change_onclick(this);' $button_attr />\n";
 $xtpl->assign("CHANGE_CC_ADDRS_BUTTON", $change_cc_addrs_button);
 
 $change_bcc_addrs_button = '<input type="button" name="bcc_button" tabindex="3" class="button" '
 	. 'title="' . $app_strings['LBL_SELECT_BUTTON_TITLE'] . '" '
-	. 'value="'	. $mod_strings['LBL_EMAIL_SELECTOR'] . '" '
+	. 'value="'	. $mod_strings['LBL_EMAIL_SELECTOR_SELECT'] . '" '
 	. "onclick='button_change_onclick(this);' $button_attr />\n";
 $xtpl->assign("CHANGE_BCC_ADDRS_BUTTON", $change_bcc_addrs_button);
 

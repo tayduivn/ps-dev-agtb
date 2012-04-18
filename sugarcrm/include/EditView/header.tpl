@@ -79,7 +79,7 @@
 {{sugar_button module="$module" id="Audit" view="$view" form_id="$form_id" appendTo="header_buttons"}}
 {{/if}}
 {{/if}}
-{{sugar_action_menu buttons=$header_buttons class="fancymenu" theme="Classic"}}
+{{sugar_action_menu buttons=$header_buttons class="fancymenu" flat=true}}
 </td>
 <td align='right'>{{$ADMIN_EDIT}}
 {{if $panelCount == 0}}

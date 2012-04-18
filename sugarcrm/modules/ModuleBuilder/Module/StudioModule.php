@@ -50,7 +50,9 @@ class StudioModule
         $this->name = isset ( $moduleNames [ strtolower ( $module ) ] ) ? $moduleNames [ strtolower ( $module ) ] : strtolower ( $module ) ;
         $this->module = $module ;
         $this->seed = BeanFactory::getBean($this->module);
-        $this->fields = $this->seed->field_defs ;
+        if($this->seed) {
+            $this->fields = $this->seed->field_defs;
+        }
         //$GLOBALS['log']->debug ( get_class($this)."->__construct($module): ".print_r($this->fields,true) ) ;
     }
 
@@ -337,7 +339,8 @@ class StudioModule
     	$nodes = array ( ) ;
         foreach ( $this->sources as $file => $def )
         {
-            if (file_exists ( "modules/{$this->module}/metadata/portal.$file" ))
+            $file = str_replace('viewdefs', '', $file);
+            if (file_exists ( "modules/{$this->module}/metadata/portal/views/$file" ))
             {
             	//$file = str_replace ( $file, '.php', '' ) ;
             	$nodes [] = array ( 

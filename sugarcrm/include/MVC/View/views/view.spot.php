@@ -70,11 +70,6 @@ class ViewSpot extends ViewAjax
         $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $ss->assign('queryEncoded', $query_encoded);
 
-        $ss->assign('ftsEnabled', false);
-        if(!is_a($searchEngine, "SugarSearchEngine")) {
-            $ss->assign('ftsEnabled', true);
-        }
-
         $template = 'include/SearchForm/tpls/SugarSpot.tpl';
         if(file_exists('custom/include/SearchForm/tpls/SugarSpot.tpl'))
         {
