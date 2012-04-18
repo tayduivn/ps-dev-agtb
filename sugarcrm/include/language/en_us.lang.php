@@ -2563,6 +2563,7 @@ $app_strings = array (
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
+    'LBL_MEETING_GO_BACK'=>'Go back to the meeting',
     'LBL_MEMBERS'=>'Members',
     'LBL_MEMBER_OF'=>'Member Of',
     'LBL_MODIFIED_BY_USER'=>'Modified by User',
