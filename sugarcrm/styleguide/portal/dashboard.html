@@ -47,10 +47,9 @@
           </ul>
           <div id="searchForm">
             <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+              <input type="text" class="search-query span3" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]"><a href="" class="btn"><i class="icon-search"></i></a> 
                 <a href="#adminSearch" class="pull-right advanced" data-toggle="modal" rel="tooltip" title="Advanced Search Options" id="searchAdvanced"><i class="icon-cog"></i></a>
             </form>
-
           </div>
         </div><!-- /.nav-collapse -->
       </div>
@@ -64,10 +63,10 @@
           <table class="table table-striped datatable">
             <thead>
               <tr>
-                <th class="span1">ID</th>
+                <th class="">ID</th>
                 <th class="span7">Title</th>
-                <th class="span2">Priority</th>
-                <th class="span2">Status</th>
+                <th class="">Priority</th>
+                <th class="">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -198,45 +197,64 @@
                 <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
           </form> 
           <div id="activity">
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> as a <a href="">Lead</a>.<br>
-                <date class="date">Posted just a second ago</date>
-              </p>
-            </article> 
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                <a href="/users/toreilly">Tim O'Reilly</a> made a <a href="">phone call</a> and <a href="">emailed</a> a <a href="">Purchase Order Statement</a>.<br>
-                <date class="date">Posted 2 days ago</date>
-              </p>
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="">SugarCRM Pricing</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-                <br>
-                <date class="date">Posted 4 days ago</date>
-              </p>
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                <a href="/users/toreilly">Tim O'Reilly</a> called and requested a <a href="">Pricing Sheet</a>.<br>
-                <date class="date">Posted 1 week ago</date>
-              </p>                   
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                <a href="/users/mitani">Majed Itani</a> added <a href="/users/toreilly">Tim O'Reilly</a> to an <a href="">opportunity</a> with <a href="">IBM</a>.
-                <br>
-                <date class="date">Posted 4 days ago</date>
-              </p>
-            </article>               
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                <a href="/users/mitani">Omair Ali</a> added <a href="/users/toreilly">Tim O'Reilly</a> as a <a href="">contact</a> and a <a href="">lead</a>
-                <br>
-                <date class="date">Posted 1 week ago</date>
-              </p>
-            </article>
+            <ul class="nav nav-tabs results">
+              <li>
+                <a href="#file1" data-toggle="tab"><span class="label label-file">File</span></a>
+                <p>
+                  Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                  <br>
+                  <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
+                </p>
+              </li>
+              <li>
+                <a href="#log1" data-toggle="tab"><span class="label label-log">Log</span></a>
+                <p>
+                  <a href=" profile_skhan.html">Sabra Khan</a> sent an email to <a href="contact_mark.html">Mark Edwin</a> titled <a href="">Let's do lunch</a>.
+                  <br>
+                  <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
+                </p>
+              </li>
+              <li>
+                <a href="#doc1" data-toggle="tab"><span class="label label-document">Document</span></a>
+                <p>
+                  <a href="#doc1" data-toggle="tab">Sales-document33.doc</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                  <br>
+                  <date class="date">Posted 6 hours ago at 9:00 am EST</date>
+                </p>
+              </li>
+              <li>
+                <a href="#note1" data-toggle="tab"><span class="label label-note">Note</span></a>
+                <p>
+                  <a href="#note1" data-toggle="tab">Note</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                  <br>
+                  <date class="date">Posted 2 days ago at 3:30 pm EST</date>
+                </p>
+              </li>
+              <li>
+                <a href="#lead1" data-toggle="tab"><span class="label label-lead">Lead</span></a>
+                <p>
+                  <a href="#lead1" data-toggle="tab">Perkin Kleiners - 100 Seats</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                  <br>
+                  <date class="date">Posted 3 days ago at 1:00 pm EST</date>
+                </p>
+              </li>
+              <li>
+                <a href="#contact1" data-toggle="tab"><span class="label label-contact">Contact</span></a>
+                <p>
+                  <a href="contact_mark.html">Mark Edwin</a>, CIO, added by <a href="profile_skhan.html">Sabra Khan</a>
+                  <br>
+                  <date class="date">Posted 3 days ago at 6:00 pm EST</date>
+                </p>
+              </li>   
+              <li>
+                <a href="#log2" data-toggle="tab"><span class="label label-log">Log</span></a>
+                <p>
+                  <a href=" profile_skhan.html">Sabra Khan</a> made an planned outbound call to <a href="contact_mark.html">Mark Edwin</a> for 30 mins.
+                  <br>
+                  <date class="date">Posted 2 days ago at 1:20 pm EST</date>
+                </p>
+              </li>
+            </ul>
             <div class="block-footer">
               <a href="" data-loading-text="Loading...">
                 Show more activity
