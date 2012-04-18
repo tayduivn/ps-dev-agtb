@@ -5,7 +5,7 @@ describe('Metadata Manager', function () {
 
     beforeEach(function () {
         //Load the metadata
-        app = sugarApp; // from spec-helper
+        app = SugarTest.app; 
         app.template.load(fixtures.metadata.viewTemplates);
         app.metadata.set(fixtures.metadata);
     });

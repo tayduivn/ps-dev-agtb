@@ -3,7 +3,7 @@ describe("Field", function() {
     var app, bean;
 
     beforeEach(function() {
-        app = sugarApp;
+        app = SugarTest.app;
         app.data.declareModel("Cases", fixtures.metadata.modules.Cases);
         bean = app.data.createBean("Cases");
     });

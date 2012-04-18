@@ -2,7 +2,7 @@ describe('app.cache', function () {
     var app;
 
     beforeEach(function () {
-        app = sugarApp; // from spec-helper
+        app = SugarTest.app; // from spec-helper
         app.cache.store = stash;
         app.cache.cutAll();
     });

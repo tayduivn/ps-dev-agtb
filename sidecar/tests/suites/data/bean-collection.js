@@ -4,7 +4,7 @@ describe("BeanCollection", function() {
         server;
 
     beforeEach(function() {
-        app = sugarApp; 
+        app = SugarTest.app; 
         app.config.maxQueryResult = 2;
         dm.reset();
         metadata = fixtures.metadata;

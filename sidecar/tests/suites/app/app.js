@@ -27,18 +27,18 @@ describe("App", function() {
     describe("when an instance is requested", function() {
 
         it("should return a new instance if none exists", function() {
-            expect(sugarApp).toBeTruthy();
+            expect(SugarTest.app).toBeTruthy();
         });
 
         it("should return an existing instance", function() {
             var app2 = SUGAR.App.init({el: "body"});
-            expect(app2).toEqual(sugarApp);
+            expect(app2).toEqual(SugarTest.app);
         });
 
         it("should fire a app:init event when initialized", function() {
             var cbSpy = sinon.spy(function() {});
-            sugarApp.events.on("app:init", cbSpy);
-            sugarApp.trigger("app:init", this, {modules: cbSpy});
+            SugarTest.app.events.on("app:init", cbSpy);
+            SugarTest.app.trigger("app:init", this, {modules: cbSpy});
             expect(cbSpy).toHaveBeenCalled();
         });
     });
@@ -53,7 +53,7 @@ describe("App", function() {
             mock = sinon.mock(module);
 
             mock.expects("init").once();
-            sugarApp.augment("test", module, true);
+            SugarTest.app.augment("test", module, true);
 
             expect(mock.verify()).toBeTruthy();
         });
@@ -65,10 +65,10 @@ describe("App", function() {
                 SugarTest.setWaitFlag();
             });
 
-            sugarApp.events.off("app:sync:complete"); // clear the app sync complete events
-            sugarApp.on("app:sync:complete", cbSpy);
+            SugarTest.app.events.off("app:sync:complete"); // clear the app sync complete events
+            SugarTest.app.on("app:sync:complete", cbSpy);
 
-            sugarApp.sync();
+            SugarTest.app.sync();
             SugarTest.wait();
 
             runs(function() {
@@ -79,7 +79,7 @@ describe("App", function() {
         it('should start and call sync if authenticated', function() {
             var syncSpy = sinon.spy(SUGAR.App, 'sync');
 
-            sugarApp.start();
+            SugarTest.app.start();
             expect(syncSpy.called).toBeTruthy();
 
             SUGAR.App.sync.restore();
@@ -90,9 +90,9 @@ describe("App", function() {
                 SugarTest.setWaitFlag();
             });
 
-            sugarApp.on("app:sync:error", cbSpy);
+            SugarTest.app.on("app:sync:error", cbSpy);
             isGetMetadataSucceeded = false;
-            sugarApp.sync();
+            SugarTest.app.sync();
             SugarTest.wait();
 
             runs(function() {
@@ -106,11 +106,11 @@ describe("App", function() {
             action = "edit",
             options = {},
             context = {},
-            routerSpy = sinon.spy(sugarApp.router, "navigate");
+            routerSpy = sinon.spy(SugarTest.app.router, "navigate");
 
         model.set("id", "1234");
         model.module = "Contacts";
-        sugarApp.navigate(context, action, model, options);
+        SugarTest.app.navigate(context, action, model, options);
 
         expect(routerSpy).toHaveBeenCalled();
 

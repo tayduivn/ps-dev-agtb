@@ -3,7 +3,7 @@ describe("when a route is matched", function() {
     var app, server;
 
     beforeEach(function() {
-        app = sugarApp;
+        app = SugarTest.app;
         server = sinon.fakeServer.create();
     });
 

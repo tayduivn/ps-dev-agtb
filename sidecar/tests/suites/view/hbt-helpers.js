@@ -3,7 +3,7 @@ describe("Handlebars Helpers", function() {
     var app;
 
     beforeEach(function() {
-        app = sugarApp;
+        app = SugarTest.app;
     });
 
     // TODO: Create test for each helper

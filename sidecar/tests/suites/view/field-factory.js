@@ -7,7 +7,7 @@ describe("View Manager", function() {
         var bean, collection, context, view;
 
         beforeEach(function() {
-            app = sugarApp;
+            app = SugarTest.app;
 
             app.metadata.set(fixtures.metadata);
             app.data.declareModels(fixtures.metadata);

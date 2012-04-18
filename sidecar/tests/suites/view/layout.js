@@ -3,7 +3,7 @@ describe("View.Layout", function(){
     var context, bean, collection;
 
     beforeEach(function() {
-        app = sugarApp;
+        app = SugarTest.app;
         app.metadata.set(fixtures.metadata);
         bean = app.data.createBean("Contacts", {
             first_name: "Foo",

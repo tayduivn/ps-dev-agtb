@@ -2,7 +2,7 @@ describe('template', function() {
     var app;
 
     beforeEach(function() {
-        app = sugarApp;
+        app = SugarTest.app;
     });
 
     afterEach(function() {
