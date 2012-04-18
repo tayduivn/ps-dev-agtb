@@ -4,14 +4,9 @@
     </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group">
-        <div class="dropdown">
-          <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-          <ul class="dropdown-menu menu">
             {{#each meta.buttons}}
-                <li>{{field ../context ../this ../model}}</li>
+                {{field ../context ../this ../model}}
             {{/each}}
-          </ul>
-        </div>
       </div>
     </div>
 </div>
