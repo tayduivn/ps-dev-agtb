@@ -84,14 +84,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             sugar_die ( get_class ( $this ) . ": incorrect view variable for $view" ) ;
         }
 
-        //$viewdefs = $viewdefs [ self::$variableMap [ $view ] ] ;
         $viewdefs = $this->getDefsFromArray($viewdefs, $view);
-        if (! isset ( $viewdefs [ 'templateMeta' ] ))
-            sugar_die ( get_class ( $this ) . ": missing templateMeta section in layout definition (case sensitive)" ) ;
-
-        if (! isset ( $viewdefs [ 'panels' ] ))
-            sugar_die ( get_class ( $this ) . ": missing panels section in layout definition (case sensitive)" ) ;
-
+        $this->validateMetaData($viewdefs);
         $this->_viewdefs = $viewdefs ;
         if ($this->getMaxColumns () < 1)
             sugar_die ( get_class ( $this ) . ": maxColumns=" . $this->getMaxColumns () . " - must be greater than 0!" ) ;
@@ -100,6 +94,23 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         $this->_standardizeFieldLabels( $this->_fielddefs );
         $this->_viewdefs [ 'panels' ] = $this->_convertFromCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ; // put into our internal format
         $this->_originalViewDef = $this->getFieldsFromLayout($this->implementation->getOriginalViewdefs ());
+    }
+
+    /**
+     * Checks for necessary elements of the metadata array and fails the request
+     * if not found
+     *
+     * @param array $viewdefs The view defs being requested
+     * @return void
+     */
+    public function validateMetaData($viewdefs) {
+        if (!isset($viewdefs['templateMeta'])) {
+            sugar_die(get_class($this) . ': missing templateMeta section in layout definition (case sensitive)');
+        }
+
+        if (!isset($viewdefs['panels'])) {
+            sugar_die(get_class($this) . ': missing panels section in layout definition (case sensitive)');
+        }
     }
 
     public function hasViewVariable($viewdefs, $view) {

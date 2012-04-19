@@ -43,9 +43,9 @@ class ParserFactory
      * @return AbstractMetaDataParser
      */
 
-    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null )
+    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = null )
     {
-        $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName )" ) ;
+        $GLOBALS [ 'log' ]->debug ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
 		$sm = null;
         $lView = strtolower ( $view );
         if ( empty ( $packageName ) || ( $packageName == 'studio' ) )
@@ -66,6 +66,10 @@ class ParserFactory
             }
         }
 
+        require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+
+        $lView = MetaDataFiles::getMBConstantForView($lView, $client);
+
         switch ( $lView)
         {
             case MB_EDITVIEW :
@@ -78,12 +82,12 @@ class ParserFactory
             case MB_WIRELESSDETAILVIEW :
             case MB_PORTALDETAILVIEW:
             case MB_PORTALEDITVIEW:
-                require_once 'modules/ModuleBuilder/parsers/views/WirelessGridLayoutMetaDataParser.php' ;
-                return new WirelessGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
+                return new SidecarGridLayoutMetaDataParser($lview, $moduleName, $packageName);
             case MB_WIRELESSLISTVIEW:
             case MB_PORTALLISTVIEW:
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
-                return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName);
+                return new SidecarListLayoutMetaDataParser($lview, $moduleName, $packageName);
             //END SUGARCRM flav=pro || flav=sales ONLY
             case MB_BASICSEARCH :
             case MB_ADVANCEDSEARCH :

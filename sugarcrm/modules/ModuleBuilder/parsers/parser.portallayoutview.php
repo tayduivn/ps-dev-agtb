@@ -57,10 +57,12 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
      */
     function init($module, $view, $submittedLayout = false)
     {
+        $viewType = strtolower(str_ireplace('view', '', $view));
         $GLOBALS['log']->debug("in ParserPortalLayoutView");
-        $file = "modules/{$module}/metadata/portal." . strtolower($view) . "defs.php";
-        $this->_customFile = "custom/" . $file;
-        $this->_workingFile = "custom/working/" . $file;
+        //$file = "modules/{$module}/metadata/portal." . strtolower($view) . "defs.php";
+        $file = 'modules/' . $module . '/metadata/portal/layouts/' . $viewType . '.php';
+        $this->_customFile = MetaDataFiles::PATHCUSTOM . $file;
+        $this->_workingFile = MetaDataFiles::PATHWORKING . $file;
         $this->_sourceFile = $file;
         $this->_module = $module;
         $this->_view = $view;

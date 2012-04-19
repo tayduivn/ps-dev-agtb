@@ -83,6 +83,16 @@ class MetaDataFiles
         MB_EDITVIEW    => 'EditView' ,
     	MB_DETAILVIEW  => 'DetailView' ,
     	MB_QUICKCREATE => 'QuickCreate',
+
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
+        MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
+        //END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALEDITVIEW => array('portal','view','edit'),
+        MB_PORTALDETAILVIEW => array('portal','view','detail'),
+        //END SUGARCRM flav=ent ONLY
+
     );
 
     /**
@@ -155,11 +165,11 @@ class MetaDataFiles
      */
     public static function getViewClient($view) {
         if (!empty($view)) {
-            if (strpos($view, 'portal') !== false) {
+            if (stripos($view, 'portal') !== false) {
                 return 'portal';
             }
 
-            if (strpos($view, 'wireless') !== false || strpos($view, 'mobile') !== false) {
+            if (stripos($view, 'wireless') !== false || stripos($view, 'mobile') !== false) {
                 return 'mobile';
             }
 
@@ -168,6 +178,55 @@ class MetaDataFiles
 
         return '';
     }
+
+    /**
+     * helper to give us a parameterized path to create viewdefs for saving to file
+     * @param string | array $path (path of keys to use for array)
+     * @param mixed $data the data to place at that path
+     * @return array the data in the correct path
+     */
+    public static function mapPathToArray($path, $data)
+    {
+        if (!is_array($path)) {
+            return array($path => $data);
+        }
+
+        $arr = $data;
+        while($key = array_pop($path)) {
+            $arr = array($key => $arr);
+        }
+        return $arr;
+    }
+
+    /**
+     * helper to give us a parameterized path find our data from our viewdefs
+     * @param string | array $path (path of keys to use for array)
+     * @param mixed $arr the array to search for the path
+     * @return array| null the data in the correct path or null if a key isn't found.
+     */
+    public static function mapArrayToPath($path, $arr)
+    {
+        if (!is_array($arr)) {
+            return NULL;
+        }
+
+        if (!is_array($path)) {
+            return (isset($arr[$path]) ? $arr[$path] : NULL);
+        }
+
+        // traverse the array for our path
+        $out = &$arr;
+        foreach ($path as $key) {
+            if (!isset($out[$key])) {
+                return NULL;
+            }
+
+            $out = $out[$key];
+        }
+        return $out;
+    }
+
+
 
     /**
      * Gets the list of view def array variable names
@@ -285,5 +344,85 @@ class MetaDataFiles
                 $mb = new ModuleBuilder();
                 return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/metadata/' . $viewPath . $names[$view] . '.php';
         }
+    }
+
+    public static function getModuleMetaDataDefsWithReplacements($module, $defs) {
+        if (!$module instanceof SugarBean) {
+            $module = BeanFactory::getBean($module);
+        }
+        $replacements = array(
+			"<object_name>"  => $module->object_name,
+			"<_object_name>" => strtolower($module->object_name),
+			"<OBJECT_NAME>"  => strtoupper($module->object_name),
+			"<module_name>"  => $module->module_dir,
+			'<_module_name>' => strtolower($module->module_dir),
+		);
+		return self::recursiveVariableReplace($defs, $replacements);
+    }
+
+    public static function recursiveVariableReplace($source, $replacements) {
+        $ret = array();
+		foreach ($source as $key => $val) {
+			if (is_array($val)) {
+	            $newkey = $key;
+                $val = self::recursiveVariableReplace($val, $replacements);
+	            $newkey = str_replace(array_keys($replacements), $replacements, $newkey);
+	            $ret[$newkey] = $val;
+	        } else {
+                $newkey = $key;
+			    $newval = $val;
+                if(is_string($val)) {
+                    $newkey = str_replace(array_keys($replacements), $replacements, $newkey);
+                    $newval = str_replace(array_keys($replacements), $replacements, $newval);
+                }
+                $ret[$newkey] = $newval;
+			}
+        }
+		return $ret;
+    }
+
+    /**
+     * @param $view
+     * @return mixed
+     * hack for portal to use its own constants
+     */
+    public static function getMBConstantForView($view, $client = "base")
+    {
+        // Sometimes client is set to a defined null
+        if (empty($client)) {
+            $client = 'base';
+        }
+
+        $map = array(
+            //BEGIN SUGARCRM flav=ent ONLY
+            "portal" => array(
+                'edit' => MB_PORTALEDITVIEW,
+                'detail' => MB_PORTALDETAILVIEW,
+                'search' => MB_PORTALSEARCHVIEW,
+                'list' => MB_PORTALLISTVIEW
+            ),
+            //END SUGARCRM flav=ent ONLY
+            'mobile' => array(
+                'edit' => MB_WIRELESSEDITVIEW,
+                'detail' => MB_WIRELESSDETAILVIEW,
+                'list' => MB_WIRELESSLISTVIEW
+            ),
+            "base" => array(
+                'edit' => MB_EDITVIEW,
+                'detail' => MB_DETAILVIEW,
+                'advanced_search' => MB_ADVANCEDSEARCH,
+                'basic_search' => MB_BASICSEARCH,
+                'list' => MB_LISTVIEW,
+            ),
+        );
+
+        // view variable sent to the factory has changed: remove 'view' suffix
+        // in case of further change
+        $view = strtolower($view);
+        if (substr_compare($view,'view',-4) === 0) {
+            $view = substr($view,0,-4);
+        }
+
+        return isset($map[$client][$view]) ? $map[$client][$view] : $view;
     }
 }

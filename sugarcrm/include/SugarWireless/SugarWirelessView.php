@@ -89,6 +89,38 @@ class SugarWirelessView extends SugarView
         $this->ss->assign('VIEW', $this->action);
     }
 
+    public function getMetaDataFileFallback($view, $moduleName) {
+        $view = strtolower($view);
+        require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
+        $module = new StudioModule($moduleName);
+
+        // If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
+        $metadataPath = 'include/SugarObjects/templates/' . $module->getType () . '/metadata/';
+        $filename =  $metadataPath . 'mobile/views/' . str_replace(array('wireless', 'view'), '', $view) . '.php';
+
+        // Last ditch effort here, using the old old system
+        if (!file_exists($filename)) {
+            // Special case wireless search
+            if (preg_match('#wireless_(.+)_search#', $view)) {
+                $filename = $metadataPath . 'wireless.searchdefs.php';
+            } else {
+                $wireless = strpos($view, 'wireless') !== false;
+                $viewType = str_replace('wireless', '', $view);
+                foreach ($module->sources as $fname => $defs) {
+                    if (isset($defs['type']) && $defs['type'] == $viewType) {
+                        if ($wireless) {
+                            $fname = 'wireless.' . $fname;
+                        }
+                        $filename = $metadataPath . $fname;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $filename;
+    }
+
     protected function wl_get_metadata_location( $view ) {
 
     	require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
@@ -96,13 +128,8 @@ class SugarWirelessView extends SugarView
 
  	    if (!file_exists ( $filename ) ) {
  	    	$filename = DeployedMetaDataImplementation::getFileName ( $view, $GLOBALS['module'] , MB_BASEMETADATALOCATION ) ;
- 	    	if (!file_exists($filename))
- 	    	{
- 	    		require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
-				$module = new StudioModule ( $GLOBALS['module'] ) ;
-
- 	    		// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
-				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/mobile/views/' . basename( $filename ) ;
+ 	    	if (!file_exists($filename)) {
+                $filename = $this->getMetaDataFileFallback($view, $GLOBALS['module']);
  			}
  		}
 
@@ -287,12 +314,16 @@ class SugarWirelessView extends SugarView
 
 			if (!file_exists($filename))
  	    	{
+                /*
  	    		require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
 				$module = new StudioModule ( $this->module ) ;
 
  	    		// If we're missing a wireless view we fallback on a template, sourced from SugarObjects
 				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/mobile/views/' . basename( $filename ) ;
 				$module_name = '<module_name>' ;
+                */
+                $filename = $this->getMetaDataFileFallback($view, $module_name);
+                $module_name = '<module_name>';
  	    	}
  	    }
 
@@ -311,14 +342,28 @@ class SugarWirelessView extends SugarView
 
  	    $GLOBALS['log']->debug( get_class($this)."->bean_details($view): loading viewdefs from $filename, with module_name=$module_name" ) ;
 
- 	    require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
- 	    require $filename ;
+        $path = 'modules/ModuleBuilder/parsers/views/';
+        $oldstyle = strpos($filename, 'wireless.') !== false;
+ 	    if ($oldstyle) {
+            require_once $path . 'GridLayoutMetaDataParser.php';
+        } else {
+            require_once $path . 'SidecarGridLayoutMetaDataParser.php';
+            $parser = new SidecarGridLayoutMetaDataParser($view, $module_name);
+        }
 
-		if ( !isset($viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ])
-				&& strtolower( $view ) == MB_WIRELESSDETAILVIEW )
-			$panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ MB_WIRELESSEDITVIEW ] ]['panels'];
-		else
- 	    	$panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ]['panels'];
+        require $filename;
+
+        if ($oldstyle) {
+            if ( !isset($viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ])
+                    && strtolower( $view ) == MB_WIRELESSDETAILVIEW )
+                $panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ MB_WIRELESSEDITVIEW ] ]['panels'];
+            else
+                $panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ]['panels'];
+        } else {
+            $viewdefs = $parser->getDefsFromArray($viewdefs[$module_name], $view);
+            $panels = $viewdefs['panels'];
+        }
+
 // 	    $GLOBALS['log']->debug( get_class($this)."->bean_details($view): loaded these panels: ".print_r( $panels, true ) ) ;
 
 		// traverse through the wirelessviewdefs metadata to get the fields and values

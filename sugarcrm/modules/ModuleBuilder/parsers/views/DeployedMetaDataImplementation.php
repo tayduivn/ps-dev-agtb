@@ -86,6 +86,11 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 			}
 			if ( null !== $layout )
 			{
+                if (MB_WORKINGMETADATALOCATION == $type) {
+                    $this->_useWorkingFile = true;
+                } elseif (MB_HISTORYMETADATALOCATION == $type && $this->_useWorkingFile) {
+                    $this->_useWorkingFile = false;
+                }
 				// merge in the fielddefs from this layout
 				$this->_mergeFielddefs ( $fielddefs , $layout ) ;
 				$loaded = $layout ;
@@ -121,6 +126,8 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 				case MB_WIRELESSADVANCEDSEARCH:
 				case MB_WIRELESSLISTVIEW:
                 case MB_PORTALLISTVIEW:
+                case MB_PORTALEDITVIEW:
+                case MB_PORTALDETAILVIEW:
                     // Set a view type (ie, portal, wireless)
                     $_viewtype =  in_array($view, array(MB_PORTALLISTVIEW, MB_PORTALDETAILVIEW, MB_PORTALEDITVIEW, MB_PORTALSEARCHVIEW)) ? 'portal' : 'mobile';
 
