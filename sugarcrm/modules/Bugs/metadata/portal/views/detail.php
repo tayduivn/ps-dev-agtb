@@ -1,6 +1,21 @@
 <?php
 $viewdefs ['Bugs']['portal']['view']['detail'] =
     array(
+        'buttons' =>
+        array(
+            0 =>
+            array(
+                'name' => 'edit_button',
+                'type' => 'button',
+                'label' => 'Edit',
+                'value' => 'edit',
+                'route' =>
+                array(
+                    'action' => 'edit',
+                ),
+                'primary' => true,
+            ),
+        ),
         'templateMeta' =>
         array(
             'maxColumns' => '2',

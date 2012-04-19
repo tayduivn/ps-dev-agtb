@@ -1,0 +1,1 @@
+{{#if link}}<a href="#{{buildRoute context model route.action route.options}}">{{value}}</a>{{else}}{{value}}{{/if}}
