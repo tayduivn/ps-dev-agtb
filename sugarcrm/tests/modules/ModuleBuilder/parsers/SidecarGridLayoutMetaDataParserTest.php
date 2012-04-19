@@ -130,7 +130,6 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $output = $this->_parser->testConvertFromCanonicalForm($input, array());
 
         $this->assertEquals($expected, $output);
-        //print_r($output);
 
     }
 
