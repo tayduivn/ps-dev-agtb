@@ -182,7 +182,6 @@
         app.logger.debug("*****HBT: Current Value*****");
         app.logger.debug(value);
         app.logger.debug("***********************");
-
     });
 
     /**
