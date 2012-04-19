@@ -4190,7 +4190,7 @@ html {
   color: #c2c2c2;
 }
 .search-query[placeholder] {
-  padding-left: 30px !important;
+  text-indent: 30px !important;
 }
 #listing .search-query {
   width: 98.75%;

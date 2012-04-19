@@ -146,7 +146,7 @@
 	<section class="search topelbar">\
           <i class="icon-search"></i>\
           <div class="form-search row-fluid" action="" _lpchecked="1">\
-            <input type="text" class="search-query" placeholder="Search all activity">\
+            <input type="text" class="search-query" placeholder="       Search all activity">\
           </div>\
         </section>';
 
