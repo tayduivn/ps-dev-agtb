@@ -99,13 +99,7 @@ $buttons = array(
 		onclick=\"document.EditView.action.value='".$return['action']."';document.EditView.module.value='".$return['module']."';document.EditView.record.value='".$return['record']."';document.EditView.submit();\">",
 );
 
-require_once('include/Smarty/plugins/function.sugar_action_menu.php');
-$action_buttons = smarty_function_sugar_action_menu(array(
-    'id' => 'ACLRoles_EditView_action_menu',
-    'buttons' => $buttons,
-    'theme' => 'Classic'
-), $sugar_smarty);
-
+$action_buttons = $buttons;
 $sugar_smarty->assign('ACTION_MENU', $action_buttons);
 echo $sugar_smarty->fetch('modules/ACLRoles/EditView.tpl');
 
