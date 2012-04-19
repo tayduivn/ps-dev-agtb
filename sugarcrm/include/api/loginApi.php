@@ -83,10 +83,10 @@ class loginApi extends SugarApi {
     public function logout($api, $args) {
         // In the future it should destroy the oauth tokens associated to this connection
         // For now, we just nuke the session.
-        foreach ( $_SESSION as $key => $ignore ) {
-            $_SESSION[$key] = '';
-        }
+        session_regenerate_id(true);
+
         
-        session_destroy();
+        return array('success'=>true);
+
     }
 }
