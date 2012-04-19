@@ -60,6 +60,10 @@ abstract class AbstractMetaDataParser
     	return false;
     }
 
+    public function useWorkingFile() {
+        return $this->implementation->useWorkingFile();
+    }
+
     /*
      * Is this field something we wish to show in Studio/ModuleBuilder layout editors?
      * @param array $def    Field definition in the standard SugarBean field definition format - name, vname, type and so on
