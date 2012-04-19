@@ -33,6 +33,30 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ParserFactory
 {
+    // BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @param $view
+     * @return mixed
+     * hack for portal to use its own constants
+     */
+    protected static function _helperConvertToViewConstant($view)
+    {
+        $map = array(
+            'edit' => MB_PORTALEDITVIEW,
+            'detail' => MB_PORTALDETAILVIEW,
+            'search' => MB_PORTALSEARCHVIEW,
+            'list' => MB_PORTALLISTVIEW
+        );
+
+        // view variable sent to the factory has changed: remove 'view' suffix
+        // in case of further change
+        $view = strtolower($view);
+        if (substr_compare($view,'view',-4) === 0) {
+            $view = substr($view,0,-4);
+        }
+        return $map[$view];
+    }
+    //END SUGARCRM flav=ent ONLY
 
     /*
      * Create a new parser
@@ -40,12 +64,13 @@ class ParserFactory
      * @param string $view          The view, for example EditView or ListView. For search views, use advanced_search or basic_search
      * @param string $moduleName    Module name
      * @param string $packageName   Package name. If present implies that we are being called from ModuleBuilder
+     * @param string $client        The view client (e.g. portal, wireless, etc.)
      * @return AbstractMetaDataParser
      */
 
-    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null )
+    public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = null )
     {
-        $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName )" ) ;
+        $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
 		$sm = null;
         $lView = strtolower ( $view );
         if ( empty ( $packageName ) || ( $packageName == 'studio' ) )
@@ -66,6 +91,15 @@ class ParserFactory
             }
         }
 
+        // BEGIN SUGARCRM flav=ent ONLY
+        // eventually we should make better use of the client param, but for now keep this ugly hack in
+        // the factory where it can cause as little confusion as possible.
+        if ($client == 'portal') {
+            $lView = self::_helperConvertToViewConstant($lView);
+            $view = $lView; // so the Parser can find the portal files - pass the portalview constant to its ctor
+        }
+        //END SUGARCRM flav=ent ONLY
+
         switch ( $lView)
         {
             case MB_EDITVIEW :
@@ -76,12 +110,16 @@ class ParserFactory
             //BEGIN SUGARCRM flav=pro || flav=sales ONLY
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :
+            //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALDETAILVIEW:
             case MB_PORTALEDITVIEW:
-                require_once 'modules/ModuleBuilder/parsers/views/WirelessGridLayoutMetaDataParser.php' ;
-                return new WirelessGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+            //END SUGARCRM flav=ent ONLY
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
+                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
             case MB_WIRELESSLISTVIEW:
+            //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
+            //END SUGARCRM flav=ent ONLY
                 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
                 return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName);
             //END SUGARCRM flav=pro || flav=sales ONLY

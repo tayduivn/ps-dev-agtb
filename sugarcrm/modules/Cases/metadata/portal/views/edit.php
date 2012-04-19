@@ -76,40 +76,27 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
         array(
             'label' => 'default',
             'fields' => array(
-                array(
-                    'name' => 'case_number',
-                    'label' => 'Case Number',
-                    'displayParams' => array(
-                        'colspan' => 2
-                    ),
-                    'readOnly' => true),
-                array(
-                    'name' => 'priority',
-                    'label' => 'Priority',
-                    'displayParams' => array(
-                        'colspan' => 2
-                    )),
-                array(
-                    'name' => 'status',
-                    'label' => 'Status',
-                    'displayParams' => array(
-                        'colspan' => 2
-                    )),
-                array(
-                    'name' => 'name',
-                    'label' => 'Name',
-                    'displayParams' => array(
-                        'colspan' => 2,
-                        'size' => 60
-                    ),
-                    'required' => true),
-                array('name' => 'description',
-                    'label' => 'Description',
-                    'displayParams' => array(
-                        'colspan' => 2,
-                        'rows' => '15',
-                        'cols' => '100'
-                    ))
+                 array(
+                     'name' => 'case_number',
+                     'displayParams' => array(
+                         'colspan' => 2
+                     ),
+                     'readOnly' => true),
+                 'priority',
+                 'status',
+                 array(
+                     'name' => 'name',
+                     'displayParams' => array(
+                         'colspan' => 2,
+                         'size' => 60
+                     ),
+                     'required' => true),
+                 array('name' => 'description',
+                     'displayParams' => array(
+                         'colspan' => 2,
+                         'rows' => '15',
+                         'cols' => '100'
+                     ))
             )
         )
     ),

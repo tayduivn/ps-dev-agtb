@@ -1,5 +1,5 @@
 <div class="row-fluid">
-    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
     <div class="span4">
         <input type="text" class="input-xlarge datepicker" value="{{value}}">
         <p class="help-block"></p>

@@ -1,10 +1,10 @@
 <div class="container-fluid">
 <div class="row-fluid">
     <div class="span12">
-        <div class="thumbnail">
+        <div class="thumbnail {{name}}">
             <h1><a href='#{{context.state.module}}'>{{context.state.module}}</a></h1>
-            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper {{name}}" role="grid">
-                <div class="dataTables_filter" id="DataTables_Table_0_filter">
+            <div>
+                <div class="dataTables_filter">
                     <label class="hide">Search:</label> <input class="span4" placeholder="Refine list ..." type="text" aria-controls="DataTables_Table_0">
                 </div>
                 {{#each meta.panels}}
@@ -13,7 +13,7 @@
                       <tr role="row">
                         {{#each fields}}
                             <th class="span1 {{#if sorting}}sorting{{eq ../../../context.state.collection.orderBy.field name ../../../this.orderBy.direction ""}} orderBy{{name}}{{/if}}" role="columnheader" {{#if width}}style="width: {{width}}%"{{/if}} data-fieldname="{{name}}">
-                            {{label}}
+                            {{getLabel label ../../context.state.module}}
                             </th>
                         {{/each}}
                       </tr>
@@ -35,12 +35,12 @@
                     {{field ../context ../this ../model}}
                 {{/each}}
             </div>
-            <ul class="nav nav-pills actions" id="bugsModuleActions">
+            <ul class="nav nav-pills actions">
                 <li>
-                    <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add a bug" id="bugsModuleActionsAdd"><i class="icon-plus"></i></a>
+                    <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="Add"><i class="icon-plus"></i></a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" rel="tooltip" title="Refine list" class="search" id="bugsModuleActionsSearch"><i class="icon-search"></i></a>
+                    <a href="javascript:void(0)" rel="tooltip" title="Refine list" class="search"><i class="icon-search"></i></a>
                 </li>
             </ul>
         </div>

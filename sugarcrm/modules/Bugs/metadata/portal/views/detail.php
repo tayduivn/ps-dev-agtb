@@ -40,71 +40,23 @@ $viewdefs ['Bugs']['portal']['view']['detail'] =
                 array(
                     array(
                         'name' => 'bug_number',
-                        'label' => 'Number',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
                         ),
                     ),
-                    array(
-                        'name' => 'priority',
-                        'label' => 'Priority',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'product_category',
-                        'label' => 'Category',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'status',
-                        'label' => 'Status',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'type',
-                        'label' => 'Type',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'resolution',
-                        'label' => 'Resolution',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'date_entered',
-                        'label' => 'Created',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'date_modified',
-                        'label' => 'Modified',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
+                    'status',
+                    'priority',
+                    'source',
+                    'product_category',
+                    'resolution',
+                    'type',
+                    'date_modified',
+                    'modified_by_name',
+                    'created_by_name',
+                    'date_entered',
                     array(
                         'name' => 'name',
-                        'label' => 'Name',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -112,7 +64,13 @@ $viewdefs ['Bugs']['portal']['view']['detail'] =
                     ),
                     array(
                         'name' => 'description',
-                        'label' => 'Description',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                    array(
+                        'name' => 'work_log',
                         'displayParams' =>
                         array(
                             'colspan' => 2,

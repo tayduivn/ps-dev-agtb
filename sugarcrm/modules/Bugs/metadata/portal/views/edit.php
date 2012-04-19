@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Bugs']['portal']['view']['edit'] =
+$viewdefs ['Bugs']['portal']['view']['edit'] =
     array(
         'buttons' =>
         array(
@@ -65,64 +65,12 @@ $viewdefs['Bugs']['portal']['view']['edit'] =
                 'label' => 'default',
                 'fields' =>
                 array(
-                    array(
-                        'name' => 'bug_number',
-                        'label' => 'Number',
-                        'displayParams' => array(
-                            'colspan' => 2,
-                        ),
-                        'readOnly' => true),
-                    array(
-                        'name' => 'priority',
-                        'label' => 'Priority',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'product_category',
-                        'label' => 'Category',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'status',
-                        'label' => 'Status',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'type',
-                        'label' => 'Type',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
+                    'priority',
+                    'status',
+                    'source',
+                    'product_category',
                     array(
                         'name' => 'resolution',
-                        'label' => 'Resolution',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'date_entered',
-                        'label' => 'Created',
-                        'displayParams' =>
-                        array(
-                            'colspan' => 2,
-                        ),
-                    ),
-                    array(
-                        'name' => 'date_modified',
-                        'label' => 'Modified',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -130,7 +78,6 @@ $viewdefs['Bugs']['portal']['view']['edit'] =
                     ),
                     array(
                         'name' => 'name',
-                        'label' => 'Name',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -138,7 +85,13 @@ $viewdefs['Bugs']['portal']['view']['edit'] =
                     ),
                     array(
                         'name' => 'description',
-                        'label' => 'Description',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                    array(
+                        'name' => 'work_log',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
