@@ -78,7 +78,7 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'assigned_user',
+                    'name' => 'assigned_user_name',
                     'width' => '9',
                     'label' => 'LBL_ASSIGNED_USER',
                     'default' => true,
@@ -87,39 +87,4 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
             ),
         ),
     ),
-	/*
-    'CASE_NUMBER' => array(
-		'width' => '5',
-		'label' => 'LBL_NUMBER',
-		'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '32',
-		'label' => 'LBL_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_STATUS',
-        'default' => true),
-    'PRIORITY' => array(
-        'width' => '10',
-        'label' => 'LBL_PRIORITY',
-        'default' => true),
-    'RESOLUTION' => array(
-        'width' => '10',
-        'label' => 'LBL_RESOLUTION',
-        'default' => true),
-//BEGIN SUGARCRM flav=pro ONLY
-	'TEAM_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_TEAM',
-        'default' => true),
-//END SUGARCRM flav=pro ONLY
-	'ASSIGNED_USER_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_ASSIGNED_USER',
-        'default' => true),
-	*/
-
 );
