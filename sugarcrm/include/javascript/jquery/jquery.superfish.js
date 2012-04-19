@@ -55,9 +55,18 @@
         },
         out = function() {
             var $$ = $(this),
-            menu = getMenu($$),
-            o = sf.op,
-            $menu = $(menu);
+                menu = getMenu($$),
+                o = sf.op,
+                $menu = $(menu);
+            if($$.parent().hasClass("hs-active")) {
+                $$.addClass("iefix");
+                //initially disapper
+                //$$.hideSuperfishUl();
+                $$.removeClass(sf.defaults['retainClass']);
+            } else {
+                $$.removeClass("iefix");
+            }
+
             clearTimeout(menu.sfTimer);
             menu.sfTimer = $menu.hasClass(sf.defaults['retainClass']) ? null : setTimeout(function() {
                 if($menu.hasClass(sf.defaults['retainClass']) === false) {
