@@ -266,6 +266,10 @@ if(document.DetailView != null &&
 			$thisPanel=$this->subpanel_definitions->load_subpanel($tab);
             if ($thisPanel === false)
                 continue;
+            // Check ACLs for the subpanel
+            if(!$this->focus->ACLAccess("subpanel", array("subpanel" => $thisPanel))) {
+                continue;
+            }
 			//this if-block will try to skip over ophaned subpanels. Studio/MB are being delete unloaded modules completely.
 			//this check will ignore subpanels that are collections (activities, history, etc)
 			if (!isset($thisPanel->_instance_properties['collection_list']) and isset($thisPanel->_instance_properties['get_subpanel_data']) ) {
@@ -294,6 +298,11 @@ if(document.DetailView != null &&
 			$display= 'none';
 			$div_display = $default_div_display;
 			$cookie_name =   $tab . '_v';
+
+            if (isset($thisPanel->_instance_properties['collapsed']) && $thisPanel->_instance_properties['collapsed'])
+            {
+                $div_display = 'none';
+            }
 
 			if(isset($div_cookies[$cookie_name])){
 				$div_display = 	$div_cookies[$cookie_name];

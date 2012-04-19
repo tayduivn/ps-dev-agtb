@@ -443,13 +443,7 @@ class Meeting extends Activity {
 		}
 
 		global $app_list_strings;
-		$parent_types = $app_list_strings['record_type_display'];
-		$disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
-		foreach($disabled_parent_types as $disabled_parent_type){
-			if($disabled_parent_type != $this->parent_type){
-				unset($parent_types[$disabled_parent_type]);
-			}
-		}
+		$parent_types = SugarACL::filterModuleList($app_list_strings['record_type_display']);
 
 		$this->parent_type_options = get_select_options_with_id($parent_types, $this->parent_type);
 		if (empty($this->reminder_time)) {

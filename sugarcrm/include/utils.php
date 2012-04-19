@@ -2734,10 +2734,7 @@ function parse_list_modules(&$listArray)
 		}
 		//END SUGARCRM flav!=sales ONLY
 	}
-	$acldenied = ACLController::disabledModuleList($listArray,false);
-	foreach($acldenied as $denied){
-		unset($returnArray[$denied]);
-	}
+	$returnArray = SugarACL::filterModuleList($listArray, 'access', true);
 	asort($returnArray);
 
 	return $returnArray;
@@ -5019,12 +5016,12 @@ function sql_like_string($str, $like_char, $wildcard = '%', $appendWildcard = tr
         $wildcard = $GLOBALS['sugar_config']['search_wildcard_char'];
     }
 
-    // add wildcard at the beginning of the search string
-    if (isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
-        $GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
-        if (substr($str,0,1) <> $wildcard)
-          $str = $wildcard.$str;
-    }
+	// add wildcard at the beginning of the search string
+	if(isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
+		$GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
+		if(substr($str,0,1) <> $wildcard)
+			$str = $wildcard.$str;
+	}
 
     // add wildcard at the end of search string (default)
     if ($appendWildcard) {
@@ -5033,7 +5030,7 @@ function sql_like_string($str, $like_char, $wildcard = '%', $appendWildcard = tr
         }
     }
 
-    return str_replace($wildcard, $like_char, $str);
+	return str_replace($wildcard, $like_char, $str);
 }
 
 //check to see if custom utils exists
