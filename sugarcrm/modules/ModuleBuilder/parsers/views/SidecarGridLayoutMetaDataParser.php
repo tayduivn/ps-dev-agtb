@@ -186,7 +186,9 @@ class  SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser
             $row = array();
             foreach ($panel['fields'] as $field) {
                 // try to find the column span of the field. It can range from 1 to max columns of the panel.
-                $colspan = isset($field['displayParams']['colspan']) ? $field['displayParams']['colspan'] : 1;
+                $colspan = is_array($field) && isset($field['displayParams']['colspan']) ?
+                        $field['displayParams']['colspan'] :
+                        1;
                 $colspan = min($colspan, $this->getMaxColumns()); // we can't put in a field wider than the panel.
                 $cols_left = $this->getMaxColumns() - count($row);
 
