@@ -371,8 +371,7 @@
                             model.page = model.getPageNumber();
                         }
                         data = data.records || [];
-                    }
-                    else if ((options.relate === true) && (method != "read")) {
+                    } else if ((options.relate === true) && (method != "read")) {
                         // Reset the flag to indicate that fetched relationship(s) do exist.
                         model.link.isNew = false;
                         // The response for create/update/delete relationship contains updated beans
@@ -390,9 +389,18 @@
                 }
             };
 
+            var error = function(xhr, error) {
+                if (options.error) {
+                    options.error(xhr, error);
+                }
+
+                // Handle error codes
+                app.error.statusCodes[xhr.status](xhr, error);
+            };
+
             var callbacks = {
                 success: success,
-                error: options.error
+                error: error
             };
 
             if (options.relate === true) {
