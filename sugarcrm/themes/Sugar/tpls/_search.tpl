@@ -4,7 +4,6 @@
 <div class="dcmenuDivider" id="searchDivider"></div>
 <div id="dcmenuSearchDiv">
         <div id="sugar_spot_search_div">
-            <div id="spot_search_btn" onclick="DCMenu.spot(document.getElementById('sugar_spot_search').value);">&nbsp;</div>
             <input size=20 id='sugar_spot_search'  title='Enter global search term' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
             <img src="{sugar_getimagepath file="info-del.png"}" id="close_spot_search"/>
             <div id="sugar_spot_search_results" style="display:none;">
@@ -17,7 +16,7 @@
 
             <div id="sugar_spot_ac_results"></div>
         </div>
-	<div id="glblSearchBtn">{$ICONSEARCH}
+    <div id="glblSearchBtn" {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}>{$ICONSEARCH}
     </div>
 </div>
 //BEGIN SUGARCRM flav=sales ONLY
@@ -25,6 +24,22 @@
 //END SUGARCRM flav=sales ONLY
 
 </div>
+
+<script>
+    search = '{$APP.LBL_SEARCH}';
+{literal}
+$("#sugar_spot_search").ready(function() {
+    $("#sugar_spot_search").val(search+'...');
+    $("#sugar_spot_search").css('color', 'grey');
+    $("#sugar_spot_search").focus(function() {
+        if ($("#sugar_spot_search").val()==search+'...') {
+            $("#sugar_spot_search").val('');
+            $('#sugar_spot_search').css('color', 'black');
+        }
+    });
+});
+{/literal}
+</script>
 
 {if $FTS_AUTOCOMPLETE_ENABLE}
 {literal}
@@ -66,7 +81,7 @@
         //If theres old data, clear it.
           if( $("#sugar_spot_search_results").find('section').length > 0 )
               $("#sugar_spot_search_results").html('');
-		$('#sugar_spot_search_div').css("width",360);
+        $('#sugar_spot_search_div').css("width",315);
 		$('#sugar_spot_search').css("width",290);
         $("#sugar_spot_search_results").show();
     });

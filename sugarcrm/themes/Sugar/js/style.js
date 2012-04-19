@@ -275,7 +275,7 @@ SUGAR.append(SUGAR.themes, {
         $('#sugar_spot_search').attr("width", $('#sugar_spot_search').attr("width") || $('#sugar_spot_search').css("width").replace("px",""));
         var originalSearchWidth = parseInt($('#sugar_spot_search').attr("width"));
         searchWidth = (searchWidth >= originalSearchWidth) ? searchWidth : originalSearchWidth;
-        $('#sugar_spot_search_div').width(searchWidth + 70);
+        $('#sugar_spot_search_div').width(searchWidth + 25);
         $('#sugar_spot_search').width(searchWidth);
         $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
 
@@ -416,7 +416,8 @@ SUGAR.append(SUGAR.themes, {
    		$("div#sugar_spot_search_results").hide();
         $("#SpotResults").remove();
 		$('#close_spot_search').css("display","none");
-		$("#sugar_spot_search").val("");
+        $("#sugar_spot_search").val(SUGAR.language.get('app_strings', 'LBL_SEARCH')+'...');
+        $("#sugar_spot_search").css('color', 'grey');
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
 	  	firstHit = false;
