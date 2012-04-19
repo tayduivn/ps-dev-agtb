@@ -132,8 +132,8 @@ class Call extends Activity
 			$this->team_id = 1; // make the item globally accessible
 		}
 		//END SUGARCRM flav=pro ONLY
-		
-		
+
+
 
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))
         	$this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
@@ -165,15 +165,15 @@ class Call extends Activity
 	function save($check_notify = FALSE) {
 		global $timedate,$current_user;
 
-	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
         {
     	    $td = $timedate->fromDb($this->date_start);
     	    if($td)
     	    {
 	        	$this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-    	    }	
+    	    }
         }
-        		
+
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
         } else {
@@ -410,14 +410,7 @@ class Call extends Activity
 		$this->fill_in_additional_parent_fields();
 
 		global $app_list_strings;
-		$parent_types = $app_list_strings['record_type_display'];
-		$disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
-		foreach($disabled_parent_types as $disabled_parent_type){
-			if($disabled_parent_type != $this->parent_type){
-				unset($parent_types[$disabled_parent_type]);
-			}
-		}
-
+		$parent_types = SugarACL::filterModuleList($app_list_strings['record_type_display']);
 		$this->parent_type_options = get_select_options_with_id($parent_types, $this->parent_type);
 
 		if (empty($this->reminder_time)) {
@@ -516,7 +509,7 @@ class Call extends Activity
 
         // rrs: bug 42684 - passing a contact breaks this call
 		$notifyUser =($call->current_notify_user->object_name == 'User') ? $call->current_notify_user : $current_user;
-		        
+
 
 		// Assumes $call dates are in user format
 		$calldate = $timedate->fromDb($call->date_start);

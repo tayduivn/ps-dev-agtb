@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $theme;
 
 
-$GLOBALS['displayListView'] = true; 
+$GLOBALS['displayListView'] = true;
 
 require_once('modules/Reports/templates/templates_reports.php');
 require_once('modules/Reports/templates/templates_reports_index.php');
@@ -58,7 +58,7 @@ if ($_REQUEST['action'] == 'index') {
 if ( isset($_REQUEST['id'])) {
 	$saved_report_seed = new SavedReport();
 	$saved_report_seed->disable_row_level_security = true;
-	
+
 	$saved_report_seed->retrieve($_REQUEST['id'], false);
 
 	$args['reporter'] = new Report($saved_report_seed->content);
@@ -69,7 +69,7 @@ if ( isset($_REQUEST['id'])) {
 		list($new_filter['table_name'],$new_filter['name']) = explode(':',$_REQUEST['filter_key']);
 		$new_filter['qualifier_name'] = 'is';
 		$new_filter['input_name0'] = array($_REQUEST['filter_value']);
-		
+
 		if ( ! is_array($args['reporter']->report_def['filters_def'])) {
 			$args['reporter']->report_def['filters_def'] = array();
 		}
@@ -77,7 +77,7 @@ if ( isset($_REQUEST['id'])) {
 		$args['reporter']->report_def['chart_type'] = 'none';
 		$args['reporter']->chart_type = 'none';
 	}
-	
+
 	$args['reporter']->is_saved_report = true;
 	$args['reporter']->saved_report_id = $saved_report_seed->id;
 
@@ -143,7 +143,7 @@ if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report')
 // show report lists
 else
 {
-//END SUGARCRM flav!=sales ONLY                      
+//END SUGARCRM flav!=sales ONLY
 if ( empty($_REQUEST['search_form_only']) ) {
     $params = array();
     if(!empty($_REQUEST['favorite'])) {
@@ -168,32 +168,21 @@ function checkACLForEachColInArr ($arr, $full_table_list, $is_owner = 1){
 	foreach ($arr as $column) {
 		$col_module = $full_table_list[$column['table_key']]['module'];
 		//todo: check the last param of this call (is_owner)
-		if (ACLField::hasAccess($column['name'], $col_module, $GLOBALS['current_user']->id, $is_owner) == 0) {
+		if(!SugarACL::checkField($col_module, $column['name'], $is_owner?array("onwer_override" => true):array())) {
 			return false;
 		}
 	}
 	//END SUGARCRM flav!=sales ONLY
-	return true;	
+	return true;
 }
 
 function checkACLForEachColInArrForFilterDef($arr, $full_table_list, $is_owner = 1){
-	$hasAccess = checkACLForEachColForFilter($arr, $full_table_list, $is_owner, true);
-	return $hasAccess;
-	/*
-	foreach ($arr as $column) {
-		$col_module = $full_table_list[$column['table_key']]['module'];
-		//todo: check the last param of this call (is_owner)
-		if (ACLField::hasAccess($column['name'], $col_module, $GLOBALS['current_user']->id, $is_owner) == 0) {
-			return false;
-		}
-	}
-	return true;	
-	*/
+	return checkACLForEachColForFilter($arr, $full_table_list, $is_owner, true);
 }
 
 function checkACLForEachColForFilter($filters, $full_table_list, $is_owner, $hasAccess) {
 	if (!$hasAccess) {
-		return $hasAccess;
+		return false;
 	} // if
 	$i = 0;
 	while (isset($filters[$i])) {
@@ -207,10 +196,8 @@ function checkACLForEachColForFilter($filters, $full_table_list, $is_owner, $has
 		else {
 			$col_module = $full_table_list[$current_filter['table_key']]['module'];
 			//BEGIN SUGARCRM flav!=sales ONLY
-			if (ACLField::hasAccess($current_filter['name'], $col_module, $GLOBALS['current_user']->id, $is_owner) == 0) {
-			//if(isset($current_filter['runtime']) && $current_filter['runtime'] == 1) {
-				$hasAccess = false;
-				return $hasAccess;
+			if(!SugarACL::checkField($col_module, $current_filter['name'], $is_owner?array("onwer_override" => true):array())) {
+				return false;
 			} // if
 			//END SUGARCRM flav!=sales ONLY
 		}
@@ -229,20 +216,20 @@ function checkSavedReportACL(&$reporter,&$args) {
 		$group_defs = $reporter->report_def['group_defs'];
 		if (!empty($reporter->report_def['order_by']))
 			$order_by = $reporter->report_def['order_by'];
-		else 
+		else
 			$order_by = array();
 
 		$summary_columns = $reporter->report_def['summary_columns'];
 		$full_table_list = $reporter->report_def['full_table_list'];
 
-		if (!checkACLForEachColInArr($display_columns, $full_table_list) || 
-			!checkACLForEachColInArrForFilterDef($filters_def, $full_table_list) || 
-			!checkACLForEachColInArr($group_defs, $full_table_list) || 
-			!checkACLForEachColInArr($order_by, $full_table_list) || 
+		if (!checkACLForEachColInArr($display_columns, $full_table_list) ||
+			!checkACLForEachColInArrForFilterDef($filters_def, $full_table_list) ||
+			!checkACLForEachColInArr($group_defs, $full_table_list) ||
+			!checkACLForEachColInArr($order_by, $full_table_list) ||
 			!checkACLForEachColInArr($summary_columns, $full_table_list)) {
 			sugar_die($mod_strings['LBL_NO_ACCESS']);
 		}
-		
+
 		//Check for List view permissions
 		$hashModules = array();
 		foreach ($display_columns as $column) {
@@ -255,13 +242,13 @@ function checkSavedReportACL(&$reporter,&$args) {
 			//todo: check the last param of this call (is_owner)
 			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams' && $col_module != 'CampaignLog'){
 				sugar_die($mod_strings['LBL_NO_ACCESS']);
-			}			
+			}
 		}
 
 		// Check Report module Permissions
 		$is_owner =  true;
 		global $current_user;
-		if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) 
+		if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id)
 			$is_owner = false;
 		if(!ACLController::checkAccess('Reports', 'list', $is_owner) || !ACLController::checkAccess('Reports', 'view', $is_owner))  {
 			sugar_die($mod_strings['LBL_NO_ACCESS']);

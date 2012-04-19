@@ -33,18 +33,18 @@ require_once('modules/Reports/config.php');
 require_once('modules/Reports/Report.php');
 require_once('modules/Reports/templates/templates_reports.php');
 
-$is_owner =  true;
-global $current_user;
-if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
-	$is_owner = false;
+if(!empty($args['reporter']->saved_report)) {
+    $context = array("bean" => $args['reporter']->saved_report);
+} else {
+    $context = array();
 }
 
-if(!(ACLController::checkAccess('Reports', 'edit', $is_owner)))
+if(!SugarACL::checkAccess('Reports', 'edit', $context))
 {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
 }
-global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $app_strings, $sugar_config, $sugar_version;
+global $current_user, $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $app_strings, $sugar_config, $sugar_version;
 
 $params = array();
 $params[] = $mod_strings['LBL_CREATE_CUSTOM_REPORT'];
@@ -130,7 +130,7 @@ require_once('include/SugarCharts/SugarChartFactory.php');
 $sugarChart = SugarChartFactory::getInstance();
 $resources = $sugarChart->getChartResources();
 $sugar_smarty->assign('chartResources', $resources);
-	
+
 if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1))
 	$sugar_smarty->assign("RUN_QUERY", '1');
 else

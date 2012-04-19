@@ -433,9 +433,8 @@ class ListViewData {
                 if($temp->isFavoritesEnabled()){
 					$data[$dataIndex]['star'] = SugarFavorites::generateStar(!empty($row['is_favorite']), $temp->module_dir, $temp->id);
 				}
-				if($temp->bean_implements('ACL')){
-			    	ACLField::listFilter($data[$dataIndex],$temp->module_dir,$GLOBALS['current_user']->id, $temp->isOwner($GLOBALS['current_user']->id));
-				}
+
+				$temp->ACLFilterFieldList($data[$dataIndex]);
 				//END SUGARCRM flav=pro ONLY
 			    $pageData['rowAccess'][$dataIndex] = array('view' => $temp->ACLAccess('DetailView'), 'edit' => $temp->ACLAccess('EditView'));
 			    $additionalDetailsAllow = $this->additionalDetails && $temp->ACLAccess('DetailView') && (file_exists('modules/' . $temp->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));

@@ -106,7 +106,7 @@ require_once('include/EditView/EditView2.php');
 
         $this->searchFields = $searchFields[$this->module];
 
-        // Setup the tab array.
+        // Setub the tab array.
         $this->tabs = array();
         if($this->showBasic){
             $this->nbTabs++;
@@ -144,7 +144,8 @@ require_once('include/EditView/EditView2.php');
 		$this->th->ss->assign('module', $this->module);
 		$this->th->ss->assign('action', $this->action);
 		//BEGIN SUGARCRM flav=pro ONLY
-		ACLField::listFilter($this->fieldDefs, $this->module, $GLOBALS['current_user']->id, true, false, 1,false, true, '_'.$this->parsedView);
+		SugarACL::listFilter($this->module, $this->fieldDefs, array("owner_override" => true),
+		    array("use_value" => true, "suffix" => '_'.$this->parsedView, "add_acl" => true));
 		//END SUGARCRM flav=pro ONLY
 		$this->th->ss->assign('displayView', $this->displayView);
 		$this->th->ss->assign('APP', $GLOBALS['app_strings']);
@@ -236,9 +237,9 @@ require_once('include/EditView/EditView2.php');
         $return_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchForm_'.$this->parsedView, $this->locateFile($this->tpl));
 
         if($header){
-			$this->th->ss->assign('return_txt', $return_txt);
+            $this->th->ss->assign('return_txt', $return_txt);
 			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', $this->locateFile('header.tpl'));
-            //pass in info to render the select dropdown below the form
+			//pass in info to render the select dropdown below the form
             $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', $this->locateFile('footer.tpl'));
 			$return_txt = $header_txt.$footer_txt;
 		}
@@ -300,7 +301,7 @@ require_once('include/EditView/EditView2.php');
      {
         $savedSearch = new SavedSearch($this->listViewDefs[$this->module], $this->lv->data['pageData']['ordering']['orderBy'], $this->lv->data['pageData']['ordering']['sortOrder']);
         return $savedSearch->getForm($this->module, false);
-     }
+    }
 
 
   function displaySavedSearchSelect(){
@@ -425,7 +426,7 @@ require_once('include/EditView/EditView2.php');
 						$value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						$this->fieldDefs[$fvName]['value'] = $value;
 					}else{
-						if(!isset($function['params']) || !is_array($function['params'])) {
+					    if(!isset($function['params']) || !is_array($function['params'])) {
 							$this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
 						} else {
 							$this->fieldDefs[$fvName]['options'] = call_user_func_array($function_name, $function['params']);
@@ -554,7 +555,7 @@ require_once('include/EditView/EditView2.php');
                     	{
                     		$long_name = $key.'_'.$SearchName;
 
-	                        if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys))
+                    		if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys))
 	                    	{
 	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
 
@@ -1038,10 +1039,10 @@ require_once('include/EditView/EditView2.php');
                                  }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
                                      $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
                                      $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
-                                 }else{
+                                 } else {
                                      //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
                                      //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
-                                    $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').") {$field}_derived)";
+                                     $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').") {$field}_derived)";
                                  }
 
                                  break;
@@ -1264,4 +1265,5 @@ require_once('include/EditView/EditView2.php');
 
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
      }
- }
+    }
+
