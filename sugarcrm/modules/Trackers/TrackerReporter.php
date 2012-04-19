@@ -220,10 +220,13 @@ class TrackerReporter{
 	 */
 	public function ShowMyWeeklyActivities($date_selected = null){
 		$user = $GLOBALS['current_user']->id;
-		if(!empty($date_selected))
-			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
-		else
-			$timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get("-1 week")->asDb()."'" ,"datetime");
+        if(!empty($date_selected)) {
+            $timeSpan = db_convert("'".$date_selected."'" ,"datetime");
+        } else {
+            // Need to figure out the start of the week, and go from there.
+            $firstDay = $GLOBALS['timedate']->get_first_day_of_week($GLOBALS['current_user']);
+            $timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get_day_by_index_this_week($firstDay)->asDb()."'" ,"datetime");
+        }
 
 		$args = array($user, $timeSpan);
 
@@ -277,10 +280,12 @@ class TrackerReporter{
 	 */
 	public function ShowMyCumulativeLoggedInTime($date_selected = null){
 		$user = $GLOBALS['current_user']->id;
-		if(!empty($date_selected))
-			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
-		else
-			$timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get("-1 week")->asDb()."'", "datetime");
+        if(!empty($date_selected)) {
+            $timeSpan = db_convert("'".$date_selected."'" ,"datetime");
+        } else {
+            $firstDay = $GLOBALS['timedate']->get_first_day_of_week($GLOBALS['current_user']);
+            $timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get_day_by_index_this_week($firstDay)->asDb()."'" ,"datetime");
+        }
 		$args = array($user, $timeSpan);
 		$result = $this->execute($this->setup('ShowMyCumulativeLoggedInTime', $args));
 	    $data = array();
@@ -301,10 +306,12 @@ class TrackerReporter{
 	 * @return Array - dataset
 	 */
 	public function ShowUsersCumulativeLoggedInTime($date_selected = null) {
-		if(!empty($date_selected))
-			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
-		else
-			$timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get("-1 week")->asDb()."'", "datetime");
+        if(!empty($date_selected)) {
+            $timeSpan = db_convert("'".$date_selected."'" ,"datetime");
+        } else {
+            $firstDay = $GLOBALS['timedate']->get_first_day_of_week($GLOBALS['current_user']);
+            $timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get_day_by_index_this_week($firstDay)->asDb()."'" ,"datetime");
+        }
 		$args = array($timeSpan);
 		$result = $this->execute($this->setup('ShowUsersCumulativeLoggedInTime', $args));
 		$data = array();

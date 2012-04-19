@@ -420,6 +420,48 @@ class SavedReport extends SugarBean
  	{
 		return $this->create_new_list_query($order_by, $where);
   	}
+
+    /**
+    * @see SugarBean::cleanBean
+    */
+    function cleanBean() {
+        foreach($this->field_defs as $key => $def) {
+
+            if (isset($def['type'])) {
+                $type=$def['type'];
+            }
+            if(isset($def['dbType']))
+                $type .= $def['dbType'];
+
+            if((strpos($type, 'char') !== false ||
+                strpos($type, 'text') !== false ||
+                $type == 'enum') &&
+                !empty($this->$key)
+            ) {
+                // Bug51621: the report contents JSON string getting converted to html as a whole
+                //    breaks reports that get cleaned
+                if ($key !== "content") {
+                    $str = from_html($this->$key);
+                } else {
+                    $str = $this->$key;
+                }
+                // Julian's XSS cleaner
+                $potentials = clean_xss($str, false);
+
+                if(is_array($potentials) && !empty($potentials)) {
+                    foreach($potentials as $bad) {
+                        $str = str_replace($bad, "", $str);
+                    }
+                    if ($key !== "content") {
+                        $this->$key = to_html($str);
+                    } else {
+                        $this->$key = $str;
+                    }
+                }
+            }
+        }
+    }
+
 }
 
   // returns the available modules for the specific user
@@ -477,4 +519,3 @@ class SavedReport extends SugarBean
      return $unallowed_modules;
   }
 
-?>

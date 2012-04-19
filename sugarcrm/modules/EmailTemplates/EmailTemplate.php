@@ -217,7 +217,8 @@ class EmailTemplate extends SugarBean {
 	function fill_in_additional_detail_fields() {
 	    if (empty($this->body) && !empty($this->body_html))
         {
-            $this->body = strip_tags(html_entity_decode($this->body_html));
+            global $sugar_config;
+            $this->body = strip_tags(html_entity_decode($this->body_html, ENT_COMPAT, $sugar_config['default_charset']));
         }
 		$this->created_by_name = get_assigned_user_name($this->created_by);
 		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
@@ -438,14 +439,6 @@ class EmailTemplate extends SugarBean {
 		$repl_arr = array();
 
 		// cn: bug 9277 - create a replace array with empty strings to blank-out invalid vars
-		if(!class_exists('Account'))
-		if(!class_exists('Contact'))
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if(!class_exists('Leads'))
-		if(!class_exists('Prospects'))
-		//END SUGARCRM flav!=sales ONLY
-
-		require_once('modules/Accounts/Account.php');
 		$acct = new Account();
 		$contact = new Contact();
 		//BEGIN SUGARCRM flav!=sales ONLY
