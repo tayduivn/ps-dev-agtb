@@ -44,7 +44,7 @@ $("#sugar_spot_search").ready(function() {
 {if $FTS_AUTOCOMPLETE_ENABLE}
 {literal}
 <script>
-    $("#spot_search_btn").click(function(){
+    $("#glblSearchBtn").click(function(){
         SUGAR.util.doWhen(function(){
             return document.getElementById('SpotResults') != null;
         }, SUGAR.themes.resizeSearch);
