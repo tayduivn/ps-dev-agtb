@@ -296,12 +296,18 @@ class SugarHtml {
         $reserved_strings = array(
             '$', 'ldelim', 'rdelim'
         );
+        $reserved_functions = array(
+            'literal' => false,
+            'nocache' => false,
+        );
         $queue = 0;
         $is_literal = false;
+        $current_literal_string = '';
         for($seq = 0; $seq < count($clauses); $seq++) {
             $is_reserved = false;
 
-            $is_literal = $is_literal || (substr(ltrim($clauses[$seq]), 0, strlen("literal")) == "literal");
+            $current_literal_string = !empty($current_literal_string) ? $current_literal_string : (isset($reserved_functions[trim($clauses[$seq])]) ? trim($clauses[$seq]) : '');
+            $is_literal = $is_literal || !empty($current_literal_string);
 
             foreach($reserved_strings as $str) {
                 if(substr(ltrim($clauses[$seq]), 0, strlen($str)) == $str) {
@@ -310,10 +316,16 @@ class SugarHtml {
                 }
             }
             if($is_literal || ($seq > 0 && $is_reserved)) {
-                $clauses[--$queue] .= self::SMARTY_TAG_BEGIN.$clauses[$seq].self::SMARTY_TAG_END;
-                $is_literal = $is_literal && (substr(ltrim($clauses[$seq]), 0, strlen("/literal")) != "/literal");
-                if($seq < count($clauses)) {
+                if($queue == 0)
+                    $clauses[$queue] = self::SMARTY_TAG_BEGIN.$clauses[$seq].self::SMARTY_TAG_END;
+                else
+                    $clauses[--$queue] .= self::SMARTY_TAG_BEGIN.$clauses[$seq].self::SMARTY_TAG_END;
+                $is_literal = $is_literal && (substr(ltrim($clauses[$seq]), 0, strlen("/".$current_literal_string)) != "/".$current_literal_string);
+                $current_literal_string = ($is_literal) ? $current_literal_string : '';
+                if($seq < count($clauses) - 1) {
                     $clauses[$queue++] .= $clauses[++$seq];
+                } else {
+                    $queue++;
                 }
             } else {
                 $clauses[$queue++] = $clauses[$seq];
@@ -347,9 +359,11 @@ class SugarHtml {
         $seq = 0;
         foreach($clauses as $index => $clause) {
             if($index % 2 == 0) {
-                $smarty_template['template'] .= '{'.$clause.'}';
-
-            } else {
+                if(self::SMARTY_TAG_BEGIN == substr($clause, 0, 1) && self::SMARTY_TAG_END == substr($clause, -1, 1))
+                    $smarty_template['template'] .= $clause;
+                else
+                    $smarty_template['template'] .= '{'.$clause.'}';
+            } else if( !empty($clause) ){
                 $key = '[CONTENT'.($seq++).']';
                 $smarty_template['template'] .= $key;
                 $params = array();
