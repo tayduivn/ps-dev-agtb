@@ -46,6 +46,10 @@ background: #eeeeff;
 border: 1px solid #000000;
 border-spacing: 0px;
 }
+.codesample .note {
+background: #ffffff;
+font-style: italic;
+}
 </style>
 <script type="text/javascript" src="../../include/javascript/jquery/jquery.js"></script>
 </head>
