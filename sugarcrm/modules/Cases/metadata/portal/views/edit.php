@@ -79,14 +79,25 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
             'fields' => array(
                 array(
                     'name' => 'case_number',
+                    'displayParams' => array(
+                        'colspan' => 2
                     ),
-                array(
-                    'name' => 'name',
-                    'required' => true),
+                    'readOnly' => true),
                 'priority',
                 'status',
+                array(
+                    'name' => 'name',
+                    'displayParams' => array(
+                        'colspan' => 2,
+                        'size' => 60
+                    ),
+                    'required' => true),
                 array('name' => 'description',
-                )
+                    'displayParams' => array(
+                        'colspan' => 2,
+                        'rows' => '15',
+                        'cols' => '100'
+                    ))
             )
         )
     ),

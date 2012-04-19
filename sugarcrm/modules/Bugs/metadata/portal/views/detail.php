@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Bugs']['portal']['view']['edit'] =
+$viewdefs ['Bugs']['portal']['view']['detail'] =
     array(
         'templateMeta' =>
         array(
@@ -15,23 +15,6 @@ $viewdefs['Bugs']['portal']['view']['edit'] =
                     'field' => '30',
                 ),
             ),
-            'formId' => 'BugEditView',
-            'formName' => 'BugEditView',
-            'hiddenInputs' =>
-            array(
-                'module' => 'Bugs',
-                'returnmodule' => 'Bugs',
-                'returnaction' => 'DetailView',
-                'action' => 'Save',
-            ),
-            'hiddenFields' =>
-            array(
-                array(
-                    'name' => 'portal_viewable',
-                    'operator' => '=',
-                    'value' => '1',
-                ),
-            ),
             'useTabs' => false,
         ),
         'panels' =>
@@ -40,17 +23,23 @@ $viewdefs['Bugs']['portal']['view']['edit'] =
                 'label' => 'default',
                 'fields' =>
                 array(
-                    'priority',
-                    'status',
-                    'source',
-                    'product_category',
                     array(
-                        'name' => 'resolution',
+                        'name' => 'bug_number',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
                         ),
                     ),
+                    'status',
+                    'priority',
+                    'source',
+                    'product_category',
+                    'resolution',
+                    'type',
+                    'date_modified',
+                    'modified_by_name',
+                    'created_by_name',
+                    'date_entered',
                     array(
                         'name' => 'name',
                         'displayParams' =>
