@@ -613,7 +613,7 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
      * @dataProvider providerCustomCodeWithHidden
      */
     public function testCustomCodeWithHidden($customCode, $expected_customCode, $expected_hidden_array) {
-/*
+
         $params = array(
             'module' => 'Accounts',
             'view' => 'DetailView',
@@ -626,11 +626,11 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
         $form = $this->_smarty->get_template_vars('form');
 
         $this->assertEquals($expected_hidden_array, $form['hidden']);
-*/
+
     }
 
     public function testBuildSugarHtml() {
-/*
+
         $sugar_html = array(
             'type' => 'submit',
             'value' => '{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}',
@@ -655,6 +655,6 @@ class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
         );
         //Test for smarty_function_sugar_button for sugar_html
         $this->assertEquals($expected_html, smarty_function_sugar_button($params, $this->_smarty));
-*/
+
     }
 }
