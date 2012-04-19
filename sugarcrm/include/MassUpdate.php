@@ -289,7 +289,7 @@ eoq;
 					////////////////////////
 					//END SUGARCRM flav=pro ONLY
 
-					if($this->sugarbean->ACLAccess('Save')){
+					if($this->sugarbean->ACLAccess('Save', array("massupdate" => true))) {
 						$_POST['record'] = $id;
 						$_GET['record'] = $id;
 						$_REQUEST['record'] = $id;
@@ -375,8 +375,8 @@ eoq;
 		global $app_strings;
 		global $current_user;
 
-		if($this->sugarbean->bean_implements('ACL') && ( !ACLController::checkAccess($this->sugarbean->module_dir, 'edit', true) || !ACLController::checkAccess($this->sugarbean->module_dir, 'massupdate', true) ) ){
-			return '';
+		if(!$this->sugarbean->ACLAccess('edit', true) && !$this->sugarbean->ACLAccess('massupdate', true)) {
+		    return '';
 		}
 
 		$lang_delete = translate('LBL_DELETE');
@@ -414,8 +414,7 @@ eoq;
 		foreach($this->sugarbean->field_defs as $field)
 		{
 			//BEGIN SUGARCRM flav=pro ONLY
-			   if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, false)  < 2)
-			   {
+			   if(!$this->sugarbean->ACLFieldAccess($field['name'], 'edit')) {
 			   	  continue;
 			   }
 			//END SUGARCRM flav=pro ONLY
@@ -687,14 +686,14 @@ EOJS;
 			".SugarThemeRegistry::current()->getImage("id-ff-select", '', null, null, ".png", $app_strings['LBL_ID_FF_SELECT'])."
 			</button></span>";
 			$parent_type = $field['parent_type'];
-            $parent_types = $app_list_strings[$parent_type];
-            $disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
+			$parent_types = $app_list_strings[$parent_type];
+            $disabled_parent_types = SugarACL::disabledModuleList($parent_types);
             foreach($disabled_parent_types as $disabled_parent_type) {
-			    unset($parent_types[$disabled_parent_type]);
+                unset($parent_types[$disabled_parent_type]);
             }
 			$types = get_select_options_with_id($parent_types, '');
 			//BS Fix Bug 17110
-			$pattern = "/\n<OPTION.*".$app_strings['LBL_NONE']."<\/OPTION>/";
+			$pattern = "#\n<OPTION.*".$app_strings['LBL_NONE'].'</OPTION>#';
 			$types = preg_replace($pattern, "", $types);
 			// End Fix
 
@@ -1350,7 +1349,7 @@ EOQ;
         static $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
         foreach($this->sugarbean->field_defs as $field) {
             //BEGIN SUGARCRM flav=pro ONLY
-            if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, false)  < 2)continue;
+            if(!$this->sugarbean->ACLFieldAccess($field['name'], 'edit')) continue;
             //END SUGARCRM flav=pro ONLY
             if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate']))){
                 if(isset($field['type']) && $field['type'] == 'relate' && isset($field['id_name']) && $field['id_name'] == 'assigned_user_id')

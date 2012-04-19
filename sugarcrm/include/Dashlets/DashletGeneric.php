@@ -145,9 +145,7 @@ class DashletGeneric extends Dashlet {
         //$this->addCustomFields();
         if($this->displayColumns) {
              //BEGIN SUGARCRM flav=pro ONLY
-             if($this->seedBean->bean_implements('ACL')) {
-                    ACLField::listFilter($this->displayColumns,$this->seedBean->module_dir, $GLOBALS['current_user']->id ,true);
-             }
+             $this->seedBean->ACLFilterFieldList($this->displayColumns, array("owner_override" => true));
              //END SUGARCRM flav=pro ONLY
              // columns to display
              foreach($this->displayColumns as $num => $name) {
@@ -166,9 +164,7 @@ class DashletGeneric extends Dashlet {
         }
         else {
              //BEGIN SUGARCRM flav=pro ONLY
-             if($this->seedBean->bean_implements('ACL')) {
-                ACLField::listFilter($this->columns,$this->seedBean->module_dir, $GLOBALS['current_user']->id ,true);
-             }
+             $this->seedBean->ACLFilterFieldList($this->columns, array("owner_override" => true));
              //END SUGARCRM flav=pro ONLY
              foreach($this->columns as $name => $val) {
                 // defensive code for array being returned
@@ -384,9 +380,7 @@ class DashletGeneric extends Dashlet {
         $this->lvs->displayColumns = $displayColumns;
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if($this->seedBean->bean_implements('ACL')) {
-            ACLField::listFilter($this->lvs->displayColumns,$this->seedBean->module_dir, $GLOBALS['current_user']->id ,true);
-        }
+        $this->seedBean->ACLFilterFieldList($this->lvs->displayColumns, array("owner_override" => true));
         //END SUGARCRM flav=pro ONLY
 
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());

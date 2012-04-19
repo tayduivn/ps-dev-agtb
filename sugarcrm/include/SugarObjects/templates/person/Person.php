@@ -77,7 +77,7 @@ class Person extends Basic
 
         //BEGIN SUGARCRM flav=pro ONLY
         $globalUserSet = isset($GLOBALS['current_user']);
-        if ($globalUserSet && (ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if ($globalUserSet && $this->ACLFieldAccess('first_name')) {
         //END SUGARCRM flav=pro ONLY
            // first name has at least read access
            $first_name = $this->first_name;
@@ -86,7 +86,7 @@ class Person extends Basic
         //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ($globalUserSet && (ACLField::hasAccess('last_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if ($globalUserSet && $this->ACLFieldAccess('last_name')) {
         //END SUGARCRM flav=pro ONLY
             // last name has at least read access
             $last_name = $this->last_name;
@@ -95,7 +95,7 @@ class Person extends Basic
         //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ($globalUserSet && (ACLField::hasAccess('salutation', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if ($globalUserSet && $this->ACLFieldAccess('salutation')) {
         //END SUGARCRM flav=pro ONLY
 
             // salutation has at least read access
@@ -110,9 +110,9 @@ class Person extends Basic
         //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ($globalUserSet && (ACLField::hasAccess('title', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if ($globalUserSet && $this->ACLFieldAccess('title')) {
         //END SUGARCRM flav=pro ONLY
-            // last name has at least read access
+            // title has at least read access
             $title = $this->title;
         //BEGIN SUGARCRM flav=pro ONLY
         }
@@ -135,7 +135,6 @@ class Person extends Basic
 		$this->name = $full_name;
 		$this->full_name = $full_name; //used by campaigns
 	}
-	
 
 	/**
  	 * @see parent::save()
