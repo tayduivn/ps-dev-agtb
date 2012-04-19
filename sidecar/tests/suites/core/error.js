@@ -1,13 +1,9 @@
 describe("Error module", function() {
-    var app = SUGAR.App,
-        server;
+    var app;
 
-    beforeEach(function() {
-        server = sinon.fakeServer.create();
-    });
-
-    afterEach(function() {
-        server.restore();
+    beforeEach(function () {
+        app = SugarTest.app;
+        SugarTest.seedFakeServer();
     });
 
     it("should inject custom http error handlers and should handle http code errors", function() {
@@ -24,14 +20,13 @@ describe("Error module", function() {
         };
 
         app.error.initialize({statusCodes: statusCodes});
+
         sinon.spy(app.error, "handleHTTPError");
-        server.respondWith([404, {}, ""]);
-
+        SugarTest.server.respondWith([404, {}, ""]);
         bean.save();
-        server.respond();
-
-        expect(app.error.handleHTTPError.called).toBeTruthy();
+        SugarTest.server.respond();
         expect(handled).toBeTruthy();
+        expect(app.error.handleHTTPError.called).toBeTruthy();
 
         app.error.handleHTTPError.restore();
     });

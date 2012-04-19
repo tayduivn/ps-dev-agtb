@@ -83,7 +83,7 @@ describe("Sugar App Language Manager", function() {
 
         lang.setLabel("Accounts", setData);
         string = lang.translate("BOGUS");
-        expect(string).toEqual("BOGUS");
+        expect(string).toEqual(false);
     });
 
     it("should save app list strings to the language cache and app cache", function() {

@@ -1,17 +1,11 @@
 describe('Metadata Manager', function () {
     var app;
-    var server;
-    //Preload the templates
 
     beforeEach(function () {
-        //Load the metadata
         app = SugarTest.app; 
+        SugarTest.seedFakeServer();
         app.template.load(fixtures.metadata.viewTemplates);
         app.metadata.set(fixtures.metadata);
-    });
-
-    afterEach(function () {
-        if (server && server.restore) server.restore();
     });
 
     it('should get view definitions', function () {
@@ -65,13 +59,12 @@ describe('Metadata Manager', function () {
 
     it ('should sync metadata', function (){
         SugarTest.storage = {};
-        server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=",
+        SugarTest.server.respondWith("GET", "/rest/v10/metadata?typeFilter=&moduleFilter=",
                         [200, {  "Content-Type":"application/json"},
                             JSON.stringify(fixtures.metadata)]);
 
         app.metadata.sync();
-        server.respond();
+        SugarTest.server.respond();
 
         expect(SugarTest.storage["test:portal:md:modules"]).toEqual("Cases,Contacts,Home");
         expect(SugarTest.storage["test:portal:md:m:Cases"]).toBeDefined();

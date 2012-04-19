@@ -31,8 +31,9 @@ describe("App", function() {
         });
 
         it("should return an existing instance", function() {
+            var app = SUGAR.App.init({el: "body"});
             var app2 = SUGAR.App.init({el: "body"});
-            expect(app2).toEqual(SugarTest.app);
+            expect(app2).toEqual(app);
         });
 
         it("should fire a app:init event when initialized", function() {
