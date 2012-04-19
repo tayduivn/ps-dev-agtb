@@ -47,6 +47,9 @@
             },
             405: function() {
             },
+            422: function() {
+
+            },
             500: function() {
             }
         },

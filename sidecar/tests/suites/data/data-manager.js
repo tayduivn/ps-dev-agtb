@@ -160,7 +160,20 @@ describe("DataManager", function() {
         expect(beans.at(1).get("name")).toEqual("Petr Petrov");
         expect(beans.at(1).module).toEqual("Contacts");
         expect(beans.at(1).fields).toBeDefined();
+    });
 
+    it("should be able to handle sync errors", function() {
+        var moduleName = "Contacts";
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+        var bean = dm.createBean(moduleName);
+        var spy = sinon.spy();
+
+        server = sinon.fakeServer.create();
+        server.respondWith([422, {}, ""]);
+        bean.save(null, {error: spy});
+        server.respond();
+
+        expect(spy.called).toBeTruthy();
     });
 
     it("should add result count and next offset to a collection if in server response", function(){
