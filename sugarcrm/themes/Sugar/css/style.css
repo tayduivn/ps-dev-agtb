@@ -6088,7 +6088,7 @@ margin-left:10px;
 }
 #sugar_spot_search {
 	border: 0;
-	width:290px;
+	width:215px;
 	font-size: 12px;
     padding:5px 5px 5px 5px;
     border-radius: 2px;
@@ -6234,7 +6234,7 @@ margin-top: 14px;
 #close_spot_search {
 display: block;
 position: absolute;
-right: 12px;
+right: 20px;
 top: 6px;
 display: none;
 cursor: pointer;

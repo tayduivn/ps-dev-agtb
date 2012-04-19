@@ -81,8 +81,8 @@ $("#sugar_spot_search").ready(function() {
         //If theres old data, clear it.
           if( $("#sugar_spot_search_results").find('section').length > 0 )
               $("#sugar_spot_search_results").html('');
-        $('#sugar_spot_search_div').css("width",240);
-		$('#sugar_spot_search').css("width",215);
+        //$('#sugar_spot_search_div').css("width",240);
+		//$('#sugar_spot_search').css("width",215);
         $("#sugar_spot_search_results").show();
     });
 
