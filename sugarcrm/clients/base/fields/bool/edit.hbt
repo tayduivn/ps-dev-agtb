@@ -1,5 +1,7 @@
-<div class="controls">
-    <label class="control-label" for="input01">{{label}}</label>
-    <input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}>
-    <p class="help-block"></p>
+<div class="row-fluid">
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span4">
+        <input type="checkbox" class="checkbox"{{#if value}} checked{{/if}}>
+        <p class="help-block"></p>
+    </div>
 </div>

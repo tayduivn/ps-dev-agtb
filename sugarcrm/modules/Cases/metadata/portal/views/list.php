@@ -19,7 +19,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
         0 =>
         array(
             'name' => 'show_more_button_back',
-            'type' => 'navElement',
+            'type' => 'navelement',
             'icon' => 'icon-plus',
             'label' => ' ',
             'route' =>
@@ -31,7 +31,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
         1 =>
         array(
             'name' => 'show_more_button_back',
-            'type' => 'navElement',
+            'type' => 'navelement',
             'icon' => 'icon-chevron-left',
             'label' => ' ',
             'events' =>
@@ -42,7 +42,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
         2 =>
         array(
             'name' => 'show_more_button_forward',
-            'type' => 'navElement',
+            'type' => 'navelement',
             'icon' => 'icon-chevron-right',
             'label' => ' ',
             'events' =>
@@ -61,17 +61,22 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 0 =>
                 array(
                     'name' => 'case_number',
-                    'label' => 'Case Number',
+                    'label' => 'ID',
                     'class' => 'foo',
                     'default' => true,
                     'enabled' => true,
+                    'sorting' => true,
+                    'width' =>  8
                 ),
                 1 =>
                 array(
                     'name' => 'name',
-                    'label' => 'Name',
+                    'label' => 'Title',
                     'default' => true,
                     'enabled' => true,
+                    'link' => true,
+                    'sorting' => true,
+                    'width' => 49
                 ),
                 2 =>
                 array(
@@ -79,6 +84,8 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                     'label' => 'Status',
                     'default' => true,
                     'enabled' => true,
+                    'sorting' => true,
+                    'width' => 17
                 ),
                 3 =>
                 array(
@@ -86,11 +93,15 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                     'label' => 'Modifed Date',
                     'default' => true,
                     'enabled' => true,
+                    'sorting' => true,
+                    'width' => 17
                 ),
                 4 =>
                 array(
-                    'type' => 'actionsLink',
-                    'label' => 'Actions',
+                    'type' => 'actionslink',
+                    'label' => '',
+                    'width' => 5,
+                    'sorting' => false
                 ),
             ),
         ),

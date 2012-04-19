@@ -1874,6 +1874,15 @@ EOQ;
 					    $this->picture = '';
 					}
 				}
+			} else {
+				$this->picture = create_guid().".png";
+				$file = "include/images/default-profile.png";
+				$newfile = "upload://$this->picture";
+				if (!copy($file, $newfile)) {
+		   			global $app_strings;
+		        	$GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
+		
+				}	
 			}
 		}
 

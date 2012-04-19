@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML>
 <html>
     <head>
 		<meta http-equiv="x-ua-compatible" content="IE=8">
@@ -17,14 +17,14 @@
         <script src='utils/utils.js'></script>
 		<script src='core/cache.js'></script>
         <script src="core/events.js"></script>
+        <script src='core/error.js'></script>
 		<script src='view/template.js'></script>
-		<script src='view/sugar-field-manager.js'></script>
-		<script src='view/sugar-field.js'></script>
 		<script src='core/context.js'></script>
 		<script src='core/controller.js'></script>
 		<script src='core/router.js'></script>
         <script src='core/language.js'></script>
 		<script src='core/metadata-manager.js'></script>
+        <script src='core/acl.js'></script>
 		<script src='utils/logger.js'></script>
 		<script src='config.js'></script>
 
@@ -34,10 +34,13 @@
 		<script src='data/validation.js'></script>
 
         <script src='view/hbt-helpers.js'></script>
-        <script src='view/layout-manager.js'></script>
+        <script src='view/view-manager.js'></script>
+        <script src='view/component.js'></script>
         <script src='view/view.js'></script>
+        <script src='view/field.js'></script>
         <script src='view/layout.js'></script>
         <script src='view/views/list-view.js'></script>
+        <script src='view/views/header-view.js'></script>
         <script src='view/layouts/columns-layout.js'></script>
         <script src='view/layouts/fluid-layout.js'></script>
 
@@ -46,33 +49,14 @@
 		<script language="javascript" src="../lib/sinon/sinon.js"></script>
 		<link rel="stylesheet" href="../lib/twitterbootstrap/bootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="../lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-		<script src="../lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
-
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        <script src="../lib/twitterbootstrap/bootstrap/js/bootstrap.js"></script>
+        <script src="../lib/twitterbootstrap/bootstrap/js/bootstrap-tooltip.js"></script>
+        <script src="../lib/twitterbootstrap/bootstrap/js/bootstrap-popover.js"></script>
+        <script src="../lib/twitterbootstrap/bootstrap/js/application.js"></script>
     </head>
     <body>
-    <div class="navbar navbar-fixed-top">
-          <div class="navbar-inner">
-
-            <div class="container-fluid">
-                <a class="cube" href="#" rel="tooltip" data-original-title="Dashboard"></a>
-              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </a>
-              <a class="brand" href="#">Sidecar</a>
-              <div class="nav-collapse">
-                <ul class="nav">
-                    <li><a href="#">Browse</a></li>
-                    <li><a href="#Cases/create">Create</a></li>
-                </ul>
-                  <p class="navbar-text pull-right"></p>
-              </div><!--/.nav-collapse -->
-            </div>
-          </div>
-        </div>
     	<div id="portal">
-			<div id="view" style="" class="container-fluid"></div>
 			<div id="sidecar" style="" ></div>
 			<div id="layout" style=""></div>
 		</div>

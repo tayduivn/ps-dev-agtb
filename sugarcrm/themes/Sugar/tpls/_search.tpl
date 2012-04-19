@@ -4,6 +4,7 @@
 <div class="dcmenuDivider" id="searchDivider"></div>
 <div id="dcmenuSearchDiv">
         <div id="sugar_spot_search_div">
+            <div id="spot_search_btn" onclick="DCMenu.spot(document.getElementById('sugar_spot_search').value);">&nbsp;</div>
             <input size=20 id='sugar_spot_search'  title='Enter global search term' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
             <img src="{sugar_getimagepath file="info-del.png"}" id="close_spot_search"/>
             <div id="sugar_spot_search_results" style="display:none;">
@@ -28,7 +29,11 @@
 {if $FTS_AUTOCOMPLETE_ENABLE}
 {literal}
 <script>
-
+    $("#spot_search_btn").click(function(){
+        SUGAR.util.doWhen(function(){
+            return document.getElementById('SpotResults') != null;
+        }, SUGAR.themes.resizeSearch);
+    });
     var data = encodeURIComponent(YAHOO.lang.JSON.stringify({'method':'fts_query','conditions':[]}));
     var autoCom = $( "#sugar_spot_search" ).autocomplete({
         source: 'index.php?to_pdf=true&module=Home&action=quicksearchQuery&append_wildcard=true&data='+data,
@@ -61,7 +66,7 @@
         //If theres old data, clear it.
           if( $("#sugar_spot_search_results").find('section').length > 0 )
               $("#sugar_spot_search_results").html('');
-		$('#sugar_spot_search_div').css("width",344);
+		$('#sugar_spot_search_div').css("width",360);
 		$('#sugar_spot_search').css("width",290);
         $("#sugar_spot_search_results").show();
     });

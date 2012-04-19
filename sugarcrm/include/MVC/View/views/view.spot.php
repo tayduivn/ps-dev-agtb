@@ -54,6 +54,7 @@ class ViewSpot extends ViewAjax
         $options = array('current_module' => $this->module, 'modules' => $modules);
 
         $searchEngine = SugarSearchEngineFactory::getInstance();
+
         $trimmed_query = trim($_REQUEST['q']);
         $rs = $searchEngine->search($trimmed_query, $offset, $limit, $options);
         $formattedResults = $this->formatSearchResultsToDisplay($rs, $offset,$trimmed_query);
@@ -68,6 +69,7 @@ class ViewSpot extends ViewAjax
         $ss->assign('appStrings', $GLOBALS['app_strings']);
         $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $ss->assign('queryEncoded', $query_encoded);
+
         $template = 'include/SearchForm/tpls/SugarSpot.tpl';
         if(file_exists('custom/include/SearchForm/tpls/SugarSpot.tpl'))
         {

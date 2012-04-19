@@ -140,18 +140,11 @@ class DetailView extends ListView {
         //indicate that this is not the first time anymore
         $this->setLocalSessionVariable($html_varName, "IS_FIRST_VIEW",  false);
 
-        // All 3 databases require this because the limit query does a > db_offset comparison.
+        // All databases require this because the limit query does a > db_offset comparision.
 		$db_offset=$offset-1;
 
 		$this->populateQueryWhere($isFirstView, $html_varName);
-		if(ACLController::requireOwner($seed->module_dir, 'view')) {
-			global $current_user;
-			$seed->getOwnerWhere($current_user->id);
-       		if(!empty($this->query_where)) {
-       			$this->query_where .= ' AND ';
-       		}
-       		$this->query_where .= $seed->getOwnerWhere($current_user->id);
-		}
+		$seed->addVisibilityWhere($this->query_where);
 
         $order = $this->getLocalSessionVariable($seed->module_dir.'2_'.$html_varName, "ORDER_BY");
         $orderBy = '';

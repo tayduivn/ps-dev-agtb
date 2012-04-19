@@ -1,5 +1,7 @@
-<div class="controls">
-    <label class="control-label" for="input01">{{label}}</label>
-    <input type="text" class="input-xlarge" value="{{#if value}}{{value}}{{else}}http://{{/if}}">
-    <p class="help-block"></p>
+<div class="row-fluid">
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span10">
+        <input type="text" name="{{name}}" value="{{#if value}}{{value}}{{else}}http://{{/if}}" class="input-xlarge wide tleft">
+        <p class="help-block"></p>
+    </div>
 </div>

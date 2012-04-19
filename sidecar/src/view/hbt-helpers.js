@@ -16,7 +16,7 @@
      * @param {Data.Bean} bean
      * @return {String}
      */
-    Handlebars.registerHelper('sugarField', function(context, view, bean) {
+    Handlebars.registerHelper('field', function(context, view, bean) {
         var ret = '<span sfuuid="' + (++sfid) + '"></span>',
             name = this.name,
             label = this.label || this.name,
@@ -29,12 +29,38 @@
             def = bean.fields[name];
         }
 
-        sf = view.sugarFields[sfid] || (view.sugarFields[sfid] = app.sugarFieldManager.get({
+        sf = (view.sugarFields[sfid] = app.view.createField({
             def: def,
             view: view,
             context: context,
             label: label,
-            model: bean || context.get("model")
+            model: bean
+        }));
+
+        sf.sfid = sfid;
+
+        return new Handlebars.SafeString(ret);
+    });
+
+    /**
+     *
+     */
+    Handlebars.registerHelper('button', function(type, label) {
+
+        var ret = '<span sfuuid="' + (++sfid) + '"></span>',
+            def = { type: type, name: type },
+            sf;
+
+        var context = this.context;
+        var bean = context.get("model");
+        var view = this;
+
+        sf = (view.sugarFields[sfid] = app.view.createField({
+            def: def,
+            view: view,
+            context: context,
+            label: label,
+            model: bean
         }));
 
         sf.sfid = sfid;
@@ -78,6 +104,8 @@
      * @return {String}
      */
     Handlebars.registerHelper('buildRoute', function(context, model, action, params) {
+        model = model || context.get("model");
+
         var id = model.id,
             route;
 
@@ -154,7 +182,16 @@
         app.logger.debug("*****HBT: Current Value*****");
         app.logger.debug(value);
         app.logger.debug("***********************");
+    });
 
+    /**
+     * @method getLabel
+     * @param {String} string
+     * @param {String}
+     */
+    Handlebars.registerHelper("getLabel", function(string, module){
+       var result = app.lang.get(string, module);
+       return result;
     });
 
 })(SUGAR.App);

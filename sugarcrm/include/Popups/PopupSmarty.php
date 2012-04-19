@@ -71,7 +71,7 @@ class PopupSmarty extends ListViewSmarty{
 
     /**
      * Assign several arrow image attributes to TemplateHandler smarty. Such as width, height, etc.
-     * 
+     *
      * @return void
      */
     function processArrowVars()
@@ -205,10 +205,10 @@ class PopupSmarty extends ListViewSmarty{
 
 
 		$associated_row_data = array();
-		
+
 		//C.L. - Bug 44324 - Override the NAME entry to not display salutation so that the data returned from the popup can be searched on correctly
 		$searchNameOverride = !empty($this->seed) && $this->seed instanceof Person && (isset($this->data['data'][0]['FIRST_NAME']) && isset($this->data['data'][0]['LAST_NAME'])) ? true : false;
-		
+
 		global $locale;
 		foreach($this->data['data'] as $val)
 		{
@@ -232,7 +232,7 @@ class PopupSmarty extends ListViewSmarty{
 		$this->th->ss->assign('formData', $this->formData);
 		$this->th->ss->assign('APP', $GLOBALS['app_strings']);
 		$this->th->ss->assign('MOD', $GLOBALS['mod_strings']);
-        if (isset($this->_popupMeta['create']['createButton'])) 
+        if (isset($this->_popupMeta['create']['createButton']))
 		{
            $this->_popupMeta['create']['createButton'] = translate($this->_popupMeta['create']['createButton']);
         }
@@ -325,7 +325,8 @@ class PopupSmarty extends ListViewSmarty{
         $this->searchForm->displaySavedSearch = false;
 
         //BEGIN SUGARCRM flav=pro ONLY
-		ACLField::listFilter($this->searchForm->fieldDefs, $this->module, $GLOBALS['current_user']->id, true, false, 1,false, true, '_advanced');
+		SugarACL::listFilter($this->module, $this->searchForm->fieldDefs, array("owner_override" => true),
+		    array("use_value" => true, "suffix" => '_advanced', "add_acl" => true));
 		//END SUGARCRM flav=pro ONLY
 
         $this->searchForm->populateFromRequest('advanced_search');
@@ -379,7 +380,7 @@ class PopupSmarty extends ListViewSmarty{
         }
 
         /**
-         * Bug #46842 : The relate field field_to_name_array fails to copy over custom fields 
+         * Bug #46842 : The relate field field_to_name_array fails to copy over custom fields
          * By default bean's create_new_list_query function loads fields displayed on the page or used in the search
          * add fields used to populate forms from _viewdefs :: field_to_name_array to retrive from db
          */
@@ -394,9 +395,9 @@ class PopupSmarty extends ListViewSmarty{
                     $this->filter_fields[$add_field] = true;
                 }
             }
-            
+
         }
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         //check for team_set_count
         if(!empty($this->filter_fields['team_name']) && empty($this->filter_fields['team_count'])){

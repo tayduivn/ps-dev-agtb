@@ -42,7 +42,7 @@
 <div class="clear"></div>
 <div id="arrow" title="Show" class="up"></div>
 <div id="footer">
-    <img src="{$COMPANY_LOGO_URL}" width="{$COMPANY_LOGO_WIDTH}" class="logo" id="logo" height="{$COMPANY_LOGO_HEIGHT}"
+    <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" 
         title="&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}" border="0"/>
     <div id="partner">
     {foreach from=$DYNAMICDCACTIONS item=action}
@@ -50,10 +50,11 @@
     {/foreach}
 
      </div>
-    
-{if $smarty.request.module != "Emails" && $smarty.request.module != "Users"}     
+<script>
+ 	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS}";
+</script>       
+{if $smarty.request.module != "Emails" && $smarty.request.module != "Users"}
 {literal}
-
 
 <script type="text/javascript" src="//asset0.zendesk.com/external/zenbox/v2.4/zenbox.js"></script>
 <style type="text/css" media="screen, projection">

@@ -62,6 +62,7 @@ class OracleManager extends DBManager
         "fulltext" => true,
         "auto_increment_sequence" => true,
         'limit_subquery' => true,
+        "recursive_query" => true,
     );
 
     protected $maxNameLengths = array(

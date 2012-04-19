@@ -23,7 +23,7 @@ describe("Handlebars Helpers", function() {
 
     });
 
-    describe("sugarField", function() {
+    describe("field", function() {
         it("should return a sugarfield span element", function() {
             var sfid = 0,
                 model = new app.Bean(),
@@ -33,10 +33,10 @@ describe("Handlebars Helpers", function() {
                     }
                 },
                 field = new Backbone.View(),
-                view = {sugarFields: [null, field]},
-                sugarField = {name: "TestName", label: "TestLabel"};
+                view = {sugarFields: [null, field], name: "detail"},
+                sugarField = {name: "TestName", label: "TestLabel", type: "text"};
 
-            expect(Handlebars.helpers.sugarField.call(sugarField, context, view, model).toString()).toEqual('<span sfuuid="1"></span>');
+            expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toEqual('<span sfuuid="1"></span>');
         })
     });
 
@@ -66,8 +66,6 @@ describe("Handlebars Helpers", function() {
 
             model.id = "1245";
 
-            console.log("DSL:KF");
-            console.log(Handlebars.helpers.buildRoute(context, model, action, params));
             expect(Handlebars.helpers.buildRoute(context, model, action, params).toString()).toEqual("Cases/1245");
         });
     });
@@ -140,6 +138,22 @@ describe("Handlebars Helpers", function() {
                 returnFalse = "Failure!";
 
             expect(Handlebars.helpers.eq(val1, val2, returnTrue, returnFalse)).toEqual(returnFalse);
+        });
+    });
+
+    describe("getLabel", function() {
+        it("should get a label", function() {
+            var lang = SUGAR.App.lang;
+            var setData = fixtures.language.Accounts,
+                string;
+
+            lang.setLabel("Accounts", setData);
+            string = lang.get("LBL_ANNUAL_REVENUE", "Accounts");
+
+            expect(string).toEqual("Annual Revenue");
+            // Save instance of app cache
+            expect(Handlebars.helpers.getLabel("LBL_ANNUAL_REVENUE", "Accounts")).toEqual("Annual Revenue");
+            // Restore cache
         });
     });
 

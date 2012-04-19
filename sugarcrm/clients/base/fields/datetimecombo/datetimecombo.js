@@ -1,6 +1,6 @@
 ({
     render:function(value) {
-        app.sugarField.base.prototype.render.call(this);//call proto render
+        app.view.Field.prototype.render.call(this);//call proto render
         $(function() {
             $(".datepicker").datepicker({
                 showOn: "button",
@@ -15,17 +15,17 @@
     },
 
     format:function(value) {
-        var jsDate = app.utils.date.parse(value);
-        jsDate = app.utils.date.roundTime(jsDate);
+        var jsDate = this.app.utils.date.parse(value);
+        jsDate = this.app.utils.date.roundTime(jsDate);
         value = {
             dateTime: value,
             //TODO Account for user prefs
-            date: app.utils.date.format(jsDate, 'Y-m-d'),
-            time: app.utils.date.format(jsDate, 'h:i:s'),
-            hours: app.utils.date.format(jsDate, 'H'),
-            minutes: app.utils.date.format(jsDate, 'i'),
-            seconds: app.utils.date.format(jsDate, 's'),
-            amPm: app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+            date: this.app.utils.date.format(jsDate, 'Y-m-d'),
+            time: this.app.utils.date.format(jsDate, 'h:i:s'),
+            hours: this.app.utils.date.format(jsDate, 'H'),
+            minutes: this.app.utils.date.format(jsDate, 'i'),
+            seconds: this.app.utils.date.format(jsDate, 's'),
+            amPm: this.app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
         return value
     },

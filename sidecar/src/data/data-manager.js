@@ -81,7 +81,6 @@
     // Bean collection class cache
     var _collections = {};
 
-    var _serverProxy;
     var _dataManager = {
 
         /**
@@ -100,7 +99,6 @@
          * @method
          */
         init: function() {
-            _serverProxy = app.api;
             Backbone.sync = this.sync;
         },
 
@@ -276,14 +274,23 @@
              * {
              *   name: link name,
              *   bean: reference to the related bean
+             *   isNew: flag indicating that it is a new relationship
              * }
              * </pre>
+             *
+             * The `link.isNew` flag is used to distinguish between an existing relationship and a relationship
+             * that is about to be created. Please, refer to REST API specification for details.
+             * In brief, REST API supports creating a new relationship for two existing records as well as
+             * updating an existing relationship (updating relationship fields).
+             * The `link.isNew` flag equals to `true` by default. The flag is set to `false` by data manager
+             * once a relationship is created and whenever relationships are fetched from the server.
              *
              * @member Data.Bean
              */
             beanOrId2.link = {
                 name: link,
-                bean: bean1
+                bean: bean1,
+                isNew: true
             };
 
             return beanOrId2;
@@ -363,24 +370,37 @@
                             model.offset = data.next_offset;
                             model.page = model.getPageNumber();
                         }
-                        // TODO: Hack to overcome wrong response format of get-relationships request until fixed
-                        data = data.records ? data.records : data;
-                    }
-                    else if ((options.relate === true) && (method != "read")) {
+                        data = data.records || [];
+                    } else if ((options.relate === true) && (method != "read")) {
+                        // Reset the flag to indicate that fetched relationship(s) do exist.
+                        model.link.isNew = false;
                         // The response for create/update/delete relationship contains updated beans
-                        if (model.link.bean) model.link.bean.set(data.bean);
-                        data = data.relatedBean;
+                        if (model.link.bean) model.link.bean.set(data.record);
+                        data = data.relatedRecord;
                         // Attributes will be set automatically for create/update but not for delete
-                        if (method == "delete") model.set(data);
+                        // Also, break the link
+                        if (method == "delete") {
+                            model.set(data);
+                            delete model.link;
+                        }
                     }
 
                     options.success(data);
                 }
             };
 
+            var error = function(xhr, error) {
+                if (options.error) {
+                    options.error(xhr, error);
+                }
+
+                // Handle error codes
+                app.error.statusCodes[xhr.status](xhr, error);
+            };
+
             var callbacks = {
                 success: success,
-                error: options.error
+                error: error
             };
 
             if (options.relate === true) {
@@ -390,13 +410,15 @@
                 // - null for read/delete method
                 var relatedData = null;
                 if (method == "create" || method == "update") {
-                    // TODO: Figure out how to extract relationship fields for update method
-                    // We shouldn't pass bean fields in update request but just the relationship fields
-                    // On the other hand passing all fields shouldn't break the server
+                    // Pass all fields: bean fields + relationship fields
                     relatedData = model.attributes;
+                    // Change 'update' method to 'create' if the relationship is a new one
+                    if (method == "update" && model.link.isNew) {
+                        method = "create";
+                    }
                 }
 
-                _serverProxy.relationships(
+                app.api.relationships(
                     method,
                     model.link.bean.module,
                     {
@@ -410,7 +432,7 @@
                 );
             }
             else {
-                _serverProxy.beans(
+                app.api.records(
                     method,
                     model.module,
                     model.attributes,

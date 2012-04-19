@@ -1,16 +1,14 @@
 (function(app) {
     // Key prefix used to identify metadata in the local storage.
-    var _keyPrefix;
+    var _keyPrefix = "md:";
+    var _modulePrefix = "m:";
+    var _fieldPrefix = "f:";
+    var _appPrefix = "a:";
+
     // Metadata that has been loaded from offline storage (memory cache)
+    var _app = {};
     var _metadata = {};
-    var _sugarFields = {};
-    var _fieldTypeMap = {
-        varchar: "text",
-        name: "text",
-        text: "textarea",
-        decimal: "float",
-        currency: "text"
-    };
+    var _fields = {};
 
     function _get(key) {
         return app.cache.get(_keyPrefix + key);
@@ -38,7 +36,7 @@
                 var modules = s.split(",");
                 _.each(modules, function(module) {
                     if (!_metadata[module]) {
-                        _metadata[module] = _get("m." + module);
+                        _metadata[module] = _get(_modulePrefix + module);
                     }
                 });
             }
@@ -68,52 +66,19 @@
 
         /**
          * Gets field widget metadata.
-         * @param {Object} field Field definition.
-         * @return {Object} metadata
-         * @private
+         * @param {Object} type Field type.
+         * @return {Object} Metadata for the specified field type.
          */
-        getField: function(field) {
-            var metadata;
-            var name = _fieldTypeMap[field.type] || field.type;
-            var viewName = field.viewName || field.view;
-
-            if (!name) {
-                app.logger.error("Unknown sugar field type");
-                return null;
-            }
-
-            metadata = _sugarFields[name];
-            // get sugarfield from app cache if we dont have it in memory
+        getField: function(type) {
+            var metadata = _fields[type];
             if (!metadata) {
-                _sugarFields[name] = _get("f." + name);
-                metadata = _sugarFields[name];
+                _fields[type] = _get(_fieldPrefix + type);
+                metadata = _fields[type];
             }
 
-            if (metadata) {
-                var views = metadata.views;
-                if (views && viewName) {
-                    metadata = views[viewName];
-                    if (!metadata) {
-                        // fall back to default view if view for this field doesnt exist
-                        metadata = views['default'];
-                    }
-                }
-                // TODO: This is temp hack for metadata that doesn't contain 'views' section
-                else if (viewName) {
-                    var t = metadata[viewName];
-                    if (t) {
-                        metadata = t;
-                    }
-                    else {
-                        // fall back to default view if view for this field doesnt exist
-                        metadata = metadata['default'];
-                    }
-                }
-
-            }
-
-            if (!metadata && _sugarFields.text && _sugarFields.text.views['default']) {
-                metadata = _sugarFields.text.views['default'];
+            // Fall back to plain text field
+            if (!metadata) {
+                metadata = _fields.text;
             }
 
             return metadata;
@@ -149,6 +114,26 @@
             return metadata;
         },
 
+        /**
+         * Gets module list
+         * @return {Object}
+         */
+        getModuleList: function() {
+           var result =  {};
+            if (_app.moduleList) {
+                result = _app.moduleList;
+            } else {
+                _app.moduleList=_get(_appPrefix+"moduleList");
+                result = _app.moduleList;
+            }
+
+            if(result._hash) {
+                delete result._hash;
+            }
+
+            return result;
+        },
+
         // set is going to be used by the sync function and will transalte
         // from server format to internal format for metadata
 
@@ -158,16 +143,13 @@
          * By default this function is used by MetadataManager to translate server responses into metadata
          * usable internally.
          * @param {Object} data Metadata payload returned by the server.
-         * @param {String} key(optional) Metadata identifier prefix.
          */
-        set: function(data, key) {
-            _keyPrefix = (key || "md") + ".";
-
+        set: function(data) {
             if (data.modules) {
                 var modules = [];
                 _.each(data.modules, function(entry, module) {
                     _metadata[module] = entry;
-                    _set("m." + module, entry);
+                    _set(_modulePrefix + module, entry);
                     modules.push(module);
                 });
                 _set("modules", modules.join(","));
@@ -175,17 +157,14 @@
 
             if (data.sugarFields) {
                 _.each(data.sugarFields, function(entry, module) {
-                    _sugarFields[module] = entry;
-                    _set("f." + module, entry);
+                    _fields[module] = entry;
+                    _set(_fieldPrefix + module, entry);
                 });
             }
 
-            if (data.appListStrings) {
-                app.lang.setAppListStrings(data.appListStrings);
-            }
-
-            if (data.appStrings) {
-                app.lang.setAppStrings(data.appStrings);
+            if (data.moduleList) {
+                _app.moduleList = data.moduleList;
+                _set(_appPrefix+"moduleList", data.moduleList);
             }
 
             //TODO add template support
@@ -193,19 +172,23 @@
 
         /**
          * Syncs metadata from the server. Saves the metadata to the local cache.
-         * @param {Function} callback Callback function to be executed after sync completes.
+         * @param {Function} callback(optional) Callback function to be executed after sync completes.
          */
         sync: function(callback) {
             var self = this;
             app.api.getMetadata([], [], {
                 success: function(metadata) {
                     self.set(metadata);
-                    callback.call(self, null, metadata);
+                    if (callback) {
+                        callback.call(self, null, metadata);
+                    }
                 },
                 error: function(error) {
                     app.logger.error("Error fetching metadata");
                     app.logger.error(error);
-                    callback.call(self, error);
+                    if (callback) {
+                        callback.call(self, error);
+                    }
                 }
             });
         }

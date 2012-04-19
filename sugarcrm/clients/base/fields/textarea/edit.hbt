@@ -1,0 +1,7 @@
+<div class="row-fluid">
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span10">
+        <textarea rows="2" name="{{name}}" class="input-xlarge wide tleft">{{value}}</textarea>
+        <p class="help-block"></p>
+    </div>
+</div>

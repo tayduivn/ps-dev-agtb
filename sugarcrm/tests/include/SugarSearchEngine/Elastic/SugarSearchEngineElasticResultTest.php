@@ -41,10 +41,17 @@ class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $response = new Elastica_Response($this->_responseString);
         $elasticResultSet = new Elastica_ResultSet($response);
         $results = $elasticResultSet->getResults();
         $this->_elasticResult = new SugarSeachEngineElasticResult($results[0]);
+    }
+
+    public function tearDown()
+    {
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     public function testElasticResultGetId()

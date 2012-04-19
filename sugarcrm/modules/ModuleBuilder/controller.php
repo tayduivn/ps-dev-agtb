@@ -220,10 +220,15 @@ class ModuleBuilderController extends SugarController
 
     function action_DeployPackage ()
     {
+    	global $current_user;
+    	
     	if(defined('TEMPLATE_URL')){
     		sugar_cache_reset();
     		SugarTemplateUtilities::disableCache();
     	}
+    	
+    	//increment etag for menu so the new module shows up when the AJAX UI reloads
+    	$current_user->incrementETag("mainMenuETag");
 
         $mb = new ModuleBuilder ( ) ;
         $load = $_REQUEST [ 'package' ] ;
@@ -255,7 +260,7 @@ class ModuleBuilderController extends SugarController
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
 
             //bug 44269 - start
-            global $current_user;
+            
             //clear workflow admin modules cache
             if (isset($_SESSION['get_workflow_admin_modules_for_user'])) unset($_SESSION['get_workflow_admin_modules_for_user']);
 
@@ -748,6 +753,8 @@ class ModuleBuilderController extends SugarController
         $this->view = 'wizard' ;
     }
 
+
+
     /**
      * Receive a layout through $_REQUEST and save it out to the working files directory
      * Expects a series of $_REQUEST parameters all in the format $_REQUEST['slot-panel#-slot#-property']=value
@@ -756,20 +763,26 @@ class ModuleBuilderController extends SugarController
     function action_saveLayout ()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (isset ( $_REQUEST [ 'PORTAL' ] ))
+        if (isset($_REQUEST['PORTAL']))
         {
-            $parser = ParserFactory::getParser ( 'portallayoutview', $_REQUEST [ 'view_module' ] ) ;
-            $parser->init( $_REQUEST [ 'view_module' ] , $_REQUEST [ 'view' ], true ) ;
+            $client = 'portal';
             $this->view = 'portallayoutview' ;
         }
         else
         {
         //END SUGARCRM flav=ent ONLY
-            $parser = ParserFactory::getParser ( $_REQUEST [ 'view' ], $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
             $this->view = 'layoutview' ;
+            $client = null;
         //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
+
+
+        $parser = ParserFactory::getParser ( $_REQUEST['view'],
+                                             $_REQUEST['view_module'],
+                                             isset( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
+                                             null,
+                                             $client) ;
         $parser->writeWorkingFile () ;
 
     	if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
@@ -784,21 +797,24 @@ class ModuleBuilderController extends SugarController
     function action_saveAndPublishLayout ()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (isset ( $_REQUEST [ 'PORTAL' ] ))
+        if (isset($_REQUEST['PORTAL']))
         {
-            $parser = ParserFactory::getParser ( 'portallayoutview', $_REQUEST [ 'view_module' ] ) ;
-            $parser->init( $_REQUEST [ 'view_module' ] , $_REQUEST [ 'view' ], true ) ;
+            $client = 'portal';
             $this->view = 'portallayoutview' ;
-            $parser->writeWorkingFile () ;
         }
         else
         {
-        //END SUGARCRM flav=ent ONLY
-            $parser = ParserFactory::getParser ( $_REQUEST [ 'view' ], $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+            //END SUGARCRM flav=ent ONLY
+            $client = null;
             $this->view = 'layoutview' ;
-        //BEGIN SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
         }
         //END SUGARCRM flav=ent ONLY
+        $parser = ParserFactory::getParser ( $_REQUEST['view'],
+                                             $_REQUEST['view_module'],
+                                             isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null,
+                                             null,
+                                             $client);
         $parser->handleSave () ;
 
         if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
@@ -945,16 +961,23 @@ class ModuleBuilderController extends SugarController
     //BEGIN SUGARCRM flav=ent ONLY
     function action_editPortal ()
     {
-        switch ( strtolower ( $_REQUEST [ 'view' ] ))
+        // when the file names changed, the request variable (which was tied to them in SugarPortalModule.php)
+        // changed. hence, chop off the 'view' suffix in case it appears.
+        $view = strtolower($_REQUEST['view']);
+        if (substr_compare($view,'view',-4) === 0) {
+            $view = substr($view,0,-4);
+        }
+
+        switch ($view)
         {
-            case 'editview' :
-            case 'detailview' :
+            case 'edit' :
+            case 'detail' :
                 $this->view = 'portallayoutView' ;
                 break ;
-            case 'listview' :
+            case 'list' :
                 $this->view = 'portallistView' ;
                 break ;
-            case 'searchview' :
+            case 'search' :
                 $this->view = 'portalsearchView' ;
                 break ;
             default :
