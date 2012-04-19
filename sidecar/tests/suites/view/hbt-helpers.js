@@ -141,4 +141,20 @@ describe("Handlebars Helpers", function() {
         });
     });
 
+    describe("getLabel", function() {
+        it("should get a label", function() {
+            var lang = SUGAR.App.lang;
+            var setData = fixtures.language.Accounts,
+                string;
+
+            lang.setLabel("Accounts", setData);
+            string = lang.get("LBL_ANNUAL_REVENUE", "Accounts");
+
+            expect(string).toEqual("Annual Revenue");
+            // Save instance of app cache
+            expect(Handlebars.helpers.getLabel("LBL_ANNUAL_REVENUE", "Accounts")).toEqual("Annual Revenue");
+            // Restore cache
+        });
+    });
+
 });

@@ -1,5 +1,5 @@
 <div class="row-fluid">
-    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
     <div class="span4" name="{{name}}">
         {{value.street}}<br>
         {{value.city}}<br>

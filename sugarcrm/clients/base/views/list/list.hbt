@@ -7,7 +7,7 @@
             <tr>
             {{#each fields}}
                 <th width="{{width}}%" data-fieldname="{{name}}" class="orderBy{{name}}">
-                {{label}}
+                {{getLabel label ../../context.state.module}}
                     <i class="icon-chevron-{{eq ../../context.state.collection.orderBy.field name ../../this.orderBy.direction ""}}"></i>
                 </th>
             {{/each}}
