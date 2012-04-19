@@ -10,31 +10,26 @@ describe("Error module", function() {
         server.restore();
     });
 
-    it("should handle http code errors", function() {
+    it("should inject custom http error handlers and should handle http code errors", function() {
         var bean = app.data.createBean("Cases");
+        var handled = false;
+
+        // The reason we don't use a spy in this case is because
+        // the status codes are copied instead of passed in by
+        // by reference, thus the spied function will never be called.
         var statusCodes = {
             404: function() {
-                console.log("Error test");
+                console.log(handled);
+                handled = true;
             }
         };
 
         app.error.initialize({statusCodes: statusCodes});
 
-        console.log(app.error.statusCodes);
-        sinon.spy(statusCodes, "404");
         server.respondWith([404, {}, ""]);
         bean.save();
         server.respond();
-        expect(statusCodes['404'].called).toBeTruthy();
-        console.log(statusCodes['404']);
-    });
-
-    xit("should inject custom http error handlers", function() {
-        var statusCodes = {
-            404: function() {}
-        }
-
-        app.error.initialize({statusCodes: statusCodes});
+        expect(handled).toBeTruthy();
     });
 
     it("overloads window.onerror", function() {
