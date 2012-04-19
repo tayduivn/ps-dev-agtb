@@ -1,32 +1,27 @@
 describe("Controller", function() {
-describe("when a route is matched", function() {
-    var app, server;
 
-    beforeEach(function() {
-        app = SugarTest.app;
-        server = sinon.fakeServer.create();
-    });
+    describe("when a route is matched", function() {
 
-    afterEach(function() {
-        if (server && server.restore) server.restore();
-    });
+        beforeEach(function() {
+            SugarTest.seedMetadata();
+            SugarTest.seedFakeServer();
+        });
 
-    it("should load the view properly", function() {
-            var params = {
-                module: "Contacts",
-                layout: "list"
-            };
+        it("should load the view properly", function() {
+            var app = SugarTest.app,
+                params = {
+                    module: "Contacts",
+                    layout: "list"
+                },
+                mock = sinon.mock(app.controller.$el),
+                expection = mock.expects("html");
 
-            var mock = sinon.mock(app.controller.$el);
-            var expection = mock.expects("html");
-
-            server.respondWith("GET", /\/rest\/v10\/Contacts/,
+            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts.*/,
                 [200, {  "Content-Type":"application/json"},
                     JSON.stringify(fixtures.api["rest/v10/contact"].GET.response)]);
 
-
             app.controller.loadView(params);
-            server.respond();
+            SugarTest.server.respond();
 
             expect(app.controller.layout).toBeDefined();
             expect(app.controller.layout instanceof Backbone.View).toBeTruthy();

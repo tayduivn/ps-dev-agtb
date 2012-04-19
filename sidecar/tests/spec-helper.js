@@ -50,12 +50,28 @@ var SugarTest = {};
         return test.loadFile("../fixtures", file, "json", function(data) { return data; }, "json");
     };
 
+    // Only certain tests want seeded meta data so those suites can 
+    // load this in there respective beforeEach:
+    // SugarTest.seedMetadata();
+    test.seedMetadata = function() {
+        SugarTest.app = SUGAR.App.init({el: "body"});
+        SugarTest.metadata = SugarTest.loadFixture("metadata");
+        SugarTest.app.metadata.set(SugarTest.metadata);
+        SugarTest.dm = SUGAR.App.data;
+        SugarTest.dm.reset();
+        SugarTest.dm.declareModels(SugarTest.metadata);
+    };
+
+    test.seedFakeServer = function() {
+        SugarTest.server = sinon.fakeServer.create();
+    };
+
     test.waitFlag = false;
     test.wait = function() { waitsFor(function() { return test.waitFlag; }); };
     test.resetWaitFlag = function() { this.waitFlag = false; };
     test.setWaitFlag = function() { this.waitFlag = true; };
 
-})(SugarTest);
+}(SugarTest));
 
 beforeEach(function(){
     SugarTest.resetWaitFlag();
@@ -74,5 +90,8 @@ beforeEach(function(){
 
 afterEach(function() {
     SugarTest.app.destroy();
+    if (SugarTest.server && SugarTest.server.restore) {
+        SugarTest.server.restore();
+    }
     if (typeof Backbone != "undefined" && !_.isUndefined(Backbone.history)) Backbone.history.stop();
 });
