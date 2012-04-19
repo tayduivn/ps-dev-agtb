@@ -193,10 +193,6 @@
                     <td width="15%" scope="row"><slot>{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT|strip_semicolon}:</slot></td>
                     <td><slot>{$NAME_FORMAT}&nbsp;</slot></td>
                     <td><slot></slot>{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}&nbsp;</td>
-                </tr><tr> 
-                    <td width="15%" scope="row"><slot>{$MOD.LBL_FDOW|strip_semicolon}:</slot></td>
-                    <td><slot>{$FDOWDISPLAY}&nbsp;</slot></td>
-                    <td><slot></slot>{$MOD.LBL_FDOW_TEXT}&nbsp;</td>
                 </tr>
             </table>
         </div>
@@ -257,6 +253,11 @@
             <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_ICAL_PUB_URL|strip_semicolon}: {sugar_help text=$MOD.LBL_ICAL_PUB_URL_HELP}</slot></td>
             <td colspan=2><slot>{$CALENDAR_ICAL_URL}</slot></td>
+            </tr>
+            <tr> 
+            <td width="15%" scope="row"><slot>{$MOD.LBL_FDOW|strip_semicolon}:</slot></td>
+            <td><slot>{$FDOWDISPLAY}&nbsp;</slot></td>
+            <td><slot></slot>{$MOD.LBL_FDOW_TEXT}&nbsp;</td>
             </tr>
             </table>
         </div>
