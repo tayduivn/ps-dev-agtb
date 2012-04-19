@@ -115,7 +115,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
     public function hasViewVariable($viewdefs, $view) {
         $name = MetaDataFiles::getViewDefVar($view);
-        return $name && isset($viewdefs[$name]);
+        return $name && isset($viewdefs[$name]);    
     }
 
     public function getDefsFromArray($viewdefs, $view) {
@@ -495,36 +495,6 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
     }
 
-    /*
-    * Helper method for adding required fields back to the layout when they were
-    * removed.
-    */
-    protected function _restoreRequiredFields($fielddefs, $previousFields, $currentFields)
-    {
-        foreach($fielddefs as $field => $def)
-        {
-            if (self::fieldIsRequired($def) && !isset($currentFields[$field]))
-            {
-                //Use the previous viewdef if this field was on it.
-                if (isset($previousFields[$field]))
-                {
-                    $def = $previousFields[$field];
-                }
-                //next see if the field was on the original layout.
-                elseif (isset ($this->_originalViewDef [ $field ]))
-                {
-                    $def = $this->_originalViewDef [ $field ] ;
-                }
-                //Otherwise make up a viewdef for it from field_defs
-                else
-                {
-                    $def =  self::_trimFieldDefs( $def ) ;
-                }
-                $this->addField($def);
-            }
-        }
-    }
-
     /*  Convert our internal format back to the standard Canonical MetaData layout
      *  First non-(empty) field goes in at column 0; all other (empty)'s removed
      *  Studio required fields are also added to the layout.
@@ -533,8 +503,30 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     protected function _convertToCanonicalForm ( $panels , $fielddefs )
     {
         $previousViewDef = $this->getFieldsFromLayout($this->implementation->getViewdefs ());
+        $oldDefs = $this->implementation->getViewdefs ();
         $currentFields = $this->getFieldsFromLayout($this->_viewdefs);
-        $this->_restoreRequiredFields($fielddefs, $previousViewDef, $currentFields);
+        foreach($fielddefs as $field => $def)
+        {
+        	if (self::fieldIsRequired($def) && !isset($currentFields[$field]))
+        	{
+                //Use the previous viewdef if this field was on it.
+                if (isset($previousViewDef[$field]))
+                {
+                    $def = $previousViewDef[$field];
+                }
+                //next see if the field was on the original layout.
+                else if (isset ($this->_originalViewDef [ $field ]))
+                {
+                    $def = $this->_originalViewDef [ $field ] ;   
+                }
+                //Otherwise make up a viewdef for it from field_defs
+                else
+                {
+                    $def =  self::_trimFieldDefs( $def ) ;
+                }
+                $this->addField($def);
+        	}
+        }
         
         foreach ( $panels as $panelID => $panel )
         {
@@ -756,7 +748,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      */
     protected function getFieldsFromLayout($viewdef) {
     	$panels = $this->getPanelsFromViewDef($viewdef);
-
+    	
         $ret = array();
         if (is_array($panels)) 
         {       
@@ -795,7 +787,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     			if (!empty($def['studio'][$this->_view]) && $def['studio'][$this->_view] == "required")
     			{
     				return true;
-                }
+    }
     			else if (!empty($def['studio']['required']) && $def['studio']['required'] == true)
     			{
     				return true;
@@ -804,7 +796,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     		else if ($def['studio'] == "required" ){
     		  return true;
     		}
-         }
+    }
         return false;
     }
 
