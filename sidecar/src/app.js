@@ -225,6 +225,7 @@ SUGAR.App = (function() {
                 app.data.declareModels(metadata);
                 // load viewTemplates
                 app.template.load(metadata);
+
                 // load language strings
                 if (metadata.appListStrings) {
                     app.lang.setAppListStrings(metadata.appListStrings);
@@ -235,6 +236,9 @@ SUGAR.App = (function() {
                 if (metadata.modStrings) {
                     app.lang.setLabels(metadata.modStrings);
                 }
+
+                app.acl.set(metadata.acl);
+
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {

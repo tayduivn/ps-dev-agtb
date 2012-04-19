@@ -129,18 +129,15 @@ function processListView($seed, $xTemplateSection, $html_varName)
     //mass update turned off?
     if(!$this->show_mass_update) $this->shouldProcess = false;
     if(is_subclass_of($seed, "SugarBean")) {
-        if($seed->bean_implements('ACL')) {
-            if(!ACLController::checkAccess($seed->module_dir,'list',true)) {
+        if(!$seed->ACLAccess('list', true)) {
                 if($_REQUEST['module'] != 'Home') {
                     ACLController::displayNoAccess();
                 }
                 return;
-            }
-            if(!ACLController::checkAccess($seed->module_dir,'export',true)) {
+         }
+         if(!$seed->ACLAccess('export', true)) {
                 $sugar_config['disable_export']= true;
-            }
-
-        }
+         }
     }
 
     //force mass update form if requested.
@@ -304,10 +301,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 
         $fields = $aItem->get_list_view_data();
         //BEGIN SUGARCRM flav=pro ONLY
-        if($aItem->bean_implements('ACL')){
-            ACLField::listFilter($fields,$aItem->module_dir,$GLOBALS['current_user']->id, $aItem->isOwner($GLOBALS['current_user']->id));
-
-        }
+        $aItem->ACLFilterFieldList($fields);
         //END SUGARCRM flav=pro ONLY
         if(isset($processed_ids[$aItem->id])) {
             continue;
@@ -1342,14 +1336,9 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 
             if($_REQUEST['module'] == 'Home' || $this->local_current_module == 'Import'
                 || $this->show_export_button == false
-                || (!empty($sugar_config['disable_export']))
-                || (!empty($sugar_config['admin_export_only'])
-                && !(
-                        is_admin($current_user)
-                        || (ACLController::moduleSupportsACL($_REQUEST['module'])
-                            && ACLAction::getUserAccessLevel($current_user->id,$_REQUEST['module'], 'access') == ACL_ALLOW_ENABLED
-                            && (ACLAction::getUserAccessLevel($current_user->id, $_REQUEST['module'], 'admin') == ACL_ALLOW_ADMIN ||
-                                ACLAction::getUserAccessLevel($current_user->id, $_REQUEST['module'], 'admin') == ACL_ALLOW_ADMIN_DEV)))))
+                || !empty($sugar_config['disable_export'])
+                || (!empty($sugar_config['admin_export_only']) && !$current_user->isAdminForModule($_REQUEST['module']))
+            )
             {
                 if ($_REQUEST['module'] != 'InboundEmail' && $_REQUEST['module'] != 'EmailMan' && $_REQUEST['module'] != 'iFrames') {
                     $selected_objects_span = '';

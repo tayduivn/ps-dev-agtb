@@ -102,7 +102,7 @@ class UsersViewDetail extends ViewDetail {
             }
         }
 
-        $buttons = array_merge($buttons, $this->ss->get_template_vars('BUTTONS'));
+        $buttons = array_merge($buttons, $this->ss->get_template_vars('BUTTONS_HEADER'));
 
         $this->ss->assign('EDITBUTTONS',$buttons);
 

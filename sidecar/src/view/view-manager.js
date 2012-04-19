@@ -86,8 +86,11 @@
         createLayout: function(params) {
             var options = _.clone(params);
             options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getLayout(options.module, params.name);
+            options.meta = params.meta || app.metadata.getLayout(options.module, params.name) || {};
+
+            options.meta.type = options.meta.type || options.name;
             options.name = options.name || options.meta.type;
+
             return this._createComponent("Layout", options.meta.type, options);
         },
 

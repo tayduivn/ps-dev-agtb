@@ -131,9 +131,7 @@ function export($type, $records = null, $members = false, $sample=false) {
     $focus = 0;
     $content = '';
 
-    $bean = $beanList[$type];
-    require_once($beanFiles[$bean]);
-    $focus = new $bean;
+	$focus = BeanFactory::newBean($type);
     $searchFields = array();
     $db = DBManagerFactory::getInstance();
 
@@ -147,26 +145,21 @@ function export($type, $records = null, $members = false, $sample=false) {
         if(!empty($_REQUEST['current_post'])) {
             $ret_array = generateSearchWhere($type, $_REQUEST['current_post']);
 
-            $where = $ret_array['where'];
-            $searchFields = $ret_array['searchFields'];
-        } else {
-            $where = '';
-        }
-    }
-    $order_by = "";
-    if($focus->bean_implements('ACL')){
-        if(!ACLController::checkAccess($focus->module_dir, 'export', true)){
-            ACLController::displayNoAccess();
-            sugar_die('');
-        }
-        if(ACLController::requireOwner($focus->module_dir, 'export')){
-            if(!empty($where)){
-                $where .= ' AND ';
-            }
-            $where .= $focus->getOwnerWhere($current_user->id);
-        }
+			$where = $ret_array['where'];
+			$searchFields = $ret_array['searchFields'];
+		} else {
+			$where = '';
+		}
+	}
+	$order_by = "";
 
-    }
+	if($focus->bean_implements('ACL')){
+		if(!ACLController::checkAccess($focus->module_dir, 'export', true)){
+			ACLController::displayNoAccess();
+			sugar_die('');
+		}
+	    $focus->addVisibilityWhere($where);
+	}
     // Export entire list was broken because the where clause already has "where" in it
     // and when the query is built, it has a "where" as well, so the query was ill-formed.
     // Eliminating the "where" here so that the query can be constructed correctly.
@@ -208,7 +201,7 @@ function export($type, $records = null, $members = false, $sample=false) {
         //Remove fields that are only used for logic
         if($members && (in_array($dbname, $remove_from_members)))
             continue;
-        
+
         //default to the db name of label does not exist
         $field_labels[$key] = translateForExport($dbname,$focus);
     }
@@ -233,7 +226,7 @@ function export($type, $records = null, $members = false, $sample=false) {
                 $focus->id = (!empty($val['id']))?$val['id']:'';
                 $focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
                 $focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
-                ACLField::listFilter($val, $focus->module_dir,$current_user->id, $focus->isOwner($current_user->id), true, 1, true );
+                $focus->ACLFilterFieldList($val, array(), array("blank_value" => true));
             }
 
 		//END SUGARCRM flav=pro ONLY

@@ -1040,8 +1040,7 @@ function getEmailAddressWidget($focus, $field, $value, $view, $tabindex='0') {
     $sea->setView($view);
 
     //BEGIN SUGARCRM flav=pro ONLY
-    $aclAccessLevel = ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $focus->isOwner($GLOBALS['current_user']->id));
-    if($aclAccessLevel > 1) {
+    if($focus->ACLFieldAccess($field, "edit")) {
     //END SUGARCRM flav=pro ONLY
         if($view == 'EditView' || $view == 'QuickCreate' || $view == 'ConvertLead') {
             $module = $focus->module_dir;

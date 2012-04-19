@@ -91,14 +91,6 @@ $this->assign('currentGroupTab', $currentGroupTab);
 				</div>
 				<div class="megacolumn">
 					<div class="megacolumn-content divider">
-					<ul class="MMFavorites">
-						<li class="groupLabel">{$APP.LBL_FAVORITES}</li>
-						<li><a href="javascript: void(0);">&nbsp;</a></li>
-					</ul>
-					</div>
-				</div>
-				<div class="megacolumn">
-					<div class="megacolumn-content">
 					{if $groupTabId}
 					<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="MMLastViewed">
 						<li class="groupLabel">{$APP.LBL_LAST_VIEWED}</li>
@@ -112,6 +104,14 @@ $this->assign('currentGroupTab', $currentGroupTab);
 					{/if}
 					</div>
 				</div>
+                <div class="megacolumn">
+                    <div class="megacolumn-content">
+                    <ul class="MMFavorites">
+                        <li class="groupLabel">{$APP.LBL_FAVORITES}</li>
+                        <li><a href="javascript: void(0);">&nbsp;</a></li>
+                    </ul>
+                    </div>
+                </div>
 			</div>
 		</li>
 		</ul>

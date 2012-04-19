@@ -3708,6 +3708,10 @@ ul.clickMenu {
     color: #000000;
 	display: inline-block;
 }
+ul.clickMenu form{
+	float:left;
+	display:block;
+}
 ul.SugarActionMenuIESub {
 }
 

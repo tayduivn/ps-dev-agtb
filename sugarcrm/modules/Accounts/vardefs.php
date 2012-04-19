@@ -130,7 +130,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
 			),
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
-		),	
+		),
 //END SUGARCRM flav!=sales ONLY
   'tasks' =>
   array (
@@ -309,8 +309,8 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
       'vname' => 'LBL_CAMPAIGNS',
       'relationship' => 'campaign_accounts',
       'source' => 'non-db',
-  ),  
-  
+  ),
+
   //END SUGARCRM flav!=sales ONLY
   'created_by_link' =>
   array (
@@ -397,12 +397,12 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
         'source'=>'non-db',
         'table' => 'campaigns',
         'id_name' => 'campaign_id',
-        'link' => 'campaign_accounts', 
+        'link' => 'campaign_accounts',
         'module'=>'Campaigns',
         'duplicate_merge'=>'disabled',
         'comment' => 'The first campaign name for Account (Meta-data only)',
  ),
- 
+
       'prospect_lists' =>
       array (
         'name' => 'prospect_lists',
@@ -411,7 +411,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
         'module'=>'ProspectLists',
         'source'=>'non-db',
         'vname'=>'LBL_PROSPECT_LIST',
-      ), 
+      ),
 //END SUGARCRM flav!=sales ONLY
 )
 , 'indices' => array (
@@ -487,13 +487,13 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
   array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
   'rhs_module'=> 'Accounts', 'rhs_table'=> 'accounts', 'rhs_key' => 'created_by',
   'relationship_type'=>'one-to-many'),
-  
+
 //BEGIN SUGARCRM flav!=sales ONLY
   'account_campaign_log' => array('lhs_module' => 'Accounts', 'lhs_table'=> 'accounts', 'lhs_key'=> 'id',
   'rhs_module'=> 'CampaignLog','rhs_table'=>'campaign_log', 'rhs_key'=> 'target_id',
   'relationship_type'	=>'one-to-many'),
-//END SUGARCRM flav!=sales ONLY    
-  
+//END SUGARCRM flav!=sales ONLY
+
   ),
   //This enables optimistic locking for Saves From EditView
   'optimistic_locking'=>true,

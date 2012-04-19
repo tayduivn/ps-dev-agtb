@@ -57,7 +57,7 @@ var $myFavoritesOnly = false;
         $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
         // Need to get the rest of the active SugarFeed modules
         $module_list = SugarFeed::getActiveFeedModules();
-        
+
         // Translate the category names
         if ( ! is_array($module_list) ) { $module_list = array(); }
         foreach ( $module_list as $module ) {
@@ -87,10 +87,10 @@ var $myFavoritesOnly = false;
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFeedDashlet']['columns'];
 		$catCount = count($this->categories);
-		ACLController::filterModuleList($this->categories, false);
+		$this->categories = SugarACL::filterModuleList($this->categories);
 		if(count($this->categories) < $catCount){
 			if(!empty($this->selectedCategories)){
-				ACLController::filterModuleList($this->selectedCategories, true);
+				$this->selectedCategories = SugarACL::filterModuleList($this->selectedCategories, 'access', true);
 			}else{
 				$this->selectedCategories = array_keys($this->categories);
 				unset($this->selectedCategories[0]);
@@ -198,7 +198,7 @@ var $myFavoritesOnly = false;
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
-                
+
                  //From SugarBean add_team_security_where_clause but customized select.
                 $lvsParams['custom_from'] .= ' LEFT JOIN (select tst.team_set_id, team_memberships.id as team_membership_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = "' . $current_user->id . '" AND team_memberships.deleted=0 group by tst.team_set_id) sugarfeed_tf on sugarfeed_tf.team_set_id  = sugarfeed.team_set_id ';
 
@@ -264,7 +264,7 @@ var $myFavoritesOnly = false;
                     $modString = translate($modKey, $modStringMatches[1]);
                     if( strpos($modString, '{0}') === FALSE || !isset($GLOBALS['app_list_strings']['moduleListSingular'][$data['RELATED_MODULE']]) )
                         continue;
-                    
+
                     $modStringSingular = $GLOBALS['app_list_strings']['moduleListSingular'][$data['RELATED_MODULE']];
                     $modString = string_format($modString, array($modStringSingular) );
                     $this->lvs->data['data'][$row]['NAME'] = preg_replace('/' . $modStringMatches[0] . '/', strtolower($modString), $this->lvs->data['data'][$row]['NAME']);
@@ -336,7 +336,7 @@ var $myFavoritesOnly = false;
             if ( empty($item['NAME']) ) {
                 continue;
             }
-            
+
             if ( empty($item['IMAGE_URL']) ) {
                 $item['IMAGE_URL'] = 'include/images/default_user_feed_picture.png';
                 if ( isset($item['CREATED_BY']) ) {
@@ -347,7 +347,7 @@ var $myFavoritesOnly = false;
                     }
                 }
             }
-    
+
             $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><!--not_in_theme!--><img src="'.$item['IMAGE_URL'].'" style="max-width: 50px; max-height: 50px;"></div> '.$item['NAME'];
         }
         //END SUGARCRM flav=pro ONLY
