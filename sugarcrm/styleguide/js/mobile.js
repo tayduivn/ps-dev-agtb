@@ -99,7 +99,7 @@
 	    return false;
     });
     // fake phone for prototype
-    $('#record-action .icon-phone, .btn-group .btn.call, .controls .btn.call').on('click tap', function () {
+    $('#record-action .icon-phone, .btn-group .btn.call, .controls .btn.call').on('click', function () {
 	
 	    $('body').append('<div class="over"><h4>Place a call</h4><p><a href="tel:605-334-2345" class="btn btn-large">Home (605)-334-2345</a></p><p><a class="btn btn-large">Mobile (605)-334-2345</a></p><p><a class="btn btn-large">Office (605)-334-2345</a></p><p><a href="javascript:return false;" class="btn btn-inverse btn-large" id="cancel">Cancel</a></p></div>');
 	    return false;
