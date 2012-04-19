@@ -435,7 +435,8 @@ function ajaxBannedModules(){
         'EmailAddresses',
         'Relationships',
         'Employees',
-        'Import'
+        'Import',
+        'OAuthKeys'
     );
 
     if(!empty($GLOBALS['sugar_config']['addAjaxBannedModules'])){
@@ -453,7 +454,7 @@ function ajaxLink($url)
     global $sugar_config;
     $match = array();
     $javascriptMatch = array();
-    
+
     preg_match('/module=([^&]*)/i', $url, $match);
     preg_match('/^javascript/i', $url, $javascriptMatch);
 

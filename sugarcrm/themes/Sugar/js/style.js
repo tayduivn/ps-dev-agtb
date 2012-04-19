@@ -264,20 +264,21 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeSearch: function() {
+        if(SUGAR.themes.enableResizeSearch) {
+            $('#moduleList').attr("width", $('#moduleList').attr("width") || $('#moduleList').css("width").replace("px",""));
 
-        $('#moduleList').attr("width", $('#moduleList').attr("width") || $('#moduleList').css("width").replace("px",""));
+            var searchWidth = $("#dcmenu").width() - 200
+                - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#moduleList").attr("width");
+            //maximize the proportion of the searchbox size as three quarter of the empty space among the module list and right-hand side menus
+            searchWidth *= .75;
 
-        var searchWidth = $("#dcmenu").width() - 200
-            - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#moduleList").attr("width");
-        //maximize the proportion of the searchbox size as three quarter of the empty space among the module list and right-hand side menus
-        searchWidth *= .75;
-
-        $('#sugar_spot_search').attr("width", $('#sugar_spot_search').attr("width") || $('#sugar_spot_search').css("width").replace("px",""));
-        var originalSearchWidth = parseInt($('#sugar_spot_search').attr("width"));
-        searchWidth = (searchWidth >= originalSearchWidth) ? searchWidth : originalSearchWidth;
-        $('#sugar_spot_search_div').width(searchWidth + 25);
-        $('#sugar_spot_search').width(searchWidth);
-        $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
+            $('#sugar_spot_search').attr("width", $('#sugar_spot_search').attr("width") || $('#sugar_spot_search').css("width").replace("px",""));
+            var originalSearchWidth = parseInt($('#sugar_spot_search').attr("width"));
+            searchWidth = (searchWidth >= originalSearchWidth) ? searchWidth : originalSearchWidth;
+            $('#sugar_spot_search_div').width(searchWidth + 25);
+            $('#sugar_spot_search').width(searchWidth);
+            $('#sugar_spot_search_div').find("section ul").width(searchWidth - 120); //resize the search result text length
+        }
 
     },
     resizeMenu: function () {
@@ -453,6 +454,8 @@ SUGAR.append(SUGAR.themes, {
         }, 200, function() {
             current_menu.hide();
             target_menu.show();
+            SUGAR.themes.menuItemsWidth = null;
+            SUGAR.themes.resizeSearch();
             SUGAR.themes.resizeMenu();
             $(this).animate({
                 top: '+=' + dcheight

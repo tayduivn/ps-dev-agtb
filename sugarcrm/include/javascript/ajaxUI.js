@@ -96,7 +96,7 @@ SUGAR.ajaxUI = {
             // set response time from ajax response
             if(typeof(r.responseTime) != 'undefined'){
                 var rt = $("#responseTime");
-                if(rt != null){
+                if(rt.length > 0){
                     rt.html(rt.html().replace(/[\d]+\.[\d]+/, r.responseTime));
                 }
                 else if(typeof(logoStats) != "undefined"){
