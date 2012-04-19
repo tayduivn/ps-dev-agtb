@@ -12,11 +12,21 @@ describe("Error module", function() {
 
     it("should handle http code errors", function() {
         var bean = app.data.createBean("Cases");
-        server.respondWith([404, {}, ""]);
+        var statusCodes = {
+            404: function() {
+                console.log("Error test");
+            }
+        };
 
+        app.error.initialize({statusCodes: statusCodes});
+
+        console.log(app.error.statusCodes);
+        sinon.spy(statusCodes, "404");
+        server.respondWith([404, {}, ""]);
         bean.save();
         server.respond();
-        expect(sinon.assert.calledWith(callback, [{ id: 12, comment: "Hey there" }])).toEqual();
+        expect(statusCodes['404'].called).toBeTruthy();
+        console.log(statusCodes['404']);
     });
 
     xit("should inject custom http error handlers", function() {

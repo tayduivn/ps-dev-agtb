@@ -1,4 +1,8 @@
 (function(app) {
+    /**
+     * Error handling module.
+     * @class Error
+     */
     var module = {
         /**
          * Setups the params for error module
@@ -49,6 +53,13 @@
 
         remoteLogging: false,
 
+        /**
+         * This is the default error handler we overload onerror with
+         * @param {String} mesg Error message
+         * @param {String} url URL of script
+         * @param {String} line Line number of script
+         * @method
+         */
         handleError: function(mesg, url, line) {
             app.logger.error(mesg + " at " + " on line " + line);
         },
