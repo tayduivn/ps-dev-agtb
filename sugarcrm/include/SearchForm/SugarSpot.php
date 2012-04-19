@@ -433,8 +433,8 @@ class SugarSpot
 
             if(isset($return_fields['name']['fields']))
             {
-                // some names are composite
-                foreach($return_fields['name']['fields'] as $field)
+			    // some names are composite name fields (e.g. last_name, first_name), add these to return list
+			    foreach($return_fields['name']['fields'] as $field)
                 {
                     $return_fields[$field] = $seed->field_defs[$field];
                 }
@@ -684,7 +684,7 @@ class SugarSpot
      * filterSearchType
      *
      * This is a private function to determine if the search type field should be filtered out based on the query string value
-     * 
+     *
      * @param String $type The string value of the field type (e.g. phone, date, datetime, int, etc.)
      * @param String $query The search string value sent from the global search
      * @return boolean True if the search type fits the query string value; false otherwise

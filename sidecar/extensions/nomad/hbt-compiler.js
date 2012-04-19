@@ -1,11 +1,10 @@
-var src_path = "./extensions/nomad/views"; // directory of handlebars templates are stored with .hbt file extension
+var src_path = "./extensions/nomad/templates"; // directory of handlebars templates are stored with .hbt file extension
 var compiled_path = "./extensions/nomad/compiled/"; // directory where the compiled .js files should be saved to
 
 var fs = require('fs');
 var handlebars = require('handlebars');
 var watcher = require('watch-tree-maintained').watchTree(src_path, {'sample-rate': 500})
 var fstools = require('fs-tools');
-
 
 fstools.walk(src_path, '\.hbt$',
     function(path, stats, callback) {

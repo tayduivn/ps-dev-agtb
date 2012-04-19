@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
  require_once('include/ListView/ListViewSmarty.php');
- 
+
 
  /**
   * A Facade to ListView and ListViewSmarty
@@ -98,8 +98,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	        require_once($metadataFile);
 
 			//BEGIN SUGARCRM flav=pro ONLY
-			if($this->focus->bean_implements('ACL'))
-			ACLField::listFilter($listViewDefs[ $this->module], $this->module, $GLOBALS['current_user']->id ,true);
+			SugarACL::listFilter($module, $listViewDefs[ $this->module], array("owner_override" => true));
 			//END SUGARCRM flav=pro ONLY
 
 			$this->lv = new ListViewSmarty();
@@ -144,7 +143,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 			$this->lv->mailMerge = false;
 			$this->lv->multiSelect = false;
  			$this->lv->setup($this->focus, $this->template, $where, $params, $offset, $limit,  $filter_fields, $id_field);
- 			
+
  		}
  	}
 

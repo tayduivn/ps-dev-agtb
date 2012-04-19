@@ -1,6 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,40 +19,75 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Bugs']['editview'] = array (
-  'templateMeta' =>
-  array (
-    'maxColumns' => '2',
-    'widths' => array(
-                    array('label' => '10', 'field' => '30'),
-                    array('label' => '10', 'field' => '30')
-                    ),
-    'formId' => 'BugEditView',
-    'formName' => 'BugEditView',
-    'hiddenInputs' =>
-    array (
-      'module' => 'Bugs',
-      'returnmodule' => 'Bugs',
-      'returnaction' => 'DetailView',
-      'action' => 'Save',
-    ),
-    //BEGIN SUGARCRM flav=pro ONLY
-    'hiddenFields' => array(
-	    array (
-           'name'=>'portal_viewable',
-           'operator'=>'=',
-           'value'=>'1',
-	    ),
-    ),
-    //END SUGARCRM flav=pro ONLY
-  ),
-  'data' => array(
-     array ('priority','status'),
-     array ('source','product_category'),
-     array ('resolution'),
-     array (array ('field' => 'name', 'displayParams' => array('size' => 60))),
-     array (array ('field' => 'description', 'displayParams' => array ('rows' => '15', 'cols' => '100'))),
-     array (array ('field' => 'work_log', 'displayParams' => array ('rows' => '15', 'cols' => '100'))),
-  )
-);
-?>
+
+/**
+ * Base class for visibility implementations
+ * @api
+ */
+abstract class SugarVisibility
+{
+    /**
+     * Parent bean
+     * @var SugarBean
+     */
+    protected $bean;
+    protected $module_dir;
+
+    /**
+     * Options for this run
+     * @var array|null
+     */
+    protected $options;
+
+    /**
+     * @param SugarBean $bean
+     */
+    public function __construct($bean)
+    {
+        $this->bean = $bean;
+        $this->module_dir = $this->bean->module_dir;
+    }
+
+    /**
+     * Add visibility clauses to the FROM part of the query
+     * @param string $query
+     */
+    public function addVisibilityFrom(&$query)
+    {
+        return $query;
+    }
+
+    /**
+     * Add visibility clauses to the WHERE part of the query
+     * @param string $query
+     */
+    public function addVisibilityWhere(&$query)
+    {
+        return $query;
+    }
+
+    /**
+     * Get visibility options
+     * @param string $name
+     * @param mixed $default Default value if option not set
+     * @return mixed
+     */
+    public function getOption($name, $default = null)
+    {
+        if(isset($this->options[$name])) {
+            return $this->options[$name];
+        }
+        return $default;
+    }
+
+    /**
+     * Set visibility options
+     * @param array $options
+     * @return SugarVisibility
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+        return $this;
+    }
+}

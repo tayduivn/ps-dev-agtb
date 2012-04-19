@@ -42,8 +42,7 @@ class ViewList extends SugarView{
 
         $this->listViewDefs = $listViewDefs;
         //BEGIN SUGARCRM flav=pro ONLY
-        if($this->bean->bean_implements('ACL'))
-        ACLField::listFilter($this->listViewDefs[$module],$module, $GLOBALS['current_user']->id ,true);
+        $this->bean->ACLFilterFieldList($this->listViewDefs[$module], array("owner_override" => true));
         //END SUGARCRM flav=pro ONLY
 
         if(!empty($this->bean->object_name) && isset($_REQUEST[$module.'2_'.strtoupper($this->bean->object_name).'_offset'])) {//if you click the pagination button, it will populate the search criteria here

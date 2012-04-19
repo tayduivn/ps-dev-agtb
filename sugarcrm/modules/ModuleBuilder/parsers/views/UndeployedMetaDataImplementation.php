@@ -99,6 +99,12 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
 			}
 			if ( null !== $layout  )
 			{
+                if (MB_WORKINGMETADATALOCATION == $type) {
+                    $this->_useWorkingFile = true;
+                } elseif (MB_HISTORYMETADATALOCATION == $type && $this->_useWorkingFile) {
+                    $this->_useWorkingFile = false;
+                }
+
 				// merge in the fielddefs from this layout
 				$this->_mergeFielddefs ( $fielddefs , $layout ) ;
 				$loaded = $layout ;

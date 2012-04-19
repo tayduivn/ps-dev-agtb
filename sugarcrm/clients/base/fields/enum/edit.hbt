@@ -1,7 +1,11 @@
 <div class="row-fluid">
-    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
     <div class="span4">
-        <select name="{{name}}" {{#if multi}} multiple {{/if}}>{{#eachOptions options}}<option value="{{{this.key}}}" {{has this.key ../value "selected"}}>{{this.value}}</option>{{/eachOptions}}</select>
+        <select name="{{name}}" {{#if multi}} multiple {{/if}}>
+            {{#eachOptions options}}
+                <option value="{{{this.key}}}" {{has this.key ../value "selected" ""}}>{{this.value}}</option>
+            {{/eachOptions}}
+        </select>
         <p class="help-block"></p>
     </div>
 </div>

@@ -167,14 +167,6 @@
                 _set(_appPrefix+"moduleList", data.moduleList);
             }
 
-            if (data.appListStrings) {
-                app.lang.setAppListStrings(data.appListStrings);
-            }
-
-            if (data.appStrings) {
-                app.lang.setAppStrings(data.appStrings);
-            }
-
             //TODO add template support
         },
 

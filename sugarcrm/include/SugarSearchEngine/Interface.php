@@ -41,14 +41,6 @@ interface SugarSearchEngineInterface{
     public function search($query, $offset = 0, $limit = 20);
 
     /**
-     * Save the data to the Full Text Search engine backend
-     *
-     * @abstract
-     * @return void
-     */
-    public function flush();
-
-    /**
      * Pass in a bean and go through the list of fields to pass to the engine
      *
      * @abstract

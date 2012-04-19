@@ -38,10 +38,9 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
             'type' => 'button',
             'label' => 'Cancel',
             'value' => 'cancel',
-            'route' =>
+            'events' =>
             array(
-                'action' => 'detail',
-                'module' => 'Cases',
+                'click' => 'function(){ window.history.back(); }',
             ),
             'primary' => false,
         ),
@@ -77,28 +76,29 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
         array(
             'label' => 'default',
             'fields' => array(
-                array(
-                    'name' => 'case_number',
-                    'displayParams' => array(
-                        'colspan' => 2
-                    ),
-                    'readOnly' => true),
-                'priority',
-                'status',
-                array(
-                    'name' => 'name',
-                    'displayParams' => array(
-                        'colspan' => 2,
-                        'size' => 60
-                    ),
-                    'required' => true),
-                array('name' => 'description',
-                    'displayParams' => array(
-                        'colspan' => 2,
-                        'rows' => '15',
-                        'cols' => '100'
-                    ))
+                 array(
+                     'name' => 'case_number',
+                     'displayParams' => array(
+                         'colspan' => 2
+                     ),
+                     'readOnly' => true),
+                 'priority',
+                 'status',
+                 array(
+                     'name' => 'name',
+                     'displayParams' => array(
+                         'colspan' => 2,
+                         'size' => 60
+                     ),
+                     'required' => true),
+                 array('name' => 'description',
+                     'displayParams' => array(
+                         'colspan' => 2,
+                         'rows' => '15',
+                         'cols' => '100'
+                     ))
             )
         )
     ),
 );
+?>

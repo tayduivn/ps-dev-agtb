@@ -182,7 +182,16 @@
         app.logger.debug("*****HBT: Current Value*****");
         app.logger.debug(value);
         app.logger.debug("***********************");
+    });
 
+    /**
+     * @method getLabel
+     * @param {String} string
+     * @param {String}
+     */
+    Handlebars.registerHelper("getLabel", function(string, module){
+       var result = app.lang.get(string, module);
+       return result;
     });
 
 })(SUGAR.App);
