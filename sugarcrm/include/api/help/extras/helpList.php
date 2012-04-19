@@ -19,6 +19,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+/**
+ * This file is here to provide a HTML template for the rest help api.
+ */
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -30,6 +34,17 @@ display: none;
 }
 .endpointMain {
 background: #eeeeee;
+}
+code {
+white-space: pre;
+height: 150px;
+overflow-x: scroll;
+display: inline-block;
+background: #eeeeff;
+}
+.params table, .params table td, .params table th {
+border: 1px solid #000000;
+border-spacing: 0px;
 }
 </style>
 <script type="text/javascript" src="../../include/javascript/jquery/jquery.js"></script>
