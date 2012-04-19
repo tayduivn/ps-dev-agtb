@@ -35,10 +35,8 @@
             var $$ = $(this),
             menu = getMenu($$),
             o = sf.op;
-
+            //Bug#52225: Activate submenu while hs-activated
             if($$.parent().hasClass("hs-active")) {
-                //Bug#51993: deactive submenu while hoverscroll is activated
-                //return;
                 $$.addClass("iefix");
             } else {
                 $$.removeClass("iefix");
@@ -58,11 +56,14 @@
                 menu = getMenu($$),
                 o = sf.op,
                 $menu = $(menu);
+
             if($$.parent().hasClass("hs-active")) {
                 $$.addClass("iefix");
-                //initially disapper
-                //$$.hideSuperfishUl();
-                $$.removeClass(sf.defaults['retainClass']);
+                setTimeout(function() {
+                    if($menu.hasClass(sf.defaults['retainClass']) === false)
+                        $$.hideSuperfishUl();
+                }, o.delay);
+                //$$.removeClass(sf.defaults['retainClass']);
             } else {
                 $$.removeClass("iefix");
             }
@@ -239,7 +240,7 @@
                     var $$ = $(this),
                         o = sf.op,
                         _id = $$.attr("ul-child-id") ? $$.attr("ul-child-id") : ($ul.attr('id')) ? $ul.attr('id') : o.megamenuID ? o.megamenuID + ++sf.counter : 'megamenu' + ++sf.counter,
-                        _top = $$.position().top + $$.parent().position().top,
+                        _top = $$.position().top + $$.parent().offset().top,
                         _left = $$.offset().left - sf.cssValue.call($ul, "border-left-width"),
                         $menu = $('ul.' + sf.c.menuClass + ':visible');
                     //handling sub-sliding menu
@@ -275,9 +276,11 @@
                             var menu = sf.getMenu($menu),
                                 o = sf.op;
                             clearTimeout(menu.sfTimer);
+
                             menu.sfTimer = setTimeout(function() {
                                 $$.hideSuperfishUl();
                                 $(menu).removeClass(sf.defaults['retainClass']);
+                                $(menu).hideSuperfishUl();
                             }, o.delay)
                         })
                     );
