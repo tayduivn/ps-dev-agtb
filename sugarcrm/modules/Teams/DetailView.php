@@ -76,10 +76,10 @@ $buttons = array(<<<EOD
             <input type="submit" class="button" id="teamEditButton" title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" value="{$app_strings['LBL_EDIT_BUTTON_LABEL']}">
 EOD
 , <<<EOD
-            <input title="{$app_strings['LBL_DUPLICATE_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_DUPLICATE_BUTTON_KEY']}" class="button" onclick="document.DetailView.isDuplicate.value = 1;" type="submit" name="Duplicate" value=" {$app_strings['LBL_DUPLICATE_BUTTON_LABEL']} ">
+            <input id="duplicate_button" title="{$app_strings['LBL_DUPLICATE_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_DUPLICATE_BUTTON_KEY']}" class="button" onclick="document.DetailView.isDuplicate.value = 1;" type="submit" name="Duplicate" value=" {$app_strings['LBL_DUPLICATE_BUTTON_LABEL']} ">
 EOD
 , <<<EOD
-            <input title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="document.DetailView.return_action.value = 'ListView'; document.DetailView.action.value = 'Delete'; return confirm('{$app_strings['NTC_DELETE_CONFIRMATION']}')" type="submit" name="Delete" value=" {$app_strings['LBL_DELETE_BUTTON_LABEL']} ">
+            <input id="delete_button" title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="document.DetailView.return_action.value = 'ListView'; document.DetailView.action.value = 'Delete'; return confirm('{$app_strings['NTC_DELETE_CONFIRMATION']}')" type="submit" name="Delete" value=" {$app_strings['LBL_DELETE_BUTTON_LABEL']} ">
 EOD
 );
 require_once('include/Smarty/plugins/function.sugar_action_menu.php');
