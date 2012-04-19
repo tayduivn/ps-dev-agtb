@@ -184,7 +184,10 @@ SUGAR.append(SUGAR.themes, {
     		return false;
     	}
     },
-
+    updateFavoritesList: function(v)
+    {
+        makeCall = v;
+    },
     loadModuleList: function() {
     	$('#moduleList ul.sf-menu').superfish({
 			delay: 50,
