@@ -83,8 +83,7 @@ $params[] = "<a href='index.php?module=ACLRoles&action=index'>{$mod_strings['LBL
 if(empty($role->id)){
 	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{
-	$params[] = "<a href='index.php?module=ACLRoles&action=DetailView&record={$role->id}'>".$role->get_summary_text()."</a>";
-	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
+	$params[] = $role->get_summary_text();
 }
 echo getClassicModuleTitle("ACLRoles", $params, true);
 
