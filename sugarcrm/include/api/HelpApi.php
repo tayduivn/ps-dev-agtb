@@ -56,26 +56,17 @@ class HelpApi extends SugarApi {
         ob_start();
         require('include/api/help/extras/helpList.php');
         $endpointHtml = ob_get_clean();
-/*
-        $endpointHtml = file_get_contents('include/api/help/extras/header.html');
-        $endpointHtml .= '<table id="endpointList" border=1 cellspacing=0 cellpadding=2>';
-        foreach ( $endpointList as $i => $endpoint ) {
-            if ( !isset($endpoint['shortHelp']) ) {
-                // Hidden, for some reason
-                continue;
-            }
-            $endpointHtml .= '<tr id="endpoint_'.$i.'"><td class="showHide">[+]</td><td class="reqType">'.htmlspecialchars($endpoint['reqType']).'</td><td class="fullPath">'.htmlspecialchars($endpoint['fullPath']).'</td><td class="shortHelp">'.htmlspecialchars($endpoint['shortHelp']).'</td><td class="score">'.sprintf("%.02f",$endpoint['score']).'</td></tr>';
-            $endpointHtml .= '<tr id="endpoint_'.$i.'_full" class="hidden"><td class="filler">&nbsp;</td><td colspan=3>';
-            $endpointHtml .=
-            $endpointHtml .= '</td></tr>';
-        }
-        $endpointHtml .= '</table>';
-        $endpointHtml .= file_get_contents('include/api/help/extras/footer.html');
-*/
+
         header('Content Type: text/html');
         return $endpointHtml;
     }
 
+    /**
+     * This function is called recursively to pull the endpoints out of the pre-optimized arrays that the service dictionary stores them in. It's complicated and slow, but since this function is only called when the developer wants some docs, it's not worth the cost of storing this information elsewhere.
+     * @param $dirPart array required, the section of the directory you are looking at
+     * @param $depth int required, how much deeper you need to go before you actually find the endpoints.
+     * @return array An array of endpoints for that directory part.
+     */
     protected function getEndpoints($dirPart, $depth) {
         if ( $depth == 0 ) {
             $endpoints = array();
@@ -95,6 +86,12 @@ class HelpApi extends SugarApi {
         return $endpoints;
     }
 
+    /**
+     * This function compares endpoints, it would be an anonymous function but we have to support older versions of PHP
+     * @param $endpoint1 hash required, This should be one endpoint element in the endpoint list. Should look pretty close to something registered through registerApiRest()
+     * @param $endpoint2 hash required, Second verse, same as the first.
+     * @return int +1 if endpoint1 is greater than endpoint2, -1 otherwise
+     */
     public static function cmpEndpoints($endpoint1, $endpoint2) {
         return ( $endpoint1['fullPath'] > $endpoint2['fullPath'] ) ? +1 : -1;
     }
