@@ -238,6 +238,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
     'merge_filter' => 'enabled',
   ),
+  //BEGIN SUGARCRM flav=PRO ONLY
   'best_case' =>
   array (
     'name' => 'best_case',
@@ -259,6 +260,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'long',
     'source'=>'non-db',
   ),
+  //END SUGARCRM flav=PRO ONLY
   'accounts' =>
   array (
   	'name' => 'accounts',
