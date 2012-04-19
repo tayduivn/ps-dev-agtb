@@ -57,7 +57,7 @@ describe("View Manager", function() {
                 model: model
             });
             expect(result).toBeDefined();
-            expect(result.type).toEqual("varchar");
+            expect(result.type).toEqual("text");
         });
 
         it("with custom controller", function() {

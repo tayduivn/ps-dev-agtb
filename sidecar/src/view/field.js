@@ -101,7 +101,6 @@
         sfid: -1,
 
         initialize: function(options) {
-            var templateKey;
             _.extend(this, options.def);
 
             this.view = options.view;

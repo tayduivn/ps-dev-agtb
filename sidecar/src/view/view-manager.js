@@ -77,33 +77,45 @@
         },
 
         createView: function(params) {
-            var options = _.clone(params);
-            options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getView(options.module, params.name);
-            return this._createComponent("View", params.name, options);
+            var clonedParams = _.clone(params);
+            clonedParams.module = params.module || params.context.get("module");
+            clonedParams.meta = params.meta || app.metadata.getView(clonedParams.module, params.name);
+            return this._createComponent("View", params.name, clonedParams);
         },
 
         createLayout: function(params) {
-            var options = _.clone(params);
-            options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getLayout(options.module, params.name) || {};
+            var clonedParams = _.clone(params);
+            clonedParams.module = params.module || params.context.get("module");
+            clonedParams.meta = params.meta || app.metadata.getLayout(clonedParams.module, params.name) || {};
 
-            options.meta.type = options.meta.type || options.name;
-            options.name = options.name || options.meta.type;
+            clonedParams.meta.type = clonedParams.meta.type || clonedParams.name;
+            clonedParams.name = clonedParams.name || clonedParams.meta.type;
 
-            return this._createComponent("Layout", options.meta.type, options);
+            return this._createComponent("Layout", clonedParams.meta.type, clonedParams);
         },
 
         createField: function(params) {
-            // adds support for fields just defined by single strings in metadata
-            if(params.def && _.isString(params.def) && params.model){
-                params.def = params.model.fields[params.def];
+            var clonedParams = _.clone(params);
+
+            // TODO: We clone field definition (params.def) not to mess it up down the road
+            // Consider the opposite: pre-process the field defs at app start-up and patch the definitions once
+            // instead of every time we create a new field
+
+            // Definition can be an object or a string
+            // If it's a string than it's just the field name -- grab its definition from module vardefs.
+            if (_.isString(clonedParams.def) && clonedParams.model){
+                clonedParams.def = _.clone(params.model.fields[clonedParams.def]);
             }
-            var options = _.clone(params);
-            var type = params.def.type;
-            var name = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;
-            options.meta = params.meta || app.metadata.getField(type);
-            return this._createComponent("Field", name, options);
+            else {
+                clonedParams.def = _.clone(params.def);
+            }
+
+            var type = clonedParams.def.type;
+            type = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;
+            clonedParams.meta = clonedParams.meta || app.metadata.getField(type);
+            clonedParams.def.type = type; // patch the original type with mapped type if any
+
+            return this._createComponent("Field", type, clonedParams);
         }
 
     };
