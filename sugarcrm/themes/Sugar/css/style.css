@@ -721,6 +721,12 @@ margin-top: 0;
     width: 150px !important;
 }
 
+/* Quiq Edit*/
+
+input#header {
+    min-width: inherit;
+}
+
 /* Listview styles */
 .listViewBody {
 box-shadow: #ccc 0px 0px 10px;

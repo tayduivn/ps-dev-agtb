@@ -877,14 +877,14 @@ $dictionary['User'] = array(
 			 	'lhs_module'=> 'Teams',
 			 	'lhs_table'=> 'team_sets',
 			 	'lhs_key' => 'id',
-	    		'rhs_module'=> 'users',
+	    		'rhs_module'=> 'Users',
 	    		'rhs_table'=> 'users',
 	    		'rhs_key' => 'team_set_id',
 	   			'relationship_type'=>'one-to-many'
 			 ),
 		'users_teams' =>
 			array (
-				'lhs_module'        => 'users',
+				'lhs_module'        => 'Users',
 	            'lhs_table'         => 'users',
 	            'lhs_key'           => 'team_set_id',
 	            'rhs_module'        => 'Teams',
@@ -897,7 +897,7 @@ $dictionary['User'] = array(
 			),
 	   'users_team' =>
 	   array('lhs_module'=> 'Teams', 'lhs_table'=> 'teams', 'lhs_key' => 'id',
-	    'rhs_module'=> 'users', 'rhs_table'=> 'users', 'rhs_key' => 'default_team',
+	    'rhs_module'=> 'Users', 'rhs_table'=> 'users', 'rhs_key' => 'default_team',
 	   'relationship_type'=>'one-to-many'),
 	   //END SUGARCRM flav=pro ONLY
     ),

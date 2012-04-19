@@ -20,10 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-// Meeting is used to store customer information.
-require_once('modules/Activities/Activity.php');
-
-class Meeting extends Activity {
+class Meeting extends SugarBean {
 	// Stored fields
 	var $id;
 	var $date_entered;
@@ -535,17 +532,8 @@ class Meeting extends Activity {
 		}
 
         $meeting_fields['CONTACT_ID'] = $this->contact_id;
-
-        //If we have a contact id and there are more than one contacts found for this meeting then let's create a hover link
-        if($this->alter_many_to_many_query && !empty($this->contact_id) && isset($this->secondary_select_count) && $this->secondary_select_count > 1)
-        {
-           $meeting_fields['CONTACT_NAME'] = $this->createManyToManyDetailHoverLink($this->contact_name, $this->contact_id);
-        } else {
-           $meeting_fields['CONTACT_NAME'] = $this->contact_name;
-        }
-
+        $meeting_fields['CONTACT_NAME'] = $this->contact_name;
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
-
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
         $meeting_fields['EMAIL_REMINDER_CHECKED'] = $this->email_reminder_time==-1 ? false : true;
 
