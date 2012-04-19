@@ -8,7 +8,11 @@
      */
     app.view.views.ListView = app.view.View.extend({
         events: {
-            'click [class*="orderBy"]': 'setOrderBy'
+            'click [class*="orderBy"]': 'setOrderBy',
+            'click .search': 'showSearch',
+            'click [rel=tooltip]': 'fixTooltip',
+            'mouseenter tr': 'showActions',
+            'mouseleave tr': 'hideActions'
         },
         bind: function(context) {
             var collection = context.get("collection");
@@ -41,8 +45,8 @@
 
             //mapping for css
             var orderMap = {
-                "desc": "down",
-                "asc": "up"
+                "desc": "_desc",
+                "asc": "_asc"
             }
 
             //TODO probably need to check if we can sort this field from metadata
@@ -54,7 +58,8 @@
                     field: "",
                     direction: ""
                 };
-            };
+            }
+            ;
 
             var nOrder = "desc";
 
@@ -75,6 +80,23 @@
 
             // refetch the collection
             collection.fetch();
+        },
+        showSearch: function() {
+            var searchEl = '.search';
+            $(searchEl).toggleClass('active');
+            $(searchEl).parent().parent().parent().find('.dataTables_filter').toggle();
+            $(searchEl).parent().parent().parent().find('.form-search').toggleClass('hide');
+            return false;
+        },
+        fixTooltip: function() {
+            console.log("click on a tooltip");
+            $(".tooltip").hide();
+        },
+        showActions: function(e) {
+            $(e.currentTarget).children("td").children("span").children(".btn-group").show();
+        },
+        hideActions: function(e) {
+            $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
         }
     });
 

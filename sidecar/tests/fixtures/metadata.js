@@ -60,7 +60,7 @@ fixtures.metadata = {
                 "leradio_c": {
                     "name": "leradio_c",
                     "type": "radioenum",
-                    "options": "Elastic_boost_options" // Temporary, TODO: Pull from app list strings
+                    "options": "Elastic_boost_options"
                 }
             },
             "relationships": {

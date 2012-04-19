@@ -27,7 +27,7 @@
 
             /**
              * Validates the max length of a given value.
-             * @param field bean field metadata
+             * @param {String} field bean field metadata
              * @param {String} value bean field value
              * @return {Number} max length or noting if the field is valid.
              * @method

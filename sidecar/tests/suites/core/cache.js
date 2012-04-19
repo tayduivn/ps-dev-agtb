@@ -66,6 +66,13 @@ describe('app.cache', function () {
         expect(app.cache.get(key)).toBeFalsy();
     });
 
+    it('should provide has to determine if key exists', function () {
+        var value = "Hello";
+        var key = "testKey";
+        app.cache.set(key, value);
+        app.cache.cut(key);
+        expect(app.cache.has(key)).toBeFalsy();
+    });
 
     it('should remove all values', function () {
         var value = "Hello";
