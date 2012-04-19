@@ -2061,7 +2061,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         for($sibling = 0; $sibling < $number; $sibling++)
         {
             $id = (!empty($parent)) ? "{$parent}_{$sibling}" : "$sibling";
-            $this->_db->query("INSERT INTO $tableName (id, parent_id, level) VALUES ('$id', '$parent', $level)");
+            $this->_db->query("INSERT INTO $tableName (id, parent_id, db_level) VALUES ('$id', '$parent', $level)");
             $this->addChildren($tableName, $id, $number, $level+1, $stoplevel);
         }
     }
@@ -2086,8 +2086,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 //                'type' => 'varchar',
 //                'len' => '255',
 //                ),
-            'level' => array (  // For verification purpose
-                'name' => 'level',
+            'db_level' => array (  // For verification purpose
+                'name' => 'db_level',
                 'type' => 'int',
                 ),
 //            'lineage' => array ( // For verification purpose
@@ -2103,7 +2103,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->createTableParams($tableName, $params, array());
 
         // Load data
-        $this->_db->query("INSERT INTO $tableName (id, level) VALUES ('1', 0)");
+        $this->_db->query("INSERT INTO $tableName (id, db_level) VALUES ('1', 0)");
         $this->addChildren($tableName, '1', 3, 1, 10);
     }
 
