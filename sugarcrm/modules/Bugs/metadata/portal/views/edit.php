@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Bugs']['portal']['view']['edit'] =
+$viewdefs ['Bugs']['portal']['view']['edit'] =
     array(
         'templateMeta' =>
         array(

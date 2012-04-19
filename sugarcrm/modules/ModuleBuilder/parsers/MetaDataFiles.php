@@ -83,6 +83,16 @@ class MetaDataFiles
         MB_EDITVIEW    => 'EditView' ,
     	MB_DETAILVIEW  => 'DetailView' ,
     	MB_QUICKCREATE => 'QuickCreate',
+
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
+        MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
+        //END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALEDITVIEW => array('portal','view','edit'),
+        MB_PORTALDETAILVIEW => array('portal','view','detail'),
+        //END SUGARCRM flav=ent ONLY
+
     );
 
     /**
@@ -168,6 +178,56 @@ class MetaDataFiles
 
         return '';
     }
+
+
+    /**
+     * helper to give us a parameterized path to create viewdefs for saving to file
+     * @param string | array $path (path of keys to use for array)
+     * @param mixed $data the data to place at that path
+     * @return array the data in the correct path
+     */
+    public static function mapPathToArray($path, $data)
+    {
+        if (!is_array($path)) {
+            return array($path => $data);
+        }
+
+        $arr = $data;
+        while($key = array_pop($path)) {
+            $arr = array($key => $arr);
+        }
+        return $arr;
+    }
+
+    /**
+     * helper to give us a parameterized path find our data from our viewdefs
+     * @param string | array $path (path of keys to use for array)
+     * @param mixed $arr the array to search for the path
+     * @return array| null the data in the correct path or null if a key isn't found.
+     */
+    public static function mapArrayToPath($path, $arr)
+    {
+        if (!is_array($arr)) {
+            return NULL;
+        }
+
+        if (!is_array($path)) {
+            return (isset($arr[$path]) ? $arr[$path] : NULL);
+        }
+
+        // traverse the array for our path
+        $out = &$arr;
+        foreach ($path as $key) {
+            if (!isset($out[$key])) {
+                return NULL;
+            }
+
+            $out = $out[$key];
+        }
+        return $out;
+    }
+
+
 
     /**
      * Gets the list of view def array variable names

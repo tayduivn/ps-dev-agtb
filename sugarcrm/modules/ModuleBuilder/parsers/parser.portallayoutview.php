@@ -303,5 +303,9 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         return $this->_fieldDefs;
     }
 
+    function getMaxColumns()
+    {
+        return $this->maxColumns;
+    }
 }
 ?>
