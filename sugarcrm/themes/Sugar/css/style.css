@@ -5827,7 +5827,7 @@ top:0px;
 }
 
 #glblSearchBtn {
-    display:inline-block;
+    display:block;
     float: right;
     position: relative;
     left: -10px;
@@ -6050,6 +6050,7 @@ color: #0B578F;
 	float:right;
 	margin-top: 8px;
 	height: 26px;
+    width: 270px;
 }
 
 table.dcListView th,table.dcListView td {
@@ -6241,7 +6242,7 @@ margin-top: 14px;
 display: block;
 position: absolute;
 right: 20px;
-top: 6px;
+top: 8px;
 display: none;
 cursor: pointer;
 }
