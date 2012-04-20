@@ -65,7 +65,7 @@ class ListApi extends SugarApi {
             $deleted = true;
         }
 
-        $limit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
+        $limit = $this->defaultLimit;
         if ( isset($args['max_num']) ) {
             $limit = (int)$args['max_num'];
         }
@@ -227,7 +227,7 @@ class ListApi extends SugarApi {
 
         if ( $count == 0 ) {
             // Empty query
-            return array('count' => 0, 'records' => array());
+            return array('next_offset' => -1, 'records' => array());
         }
 
         if ( !empty($queryParts['secondary_select']) ) {

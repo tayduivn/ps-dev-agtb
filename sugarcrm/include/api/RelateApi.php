@@ -35,6 +35,10 @@ class RelateApi extends ListApi {
             ),
         );
     }
+
+    public function __construct() {
+        $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_subpanel'];
+    }
     
     public function listRelated($api, $args) {
         // Load up the bean

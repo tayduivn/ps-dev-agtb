@@ -56,8 +56,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
     }
     
     public function testMetadataModuleLayout() {
-        $filesToCheck = array('modules/Bugs/metadata/portal/layouts/edit.php',
-                              'custom/modules/Bugs/metadata/portal/layouts/edit.php',
+        $filesToCheck = array('modules/Cases/metadata/portal/layouts/edit.php',
+                              'custom/modules/Cases/metadata/portal/layouts/edit.php',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -68,8 +68,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('modules/Bugs/metadata/portal/layouts',
-                            'custom/modules/Bugs/metadata/portal/layouts',
+        $dirsToMake = array('modules/Cases/metadata/portal/layouts',
+                            'custom/modules/Cases/metadata/portal/layouts',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -79,24 +79,24 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         }
         
         // Make sure we get it when we ask for portal
-        file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Bugs']['portal']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n");
-        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Bugs&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Bugs']['layouts']['edit']['unit_test'],"Didn't get the portal layout");
+        file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n");
+        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['unit_test'],"Didn't get the portal layout");
 
         // Make sure we get the custom file
-        file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Bugs']['portal']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n");
-        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Bugs&platform=portal');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Bugs']['layouts']['edit']['unit_test'],"Didn't get the custom portal layout");
+        file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n");
+        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['unit_test'],"Didn't get the custom portal layout");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
-        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Bugs&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Bugs']['layouts']['edit']['unit_test'],"Didn't get the portal layout");
+        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['unit_test'],"Didn't get the portal layout");
     }
 
     public function testMetadataModuleViews() {
-        $filesToCheck = array('modules/Bugs/metadata/portal/views/edit.php',
-                              'custom/modules/Bugs/metadata/portal/views/edit.php',
+        $filesToCheck = array('modules/Cases/metadata/portal/views/edit.php',
+                              'custom/modules/Cases/metadata/portal/views/edit.php',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -107,8 +107,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('modules/Bugs/metadata/portal/views',
-                            'custom/modules/Bugs/metadata/portal/views',
+        $dirsToMake = array('modules/Cases/metadata/portal/views',
+                            'custom/modules/Cases/metadata/portal/views',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -118,18 +118,18 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         }
         
         // Make sure we get it when we ask for portal
-        file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Bugs']['portal']['view']['edit'] = array('unit_test'=>'Standard Dir');\n");
-        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Bugs&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Bugs']['views']['edit']['unit_test'],"Didn't get the portal view");
+        file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Standard Dir');\n");
+        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['unit_test'],"Didn't get the portal view");
 
         // Make sure we get the custom file
-        file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Bugs']['portal']['view']['edit'] = array('unit_test'=>'Custom Dir');\n");
-        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Bugs&platform=portal');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Bugs']['views']['edit']['unit_test'],"Didn't get the custom portal view");
+        file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Custom Dir');\n");
+        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['unit_test'],"Didn't get the custom portal view");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
-        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Bugs&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Bugs']['views']['edit']['unit_test'],"Didn't get the portal view");
+        $restReply = $this->_restCall('metadata/?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['unit_test'],"Didn't get the portal view");
     }
 }
