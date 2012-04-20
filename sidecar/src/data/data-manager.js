@@ -332,6 +332,8 @@
          * @param options(optional) standard Backbone options as well as Sugar specific options
          */
         sync: function(method, model, options) {
+            var self = this;
+
             app.logger.trace('remote-sync-' + (options.relate ? 'relate-' : '') + method + ": " + model);
 
             options = options || {};
@@ -367,7 +369,9 @@
                         // Reset the flag to indicate that fetched relationship(s) do exist.
                         model.link.isNew = false;
                         // The response for create/update/delete relationship contains updated beans
-                        if (model.link.bean) model.link.bean.set(data.record);
+                        if (model.link.bean) {
+                            model.link.bean.set(data.record);
+                        }
                         data = data.relatedRecord;
                         // Attributes will be set automatically for create/update but not for delete
                         // Also, break the link
@@ -382,7 +386,7 @@
             };
 
             var error = function(xhr, error) {
-                app.error.handleHTTPError(xhr, error);
+                app.error.handleHTTPError(xhr, error, self);
 
                 if (options.error) {
                     options.error(xhr, error);
