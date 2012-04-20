@@ -1,0 +1,35 @@
+<script type="text/javascript" language="javascript">
+$(document).ready(function() {
+    var gTable = $('#gridTable').dataTable();
+
+    gTable.$('td').editable(function (value, settings) {
+        console.log('value:' + value);
+        return value;
+    });
+});
+</script>
+
+<div class="span12 container-fluid subhead">
+    This is The Grid.
+    <h3>{{context.state.module}}</h3>
+    {{#each meta.panels}}
+    <table id="gridTable">
+        <thead>
+            <tr>
+            {{#each fields}}
+                <th>{{label}}</th>
+            {{/each}}
+            </tr>
+        </thead>
+        <tbody>
+        {{#each ../context.state.collection.models}}
+            <tr>
+            {{#each ../fields}}
+                <td>{{field ../../../context ../../../this ../this}}</td>
+            {{/each}}
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+    {{/each}}
+</div>
