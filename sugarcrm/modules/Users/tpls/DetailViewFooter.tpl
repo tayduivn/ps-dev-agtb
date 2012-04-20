@@ -275,11 +275,6 @@
             <td><slot>{$MOD.LBL_NAVIGATION_PARADIGM_DESCRIPTION}&nbsp;</slot></td>
             </tr>
             <tr>
-            <td width="15%" scope="row"><slot>{$MOD.LBL_MAX_TAB|strip_semicolon}:</slot></td>
-            <td width="15%"><slot>{$MAX_TAB}&nbsp;</slot></td>
-            <td><slot>{$MOD.LBL_MAX_TAB_DESCRIPTION}&nbsp;</slot></td>
-            </tr>
-            <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_SUBPANEL_TABS|strip_semicolon}:</slot></td>
             <td><slot><input class="checkbox" type="checkbox" disabled {$SUBPANEL_TABS}></slot></td>
             <td><slot>{$MOD.LBL_SUBPANEL_TABS_DESCRIPTION}&nbsp;</slot></td>
