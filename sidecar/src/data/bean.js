@@ -64,6 +64,7 @@
 
             // "validate" method should not return anything in case there are no validation errors
             if (!_.isEmpty(errors)) {
+                app.error.handleValidationError(this, errors);
                 return errors;
             }
         },
@@ -95,5 +96,4 @@
             errors[fieldName][validatorName] = result;
         }
     }
-
 })(SUGAR.App);

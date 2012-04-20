@@ -193,7 +193,6 @@
          * @param metadata metadata hash in which keys are module names and values are module definitions.
          */
         declareModels: function(metadata) {
-            this.reset();
             _.each(metadata.modules, function(module, name) {
                 this.declareModel(name, module);
             }, this);
@@ -390,12 +389,11 @@
             };
 
             var error = function(xhr, error) {
+                app.error.handleHTTPError(xhr, error);
+
                 if (options.error) {
                     options.error(xhr, error);
                 }
-
-                // Handle error codes
-                app.error.statusCodes[xhr.status](xhr, error);
             };
 
             var callbacks = {

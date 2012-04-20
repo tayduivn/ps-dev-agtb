@@ -18,9 +18,19 @@ fixtures.metadata = {
                     number_group_seperator: ",",
                     decimal_seperator: "."
                 },
-                "name": {
-                    "name": "name",
-                    "type": "varchar"
+                name: {
+                    audited: true,
+                    comment: "The short description of the bug",
+                    dbType: "varchar",
+                    full_text_search: {boost: 3},
+                    len: 255,
+                    link: true,
+                    merge_filter: "selected",
+                    name: "name",
+                    required: true,
+                    type: "name",
+                    unified_search: true,
+                    vname: "LBL_SUBJECT"
                 },
                 "description": {
                     "name": "description",

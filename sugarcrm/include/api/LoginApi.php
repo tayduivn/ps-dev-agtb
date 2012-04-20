@@ -20,10 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('soap/SoapError.php');
-require_once('include/api/SugarApi/ServiceCoreHelper.php');
-
-class loginApi extends SugarApi {
+class LoginApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'login' => array(
@@ -83,10 +80,10 @@ class loginApi extends SugarApi {
     public function logout($api, $args) {
         // In the future it should destroy the oauth tokens associated to this connection
         // For now, we just nuke the session.
-        foreach ( $_SESSION as $key => $ignore ) {
-            $_SESSION[$key] = '';
-        }
+        session_regenerate_id(true);
+
         
-        session_destroy();
+        return array('success'=>true);
+
     }
 }
