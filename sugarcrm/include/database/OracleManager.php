@@ -1704,8 +1704,7 @@ EOQ;
         if(empty($version)) {
             return array('ERR_DB_VERSION_FAILURE');
         }
-        if (version_compare($version, '9', '<'))
-        {
+        if(!preg_match("/^(9|10|11)\\./i", $version)) {
             return array('ERR_DB_OCI8_VERSION', $version);
         }
         return true;

@@ -951,14 +951,10 @@ function getModuleLanguagePack($lang, $module) {
 		$langPack = clean_path(getcwd().'/'.$module.'/language/'.$lang.'.lang.php');
 		$langPackEn = clean_path(getcwd().'/'.$module.'/language/en_us.lang.php');
 
-        if (file_exists($langPack))
-        {
-            include($langPack);
-        }
-        elseif (file_exists($langPackEn))
-        {
-            include($langPackEn);
-        }
+		if(file_exists($langPack))
+			include_once($langPack);
+		elseif(file_exists($langPackEn))
+			include_once($langPackEn);
 	}
 
 	return $mod_strings;
@@ -1000,18 +996,19 @@ function checkSystemCompliance() {
 
 	// database and connect
     $v = $db->version();
-    if ($db->canInstall() !== true)
+	if($db->dbType == 'mysql')
     {
-        $ret['error_found'] = true;
-        if($db->dbType == 'mysql')
-        {
-            $ret['mysqlVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_MYSQL_VERSION'].$v."</span></b>";
-        }
-        elseif ($db->dbType == 'oci8')
-        {
-            $ret['ociVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_OCI8_VERSION'].$v."</span></b>";
-        }
-    }
+        if(version_compare($v, '4.1.2') < 0) {
+	        	$ret['error_found'] = true;
+	        	$ret['mysqlVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_MYSQL_VERSION'].$v."</span></b>";
+	    }
+	} elseif($db->dbType == 'oci8') {
+	    if(!preg_match("/Oracle9i|Oracle Database 10g|11/i", $v)) {
+	        	$ret['error_found'] = true;
+	        	$ret['ociVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_OCI8_VERSION'].$v."</span></b>";
+	    }
+	}
+
 
 	// XML Parsing
 	if(function_exists('xml_parser_create')) {
