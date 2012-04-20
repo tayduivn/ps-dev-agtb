@@ -19,16 +19,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['ProductCategory'] = array('table' => 'product_categories',
-				'comment' => 'Used to categorize products in the product catalog'
+$dictionary['OpportunityLineBundle'] = array('table' => 'opp_line_bundle', 'comment' => 'Opportunity Line groups'
                                ,'fields' => array (
-  'id' =>
+ 'id' =>
   array (
     'name' => 'id',
-    'vname' => 'LBL_ID',
+    'vname' => 'LBL_NAME',
     'type' => 'id',
     'required' => true,
-    'reportable'=>true,
+    'reportable'=>false,
     'comment' => 'Unique identifier'
   ),
    'deleted' =>
@@ -57,12 +56,12 @@ $dictionary['ProductCategory'] = array('table' => 'product_categories',
     'required' => true,
     'comment' => 'Date record last modified'
   ),
-  'modified_user_id' =>
+    'modified_user_id' =>
   array (
     'name' => 'modified_user_id',
     'rname' => 'user_name',
     'id_name' => 'modified_user_id',
-    'vname' => 'LBL_MODIFIED_ID',
+    'vname' => 'LBL_ASSIGNED_TO',
     'type' => 'assigned_user_name',
     'table' => 'users',
     'isnull' => 'false',
@@ -75,7 +74,7 @@ $dictionary['ProductCategory'] = array('table' => 'product_categories',
     'name' => 'created_by',
     'rname' => 'user_name',
     'id_name' => 'modified_user_id',
-    'vname' => 'LBL_CREATED_ID',
+    'vname' => 'LBL_ASSIGNED_TO',
     'type' => 'assigned_user_name',
     'table' => 'users',
     'isnull' => 'false',
@@ -85,85 +84,30 @@ $dictionary['ProductCategory'] = array('table' => 'product_categories',
   'name' =>
   array (
     'name' => 'name',
-    'vname' => 'LBL_LIST_NAME',
-    'type' => 'name',
+    'vname' => 'LBL_NAME',
     'dbType' => 'varchar',
-    'len' => '50',
-    'comment' => 'Name of the product category',
-    'importable' => 'required',
+    'type' => 'name',
+    'len' => '255',
+    'comment' => 'Name of the group'
   ),
-  'list_order' =>
+
+  'opportunity_lines' =>
   array (
-    'name' => 'list_order',
-    'vname' => 'LBL_LIST_ORDER',
-    'type' => 'int',
-    'len' => '4',
-    'comment' => 'Order within list',
-    'importable' => 'required',
-  ),
-  'description' =>
-  array (
-    'name' => 'description',
-    'vname' => 'LBL_DESCRIPTION',
-    'type' => 'text',
-    'comment' => 'Full desscription of the category'
-  ),
-  //BEGIN SUGARCRM flav=pro ONLY
-  'assigned_user_id' =>
-  array (
-    'name' => 'assigned_user_id',
-    'vname' => 'LBL_ASSIGNED_USER_NAME',
-    'type' => 'varchar',
-    'len' => '36',
-    'comment' => 'The id of the user who owns the product category',
-    'reportable'=>true
-  ),
-  'parent_id' =>
-  array (
-    'name' => 'parent_id',
-    'vname' => 'LBL_PARENT_NAME',
-    'type' => 'varchar',
-    'len' => '36',
-    'comment' => 'Parent category of this item; used for multi-tiered categorization',
-    'reportable'=>true
-  ),
-  'categories' =>
-  array (
-    'name' => 'categories',
+    'name' => 'opportunity_lines',
     'type' => 'link',
-    'relationship' => 'member_categories',
-    'module'=>'ProductCategories',
-    'bean_name'=>'ProductCategory',
+    'relationship' => 'opp_line_bundle_opp_line',
+    'module'=>'OpportunityLine',
+    'bean_name'=>'OpportunityLine',
     'source'=>'non-db',
-    'vname'=>'LBL_CATEGORIES',
+    'rel_fields'=>array('opp_index'=>array('type'=>'integer')),
+    'vname'=>'LBL_PRODUCTS',
   ),
 
-  'parent_name' =>
-  array (
-    'name' => 'parent_name',
-    'type' => 'varchar',
-    'source' => 'non-db'
-  ),
-
-  'type' =>
-  array(
-    'name' => 'type',
-    'type' => 'varchar',
-    'source' => 'non-db'
-  ),
-
-  //END SUGARCRM flav=pro ONLY
-)
-,'indices' =>
-        array (
-            array('name' =>'product_categoriespk', 'type' =>'primary', 'fields'=>array('id')),
-            array('name' =>'idx_productcategories', 'type'=>'index', 'fields'=>array('name','deleted')),
-        )
-, 'relationships' => array (
-    'member_categories' => array('lhs_module'=> 'ProductCategories', 'lhs_table'=> 'product_categories', 'lhs_key' => 'id',
-                              'rhs_module'=> 'ProductCategories', 'rhs_table'=> 'product_categories', 'rhs_key' => 'parent_id',
-                              'relationship_type'=>'one-to-many')
-     )
+),
+    'indices' => array (
+       array('name' =>'opp_bundlespk', 'type' =>'primary', 'fields'=>array('id')),
+    )
 );
 
-?>
+VardefManager::createVardef('OpportunityLineBundles','OpportunityLineBundle', array(
+));

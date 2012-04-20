@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/accounts_bugsMetaData.php");
 include("metadata/accounts_casesMetaData.php");
-//END SUGARCRM flav!=sales ONLY
+//END SUGARCRM flav!=sales ONLYF
 include("metadata/accounts_contactsMetaData.php");
 include("metadata/accounts_opportunitiesMetaData.php");
 include("metadata/calls_contactsMetaData.php");
@@ -82,6 +82,9 @@ include("metadata/saved_reportsMetaData.php");
 //END SUGARCRM flav=pro || flav=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
+include("metadata/opportunity_line_bundle_opportunity.php");
+include("metadata/opportunity_line_bundle_opportunity_line.php");
+
 //BEGIN SUGARCRM flav!=sales ONLY
 
 include("metadata/product_bundle_noteMetaData.php");

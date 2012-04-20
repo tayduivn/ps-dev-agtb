@@ -238,6 +238,26 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
     'merge_filter' => 'enabled',
   ),
+  //BEGIN SUGARCRM flav=PRO ONLY
+  'best_case' =>
+  array (
+    'name' => 'best_case',
+    'vname' => 'LB_BEST_CASE_VALUE',
+    'type' => 'long',
+  ),
+  'likely_case' =>
+  array (
+    'name' => 'likely_case',
+    'vname' => 'LB_LIKELY_VALUE',
+    'type' => 'long',
+  ),
+  'worst_case' =>
+  array (
+    'name' => 'worst_case',
+    'vname' => 'LB_WORST_CASE_VALUE',
+    'type' => 'long',
+  ),
+  //END SUGARCRM flav=PRO ONLY
   'accounts' =>
   array (
   	'name' => 'accounts',
