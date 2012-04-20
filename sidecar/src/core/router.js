@@ -12,7 +12,7 @@
          */
         routes: {
             "": "index",
-            "login": "login",
+            "logout": "logout",
             ":module": "index",
             ":module/layout/:view": "layout",
             ":module/list": "index",
@@ -34,6 +34,16 @@
 
             if (!this.controller) {
                 throw "No Controller Specified";
+            }
+        },
+
+        navigate: function(fragment, options) {
+            if (!(app.api.isAuthenticated())) {
+                Backbone.Router.prototype.navigate.call(this, fragment);
+                this.login();
+                Backbone.history.stop();
+            } else {
+                Backbone.Router.prototype.navigate.call(this, fragment, options);
             }
         },
 
@@ -61,7 +71,7 @@
          * @param {Object} options Additional parameters. Should not include id/module/action.
          * @return {String} route The built route
          */
-        buildRoute : function(module, id, action, params) {
+        buildRoute: function(module, id, action, params) {
             var route;
 
             if (module) {
@@ -115,17 +125,24 @@
         create: function(module) {
             this.controller.loadView({
                 module: module,
-                create:true,
+                create: true,
                 layout: "edit"
             });
         },
 
         login: function() {
             this.controller.loadView({
-                module: "Home",
+                module: "Login",
                 layout: "login",
                 create: true
             });
+        },
+
+        logout: function() {
+            self = this;
+            app.api.logout({success: function(data) {
+                self.navigate("#");
+            }});
         },
 
         record: function(module, id, action) {
