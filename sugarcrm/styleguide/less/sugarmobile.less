@@ -293,10 +293,10 @@ a:hover [class^="icon-"]{
 }
 
 .btn [class^="icon-"] {
-  margin-top: 1px;
+  margin-top: 3px;
 }
 
-.icon-star {
+article .icon-star {
   color: @orange;
 }
 .icon-star-empty {
@@ -381,11 +381,13 @@ html {
   .box-shadow(@shadow);
 }
 
-.onL .nav-collapse li.divider-horizontal,.onL .nav-collapse li#userAdmin {
+#useradmin a, #quickTitle a{ color: lighten(@gray, 10%); text-shadow: none;}
+
+.onL .nav-collapse li.divider-horizontal,.onL .nav-collapse li#userAdmin, .onR .nav-collapse li.divider-horizontal, .onR .nav-collapse li#quickTitle  {
   #gradient > .vertical(lighten(@black, 30%), lighten(@black, 20%));
 }
 
-.onL .nav-collapse li.divider-horizontal {
+.onL .nav-collapse li.divider-horizontal, .onR .nav-collapse li.divider-horizontal {
   height: 5px;
   display: block;
 }
@@ -502,24 +504,6 @@ html {
 
 .tcenter > .btn-group {
   display:inline-block;
-}
-
-.topelbar.search .btn-group .btn:last-child {
-     -webkit-border-top-right-radius: 18px;
-         -moz-border-radius-topright: 18px;
-             border-top-right-radius: 18px;
-  -webkit-border-bottom-right-radius: 18px;
-      -moz-border-radius-bottomright: 18px;
-          border-bottom-right-radius: 18px;
-}
-
-.topelbar.search .btn-group .btn:first-child {
-     -webkit-border-top-left-radius: 18px;
-         -moz-border-radius-topleft: 18px;
-             border-top-left-radius: 18px;
-  -webkit-border-bottom-left-radius: 18px;
-      -moz-border-radius-bottomleft: 18px;
-          border-bottom-left-radius: 18px;
 }
 
 #listing .form-search {
@@ -771,10 +755,11 @@ color: @gray;
 
 /* edit record
 --------------*/
-.pad {
+.pad, .form-horizontal {
   background: @white;
   margin: 0;
   min-height:300px;
+  height: 100%;
 }
 #createRecord.form-horizontal {
   .control-group > label  {

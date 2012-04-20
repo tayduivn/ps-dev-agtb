@@ -1,6 +1,6 @@
 <head>
   <meta charset="utf-8">
-  <title>SugarCRM</title>
+  <title>Contact - Mia Hamm - SugarCRM</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -21,9 +21,9 @@
           <li id="userAdmin"><a href="sabra_khan.html" id="userTab">Sabra Khan</a></li>
           <li class="divider-horizontal"></li>                       
           <li id="gen0"><a href="index.html" id="moduleTab_Activity">Activity</a></li>
-          <li id="gen1" class="active"><a href="accounts.html" id="moduleTab_Accounts">Accounts</a></li>
+          <li id="gen1"><a href="accounts.html" id="moduleTab_Accounts">Accounts</a></li>
           <li id="gen25"><a href="cases.html" id="moduleTab_Cases">Cases</a></li>             
-          <li id="gen2"><a href="not.html" id="moduleTab_Contacts">Contacts</a></li>
+          <li id="gen2" class="active"><a href="not.html" id="moduleTab_Contacts">Contacts</a></li>
           <li id="gen23"><a href="not.html" id="moduleTab_Documents">Documents</a></li>                      
           <li id="gen3"><a href="opportunity.html" id="moduleTab_Opportunities">Opportunities</a></li>            
           <li class="divider-horizontal"></li>                       
@@ -33,19 +33,19 @@
           <li id="gen25"><a href="not.html" id="moduleTab_Cases">Import Contacts</a></li>  
           <li id="gen2"><a href="login.html" id="moduleTab_Contacts">Log Out</a></li>       
         </ul>
-         <ul class="nav" id="createList">
-           <li id="quickTitle"><a name>Quick Create</a></li>
-           <li class="divider-horizontal"></li>
-           <li><a href="account_create.html">Create Account</a></li>
-           <li><a href="not.html">Create Case</a></li>
-           <li><a href="not.html">Create Contact</a></li>
-           <li><a href="not.html">Create Opportunity</a></li>
-           <li><a href="not.html">Create Task</a></li>
-           <li><a href="not.html">Create Meeting</a></li>
-          </ul>
+        <ul class="nav" id="createList">
+          <li id="quickTitle"><a name>Quick Create</a></li>
+          <li class="divider-horizontal"></li>
+          <li><a href="account_create.html">Create Account</a></li>
+          <li><a href="not.html">Create Case</a></li>
+          <li><a href="not.html">Create Contact</a></li>
+          <li><a href="not.html">Create Opportunity</a></li>
+          <li><a href="not.html">Create Task</a></li>
+          <li><a href="not.html">Create Meeting</a></li>
+         </ul>
       </div><!-- /.nav-collapse -->
         <div id="back"><i class="icon-chevron-left icon-md back"></i>
-        <h1>Account</h1>
+        <h1>Contact</h1>
         </div>
         <a href="#d" title="Dashboard" class="cube" id="logo"></a>
         <a href="#l" class="launch" id="create"><i class="icon-plus icon-md"></i></a>
@@ -55,8 +55,8 @@
     <div id="scroll">
     <section class="topelbar tcenter">
       <div class="btn-group">
-        <a title="Call" href="#call" class="btn call"><i class="icon-phone-black  icon-md "></i> <i class="opt">Call</i></a>
-        <a title="Email" href="mailto:info@kpcb.com" class="btn"><i class="icon-envelope  icon-md "></i> <i class="opt">Email</i></a> 
+        <a title="Call" href="#call" class="btn call"><i class="icon-phone-black"></i> <i class="opt">Call</i></a>
+        <a title="Email" href="mailto:ux@sugarcrm.com" class="btn"><i class="icon-envelope"></i> <i class="opt">Email</i></a> 
         <a title="SMS" href="#sms" class="btn">SMS</a>
       </div>
     </section>
@@ -64,25 +64,51 @@
       <div class="control-group">
         <label class="control-label" for="input01">Image</label>
         <div class="controls">
-          <img src="../img/logo_perkins.png" class="avatar" alt="Sabra Khan avatar">
+          <img src="../img/avatar_mia.jpg" class="avatar" alt="Sabra Khan avatar">
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="input01">Name</label>
+        <label class="control-label" for="input01">First Name</label>
         <div class="controls">
-          <input type="text" class="span4" id="input01" value="Perkin Kleiners"  type="search">
+          <input type="text" class="span4" id="input01" value="Mia"  type="search">
         </div>
       </div>
+      <div class="control-group">
+        <label class="control-label" for="input01">Last Name</label>
+        <div class="controls">
+          <input type="text" class="span4" id="input01" value="Hamm"  type="search">
+        </div>
+      </div>
+      <div class="control-group">
+         <label class="control-label" for="input01">Company</label>
+         <div class="controls">
+           <input type="text" class="span4" id="input01" value="Stratego">
+         </div>
+       </div>
+       <div class="control-group">
+          <label class="control-label" for="textarea" id="en-label">Phone</label>
+          <div class="controls">
+            <input type="text" class="fleft span4" id="input01" value="(603) 521-0643">
+            <a class="btn fright call" href="#call"><i class="icon-phone-black"></i></a>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="textarea" id="en-label">Email</label>
+          <div class="controls">
+            <input type="text" class="fleft span4" id="input01" value="ux@sugarcrm.com">
+            <a class="btn fright" href="mailto:ux@sugarcrm.com"><i class="icon-envelope"></i></a>
+          </div>
+        </div>
       <div class="control-group">
         <label class="control-label" for="input01">Address</label>
         <div class="controls">
-          <input type="text" class="span4" id="input01" value="9243 Ralston Ave">
+          <input type="text" class="span4" id="input01" value="33 Cuper Rd">
         </div>
       </div>      
       <div class="control-group">
         <label class="control-label" for="input01">City</label>
         <div class="controls">
-          <input type="text" class="span4" id="input01" value="Sunnyvale">
+          <input type="text" class="span4" id="input01" value="Boston">
         </div>
       </div>      
       <div class="control-group">
@@ -94,37 +120,11 @@
               <option>AL</option>
               <option>CA</option>
               <option>CO</option>
+              <option selected="selected">MA</option>
           </select>
         </div>
       </div>
-      <div class="control-group">
-        <label class="control-label" for="textarea" id="en-label">Url</label>
-        <div class="controls">
-          <input type="text" class="span4" id="input01" value="http://www.kpcb.com/">
-        </div>
-      </div>
-     <div class="control-group">
-        <label class="control-label" for="textarea" id="en-label">Phone</label>
-        <div class="controls">
-          <input type="text" class="fleft span4" id="input01" value="(603)1001010">
-          <a class="btn fright call" href="#call"><i class="icon-phone-black"></i></a>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="textarea" id="en-label">Email</label>
-        <div class="controls">
-          <input type="text" class="fleft span4" id="input01" value="info@kpcb.com">
-          <a class="btn fright" href="mailto:email@email.com"><i class="icon-envelope"></i></a>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="textarea" id="en-label">Description</label>
-        <div class="controls">
-          <textarea class="" id="textarea" style="height: 40px; margin-top: 5px;">Invest across all stages of new ventures</textarea>
-        </div>
-      </div>
-      <br><br><br><br><br>
-
+      <br><br><br><br><br><br>
   </fieldset>
   </div>
   </div>
