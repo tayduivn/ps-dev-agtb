@@ -13,6 +13,13 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 'click' => 'function(){ var self = this;this.context.state.collection.paginate({add:true, success:function(){console.log("in paginate success");window.scrollTo(0,document.body.scrollHeight);}});}',
             ),
         ),
+        1 =>
+        array(
+            'name' => 'test_editable',
+            'type' => 'clickToEdit',
+            'label' => 'click to edit',
+            'class' => 'cte',
+        ),
     ),
     'listNav' =>
     array(

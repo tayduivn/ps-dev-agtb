@@ -203,7 +203,8 @@
                     };
 
                     collection = app.data.createBeanCollection(state.module);
-                    collection.on("app:collection:fetch", state.layout.render, this);
+                    console.log("Fetching Data!");
+                    //collection.on("app:collection:fetch", state.layout.render, state.layout);
                     collection.fetch(options);
 
                     bean = collection.models[0] || {};
