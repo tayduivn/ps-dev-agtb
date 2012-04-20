@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 // A simple example class
-class pingApi extends SugarApi {
+class PingApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'ping' => array(

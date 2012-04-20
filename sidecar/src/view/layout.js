@@ -1,7 +1,7 @@
 (function(app) {
 
     /**
-     * Base Layout class. Use {@link View.LayoutManager} to create instances of layouts.
+     * Base Layout class. Use {@link View.ViewManager} to create instances of layouts.
      *
      * @class View.Layout
      * @alias SUGAR.App.layout.Layout
@@ -143,5 +143,4 @@
             return fields;
         }
     });
-
 })(SUGAR.App);

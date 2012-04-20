@@ -355,7 +355,7 @@
              * Sets a cookie
              * @param {String} cName cookie name
              * @param {String} value
-             * @param {Integer} exdays days until expiration
+             * @param {Number} exdays days until expiration
              */
             setCookie: function setCookie(cName, value, exdays) {
                 var exdate = new Date();

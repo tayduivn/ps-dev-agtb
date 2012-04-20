@@ -1,0 +1,44 @@
+<div class="longHelpTitle">List Records In Module</div>
+<div class="summary">
+<h2>Summary:</h2>
+  This endpoint lists records in a specific module. Searching, filtering and ordering can be applied to only fetch the records you are interested in. Additionally the set of returned fields can be restricted to speed up processing and reduce download times.
+</div>
+<div class="params">
+<h2>Query Parameters:</h2>
+<table>
+  <tr><th>Param</td><th>Description</td><th>Optional</td></tr>
+  <tr><td>q</td><td>Search the records by this parameter, if you don't have a full-text search engine enabled it will only search the name field of the records.</td><td>Optional</td></tr>
+  <tr><td>maxResult</td><td>A maximum number of records to return</td><td>Optional</td></tr>
+  <tr><td>offset</td><td>How many records to skip over before records are returned</td><td>Optional</td></tr>
+  <tr><td>fields</td><td>Comma delimited list of what fields you want returned.<br>The field date_modified will always be added</td><td>Optional</td></tr>
+  <tr><td>orderBy</td><td>How to sort the returned records, in a comma delimited list with the direction appended to the column name after a colon.<br>Example: last_name:DESC,first_name:DESC,date_modified:ASC</td><td>Optional</td></tr>
+  <tr><td>favorites</td><td>Only fetch favorite records</td><td>Optional</td></tr>
+  <tr><td>deleted</td><td>Show deleted records in addition to undeleted records</td><td>Optional</td></tr>
+</table>
+</div>
+<div class="input">
+<h2>Input Example:</h2>
+This endpoint does not accept any input
+</div>
+<div class="output">
+  <h2>Output Example:</h2>
+<code class="codesample"> 
+{
+    "next_offset": 31, <span class="note">This will be set to -1 when there are no more records after this "page"</span>
+    "records": [
+        {
+             "id":"514eab95-4e5b-63f1-1658-4f8c7675955c",
+             "name":"Nelson Inc",
+             "date_entered":"2012-04-16 19:41:10",
+             "date_modified":"2012-04-16 19:41:10",
+             "modified_user_id":"1",
+             "created_by":"1","description":null,
+             "deleted":"0",
+             "assigned_user_id":"seed_sarah_id",
+             ... additional fields ...
+        },
+        ... additional records ...
+    ]
+}
+</code>
+</div>
