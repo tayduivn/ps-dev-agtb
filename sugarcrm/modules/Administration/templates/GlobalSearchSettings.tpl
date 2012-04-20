@@ -54,7 +54,7 @@
 		<tr>
 			<td>
 			<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="SUGAR.saveGlobalSearchSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
-                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="display: none;text-decoration: none;" id='schedFullSystemIndexBtn' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
+                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="{if !$showSchedButton}display:none;{/if}text-decoration: none;" id='schedFullSystemIndexBtn' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
             <input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.GlobalSearchSettings.action.value='';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
 			</td>
 		</tr>
@@ -73,7 +73,8 @@
 		</table>
 	</div>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
-    {if !$hide_fts_config}
+    <div {if $hide_fts_config}style="display:none;"{/if}>
+
         <br>
         {$MOD.LBL_FTS_PAGE_DESC}
         <br><br>
@@ -88,12 +89,12 @@
                 </tr>
                 <tr class="shouldToggle">
                     <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}:&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
-                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
+                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" ></td>
                     <td width="60%" valign="bottom">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.testSettings();" style="text-decoration: none;">{$MOD.LBL_FTS_TEST}</a></td>
                 </tr>
                 <tr class="shouldToggle">
                     <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}:&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
-                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
+                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}"></td>
                     <td width="60%"></td>
                 </tr>
                 <tr class="shouldToggle">
@@ -101,14 +102,13 @@
                 </tr>
             </tbody>
         </table>
-    {/if}
-
+    </div>
 {* //END SUGARCRM flav=pro ONLY *}
 	<table border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>
 				<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button primary" onclick="SUGAR.saveGlobalSearchSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
-                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="display:none;text-decoration: none;" id='schedFullSystemIndex' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
+                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="{if !$showSchedButton}display:none;{/if}text-decoration: none;" id='schedFullSystemIndex' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
                 <input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" class="button" onclick="document.GlobalSearchSettings.action.value='';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
 			</td>
 		</tr>
