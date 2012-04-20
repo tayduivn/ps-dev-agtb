@@ -632,6 +632,16 @@ class EmailTemplate extends SugarBean {
 		return false;
 	}
 
+    static function getTypeOptionsForSearch(){
+        $template = new EmailTemplate();
+        $optionKey = $template->field_defs['type']['options'];
+        $options = $GLOBALS['app_list_strings'][$optionKey];
+        if( ! is_admin($GLOBALS['current_user']) && isset($options['workflow']))
+            unset($options['workflow']);
+
+        return $options;
+    }
+
 	function is_used_by_email_marketing() {
 		$query = "select id from email_marketing where template_id='$this->id' and deleted=0";
 		$result = $this->db->query($query);
