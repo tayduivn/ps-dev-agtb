@@ -799,7 +799,11 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 		else
 			value = AH.getValue(varname, this.formName);
 
-		if (typeof(value) == "string")
+        if(typeof(value) == 'number')
+        {
+            return toConst(value);
+        }
+		else if (typeof(value) == "string")
 		{
 			value = value.replace(/\n/g, "");
 			if ((/^(\s*)$/).exec(value) != null || value === "")
