@@ -244,21 +244,18 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
     'type' => 'long',
-	'source'=>'non-db',
   ),
   'likely_case' =>
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
     'type' => 'long',
-    'source'=>'non-db',
   ),
   'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
     'type' => 'long',
-    'source'=>'non-db',
   ),
   //END SUGARCRM flav=PRO ONLY
   'accounts' =>
