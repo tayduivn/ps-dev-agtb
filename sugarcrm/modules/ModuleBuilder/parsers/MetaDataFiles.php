@@ -165,11 +165,11 @@ class MetaDataFiles
      */
     public static function getViewClient($view) {
         if (!empty($view)) {
-            if (strpos($view, 'portal') !== false) {
+            if (stripos($view, 'portal') !== false) {
                 return 'portal';
             }
 
-            if (strpos($view, 'wireless') !== false || strpos($view, 'mobile') !== false) {
+            if (stripos($view, 'wireless') !== false || stripos($view, 'mobile') !== false) {
                 return 'mobile';
             }
 
@@ -345,5 +345,85 @@ class MetaDataFiles
                 $mb = new ModuleBuilder();
                 return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/metadata/' . $viewPath . $names[$view] . '.php';
         }
+    }
+
+    public static function getModuleMetaDataDefsWithReplacements($module, $defs) {
+        if (!$module instanceof SugarBean) {
+            $module = BeanFactory::getBean($module);
+        }
+        $replacements = array(
+			"<object_name>"  => $module->object_name,
+			"<_object_name>" => strtolower($module->object_name),
+			"<OBJECT_NAME>"  => strtoupper($module->object_name),
+			"<module_name>"  => $module->module_dir,
+			'<_module_name>' => strtolower($module->module_dir),
+		);
+		return self::recursiveVariableReplace($defs, $replacements);
+    }
+
+    public static function recursiveVariableReplace($source, $replacements) {
+        $ret = array();
+		foreach ($source as $key => $val) {
+			if (is_array($val)) {
+	            $newkey = $key;
+                $val = self::recursiveVariableReplace($val, $replacements);
+	            $newkey = str_replace(array_keys($replacements), $replacements, $newkey);
+	            $ret[$newkey] = $val;
+	        } else {
+                $newkey = $key;
+			    $newval = $val;
+                if(is_string($val)) {
+                    $newkey = str_replace(array_keys($replacements), $replacements, $newkey);
+                    $newval = str_replace(array_keys($replacements), $replacements, $newval);
+                }
+                $ret[$newkey] = $newval;
+			}
+        }
+		return $ret;
+    }
+
+    /**
+     * @param $view
+     * @return mixed
+     * hack for portal to use its own constants
+     */
+    public static function getMBConstantForView($view, $client = "base")
+    {
+        // Sometimes client is set to a defined null
+        if (empty($client)) {
+            $client = 'base';
+        }
+
+        $map = array(
+            //BEGIN SUGARCRM flav=ent ONLY
+            "portal" => array(
+                'edit' => MB_PORTALEDITVIEW,
+                'detail' => MB_PORTALDETAILVIEW,
+                'search' => MB_PORTALSEARCHVIEW,
+                'list' => MB_PORTALLISTVIEW
+            ),
+            //END SUGARCRM flav=ent ONLY
+            'mobile' => array(
+                'edit' => MB_WIRELESSEDITVIEW,
+                'detail' => MB_WIRELESSDETAILVIEW,
+                'list' => MB_WIRELESSLISTVIEW
+            ),
+            "base" => array(
+                'edit' => MB_EDITVIEW,
+                'detail' => MB_DETAILVIEW,
+                'advanced_search' => MB_ADVANCEDSEARCH,
+                'basic_search' => MB_BASICSEARCH,
+                'list' => MB_LISTVIEW,
+            ),
+        );
+
+        // view variable sent to the factory has changed: remove 'view' suffix
+        // in case of further change
+        $view = strtolower($view);
+        if (substr_compare($view,'view',-4) === 0) {
+            $view = substr($view,0,-4);
+        }
+
+        return isset($map[$client][$view]) ? $map[$client][$view] : $view;
     }
 }

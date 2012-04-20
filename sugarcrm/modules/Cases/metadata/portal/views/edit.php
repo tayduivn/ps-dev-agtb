@@ -102,3 +102,4 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
         )
     ),
 );
+?>

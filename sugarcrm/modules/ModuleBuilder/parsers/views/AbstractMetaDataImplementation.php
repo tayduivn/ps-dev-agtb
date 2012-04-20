@@ -44,6 +44,7 @@ abstract class AbstractMetaDataImplementation
 	protected $_fielddefs;
     protected $_paneldefs;
     protected $_paneldefsPath = array();
+    protected $_useWorkingFile = false;
 	protected $_sourceFilename = '' ; // the name of the file from which we loaded the definition we're working on - needed when we come to write out the historical record
 	// would like this to be a constant, but alas, constants cannot contain arrays...
 	protected $_fileVariables = array (
@@ -97,6 +98,16 @@ abstract class AbstractMetaDataImplementation
     public function getPanelDefsPath() {
         return $this->_paneldefsPath;
     }
+
+    /**
+     * Flag fetcher that tells if we are using the working file
+     *
+     * @return bool
+     */
+    public function useWorkingFile() {
+        return $this->_useWorkingFile;
+    }
+
     /**
      * Sets the view client for the metadata
      *

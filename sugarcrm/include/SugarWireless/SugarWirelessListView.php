@@ -55,9 +55,12 @@ class SugarWirelessListView extends SugarWirelessView{
        
  		// retrieve the displayColumns from listview metadata file
         $this->displayColumns = array();
-		foreach($listViewDefs[$GLOBALS['module']] as $col => $params) {
-            if(!empty($params['default']) && $params['default'])
-                $this->displayColumns[$col] = $params;
+		foreach($listViewDefs[$GLOBALS['module']]['panels'] as $panel) {
+            foreach ($panel['fields'] as $field) {
+                if(!empty($field['default'])) {
+                    $this->displayColumns[$field['name']] = $field;
+                }
+            }
         }
 
         parent::init($bean, $view_object_map);
@@ -74,6 +77,18 @@ class SugarWirelessListView extends SugarWirelessView{
         
     	require_once 'modules/ModuleBuilder/parsers/constants.php';
 		require $this->wl_get_metadata_location( MB_WIRELESSLISTVIEW );
+        $module = $GLOBALS['module'];
+        // Check for viewdefs first
+        if (isset($viewdefs)) {
+            if (isset($viewdefs[$module])) {
+                return $viewdefs[$module]['mobile']['view']['list'];
+            }
+
+            if (isset($viewdefs['<module_name>']) || isset($viewdefs['<_module_name>']) || isset($viewdefs['<MODULE_NAME>'])) {
+                $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($module, $viewdefs);
+                return $viewdefs[$module]['mobile']['view']['list'];
+            }
+        }
 
         // Get our module from the globals array
         $module = $GLOBALS['module'];
@@ -89,10 +104,14 @@ class SugarWirelessListView extends SugarWirelessView{
         }
 
 		// if we loaded the metadata from a SugarObjects template, then switch the template modulename to this module
-		if ( !isset ( $listViewDefs [ $GLOBALS['module'] ] ) &&  isset ( $listViewDefs [ '<module_name>' ] ) )
-			$listViewDefs [ $GLOBALS['module'] ] = $listViewDefs [ '<module_name>' ] ;
-			
-        return $listViewDefs [ $GLOBALS['module'] ];
+		//if ( !isset ( $listViewDefs [ $GLOBALS['module'] ] ) &&  isset ( $listViewDefs [ '<module_name>' ] ) ) {
+            //$listViewDefs [ $GLOBALS['module'] ] = $listViewDefs [ '<module_name>' ] ;
+        //}
+        if (!isset($listViewDefs[$module]) && isset($listViewDefs['<module_name>'])) {
+            $listViewDefs[$module] = $listViewDefs['<module_name>'];
+        }
+
+        return $listViewDefs[$module];
     }
     
 	/**
