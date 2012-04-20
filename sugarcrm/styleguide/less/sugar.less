@@ -5,10 +5,6 @@ body {
   padding: 47px 0;
 }
 
-body#login {
-	background: #333 url(../img/hixs_pattern_evolution.png);
-}
-
 .link {
 margin-top: 6px;
 display: inline-block;
@@ -252,15 +248,6 @@ border-right: 1px solid @grayLighter;
           transition: all .2s linear;
   }
   
-  #portal .modal .brand,#portal .thumbnail .brand {
-    background: url(../img/badge_256g.png) 50% 50% no-repeat;
-      background-size: 10%;
-      text-indent: -7000px;
-      -webkit-transition: all .2s linear;
-         -moz-transition: all .2s linear;
-              transition: all .2s linear;
-      }  
-  
 /* Messages 
 ------------*/
 .alert-top {
@@ -278,20 +265,18 @@ border-right: 1px solid @grayLighter;
 #folded .tab-pane {
   overflow: auto;
   min-height: 600px;
+  border-left: 1px solid darken(@grayLighter, 4%);
 }
 
 #folded .tab-pane.active#overview {
   background: @white;
-  @shadow: inset 1px 0 0 darken(@grayLighter, 1%);
-  .box-shadow(@shadow);
 }
 #folded .tab-pane.active {
   position: fixed !important;
   top: 92px;
   right: 0;
   background: @grayLighter;
-  @shadow: inset 1px 0 0 darken(@grayLighter, 3%), inset 1px 1px 1px @grayLight;
-  .box-shadow(@shadow);
+
   height: 100%;
   width: inherit;
   padding: 10px 0;
@@ -370,7 +355,7 @@ article .avatar {
   margin-bottom: 12px;
   	.border-radius(3px);
 }
-.pull-left .avatar {margin-right: 20px;}
+.pull-left .avatar {margin-right: 10px;}
 .navbar .avatar {
   margin-right: 10px;
 	margin-top: -3px;
@@ -484,16 +469,33 @@ article .avatar {
 .block.thumbnail .nav-tabs {margin: 0; border: none;}
 
 .block.thumbnail .nav-tabs li, .block.tabs-left .nav-tabs li{
-  border-bottom: 1px solid @grayLighter;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
   margin-bottom: 10px;
 }
 
 .block.tabs-left .nav-tabs p {
   margin: -18px 0 10px 90px;
 }
-#moduleActivity article p {
-  margin: -2px 0 0 70px;
+
+.block.tabs-left .nav-tabs li li .avatar {
+  margin: 3px 0 0;
 }
+
+.block.tabs-left .nav-tabs li li{
+  margin: 0 0 10px 65px;
+  padding: 10px 0 0;
+  border-top: 1px solid @grayLighter;
+  border-bottom: none;
+}
+
+.block.tabs-left .nav-tabs li li p {
+  margin: 0 0 10px 38px;
+}
+
+#moduleActivity article p {
+  margin: -2px 0 0 40px;
+}
+
 #moduleActivity article .label {margin: 1px;}
 
 .block.tabs-left .nav-tabs > li > a:hover, .block.tabs-left .nav-tabs > li > a {
@@ -503,27 +505,26 @@ article .avatar {
 .block.tabs-left .nav-tabs .active > a { background: none !important; border: none;   }
 
 .block.tabs-left .nav-tabs .active {
-  padding: 10px 0 4px 8px; 
+  padding: 11px 0 4px 8px; 
   float: none;
-  margin: -10px -6% 7px -8px;
+  margin: -11px -60px 7px -8px;
   border: none;   
-  background: darken(@grayLighter, 3%);
+  background: darken(@grayLighter, 4%);
   .border-radius(4px 0 0 4px);
 }
-.block .list li .btn {
-  position: absolute;
-  right: 10px;
-  top: -2px;
-  padding: 1px 4px;
-  width: 20px;
+
+
+.block.tabs-left .nav-tabs li:hover .actions {
+  display: block;
+  top: 0;
 }
-.block .nav-tabs li .btn {
-  position: absolute;
-  right: 10px;
-  top: 6px;
-  padding: 1px 4px;
-  width: 20px;
+
+.block.tabs-left .nav-tabs li.active:hover .actions {
+  display: block;
+  top: 11px;
+  right: 60px;
 }
+
 .block .nav-tabs li {
   list-style: none;
   position: relative;
@@ -628,7 +629,7 @@ position: relative;
   padding: 10px 0 11px;
   border-bottom: 1px solid darken(@grayLighter, 5%);
 }
-.card2 span:last-child .row-fluid {
+.card2 .extend + .row-fluid {
   border-bottom: none;
 }
 
@@ -802,8 +803,8 @@ padding-bottom: 15px;
 .subnav, footer {
   width: 100%;
   min-height: 44px;
-  #gradient > .vertical(@subnavbarBackgroundHighlight, @subnavbarBackground);
-  border-bottom: 1px solid darken(@grayLight, 10%);
+  #gradient > .vertical(@white, darken(@grayLighter, 4%));
+  border-bottom: 1px solid darken(@grayLighter, 8%);
   position: relative;
   @shadow: 0 1px 0 rgb(255,255,255);
   .box-shadow(@shadow);
@@ -814,14 +815,6 @@ padding-bottom: 15px;
   font-size: 20px !important;
   font-weight: 500;
   margin-top: -5px;
-}
-.subnav #accordion2 {
-  margin-top: 44px;
-  z-index: @zindexFixedNavbar;
-  position: relative;
-}
-.subnav form {
-  margin: 0;
 }
 .subnav .btn-toolbar.pull-right {margin: 9px 20px 0 0;}
 .subnav .btn-toolbar.pull-left {margin: 9px 0 0 20px;}
@@ -838,11 +831,11 @@ padding-bottom: 15px;
   border-left: 1px solid @grayLighter;
   border-right: 1px solid @grayLight;
   .border-radius(0px);
-  color: @subnavbarLinkColor;
+  color: @gray;
 }
 .subnav .nav > a,
 .subnav .nav > a:hover {
-  color: @subnavbarLinkColorHover;
+  color: @gray;
   background-color: @grayLight;
   border-right-color: @gray;
   border-left: 0;
@@ -851,7 +844,7 @@ padding-bottom: 15px;
 }
 .subnav .nav > .active > a,
 .subnav .nav > .active > a:hover {
-  color: @subnavbarLinkColorHover;
+  color: @gray;
   background-color: @grayLight;
   border-right-color: @grayLight;
   border-left: 0;
@@ -929,13 +922,12 @@ padding-bottom: 15px;
 }
 
 
-
 /* Footer
 -------------------------------------------------- */
 footer {
   .border-radius(0);
   border: none;
-  border-top: 1px solid darken(@grayLight, 10%);
+  border-top: 1px solid darken(@grayLighter, 8%);
 	padding: 0;
 	height: inherit;
 	position: fixed;
@@ -947,74 +939,6 @@ footer p {
 }
 footer .btn-toolbar.pull-right {margin: 8px 8px 0 0; height: 20px;}
 footer .btn-toolbar.pull-left {margin: 8px 0 0 8px; height: 20px;}
-
-
-
-/* Special grid styles
--------------------------------------------------- */
-.show-grid {
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-.show-grid [class*="span"] {
-  background-color: #eee;
-  text-align: center;
-  .border-radius(3px);
-  min-height: 30px;
-  line-height: 30px;
-}
-.show-grid:hover [class*="span"] {
-  background: #ddd;
-}
-.show-grid .show-grid {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.show-grid .show-grid [class*="span"] {
-  background-color: #ccc;
-}
-
-/* Popover docs
--------------------------------------------------- */
-.popover-well {
-  min-height: 160px;
-}
-.popover-well .popover {
-  display: block;
-}
-.popover-well .popover-wrapper {
-  width: 50%;
-  height: 160px;
-  float: left;
-  margin-left: 55px;
-  position: relative;
-}
-.popover-well .popover-menu-wrapper {
-  height: 80px;
-}
-
-
-
-/* Color swatches on LESS docs page
--------------------------------------------------- */
-/* Sets the width of the td */
-.swatch-col {
-  width: 30px;
-}
-
-.swatch {
-  display: inline-block;
-  width: 30px;
-  height: 20px;
-  margin: -6px 0;
-  .border-radius(3px);
-}
-
-.swatch-bordered {
-  width: 28px;
-  height: 18px;
-  border: 1px solid #eee;
-}
 
 /* Editable 
 --------------*/
@@ -1052,6 +976,7 @@ tr:hover .dropdown.hide {
   overflow: auto;
   height: 310px;
 }
+.modal-body textarea {text-align: left}
 
 .drag:hover {cursor: move;}
 

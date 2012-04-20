@@ -24,7 +24,7 @@
     })
     
     // timeout the alerts
-    setTimeout(function(){$('.alert').fadeOut().remove();},9000);
+    setTimeout(function(){$('.timeten').fadeOut().remove();},9000)
 
     // toggle star
     $('.icon-star').on('click', function (e) {
@@ -50,10 +50,19 @@
       function () {$(this).before('<i class="icon-pencil icon-sm"></i>');},
       function () {$('.icon-pencil').remove();}
   	)
-    
-    // Select widget
-    $(".chzn-select").chosen(); $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-
+    $("a[rel=popover]")
+      .popover()
+      .click(function(e) {
+        e.preventDefault()
+      })
+    $("a[rel=popoverTop]")
+      .popover({
+        placement: "top"
+      })
+      .click(function(e) {
+        e.preventDefault()
+      })
+      
     // fix sub nav on scroll
     var $win = $(window)
       , $nav = $('.subnav')
@@ -61,7 +70,6 @@
       , isFixed = 0
 
     processScroll()
-
     $win.on('scroll', processScroll)
 
     function processScroll() {
@@ -77,7 +85,6 @@
 
     // do this if greater than 768px page width
     if ( $(window).width() > 768) {		
-
     // tooltip demo
     $('body').tooltip({
       selector: "[rel=tooltip]"
@@ -93,21 +100,7 @@
     $('.navbar').tooltip({
       selector: "a[rel=tooltip]",
 			placement: "bottom"
-    })
-
-    $("a[rel=popover]")
-      .popover()
-      .click(function(e) {
-        e.preventDefault()
-      })
-    $("a[rel=popoverTop]")
-      .popover({
-        placement: "top"
-      })
-      .click(function(e) {
-        e.preventDefault()
-      })
-      
+    })  
     }
     
     // column collapse
@@ -142,13 +135,6 @@
 			$('.pointsolight').prependTo('body');
     })
     
-    // add a comment
-    $('#folded').find('.reply').on('click', function (e) {
-			$(this).parent().after('<form class="form-horizontal tcenter"><hr><textarea class="span4"></textarea><input type="submit" class="btn pull-right" value="Reply"></form>');
-			return false;
-    })
-    
-    
     // remove a close item
     $('#folded').find('[data-toggle=tab]').on('click', function (e) {
 			$('.nav-tabs').find('li').removeClass('active');
@@ -164,20 +150,6 @@
     // colorpicker
     $('[rel=colorpicker]').colorpicker({
   		format: 'hex'
-  	})
-
-    // datagrid
-    $('table.datatable').dataTable({
-      "bPaginate": false,
-      "bFilter": true,
-      "bInfo": false,
-      "bAutoWidth": true
-    })
-
-  	$('.block').hover( function () {
-  	    $(this).find('.actions .btn').toggleClass('btn-success');
-  	    $(this).find('.actions .btn.btn-success').css('color','#fff');
-  	    return false;
   	})
 
     // editable example
@@ -205,5 +177,16 @@
   $('#moduleRelated.filtered input').quicksearch('#moduleRelated article')
   $('#moduleActivity.filtered input').quicksearch('#moduleActivity article')
   $('#moduleActivity.filtered input').quicksearch('#moduleActivity .results li')
+ 
+  // datagrid
+  $('table.datatable').dataTable({
+    "bPaginate": false,
+    "bFilter": true,
+    "bInfo": false,
+    "bAutoWidth": true
+  })
   
+  // Select widget
+  $(".chzn-select").chosen()
+  $(".chzn-select-deselect").chosen({allow_single_deselect:true})
 }(window.jQuery)

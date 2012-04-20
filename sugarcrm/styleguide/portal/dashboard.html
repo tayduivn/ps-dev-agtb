@@ -13,6 +13,12 @@
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
 </head>
 <body id="portal">
+  <div class="alert-top">
+    <div class="alert alert-warning alert-block timeten">
+      <strong>Loading... </strong> This process is taking longer then expected.
+      <a class="close" data-dismiss="alert" href="#">x</a>
+    </div>
+  </div>
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
@@ -104,7 +110,7 @@
           </table>
           <div class="block-footer">
             <a href="" data-loading-text="Loading...">
-              Show more bugs
+              Show more bugs ...
             </a>
           </div>
           <ul class="nav nav-pills actions" id="bugsModuleActions">
@@ -170,96 +176,65 @@
         </div>
       </div>  
       <div class="span4">
-        <div class="thumbnail filtered" id="moduleActivity">
-          <h1>My Activity</h1>
-          <form class="form-addit form-horizontal hide" action="">
-            <ul class="nav nav-tabs">
-              <li class="active"><a href="#note" data-toggle="tab">Note</a></li>
-              <li><a href="#link" data-toggle="tab">Link</a></li>
-              <li><a href="#document" data-toggle="tab">Document</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="note">
-                  <input id="addit" value="" class="span3" placeholder="Add a note ...">
-                  <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-              <div class="tab-pane" id="link">
-                <input id="addit" value="" class="span3" placeholder="Add a link ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-              <div class="tab-pane" id="document">
-                <input id="addit" value="" class="span3" placeholder="Add a document ...">
-                <input id="additSubmit" type="submit" value="Add" class="btn">
-              </div>
-            </div>
-          </form> 
+        <div class="block filtered thumbnail" id="moduleActivity">
+          <h4>Activity</h4>
           <form class="form-search hide" action="">
-                <input id="activitySearchQuery" value="" class="span4" placeholder="Refine activity ...">
+            <input value="" class="span4" placeholder="Refine activity ...">
           </form> 
-          <div id="activity">
-            <ul class="nav nav-tabs results">
-              <li>
-                <a href="#file1" data-toggle="tab"><span class="label label-file">File</span></a>
-                <p>
-                  Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
-                </p>
-              </li>
-              <li>
-                <a href="#log1" data-toggle="tab"><span class="label label-log">Log</span></a>
-                <p>
-                  <a href=" profile_skhan.html">Sabra Khan</a> sent an email to <a href="contact_mark.html">Mark Edwin</a> titled <a href="">Let's do lunch</a>.
-                  <br>
-                  <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
-                </p>
-              </li>
-              <li>
-                <a href="#doc1" data-toggle="tab"><span class="label label-document">Document</span></a>
-                <p>
-                  <a href="#doc1" data-toggle="tab">Sales-document33.doc</a> added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 6 hours ago at 9:00 am EST</date>
-                </p>
-              </li>
-              <li>
-                <a href="#note1" data-toggle="tab"><span class="label label-note">Note</span></a>
-                <p>
-                  <a href="#note1" data-toggle="tab">Note</a> added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 2 days ago at 3:30 pm EST</date>
-                </p>
-              </li>
-              <li>
-                <a href="#lead1" data-toggle="tab"><span class="label label-lead">Lead</span></a>
-                <p>
-                  <a href="#lead1" data-toggle="tab">Perkin Kleiners - 100 Seats</a> added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 3 days ago at 1:00 pm EST</date>
-                </p>
-              </li>
-              <li>
-                <a href="#contact1" data-toggle="tab"><span class="label label-contact">Contact</span></a>
-                <p>
-                  <a href="contact_mark.html">Mark Edwin</a>, CIO, added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 3 days ago at 6:00 pm EST</date>
-                </p>
-              </li>   
-              <li>
-                <a href="#log2" data-toggle="tab"><span class="label label-log">Log</span></a>
-                <p>
-                  <a href=" profile_skhan.html">Sabra Khan</a> made an planned outbound call to <a href="contact_mark.html">Mark Edwin</a> for 30 mins.
-                  <br>
-                  <date class="date">Posted 2 days ago at 1:20 pm EST</date>
-                </p>
-              </li>
-            </ul>
-            <div class="block-footer">
-              <a href="" data-loading-text="Loading...">
-                Show more activity
-              </a>
-            </div>
+          <article>
+            <a href="profile_skhan.html" class="pull-left" data-author_id="skhan">
+              <img src="../img/avatar_sabra.jpg" class="avatar" alt="skhan avatar">
+            </a>
+            <p>
+              Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+              <br>
+              <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
+            </p>
+          </article>
+          <article>
+            <a href="profile_skhan.html" class="pull-left" data-author_id="skhan">
+              <img src="../img/avatar_sabra.jpg" class="avatar" alt="skhan avatar">
+            </a>
+            <p>
+              <a href=" profile_skhan.html">Sabra Khan</a> sent an email to <a href="contact_mark.html">Mark Edwin</a> titled <a href="">Let's do lunch</a>.
+              <br>
+              <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
+            </p>
+          </article>
+          <article>
+            <a href="profile_skhan.html" class="pull-left" data-author_id="skhan">
+              <img src="../img/avatar_sabra.jpg" class="avatar" alt="skhan avatar">
+            </a>
+            <p>
+              <a href="#doc1" data-toggle="tab">Sales-document33.doc</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+              <br>
+              <date class="date">Posted 6 hours ago at 9:00 am EST</date>
+            </p>
+          </article>
+          <article>
+            <a href="contact_mark.html" class="pull-left" data-author_id="skhan">
+              <img src="../img/avatar_weyland.png" class="avatar" alt="skhan avatar">
+            </a>
+            <p>
+              <a href="contact_mark.html">Mark Edwin</a> sent a message, <a href="">Would love to talk more about fuel options</a> to <a href="profile_sabra.html">Sabra Khan</a>.
+              <br>
+              <date class="date">Posted 1 day ago at 3:00 pm EST</date>
+            </p>
+          </article>
+          <article>
+            <a href="profile_skhan.html" class="pull-left" data-author_id="skhan">
+              <img src="../img/avatar_sabra.jpg" class="avatar" alt="skhan avatar">
+            </a>
+            <p>
+              <a href="#lead1" data-toggle="tab">Perkin Kleiners - 100 Seats</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+              <br>
+              <date class="date">Posted 3 days ago at 1:00 pm EST</date>
+            </p>
+          </article>
+          <div class="block-footer">
+            <a href="" data-loading-text="Loading...">
+              Show more activity ...
+            </a>
           </div>
           <ul class="nav nav-pills actions" id="bugsModuleActions">
             <li>  
