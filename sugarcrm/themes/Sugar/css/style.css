@@ -507,7 +507,7 @@ div.import_instruction
 /* module title */
 div.moduleTitle
 {
-    height:2em;
+    line-height:2em;
 	padding-bottom: 3px;
     padding-top: 0;
     margin-bottom: 10px;
