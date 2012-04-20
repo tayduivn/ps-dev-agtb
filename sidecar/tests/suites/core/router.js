@@ -102,7 +102,7 @@ describe("Router", function() {
     it("should create login view", function() {
         var mock = sinon.mock(controller);
         mock.expects("loadView").once().withArgs({
-            module:'Home',
+            module:'Login',
             layout:'login',
             create: true
         });
