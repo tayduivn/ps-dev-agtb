@@ -63,7 +63,6 @@
                     if($menu.hasClass(sf.defaults['retainClass']) === false)
                         $$.hideSuperfishUl();
                 }, o.delay);
-                //$$.removeClass(sf.defaults['retainClass']);
             } else {
                 $$.removeClass("iefix");
             }
