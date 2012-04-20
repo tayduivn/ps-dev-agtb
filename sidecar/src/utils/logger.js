@@ -97,7 +97,7 @@
              */
             write: function(level, message) {
                 if (level.value <= app.logger.levels.INFO.value) {
-                    console.info(message);
+                    console.log(message);
                 }
                 else if (level.value == app.logger.levels.WARN.value) {
                     console.warn(message);
@@ -209,7 +209,14 @@
 
                 if (level.value >= l.value) {
                     if (_.isFunction(message)) message = message.call(this);
-                    if (_.isObject(message)) message = JSON.stringify(message);
+                    if (_.isObject(message)) {
+                        // Try to jsonify the object. It'll fail if it has circular dependency
+                        try {
+                            message = JSON.stringify(message);
+                        } catch (e) {
+                            message = message.toString();
+                        }
+                    }
                     writer.write(level, formatter.format(level, message, new Date()));
                 }
             }
