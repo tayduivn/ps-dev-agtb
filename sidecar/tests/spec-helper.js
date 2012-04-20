@@ -54,12 +54,16 @@ var SugarTest = {};
     // load this in there respective beforeEach:
     // SugarTest.seedMetadata();
     test.seedMetadata = function() {
-        SugarTest.app = SUGAR.App.init({el: "body"});
+        this.seedApp();
         SugarTest.metadata = SugarTest.loadFixture("metadata");
         SugarTest.app.metadata.set(SugarTest.metadata);
         SugarTest.dm = SUGAR.App.data;
         SugarTest.dm.reset();
         SugarTest.dm.declareModels(SugarTest.metadata);
+    };
+
+    test.seedApp = function() {
+        SugarTest.app = SUGAR.App.init({el: "body"});
     };
 
     test.seedFakeServer = function() {
