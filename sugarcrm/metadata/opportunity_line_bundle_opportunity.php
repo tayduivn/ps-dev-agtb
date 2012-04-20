@@ -40,7 +40,7 @@ $dictionary['opp_line_bundle_opp'] = array (
 	'relationships' => array (
         'opp_line_bundle_opp' => array(
             'lhs_module'=> 'OpportunityLineBundles', 'lhs_table'=> 'opp_line_bundles', 'lhs_key' => 'id',
-            'rhs_module'=> 'Opportunity', 'rhs_table'=> 'opportunities', 'rhs_key' => 'id',
+            'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'id',
             'relationship_type'=>'many-to-many',
             'join_table'=> 'opp_line_bundle_opp', 'join_key_lhs'=>'bundle_id', 'join_key_rhs'=>'opportunity_id'
         )
