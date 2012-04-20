@@ -1,4 +1,12 @@
 describe("Application context manager", function() {
+    var app;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+        app.metadata.set(fixtures.metadata);
+        app.data.declareModels(fixtures.metadata);
+    });
+
     it("should return a new context object", function() {
         var context = SUGAR.App.context.getContext({}, {});
         expect(context).toBeTruthy();

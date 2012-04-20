@@ -28,6 +28,11 @@ describe("Handlebars Helpers", function() {
     });
 
     describe("field", function() {
+
+        beforeEach(function() {
+            SugarTest.seedApp();
+        });
+
         it("should return a sugarfield span element", function() {
             var sfid = 0,
                 model = new app.Bean(),
@@ -106,11 +111,10 @@ describe("Handlebars Helpers", function() {
     describe("eachOptions", function() {
         it("should pull options hash from app list strings and return an iterated block string", function() {
             var optionName = "custom_fields_importable_dom",
-                blockHtml = "<li>{{this.key}} {{this.value}}</li>",
-                template;
-
-            template = Handlebars.compile(blockHtml);
-
+                blockHtml = "<li>{{this.key}} {{this.value}}</li>";
+            var appListStrings = fixtures.metadata.appListStrings;
+            var template = Handlebars.compile(blockHtml);
+            app.lang.setAppListStrings(fixtures.metadata.appListStrings)
             expect(Handlebars.helpers.eachOptions(optionName, template)).toEqual("<li>true Yes</li><li>false No</li><li>required Required</li>");
         });
 

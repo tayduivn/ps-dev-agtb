@@ -1,18 +1,13 @@
 describe("DataManager", function() {
 
     var metadata, app,
-        dm = SUGAR.App.data,
-        server;
+        dm = SUGAR.App.data;
 
     beforeEach(function() {
         app = SugarTest.app;
+        metadata = SugarTest.loadFixture("metadata");
         app.config.maxQueryResult = 2;
         dm.reset();
-        metadata = SugarTest.loadFixture("metadata");
-    });
-
-    afterEach(function() {
-        if (server && server.restore) server.restore();
     });
 
     it("should be able to create an empty instance of bean and collection", function() {
@@ -79,14 +74,13 @@ describe("DataManager", function() {
 
         var contact = SugarTest.loadFixture("contact");
 
-        server = sinon.fakeServer.create();
-
-        server.respondWith("GET", "/rest/v10/Contacts/1234",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contact)]);
 
         bean.fetch();
-        server.respond();
+        SugarTest.server.respond();
 
         expect(bean.get("primary_address_city")).toEqual("Cupertino");
     });
@@ -96,14 +90,13 @@ describe("DataManager", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var contact = dm.createBean(moduleName, { first_name: "Clara", last_name: "Tsetkin" });
 
-        server = sinon.fakeServer.create();
-
-        server.respondWith("POST", "/rest/v10/Contacts",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("POST", /.*\/rest\/v10\/Contacts.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify({ id: "xyz" })]);
 
         contact.save();
-        server.respond();
+        SugarTest.server.respond();
 
         expect(contact.id).toEqual("xyz");
     });
@@ -113,14 +106,13 @@ describe("DataManager", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var contact = dm.createBean(moduleName, { id: "xyz", first_name: "Clara", last_name: "Tsetkin", dateModified: "1" });
 
-        server = sinon.fakeServer.create();
-
-        server.respondWith("PUT", "/rest/v10/Contacts/xyz",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("PUT", /.*\/rest\/v10\/Contacts\/xyz.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify({ dateModified: "2" })]);
 
         contact.save();
-        server.respond();
+        SugarTest.server.respond();
 
         expect(contact.get("dateModified")).toEqual("2");
     });
@@ -130,13 +122,12 @@ describe("DataManager", function() {
         dm.declareModel(moduleName, metadata.modules[moduleName]);
         var contact = dm.createBean(moduleName, { id: "xyz" });
 
-        server = sinon.fakeServer.create();
-
-        server.respondWith("DELETE", "/rest/v10/Contacts/xyz",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("DELETE", /.*\/rest\/v10\/Contacts\/xyz.*/,
             [200, {  "Content-Type": "application/json"}, ""]);
 
         contact.destroy();
-        server.respond();
+        SugarTest.server.respond();
     });
 
     it("should be able to sync (read) beans", function() {
@@ -146,14 +137,13 @@ describe("DataManager", function() {
 
         var contacts = SugarTest.loadFixture("contacts");
 
-        server = sinon.fakeServer.create();
-
-        server.respondWith("GET", "/rest/v10/Contacts?maxresult=2",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}maxresult=2.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
         beans.fetch();
-        server.respond();
+        SugarTest.server.respond();
 
         expect(beans.length).toEqual(2);
         expect(beans.at(0).get("name")).toEqual("Vladimir Vladimirov");
@@ -168,10 +158,10 @@ describe("DataManager", function() {
         var bean = dm.createBean(moduleName);
         var spy = sinon.spy();
 
-        server = sinon.fakeServer.create();
-        server.respondWith([422, {}, ""]);
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith([422, {}, ""]);
         bean.save(null, {error: spy});
-        server.respond();
+        SugarTest.server.respond();
 
         expect(spy.called).toBeTruthy();
     });
@@ -183,14 +173,13 @@ describe("DataManager", function() {
 
         var contacts = SugarTest.loadFixture("contacts");
 
-        server = sinon.fakeServer.create();
-
-        server.respondWith("GET", "/rest/v10/Contacts?maxresult=2",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}maxresult=2.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
         beans.fetch();
-        server.respond();
+        SugarTest.server.respond();
 
         expect(beans.offset).toEqual(2);
     });

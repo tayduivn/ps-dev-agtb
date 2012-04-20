@@ -1,17 +1,12 @@
 describe("BeanCollection", function() {
     var metadata, app,
-        dm = SUGAR.App.data,
-        server;
+        dm = SUGAR.App.data;
 
     beforeEach(function() {
         app = SugarTest.app; 
         app.config.maxQueryResult = 2;
+        metadata = SugarTest.loadFixture("metadata"); 
         dm.reset();
-        metadata = fixtures.metadata;
-    });
-
-    afterEach(function() {
-        if (server && server.restore) server.restore();
     });
 
     it("should get records for page +n from the current", function() {
@@ -27,13 +22,14 @@ describe("BeanCollection", function() {
         contacts.result_count = 1;
         contacts.records.pop();
 
-        server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/Contacts?maxresult=1",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
         var syncSpy = sinon.spy(beans, "fetch");
+
         beans.fetch();
-        server.respond();
+        SugarTest.server.respond();
 
         beans.paginate();
         expect(syncSpy).toHaveBeenCalledTwice();
@@ -53,13 +49,13 @@ describe("BeanCollection", function() {
         contacts.result_count = 1;
         contacts.records.pop();
 
-        server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/Contacts?maxresult=1",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
         var syncSpy = sinon.spy(beans, "fetch");
         beans.fetch();
-        server.respond();
+        SugarTest.server.respond();
 
         beans.paginate();
         expect(syncSpy).toHaveBeenCalledTwice();
@@ -83,21 +79,21 @@ describe("BeanCollection", function() {
         subSetContacts.result_count = 1;
         subSetContacts.records.pop();
 
-        server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/Contacts?maxresult=1",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(subSetContacts)]);
         var syncSpy = sinon.spy(beans, "fetch");
         beans.fetch();
 
-        server.respond();
-        server.restore();
+        SugarTest.server.respond();
+        SugarTest.server.restore();
         var contacts = SugarTest.loadFixture("contacts");
 
         contacts.records.shift();
-        server = sinon.fakeServer.create();
+        var server = sinon.fakeServer.create();
 
-        server.respondWith("GET", "/rest/v10/Contacts?offset=1&maxresult=1",
+        server.respondWith("GET", /.*\/rest\/v10\/Contacts\?offset=1&maxresult=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
 
@@ -121,14 +117,13 @@ describe("BeanCollection", function() {
             direction: "asc"
         };
 
-        server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/Contacts?maxresult=1&orderBy=bob%3Aasc",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1&orderBy=bob%3Aasc/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(subSetContacts)]);
         beans.fetch();
-        server.respond();
-        server.restore();
-        expect(ajaxSpy.getCall(1).args[0].url).toEqual("/rest/v10/Contacts?maxresult=1&orderBy=bob%3Aasc");
+        SugarTest.server.respond();
+        expect(ajaxSpy.getCall(1).args[0].url).toMatch(/.*\/rest\/v10\/Contacts\?maxresult=1&orderBy=bob%3Aasc/);
         ajaxSpy.restore();
     });
 
@@ -162,14 +157,13 @@ describe("BeanCollection", function() {
         contacts.result_count = 1;
         contacts.records.pop();
 
-        server = sinon.fakeServer.create();
-        server.respondWith("GET", "/rest/v10/Contacts?maxresult=1",
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify(contacts)]);
         beans.on("app:collection:fetch", triggerFuncSpy, this);
         beans.fetch();
-        server.respond();
-        server.restore();
+        SugarTest.server.respond();
         expect(triggerFuncSpy).toHaveBeenCalledOnce();
     });
 });
