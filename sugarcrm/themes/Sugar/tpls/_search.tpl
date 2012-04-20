@@ -4,7 +4,7 @@
 <div class="dcmenuDivider" id="searchDivider"></div>
 <div id="dcmenuSearchDiv">
         <div id="sugar_spot_search_div">
-            <input size=20 id='sugar_spot_search'  title='Enter global search term' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
+            <input size=20 id='sugar_spot_search'  title='' {if $ACTION  eq "spot" and $FULL eq "true"}style="display: none;"{/if}/>
             <img src="{sugar_getimagepath file="info-del.png"}" id="close_spot_search"/>
             <div id="sugar_spot_search_results" style="display:none;">
                 {if $FTS_AUTOCOMPLETE_ENABLE}
@@ -29,10 +29,10 @@
     search = '{$APP.LBL_SEARCH}';
 {literal}
 $("#sugar_spot_search").ready(function() {
-    $("#sugar_spot_search").val(search+'...');
+    $("#sugar_spot_search").val(search);
     $("#sugar_spot_search").css('color', 'grey');
     $("#sugar_spot_search").focus(function() {
-        if ($("#sugar_spot_search").val()==search+'...') {
+        if ($("#sugar_spot_search").val()==search) {
             $("#sugar_spot_search").val('');
             $('#sugar_spot_search').css('color', 'black');
         }

@@ -420,7 +420,7 @@ SUGAR.append(SUGAR.themes, {
    		$("div#sugar_spot_search_results").hide();
         $("#SpotResults").remove();
 		$('#close_spot_search').css("display","none");
-        $("#sugar_spot_search").val(SUGAR.language.get('app_strings', 'LBL_SEARCH')+'...');
+        $("#sugar_spot_search").val(SUGAR.language.get('app_strings', 'LBL_SEARCH'));
         $("#sugar_spot_search").css('color', 'grey');
 		$("#sugar_spot_search").removeClass("searching");
 		$('#sugar_spot_search_div').css("left",0);
