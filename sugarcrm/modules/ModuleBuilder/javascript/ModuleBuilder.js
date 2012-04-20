@@ -1139,6 +1139,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 module:"ModuleBuilder",
                 action:"depdropdown",
                 targetModule: ModuleBuilder.module,
+                package: ModuleBuilder.MBpackage,
                 parentList: parent_options,
                 childList: child_options,
                 targetId:targetId,

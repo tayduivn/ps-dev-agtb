@@ -408,12 +408,6 @@
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                             </slot></td>
                         </tr>
-                        <tr>
-                            <td width="17%" scope="row"><slot>{$MOD.LBL_FDOW}:</slot>&nbsp;{sugar_help text=$MOD.LBL_FDOW_TEXT}</td>
-                            <td ><slot>
-                                <select tabindex='14' name='fdow'>{html_options options=$FDOWOPTIONS selected=$FDOWCURRENT}</select>
-                            </slot></td>
-                        </tr>
                     </table>
         </div>
 
@@ -472,6 +466,12 @@
                         <tr>
                             <td width="15%" scope="row"><slot>{$MOD.LBL_ICAL_PUB_URL|strip_semicolon}: {sugar_help text=$MOD.LBL_ICAL_PUB_URL_HELP}</slot></td>
                             <td colspan=2><slot>{$CALENDAR_ICAL_URL}</slot></td>
+                        </tr>
+                        <tr>
+                            <td width="17%" scope="row"><slot>{$MOD.LBL_FDOW}:</slot>&nbsp;{sugar_help text=$MOD.LBL_FDOW_TEXT}</td>
+                            <td ><slot>
+                                <select tabindex='14' name='fdow'>{html_options options=$FDOWOPTIONS selected=$FDOWCURRENT}</select>
+                            </slot></td>
                         </tr>
                     </table>
         </div>
