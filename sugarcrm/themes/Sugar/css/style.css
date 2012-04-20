@@ -6419,7 +6419,7 @@ ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
 
-ul.clickMenu:hover {
+ul.clickMenu li a:hover {
    		background-image: -moz-linear-gradient(center top, 
 		#ffffff 0%,
 		#255e90 2%,
@@ -6440,10 +6440,10 @@ ul.clickMenu:hover {
 }
 ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
 ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a, ul.clickMenu:hover > li > form > a {
-	color: #fff !important;	
+	/*color: #fff !important;*/
 }
 
-ul.clickMenu:hover > li > span {
+ul.clickMenu li span:hover {
 	background-position: 5px 3px;
 }
 ul.clickMenu li, ul.SugarActionMenuIESub li {
@@ -6466,7 +6466,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 }
 
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
-	color: #fff;
+	/*color: #fff;*/
 }
 
 ul.clickMenu li.single a{ 
