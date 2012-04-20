@@ -16,9 +16,9 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
         1 =>
         array(
             'name' => 'test_editable',
-            'type' => 'editable',
+            'type' => 'clickToEdit',
             'label' => 'click to edit',
-            'class' => 'editable',
+            'class' => 'cte',
         ),
     ),
     'listNav' =>
