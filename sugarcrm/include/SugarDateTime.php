@@ -331,7 +331,7 @@ class SugarDateTime extends DateTime
 	function get_day_by_index_this_month($day_index)
 	{
 		$newdate = clone $this;
-		return $newdate->setDate($this->year, $this->month, $day_index)->setTime(0, 0);
+		return $newdate->setDate($this->year, $this->month, $day_index+1)->setTime(0, 0);
 	}
 
 	/**
