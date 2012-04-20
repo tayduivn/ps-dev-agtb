@@ -305,6 +305,10 @@ fixtures.metadata = {
                     "name": "phone_work",
                     "type": "varchar"
                 },
+                "phone_home": {
+                    "name": "phone_home",
+                    "type": "varchar"
+                },
                 "email1": {
                     "name": "email1",
                     "type": "varchar"
@@ -377,6 +381,7 @@ fixtures.metadata = {
                                 {name: "first_name", label: "First Name"},
                                 {name: "last_name", label: "Last Name"},
                                 {name: "phone_work", label: "Phone"},
+                                "phone_home",
                                 {name: "email1", label: "Email"}
                             ]
                         }
