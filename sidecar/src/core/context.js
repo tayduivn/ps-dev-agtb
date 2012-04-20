@@ -174,20 +174,13 @@
                 var fields, bean, collection,
                     options = {},
                     self = this,
+                    fetchObject,
                     state = this.get();
-
-                if (state.layout) {
-                    fields = state.layout.getFields();
-                    this.set({fields: fields});
-
-                    options.fields = fields;
-                }
 
                 if (state.id) {
                     bean = app.data.createBean(state.module, { id: state.id });
                     collection = app.data.createBeanCollection(state.module, [bean]);
-
-                    bean.fetch(options);
+                    fetchObject = bean;
                 } else if (state.create) {
                     bean = app.data.createBean(state.module);
                     collection = app.data.createBeanCollection(state.module, [bean]);
@@ -203,14 +196,26 @@
                     };
 
                     collection = app.data.createBeanCollection(state.module);
-                    console.log("Fetching Data!");
-                    //collection.on("app:collection:fetch", state.layout.render, state.layout);
-                    collection.fetch(options);
+                    collection.on("app:collection:fetch", state.layout.render, this);
+                    fetchObject = collection;
 
                     bean = collection.models[0] || {};
                 }
 
                 this.set({collection: collection, model: bean});
+
+                if (state.layout) {
+                    fields = state.layout.getFields();
+                    this.set({fields: fields});
+                    options.fields = fields;
+                }
+
+
+                if (fetchObject) {
+                    fetchObject.fetch(options);
+                }
+
+
                 if ((state.id || state.create) && state.layout) {
                     state.layout.render();
                 }

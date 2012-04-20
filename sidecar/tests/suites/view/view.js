@@ -9,6 +9,7 @@ describe("Layout.View", function() {
             first_name: "Foo",
             last_name: "Bar"
         });
+        bean.fields = fixtures.metadata.modules.Contacts.fields;
         collection = new app.BeanCollection([bean]);
         context = app.context.getContext({
             url: "someurl",
@@ -72,5 +73,26 @@ describe("Layout.View", function() {
         var html = view.$el.html();
         expect(html).toContain('detail');
     });
+
+    it('should complete its metadata', function(){
+        var view = app.view.createView({
+            context: context,
+            name: "detail"
+        });
+        expect(view.meta.panels[0].fields[3]).toEqual("phone_home");
+        view.completeMeta();
+        expect(view.meta.panels[0].fields[3].type).toEqual("varchar");
+    });
+
+    it('should return its fields', function(){
+        var view = app.view.createView({
+            context: context,
+            name: "detail"
+        });
+        view.completeMeta();
+        var fields = view.getFields();
+        expect(fields).toEqual(["first_name", "last_name", "phone_work", "phone_home", "email1"]);
+    });
+
 
 });
