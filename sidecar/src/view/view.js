@@ -1,7 +1,7 @@
 (function(app) {
 
     /**
-     * Base View class. Use {@link View.LayoutManager} to create instances of views.
+     * Base View class. Use {@link View.ViewManager} to create instances of views.
      *
      * @class View.View
      * @alias SUGAR.App.layout.View
@@ -38,7 +38,7 @@
 
             /**
              * Template to render
-             * @cfg {Template}
+             * @cfg {Function}
              */
             this.template = options.template || app.template.get(this.name, this.context.get("module"));
 

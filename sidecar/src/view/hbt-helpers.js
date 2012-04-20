@@ -43,7 +43,7 @@
     });
 
     /**
-     *
+     * Adds a button
      */
     Handlebars.registerHelper('button', function(type, label) {
 

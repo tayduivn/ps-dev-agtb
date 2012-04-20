@@ -389,12 +389,11 @@
             };
 
             var error = function(xhr, error) {
+                app.error.handleHTTPError(xhr, error);
+
                 if (options.error) {
                     options.error(xhr, error);
                 }
-
-                // Handle error codes
-                app.error.statusCodes[xhr.status](xhr, error);
             };
 
             var callbacks = {
