@@ -20,10 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('soap/SoapError.php');
-require_once('include/api/SugarApi/ServiceCoreHelper.php');
-
-class loginApi extends SugarApi {
+class LoginApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'login' => array(
