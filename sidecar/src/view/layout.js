@@ -134,6 +134,9 @@
         getFields: function() {
             var fields = [];
             _.each(this.components, function(view) {
+                if (view.completeMeta){
+                    view.completeMeta();
+                }
                 fields = _.union(fields, view.getFields());
             });
 

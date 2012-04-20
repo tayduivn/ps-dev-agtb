@@ -79,6 +79,24 @@
         },
 
         /**
+         * Completes metadata so string defined fields are completed with field def from model
+         */
+        completeMeta: function() {
+            var self = this;
+            if (this.meta && this.meta.panels) {
+                var model = this.context.get('model');
+                _.each(this.meta.panels, function(panel, panelkey){
+                    var pkey = panelkey;
+                    _.each(panel.fields, function(field, fieldkey){
+                        if (_.isString(field) && model) {
+                            self.meta.panels[pkey].fields[fieldkey]= model.fields[field];
+                        }
+                    })
+                })
+            }
+        },
+
+        /**
          * Renders the view onto the page. See Backbone.View
          * @return {Object} this
          */
