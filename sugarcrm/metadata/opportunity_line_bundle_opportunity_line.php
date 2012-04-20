@@ -27,20 +27,18 @@ $dictionary['opp_line_bundle_opp_line'] = array (
       , array ('name' => 'date_modified','type' => 'datetime')
       , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required' => false,)
       , array('name' =>'bundle_id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'opportunity_id', 'type' =>'varchar', 'len'=>'36')
+      , array('name' =>'opportunity_line_id', 'type' =>'varchar', 'len'=>'36')
       , array('name' =>'opp_index', 'type' =>'int', 'len'=>'11', 'default'=>'0', 'required' => true,)
 	),
 
 	'indices' => array (
-       array('name' =>'opp_bundl_opppk', 'type' =>'primary', 'fields'=>array('id'))
-      , array('name' =>'idx_pbp_bundle', 'type' =>'index', 'fields'=>array('bundle_id'))
-      , array('name' =>'idx_pbp_quote', 'type' =>'index', 'fields'=>array('opportunity_id'))
-      , array('name' =>'idx_pbp_bq', 'type'=>'alternate_key', 'fields'=>array('opportunity_id','bundle_id'))
+       array('name' =>'idx_obo_pk', 'type' =>'primary', 'fields'=>array('id'))
+      , array('name' =>'idx_obo_ob_idx', 'type'=>'alternate_key', 'fields'=>array('opportunity_line_id','bundle_id'))
 	),
 
-	'relationships' => array ('opp_line_bundle_opp_line' => array('lhs_module'=> 'oppBundles', 'lhs_table'=> 'opp_line_bundles', 'lhs_key' => 'id',
-		'rhs_module'=> 'opps', 'rhs_table'=> 'opps', 'rhs_key' => 'id',
-		'relationship_type'=>'many-to-many',
-		'join_table'=> 'opp_line_bundle_opp_line', 'join_key_lhs'=>'bundle_id', 'join_key_rhs'=>'opportunity_id'))
+    'relationships' => array ('opp_line_bundle_opp_line' => array('lhs_module'=> 'OpportunityLineBundles', 'lhs_table'=> 'opp_line_bundle', 'lhs_key' => 'id',
+   		'rhs_module'=> 'OpportunityLines', 'rhs_table'=> 'opportunity_lines', 'rhs_key' => 'id',
+   		'relationship_type'=>'many-to-many',
+   		'join_table'=> 'opp_line_bundle_opp_line', 'join_key_lhs'=>'bundle_id', 'join_key_rhs'=>'opportunity_line_id'))
 );
 ?>

@@ -20,9 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['opp_line'] = array('table' => 'opportunity_line','audited'=>false,
-		'comment' => 'The opportunity line item assoicated with the product'
-                               ,'fields' => array (
+$dictionary['OpportunityLine'] = array('table' => 'opportunity_line','audited'=>false,
+		'comment' => 'The opportunity line item assoicated with the product',
+'fields' => array (
   'id' =>
   array (
       'name' => 'id',
@@ -31,6 +31,13 @@ $dictionary['opp_line'] = array('table' => 'opportunity_line','audited'=>false,
       'required' => true,
       'reportable'=>false,
       'comment' => 'Unique identifier'
+  ),
+  'product_id' =>
+  array (
+      'name' => 'product_id',
+      'vname' => 'LBL_PRODUCT_ID',
+      'type' => 'id',
+      'required' => true
   ),
   'discount_price' =>
   array (
@@ -97,6 +104,10 @@ $dictionary['opp_line'] = array('table' => 'opportunity_line','audited'=>false,
   ),
 )
   ,'indices' => array (
-       array('name' =>'idx_opp_line_id', 'type'=>'primary'),
+       array('name' =>'idx_opp_line_id', 'type'=>'primary', 'fields'=>array('id')),
   )
 );
+
+VardefManager::createVardef('OpportunityLines','OpportunityLine', array(
+'team_security',
+));

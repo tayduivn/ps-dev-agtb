@@ -116,8 +116,8 @@ $beanList['EditCustomFields']   = 'FieldsMetaData';
 $beanList['Opportunities']  = 'Opportunity';
 
 //BEGIN SUGARCRM flav=PRO ONLY
-$beanList['OpportunityLine'] = 'OpportunityLine';
-$beanList['OpportunityLineBundle'] = 'OpportunityLineBundle';
+$beanList['OpportunityLines'] = 'OpportunityLine';
+$beanList['OpportunityLineBundles'] = 'OpportunityLineBundle';
 //END SUGARCRM flav=PRO ONLY
 
 $beanList['EmailTemplates']     = 'EmailTemplate';
@@ -281,7 +281,7 @@ $beanFiles['Contact']       = 'modules/Contacts/Contact.php';
 $beanFiles['Account']       = 'modules/Accounts/Account.php';
 $beanFiles['Opportunity']   = 'modules/Opportunities/Opportunity.php';
 //BEGIN SUGARCRM flav=PRO ONLY
-$beanFiles['OpportunityLine']   = 'modules/OpportunityLine/OpportunityLine.php';
+$beanFiles['OpportunityLine']   = 'modules/OpportunityLines/OpportunityLine.php';
 $beanFiles['OpportunityLineBundle']   = 'modules/OpportunityLineBundles/OpportunityLineBundle.php';
 //END SUGARCRM flav=PRO ONLY
 $beanFiles['EmailTemplate']         = 'modules/EmailTemplates/EmailTemplate.php';
@@ -411,7 +411,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Help', 'Import',  'MySettings', 'EditCustomFields','FieldsMetaData',
     'UpgradeWizard', 'Trackers', 'Connectors', 'Employees', 'Calendar',
     //BEGIN SUGARCRM flav=pro ONLY
-    'OpportunityLineBundle', 'OpportunityLine', 'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers', 'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
+    'OpportunityLineBundles', 'OpportunityLine', 'Manufacturers','ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes','Shippers', 'TaxRates', 'TeamNotices', 'Teams','TimePeriods','ForecastOpportunities','Quotas','KBDocumentRevisions','KBDocumentKBTags','KBTags','KBContents',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'

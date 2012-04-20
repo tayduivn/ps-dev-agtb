@@ -23,8 +23,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class OpportunityLine extends SugarBean
 {
-
 	// Stored fields
 	var $id;
+    var $product_id;
+    var $table_name = "opportunity_line";
+   	var $module_dir = 'OpportunityLines';
+   	var $object_name = "OpportunityLine";
 
 }

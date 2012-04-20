@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/accounts_bugsMetaData.php");
 include("metadata/accounts_casesMetaData.php");
-//END SUGARCRM flav!=sales ONLY
+//END SUGARCRM flav!=sales ONLYF
 include("metadata/accounts_contactsMetaData.php");
 include("metadata/accounts_opportunitiesMetaData.php");
 include("metadata/calls_contactsMetaData.php");

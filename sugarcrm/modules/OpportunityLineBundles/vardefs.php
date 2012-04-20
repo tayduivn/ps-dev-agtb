@@ -110,7 +110,4 @@ $dictionary['OpportunityLineBundle'] = array('table' => 'opp_line_bundle', 'comm
 );
 
 VardefManager::createVardef('OpportunityLineBundles','OpportunityLineBundle', array(
-//BEGIN SUGARCRM flav=pro ONLY
-'team_security',
-//END SUGARCRM flav=pro ONLY
 ));
