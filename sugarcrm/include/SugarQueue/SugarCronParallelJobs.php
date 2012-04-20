@@ -28,14 +28,16 @@ require_once 'include/SugarHttpClient.php';
  */
 class SugarCronParallelJobs extends SugarCronJobs
 {
+    public $allow_fork = true;
+
     public function runShell($job)
     {
 
         // Unfortunately, won't work until PHP bug #60185 is fixed.
-        return false;
+//        return false;
         global $sugar_config;
         chdir(dirname(__FILE__). "/../../");
-        $command = sprintf("/bin/sh %s -f run_job.php %s %s 1>&- 2>&- &", $sugar_config['cron']['php_binary'], $job->id, $this->getMyId());
+        $command = sprintf("nohup %s -f run_job.php %s %s 1>/dev/null 2>/dev/null &", $sugar_config['cron']['php_binary'], $job->id, $this->getMyId());
         shell_exec($command);
         return true;
     }
@@ -107,7 +109,7 @@ class SugarCronParallelJobs extends SugarCronJobs
             $this->runWindows($job);
             return;
         }
-        if(function_exists("pcntl_fork") && function_exists("posix_setsid")) {
+        if($this->allow_fork && function_exists("pcntl_fork") && function_exists("posix_setsid")) {
             $this->forkJob($job);
             return;
         }
