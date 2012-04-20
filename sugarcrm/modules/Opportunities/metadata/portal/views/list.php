@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Cases']['portal']['view']['list'] = array(
+$viewdefs['Opportunities']['portal']['view']['list'] = array(
     'buttons' =>
     array(
         0 =>
@@ -13,32 +13,25 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 'click' => 'function(){ var self = this;this.context.state.collection.paginate({add:true, success:function(){console.log("in paginate success");window.scrollTo(0,document.body.scrollHeight);}});}',
             ),
         ),
-        1 =>
-        array(
-            'name' => 'test_editable',
-            'type' => 'editable',
-            'label' => 'click to edit',
-            'class' => 'editable',
-        ),
     ),
     'listNav' =>
     array(
         0 =>
         array(
             'name' => 'show_more_button_back',
-            'type' => 'navelement',
+            'type' => 'navElement',
             'icon' => 'icon-plus',
             'label' => ' ',
             'route' =>
             array(
                 'action' => 'create',
-                'module' => 'Cases',
+                'module' => 'Opportunities',
             ),
         ),
         1 =>
         array(
             'name' => 'show_more_button_back',
-            'type' => 'navelement',
+            'type' => 'navElement',
             'icon' => 'icon-chevron-left',
             'label' => ' ',
             'events' =>
@@ -49,7 +42,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
         2 =>
         array(
             'name' => 'show_more_button_forward',
-            'type' => 'navelement',
+            'type' => 'navElement',
             'icon' => 'icon-chevron-right',
             'label' => ' ',
             'events' =>
@@ -67,48 +60,36 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
             array(
                 0 =>
                 array(
-                    'name' => 'case_number',
-                    'label' => 'ID',
-                    'class' => 'foo',
+                    'name' => 'name',
+                    'label' => 'Name',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
-                    'width' =>  8
                 ),
                 1 =>
                 array(
-                    'name' => 'name',
-                    'label' => 'Title',
+                    'name' => 'amount',
+                    'label' => 'Opportunity Amount',
                     'default' => true,
                     'enabled' => true,
-                    'link' => true,
-                    'sorting' => true,
-                    'width' => 49
                 ),
                 2 =>
                 array(
-                    'name' => 'status',
-                    'label' => 'Status',
+                    'name' => 'opportunity_type',
+                    'label' => 'Opp. Type',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
-                    'width' => 17
                 ),
                 3 =>
                 array(
-                    'name' => 'date_modified',
-                    'label' => 'Modifed Date',
+                    'name' => 'lead_source',
+                    'label' => 'Lead Source',
                     'default' => true,
                     'enabled' => true,
-                    'sorting' => true,
-                    'width' => 17
                 ),
                 4 =>
                 array(
-                    'type' => 'actionslink',
-                    'label' => '',
-                    'width' => 5,
-                    'sorting' => false
+                    'type' => 'sugarField_actionsLink',
+                    'label' => 'Actions',
                 ),
             ),
         ),
