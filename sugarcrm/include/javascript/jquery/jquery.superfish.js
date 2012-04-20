@@ -240,7 +240,7 @@
                     var $$ = $(this),
                         o = sf.op,
                         _id = $$.attr("ul-child-id") ? $$.attr("ul-child-id") : ($ul.attr('id')) ? $ul.attr('id') : o.megamenuID ? o.megamenuID + ++sf.counter : 'megamenu' + ++sf.counter,
-                        _top = $$.position().top + $$.parent().offset().top,
+                        _top = $$.position().top + $$.parent().offset().top - $(document).scrollTop(),
                         _left = $$.offset().left - sf.cssValue.call($ul, "border-left-width"),
                         $menu = $('ul.' + sf.c.menuClass + ':visible');
                     //handling sub-sliding menu
