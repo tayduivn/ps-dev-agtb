@@ -1,19 +1,25 @@
 describe("Router", function() {
-    var app, mock,
+    var app, mock, router,
         controller = {
             loadView: function(args) {
             }
+        },
+        initRouter = function() {
+            SugarTest.app.router.initialize({controller: controller});
         };
+
+    beforeEach(function() {
+        SugarTest.seedApp();        
+        router = SugarTest.app.router;
+    });
 
     it("should call the controller to load the default view", function() {
         var mock = sinon.mock(controller);
         mock.expects("loadView").once();
 
-        // Initialize the router
-        SUGAR.App.router.initialize({controller: controller});
-        SUGAR.App.router.start();
+        initRouter();
+        router.start();
         expect(mock.verify()).toBeTruthy();
-
     });
 
     it("should build a route given a model", function(){
@@ -24,9 +30,9 @@ describe("Router", function() {
         model.set("id", "1234");
         model.module = "Contacts";
 
-        SUGAR.App.router.initialize({controller: controller});
-
-        route = SUGAR.App.router.buildRoute(model.module, model.id, action);
+        initRouter();
+        router.start();
+        route = router.buildRoute(model.module, model.id, action);
 
         expect(route).toEqual("Contacts/1234/edit");
     });
@@ -36,9 +42,8 @@ describe("Router", function() {
             context = { get: function() { return "Contacts"; }},
             action = "create";
 
-        SUGAR.App.router.initialize({controller: controller});
-
-        route = SUGAR.App.router.buildRoute(context, null, action,{});
+        initRouter();
+        route = router.buildRoute(context, null, action,{});
 
         expect(route).toEqual("Contacts/create");
     });
@@ -50,8 +55,8 @@ describe("Router", function() {
             layout:'list'
         });
 
-        SUGAR.App.router.initialize({controller: controller});
-        SUGAR.App.router.list('Contacts');
+        initRouter();
+        router.list('Contacts');
         expect(mock.verify()).toBeTruthy();
     });
 
@@ -62,8 +67,8 @@ describe("Router", function() {
             layout:'list'
         });
 
-        SUGAR.App.router.initialize({controller: controller});
-        SUGAR.App.router.layout('Cases', 'list');
+        initRouter();
+        router.layout('Cases', 'list');
         expect(mock.verify()).toBeTruthy();
     });
 
@@ -75,8 +80,8 @@ describe("Router", function() {
             layout: 'edit'
         });
 
-        SUGAR.App.router.initialize({controller: controller});
-        SUGAR.App.router.create('Cases');
+        initRouter();
+        router.create('Cases');
         expect(mock.verify()).toBeTruthy();
     });
 
@@ -89,8 +94,8 @@ describe("Router", function() {
             layout: 'edit'
         });
 
-        SUGAR.App.router.initialize({controller: controller});
-        SUGAR.App.router.record('Cases', 123, 'edit');
+        initRouter();
+        router.record('Cases', 123, 'edit');
         expect(mock.verify()).toBeTruthy();
     });
 
@@ -102,8 +107,8 @@ describe("Router", function() {
             create: true
         });
 
-        SUGAR.App.router.initialize({controller: controller});
-        SUGAR.App.router.login();
+        initRouter();
+        router.login();
         expect(mock.verify()).toBeTruthy();
     });
 
@@ -121,8 +126,8 @@ describe("Router", function() {
             },
             action = "create";
 
-        SUGAR.App.router.initialize({controller: controller});
-        route = SUGAR.App.router.buildRoute(context, action, {}, options);
+        initRouter();
+        route = router.buildRoute(context, action, {}, options);
 
         expect(route).toEqual("Contacts/create?first=Rick&last=Astley&job=Rock+Star");
     });
