@@ -108,14 +108,62 @@ class ModuleApi extends SugarApi {
         
         if ( $bean == FALSE ) {
             // Couldn't load the bean
-            throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
+            throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$api['module']);
         }
 
         if (!$bean->ACLAccess($aclToCheck)) {
-            throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$args['module']);
+            throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$api['module']);
         }
         
         return $bean;
+    }
+
+    protected function formatBean($api, $args, $bean) {
+        $sfh = new SugarFieldHandler();
+        $aclField = new ACLField();
+
+        // Need to figure out the ownership for ACL's
+        $isOwner = false;
+        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $api->security->userId ) {
+            $isOwner = true;
+        }
+        
+        if ( !empty($args['fields']) ) {
+            $fieldList = explode(',',$args['fields']);
+            if ( ! in_array('date_modified',$fieldList ) ) {
+                $fieldList[] = 'date_modified';
+            }
+        } else {
+            $fieldList = '';
+        }
+
+        $data = array();
+        foreach ( $bean->field_defs as $fieldName => $properties ) {
+            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->security->userId,$isOwner) < 1 ) { 
+                // No read access to this field, skip it.
+                continue;
+            }
+            if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
+                // They want to skip this field
+                continue;
+            }
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $field = $sfh->getSugarField($type);
+            
+            if ( $field != null ) {
+                if ( method_exists($field,'retrieveForApi') ) {
+                    $field->retrieveForApi($data, $bean, $args, $fieldName, $properties);
+                } else {
+                    if ( isset($bean->$fieldName) ) {
+                        $data[$fieldName] = $bean->$fieldName;
+                    } else {
+                        $data[$fieldName] = '';
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 
     public function createRecord($api, $args) {
@@ -147,47 +195,7 @@ class ModuleApi extends SugarApi {
 
         $bean = $this->loadBean($api, $args, 'view');
 
-        $sfh = new SugarFieldHandler();
-        $aclField = new ACLField();
-
-        // Need to figure out the ownership for ACL's
-        $isOwner = false;
-        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $api->user->id ) {
-            $isOwner = true;
-        }            
-        
-        $data = array();
-        foreach ( $bean->field_defs as $fieldName => $properties ) {
-            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->user->id,$isOwner) < 1 ) { 
-                // No read access to this field, skip it.
-            }
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            $field = $sfh->getSugarField($type);
-            
-            if ( $field != null ) {
-                if ( method_exists($field,'retrieveForApi') ) {
-                    $field->retrieveForApi($data, $bean, $args, $fieldName, $properties);
-                } else {
-                    if ( isset($bean->$fieldName) ) {
-                        $data[$fieldName] = $bean->$fieldName;
-                    } else {
-                        $data[$fieldName] = '';
-                    }
-                }
-            }
-        }
-
-        if ( isset($args['fields']) ) {
-            $fieldList = explode(',',$args['fields']);
-            if ( ! in_array('date_modified',$fieldList ) ) {
-                $fieldList[] = 'date_modified';
-            }
-            $unfilteredData = $data;
-            $data = array();
-            foreach ( $fieldList as $fieldName ) {
-                $data[$fieldName] = $unfilteredData[$fieldName];
-            }
-        }
+        $data = $this->formatBean($api, $args, $bean);
 
         return $data;
 
