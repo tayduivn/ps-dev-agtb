@@ -1485,16 +1485,16 @@ class MysqlManager extends DBManager
                DROP TABLE IF EXISTS   _hierarchy_return_set;
 
                CREATE TEMPORARY TABLE _hierarchy_return_set (
-                      _id          INT 
-                    , _parent_id   INT
+                      _id          VARCHAR(100)
+                    , _parent_id   VARCHAR(100)
                     , _level       INT
                );
 
                DROP TABLE IF EXISTS   _hierarchy_current_set;
             
                CREATE TEMPORARY TABLE _hierarchy_current_set (
-                      _id          INT 
-                    , _parent_id   INT
+                      _id          VARCHAR(100)
+                    , _parent_id   VARCHAR(100)
                     , _level       INT
                );
 

@@ -193,7 +193,6 @@
          * @param metadata metadata hash in which keys are module names and values are module definitions.
          */
         declareModels: function(metadata) {
-            this.reset();
             _.each(metadata.modules, function(module, name) {
                 this.declareModel(name, module);
             }, this);

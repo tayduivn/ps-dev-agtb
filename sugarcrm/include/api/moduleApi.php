@@ -51,7 +51,7 @@ class moduleApi extends SugarApi {
                 'longHelp' => 'include/api/html/module_update_help.html',
             ),
             'delete' => array(
-                'reqType' => 'PUT',
+                'reqType' => 'DELETE',
                 'path' => array('<module>','?'),
                 'pathVars' => array('module','record'),
                 'method' => 'deleteRecord',

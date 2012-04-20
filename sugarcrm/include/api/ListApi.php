@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/BeanFactory.php');
 
-class listApi extends SugarApi {
+class ListApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'listModules' => array(
@@ -31,7 +31,7 @@ class listApi extends SugarApi {
                 'pathVars' => array('module'),
                 'method' => 'listModule',
                 'shortHelp' => 'List records in this module',
-                'longHelp' => 'include/api/html/module_list_help.html',
+                'longHelp' => 'include/api/help/getListModule.html',
             ),
             'searchModules' => array(
                 'reqType' => 'GET',
@@ -39,7 +39,15 @@ class listApi extends SugarApi {
                 'pathVars' => array('module','','q'),
                 'method' => 'listModule',
                 'shortHelp' => 'Searches records in this module',
-                'longHelp' => 'include/api/html/module_list_search_help.html',
+                'longHelp' => 'include/api/help/getListSearch.html',
+            ),
+            'searchModulesPost' => array(
+                'reqType' => 'POST',
+                'path' => array('<module>','search'),
+                'pathVars' => array('module',''),
+                'method' => 'listModule',
+                'shortHelp' => 'Searches records in this module',
+                'longHelp' => 'include/api/help/postListSearch.html',
             ),
         );
     }
@@ -101,6 +109,11 @@ class listApi extends SugarApi {
                 if ( strpos($order,':') ) {
                     // It has a :, it's specifying ASC / DESC
                     list($column,$direction) = explode(':',$order);
+                    if ( strtolower($direction) == 'desc' ) {
+                        $direction = 'DESC';
+                    } else {
+                        $direction = 'ASC';
+                    }
                 } else {
                     // No direction specified, let's let it fly free
                     $column = $order;
