@@ -135,10 +135,10 @@ class RestTestRelate extends RestTestBase {
         // Test normal fetch
         $restReply = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/opportunities");
 
-        $this->assertEquals(20,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
+        $this->assertEquals(10,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
-        $restReply2 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/opportunities?offset=".$restReply['reply']['next_offset']);
+        $restReply2 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/opportunities?offset=20");
 
         $this->assertEquals(-1,$restReply2['reply']['next_offset'],"Next offset was set incorrectly on the second page.");
 
