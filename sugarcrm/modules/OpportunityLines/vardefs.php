@@ -39,58 +39,130 @@ $dictionary['OpportunityLine'] = array('table' => 'opportunity_line','audited'=>
       'type' => 'id',
       'required' => true
   ),
-  'discount_price' =>
+    'cost_price' =>
+    array (
+      'name' => 'cost_price',
+      'vname' => 'LBL_COST_PRICE',
+      'type' => 'currency',
+      'len' => '26,6',
+      'audited'=>true,
+      'comment' => 'Product cost ("Cost" in Quote)'
+    ),
+    'discount_price' =>
+    array (
+      'name' => 'discount_price',
+      'vname' => 'LBL_DISCOUNT_PRICE',
+      'type' => 'currency',
+      'len' => '26,6',
+      'audited'=>true,
+      'comment' => 'Discounted price ("Unit Price" in Quote)'
+    ),
+    'discount_amount' =>
+    array (
+      'name' => 'discount_amount',
+      'vname' => 'LBL_DISCOUNT_RATE',
+      'type' => 'decimal',
+      'options' => 'discount_amount_class_dom',
+      'len' => '26,6',
+      'precision' => 6,
+      'comment' => 'Discounted amount'
+    ),
+    'discount_amount_usdollar' =>
+    array (
+      'name' => 'discount_amount_usdollar',
+      'vname' => 'LBL_DISCOUNT_RATE_USDOLLAR',
+      'type' => 'decimal',
+      'len' => '26,6',
+    	'studio' => array('editview' => false),
+    ),
+    'discount_select' =>
+    array (
+      'name' => 'discount_select',
+      'vname' => 'LBL_SELECT_DISCOUNT',
+      'type' => 'bool',
+      'reportable'=>false,
+    ),
+      'deal_calc' =>
+    array (
+      'name' => 'deal_calc',
+      'vname' => 'LBL_DISCOUNT_TOTAL',
+      'type' => 'currency',
+      'len' => '26,6',
+      'group'=>'deal_calc',
+      'comment' => 'deal_calc',
+      'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
+    ),
+      'deal_calc_usdollar' =>
+    array (
+      'name' => 'deal_calc_usdollar',
+      'vname' => 'LBL_DISCOUNT_TOTAL_USDOLLAR',
+      'type' => 'currency',
+      'len' => '26,6',
+      'group'=>'deal_calc',
+      'comment' => 'deal_calc_usdollar',
+    	'studio' => array('editview' => false),
+    ),
+    'list_price' =>
+    array (
+      'name' => 'list_price',
+      'vname' => 'LBL_LIST_PRICE',
+      'type' => 'currency',
+      'len' => '26,6',
+      'audited'=>true,
+      'comment' => 'List price of product ("List" in Quote)'
+    ),
+    'cost_usdollar' =>
+    array (
+      'name' => 'cost_usdollar',
+      'vname' => 'LBL_COST_USDOLLAR',
+      'dbType' => 'decimal',
+      'group'=>'cost_price',
+      'type' => 'currency',
+      'len' => '26,6',
+      'comment' => 'Cost expressed in USD',
+      'studio' => array('editview' => false),
+    ),
+    'discount_usdollar' =>
+    array (
+      'name' => 'discount_usdollar',
+      'vname' => 'LBL_DISCOUNT_USDOLLAR',
+      'dbType' => 'decimal',
+      'group'=>'discount_price',
+      'type' => 'currency',
+      'len' => '26,6',
+      'comment' => 'Discount price expressed in USD',
+    	'studio' => array('editview' => false),
+    ),
+    'list_usdollar' =>
+    array (
+      'name' => 'list_usdollar',
+      'vname' => 'LBL_LIST_USDOLLAR',
+      'dbType' => 'decimal',
+      'type' => 'currency',
+      'group'=>'list_price',
+      'len' => '26,6',
+      'comment' => 'List price expressed in USD',
+    	'studio' => array('editview' => false),
+    ),
+    'currency_id' =>
+    array (
+      'name' => 'currency_id',
+      'dbType' => 'id',
+      'vname'=>'LBL_CURRENCY',
+      'type' => 'varchar',
+  	'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
+      'required'=>false,
+      'reportable'=>false,
+      'comment' => 'Currency of the product'
+    ),
+  'tax_class' =>
   array (
-    'name' => 'discount_price',
-    'vname' => 'LBL_DISCOUNT_PRICE',
-    'type' => 'currency',
-    'len' => '26,6',
-    'audited'=>true,
-    'comment' => 'Discounted price ("Unit Price")'
-  ),
-  'discount_amount' =>
-  array (
-    'name' => 'discount_amount',
-    'vname' => 'LBL_DISCOUNT_RATE',
-    'type' => 'decimal',
-    'options' => 'discount_amount_class_dom',
-    'len' => '26,6',
-    'precision' => 6,
-    'comment' => 'Discounted amount'
-  ),
-  'discount_amount_usdollar' =>
-  array (
-    'name' => 'discount_amount_usdollar',
-    'vname' => 'LBL_DISCOUNT_RATE_USDOLLAR',
-    'type' => 'decimal',
-    'len' => '26,6',
-  	'studio' => array('editview' => false), 
-  ),
-  'discount_select' =>
-  array (
-    'name' => 'discount_select',
-    'vname' => 'LBL_SELECT_DISCOUNT',
-    'type' => 'bool',
-    'reportable'=>false,
-  ),
-  'currency_id' =>
-  array (
-    'name' => 'currency_id',
-    'dbType' => 'id',
-    'vname'=>'LBL_CURRENCY',
-    'type' => 'varchar',
-	'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
-    'required'=>false,
-    'reportable'=>false,
-    'comment' => 'Currency of the product'
-  ),
-  'quantity' =>
-  array (
-    'name' => 'quantity',
-    'vname' => 'LBL_QUANTITY',
-    'type' => 'int',
-    'len'=>5,
-    'comment' => 'Quantity in use'
+    'name' => 'tax_class',
+    'vname' => 'LBL_TAX_CLASS',
+    'type' => 'enum',
+    'options' => 'tax_class_dom',
+    'len' => 100,
+    'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
   ),
   'deleted' =>
   array (
@@ -102,6 +174,7 @@ $dictionary['OpportunityLine'] = array('table' => 'opportunity_line','audited'=>
     'reportable'=>false,
     'comment' => 'Record deletion indicator'
   ),
+
 )
   ,'indices' => array (
        array('name' =>'idx_opp_line_id', 'type'=>'primary', 'fields'=>array('id')),
