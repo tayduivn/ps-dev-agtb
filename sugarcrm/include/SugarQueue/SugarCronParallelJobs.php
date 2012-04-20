@@ -30,9 +30,13 @@ class SugarCronParallelJobs extends SugarCronJobs
 {
     public function runShell($job)
     {
+
+        // Unfortunately, won't work until PHP bug #60185 is fixed.
+        return false;
+        global $sugar_config;
         chdir(dirname(__FILE__). "/../../");
-        $command = sprintf("nohup %s -f run_job.php %s %s &", $sugar_config['cron']['php_binary'], $job->id, $this->getMyId());
-        exec($command);
+        $command = sprintf("/bin/sh %s -f run_job.php %s %s 1>&- 2>&- &", $sugar_config['cron']['php_binary'], $job->id, $this->getMyId());
+        shell_exec($command);
         return true;
     }
 
