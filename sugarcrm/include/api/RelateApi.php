@@ -20,9 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/listApi.php');
+require_once('include/api/ListApi.php');
 
-class relateApi extends listApi {
+class RelateApi extends ListApi {
     public function registerApiRest() {
         return array(
             'listRelatedRecords' => array(

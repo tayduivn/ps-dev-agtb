@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MetaDataManager/MetaDataManager.php');
 
 // An API to let the user in to the metadata
-class metadataApi extends SugarApi {
+class MetadataApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'getAllMetadata' => array(
