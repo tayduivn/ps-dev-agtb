@@ -531,9 +531,15 @@ class Report
 
     function _load_all_fields()
     {
+        $tmp = array();
         foreach ($this->full_table_list as $table_key => $table_data) {
+            if(!isset($tmp[$table_data['module']]))
+            {
+                $tmp[$table_data['module']] = array();
+            }
             foreach ($this->full_bean_list[$table_key]->field_defs as $field_def)
             {
+                $tmp[$table_data['module']][$field_def['name']] = 0;
                 $field_def['module'] = $this->full_table_list[$table_key]['bean_label'];
                 $field_def['real_table'] = $this->full_bean_list[$table_key]->table_name;
                 //if ( ! empty($field_def['source']) && $field_def['source'] == 'custom_fields' ) {
@@ -547,10 +553,16 @@ class Report
                     require_once($beanFiles[$beanList[$field_def['ext2']]]);
                     $joinFocus = new $beanList[$field_def['ext2']]();
                     $field_def['secondary_table'] = $joinFocus->table_name;
+                    if(isset($table_data['link_def']) && $table_data['link_def']['module'] == $table_data['module'])
+                    {
+                        $tmp[$table_data['module']][$field_def['name']]++;
+                    }
                 }
+                $field_def['rep_rel_name'] = $field_def['name'] . '_' . $tmp[$table_data['module']][$field_def['name']];
                 $this->all_fields[$table_key . ':' . $field_def['name']] = $field_def;
             }
         }
+	unset($tmp);
     }
 
 
@@ -891,13 +903,14 @@ class Report
             $joinFocus = new $beanList[$field_def['ext2']]();
             */
             //#27662  , if the table was not in reristed cutom links, we will regist it
-            if (!isset($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']])) {
+            $kk = $field_def['secondary_table'] . '_' . $field_def['rep_rel_name'];
+            if (!isset($this->selected_loaded_custom_links[$kk])) {
                 $this->jtcount++;
                 $params = array(
                     'join_table_alias' => $field_def['secondary_table'] . $this->jtcount,
                     'base_table' => $field_def['secondary_table'],
                     'join_id' => $layout_def['table_alias'] . '.' . $field_def['id_name']);
-                $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']] = $params;
+                $this->selected_loaded_custom_links[$kk] = $params;
             }
         }
         if (!empty($layout_def['name']) && ($layout_def['name'] == 'weighted_amount' || $layout_def['name'] == 'weighted_sum')) {
@@ -2237,8 +2250,8 @@ return str_replace(' > ','_',
         global $beanList;
         $extModule = new $beanList[$field_def['ext2']];
         $secondaryTableAlias = $field_def['secondary_table'];
-        if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']])) {
-            $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['name']]['join_table_alias'];
+        if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']])) {
+            $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'] . '_' . $field_def['rep_rel_name']]['join_table_alias'];
         } else if (!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])) {
             $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
         }
