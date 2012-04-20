@@ -4067,6 +4067,9 @@ html {
   padding-bottom: 146px;
   display: block;
 }
+.hasTeaser #scroll {
+  height: 68%;
+}
 #listing {
   height: 100%;
   position: absolute;
@@ -4771,6 +4774,7 @@ html {
   top: 50px;
   height: auto;
   overflow: scroll;
+  z-index: 2000;
   -webkit-overflow-scrolling: touch;
 }
 .navbar-bottom.exposed .row-fluid {

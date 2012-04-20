@@ -42,6 +42,9 @@
 	$('.thrhld').click(function () {
 		if($(this).parent().hasClass('teaser')) {
 			$(this).parent().removeClass('teaser');
+			if($('body').hasClass('hasTeaser')) {
+				$('body').removeClass('hasTeaser');
+			}
 		} else {
 			$(this).parent().toggleClass('exposed');
 			//.css('height',window.innerWidth);

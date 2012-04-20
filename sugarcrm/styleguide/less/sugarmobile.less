@@ -404,6 +404,10 @@ html {
   display: block;
 }
 
+.hasTeaser #scroll {
+  height:68%;
+}
+
 #listing {
   height: 100%;
   position: absolute;
@@ -772,13 +776,15 @@ color: @gray;
   margin: 0;
   min-height:300px;
 }
-#createRecord.form-horizontal .control-group > label  {
+#createRecord.form-horizontal {
+  .control-group > label  {
   width: 25% !important;
   margin-right: 2% !important;
   float: left !important;
   text-align: right !important;
   font-weight: 600;
   font-size: 12px;
+  }
 }
 #createRecord input, #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
   width: 75% !important;
@@ -1050,6 +1056,7 @@ float: none !important;}
   top:50px;
   height:auto;
   overflow: scroll;
+  z-index:2000;
   -webkit-overflow-scrolling:touch;
   .row-fluid {
     display: block;
