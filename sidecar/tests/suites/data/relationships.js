@@ -85,11 +85,8 @@ describe("Relationships", function() {
         var server;
 
         beforeEach(function() {
-            server = sinon.fakeServer.create();
-        });
-
-        afterEach(function() {
-            if (server && server.restore) server.restore();
+            SugarTest.seedFakeServer();
+            server = SugarTest.server;
         });
 
         it("should be able to fetch related beans", function() {
