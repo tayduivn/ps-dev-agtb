@@ -175,7 +175,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
-                    'label' => 'LBL_ASSIGNED_USER',
+                    'label' => 'LBL_ASSIGNED_USER_NAME',
                     'default' => true,
                     'enabled' => true,
                     'width' => '2',

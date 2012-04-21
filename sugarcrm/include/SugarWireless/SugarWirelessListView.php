@@ -51,15 +51,10 @@ class SugarWirelessListView extends SugarWirelessView{
      */
     public function init($bean = null, $view_object_map = array())
     {
-    	$listViewDefs[$GLOBALS['module']] = $this->getMetaDataFile();
-       
- 		// retrieve the displayColumns from listview metadata file
-        $this->displayColumns = array();
-        foreach($listViewDefs[$GLOBALS['module']]['panels'] as $panel) {
-            foreach ($panel['fields'] as $field) {
-                if(!empty($field['default'])) {
-                    $this->displayColumns[strtoupper($field['name'])] = $field;
-                }
+        $defs = $this->getMetaDataViewDefs();
+        foreach ($defs as $name => $field) {
+            if(!empty($field['default'])) {
+                $this->displayColumns[strtoupper($name)] = $field;
             }
         }
 
@@ -67,7 +62,22 @@ class SugarWirelessListView extends SugarWirelessView{
     }
 
     /**
+     * Gets the default fields from the view defs from the parser
+     *
+     * @return array
+     */
+    public function getMetaDataViewDefs() {
+        require_once 'modules/ModuleBuilder/parsers/constants.php';
+        require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
+        $parser = new SidecarListLayoutMetaDataParser(MB_WIRELESSLISTVIEW, $GLOBALS['module']);
+        $defs = $parser->getDefaultFields();
+        return $defs;
+    }
+
+    /**
      * Retrieve the listview defs for this view.
+     *
+     * DEPRECATED FOR NOW
      *
      * @param none
      * @return array Listview defs
