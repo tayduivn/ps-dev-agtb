@@ -8,39 +8,25 @@
 (function(app) {
 
     // Create a new subclass of the given parent class based on the controller definition passed.
-    var _declareClass = function(cache, parent, className, controller) {
+    var _declareClass = function(cache, base, className, controller) {
         var klass = null;
+        var evaledController = null;
         if (controller) {
             try {
-                var obj = eval("(" + controller + ")");
-                if (_.isObject(obj)) {
-                    klass = cache[className] = parent.extend(obj);
-                }
+                evaledController = eval("(" + controller + ")");
             } catch (e) {
-                app.logger.error("invalid view controller " + className + " : " + controller);
+                app.logger.error("Failed to eval view controller for " + className + ": " + e + ":\n" + controller);
             }
         }
+
+        if (_.isObject(evaledController)) {
+            klass = cache[className] = base.extend(evaledController);
+        }
+
         return klass;
     };
 
     var _viewManager = {
-
-        /**
-         * Map of fields types.
-         *
-         * Specifies correspondence between module field types and field widget types.
-         *
-         * - `varchar`, `name`, `currency` are mapped to `text` widget
-         * - `text` - `textarea`
-         * - `decimal` - `float`
-         */
-        fieldTypeMap: {
-            varchar: "text",
-            name: "text",
-            text: "textarea",
-            decimal: "float",
-            currency: "text"
-        },
 
         /**
          * Hash of view classes.
@@ -95,27 +81,9 @@
         },
 
         createField: function(params) {
-            var clonedParams = _.clone(params);
-
-            // TODO: We clone field definition (params.def) not to mess it up down the road
-            // Consider the opposite: pre-process the field defs at app start-up and patch the definitions once
-            // instead of every time we create a new field
-
-            // Definition can be an object or a string
-            // If it's a string than it's just the field name -- grab its definition from module vardefs.
-            if (_.isString(clonedParams.def) && clonedParams.model){
-                clonedParams.def = _.clone(params.model.fields[clonedParams.def]);
-            }
-            else {
-                clonedParams.def = _.clone(params.def);
-            }
-
-            var type = clonedParams.def.type;
-            type = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;
-            clonedParams.meta = clonedParams.meta || app.metadata.getField(type);
-            clonedParams.def.type = type; // patch the original type with mapped type if any
-
-            return this._createComponent("Field", type, clonedParams);
+            var type = params.def.type;
+            params.meta = params.meta || app.metadata.getField(type);
+            return this._createComponent("Field", type, params);
         }
 
     };
