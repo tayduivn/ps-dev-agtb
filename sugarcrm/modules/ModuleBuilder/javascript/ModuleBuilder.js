@@ -1114,8 +1114,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 
             if (!ModuleBuilder.visGridWindow)
                 ModuleBuilder.visGridWindow = new YAHOO.SUGAR.AsyncPanel('visGridWindow', {
-                    width: 800,
-                    height: 700,
                     draggable: true,
                     close: true,
                     constraintoviewport: true,
