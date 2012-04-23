@@ -80,7 +80,6 @@ describe("Layout.View", function() {
                 context: context,
                 name: "detail"
             });
-        view.completeMeta();
         fields = view.getFields();
         expect(fields).toEqual(["first_name", "last_name", "phone_work", "phone_home", "email1"]);
     });
