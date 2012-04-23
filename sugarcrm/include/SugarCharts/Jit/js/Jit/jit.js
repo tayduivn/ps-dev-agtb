@@ -204,9 +204,40 @@ $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
 	}
 };
 
+$.dashedLine = function(ctx,x, y, x2, y2, dashArray){
+    if(! dashArray) dashArray=[10,5];
+    var dashCount = dashArray.length;
+    var dx = (x2 - x);
+    var dy = (y2 - y);
+    var xSlope = (Math.abs(dx) > Math.abs(dy));
+    var slope = (xSlope) ? dy / dx : dx / dy;
+
+    ctx.moveTo(x, y);
+    var distRemaining = Math.sqrt(dx * dx + dy * dy);
+    var dashIndex = 0;
+    while(distRemaining >= 0.1){
+        var dashLength = Math.min(distRemaining, dashArray[dashIndex % dashCount]);
+        var step = Math.sqrt(dashLength * dashLength / (1 + slope * slope));
+        if(xSlope){
+            if(dx < 0) step = -step;
+            x += step
+            y += slope * step;
+        }else{
+            if(dy < 0) step = -step;
+            x += slope * step;
+            y += step;
+        }
+        ctx[(dashIndex % 2 == 0) ? 'lineTo' : 'moveTo'](x, y);
+        distRemaining -= dashLength;
+        dashIndex++;
+    }
+}
+
+
+
 $.saveImageFile = function (id,jsonfilename,imageExt) {
 	var parts = jsonfilename.split("/");
-	var filename = parts[2].replace(".js","."+imageExt);
+	var filename = parts[parts.length - 1].replace(".js","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
 	
 	if(oCanvas) {
@@ -1746,8 +1777,8 @@ Options.Tips = {
   
   enable: false,
   type: 'auto',
-  offsetX: 20,
-  offsetY: 20,
+  offsetX: 0,
+  offsetY: 15,
   force: false,
   onShow: $.empty,
   onHide: $.empty
@@ -2208,12 +2239,15 @@ var MouseEventsManager = new Class({
         return this.pos;
       },
       getNode: function() {
+      	
+      	var canvas = that.viz.canvas;
+      	
         if(this.getNodeCalled) return this.node;
         this.getNodeCalled = true;
         for(var id in graph.nodes) {
           var n = graph.nodes[id],
               geom = n && ntypes[n.getData('type')],
-              contains = geom && geom.contains && geom.contains.call(fx, n, this.getPos());
+              contains = geom && geom.contains && geom.contains.call(fx, n, this.getPos(),canvas);
           if(contains) {
             this.contains = contains;
             return that.node = this.node = n;
@@ -2438,16 +2472,29 @@ Extras.Classes.Tips = new Class({
   initializePost: function() {
     //add DOM tooltip
     if(document.body) {
-      var tip = $('_tooltip') || document.createElement('div');
-      tip.id = '_tooltip';
-      tip.className = 'tip';
+      var tip = $('tiptip_holder') || document.createElement('div');
+      tip.id = 'tiptip_holder';
+      tip.className = 'tip_bottom';
+
+       var tip_content = document.createElement('div'),
+           tip_arrow = document.createElement('div'),
+           tip_arrow_inner = document.createElement('div');
+       tip_arrow.setAttribute("style","margin-left:5px; margin-top: -12px;");
+       tip_content.id = "tiptip_content";
+       tip_arrow_inner.id = "tiptip_arrow_inner";
+       tip_arrow.id = "tiptip_arrow";
       $.extend(tip.style, {
         position: 'absolute',
         display: 'none',
         zIndex: 13000
       });
+
+      tip.appendChild(tip_arrow);
+      tip_arrow.appendChild(tip_arrow_inner);
+      tip.appendChild(tip_content);
       document.body.appendChild(tip);
       this.tip = tip;
+      this.tip_content = tip_content;
       this.node = false;
     }
   },
@@ -2475,7 +2522,7 @@ Extras.Classes.Tips = new Class({
     var label;
     if(this.dom && (label = this.isLabel(e, win))) {
       this.node = this.viz.graph.getNode(label.id);
-      this.config.onShow(this.tip, this.node, label);
+      this.config.onShow(this.tip_content, this.node, label);
     }
   },
   
@@ -2491,7 +2538,7 @@ Extras.Classes.Tips = new Class({
       }
       if(this.config.force || !this.node || this.node.id != node.id) {
         this.node = node;
-        this.config.onShow(this.tip, node, opt.getContains());
+        this.config.onShow(this.tip_content, node, opt.getContains());
       }
       this.setTooltipPosition($.event.getPos(e, win));
     }
@@ -2501,7 +2548,7 @@ Extras.Classes.Tips = new Class({
     var tip = this.tip, 
         style = tip.style, 
         cont = this.config;
-    style.display = '';
+    style.display = 'block';
     //get window dimensions
     var win = {
       'height': document.body.clientHeight,
@@ -11605,6 +11652,10 @@ $jit.ST.Plot.NodeTypes.implement({
           valueArray = node.getData('valueArray'),
           stringArray = node.getData('stringArray'),
           linkArray = node.getData('linkArray'),
+          goalMarkerLabel = node.getData('goalMarkerLabel'),
+          goalMarker = node.getData('goalMarker'),
+          goalMarkerColor = node.getData('goalMarkerColor'),
+          goalMarkerType = node.getData('goalMarkerType'),
           gvl = node.getData('gvl'),
           colorArray = node.getData('colorArray'),
           colorLength = colorArray.length,
@@ -11618,9 +11669,9 @@ $jit.ST.Plot.NodeTypes.implement({
           horz = config.orientation == 'horizontal',
           aggregates = config.showAggregates,
           showLabels = config.showLabels,
+          showNodeLabels = config.showNodeLabels,
           label = config.Label,
           margin = config.Margin;
-          
           
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
@@ -11646,7 +11697,7 @@ $jit.ST.Plot.NodeTypes.implement({
             var linear;
             
 
-          
+          //drawing bar segements with background colors
             if(horz) {
               linear = ctx.createLinearGradient(x + acum + dimArray[i]/2, y, 
                   x + acum + dimArray[i]/2, y + height);
@@ -11679,7 +11730,7 @@ $jit.ST.Plot.NodeTypes.implement({
           }
           ctx.fillRect(xCoord, yCoord, chartBarWidth, chartBarHeight);
 
-          // add label
+          // add labels inside bar with rounded filled background
           if (chartBarHeight > 0)
           {
               ctx.font = label.style + ' ' + (label.size - 2) + 'px ' + label.family;
@@ -11693,20 +11744,20 @@ $jit.ST.Plot.NodeTypes.implement({
               labelBoxHeight = label.size + labelTextPaddingY;
 
               // do NOT draw label if label box is smaller than chartBarHeight
-              if ((horz && (labelBoxWidth < chartBarWidth)) || (!horz && (labelBoxHeight < chartBarHeight)))
+              if ((horz && (labelBoxWidth < chartBarWidth) && showNodeLabels(labelText)) || (!horz && (labelBoxHeight < chartBarHeight) && showNodeLabels(labelText)))
               {
                   labelBoxX = xCoord + chartBarWidth/2 - mtxt.width/2 - labelTextPaddingX/2;
                   labelBoxY = yCoord + chartBarHeight/2 - labelBoxHeight/2;
 
-                  ctx.fillStyle = "rgba(255,255,255,.2)";
+                  ctx.fillStyle = "rgba(255,255,255,.5)";
                   $.roundedRect(ctx, labelBoxX, labelBoxY, labelBoxWidth, labelBoxHeight, 4, "fill");
                   ctx.fillStyle = "rgba(0,0,0,.8)";
                   $.roundedRect(ctx, labelBoxX, labelBoxY, labelBoxWidth, labelBoxHeight, 4, "stroke");
                   ctx.textAlign = 'center';
-                  ctx.fillStyle = "rgba(255,255,255,.6)";
+                  //ctx.fillStyle = "rgba(255,255,255,.6)";
+                  //ctx.fillText(labelText, labelBoxX + mtxt.width/2 + labelTextPaddingX/2, labelBoxY + labelBoxHeight/2);
+                  ctx.fillStyle = "rgba(0,0,0,1)";
                   ctx.fillText(labelText, labelBoxX + mtxt.width/2 + labelTextPaddingX/2, labelBoxY + labelBoxHeight/2);
-                  ctx.fillStyle = "rgba(0,0,0,.6)";
-                  ctx.fillText(labelText, labelBoxX + mtxt.width/2 + labelTextPaddingX/2 + 1, labelBoxY + labelBoxHeight/2 + 1);
               }
           }
 
@@ -11776,7 +11827,59 @@ $jit.ST.Plot.NodeTypes.implement({
 
             }
           }
+          
+          //draw gloal line
+        //  console.log(goalMarker);
+          
+          
+         if(goalMarkerType != "") { 
+	      	ctx.strokeStyle = goalMarkerColor;
+	     	ctx.lineWidth   = 4;
+	          if(horz) {
+                  if(goalMarkerType == 'group') {
+
+                      var y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
+                          y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0)),
+                          x1 = x + (dimArray[0]/valueArray[0] * goalMarker),
+                          x2 = x + (dimArray[0]/valueArray[0] * goalMarker);
+                      ctx.beginPath();
+                      $.dashedLine(ctx,x1, y1, x2, y2);
+                      ctx.closePath();
+                      ctx.stroke();
+                  } else {
+                      ctx.beginPath();
+                      $.dashedLine(ctx,x + (dimArray[0]/valueArray[0] * goalMarker), y, x + (acum/acumValueLabel * goalMarker), y + height);
+                      ctx.closePath();
+                      ctx.stroke();
+                  }
+	          } else {
+	            if(goalMarkerType == 'group') {
+
+	            	var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
+	            	    x2 = canvasSize.width/2 - margin.right,
+	            	    y1 = y - (dimArray[0]/valueArray[0] * goalMarker),
+	            	    y2 = y - (dimArray[0]/valueArray[0] * goalMarker);
+		            ctx.beginPath();
+                    //console.log(x1, y1, x2, y2)
+		            $.dashedLine(ctx,x1, y1, x2, y2);
+		            ctx.closePath();
+		            ctx.stroke();
+	            } else {
+	            	ctx.beginPath();
+		            $.dashedLine(ctx,x, y - (dimArray[0]/valueArray[0] * goalMarker), x + width, y - (acum/acumValueLabel * goalMarker));
+		            ctx.closePath();
+		            ctx.stroke();  	
+	            }
+	          }
+          
+         }
+          
+          
+          
+          
           if(showLabels(node.name, valAcum, node)) {
+          	ctx.fillStyle = ctx.strokeStyle = label.color;
+          	
             if(horz) {
 
 
@@ -11837,9 +11940,70 @@ $jit.ST.Plot.NodeTypes.implement({
           algnPos = this.getAlignedPos(pos, width, height),
           x = algnPos.x, y = algnPos.y,
           dimArray = node.getData('dimArray'),
+          valueArray = node.getData('valueArray'),
           config = node.getData('config'),
           rx = mpos.x - x,
-          horz = config.orientation == 'horizontal';
+          horz = config.orientation == 'horizontal',
+          goalMarkerLabel = node.getData('goalMarkerLabelContain'),
+          goalMarker = node.getData('goalMarkerContain'),
+          goalMarkerColor = node.getData('goalMarkerColor'),
+          goalMarkerType = node.getData('goalMarkerTypeContain'),
+          goalMarkerValueLabel = node.getData('goalMarkerValueLabelContain'),
+          label = config.Label,
+          margin = config.Margin,
+          canvasSize = this.viz.canvas.getSize();
+
+	     //console.log("mx:" + mpos.x + " x1:" + x1 + " x2:" + x2);
+	    // console.log("my:" + mpos.y + " y1:" + y1);
+
+		//check for goal marker line
+		if(horz) {
+
+            if(goalMarkerType == 'group') {
+                var x1 = (x + dimArray[0]/valueArray[0] * goalMarker) - 2,
+                    x2 = (x + dimArray[0]/valueArray[0] * goalMarker) + 2,
+                    y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
+                    y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0));
+            } else {
+                var x1 = (x + dimArray[0]/valueArray[0] * goalMarker) - 2,
+                    x2 = (x + dimArray[0]/valueArray[0] * goalMarker) + 2,
+                    y1 = y,
+                    y2 = y + height;
+
+            }
+
+            if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+                return {
+                    'name': goalMarkerLabel,
+                    'value':goalMarker,
+                    'valuelabel':goalMarkerValueLabel,
+                    'type': 'marker'
+                }
+            }
+		} else {
+            if(goalMarkerType == 'group') {
+                var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
+                    x2 = canvasSize.width/2 - margin.right,
+                    y1 = (y - dimArray[0]/valueArray[0] * goalMarker) - 2,
+                    y2 = (y - dimArray[0]/valueArray[0] * goalMarker) + 2;
+            } else {
+                var x1 = x,
+                    x2 = x + width,
+                    y1 = (y - dimArray[0]/valueArray[0] * goalMarker) - 2,
+                    y2 = (y - dimArray[0]/valueArray[0] * goalMarker) + 2;
+            }
+
+
+			if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
+			     return {
+		          	'name': goalMarkerLabel,
+		          	'value':goalMarker,
+		          	'valuelabel':goalMarkerValueLabel,
+		          	'type': 'marker'
+		          }
+		     }
+		}
+		
       //bounding box check
       if(horz) {
         if(mpos.x < x || mpos.x > x + width
@@ -11852,6 +12016,8 @@ $jit.ST.Plot.NodeTypes.implement({
             return false;
           }
       }
+
+      
       //deep check
       for(var i=0, l=dimArray.length, acum=(horz? x:y); i<l; i++) {
         var dimi = dimArray[i];
@@ -12447,9 +12613,13 @@ $jit.BarChart = new Class({
     var showLabels = this.config.showLabels,
         typeLabels = $.type(showLabels),
         showAggregates = this.config.showAggregates,
-        typeAggregates = $.type(showAggregates);
+        typeAggregates = $.type(showAggregates),
+        showNodeLabels = this.config.showNodeLabels,
+        typeNodeLabels = $.type(showNodeLabels);
+                
     this.config.showLabels = typeLabels == 'function'? showLabels : $.lambda(showLabels);
     this.config.showAggregates = typeAggregates == 'function'? showAggregates : $.lambda(showAggregates);
+    this.config.showNodeLabels = typeNodeLabels == 'function'? showNodeLabels : $.lambda(showNodeLabels);
     Options.Fx.clearCanvas = false;
     this.initializeViz();
   },
@@ -12493,7 +12663,7 @@ $jit.BarChart = new Class({
         onShow: function(tip, node, contains) {
           var elem = contains;
           config.Tips.onShow(tip, elem, node);
-			  if(elem.link != 'undefined' && elem.link != '') {
+			  if(elem.link != undefined && elem.link != '') {
 				document.body.style.cursor = 'pointer';
 			  }
         },
@@ -12511,6 +12681,7 @@ $jit.BarChart = new Class({
           config.Events.onClick(elem, eventInfo, evt);
         },
         onMouseMove: function(node, eventInfo, evt) {
+        	
           if(!config.hoveredColor) return;
           if(node) {
             var elem = eventInfo.getContains();
@@ -12999,7 +13170,9 @@ $jit.BarChart = new Class({
         that = this,
 		colorLength = color.length,
 		nameLength = name.length;
-        groupTotalValue = 0;
+        groupTotalValue = 0,
+        properties = $.splat(json.properties)[0];
+        
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
     	var val = values[i];
       	var valArray = $.splat(val.values);
@@ -13014,6 +13187,28 @@ $jit.BarChart = new Class({
       var titleArray = $.splat(values[i].titles);
       var barTotalValue = valArray.sum();
       var acum = 0;
+      
+      if(properties['goal_marker_type'] != undefined) {
+      	var goalMarkerContain = values[i].goalmarkervalue;
+      	var goalMarkerValueLabelContain = values[i].goalmarkervaluelabel;
+      	var goalMarkerLabelContain = values[i].goalmarkerlabel;
+      	var goalMarkerTypeContain = properties['goal_marker_type'];
+      }
+      if((properties['goal_marker_type'] != undefined && properties['goal_marker_type'] == 'individual') || (properties['goal_marker_type'] == 'group' && i == json.values.length-1)) {
+            var goalMarker = values[i].goalmarkervalue,
+                goalMarkerValueLabel = values[i].goalmarkervaluelabel,
+      		    goalMarkerLabel = values[i].goalmarkerlabel,	
+      		    goalMarkerColor = properties['goal_marker_color'];	
+      		    goalMarkerType = properties['goal_marker_type'];
+      } else {
+      		var goalMarker = "",
+      		    goalMarkerLabel = "",	
+      		    goalMarkerValueLabel = "",	
+      		    goalMarkerColor = "";
+      		    goalMarkerType = "";
+      }
+      
+      
       ch.push({
         'id': prefix + val.label,
         'name': val.label,
@@ -13021,6 +13216,15 @@ $jit.BarChart = new Class({
         'data': {
           'value': valArray,
           '$linkArray': linkArray,
+          '$goalMarker': goalMarker,
+          '$goalMarkerContain': goalMarkerContain,
+          '$goalMarkerLabel': goalMarkerLabel,
+          '$goalMarkerLabelContain': goalMarkerLabelContain,
+          '$goalMarkerValueLabel': goalMarkerValueLabel,
+          '$goalMarkerValueLabelContain': goalMarkerValueLabelContain,
+          '$goalMarkerColor': goalMarkerColor,
+          '$goalMarkerType': goalMarkerType,
+          '$goalMarkerTypeContain': goalMarkerTypeContain,
 		  '$gvl': val.gvaluelabel,
           '$titleArray': titleArray,
           '$valueArray': valArray,
