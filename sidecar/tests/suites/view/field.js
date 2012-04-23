@@ -1,12 +1,20 @@
 describe("Field", function() {
 
-    var app, bean;
+    var app, bean, meta = fixtures.metadata;
 
     beforeEach(function() {
         app = SugarTest.app;
+        app.template.initialize();
+        app.template.load(meta.viewTemplates);
+        app.metadata.set(meta);
         app.data.declareModel("Cases", fixtures.metadata.modules.Cases);
         bean = app.data.createBean("Cases");
     });
+
+     afterEach(function() {
+         app.cache.cutAll();
+         delete Handlebars.templates;
+     });
 
     it("should delegate events", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
@@ -109,7 +117,7 @@ describe("Field", function() {
 
         $('body').append('<div id="'+id+'"></div>');
         bean = new Backbone.Model();
-        view = {name:'edit'};
+        view = {name: 'edit'};
         context = {bob:"bob"};
         field = app.view.createField({
             def: {name: "status", type: "varchar"},
