@@ -105,7 +105,7 @@
   </ul> -->
   <div class="subnav">
     <div class="btn-toolbar pull-left">
-      <h1>Forecast: Sabra Khan</h1>
+      <h1>Forecast: <small><a href="forecast.html">Sabra Khan</a> &nbsp;/&nbsp;</small> James Joplin</h1>
     </div>
     <div class="btn-toolbar pull-right">
       <div class="dropdown">
@@ -125,7 +125,7 @@
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span2" id="drawer">
-        <a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left icon-sm"></i></a>
+        <a class="drawerTrig btn btn-mini pull-right"><i class="icon-chevron-left"></i></a>
         <div class="bordered">
           <div class="block">
                         <br>
@@ -162,7 +162,7 @@
               <label for="select01" class="control-label">Horizontal (x):</label>
               <div class="controls ">
                 <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
-                  <option value="pk" selected="selected">Team Members</option> 
+                  <option value="pk" selected="selected">Months</option> 
                   <option value="pk">x</option>
                   <option value="pk">x</option>
                   <option value="pk">x</option> 
@@ -192,14 +192,14 @@
               </div>
             </div>
             </div>
-          </div>         
+          </div>
           <div class="block">
             <h4>People:</h4>
             <ul class="list" id="people">
-              <li><i class="icon-folder-open"></i> Sabra Khan
+              <li><a href="forecast.html"><i class="icon-folder-open"></i> Sabra Khan</a>
                 <ul>
                   <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Mark Gibson</a></li>
-                  <li><a href="forecast_james.html"><i class="icon-folder-close"></i> James Joplin</a></li>
+                  <li><i class="icon-folder-open"></i> James Joplin</li>
                   <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Terrence Li</a></li>
                   <li><a href="forecast_james.html"><i class="icon-folder-close"></i> Amy McCray</a></li>
                 </ul>
@@ -209,150 +209,65 @@
         </div>
       </div>
       <div id="charts" class="span10">
-        <div class="row-fluid">
-          <div class="span7">
             <div id="chart" class="tcenter">
-              <img src="../img/chart-sm.png">
+              <img src="../img/chart-sp2.png">
             </div>
-          </div>
-          <div class="span5">
-            <div class="tab-pane active" id="overview">
-              <div class="block" id="moduleTwitter">
-                <h4>Progress</h4>
-                <article>
-                 <span class="label label-warn">Motivate</span>
-                    <p>
-                      Sabra Khan your team is 60% of quota<br>
-                      <date class="date">There are 8 days to meet quota</date>
-                    </p>
-                    <div class="actions hide">
-                      <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                      <a data-toggle="modal" href="#share" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                    </div>
-                </article>
-              </div>
-              <div class="block" id="moduleTwitter">
-                <h4>Leaderboard <small>Top 3</small></h4>
-                <article>
-                  <div class="span1 pull-right" rel="tooltip" data-title="110% of quota">
-                    <div class="progress progress-success">
-                      <div class="bar" style="width: 100%;"></div>
-                    </div>
-                  </div>
-                    <a href="" class="pull-left">
-                      <img src="../img/avatar_nate.jpg" class="avatar" alt="Skhan avatar">
-                    </a>
-                    <p>
-                      <a href="#">Mark Gibson</a>: 120% of quota<br>
-                      <date class="date">Last close 8 hours ago at 9:00 pm EST</date>
-                    </p>
-                    <div class="actions hide">
-                      <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                      <a href="forecast_james.html" class="charted btn btn-mini"><i class="icon-signal"></i></a>
-                      <a data-toggle="modal" href="#share" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                    </div>
-                </article>
-                <article>
-                  <div class="span1 pull-right" rel="tooltip" data-title="50% of quota">
-                    <div class="progress progress-mid">
-                      <div class="bar" style="width: 50%;"></div>
-                    </div>
-                  </div>
-                    <a href="" class="pull-left">
-                      <img src="../img/avatar_james.jpg" class="avatar" alt="James avatar">
-                    </a>
-                    <p>
-                      <a href="#">James Joplin</a>: 50% of quota<br>
-                      <date class="date">Last close 3 days ago at 9:00 pm EST</date>
-                    </p>
-                    <div class="actions hide">
-                      <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                      <a href="forecast_james.html" class="charted btn btn-mini"><i class="icon-signal"></i></a>
-                      <a data-toggle="modal" href="#share" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                    </div>
-                </article>
-                <article>
-                  <div class="span1 pull-right" rel="tooltip" data-title="30% of quota">
-                    <div class="progress progress-danger">
-                      <div class="bar" style="width: 30%;"></div>
-                    </div>
-                  </div>
-                    <a href="" class="pull-left">
-                      <img src="../img/avatar_mia.jpg" class="avatar" alt="Skhan avatar">
-                    </a>
-                    <p>
-                      <a href="#">Amy McCray</a>: 30% of quota<br>
-                      <date class="date">Last close 8 days ago at 9:00 pm EST</date>
-                    </p>
-                    <div class="actions hide">
-                      <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                      <a href="forecast_james.html" class="charted btn btn-mini"><i class="icon-signal"></i></a>
-                      <a data-toggle="modal" href="#share" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                    </div>
-                </article>
-            </div>
-          </div>
-        </div>
         <hr>
         <table class="table table-striped datatable">
           <thead>
             <tr>
-              <th>Name</th>
+              <th class="nosort">Commit</th>
               <th>Opportunity</th>
-              <th>Best Case</th>
-              <th>Likely Case</th>
-              <th>Worst Case</th>
-              <th>Quota</th>
+              <th>Stage</th>
+              <th>Probability</th>
+              <th>Expected Close</th>
+              <th>Chance to Close</th>
+              <th>Amount</th>
               <th class="nosort"><i class="icon-cog pull-right"></i></th>
             </tr>
           </thead>
           <tbody id="listed">
             <tr>
-              <td>Mark Gibson</td>
-              <td><span class="dblclick">480,000</span></td>
-              <td><span class="dblclick">490,000</span></td>                
-              <td><span class="dblclick">450,000</span></td>
-              <td><span class="dblclick">420,000</span></td>
-              <td><span class="dblclick">450,000</span></td>
+              <td class="tcenter">
+                <input type="checkbox">
+              </td>
+              <td>Opp A</td>
+              <td>Proposed</td>                
+              <td>10%</td>
+              <td>2012/1/12</td>
+              <td>75%</td>
+              <td><span class="dblclick">150,000</span></td>
               <td></td>
             </tr>
             <tr>
-              <td>James Joplin</td>
-              <td><span class="dblclick">330,000</span></td>
-              <td><span class="dblclick">340,000</span></td>                
-              <td><span class="dblclick">310,000</span></td>
-              <td><span class="dblclick">300,000</span></td>
-              <td><span class="dblclick">320,000</span></td>
+              <td class="tcenter">
+                <input type="checkbox">
+              </td>
+              <td>Opp B</td>                
+              <td>Quotes</td>
+              <td>80%</td>
+              <td>2012/1/19</td>
+              <td>20%</td>
+              <td>75,000</td>
               <td></td>
             </tr>
             <tr>
-              <td>Terrence Li</td>
-              <td><span class="dblclick">410,000</span></td>
-              <td><span class="dblclick">420,000</span></td>                
-              <td><span class="dblclick">400,000</span></td>
-              <td><span class="dblclick">390,000</span></td>
-              <td><span class="dblclick">405,000</span></td>
+              <td class="tcenter">
+                <input type="checkbox">
+              </td>
+              <td>Opp B</td>
+              <td>Closed</td>               
+              <td>100%</td>
+              <td>2012/2/21</td>
+              <td>100%</td>
+              <td>85,000</td>
               <td></td>
-            </tr> 
-            <tr>
-              <td>Amy McCray</td>
-              <td><span class="dblclick">310,000</span></td>
-              <td><span class="dblclick">320,000</span></td>                
-              <td><span class="dblclick">300,000</span></td>
-              <td><span class="dblclick">290,000</span></td>
-              <td><span class="dblclick">305,000</span></td>
-              <td></td>
-            </tr>             
+            </tr>              
           </tbody> 
           <tfoot>
             <tr>
-              <td class="tright">Total:</td>
-              <td>1,840,000</td>
-              <td>1,250,000</td>
-              <td>1,320,000</td>
-              <td>1,220,000</td>
-              <td>1,480,000</td>
-              <td></td>
+              <td colspan="6" class="tright">Total:</td>
+              <td colspan="2">310,000</td>
             </tr>
           </tfoot>                                                                     
         </table>

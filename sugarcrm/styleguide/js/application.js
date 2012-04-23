@@ -97,27 +97,34 @@
       selector: "a[rel=tooltip]",
 			placement: "bottom"
     })
-    $('.navbar').tooltip({
+    $('.navbar, .subnav').tooltip({
       selector: "a[rel=tooltip]",
 			placement: "bottom"
     })  
     }
     
+    $('.collapse').on('show', function () {
+      $(this).parent().find('.icon-chevron-up').remove();
+            $(this).parent().find('.icon-chevron-down').remove();
+      $(this).parent().find('h4').append('<i class="icon-chevron-up icon-sm pull-right"></i>');
+    })
+    
+    $('.collapse').on('hide', function () {
+      $(this).parent().find('.icon-chevron-down').remove();
+            $(this).parent().find('.icon-chevron-up').remove();
+      $(this).parent().find('h4').append('<i class="icon-chevron-down icon-sm pull-right"></i>');
+    })
+    
     // column collapse
-    $('.btn-left').toggle(
+    $('.drawerTrig').on('click',
     function () {
-      $(this).html('<i class="icon-chevron-right icon-sm"></i>');
-      $('#colright').addClass('span4');
-      $('#colcenter').removeClass('span12').addClass('span8'); 
+      $(this).toggleClass('pull-right').toggleClass('pull-left');
+      $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
+      $('#drawer').toggleClass('span2');
+      $('.bordered').toggleClass('hide');
+      $('#charts').toggleClass('span10').toggleClass('span12');
       return false;
-    },
-    function () {
-      $(this).html('<i class="icon-chevron-left icon-sm"></i>');
-      $('#colright').removeClass('span4');
-      $('#colcenter').addClass('span12').removeClass('span8'); 
-      return false;
-    }
-    )
+    })
     
     // button state demo
     $('.loading')

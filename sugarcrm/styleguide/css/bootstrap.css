@@ -1214,8 +1214,8 @@ table {
   -moz-border-radius: 0 0 4px 0;
   border-radius: 0 0 4px 0;
 }
-.table-striped tbody tr:nth-child(odd) td,
-.table-striped tbody tr:nth-child(odd) th {
+.table-striped tbody tr:nth-child(even) td,
+.table-striped tbody tr:nth-child(even) th {
   background-color: #f8f8f8;
 }
 .table tbody tr:hover td,
@@ -4276,7 +4276,12 @@ a.thumbnail:hover {
   color: #ffffff;
   text-decoration: none;
 }
-.label-file {
+.label-danger {
+  background-color: #b81213;
+  color: #ffffff;
+}
+.label-file,
+.label-warn {
   background-color: #e57417;
   color: #ffffff;
 }
@@ -4291,6 +4296,7 @@ a.thumbnail:hover {
 .label-note:hover {
   background-color: #d1cf15;
 }
+.label-success,
 .label-lead {
   background-color: #3fb300;
   color: #ffffff;
@@ -5606,6 +5612,31 @@ article .avatar {
   -webkit-border-radius: 4px 0 0 4px;
   -moz-border-radius: 4px 0 0 4px;
   border-radius: 4px 0 0 4px;
+}
+.bordered .tabs-left .nav-tabs > li > a,
+.bordered .tabs-left .nav-tabs .active > a,
+.bordered .tabs-left .nav-tabs .active {
+  padding: 4px;
+  margin: 4px -10px 4px 0;
+}
+.row-fluid > #charts.span12 {
+  margin-left: 0 !important;
+}
+.drawerTrig {
+  font-size: 8px;
+  padding: 1px 5px 0;
+  z-index: 1020;
+  position: absolute;
+}
+h4 i {
+  color: #cdcccb;
+}
+.drawerTrig.pull-right {
+  -webkit-border-radius: 4px 0 0 4px;
+  -moz-border-radius: 4px 0 0 4px;
+  border-radius: 4px 0 0 4px;
+  margin-right: -1px;
+  position: relative;
 }
 .block.tabs-left .nav-tabs li:hover .actions {
   display: block;
