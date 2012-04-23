@@ -634,6 +634,7 @@ margin-bottom: 10px;
 /* when ever possible enclose action buttons inside a table or div with this class */
 table.actionsContainer {
     margin-bottom: 10px;
+    clear:both;
 }
 div.actionsContainer
 {
