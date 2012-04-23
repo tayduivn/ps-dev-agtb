@@ -78,7 +78,7 @@
     });
     $('article').live('swipeLeft',function () {
 	var anchor=$(this);
-	anchor.closest('#listing').find("article span[id^=listing-action] .grip.on").closest('article').trigger('swipeRight');
+	anchor.closest('.listing').find("article span[id^=listing-action] .grip.on").closest('article').trigger('swipeRight');
 	anchor.find('.grip').addClass('on');
 	anchor.find('[id^=listing-action] span').removeClass('hide').addClass('on');
     });	
@@ -129,17 +129,17 @@
 		    window.history.back(-1);		
 		}
     });
-    $('#listing > article:last-child a.show_more_posts').live('click', function(e){
+    $('.listing > article:last-child a.show_more_posts').live('click', function(e){
         $(this).closest('article').remove();
-	inject_posts('append',$('#listing'),5);
+	inject_posts('append',$('.listing'),5);
 	return false;
     });
-    $('#listing > article:nth-child(3) a.show_more_posts').live('click', function(e){
+    $('.listing > article:nth-child(3) a.show_more_posts').live('click', function(e){
 	$(this).closest('article').remove();
-	inject_posts('prepend',$('#listing'),5);
+	inject_posts('prepend',$('.listing'),5);
 	return false;
     });
-    $('#listing > article.nav').live('click', function(e){
+    $('.listing > article.nav').live('click', function(e){
         $(this).find('a').first().css('border','1px solid red').trigger('click');
     });
 
@@ -157,7 +157,7 @@
     function inject_posts(order,anchor,numberofrecords){
 	var posts = '',
 	    topspacer = '<i></i>',
-	    domtopspacer = $('#listing > i');
+	    domtopspacer = $('.listing > i');
         for(i=0;i<numberofrecords;i++){
 		posts = posts + post_template;
 		if(i===numberofrecords-1 && order==='append') {

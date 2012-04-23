@@ -3723,7 +3723,7 @@ article {
   border-top: 1px solid #e8e8e8;
   min-height: 52px;
 }
-.accounts article {
+.fav article {
   padding-left: 44px;
 }
 article div {
@@ -3979,9 +3979,9 @@ html {
 .onR .navbar {
   left: -86%;
 }
-.onL #listing *,
+.onL .listing *,
 .onL .bizcard *,
-.onR #listing *,
+.onR .listing *,
 .onR .bizcard * {
   display: none;
 }
@@ -4078,7 +4078,7 @@ html {
 .hasTeaser #scroll {
   height: 68%;
 }
-#listing {
+.listing {
   height: 100%;
   position: absolute;
   left: 0;
@@ -4087,13 +4087,13 @@ html {
   -webkit-overflow-scrolling: touch;
   display: block;
 }
-#listing article {
+.listing article {
   -webkit-transition: all 0.25s ease-in-out;
 }
-#listing article.deleted {
+.listing article.deleted {
   opacity: 0;
 }
-#listing article.nav {
+.listing article.nav {
   margin-bottom: 0;
   background-color: #f8f8f8;
   background-image: -moz-linear-gradient(top, #ffffff, #ededed);
@@ -4112,22 +4112,22 @@ html {
   padding-bottom: 0;
   min-height: 42px;
 }
-#listing article.nav:last-child {
+.listing article.nav:last-child {
   border-top: 1px solid #b5b5b5;
 }
-#listing article.nav:first-child,
-#listing article.nav:nth-child(2),
-#listing article.nav:nth-child(3) {
+.listing article.nav:first-child,
+.listing article.nav:nth-child(2),
+.listing article.nav:nth-child(3) {
   border-bottom: 1px solid #b5b5b5;
 }
-#listing article.nav div {
+.listing article.nav div {
   height: 42px;
 }
-#listing > i {
+.listing > i {
   height: 45px;
   display: inline-block;
 }
-#detailListing #listing > i {
+#detailListing .listing > i {
   height: 218px;
   display: inline-block;
 }
@@ -4165,7 +4165,7 @@ html {
   min-width: 18px;
   min-height: 22px;
 }
-.accounts .topelbar {
+.filtered .topelbar {
   padding-right: 94px;
 }
 @media (max-width: 479px) {
@@ -4176,10 +4176,10 @@ html {
 .tcenter > .btn-group {
   display: inline-block;
 }
-#listing .form-search {
+.listing .form-search {
   margin: 0;
 }
-#listing .icon-search {
+.listing .icon-search {
   position: absolute;
   margin: 8px 0 0 14px;
   color: #c2c2c2;
@@ -4187,7 +4187,7 @@ html {
 .search-query[placeholder] {
   text-indent: 30px !important;
 }
-#listing .search-query {
+.listing .search-query {
   width: 98.75%;
   height: 26px;
   -webkit-border-radius: 18px;
@@ -4231,7 +4231,7 @@ html {
   text-align: center;
   padding-top: 10px;
 }
-#detailListing #listing {
+#detailListing .listing {
   /*
   top: 202px; 
   padding-bottom: 190px;
