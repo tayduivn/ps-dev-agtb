@@ -285,6 +285,9 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeMenu: function () {
+        //Bug#52433: Prevent calling resizeMenu before basic theme is initialized
+        if(typeof sugar_theme_gm_current == "undefined") return;
+
 	    var maxMenuWidth = $("#dcmenu").width() - 40 //40px: misc. padding and border lines
             - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#dcmenuSearchDiv").width();
 		var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
