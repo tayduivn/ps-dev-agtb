@@ -12,31 +12,31 @@ describe('app.cache', function () {
     });
 
     it('should store strings', function () {
-        var value = "This is a test.";
-        var key = "testKey";
+        var value = "This is a test.",
+            key = "testKey";
         app.cache.set(key, value);
         expect(app.cache.get(key)).toEqual(value);
     });
 
     it('should store objects', function () {
-        var value = {foo: "test", bar:{more:"a"}};
-        var key = "testKey";
+        var value = {foo: "test", bar:{more:"a"}},
+            key = "testKey";
         app.cache.set(key, value);
         expect(app.cache.get(key)).toEqual(value);
     });
 
     it('should store functions', function () {
-        var func = function(){return "Hello World"};
-        var key = "testKey";
+        var func = function(){return "Hello World";},
+            key = "testKey";
         app.cache.set(key, func);
         expect(app.cache.get(key)()).toEqual(func());
     });
 
     it('should store DOM elements', function () {
-        var el = document.createElement("div");
+        var el = document.createElement("div"), key;
         el.id = "testID";
         el.className = "Test";
-        var key = "testKey";
+        key = "testKey";
         app.cache.set(key, el);
         //Ensure it is an element
         expect(app.cache.get(key) instanceof HTMLElement).toBeTruthy();
@@ -47,8 +47,8 @@ describe('app.cache', function () {
     });
 
     it('should append values', function () {
-        var value = "Hello";
-        var key = "testKey";
+        var value = "Hello",
+            key = "testKey";
         app.cache.set(key, value);
         expect(app.cache.get(key)).toEqual(value);
 
@@ -58,8 +58,8 @@ describe('app.cache', function () {
 
 
     it('should remove values', function () {
-        var value = "Hello";
-        var key = "testKey";
+        var value = "Hello",
+            key = "testKey";
         app.cache.set(key, value);
         expect(app.cache.get(key)).toEqual(value);
 
@@ -68,17 +68,17 @@ describe('app.cache', function () {
     });
 
     it('should provide has to determine if key exists', function () {
-        var value = "Hello";
-        var key = "testKey";
+        var value = "Hello",
+            key = "testKey";
         app.cache.set(key, value);
         app.cache.cut(key);
         expect(app.cache.has(key)).toBeFalsy();
     });
 
     it('should remove all values', function () {
-        var value = "Hello";
-        var key = "testKey";
-        var key2 = "testKey2";
+        var value = "Hello",
+            key = "testKey",
+            key2 = "testKey2";
         app.cache.set(key, value);
         app.cache.set(key2, value);
         expect(app.cache.get(key)).toEqual(value);

@@ -8,12 +8,11 @@ describe("Bean", function() {
     });
 
     it("should be able to validate itself", function() {
-        var moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var bean = dm.createBean(moduleName, { first_name: "Super long first name"});
-        var error;
-        var errors = bean.validate(bean.attributes);
+        var moduleName = "Contacts", bean, error, errors;
 
+        dm.declareModel(moduleName, metadata.modules[moduleName]);
+        bean = dm.createBean(moduleName, { first_name: "Super long first name"});
+        errors = bean.validate(bean.attributes);
         expect(errors).toBeDefined();
         error = errors["first_name"];
         expect(error).toBeDefined();
@@ -21,9 +20,9 @@ describe("Bean", function() {
     });
 
     it("should be populated with defaults upon instantiation", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", bean;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var bean = dm.createBean(moduleName);
+        bean = dm.createBean(moduleName);
         expect(bean.get("field_0")).toEqual(100);
     });
 });

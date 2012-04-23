@@ -1,7 +1,7 @@
 describe("Sugar App Language Manager", function() {
     var lang = SUGAR.App.lang,
-        appCacheInstance;
-    var appCache = SUGAR.App.cache;
+        appCacheInstance,
+        appCache = SUGAR.App.cache;
 
     it("exist in sugar App Instance", function() {
         expect(lang).toBeDefined();
@@ -38,8 +38,8 @@ describe("Sugar App Language Manager", function() {
 
     it("should retreive the label from app strings if its not set in mod strings", function() {
         var setData = fixtures.language.Accounts,
-            string;
-        var appStrings = fixtures.metadata.appStrings;
+            string,
+            appStrings = fixtures.metadata.appStrings;
 
         lang.setAppStrings(appStrings);
 
@@ -50,8 +50,8 @@ describe("Sugar App Language Manager", function() {
 
     it("should return the input if its not set at all", function() {
         var setData = fixtures.language.Accounts,
-            string;
-        var appStrings = fixtures.metadata.appStrings;
+            string,
+            appStrings = fixtures.metadata.appStrings;
         lang.setAppStrings(appStrings);
 
         string = lang.get("THIS_LABEL_DOES_NOT_EXIST");

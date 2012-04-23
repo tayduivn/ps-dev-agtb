@@ -37,9 +37,9 @@ describe("Application context manager", function() {
         });
 
         describe("when creating a context", function() {
-            var getFieldsSpy = sinon.spy(function() { return [1,2]; });
-            var renderSpy    = sinon.spy();
-            var context      = SUGAR.App.context.getContext();
+            var getFieldsSpy = sinon.spy(function() { return [1,2]; }),
+                renderSpy    = sinon.spy(),
+                context      = SUGAR.App.context.getContext();
 
             it("should load the context for layout path", function() {
                 var params = {
@@ -60,11 +60,11 @@ describe("Application context manager", function() {
             });
 
             it("should load the context for create path", function() {
-                var stub = sinon.spy();
-                var params = {
-                    create: stub,
-                    module: 'Home'
-                };
+                var stub = sinon.spy(),
+                    params = {
+                        create: stub,
+                        module: 'Home'
+                    };
 
                 context.init(params);
                 context.loadData();
@@ -85,8 +85,9 @@ describe("Application context manager", function() {
                 expect(context.state.model).toBeDefined();
             });
             it("should trigger context:focus when focus called", function() {
-                var onFocusSpy = sinon.spy();
-                var context = SUGAR.App.context.getContext();
+                var onFocusSpy = sinon.spy(),
+                    context = SUGAR.App.context.getContext();
+
                 context.bind("context:focus", onFocusSpy);
                 context.init({});
                 context.focus(onFocusSpy);
@@ -95,18 +96,18 @@ describe("Application context manager", function() {
         });
 
         describe("when a new state is required", function() {
-            var obj = {
-                url: "someurl",
-                module: "test_module"
-            };
+            var stub, context,
+                obj = {
+                    url: "someurl",
+                    module: "test_module"
+                },
+                data = {
+                    model: {name: "sample"},
+                    collection: {name: "sample collection"}
+                };
 
-            var data = {
-                model: {name: "sample"},
-                collection: {name: "sample collection"}
-            };
-
-            var stub = sinon.spy();
-            var context = SUGAR.App.context.getContext(); // We don't initialize first because we need to attach an event handler first for test.
+            stub = sinon.spy();
+            context = SUGAR.App.context.getContext(); // We don't initialize first because we need to attach an event handler first for test.
             context.bind(context.contextId + ":change", stub);
             context.init(obj, data);
 

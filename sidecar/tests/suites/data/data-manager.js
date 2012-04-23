@@ -21,30 +21,30 @@ describe("DataManager", function() {
     });
 
     it("should be able to create an instance of bean and collection", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", bean, collection;
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
-        var bean = dm.createBean(moduleName, { someAttr: "Some attr value"});
+        bean = dm.createBean(moduleName, { someAttr: "Some attr value"});
         expect(bean.module).toEqual(moduleName);
         expect(bean.fields).toEqual(metadata.modules[moduleName].fields);
         expect(bean.get("someAttr")).toEqual("Some attr value");
 
-        var collection = dm.createBeanCollection(moduleName);
+        collection = dm.createBeanCollection(moduleName);
         expect(collection.module).toEqual(moduleName);
         expect(collection.model).toBeDefined();
 
     });
 
     it("should be able to fetch a bean by ID", function() {
-        var moduleName = "Teams";
+        var moduleName = "Teams", mock, bean;
 
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
-        var mock = sinon.mock(Backbone);
+        mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
 
-        var bean = dm.createBean(moduleName, {id: "xyz"});
+        bean = dm.createBean(moduleName, {id: "xyz"});
         bean.fetch();
 
         expect(bean.id).toEqual("xyz");
@@ -53,13 +53,13 @@ describe("DataManager", function() {
     });
 
     it("should be able to fetch beans", function() {
-        var moduleName = "Teams";
+        var moduleName = "Teams", mock, collection;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
 
-        var mock = sinon.mock(Backbone);
+        mock = sinon.mock(Backbone);
         mock.expects("sync").once().withArgs("read");
 
-        var collection = dm.createBeanCollection(moduleName, null);
+        collection = dm.createBeanCollection(moduleName, null);
         collection.fetch();
 
         expect(collection.module).toEqual(moduleName);
@@ -68,11 +68,11 @@ describe("DataManager", function() {
     });
 
     it("should be able to sync (read) a bean", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", bean, contact;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var bean = dm.createBean(moduleName, { id: "1234" });
+        bean = dm.createBean(moduleName, { id: "1234" });
 
-        var contact = SugarTest.loadFixture("contact");
+        contact = SugarTest.loadFixture("contact");
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
@@ -86,9 +86,9 @@ describe("DataManager", function() {
     });
 
     it("should be able to sync (create) a bean", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", contact;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var contact = dm.createBean(moduleName, { first_name: "Clara", last_name: "Tsetkin" });
+        contact = dm.createBean(moduleName, { first_name: "Clara", last_name: "Tsetkin" });
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("POST", /.*\/rest\/v10\/Contacts.*/,
@@ -102,9 +102,9 @@ describe("DataManager", function() {
     });
 
     it("should be able to sync (update) a bean", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", contact;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var contact = dm.createBean(moduleName, { id: "xyz", first_name: "Clara", last_name: "Tsetkin", dateModified: "1" });
+        contact = dm.createBean(moduleName, { id: "xyz", first_name: "Clara", last_name: "Tsetkin", dateModified: "1" });
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("PUT", /.*\/rest\/v10\/Contacts\/xyz.*/,
@@ -118,9 +118,9 @@ describe("DataManager", function() {
     });
 
     it("should be able to sync (delete) a bean", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", contact;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var contact = dm.createBean(moduleName, { id: "xyz" });
+        contact = dm.createBean(moduleName, { id: "xyz" });
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("DELETE", /.*\/rest\/v10\/Contacts\/xyz.*/,
@@ -131,11 +131,11 @@ describe("DataManager", function() {
     });
 
     it("should be able to sync (read) beans", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", beans, contacts;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var beans = dm.createBeanCollection(moduleName);
+        beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadFixture("contacts");
+        contacts = SugarTest.loadFixture("contacts");
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}maxresult=2.*/,
@@ -153,10 +153,10 @@ describe("DataManager", function() {
     });
 
     it("should be able to handle sync errors", function() {
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", bean, spy;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var bean = dm.createBean(moduleName);
-        var spy = sinon.spy();
+        bean = dm.createBean(moduleName);
+        spy = sinon.spy();
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith([422, {}, ""]);
@@ -167,11 +167,11 @@ describe("DataManager", function() {
     });
 
     it("should add result count and next offset to a collection if in server response", function(){
-        var moduleName = "Contacts";
+        var moduleName = "Contacts", beans, contacts;
         dm.declareModel(moduleName, metadata.modules[moduleName]);
-        var beans = dm.createBeanCollection(moduleName);
+        beans = dm.createBeanCollection(moduleName);
 
-        var contacts = SugarTest.loadFixture("contacts");
+        contacts = SugarTest.loadFixture("contacts");
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts[?]{1}maxresult=2.*/,

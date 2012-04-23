@@ -1,6 +1,5 @@
 describe("View.Layout", function(){
-    var app;
-    var context, bean, collection;
+    var app, context, bean, collection;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -27,14 +26,15 @@ describe("View.Layout", function(){
     });
 
     it('should accept metadata overrides', function(){
-        var testMeta = {
+        var layout, 
+            testMeta = {
             //Default layout is a single view
             "type" : "simple",
             "components" : [
                 {view : "testComp"}
             ]
-        }
-        var layout = app.view.createLayout({
+        };
+        layout = app.view.createLayout({
             context : context,
             name: "edit",
             meta: testMeta
@@ -44,4 +44,4 @@ describe("View.Layout", function(){
 
     //TODO: Need to defined tests for sublayout, complex layouts, and inline defined layouts
 
-})
+});

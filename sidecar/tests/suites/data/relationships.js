@@ -11,11 +11,11 @@ describe("Relationships", function() {
         it("should be able to create a related bean instance from a bean ID", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), attrs, contact;
             opportunity.id = "opp-1";
 
-            var attrs = { first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
-            var contact = dm.createRelatedBean(opportunity, "contact-1", "contacts", attrs);
+            attrs = { first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
+            contact = dm.createRelatedBean(opportunity, "contact-1", "contacts", attrs);
 
             expect(contact.link).toBeDefined();
             expect(contact.link.name).toEqual("contacts");
@@ -30,12 +30,12 @@ describe("Relationships", function() {
         it("should be able to create a related bean instance from a bean", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), attrs, contact, relation;
             opportunity.id = "opp-1";
 
-            var attrs = { id: "contact-1", first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
-            var contact = dm.createBean("Contacts", attrs);
-            var relation = dm.createRelatedBean(opportunity, contact, "contacts");
+            attrs = { id: "contact-1", first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
+            contact = dm.createBean("Contacts", attrs);
+            relation = dm.createRelatedBean(opportunity, contact, "contacts");
 
             expect(contact).toEqual(relation);
             expect(contact.link).toBeDefined();
@@ -50,11 +50,11 @@ describe("Relationships", function() {
         it("should be able to create a new related bean instance", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), attrs, contact;
             opportunity.id = "opp-1";
 
-            var attrs = { id: "contact-1", first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
-            var contact = dm.createRelatedBean(opportunity, null, "contacts", attrs);
+            attrs = { id: "contact-1", first_name: "John", last_name: "Smith", contact_role: "Decision Maker" };
+            contact = dm.createRelatedBean(opportunity, null, "contacts", attrs);
 
             expect(contact.link).toBeDefined();
             expect(contact.link.name).toEqual("contacts");
@@ -67,11 +67,10 @@ describe("Relationships", function() {
 
         it("should be able to create a collection of related beans", function() {
             dm.declareModels(metadata);
-
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), contacts;
             opportunity.id = "opp-1";
 
-            var contacts = dm.createRelatedCollection(opportunity, "contacts");
+            contacts = dm.createRelatedCollection(opportunity, "contacts");
 
             expect(contacts.module).toEqual("Contacts");
             expect(contacts.link).toBeDefined();
@@ -92,14 +91,14 @@ describe("Relationships", function() {
         it("should be able to fetch related beans", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), contacts;
             opportunity.id = "1";
 
             server.respondWith("GET", /\/Opportunities\/1\/contacts/,
                 [200, {  "Content-Type":"application/json"},
                     JSON.stringify(fixtures.api["rest/v10/opportunities/1/contacts"].GET.response)]);
 
-            var contacts = dm.createRelatedCollection(opportunity, "contacts");
+            contacts = dm.createRelatedCollection(opportunity, "contacts");
             contacts.fetch({ relate: true });
             server.respond();
 
@@ -124,9 +123,9 @@ describe("Relationships", function() {
         it("should be able to create a related bean", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
-            var contact = dm.createRelatedBean(opportunity, null, "contacts", {
+            contact = dm.createRelatedBean(opportunity, null, "contacts", {
                 first_name: "John",
                 last_name: "Smith",
                 opportunity_role: "Influencer"
@@ -149,9 +148,9 @@ describe("Relationships", function() {
         it("should be able to delete a relationship", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
-            var contact = dm.createRelatedBean(opportunity, null, "contacts", { id: "2" });
+            contact = dm.createRelatedBean(opportunity, null, "contacts", { id: "2" });
 
             server.respondWith("DELETE", /\/Opportunities\/1\/contacts\/2/,
                 [200, {  "Content-Type":"application/json"},
@@ -169,9 +168,9 @@ describe("Relationships", function() {
         it("should be able to update a relationship", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
-            var contact = dm.createRelatedBean(opportunity, null, "contacts",
+            contact = dm.createRelatedBean(opportunity, null, "contacts",
                 { id: "2", opportunity_role: "Primary Decision Maker" });
             // Indicate that this relationship is an existing one
             contact.link.isNew = false;
@@ -191,9 +190,9 @@ describe("Relationships", function() {
         it("should be able to create a relationship for two existing beans", function() {
             dm.declareModels(metadata);
 
-            var opportunity = dm.createBean("Opportunities");
+            var opportunity = dm.createBean("Opportunities"), contact;
             opportunity.id = "1";
-            var contact = dm.createRelatedBean(opportunity, null, "contacts",
+            contact = dm.createRelatedBean(opportunity, null, "contacts",
                 { id: "2", opportunity_role: "Influencer" });
 
             server.respondWith("POST", /\/Opportunities\/1\/contacts\/2/,

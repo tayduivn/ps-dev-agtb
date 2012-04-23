@@ -10,13 +10,13 @@ describe("Error module", function() {
     });
 
     it("should inject custom http error handlers and should handle http code errors", function() {
-        var bean = app.data.createBean("Cases");
-        var handled = false;
+        var bean = app.data.createBean("Cases"),
+            handled = false, statusCodes;
 
         // The reason we don't use a spy in this case is because
         // the status codes are copied instead of passed in by
         // by reference, thus the spied function will never be called.
-        var statusCodes = {
+        statusCodes = {
             404: function() {
                 handled = true;
             }

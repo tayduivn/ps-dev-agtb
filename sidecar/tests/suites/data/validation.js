@@ -44,12 +44,12 @@ describe("Validation", function() {
 
     describe("'required' validator", function() {
 
-        var rv = validation.requiredValidator;
-        var field = { required: true }; // field metadata
+        var rv = validation.requiredValidator,
+            field = { required: true }; // field metadata
 
         it("should be able to validate an empty string field set on a bean with a field already set", function() {
-            var bean = new Bean({ name: "foo" });
-            var result = rv(field, "name", bean, "");
+            var bean = new Bean({ name: "foo" }),
+                result = rv(field, "name", bean, "");
             expect(result).toBeFalsy();
 
             result = rv(field, "name", bean, undefined);
@@ -60,8 +60,8 @@ describe("Validation", function() {
         });
 
         it("should be able to validate an empty string field set on a bean with unset field", function() {
-            var bean = new Bean();
-            var result = rv(field, "name", bean, "");
+            var bean = new Bean(),
+                result = rv(field, "name", bean, "");
             expect(result).toBeFalsy();
 
             result = rv(field, "name", bean, undefined);
@@ -72,22 +72,20 @@ describe("Validation", function() {
         });
 
         it("should be able to validate a non-empty string field set on a bean with unset field", function() {
-            var bean = new Bean();
-
-            var result = rv(field, "name", bean, "bar");
+            var bean = new Bean(),
+                result = rv(field, "name", bean, "bar");
             expect(result).toBeTruthy();
         });
 
         it("should be able to validate a non-empty string field set on a bean with a field already set", function() {
-            var bean = new Bean({ name: "foo" });
-
-            var result = rv(field, "name", bean, "bar");
+            var bean = new Bean({ name: "foo" }),
+                result = rv(field, "name", bean, "bar");
             expect(result).toBeTruthy();
         });
 
         it("should skip validation if a field is not required", function() {
-            var bean = new Bean();
-            var result = rv({required: false}, "name", bean, "");
+            var bean = new Bean(),
+                result = rv({required: false}, "name", bean, "");
             expect(result).toBeTruthy();
 
             result = rv({}, "name", bean, "");

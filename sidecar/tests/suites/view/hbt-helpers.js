@@ -46,7 +46,7 @@ describe("Handlebars Helpers", function() {
                 sugarField = {name: "TestName", label: "TestLabel", type: "text"};
 
             expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toMatch(/<span sfuuid=.*(\d+).*/);
-        })
+        });
     });
 
     describe("buildRoute", function() {
@@ -111,10 +111,11 @@ describe("Handlebars Helpers", function() {
     describe("eachOptions", function() {
         it("should pull options hash from app list strings and return an iterated block string", function() {
             var optionName = "custom_fields_importable_dom",
-                blockHtml = "<li>{{this.key}} {{this.value}}</li>";
-            var appListStrings = fixtures.metadata.appListStrings;
-            var template = Handlebars.compile(blockHtml);
-            app.lang.setAppListStrings(fixtures.metadata.appListStrings)
+                blockHtml = "<li>{{this.key}} {{this.value}}</li>",
+                appListStrings = fixtures.metadata.appListStrings,
+                template = Handlebars.compile(blockHtml);
+
+            app.lang.setAppListStrings(fixtures.metadata.appListStrings);
             expect(Handlebars.helpers.eachOptions(optionName, template)).toEqual("<li>true Yes</li><li>false No</li><li>required Required</li>");
         });
 
@@ -151,8 +152,8 @@ describe("Handlebars Helpers", function() {
 
     describe("getLabel", function() {
         it("should get a label", function() {
-            var lang = SUGAR.App.lang;
-            var setData = fixtures.language.Accounts,
+            var lang = SUGAR.App.lang,
+                setData = fixtures.language.Accounts,
                 string;
 
             lang.setLabel("Accounts", setData);

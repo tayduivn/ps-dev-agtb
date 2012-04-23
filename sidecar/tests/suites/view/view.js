@@ -48,15 +48,15 @@ describe("Layout.View", function() {
     });
 
     it('should render edit views', function() {
-        var aclSpy = sinon.spy(app.acl,'hasAccess');
-        var view = app.view.createView({
-            context: context,
-            name: "edit"
-        });
+        var aclSpy = sinon.spy(app.acl,'hasAccess'), html,
+            view = app.view.createView({
+                context: context,
+                name: "edit"
+            });
 
         expect(view.meta).toBeDefined();
         view.render();
-        var html = view.$el.html();
+        html = view.$el.html();
         expect(html).toContain('edit');
 
         expect(view.$el).toContain('input=[value="Foo"]');
@@ -66,20 +66,22 @@ describe("Layout.View", function() {
 
     it('should render detail views', function() {
         var view = app.view.createView({
-            context: context,
-            name: "detail"
-        });
+                context: context,
+                name: "detail"
+            }), html;
         view.render();
-        var html = view.$el.html();
+        html = view.$el.html();
         expect(html).toContain('detail');
     });
 
     it('should return its fields', function(){
-        var view = app.view.createView({
-            context: context,
-            name: "detail"
-        });
-        var fields = view.getFields();
+        var fields,
+            view = app.view.createView({
+                context: context,
+                name: "detail"
+            });
+        view.completeMeta();
+        fields = view.getFields();
         expect(fields).toEqual(["first_name", "last_name", "phone_work", "phone_home", "email1"]);
     });
 

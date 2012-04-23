@@ -97,5 +97,5 @@ afterEach(function() {
     if (SugarTest.server && SugarTest.server.restore) {
         SugarTest.server.restore();
     }
-    if (typeof Backbone != "undefined" && !_.isUndefined(Backbone.history)) Backbone.history.stop();
+    if (typeof Backbone !== "undefined" && !_.isUndefined(Backbone.history)) Backbone.history.stop();
 });
