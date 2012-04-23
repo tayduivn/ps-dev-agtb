@@ -233,7 +233,7 @@
          */
         sync: function(callback) {
             var self = this;
-            app.api.getMetadata([], [], {
+            app.api.getMetadata(app.config.metadataTypes, [], {
                 success: function(metadata) {
                     self.set(metadata);
                     if (callback) {
