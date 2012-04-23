@@ -48,6 +48,15 @@ describe('Metadata Manager', function () {
         expect(app.metadata.getField('doesntexist')).toBe(fixtures.metadata.sugarFields.text);
     });
 
+    it('should patch view metadata', function () {
+        app.metadata.set(fixtures.metadata);
+        var field = app.metadata.getView("Contacts", "detail").panels[0].fields[3];
+        expect(_.isObject(field)).toBeTruthy();
+        expect(field.name).toEqual("phone_home");
+        expect(field.type).toEqual("text");
+        expect(field.label).toEqual("LBL_PHONE_HOME");
+    });
+
     it ('should sync metadata', function (){
         SugarTest.storage = {};
         server = sinon.fakeServer.create();

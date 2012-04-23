@@ -57,8 +57,8 @@ class UserViewHelper {
         $this->assignUserTypes();
         $this->setupButtonsAndTabs();
         $this->setupUserTypeDropdown();
-        $this->setupEmailSettings();
         $this->setupPasswordTab();
+        $this->setupEmailSettings();
         $this->setupThemeTab();
         $this->setupAdvancedTab();
         
@@ -541,17 +541,7 @@ class UserViewHelper {
             $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
         }
         $this->ss->assign("USE_GROUP_TABS",($useGroupTabs=='gm')?'checked':'');
-        
-        $user_max_tabs = $this->bean->getPreference('max_tabs');
-        if(isset($user_max_tabs) && $user_max_tabs > 0) {
-            $this->ss->assign("MAX_TAB", $user_max_tabs);
-        } elseif(SugarThemeRegistry::current()->maxTabs > 0) {
-            $this->ss->assign("MAX_TAB", SugarThemeRegistry::current()->maxTabs);
-        } else {
-            $this->ss->assign("MAX_TAB", $GLOBALS['sugar_config']['default_max_tabs']);
-        }
-        $this->ss->assign("MAX_TAB_OPTIONS", range(1, ((!empty($GLOBALS['sugar_config']['default_max_tabs']) && $GLOBALS['sugar_config']['default_max_tabs'] > 10 ) ? $GLOBALS['sugar_config']['default_max_tabs'] : 10)));
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
         $user_subpanel_tabs = $this->bean->getPreference('subpanel_tabs');
         if(isset($user_subpanel_tabs)) {

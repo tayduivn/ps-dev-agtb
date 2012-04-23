@@ -9,7 +9,8 @@
         logFormatter: app.logger.SimpleFormatter,
         serverUrl: 'http://localhost:8888/sugarcrm/rest/v10',
         maxQueryResult: 20,
-        platform: "mobile"
+        platform: "mobile",
+        metadataTypes: ["acl", "appListStrings", "appStrings", "modStrings", "moduleList", "modules"]
     }, false);
 
 })(SUGAR.App);

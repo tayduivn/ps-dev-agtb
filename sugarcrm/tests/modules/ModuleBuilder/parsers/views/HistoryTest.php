@@ -73,7 +73,6 @@ class HistoryTest extends PHPUnit_Framework_TestCase
         $el2 = $this->_history->append($other_file);
         $el3 = $this->_history->append($other_file);
 
-        $this->assertEquals(3, $this->_history->getCount());
         $this->assertEquals($el3, $this->_history->getFirst());
         $this->assertEquals($el1, $this->_history->getLast());
         $this->assertEquals($el2, $this->_history->getNth(1));

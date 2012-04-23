@@ -10,13 +10,17 @@
                 var url = model.get("url");
                 var args = {password: model.get("password"), username: model.get("username")};
                 app.logger.debug(args.username + ":" + args.password + "@" + url);
-                app.api.login(args, {
+                app.api.login(args, null, {
                     success: function() {
-                        app.logger.debug("logged in successfully! dtam");
+                        app.logger.debug("logged in successfully!");
                         app.sync(function() {
                             app.logger.debug("sync success firing");
                         });
-                }});
+                    },
+                    error: function(error) {
+                        app.logger.debug("login failed: " + error);
+                    }
+                });
             }
         }
     });

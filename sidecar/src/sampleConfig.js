@@ -61,7 +61,13 @@
          * Platform name.
          * @cfg {String}
          */
-        platform: "portal"
+        platform: "portal",
+
+        /**
+         * A list of metadata types to fetch by default.
+         * @cfg {Array}
+         */
+        metadataTypes: []
 
     }, false);
 

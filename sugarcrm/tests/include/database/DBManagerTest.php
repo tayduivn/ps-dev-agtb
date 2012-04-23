@@ -2055,6 +2055,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+
     private function addChildren($tableName, $parent, $number, $level, $stoplevel)
     {
         if($level >= $stoplevel) return;
@@ -2102,6 +2103,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 //        $this->createTableParams($tableName, $params, array());
         $this->_db->createTableParams($tableName, $params, array());
 
+
         // Load data
         $this->_db->query("INSERT INTO $tableName (id, db_level) VALUES ('1', 0)");
         $this->addChildren($tableName, '1', 3, 1, 10);
@@ -2114,5 +2116,23 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->setupRecursiveStructure();
 
 
+    }
+
+    public function testGetIndicesContainsPrimary()
+    {
+        $indices = $this->_db->get_indices('accounts');
+
+        // find if any are primary
+        $found = false;
+
+        foreach($indices as $index)
+        {
+            if($index['type'] == "primary") {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($found, 'Primary Key Not Found On Module');
     }
 }

@@ -305,6 +305,11 @@ fixtures.metadata = {
                     "name": "phone_work",
                     "type": "varchar"
                 },
+                "phone_home": {
+                    "name": "phone_home",
+                    "type": "varchar",
+                    "vname": "LBL_PHONE_HOME"
+                },
                 "email1": {
                     "name": "email1",
                     "type": "varchar"
@@ -377,6 +382,7 @@ fixtures.metadata = {
                                 {name: "first_name", label: "First Name"},
                                 {name: "last_name", label: "Last Name"},
                                 {name: "phone_work", label: "Phone"},
+                                "phone_home",
                                 {name: "email1", label: "Email"}
                             ]
                         }
@@ -554,11 +560,11 @@ fixtures.metadata = {
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                "  value = this.app.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
+                "  value = this.app.utils.unformatNumberString(value, this.fieldDef.number_group_seperator, this.fieldDef.decimal_seperator, false);\n" +
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                " value = this.app.utils.formatNumber(value, this.fieldDef.round, this.fieldDef.precision, this.fieldDef.number_group_seperator, this.fieldDef.decimal_seperator);\n" +
                 "return value\n" +
                 "}" +
                 "}"
@@ -676,7 +682,7 @@ fixtures.metadata = {
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, 1, 0, this.number_group_seperator, \".\");\n" +
+                " value = this.app.utils.formatNumber(value, 1, 0, this.fieldDef.number_group_seperator), \".\");\n" +
                 "return value\n" +
                 "}" +
                 "}"

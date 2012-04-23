@@ -7,65 +7,48 @@
  */
 (function(app) {
 
-    var sfid = 0;
+    var _sfid = 0;
 
     /**
-     * @method sugarField
+     * Creates field widget.
+     * @method field
      * @param {Core.Context} context
      * @param {View.View} view
      * @param {Data.Bean} bean
-     * @return {String}
+     * @return {String} HTML placeholder for the widget.
      */
     Handlebars.registerHelper('field', function(context, view, bean) {
-        var ret = '<span sfuuid="' + (++sfid) + '"></span>',
-            name = this.name,
-            label = this.label || this.name,
-            def = this,
-            sf;
-
-        bean = bean || context.get("model");
-
-        if (bean.fields && bean.fields[name]) {
-            def = bean.fields[name];
-        }
-
-        sf = (view.sugarFields[sfid] = app.view.createField({
-            def: def,
+        var placeholder = '<span sfuuid="' + (++_sfid) + '"></span>';
+        var sf = (view.sugarFields[_sfid] = app.view.createField({
+            def: this,
             view: view,
             context: context,
-            label: label,
-            model: bean
+            model: bean || context.get("model")
         }));
 
-        sf.sfid = sfid;
+        sf.sfid = _sfid;
 
-        return new Handlebars.SafeString(ret);
+        return new Handlebars.SafeString(placeholder);
     });
 
     /**
      * Adds a button
      */
     Handlebars.registerHelper('button', function(type, label) {
-
-        var ret = '<span sfuuid="' + (++sfid) + '"></span>',
-            def = { type: type, name: type },
-            sf;
-
-        var context = this.context;
-        var bean = context.get("model");
+        var placeholder = '<span sfuuid="' + (++_sfid) + '"></span>';
+        var def = { type: type, name: type, label: label };
         var view = this;
 
-        sf = (view.sugarFields[sfid] = app.view.createField({
+        var sf = (view.sugarFields[_sfid] = app.view.createField({
             def: def,
-            view: view,
-            context: context,
-            label: label,
-            model: bean
+            view: this,
+            context: this.context,
+            model: this.context.get("model")
         }));
 
-        sf.sfid = sfid;
+        sf.sfid = _sfid;
 
-        return new Handlebars.SafeString(ret);
+        return new Handlebars.SafeString(placeholder);
     });
 
     /**

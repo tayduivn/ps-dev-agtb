@@ -101,17 +101,23 @@
         sfid: -1,
 
         initialize: function(options) {
+            // Here options.def is field viewdef (name, type, label)
             _.extend(this, options.def);
 
             this.view = options.view;
-            this.label = options.label || options.def.vname;
-            this.bindModelChange(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = options.meta;
 
             // this is experimental to try to see if we can have custom events on sugarfields themselves.
             // the following line doesn't work, need to _.extend it or something.
             // this.events = this.meta.events;
+
+            this.bindModelChange(options.context, options.model || options.context.get("model"));
+
+            // Set module field definition (vardef)
+            if (this.model && this.model.fields) {
+                this.fieldDef = this.model.fields[this.name];
+            }
         },
 
         /**
@@ -280,11 +286,7 @@
             delete this.model;
             delete this.context;
         }
-    });
 
-    // TODO: Remove once we migrate to new namespacing
-    app.augment("sugarField", {
-        base: app.view.Field
     });
 
 }(SUGAR.App));

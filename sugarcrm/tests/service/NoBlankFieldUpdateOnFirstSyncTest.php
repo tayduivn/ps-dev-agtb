@@ -122,6 +122,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
                                             array('name'=>'phone_mobile', 'value'=>''),
                                             array('name'=>'contacts_users_id', 'value'=>"{$current_user->id}"),
                                             array('name'=>'title', 'value'=>''),
+                                            array('name'=>'do_not_call', 'value'=>'1'),
                                         )
                               )
                         );
@@ -135,6 +136,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
 
         $this->assertEquals('867-5309', $existingContact->phone_mobile, 'Assert that we have not changed the phone_mobile field from first sync');
         $this->assertEquals('Jenny - I Got Your Number', $existingContact->title, 'Assert that we have not changed the title field from first sync');
+        $this->assertEquals(1, $existingContact->do_not_call, 'Assert the field "do_not_call" checkbox was checked and has value of 1');
 
         $total = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
         $this->assertEquals(1, $total, 'Assert we only have one Contact with the first and last name');
@@ -152,6 +154,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
                                             array('name'=>'phone_mobile', 'value'=>'1-800-SUGARCRM'),
                                             array('name'=>'contacts_users_id', 'value'=>"{$current_user->id}"),
                                             array('name'=>'title', 'value'=>''),
+                                            array('name'=>'do_not_call', 'value'=>'0'),
                                         )
                               )
                         );
@@ -167,6 +170,7 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         $this->assertEquals('', $existingContact->title, 'Assert that we have changed the title field to be (blank) from second sync');
         $total = $GLOBALS['db']->getOne("SELECT count(id) AS total FROM contacts WHERE first_name = '{$existingContact->first_name}' AND last_name = '{$existingContact->last_name}'");
         $this->assertEquals(1, $total, 'Assert we only have one Contact with the first and last name');
+        $this->assertEquals(0, $existingContact->do_not_call, 'Assert the field "do_not_call" checkbox was UN-checked and has value of 0');
     }
     
 

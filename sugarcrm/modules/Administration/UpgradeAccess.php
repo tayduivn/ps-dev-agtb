@@ -73,10 +73,8 @@ if (empty($GLOBALS['sugar_config']['upload_dir'])) {
 $uploadHta = "upload://.htaccess";
 
 $denyAll =<<<eoq
-<Directory>
 	Order Deny,Allow
 	Deny from all
-</Directory>
 eoq;
 
 if(file_exists($uploadHta) && filesize($uploadHta)) {

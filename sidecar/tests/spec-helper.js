@@ -48,7 +48,7 @@ var SugarTest = {};
 
     test.loadFixture = function(file) {
         return test.loadFile("../fixtures", file, "json", function(data) { return data; }, "json");
-    }
+    };
 
     test.waitFlag = false;
     test.wait = function() { waitsFor(function() { return test.waitFlag; }); };

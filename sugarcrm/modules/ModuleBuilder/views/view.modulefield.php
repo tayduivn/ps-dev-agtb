@@ -252,14 +252,17 @@ class ViewModulefield extends SugarView
 				$field_types['parent'] = $GLOBALS['mod_strings']['parent'];
 
             $enumFields = array();
-            foreach($module->mbvardefs->vardefs as $field => $def)
+            if (!empty($module->mbvardefs->vardefs['fields']))
             {
-                if (!empty($def['type']) && $def['type'] == "enum" && $field != $vardef['name'])
+                foreach($module->mbvardefs->vardefs['fields'] as $field => $def)
                 {
-                    $enumFields[$field] = isset($module->mblanguage->strings[$current_language][$def['vname']]) ?
-                        $this->mbModule->mblanguage->strings[$current_language][$def['vname']] : $field;
-                    if (substr($enumFields[$field], -1) == ":")
-                        $enumFields[$field] = substr($enumFields[$field], 0, strlen($enumFields[$field]) -1);
+                    if (!empty($def['type']) && $def['type'] == "enum" && $field != $vardef['name'])
+                    {
+                        $enumFields[$field] = isset($module->mblanguage->strings[$current_language][$def['vname']]) ?
+                            $this->mbModule->mblanguage->strings[$current_language][$def['vname']] : translate($field);
+                        if (substr($enumFields[$field], -1) == ":")
+                            $enumFields[$field] = substr($enumFields[$field], 0, strlen($enumFields[$field]) -1);
+                    }
                 }
             }
 
@@ -300,7 +303,7 @@ class ViewModulefield extends SugarView
         //BEGIN SUGARCRM flav=pro ONLY
         $ftsEngineType = getFTSEngineType();
         require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
-        if (!empty($ftsEngineType) && SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type'])) {
+        if (!empty($ftsEngineType) && SugarSearchEngineMappingHelper::isTypeFtsEnabled($vardef['type']) && SugarSearchEngineMappingHelper::shouldShowModule($moduleName)) {
             $ftsBoostOptions = getFTSBoostOptions($ftsEngineType.'_boost_options');
             $fv->ss->assign('fts_options', $ftsBoostOptions);
             $fv->ss->assign('show_fts', true);

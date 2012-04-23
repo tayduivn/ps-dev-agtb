@@ -26,11 +26,12 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
 require_once ("modules/ModuleBuilder/Module/StudioModuleFactory.php");
 
 class ViewDepDropdown extends SugarView
 {
-    protected $vars = array("editModule", "field", "parentList", "list");
+    protected $vars = array("editModule", "field", "parentList", "childList");
 
     function display ()
     {
@@ -47,24 +48,36 @@ class ViewDepDropdown extends SugarView
 
         $this->ss->assign("mapping", $mapping);
 
-        $sm = StudioModuleFactory::getStudioModule($_REQUEST['targetModule']);
-        $fields = $sm->getFields();
-        if (!empty($fields[$this->parentList]) && !empty($fields[$this->parentList]['options']))
-            $this->parentList = $fields[$this->parentList]['options'];
-        $this->ss->assign("parent_list_options", translate($this->parentList));
-        $parentOptions = translate($this->parentList);
-        $parentOptionsArray = array();
-        if(!is_array($parentOptions)) {
-            $parentOptions = array();
+        if (empty($_REQUEST['package']) || $_REQUEST['package'] == 'studio') {
+            $sm = StudioModuleFactory::getStudioModule($_REQUEST['targetModule']);
+            $fields = $sm->getFields();
+            if (!empty($fields[$this->parentList]) && !empty($fields[$this->parentList]['options']))
+                $this->parentList = $fields[$this->parentList]['options'];
+            $parentOptions = translate($this->parentList);
+            $childOptions = translate($this->childList);
+
         }
+        else {
+            $mb = new ModuleBuilder();
+            $moduleName = $_REQUEST['targetModule'];
+            $sm = $mb->getPackageModule($_REQUEST['package'], $moduleName);
+            $sm->getVardefs();
+            $fields = $sm->mbvardefs->vardefs['fields'];
+            if (!empty($fields[$this->parentList]) && !empty($fields[$this->parentList]['options']))
+                $this->parentList = $fields[$this->parentList]['options'];
+            $parentOptions = $this->getMBOptions($this->parentList, $sm);
+            $childOptions = $this->getMBOptions($this->childList, $sm);
+        }
+
+        $this->ss->assign("parent_list_options", $parentOptions);
+
+        $parentOptionsArray = array();
         foreach($parentOptions as $value => $label)
         {
             $parentOptionsArray[] = array("value" => $value, "label" => $label);
         }
-        $this->ss->assign("parentOptions",  json_encode(translate($this->parentList)));
-        $child = !empty($_REQUEST["childList"]) ? $_REQUEST["childList"] : "industry_dom";
-        $this->ss->assign("child_list_options",  translate($child));
-        $childOptions = translate("industry_dom");
+        $this->ss->assign("parentOptions",  json_encode($parentOptions));
+        $this->ss->assign("child_list_options",  $childOptions);
         $childOptionsArray = array();
         foreach($childOptions as $value => $label)
         {
@@ -75,4 +88,22 @@ class ViewDepDropdown extends SugarView
     }
 
 
+    protected function getMBOptions($label_key, $sm){
+        global $app_list_strings;
+        $lang = $GLOBALS['current_language'];
+        $sm->mblanguage->generateAppStrings(false);
+        $package_strings = $sm->mblanguage->getAppListStrings($lang.'.lang.php');
+        $my_list_strings = $app_list_strings;
+        $my_list_strings = array_merge($my_list_strings, $package_strings);
+        foreach($my_list_strings as $key=>$value){
+            if(!is_array($value)){
+                unset($my_list_strings[$key]);
+            }
+        }
+
+        if (empty($my_list_strings[$label_key]))
+            return array();
+
+        return $my_list_strings[$label_key];
+    }
 }

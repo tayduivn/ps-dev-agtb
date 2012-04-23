@@ -13,12 +13,4 @@
 
     });
 
-    // Hack metadata module to ignore sugarFields and viewTemplates in the payload
-    var _origSet = app.metadata.set;
-    app.metadata.set = function(data) {
-        data.sugarFields = null;
-        data.viewTemplates = null;
-        _origSet.call(this, data);
-    };
-
 })(SUGAR.App);
