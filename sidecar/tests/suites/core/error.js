@@ -1,37 +1,35 @@
 describe("Error module", function() {
-    var app = SUGAR.App,
-        server;
+    var app;
+
 
     beforeEach(function() {
-        server = sinon.fakeServer.create();
-    });
-
-    afterEach(function() {
-        server.restore();
+        app = SugarTest.app;
+        app.metadata.set(fixtures.metadata);
+        app.data.declareModels(fixtures.metadata);
+        SugarTest.seedFakeServer();
     });
 
     it("should inject custom http error handlers and should handle http code errors", function() {
-        var bean = app.data.createBean("Cases");
-        var handled = false;
+        var bean = app.data.createBean("Cases"),
+            handled = false, statusCodes;
 
         // The reason we don't use a spy in this case is because
         // the status codes are copied instead of passed in by
         // by reference, thus the spied function will never be called.
-        var statusCodes = {
+        statusCodes = {
             404: function() {
                 handled = true;
             }
         };
 
         app.error.initialize({statusCodes: statusCodes});
+
         sinon.spy(app.error, "handleHTTPError");
-        server.respondWith([404, {}, ""]);
-
+        SugarTest.server.respondWith([404, {}, ""]);
         bean.save();
-        server.respond();
-
-        expect(app.error.handleHTTPError.called).toBeTruthy();
+        SugarTest.server.respond();
         expect(handled).toBeTruthy();
+        expect(app.error.handleHTTPError.called).toBeTruthy();
 
         app.error.handleHTTPError.restore();
     });
