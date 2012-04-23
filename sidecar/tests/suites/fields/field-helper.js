@@ -8,7 +8,7 @@ var SugarFieldTest = {};
         });
     }
 
-    test.createField = function(type, viewName, extraparams) {
+    test.createField = function(name, type, viewName, fieldDef) {
 
 
         var app = SUGAR.App;
@@ -16,16 +16,19 @@ var SugarFieldTest = {};
         var view = new Backbone.View();
         view.name = viewName;
 
-        var def = { type: type };
+        var def = { name: name, type: type };
 
-        extraparams = extraparams || {};
-        _.extend(def, extraparams);
+        var model = new Backbone.Model();
+        if (fieldDef) {
+            model.fields = {};
+            model.fields[name] = fieldDef;
+        }
 
         return app.view.createField({
             def: def,
             view: view,
             context: "",
-            model: new Backbone.Model()
+            model: model
         });
     }
 

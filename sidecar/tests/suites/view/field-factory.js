@@ -1,6 +1,6 @@
 describe("View Manager", function() {
 
-    describe("should be able to create instances of Field class", function() {
+    describe("should be able to create instances", function() {
 
         var app = SUGAR.App;
 
@@ -31,11 +31,12 @@ describe("View Manager", function() {
             app.view.fields = {};
         });
 
-        it("with default template", function() {
+        it("of base class", function() {
             var result = app.view.createField({
                 def: {
                     type: 'addresscombo',
-                    name: "address"
+                    name: "address",
+                    label: "Address"
                 },
                 context: context,
                 view: view
@@ -43,27 +44,38 @@ describe("View Manager", function() {
 
             expect(result).toBeDefined();
             expect(result instanceof app.view.Field).toBeTruthy();
+            expect(result.type).toEqual("addresscombo");
+            expect(result.name).toEqual("address");
+            expect(result.label).toEqual("Address");
+            expect(result.fieldDef).toEqual(fixtures.metadata.modules["Contacts"].fields["address"]);
+
         });
 
-        it("with def of a string", function() {
-            var model = app.data.createBean("Contacts", {
-                first_name: "Foo",
-                last_name: "Bar"
+        it("of custom class", function() {
+            app.view.fields.AddresscomboField = app.view.Field.extend({
+                foo: "foo"
             });
-            var result = app.view.createField({
-                def: "first_name",
-                context: context,
-                view: view,
-                model: model
-            });
-            expect(result).toBeDefined();
-            expect(result.type).toEqual("text");
-        });
 
-        it("with custom controller", function() {
             var result = app.view.createField({
                 def: {
-                    type: 'varchar',
+                    type: 'addresscombo',
+                    name: "address",
+                    label: "Address"
+                },
+                context: context,
+                view: view
+            });
+
+            expect(result).toBeDefined();
+            expect(result instanceof app.view.fields.AddresscomboField).toBeTruthy();
+            expect(result.foo).toEqual("foo");
+
+        });
+
+        it("of custom class with controller", function() {
+            var result = app.view.createField({
+                def: {
+                    type: 'text',
                     name: "description"
                 },
                 context: context,

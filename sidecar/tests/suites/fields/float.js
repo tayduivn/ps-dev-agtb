@@ -4,7 +4,7 @@ describe("sugarfields", function() {
         it("should format the value", function() {
 
             var controller = SugarFieldTest.loadSugarField('float/float');
-            var field = SugarFieldTest.createField("float", "detail", {
+            var field = SugarFieldTest.createField("foo", "float", "detail", {
                                 round: 3,
                                 precision: 4,
                                 number_group_seperator: ",",
