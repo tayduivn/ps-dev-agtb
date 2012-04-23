@@ -188,6 +188,42 @@ class TemplateEnum extends TemplateText{
         }
 		parent::save($df);
 	}
+
+    /**
+     * @param DynamicField $df
+     */
+    function delete($df){
+        //BEGIN SUGARCRM flav=pro ONLY
+        //If a dropdown uses the field that is being delted as a parent dropdown, we need to remove that dependency
+        $seed = BeanFactory::getBean($df->getModuleName());
+        if ($seed)
+        {
+            $fields = $seed->field_defs;
+            foreach($fields as $field => $def)
+            {
+                if (!empty($def['visibility_grid']['trigger']) && $def['visibility_grid']['trigger'] == $this->name)
+                {
+                    $field = get_widget ( $def [ 'type' ] ) ;
+                    unset($def['visibility_grid']);
+                    $field->populateFromRow($def);
+                    if(isset($def['source']) && $def['source'] == "custom_fields")
+                        $field->save ( $df );
+                    else
+                    {
+                        //Out of the box field that we need to use a StandardField rather than DynamicFIeld object to save
+                        require_once ('modules/ModuleBuilder/parsers/StandardField.php') ;
+                        $sf = new StandardField ( $df->getModuleName() ) ;
+                        $sf->setup ( $seed ) ;
+                        $field->module = $seed;
+                        $field->save ( $sf ) ;
+                    }
+                }
+            }
+        }
+
+        //END SUGARCRM flav=pro ONLY
+        parent::delete($df);
+    }
 }
 
 

@@ -5828,7 +5828,7 @@ top:0px;
 }
 
 #glblSearchBtn {
-    display:inline-block;
+    display:block;
     float: right;
     position: relative;
     left: -10px;
@@ -6051,6 +6051,7 @@ color: #0B578F;
 	float:right;
 	margin-top: 8px;
 	height: 26px;
+    width: 270px;
 }
 
 table.dcListView th,table.dcListView td {
@@ -6097,7 +6098,8 @@ margin-left:10px;
 	border: 0;
 	width:215px;
 	font-size: 12px;
-    padding:5px 5px 5px 5px;
+    padding:1px 5px 0px 5px;
+    height: 25px;
     border-radius: 2px;
 	-moz-border-radius: 2px;
 	-webkit-border-radius: 2px;
@@ -6242,7 +6244,7 @@ margin-top: 14px;
 display: block;
 position: absolute;
 right: 20px;
-top: 6px;
+top: 8px;
 display: none;
 cursor: pointer;
 }
