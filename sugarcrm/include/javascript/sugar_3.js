@@ -4538,7 +4538,7 @@ closeActivityPanel: {
                                 // Bug 51984: We need to submit the form just incase we have a form already submitted
                                 // so we dont get a popup stating that the form needs to be resubmitted like it doesn,
                                 // when you do a reload/refresh
-                                window.setTimeout("document.getElementById('search_form').submit()", 0);
+                                window.setTimeout(function(){if(document.getElementById('search_form')) document.getElementById('search_form').submit(); else window.location.reload(true);}, 0);
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };
