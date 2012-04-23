@@ -11,7 +11,6 @@
          * Renders Header view
          */
         render: function() {
-            debugger;
             app.view.View.prototype.render.call(this);
             var gTable = this.$el.find('#gridTable').dataTable();
             gTable.$('td').editable(function (value, settings) {

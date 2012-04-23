@@ -8,19 +8,21 @@
      */
     app.view.views.TreeView = app.view.View.extend({
 
-        initialize : function(options){
-            options.context = app.context.getContext();
-            options.context.set({
-                "module":"Users",
-                "layout":this
+        render : function (){
+            app.view.View.prototype.render.call(this);
+            $("#demo1")
+            // call `.jstree` with the options object
+            .jstree({
+                // the `plugins` array allows you to configure the active plugins on this instance
+                "plugins" : ["themes","html_data","ui","crrm"],
+                // each plugin you have included can have its own config object
+                "core" : { "initially_open" : [ "phtml_1" ] }
+                // it makes sense to configure a plugin only if overriding the defaults
             });
-            options.context.loadData();
-            app.view.View.prototype.initialize.call(this, options);
-            return this;
         },
 
         getFields: function() {
-            return ["first_name", "last_name", "title"];
+            return ["name"];
         }
 
     });
