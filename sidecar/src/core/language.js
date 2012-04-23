@@ -119,7 +119,11 @@
          * @return {String} Translated string
          */
         translate: function(str, module) {
-            return this.get(str, module) || this.getAppStrings(str) || "";
+            if(typeof module !== 'undefined' && module) {
+                return this.get(str, module) || this.getAppStrings(str) || "";
+            } else {
+                return this.getAppStrings(str);
+            }
         }
     });
 })(SUGAR.App);
