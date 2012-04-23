@@ -1,0 +1,12 @@
+<div class="row-fluid">
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
+    <div class="span4">
+        <select name="{{name}}" {{#if multi}} multiple {{/if}}>
+            <option value="{{this.value}}" selected>{{this.value}}</option>
+            {{#eachOptions options}}
+                <option value="{{getValue this "id"}}">{{getValue this "full_name"}}</option>
+            {{/eachOptions}}
+        </select>
+        <p class="help-block"></p>
+    </div>
+</div>

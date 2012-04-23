@@ -1,0 +1,4 @@
+{{log this}}
+{{#each options}}
+    <option value="{{getFieldValue this "full_name"}}" id="{{getFieldValue this "id"}}">{{getFieldValue this "full_name"}}</option>
+{{/each}}
