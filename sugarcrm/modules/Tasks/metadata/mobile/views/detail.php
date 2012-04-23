@@ -35,23 +35,24 @@ $viewdefs['Tasks']['mobile']['view']['detail'] = array(
         ),
     ),
     'panels' => array(
-        'label' => 'LBL_PANEL_1',
-        'fields' => array(
-            array(
-                'name' => 'name',
-                'displayParams' => array(
-                    'required' => true,
-                    'wireless_edit_only' => true)),
-            'priority',
-            'status',
-            'date_start',
-            'date_due',
-            'description',
-            'assigned_user_name',
-            //BEGIN SUGARCRM flav=pro ONLY
-            'team_name',
-            //END SUGARCRM flav=pro ONLY
-
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'name',
+                    'displayParams' => array(
+                        'required' => true,
+                        'wireless_edit_only' => true)),
+                'priority',
+                'status',
+                'date_start',
+                'date_due',
+                'description',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            )
         ),
     ),
 );
