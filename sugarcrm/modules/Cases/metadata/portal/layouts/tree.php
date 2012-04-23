@@ -1,6 +1,6 @@
 <?php
 $viewdefs['Cases']['portal']['layout']['tree'] = array(
-    'type' => 'row',
+    'type' => 'simple',
     'components' =>
     array(
         0 => array(
