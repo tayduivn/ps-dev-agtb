@@ -36,5 +36,5 @@ describe("Events Hub", function() {
 
             expect(cb3).not.toHaveBeenCalled();
         });
-    })
+    });
 });

@@ -1,4 +1,5 @@
 describe("App", function() {
+
     var authStub, metaStub, isGetMetadataSucceeded;
 
     beforeEach(function() {
@@ -24,52 +25,51 @@ describe("App", function() {
     });
 
     describe("when an instance is requested", function() {
-        var app;
 
         it("should return a new instance if none exists", function() {
-            app = SUGAR.App.init({el: "body", silent: true});
-            expect(app).toBeTruthy();
+            expect(SugarTest.app).toBeTruthy();
         });
 
         it("should return an existing instance", function() {
+            var app = SUGAR.App.init({el: "body"});
             var app2 = SUGAR.App.init({el: "body"});
             expect(app2).toEqual(app);
         });
 
-        SUGAR.App.destroy();
+        it("should fire a app:init event when initialized", function() {
+            var cbSpy = sinon.spy(function() {});
+            SugarTest.app.events.on("app:init", cbSpy);
+            SugarTest.app.trigger("app:init", this, {modules: cbSpy});
+            expect(cbSpy).toHaveBeenCalled();
+        });
     });
 
     describe("when augmented", function() {
-        var app = SUGAR.App.init({el: "body", silent: true}),
-                mock;
         it("should register a module with itself", function() {
-            var module = {
-                init: function() {
-                }
-            }
-
+            var mock,
+                module = {
+                    init: function() {
+                    }
+                };
             mock = sinon.mock(module);
-            mock.expects("init").once();
 
-            app.augment("test", module, true);
+            mock.expects("init").once();
+            SugarTest.app.augment("test", module, true);
+
             expect(mock.verify()).toBeTruthy();
         });
-
-        SUGAR.App.destroy();
     });
 
     describe("when a data sync is required", function() {
         it("should fire a sync:complete event when all of the sync jobs have finished", function() {
-
             var cbSpy = sinon.spy(function() {
                 SugarTest.setWaitFlag();
             });
-            var app = SUGAR.App.init({el: "body"});
-            app.events.off("app:sync:complete"); // clear the app sync complete events
-            // Add listener onto app for the syncComplete event
-            app.on("app:sync:complete", cbSpy);
-            app.sync();
 
+            SugarTest.app.events.off("app:sync:complete"); // clear the app sync complete events
+            SugarTest.app.on("app:sync:complete", cbSpy);
+
+            SugarTest.app.sync();
             SugarTest.wait();
 
             runs(function() {
@@ -77,18 +77,23 @@ describe("App", function() {
             });
         });
 
+        it('should start and call sync if authenticated', function() {
+            var syncSpy = sinon.spy(SUGAR.App, 'sync');
+
+            SugarTest.app.start();
+            expect(syncSpy.called).toBeTruthy();
+
+            SUGAR.App.sync.restore();
+        });
+
         it("should fire a sync:error event when one of the sync jobs have failed", function() {
             var cbSpy = sinon.spy(function() {
                 SugarTest.setWaitFlag();
             });
-            var app = SUGAR.App.init({el: "body"});
 
-            // Add listener onto app for the syncComplete event
-            app.on("app:sync:error", cbSpy);
-
+            SugarTest.app.on("app:sync:error", cbSpy);
             isGetMetadataSucceeded = false;
-            app.sync();
-
+            SugarTest.app.sync();
             SugarTest.wait();
 
             runs(function() {
@@ -98,16 +103,15 @@ describe("App", function() {
     });
 
     it('should navigate given context, model and action', function() {
-        var app = SUGAR.App.init({el: "body"}),
-            model = new Backbone.Model(),
+        var model = new Backbone.Model(),
             action = "edit",
             options = {},
             context = {},
-            routerSpy = sinon.spy(app.router, "navigate");
+            routerSpy = sinon.spy(SugarTest.app.router, "navigate");
 
         model.set("id", "1234");
         model.module = "Contacts";
-        app.navigate(context, action, model, options);
+        SugarTest.app.navigate(context, action, model, options);
 
         expect(routerSpy).toHaveBeenCalled();
 

@@ -1,37 +1,44 @@
 describe("View Manager", function() {
 
-    describe("should be able to create instances", function() {
+    var app;
 
-        var app = SUGAR.App;
+    describe("should be able to create instances of Field class", function() {
 
-        app.metadata.set(fixtures.metadata);
-        app.data.declareModels(fixtures.metadata);
-
-        //Need a sample Bean
-        var bean = app.data.createBean("Contacts", {
-            first_name: "Foo",
-            last_name: "Bar"
-        });
-
-        var collection = new app.BeanCollection([bean]);
-
-        //Setup a context
-        var context = app.context.getContext({
-            url: "someurl",
-            module: "Contacts",
-            model: bean,
-            collection: collection
-        });
-
-        var view = {
-            name: "test"
-        };
+        var bean, collection, context, view;
 
         beforeEach(function() {
+            app = SugarTest.app;
+
+            app.metadata.set(fixtures.metadata);
+            app.data.declareModels(fixtures.metadata);
+
+            //Need a sample Bean
+            bean = app.data.createBean("Contacts", {
+                first_name: "Foo",
+                last_name: "Bar"
+            });
+
+            collection = new app.BeanCollection([bean]);
+
+            //Setup a context
+            context = app.context.getContext({
+                url: "someurl",
+                module: "Contacts",
+                model: bean,
+                collection: collection
+            });
+
+            view = {
+                name: "test"
+            };
             app.view.fields = {};
         });
 
-        it("of base class", function() {
+        afterEach(function() {
+            bean = null, collection = null, context = null, view = null;
+        });
+
+        it("with default template", function() {
             var result = app.view.createField({
                 def: {
                     type: 'addresscombo',
