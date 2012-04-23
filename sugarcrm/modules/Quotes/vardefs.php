@@ -685,7 +685,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'table' => 'Opportunities',
     'isnull' => 'true',
     'module' => 'Opportunities',
-    'link' => 'opportunity_link',
+    'link' => 'opportunities',
     'massupdate' => false,
     //'dbType' => 'varchar',
     'source' => 'non-db',

@@ -74,20 +74,20 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
     	   }
        } //foreach
     }
-    
-    
-    
+
+
+
     /**
      * Ensure that no custom metadata is created and no history item created.
      *
      */
-    function testHistoryCreationForNonUpgradedMetadataFiles() 
-    {		
+    function testHistoryCreationForNonUpgradedMetadataFiles()
+    {
        $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
        $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
        require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
        $sugar_merge = new SugarMerge('tests/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob');
-       
+
        //Using oob defs make sure nothing is merged
        $mergedFiles = $sugar_merge->mergeModule('Accounts');
        $this->assertFalse(file_exists('custom/modules/Accounts/metadata/detailviewdefs.php'));
@@ -127,7 +127,7 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
             return;
         while (($filename = readdir($dir_handle)) !== false) 
         {
-            if ($filename == '.' || $filename == '..' || is_file("{$path}/{$filename}") == false)
+            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}"))
             {
                 continue;
             }
@@ -150,6 +150,8 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
         }
         return $results;
     }
+
+
     private function checkForHistoryRecords($module_dir)
     {
         $parth = "custom/history/modules/$module_dir/metadata";
@@ -159,10 +161,12 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
         $found = FALSE;
         while (($filename = readdir($dir_handle)) !== false) 
         {
-            if ($filename == '.' || $filename == '..')
+            if ($filename == '.' || $filename == '..' || is_dir("{$parth}/{$filename}"))
+            {
                 continue;
-            else 
+            } else {
                 return TRUE;
+            }
         }
         return $found;
     }

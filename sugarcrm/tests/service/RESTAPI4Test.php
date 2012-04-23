@@ -74,7 +74,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->aclField = new ACLField();
         $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
-        $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
+        ACLField::loadUserFields('Accounts', 'Account', $this->_user->id, true );
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
         //END SUGARCRM flav=pro ONLY
     }

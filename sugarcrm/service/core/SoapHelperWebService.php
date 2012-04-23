@@ -470,6 +470,14 @@ function validate_user($user_name, $password){
 			}
 
 			$filterFields = $this->filter_fields($value, $fields);
+
+           //BEGIN SUGARCRM flav=pro ONLY
+            //now check field level acl's if this bean implements them
+            if($value->bean_implements('ACL') && !empty($GLOBALS['current_user'])){
+                $filterFields = $this->returnFieldsWithAccess($value, $filterFields);
+            }
+          //END SUGARCRM flav=pro ONLY
+
 			foreach($filterFields as $field){
 				$var = $value->field_defs[$field];
 				if(isset($value->$var['name'])){
@@ -1176,6 +1184,46 @@ function validate_user($user_name, $password){
 		}
 		return false;
 	} // fn
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * returnFieldsWithAccess
+     *
+     * @param object $seed an instance of the bean we are checking acl's on
+     * @param array $select_fields array of fields being explicitly checked for access, empty array means check all
+     * @return array Array of the fields for this bean that passed the acl filter test
+     */
+    function returnFieldsWithAccess($seed,$select_fields=array()){
+        //can't do anything if there is no bean
+        if(empty($seed)){
+            return $select_fields;
+        }
+        //if the select fields array is empty, then use all the fields for this bean
+        if(empty($select_fields)){
+            $fields = $seed->field_name_map;
+            $select_fields = array_keys($fields);
+        }
+        //check to see if bean implements acl and this is not an admin so we can remove any restricted fields
+        if($seed->bean_implements('ACL') && !empty($GLOBALS['current_user']) && !$GLOBALS['current_user']->is_admin){
+            //lets load up any acl fields for this uer
+             ACLField::loadUserFields($seed->module_dir,$seed->object_name, $GLOBALS['current_user']->id);
+
+            //iterate through the select fields array and remove any restricted acl fields (less than 0)
+            foreach($select_fields as $fieldnum=>$fieldname){
+                if(isset($_SESSION['ACL'][$GLOBALS['current_user']->id][$seed->module_dir]['fields'][$fieldname])
+                    && $_SESSION['ACL'][$GLOBALS['current_user']->id][$seed->module_dir]['fields'][$fieldname] < 0
+                ){
+                    //this field has an acl restricting the user from accessing it, unset it
+                    unset($select_fields[$fieldnum]);
+                }
+            }
+        }
+        return $select_fields;
+    }
+  //END SUGARCRM flav=pro ONLY
+
+
 } // clazz
 
 ?>

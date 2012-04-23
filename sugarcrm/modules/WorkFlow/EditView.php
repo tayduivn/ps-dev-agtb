@@ -113,7 +113,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign('NAME', $focus->name);
-$xtpl->assign("DESCRIPTION", nl2br($focus->description));
+$xtpl->assign("DESCRIPTION", $focus->description);
 
 if ($focus->id=="" || $focus->status==1){
 	$status = "Active";

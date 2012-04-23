@@ -91,6 +91,7 @@ $vardefs = array(
 	    'dbType' => 'id',
 	    'reportable'=>true,
 	    'comment' => 'User who last modified record',
+        'massupdate' => false,
 	  ),
 	  'modified_by_name' => 
 	  array (
@@ -104,7 +105,8 @@ $vardefs = array(
 	    'id_name' => 'modified_user_id',
 	    'module'=>'Users',
 	    'link'=>'modified_user_link',
-	    'duplicate_merge'=>'disabled' 
+	    'duplicate_merge'=>'disabled',
+        'massupdate' => false,
 	  ),  
 	  'created_by' =>
 	  array (
@@ -118,6 +120,7 @@ $vardefs = array(
 	    'dbType' => 'id',
 	    'group'=>'created_by_name',
 	    'comment' => 'User who created record',
+        'massupdate' => false,
 	  ),
 	  	'created_by_name' => 
 	  array (
@@ -133,6 +136,7 @@ $vardefs = array(
 		'module'=>'Users',
 		'duplicate_merge'=>'disabled',
         'importable' => 'false',
+        'massupdate' => false,
 	),
 	  'description' =>
 	  array (

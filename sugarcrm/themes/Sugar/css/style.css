@@ -507,7 +507,7 @@ div.import_instruction
 /* module title */
 div.moduleTitle
 {
-    height:2em;
+    line-height:2em;
 	padding-bottom: 3px;
     padding-top: 0;
     margin-bottom: 10px;
@@ -719,6 +719,12 @@ margin-top: 0;
 .search td select
 {
     width: 150px !important;
+}
+
+/* Quiq Edit*/
+
+input#header {
+    min-width: inherit;
 }
 
 /* Listview styles */
@@ -5821,10 +5827,10 @@ top:0px;
 }
 
 #glblSearchBtn {
-    display:none;
-float: right;
-margin-top: 7px;
-margin-right: 10px;
+    display:inline-block;
+    float: right;
+    position: relative;
+    left: -10px;
 }
 
 
@@ -6084,29 +6090,30 @@ margin-left:10px;
 	width: 240px;
 	display: inline-block;
 	position: relative;
+    float: left;
 }
 #sugar_spot_search {
 	border: 0;
-	width:170px;
+	width:215px;
 	font-size: 12px;
-    padding:5px 20px 5px 20px;
+    padding:5px 5px 5px 5px;
     border-radius: 2px;
 	-moz-border-radius: 2px;
 	-webkit-border-radius: 2px;
     box-shadow:inset 0 1px 1px #999;
 	-moz-box-shadow:inset 0 1px 1px #999;
 	box-shadow:inset 0 1px 1px #999;
-    background: #fff url(../../../../index.php?entryPoint=getImage&imageName=search.png) 5px 6px no-repeat;
-    left: -10px;
 }
 
 #spot_search_btn {
-    width: 10px;
+    width: 12px;
     height: 20px;
     cursor: pointer;
-    display: inline-block;
-    left: 20px;
-    position: relative;
+    display: block;
+    top:5px;
+    left: 24px;
+    position: absolute;
+    *font-size:30px;
 }
 
 input#sugar_spot_search:focus {
@@ -6139,16 +6146,21 @@ input#sugar_spot_search:focus {
     max-height: 600px;
     min-height: 30px;
     overflow: auto;
+    width:360px;
+    /*IE hack since box-shadow is not supported*/
+    border-color:#999\9;
+    border-style:solid\9;
+    border-width:1px\9;
 }
 
 #sugar_spot_search_results section {
 
 }
 
-#sugar_full_search_results section.odd {
+#sugar_full_search_results .odd {
 	background-color: #efefef;	
 }
-
+#sugar_spot_search_results .resultTitle, #sugar_full_search_results .resultTitle,
 #sugar_spot_search_results section .resultTitle, #sugar_full_search_results section .resultTitle{
     float:left;
     color:#666;
@@ -6162,45 +6174,48 @@ input#sugar_spot_search:focus {
 
 
 
-#sugar_spot_search_results section .desc, #sugar_full_search_results section .desc {
+#sugar_spot_search_results .desc, #sugar_full_search_results .desc {
 	color: #aaa;
 }
 
 
-#sugar_spot_search_results section.resultNull {   
+#sugar_spot_search_results .resultNull {
 	 text-align:center;
 	 color: #666;
 }
 
-#sugar_spot_search_results section.resultNull h1 {
+#sugar_spot_search_results .resultNull h1 {
     font-weight:normal;
     margin-bottom:5px;
 }
 
 
 
-#sugar_spot_search_results section.resultNull a {
+#sugar_spot_search_results .resultNull a {
     text-decoration:none;
 }
-
+#sugar_spot_search_results ul,#sugar_full_search_results ul,
 #sugar_spot_search_results section ul, #sugar_full_search_results section ul {
-    width:155px;
+    width:230px;
     line-height:20px;
     padding:0 0 25px 10px;
     float:left;
 	margin: 0px;
 }
 
+#sugar_spot_search_results ul li, #sugar_full_search_results ul li,
 #sugar_spot_search_results section ul li, #sugar_full_search_results section ul li  {
     list-style: none;
     margin-bottom:7px;
 }
 
+#sugar_spot_search_results ul li a, #sugar_full_search_results ul li a,
 #sugar_spot_search_results section ul li a, #sugar_full_search_results section ul li a {
     color:#006BB9;
     text-decoration:none;
 }
 
+#sugar_spot_search_results ul li a:hover, #sugar_full_search_results ul li a:hover,
 #sugar_spot_search_results section ul li a:hover, #sugar_full_search_results section ul li a:hover {
     text-decoration:underline;
 }
@@ -6223,10 +6238,10 @@ margin-top: 14px;
 }
 
 #close_spot_search {
-display: inline-block;	
-position: relative;
-left: -18px;
-top: 1px;
+display: block;
+position: absolute;
+right: 20px;
+top: 6px;
 display: none;
 cursor: pointer;
 }
@@ -6404,7 +6419,7 @@ ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
 
-ul.clickMenu:hover {
+ul.clickMenu li a:hover {
    		background-image: -moz-linear-gradient(center top, 
 		#ffffff 0%,
 		#255e90 2%,
@@ -6425,10 +6440,10 @@ ul.clickMenu:hover {
 }
 ul#globalLinksSubnav.SugarActionMenuIESub li a:hover, ul#quickCreateULSubnav.SugarActionMenuIESub li a:hover,
 ul.clickMenu:hover > li > span > a, ul.clickMenu:hover > li > a, ul.clickMenu:hover > li > form > a {
-	color: #fff !important;	
+	/*color: #fff !important;*/
 }
 
-ul.clickMenu:hover > li > span {
+ul.clickMenu li span:hover {
 	background-position: 5px 3px;
 }
 ul.clickMenu li, ul.SugarActionMenuIESub li {
@@ -6451,7 +6466,7 @@ ul.clickMenu li a, .list tr.pagination td.buttons ul.clickMenu > li > a:link, .l
 }
 
 .list tr.pagination td.buttons ul.clickMenu:hover > li > a:link, .list tr.pagination td.buttons ul.clickMenu:hover > li > a{		
-	color: #fff;
+	/*color: #fff;*/
 }
 
 ul.clickMenu li.single a{ 

@@ -122,7 +122,6 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
                 }
                 //include the button class and see if it extends quick create
                 $className = 'SugarWidget'.$buttonClass;
-
                 $widgetClass = get_custom_file_if_exists('include/generic/SugarWidgets/'.$className.'.php');
                 if (file_exists($widgetClass)){
                     include_once($widgetClass);

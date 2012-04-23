@@ -476,6 +476,7 @@ class StudioModule
         $sources = $this->getViewMetadataSources();
         $sources[] = array('type'  => MB_BASICSEARCH);
         $sources[] = array('type'  => MB_ADVANCEDSEARCH);
+        $sources[] = array('type'  => MB_POPUPSEARCH);        
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
         //END SUGARCRM flav=pro || flav=sales ONLY

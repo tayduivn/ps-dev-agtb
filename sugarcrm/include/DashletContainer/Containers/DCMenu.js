@@ -263,8 +263,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         Y.one(item).setAttribute("title", SUGAR.language.get('app_strings', 'LBL_REMOVE_FROM_FAVORITES'));
 		item.onclick = function(){
 			DCMenu.removeFromFavorites(this, module, record);
+            SUGAR.themes.updateFavoritesList(true);
 		}
 		quickRequest('favorites', 'index.php?to_pdf=1&module=SugarFavorites&action=save&fav_id=' + record + '&fav_module=' + module);
+        SUGAR.themes.updateFavoritesList(true);
 	}
 
 	DCMenu.removeFromFavorites = function(item, module, record){

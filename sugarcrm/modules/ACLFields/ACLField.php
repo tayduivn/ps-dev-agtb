@@ -159,7 +159,7 @@ class ACLField  extends ACLAction
      * @param string $user_id
      * @param bool $refresh
      */
-    function loadUserFields($category,$object, $user_id, $refresh=false){
+    static function loadUserFields($category,$object, $user_id, $refresh=false){
         if(!$refresh && isset($_SESSION['ACL'][$user_id][$category]['fields']))return $_SESSION['ACL'][$user_id][$category]['fields'];
         if(empty($_SESSION['ACL'][$user_id])) {
             // load actions to prevent cache poisoning for ACLAction

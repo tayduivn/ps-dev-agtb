@@ -27,7 +27,8 @@
 			<input type="hidden" name="module" id="module" value="KBDocuments">
 			<input type="hidden" name="action" id="action" value="SearchHome">
 			<input type="hidden" name="mode" id="mode_a" value="advanced">			
-			<input type="hidden" name="post_clear_mode" id="post_clear_mode" value="advanced">						
+			<input type="hidden" name="post_clear_mode" id="post_clear_mode" value="advanced">
+            <input type="hidden" value="true" name="query" id="query">
 							
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view search kb">
 		<tr><td>
