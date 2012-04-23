@@ -27,69 +27,51 @@ class RelateApi extends ListApi {
         return array(
             'listRelatedRecords' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','?','?'),
-                'pathVars' => array('module','record','relationship'),
+                'path' => array('<module>','?','link','?'),
+                'pathVars' => array('module','record','','link_name'),
                 'method' => 'listRelated',
                 'shortHelp' => 'List related records to this module',
                 'longHelp' => 'include/api/html/module_relate_help.html',
             ),
         );
     }
+
+    public function __construct() {
+        $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_subpanel'];
+    }
     
     public function listRelated($api, $args) {
-        global $current_user;
-        $deleted = 0;
-        $relatedFields = array();
-        $fields = array();
-        $where = "";
-
-        if (isset($args['fields'])) {
-            $tmp = explode(",", $args["fields"]);
-            foreach ($tmp as $f) {
-                if (!empty($f)) {
-                    array_push($fields, $f);
-                }
-            }
+        // Load up the bean
+        $record = BeanFactory::getBean($args['module']);
+        $record->retrieve($args['record']);
+        if ( ! $api->security->canAccessModule($record,'view') ) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
+        // Load up the relationship
+        $linkName = $args['link_name'];
+        if ( ! $record->load_relationship($linkName) ) {
+            // The relationship did not load, I'm guessing it doesn't exist
+            throw new SugarApiExceptionNotFound('Could not find a relationship named: '.$args['relationship']);
+        }
+        // Figure out what is on the other side of this relationship, check permissions
+        $linkModuleName = $record->$linkName->getRelatedModuleName();
+        $linkSeed = BeanFactory::getBean($linkModuleName);
+        if ( ! $api->security->canAccessModule($linkSeed,'view') ) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$linkModuleName);
         }
 
-        if (isset($args['where'])) {
-            $where = $args["where"];
+        $options = $this->parseArguments($api, $args, $linkSeed);
+
+        $linkQueryParts = $record->$linkName->getSubpanelQuery(array('return_as_array'=>true));
+
+        $listQueryParts = $linkSeed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
+        
+        $listQueryParts['from'] .= $linkQueryParts['join'];
+
+        if ( $api->security->hasExtraSecurity($record,'relateList',$linkSeed) ) {
+            $api->security->addExtraSecurityRelateList($record,$listQueryParts);
         }
 
-        $obj = new SugarWebServiceImpl();
-        $relateData = $obj->get_relationships($api->sessionId,
-            $args['module'],
-            $args['record'],
-            $args['relationship'],
-            $where,
-            $fields,
-            array(),
-            $deleted);
-
-        if (!array_key_exists("entry_list", $relateData)) {
-            throw new SugarApiExceptionError("No returned data");
-        }
-
-        $retData = array();
-        foreach ($relateData["entry_list"] as $entry) {
-            $keys = array_keys($entry);
-            $tmpData = array();
-
-            // this inner loop is needed to remove the unneeded nesting of hashes where name="name" &
-            // value="value" so the data is a proper hash //
-            foreach ($keys as $key) {
-                if ($key != "name_value_list") {
-                    $tmpData[$key] = $entry[$key];
-                } else {
-                    $value = $entry[$key];
-                    foreach ($value as $listData) {
-                        $tmpData[$listData["name"]] = $listData["value"];
-                    }
-                }
-            }
-            array_push($retData, $tmpData);
-        }
-
-        return $retData;
+        return $this->performQuery($api, $args, $linkSeed, $listQueryParts, $options['limit'], $options['offset']);
     }
 }

@@ -52,25 +52,22 @@ class ListApi extends SugarApi {
         );
     }
 
-    public function listModule($api, $args) {
-        global $current_user;
+    protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
 
-        $this->requireArgs($args,array('module'));
+    public function __construct() {
+        $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
+    }
 
-        // Load up a seed bean
-        $seed = BeanFactory::getBean($args['module']);
-        if ( ! $api->security->canAccessModule($seed,'view') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
-        }
+    protected function parseArguments($api, $args, $seed) {
 
         $deleted = false;
         if ( isset($args['deleted']) && ( strtolower($args['deleted']) == 'true' || $args['deleted'] == '1' ) ) {
             $deleted = true;
         }
 
-        $maxResults = $GLOBALS['sugar_config']['list_max_entries_per_page'];
-        if ( isset($args['maxResult']) ) {
-            $maxResults = (int)$args['maxResult'];
+        $limit = $this->defaultLimit;
+        if ( isset($args['max_num']) ) {
+            $limit = (int)$args['max_num'];
         }
 
         $offset = 0;
@@ -132,63 +129,81 @@ class ListApi extends SugarApi {
             $orderBy = implode(',',$orderByArray);
         }
 
-        $where = '';
+        $whereParts = array();
         // TODO: Upgrade this to use the full-text search for basic searches
-        if ( isset($args['basicSearch']) ) {
+        if ( isset($args['q']) ) {
             $tableName = $seed->table_name;
-            $basicSearch = $GLOBALS['db']->quote($args['basicSearch']);
+            $basicSearch = $GLOBALS['db']->quote($args['q']);
             if ( is_a($seed,'Person') ) {
                 // Search by first_name, last_name
-                if ( strpos($args['basicSearch'],' ') !== false ) {
+                if ( strpos($args['q'],' ') !== false ) {
                     // There is a space in there, search by first name and last name
-                    list($leftPart,$rightPart) = explode(' ',$args['basicSearch']);
+                    list($leftPart,$rightPart) = explode(' ',$args['q']);
                     $leftPart = $GLOBALS['db']->quote($leftPart);
                     $rightPart = $GLOBALS['db']->quote($rightPart);
                     
-                    $where = "( {$tableName}.first_name LIKE '{$leftPart}%' AND {$tableName}.last_name LIKE '{$rightPart}%' ) OR ( {$tableName}.last_name LIKE '{$leftPart}%' AND {$tableName}.first_name LIKE '{$right_part}%' )";
+                    $whereParts[] = "( {$tableName}.first_name LIKE '{$leftPart}%' AND {$tableName}.last_name LIKE '{$rightPart}%' ) OR ( {$tableName}.last_name LIKE '{$leftPart}%' AND {$tableName}.first_name LIKE '{$right_part}%' )";
                 } else {
                     // No space, search by first name or last name
-                    $where = "{$tableName}.first_name LIKE '{$basicSearch}%' OR {$tableName}.last_name LIKE '{$basicSearch}%' ";
+                    $whereParts[] = "{$tableName}.first_name LIKE '{$basicSearch}%' OR {$tableName}.last_name LIKE '{$basicSearch}%' ";
                 }
             } else {
                 // Search by name
-                $where = "{$tableName}.name LIKE '{$basicSearch}%' ";
+                $whereParts[] = "{$tableName}.name LIKE '{$basicSearch}%' ";
             }
         }
-
         $params = array();
         if ( isset($args['favorites']) && $args['favorites'] ) {
             $params['favorites'] = true;
         }
+
+        if ( count($whereParts) > 0 ) {
+            $where = '('.implode(") AND (",$whereParts).')';
+        } else {
+            $where = '';
+        }
+
+
+        return array('deleted'=>$deleted,
+                     'limit'=>$limit,
+                     'offset'=>$offset,
+                     'userFields'=>$userFields,
+                     'orderBy'=>$orderBy,
+                     'params'=>$params,
+                     'whereParts'=>$whereParts,
+                     'where'=>$where,
+        );
+                     
         
-        $listQueryParts = $seed->create_new_list_query($orderBy, $where, $userFields, $params, $deleted, '', true, null, false, false);
+    }
+
+    public function listModule($api, $args) {
+        $this->requireArgs($args,array('module'));
+
+        // Load up a seed bean
+        $seed = BeanFactory::getBean($args['module']);
+        if ( ! $api->security->canAccessModule($seed,'view') ) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        }
+        
+        $options = $this->parseArguments($api, $args, $seed);
+        
+        $listQueryParts = $seed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
 
         if ( $api->security->hasExtraSecurity($seed,'list') ) {
             $api->security->addExtraSecurityList($seed,$listQueryParts);
         }
         
-        $reply = $this->performQuery($api, $args, $seed, $listQueryParts, $maxResults, $offset);
-        if ( $reply['count'] > $maxResults ) {
-            $nextOffset = $offset + $maxResults;
-        } else {
-            $nextOffset = 0;
-        }
-        
-        $response = array();
-        $response["next_offset"] = $nextOffset;
-        $response["result_count"] = $reply['count'];
-        $response["records"] = array_values($reply['records']);
-
-        return $response;
+        return $this->performQuery($api, $args, $seed, $listQueryParts, $options['limit'], $options['offset']);
     }
 
 
-    protected function performQuery($api, $args, $seed, $queryParts, $maxResults, $offset) {
+    protected function performQuery($api, $args, $seed, $queryParts, $limit, $offset) {
         $query = $queryParts['select'] . $queryParts['from'] . $queryParts['where'] . $queryParts['order_by'];
+        $countQuery = 'SELECT COUNT(*) c ' . $queryParts['from'] . $queryParts['where'] . $queryParts['order_by'];
 
         // If we want the last page, here is the magic to get there.
         if($offset === 'end'){
-            $countQuery = $seed->create_list_count_query($query);
             $ret = $GLOBALS['db']->query($countQuery);
             if ( $row = $GLOBALS['db']->fetchByAssoc($ret) ) {
                 $totalCount = $row['c'];
@@ -198,13 +213,13 @@ class ListApi extends SugarApi {
             $offset = (floor(($totalCount -1) / $limit)) * $limit;
         }
         
-        $ret = $GLOBALS['db']->limitQuery($query, $offset, $maxResults + 1);
+        $ret = $GLOBALS['db']->limitQuery($query, $offset, $limit + 1);
         
         $records = array();
         $count = 0;
 
         while($row = $GLOBALS['db']->fetchByAssoc($ret)) {
-            if ( $count < $maxResults ) {
+            if ( $count < $limit ) {
                 $records[$row['id']] = $seed->convertRow($row);
             }
             $count++;
@@ -212,7 +227,7 @@ class ListApi extends SugarApi {
 
         if ( $count == 0 ) {
             // Empty query
-            return array('count' => 0, 'records' => array());
+            return array('next_offset' => -1, 'records' => array());
         }
 
         if ( !empty($queryParts['secondary_select']) ) {
@@ -237,7 +252,17 @@ class ListApi extends SugarApi {
                 }
             }
         }
+
+        if ( $count > $limit ) {
+            $nextOffset = $offset + $limit;
+        } else {
+            $nextOffset = -1;
+        }
         
-        return array('count' => $count, 'records' => $records );
+        $response = array();
+        $response["next_offset"] = $nextOffset;
+        $response["records"] = array_values($records);
+
+        return $response;
     }
 }
