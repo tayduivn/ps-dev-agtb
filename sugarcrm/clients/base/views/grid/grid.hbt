@@ -1,14 +1,3 @@
-<script type="text/javascript" language="javascript">
-$(document).ready(function() {
-    var gTable = $('#gridTable').dataTable();
-
-    gTable.$('td').editable(function (value, settings) {
-        console.log('value:' + value);
-        return value;
-    });
-});
-</script>
-
 <div class="span12 container-fluid subhead">
     This is The Grid.
     <h3>{{context.state.module}}</h3>

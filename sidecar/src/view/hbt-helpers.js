@@ -26,7 +26,7 @@
         bean = bean || context.get("model");
 
         if (bean.fields && bean.fields[name]) {
-            def = bean.fields[name];
+            def = _.extend(bean.fields[name], this);
         }
 
         sf = (view.sugarFields[sfid] = app.view.createField({
