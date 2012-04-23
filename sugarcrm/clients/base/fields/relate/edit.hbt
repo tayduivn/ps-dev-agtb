@@ -4,7 +4,7 @@
         <select name="{{name}}" {{#if multi}} multiple {{/if}}>
             <option value="{{this.value}}" selected>{{this.value}}</option>
             {{#eachOptions options}}
-                <option value="{{getValue this "id"}}">{{getValue this "full_name"}}</option>
+                <option value="{{getValue this "id"}}">{{getValue this ../this.fieldDef.rname}}</option>
             {{/eachOptions}}
         </select>
         <p class="help-block"></p>

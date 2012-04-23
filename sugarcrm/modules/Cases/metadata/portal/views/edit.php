@@ -88,6 +88,9 @@ $viewdefs['Cases']['portal']['view']['edit'] = array(
                 array(
                     'name' => 'assigned_user_name',
                     ),
+                array(
+                    'name' => 'account_name',
+                    ),
                  array(
                      'name' => 'name',
                      'displayParams' => array(

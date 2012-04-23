@@ -2,27 +2,36 @@
     events: {
         'keyup .chzn-search input': 'throttleSearch'
     },
-
-    fieldType: "select",
-
+    /**
+     * Initializes field and binds all function calls to this
+     * @param {Object} options
+     */
     initialize: function(options) {
         _.bindAll(this);
         this.app.view.Field.prototype.initialize.call(this, options);
     },
-
+    /**
+     * Renders relate field
+     */
     render: function() {
         var self = this;
         var result = this.app.view.Field.prototype.render.call(this);
-        $(this.fieldType + "[name=" + this.name + "]").chosen({no_results_text: "Searching for "}).change(function(event) { // TODO Add labels support
+        $("[name=" + this.name + "]").chosen({
+            no_results_text: "Searching for " // TODO Add labels support
+        }).change(function(event) {
             var selected = $(event.target).find(':selected');
             self.model.set(self.fieldDef.id_name, self.unformat(selected.attr('id')));
             self.model.set(self.fieldDef.name, self.unformat(selected.attr('value')));
         });
         return result;
     },
-
+    /**
+     * Throttles search ajax
+     * @param {Object} e event object
+     * @param {Integer} interval interval to throttle
+     */
     throttleSearch: function(e, interval) {
-        if (interval === 0) {
+        if (interval === 0 && e.target.value != "") {
             this.search(e);
             return;
         } else {
@@ -33,37 +42,40 @@
 
         this.throttling = setTimeout(this.throttleSearch, interval, e, 0);
     },
-
+    /**
+     * Searches for related field
+     * @param event
+     */
     search: function(event) {
         var self = this;
         var collection = app.data.createBeanCollection(this.fieldDef.module);
         collection.fetch({
-            params: [
-                {key: "q", value: event.target.value}
-            ],
+            params: {basicSearch:event.target.value},  // TODO update this to filtering API
             success: function(data) {
                 if (data.models.length > 0) {
                     self.options = data.models;
-                    self.getOptionsTemplate();
+                    self.setOptionsTemplate();
                     var options = self.optionsTemplateC(self);
-                    self.$('select').append(options);
+                    self.$('select').html(options);
                     self.$('select').trigger("liszt:updated");
                 } else {
-                    //TODO trigger we found nothing
+                    //TODO trigger error we found nothing
                 }
             }
 
         });
     },
-
-    getOptionsTemplate: function() {
-        var templateKey = "sugarField." + this.type + ".options";
+    /**
+     * Sets custom options template from app cache and compiles it
+     */
+    setOptionsTemplate: function() {
+        var templateKey = "sugarField." + this.fieldType + ".options";
 
         var templateSource = null;
 
         if (this.meta) {
             templateSource = this.meta.views["options"];
         }
-        this.optionsTemplateC = app.template.get(templateKey) || app.template.compile(templateSource, templateKey);
+        this.optionsTemplateC = this.app.template.get(templateKey) || this.app.template.compile(templateSource, templateKey);
     }
 })
