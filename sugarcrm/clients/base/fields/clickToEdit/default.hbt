@@ -1,1 +1,1 @@
-<span name="{{name}}" class="{{class}}">{{label}}</span>
+<span name="{{name}}" class="{{cteclass}}">{{value}}</span>
