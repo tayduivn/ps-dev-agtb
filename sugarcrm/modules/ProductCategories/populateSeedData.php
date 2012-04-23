@@ -87,6 +87,10 @@ function traverse_tree($parent_id, $depth_flag, &$tree_depth, &$tree_branches, &
 
 
 function create_category($parent_id){
+    require_once('install/UserDemoData.php');
+    $userDemo = new UserDemoData($GLOBALS['current_user']);
+    $key = array_rand($userDemo->guids);
+
 	global $sugar_demodata;
 	$last_name_array = $sugar_demodata['last_name_array'];
 	$last_name_count = count($sugar_demodata['last_name_array']) - 1;
@@ -94,6 +98,7 @@ function create_category($parent_id){
 	$category = new ProductCategory();
 	$category->name = $last_name_array[mt_rand(0,$last_name_max)] ." Widgets";
 	$category->parent_id = $parent_id;
+    $category->assigned_user_id = $userDemo->guids[$key];
 	$category->save();
 	$cat_id = $category->id;
 	unset($category);

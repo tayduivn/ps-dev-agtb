@@ -85,6 +85,9 @@ class Opportunity extends SugarBean {
 	var $module_dir = "Opportunities";
 //BEGIN SUGARCRM flav=pro ONLY
 	var $rel_quote_table = "quotes_opportunities";
+    var $best_case;
+    var $worst_case;
+    var $likely_case;
 //END SUGARCRM flav=pro ONLY
 
 	var $importable = true;
@@ -484,6 +487,14 @@ $query .= 			"LEFT JOIN users
 		}
 		return $ret_array;
 	}
+
+
+    //BEGIN SUGARCRM flav=PRO ONLY
+    public function setBundles($bundle)
+    {
+
+    }
+    //END SUGARCRM flav=PRO ONLY
 }
 function getCurrencyType(){
 

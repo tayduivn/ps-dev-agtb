@@ -399,6 +399,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'source' => 'non-db',
 
   ),
+    'opportunity_line_bundles' =>
+    array (
+        'name' => 'opportunity_line_bundles',
+        'type' => 'link',
+        'vname'=>'LBL_OPPORTUNITY_LINE_BUNDLES',
+        'relationship' => 'opportunity_line_bundle_opportunity',
+        'source'=>'non-db',
+    ),
  //END SUGARCRM flav=pro ONLY
 ),
 		'indices' => array (

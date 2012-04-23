@@ -2980,6 +2980,7 @@ $app_strings = array (
     'LBL_REMOVE' => 'Remove',
     'LBL_TRAINING' => 'Support',
     'ERR_DATABASE_CONN_DROPPED'=>'Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.',
+    'ERR_DATABSE_RELATIONSHIP_QUERY'=>'Error setting {0} relationship: {1}',
     'ERR_MSSQL_DB_CONTEXT' =>'Changed database context to',
   'ERR_MSSQL_WARNING' =>'Warning:',
 

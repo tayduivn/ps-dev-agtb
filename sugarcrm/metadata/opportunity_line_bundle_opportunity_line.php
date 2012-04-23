@@ -28,7 +28,7 @@ $dictionary['opp_line_bundle_opp_line'] = array (
       , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required' => false,)
       , array('name' =>'bundle_id', 'type' =>'varchar', 'len'=>'36')
       , array('name' =>'opportunity_line_id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'opp_index', 'type' =>'int', 'len'=>'11', 'default'=>'0', 'required' => true,)
+      , array('name' =>'opportunity_line_index', 'type' =>'int', 'len'=>'11', 'default'=>'0', 'required' => true,)
 	),
 
 	'indices' => array (

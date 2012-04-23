@@ -277,6 +277,13 @@ for($i = 0; $i < $number_companies; $i++) {
 //BEGIN SUGARCRM flav=pro ONLY
 	$opp->team_id = $account->team_id;
 	$opp->team_set_id = $account->team_set_id;
+    $worst_case = array("2500", "7500", "15000", "25000");
+    $likely_case = array("5000", "10000", "20000", "50000");
+    $best_case = array("7500", "12500", "25000", "60000");
+    $key = array_rand($best_case);
+    $opp->worst_case = $worst_case[$key];
+    $opp->likely_case = $likely_case[$key];
+    $opp->best_case = $best_case[$key];
 //END SUGARCRM flav=pro ONLY
 	$opp->assigned_user_id = $account->assigned_user_id;
 	$opp->assigned_user_name = $account->assigned_user_name;
@@ -931,6 +938,8 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 //BEGIN SUGARCRM flav=pro ONLY
     include('install/seed_data/products_SeedData.php');
     include('install/seed_data/quotes_SeedData.php');
+    include('install/seed_data/opportunities_SeedData.php');
+
     //This is set to yes at the begininning of this file
 	unset($_SESSION['disable_workflow']);
 //END SUGARCRM flav=pro ONLY

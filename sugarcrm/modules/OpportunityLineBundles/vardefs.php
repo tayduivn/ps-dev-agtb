@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['OpportunityLineBundle'] = array('table' => 'opp_line_bundle', 'comment' => 'Opportunity Line groups'
+$dictionary['OpportunityLineBundle'] = array('table' => 'opportunity_line_bundles', 'comment' => 'Opportunity Line groups'
                                ,'fields' => array (
  'id' =>
   array (
