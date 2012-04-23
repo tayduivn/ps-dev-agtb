@@ -12,6 +12,7 @@ describe("Application configuration", function() {
         expect(config.maxQueryResult).toBeDefined();
         expect(config.serverUrl).toBeDefined();
         expect(config.debugSugarApi).toBeDefined();
+        expect(config.metadataTypes).toBeDefined();
     });
 
 });

@@ -1,8 +1,8 @@
 <div class="row-fluid">
     <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
     <div class="span4">
-        <select name="{{name}}" {{#if multi}} multiple {{/if}}>
-            {{#eachOptions options}}
+        <select name="{{name}}" {{#if fieldDef.multi}} multiple {{/if}}>
+            {{#eachOptions fieldDef.options}}
                 <option value="{{{this.key}}}" {{has this.key ../value "selected" ""}}>{{this.value}}</option>
             {{/eachOptions}}
         </select>

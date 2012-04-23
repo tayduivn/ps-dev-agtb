@@ -3967,6 +3967,10 @@ SUGAR.reports = function() {
 	        */
 	        myDataTable.subscribe("rowClickEvent", SUGAR.reports.gridRowClickHandler);
 	        
+	        // Bug 44636
+	        // Must remove old listeners, because every time we select a new node, AutoComplete widget adds new listeners. 
+	        YAHOO.util.Event.removeListener("dt_input");
+	        
 			var oACDS = myDataSource;
 	        oACDS.queryMatchContains = true; 
 	        var oAutoComp = new YAHOO.widget.AutoComplete("dt_input","dt_ac_container", oACDS);

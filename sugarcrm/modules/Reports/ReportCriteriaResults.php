@@ -53,7 +53,7 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 	// do this to go through the transformation
 	$reportObj = new Report($saved_report_seed->content);
 	$saved_report_seed->content = $reportObj->report_def_str;
-	
+
 	$savedReportContent = $jsonObj->decode($saved_report_seed->content);
 	$returnArray = hasReportFilterModified($_REQUEST['id'], $savedReportContent['filters_def']);
 	$reportCache = $returnArray['reportCache'];
@@ -70,7 +70,7 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 		}
 	} // if
 	$args['reporter'] = new Report($saved_report_seed->content);
-	$args['reporter']->saved_report = &$saved_report_seed;
+	$args['reporter']->saved_report = $saved_report_seed;
 	//if (hasRuntimeFilter($args['reporter'])) {
 		$savedReportContent = $jsonObj->decode($saved_report_seed->content);
 		$newArray = array();
@@ -85,7 +85,7 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 		list($new_filter['table_name'],$new_filter['name']) = explode(':',$_REQUEST['filter_key']);
 		$new_filter['qualifier_name'] = 'is';
 		$new_filter['input_name0'] = array($_REQUEST['filter_value']);
-		
+
 		if ( ! is_array($args['reporter']->report_def['filters_def'])) {
 			$args['reporter']->report_def['filters_def'] = array();
 		} // if
@@ -93,11 +93,11 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 		$args['reporter']->report_def['chart_type'] = 'none';
 		$args['reporter']->chart_type = 'none';
 	} // if
-	
+
 	$args['reporter']->is_saved_report = true;
 	$args['reporter']->saved_report_id = $saved_report_seed->id;
 	$args['reportCache'] = $reportCache;
-} 
+}
 else if (isset($_REQUEST['record'])){
     $saved_report_seed = new SavedReport();
     $saved_report_seed->disable_row_level_security = true;
@@ -147,7 +147,7 @@ else if (isset($_REQUEST['record'])){
     $args['reporter']->is_saved_report = true;
     $args['reporter']->saved_report = &$saved_report_seed;
     $args['reporter']->saved_report_id = $saved_report_seed->id;
-	
+
 } else if(!empty($_REQUEST['addtofavorites']) && $_REQUEST['addtofavorites']) {
         $current_favorites = $current_user->getPreference('favorites', 'Reports');
         if(empty($current_favorites)) $current_favorites = array();
@@ -158,10 +158,10 @@ else if (isset($_REQUEST['record'])){
         $current_favorites = $current_user->getPreference('favorites', 'Reports');
         if(empty($current_favorites)) $current_favorites = array();
 		if(isset($current_favorites[$_REQUEST['report_id']])) {
-        	unset($current_favorites[$_REQUEST['report_id']]);        
+        	unset($current_favorites[$_REQUEST['report_id']]);
 		} // if
         $current_user->setPreference('favorites', $current_favorites, 0, 'Reports');
-        sugar_die('');	
+        sugar_die('');
 } else if(!empty($_REQUEST['report_options'])) {
 	$reportOptionsArray = array();
 	if (isset($_REQUEST['showDetails'])) {
@@ -192,7 +192,8 @@ else if (isset($_REQUEST['record'])){
 }
 
 if(! empty($_REQUEST['to_pdf'])){
-	template_handle_pdf($args['reporter']);
+    if (isset($args['reporter']))
+        template_handle_pdf($args['reporter']);
 	return;
 } // if
 if(! empty($_REQUEST['to_csv'])){
@@ -216,11 +217,12 @@ if(!empty($_REQUEST['favorite']))
     $params[] = "<a href='index.php?module=Reports&action=index&favorite=1'>{$mod_strings['LBL_FAVORITES_TITLE']}</a>";
 $star = '';
 //BEGIN SUGARCRM flav=pro ONLY
-if(!empty($args['reporter']->saved_report->id)){ 
+if(!empty($args['reporter']->saved_report->id)){
     $star = SugarFavorites::generateStar(SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id), 'Reports', $args['reporter']->saved_report->id);
 }
 //END SUGARCRM flav=pro ONLY
-$params[] = "{$args['reporter']->name}&nbsp;{$star}";
+if (!empty($args['reporter']->name))
+    $params[] = "{$args['reporter']->name}&nbsp;{$star}";
 
 //Override the create url
 $createURL = 'index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report';
@@ -229,7 +231,7 @@ echo getClassicModuleTitle("Reports", $params, true, '', $createURL);
 // show report interface
 if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report') {
 	checkSavedReportACL($args['reporter'],$args);
-	if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) 
+	if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1))
 		reportResults($args['reporter'],$args);
 	else
 		reportCriteriaWithResult($args['reporter'],$args);

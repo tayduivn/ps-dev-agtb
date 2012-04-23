@@ -130,7 +130,7 @@ $mod_strings = array (
 	'LBL_CHANGE_SYSTEM_PASSWORD'		=> 'Please provide a new password.',
 	'LBL_CHANGE_PASSWORD_TITLE'         => 'Password',
     'LBL_CHOOSE_A_KEY'					=> 'Choose a key to prevent unauthorized publishing of your calendar',
-	'LBL_CHOOSE_WHICH'					=> 'Select which modules are accessible within the top navigation bar. Designate the order in which you would like the modules to appear. To select the number of modules that appear in the navigation bar, with the remainder appearing in the overflow menu, use the "Number of Modules in Navigation Bar" field.',
+	'LBL_CHOOSE_WHICH'					=> 'Select which modules are accessible within the top navigation bar. Designate the order in which you would like the modules to appear.',
 	'LBL_CITY'							=> 'City',
 
 	'LBL_CLEAR_BUTTON_TITLE'			=> 'Clear',

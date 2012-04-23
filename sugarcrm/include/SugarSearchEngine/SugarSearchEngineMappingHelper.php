@@ -92,6 +92,33 @@ class SugarSearchEngineMappingHelper
 
     /**
      *
+     * Given a modulename, determine whether this module can be enabled for full text search.
+     *
+     * @param $moduleName module name
+     *
+     * @return boolean whether the module can be enabled for full text search
+     */
+    public static function shouldShowModule($moduleName)
+    {
+        require_once('modules/Home/UnifiedSearchAdvanced.php');
+        $usa = new UnifiedSearchAdvanced();
+        $modLists = $usa->retrieveEnabledAndDisabledModules();
+
+        foreach ($modLists as $list)
+        {
+            foreach ($list as $module)
+            {
+                if (isset($module['module']) && $module['module'] == $moduleName)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
      * Given a search engine name and a vardef name, this function returns corresponding search engine map type.
      *
      * @param $name search engine name

@@ -65,7 +65,6 @@ class Bug44206Test extends Sugar_PHPUnit_Framework_TestCase
         if (!empty($this->opportunity)) {
             $this->opportunity->mark_deleted($this->opportunity->id);
         }
-
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }

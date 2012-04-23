@@ -74,22 +74,11 @@ describe("Layout.View", function() {
         expect(html).toContain('detail');
     });
 
-    it('should complete its metadata', function(){
-        var view = app.view.createView({
-            context: context,
-            name: "detail"
-        });
-        expect(view.meta.panels[0].fields[3]).toEqual("phone_home");
-        view.completeMeta();
-        expect(view.meta.panels[0].fields[3].type).toEqual("varchar");
-    });
-
     it('should return its fields', function(){
         var view = app.view.createView({
             context: context,
             name: "detail"
         });
-        view.completeMeta();
         var fields = view.getFields();
         expect(fields).toEqual(["first_name", "last_name", "phone_work", "phone_home", "email1"]);
     });

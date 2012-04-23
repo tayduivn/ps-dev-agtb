@@ -52,7 +52,7 @@ xmlns:impl="G2M_Organizers">
         <subject xsi:type="xsd:string"></subject>
         <startTime xsi:type="xsd:dateTime"></startTime>
         <timeZoneKey xsi:type="xsd:string">50</timeZoneKey>
-        <conferenceCallInfo xsi:type="xsd:string">Free</conferenceCallInfo>
+        <conferenceCallInfo xsi:type="xsd:string">Hybrid</conferenceCallInfo>
         <meetingType xsi:type="xsd:string">Scheduled</meetingType>
         <passwordRequired xsi:type="xsd:boolean"></passwordRequired>
       </meetingParameters>
@@ -68,11 +68,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
 xmlns:impl="G2M_Organizers">
-  <soap:Body
-soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+  <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
     <impl:startMeeting>
-      <connectionId
-xsi:type="xsd:string"></connectionId>
+      <connectionId xsi:type="xsd:string"></connectionId>
       <meetingId xsi:type="xsd:long"></meetingId>
       <uniqueMeetingId xsi:type="xsd:string"></uniqueMeetingId>
     </impl:startMeeting>
@@ -113,7 +111,7 @@ $edit_xml = <<<EDT
         <subject xsi:type="xsd:string"></subject>
         <startTime xsi:type="xsd:dateTime"></startTime>
         <timeZoneKey xsi:type="xsd:string">50</timeZoneKey>
-        <conferenceCallInfo xsi:type="xsd:string">Free</conferenceCallInfo>
+        <conferenceCallInfo xsi:type="xsd:string">Hybrid</conferenceCallInfo>
         <meetingType xsi:type="xsd:string">Scheduled</meetingType>
         <passwordRequired xsi:type="xsd:boolean"></passwordRequired>
       </meetingParameters>
