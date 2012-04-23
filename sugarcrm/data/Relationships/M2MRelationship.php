@@ -316,9 +316,9 @@ class M2MRelationship extends SugarRelationship
 
         //Add any optional where clause
         if (!empty($params['where'])){
-            $add_where = $this->getOptionalWhereClause($params['where']);
+            $add_where = is_string($params['where']) ? $params['where'] : "$whereTable." . $this->getOptionalWhereClause($params['where']);
             if (!empty($add_where))
-                $where .= " AND $rel_table.$targetKey=$whereTable.id AND $whereTable.$add_where";
+                $where .= " AND $rel_table.$targetKey=$whereTable.id AND $add_where";
         }
 
         $deleted = !empty($params['deleted']) ? 1 : 0;
