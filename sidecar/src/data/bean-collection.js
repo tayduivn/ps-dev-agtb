@@ -17,7 +17,6 @@
         },
 
         _prepareModel: function(model, options) {
-            this.fields = (options && options.fields) ? options.fields : null;
             model = Backbone.Collection.prototype._prepareModel.call(this, model, options);
             if (model) model.link = this.link;
             return model;
@@ -37,6 +36,7 @@
          */
         fetch: function(options) {
             options = options || {};
+            this.fields = (options && options.fields) ? options.fields : null;
             var origSuccess = options.success,
                 that = this;
 

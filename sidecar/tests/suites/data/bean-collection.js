@@ -147,9 +147,9 @@ describe("BeanCollection", function() {
 
         bean  = dm.createBean("Contacts");
         beans = dm.createBeanCollection("Contacts");
-        spy   = sinon.spy(beans, 'fetch');
-        beans._prepareModel(bean, {fields:['a','b','c']});
+        beans.fetch({fields:['a','b','c']});
 
+        spy   = sinon.spy(beans, 'fetch');
         beans.paginate();
         args = spy.getCall(0).args[0];
 
