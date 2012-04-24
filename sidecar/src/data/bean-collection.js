@@ -17,6 +17,7 @@
         },
 
         _prepareModel: function(model, options) {
+            this.fields = (options && options.fields) ? options.fields : null;
             model = Backbone.Collection.prototype._prepareModel.call(this, model, options);
             if (model) model.link = this.link;
             return model;
@@ -36,8 +37,9 @@
          */
         fetch: function(options) {
             options = options || {};
-            var origSuccess = options.success;
-            var that = this;
+            var origSuccess = options.success,
+                that = this;
+
             options.success = function(args) {
                 that.trigger(
                     /**
@@ -81,6 +83,9 @@
         paginate: function(options) {
             options = options || {};
             options.page = options.page || 1;
+            if(options && !options.fields) {
+                options.fields = this.fields;
+            }
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;
@@ -106,4 +111,4 @@
 
     }), false);
 
-})(SUGAR.App);
+}(SUGAR.App));

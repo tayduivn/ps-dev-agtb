@@ -141,6 +141,22 @@ describe("BeanCollection", function() {
         expect(p).toEqual(2);
     });
 
+    it("should keep track of fields when paginating", function() {
+        var bean, beans, spy, args;
+        dm.declareModel("Contacts", metadata.modules["Contacts"]);
+
+        bean  = dm.createBean("Contacts");
+        beans = dm.createBeanCollection("Contacts");
+        spy   = sinon.spy(beans, 'fetch');
+        beans._prepareModel(bean, {fields:['a','b','c']});
+
+        beans.paginate();
+        args = spy.getCall(0).args[0];
+
+        expect(args.fields).toEqual(['a','b','c']);
+        beans.fetch.restore();
+    });
+
     it("should trigger app:collection:fetch on fetch", function() {
         var moduleName, beans, contacts,
             triggerFuncSpy = sinon.spy(function(data) {
