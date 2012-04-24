@@ -1,6 +1,7 @@
 describe("listView", function() {
     describe("should set order by", function() {
-            var collection = {
+        var event, x,
+            collection = {
                 orderBy: {
                     field: "",
                     direction: ""
@@ -8,18 +9,18 @@ describe("listView", function() {
                 fetch: function() {
                     return true;
                 }
-            };
-            var options = {
+            },
+            options = {
                 context: {},
                 id: "1",
                 template: "asdf"
-            };
+            },
+            view = new SUGAR.App.view.views.ListView(options);
 
-            var view = new SUGAR.App.view.views.ListView(options);
             view.$el.html('<div id="test" data-fieldname="bob"></div>');
 
-            var x = view.$el.children('#test');
-            var event = {target:x};
+            x = view.$el.children('#test');
+            event = {target:x};
             view.context.get = function(args) {
                 return collection;
             };
@@ -32,5 +33,5 @@ describe("listView", function() {
             expect(collection.orderBy.direction).toEqual('asc');
             expect(collection.orderBy.field).toEqual('bob');
         }
-    )
+    );
 });

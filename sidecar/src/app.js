@@ -276,4 +276,4 @@ SUGAR.App = (function() {
 
         modules: modules
     };
-})();
+}());

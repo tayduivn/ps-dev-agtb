@@ -1,9 +1,9 @@
 describe("Offline", function() {
 
-    var app = SUGAR.App, origWebSqlAdapter = app.webSqlAdapter, spec = this;
+    var app = SUGAR.App, origWebSqlAdapter = app.webSqlAdapter, spec = this, db;
 
     // WebSQL adapter stub
-    var db = {
+    db = {
         tx: null,
         recordSet: null,
 
@@ -61,13 +61,13 @@ describe("Offline", function() {
 
     describe("StorageAdapter", function() {
 
-        var dbSpy;
-        var dm = app.dataManager, sa = app.Offline.storageAdapter;
-        var options = {
-            success: function() {
-                SugarTest.setWaitFlag();
-            }
-        };
+        var dbSpy,
+            dm = app.dataManager, sa = app.Offline.storageAdapter,
+            options = {
+                success: function() {
+                    SugarTest.setWaitFlag();
+                }
+            };
 
         beforeEach(function() {
             app.webSqlAdapter = db;
@@ -102,8 +102,8 @@ describe("Offline", function() {
             SugarTest.wait();
 
             runs(function() {
-                var args = dbSpy.firstCall.args;
-                var params = args[2];
+                var args = dbSpy.firstCall.args,
+                    params = args[2];
                 expect(args[1]).toContain("INSERT");
                 expect(params.length).toEqual(8);
                 expect(params[0]).toBeDefined();
@@ -135,8 +135,8 @@ describe("Offline", function() {
             SugarTest.wait();
 
             runs(function() {
-                var args = dbSpy.firstCall.args;
-                var params = args[2];
+                var args = dbSpy.firstCall.args,
+                    params = args[2];
                 expect(args[1]).toContain("UPDATE");
                 expect(params.length).toEqual(9);
                 expect(params[0]).toEqual("axe");
@@ -168,8 +168,8 @@ describe("Offline", function() {
             SugarTest.wait();
 
             runs(function() {
-                var args = dbSpy.firstCall.args;
-                var params = args[2];
+                var args = dbSpy.firstCall.args,
+                    params = args[2];
                 expect(args[1]).toContain("REPLACE");
                 expect(params.length).toEqual(8);
                 expect(params[0]).toEqual("axe");
@@ -195,8 +195,8 @@ describe("Offline", function() {
             SugarTest.wait();
 
             runs(function() {
-                var args = dbSpy.firstCall.args;
-                var params = args[2];
+                var args = dbSpy.firstCall.args,
+                    params = args[2];
                 expect(args[1]).toContain("DELETE");
                 expect(params.length).toEqual(1);
                 expect(params[0]).toEqual("axe");
@@ -215,8 +215,8 @@ describe("Offline", function() {
             SugarTest.wait();
 
             runs(function() {
-                var args = dbSpy.firstCall.args;
-                var params = args[2];
+                var args = dbSpy.firstCall.args,
+                    params = args[2];
                 expect(args[1]).toContain("SELECT");
                 expect(params.length).toEqual(1);
                 expect(params[0]).toEqual("axe");
@@ -242,9 +242,9 @@ describe("Offline", function() {
 
     describe("DataManager", function() {
 
-        var dbSpy, metadata;
-        var odm = app.Offline.dataManager;
-        var dm = app.dataManager;
+        var dbSpy, metadata,
+            odm = app.Offline.dataManager,
+            dm = app.dataManager;
 
         beforeEach(function() {
             metadata = SugarTest.loadFixture("metadata");
@@ -277,9 +277,9 @@ describe("Offline", function() {
 
             runs(function() {
                 expect(dbSpy.firstCall).toBeDefined();
-                var args = dbSpy.firstCall.args;
+                var args = dbSpy.firstCall.args, statements;
                 expect(args[0]).toBeNull();
-                var statements = args[1];
+                statements = args[1];
                 expect(statements.length).toEqual(14);
 
                 _.each(_.keys(metadata), function(moduleName) {

@@ -92,7 +92,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'sorting' => true,
-                    'width' => 17
+                    'width' => 13
                 ),
                 3 =>
                 array(
@@ -107,7 +107,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                 array(
                     'type' => 'actionslink',
                     'label' => '',
-                    'width' => 5,
+                    'width' => 9,
                     'sorting' => false
                 ),
             ),

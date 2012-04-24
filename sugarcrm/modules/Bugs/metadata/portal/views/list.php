@@ -74,6 +74,7 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
                     'label' => 'Title',
                     'default' => true,
                     'enabled' => true,
+                    'link' => true,
                     'sorting' => true,
                     'width' =>  49
                 ),
@@ -84,7 +85,7 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'sorting' => true,
-                    'width' =>  17
+                    'width' =>  13
                 ),
                 3 =>
                 array(
@@ -99,7 +100,7 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
                 array(
                     'type' => 'actionslink',
                     'label' => '',
-                    'width' => 5,
+                    'width' => 9,
                     'sorting' => false
                 ),
             ),
