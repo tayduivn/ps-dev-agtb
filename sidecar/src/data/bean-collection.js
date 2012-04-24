@@ -36,8 +36,10 @@
          */
         fetch: function(options) {
             options = options || {};
-            var origSuccess = options.success;
-            var that = this;
+            this.fields = (options && options.fields) ? options.fields : null;
+            var origSuccess = options.success,
+                that = this;
+
             options.success = function(args) {
                 that.trigger(
                     /**
@@ -81,6 +83,9 @@
         paginate: function(options) {
             options = options || {};
             options.page = options.page || 1;
+            if(options && !options.fields) {
+                options.fields = this.fields;
+            }
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;
@@ -106,4 +111,4 @@
 
     }), false);
 
-})(SUGAR.App);
+}(SUGAR.App));
