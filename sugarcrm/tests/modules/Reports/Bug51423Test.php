@@ -74,8 +74,14 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
 
     private $_user;
 
+    /**
+     * @var bool
+     */
+    protected $origin_isCacheReset;
+
     public function setUp()
     {
+        $this->origin_isCacheReset = SugarCache::$isCacheReset;
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
@@ -144,7 +150,7 @@ class Bug51423Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_contact_2->mark_deleted($this->_contact_2->id);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
+        SugarCache::$isCacheReset = $this->origin_isCacheReset;
     }
 
     /**
