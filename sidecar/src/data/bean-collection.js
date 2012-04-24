@@ -36,12 +36,20 @@
          */
         fetch: function(options) {
             options = options || {};
-            this.fields = (options && options.fields) ? options.fields : null;
+            /**
+             * Field names.
+             *
+             * A list of fields that are populated on collection members.
+             * This property is used to build `fields` URL parameter when fetching beans.
+             * @member Data.BeanCollection
+             * @property {Array}
+             */
+            this.fields = options.fields || null;
             var origSuccess = options.success,
-                that = this;
+                self = this;
 
             options.success = function(args) {
-                that.trigger(
+                self.trigger(
                     /**
                      * Fired when the collection fetch operataion succeeds.
                      * @event
@@ -83,9 +91,7 @@
         paginate: function(options) {
             options = options || {};
             options.page = options.page || 1;
-            if(options && !options.fields) {
-                options.fields = this.fields;
-            }
+            options.fields = options.fields || this.fields;
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;
