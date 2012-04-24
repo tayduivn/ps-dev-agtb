@@ -316,17 +316,9 @@
                                     </table>
                                 </td>
                             </tr>
-                            <tr>
-                                <td width="17%" scope="row"><span scope="row">{$MOD.LBL_MAX_TAB}:</span>&nbsp;{sugar_help text=$MOD.LBL_MAX_TAB_DESCRIPTION }</td>
-                                <td width="83%" colspan="3">
-                                    <select name="user_max_tabs" tabindex='12'>
-                                    {html_options values=$MAX_TAB_OPTIONS output=$MAX_TAB_OPTIONS selected=$MAX_TAB}
-                                    </select>
-                                </td>
-							</tr>
 							<tr>
-                                <td scope="row"><span>{$MOD.LBL_SUBPANEL_TABS}:</span>&nbsp;{sugar_help text=$MOD.LBL_SUBPANEL_TABS_DESCRIPTION }</td>
-                                <td colspan="3"><input type="checkbox" name="user_subpanel_tabs" {$SUBPANEL_TABS} tabindex='13'></td>
+                                <td width="17%" scope="row"><span>{$MOD.LBL_SUBPANEL_TABS}:</span>&nbsp;{sugar_help text=$MOD.LBL_SUBPANEL_TABS_DESCRIPTION }</td>
+                                <td width="83%" colspan="3"><input type="checkbox" name="user_subpanel_tabs" {$SUBPANEL_TABS} tabindex='13'></td>
                             </tr>
                         </table>
         </div>
@@ -408,12 +400,6 @@
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                             </slot></td>
                         </tr>
-                        <tr>
-                            <td width="17%" scope="row"><slot>{$MOD.LBL_FDOW}:</slot>&nbsp;{sugar_help text=$MOD.LBL_FDOW_TEXT}</td>
-                            <td ><slot>
-                                <select tabindex='14' name='fdow'>{html_options options=$FDOWOPTIONS selected=$FDOWCURRENT}</select>
-                            </slot></td>
-                        </tr>
                     </table>
         </div>
 
@@ -472,6 +458,12 @@
                         <tr>
                             <td width="15%" scope="row"><slot>{$MOD.LBL_ICAL_PUB_URL|strip_semicolon}: {sugar_help text=$MOD.LBL_ICAL_PUB_URL_HELP}</slot></td>
                             <td colspan=2><slot>{$CALENDAR_ICAL_URL}</slot></td>
+                        </tr>
+                        <tr>
+                            <td width="17%" scope="row"><slot>{$MOD.LBL_FDOW}:</slot>&nbsp;{sugar_help text=$MOD.LBL_FDOW_TEXT}</td>
+                            <td ><slot>
+                                <select tabindex='14' name='fdow'>{html_options options=$FDOWOPTIONS selected=$FDOWCURRENT}</select>
+                            </slot></td>
                         </tr>
                     </table>
         </div>
@@ -565,7 +557,7 @@ onUserEditView();
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer footer">
     <tr>
         <td>
-        {sugar_action_menu id="userEditActions" class="clickMenu fancymenu" buttons=$ACTION_BUTTON theme='Classic'}
+        {sugar_action_menu id="userEditActions" class="clickMenu fancymenu" buttons=$ACTION_BUTTON_FOOTER flat=true}
         </td>
         <td align="right" nowrap>
             <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}

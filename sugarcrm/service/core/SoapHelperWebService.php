@@ -326,26 +326,27 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_user_module_list');
 		global $app_list_strings, $current_language;
 		$app_list_strings = return_app_list_strings_language($current_language);
-		$modules = query_module_access_list($user);
-		ACLController :: filterModuleList($modules, false);
+		$modules = SugarACL::filterModuleList(query_module_access_list($user));
 		global $modInvisList;
 
 		foreach($modInvisList as $invis){
 			$modules[$invis] = 'read_only';
 		}
 
-		$actions = ACLAction::getUserActions($user->id,true);
-		foreach($actions as $key=>$value){
-			if(isset($value['module']) && $value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
-				if ($value['module']['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
-					unset($modules[$key]);
-				} else {
-					$modules[$key] = 'read_only';
-				} // else
-			} else {
-				$modules[$key] = '';
-			} // else
-		} // foreach
+		foreach($modules as $key=>$val) {
+		    if(!SugarACL::checkAccess($key, 'access')) {
+		        if(!SugarACL::checkAccess($key, 'access', array("owner_override" => true))) {
+		            // access available, but not to you
+		            $modules[$key] = 'read_only';
+		        } else {
+		            // access denied
+		            unset($modules[$key]);
+		        }
+		    } else {
+		        // access ok
+		        if($modules[$key] != 'read_only') $modules[$key] = '';
+		    }
+		}
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_user_module_list');
 		return $modules;
 
@@ -469,6 +470,14 @@ function validate_user($user_name, $password){
 			}
 
 			$filterFields = $this->filter_fields($value, $fields);
+
+           //BEGIN SUGARCRM flav=pro ONLY
+            //now check field level acl's if this bean implements them
+            if($value->bean_implements('ACL') && !empty($GLOBALS['current_user'])){
+                $filterFields = $this->returnFieldsWithAccess($value, $filterFields);
+            }
+          //END SUGARCRM flav=pro ONLY
+
 			foreach($filterFields as $field){
 				$var = $value->field_defs[$field];
 				if(isset($value->$var['name'])){
@@ -1175,6 +1184,46 @@ function validate_user($user_name, $password){
 		}
 		return false;
 	} // fn
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * returnFieldsWithAccess
+     *
+     * @param object $seed an instance of the bean we are checking acl's on
+     * @param array $select_fields array of fields being explicitly checked for access, empty array means check all
+     * @return array Array of the fields for this bean that passed the acl filter test
+     */
+    function returnFieldsWithAccess($seed,$select_fields=array()){
+        //can't do anything if there is no bean
+        if(empty($seed)){
+            return $select_fields;
+        }
+        //if the select fields array is empty, then use all the fields for this bean
+        if(empty($select_fields)){
+            $fields = $seed->field_name_map;
+            $select_fields = array_keys($fields);
+        }
+        //check to see if bean implements acl and this is not an admin so we can remove any restricted fields
+        if($seed->bean_implements('ACL') && !empty($GLOBALS['current_user']) && !$GLOBALS['current_user']->is_admin){
+            //lets load up any acl fields for this uer
+             ACLField::loadUserFields($seed->module_dir,$seed->object_name, $GLOBALS['current_user']->id);
+
+            //iterate through the select fields array and remove any restricted acl fields (less than 0)
+            foreach($select_fields as $fieldnum=>$fieldname){
+                if(isset($_SESSION['ACL'][$GLOBALS['current_user']->id][$seed->module_dir]['fields'][$fieldname])
+                    && $_SESSION['ACL'][$GLOBALS['current_user']->id][$seed->module_dir]['fields'][$fieldname] < 0
+                ){
+                    //this field has an acl restricting the user from accessing it, unset it
+                    unset($select_fields[$fieldnum]);
+                }
+            }
+        }
+        return $select_fields;
+    }
+  //END SUGARCRM flav=pro ONLY
+
+
 } // clazz
 
 ?>

@@ -4,14 +4,9 @@
     </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group">
-        <div class="dropdown">
-          <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">Actions <i class="icon caret"></i></a>
-          <ul class="dropdown-menu menu">
-            {{#each meta.buttons}}
-                <li>{{field ../context ../this ../model}}</li>
-            {{/each}}
-          </ul>
-        </div>
+          <a class="btn btn-success" href="#{{buildRoute context model "edit" route.options}}">
+          <i class="icon-pencil"></i> Edit
+          </a>
       </div>
     </div>
 </div>
@@ -28,9 +23,7 @@
                     {{/each}}
                     <div class="form-actions">
                     {{#each meta.buttons}}
-                        <a class="btn {{#if primary}}btn-primary{{/if}}" href="{{#if route}}#{{buildRoute ../../context ../../model ../route.action ../route.options}}
-                        {{else}}javascript:void(0){{/if}}">
-                        {{#if icon}}<i class="{{icon}}"></i>{{/if}}{{label}}</a>
+                        {{field ../context ../this ../model}}
                     {{/each}}
                     </div>
                 </div>

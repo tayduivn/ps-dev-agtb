@@ -30,7 +30,7 @@ table {
     border-top: 1px solid darken(@grayLighter, 5%);
   }
   th {
-    font-weight: bold;
+    font-weight: 600;
   }
   // Bottom align for column headings
   thead th {
@@ -155,9 +155,14 @@ table {
 }
 
 // Sugar
+table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child, 
+table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
+  .border-radius(0 0 4px 4px)
+}
 
-.subhead table th {
-   min-width: 55px;
+
+table th {
+   min-width: 20px;
  }
 table th .btn-group {
   margin: 0 0 0 -10px;

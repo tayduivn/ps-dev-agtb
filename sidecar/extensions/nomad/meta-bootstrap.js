@@ -2,7 +2,7 @@
     var base_metadata = {
         _hash: '',
         "modules": {
-            "Home": {
+            "Login": {
                 "fields": {
                     "username": {
                         "name": "username",

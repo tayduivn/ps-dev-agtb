@@ -166,6 +166,7 @@ $dictionary['Note'] = array(
   	'type' =>'parent_type',
     'dbType' => 'varchar',
     'group'=>'parent_name',
+    'options'=> 'parent_type_display',
   	'len'=> '255',
   	'comment' => 'Sugar module the Note is associated with'
   ),
@@ -264,7 +265,8 @@ $dictionary['Note'] = array(
         'name'=>'contact_email',
         'type'=>'varchar',
 		'vname' => 'LBL_EMAIL_ADDRESS',
-		'source' => 'non-db'
+		'source' => 'non-db',
+        'studio' => false
     ),
 
   'account_id' =>

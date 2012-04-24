@@ -20,10 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-// Meeting is used to store customer information.
-require_once('modules/Activities/Activity.php');
-
-class Meeting extends Activity {
+class Meeting extends SugarBean {
 	// Stored fields
 	var $id;
 	var $date_entered;
@@ -443,13 +440,7 @@ class Meeting extends Activity {
 		}
 
 		global $app_list_strings;
-		$parent_types = $app_list_strings['record_type_display'];
-		$disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
-		foreach($disabled_parent_types as $disabled_parent_type){
-			if($disabled_parent_type != $this->parent_type){
-				unset($parent_types[$disabled_parent_type]);
-			}
-		}
+		$parent_types = SugarACL::filterModuleList($app_list_strings['record_type_display']);
 
 		$this->parent_type_options = get_select_options_with_id($parent_types, $this->parent_type);
 		if (empty($this->reminder_time)) {
@@ -535,17 +526,8 @@ class Meeting extends Activity {
 		}
 
         $meeting_fields['CONTACT_ID'] = $this->contact_id;
-
-        //If we have a contact id and there are more than one contacts found for this meeting then let's create a hover link
-        if($this->alter_many_to_many_query && !empty($this->contact_id) && isset($this->secondary_select_count) && $this->secondary_select_count > 1)
-        {
-           $meeting_fields['CONTACT_NAME'] = $this->createManyToManyDetailHoverLink($this->contact_name, $this->contact_id);
-        } else {
-           $meeting_fields['CONTACT_NAME'] = $this->contact_name;
-        }
-
+        $meeting_fields['CONTACT_NAME'] = $this->contact_name;
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
-
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
         $meeting_fields['EMAIL_REMINDER_CHECKED'] = $this->email_reminder_time==-1 ? false : true;
 

@@ -1,6 +1,31 @@
 <?php
-$viewdefs['Bugs']['portal']['view']['edit'] =
+$viewdefs ['Bugs']['portal']['view']['edit'] =
     array(
+        'buttons' =>
+        array(
+            array(
+                'name' => 'save_button',
+                'type' => 'button',
+                'label' => 'Save',
+                'value' => 'save',
+                'primary' => true,
+                'events' =>
+                array(
+                    'click' => 'function(){ var self = this; this.model.save(null, {success:function(){self.app.navigate(self.context, self.model, \'detail\');}});}',
+                ),
+            ),
+            array(
+                'name' => 'cancel_button',
+                'type' => 'button',
+                'label' => 'Cancel',
+                'value' => 'cancel',
+                'events' =>
+                array(
+                    'click' => 'function(){ window.history.back(); }',
+                ),
+                'primary' => false,
+            ),
+        ),
         'templateMeta' =>
         array(
             'maxColumns' => '2',

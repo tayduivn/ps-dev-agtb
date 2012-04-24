@@ -18,9 +18,19 @@ fixtures.metadata = {
                     number_group_seperator: ",",
                     decimal_seperator: "."
                 },
-                "name": {
-                    "name": "name",
-                    "type": "varchar"
+                name: {
+                    audited: true,
+                    comment: "The short description of the bug",
+                    dbType: "varchar",
+                    full_text_search: {boost: 3},
+                    len: 255,
+                    link: true,
+                    merge_filter: "selected",
+                    name: "name",
+                    required: true,
+                    type: "name",
+                    unified_search: true,
+                    vname: "LBL_SUBJECT"
                 },
                 "description": {
                     "name": "description",
@@ -60,7 +70,7 @@ fixtures.metadata = {
                 "leradio_c": {
                     "name": "leradio_c",
                     "type": "radioenum",
-                    "options": "Elastic_boost_options" // Temporary, TODO: Pull from app list strings
+                    "options": "Elastic_boost_options"
                 }
             },
             "relationships": {
@@ -295,6 +305,11 @@ fixtures.metadata = {
                     "name": "phone_work",
                     "type": "varchar"
                 },
+                "phone_home": {
+                    "name": "phone_home",
+                    "type": "varchar",
+                    "vname": "LBL_PHONE_HOME"
+                },
                 "email1": {
                     "name": "email1",
                     "type": "varchar"
@@ -367,6 +382,7 @@ fixtures.metadata = {
                                 {name: "first_name", label: "First Name"},
                                 {name: "last_name", label: "Last Name"},
                                 {name: "phone_work", label: "Phone"},
+                                "phone_home",
                                 {name: "email1", label: "Email"}
                             ]
                         }
@@ -544,11 +560,11 @@ fixtures.metadata = {
             },
             controller: "{" +
                 "unformat:function(value){\n" +
-                "  value = this.app.utils.unformatNumberString(value, this.number_group_seperator, this.decimal_seperator, false);\n" +
+                "  value = this.app.utils.unformatNumberString(value, this.fieldDef.number_group_seperator, this.fieldDef.decimal_seperator, false);\n" +
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, this.round, this.precision, this.number_group_seperator, this.decimal_seperator);\n" +
+                " value = this.app.utils.formatNumber(value, this.fieldDef.round, this.fieldDef.precision, this.fieldDef.number_group_seperator, this.fieldDef.decimal_seperator);\n" +
                 "return value\n" +
                 "}" +
                 "}"
@@ -666,7 +682,7 @@ fixtures.metadata = {
                 "return value\n" +
                 "}," +
                 "format:function(value){\n" +
-                " value = this.app.utils.formatNumber(value, 1, 0, this.number_group_seperator, \".\");\n" +
+                " value = this.app.utils.formatNumber(value, 1, 0, this.fieldDef.number_group_seperator), \".\");\n" +
                 "return value\n" +
                 "}" +
                 "}"
@@ -1036,5 +1052,28 @@ fixtures.metadata = {
         'Cases':'Cases',
         'Bugs':'Bugs',
         '_hash':'dfl23asfd'
-    }
+    },
+  'acl': {
+      "Cases":{
+          "fields": {
+                    "name": {
+                        "write": "owner"
+                    }, "status": {
+                        "write": "no"
+                    }
+                },
+                "admin": "no",
+                "developer": "no",
+                "access": "yes",
+                "view": "yes",
+                "list": "yes",
+                "edit": "no",
+                "delete": "yes",
+                "import": "yes",
+                "export": "yes",
+                "massupdate": "yes",
+                "create": "yes",
+                "_hash": "c2dd34be3e193dd127eb7ab69d413cc6"
+      }
+  }
 };

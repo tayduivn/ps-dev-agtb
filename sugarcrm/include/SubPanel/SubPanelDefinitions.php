@@ -116,7 +116,7 @@ class aSubPanel
 				$this->panel_definition = $subpanel_layout ;
 
 				//BEGIN SUGARCRM flav=pro ONLY
-				ACLField::listFilter ( $this->panel_definition [ 'list_fields' ], $this->_instance_properties [ 'module' ], $GLOBALS [ 'current_user' ]->id, true ) ;
+				SugarACL::listFilter($this->_instance_properties [ 'module' ], $this->panel_definition [ 'list_fields' ], array("owner_override" => true));
 				//END SUGARCRM flav=pro ONLY
 			}
 			$this->load_module_info () ; //load module info from the module's bean file.
@@ -215,7 +215,10 @@ class aSubPanel
 			}
 		}
 
-		global $modules_exempt_from_availability_check ;
+        //by default all the activities modules are exempt, so hiding them won't affect their appearance unless the 'activity' subpanel itself is hidden.
+        //add email to the list temporarily so it is not affected in activities subpanel
+        global $modules_exempt_from_availability_check ;
+        $modules_exempt_from_availability_check['Emails'] = 'Emails';
 
 		$listFieldMap = array();
 

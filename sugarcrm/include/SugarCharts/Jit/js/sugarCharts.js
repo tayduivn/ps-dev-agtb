@@ -43,10 +43,10 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 						&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
 				  labelType = 'Native';
 				  nativeTextSupport = labelType == 'Native';
-				  useGradients = nativeCanvasSupport;
+				  useGradients = false;
 				  animate = false;
 				})();
-				
+
 			var delay = 500;
 			switch(chartConfig["chartType"]) {
 			case "barChart":
@@ -75,7 +75,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  shadow: {
-				     enable: true,
+				     enable: false,
 				     size: 2	
 				  },
 				  //horizontal or vertical barcharts
@@ -113,8 +113,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  Events: {
 					enable: true,
 					onClick: function(node) {  
-					if(!node || SUGAR.util.isTouchScreen()) return;  
-					if(node.link == 'undefined' || node.link == '') return;
+					if(!node || SUGAR.util.isTouchScreen()) return;
+					if(node.link == undefined || node.link == '') return;
 					window.location.href=node.link;
 					}
 				  },
@@ -123,7 +123,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  //bars style
 				  type: useGradients? chartConfig["barType"]+':gradient' : chartConfig["barType"],
 				  //whether to show the aggregation of the values
-				  showAggregates:true,
+				  showAggregates: (chartConfig["showAggregates"] != undefined) ? chartConfig["showAggregates"] : true,
+				  showNodeLabels: (chartConfig["showNodeLabels"] != undefined) ? chartConfig["showNodeLabels"] : true,
 				  //whether to show the labels for the bars
 				  showLabels:true,
 				  //labels style
@@ -138,18 +139,23 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  Tips: {
 					enable: true,
 					onShow: function(tip, elem) {
-					  if(elem.link != 'undefined' && elem.link != '') {
-						drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
-					  } else {
-						drillDown = "";
-					  }
-
-					  if(elem.valuelabel != 'undefined' && elem.valuelabel != undefined && elem.valuelabel != '') {
-						value = "elem.valuelabel";
-					  } else {
-						value = "elem.value";
-					  }
-					  eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
+						
+						if(elem.type == 'marker') {
+							  tip.innerHTML = '<b>' + elem.name + '</b>: ' + elem.valuelabel ;
+						} else {
+							  if(elem.link != 'undefined' && elem.link != '') {
+								drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+							  } else {
+								drillDown = "";
+							  }
+		
+							  if(elem.valuelabel != 'undefined' && elem.valuelabel != undefined && elem.valuelabel != '') {
+								value = "elem.valuelabel";
+							  } else {
+								value = "elem.value";
+							  }
+							  eval("tip.innerHTML = 'Sales Stage: <b>' + elem."+chartConfig["tip"]+" + '</b><br> Amount: <b>' + "+value+" + '</b> <br> Percentage: <b>' + elem.percentage + '</b>' + drillDown");
+						}
 					}
 				  }
 				});

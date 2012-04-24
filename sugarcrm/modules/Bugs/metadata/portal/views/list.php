@@ -61,36 +61,47 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
                 0 =>
                 array(
                     'name' => 'bug_number',
-                    'label' => 'Bugs Number',
+                    'label' => 'ID',
                     'class' => 'foo',
                     'default' => true,
                     'enabled' => true,
+                    'sorting' => true,
+                    'width' =>  8
                 ),
                 1 =>
                 array(
                     'name' => 'name',
-                    'label' => 'Name',
+                    'label' => 'Title',
                     'default' => true,
                     'enabled' => true,
+                    'link' => true,
+                    'sorting' => true,
+                    'width' =>  49
                 ),
                 2 =>
+                array(
+                    'name' => 'priority',
+                    'label' => 'Priority',
+                    'default' => true,
+                    'enabled' => true,
+                    'sorting' => true,
+                    'width' =>  13
+                ),
+                3 =>
                 array(
                     'name' => 'status',
                     'label' => 'Status',
                     'default' => true,
                     'enabled' => true,
-                ),
-                3 =>
-                array(
-                    'name' => 'date_modified',
-                    'label' => 'Modifed Date',
-                    'default' => true,
-                    'enabled' => true,
+                    'sorting' => true,
+                    'width' =>  17
                 ),
                 4 =>
                 array(
                     'type' => 'actionslink',
-                    'label' => 'Actions',
+                    'label' => '',
+                    'width' => 9,
+                    'sorting' => false
                 ),
             ),
         ),

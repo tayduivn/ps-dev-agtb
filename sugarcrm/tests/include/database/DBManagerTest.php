@@ -2056,4 +2056,83 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
+    private function addChildren($tableName, $parent, $number, $level, $stoplevel)
+    {
+        if($level >= $stoplevel) return;
+        for($sibling = 0; $sibling < $number; $sibling++)
+        {
+            $id = (!empty($parent)) ? "{$parent}_{$sibling}" : "$sibling";
+            $this->_db->query("INSERT INTO $tableName (id, parent_id, db_level) VALUES ('$id', '$parent', $level)");
+            $this->addChildren($tableName, $id, $number, $level+1, $stoplevel);
+        }
+    }
+
+    private function setupRecursiveStructure()
+    {
+
+        $tableName = 'testRecursive_' . mt_rand();
+        $params =  array(
+            'id' => array (
+                'name' => 'id',
+                'type' => 'varchar',
+                'len' => '36',
+                ),
+            'parent_id' => array (
+                'name' => 'parent_id',
+                'type' => 'varchar',
+                'len' => '36',
+                ),
+//            'name' => array (
+//                'name' => 'name',
+//                'type' => 'varchar',
+//                'len' => '255',
+//                ),
+            'db_level' => array (  // For verification purpose
+                'name' => 'db_level',
+                'type' => 'int',
+                ),
+//            'lineage' => array ( // For verification purpose
+//                'name' => 'lineage',
+//                'type' => 'varchar',
+//                'len' => '1024',
+//                ),
+        );
+        if($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+//        $this->createTableParams($tableName, $params, array());
+        $this->_db->createTableParams($tableName, $params, array());
+
+
+        // Load data
+        $this->_db->query("INSERT INTO $tableName (id, db_level) VALUES ('1', 0)");
+        $this->addChildren($tableName, '1', 3, 1, 10);
+    }
+
+    public function testRecursiveQuery()
+    {
+//        $result = $this->_db->createRecursiveQuerySPs();
+//        echo var_dump($result);
+        $this->setupRecursiveStructure();
+
+
+    }
+
+    public function testGetIndicesContainsPrimary()
+    {
+        $indices = $this->_db->get_indices('accounts');
+
+        // find if any are primary
+        $found = false;
+
+        foreach($indices as $index)
+        {
+            if($index['type'] == "primary") {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($found, 'Primary Key Not Found On Module');
+    }
 }

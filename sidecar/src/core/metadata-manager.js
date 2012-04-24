@@ -27,6 +27,63 @@
     app.augment("metadata", {
 
         /**
+         * Map of fields types.
+         *
+         * Specifies correspondence between module field types and field widget types.
+         *
+         * - `varchar`, `name`, `currency` are mapped to `text` widget
+         * - `text` - `textarea`
+         * - `decimal` - `float`
+         */
+        fieldTypeMap: {
+            varchar: "text",
+            name: "text",
+            text: "textarea",
+            decimal: "float",
+            currency: "text"
+        },
+
+        /**
+         * Patches view fields' definitions.
+         * @param moduleName Module name
+         * @param module Module definition
+         * @private
+         */
+        _patchMetadata: function (moduleName, module) {
+            if (module._patched === true) return module;
+            var self = this;
+            _.each(module.views, function(view, viewName) {
+                _.each(view.panels, function(panel) {
+                    _.each(panel.fields, function(field, fieldIndex) {
+                        var name = _.isString(field) ? field : field.name;
+                        var fieldDef = module.fields[name];
+                        if (!_.isEmpty(fieldDef)) {
+                            // Create a definition if it doesn't exist
+                            if (_.isString(field)) {
+                                field = { name: field };
+                            }
+
+                            // Patch label
+                            field.label = field.label || fieldDef.vname || fieldDef.name;
+                            // Assign type
+                            field.type = field.type || fieldDef.type;
+                            // Patch type
+                            field.type = self.fieldTypeMap[field.type] || field.type;
+
+                            panel.fields[fieldIndex] = field;
+                        }
+                        else {
+                            // Ignore view fields that don't have module field definition
+                            app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
+                        }
+                    });
+                });
+            });
+            module._patched = true;
+            return module;
+        },
+
+        /**
          * Gets metadata for all modules.
          * @return {Object} Metadata for all modules.
          */
@@ -54,7 +111,7 @@
 
             // Load metadata in memory if it's not there yet
             if (!metadata) {
-                _metadata[module] = _get(module);
+                _metadata[module] = this._patchMetadata(module, _get(module));
                 metadata = _metadata[module];
             }
 
@@ -148,10 +205,10 @@
             if (data.modules) {
                 var modules = [];
                 _.each(data.modules, function(entry, module) {
-                    _metadata[module] = entry;
+                    _metadata[module] = this._patchMetadata(module, entry);
                     _set(_modulePrefix + module, entry);
                     modules.push(module);
-                });
+                }, this);
                 _set("modules", modules.join(","));
             }
 
@@ -164,15 +221,7 @@
 
             if (data.moduleList) {
                 _app.moduleList = data.moduleList;
-                _set(_appPrefix+"moduleList", data.moduleList);
-            }
-
-            if (data.appListStrings) {
-                app.lang.setAppListStrings(data.appListStrings);
-            }
-
-            if (data.appStrings) {
-                app.lang.setAppStrings(data.appStrings);
+                _set(_appPrefix + "moduleList", data.moduleList);
             }
 
             //TODO add template support
@@ -184,7 +233,7 @@
          */
         sync: function(callback) {
             var self = this;
-            app.api.getMetadata([], [], {
+            app.api.getMetadata(app.config.metadataTypes, [], {
                 success: function(metadata) {
                     self.set(metadata);
                     if (callback) {

@@ -101,28 +101,56 @@
         sfid: -1,
 
         initialize: function(options) {
-            var templateKey;
+            // Here options.def is field viewdef (name, type, label)
             _.extend(this, options.def);
 
             this.view = options.view;
-            this.label = options.label || options.def.vname;
-            this.bindModelChange(options.context, options.model || options.context.get("model"));
             this.viewName = this.view.name;
             this.meta = options.meta;
 
             // this is experimental to try to see if we can have custom events on sugarfields themselves.
             // the following line doesn't work, need to _.extend it or something.
             // this.events = this.meta.events;
-            templateKey = "sugarField." + this.type + "." + this.view.name;
+
+            this.bindModelChange(options.context, options.model || options.context.get("model"));
+
+            // Set module field definition (vardef)
+            if (this.model && this.model.fields) {
+                this.fieldDef = this.model.fields[this.name];
+            }
+        },
+
+        /**
+         * Loads template for current sugarField
+         */
+        loadTemplate: function() {
+            var viewFallbackMap = {
+                'edit': 'detail',
+                'detail': 'none'
+            };
+
+            if (!(app.acl.hasAccess(this.viewName, this.model, this.name))) {
+                this.viewName = viewFallbackMap[this.viewName];
+                // falling back, but now we need to check your access to the fallback view
+                this.loadTemplate();
+            }
+
+            var templateKey = "sugarField." + this.type + "." + this.view.name;
 
             var templateSource = null;
+
             if (this.meta) {
                 templateSource = this.meta.views[this.viewName] ?
                     this.meta.views[this.viewName] :
                     this.meta.views["default"];
             }
 
-            this.templateC = app.template.get(templateKey) || app.template.compile(templateSource, templateKey);
+            if (this.viewName == 'none') {
+                this.templateC = function(context){return ''};
+            } else {
+                this.templateC = app.template.get(templateKey) || app.template.compile(templateSource, templateKey);
+            }
+
         },
 
         /**
@@ -179,6 +207,7 @@
          * @return {Object} this Reference to the SugarField
          */
         render: function() {
+            this.loadTemplate();
             // If we don't have any data in the model yet
             if (!(this.model instanceof Backbone.Model)) {
                 return null;
@@ -257,11 +286,7 @@
             delete this.model;
             delete this.context;
         }
-    });
 
-    // TODO: Remove once we migrate to new namespacing
-    app.augment("sugarField", {
-        base: app.view.Field
     });
 
 }(SUGAR.App));

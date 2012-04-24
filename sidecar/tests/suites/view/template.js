@@ -1,23 +1,27 @@
 describe('template', function() {
-    var app = SUGAR.App;
+    var app;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+    });
 
     afterEach(function() {
         //Reset the cache after every test
-        app.cache.cutAll()
+        app.cache.cutAll();
         delete Handlebars.templates;
         app.template.initialize();
     });
 
     it('should compile templates', function() {
-        var src = "Hello {{name}}!";
-        var key = "testKey";
-        var temp = app.template.compile(src, key);
+        var src = "Hello {{name}}!",
+            key = "testKey",
+            temp = app.template.compile(src, key);
         expect(temp({name: "Jim"})).toEqual("Hello Jim!");
     });
 
     it('should retrieve compiled templates', function() {
-        var src = "Hello {{name}}!";
-        var key = "testKey";
+        var src = "Hello {{name}}!",
+            key = "testKey";
         //Compile the template
         app.template.compile(src, key);
 
@@ -31,8 +35,8 @@ describe('template', function() {
     });
 
     it('should retrieve compiled templates from cache', function() {
-        var src = "Hello {{name}}!";
-        var key = "testKey";
+        var src = "Hello {{name}}!",
+            key = "testKey";
         //Compile the template
         app.template.compile(src, key);
         //Initialize will reset the internal varaibles referencing the tempaltes in memory

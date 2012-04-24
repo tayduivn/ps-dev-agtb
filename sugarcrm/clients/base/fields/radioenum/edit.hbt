@@ -1,5 +1,5 @@
 <div class="row-fluid">
-    <div class="span2"><strong>{{label}}</strong></div>
+    <div class="span2"><strong>{{getLabel label model.module}}</strong></div>
     <div class="span10">
     {{#eachOptions options}}
         <input type="radio" name="{{../name}}" value="{{this}}" {{eq this ../value "SELECTED"}}>{{this}}</label>

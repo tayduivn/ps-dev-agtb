@@ -1,7 +1,7 @@
 (function(app) {
 
     /**
-     * Base View class. Use {@link View.LayoutManager} to create instances of views.
+     * Base View class. Use {@link View.ViewManager} to create instances of views.
      *
      * @class View.View
      * @alias SUGAR.App.layout.View
@@ -38,7 +38,7 @@
 
             /**
              * Template to render
-             * @cfg {Template}
+             * @cfg {Function}
              */
             this.template = options.template || app.template.get(this.name, this.context.get("module"));
 
@@ -83,17 +83,24 @@
          * @return {Object} this
          */
         render: function() {
-            //Bad templates can cause a JS error that we want to catch here
-            try {
-                this._render();
-                //Render will create a placeholder for sugar fields. we now need to populate those fields
-                _.each(this.sugarFields, function(sf) {
-                    sf.setElement(this.$el.find("span[sfuuid='" + sf.sfid + "']"));
-                    sf.render();
-                }, this);
-            } catch (e) {
-                app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
+            var renderFlag = app.acl.hasAccess(this.name, this.context.get("model"));
+            if (renderFlag) {
+                //Bad templates can cause a JS error that we want to catch here
+                try {
+                    this._render();
+                    //Render will create a placeholder for sugar fields. we now need to populate those fields
+                    _.each(this.sugarFields, function(sf) {
+                        sf.setElement(this.$el.find("span[sfuuid='" + sf.sfid + "']"));
+                        sf.render();
+                    }, this);
+                } catch (e) {
+                    app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
+                }
+            } else {
+                app.logger.error("Current user does not have access to this module view.");
+                //TODO throw and app error of no access
             }
+
 
             return this;
         },

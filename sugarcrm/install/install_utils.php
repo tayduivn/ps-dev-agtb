@@ -772,18 +772,19 @@ function handleSugarConfig() {
     if(!empty($_SESSION['fts_type']))
         $sugar_config['full_text_engine']               = array($_SESSION['fts_type'] => array('host'=> $_SESSION['fts_host'], 'port' => $_SESSION['fts_port']));
 
-    /*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
-        these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
-    $sugar_config['logger'] =
-        array ('level'=>$setup_site_log_level,
-         'file' => array(
-            'ext' => '.log',
-            'name' => 'sugarcrm',
-            'dateFormat' => '%c',
-            'maxSize' => '10MB',
-            'maxLogs' => 10,
-            'suffix' => '%m_%Y'),
-    );
+	/*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
+		these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
+    $sugar_config['logger']	=
+    	array ('level'=>$setup_site_log_level,
+    	 'file' => array(
+			'ext' => '.log',
+			'name' => 'sugarcrm',
+			'dateFormat' => '%c',
+			'maxSize' => '10MB',
+			'maxLogs' => 10,
+			'suffix' => ''), // bug51583, change default suffix to blank for backwards comptability
+  	);
+
     $sugar_config['session_dir']                    = $setup_site_session_path;
     $sugar_config['site_url']                       = $setup_site_url;
     $sugar_config['sugar_version']                  = $setup_sugar_version;
@@ -894,6 +895,14 @@ $cache_headers = <<<EOQ
         ExpiresByType image/jpg "access plus 1 month"
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    Options +FollowSymLinks
+    RewriteEngine On
+    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+</IfModule>
 EOQ;
     if(file_exists($htaccess_file)){
         $fp = fopen($htaccess_file, 'r');
@@ -906,24 +915,6 @@ EOQ;
         }
     }
     $status =  file_put_contents($htaccess_file, $contents . $restrict_str . $cache_headers);
-    if( !$status ) {
-        echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
-        echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";
-        echo $restrict_str;
-    }
-
-$restHtaccess = <<<HTACCCESS
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    Options +FollowSymLinks
-    RewriteEngine On
-    RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
-</IfModule>
-HTACCCESS;
-
-    $status =  sugar_file_put_contents("rest/{$htaccess_file}", $restHtaccess);
     if( !$status ) {
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
         echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";

@@ -102,7 +102,8 @@ $dictionary['Task'] = array('table' => 'tasks',
   	'vname'=>'LBL_PARENT_NAME',
     'type' => 'parent_type',
     'dbType'=>'varchar',
-  	 'group'=>'parent_name',
+  	'group'=>'parent_name',
+    'options'=> 'parent_type_display',
   	'required'=>false,
 	'len'=>'255',
     'comment' => 'The Sugar object to which the call is related',
@@ -172,7 +173,7 @@ $dictionary['Task'] = array('table' => 'tasks',
         'type'=>'varchar',
 		'vname' => 'LBL_EMAIL_ADDRESS',
 		'source' => 'non-db',
-        'studio' => 'hidden'
+        'studio' => false
     ),
 
   'priority' =>

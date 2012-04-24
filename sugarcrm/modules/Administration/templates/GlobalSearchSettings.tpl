@@ -54,7 +54,7 @@
 		<tr>
 			<td>
 			<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="SUGAR.saveGlobalSearchSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
-                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="display: none;text-decoration: none;" id='schedFullSystemIndexBtn' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
+                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="{if !$showSchedButton}display:none;{/if}text-decoration: none;" id='schedFullSystemIndexBtn' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
             <input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.GlobalSearchSettings.action.value='';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
 			</td>
 		</tr>
@@ -73,7 +73,8 @@
 		</table>
 	</div>
 {* //BEGIN SUGARCRM flav=pro ONLY *}
-    {if !$hide_fts_config}
+    <div {if $hide_fts_config}style="display:none;"{/if}>
+
         <br>
         {$MOD.LBL_FTS_PAGE_DESC}
         <br><br>
@@ -88,12 +89,12 @@
                 </tr>
                 <tr class="shouldToggle">
                     <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_HOST}:&nbsp;{sugar_help text=$MOD.LBL_FTS_HOST_HELP}</td>
-                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" {if $disableEdit} disabled {/if}></td>
+                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_host" id="fts_host" value="{$fts_host}" ></td>
                     <td width="60%" valign="bottom">&nbsp;<a href="javascript:void(0);" onclick="SUGAR.FTS.testSettings();" style="text-decoration: none;">{$MOD.LBL_FTS_TEST}</a></td>
                 </tr>
                 <tr class="shouldToggle">
                     <td width="25%" scope="row" valign="middle">{$MOD.LBL_FTS_PORT}:&nbsp;{sugar_help text=$MOD.LBL_FTS_PORT_HELP}</td>
-                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}" {if $disableEdit} disabled {/if}></td>
+                    <td width="25%" align="left" valign="middle"><input type="text" name="fts_port" id="fts_port" maxlength="5" size="5" value="{$fts_port}"></td>
                     <td width="60%"></td>
                 </tr>
                 <tr class="shouldToggle">
@@ -101,14 +102,13 @@
                 </tr>
             </tbody>
         </table>
-    {/if}
-
+    </div>
 {* //END SUGARCRM flav=pro ONLY *}
 	<table border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>
 				<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button primary" onclick="SUGAR.saveGlobalSearchSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
-                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="display:none;text-decoration: none;" id='schedFullSystemIndex' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
+                <input title="{$MOD.LBL_SAVE_SCHED_BUTTON}" class="button primary schedFullSystemIndex" onclick="SUGAR.FTS.schedFullSystemIndex();" style="{if !$showSchedButton}display:none;{/if}text-decoration: none;" id='schedFullSystemIndex' type="button" name="button" value="{$MOD.LBL_SAVE_SCHED_BUTTON}">
                 <input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" class="button" onclick="document.GlobalSearchSettings.action.value='';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
 			</td>
 		</tr>
@@ -118,6 +118,7 @@
 <div id='selectFTSModules' class="yui-hidden">
     <div style="background-color: white; padding: 20px;">
         <div id='selectFTSModulesTable' ></div>
+        <div style="padding-top: 10px"><input type="checkbox" name="clearDataOnIndex" id="clearDataOnIndex" >&nbsp;{$MOD.LBL_DELETE_FTS_DATA}</div>
     </div>
 </div>
 <script type="text/javascript">
@@ -274,6 +275,8 @@
             var port = document.getElementById('fts_port').value;
             var typeEl = document.getElementById('fts_type');
             var type = typeEl.options[typeEl.selectedIndex].value;
+            var clearData = $('#clearDataOnIndex').attr('checked') ? 1 : 0;
+
             var modules = SUGAR.getEnabledModulesForFTSSched();
             if(modules.length == 0)
             {
@@ -289,29 +292,12 @@
             }
             var sUrl = 'index.php?to_pdf=1&module=Administration&action=ScheduleFTSIndex&sched=true&type='
                             + encodeURIComponent(type) + '&host=' + encodeURIComponent(host) + '&port=' + encodeURIComponent(port)
-                            + '&modules=' + encodeURIComponent(modules);
+                            + "&clearData=" + clearData + '&modules=' + encodeURIComponent(modules);
 
-            var callback = {
-                success: function(o)
-                {
-                    var r = YAHOO.lang.JSON.parse(o.responseText);
-                    if(r.success)
-                    {
-                        alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
-                    }
-                    else
-                    {
-                        alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
-                    }
-                    SUGAR.FTS.selectFTSModulesDialog.cancel();
-                },
-                failure: function(o)
-                {
-                    alert(SUGAR.language.get('Administration','LBL_FTS_CONN_FAILURE_SHORT'));
-                    SUGAR.FTS.selectFTSModulesDialog.cancel();
-                }
-            }
-            var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback, null);
+            var transaction = YAHOO.util.Connect.asyncRequest('GET', sUrl, null, null);
+            alert(SUGAR.language.get('Administration','LBL_FTS_CONN_SUCCESS_SHORT'));
+            SUGAR.FTS.selectFTSModulesDialog.cancel();
+
         },
         schedFullSystemIndex : function()
         {

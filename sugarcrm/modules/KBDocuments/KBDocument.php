@@ -113,7 +113,7 @@ class KBDocument extends SugarBean {
 
 	  function set_notification_body($xtpl, $kbdoc)
 	{
-		global $app_list_strings,$current_user,$mod_strings;
+		global $app_list_strings,$current_user,$mod_strings,$timedate;
 		$user = new User();
 		$user->retrieve($kbdoc->created_by);
 		$user_name = '';
@@ -127,7 +127,14 @@ class KBDocument extends SugarBean {
 
 		$xtpl->assign("KBDOCUMENT_NAME", $kbdoc->kbdocument_name);
 		$xtpl->assign("KBDOCUMENT_STATUS", (isset($kbdoc->status_id) ? $app_list_strings['kbdocument_status_dom'][$kbdoc->status_id]:""));
-		$xtpl->assign("KBDOCUMENT_DATE_CREATED",$kbdoc->active_date);
+
+        //date entered will be available most of the time, in the cases where it is cleared out, use the fetched row value
+        $dateCreated = $timedate->to_display_date_time($kbdoc->date_entered);
+        if(empty($dateCreated)){
+            $dateCreated = $timedate->to_display_date_time($kbdoc->fetched_row['date_entered']);
+        }
+
+		$xtpl->assign("KBDOCUMENT_DATE_CREATED",$dateCreated);
 		$xtpl->assign("KBDOCUMENT_CREATED_BY",$user_name);
 		$xtpl->assign("KBDOCUMENT_DESCRIPTION", $kbdoc->description);
         if(isset($kbdoc->status_id) && $kbdoc->status_id != null){

@@ -8,39 +8,25 @@
 (function(app) {
 
     // Create a new subclass of the given parent class based on the controller definition passed.
-    var _declareClass = function(cache, parent, className, controller) {
+    var _declareClass = function(cache, base, className, controller) {
         var klass = null;
+        var evaledController = null;
         if (controller) {
             try {
-                var obj = eval("(" + controller + ")");
-                if (_.isObject(obj)) {
-                    klass = cache[className] = parent.extend(obj);
-                }
+                evaledController = eval("(" + controller + ")");
             } catch (e) {
-                app.logger.error("invalid view controller " + className + " : " + controller);
+                app.logger.error("Failed to eval view controller for " + className + ": " + e + ":\n" + controller);
             }
         }
+
+        if (_.isObject(evaledController)) {
+            klass = cache[className] = base.extend(evaledController);
+        }
+
         return klass;
     };
 
     var _viewManager = {
-
-        /**
-         * Map of fields types.
-         *
-         * Specifies correspondence between module field types and field widget types.
-         *
-         * - `varchar`, `name`, `currency` are mapped to `text` widget
-         * - `text` - `textarea`
-         * - `decimal` - `float`
-         */
-        fieldTypeMap: {
-            varchar: "text",
-            name: "text",
-            text: "textarea",
-            decimal: "float",
-            currency: "text"
-        },
 
         /**
          * Hash of view classes.
@@ -77,33 +63,27 @@
         },
 
         createView: function(params) {
-            var options = _.clone(params);
-            options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getView(options.module, params.name);
-            return this._createComponent("View", params.name, options);
+            var clonedParams = _.clone(params);
+            clonedParams.module = params.module || params.context.get("module");
+            clonedParams.meta = params.meta || app.metadata.getView(clonedParams.module, params.name);
+            return this._createComponent("View", params.name, clonedParams);
         },
 
         createLayout: function(params) {
-            var options = _.clone(params);
-            options.module = params.module || params.context.get("module");
-            options.meta = params.meta || app.metadata.getLayout(options.module, params.name) || {};
+            var clonedParams = _.clone(params);
+            clonedParams.module = params.module || params.context.get("module");
+            clonedParams.meta = params.meta || app.metadata.getLayout(clonedParams.module, params.name) || {};
 
-            options.meta.type = options.meta.type || options.name;
-            options.name = options.name || options.meta.type;
+            clonedParams.meta.type = clonedParams.meta.type || clonedParams.name;
+            clonedParams.name = clonedParams.name || clonedParams.meta.type;
 
-            return this._createComponent("Layout", options.meta.type, options);
+            return this._createComponent("Layout", clonedParams.meta.type, clonedParams);
         },
 
         createField: function(params) {
-            // adds support for fields just defined by single strings in metadata
-            if(params.def && _.isString(params.def) && params.model){
-                params.def = params.model.fields[params.def];
-            }
-            var options = _.clone(params);
             var type = params.def.type;
-            var name = this.fieldTypeMap[type] ? this.fieldTypeMap[type] : type;
-            options.meta = params.meta || app.metadata.getField(type);
-            return this._createComponent("Field", name, options);
+            params.meta = params.meta || app.metadata.getField(type);
+            return this._createComponent("Field", type, params);
         }
 
     };

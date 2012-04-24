@@ -69,8 +69,7 @@ class ProjectTaskViewList extends ViewList{
         require_once($metadataFile);
 
 		//BEGIN SUGARCRM flav=pro ONLY
-		if($this->bean->bean_implements('ACL'))
-		ACLField::listFilter($listViewDefs[$module],$module, $GLOBALS['current_user']->id ,true);
+		$this->bean->ACLFilterFieldList($listViewDefs[$module], array("owner_override" => true));
 		//END SUGARCRM flav=pro ONLY
 		$seed = $this->bean;
         if(!empty($this->bean->object_name) && isset($_REQUEST[$module.'2_'.strtoupper($this->bean->object_name).'_offset'])) {//if you click the pagination button, it will populate the search criteria here
@@ -122,6 +121,7 @@ class ProjectTaskViewList extends ViewList{
 		if (!is_admin($current_user)){
 			$params = array( 'massupdate' => false );
 			$lv->export = false;
+            $lv->multiSelect = false;
 		}
 		else{
 			$params = array( 'massupdate' => true, 'export' => true);

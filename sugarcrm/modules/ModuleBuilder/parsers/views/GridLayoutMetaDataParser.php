@@ -25,6 +25,7 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
 require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php' ;
 require_once 'modules/ModuleBuilder/parsers/views/MetaDataParserInterface.php' ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
+require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php' ;
 
 class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDataParserInterface
 {
@@ -38,18 +39,19 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	MB_WIRELESSDETAILVIEW => 'DetailView' ,
     	//END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW => 'EditView' ,
-        MB_PORTALDETAILVIEW => 'DetailView' ,
+        MB_PORTALEDITVIEW => array('portal','view','edit'),
+        MB_PORTALDETAILVIEW => array('portal','view','detail') ,
         //END SUGARCRM flav=ent ONLY
     	) ;
 
 	protected $FILLER ;
 
-    /*
+
+    /**
      * Constructor
-     * @param string view           The view type, that is, editview, searchview etc
-     * @param string moduleName     The name of the module to which this view belongs
-     * @param string packageName    If not empty, the name of the package to which this view belongs
+     * @param string $view           The view type, that is, editview, searchview etc
+     * @param string $moduleName     The name of the module to which this view belongs
+     * @param string $packageName    If not empty, the name of the package to which this view belongs
      */
     function __construct ($view , $moduleName , $packageName = '')
     {
@@ -72,20 +74,15 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             $this->implementation = new UndeployedMetaDataImplementation ( $view, $moduleName, $packageName ) ;
         }
 
-        $viewdefs = $this->implementation->getViewdefs () ;
-        //if (!isset(self::$variableMap [ $view ]))
-        //    self::$variableMap [ $view ] = $view;
         if (MetaDataFiles::getViewDefVar($view) === null) {
             MetaDataFiles::setViewDefVar($view, $view);
         }
 
-        //if (!isset($viewdefs [ self::$variableMap [ $view ]])){
-        if (!$this->hasViewVariable($viewdefs, $view)) {
+        $viewdefs = $this->getDefsFromArray($this->implementation->getViewdefs(), $view);
+        if ($viewdefs === null) {
             sugar_die ( get_class ( $this ) . ": incorrect view variable for $view" ) ;
         }
 
-        //$viewdefs = $viewdefs [ self::$variableMap [ $view ] ] ;
-        $viewdefs = $this->getDefsFromArray($viewdefs, $view);
         if (! isset ( $viewdefs [ 'templateMeta' ] ))
             sugar_die ( get_class ( $this ) . ": missing templateMeta section in layout definition (case sensitive)" ) ;
 
@@ -108,7 +105,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     }
 
     public function getDefsFromArray($viewdefs, $view) {
-        return $this->hasViewVariable($viewdefs, $view) ? $viewdefs[MetaDataFiles::getViewDefVar($view)] : array();
+        return MetaDataFiles::mapArrayToPath(MetaDataFiles::getViewDefVar($view),$viewdefs);
     }
 
     /*
@@ -120,8 +117,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             $this->_populateFromRequest ( $this->_fielddefs ) ;
         
         $viewdefs = $this->_viewdefs ;
-        $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ;
-        $this->implementation->save ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+        $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm( $this->_viewdefs [ 'panels' ] , $this->_fielddefs );
+        $this->implementation->save(MetaDataFiles::mapPathToArray(MetaDataFiles::getViewDefVar($this->_view),$viewdefs));
     }
 
     /*
@@ -137,7 +134,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
         $viewdefs = $this->_viewdefs ;
         $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ;
-        $this->implementation->deploy ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+        $this->implementation->deploy(MetaDataFiles::mapPathToArray(MetaDataFiles::getViewDefVar($this->_view),$viewdefs));
     }
 
     /*
@@ -723,7 +720,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         if (isset($viewdef['panels'])) {
     		$panels = $viewdef['panels'];
     	} else {
-    	    $panels = $viewdef[self::$variableMap [ $this->_view ] ]['panels'];
+            $defs = MetaDataFiles::mapArrayToPath(MetaDataFiles::getViewDefVar($this->_view), $viewdef);
+            $panels = isset($defs['panels']) ? $defs['panels'] : null;
     	}
 
         return $panels;

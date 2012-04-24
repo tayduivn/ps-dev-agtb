@@ -1,7 +1,8 @@
 describe("View Manager", function() {
-    var app = SUGAR.App;
+    var app;
 
     beforeEach(function() {
+        app = SugarTest.app;
         app.metadata.set(fixtures.metadata);
     });
 

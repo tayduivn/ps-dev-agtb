@@ -1,20 +1,34 @@
 describe("Field", function() {
-    var app = SUGAR.App;
+
+    var app, bean, meta = fixtures.metadata;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+        app.template.initialize();
+        app.template.load(meta.viewTemplates);
+        app.metadata.set(meta);
+        app.data.declareModel("Cases", fixtures.metadata.modules.Cases);
+        bean = app.data.createBean("Cases");
+    });
+
+     afterEach(function() {
+         app.cache.cutAll();
+         delete Handlebars.templates;
+     });
 
     it("should delegate events", function() {
-        var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents');
-        var events = {"click": "callback_click"};
-        var bean = new Backbone.Model();
-
-        var view = {};
-        var context = {};
-        var inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events;
-        var field = app.view.createField({
-            def: { name: "status", type: "varchar" },
-            view: view,
-            context: context,
-            model: bean
-        });
+        var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
+            events = {"click": "callback_click"},
+            bean = new Backbone.Model(),
+            view = {},
+            context = {},
+            inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
+            field = app.view.createField({
+                def: { name: "status", type: "varchar" },
+                view: view,
+                context: context,
+                model: bean
+            });
 
         field.delegateEvents(inputEvents);
         expect(delegateSpy).toHaveBeenCalledWith(events);
@@ -22,11 +36,10 @@ describe("Field", function() {
     });
 
     it("should render sugarfields html", function() {
-        var bean = new Backbone.Model(),
-            view = {},
+        var view = {},
             context = {},
             field = app.view.createField({
-                def: {name: "status", type: "varchar"},
+                def: {name: "status", type: "text"},
                 view: view,
                 context: context,
                 model: bean
@@ -38,31 +51,16 @@ describe("Field", function() {
         expect(field.$el.html()).toEqual('<span name="status">new</span>');
     });
 
-    it("should fall labels back to vname", function() {
-        var bean = new Backbone.Model(),
-            view = {},
-            context = {},  field = app.view.createField({
-                def: {name: "status", type: "varchar", vname: "TEST LABEL"},
-                view: view,
-                context: context,
-                model: bean
-            });
-        bean.set({status: "new", id: "anId"});
-        expect(field.label).toEqual("TEST LABEL");
-    });
-
     it("should bind bind model change on render", function() {
-        var bean = new Backbone.Model(),
-            view = {},
+        var view = {},
             context = {},
             field = app.view.createField({
-                def: {name: "status", type: "varchar"},
+                def: {name: "status", type: "text"},
                 view: view,
                 context: context,
                 model: bean
-            });
-
-        var spy = sinon.spy(field, 'bindDomChange');
+            }), 
+            spy = sinon.spy(field, 'bindDomChange');
 
         bean.set({status: "new", id: "anId"});
 
@@ -70,12 +68,11 @@ describe("Field", function() {
     });
 
     it("unbind events", function() {
-        var bean = new Backbone.Model(),
-            view = {},
+        var view = {},
             context = {bob: "bob"},
             inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
             field = app.view.createField({
-                def: {name: "status", type: "varchar"},
+                def: {name: "status", type: "text"},
                 view: view,
                 context: context,
                 model: bean
@@ -90,13 +87,12 @@ describe("Field", function() {
 
 
     it("bind render to model change events", function() {
-        var bean = new Backbone.Model(),
-            secondBean = new Backbone.Model(),
+        var secondBean = app.data.createBean("Cases"),
             view = {},
             context = {bob:"bob"},
             secondContext = {rob:"rob"},
             field = app.view.createField({
-                def: {name: "status", type: "varchar"},
+                def: {name: "status", type: "text"},
                 view: view,
                 context: context,
                 model: bean
@@ -116,23 +112,27 @@ describe("Field", function() {
     });
 
     it("update model on dom input change", function() {
-        var id = _.uniqueId('sugarFieldTest');
+        var id = _.uniqueId('sugarFieldTest'),
+            bean, view, context, field, input;
+
         $('body').append('<div id="'+id+'"></div>');
-        var bean = new Backbone.Model(),
-            view = {name:'edit'},
-            context = {bob:"bob"},
-            field = app.view.createField({
-                def: {name: "status", type: "varchar"},
-                view: view,
-                context: context,
-                model: bean,
-                el:$('#'+id)
-            });
+        bean = new Backbone.Model();
+        view = {name: 'edit'};
+        context = {bob:"bob"};
+        field = app.view.createField({
+            def: {name: "status", type: "varchar"},
+            view: view,
+            context: context,
+            model: bean,
+            el:$('#'+id)
+        });
+
         bean.set({status: "new"});
-        var input = field.$el.find("input");
+        input = field.$el.find("input");
         input.attr('value','bob');
         input.trigger('change');
         expect(bean.get('status')).toEqual('bob');
         $('#'+id).remove();
     });
 });
+

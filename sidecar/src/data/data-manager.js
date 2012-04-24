@@ -193,7 +193,6 @@
          * @param metadata metadata hash in which keys are module names and values are module definitions.
          */
         declareModels: function(metadata) {
-            this.reset();
             _.each(metadata.modules, function(module, name) {
                 this.declareModel(name, module);
             }, this);
@@ -371,8 +370,7 @@
                             model.page = model.getPageNumber();
                         }
                         data = data.records || [];
-                    }
-                    else if ((options.relate === true) && (method != "read")) {
+                    } else if ((options.relate === true) && (method != "read")) {
                         // Reset the flag to indicate that fetched relationship(s) do exist.
                         model.link.isNew = false;
                         // The response for create/update/delete relationship contains updated beans
@@ -390,9 +388,17 @@
                 }
             };
 
+            var error = function(xhr, error) {
+                app.error.handleHTTPError(xhr, error);
+
+                if (options.error) {
+                    options.error(xhr, error);
+                }
+            };
+
             var callbacks = {
                 success: success,
-                error: options.error
+                error: error
             };
 
             if (options.relate === true) {

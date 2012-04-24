@@ -173,16 +173,26 @@ else {
 		header("Pragma: public");
 		header("Cache-Control: maxage=1, post-check=0, pre-check=0");
 		if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
-		    $mime = getimagesize($download_location);
-		    if(!empty($mime)) {
+			$mime = getimagesize($download_location);
+		   	if(!empty($mime)) {
 			    header("Content-Type: {$mime['mime']}");
 		    } else {
 		        header("Content-Type: image/png");
 		    }
 		} else {
-            header("Content-Type: application/force-download");
-            header("Content-type: application/octet-stream");
-            header("Content-Disposition: attachment; filename=\"".$name."\";");
+						
+			if(preg_match("/\.jpg|\.gif|\.png|\.jpeg/i", $name)){
+				$mime = getimagesize($download_location);
+				if(!empty($mime)) {
+			   		header("Content-Type: {$mime['mime']}");
+				}
+			}
+			else{
+				header("Content-Type: application/force-download");
+            	header("Content-type: application/octet-stream");
+            	header("Content-Disposition: attachment; filename=\"".$name."\";");
+			}
+            
 		}
 		// disable content type sniffing in MSIE
 		header("X-Content-Type-Options: nosniff");

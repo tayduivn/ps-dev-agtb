@@ -89,6 +89,38 @@ class SugarWirelessView extends SugarView
         $this->ss->assign('VIEW', $this->action);
     }
 
+    public function getMetaDataFileFallback($view, $moduleName) {
+        $view = strtolower($view);
+        require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
+        $module = new StudioModule($moduleName);
+
+        // If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
+        $metadataPath = 'include/SugarObjects/templates/' . $module->getType () . '/metadata/';
+        $filename =  $metadataPath . 'mobile/views/' . str_replace(array('wireless', 'view'), '', $view) . '.php';
+
+        // Last ditch effort here, using the old old system
+        if (!file_exists($filename)) {
+            // Special case wireless search
+            if (preg_match('#wireless_(.+)_search#', $view)) {
+                $filename = $metadataPath . 'wireless.searchdefs.php';
+            } else {
+                $wireless = strpos($view, 'wireless') !== false;
+                $viewType = str_replace('wireless', '', $view);
+                foreach ($module->sources as $fname => $defs) {
+                    if (isset($defs['type']) && $defs['type'] == $viewType) {
+                        if ($wireless) {
+                            $fname = 'wireless.' . $fname;
+                        }
+                        $filename = $metadataPath . $fname;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $filename;
+    }
+
     protected function wl_get_metadata_location( $view ) {
 
     	require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
@@ -96,13 +128,8 @@ class SugarWirelessView extends SugarView
 
  	    if (!file_exists ( $filename ) ) {
  	    	$filename = DeployedMetaDataImplementation::getFileName ( $view, $GLOBALS['module'] , MB_BASEMETADATALOCATION ) ;
- 	    	if (!file_exists($filename))
- 	    	{
- 	    		require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
-				$module = new StudioModule ( $GLOBALS['module'] ) ;
-
- 	    		// If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
-				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/mobile/views/' . basename( $filename ) ;
+ 	    	if (!file_exists($filename)) {
+                $filename = $this->getMetaDataFileFallback($view, $GLOBALS['module']);
  			}
  		}
 
@@ -173,10 +200,10 @@ class SugarWirelessView extends SugarView
      * @param SugarBean - $child_seed the subpanel module bean
      * @param String - $related_field the link field to use
      * @param aSubPanel - $subpanel_def defninition of this subpanel
-     * @return 
+     * @return
      */
  	protected function wl_get_subpanel_data($child_seed, $related_field, $subpanel = null){
- 		
+
  		// load the relationship of the subpanel module to the current loaded bean
 		$this->bean->load_relationship($related_field);
 		// attain the query
@@ -259,7 +286,7 @@ class SugarWirelessView extends SugarView
 			else
 				$this->subpanel_layout_defs = $layout_defs [ $this->module] ;
 		}
-        
+
         return $this->subpanel_layout_defs;
     }
 
@@ -287,15 +314,19 @@ class SugarWirelessView extends SugarView
 
 			if (!file_exists($filename))
  	    	{
+                /*
  	    		require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
 				$module = new StudioModule ( $this->module ) ;
 
  	    		// If we're missing a wireless view we fallback on a template, sourced from SugarObjects
 				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/mobile/views/' . basename( $filename ) ;
 				$module_name = '<module_name>' ;
+                */
+                $filename = $this->getMetaDataFileFallback($view, $module_name);
+                $module_name = '<module_name>';
  	    	}
  	    }
- 	    
+
  	    return array('filename' => $filename, 'module_name' => $module_name);
  	}
 	/**
@@ -304,21 +335,35 @@ class SugarWirelessView extends SugarView
 	 */
  	public function bean_details($view)
 	{
-		
+
  	    $metaInfo = $this->getMetaDataFile($view);
  	    $filename = $metaInfo['filename'];
  	    $module_name = $metaInfo['module_name'];
- 	    
+
  	    $GLOBALS['log']->debug( get_class($this)."->bean_details($view): loading viewdefs from $filename, with module_name=$module_name" ) ;
 
- 	    require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
- 	    require $filename ;
+        $path = 'modules/ModuleBuilder/parsers/views/';
+        $oldstyle = strpos($filename, 'wireless.') !== false;
+ 	    if ($oldstyle) {
+            require_once $path . 'GridLayoutMetaDataParser.php';
+        } else {
+            require_once $path . 'SidecarGridLayoutMetaDataParser.php';
+            $parser = new SidecarGridLayoutMetaDataParser($view, $module_name);
+        }
 
-		if ( !isset($viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ])
-				&& strtolower( $view ) == MB_WIRELESSDETAILVIEW )
-			$panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ MB_WIRELESSEDITVIEW ] ]['panels'];
-		else
- 	    	$panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ]['panels'];
+        require $filename;
+
+        if ($oldstyle) {
+            if ( !isset($viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ])
+                    && strtolower( $view ) == MB_WIRELESSDETAILVIEW )
+                $panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ MB_WIRELESSEDITVIEW ] ]['panels'];
+            else
+                $panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ]['panels'];
+        } else {
+            $viewdefs = $parser->getDefsFromArray($viewdefs[$module_name], $view);
+            $panels = $viewdefs['panels'];
+        }
+
 // 	    $GLOBALS['log']->debug( get_class($this)."->bean_details($view): loaded these panels: ".print_r( $panels, true ) ) ;
 
 		// traverse through the wirelessviewdefs metadata to get the fields and values
@@ -386,7 +431,7 @@ class SugarWirelessView extends SugarView
 		if ( !isset($this->bean->field_name_map[$field]) ) {
 		    return false;
 		}
-		
+
         // retrieve the field, id, and value, pass it as an array for Smarty
         return array(
 				'id' => $this->bean->id,
@@ -422,13 +467,13 @@ class SugarWirelessView extends SugarView
 			$readOnly = !empty($field['readOnly']);
 			$field = $field['name'];
 		}
-		
+
 		$displayParams['readOnly'] = !empty($displayParams['readOnly']) || $readOnly || !empty($this->bean->field_name_map[$field]['calculated']);
 
         if ( !isset($this->bean->field_name_map[$field]) ) {
 		    return false;
 		}
-		
+
 		return array(
 				'id' => $this->bean->id,
 				'field' => $field,
@@ -447,7 +492,7 @@ class SugarWirelessView extends SugarView
  	protected function get_field_defs()
     {
         global $app_list_strings;
-        
+
  		$this->bean->fill_in_relationship_fields();
 
  		$is_owner = $this->bean->isOwner($GLOBALS['current_user']->id);
@@ -527,11 +572,7 @@ class SugarWirelessView extends SugarView
 
 	            $field_defs[$name]['value'] = $value;
 				//BEGIN SUGARCRM flav=pro ONLY
-	            if($this->bean->bean_implements('ACL')){
-	       			$field_defs[$name]['acl'] = ACLField::hasAccess($name, $this->bean->module_dir,$GLOBALS['current_user']->id, $is_owner);
-	            }else{
-	            	$field_defs[$name]['acl'] = 4;
-	            }
+                $field_defs[$name]['acl'] = $this->bean->ACLFieldGet($name);
 	            //END SUGARCRM flav=pro ONLY
 	        } //foreach
 		} //if
@@ -646,7 +687,7 @@ class SugarWirelessView extends SugarView
                             $field['options']);
                     }
                 }
-                elseif ( isset($GLOBALS['app_list_strings'][$field['options']]) 
+                elseif ( isset($GLOBALS['app_list_strings'][$field['options']])
                         && !isset($GLOBALS['app_list_strings'][$field['options']]['']) ) {
                     $fields[$name]['options'] = array_merge(
                         array('' => $GLOBALS['app_strings']['LBL_NONE']),

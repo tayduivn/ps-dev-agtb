@@ -1,6 +1,10 @@
 describe("Handlebars Helpers", function() {
 
-    var app = SUGAR.App;
+    var app;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+    });
 
     // TODO: Create test for each helper
 
@@ -24,6 +28,11 @@ describe("Handlebars Helpers", function() {
     });
 
     describe("field", function() {
+
+        beforeEach(function() {
+            SugarTest.seedApp();
+        });
+
         it("should return a sugarfield span element", function() {
             var sfid = 0,
                 model = new app.Bean(),
@@ -36,8 +45,8 @@ describe("Handlebars Helpers", function() {
                 view = {sugarFields: [null, field], name: "detail"},
                 sugarField = {name: "TestName", label: "TestLabel", type: "text"};
 
-            expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toEqual('<span sfuuid="1"></span>');
-        })
+            expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toMatch(/<span sfuuid=.*(\d+).*/);
+        });
     });
 
     describe("buildRoute", function() {
@@ -103,10 +112,10 @@ describe("Handlebars Helpers", function() {
         it("should pull options hash from app list strings and return an iterated block string", function() {
             var optionName = "custom_fields_importable_dom",
                 blockHtml = "<li>{{this.key}} {{this.value}}</li>",
-                template;
+                appListStrings = fixtures.metadata.appListStrings,
+                template = Handlebars.compile(blockHtml);
 
-            template = Handlebars.compile(blockHtml);
-
+            app.lang.setAppListStrings(fixtures.metadata.appListStrings);
             expect(Handlebars.helpers.eachOptions(optionName, template)).toEqual("<li>true Yes</li><li>false No</li><li>required Required</li>");
         });
 
@@ -138,6 +147,22 @@ describe("Handlebars Helpers", function() {
                 returnFalse = "Failure!";
 
             expect(Handlebars.helpers.eq(val1, val2, returnTrue, returnFalse)).toEqual(returnFalse);
+        });
+    });
+
+    describe("getLabel", function() {
+        it("should get a label", function() {
+            var lang = SUGAR.App.lang,
+                setData = fixtures.language.Accounts,
+                string;
+
+            lang.setLabel("Accounts", setData);
+            string = lang.get("LBL_ANNUAL_REVENUE", "Accounts");
+
+            expect(string).toEqual("Annual Revenue");
+            // Save instance of app cache
+            expect(Handlebars.helpers.getLabel("LBL_ANNUAL_REVENUE", "Accounts")).toEqual("Annual Revenue");
+            // Restore cache
         });
     });
 

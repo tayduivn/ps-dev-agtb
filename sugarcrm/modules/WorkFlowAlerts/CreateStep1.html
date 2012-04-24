@@ -239,7 +239,7 @@ function confirm_safety(type){
 	</tr>
 	<tr id='save_div'>
 	<td align='right' colspan='2'>
-		<input type='submit' class='button' value='{APP.LBL_SAVE_BUTTON_LABEL}' id='save' name='save' title='{APP.LBL_SAVE_BUTTON_LABEL}' onclick="this.form.action.value='Save'; return confirm_safety('save');">
+		<input type='submit' class='button' value='{APP.LBL_SAVE_BUTTON_LABEL}' id='save' name='save' title='{APP.LBL_SAVE_BUTTON_LABEL}' onclick="if(confirm_safety('save')) { this.form.action.value='Save'; return true; } else return false;">
 	 <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.close();" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  ">
 
 

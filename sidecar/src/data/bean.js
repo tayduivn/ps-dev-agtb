@@ -58,12 +58,15 @@
                 }
             });
 
-            //{
+            // {
             // first_name: { maxLength: 20 },
             // }
 
             // "validate" method should not return anything in case there are no validation errors
-            if (!_.isEmpty(errors)) return errors;
+            if (!_.isEmpty(errors)) {
+                app.error.handleValidationError(this, errors);
+                return errors;
+            }
         },
 
         /**
@@ -78,10 +81,11 @@
     }), false);
 
     /**
-     * @param errors
+     * Adds validation error to the passed in error object.
+     * @param {Object} errors
      * @param result
-     * @param fieldName
-     * @param validatorName
+     * @param {String} fieldName
+     * @param {String} validatorName
      * @private
      */
     function _addValidationError(errors, result, fieldName, validatorName) {
@@ -92,5 +96,4 @@
             errors[fieldName][validatorName] = result;
         }
     }
-
 })(SUGAR.App);

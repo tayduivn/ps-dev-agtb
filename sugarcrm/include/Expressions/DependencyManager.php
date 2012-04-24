@@ -209,6 +209,9 @@ class DependencyManager
                 if (!isset($grid['values']) || empty($grid['trigger']))
                     continue;
 
+                if( !isset($fields[$grid['trigger']]) )
+                    continue;
+
                 $trigger_list_id = $fields[$grid ['trigger']]['options'];
                 $trigger_values = $app_list_strings[$trigger_list_id];
 
@@ -382,7 +385,10 @@ class DependencyManager
     static function getDependenciesForFields($fields, $view = "")
     {
         if ($view == "DetailView") {
-            return self::getDependentFieldDependencies($fields);
+            return array_merge(
+                self::getDependentFieldDependencies($fields),
+                self::getDropDownDependencies($fields)
+            );
         } else
         {
             return array_merge(

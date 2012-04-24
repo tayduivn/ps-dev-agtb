@@ -27,10 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-// Call is used to store customer information.
-require_once('modules/Activities/Activity.php');
-class Call extends Activity
-{
+class Call extends SugarBean {
 	var $field_name_map;
 	// Stored fields
 	var $id;
@@ -108,9 +105,7 @@ class Call extends Activity
 										'user_id'			=> 'users',
 										'assigned_user_id'	=> 'users',
 										'note_id'			=> 'notes',
-										//BEGIN SUGARCRM flav=sales ONLY
-										'lead_id'			=> 'leads',
-										//END SUGARCRM flav=sales ONLY
+                                        'lead_id'			=> 'leads',
 								);
 
 	function Call() {
@@ -132,8 +127,8 @@ class Call extends Activity
 			$this->team_id = 1; // make the item globally accessible
 		}
 		//END SUGARCRM flav=pro ONLY
-		
-		
+
+
 
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))
         	$this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
@@ -165,15 +160,15 @@ class Call extends Activity
 	function save($check_notify = FALSE) {
 		global $timedate,$current_user;
 
-	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes))
         {
     	    $td = $timedate->fromDb($this->date_start);
     	    if($td)
     	    {
 	        	$this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-    	    }	
+    	    }
         }
-        		
+
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
         } else {
@@ -187,7 +182,9 @@ class Call extends Activity
 			}
 			if((empty($this->id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $GLOBALS['current_user']->id != $_REQUEST['assigned_user_id']) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) && $old_assigned_user_id != $_REQUEST['assigned_user_id']) ){
 				$this->special_notification = true;
-				$check_notify = true;
+				if(!isset($GLOBALS['resavingRelatedBeans']) || $GLOBALS['resavingRelatedBeans'] == false) {
+					$check_notify = true;
+				}
                 if(isset($_REQUEST['assigned_user_name'])) {
                     $this->new_assigned_user_name = $_REQUEST['assigned_user_name'];
                 }
@@ -410,14 +407,7 @@ class Call extends Activity
 		$this->fill_in_additional_parent_fields();
 
 		global $app_list_strings;
-		$parent_types = $app_list_strings['record_type_display'];
-		$disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
-		foreach($disabled_parent_types as $disabled_parent_type){
-			if($disabled_parent_type != $this->parent_type){
-				unset($parent_types[$disabled_parent_type]);
-			}
-		}
-
+		$parent_types = SugarACL::filterModuleList($app_list_strings['record_type_display']);
 		$this->parent_type_options = get_select_options_with_id($parent_types, $this->parent_type);
 
 		if (empty($this->reminder_time)) {
@@ -491,16 +481,8 @@ class Call extends Activity
 		}
 
         $call_fields['CONTACT_ID'] = $this->contact_id;
-        //If we have a contact id and there are more than one contacts found for this meeting then let's create a hover link
-        if($this->alter_many_to_many_query && !empty($this->contact_id) && isset($this->secondary_select_count) && $this->secondary_select_count > 1)
-        {
-           $call_fields['CONTACT_NAME'] = $this->createManyToManyDetailHoverLink($this->contact_name, $this->contact_id);
-        } else {
-           $call_fields['CONTACT_NAME'] = $this->contact_name;
-        }
-
+        $call_fields['CONTACT_NAME'] = $this->contact_name;
 		$call_fields['PARENT_NAME'] = $this->parent_name;
-
         $call_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
 	$call_fields['EMAIL_REMINDER_CHECKED'] = $this->email_reminder_time==-1 ? false : true;
 
@@ -516,7 +498,7 @@ class Call extends Activity
 
         // rrs: bug 42684 - passing a contact breaks this call
 		$notifyUser =($call->current_notify_user->object_name == 'User') ? $call->current_notify_user : $current_user;
-		        
+
 
 		// Assumes $call dates are in user format
 		$calldate = $timedate->fromDb($call->date_start);

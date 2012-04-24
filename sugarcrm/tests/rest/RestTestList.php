@@ -46,7 +46,7 @@ class RestTestList extends RestTestBase {
 
     public function testList() {
         // Make sure there is at least one page of accounts
-        for ( $i = 0 ; $i < 30 ; $i++ ) {
+        for ( $i = 0 ; $i < 40 ; $i++ ) {
             $account = new Account();
             $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
             $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
@@ -57,8 +57,7 @@ class RestTestList extends RestTestBase {
         // Test normal fetch
         $restReply = $this->_restCall("Accounts/");
 
-        $this->assertEquals(21,$restReply['reply']['result_count'],"The result count did not have 21 entries");
-        $this->assertEquals(20,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
+        $this->assertEquals(31,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
         $restReply2 = $this->_restCall("Accounts?offset=".$restReply['reply']['next_offset']);
@@ -91,4 +90,4 @@ class RestTestList extends RestTestBase {
     }
 
 }
-- 
+

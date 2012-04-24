@@ -1,41 +1,49 @@
 describe("View Manager", function() {
 
+    var app;
+
     describe("should be able to create instances of Field class", function() {
 
-        var app = SUGAR.App;
-
-        app.metadata.set(fixtures.metadata);
-        app.data.declareModels(fixtures.metadata);
-
-        //Need a sample Bean
-        var bean = app.data.createBean("Contacts", {
-            first_name: "Foo",
-            last_name: "Bar"
-        });
-
-        var collection = new app.BeanCollection([bean]);
-
-        //Setup a context
-        var context = app.context.getContext({
-            url: "someurl",
-            module: "Contacts",
-            model: bean,
-            collection: collection
-        });
-
-        var view = {
-            name: "test"
-        };
+        var bean, collection, context, view;
 
         beforeEach(function() {
+            app = SugarTest.app;
+
+            app.metadata.set(fixtures.metadata);
+            app.data.declareModels(fixtures.metadata);
+
+            //Need a sample Bean
+            bean = app.data.createBean("Contacts", {
+                first_name: "Foo",
+                last_name: "Bar"
+            });
+
+            collection = new app.BeanCollection([bean]);
+
+            //Setup a context
+            context = app.context.getContext({
+                url: "someurl",
+                module: "Contacts",
+                model: bean,
+                collection: collection
+            });
+
+            view = {
+                name: "test"
+            };
             app.view.fields = {};
+        });
+
+        afterEach(function() {
+            bean = null, collection = null, context = null, view = null;
         });
 
         it("with default template", function() {
             var result = app.view.createField({
                 def: {
                     type: 'addresscombo',
-                    name: "address"
+                    name: "address",
+                    label: "Address"
                 },
                 context: context,
                 view: view
@@ -43,27 +51,38 @@ describe("View Manager", function() {
 
             expect(result).toBeDefined();
             expect(result instanceof app.view.Field).toBeTruthy();
+            expect(result.type).toEqual("addresscombo");
+            expect(result.name).toEqual("address");
+            expect(result.label).toEqual("Address");
+            expect(result.fieldDef).toEqual(fixtures.metadata.modules["Contacts"].fields["address"]);
+
         });
 
-        it("with def of a string", function() {
-            var model = app.data.createBean("Contacts", {
-                first_name: "Foo",
-                last_name: "Bar"
+        it("of custom class", function() {
+            app.view.fields.AddresscomboField = app.view.Field.extend({
+                foo: "foo"
             });
-            var result = app.view.createField({
-                def: "first_name",
-                context: context,
-                view: view,
-                model: model
-            });
-            expect(result).toBeDefined();
-            expect(result.type).toEqual("varchar");
-        });
 
-        it("with custom controller", function() {
             var result = app.view.createField({
                 def: {
-                    type: 'varchar',
+                    type: 'addresscombo',
+                    name: "address",
+                    label: "Address"
+                },
+                context: context,
+                view: view
+            });
+
+            expect(result).toBeDefined();
+            expect(result instanceof app.view.fields.AddresscomboField).toBeTruthy();
+            expect(result.foo).toEqual("foo");
+
+        });
+
+        it("of custom class with controller", function() {
+            var result = app.view.createField({
+                def: {
+                    type: 'text',
                     name: "description"
                 },
                 context: context,

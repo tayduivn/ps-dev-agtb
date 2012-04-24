@@ -29,7 +29,8 @@
 *}
 
 <script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp1_jquery.js'}"></script>
-
+<!-- Below Div must exist in order for IE7/8 to read the inline style declaration. Line should be removed for IE9+ -->
+<div display="none">&nbsp;</div>
 <style>
 {literal}
 #visGridWindow .yui-dt table, #visGridWindow .yui-dt td, .yui-dt tr th, #visGridWindow .yui-dt-liner {
@@ -107,7 +108,7 @@
     float:left;
     border-right: 1px solid grey;
     padding-right: 5px;
-    height:100%;
+    height:542px;
 }
 
 #ddd_delete div {
@@ -136,6 +137,8 @@
             {foreach from=$child_list_options key=val item=label}
                 {if $val==""}
                     {assign var=val value='--blank--'}
+                {/if}
+                {if $label==""}
                     {assign var=label value='--blank--'}
                 {/if}
                 <li class="ui-state-default" val="{$val}">{$label}</li>

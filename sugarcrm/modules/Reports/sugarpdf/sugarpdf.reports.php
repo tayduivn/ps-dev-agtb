@@ -35,7 +35,7 @@ class ReportsSugarpdfReports extends Sugarpdf
     );
     
     function preDisplay(){
-        global $app_list_strings, $locale;
+        global $app_list_strings, $locale, $timedate;
         
         parent::preDisplay();
         
@@ -45,10 +45,10 @@ class ReportsSugarpdfReports extends Sugarpdf
         $this->SetFont(PDF_FONT_NAME_MAIN,'',PDF_FONT_SIZE_MAIN);
         
         //Set PDF document properties
-        if($this->bean->name == "untitled") {
-            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $app_list_strings['moduleList'][$this->bean->module], date("Y-m-d H:i:s"));
+   		if($this->bean->name == "untitled") {
+            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $app_list_strings['moduleList'][$this->bean->module], $timedate->getNow(true));
         } else {
-            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, date("Y-m-d H:i:s"));
+            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, $timedate->getNow(true));
         }
         $cols = count($this->bean->report_def['display_columns']);
     }

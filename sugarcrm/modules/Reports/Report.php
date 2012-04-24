@@ -155,6 +155,8 @@ class Report
             $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));
         }
 
+        $this->cleanLabels();
+
         if (!empty($this->report_def['report_name'])) {
             $this->name = $this->report_def['report_name'];
         }
@@ -177,6 +179,7 @@ class Report
         if (!empty($this->report_def['chart_description'])) {
             $this->chart_description = $this->report_def['chart_description'];
         }
+
 
         //Upgrade the pre-5.1 reports that had a summary column field that wasn't in the group by or an aggregate field.
         if (!empty ($this->report_def['summary_columns'])) {
@@ -422,6 +425,29 @@ class Report
         $this->report_def_str = $json->encode($this->report_def);
 
 
+    }
+
+    /**
+     * Ensure that report labels do not have HTML inside
+     */
+    protected function cleanLabels()
+    {
+        foreach(array('summary_columns', 'display_columns', 'group_defs', 'full_table_list') as $def) {
+            if (!empty ($this->report_def[$def])) {
+                foreach ($this->report_def[$def] as &$column) {
+                    if(!empty($column['label'])) {
+                        // clean up the label
+                        $column['label'] = strip_tags($column['label']);
+                    }
+                }
+            }
+        }
+        if(!empty($this->report_def['report_name'])) {
+            $this->report_def['report_name'] = strip_tags($this->report_def['report_name']);
+        }
+        if(!empty($this->report_def['chart_description'])) {
+            $this->report_def['chart_description'] = strip_tags($this->report_def['chart_description']);
+        }
     }
 
     // gets rid of fields that user shouldn't see
@@ -877,13 +903,13 @@ class Report
         if (!empty($layout_def['name']) && ($layout_def['name'] == 'weighted_amount' || $layout_def['name'] == 'weighted_sum')) {
             $field_def['type'] = 'currency';
         }
-        
+
         // Bug 32799
-        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also 
+        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also
         if (strtolower($layout_def['name']) == 'document_name') {
         	$field_def['type'] = 'name';
         }
-        
+
         $layout_def['type'] = $field_def['type'];
         if (isset($field_def['rel_field'])) {
             $layout_def['rel_field'] = $field_def['rel_field'];
@@ -1210,16 +1236,7 @@ return str_replace(' > ','_',
                 }
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
             }
-            // Bug 40573: addon field for "day" "select" field
-            if(isset($display_column['column_function']) && $display_column['column_function'] == 'day')
-            {
-                $addon_dispay_column = $display_column;
-                $addon_dispay_column['column_function'] = 'dayreal';
-                $addon_select_piece = $this->layout_manager->widgetQuery($addon_dispay_column);
-                if (!$this->select_already_defined($addon_select_piece, $field_list_name)) {
-                    array_push($this->$field_list_name, $addon_select_piece);
-                }
-            }
+
             if (!$this->select_already_defined($select_piece, $field_list_name)) {
                 array_push($this->$field_list_name, $select_piece);
             }
@@ -1955,10 +1972,10 @@ return str_replace(' > ','_',
                     }
                     $display_column['fields'][$field_name] = $display;
                 } else {
-                        if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
-                            $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
-                        }
-                        $display = $this->layout_manager->widgetDisplay($display_column);
+                    if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
+                        $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
+                    }
+                    $display = $this->layout_manager->widgetDisplay($display_column);
                 }
 
             } else {
@@ -2228,6 +2245,8 @@ return str_replace(' > ','_',
 
         if (isset($extModule->field_defs['name']['db_concat_fields'])) {
             $select_piece = db_concat($secondaryTableAlias, $extModule->field_defs['name']['db_concat_fields']);
+        } else if(isset($field_def['rname']) && isset($extModule->field_defs[$field_def['rname']])) {
+         	$select_piece = $secondaryTableAlias . ".{$field_def['rname']}";
         } else {
             $select_piece = $secondaryTableAlias . '.name'; //. $secondaryTableAlias.'_name';
         }

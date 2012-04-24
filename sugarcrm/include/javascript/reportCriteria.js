@@ -616,7 +616,7 @@ function addFilterInput(cell,filter) {
 			addFilterInputDatetimecombo(row,filter);
 		}
 	} 
-	else if (field_type == 'id' || field_type == 'name' ) {
+	else if (field_type == 'id' || field_type == 'name'  || field_type == 'fullname' ) {
 		if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 			addFilterInputRelate(row,field,filter,false);
 		} 
@@ -942,7 +942,7 @@ function addFilterInputSelectSingle(row,options,filter) {
 		}
 
 		if ((option_value == filter.input_name0)
-			|| (filter.name ='user_name')
+			|| (filter.name == 'user_name')
 				&& (filter.input_name0 == 'Current User')
 				&& (option_value == current_user_id)
 			) {
@@ -1407,7 +1407,7 @@ function validateFilterRow(filter, returnObject) {
 
 		var column_name = cell0.getElementsByTagName('select')[0].value;
 		//var filter_def = new Object();
-		var field = all_fields[column_name].field_def;	
+		var field = all_fields[column_name].field_def;
 		filter.name = field.name;
 		filter.table_key = all_fields[column_name].linked_field_name;
 

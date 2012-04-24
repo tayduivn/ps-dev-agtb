@@ -458,11 +458,7 @@ class EditView
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY
-                if ($this->focus->bean_implements('ACL')) {
-                    $this->fieldDefs[$name]['acl'] =  ACLField::hasAccess($name, $this->focus->module_dir,$GLOBALS['current_user']->id, $is_owner);
-                } else {
-                    $this->fieldDefs[$name]['acl'] = 4;
-                }
+                $this->fieldDefs[$name]['acl'] = $this->focus->ACLFieldGet($name);
                 //END SUGARCRM flav=pro ONLY
 
                 //This code is used for QuickCreates that go to Full Form view.  We want to overwrite the values from the bean
@@ -519,7 +515,7 @@ class EditView
         }
     }
 
-    
+
     /**
      * display
      * This method makes the Smarty variable assignments and then displays the

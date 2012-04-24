@@ -1,7 +1,7 @@
 (function(app) {
 
     /**
-     * Base Layout class. Use {@link View.LayoutManager} to create instances of layouts.
+     * Base Layout class. Use {@link View.ViewManager} to create instances of layouts.
      *
      * @class View.Layout
      * @alias SUGAR.App.layout.Layout
@@ -134,11 +134,13 @@
         getFields: function() {
             var fields = [];
             _.each(this.components, function(view) {
+                if (view.completeMeta){
+                    view.completeMeta();
+                }
                 fields = _.union(fields, view.getFields());
             });
 
             return fields;
         }
     });
-
 })(SUGAR.App);

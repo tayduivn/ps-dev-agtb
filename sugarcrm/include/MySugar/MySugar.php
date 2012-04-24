@@ -45,15 +45,8 @@ class MySugar{
 				&& (!in_array('Activities', $GLOBALS['moduleList']))){
 			$displayDashlet = false;
 		}
-		elseif (ACLController::moduleSupportsACL($this->type) ) {
-		    $bean = SugarModule::get($this->type)->loadBean();
-		    if ( !ACLController::checkAccess($this->type,'list',true,$bean->acltype)) {
-		        $displayDashlet = false;
-		    }
-		    $displayDashlet = true;
-		}
-		else{
-			$displayDashlet = true;
+		else {
+		    $displayDashlet = SugarACL::checkAccess($this->type, 'list', array("owner_override" => true));
 		}
 
 		return $displayDashlet;
@@ -733,7 +726,7 @@ EOJS;
 
 							$chartsArray[$id] = array();
 							$chartsArray[$id]['id'] = $id;
-							$chartsArray[$id]['xmlFile'] = $sugar_config['tmp_dir'] . $dashlets[$id]['reportId'] . '_saved_chart.xml';
+							$chartsArray[$id]['xmlFile'] = sugar_cached("xml/") . $dashlets[$id]['reportId'] . '_saved_chart.xml';
 							$chartsArray[$id]['width'] = '100%';
 							$chartsArray[$id]['height'] = '480';
 							$chartsArray[$id]['styleSheet'] = $chartStyleCSS;

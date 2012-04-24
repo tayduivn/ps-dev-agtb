@@ -63,8 +63,8 @@ function process_action_update($focus, $action_array){
 			{
 				$relBean = get_module_info($focus->field_defs[$field]['module']);
 				$relBean->retrieve($new_value);
-				if (empty($relBean->id))
-				{
+                if (empty($relBean->id) && (!empty($focus->required_fields[$field]) && $focus->required_fields[$field] == true))
+                {
 					$GLOBALS['log']->info("workflow attempting to set relate field $field to invalid id: $new_value");
 					continue;
 				}

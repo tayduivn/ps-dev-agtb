@@ -850,23 +850,32 @@ function getUserArrayFromFullName($args, $hide_portal_users = false) {
 	global $locale;
 	$db = DBManagerFactory::getInstance();
 
-	$argArray = array();
-	if(strpos($args, " ")) {
-		$argArray = explode(" ", $args);
-	} else {
-		$argArray[] = $args;
-	}
+	// jmorais@dri - Bug #51411
+	//
+    // Refactor the code responsible for parsing supplied $args, this way we
+    // ensure that if $args has at least one space (after trim), the $inClause
+    // will be composed by several clauses ($inClauses) inside parenthesis.
+    //
+    // Ensuring that operator precedence is respected, and avoiding
+    // inactive/deleted users to be retrieved.
+    //
+    $args = trim($args);
+    if (strpos($args, ' ')) {
+        $inClauses = array();
 
-	$inClause = '';
-	foreach($argArray as $arg) {
-		if(!empty($inClause)) {
-			$inClause .= ' OR ';
-		}
-		if(empty($arg))
-		continue;
-        $arg = $db->quote($arg);
-		$inClause .= "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
-	}
+        $argArray = explode(' ', $args);
+        foreach ($argArray as $arg) {
+            $arg = $db->quote($arg);
+            $inClauses[] = "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
+        }
+
+        $inClause = '(' . implode('OR ', $inClauses) . ')';
+
+    } else {
+        $args = $db->quote($args);
+        $inClause = "(first_name LIKE '{$args}%' OR last_name LIKE '{$args}%')";
+    }
+    // ~jmorais@dri
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
 	if ( $hide_portal_users ) {
@@ -1803,7 +1812,7 @@ function get_set_focus_js () {
 	//TODO Clint 5/20 - Make this function more generic so that it can take in the target form and field names as variables
 	$the_script = <<<EOQ
 <script type="text/javascript" language="JavaScript">
-<!-- Begin
+<!--
 function set_focus() {
 	if (document.forms.length > 0) {
 		for (i = 0; i < document.forms.length; i++) {
@@ -1821,7 +1830,7 @@ function set_focus() {
       	}
    	}
 }
-//  End -->
+-->
 </script>
 EOQ;
 
@@ -1929,7 +1938,9 @@ function translate($string, $mod='', $selectedValue=''){
 		return $string;
 	}
 
-	if(is_array($returnValue) && ! empty($selectedValue) && isset($returnValue[$selectedValue]) ){
+    // Bug 48996 - Custom enums with '0' value were not returning because of empty check
+    // Added a numeric 0 checker to the conditional to allow 0 value indexed to pass
+	if(is_array($returnValue) && (!empty($selectedValue) || (is_numeric($selectedValue) && $selectedValue == 0))  && isset($returnValue[$selectedValue]) ){
 		return $returnValue[$selectedValue];
 	}
 
@@ -2212,8 +2223,15 @@ function clean_incoming_data() {
 	foreach($get  as $k => $v) { $_GET[$k] = $v; }
 	foreach($req  as $k => $v) {
 		 $_REQUEST[$k] = $v;
-		 //ensure the keys are safe as well
-		 securexsskey($k);
+
+	    //ensure the keys are safe as well.  If mbstring encoding translation is on, the post keys don't
+        //get translated, so scrub the data but don't die
+	    if(ini_get('mbstring.encoding_translation')==='1'){
+            securexsskey($k,false);
+        }else{
+		    securexsskey($k,true);
+        }
+
 	}
 	// Any additional variables that need to be cleaned should be added here
 	if (isset($_REQUEST['login_theme'])) clean_string($_REQUEST['login_theme']);
@@ -2734,10 +2752,7 @@ function parse_list_modules(&$listArray)
 		}
 		//END SUGARCRM flav!=sales ONLY
 	}
-	$acldenied = ACLController::disabledModuleList($listArray,false);
-	foreach($acldenied as $denied){
-		unset($returnArray[$denied]);
-	}
+	$returnArray = SugarACL::filterModuleList($listArray, 'access', true);
 	asort($returnArray);
 
 	return $returnArray;
@@ -3177,10 +3192,12 @@ function sugar_cleanup($exit = false) {
 	Tracker::logPage();
 	// Now write the cached tracker_queries
     //BEGIN SUGARCRM flav=pro ONLY
-    $trackerManager = TrackerManager::getInstance();
-    if($monitor = $trackerManager->getMonitor('tracker_queries')){
-    	$trackerManager->saveMonitor($monitor, true);
-	}
+    if(class_exists("TrackerManager")) {
+        $trackerManager = TrackerManager::getInstance();
+        if($monitor = $trackerManager->getMonitor('tracker_queries')){
+        	$trackerManager->saveMonitor($monitor, true);
+    	}
+    }
     //END SUGARCRM flav=pro ONLY
 	if(!empty($GLOBALS['savePreferencesToDB']) && $GLOBALS['savePreferencesToDB']) {
 	    if ( isset($GLOBALS['current_user']) && $GLOBALS['current_user'] instanceOf User )
@@ -4934,13 +4951,18 @@ function verify_image_file($path, $jpeg = false)
         }
 	} else {
 	    // check image manually
-	    $fp = fopen($path, "r");
-	    if(!$fp) return false;
-	    $data = fread($fp, 4096);
+        $fp = fopen($path, "rb");
+        if(!$fp) return false;
+        $data = '';
+        // read the whole file in chunks
+        while(!feof($fp)) {
+            $data .= fread($fp,8192);
+        }
+
 	    fclose($fp);
-	    if(preg_match("/<(html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+	    if(preg_match("/<(\?php|html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
 	         $data, $m)) {
-	        $GLOBALS['log']->info("Found {$m[0]} in $path, not allowing upload");
+	        $GLOBALS['log']->fatal("Found {$m[0]} in $path, not allowing upload");
 	        return false;
 	    }
 	    return true;
@@ -5019,12 +5041,12 @@ function sql_like_string($str, $like_char, $wildcard = '%', $appendWildcard = tr
         $wildcard = $GLOBALS['sugar_config']['search_wildcard_char'];
     }
 
-    // add wildcard at the beginning of the search string
-    if (isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
-        $GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
-        if (substr($str,0,1) <> $wildcard)
-          $str = $wildcard.$str;
-    }
+	// add wildcard at the beginning of the search string
+	if(isset($GLOBALS['sugar_config']['search_wildcard_infront']) &&
+		$GLOBALS['sugar_config']['search_wildcard_infront'] == true) {
+		if(substr($str,0,1) <> $wildcard)
+			$str = $wildcard.$str;
+	}
 
     // add wildcard at the end of search string (default)
     if ($appendWildcard) {
@@ -5033,7 +5055,7 @@ function sql_like_string($str, $like_char, $wildcard = '%', $appendWildcard = tr
         }
     }
 
-    return str_replace($wildcard, $like_char, $str);
+	return str_replace($wildcard, $like_char, $str);
 }
 
 //check to see if custom utils exists
