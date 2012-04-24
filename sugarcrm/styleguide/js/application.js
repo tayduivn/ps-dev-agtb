@@ -11,7 +11,7 @@
         , title: function () { return $(this).width() + 'px' }
       })
     }
-    
+
     // toggle all stars
     $('.toggle-all-stars').on('click', function (e) {
     		$(this).closest('table').toggleClass('active'); 

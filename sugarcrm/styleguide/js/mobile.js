@@ -194,13 +194,21 @@
         }, 3000);
     }
 
-    $(".icon-star-empty, .icon-star, a[title=Remove]").live('click tap',function(){
+    $(".icon-star-empty, .icon-star").live('click tap',function(){
 	var rn=Math.floor(Math.random()*100);
 	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-general" style="display:block;"><strong>Loading...</strong></div>');
 	setTimeout(function(ia){
             $('.alert.tmp-'+rn).anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert.tmp-'+rn).remove() });
         }, 3000);
     });
+      $("a[title=Remove]").live('click tap',function(){
+  	var rn=Math.floor(Math.random()*100);
+  	$('body').append('<div id="demo-general" class="tmp-' + rn + ' alert alert-success" style="display:block;"><strong>Success!</strong> You removed an item!</div>');
+  	setTimeout(function(ia){
+              $('.alert.tmp-'+rn).anim({ translateY: window.innerHeight + 'px', opacity: '0'}, 3, 'ease-out', function (){ $('.alert.tmp-'+rn).remove() });
+          }, 3000);
+      });
+
 
     $('.icon-star, .icon-star-empty').live('click tap',function(){
         $(this).toggleClass('icon-star-empty').toggleClass('icon-star');
