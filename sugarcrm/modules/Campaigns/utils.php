@@ -895,28 +895,27 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 		$delete_query="delete from campaign_log where campaign_id='".$GLOBALS['db']->quote($focus->id)."' and activity_type='targeted'";
 		$focus->db->query($delete_query);
 
-		$query="SELECT prospect_lists.id prospect_list_id from prospect_lists ";
-		$query.=" INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = prospect_lists.id";
+		$query="SELECT prospect_lists.id prospect_list_id, plp.related_id related_id, plp.related_type related_type from prospect_lists ";
+        $query.=" INNER JOIN prospect_lists_prospects plp ON plp.prospect_list_id = prospect_lists.id";
+        $query.=" INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = prospect_lists.id";
 		$query.=" WHERE plc.campaign_id='".$GLOBALS['db']->quote($focus->id)."'"; 
 		$query.=" AND prospect_lists.deleted=0";
 		$query.=" AND plc.deleted=0";
+        $query.=" AND plp.deleted=0";
 		$query.=" AND prospect_lists.list_type!='test' AND prospect_lists.list_type not like 'exempt%'";
 		$result=$focus->db->query($query);
 		while (($row=$focus->db->fetchByAssoc($result))!=null ) {
 			$prospect_list_id=$row['prospect_list_id'];
+            $related_id=$row['related_id'];
+            $related_type=$row['related_type'];
             $guid = create_guid();
             $current_date = $focus->db->now();
 
 			$insert_query= "INSERT INTO campaign_log (id,activity_date, campaign_id, target_tracker_key,list_id, target_id, target_type, activity_type";
 			$insert_query.=')';
-			$insert_query.= " SELECT '{$guid}',$current_date,plc.campaign_id,'{$guid}',plp.prospect_list_id, plp.related_id, plp.related_type,'targeted' ";
-			$insert_query.= "FROM prospect_lists_prospects plp ";
-			$insert_query.= "INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = plp.prospect_list_id ";
-			$insert_query.= "WHERE plp.prospect_list_id = '{$prospect_list_id}' ";
-			$insert_query.= "AND plp.deleted=0 ";
-			$insert_query.= "AND plc.deleted=0 ";
-			$insert_query.= "AND plc.campaign_id='{$focus->id}'";
-			$focus->db->query($insert_query);
+            $insert_query.=" VALUES ('{$guid}', $current_date, '{$focus->id}', '{$guid}', '{$prospect_list_id}', '{$related_id}', '{$related_type}', 'targeted' )";
+
+            $focus->db->query($insert_query);
 		}
         global $mod_strings;
         //return success message
