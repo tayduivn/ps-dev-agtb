@@ -301,16 +301,23 @@ class SugarWirelessView extends SugarView
  	    require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
  	    $filename = DeployedMetaDataImplementation::getFileName ( strtolower( $view ), $this->module, MB_CUSTOMMETADATALOCATION ) ;
 		$module_name = $this->module;
+        $using_view = strtolower($view);
 
-		if (!file_exists($filename) && strtolower( $view ) == MB_WIRELESSDETAILVIEW )
-			$filename = DeployedMetaDataImplementation::getFileName ( MB_WIRELESSEDITVIEW, $this->module, MB_CUSTOMMETADATALOCATION ) ;
+		if (!file_exists($filename) && strtolower( $view ) == MB_WIRELESSDETAILVIEW ) {
+            $filename = DeployedMetaDataImplementation::getFileName ( MB_WIRELESSEDITVIEW, $this->module, MB_CUSTOMMETADATALOCATION ) ;
+            $using_view = MB_WIRELESSEDITVIEW;
+        }
 
  	    if (!file_exists($filename))
  	    {
  	    	$filename = DeployedMetaDataImplementation::getFileName ( strtolower( $view ), $this->module, MB_BASEMETADATALOCATION ) ;
+             $using_view = strtolower($view);
 
-			if (!file_exists($filename) && strtolower( $view ) == MB_WIRELESSDETAILVIEW )
-				$filename = DeployedMetaDataImplementation::getFileName ( MB_WIRELESSEDITVIEW, $this->module, MB_BASEMETADATALOCATION ) ;
+			if (!file_exists($filename) && strtolower( $view ) == MB_WIRELESSDETAILVIEW ) {
+                $filename = DeployedMetaDataImplementation::getFileName ( MB_WIRELESSEDITVIEW, $this->module, MB_BASEMETADATALOCATION ) ;
+                $using_view = MB_WIRELESSEDITVIEW;
+            }
+
 
 			if (!file_exists($filename))
  	    	{
@@ -324,11 +331,13 @@ class SugarWirelessView extends SugarView
                 */
                 $filename = $this->getMetaDataFileFallback($view, $module_name);
                 $module_name = '<module_name>';
+                $using_view = strtolower($view);
  	    	}
  	    }
 
- 	    return array('filename' => $filename, 'module_name' => $module_name);
+ 	    return array('filename' => $filename, 'module_name' => $module_name, 'using_view' => $using_view);
  	}
+
 	/**
 	 * Public function that attains the bean detail and sets up an array for
 	 * Smarty consumption.
@@ -339,37 +348,28 @@ class SugarWirelessView extends SugarView
  	    $metaInfo = $this->getMetaDataFile($view);
  	    $filename = $metaInfo['filename'];
  	    $module_name = $metaInfo['module_name'];
+        $using_view = $metaInfo['using_view'];
 
  	    $GLOBALS['log']->debug( get_class($this)."->bean_details($view): loading viewdefs from $filename, with module_name=$module_name" ) ;
 
-        $path = 'modules/ModuleBuilder/parsers/views/';
-        $oldstyle = strpos($filename, 'wireless.') !== false;
- 	    if ($oldstyle) {
-            require_once $path . 'GridLayoutMetaDataParser.php';
-        } else {
-            require_once $path . 'SidecarGridLayoutMetaDataParser.php';
-            $parser = new SidecarGridLayoutMetaDataParser($view, $module_name);
-        }
+        $path = 'modules/ModuleBuilder/parsers/';
+        require_once $path . 'MetaDataFiles.php';
 
+        // pull in our data and get the panel defs
         require $filename;
 
-        if ($oldstyle) {
-            if ( !isset($viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ])
-                    && strtolower( $view ) == MB_WIRELESSDETAILVIEW )
-                $panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ MB_WIRELESSEDITVIEW ] ]['panels'];
-            else
-                $panels = $viewdefs[$module_name][ GridLayoutMetaDataParser::$variableMap [ strtolower( $view ) ] ]['panels'];
-        } else {
-            $viewdefs = $parser->getDefsFromArray($viewdefs[$module_name], $view);
-            $panels = $viewdefs['panels'];
-        }
+        $defs = MetaDataFiles::mapArrayToPath(MetaDataFiles::getViewDefVar($using_view), $viewdefs[$module_name]);
+        $panels = $defs['panels'];
 
 // 	    $GLOBALS['log']->debug( get_class($this)."->bean_details($view): loaded these panels: ".print_r( $panels, true ) ) ;
 
 		// traverse through the wirelessviewdefs metadata to get the fields and values
 		$bean_details = array();
-        foreach($panels as $fields){
-        	foreach($fields as $field){
+        foreach($panels as $panel){
+            if (!isset($panel['fields'])) {
+                continue;
+            }
+        	foreach($panel['fields'] as $field){
 	            // handle empty assigned_user_name
                 if(empty($this->bean->assigned_user_name)) {
 				   if(!empty($this->bean->assigned_user_id)){
