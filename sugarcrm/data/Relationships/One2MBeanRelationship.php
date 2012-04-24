@@ -288,6 +288,10 @@ class One2MBeanRelationship extends One2MRelationship
         //Next add any role filters
                . $this->getRoleWhere() . "\n";
 
+        if (!empty($params['return_as_array'])) {
+            $return_array = true;
+        }
+
         if($return_array){
             return array(
                 'join' => $query,
