@@ -1,21 +1,7 @@
 <div class="thumbnail">
     <h1>{{meta.panels.0.label}}</h1>
 
-    <div id="demo1">
-        <ul>
-            <li id="phtml_1">
-                <a href="#">Jim Brennan (me)</a>
-                <ul>
-                    <li id="phtml_2">
-                        <a href="#">Sarah Smith</a>
-                    </li>
-                    <li id="phtml_3">
-                        <a href="#">Will Westin</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
+    <div id="jsTree"></div>
     {{#if meta.options.show_footer}}
     <div class="block-footer">
         Hello World
