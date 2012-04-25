@@ -42,7 +42,7 @@ describe("Handlebars Helpers", function() {
                     }
                 },
                 field = new Backbone.View(),
-                view = {sugarFields: [null, field], name: "detail"},
+                view = {fields: [null, field], name: "detail"},
                 sugarField = {name: "TestName", label: "TestLabel", type: "text"};
 
             expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toMatch(/<span sfuuid=.*(\d+).*/);

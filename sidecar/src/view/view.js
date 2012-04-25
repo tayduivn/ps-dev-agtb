@@ -34,20 +34,27 @@
              * Classname of the root div. Uses name if none is provided.
              * @cfg {String} className
              */
-            this.$el.addClass("view " + (options.className || this.name));
+            this.$el.addClass("view " + this.name);
 
             /**
              * Template to render
              * @cfg {Function}
              */
-            this.template = options.template || app.template.get(this.name, this.context.get("module"));
+            this.template = options.template || app.template.get(this.name);
 
             /**
              * Metadata
              * @cfg {Object}
              */
             this.meta = options.meta;
-            this.sugarFields = {};
+
+            /**
+             * Dictionary of field widgets.
+             *
+             * - keys: field IDs (sfuuid)
+             * - value: instances of `app.view.Field` class
+             */
+            this.fields = {};
         },
 
         /**
@@ -89,7 +96,7 @@
                 try {
                     this._render();
                     //Render will create a placeholder for sugar fields. we now need to populate those fields
-                    _.each(this.sugarFields, function(sf) {
+                    _.each(this.fields, function(sf) {
                         sf.setElement(this.$el.find("span[sfuuid='" + sf.sfid + "']"));
                         sf.render();
                     }, this);
