@@ -29,7 +29,7 @@
 
 {if $controls}
 
-<div style='width: 100%; margin-top: 12px;'></div>
+<div class="clear"></div>
 
 <div style='float:left; width: 50%;'>
 {foreach name=tabs from=$tabs key=k item=tab}
