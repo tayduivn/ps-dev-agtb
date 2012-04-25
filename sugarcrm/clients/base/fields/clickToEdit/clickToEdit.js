@@ -1,11 +1,23 @@
 ({
     render:function() {
-        var result = this.app.view.Field.prototype.render.call(this);
-        $('.' + this.cteclass).editable(function(value) {
-                console.log('value:' + value);
-                return value;
-            });
-        return result;
-    }
 
+        this.app.view.Field.prototype.render.call(this);
+        var self = this;
+        var ctefield = this.$el.find('.' + this.cteclass);
+
+        ctefield.editable(function(value, settings) {
+                self.model.set( self.name , value );
+                return value;
+            }
+        );
+        return this;
+    },
+    
+    /***
+     * Overwriting default bindDomChange function to prevent default behavior
+     *
+     * @param model
+     * @param fieldName
+     */
+    bindDomChange: function(model, fieldName) {}
 })

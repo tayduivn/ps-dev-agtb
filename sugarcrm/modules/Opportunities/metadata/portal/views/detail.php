@@ -29,8 +29,8 @@ $viewdefs['Opportunities']['portal']['view']['detail'] = array(
                 ),
                 1 =>
                 array(
-                    'name' => 'ammount',
-                    'label' => 'Opportunity Ammount',
+                    'name' => 'amount',
+                    'label' => 'Opportunity Amount',
                 ),
                 2 =>
                 array(
