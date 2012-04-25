@@ -14,6 +14,17 @@
             'mouseenter tr': 'showActions',
             'mouseleave tr': 'hideActions'
         },
+        initialize : function(options) {
+            app.view.View.prototype.initialize.call(this, options);
+
+            SUGAR.App.events.on('treeview:node_select', this.handleTreeNodeSelect);
+
+            return this;
+        },
+        handleTreeNodeSelect : function(a,s,d,f) {
+            console.log(this);
+            console.log(a);
+        },
         bind: function(context) {
             var collection = context.get("collection");
             _.each(collection.models, function(model) {

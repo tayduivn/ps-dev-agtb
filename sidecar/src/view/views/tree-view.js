@@ -22,8 +22,9 @@
 
             // only let this render once.  since if there is more than one view on a layout it renders twice
             if(this.rendered) return;
-
             app.view.View.prototype.render.call(this);
+
+            SUGAR.App.events.register("treeview:node_select", this.context);
 
             this.primary_user = SUGAR.App.data.createBean('Users', { id: 'seed_jim_id'});
             this.primary_user.on('change', this.postUserFetch, this);
@@ -70,7 +71,8 @@
             _.each(this.reportees.models, function(reportee) {
                 if(reportee.get('reports_to_id') == parent_id) {
                     var child = {
-                        "data" : reportee.get('full_name')
+                        "data" : reportee.get('full_name'),
+                        "metadata" : { model : reportee }
                     };
 
                     // check for children
@@ -98,24 +100,29 @@
                 {
                     "data" : this.primary_user.get('full_name'),
                     "children" : this.findChildren(this.primary_user.get('id')),
+                    "metadata" : { model: this.primary_user },
                     "state" : "open"
                 }
             ] };
 
-            $("#jsTree")
-            // call `.jstree` with the options object
-            .jstree({
-                // the `plugins` array allows you to configure the active plugins on this instance
+            $("#jsTree").jstree({
                 "plugins" : ["themes","json_data","ui","crrm"],
                 "themes" : {
                             "theme" : "classic",
-                            "dots" : true,
-                            "icons" : false
+                            "dots" : false,
+                            "icons" : true
                         },
-                // each plugin you have included can have its own config object
                 "json_data" : tree_data
-                // it makes sense to configure a plugin only if overriding the defaults
-            });
+            }).bind("select_node.jstree", this.treeNodeSelect);
+        },
+
+        treeNodeSelect: function(event, data)
+        {
+
+            this.context.trigger('treeview:node_select', data.inst.get_json());
+            //this.trigger('treeview:node_select');
+            //this.trigger('mynamespaced:event');
+            //app.controller.context.get('collection').paginate({add:true, success:function(){console.log("in paginate success");window.scrollTo(0,document.body.scrollHeight);}})
         }
     });
 
