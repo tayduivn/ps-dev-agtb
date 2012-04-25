@@ -22,8 +22,9 @@
 
             // only let this render once.  since if there is more than one view on a layout it renders twice
             if(this.rendered) return;
-
             app.view.View.prototype.render.call(this);
+
+            SUGAR.App.events.register("treeview:node_select", this.context);
 
             this.primary_user = SUGAR.App.data.createBean('Users', { id: 'seed_jim_id'});
             this.primary_user.on('change', this.postUserFetch, this);
@@ -108,13 +109,20 @@
                 "plugins" : ["themes","json_data","ui","crrm"],
                 "themes" : {
                             "theme" : "classic",
-                            "dots" : true,
-                            "icons" : false
+                            "dots" : false,
+                            "icons" : true
                         },
                 "json_data" : tree_data
-            }).bind("select_node.jstree", function (event, data) {
-                    console.log(data.inst.get_json());
-            }, this);
+            }).bind("select_node.jstree", this.treeNodeSelect);
+        },
+
+        treeNodeSelect: function(event, data)
+        {
+
+            this.context.trigger('treeview:node_select', data.inst.get_json());
+            //this.trigger('treeview:node_select');
+            //this.trigger('mynamespaced:event');
+            //app.controller.context.get('collection').paginate({add:true, success:function(){console.log("in paginate success");window.scrollTo(0,document.body.scrollHeight);}})
         }
     });
 
