@@ -70,7 +70,8 @@
             _.each(this.reportees.models, function(reportee) {
                 if(reportee.get('reports_to_id') == parent_id) {
                     var child = {
-                        "data" : reportee.get('full_name')
+                        "data" : reportee.get('full_name'),
+                        "metadata" : { model : reportee }
                     };
 
                     // check for children
@@ -98,24 +99,22 @@
                 {
                     "data" : this.primary_user.get('full_name'),
                     "children" : this.findChildren(this.primary_user.get('id')),
+                    "metadata" : { model: this.primary_user },
                     "state" : "open"
                 }
             ] };
 
-            $("#jsTree")
-            // call `.jstree` with the options object
-            .jstree({
-                // the `plugins` array allows you to configure the active plugins on this instance
+            $("#jsTree").jstree({
                 "plugins" : ["themes","json_data","ui","crrm"],
                 "themes" : {
                             "theme" : "classic",
                             "dots" : true,
                             "icons" : false
                         },
-                // each plugin you have included can have its own config object
                 "json_data" : tree_data
-                // it makes sense to configure a plugin only if overriding the defaults
-            });
+            }).bind("select_node.jstree", function (event, data) {
+                    console.log(data.inst.get_json());
+            }, this);
         }
     });
 
