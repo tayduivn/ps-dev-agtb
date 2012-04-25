@@ -41,7 +41,7 @@ if( file_exists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
 {
     require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
     $ftsType = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
-    if(!empty($ftsType) && !$GLOBALS['sugar_config']['full_text_engine'][$ftsType]['valid'])
+    if(!empty($ftsType) && isset($GLOBALS['sugar_config']['full_text_engine'][$ftsType]['valid']) && !$GLOBALS['sugar_config']['full_text_engine'][$ftsType]['valid'])
     {
         displayAdminError(translate('LBL_FTS_CONNECTION_INVALID', 'Administration'));
     }
