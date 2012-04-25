@@ -1,4 +1,11 @@
 describe("headerView", function() {
+    var app;
+
+    beforeEach(function() {
+        SugarTest.seedMetadata(true);
+        app = SugarTest.app;
+    });
+
     it("should set current module", function() {
         var options = {
                 context: {get: function() {

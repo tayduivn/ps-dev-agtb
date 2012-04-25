@@ -2,8 +2,8 @@ describe("View.Layout", function(){
     var app, context, bean, collection;
 
     beforeEach(function() {
+        SugarTest.seedMetadata(true);
         app = SugarTest.app;
-        app.metadata.set(fixtures.metadata);
         bean = app.data.createBean("Contacts", {
             first_name: "Foo",
             last_name: "Bar"
@@ -30,6 +30,7 @@ describe("View.Layout", function(){
             testMeta = {
             //Default layout is a single view
             "type" : "simple",
+            "module" : "Contacts",
             "components" : [
                 {view : "testComp"}
             ]

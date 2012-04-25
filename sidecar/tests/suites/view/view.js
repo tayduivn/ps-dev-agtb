@@ -2,9 +2,9 @@ describe("Layout.View", function() {
     var app, bean, collection, context;
 
     beforeEach(function() {
+        SugarTest.seedMetadata(true);
         app = SugarTest.app;
-        app.metadata.set(fixtures.metadata);
-        app.data.declareModels(fixtures.metadata);
+
         bean = app.data.createBean("Contacts", {
             first_name: "Foo",
             last_name: "Bar"
