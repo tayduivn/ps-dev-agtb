@@ -6705,13 +6705,12 @@ ul#selectLink.clickMenu {
 	min-width: 20px;
 }
 td.paginationActionButtons ul.clickMenu .massall,
-ul#selectLink.clickMenu .massall{
+ul#selectLink.clickMenu .massall, td.selectCol .massall{
 	float: left;
 	margin: 4px 4px;
 }
 
-td.paginationActionButtons ul.selectmenu > li > a,
-ul#selectLink.clickMenu > li > a{
+td.paginationActionButtons ul.selectmenu > li > a, td.selectCol ul.selectmenu > li > a, ul#selectLink.clickMenu > li > a {
 	padding: 0px !important;
 }
 
