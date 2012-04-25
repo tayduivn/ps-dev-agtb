@@ -13,10 +13,7 @@
     bindDomChange: function(model, fieldName) {
         var thing = this.$el.find('.' + this.cteclass);
         thing.on('change', function(ev) {
-            console.log("***** start onDomChange callback *****");
-            console.log(ev.target.value);
             model.set(fieldName, ev.target.value);
-            console.log("***** end onDomChange callback *****");
         });
     }
 })
