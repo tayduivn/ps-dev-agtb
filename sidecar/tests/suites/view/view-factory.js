@@ -4,7 +4,7 @@ describe("View Manager", function() {
     beforeEach(function() {
         SugarTest.seedApp(true);
         app = SugarTest.app;
-        app.metadata.set(fixtures.metadata);
+        SugarTest.seedMetadata(true);
     });
 
     describe("should be able to create instances of View class which is", function() {
