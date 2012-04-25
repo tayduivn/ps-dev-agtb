@@ -6,7 +6,8 @@
         var ctefield = this.$el.find('.' + this.cteclass);
 
         ctefield.editable(function(value, settings) {
-                self.model.set( self.name , value );
+                self.model.set(self.name,value);
+                self.model.save(self.name,value);
                 return value;
             }
         );
