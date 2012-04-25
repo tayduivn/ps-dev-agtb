@@ -1,21 +1,10 @@
 <div class="thumbnail">
-    <h1>Tree View</h1>
-    <div id="demo1">
-        <ul>
-            <li id="phtml_1">
-                <a href="#">Root node 1</a>
-                <ul>
-                    <li id="phtml_2">
-                        <a href="#">Child node 1</a>
-                    </li>
-                    <li id="phtml_3">
-                        <a href="#">Child node 2</a>
-                    </li>
-                </ul>
-            </li>
-            <li id="phtml_4">
-                <a href="#">Root node 2</a>
-            </li>
-        </ul>
+    <h1>{{meta.panels.0.label}}</h1>
+
+    <div id="jsTree"></div>
+    {{#if meta.options.show_footer}}
+    <div class="block-footer">
+        Hello World
     </div>
+    {{/if}}
 </div>

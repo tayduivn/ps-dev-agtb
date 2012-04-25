@@ -184,6 +184,7 @@ SUGAR.Api = (function() {
                 // Make the request, allowing override of any Ajax options.
                 var result = $.ajax(_.extend(params, options));
 
+
                 if (SUGAR.demoRestServer && SUGAR.restDemoData) {
                     for (i = 0; i < SUGAR.restDemoData.length; i++) {
                         if (SUGAR.restDemoData[i].route.test(url)) {
@@ -222,6 +223,10 @@ SUGAR.Api = (function() {
 
                 if ((action != "create") && attributes && attributes.id) {
                     parts.push(attributes.id);
+                }
+
+                if (attributes && attributes.link) {
+                    parts.push('link');
                 }
 
                 if (action && _baseActions.indexOf(action) == -1) {
