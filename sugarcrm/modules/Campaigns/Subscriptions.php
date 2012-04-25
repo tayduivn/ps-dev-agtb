@@ -94,8 +94,8 @@ $title = getClassicModuleTitle($focus->module_dir, $params, true);
 $orig_vals_str = printOriginalValues($focus);
 $orig_vals_array = constructDDSubscriptionList($focus);
 
-$this->ss->assign('APP', $GLOBALS['app_strings']);
-$this->ss->assign('MOD', $GLOBALS['mod_strings']);
+$this->ss->assign('APP', $app_strings);
+$this->ss->assign('MOD', $mod_strings);
 $this->ss->assign('title',  $title);
 
 $this->ss->assign('enabled_subs', $orig_vals_array[0]);
@@ -104,8 +104,8 @@ $this->ss->assign('enabled_subs_string', $orig_vals_str[0]);
 $this->ss->assign('disabled_subs_string', $orig_vals_str[1]);
 
 $buttons = array(
-    '<input title="'.$GLOBALS['app_strings']['LBL_SAVE_BUTTON_TITLE'].'" accessKey="'.$GLOBALS['app_strings']['LBL_SAVE_BUTTON_KEY'].'" class="button" onclick="save();this.form.action.value=\'Subscriptions\'; " type="submit" name="button" value="'.$GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL'].'">',
-    '<input title="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_TITLE'].'" accessKey="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_KEY'].'" class="button" onclick="this.form.action.value=\''.$this->ss->get_template_vars('RETURN_ACTION').'\'; this.form.module.value=\''.$this->ss->get_template_vars('RETURN_MODULE').'\;" type="submit" name="button" value="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'">'
+    '<input id="save_button" title="'.$app_strings['LBL_SAVE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_BUTTON_KEY'].'" class="button" onclick="save();this.form.action.value=\'Subscriptions\'; " type="submit" name="button" value="'.$app_strings['LBL_SAVE_BUTTON_LABEL'].'">',
+    '<input id="cancel_button" title="'.$app_strings['LBL_CANCEL_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_CANCEL_BUTTON_KEY'].'" class="button" onclick="this.form.action.value=\''.$this->ss->get_template_vars('RETURN_ACTION').'\'; this.form.module.value=\''.$this->ss->get_template_vars('RETURN_MODULE').'\';" type="submit" name="button" value="'.$app_strings['LBL_CANCEL_BUTTON_LABEL'].'">'
 );
 $this->ss->assign('BUTTONS', $buttons);
 $this->ss->display('modules/Campaigns/Subscriptions.tpl');
