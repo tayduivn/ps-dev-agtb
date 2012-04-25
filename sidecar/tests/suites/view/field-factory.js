@@ -7,11 +7,9 @@ describe("View Manager", function() {
         var bean, collection, context, view;
 
         beforeEach(function() {
+            SugarTest.seedMetadata(true);
             app = SugarTest.app;
-
-            app.metadata.set(fixtures.metadata);
-            app.data.declareModels(fixtures.metadata);
-
+       
             //Need a sample Bean
             bean = app.data.createBean("Contacts", {
                 first_name: "Foo",
@@ -35,7 +33,10 @@ describe("View Manager", function() {
         });
 
         afterEach(function() {
-            bean = null, collection = null, context = null, view = null;
+            bean = null;
+            collection = null;
+            context = null;
+            view = null;
         });
 
         it("with default template", function() {
