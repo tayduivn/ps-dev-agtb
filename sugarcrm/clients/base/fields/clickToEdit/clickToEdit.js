@@ -11,5 +11,13 @@
             }
         );
         return this;
-    }
+    },
+    
+    /***
+     * Overwriting default bindDomChange function to prevent default behavior
+     *
+     * @param model
+     * @param fieldName
+     */
+    bindDomChange: function(model, fieldName) {}
 })
