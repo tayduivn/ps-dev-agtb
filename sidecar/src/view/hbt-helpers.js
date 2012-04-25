@@ -19,7 +19,7 @@
      */
     Handlebars.registerHelper('field', function(context, view, bean) {
         var placeholder = '<span sfuuid="' + (++_sfid) + '"></span>';
-        var sf = (view.sugarFields[_sfid] = app.view.createField({
+        var sf = (view.fields[_sfid] = app.view.createField({
             def: this,
             view: view,
             context: context,
@@ -39,7 +39,7 @@
         var def = { type: type, name: type, label: label };
         var view = this;
 
-        var sf = (view.sugarFields[_sfid] = app.view.createField({
+        var sf = (view.fields[_sfid] = app.view.createField({
             def: def,
             view: this,
             context: this.context,

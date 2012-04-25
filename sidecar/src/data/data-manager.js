@@ -143,13 +143,6 @@
             var model = this.beanModel.extend({
                 defaults: defaults,
                 /**
-                 * TODO: Documentation required
-                 * @member Data.Bean
-                 * @property {Object}
-                 *
-                 */
-                sugarFields: {},
-                /**
                  * Module name.
                  * @member Data.Bean
                  * @property {String}
