@@ -1,11 +1,9 @@
 describe("Error module", function() {
     var app;
 
-
     beforeEach(function() {
+        SugarTest.seedMetadata(true);
         app = SugarTest.app;
-        app.metadata.set(fixtures.metadata);
-        app.data.declareModels(fixtures.metadata);
         SugarTest.seedFakeServer();
     });
 

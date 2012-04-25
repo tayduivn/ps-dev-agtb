@@ -30,24 +30,27 @@
              */
             this.id = options.id || this.getID();
 
-            /**
-             * Classname of the root div. Uses name if none is provided.
-             * @cfg {String} className
-             */
-            this.$el.addClass("view " + (options.className || this.name));
+            this.$el.addClass("view " + this.name);
 
             /**
              * Template to render
              * @cfg {Function}
              */
-            this.template = options.template || app.template.get(this.name, this.context.get("module"));
+            this.template = options.template || app.template.get(this.name, (this.context ? this.context.get("module") : null));
 
             /**
              * Metadata
              * @cfg {Object}
              */
             this.meta = options.meta;
-            this.sugarFields = {};
+
+            /**
+             * Dictionary of field widgets.
+             *
+             * - keys: field IDs (sfuuid)
+             * - value: instances of `app.view.Field` class
+             */
+            this.fields = {};
         },
 
         /**
@@ -73,34 +76,39 @@
          * @method
          */
         _render: function() {
+            // Bad templates can cause a JS error that we want to catch here
             if (this.template) {
-                this.$el.html(this.template(this));
+                try {
+                    this.$el.html(this.template(this));
+                } catch (e) {
+                    app.logger.error("Failed to render '" + this.name + "' view.\n" + e.message);
+                    // TODO: trigger app event to render an error message
+                }
             }
         },
 
         /**
-         * Renders the view onto the page. See Backbone.View
-         * @return {Object} this
+         * Renders the view onto the page.
+         * See Backbone.View documentation for details.
+         * @return {Object} Reference to this view.
          */
         render: function() {
-            var renderFlag = app.acl.hasAccess(this.name, this.context.get("model"));
-            if (renderFlag) {
-                //Bad templates can cause a JS error that we want to catch here
-                try {
-                    this._render();
-                    //Render will create a placeholder for sugar fields. we now need to populate those fields
-                    _.each(this.sugarFields, function(sf) {
-                        sf.setElement(this.$el.find("span[sfuuid='" + sf.sfid + "']"));
+            if (app.acl.hasAccess(this.name, this.context.get("model"))) {
+                this._render();
+                // Render will create a placeholder for sugar fields. we now need to populate those fields
+                _.each(this.fields, function(sf) {
+                    sf.setElement(this.$el.find("span[sfuuid='" + sf.sfid + "']"));
+                    try {
                         sf.render();
-                    }, this);
-                } catch (e) {
-                    app.logger.error("Runtime template error in " + this.name + ".\n" + e.message);
-                }
+                    } catch (e) {
+                        app.logger.error("Failed to render field '" + sf.name + "' on '" + this.name + "' view.\n" + e.message);
+                        // TODO: trigger app event to render an error message
+                    }
+                }, this);
             } else {
-                app.logger.error("Current user does not have access to this module view.");
-                //TODO throw and app error of no access
+                app.logger.info("Current user does not have access to this module view.");
+                //TODO trigger app event to notify user about no access
             }
-
 
             return this;
         },
@@ -128,7 +136,7 @@
          * @return {String} id of this view.
          */
         getID: function() {
-            return this.id || this.context.get("module") + "_" + this.options.name;
+            return (this.id || this.options.module || "") + "_" + this.name;
         }
     });
 

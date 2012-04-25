@@ -1,9 +1,10 @@
 describe("View Manager", function() {
-    var app;
+    var app, views;
 
     beforeEach(function() {
+        SugarTest.seedApp(true);
         app = SugarTest.app;
-        app.metadata.set(fixtures.metadata);
+        SugarTest.seedMetadata(true);
     });
 
     describe("should be able to create instances of View class which is", function() {
@@ -16,6 +17,7 @@ describe("View Manager", function() {
 
             expect(view).toBeDefined();
             expect(view instanceof app.view.View).toBeTruthy();
+            expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit);
         });
 
         it('pre-defined view class', function () {
@@ -38,6 +40,35 @@ describe("View Manager", function() {
             expect(result.customCallback).toBeDefined();
             expect(app.view.views.HomeLoginView).toBeDefined();
         });
+
+        it('base class with custom metadata', function() {
+            var testMeta = {
+                "panels": [
+                    {
+                        "label": "TEST",
+                        "fields": []
+                    }
+                ]
+            };
+
+            var view = app.view.createView({
+                name: "edit",
+                meta: testMeta
+            });
+
+            expect(view.meta).toEqual(testMeta);
+        });
+
+        it('custom class without metadata', function() {
+            app.view.views.ToolbarView = Backbone.View.extend();
+
+            var view = app.view.createView({
+                name: "toolbar"
+            });
+
+            expect(view instanceof app.view.views.ToolbarView).toBeTruthy();
+        });
+
 
     });
 

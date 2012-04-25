@@ -64,8 +64,8 @@
 
         createView: function(params) {
             var clonedParams = _.clone(params);
-            clonedParams.module = params.module || params.context.get("module");
-            clonedParams.meta = params.meta || app.metadata.getView(clonedParams.module, params.name);
+            clonedParams.module = params.module || (params.context ? params.context.get("module") : null);
+            clonedParams.meta = params.meta || (clonedParams.module ? app.metadata.getView(clonedParams.module, params.name) : null);
             return this._createComponent("View", params.name, clonedParams);
         },
 

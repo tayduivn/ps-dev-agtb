@@ -2,8 +2,8 @@ describe("View Manager", function() {
     var app;
 
     beforeEach(function() {
+        SugarTest.seedMetadata(true);
         app = SugarTest.app;
-        app.metadata.set(fixtures.metadata);
     });
 
     describe("should be able to create instances of Layout class which is", function() {
