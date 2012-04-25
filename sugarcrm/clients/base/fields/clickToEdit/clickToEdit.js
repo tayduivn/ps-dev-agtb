@@ -1,11 +1,22 @@
 ({
     render:function() {
-        var result = this.app.view.Field.prototype.render.call(this);
-        $('.' + this.cteclass).editable(function(value) {
-                console.log('value:' + value);
+        this.app.view.Field.prototype.render.call(this);
+        var self = this;
+        var ctefield = this.$el.find('.' + this.cteclass);
+        ctefield.editable(function(value, settings) {
                 return value;
-            });
-        return result;
-    }
+            }
+        );
+        return this;
+    },
 
+    bindDomChange: function(model, fieldName) {
+        var thing = this.$el.find('.' + this.cteclass);
+        thing.on('change', function(ev) {
+            console.log("***** start onDomChange callback *****");
+            console.log(ev.target.value);
+            model.set(fieldName, ev.target.value);
+            console.log("***** end onDomChange callback *****");
+        });
+    }
 })
