@@ -3159,6 +3159,8 @@ function save_relationship_changes($is_update, $exclude=array())
         if($custom_join)
         {
             $ret_array['from'] .= ' ' . $custom_join['join'];
+            // Bug 52490 - Captivea (Sve) - To be able to add custom fields inside where clause in a subpanel
+            $ret_array['from_min'] .= ' ' . $custom_join['join'];
         }
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
