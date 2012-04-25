@@ -121,20 +121,10 @@ class SugarWirelessView extends SugarView
         return $filename;
     }
 
+    // list view uses this version to get metadata file location.
     protected function wl_get_metadata_location( $view ) {
-
-    	require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
- 	    $filename = DeployedMetaDataImplementation::getFileName ( $view, $GLOBALS['module'] , MB_CUSTOMMETADATALOCATION ) ;
-
- 	    if (!file_exists ( $filename ) ) {
- 	    	$filename = DeployedMetaDataImplementation::getFileName ( $view, $GLOBALS['module'] , MB_BASEMETADATALOCATION ) ;
- 	    	if (!file_exists($filename)) {
-                $filename = $this->getMetaDataFileFallback($view, $GLOBALS['module']);
- 			}
- 		}
-
-		return $filename ;
-
+        $metaInfo = $this->getMetaDataFileInternal($view, $GLOBALS['module']);
+        return $metaInfo['filename'];
     }
 
  	/**
@@ -290,55 +280,47 @@ class SugarWirelessView extends SugarView
         return $this->subpanel_layout_defs;
     }
 
- 	/**
- 	 * Retrieve the meta data file and module name for a particular view
- 	 *
- 	 * @param string $view
- 	 * @return array filename and module name information
- 	 */
- 	public function getMetaDataFile($view)
- 	{
- 	    require_once 'modules/ModuleBuilder/parsers/views/DeployedMetaDataImplementation.php' ;
- 	    $filename = DeployedMetaDataImplementation::getFileName ( strtolower( $view ), $this->module, MB_CUSTOMMETADATALOCATION ) ;
-		$module_name = $this->module;
-        $using_view = strtolower($view);
+    // helper method to unify the view and the layout's metadata file location calls
+    protected function getMetaDataFileInternal($view,$module_name)
+    {
+        require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+        $file_strategy = array(MB_CUSTOMMETADATALOCATION,MB_BASEMETADATALOCATION);
+        $lView = strtolower($view);
 
-		if (!file_exists($filename) && strtolower( $view ) == MB_WIRELESSDETAILVIEW ) {
-            $filename = DeployedMetaDataImplementation::getFileName ( MB_WIRELESSEDITVIEW, $this->module, MB_CUSTOMMETADATALOCATION ) ;
-            $using_view = MB_WIRELESSEDITVIEW;
-        }
+        do {
+            $file_location = array_shift($file_strategy);
+            $filename = MetaDataFiles::getDeployedFileName($lView, $this->module, $file_location);
+            $using_view = $lView;
 
- 	    if (!file_exists($filename))
- 	    {
- 	    	$filename = DeployedMetaDataImplementation::getFileName ( strtolower( $view ), $this->module, MB_BASEMETADATALOCATION ) ;
-             $using_view = strtolower($view);
-
-			if (!file_exists($filename) && strtolower( $view ) == MB_WIRELESSDETAILVIEW ) {
-                $filename = DeployedMetaDataImplementation::getFileName ( MB_WIRELESSEDITVIEW, $this->module, MB_BASEMETADATALOCATION ) ;
+            // fallback for detail view
+            if (!file_exists($filename) && $lView == MB_WIRELESSDETAILVIEW ) {
+                $filename = MetaDataFiles::getDeployedFileName( MB_WIRELESSEDITVIEW, $this->module, $file_location);
                 $using_view = MB_WIRELESSEDITVIEW;
             }
+        } while (!file_exists($filename) && !empty($file_strategy));
 
+        // sugar objects fallback
+        if (!file_exists($filename)) {
+            $filename = $this->getMetaDataFileFallback($view, $module_name);
+            $module_name = '<module_name>';
+            $using_view = $lView;
+        }
 
-			if (!file_exists($filename))
- 	    	{
-                /*
- 	    		require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
-				$module = new StudioModule ( $this->module ) ;
+        return array('filename' => $filename, 'module_name' => $module_name, 'using_view' => $using_view);
+    }
 
- 	    		// If we're missing a wireless view we fallback on a template, sourced from SugarObjects
-				$filename =  'include/SugarObjects/templates/' . $module->getType () . '/metadata/mobile/views/' . basename( $filename ) ;
-				$module_name = '<module_name>' ;
-                */
-                $filename = $this->getMetaDataFileFallback($view, $module_name);
-                $module_name = '<module_name>';
-                $using_view = strtolower($view);
- 	    	}
- 	    }
+    /**
+     * Retrieve the meta data file and module name for a particular view
+     *
+     * @param string $view
+     * @return array filename and module name information
+     */
+    public function getMetaDataFile($view)
+    {
+        return $this->getMetaDataFileInternal($view, $this->module);
+    }
 
- 	    return array('filename' => $filename, 'module_name' => $module_name, 'using_view' => $using_view);
- 	}
-
-	/**
+	/*
 	 * Public function that attains the bean detail and sets up an array for
 	 * Smarty consumption.
 	 */
