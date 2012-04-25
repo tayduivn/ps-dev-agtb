@@ -187,14 +187,10 @@ class quicksearchQuery
                     elseif ($focus instanceof Team) {
                         array_push(
                             $conditionArray,
-                            $table_prefix . $db->getValidDBName($condition['name']) . sprintf(" like '%s%%'", $db->quote($condition['value']))
+                            '(' . $table_prefix . $db->getValidDBName($condition['name']) . sprintf(" like '%s%%'", $db->quote($condition['value'])) . ' or ' . $table_prefix . 'name_2' . sprintf(" like '%s%%'", $db->quote($condition['value'])) . ')'
                         );
 
                         $condition['exclude_private_teams'] = true;
-                        array_push(
-                            $conditionArray,
-                            $table_prefix . 'name_2' . sprintf(" like '%s%%'", $db->quote($condition['value']))
-                        );
                     }
                     //END SUGARCRM flav=pro ONLY
                     else {
