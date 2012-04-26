@@ -1236,6 +1236,31 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if ($('#depTypeSelect').val() != "formula")
                 $("#dependency").val("");
             return true;
+        },
+        addToHead: function(src, type){
+            var tag, srcKey, typeTag, rel;
+            type = type ? type : "js";
+            if (type == "js") {
+                tag = "script";
+                srcKey = "src";
+                typeTag = "text/javascript";
+            } else if (type == "css")
+            {
+                tag = "link";
+                srcKey = "href";
+                typeTag = "text/css";
+                rel = "stylesheet";
+            } else {
+                //Invalid or unknown type
+                return;
+            }
+            var headElem = document.getElementsByTagName('head')[0];
+            var tmpElem = document.createElement(tag);
+            tmpElem.type = typeTag;
+            tmpElem[srcKey] = src;
+            if (rel)
+                tmpElem.rel = rel;
+            headElem.appendChild(tmpElem);
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY
