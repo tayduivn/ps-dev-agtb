@@ -36,31 +36,33 @@ $viewdefs['Cases']['mobile']['view']['detail'] = array(
         ),
     ),
     'panels' => array(
-        'label' => 'LBL_PANEL_1',
-        'fields' => array(
-            array(
-                'name' => 'case_number',
-                'displayParams' => array(
-                    'required' => false,
-                    'wireless_detail_only' => true,
-                )
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'case_number',
+                    'displayParams' => array(
+                        'required' => false,
+                        'wireless_detail_only' => true,
+                    )
+                ),
+                array('name' => 'name',
+                    'displayParams' => array(
+                        'required' => true,
+                        'wireless_edit_only' => true,
+                    )
+                ),
+                'account_name',
+                'priority',
+                'status',
+                'description',
+                'resolution',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
             ),
-            array('name' => 'name',
-                'displayParams' => array(
-                    'required' => true,
-                    'wireless_edit_only' => true,
-                )
-            ),
-            'account_name',
-            'priority',
-            'status',
-            'description',
-            'resolution',
-            'assigned_user_name',
-            //BEGIN SUGARCRM flav=pro ONLY
-            'team_name',
-            //END SUGARCRM flav=pro ONLY
-        ),
+        )
     )
 );
 ?>
