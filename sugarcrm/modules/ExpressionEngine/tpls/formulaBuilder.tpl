@@ -19,9 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<link rel="stylesheet" type="text/css" href="include/javascript/jquery/markitup/skins/simple/style.css" />
-<link rel="stylesheet" type="text/css" href="include/javascript/jquery/markitup/sets/default/style.css" />
-<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ExpressionEngine/tpls/formulaBuilder.css'}" />
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
 		<textarea type="text" name="formulaInput" id="formulaInput" style="width:490px;height:120px;position: relative;z-index:50">{$formula}</textarea>
@@ -57,6 +54,9 @@
 <script src="{sugar_getjspath file='include/javascript/jquery/markitup/sets/default/set.js'}"></script>
 <script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
 <script type="text/javascript">
+ModuleBuilder.addToHead("{sugar_getjspath file='modules/ExpressionEngine/tpls/formulaBuilder.css'}", "css");
+ModuleBuilder.addToHead("include/javascript/jquery/markitup/skins/simple/style.css", "css");
+ModuleBuilder.addToHead("include/javascript/jquery/markitup/sets/default/style.css", "css");
 {literal}
 var FBLoader = new YAHOO.util.YUILoader({
     require : ["formulabuilder"],
