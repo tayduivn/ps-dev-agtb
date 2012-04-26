@@ -154,7 +154,7 @@ if ( empty($_REQUEST['search_form_only']) ) {
 
     //Override the create url
     $createURL = 'index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report';
-    echo getClassicModuleTitle("Reports", $params, true, '', $createURL);
+    echo getClassicModuleTitle("Reports", $params, true, '', $createURL) . "<div class='clear'></div>";
 }
 
 include("modules/Reports/ListView.php");

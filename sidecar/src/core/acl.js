@@ -37,10 +37,11 @@
             //TODO Update this to get apps current user id
             //TODO Also add override for app full admins remember to add a test this means you
             // get current users ID
-            var myID = "seed_sally_id";
-            var module = model.module || '';
-            var hasAccess = true;
-            var access = "yes";
+            var myID = "seed_sally_id",
+                module = model.module || '',
+                hasAccess = true,
+                access = "yes";
+
             if (this.acls && this.acls[module]) {
                 // if we have a field check field level access
                 if (fieldName && this.acls[module].fields[fieldName] && this.action2acl[action]) {
@@ -52,11 +53,11 @@
                 }
 
 
-                if (access == "no") {
+                if (access === "no") {
                     hasAccess = false;
                 }
 
-                if (access == "owner" && model && model.get('assigned_user_id') != myID) {
+                if (access === "owner" && model && model.get('assigned_user_id') !== myID) {
                     hasAccess = false;
                 }
                 // if module admin they have full access
@@ -68,4 +69,4 @@
             return hasAccess;
         }
     });
-})(SUGAR.App);
+}(SUGAR.App));

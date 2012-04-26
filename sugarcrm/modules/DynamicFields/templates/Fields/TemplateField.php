@@ -427,9 +427,12 @@ class TemplateField{
 		if(!is_array($row)) {
 			$GLOBALS['log']->error("Error: TemplateField->populateFromRow expecting Array");
 		}
-		//Bug 24189: Copy fields from FMD format to Field objects
+		//Bug 24189: Copy fields from FMD format to Field objects and vice versa
 		foreach ($fmd_to_dyn_map as $fmd_key => $dyn_key) {
-			if (isset($row[$fmd_key])) {
+            if (isset($row[$dyn_key])) {
+                $this->$fmd_key = $row[$dyn_key];
+            }
+            if (isset($row[$fmd_key])) {
 				$this->$dyn_key = $row[$fmd_key];
 			}
 		}
@@ -523,7 +526,7 @@ class TemplateField{
      * checks to see if updates are needed for the SearchFields.php file.  In the event that the unified_search
      * member variable is set to true, a search field definition is updated/created to the SearchFields.php file.
      *
-     * @param $df Instance of DynamicField
+     * @param DynamicField $df
      */
 	function save($df){
 		//	    $GLOBALS['log']->debug('saving field: '.print_r($this,true));

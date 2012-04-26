@@ -3,13 +3,11 @@
 
 describe("DataManager.sync", function() {
 
-    var app = SUGAR.App,
-        origStorageAdapter,
-        spySa,
-        origSync;
+    var app = SUGAR.App, origStorageAdapter, spySa, 
+        origSync, callback, options, sa;
 
-    var callback = function() { SugarTest.setWaitFlag(); }
-    var options = {
+    callback = function() { SugarTest.setWaitFlag(); };
+    options = {
         silent: true,
         skipRemoteSync: true,
         success: callback,
@@ -17,7 +15,7 @@ describe("DataManager.sync", function() {
     };
 
     // StorageAdapter stub
-    var sa = {
+    sa = {
         sync: function(method, model, options) {
             _.delay(options.success, 20);
         }
@@ -138,7 +136,7 @@ describe("DataManager.sync", function() {
         });
 
         it("should be able to fetch beans", function() {
-            var beans = new app.BeanCollection;
+            var beans = new app.BeanCollection();
             beans.fetch(options);
 
             SugarTest.wait();
@@ -153,15 +151,15 @@ describe("DataManager.sync", function() {
     describe("skipRemoteSync=false", function() {
 
         var origDataManager,
-            spyDm;
+            spyDm, dm;
 
         // DataManager stub
-        var dm = {
+        dm = {
             sync: function(method, model, options) {
                 app.logger.trace('remote-sync-' + method + ": " + model);
                 _.delay(options.success, 20);
             }
-        }
+        };
 
         beforeEach(function() {
             options.skipRemoteSync = false;
@@ -282,8 +280,8 @@ describe("DataManager.sync", function() {
         });
 
         it("should be able to fetch beans", function() {
-            var beans = new app.BeanCollection;
-            var opts = _.clone(options);
+            var beans = new app.BeanCollection(),
+                opts = _.clone(options);
             opts.skipOffline = true;
 
             beans.fetch(opts);

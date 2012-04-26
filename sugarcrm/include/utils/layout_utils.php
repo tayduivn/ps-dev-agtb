@@ -288,7 +288,7 @@ EOHTML;
         $the_title .= '</span>';
     }
 
-    $the_title .= "</div>\n";
+    $the_title .= "<div class='clear'></div></div>\n";
     return $the_title;
 
 }

@@ -66,7 +66,7 @@ width:70%;
         <table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0" width="30%">
             <tr>
                 <td colspan="2">
-                {sugar_translate label="LBL_SELECT_MODULES_TITLE" module="Administration"}
+                {sugar_translate label="LBL_SELECT_FTS_MODULES_TITLE" module="Administration"}
                 </td>
             </tr>
             <tr>

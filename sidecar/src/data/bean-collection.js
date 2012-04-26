@@ -36,10 +36,20 @@
          */
         fetch: function(options) {
             options = options || {};
-            var origSuccess = options.success;
-            var that = this;
+            /**
+             * Field names.
+             *
+             * A list of fields that are populated on collection members.
+             * This property is used to build `fields` URL parameter when fetching beans.
+             * @member Data.BeanCollection
+             * @property {Array}
+             */
+            this.fields = options.fields || null;
+            var origSuccess = options.success,
+                self = this;
+
             options.success = function(args) {
-                that.trigger(
+                self.trigger(
                     /**
                      * Fired when the collection fetch operataion succeeds.
                      * @event
@@ -81,6 +91,7 @@
         paginate: function(options) {
             options = options || {};
             options.page = options.page || 1;
+            options.fields = options.fields || this.fields;
 
             // fix page number since our offset is already at the end of the collection subset
             options.page--;
@@ -106,4 +117,4 @@
 
     }), false);
 
-})(SUGAR.App);
+}(SUGAR.App));

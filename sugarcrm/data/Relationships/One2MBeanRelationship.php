@@ -201,9 +201,9 @@ class One2MBeanRelationship extends One2MRelationship
 
             //Add any optional where clause
             if (!empty($params['where'])){
-                $add_where = $this->getOptionalWhereClause($params['where']);
+                $add_where = is_string($params['where']) ? $params['where'] : "$rhsTable." . $this->getOptionalWhereClause($params['where']);
                 if (!empty($add_where))
-                    $where .= " AND $rhsTable.$add_where";
+                    $where .= " AND $add_where";
             }
 
             if (empty($params['return_as_array'])) {
@@ -287,6 +287,10 @@ class One2MBeanRelationship extends One2MRelationship
         $query .= "$join_type $targetTableWithAlias ON $startingTable.$startingKey=$targetTable.$targetKey AND $targetTable.deleted=0\n"
         //Next add any role filters
                . $this->getRoleWhere() . "\n";
+
+        if (!empty($params['return_as_array'])) {
+            $return_array = true;
+        }
 
         if($return_array){
             return array(

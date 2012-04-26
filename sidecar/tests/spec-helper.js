@@ -50,16 +50,41 @@ var SugarTest = {};
         return test.loadFile("../fixtures", file, "json", function(data) { return data; }, "json");
     };
 
+    // Only certain tests want seeded meta data so those suites can 
+    // load this in there respective beforeEach:
+    // SugarTest.seedMetadata();
+    test.seedMetadata = function(useJSMetadata) {
+        var meta = null;
+        this.seedApp();
+        SugarTest.metadata = SugarTest.loadFixture("metadata");
+        SugarTest.dm = SUGAR.App.data;
+
+        meta = (useJSMetadata) ? fixtures.metadata : SugarTest.metadata;
+        SugarTest.app.metadata.set(meta);
+        SugarTest.dm.reset();
+        SugarTest.dm.declareModels(meta);
+    };
+
+    test.seedApp = function() {
+        SugarTest.app = SUGAR.App.init({el: "body"});
+    };
+
+    test.seedFakeServer = function() {
+        SugarTest.server = sinon.fakeServer.create();
+    };
+
     test.waitFlag = false;
     test.wait = function() { waitsFor(function() { return test.waitFlag; }); };
     test.resetWaitFlag = function() { this.waitFlag = false; };
     test.setWaitFlag = function() { this.waitFlag = true; };
 
-})(SugarTest);
+}(SugarTest));
 
 beforeEach(function(){
     SugarTest.resetWaitFlag();
+
     if (SUGAR.App) {
+        SugarTest.app = SUGAR.App.init({el: "body", silent: true});
         SUGAR.App.config.logLevel = SUGAR.App.logger.levels.TRACE;
         SUGAR.App.config.env = "test";
         SUGAR.App.config.appId = "portal";
@@ -71,5 +96,9 @@ beforeEach(function(){
 });
 
 afterEach(function() {
-    if (typeof Backbone != "undefined" && !_.isUndefined(Backbone.history)) Backbone.history.stop();
+    SugarTest.app.destroy();
+    if (SugarTest.server && SugarTest.server.restore) {
+        SugarTest.server.restore();
+    }
+    if (typeof Backbone !== "undefined" && !_.isUndefined(Backbone.history)) Backbone.history.stop();
 });

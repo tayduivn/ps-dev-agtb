@@ -4,21 +4,21 @@
 
 describe("Offline+DB+server", function() {
 
-    var metadata, origSync, origDb, server;
-    var app = SUGAR.App;
-    var odm = app.Offline.dataManager, dm = app.dataManager, spec = this;
-    var success = function() {
-        SugarTest.setWaitFlag();
-    }
-    var error = function() {
-        SugarTest.setWaitFlag();
-    }
-    var options = {
-        silent: true,
-        skipRemoteSync: false,
-        success: success,
-        error: error
-    };
+    var metadata, origSync, origDb, server,
+        app = SUGAR.App,
+        odm = app.Offline.dataManager, dm = app.dataManager, spec = this,
+        success = function() {
+            SugarTest.setWaitFlag();
+        },
+        error = function() {
+            SugarTest.setWaitFlag();
+        },
+        options = {
+            silent: true,
+            skipRemoteSync: false,
+            success: success,
+            error: error
+        };
 
     beforeEach(function() {
         origSync = Backbone.sync;
@@ -116,10 +116,10 @@ describe("Offline+DB+server", function() {
     });
 
     it("should be able to fetch beans from offline storage", function() {
-        var opts = _.clone(options);
+        var opts = _.clone(options), bean, beans;
         opts.skipRemoteSync = true;
 
-        var bean = dm.createBean("Things", {
+        bean = dm.createBean("Things", {
             name: "My thing",
             int_field: 7,
             currency_field: 3.14,
@@ -144,7 +144,6 @@ describe("Offline+DB+server", function() {
 
         SugarTest.wait();
 
-        var beans;
         runs(function() {
             SugarTest.resetWaitFlag();
             beans = dm.createBeanCollection("Things");

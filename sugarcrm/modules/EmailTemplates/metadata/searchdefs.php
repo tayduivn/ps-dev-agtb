@@ -42,7 +42,9 @@
 						 	'name',
                             'type' => array('name' => 'type', 'type'=>'enum', 'function' => array('name' => 'EmailTemplate::getTypeOptionsForSearch'))
 							),
-					    'advanced_search' => array('name','type','subject','description',
+					    'advanced_search' => array('name',
+                                                        'type' => array('name' => 'type', 'type'=>'enum', 'function' => array('name' => 'EmailTemplate::getTypeOptionsForSearch')),
+                                                        'subject','description',
                                 					    'assigned_user_id' => 
                                 					      array (
                                 					        'name' => 'assigned_user_id',

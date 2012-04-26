@@ -419,17 +419,17 @@ class User extends Person {
 
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
-	
+
 	/**
      * incrementETag
-     * 
-     * This function increments any ETag seed needed for a particular user's 
-     * UI. For example, if the user changes their theme, the ETag seed for the 
+     *
+     * This function increments any ETag seed needed for a particular user's
+     * UI. For example, if the user changes their theme, the ETag seed for the
      * main menu needs to be updated, so you call this function with the seed name
      * to do so:
-     * 
+     *
      * UserPreference::incrementETag("mainMenuETag");
-     * 
+     *
      * @param string $tag ETag seed name.
      * @return nothing
      */
@@ -441,13 +441,13 @@ class User extends Person {
     	$val++;
     	$this->setPreference($tag, $val, 0, "ETag");
     }
-    
+
     /**
      * getETagSeed
-     * 
-     * This function is a wrapper to encapsulate getting the ETag seed and 
+     *
+     * This function is a wrapper to encapsulate getting the ETag seed and
      * making sure it's sanitized for use in the app.
-     * 
+     *
      * @param string $tag ETag seed name.
      * @return integer numeric value of the seed
      */
@@ -458,7 +458,7 @@ class User extends Person {
     	}
     	return $val;
     }
-	
+
 
    /**
     * Get WHERE clause that fetches all users counted for licensing purposes
@@ -867,7 +867,7 @@ EOQ;
 		$name = $db->quote($name);
 		$query = "SELECT * from users where user_name='$name'";
 		if(!empty($where)) {
-		    $query .= "AND $where";
+		    $query .= " AND $where";
 		}
 		$result = $db->limitQuery($query,0,1,false);
 		if(!empty($result)) {
@@ -1881,8 +1881,8 @@ EOQ;
 				if (!copy($file, $newfile)) {
 		   			global $app_strings;
 		        	$GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
-		
-				}	
+
+				}
 			}
 		}
 

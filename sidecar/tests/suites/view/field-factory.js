@@ -1,37 +1,43 @@
 describe("View Manager", function() {
 
-    describe("should be able to create instances", function() {
+    var app;
 
-        var app = SUGAR.App;
+    describe("should be able to create instances of Field class", function() {
 
-        app.metadata.set(fixtures.metadata);
-        app.data.declareModels(fixtures.metadata);
-
-        //Need a sample Bean
-        var bean = app.data.createBean("Contacts", {
-            first_name: "Foo",
-            last_name: "Bar"
-        });
-
-        var collection = new app.BeanCollection([bean]);
-
-        //Setup a context
-        var context = app.context.getContext({
-            url: "someurl",
-            module: "Contacts",
-            model: bean,
-            collection: collection
-        });
-
-        var view = {
-            name: "test"
-        };
+        var bean, collection, context, view, fields;
 
         beforeEach(function() {
-            app.view.fields = {};
+            SugarTest.seedMetadata(true);
+            app = SugarTest.app;
+       
+            //Need a sample Bean
+            bean = app.data.createBean("Contacts", {
+                first_name: "Foo",
+                last_name: "Bar"
+            });
+
+            collection = new app.BeanCollection([bean]);
+
+            //Setup a context
+            context = app.context.getContext({
+                url: "someurl",
+                module: "Contacts",
+                model: bean,
+                collection: collection
+            });
+
+            view = {
+                name: "test"
+            };
+
+            fields = app.view.fields;
         });
 
-        it("of base class", function() {
+        afterEach(function() {
+            app.view.fields = fields;
+        });
+
+        it("with default template", function() {
             var result = app.view.createField({
                 def: {
                     type: 'addresscombo',
@@ -47,8 +53,9 @@ describe("View Manager", function() {
             expect(result.type).toEqual("addresscombo");
             expect(result.name).toEqual("address");
             expect(result.label).toEqual("Address");
+            expect(result.context).toEqual(context);
             expect(result.fieldDef).toEqual(fixtures.metadata.modules["Contacts"].fields["address"]);
-
+            expect(result.model).toEqual(bean);
         });
 
         it("of custom class", function() {
@@ -69,7 +76,6 @@ describe("View Manager", function() {
             expect(result).toBeDefined();
             expect(result instanceof app.view.fields.AddresscomboField).toBeTruthy();
             expect(result.foo).toEqual("foo");
-
         });
 
         it("of custom class with controller", function() {
@@ -86,6 +92,9 @@ describe("View Manager", function() {
             expect(app.view.fields.TextField).toBeDefined();
             expect(result instanceof app.view.fields.TextField).toBeTruthy();
             expect(result.customCallback).toBeDefined();
+
+            // Checking fall back algorithm
+            expect(result.label).toEqual('description');
         });
 
     });

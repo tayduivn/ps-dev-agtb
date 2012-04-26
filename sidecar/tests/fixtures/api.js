@@ -22,7 +22,7 @@ fixtures.api = {
             },
         "GET" : {
             "status" :200,
-            "response" : [
+            "response" : { "records" : [
             {
                 "id":"seed_coram",
                 "name":"Clint Oram",
@@ -44,7 +44,7 @@ fixtures.api = {
                 "title":"CFO",
                 "phone_mobile":"+49 5361 90",
                 "email1":"hdp@example.com"
-            }],
+            }]},
         "PUT" : {"status" : 405},
         "DELETE": {"status" : 405},
         "POST" : {"status" : 405}
@@ -252,7 +252,7 @@ fixtures.api = {
         "POST" : { "status" : 405 }
     },
 
-    "rest/v10/opportunities/1/contacts" : {
+    "rest/v10/opportunities/1/link/contacts" : {
         "GET": {
             "status": 200,
             "response": {
