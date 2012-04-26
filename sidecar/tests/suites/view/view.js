@@ -21,32 +21,6 @@ describe("Layout.View", function() {
         app.template.load(fixtures.metadata);
     });
 
-    it('should get metadata from the metdata manager', function() {
-        var view = app.view.createView({
-            context: context,
-            name: "edit"
-        });
-        expect(view.meta).toEqual(fixtures.metadata.modules.Contacts.views.edit);
-    });
-
-    it('should accept metadata overrides', function() {
-        var testMeta = {
-            "panels": [
-                {
-                    "label": "TEST",
-                    "fields": []
-                }
-            ]
-        };
-
-        var view = app.view.createView({
-            context: context,
-            name: "edit",
-            meta: testMeta
-        });
-        expect(view.meta).toEqual(testMeta);
-    });
-
     it('should render edit views', function() {
         var aclSpy = sinon.spy(app.acl,'hasAccess'), html,
             view = app.view.createView({

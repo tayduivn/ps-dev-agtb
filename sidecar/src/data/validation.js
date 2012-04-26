@@ -29,7 +29,7 @@
              * Validates the max length of a given value.
              * @param {String} field bean field metadata
              * @param {String} value bean field value
-             * @return {Number} max length or noting if the field is valid.
+             * @return {Number} max length or nothing if the field is valid.
              * @method
              */
             maxLength: function(field, value) {
@@ -40,6 +40,53 @@
                     if (value.length > maxLength) {
                         return maxLength;
                     }
+                }
+            },
+
+            /**
+             * Validates the min length of a given value.
+             * @param {String} field bean field metadata
+             * @param {String} value bean field value
+             * @return {Number} min length or nothing if the field is valid.
+             * @method
+             */
+            minLength: function(field, value) {
+                var minLength;
+
+                if (_.isNumber(field.minlen)) { // TODO: Not sure what the proper property is if there is one
+                    minLength = field.minlen;
+                    value = value || "";
+                    value = value.toString();
+
+                    if(value.length < minLength) {
+                        return minLength;
+                    }
+                }
+            },
+
+            /**
+             * Validates that a given value is a valid URL.
+             * NOTE: Should be noted we can't do full validation of urls w/ javascript as that is impossible.
+             * @param {String} field bean field metadata
+             * @param {String} value bean field value
+             * @return {Boolean} Should return true if not valid
+             */
+            url: function(field, value) {
+                if (field.type == "url") {
+                    return !(/^(https?|http):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/.test(value));
+                }
+            },
+
+            /**
+             * Validates that a given value is a valid email address.
+             * NOTE: Should be noted that we can't do full email validation w/ javascript.
+             * @param {String} field bean field metadata
+             * @param {String} value bean field value
+             * @return {Boolean} Should return true if not valid
+             */
+            email: function(field, value) {
+                if (field.type == "email") {
+                    return !(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(value));
                 }
             }
 

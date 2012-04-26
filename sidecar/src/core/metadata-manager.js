@@ -50,7 +50,7 @@
          * @private
          */
         _patchMetadata: function (moduleName, module) {
-            if (module._patched === true) return module;
+            if (!module || module._patched === true) return module;
             var self = this;
             _.each(module.views, function(view, viewName) {
                 _.each(view.panels, function(panel) {
