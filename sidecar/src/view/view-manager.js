@@ -33,7 +33,7 @@
         var evaledController = null;
         if (controller) {
             try {
-                evaledController = eval("(" + controller + ")");
+                evaledController = eval("[" + controller + "][0]");
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + className + ": " + e + ":\n" + controller);
             }
