@@ -61,8 +61,8 @@ class MetaDataFiles
         MB_WIRELESSEDITVIEW       => 'edit' ,
         MB_WIRELESSDETAILVIEW     => 'detail' ,
         MB_WIRELESSLISTVIEW       => 'list' ,
-        MB_WIRELESSBASICSEARCH    => 'searchView' ,
-        MB_WIRELESSADVANCEDSEARCH => 'searchView' ,
+        MB_WIRELESSBASICSEARCH    => 'search' ,
+        MB_WIRELESSADVANCEDSEARCH => 'search' ,
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALEDITVIEW         => 'edit',

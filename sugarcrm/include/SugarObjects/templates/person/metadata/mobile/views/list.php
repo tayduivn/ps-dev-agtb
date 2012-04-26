@@ -39,6 +39,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+                    'related_fields' => array('first_name', 'last_name', 'salutation'),
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
