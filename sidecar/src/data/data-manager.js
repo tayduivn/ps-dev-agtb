@@ -293,9 +293,11 @@
          *
          * <pre><code>
          * // Create contacts collection for an existing opportunity.
-         * var contact = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
+         * var contacts = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
          * contacts.fetch({ relate: true });
          * </code></pre>
+         *
+         * The newly created collection is cached in the given bean instance.
          *
          * @param {Data.Bean} bean the related beans are linked to the specified bean
          * @param {String} link relationship link name
@@ -305,7 +307,7 @@
             var name = bean.fields[link].relationship;
             var relationship = bean.relationships[name];
             var relatedModule = relationship.lhs_module == bean.module ? relationship.rhs_module : relationship.lhs_module;
-            return this.createBeanCollection(relatedModule, undefined, {
+            var collection = this.createBeanCollection(relatedModule, undefined, {
                 /**
                  * Link information.
                  *
@@ -323,6 +325,9 @@
                     bean: bean
                 }
             });
+
+            bean._setRelatedCollection(link, collection);
+            return collection;
         },
 
         /**
