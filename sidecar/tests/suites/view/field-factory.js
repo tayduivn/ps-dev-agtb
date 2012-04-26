@@ -4,7 +4,7 @@ describe("View Manager", function() {
 
     describe("should be able to create instances of Field class", function() {
 
-        var bean, collection, context, view;
+        var bean, collection, context, view, fields;
 
         beforeEach(function() {
             SugarTest.seedMetadata(true);
@@ -29,14 +29,12 @@ describe("View Manager", function() {
             view = {
                 name: "test"
             };
-            app.view.fields = {};
+
+            fields = app.view.fields;
         });
 
         afterEach(function() {
-            bean = null;
-            collection = null;
-            context = null;
-            view = null;
+            app.view.fields = fields;
         });
 
         it("with default template", function() {
@@ -55,8 +53,9 @@ describe("View Manager", function() {
             expect(result.type).toEqual("addresscombo");
             expect(result.name).toEqual("address");
             expect(result.label).toEqual("Address");
+            expect(result.context).toEqual(context);
             expect(result.fieldDef).toEqual(fixtures.metadata.modules["Contacts"].fields["address"]);
-
+            expect(result.model).toEqual(bean);
         });
 
         it("of custom class", function() {
@@ -77,7 +76,6 @@ describe("View Manager", function() {
             expect(result).toBeDefined();
             expect(result instanceof app.view.fields.AddresscomboField).toBeTruthy();
             expect(result.foo).toEqual("foo");
-
         });
 
         it("of custom class with controller", function() {
@@ -94,6 +92,9 @@ describe("View Manager", function() {
             expect(app.view.fields.TextField).toBeDefined();
             expect(result instanceof app.view.fields.TextField).toBeTruthy();
             expect(result.customCallback).toBeDefined();
+
+            // Checking fall back algorithm
+            expect(result.label).toEqual('description');
         });
 
     });

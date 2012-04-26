@@ -47,8 +47,8 @@
             },
             405: function() {
             },
-            422: function() {
-
+            422: function(xhr, error, model) {
+                this.handleValidationError(model, xhr.responseText);
             },
             500: function() {
             }
@@ -77,9 +77,9 @@
          * @param {String} error Error message
          * @method
          */
-        handleHTTPError: function(xhr, error) {
+        handleHTTPError: function(xhr, error, model) {
             if (xhr.status && this.statusCodes[xhr.status]) {
-                this.statusCodes[xhr.status](xhr, error);
+                this.statusCodes[xhr.status].call(this, xhr, error, model);
             } else {
                 // TODO: Default catch all error code handler
             }
