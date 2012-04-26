@@ -69,6 +69,7 @@ require_once('include/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'teamnotices_editview_buttons',
     'buttons' => $buttons,
+    'flat' => true,
 ), $xtpl);
 
 $xtpl->assign('ACTION_BUTTON', $action_button);

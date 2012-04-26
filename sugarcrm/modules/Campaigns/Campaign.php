@@ -268,7 +268,7 @@ class Campaign extends SugarBean {
         $query_array = $this->log_entries->getQuery(true);
 
         $query_array['select'] = 'SELECT campaign_log.* ';
-        $query_array['where']  = $query_array['where']. ' AND activity_type = "lead" AND archived = 0 AND target_id IS NOT NULL';
+        $query_array['where']  = $query_array['where']. " AND activity_type = 'lead' AND archived = 0 AND target_id IS NOT NULL";
 
         return implode(' ', $query_array);
     }
@@ -423,7 +423,7 @@ class Campaign extends SugarBean {
      */
     function getDeletedCampaignLogLeadsCount()
     {
-        $query = 'SELECT COUNT(*) AS count FROM campaign_log WHERE campaign_id = "' . $this->getFieldValue('id') . '" AND target_id IS NULL AND activity_type = "lead"';
+        $query = "SELECT COUNT(*) AS count FROM campaign_log WHERE campaign_id = '" . $this->getFieldValue('id') . "' AND target_id IS NULL AND activity_type = 'lead'";
         $result = $this->db->fetchOne($query);
 
         return (int)$result['count'];
