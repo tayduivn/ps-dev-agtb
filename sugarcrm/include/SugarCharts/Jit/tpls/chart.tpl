@@ -54,7 +54,7 @@
 			{if !isset($showchart)}
 				loadCustomChartForReports();
 			{else}
-			    if (document.getElementById('showHideChartButton').value != '{$showchart}')
+			     if($('#showHideChartButton').attr('value') != '{$showchart}')
 			        loadCustomChartForReports();
 			{/if}
 			{literal}
