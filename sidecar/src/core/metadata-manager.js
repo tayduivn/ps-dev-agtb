@@ -184,7 +184,7 @@
                 result = _app.moduleList;
             }
 
-            if(result._hash) {
+            if(result && result._hash) {
                 delete result._hash;
             }
 

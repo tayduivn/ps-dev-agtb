@@ -83,7 +83,8 @@ SUGAR.App = (function() {
              * Alias to SUGAR.Api
              * @property {Object}
              */
-            api: null
+            api: null,
+            additionalComponents: []
         }, this, Backbone.Events);
     }
 
@@ -175,8 +176,26 @@ SUGAR.App = (function() {
             else {
                 this.sync();
             }
-        },
 
+            if (app.config && app.config.additionalComponents) {
+                this.loadAdditionalComponents(app.config.additionalComponents);
+            }
+        },
+        /**
+         *
+         * @param {Object} components
+         */
+        loadAdditionalComponents: function(components) {
+            var context = app.controller.context;
+            _.each(components, function(options, componentName){
+                if (options.target) {
+                   var view = app.view.createView({name: componentName, context: context});
+                   view.$el=app.controller.$(options.target);
+                   view.render();
+                   app.additionalComponents.push(view);
+                }
+            });
+        },
         /**
          * Destroys the instance of the current app
          * TODO: Not properly implemented
@@ -238,7 +257,6 @@ SUGAR.App = (function() {
                 }
 
                 app.acl.set(metadata.acl);
-
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {
