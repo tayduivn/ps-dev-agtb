@@ -71,6 +71,8 @@ $viewdefs['Opportunities']['portal']['view']['list'] = array(
                     'label' => 'Opportunity Amount',
                     'default' => true,
                     'enabled' => true,
+                    'type' => 'clickToEdit',
+                    'cteclass' => 'cteopp',
                 ),
                 2 =>
                 array(
