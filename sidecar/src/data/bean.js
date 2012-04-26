@@ -12,7 +12,44 @@
  */
 (function(app) {
 
+    var _relatedCollections;
+
     app.augment("Bean", Backbone.Model.extend({
+
+        /**
+         * Caches a collection of related beans in this bean instance.
+         * @param {String} link Relationship link name.
+         * @param collection A collection of related beans to cache.
+         * @private
+         */
+        _setRelatedCollection: function(link, collection) {
+            _relatedCollections = _relatedCollections || {};
+            _relatedCollections[link] = collection;
+        },
+
+        /**
+         * Gets a collection of related beans.
+         *
+         * This method returns a cached in memory instance of the collection. If the collection doesn't exist in the cache,
+         * it will be created using {@link Data.DataManager#createRelatedCollection} method.
+         * Use {@link Data.DataManager#createRelatedCollection} method to get a new instance of a related collection.
+         *
+         * <pre><code>
+         * // Get a cached copy or create contacts collection for an existing opportunity.
+         * var contacts = opportunity.getRelatedCollection("contacts");
+         * contacts.fetch({ relate: true });
+         * </code></pre>
+         *
+         * @param {String} link Relationship link name.
+         * @return {Data.BeanCollection} Previously created collection or a new collection of related beans.
+         */
+        getRelatedCollection: function(link) {
+            if (_relatedCollections && _relatedCollections[link]) {
+                return _relatedCollections[link];
+            }
+
+            return app.data.createRelatedCollection(this, link);
+        },
 
         /**
          * Validates a bean.
