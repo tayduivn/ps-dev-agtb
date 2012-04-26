@@ -118,7 +118,8 @@
 
         treeNodeSelect: function(event, data)
         {
-            this.trigger('treeview:node_select', data.inst.get_json());
+            jsData = data.inst.get_json();
+            this.trigger('treeview:node_select', jsData[0].metadata.model);
         }
     });
 

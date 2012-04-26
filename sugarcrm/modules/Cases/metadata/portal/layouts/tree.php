@@ -16,7 +16,7 @@ $viewdefs['Cases']['portal']['layout']['tree'] = array(
                     ),
                     array(
                         "size" => 10,
-                        "view" => "list",
+                        "view" => "grid",
                     )
                 )
             )
