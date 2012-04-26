@@ -7,6 +7,7 @@
      * @extends View.View
      */
     app.view.views.ListView = app.view.View.extend({
+
         events: {
             'click [class*="orderBy"]': 'setOrderBy',
             'click .search': 'showSearch',
@@ -17,13 +18,12 @@
         initialize : function(options) {
             app.view.View.prototype.initialize.call(this, options);
 
-            SUGAR.App.events.on('treeview:node_select', this.handleTreeNodeSelect);
+            app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
 
             return this;
         },
-        handleTreeNodeSelect : function(a,s,d,f) {
-            console.log(this);
-            console.log(a);
+        handleTreeNodeSelect : function(json_data) {
+            console.log(json_data);
         },
         bind: function(context) {
             var collection = context.get("collection");

@@ -24,7 +24,7 @@
             if(this.rendered) return;
             app.view.View.prototype.render.call(this);
 
-            SUGAR.App.events.register("treeview:node_select", this.context);
+            app.events.register("treeview:node_select", this);
 
             this.primary_user = SUGAR.App.data.createBean('Users', { id: 'seed_jim_id'});
             this.primary_user.on('change', this.postUserFetch, this);
@@ -118,11 +118,7 @@
 
         treeNodeSelect: function(event, data)
         {
-
-            this.context.trigger('treeview:node_select', data.inst.get_json());
-            //this.trigger('treeview:node_select');
-            //this.trigger('mynamespaced:event');
-            //app.controller.context.get('collection').paginate({add:true, success:function(){console.log("in paginate success");window.scrollTo(0,document.body.scrollHeight);}})
+            this.trigger('treeview:node_select', data.inst.get_json());
         }
     });
 
