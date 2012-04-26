@@ -94,9 +94,9 @@ describe("Relationships", function() {
             var opportunity = dm.createBean("Opportunities"), contacts;
             opportunity.id = "1";
 
-            server.respondWith("GET", /\/Opportunities\/1\/contacts/,
+            server.respondWith("GET", /\/Opportunities\/1\/link\/contacts/,
                 [200, {  "Content-Type":"application/json"},
-                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/contacts"].GET.response)]);
+                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/link/contacts"].GET.response)]);
 
             contacts = dm.createRelatedCollection(opportunity, "contacts");
             contacts.fetch({ relate: true });
@@ -131,9 +131,9 @@ describe("Relationships", function() {
                 opportunity_role: "Influencer"
             });
 
-            server.respondWith("POST", /\/Opportunities\/1\/contacts/,
+            server.respondWith("POST", /\/Opportunities\/1\/link\/contacts/,
                 [200, {  "Content-Type":"application/json"},
-                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/contacts"].POST.response)]);
+                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/link/contacts"].POST.response)]);
 
             contact.save(null, { relate: true });
             server.respond();
@@ -152,9 +152,9 @@ describe("Relationships", function() {
             opportunity.id = "1";
             contact = dm.createRelatedBean(opportunity, null, "contacts", { id: "2" });
 
-            server.respondWith("DELETE", /\/Opportunities\/1\/contacts\/2/,
+            server.respondWith("DELETE", /\/Opportunities\/1\/link\/contacts\/2/,
                 [200, {  "Content-Type":"application/json"},
-                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/contacts"].DELETE.response)]);
+                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/link/contacts"].DELETE.response)]);
 
             contact.destroy({ relate: true });
             server.respond();
@@ -175,9 +175,9 @@ describe("Relationships", function() {
             // Indicate that this relationship is an existing one
             contact.link.isNew = false;
 
-            server.respondWith("PUT", /\/Opportunities\/1\/contacts\/2/,
+            server.respondWith("PUT", /\/Opportunities\/1\/link\/contacts\/2/,
                 [200, {  "Content-Type":"application/json"},
-                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/contacts"].PUT.response)]);
+                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/link/contacts"].PUT.response)]);
 
             contact.save(null, { relate: true });
             server.respond();
@@ -195,9 +195,9 @@ describe("Relationships", function() {
             contact = dm.createRelatedBean(opportunity, null, "contacts",
                 { id: "2", opportunity_role: "Influencer" });
 
-            server.respondWith("POST", /\/Opportunities\/1\/contacts\/2/,
+            server.respondWith("POST", /\/Opportunities\/1\/link\/contacts\/2/,
                 [200, {  "Content-Type":"application/json"},
-                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/contacts"].POST.response)]);
+                    JSON.stringify(fixtures.api["rest/v10/opportunities/1/link/contacts"].POST.response)]);
 
             contact.save(null, { relate: true });
             server.respond();
