@@ -5,6 +5,11 @@ describe("View Manager", function() {
         SugarTest.seedApp(true);
         app = SugarTest.app;
         SugarTest.seedMetadata(true);
+        views = app.view.views;
+    });
+
+    afterEach(function() {
+        app.view.views = views;
     });
 
     describe("should be able to create instances of View class which is", function() {

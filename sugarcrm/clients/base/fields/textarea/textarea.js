@@ -1,3 +1,3 @@
 ({
-    fieldType : "textarea"
+    fieldTag : "textarea"
 })
