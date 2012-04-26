@@ -154,11 +154,6 @@
       format: 'mm-dd-yyyy'
     })
 
-    // colorpicker
-    $('[rel=colorpicker]').colorpicker({
-  		format: 'hex'
-  	})
-
     // editable example
     $('.dblclick, .ePriority, .eStatus').hover( 
       function () {$(this).before('<span class="span2"><i class="icon-pencil icon-sm"></i></span>');},
@@ -179,20 +174,7 @@
 	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
 	    return false;
 	})
-  $('#moduleTwitter.filtered input').quicksearch('#moduleTwitter article')
-  $('#moduleLog.filtered input').quicksearch('#moduleLog article')
-  $('#moduleRelated.filtered input').quicksearch('#moduleRelated article')
-  $('#moduleActivity.filtered input').quicksearch('#moduleActivity article')
-  $('#moduleActivity.filtered input').quicksearch('#moduleActivity .results li')
- 
-  // datagrid
-  $('table.datatable').dataTable({
-    "bPaginate": false,
-    "bFilter": true,
-    "bInfo": false,
-    "bAutoWidth": true
-  })
-  
+
   // Select widget
   $(".chzn-select").chosen()
   $(".chzn-select-deselect").chosen({allow_single_deselect:true})

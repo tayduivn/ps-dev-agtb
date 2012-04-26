@@ -186,8 +186,7 @@
                 // If our callbacks / events have not been registered, go ahead and registered.
                 if (!callback && _.isString(eventHandler)) {
                     try {
-                        callback = eval("(" + eventHandler + ")");
-
+                        callback = eval("[" + eventHandler + "][0]");
                         // Store this callback if it is a function. Prefix it with "callback_"
                         if (_.isFunction(callback)) {
                             this["callback_" + handlerName] = callback;
