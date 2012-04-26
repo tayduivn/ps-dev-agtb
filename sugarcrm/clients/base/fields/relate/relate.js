@@ -16,7 +16,7 @@
     render: function() {
         var self = this;
         var result = this.app.view.Field.prototype.render.call(this);
-        $("[name=" + this.name + "]").chosen({
+        this.$(".relateEdit").chosen({
             no_results_text: "Searching for " // TODO Add labels support
         }).change(function(event) {
             var selected = $(event.target).find(':selected');
