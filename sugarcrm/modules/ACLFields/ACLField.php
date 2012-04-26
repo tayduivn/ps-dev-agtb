@@ -160,7 +160,11 @@ class ACLField  extends ACLAction
      * @param bool $refresh
      */
     static function loadUserFields($category,$object, $user_id, $refresh=false){
-        if(!$refresh && isset($_SESSION['ACL'][$user_id][$category]['fields']))return $_SESSION['ACL'][$user_id][$category]['fields'];
+        if(!$refresh && isset($_SESSION['ACL'][$user_id][$category]['fields']))
+        {
+            return $_SESSION['ACL'][$user_id][$category]['fields'];
+        }
+
         if(empty($_SESSION['ACL'][$user_id])) {
             // load actions to prevent cache poisoning for ACLAction
             ACLAction::getUserActions($user_id);
@@ -170,6 +174,7 @@ class ACLField  extends ACLAction
                     INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0";
         $query .=  " WHERE af.deleted = 0 ";
         $query .= " AND af.category='$category'";
+
         $result = $GLOBALS['db']->query($query);
 
         $allFields = ACLField::getAvailableFields($category, $object);
@@ -185,7 +190,7 @@ class ACLField  extends ACLAction
                 }
             }
         }
-        
+
         return $_SESSION['ACL'][$user_id][$category]['fields'];
 
     }

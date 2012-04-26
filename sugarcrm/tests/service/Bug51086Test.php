@@ -46,7 +46,6 @@ class Bug51086Test extends SOAPTestCase
      */
 	public function setUp()
     {
-
         //set up non admin user, do not use default user created by class which is an admin
         $this->_nonAdminUser = SugarTestUserUtilities::createAnonymousUser();
         $this->_nonAdminUser->status = 'Active';
@@ -55,31 +54,15 @@ class Bug51086Test extends SOAPTestCase
         $GLOBALS['db']->commit();
         $GLOBALS['current_user'] = $this->_nonAdminUser;
 
-
-
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v4/soap.php';
-		parent::setUp();
-        $this->_login($this->_nonAdminUser);
 
-
-        $beanList = array();
-		$beanFiles = array();
+        global $beanList, $beanFiles;
 		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
 
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Contacts');
-
-        //create Contact
-   	    $this->_contact = new Contact();
-        $this->_contact->first_name = 'Joe ';
-        $this->_contact->last_name = 'UT51086 ';
-        $this->_contact->email1 = 'ut51086Contact@example.com';
-        $this->_contact->save();
-        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
         //Create new ACL role
         $this->_aclRole = new ACLRole();
@@ -95,8 +78,17 @@ class Bug51086Test extends SOAPTestCase
         $this->_aclField = new ACLField();
         $this->_aclField->setAccessControl('Contacts', $this->_aclRole->id, $this->_blockedfield, -99);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
-        ACLField::loadUserFields('Contacts', 'Contact', $GLOBALS['current_user']->id, true );
+
+        //create Contact
+   	    $this->_contact = new Contact();
+        $this->_contact->first_name = 'Joe ';
+        $this->_contact->last_name = 'UT51086 ';
+        $this->_contact->email1 = 'ut51086Contact@example.com';
+        $this->_contact->save();
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+
+        parent::setUp();
+        $this->_login($this->_nonAdminUser);
     }
 
     public function tearDown()
@@ -138,9 +130,11 @@ class Bug51086Test extends SOAPTestCase
 
 
     //test that the soap call will honor field level acl with a passed in list of selected fields
+    /**
+     * @outputBuffering disabled
+     */
     public function testFieldLevelACLWithDefinedSelect()
     {
-
         //make the soap call that will return the contact record with the selected fields.
         //Assert that blocked field is declared to be returned
         $selFields =  array('last_name'=>'last_name', 'first_name'=>'first_name', 'email1'=>'email1','id'=>'id',$this->_blockedfield=>$this->_blockedfield);
@@ -175,6 +169,9 @@ class Bug51086Test extends SOAPTestCase
             }
 
         }
+
+
+
         //assert returned field is not description
         $this->assertFalse($foundDescription, 'the blocked field ('.$this->_blockedfield.') was returned with select fields specified, despite being off limits through ACLs and user not being admin.');
     }
