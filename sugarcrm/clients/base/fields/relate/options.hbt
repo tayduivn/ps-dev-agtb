@@ -1,0 +1,3 @@
+{{#each options}}
+    <option value="{{getFieldValue this ../this.fieldDef.rname ""}}" id="{{getFieldValue this "id" ""}}">{{getFieldValue this ../this.fieldDef.rname ""}}</option>
+{{/each}}

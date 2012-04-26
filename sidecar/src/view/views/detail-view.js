@@ -14,7 +14,6 @@
         },
         render: function() {
             app.view.View.prototype.render.call(this);
-            console.log( this.$el.find("form[name=detail]").find("span")  );
             var fieldsArray = this.$el.find("form[name=detail]").find("span[sfuuid]") || [];
 
             var that = this;
