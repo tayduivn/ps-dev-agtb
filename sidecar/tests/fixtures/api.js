@@ -252,7 +252,7 @@ fixtures.api = {
         "POST" : { "status" : 405 }
     },
 
-    "rest/v10/opportunities/1/contacts" : {
+    "rest/v10/opportunities/1/link/contacts" : {
         "GET": {
             "status": 200,
             "response": {
