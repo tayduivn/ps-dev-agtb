@@ -1,6 +1,5 @@
 <div class="subnav">
     <div class="btn-toolbar pull-left">
-        {{log this}}
       <h1>{{context.state.model.attributes.id}}</h1>
     </div>
     <div class="btn-toolbar pull-right">

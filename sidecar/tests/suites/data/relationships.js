@@ -67,16 +67,18 @@ describe("Relationships", function() {
 
         it("should be able to create a collection of related beans", function() {
             dm.declareModels(metadata);
-            var opportunity = dm.createBean("Opportunities"), contacts;
+            var opportunity = dm.createBean("Opportunities");
             opportunity.id = "opp-1";
 
-            contacts = dm.createRelatedCollection(opportunity, "contacts");
+            var contacts = dm.createRelatedCollection(opportunity, "contacts");
 
             expect(contacts.module).toEqual("Contacts");
             expect(contacts.link).toBeDefined();
             expect(contacts.link.name).toEqual("contacts");
             expect(contacts.link.bean).toEqual(opportunity);
+            expect(opportunity.getRelatedCollection("contacts")).toEqual(contacts);
         });
+
     });
 
     describe("CRUD", function() {

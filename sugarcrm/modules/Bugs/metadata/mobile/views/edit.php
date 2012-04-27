@@ -27,39 +27,31 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['Bugs']['DetailView'] = array(
-	'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE',)),
-                        	'maxColumns' => '1',
-                        	'widths' => array(
-                                        array('label' => '10', 'field' => '30'),
-                                        array('label' => '10', 'field' => '30')
-                                        ),
-                        	),
+$viewdefs['Bugs']['mobile']['view']['edit'] = array(
+    'templateMeta' => array('maxColumns' => '1',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
+        ),
+    ),
 
-	'panels' => array (
-    	array (
-			'bug_number',
-		),
-		array (
-			'priority'
-		),
-		array (
-			'status',
-		),
-		array (
-			array (
-				'name' 	=> 'name',
-				'label' => 'LBL_SUBJECT',
-			),
-		),
-		array (
-			'assigned_user_name',
-		),
-		//BEGIN SUGARCRM flav=pro ONLY
-		array (
-			'team_name',
-		),
-		//END SUGARCRM flav=pro ONLY
-	)
+    'panels' => array(
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array('name' => 'bug_number', 'displayParams' => array('required' => false, 'wireless_detail_only' => true,)),
+                'priority',
+                'status',
+                array(
+                    'name' => 'name',
+                    'label' => 'LBL_SUBJECT',
+                ),
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            )
+        )
+    )
 );
 ?>

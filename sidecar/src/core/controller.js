@@ -62,7 +62,7 @@
             this.context.loadData(this);
 
             // Render the rendered layout to the main element
-            this.$el.html(this.layout.$el);
+            this.$('#content').html(this.layout.$el);
         },
 
         /**

@@ -229,7 +229,7 @@ SUGAR.Api = (function() {
                     parts.push('link');
                 }
 
-                if (action && _baseActions.indexOf(action) == -1) {
+                if (action && $.inArray(action, _baseActions) === -1) {
                     parts.push(action);
                 }
 

@@ -163,6 +163,7 @@
         app.logger.debug("*****HBT: Current Context*****");
         app.logger.debug(this);
         app.logger.debug("*****HBT: Current Value*****");
+        app.logger.debug(value);
         console.log(value);
         app.logger.debug("***********************");
     });

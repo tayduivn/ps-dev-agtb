@@ -33,7 +33,7 @@
         var evaledController = null;
         if (controller) {
             try {
-                evaledController = eval("(" + controller + ")");
+                evaledController = eval("[" + controller + "][0]");
             } catch (e) {
                 app.logger.error("Failed to eval view controller for " + className + ": " + e + ":\n" + controller);
             }
@@ -189,6 +189,11 @@
          * @return {View.Field} a new instance of field.
          */
         createField: function(params) {
+            /**
+             * Widget type (text, bool, int, etc.).
+             * @property {String}
+             * @member View.Field
+             */
             var type = params.def.type;
             params.meta = params.meta || app.metadata.getField(type);
             params.context = params.context || app.controller.context;

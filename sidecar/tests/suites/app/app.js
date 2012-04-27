@@ -43,7 +43,11 @@ describe("App", function() {
             expect(cbSpy).toHaveBeenCalled();
         });
     });
-
+    it("should initialize addtional components", function() {
+        var components = {login:{target:'#footer'}};
+        SugarTest.app.loadAdditionalComponents(components);
+        expect(SugarTest.app.additionalComponents.length).toEqual(1);
+    });
     describe("when augmented", function() {
         it("should register a module with itself", function() {
             var mock,
@@ -79,7 +83,7 @@ describe("App", function() {
 
         it('should start and call sync if authenticated', function() {
             var syncSpy = sinon.spy(SUGAR.App, 'sync');
-
+            
             SugarTest.app.start();
             expect(syncSpy.called).toBeTruthy();
 

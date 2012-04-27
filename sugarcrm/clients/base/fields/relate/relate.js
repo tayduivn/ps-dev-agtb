@@ -1,0 +1,81 @@
+({
+    events: {
+        'keyup .chzn-search input': 'throttleSearch'
+    },
+    /**
+     * Initializes field and binds all function calls to this
+     * @param {Object} options
+     */
+    initialize: function(options) {
+        _.bindAll(this);
+        this.app.view.Field.prototype.initialize.call(this, options);
+    },
+    /**
+     * Renders relate field
+     */
+    render: function() {
+        var self = this;
+        var result = this.app.view.Field.prototype.render.call(this);
+        this.$(".relateEdit").chosen({
+            no_results_text: "Searching for " // TODO Add labels support
+        }).change(function(event) {
+            var selected = $(event.target).find(':selected');
+            self.model.set(self.fieldDef.id_name, self.unformat(selected.attr('id')));
+            self.model.set(self.fieldDef.name, self.unformat(selected.attr('value')));
+        });
+        return result;
+    },
+    /**
+     * Throttles search ajax
+     * @param {Object} e event object
+     * @param {Integer} interval interval to throttle
+     */
+    throttleSearch: function(e, interval) {
+        if (interval === 0 && e.target.value != "") {
+            this.search(e);
+            return;
+        } else {
+            interval = 500;
+            clearTimeout(this.throttling);
+            delete this.throttling;
+        }
+
+        this.throttling = setTimeout(this.throttleSearch, interval, e, 0);
+    },
+    /**
+     * Searches for related field
+     * @param event
+     */
+    search: function(event) {
+        var self = this;
+        var collection = app.data.createBeanCollection(this.fieldDef.module);
+        collection.fetch({
+            params: {basicSearch:event.target.value},  // TODO update this to filtering API
+            success: function(data) {
+                if (data.models.length > 0) {
+                    self.options = data.models;
+                    self.setOptionsTemplate();
+                    var options = self.optionsTemplateC(self);
+                    self.$('select').html(options);
+                    self.$('select').trigger("liszt:updated");
+                } else {
+                    //TODO trigger error we found nothing
+                }
+            }
+
+        });
+    },
+    /**
+     * Sets custom options template from app cache and compiles it
+     */
+    setOptionsTemplate: function() {
+        var templateKey = "sugarField." + this.fieldType + ".options";
+
+        var templateSource = null;
+
+        if (this.meta) {
+            templateSource = this.meta.views["options"];
+        }
+        this.optionsTemplateC = this.app.template.get(templateKey) || this.app.template.compile(templateSource, templateKey);
+    }
+})

@@ -35,22 +35,24 @@ $viewdefs['Meetings']['mobile']['view']['edit'] = array(
         ),
     ),
     'panels' => array(
-        'label' => 'LBL_PANEL_1',
-        'fields' => array(
-            array(
-                'name' => 'name',
-                'displayParams' => array(
-                    'required' => true,
-                    'wireless_edit_only' => true,)),
-            'date_start',
-            'status',
-            'duration_hours',
-            'duration_minutes',
-            'description',
-            'assigned_user_name',
-            //BEGIN SUGARCRM flav=pro ONLY
-            'team_name',
-            //END SUGARCRM flav=pro ONLY
+        array(
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                array(
+                    'name' => 'name',
+                    'displayParams' => array(
+                        'required' => true,
+                        'wireless_edit_only' => true,)),
+                'date_start',
+                'status',
+                'duration_hours',
+                'duration_minutes',
+                'description',
+                'assigned_user_name',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
+            )
         )
     ),
 );
