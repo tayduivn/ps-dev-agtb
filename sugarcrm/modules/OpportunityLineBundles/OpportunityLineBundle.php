@@ -50,6 +50,12 @@ class OpportunityLineBundle extends SugarBean
         }
     }
 
+    function clear_opportunitylinebundle_opportunityline_relationship($bundle_id)
+    {
+        $query = "delete from $this->rel_opportunity_lines where (bundle_id='$bundle_id') and deleted=0";
+        $this->db->query($query,true,"Error clearing line bundle to line relationship: ");
+    }
+
     /**
      * set_opportunitylinebundle_opportunity_relationship
      *
@@ -69,5 +75,22 @@ class OpportunityLineBundle extends SugarBean
         } else {
             $this->db->query($query,true);
         }
+    }
+
+    function clear_opportunitylinebundle_opportunity_relationship($bundle_id)
+    {
+        $query = "delete from $this->rel_opportunities where (bundle_id='$bundle_id') and deleted=0";
+        $this->db->query($query,true,"Error clearing line bundle to opp relationship: ");
+    }
+
+    function get_line_items()
+    {
+        // First, get the list of IDs.
+        $query = "SELECT opportunity_line_id as id
+					from  $this->rel_opportunity_lines
+					where bundle_id='$this->id' AND deleted=0
+					ORDER BY opportunity_line_index";
+
+        return $this->build_related_list($query, new OpportunityLine());
     }
 }

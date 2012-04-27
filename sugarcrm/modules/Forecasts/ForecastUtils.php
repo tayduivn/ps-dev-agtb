@@ -480,4 +480,236 @@ function buildExportLink($forecast_type) {
     return $buttons;
 }
 
-?>
+function syncQuoteWithOpportunity($quote_id, $opp_id, $direction)
+{
+    global $timedate, $current_user;
+
+    $result = '';
+
+    $quote = new Quote();
+    $quote->retrieve($quote_id);
+    $quoteBundles = array();
+    $quoteBundles = $quote->get_product_bundles();
+
+    $opp = new Opportunity();
+    $opp->retrieve($opp_id);
+    $oppBundles = array();
+    $oppBundles = $opp->get_line_bundles();
+
+    if ($direction == 'to_opportunity' && !empty($quoteBundles))
+    {
+        $result['opportunity']['id'] = $opp_id;
+
+        foreach ($quoteBundles as $bundle)
+        {
+            // check if opp bundle already exists
+            $oppBundleExists = false;
+            foreach ($oppBundles as $oppBundle)
+            {
+                if ($oppBundle->name == $bundle->name)
+                {
+                    $oppBundleExists = true;
+                    break;
+                }
+            }
+
+            // sync a bundle
+            $oppLineBundle = new OpportunityLineBundle();
+
+            if ($oppBundleExists)
+            {
+                $oppLineBundle->retrieve($oppBundle->id);
+            }
+
+
+            if (!isset($oppLineBundle->id))
+            {
+                $oppLineBundle->id = null;
+                $oppLineBundle->name = $bundle->name;
+                $oppLineBundle->created_by = $bundle->created_by;
+                $oppLineBundle->modified_user_id = $current_user->id;
+                $oppLineBundle->date_created = $timedate->asDb($timedate->getNow());
+                $oppLineBundle->date_entered = $timedate->asDb($timedate->getNow());
+                $oppLineBundle->deleted = 0;
+                $oppLineBundle->save();
+
+                //set opp_line_bundle_opp relationship
+                $oppLineBundle->set_opportunitylinebundle_opportunity_relationship($opp_id, '', 1);
+            }
+
+            $productBundle = new ProductBundle();
+            $productBundle->retrieve($bundle->id);
+            $products = array();
+            $products = $productBundle->get_products();
+
+            $lineItems = array();
+            if ($oppBundleExists)
+            {
+                $lineItems = $oppLineBundle->get_line_items();
+            }
+
+            $arrOppLines = '';
+
+            foreach ($products as $product)
+            {
+                // check if line item already exists
+                $lineItemExists = false;
+                foreach ($lineItems as $lineItem)
+                {
+                    if ($lineItem->product_id == $product->id)
+                    {
+                        $lineItemExists = true;
+                        break;
+                    }
+                }
+
+                //sync a line item
+                $oppLine = new OpportunityLine();
+                if ($lineItemExists)
+                {
+                    //just update currency fields
+                    $oppLine->retrieve($lineItem->id);
+                    $oppLine->price = $product->list_price;
+                    $oppLine->discount_price = $product->discount_price;
+                    $oppLine->discount_usdollar = $product->discount_usdollar;
+                    $oppLine->currency_id = $product->currency_id;
+                    $oppLine->tax_class = $product->tax_class;
+                    $oppLine->save();
+                }
+                else
+                {
+                    //create new opportunity line item
+                    $oppLine->id = null;
+                    $oppLine->product_id = $product->id;
+                    $oppLine->opportunity_id = $opp_id;
+                    $oppLine->price = $product->list_price;
+                    $oppLine->discount_price = $product->discount_price;
+                    $oppLine->discount_usdollar = $product->discount_usdollar;
+                    $oppLine->currency_id = $product->currency_id;
+                    $oppLine->tax_class = $product->tax_class;
+                    $oppLine->deleted = 0;
+                    $oppLine->save();
+
+                    //set opp_line_bundle_opp_line relationship
+                    $oppLineBundle->set_opportunitylinebundle_opportunityline_relationship($oppLine->id, 1, '');
+                }
+                $arrOppLines[] = array('id' => $oppLine->id);
+            }//foreach products
+
+            $result['opportunity']['bundles'][] = array('id' => $oppLineBundle->id, 'products' => $arrOppLines);
+
+        }//foreach bundles
+
+        return $result;
+    }
+    elseif ($direction == 'to_quote' && !empty($oppBundles))
+    {
+        $result['quote']['id'] = $quote_id;
+
+        foreach ($oppBundles as $bundle)
+        {
+            // check if quote bundle already exists
+            $quoteBundleExists = false;
+            foreach ($quoteBundles as $quoteBundle)
+            {
+                if ($quoteBundle->name == $bundle->name)
+                {
+                    $quoteBundleExists = true;
+                    break;
+                }
+            }
+            // sync a bundle
+            $productBundle = new ProductBundle();
+
+            if ($quoteBundleExists)
+            {
+                $productBundle->retrieve($quoteBundle->id);
+            }
+
+            if (!isset($productBundle->id))
+            {
+                $productBundle->id = null;
+                $productBundle->name = $bundle->name;
+                $productBundle->created_by = $bundle->created_by;
+                $productBundle->modified_user_id = $current_user->id;
+                $productBundle->date_modified = $timedate->asDb($timedate->getNow());
+                $productBundle->date_entered = $timedate->asDb($timedate->getNow());
+                $productBundle->deleted = 0;
+                $productBundle->save();
+
+                //set productbundle_quote relationship
+                $productBundle->set_productbundle_quote_relationship($quote_id, '', '');
+            }
+
+            $oppLineBundle = new OpportunityLineBundle();
+            $oppLineBundle->retrieve($bundle->id);
+            $lineItems = array();
+            $lineItems = $oppLineBundle->get_line_items();
+
+            $products = array();
+            if ($quoteBundleExists)
+            {
+                $products = $productBundle->get_products();
+            }
+
+            $arrProducts = '';
+
+            foreach ($lineItems as $line)
+            {
+                //check if product already exists
+                $quoteProductExists = false;
+                foreach ($products as $product)
+                {
+                    if ($product->id == $line->product_id)
+                    {
+                        $quoteProductExists = true;
+                        break;
+                    }
+                }
+
+                //sync a line item
+
+                if ($quoteProductExists)
+                {
+                    //just update currency fields
+                    $product->list_price = $line->price;
+                    $product->discount_price = $line->discount_price;
+                    $product->discount_usdollar = $line->discount_usdollar;
+                    $product->currency_id = $line->currency_id;
+                    $product->tax_class = $line->tax_class;
+                    $product->save();
+
+                }
+                else
+                {
+                    //create new product for quote
+                    $product = new Product();
+                    $product->id = $line->product_id;
+                    $product->quote_id = $quote_id;
+                    $product->list_price = $line->price;
+                    $product->discount_price = $line->discount_price;
+                    $product->discount_usdollar = $line->discount_usdollar;
+                    $product->currency_id = $line->currency_id;
+                    $product->tax_class = $line->tax_class;
+                    $product->deleted = 0;
+                    $product->save();
+
+                    //set opp_line_bundle_opp_line relationship
+                    $productBundle->set_productbundle_product_relationship($product->id, 1, $bundle->id);
+                }
+
+                $arrProducts[] = array('id' => $product->id);
+
+            }//foreach oppLines
+
+            $result['quote']['bundles'][] = array('id' => $productBundle->id, 'products' => $arrProducts);
+
+        }//foreach oppBundles
+
+        return $result;
+    }
+    else
+    {
+        return null;
+    }
+}
