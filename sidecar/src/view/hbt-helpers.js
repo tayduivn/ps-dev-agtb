@@ -16,6 +16,7 @@
      * @return {Object} HTML placeholder for the widget as handlebars safe string.
      */
     Handlebars.registerHelper('field', function(context, view, bean) {
+
         var field = app.view.createField({
             def: this,
             view: view,
@@ -178,6 +179,27 @@
     Handlebars.registerHelper("getLabel", function(string, module){
        var result = app.lang.get(string, module);
        return result;
+    });
+
+    /**
+     * Creates specific field widget.
+     * @method field
+     * @param {Core.Context} context
+     * @param {View.View} view
+     * @param {Field.name} name
+     * @return {String} HTML placeholder for the widget.
+     */
+    Handlebars.registerHelper('getFieldByName', function(context, view, name) {
+
+        var field = app.view.createField({
+            def: { name: name, label: "", type: "base" },
+            view: view,
+            context: context,
+            model: context.get("model"),
+            viewName: "default" // override view name
+        });
+
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
     });
 
 })(SUGAR.App);
