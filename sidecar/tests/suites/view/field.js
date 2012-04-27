@@ -20,7 +20,7 @@ describe("Field", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
             events = {"click": "callback_click"},
             bean = new Backbone.Model(),
-            view = {},
+            view = { name: "list" },
             context = {},
             inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
             field = app.view.createField({
@@ -36,7 +36,7 @@ describe("Field", function() {
     });
 
     it("should render sugarfields html", function() {
-        var view = {},
+        var view = { name: "list" },
             context = {},
             field = app.view.createField({
                 def: {name: "status", type: "text"},
@@ -52,7 +52,7 @@ describe("Field", function() {
     });
 
     it("should bind bind model change on render", function() {
-        var view = {},
+        var view = { name: "list" },
             context = {},
             field = app.view.createField({
                 def: {name: "status", type: "text"},
@@ -68,7 +68,7 @@ describe("Field", function() {
     });
 
     it("unbind events", function() {
-        var view = {},
+        var view = { name: "list" },
             context = {bob: "bob"},
             inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
             field = app.view.createField({
@@ -88,7 +88,7 @@ describe("Field", function() {
 
     it("bind render to model change events", function() {
         var secondBean = app.data.createBean("Cases"),
-            view = {},
+            view = { name: "list" },
             context = {bob:"bob"},
             secondContext = {rob:"rob"},
             field = app.view.createField({
