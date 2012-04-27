@@ -494,17 +494,6 @@ $query .= 			"LEFT JOIN users
     {
 
     }
-
-    function get_line_bundles()
-    {
-        // First, get the list of IDs.
-        $query = "SELECT bundle_id as id
-                    FROM  $this->rel_product_bundles
-                    WHERE opportunity_id='$this->id' AND deleted=0
-                    ORDER BY bundle_index";
-
-        return $this->build_related_list($query, new OpportunityLineBundle());
-    }
     //END SUGARCRM flav=PRO ONLY
 }
 function getCurrencyType(){
