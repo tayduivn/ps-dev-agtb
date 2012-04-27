@@ -102,7 +102,7 @@ describe("utils", function() {
 
         it("should parse date strings into javascript date objects", function() {
             var result = utils.date.parse('2012-03-27 01:48:32');
-            expect(result.toString()).toEqual('Tue Mar 27 2012 01:48:00 GMT-0700 (PDT)');
+            expect(result.toUTCString()).toEqual('Tue, 27 Mar 2012 01:48:00 GMT');
 
         });
 
@@ -110,18 +110,19 @@ describe("utils", function() {
             var value = new Date(1332838080000),
                 format = 'Y-m-d H:i:sA',
                 result = utils.date.format(value, format);
-            expect(result).toEqual('2012-03-27 01:48:00AM');
+            expect(result).toEqual('2012-03-27 08:48:00AM');
             
             format = 'Y-m-d H:i:sa';
             result = utils.date.format(value, format);
-            expect(result).toEqual('2012-03-27 01:48:00am');
+            expect(result).toEqual('2012-03-27 08:48:00am');
         });
 
         it("should format date objects into strings", function() {
             var value = '2012-03-27 01:48:32',
                 format = 'Y-m-d h:i a',
                 result = utils.date.parse(value, format);
-            expect(result.toString()).toEqual('Tue Mar 27 2012 01:48:00 GMT-0700 (PDT)');
+
+            expect(result.toUTCString()).toEqual('Tue, 27 Mar 2012 01:48:00 GMT');
         });
 
         it("should format date objects given timestamp and no format", function() {
@@ -210,3 +211,4 @@ describe("utils", function() {
         });
     });
 });
+
