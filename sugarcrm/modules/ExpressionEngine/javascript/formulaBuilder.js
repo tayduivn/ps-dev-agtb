@@ -564,9 +564,18 @@ SUGAR.expressions.GridToolTip = {
 
     SUGAR.expressions.insertRollup = function(){
         $.markItUp({
+            target : "#formulaInput",
             closeWith: 'rollup' + $("#rollwiz_type").val() + '($' + $('#rollwiz_rmodule').val() + ', "' + $('#rollwiz_rfield').val() + '")'
         });
         SUGAR.rollupWindow.hide();
+    }
+
+    SUGAR.expressions.insertRelated = function(){
+        $.markItUp({
+            target : "#formulaInput",
+            closeWith:"related($" + $("#selrf_rmodule").val() + ",\"" + $("#selrf_rfield").val() + "\")"
+        });
+        SUGAR.formulaRelFieldWin.hide()
     }
 
     /**
