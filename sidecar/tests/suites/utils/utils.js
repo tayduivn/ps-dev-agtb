@@ -102,8 +102,12 @@ describe("utils", function() {
 
         it("should parse date strings into javascript date objects", function() {
             var result = utils.date.parse('2012-03-27 01:48:32');
-            expect(result.toUTCString()).toEqual('Tue, 27 Mar 2012 01:48:00 GMT');
-
+            expect(result.getDate()).toEqual(27);
+            expect(result.getFullYear()).toEqual(2012);
+            expect(result.getMonth()).toEqual(2);
+            expect(result.getHours()).toEqual(1);
+            expect(result.getMinutes()).toEqual(48);
+            expect(result.getSeconds()).toEqual(32);
         });
 
         it("should format date objects into strings", function() {
@@ -122,8 +126,27 @@ describe("utils", function() {
                 format = 'Y-m-d h:i a',
                 result = utils.date.parse(value, format);
 
-            expect(result.toUTCString()).toEqual('Tue, 27 Mar 2012 01:48:00 GMT');
+            expect(result.getDate()).toEqual(27);
+            expect(result.getFullYear()).toEqual(2012);
+            expect(result.getMonth()).toEqual(2);
+            expect(result.getHours()).toEqual(1);
+            expect(result.getMinutes()).toEqual(48);
+            expect(result.getSeconds()).toEqual(0);// no 's' specified
         });
+
+        it("should format date objects into strings with seconds included", function() {
+            var value = '2012-03-27 01:48:32',
+                format = 'Y-m-d h:i:s a',
+                result = utils.date.parse(value, format);
+
+            expect(result.getDate()).toEqual(27);
+            expect(result.getFullYear()).toEqual(2012);
+            expect(result.getMonth()).toEqual(2);
+            expect(result.getHours()).toEqual(1);
+            expect(result.getMinutes()).toEqual(48);
+            expect(result.getSeconds()).toEqual(32);// 's' specified
+        });
+
 
         it("should format date objects given timestamp and no format", function() {
             var result = utils.date.parse(1332838080000);
