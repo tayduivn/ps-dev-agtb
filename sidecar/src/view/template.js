@@ -45,7 +45,11 @@
              * @param {String} key Identifier of the template to be retrieved
              * @return {Function} compiled Handlebars template
              */
-            get: function(key) {
+            get: function(key, module) {
+                var modKey = module + key;
+                if (module && Handlebars.templates && Handlebars.templates[modKey])
+                    return Handlebars.templates[modKey];
+
                 if (Handlebars.templates && Handlebars.templates[key])
                     return Handlebars.templates[key];
             },
