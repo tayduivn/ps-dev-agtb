@@ -143,10 +143,12 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
             return "";
         while (($filename = readdir($dir_handle)) !== false)
         {
-            if ($filename == '.' || $filename == '..')
+            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}"))
+            {
                 continue;
-            else
+            } else {
                return file_get_contents("{$path}/{$filename}");
+            }
         }
         return $results;
     }
@@ -154,14 +156,14 @@ class Bug37841Test extends Sugar_PHPUnit_Framework_TestCase
 
     private function checkForHistoryRecords($module_dir)
     {
-        $parth = "custom/history/modules/$module_dir/metadata";
-        $dir_handle = @opendir($parth);
+        $path = "custom/history/modules/$module_dir/metadata";
+        $dir_handle = @opendir($path);
         if ($dir_handle === false) 
             return FALSE;
         $found = FALSE;
         while (($filename = readdir($dir_handle)) !== false) 
         {
-            if ($filename == '.' || $filename == '..' || is_dir("{$parth}/{$filename}"))
+            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}"))
             {
                 continue;
             } else {
