@@ -5038,6 +5038,12 @@ function save_relationship_changes($is_update, $exclude=array())
         // We need to confirm that the user is a member of the team of the item.
 
         global $current_user;
+        
+        if(empty($current_user) || empty($current_user->id))
+        {
+            return;
+        }
+                
         // The user either has to be an admin, or be assigned to the team that owns the data
         $team_table_alias = 'team_memberships';
 
