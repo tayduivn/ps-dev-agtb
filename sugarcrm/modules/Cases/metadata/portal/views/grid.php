@@ -38,6 +38,13 @@ $viewdefs['Cases']['portal']['view']['grid'] = array(
                     'default' => true,
                     'enabled' => true,
                 ),
+                4 =>
+                array(
+                    'name' => 'assigned_user_id',
+                    'label' => 'Assigned User',
+                    'default' => true,
+                    'enabled' => true,
+                ),
             ),
         ),
     ),

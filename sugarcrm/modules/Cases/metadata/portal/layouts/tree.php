@@ -12,11 +12,24 @@ $viewdefs['Cases']['portal']['layout']['tree'] = array(
                 'components' => array(
                     array(
                         "size" => 2,
-                        "view" => "tree",
+                        "layout" => array(
+                            'type' => 'rows',
+                            'components' => array(
+                                array(
+                                    'view' => 'tree',
+                                ),
+                                array(
+                                    'view' => 'test',
+                                )
+                            )
+                        )
                     ),
                     array(
                         "size" => 10,
                         "view" => "grid",
+                        "listeners" => array(
+                            'treeview:node_select' => "do what ever here"
+                        )
                     )
                 )
             )

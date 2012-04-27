@@ -189,10 +189,10 @@
                 } else {
                     options.success = function() {
                         self.set({model: collection.models[0]});
-                        if (state.layout) {
+                        //if (state.layout) {
                             //state
-                            state.layout.render();
-                        }
+                        //    state.layout.render();
+                        //}
                     };
 
                     collection = app.data.createBeanCollection(state.module);

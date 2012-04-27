@@ -8,21 +8,32 @@
      */
     app.view.views.GridView = app.view.View.extend({
 
+        gTable: '',
+
         initialize: function(options){
             app.view.View.prototype.initialize.call(this, options);
-            app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
         },
         /**
          * Renders Header view
          */
         render: function() {
             app.view.View.prototype.render.call(this);
-            var gTable = this.$el.find('#gridTable').dataTable();
+            app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
+            this.gTable = this.$el.find('#gridTable').dataTable();
         },
 
-        handleTreeNodeSelect: function(options)
+        handleTreeNodeSelect: function(params)
         {
-            console.log(options);
+            console.log(params);
+
+            sInput = 'seed_will_id seed_chris_id';
+            var asSearch = sInput.split( ' ' );
+            var sRegExpString = '^(?=.*?'+asSearch.join( ')(?=.*?' )+').*$';
+
+            //console.log(sRegExpString);
+
+            this.gTable.fnFilter( params.selected.id );
+            //console.log(json_data);
         }
 
 

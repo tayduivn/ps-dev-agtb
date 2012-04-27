@@ -15,12 +15,9 @@
             'mouseenter tr': 'showActions',
             'mouseleave tr': 'hideActions'
         },
-        initialize : function(options) {
-            app.view.View.prototype.initialize.call(this, options);
-
+        render : function() {
+            app.view.View.prototype.render.call(this);
             app.events.on('treeview:node_select', this.handleTreeNodeSelect, this);
-
-            return this;
         },
         handleTreeNodeSelect : function(json_data) {
             console.log(json_data);

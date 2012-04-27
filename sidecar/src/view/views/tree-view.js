@@ -119,7 +119,7 @@
         treeNodeSelect: function(event, data)
         {
             jsData = data.inst.get_json();
-            this.trigger('treeview:node_select', jsData[0].metadata.model);
+            this.trigger('treeview:node_select', {'selected' : jsData[0].metadata.model, 'json' : jsData});
         }
     });
 
