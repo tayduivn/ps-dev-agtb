@@ -50,7 +50,7 @@ if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 
 
 function keyboardShortcuts() {
-var $dialog = $('<div class="open"></div>')
+var $dialog = $('<div id="shortcuts_dialog" class="open"></div>')
 .html("{/literal}{$APP.LBL_KEYBOARD_SHORTCUTS_HELP}{literal}")
 .dialog({
 	autoOpen: false,
@@ -60,13 +60,18 @@ var $dialog = $('<div class="open"></div>')
 	    my: 'right top',
 	    at: 'left top',
 	    of: $("#shortcuts")
-  }
+    },
+    close: function(e) {
+        $(this).dialog("destroy").remove();
+    },
+    open: function(e) {
+        SUGAR.util.buildAccessKeyLabels();
+    }
 });
 
 $dialog.dialog('open');
 $(".ui-dialog").appendTo("#content");
 
-setTimeout('SUGAR.util.buildAccessKeyLabels()',500);
 }
 </script>
 {/literal}
