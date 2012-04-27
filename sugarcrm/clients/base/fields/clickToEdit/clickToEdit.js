@@ -15,6 +15,8 @@
                 self.model.set(self.name,value);
                 self.model.save(self.name,value);
                 return value;
+            },{
+                select:true
             }
         );
 

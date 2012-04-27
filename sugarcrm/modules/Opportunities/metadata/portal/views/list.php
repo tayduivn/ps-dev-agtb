@@ -87,12 +87,7 @@ $viewdefs['Opportunities']['portal']['view']['list'] = array(
                     'label' => 'Lead Source',
                     'default' => true,
                     'enabled' => true,
-                ),
-                4 =>
-                array(
-                    'type' => 'sugarField_actionsLink',
-                    'label' => 'Actions',
-                ),
+                )
             ),
         ),
     ),

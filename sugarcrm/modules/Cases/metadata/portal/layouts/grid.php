@@ -7,5 +7,9 @@ $viewdefs['Cases']['portal']['layout']['grid'] = array(
         array(
             'view' => 'grid',
         ),
+        1 =>
+        array(
+            'view' => 'grid',
+        ),
     ),
 );
