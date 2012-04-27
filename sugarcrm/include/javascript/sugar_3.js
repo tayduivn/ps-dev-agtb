@@ -3408,8 +3408,9 @@ SUGAR.util = function () {
                     }
                 }
                 //now change the text in the help div
-                var new_text = $("#shortcuts_dialog").html().replace(/Alt\+/g,controlKey);
-                $("#shortcuts_dialog").html(new_text);
+                $("#shortcuts_dialog").html(function(i, text)  {
+                    return text.replace(/Alt\+/g,controlKey);
+                });
             }// end if (typeof(Y.env.ua) !== 'undefined')
         }//end buildAccessKeyLabels()
 	};
