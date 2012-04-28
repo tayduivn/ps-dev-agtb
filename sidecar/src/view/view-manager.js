@@ -32,8 +32,7 @@
 
     // Create a new subclass of the given super class based on the controller definition passed.
     var _declareClass = function(cache, base, className, controller) {
-        var klass = null;
-        var evaledController = null;
+        var klass = null, evaledController = null;
         if (controller) {
             try {
                 evaledController = eval("[" + controller + "][0]");
@@ -82,21 +81,20 @@
          * @private
          */
         _createComponent: function(type, name, params) {
-            var className = app.utils.capitalize(name) + type;
-            var customClassName = (params.module || "") + className;
-            var cache = this[type.toLowerCase() + "s"];
-            var controller = params.meta ? params.meta.controller : null;
-            var baseClass = app.view[type];
-            var klass =
-                // First check if custom class per module already exists
-                cache[customClassName] ||
-                // Fall back to base views
-                cache[className] ||
-                // Otherwise, create custom class if the metadata has a controller
-                _declareClass(cache, baseClass, customClassName, controller) ||
-                // Fall back to regular view class (ListView, FluidLayout, etc.)
-                cache[className] ||
+            var ucType          = app.utils.capitalize(type),
+                className       = app.utils.capitalize(name) + ucType,
+                customClassName = (params.module || "") + className,
+                pluralizedType  = type.toLowerCase() + "s",
+                cache           = app.view[pluralizedType],
                 // Fall back to base class (View, Layout, or Field)
+                baseClass       = cache[className] || app.view[ucType],
+                controller      = params.controller ? params.controller : null,
+                klass           = null;
+
+            klass =
+                // Next check if custom class per module already exists
+                cache[customClassName] ||
+                // Fall back to regular view class (ListView, FluidLayout, etc.)
                 baseClass;
 
             var component = new klass(params);
@@ -153,9 +151,12 @@
          * @return {View.View} new instance of view.
          */
         createView: function(params) {
-            params.context = params.context || app.controller.context; // context is always defined on the controller
-            params.module = params.module || params.context.get("module");
-            params.meta = params.meta || app.metadata.getView(params.module, params.name);
+            var module;
+            // context is always defined on the controller
+            params.context = params.context || app.controller.context;
+            params.module  = params.module || params.context.get("module");
+            params.meta    = params.meta || app.metadata.getView(params.module, params.name);
+
             return this._createComponent("View", params.name, params);
         },
 
@@ -167,12 +168,12 @@
          * @return {View.Layout}
          */
         createLayout: function(params) {
-            var clonedParams = _.clone(params);
+            var clonedParams    = _.clone(params);
             clonedParams.module = params.module || params.context.get("module");
-            clonedParams.meta = params.meta || app.metadata.getLayout(clonedParams.module, params.name) || {};
+            clonedParams.meta   = params.meta || app.metadata.getLayout(clonedParams.module, params.name) || {};
 
             clonedParams.meta.type = clonedParams.meta.type || clonedParams.name;
-            clonedParams.name = clonedParams.name || clonedParams.meta.type;
+            clonedParams.name      = clonedParams.name || clonedParams.meta.type;
 
             return this._createComponent("Layout", clonedParams.meta.type, clonedParams);
         },
@@ -224,8 +225,8 @@
              * @property {String}
              * @member View.Field
              */
-            var type = params.def.type;
-            params.meta = params.meta || app.metadata.getField(type);
+            var type       = params.def.type;
+            params.meta    = params.meta || app.metadata.getField(type);
             params.context = params.context || app.controller.context;
             params.model = params.model || params.context.get("model");
             params.sfId = ++_sfId;
@@ -236,8 +237,18 @@
             return field;
         }
 
+        declareCustomView: function(controller, name, module) {
+            var type            = 'View',
+                className       = app.utils.capitalize(name) + type,
+                customClassName = module + className,
+                cache           = app.view.views,
+                baseClass       = cache[className] || app.view[type];
+
+            _declareClass(cache, baseClass, customClassName, controller);
+        }
     };
 
     app.augment("view", _viewManager, false);
 
-})(SUGAR.App);
+}(SUGAR.App));
+

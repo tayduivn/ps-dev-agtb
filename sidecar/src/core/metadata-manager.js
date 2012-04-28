@@ -53,31 +53,33 @@
             if (!module || module._patched === true) return module;
             var self = this;
             _.each(module.views, function(view, viewName) {
-                _.each(view.panels, function(panel) {
-                    _.each(panel.fields, function(field, fieldIndex) {
-                        var name = _.isString(field) ? field : field.name;
-                        var fieldDef = module.fields[name];
-                        if (!_.isEmpty(fieldDef)) {
-                            // Create a definition if it doesn't exist
-                            if (_.isString(field)) {
-                                field = { name: field };
+                if(view.meta) {
+                    _.each(view.meta.panels, function(panel) {
+                        _.each(panel.fields, function(field, fieldIndex) {
+                            var name = _.isString(field) ? field : field.name;
+                            var fieldDef = module.fields[name];
+                            if (!_.isEmpty(fieldDef)) {
+                                // Create a definition if it doesn't exist
+                                if (_.isString(field)) {
+                                    field = { name: field };
+                                }
+
+                                // Patch label
+                                field.label = field.label || fieldDef.vname || fieldDef.name;
+                                // Assign type
+                                field.type = field.type || fieldDef.type;
+                                // Patch type
+                                field.type = self.fieldTypeMap[field.type] || field.type;
+
+                                panel.fields[fieldIndex] = field;
                             }
-
-                            // Patch label
-                            field.label = field.label || fieldDef.vname || fieldDef.name;
-                            // Assign type
-                            field.type = field.type || fieldDef.type;
-                            // Patch type
-                            field.type = self.fieldTypeMap[field.type] || field.type;
-
-                            panel.fields[fieldIndex] = field;
-                        }
-                        else {
-                            // Ignore view fields that don't have module field definition
-                            //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
-                        }
+                            else {
+                                // Ignore view fields that don't have module field definition
+                                app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
+                            }
+                        });
                     });
-                });
+                }
             });
             module._patched = true;
             return module;
@@ -148,9 +150,13 @@
          * @return {Object} View metadata if view name is specified. Otherwise, metadata for all views of the given module.
          */
         getView: function(module, view) {
-            var metadata = this.getModule(module, "views");
+            var metadata = this.getModule(module, "views"), customClassName;
             if (metadata && view) {
-                metadata = metadata[view];
+                if(metadata[view] && metadata[view].meta) {
+                    metadata = metadata[view].meta;
+                } else {
+                    metadata = metadata[view];
+                }
             }
 
             return metadata;
@@ -165,7 +171,11 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
             if (metadata && layout) {
-                metadata = metadata[layout];
+                if(metadata[layout] && metadata[layout].meta) {
+                    metadata = metadata[layout].meta;
+                } else {
+                    metadata = metadata[layout];
+                }
             }
 
             return metadata;
@@ -203,11 +213,25 @@
          */
         set: function(data) {
             if (data.modules) {
-                var modules = [];
+                var modules = []; 
+
                 _.each(data.modules, function(entry, module) {
+                    var templateKey;
                     _metadata[module] = this._patchMetadata(module, entry);
                     _set(_modulePrefix + module, entry);
                     modules.push(module);
+
+                    // Create custom templates and modules if defined
+                    _.each(entry.views, function (view, viewKey) {
+                        if (view && view.template) {
+                            templateKey = viewKey + '.' + module.toLowerCase();
+                            app.template.compile(view.template, templateKey);
+                        }
+                        if (view && viewKey && view.controller) {
+                            app.view.declareCustomView(view.controller, viewKey, module);
+                        }
+                    });
+
                 }, this);
                 _set("modules", modules.join(","));
             }
@@ -223,8 +247,6 @@
                 _app.moduleList = data.moduleList;
                 _set(_appPrefix + "moduleList", data.moduleList);
             }
-
-            //TODO add template support
         },
 
         /**
@@ -252,3 +274,4 @@
     });
 
 })(SUGAR.App);
+
