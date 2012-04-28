@@ -3855,18 +3855,19 @@ protected function checkQuery($sql, $object_name = false)
 
     /**
      * Generates the a recursive SQL query or equivalent stored procedure implementation.
-     * The DBManager's default implementation is based on SQL-99's recursive commmon table expressions.
+     * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
      * Databases supporting recursive CTEs only need to set the recursive_query capability to true
      * @param string    $tablename       table name
      * @param string    $key             primary key field name
      * @param string    $parent_key      foreign key field name self referencing the table
-     * @param bool      $lineage         find the lineage, if false, find the children
-     * @param string    $startWith       identifies strarting element(s) as in a where clause
-     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
      * @param string    $fields          list of fields that should be returned
+     * @param bool      $lineage         find the lineage, if false, find the children
+     * @param string    $startWith       identifies starting element(s) as in a where clause
+     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
      * @return string               Recursive SQL query or equivalent representation.
      */
-    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $lineage = false, $startWith = null, $level = null, $fields = null) {
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null)
+    {
 
         if($lineage) {
             $connectWhere = "e.$key = sg.$parent_key";  // Search up the tree to get lineage

@@ -405,10 +405,11 @@ class MysqlManager extends DBManager
 		$this->log->info("tableExists: $tableName");
 
 		if ($this->getDatabase()) {
-			$result = $this->query("SHOW TABLES LIKE ".$this->quoted($tableName));
+			$result = $this->query("SHOW TABLES LIKE ".$this->quoted($tableName) . ';');
 			if(empty($result)) return false;
 			$row = $this->fetchByAssoc($result);
-			return !empty($row);
+            $exists = !empty($row);
+			return $exists;
 		}
 
 		return false;
@@ -1381,8 +1382,9 @@ class MysqlManager extends DBManager
 
 	public function preInstall()
 	{
-		$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8", true);
-		$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci", true);
+        // Not being called anyway.
+		//$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8", true);
+		//$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci", true);
         $this->createRecursiveQuerySPs();
 	}
 
@@ -1522,7 +1524,7 @@ class MysqlManager extends DBManager
                                      ,'       AND  hrs._level = @_last_level'    -- ,'       AND  hrs._level = ?'
                                      ,';'
                                     );
-                  SELECT 'Down Tree Insert: ', @_sql;
+                  -- SELECT 'Down Tree Insert: ', @_sql;
 
                ELSEIF p_mode = 'U' THEN
                   SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
@@ -1534,7 +1536,7 @@ class MysqlManager extends DBManager
                                      ,';'
                                     );
 
-                  SELECT 'Up Tree Insert: ', @_sql;
+                  -- SELECT 'Up Tree Insert: ', @_sql;
 
                ELSE  -- Unknown mode, abort
                   LEAVE root;
@@ -1543,37 +1545,37 @@ class MysqlManager extends DBManager
                PREPARE next_recs_stmt FROM @_sql;
 
                -- loop recursively finding parents/children
-               WHILE  ( _last_row_count > 0) 
+               WHILE  ( _last_row_count > 0)
                DO
                   SET _level = _level+1;
 
                   INSERT INTO _hierarchy_return_set
                        SELECT *
-                         FROM _hierarchy_current_set; 
+                         FROM _hierarchy_current_set;
 
                   TRUNCATE TABLE _hierarchy_current_set;
 
                   SET @_last_level := _level-1;
                   SET @_curr_level := _level;
 
-                  EXECUTE next_recs_stmt; 
+                  EXECUTE next_recs_stmt;
                   SET _last_row_count := ROW_COUNT();
 
                END WHILE;
 
                INSERT INTO _hierarchy_return_set
                     SELECT *
-                      FROM _hierarchy_current_set; 
+                      FROM _hierarchy_current_set;
 
                -- This returns the results
-               SET @_sql = CONCAT( 'SELECT hrs.*, ', p_fields 
+               SET @_sql = CONCAT( 'SELECT hrs.*, ', p_fields
                                   ,' FROM _hierarchy_return_set hrs '
-                                  ,' INNER JOIN ', p_tableName, ' t ' 
+                                  ,' INNER JOIN ', p_tableName, ' t '
                                   ,'          ON hrs._id = t.', p_key_column
-                                  ,';'  
+                                  ,';'
                                  );
-   
-               SELECT 'Final result query: ', @_sql;
+
+               -- SELECT 'Final result query: ', @_sql;
 
                PREPARE stmt FROM @_sql;
                EXECUTE stmt;
@@ -1591,18 +1593,18 @@ class MysqlManager extends DBManager
 
     /**
      * Generates the a recursive SQL query or equivalent stored procedure implementation.
-     * The DBManager's default implementation is based on SQL-99's recursive commmon table expressions.
+     * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
      * Databases supporting recursive CTEs only need to set the recursive_query capability to true
      * @param string    $tablename       table name
      * @param string    $key             primary key field name
      * @param string    $parent_key      foreign key field name self referencing the table
-     * @param bool      $lineage         find the lineage, if false, find the children
-     * @param string    $startWith       identifies strarting element(s) as in a where clause
-     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
      * @param string    $fields          list of fields that should be returned
+     * @param bool      $lineage         find the lineage, if false, find the children
+     * @param string    $startWith       identifies starting element(s) as in a where clause
+     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
      * @return string               Recursive SQL query or equivalent representation.
      */
-    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $lineage = false, $startWith = null, $level = null, $fields = null)
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null)
     {
         $mode = ($lineage) ? 'U' : 'D';
 
@@ -1613,7 +1615,7 @@ class MysqlManager extends DBManager
         // figure you may want to manipulate these in PHP so they are in the most convenient form for
         // use in the stored procedure.
 
-        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '$startWith', '$level', '$fields');";
+        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields')";
         return $sql;
     }
 }
