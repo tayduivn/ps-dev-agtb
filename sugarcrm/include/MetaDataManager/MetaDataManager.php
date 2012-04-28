@@ -47,6 +47,7 @@ class MetaDataManager {
     protected $platform = 'base';
     protected $typeFilter = null;
     protected $user;
+    protected $defaultPlatformDefs = array('list', 'detail', 'edit',);
 
     /**
      * The constructor for the class.
@@ -66,34 +67,66 @@ class MetaDataManager {
      *
      * @param string $moduleName The name of the module
      * @param string $viewdefType The type of def (layout or view)
+     * @param string $view The name of a view type to get defs for. If omitted
+     *                     all viewdefs for this module will be returned.
      * @return array
      */
-    protected function getModuleViewdefs($moduleName, $viewdefType = 'view') {
+    protected function getModuleViewdefs($moduleName, $viewdefType = 'view', $view = null) {
+        // Return data
         $data = array();
 
-        // TODO: Consider adding a platform to the arg list or iterating over all platforms
-        $globPath = "modules/{$moduleName}/metadata/{$this->platforms[0]}/{$viewdefType}s/*.php";
-
-        $builtinFiles = glob($globPath,GLOB_NOSORT);
-        if ( !is_array($builtinFiles) ) {
-            $builtinFiles = array();
-        }
-        $customFiles = glob(MetaDataFiles::PATHCUSTOM . $globPath, GLOB_NOSORT);
-        if ( !is_array($customFiles) ) {
-            $customFiles = array();
+        // Metadata types we expect to have
+        if ($view) {
+            $expectedTypes = array($view);
+        } else {
+            $expectedTypes = MetaDataFiles::getClientDefType($this->platforms[0]);
+            if (empty($expectedTypes)) {
+                $expectedTypes = $this->defaultPlatformDefs;
+            }
         }
 
+        // Loop and fetch
+        $locations = array(MB_BASEMETADATALOCATION, MB_CUSTOMMETADATALOCATION);
+        foreach ($locations as $location) {
+            foreach ($expectedTypes as $type) {
+                // First try, see if the module has the metadata file we want
+                $filename = MetaDataFiles::getModuleFileName($moduleName, $type, $location, $this->platforms[0], $viewdefType);
+                if (!file_exists($filename)) {
+                    // If we are in the custom scope no need to get SugarObject meta
+                    // since it's already been gotten
+                    if ($location == MB_CUSTOMMETADATALOCATION) {
+                        continue;
+                    }
 
-        $files = array_merge($builtinFiles,$customFiles);
+                    // Fall back to SugarObjects if we there is one
+                    $filename = MetaDataFiles::getSugarObjectFileName($moduleName, $type, $this->platforms[0], $viewdefType);
+                    if (!file_exists($filename)) {
+                        continue;
+                    }
+                }
 
-        foreach ( $files as $viewFile ) {
-            $viewName = basename($viewFile, '.php');
-            // Not require once, we need it to set some data
-            require($viewFile);
+                // Require rather than require once since we need the data as is
+                require $filename;
 
-            // Data in that file should look like: $viewdefs['Cases']['portal']['layout']['detail'] = array(...);
-            if ( isset($viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$viewName]) ) {
-                $data[$viewName] = $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$viewName];
+                // Search is not fully converted to sidecar so handle it differently
+                if ($type == 'search') {
+                    if (isset($searchdefs['<module_name>']) || isset($searchdefs['<_module_name>']) || isset($searchdefs['<MODULE_NAME>'])) {
+                        $searchdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $searchdefs);
+                    }
+
+                    if (isset($searchdefs[$moduleName])) {
+                        $data[$type] = $searchdefs[$moduleName];
+                    }
+                } else {
+                    if (isset($viewdefs['<module_name>']) || isset($viewdefs['<_module_name>']) || isset($viewdefs['<MODULE_NAME>'])) {
+                        $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $viewdefs);
+                    }
+
+                    // Data in that file should look like: $viewdefs['Cases']['portal']['layout']['detail'] = array(...);
+                    if ( isset($viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type]) ) {
+                        $data[$type] = $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type];
+                    }
+                }
             }
         }
 
