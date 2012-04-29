@@ -81,7 +81,7 @@
              *
              * @property {Function}
              */
-            empty: function() { return "" }
+            empty: function() { return ""; }
         };
 
     app.events.on("app:init", _templateManager.initTemplate, _templateManager);

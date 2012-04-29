@@ -47,7 +47,7 @@
             var orderMap = {
                 "desc": "_desc",
                 "asc": "_asc"
-            }
+            };
 
             //TODO probably need to check if we can sort this field from metadata
             var collection = this.context.get('collection');
@@ -59,7 +59,6 @@
                     direction: ""
                 };
             }
-            ;
 
             var nOrder = "desc";
 

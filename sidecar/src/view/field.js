@@ -105,7 +105,7 @@
              * @property {Number}
              * @member View.Field
              */
-            this.sfid = -1;
+            this.sfId = options.sfId;
 
             /**
              * Reference to view this field attached to.
