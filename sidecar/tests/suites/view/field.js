@@ -1,6 +1,6 @@
 describe("Field", function() {
 
-    var app, bean, meta = fixtures.metadata;
+    var app, bean, meta = fixtures.metadata, view;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -9,6 +9,7 @@ describe("Field", function() {
         app.metadata.set(meta);
         app.data.declareModel("Cases", fixtures.metadata.modules.Cases);
         bean = app.data.createBean("Cases");
+        view = new app.view.View({ name: "test" });
     });
 
      afterEach(function() {
@@ -20,7 +21,6 @@ describe("Field", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
             events = {"click": "callback_click"},
             bean = new Backbone.Model(),
-            view = { name: "list" },
             context = {},
             inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
             field = app.view.createField({
@@ -36,8 +36,7 @@ describe("Field", function() {
     });
 
     it("should render sugarfields html", function() {
-        var view = { name: "list" },
-            context = {},
+        var context = {},
             field = app.view.createField({
                 def: {name: "status", type: "text"},
                 view: view,
@@ -52,8 +51,7 @@ describe("Field", function() {
     });
 
     it("should bind bind model change on render", function() {
-        var view = { name: "list" },
-            context = {},
+        var context = {},
             field = app.view.createField({
                 def: {name: "status", type: "text"},
                 view: view,
@@ -68,8 +66,7 @@ describe("Field", function() {
     });
 
     it("unbind events", function() {
-        var view = { name: "list" },
-            context = {bob: "bob"},
+        var context = {bob: "bob"},
             inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
             field = app.view.createField({
                 def: {name: "status", type: "text"},
@@ -88,7 +85,6 @@ describe("Field", function() {
 
     it("bind render to model change events", function() {
         var secondBean = app.data.createBean("Cases"),
-            view = { name: "list" },
             context = {bob:"bob"},
             secondContext = {rob:"rob"},
             field = app.view.createField({
@@ -113,11 +109,11 @@ describe("Field", function() {
 
     it("update model on dom input change", function() {
         var id = _.uniqueId('sugarFieldTest'),
-            bean, view, context, field, input;
+            bean, context, field, input;
 
         $('body').append('<div id="'+id+'"></div>');
         bean = new Backbone.Model();
-        view = {name: 'edit'};
+        var view = new app.view.View({name: 'edit'});
         context = {bob:"bob"};
         field = app.view.createField({
             def: {name: "status", type: "varchar"},

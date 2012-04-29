@@ -27,6 +27,9 @@
  */
 (function(app) {
 
+    // Ever incrementing field ID
+    var _sfId = 0;
+
     // Create a new subclass of the given super class based on the controller definition passed.
     var _declareClass = function(cache, base, className, controller) {
         var klass = null;
@@ -47,6 +50,14 @@
     };
 
     var _viewManager = {
+
+        /**
+         * Gets ID of the last created field.
+         * @return {Number} ID of the last created field.
+         */
+        getFieldId: function() {
+            return _sfId;
+        },
 
         /**
          * Hash of view classes.
@@ -148,7 +159,7 @@
         },
 
         /**
-         * Creates an instance of {@link View.Field} class.
+         * Creates an instance of {@link View.Field} class and registers it with the parent view (`params.view`).
          *
          * The parameters define creation rules as well as field properties.
          * The `params` hash must contain `def` property which is the field definition and `view`
@@ -198,7 +209,12 @@
             params.meta = params.meta || app.metadata.getField(type);
             params.context = params.context || app.controller.context;
             params.model = params.model || params.context.get("model");
-            return this._createComponent("Field", type, params);
+            params.sfId = ++_sfId;
+
+            var field = this._createComponent("Field", type, params);
+            // Register new field within its parent view.
+            params.view.fields[field.sfId] = field;
+            return field;
         }
 
     };

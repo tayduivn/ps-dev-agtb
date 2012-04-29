@@ -26,9 +26,7 @@ describe("View Manager", function() {
                 collection: collection
             });
 
-            view = {
-                name: "test"
-            };
+            view = new app.view.View({ name: "test" });
 
             fields = app.view.fields;
         });
@@ -38,6 +36,7 @@ describe("View Manager", function() {
         });
 
         it("with default template", function() {
+            var fieldId = app.view.getFieldId();
             var result = app.view.createField({
                 def: {
                     type: 'addresscombo',
@@ -56,6 +55,8 @@ describe("View Manager", function() {
             expect(result.context).toEqual(context);
             expect(result.fieldDef).toEqual(fixtures.metadata.modules["Contacts"].fields["address"]);
             expect(result.model).toEqual(bean);
+            expect(result.sfId).toEqual(fieldId + 1);
+            expect(view.fields[result.sfId]).toEqual(result);
         });
 
         it("of custom class", function() {
