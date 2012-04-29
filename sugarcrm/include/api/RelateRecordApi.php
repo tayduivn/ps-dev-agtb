@@ -63,7 +63,7 @@ class RelateRecordApi extends ModuleApi {
                 'pathVars'  => array('module'  ,'record',''    ,'link_name','remote_id'),
                 'method'    => 'deleteRelatedLink',
                 'shortHelp' => 'Deletes a relationship between two records',
-                'longHelp'  => 'include/api/help/createRelatedLink.html',
+                'longHelp'  => 'include/api/help/deleteRelatedLink.html',
             ),
         );
     }
@@ -89,6 +89,34 @@ class RelateRecordApi extends ModuleApi {
         
     }
 
+    protected function getRelatedFields($api, $args, $primaryBean, $linkName) {
+        $relatedFields = $primaryBean->$linkName->getRelatedFields();
+        $relatedData = array();
+        if ( is_array($relatedFields) ) {
+            foreach ( $relatedFields as $fieldName => $fieldParams ) {
+                if ( isset($args[$fieldName]) ) {
+                    $relatedData[$fieldName] = $args[$fieldName];
+                }
+            }
+        }
+
+        
+        return $relatedData;
+    }
+
+    protected function formatNearAndFarRecords($api, $args, $primaryBean, $relatedBean, $linkName, $relatedData = array()) {
+        $recordArray = $this->formatBean($api, $args, $primaryBean);
+        $relatedArray = $this->formatBean($api, $args, $relatedBean);
+
+        // TODO: When the related data is fixed and we can fetch it from the link class, replace this with that
+        foreach ( $relatedData as $key => $value ) {
+            $relatedArray[$key] = $value;
+        }
+        
+        return array('record'=>$recordArray,
+                     'related_record'=>$relatedArray);
+    }
+
 
     function getRelatedRecord($api, $args) {
         $primaryBean = $this->loadBean($api, $args);
@@ -97,11 +125,70 @@ class RelateRecordApi extends ModuleApi {
 
         $relatedBean->retrieve($args['remote_id']);
 
-        if ( !$relatedBean->ACLAccess('view') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view this record for module: '.$args['module']);
-        }
-
         return $this->formatBean($api, $args, $relatedBean);
         
     }
+
+    function createRelatedRecord($api, $args) {
+        $primaryBean = $this->loadBean($api, $args);
+
+        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','create');
+
+        if ( isset($args['id']) ) {
+            $relatedBean->new_with_id = true;
+        }
+
+        $id = $this->updateBean($relatedBean, $api, $args);
+
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
+        
+        $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
+    }
+
+    function createRelatedLink($api, $args) {
+        $primaryBean = $this->loadBean($api, $args);
+
+        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
+
+        $relatedBean->retrieve($args['remote_id']);
+        
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
+        
+        $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
+    }
+
+
+    function updateRelatedLink($api, $args) {
+        $primaryBean = $this->loadBean($api, $args);
+
+        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','edit');
+
+        $relatedBean->retrieve($args['remote_id']);
+
+        $id = $this->updateBean($relatedBean, $api, $args);
+
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
+        
+        $primaryBean->$linkName->add(array($relatedBean),$relatedData);
+
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
+    }
+
+    function deleteRelatedLink($api, $args) {
+        $primaryBean = $this->loadBean($api, $args);
+
+        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
+
+        $relatedBean->retrieve($args['remote_id']);
+
+        $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
+
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName);
+    }
+
+
 }

@@ -68,7 +68,9 @@ class RestTestRelateRecord extends RestTestBase {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testRelateList() {
+    public function testFetchRelatedRecord() {
+        global $db;
+
         $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
         // The first element is blank, ignore it
         array_shift($cts);
@@ -98,6 +100,7 @@ class RestTestRelateRecord extends RestTestBase {
             foreach ( $contactNums as $contactNum ) {
                 $opp->load_relationship('contacts');
                 $contact_type = $cts[($contactNum%$ctsCount)];
+                $this->contacts[$contactNum]->contact_role = $contact_type;
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
@@ -106,8 +109,223 @@ class RestTestRelateRecord extends RestTestBase {
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
 
         $this->assertEquals($this->contacts[0]->id,$restReply['reply']['id'],"Did not fetch the related contact");
+        // FIXME: Need to wait for this to be repaired in link2.php
+        // $this->assertEquals($this->contacts[0]->contact_role,$restReply['reply']['contact_role'],"Did not fetch the related contact's role");
+
+        
+        $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."'");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals($this->contacts[0]->contact_role,$row['contact_role'],"Did not set the related contact's role");
+        
+    }
+
+    public function testCreateRelatedRecord() {
+        global $db;
+
+        for ( $i = 0 ; $i < 1 ; $i++ ) {
+            $opp = new Opportunity();
+            $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $opp->amount = (10000*$i)+500;
+            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
+            $opp->save();
+            $this->opps[] = $opp;
+        }
+
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts",
+                                      json_encode(array(
+                                                      'last_name'=>'TEST',
+                                                      'first_name'=>'UNIT',
+                                                      'contact_role'=>'Primary Decision Maker',
+                                                      'description'=>'UNIT TEST CONTACT'
+                                      )),'POST');
+        
+        $contact = new Contact();
+        $contact->retrieve($restReply['reply']['related_record']['id']);
+        // Save it here so it gets deleted later
+        $this->contacts[] = $contact;
+
+
+        $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."'");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals('Primary Decision Maker',$row['contact_role'],"Did not set the related contact's role");
+    }
+
+    public function testUpdateRelatedLink() {
+        global $db;
+
+        $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
+        // The first element is blank, throw it away
+        array_shift($cts);
+        $ctsCount = count($cts);
+        // Make sure there is at least two of the related modules
+        for ( $i = 0 ; $i < 2 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            $contact->save();
+
+            $this->contacts[] = $contact;
+
+            $contact_type = $cts[($i%$ctsCount)];
+            $this->contacts[$i]->contact_role = $contact_type;
+        }
+        for ( $i = 0 ; $i < 1 ; $i++ ) {
+            $opp = new Opportunity();
+            $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $opp->amount = (10000*$i)+500;
+            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
+            $opp->save();
+            $this->opps[] = $opp;
+
+            $contactNums = array(0,1);
+            $opp->load_relationship('contacts');
+            foreach ( $contactNums as $contactNum ) {
+                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->contact_role));
+            }
+
+        }
+
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
+                                      json_encode(array(
+                                                      'contact_role'=>'Primary Decision Maker',
+                                                      'last_name'=>"Test O'Chango",
+                                      )),'PUT');
+
+        $this->assertEquals($this->contacts[1]->id,$restReply['reply']['related_record']['id'],"Changed the related ID when it shouldn't have");
+        $this->assertEquals("Test O'Chango",$restReply['reply']['related_record']['last_name'],"Did not change the related contact");
+        // FIXME: Need to wait for this to be repaired in link2.php
+        // $this->assertEquals($this->contacts[1]->contact_role,$restReply['reply']['related_record']['contact_role'],"Did not fetch the related contact's role");
+
+        
+        $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[1]->id."'");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals('Primary Decision Maker',$row['contact_role'],"Did not set the related contact's role");
+        
+    }
+
+    public function testCreateRelatedLink() {
+        global $db;
+
+        $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
+        // The first element is blank, throw it away
+        array_shift($cts);
+        $ctsCount = count($cts);
+        // Make sure there is at least two of the related modules
+        for ( $i = 0 ; $i < 2 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            $contact->save();
+
+            $this->contacts[] = $contact;
+
+            $contact_type = $cts[($i%$ctsCount)];
+            $this->contacts[$i]->contact_role = $contact_type;
+        }
+        for ( $i = 0 ; $i < 1 ; $i++ ) {
+            $opp = new Opportunity();
+            $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $opp->amount = (10000*$i)+500;
+            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
+            $opp->save();
+            $this->opps[] = $opp;
+        }
+
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
+                                      json_encode(array(
+                                                      'contact_role'=>$this->contacts[1]->contact_role,
+                                      )),'POST');
+
+        $this->assertEquals($this->contacts[1]->id,$restReply['reply']['related_record']['id'],"Did not link the related contact");
+        // FIXME: Need to wait for this to be repaired in link2.php
+        // $this->assertEquals($this->contacts[1]->contact_role,$restReply['reply']['related_record']['contact_role'],"Did not fetch the related contact's role");
+
+        
+        $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[1]->id."'");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals($this->contacts[1]->contact_role,$row['contact_role'],"Did not set the related contact's role");
+        
+    }
+
+    public function testDeleteRelatedLink() {
+        global $db;
+
+        $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
+        // The first element is blank, throw it away
+        array_shift($cts);
+        $ctsCount = count($cts);
+        // Make sure there is at least two of the related modules
+        for ( $i = 0 ; $i < 2 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            $contact->save();
+
+            $this->contacts[] = $contact;
+
+            $contact_type = $cts[($i%$ctsCount)];
+            $this->contacts[$i]->contact_role = $contact_type;
+        }
+        for ( $i = 0 ; $i < 1 ; $i++ ) {
+            $opp = new Opportunity();
+            $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $opp->amount = (10000*$i)+500;
+            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
+            $opp->save();
+            $this->opps[] = $opp;
+
+            $contactNums = array(0,1);
+            $opp->load_relationship('contacts');
+            foreach ( $contactNums as $contactNum ) {
+                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->contact_role));
+            }
+
+        }
+
+        $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND deleted = 0");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals('2',$row['link_count'],"The links were not properly generated");
+
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
+                                      '','DELETE');
+
+        $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND deleted = 0");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals('1',$row['link_count'],"The first link was not properly deleted");
+
+        $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."' AND deleted = 0");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals('1',$row['link_count'],"The wrong link was deleted");
+
+        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id,
+                                      '','DELETE');
+
+        $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND deleted = 0");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals('0',$row['link_count'],"The second link was not properly deleted");
+
+        $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[0]->id."' AND deleted = 0");
+        
+        $row = $db->fetchByAssoc($ret);
+        $this->assertEquals('0',$row['link_count'],"The second link was never deleted");
+
 
     }
 
+    
 }
-
