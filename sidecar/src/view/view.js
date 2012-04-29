@@ -76,9 +76,10 @@
         },
 
         /**
-         * Renders the view onto the page. (should be overriden by subclasses instead of the formal render function if they need more advanced rendering or do not use a template)
-         * @protected
-         * @method
+         * Renders the view onto the page.
+         *
+         * This method should be overriden by subclasses instead of the formal render function
+         * if they need more advanced rendering or do not use a template.
          */
         _render: function() {
             // Bad templates can cause a JS error that we want to catch here
@@ -93,6 +94,22 @@
         },
 
         /**
+         * Renders a field.
+         *
+         * This method sets field's view element and invokes render on the given field.
+         * @param {View.Field} field The field to render
+         */
+        _renderField: function(field) {
+            field.setElement(this.$("span[sfuuid='" + field.sfId + "']"));
+            try {
+                field.render();
+            } catch (e) {
+                app.logger.error("Failed to render field '" + field.name + "' on '" + this.name + "' view.\n" + e.message);
+                // TODO: trigger app event to render an error message
+            }
+        },
+
+        /**
          * Renders the view onto the page.
          * See Backbone.View documentation for details.
          * @return {Object} Reference to this view.
@@ -101,14 +118,8 @@
             if (app.acl.hasAccess(this.name, this.context.get("model"))) {
                 this._render();
                 // Render will create a placeholder for sugar fields. we now need to populate those fields
-                _.each(this.fields, function(sf) {
-                    sf.setElement(this.$el.find("span[sfuuid='" + sf.sfId + "']"));
-                    try {
-                        sf.render();
-                    } catch (e) {
-                        app.logger.error("Failed to render field '" + sf.name + "' on '" + this.name + "' view.\n" + e.message);
-                        // TODO: trigger app event to render an error message
-                    }
+                _.each(this.fields, function(field) {
+                    this._renderField(field);
                 }, this);
             } else {
                 app.logger.info("Current user does not have access to this module view.");
