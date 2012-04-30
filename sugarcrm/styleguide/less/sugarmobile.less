@@ -65,8 +65,9 @@ h1 {font-size: 26px !important;}
 .fright {float: right !important}
 .altview {display:none;}
 
-body > .layout.list,
-body > .layout.list > .view.list {
+body > #content,
+body > #content .layout.list,
+body > #content .layout.list > .view.list {
   display:inline;
 }
 
@@ -596,7 +597,8 @@ html {
 }
 */
 
-h1.nomad {
+h1.nomad,
+h3.nomad {
   color: @white;
   z-index: 10000;
   position: absolute;

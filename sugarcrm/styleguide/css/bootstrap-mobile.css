@@ -3721,8 +3721,9 @@ h1 {
 .altview {
   display: none;
 }
-body > .layout.list,
-body > .layout.list > .view.list {
+body > #content,
+body > #content .layout.list,
+body > #content .layout.list > .view.list {
   display: inline;
 }
 /* activity and twitter */
