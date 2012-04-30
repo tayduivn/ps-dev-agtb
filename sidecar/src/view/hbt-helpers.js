@@ -16,7 +16,6 @@
      * @return {Object} HTML placeholder for the widget as handlebars safe string.
      */
     Handlebars.registerHelper('field', function(context, view, bean) {
-
         var field = app.view.createField({
             def: this,
             view: view,
@@ -190,9 +189,8 @@
      * @return {String} HTML placeholder for the widget.
      */
     Handlebars.registerHelper('getFieldByName', function(context, view, name) {
-
         var field = app.view.createField({
-            def: { name: name, label: "", type: "base" },
+            def: { name: name, type: "base" },
             view: view,
             context: context,
             model: context.get("model"),
