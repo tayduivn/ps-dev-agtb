@@ -61,7 +61,14 @@ class ModuleApi extends SugarApi {
         );
     }
 
-    protected function updateBean($bean, $api, $args) {
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $bean SugarBean The bean to be updated
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return id Bean id
+     */
+    protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
         $sfh = new SugarFieldHandler();
         $aclField = new ACLField();
 
@@ -102,23 +109,37 @@ class ModuleApi extends SugarApi {
         return $bean->id;
     }
 
-    protected function loadBean($api, $args, $aclToCheck = 'read') {
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the bean is retrieved
+     * @param $args array The arguments array passed in from the API
+     * @param $aclToCheck string What kind of ACL to verify when loading a bean. Supports: view,edit,create,import,export
+     * @return SugarBean The loaded bean
+     */
+    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
 
         $bean = BeanFactory::getBean($args['module'],$args['record']);
         
         if ( $bean == FALSE ) {
             // Couldn't load the bean
-            throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$api['module']);
+            throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
         }
 
         if (!$bean->ACLAccess($aclToCheck)) {
-            throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$api['module']);
+            throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$args['module']);
         }
         
         return $bean;
     }
 
-    protected function formatBean($api, $args, $bean) {
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the formatted data is returned
+     * @param $args array The arguments array passed in from the API, will check this for the 'fields' argument to only return the requested fields
+     * @param $bean SugarBean The fully loaded bean to format
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     */
+    protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
         $sfh = new SugarFieldHandler();
         $aclField = new ACLField();
 

@@ -68,7 +68,17 @@ class RelateRecordApi extends ModuleApi {
         );
     }
 
-    protected function checkRelatedSecurity($api, $args, $primaryBean, $securityTypeLocal='view', $securityTypeRemote='view') {
+
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how security is applied
+     * @param $args array The arguments array passed in from the API
+     * @param $primaryBean SugarBean The near side of the link
+     * @param $securityTypeLocal string What ACL to check on the near side of the link
+     * @param $securityTypeRemote string What ACL to check on the far side of the link
+     * @return array Two elements: The link name, and the SugarBean of the far end
+     */
+    protected function checkRelatedSecurity(ServiceBase $api, $args, SugarBean $primaryBean, $securityTypeLocal='view', $securityTypeRemote='view') {
         if ( ! $api->security->canAccessModule($primaryBean,$securityTypeLocal) ) {
             throw new SugarApiExceptionNotAuthorized('No access to view primaryBeans for module: '.$args['module']);
         }
@@ -89,7 +99,15 @@ class RelateRecordApi extends ModuleApi {
         
     }
 
-    protected function getRelatedFields($api, $args, $primaryBean, $linkName) {
+    /**
+     * This function is here temporarily until the Link2 class properly handles these for the non-subpanel requests
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how security is applied
+     * @param $args array The arguments array passed in from the API
+     * @param $primaryBean SugarBean The near side of the link
+     * @param $linkName string What is the name of the link field that you want to get the related fields for
+     * @return array A list of the related fields pulled out of the $args array
+     */
+    protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName) {
         $relatedFields = $primaryBean->$linkName->getRelatedFields();
         $relatedData = array();
         if ( is_array($relatedFields) ) {
@@ -104,7 +122,17 @@ class RelateRecordApi extends ModuleApi {
         return $relatedData;
     }
 
-    protected function formatNearAndFarRecords($api, $args, $primaryBean, $relatedBean, $linkName, $relatedData = array()) {
+    /**
+     * This function is here temporarily until the Link2 class properly handles these for the non-subpanel requests
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how security is applied
+     * @param $args array The arguments array passed in from the API
+     * @param $primaryBean SugarBean The near side of the link
+     * @param $relatedBean SugarBean The far side of the link
+     * @param $linkName string What is the name of the link field that you want to get the related fields for
+     * @param $relatedData array The data for the related fields (such as the contact_role in opportunities_contacts relationship)
+     * @return array Two elements, 'record' which is the formatted version of $primaryBean, and 'related_record' which is the formatted version of $relatedBean
+     */
+    protected function formatNearAndFarRecords(ServiceBase $api, $args, SugarBean $primaryBean, SugarBean $relatedBean, $linkName, $relatedData = array()) {
         $recordArray = $this->formatBean($api, $args, $primaryBean);
         $relatedArray = $this->formatBean($api, $args, $relatedBean);
 
