@@ -68,7 +68,7 @@ class MetaDataManager {
      * @param string $moduleName The name of the module
      * @param string $viewdefType The type of def (layout or view)
      * @param string $view The name of a view type to get defs for. If omitted
-     *                     all viewdefs for this module will be returned.
+     *                     all viewdefs for this module and def type will be returned.
      * @return array
      */
     protected function getModuleViewdefs($moduleName, $viewdefType = 'view', $view = null) {
@@ -85,10 +85,19 @@ class MetaDataManager {
             }
         }
 
-        // Loop and fetch
-        $locations = array(MB_BASEMETADATALOCATION, MB_CUSTOMMETADATALOCATION);
+        // Loop and fetch, starting with custom metadata then base metadata
+        $locations = array(MB_CUSTOMMETADATALOCATION, MB_BASEMETADATALOCATION);
+
+        // This is an array of metadata files already read so we don't clobber stuff
+        $fetched = array();
+
         foreach ($locations as $location) {
             foreach ($expectedTypes as $type) {
+                // If we've already gotten this one, let it ride
+                if (isset($fetched[$type])) {
+                    continue;
+                }
+
                 // First try, see if the module has the metadata file we want
                 $filename = MetaDataFiles::getModuleFileName($moduleName, $type, $location, $this->platforms[0], $viewdefType);
                 if (!file_exists($filename)) {
@@ -98,7 +107,7 @@ class MetaDataManager {
                         continue;
                     }
 
-                    // Fall back to SugarObjects if we there is one
+                    // Fall back to SugarObjects if there is one
                     $filename = MetaDataFiles::getSugarObjectFileName($moduleName, $type, $this->platforms[0], $viewdefType);
                     if (!file_exists($filename)) {
                         continue;
@@ -108,7 +117,12 @@ class MetaDataManager {
                 // Require rather than require once since we need the data as is
                 require $filename;
 
+                // Set that we've fetched it
+                $fetched[$type] = true;
+
                 // Search is not fully converted to sidecar so handle it differently
+                // TODO: figure out how to standardize metadata at a higher level
+                //       so that these kinds of conditionals don't need to exist
                 if ($type == 'search') {
                     if (isset($searchdefs['<module_name>']) || isset($searchdefs['<_module_name>']) || isset($searchdefs['<MODULE_NAME>'])) {
                         $searchdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $searchdefs);
