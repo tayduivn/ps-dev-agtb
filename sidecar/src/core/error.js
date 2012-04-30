@@ -40,6 +40,8 @@
             400: function() {
             },
             401: function() {
+                app.api.logout();
+                app.router.login();
             },
             403: function() {
             },
