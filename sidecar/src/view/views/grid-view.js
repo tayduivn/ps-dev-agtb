@@ -24,16 +24,7 @@
 
         handleTreeNodeSelect: function(params)
         {
-            console.log(params);
-
-            sInput = 'seed_will_id seed_chris_id';
-            var asSearch = sInput.split( ' ' );
-            var sRegExpString = '^(?=.*?'+asSearch.join( ')(?=.*?' )+').*$';
-
-            //console.log(sRegExpString);
-
             this.gTable.fnFilter( params.selected.id );
-            //console.log(json_data);
         }
 
 
