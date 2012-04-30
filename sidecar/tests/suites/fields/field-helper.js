@@ -12,11 +12,10 @@ var SugarFieldTest = {};
 
 
         var app = SUGAR.App,
-            view = new Backbone.View(),
+            view = new app.view.View({ name: viewName });
             def = { name: name, type: type }, model;
 
-        view.name = viewName;
-        model = new Backbone.Model();
+        var model = new Backbone.Model();
 
         if (fieldDef) {
             model.fields = {};

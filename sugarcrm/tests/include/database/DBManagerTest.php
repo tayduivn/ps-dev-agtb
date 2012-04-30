@@ -2070,53 +2070,113 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     private function setupRecursiveStructure()
     {
 
-        $tableName = 'testRecursive_' . mt_rand();
+        $tableName = 'testRecursive_'; // . mt_rand();
         $params =  array(
             'id' => array (
                 'name' => 'id',
-                'type' => 'varchar',
-                'len' => '36',
+                'type' => 'id',
+                'required'=>true,
                 ),
             'parent_id' => array (
                 'name' => 'parent_id',
                 'type' => 'varchar',
                 'len' => '36',
                 ),
-//            'name' => array (
-//                'name' => 'name',
-//                'type' => 'varchar',
-//                'len' => '255',
-//                ),
-            'db_level' => array (  // For verification purpose
+           'db_level' => array (  // For verification purpose
                 'name' => 'db_level',
                 'type' => 'int',
                 ),
-//            'lineage' => array ( // For verification purpose
-//                'name' => 'lineage',
-//                'type' => 'varchar',
-//                'len' => '1024',
-//                ),
+        );
+        $indexes = array(
+            array(
+                'name'   => 'idx_'. $tableName .'_id',
+                'type'   => 'primary',
+                'fields' => array('id'),
+                ),
+            array(
+                'name'   => 'idx_'. $tableName .'parent_id',
+                'type'   => 'index',
+                'fields' => array('parent_id'),
+                ),
         );
         if($this->_db->tableExists($tableName)) {
+            return $tableName;
             $this->_db->dropTableName($tableName);
         }
 //        $this->createTableParams($tableName, $params, array());
-        $this->_db->createTableParams($tableName, $params, array());
+        $this->_db->createTableParams($tableName, $params, $indexes);
 
 
         // Load data
         $this->_db->query("INSERT INTO $tableName (id, db_level) VALUES ('1', 0)");
-        $this->addChildren($tableName, '1', 3, 1, 10);
+        $this->addChildren($tableName, '1', 2, 1, 10);
+        return $tableName;
     }
 
-    public function testRecursiveQuery()
+    public function providerRecursiveQuery()
     {
-//        $result = $this->_db->createRecursiveQuerySPs();
-//        echo var_dump($result);
-        $this->setupRecursiveStructure();
-
-
+        return array(
+            array('1_0_0_0_0_0_0_0_0_0', '9', 1),
+            array('1_1_1_1_1_1_1_1_1_1', '9', 1),
+            array('1_0_0_0_0_0_0_0_0', '8', 3),
+            array('1_1_1_1_1_1_1_1', '7', 7),
+            array('1_0_0_0_0_0_0', '6', 15),
+            array('1_1_1_1_1_1', '5', 31),
+            array('1_0_0_0_0', '4', 63),
+            array('1_1_1_1', '3', 127),
+            array('1_0_0', '2', 255),
+            array('1_1', '1', 511),
+            array('1', '0', 1023),
+        );
     }
+
+    /**
+     * @dataProvider providerRecursiveQuery
+     * @param $startId
+     * @param $startDbLevel
+     * @param $nrchildren
+     */
+    public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
+    {
+        $this->markTestSkipped('Skipping recursive tests until functionality complete');
+        //$result = $this->_db->createRecursiveQuerySPs();
+        //echo var_dump($result);
+        $idCurrent = $startId;
+        $levels = $startDbLevel;
+       //$result = $this->_db->createRecursiveQuerySPs();
+        //echo var_dump($result);
+        //$table = $this->setupRecursiveStructure();
+		$table = 'testRecursive_';
+
+        // Testing lineage
+        $lineageSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',true, "id ='$idCurrent'");
+        $result = $this->_db->query($lineageSQL);
+
+        while($row = $this->_db->fetchByAssoc($result))
+        {
+			$this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
+			if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
+			$this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
+		}
+		$this->assertEquals('1', $idCurrent, "Incorrect top node id");
+		$this->assertEquals(0, $levels+1, "Incorrect end level"); //Compensate for extra -1 after last node level assert
+		$this->_db->disconnect(); // XXX TODO Fix the problem that requires these forced closes to clean up for MySQL
+
+		// Testing children
+        $idCurrent = $startId;
+        $childcount = 0;
+        $childrenSQL = $this->_db->getRecursiveSelectSQL($table,'id','parent_id', 'id, parent_id, db_level',false, "id ='$idCurrent'");
+        $result = $this->_db->query($childrenSQL);
+
+        while($row = $this->_db->fetchByAssoc($result))
+        {
+			$this->assertEquals(0, strpos($row['id'], $idCurrent), "Row id doesn't start with starting id as expected");
+			$childcount++;
+		}
+		$this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
+		$this->_db->disconnect(); // XXX TODO Fix the problem that requires these forced closes to clean up for MySQL
+    }
+
 
     public function testGetIndicesContainsPrimary()
     {
