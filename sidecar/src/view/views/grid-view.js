@@ -14,7 +14,7 @@
             app.view.View.prototype.initialize.call(this, options);
         },
         /**
-         * Renders Header view
+         * Renders Grid view
          */
         render: function() {
             app.view.View.prototype.render.call(this);
