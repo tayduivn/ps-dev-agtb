@@ -3855,7 +3855,7 @@ protected function checkQuery($sql, $object_name = false)
     /**
      * Generates the a recursive SQL query or equivalent stored procedure implementation.
      * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
-     * Databases supporting recursive CTEs only need to set the recursive_query capability to true
+     * Databases supporting recursive CTEs (such as SQL server) only need to set the recursive_query capability to true
      * @param string    $tablename       table name
      * @param string    $key             primary key field name
      * @param string    $parent_key      foreign key field name self referencing the table
@@ -3880,17 +3880,14 @@ protected function checkQuery($sql, $object_name = false)
             $startWith = '';
         }
 
-        if(empty($fields)) { $fields = '*'; }
-
+		$fieldsTop = $fields;
+		$fieldsBottom = 'e.'.preg_replace('/,\s*/', ',e.', $fields);
         if(!empty($level)) {
-            $fieldsTop = "$fields, 1 as $level";
-            $fieldsBottom = "$fields, sg.$level + 1";
-        } else {
-            $fieldsTop = $fieldsBottom = $fields;
+            $fieldsTop = "$fieldsTop, 1 as $level";
+            $fieldsBottom = "$fieldsBottom, sg.$level + 1";
         }
-        // XXX NOTE need to verify if we can do the WITH without specifying the output fields
-        // if not we need to add that too.
-        $sql = "WITH RECURSIVE search_graph AS (
+		
+        $sql = "WITH search_graph AS (
                    SELECT $fieldsTop
                    FROM $tablename e
                    $startWith
