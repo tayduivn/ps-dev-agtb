@@ -598,6 +598,8 @@ function validate_user($user_name, $password){
                 // use first bean to filter fields since all records have same module
                 // and  $this->filter_fields doesn't use ACLs
                 $filterFields = $this->filter_fields($related_beans[0], $link_module_fields);
+            } else {
+                $filterFields = $this->filter_fields(null, $link_module_fields);
             }
 			$list = array();
             foreach($related_beans as $id => $bean)
