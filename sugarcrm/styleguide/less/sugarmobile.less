@@ -577,7 +577,8 @@ html {
 */
 }
 
-.navbar h1 {
+/*
+.navbar-inner h1 {
   font-size: 16px !important;
   text-align: center;
   font-weight: 700;
@@ -587,6 +588,26 @@ html {
   text-shadow: 0 -1px 0 @black;
   z-index: 0;
   color: @white;
+}
+*/
+
+h1.nomad {
+  color: @white;
+  z-index: 10000;
+  position: absolute;
+  width: 80%;
+  margin: 0 10%;
+  display: inline-block;
+  text-align: center;
+  font-size:16px !important;
+  font-weight:700;
+  text-shadow:0 -1px 0 black;
+  line-height:45px;
+}
+
+.onR h1.nomad,
+.onL h1.nomad {
+  z-index:1;
 }
 
 .dialogdark {
@@ -910,6 +931,7 @@ float: none !important;}
 
   .navbar-fixed-top .navbar-inner {
     padding: 5px;
+    height: 36px;
   }
 
   // Nav collapse clears brand

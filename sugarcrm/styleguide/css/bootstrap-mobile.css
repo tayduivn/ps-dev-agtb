@@ -1214,8 +1214,8 @@ table {
   -moz-border-radius: 0 0 4px 0;
   border-radius: 0 0 4px 0;
 }
-.table-striped tbody tr:nth-child(odd) td,
-.table-striped tbody tr:nth-child(odd) th {
+.table-striped tbody tr:nth-child(even) td,
+.table-striped tbody tr:nth-child(even) th {
   background-color: #f8f8f8;
 }
 .table tbody tr:hover td,
@@ -3308,7 +3308,12 @@ a.thumbnail:hover {
   color: #ffffff;
   text-decoration: none;
 }
-.label-file {
+.label-danger {
+  background-color: #b81213;
+  color: #ffffff;
+}
+.label-file,
+.label-warn {
   background-color: #e57417;
   color: #ffffff;
 }
@@ -3323,6 +3328,7 @@ a.thumbnail:hover {
 .label-note:hover {
   background-color: #d1cf15;
 }
+.label-success,
 .label-lead {
   background-color: #3fb300;
   color: #ffffff;
@@ -4238,16 +4244,35 @@ html {
 */
 
 }
-.navbar h1 {
+/*
+.navbar-inner h1 {
   font-size: 16px !important;
   text-align: center;
   font-weight: 700;
   width: auto !important;
   overflow: hidden;
   margin: 0 auto;
-  text-shadow: 0 -1px 0 #000000;
+  text-shadow: 0 -1px 0 @black;
   z-index: 0;
+  color: @white;
+}
+*/
+h1.nomad {
   color: #ffffff;
+  z-index: 10000;
+  position: absolute;
+  width: 80%;
+  margin: 0 10%;
+  display: inline-block;
+  text-align: center;
+  font-size: 16px !important;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 #000000;
+  line-height: 45px;
+}
+.onR h1.nomad,
+.onL h1.nomad {
+  z-index: 1;
 }
 .dialogdark {
   position: fixed;
@@ -4633,7 +4658,7 @@ html {
 }
 /* TOUR */
 #tour {
-  background: url('../img/tour.png') no-repeat;
+  background: url('../img/welcome.jpg') no-repeat;
   height: 100%;
   position: absolute;
   top: 0;
@@ -4644,6 +4669,7 @@ html {
 /* Navbar collapse */
 .navbar-fixed-top .navbar-inner {
   padding: 5px;
+  height: 36px;
 }
 .navbar .nav-collapse {
   clear: left;
