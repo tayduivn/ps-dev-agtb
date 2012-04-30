@@ -593,24 +593,21 @@ function validate_user($user_name, $password){
             {
                 $params['where'] = $optional_where;
             }
+
 			//First get all the related beans
             $related_beans = $bean->$link_field_name->getBeans($params);
 
-            //Create a list of field/value rows based on $link_module_fields
             if(isset($related_beans[0])) {
                 // use first bean to filter fields since all records have same module
                 // and  $this->filter_fields doesn't use ACLs
                 $filterFields = $this->filter_fields($related_beans[0], $link_module_fields);
             } else {
-                $filterFields = $this->filter_fields($submodule, $link_module_fields);
+                $filterFields = $this->filter_fields($bean, $link_module_fields);
             }
 
 			$list = array();
             foreach($related_beans as $id => $bean)
             {
-                if ( !isset($filterFields) ) {
-                    $filterFields = $this->filter_fields($bean, $link_module_fields);
-                }
                 $row = array();
                 //Create a list of field/value rows based on $link_module_fields
 

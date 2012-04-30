@@ -36,7 +36,11 @@ class SetValueActionTest extends Sugar_PHPUnit_Framework_TestCase
 	    require('include/modules.php');
 	    $GLOBALS['beanList'] = $beanList;
 	    $GLOBALS['beanFiles'] = $beanFiles;
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        global $current_user;
+	    $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->setPreference('datef', "Y-m-d");
+        //Set the time format preference to include seconds since the test uses '2001-01-10 11:45:00' which contains seconds
+        $current_user->setPreference('timef', "H:i:s");
 	}
 
 	public static function tearDownAfterClass()
@@ -57,6 +61,7 @@ class SetValueActionTest extends Sugar_PHPUnit_Framework_TestCase
         $expr = 'addDays($date_due, -7)';
         $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
         $action->fire($task);
+
         $timed = TimeDate::getInstance()->fromUser($task->$target);
         $this->assertNotEmpty($timed, "Field $target='{$task->$target}' is not a valid user-formatted date");
         $this->assertEquals($timed->asDb(), TimeDate::getInstance()->fromDb('2001-01-10 11:45:00')->get('-7 days')->asDb());
@@ -67,7 +72,6 @@ class SetValueActionTest extends Sugar_PHPUnit_Framework_TestCase
         $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
         $action->fire($task);
         $this->assertEquals($task->$target, "Hello World");
-
 
         //Test numeric value
         $target = "name";
