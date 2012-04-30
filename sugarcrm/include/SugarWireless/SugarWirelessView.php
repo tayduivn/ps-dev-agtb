@@ -287,24 +287,23 @@ class SugarWirelessView extends SugarView
         $file_strategy = array(MB_CUSTOMMETADATALOCATION,MB_BASEMETADATALOCATION);
         $lView = strtolower($view);
 
-        do {
-            $file_location = array_shift($file_strategy);
-            $filename = MetaDataFiles::getDeployedFileName($lView, $this->module, $file_location);
+        foreach($file_strategy as $file_location)
+        {
+            $filename = MetaDataFiles::getDeployedFileName($lView, $module_name, $file_location);
             $using_view = $lView;
-
             // fallback for detail view
             if (!file_exists($filename) && $lView == MB_WIRELESSDETAILVIEW ) {
-                $filename = MetaDataFiles::getDeployedFileName( MB_WIRELESSEDITVIEW, $this->module, $file_location);
+                $filename = MetaDataFiles::getDeployedFileName( MB_WIRELESSEDITVIEW, $module_name, $file_location);
                 $using_view = MB_WIRELESSEDITVIEW;
             }
-        } while (!file_exists($filename) && !empty($file_strategy));
+            if (file_exists($filename))
+                return array('filename' => $filename, 'module_name' => $module_name, 'using_view' => $using_view);
+        }
 
         // sugar objects fallback
-        if (!file_exists($filename)) {
-            $filename = $this->getMetaDataFileFallback($view, $module_name);
-            $module_name = '<module_name>';
-            $using_view = $lView;
-        }
+        $filename = $this->getMetaDataFileFallback($view, $module_name);
+        $module_name = '<module_name>';
+        $using_view = $lView;
 
         return array('filename' => $filename, 'module_name' => $module_name, 'using_view' => $using_view);
     }

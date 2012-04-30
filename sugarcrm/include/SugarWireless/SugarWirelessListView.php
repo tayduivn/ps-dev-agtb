@@ -55,10 +55,10 @@ class SugarWirelessListView extends SugarWirelessView{
        
  		// retrieve the displayColumns from listview metadata file
         $this->displayColumns = array();
-		foreach($listViewDefs[$GLOBALS['module']]['panels'] as $panel) {
+        foreach($listViewDefs[$GLOBALS['module']]['panels'] as $panel) {
             foreach ($panel['fields'] as $field) {
                 if(!empty($field['default'])) {
-                    $this->displayColumns[$field['name']] = $field;
+                    $this->displayColumns[strtoupper($field['name'])] = $field;
                 }
             }
         }
