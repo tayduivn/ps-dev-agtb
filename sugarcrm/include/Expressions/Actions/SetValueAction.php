@@ -96,7 +96,7 @@ class SetValueAction extends AbstractAction{
         if ($result instanceof DateTime)
         {
             global $timedate;
-            if (isset($def['type']) && $def['type'] == "datetime")
+            if (isset($def['type']) && ($def['type'] == "datetime" || $def['type'] == "datetimecombo"))
             {
                 $result = DateExpression::roundTime($result);
                 $target->$field = $timedate->asDb($result);

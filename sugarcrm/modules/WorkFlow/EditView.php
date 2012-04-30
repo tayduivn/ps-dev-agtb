@@ -84,14 +84,15 @@ $GLOBALS['log']->info("WorkFlow edit view");
 $xtpl=new XTemplate ('modules/WorkFlow/EditView.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
-
+$returnAction = '';
 if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
-if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
+if (isset($_REQUEST['return_action'])) $returnAction = $_REQUEST['return_action'];
 if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 // handle Create $module then Cancel
 if (empty($_REQUEST['return_id'])) {
-	$xtpl->assign("RETURN_ACTION", 'index');
+    $returnAction = 'index';
 }
+$xtpl->assign("RETURN_ACTION", $returnAction);
 $xtpl->assign("PRINT_website", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js());
 
@@ -132,11 +133,14 @@ $xtpl->assign("BASE_MODULE", get_select_options_with_id($focus->get_module_array
 
 $cancel = "<input title='".$app_strings['LBL_CANCEL_BUTTON_TITLE']."' id='cancel_workflow'
         accessKey='".$app_strings['LBL_CANCEL_BUTTON_KEY']."' class='button' ";
-if(isset($_REQUEST['return_action'])) {
-    $cancel .= "onclick='this.form.action.value=\"".$_REQUEST['return_action']."\";";
-    if(isset($_REQUEST['return_module'])) {
+if(isset($_REQUEST['return_action']))
+{
+    $cancel .= "onclick='this.form.action.value=\"".$returnAction."\";";
+    if(isset($_REQUEST['return_module']))
+    {
         $cancel .= "this.form.module.value=\"".$_REQUEST['return_module']."\";";
-        if(isset($_REQUEST['return_id'])) {
+        if(isset($_REQUEST['return_id']))
+        {
             $cancel .= "this.form.record.value=\"".$_REQUEST['return_id']."\";";
         }
     }
