@@ -12,7 +12,10 @@
             'click .search': 'showSearch',
             'click [rel=tooltip]': 'fixTooltip',
             'mouseenter tr': 'showActions',
-            'mouseleave tr': 'hideActions'
+            'mouseleave tr': 'hideActions',
+            'click [name=show_more_button]': 'showMoreRecords',
+            'click [name=show_more_button_back]': 'showPreviousRecords',
+            'click [name=show_more_button_forward]': 'showNextRecords'
         },
         bind: function(context) {
             var collection = context.get("collection");
@@ -96,6 +99,31 @@
         },
         hideActions: function(e) {
             $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
+        },
+        showMoreRecords: function() {
+            var self = this;
+            app.controller.context.state.collection.paginate({add: true,
+                success: function() {
+                    self.render();
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
+            });
+        },
+        showPreviousRecords: function() {
+            var self = this;
+            app.controller.context.state.collection.paginate({page: -1,
+                success: function() {
+                    self.render();
+                }
+            });
+        },
+        showNextRecords: function() {
+            var self = this;
+            app.controller.context.state.collection.paginate({
+                success: function() {
+                    self.render();
+                }
+            });
         }
     });
 
