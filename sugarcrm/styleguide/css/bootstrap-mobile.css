@@ -3721,6 +3721,10 @@ h1 {
 .altview {
   display: none;
 }
+body > .layout.list,
+body > .layout.list > .view.list {
+  display: inline;
+}
 /* activity and twitter */
 article {
   position: relative;
