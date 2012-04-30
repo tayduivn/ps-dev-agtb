@@ -213,7 +213,7 @@ class quicksearchQuery
                 default:
                     array_push(
                         $conditionArray,
-                        $table_prefix.$db->getValidDBName($condition['name']) . sprintf(" like '%s%%", $db->quote($condition['value']))
+                        $table_prefix.$db->getValidDBName($condition['name']) . sprintf(" like '%s%%'", $db->quote($condition['value']))
                     );
             }
         }
