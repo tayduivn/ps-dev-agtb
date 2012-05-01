@@ -36,6 +36,7 @@ else {
     $app_strings = return_application_language($GLOBALS['current_language']);
     $mod_strings = return_module_language($GLOBALS['current_language'], 'ACL');
 	$file_type = strtolower($_REQUEST['type']);
+    $check_image = false;
     if(!isset($_REQUEST['isTempFile'])) {
 	    //Custom modules may have capilizations anywhere in thier names. We should check the passed in format first.
 		require('include/modules.php');
@@ -130,6 +131,7 @@ else {
             }
             //END SUGARCRM flav=pro ONLY
 			$query .= "WHERE notes.id = '" . $db->quote($_REQUEST['id']) ."'";
+            $check_image = true;
 		} elseif( !isset($_REQUEST['isTempFile']) && !isset($_REQUEST['tempName'] ) && isset($_REQUEST['type']) && $file_type!='temp' ){ //make sure not email temp file.
 			$query = "SELECT filename name FROM ". $file_type ." ";
             //BEGIN SUGARCRM flav=pro ONLY
@@ -176,9 +178,24 @@ else {
 		        header("Content-Type: image/png");
 		    }
 		} else {
-            header("Content-Type: application/force-download");
-            header("Content-type: application/octet-stream");
-            header("Content-Disposition: attachment; filename=\"".$name."\";");
+            if($check_image == true)
+            {
+                $mime = getimagesize($download_location);
+                if($mime !== false)
+                {
+                    header("Content-Type: {$mime['mime']}");
+                }
+                else
+                {
+                    $check_image = false;
+                }
+            }
+            if($check_image == false)
+            {
+                header("Content-Type: application/force-download");
+                header("Content-type: application/octet-stream");
+                header("Content-Disposition: attachment; filename=\"".$name."\";");
+            }
 		}
 		// disable content type sniffing in MSIE
 		header("X-Content-Type-Options: nosniff");
