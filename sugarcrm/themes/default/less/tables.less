@@ -23,14 +23,14 @@ table {
   th,
   td {
     position: relative;
-    padding: 8px;
+    padding: 10px;
     line-height: @baseLineHeight;
     text-align: left;
     vertical-align: top;
     border-top: 1px solid darken(@grayLighter, 5%);
   }
   th {
-    font-weight: bold;
+    font-weight: 600;
   }
   // Bottom align for column headings
   thead th {
@@ -45,6 +45,9 @@ table {
   // Account for multiple tbody instances
   tbody + tbody {
     border-top: 2px solid #ddd;
+  }
+  tfoot {
+    font-weight: 600;
   }
 }
 
@@ -108,8 +111,8 @@ table {
 // Default zebra-stripe styles (alternating gray and transparent backgrounds)
 .table-striped {
   tbody {
-    tr:nth-child(odd) td,
-    tr:nth-child(odd) th {
+    tr:nth-child(even) td,
+    tr:nth-child(even) th {
       background-color: lighten(@grayLighter, 1%);
     }
   }
@@ -152,19 +155,14 @@ table {
 }
 
 // Sugar
-table [class^="icon-star"] {
-  margin: 3px 0 0 16px;
-  .opacity(40);
+table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child, 
+table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-child {
+  .border-radius(0 0 4px 4px)
 }
-#stream table [class^="icon-star"] {
-  margin: 3px 0 0 10px;
-  .opacity(40);
-}
-table .icon-star {
-  .opacity(100);
-}
-.subhead table th {
-   min-width: 55px;
+
+
+table th {
+   min-width: 20px;
  }
 table th .btn-group {
   margin: 0 0 0 -10px;
