@@ -187,12 +187,7 @@
         getLayout: function(module, layout) {
             var metadata = this.getModule(module, "layouts");
             if (metadata && layout) {
-<<<<<<< HEAD
                 if(metadata[layout] && metadata[layout].meta) {
-=======
-                if(typeof metadata[layout] !== 'undefined' &&
-                    typeof metadata[layout].meta !== 'undefined') {
->>>>>>> Checks for layout.meta and view.meta
                     metadata = metadata[layout].meta;
                 } else {
                     metadata = metadata[layout];
