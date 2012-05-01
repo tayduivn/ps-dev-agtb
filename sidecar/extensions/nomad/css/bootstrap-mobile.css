@@ -1214,8 +1214,8 @@ table {
   -moz-border-radius: 0 0 4px 0;
   border-radius: 0 0 4px 0;
 }
-.table-striped tbody tr:nth-child(odd) td,
-.table-striped tbody tr:nth-child(odd) th {
+.table-striped tbody tr:nth-child(even) td,
+.table-striped tbody tr:nth-child(even) th {
   background-color: #f8f8f8;
 }
 .table tbody tr:hover td,
@@ -3308,7 +3308,12 @@ a.thumbnail:hover {
   color: #ffffff;
   text-decoration: none;
 }
-.label-file {
+.label-danger {
+  background-color: #b81213;
+  color: #ffffff;
+}
+.label-file,
+.label-warn {
   background-color: #e57417;
   color: #ffffff;
 }
@@ -3323,6 +3328,7 @@ a.thumbnail:hover {
 .label-note:hover {
   background-color: #d1cf15;
 }
+.label-success,
 .label-lead {
   background-color: #3fb300;
   color: #ffffff;
@@ -3715,6 +3721,11 @@ h1 {
 .altview {
   display: none;
 }
+body > #content,
+body > #content .layout.list,
+body > #content .layout.list > .view.list {
+  display: inline;
+}
 /* activity and twitter */
 article {
   position: relative;
@@ -4075,10 +4086,8 @@ html {
   padding-bottom: 146px;
   display: block;
 }
-.hasTeaser #scroll {
-  height: 68%;
-}
-.listing {
+#listing.listing,
+#listing.accounts {
   height: 100%;
   position: absolute;
   left: 0;
@@ -4238,16 +4247,36 @@ html {
 */
 
 }
-.navbar h1 {
+/*
+.navbar-inner h1 {
   font-size: 16px !important;
   text-align: center;
   font-weight: 700;
   width: auto !important;
   overflow: hidden;
   margin: 0 auto;
-  text-shadow: 0 -1px 0 #000000;
+  text-shadow: 0 -1px 0 @black;
   z-index: 0;
+  color: @white;
+}
+*/
+h1.nomad,
+h3.nomad {
   color: #ffffff;
+  z-index: 10000;
+  position: absolute;
+  width: 80%;
+  margin: 0 10%;
+  display: inline-block;
+  text-align: center;
+  font-size: 16px !important;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 #000000;
+  line-height: 45px;
+}
+.onR h1.nomad,
+.onL h1.nomad {
+  z-index: 1;
 }
 .dialogdark {
   position: fixed;
@@ -4516,16 +4545,16 @@ html {
 }
 /* Log In
 ----------*/
-#login {
+.login {
   background: #e61718 url(../img/leather-red.png);
   -webkit-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
   -moz-box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
 }
-#login .modal,
-#login .modal-header,
-#login .modal-footer,
-#login .modal-body {
+.login .modal,
+.login .modal-header,
+.login .modal-footer,
+.login .modal-body {
   border: none;
   padding: 0 !important;
   margin: 0 !important;
@@ -4534,8 +4563,8 @@ html {
   -moz-box-shadow: none;
   box-shadow: none;
 }
-#login input,
-#login .btn {
+.login input,
+.login .btn {
   width: 220px !important;
   margin: 0 auto !important;
   padding: 10px !important;
@@ -4544,29 +4573,29 @@ html {
   box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
   border: none;
 }
-#login .btn {
+.login .btn {
   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset -1px -1px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.2);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
   font-weight: 600;
 }
-#login .modal input[type=submit] {
+.login .modal input[type=submit] {
   -webkit-box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
 }
-#login .modal input:focus {
+.login .modal input:focus {
   border: none;
   -webkit-box-shadow: 2px 2px 0 #f17273, 2px 2px 0 #f17273;
   -moz-box-shadow: 2px 2px 0 #f17273, 2px 2px 0 #f17273;
   box-shadow: 2px 2px 0 #f17273, 2px 2px 0 #f17273;
   outline: 0;
 }
-#login {
+.login {
   text-align: center;
 }
-#login .btn-sugar {
+.login .btn-sugar {
   float: none;
   margin-left: -80px !important;
   position: absolute;
@@ -4574,14 +4603,14 @@ html {
   width: auto;
   left: 50%;
 }
-#login .modal .btn {
+.login .modal .btn {
   float: none !important;
 }
-#login .modal .pull-left {
+.login .modal .pull-left {
   display: block;
   float: none !important;
 }
-#login .btn.btn-sugar {
+.login .btn.btn-sugar {
   width: 140px!important;
 }
 .alert {
@@ -4633,7 +4662,7 @@ html {
 }
 /* TOUR */
 #tour {
-  background: url('../img/tour.png') no-repeat;
+  background: url('../img/welcome.jpg') no-repeat;
   height: 100%;
   position: absolute;
   top: 0;
@@ -4644,6 +4673,7 @@ html {
 /* Navbar collapse */
 .navbar-fixed-top .navbar-inner {
   padding: 5px;
+  height: 36px;
 }
 .navbar .nav-collapse {
   clear: left;
