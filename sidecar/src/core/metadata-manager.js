@@ -18,6 +18,22 @@
         app.cache.set(_keyPrefix + key, value);
     }
 
+    function _declareCustomComponents(entry, type, module) {
+        var plural = type+'s',
+            templateKey;
+
+        _.each(entry[plural], function (obj, key) {
+            if (obj && obj.template) {
+                templateKey = key + '.' + module.toLowerCase();
+                app.template.compile(obj.template, templateKey);
+            }
+            if (obj && key && obj.controller) {
+                app.view.declareCustomComponent(obj.controller, key, module, type);
+            }
+        });
+
+    }
+
     /**
      * The metadata manager is responsible for parsing and returning various metadata to components that request it.
      * @class Core.MetadataManager
@@ -216,23 +232,15 @@
                 var modules = []; 
 
                 _.each(data.modules, function(entry, module) {
-                    var templateKey;
                     _metadata[module] = this._patchMetadata(module, entry);
                     _set(_modulePrefix + module, entry);
                     modules.push(module);
 
-                    // Create custom templates and modules if defined
-                    _.each(entry.views, function (view, viewKey) {
-                        if (view && view.template) {
-                            templateKey = viewKey + '.' + module.toLowerCase();
-                            app.template.compile(view.template, templateKey);
-                        }
-                        if (view && viewKey && view.controller) {
-                            app.view.declareCustomView(view.controller, viewKey, module);
-                        }
-                    });
+                    // Create custom templates and modules for layouts and views
+                    _declareCustomComponents(entry, 'view', module);
+                    _declareCustomComponents(entry, 'layout', module);
 
-                }, this);
+                   }, this);
                 _set("modules", modules.join(","));
             }
 

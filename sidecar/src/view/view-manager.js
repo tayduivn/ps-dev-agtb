@@ -86,7 +86,7 @@
                 customClassName = (params.module || "") + className,
                 pluralizedType  = type.toLowerCase() + "s",
                 cache           = app.view[pluralizedType],
-                controller      = params.controller,
+                controller      = params.controller, 
                 // Fall back to base class (View, Layout, or Field)
                 baseClass       = cache[className] || app.view[ucType],
                 klass           = null;
@@ -240,12 +240,12 @@
             return field;
         }
 
-        declareCustomView: function(controller, name, module) {
-            var type            = 'View',
-                className       = app.utils.capitalize(name) + type,
+        declareCustomComponent: function(controller, name, module, type) {
+            var ucType          = app.utils.capitalize(type),
+                className       = app.utils.capitalize(name) + ucType,
                 customClassName = module + className,
                 cache           = app.view.views,
-                baseClass       = cache[className] || app.view[type];
+                baseClass       = cache[className] || app.view[ucType];
 
             _declareClass(cache, baseClass, customClassName, controller);
         }
