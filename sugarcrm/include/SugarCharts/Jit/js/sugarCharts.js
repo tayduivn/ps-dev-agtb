@@ -195,7 +195,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 
 
                             //save canvas to image for pdf consumption
-                            $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+                            $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
 
                             trackWindowResize(barChart, chartId, json);
                             that.chartObject = barChart;
@@ -207,16 +207,14 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				break;
 				
 			case "lineChart":
-				var handleFailure = function(o){
-				alert('fail');
-					if(o.responseText !== undefined){
-						alert('failed');
-					}
-				}	
-				var handleSuccess = function(o){
+                var request = jQuery.ajax({
+                    url: jsonFilename + "?r=" + new Date().getTime(),
+                    dataType:"text",
+                    async: false,
+                    success: function(data) {
 
-					if(o.responseText !== undefined && o.responseText != "No Data"){	
-					var json = eval('('+o.responseText+')');
+					if(data !== undefined && data != "No Data"){
+					var json = eval('('+data+')');
 
 				var properties = $jit.util.splat(json.properties)[0];	
 				//init Linecahrt
@@ -362,32 +360,23 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 
                 trackWindowResize(lineChart, chartId, json);
-					}
-				}
+                that.chartObject = lineChart;
+			}
+		}
+    });
 				
-				var callback =
-				{
-				  success:handleSuccess,
-				  failure:handleFailure,
-				  argument: { foo:'foo', bar:''}
-				};
-				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
-				break;
+
 			
 				
 			case "pieChart":
+                var request = jQuery.ajax({
+                    url: jsonFilename + "?r=" + new Date().getTime(),
+                    dataType:"text",
+                    async: false,
+                    success: function(data) {
 
-				var handleFailure = function(o){
-				alert('fail');
-					if(o.responseText !== undefined){
-						alert('failed');
-					}
-				}	
-				var handleSuccess = function(o){
-
-					if(o.responseText !== undefined){			
-					var json = eval('('+o.responseText+')');
+					if(data !== undefined && data != "No Data"){
+					var json = eval('('+data+')');
 					var properties = $jit.util.splat(json.properties)[0];	
 
 						//init BarChart
@@ -502,33 +491,23 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 			
                 trackWindowResize(pieChart, chartId, json);
-					}
+                that.chartObject = pieChart;
 				}
-				
-				var callback =
-				{
-				  success:handleSuccess,
-				  failure:handleFailure,
-				  argument: { foo:'foo', bar:''}
-				};
-				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
-							
+		    }
+     });
+
 				break;
 				
 				
 			case "funnelChart":
+                var request = jQuery.ajax({
+                    url: jsonFilename + "?r=" + new Date().getTime(),
+                    dataType:"text",
+                    async: false,
+                    success: function(data) {
 
-				var handleFailure = function(o){
-				alert('fail');
-					if(o.responseText !== undefined){
-						alert('failed');
-					}
-				}	
-				var handleSuccess = function(o){
-
-					if(o.responseText !== undefined && o.responseText != "No Data"){	
-					var json = eval('('+o.responseText+')');
+					if(data !== undefined && data != "No Data"){
+					var json = eval('('+data+')');
 
 				var properties = $jit.util.splat(json.properties)[0];	
 
@@ -662,33 +641,24 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 				
                 trackWindowResize(funnelChart, chartId, json);
-					}
+                that.chartObject = funnelChart;
 				}
+		    }
 				
-				var callback =
-				{
-				  success:handleSuccess,
-				  failure:handleFailure,
-				  argument: { foo:'foo', bar:''}
-				};
-				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
+      });
 				break;
 				
 				
 				
 			case "gaugeChart":
+                var request = jQuery.ajax({
+                    url: jsonFilename + "?r=" + new Date().getTime(),
+                    dataType:"text",
+                    async: false,
+                    success: function(data) {
 
-				var handleFailure = function(o){
-				alert('fail');
-					if(o.responseText !== undefined){
-						alert('failed');
-					}
-				}	
-				var handleSuccess = function(o){
-
-					if(o.responseText !== undefined){			
-					var json = eval('('+o.responseText+')');
+                    if(data !== undefined && data != "No Data"){
+					var json = eval('('+data+')');
 					var properties = $jit.util.splat(json.properties)[0];	
 
 						//init Gauge Chart
@@ -802,18 +772,11 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 				
                 trackWindowResize(gaugeChart, chartId, json);
-					}
+                that.chartObject = gaugeChart;
 				}
-				
-				var callback =
-				{
-				  success:handleSuccess,
-				  failure:handleFailure,
-				  argument: { foo:'foo', bar:''}
-				};
-				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
-							
+		}
+
+    });
 				break;
 				
 			}
@@ -827,8 +790,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                 var timeout;
 
                 // refresh graph on window resize
-                YAHOO.util.Event.addListener(window, "resize", function()
-                {
+                $(window).resize(function() {
                     if (timeout)
                     {
                         clearTimeout(timeout);
