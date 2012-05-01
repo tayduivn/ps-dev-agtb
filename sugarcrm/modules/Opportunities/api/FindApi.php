@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 // A simple example class
-require_once('include/api/listApi.php');
+require_once('include/api/ListApi.php');
 
 class FindApi extends ListApi {
     public function registerApiRest() {
