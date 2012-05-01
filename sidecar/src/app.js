@@ -260,6 +260,7 @@ SUGAR.App = (function() {
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {
+                    app.error.handleHTTPError(err);
                     app.logger.error(err);
                     self.trigger("app:sync:error", err);
                 }
