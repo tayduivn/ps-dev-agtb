@@ -84,6 +84,10 @@
             var ucType          = app.utils.capitalize(type),
                 className       = app.utils.capitalize(name) + ucType,
                 customClassName = (params.module || "") + className,
+                // createLayout passes layout type (e.g. fluid) as 'name'. However,
+                // if a custom layout controller is created upstream, it's key will 
+                // be something like ContactsDetailLayout
+                layoutAltName   = (params.module || "") + app.utils.capitalize(params.name) + ucType,
                 pluralizedType  = type.toLowerCase() + "s",
                 cache           = app.view[pluralizedType],
                 controller      = params.controller, 
@@ -94,6 +98,8 @@
             klass =
                 // Next check if custom class per module already exists
                 cache[customClassName] ||
+                // If custom layout controller created upstream
+                cache[layoutAltName] ||
                 // If we don't have a customClassName 
                 _declareClass(cache, baseClass, customClassName, controller) ||
                 // Fall back to regular view class (ListView, FluidLayout, etc.)
@@ -173,10 +179,9 @@
             var clonedParams    = _.clone(params);
             clonedParams.module = params.module || params.context.get("module");
             clonedParams.meta   = params.meta || app.metadata.getLayout(clonedParams.module, params.name) || {};
-
             clonedParams.meta.type = clonedParams.meta.type || clonedParams.name;
             clonedParams.name      = clonedParams.name || clonedParams.meta.type;
-
+        
             return this._createComponent("Layout", clonedParams.meta.type, clonedParams);
         },
 
@@ -184,6 +189,7 @@
          * Creates an instance of a field and registers it with the parent view (`params.view`).
          *
          * The parameters define creation rules as well as field properties.
+         *
          * The `params` hash must contain `def` property which is the field definition and `view`
          * property which is the reference to the parent view. For example,
          * <pre>
@@ -244,8 +250,9 @@
             var ucType          = app.utils.capitalize(type),
                 className       = app.utils.capitalize(name) + ucType,
                 customClassName = module + className,
-                cache           = app.view.views,
+                cache           = (type==='view') ? app.view.views : app.view.layouts,
                 baseClass       = cache[className] || app.view[ucType];
+
 
             _declareClass(cache, baseClass, customClassName, controller);
         }

@@ -18,7 +18,7 @@
         app.cache.set(_keyPrefix + key, value);
     }
 
-    function _declareCustomComponents(entry, type, module) {
+    function _customTemplatesComponents(entry, type, module) {
         var plural = type+'s',
             templateKey;
 
@@ -237,8 +237,8 @@
                     modules.push(module);
 
                     // Create custom templates and modules for layouts and views
-                    _declareCustomComponents(entry, 'view', module);
-                    _declareCustomComponents(entry, 'layout', module);
+                    _customTemplatesComponents(entry, 'view', module);
+                    _customTemplatesComponents(entry, 'layout', module);
 
                    }, this);
                 _set("modules", modules.join(","));

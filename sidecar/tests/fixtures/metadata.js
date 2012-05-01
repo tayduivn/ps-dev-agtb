@@ -504,7 +504,8 @@ fixtures.metadata = {
                             {layout: "detail",
                                 size: 3}
                         ]
-                    }
+                    },
+                    "controller": "{customLayoutCallback : function(){return \"overridden\";}}"
                 }
             }
         },
