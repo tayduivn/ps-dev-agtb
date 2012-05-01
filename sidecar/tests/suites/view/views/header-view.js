@@ -1,4 +1,11 @@
 describe("headerView", function() {
+    var app;
+
+    beforeEach(function() {
+        SugarTest.seedMetadata(true);
+        app = SugarTest.app;
+    });
+
     it("should set current module", function() {
         var options = {
                 context: {get: function() {
@@ -10,7 +17,7 @@ describe("headerView", function() {
                 }
             },
             view = new SUGAR.App.view.views.HeaderView(options);
-        view.render();
+        view.setModuleInfo();
         expect(view.currentModule).toEqual('cases');
     });
     it("should set the current module list", function() {
@@ -27,7 +34,7 @@ describe("headerView", function() {
         };
 
         view = new SUGAR.App.view.views.HeaderView(options);
-        view.render();
+        view.setModuleInfo();
         expect(view.moduleList).toEqual(_.toArray(result));
     });
 });

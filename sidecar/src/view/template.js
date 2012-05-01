@@ -1,9 +1,8 @@
 (function(app){
     //Pull the precompile header and footer from the node precompile implementation for handlebars
-    var header = "(function() {\n  var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};\n",
-        footer = '})();',
-        templates = {},
-        sources,
+    var _header = "(function() {\n  var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};\n",
+        _footer = '})();',
+        _templates = {};
 
         /**
          * Loads and compiles Handlebars templates.
@@ -11,15 +10,15 @@
          * @singleton
          * @alias SUGAR.App.template
          */
-        module = {
+        var _templateManager = {
             //Initialize will pull the compiled templates from local storage and populate Handlebars.templates
             initialize: function() {
-                templates = app.cache.get("templates") || {};
+                _templates = app.cache.get("templates") || {};
                 var src = "";
-                _.each(templates, function(t) {
+                _.each(_templates, function(t) {
                     src += t;
                 });
-                eval(header + src + footer);
+                eval(_header + src + _footer);
             },
 
             /**
@@ -30,9 +29,9 @@
              */
             compile: function(src, key) {
                 try {
-                    templates[key] = "templates['" + key + "'] = template(" + Handlebars.precompile(src) + ");\n";
-                    app.cache.set("templates", templates);
-                    eval(header + templates[key] + footer);
+                    _templates[key] = "templates['" + key + "'] = template(" + Handlebars.precompile(src) + ");\n";
+                    app.cache.set("templates", _templates);
+                    eval(_header + _templates[key] + _footer);
                 } catch (e) {
                     //Bad templates will cause a JS error when they either pre-compile or compile.
                     app.logger.error("Template compilation error; unable to compile " + key + ".\n" + e.message);
@@ -58,14 +57,13 @@
              * @method
              */
             load: function(metadata, force) {
-                if(metadata.viewTemplates) {
-                    var templates = metadata.viewTemplates;
-                    _.each(templates, function(src, key) {
-                                        if (!this.get(key) || force);
-                                        this.compile(src, key);
-                                    }, this);
+                if (metadata.viewTemplates) {
+                    _.each(metadata.viewTemplates, function(src, key) {
+                        if ((key != "_hash") && (!this.get(key) || force)) {
+                            this.compile(src, key);
+                        }
+                    }, this);
                 }
-
             },
 
             /**
@@ -76,9 +74,17 @@
              */
             initTemplate: function(instance) {
                 //this.load(fixtures.metadata.viewTemplates);
-            }
+            },
+
+            /**
+             * Pre-compiled empty template.
+             *
+             * @property {Function}
+             */
+            empty: function() { return ""; }
         };
 
-    app.events.on("app:init", module.initTemplate, module);
-    app.augment("template", module);
+    app.events.on("app:init", _templateManager.initTemplate, _templateManager);
+    app.augment("template", _templateManager);
+
 })(SUGAR.App);

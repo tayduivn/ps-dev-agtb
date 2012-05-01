@@ -214,7 +214,7 @@ class ListViewSmarty extends ListViewDisplay{
 
         $displayEmptyDataMessages = TRUE;
         //TODO: Cleanup, better logic for which modules are exempt from the new messaging. 
-        $modulesExemptFromEmptyDataMessages = array('WorkFlow','ContractTypes', 'OAuthKeys');
+        $modulesExemptFromEmptyDataMessages = array('WorkFlow','ContractTypes', 'OAuthKeys', 'TimePeriods');
         if( (isset($GLOBALS['moduleTabMap'][$currentModule]) && $GLOBALS['moduleTabMap'][$currentModule] == 'Administration')
             || isset($GLOBALS['adminOnlyList'][$currentModule]) || in_array($currentModule, $modulesExemptFromEmptyDataMessages) )
         {

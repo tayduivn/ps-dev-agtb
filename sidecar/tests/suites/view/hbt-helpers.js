@@ -34,18 +34,20 @@ describe("Handlebars Helpers", function() {
         });
 
         it("should return a sugarfield span element", function() {
-            var sfid = 0,
-                model = new app.Bean(),
+            var model = new app.Bean(),
                 context = {
                     get: function() {
                         return "Cases";
                     }
                 },
-                field = new Backbone.View(),
-                view = {sugarFields: [null, field], name: "detail"},
-                sugarField = {name: "TestName", label: "TestLabel", type: "text"};
+                view = new app.view.View({ name: "detail"}),
+                def = {name: "TestName", label: "TestLabel", type: "text"};
 
-            expect(Handlebars.helpers.field.call(sugarField, context, view, model).toString()).toMatch(/<span sfuuid=.*(\d+).*/);
+            var fieldId = app.view.getFieldId();
+            var result = Handlebars.helpers.field.call(def, context, view, model);
+            expect(result.toString()).toMatch(/<span sfuuid=.*(\d+).*/);
+            expect(app.view.getFieldId()).toEqual(fieldId + 1);
+            expect(view.fields[fieldId + 1]).toBeDefined();
         });
     });
 

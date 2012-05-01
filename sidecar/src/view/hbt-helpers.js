@@ -7,48 +7,50 @@
  */
 (function(app) {
 
-    var _sfid = 0;
-
     /**
-     * Creates field widget.
+     * Creates a field widget.
      * @method field
      * @param {Core.Context} context
      * @param {View.View} view
      * @param {Data.Bean} bean
-     * @return {String} HTML placeholder for the widget.
+     * @return {Object} HTML placeholder for the widget as handlebars safe string.
      */
     Handlebars.registerHelper('field', function(context, view, bean) {
-        var placeholder = '<span sfuuid="' + (++_sfid) + '"></span>';
-        var sf = (view.sugarFields[_sfid] = app.view.createField({
+        var field = app.view.createField({
             def: this,
             view: view,
             context: context,
             model: bean || context.get("model")
-        }));
+        });
 
-        sf.sfid = _sfid;
-
-        return new Handlebars.SafeString(placeholder);
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
     });
 
     /**
-     * Adds a button
+     * Creates a field widget.
+     *
+     * This helper is used for fields that don't have view definition.
+     *
+     * @method field2
+     * @param {String} type Field type
+     * @param {String} label Label key
+     * @return {Object} HTML placeholder for the widget as handlebars safe string.
      */
-    Handlebars.registerHelper('button', function(type, label) {
-        var placeholder = '<span sfuuid="' + (++_sfid) + '"></span>';
-        var def = { type: type, name: type, label: label };
-        var view = this;
+    Handlebars.registerHelper('field2', function(type, label) {
+        var def = {
+            type: type,
+            name: type,
+            label: label
+        };
 
-        var sf = (view.sugarFields[_sfid] = app.view.createField({
+        var field = app.view.createField({
             def: def,
             view: this,
             context: this.context,
             model: this.context.get("model")
-        }));
+        });
 
-        sf.sfid = _sfid;
-
-        return new Handlebars.SafeString(placeholder);
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
     });
 
     /**
@@ -66,11 +68,11 @@
         if (_.isArray(options)) {
             iterator = function(element) {
                 ret = ret + block(element);
-            }
+            };
         } else if (_.isObject(options)) { // Is object evaluates arrays to true, so put it second
             iterator = function(value, key) {
                 ret = ret + block({key: key, value: value});
-            }
+            };
         }
 
         _.each(options, iterator, this);
@@ -152,7 +154,7 @@
             return retTrue;
         }
 
-        return (retFalse != undefined) ? retFalse : "";
+        return (!_.isUndefined(retFalse)) ? retFalse : "";
     });
 
     /**
@@ -164,6 +166,7 @@
         app.logger.debug(this);
         app.logger.debug("*****HBT: Current Value*****");
         app.logger.debug(value);
+        console.log(value);
         app.logger.debug("***********************");
     });
 
@@ -175,6 +178,26 @@
     Handlebars.registerHelper("getLabel", function(string, module){
        var result = app.lang.get(string, module);
        return result;
+    });
+
+    /**
+     * Creates specific field widget.
+     * @method field
+     * @param {Core.Context} context
+     * @param {View.View} view
+     * @param {Field.name} name
+     * @return {String} HTML placeholder for the widget.
+     */
+    Handlebars.registerHelper('getFieldByName', function(context, view, name) {
+        var field = app.view.createField({
+            def: { name: name, type: "base" },
+            view: view,
+            context: context,
+            model: context.get("model"),
+            viewName: "default" // override view name
+        });
+
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
     });
 
 })(SUGAR.App);

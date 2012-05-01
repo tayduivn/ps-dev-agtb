@@ -53,13 +53,16 @@ var SugarTest = {};
     // Only certain tests want seeded meta data so those suites can 
     // load this in there respective beforeEach:
     // SugarTest.seedMetadata();
-    test.seedMetadata = function() {
+    test.seedMetadata = function(useJSMetadata) {
+        var meta = null;
         this.seedApp();
         SugarTest.metadata = SugarTest.loadFixture("metadata");
-        SugarTest.app.metadata.set(SugarTest.metadata);
         SugarTest.dm = SUGAR.App.data;
+
+        meta = (useJSMetadata) ? fixtures.metadata : SugarTest.metadata;
+        SugarTest.app.metadata.set(meta);
         SugarTest.dm.reset();
-        SugarTest.dm.declareModels(SugarTest.metadata);
+        SugarTest.dm.declareModels(meta);
     };
 
     test.seedApp = function() {

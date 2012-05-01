@@ -419,17 +419,17 @@ class User extends Person {
 
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
-	
+
 	/**
      * incrementETag
-     * 
-     * This function increments any ETag seed needed for a particular user's 
-     * UI. For example, if the user changes their theme, the ETag seed for the 
+     *
+     * This function increments any ETag seed needed for a particular user's
+     * UI. For example, if the user changes their theme, the ETag seed for the
      * main menu needs to be updated, so you call this function with the seed name
      * to do so:
-     * 
+     *
      * UserPreference::incrementETag("mainMenuETag");
-     * 
+     *
      * @param string $tag ETag seed name.
      * @return nothing
      */
@@ -441,13 +441,13 @@ class User extends Person {
     	$val++;
     	$this->setPreference($tag, $val, 0, "ETag");
     }
-    
+
     /**
      * getETagSeed
-     * 
-     * This function is a wrapper to encapsulate getting the ETag seed and 
+     *
+     * This function is a wrapper to encapsulate getting the ETag seed and
      * making sure it's sanitized for use in the app.
-     * 
+     *
      * @param string $tag ETag seed name.
      * @return integer numeric value of the seed
      */
@@ -458,7 +458,7 @@ class User extends Person {
     	}
     	return $val;
     }
-	
+
 
    /**
     * Get WHERE clause that fetches all users counted for licensing purposes
@@ -867,7 +867,7 @@ EOQ;
 		$name = $db->quote($name);
 		$query = "SELECT * from users where user_name='$name'";
 		if(!empty($where)) {
-		    $query .= "AND $where";
+		    $query .= " AND $where";
 		}
 		$result = $db->limitQuery($query,0,1,false);
 		if(!empty($result)) {
@@ -877,6 +877,24 @@ EOQ;
 		    }
 		}
 		return false;
+	}
+
+	/**
+	 * Sets new password and resets password expiration timers
+	 * @param string $new_password
+	 */
+	public function setNewPassword($new_password, $system_generated = '0')
+	{
+        $user_hash = self::getPasswordHash($new_password);
+        $this->setPreference('loginexpiration','0');
+	    $this->setPreference('lockout','');
+		$this->setPreference('loginfailed','0');
+		$this->savePreferencesToDB();
+        //set new password
+        $now = TimeDate::getInstance()->nowDb();
+		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
+		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
+        $_SESSION['hasExpiredPassword'] = '0';
 	}
 
 	/**
@@ -904,8 +922,6 @@ EOQ;
 		    return false;
 		}
 
-		$old_user_hash = strtolower(md5($user_password));
-
 		if (!$current_user->isAdminForModule('Users')) {
 			//check old password first
 			$row = self::findUserPassword($this->user_name, md5($user_password));
@@ -916,13 +932,7 @@ EOQ;
 			}
 		}
 
-        $user_hash = self::getPasswordHash($new_password);
-        $this->setPreference('loginexpiration','0');
-        //set new password
-        $now = TimeDate::getInstance()->nowDb();
-		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
-		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
-        $_SESSION['hasExpiredPassword'] = '0';
+		$this->setNewPassword($new_password, $system_generated);
 		return true;
 	}
 
@@ -1881,8 +1891,8 @@ EOQ;
 				if (!copy($file, $newfile)) {
 		   			global $app_strings;
 		        	$GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
-		
-				}	
+
+				}
 			}
 		}
 
@@ -2196,15 +2206,7 @@ EOQ;
             $emailObj->save();
             if (!isset($additionalData['link']) || $additionalData['link'] == false)
             {
-                $user_hash = strtolower(md5($additionalData['password']));
-                $this->setPreference('loginexpiration', '0');
-                $this->setPreference('lockout', '');
-                $this->setPreference('loginfailed', '0');
-                $this->savePreferencesToDB();
-                //set new password
-                $now=TimeDate::getInstance()->nowDb();
-                $query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='1', pwd_last_changed='$now' where id='$this->id'";
-                $this->db->query($query, true, "Error setting new password for $this->user_name: ");
+                $this->setNewPassword($additionalData['password'], '1');
             }
         }
 

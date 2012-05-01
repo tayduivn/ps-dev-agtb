@@ -38,8 +38,8 @@ class SugarPortalModule{
 		$this->name = $moduleNames[strtolower($module)];
 		$this->module = $module;
 		
-		$views = array('edit.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_EDITVIEW'] , 'type'=>'edit'),
-					   'detail.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_DETAILVIEW'] , 'type'=>'detail'),
+		$views = array('edit.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_EDITVIEW'] , 'type'=>'editView'),
+					   'detail.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_DETAILVIEW'] , 'type'=>'detailView'),
 					   'list.php'=>array('name'=>$GLOBALS['mod_strings']['LBL_LISTVIEW'] , 'type'=>'list'),);
 		$path = 'modules/'.$this->module.'/metadata/portal/views/';
 		foreach($views as $file => $def) {

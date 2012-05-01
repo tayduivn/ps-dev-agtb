@@ -4,13 +4,11 @@ describe("View Manager", function() {
 
     describe("should be able to create instances of Field class", function() {
 
-        var bean, collection, context, view;
+        var bean, collection, context, view, fields;
 
         beforeEach(function() {
+            SugarTest.seedMetadata(true);
             app = SugarTest.app;
-
-            app.metadata.set(fixtures.metadata);
-            app.data.declareModels(fixtures.metadata);
 
             //Need a sample Bean
             bean = app.data.createBean("Contacts", {
@@ -28,17 +26,17 @@ describe("View Manager", function() {
                 collection: collection
             });
 
-            view = {
-                name: "test"
-            };
-            app.view.fields = {};
+            view = new app.view.View({ name: "test" });
+
+            fields = app.view.fields;
         });
 
         afterEach(function() {
-            bean = null, collection = null, context = null, view = null;
+            app.view.fields = fields;
         });
 
         it("with default template", function() {
+            var fieldId = app.view.getFieldId();
             var result = app.view.createField({
                 def: {
                     type: 'addresscombo',
@@ -54,8 +52,11 @@ describe("View Manager", function() {
             expect(result.type).toEqual("addresscombo");
             expect(result.name).toEqual("address");
             expect(result.label).toEqual("Address");
+            expect(result.context).toEqual(context);
             expect(result.fieldDef).toEqual(fixtures.metadata.modules["Contacts"].fields["address"]);
-
+            expect(result.model).toEqual(bean);
+            expect(result.sfId).toEqual(fieldId + 1);
+            expect(view.fields[result.sfId]).toEqual(result);
         });
 
         it("of custom class", function() {
@@ -76,7 +77,6 @@ describe("View Manager", function() {
             expect(result).toBeDefined();
             expect(result instanceof app.view.fields.AddresscomboField).toBeTruthy();
             expect(result.foo).toEqual("foo");
-
         });
 
         it("of custom class with controller", function() {
@@ -93,6 +93,31 @@ describe("View Manager", function() {
             expect(app.view.fields.TextField).toBeDefined();
             expect(result instanceof app.view.fields.TextField).toBeTruthy();
             expect(result.customCallback).toBeDefined();
+
+            // Checking fall back algorithm
+            expect(result.label).toEqual('description');
+        });
+
+        it("and use another template than the view name", function() {
+
+            var detailView = new app.view.View({ name: "detail" });
+            var opts = {
+                def: {
+                    type: 'base',
+                    name: "name"
+                },
+                context: context,
+                view: detailView,
+                viewName: "default"
+            };
+
+            var field = app.view.createField(opts);
+            expect(field).toBeDefined();
+            field._loadTemplate();
+
+            var ctx = { value: "a value" };
+
+            expect(field.template(ctx)).toEqual(Handlebars.templates["f.base.default"](ctx));
         });
 
     });

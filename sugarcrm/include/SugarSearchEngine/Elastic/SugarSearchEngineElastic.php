@@ -327,7 +327,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $queryObj->setAnalyzeWildcard(true);
             $queryObj->setAutoGeneratePhraseQueries(false);
             if( !empty($options['append_wildcard']) )
-                $queryObj->setRewrite('top_terms_boost_5');
+                // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
+                $queryObj->setRewrite('top_terms_5');
             
             // set query string fields
             $fields = $this->getSearchFields($options);

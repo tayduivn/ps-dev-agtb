@@ -29,8 +29,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $module_name = '<module_name>';
 $viewdefs[$module_name]['mobile']['view']['list'] = array(
-    array(
-        'panels' => array(
+    'panels' => array(
+        array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
@@ -39,6 +39,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+                    'related_fields' => array('first_name', 'last_name', 'salutation'),
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(

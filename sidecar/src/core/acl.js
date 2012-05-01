@@ -34,6 +34,7 @@
          * @param {String} [fieldName]
          */
         hasAccess: function(action, model, fieldName) {
+            if (!model) return true;
             //TODO Update this to get apps current user id
             //TODO Also add override for app full admins remember to add a test this means you
             // get current users ID

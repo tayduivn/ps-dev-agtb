@@ -118,7 +118,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
 
         $origPanels = $this->getOriginalPanelDefs();
         foreach ($origPanels as $panel) {
-            if (isset($panel['fields'])) {
+            if (is_array($panel) && isset($panel['fields']) && is_array($panel['fields'])) {
                 foreach ($panel['fields'] as $field) {
                     if (isset($field['name']) && !$this->panelHasField($field['name']) || (isset($field['enabled']) && $field['enabled'] == false)) {
                         $availableFields[$field['name']] = $field;

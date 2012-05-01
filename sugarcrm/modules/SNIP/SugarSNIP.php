@@ -170,7 +170,7 @@ class SugarSNIP
 
         $request = array (
                         'user' => $snipuser->user_name,
-                        'password' => $snipuser->authenticate_id,
+                        'password' => '', //$snipuser->authenticate_id,
                         'client_api_url' => $this->getURL(),
                         'license' => $license,
             );
@@ -233,7 +233,8 @@ class SugarSNIP
         $snipuser = $this->getSnipUser();
         $request = array (
                         'user' => $snipuser->user_name,
-                        'password' => $snipuser->user_hash);
+                        'password' => '', //$snipuser->authenticate_id,
+        );
         $consumer = $this->getSnipConsumer();
         if(!empty($consumer)) {
             $request['consumer_key'] = $consumer->c_key;
@@ -419,6 +420,7 @@ class SugarSNIP
         $token = OAuthToken::createAuthorized($consumer, $user);
         $user->authenticate_id = $token->token;
         $user->save();
+        return $token;
     }
 
     /**

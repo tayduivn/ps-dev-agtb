@@ -186,7 +186,7 @@ class AdministrationController extends SugarController
 		 {
 		     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 		 }
-
+        $GLOBALS['log']->fatal("*** SAVING ");
     	 try {
 	    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
 	    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
@@ -199,8 +199,22 @@ class AdministrationController extends SugarController
              $this->cfg = new Configurator();
              $this->cfg->config['full_text_engine'] = '';
              $this->cfg->saveConfig();
-             $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port));
+             $ftsConnectionValid = TRUE;
+
+             if( !empty($type) )
+             {
+                 //Check if the connection is valid on save:
+                 $config = array('port' => $port, 'host' => $host);
+                 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+                 $searchEngine = SugarSearchEngineFactory::getInstance($type, $config);
+                 $result = $searchEngine->getServerStatus();
+                 if( !$result['valid'] )
+                     $ftsConnectionValid = FALSE;
+             }
+
+             $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port, 'valid' => $ftsConnectionValid));
              $this->cfg->handleOverride();
+
              //END SUGARCRM flav=pro ONLY
 	    	 echo "true";
     	 } catch (Exception $ex) {

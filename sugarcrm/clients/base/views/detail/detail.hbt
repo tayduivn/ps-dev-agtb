@@ -1,7 +1,6 @@
 <div class="subnav">
     <div class="btn-toolbar pull-left">
-        {{log this}}
-      <h1><a href='#{{context.state.module}}'>{{context.state.module}}</a> {{name}}</h1>
+      <h1>{{getFieldByName context this "name"}}</h1>
     </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group">
@@ -21,6 +20,12 @@
                     {{#each fields}}
                         {{field ../../context ../../this ../../model}}
                     {{/each}}
+                <span class="extend">
+                  <div class="row-fluid">
+                    <a class="more hide">More  <i class="icon-chevron-down"></i></a>
+                    <a class="less hide">Less  <i class="icon-chevron-up"></i></a>
+                  </div>
+                </span>
                 </div>
         {{/each}}
         </form>

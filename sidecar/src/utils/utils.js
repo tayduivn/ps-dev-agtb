@@ -50,11 +50,11 @@
             var numberArray = numberString.split("."),
                 regex = /(\d+)(\d{3})/;
 
-            while (numberGroupSeperator != '' && regex.test(numberArray[0])) {
+            while (numberGroupSeperator !== '' && regex.test(numberArray[0])) {
                 numberArray[0] = numberArray[0].toString().replace(regex, '$1' + numberGroupSeperator + '$2');
             }
 
-            return numberArray[0] + (numberArray.length > 1 && numberArray[1] != '' ? decimalSeperator + numberArray[1] : '');
+            return numberArray[0] + (numberArray.length > 1 && numberArray[1] !== '' ? decimalSeperator + numberArray[1] : '');
         },
 
         /**
@@ -67,12 +67,12 @@
          */
         unformatNumberString: function(numberString, numberGroupSeperator, decimalSeperator, toFloat) {
             toFloat = toFloat || false;
-            if (typeof numberGroupSeperator == 'undefined' || typeof decimalSeperator == 'undefined') {
+            if (typeof numberGroupSeperator === 'undefined' || typeof decimalSeperator === 'undefined') {
                 return numberString;
             }
 
             // parse out number group seperators
-            if (numberGroupSeperator != '') {
+            if (numberGroupSeperator !== '') {
                 var num_grp_sep_re = new RegExp('\\' + numberGroupSeperator, 'g');
                 numberString = numberString.replace(num_grp_sep_re, '');
             }
@@ -97,16 +97,20 @@
              * @return {Object} javascript date object
              */
             parse: function(date, oldFormat) {
+                var jsDate     = new Date("Jan 1, 1970 00:00:00"),
+                    part       = "",
+                    dateRemain, j, c, i, v, timeformat;
+
                 //if already a Date return it
                 if (date instanceof Date) return date;
 
                 // TODO add user prefs support
 
-                if (oldFormat == null || oldFormat == "") {
+                if (!oldFormat) {
                     oldFormat = this.guessFormat(date);
                 }
 
-                if (oldFormat == false) {
+                if (oldFormat === false) {
                     //Check if date is a timestamp
                     if (/^\d+$/.test(date)) {
                         return new Date(date);
@@ -116,16 +120,14 @@
                     return false;
                 }
 
-                var jsDate = new Date("Jan 1, 1970 00:00:00");
-                var part = "";
-                var dateRemain = $.trim(date);
+                dateRemain = $.trim(date);
                 oldFormat = $.trim(oldFormat) + " "; // Trailing space to read as last separator.
-                for (var j = 0; j < oldFormat.length; j++) {
-                    var c = oldFormat.charAt(j);
-                    if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
-                        var i = dateRemain.indexOf(c);
-                        if (i == -1) i = dateRemain.length;
-                        var v = dateRemain.substring(0, i);
+                for (j = 0; j < oldFormat.length; j++) {
+                    c = oldFormat.charAt(j);
+                    if (c === ':' || c === '/' || c === '-' || c === '.' || c === " " || c === 'a' || c === "A") {
+                        i = dateRemain.indexOf(c);
+                        if (i === -1) i = dateRemain.length;
+                        v = dateRemain.substring(0, i);
                         dateRemain = dateRemain.substring(i + 1);
                         switch (part) {
                             case 'm':
@@ -137,26 +139,31 @@
                                 jsDate.setDate(v);
                                 break;
                             case 'Y':
-                                if (!(v > 0)) return false;
+                                if (v > 0 === false) return false;
                                 jsDate.setYear(v);
                                 break;
                             case 'h':
                                 //Read time, assume minutes are at end of date string (we do not accept seconds)
-                                var timeformat = oldFormat.substring(oldFormat.length - 4);
-                                if (timeformat.toLowerCase() == "i a " || timeformat.toLowerCase() == c + "ia ") {
-                                    if (dateRemain.substring(dateRemain.length - 2).toLowerCase() == 'pm') {
+                                timeformat = oldFormat.substring(oldFormat.length - 4);
+                                if (timeformat.toLowerCase() === "i a " || timeformat.toLowerCase() === c + "ia ") {
+                                    if (dateRemain.substring(dateRemain.length - 2).toLowerCase() === 'pm') {
                                         v = v * 1;
                                         if (v < 12) {
                                             v += 12;
                                         }
                                     }
                                 }
+                                jsDate.setHours(v);
+                                break;
                             case 'H':
                                 jsDate.setHours(v);
                                 break;
                             case 'i':
                                 v = v.substring(0, 2);
                                 jsDate.setMinutes(v);
+                                break;
+                            case 's':
+                                jsDate.setSeconds(v);
                                 break;
                         }
                         part = "";
@@ -173,70 +180,70 @@
              * @return {string}
              */
             guessFormat: function(date) {
-                if (typeof date != "string")
+                if (typeof date !== "string")
                     return false;
                 //Is there a time
-                var time = "";
-                if (date.indexOf(" ") != -1) {
+                var time = "", dateSep, dateParts, dateFormat, timeFormat, timeParts,
+                    timeSep, ampmCase, timeEnd;
+
+                if (date.indexOf(" ") !== -1) {
                     time = date.substring(date.indexOf(" ") + 1, date.length);
                     date = date.substring(0, date.indexOf(" "));
                 }
 
                 //First detect if the date contains "-" or "/"
-                var dateSep = "/";
-                if (date.indexOf("/") != -1) {
+                dateSep = "/";
+                if (date.indexOf("/") !== -1) {
                 }
-                else if (date.indexOf("-") != -1) {
+                else if (date.indexOf("-") !== -1) {
                     dateSep = "-";
                 }
-                else if (date.indexOf(".") != -1) {
+                else if (date.indexOf(".") !== -1) {
                     dateSep = ".";
                 }
                 else {
                     return false;
                 }
 
-                var dateParts = date.split(dateSep);
-                var dateFormat = "";
+                dateParts = date.split(dateSep);
+                dateFormat = "";
 
-                if (dateParts[0].length == 4) {
+                if (dateParts[0].length === 4) {
                     dateFormat = "Y" + dateSep + "m" + dateSep + "d";
                 }
-                else if (dateParts[2].length == 4) {
+                else if (dateParts[2].length === 4) {
                     dateFormat = "m" + dateSep + "d" + dateSep + "Y";
                 }
                 else {
                     return false;
                 }
 
-                var timeFormat = "";
-
-
-                var timeParts = [];
+                timeFormat = "";
+                timeParts = [];
 
                 // Check for time
-                if (time != "") {
+                if (time !== "") {
 
                     // start at the i, we always have minutes
                     timeParts.push("i");
 
-                    var timeSep = ":";
+                    timeSep = ":";
 
-                    if (time.indexOf(".") == 2) {
+                    if (time.indexOf(".") === 2) {
                         timeSep = ".";
                     }
 
                     // if its long we have seconds
-                    if (time.split(timeSep).length == 3) {
+                    if (time.split(timeSep).length === 3) {
                         timeParts.push("s");
                     }
-                    var ampmCase = '';
+                    ampmCase = '';
 
                     // check for am/pm
-                    var timeEnd = time.substring(time.length - 2, time.length);
-                    if (timeEnd.toLowerCase() == "am" || timeEnd.toLowerCase() == "pm") {
+                    timeEnd = time.substring(time.length - 2, time.length);
+                    if (timeEnd.toLowerCase() === "am" || timeEnd.toLowerCase() === "pm") {
                         timeParts.unshift("h");
-                        if (timeEnd.toLowerCase() == timeEnd) {
+                        if (timeEnd.toLowerCase() === timeEnd) {
                             ampmCase = 'lower';
                         } else {
                             ampmCase = 'upper';
@@ -248,14 +255,14 @@
                     timeFormat = timeParts.join(timeSep);
 
                     // check for space between am/pm and time
-                    if (time.indexOf(" ") != -1) {
+                    if (time.indexOf(" ") !== -1) {
                         timeFormat += " ";
                     }
 
                     // deal with upper and lowercase am pm
-                    if (ampmCase && ampmCase == 'upper') {
+                    if (ampmCase && ampmCase === 'upper') {
                         timeFormat += "A";
-                    } else if (ampmCase && ampmCase == 'lower') {
+                    } else if (ampmCase && ampmCase === 'lower') {
                         timeFormat += "a";
                     }
 
@@ -274,16 +281,16 @@
             format: function(date, format) {
                 if (!date) return "";
                 // TODO: add support for userPrefs
-                var out = "";
-                for (var i = 0; i < format.length; i++) {
-                    var c = format.charAt(i);
+                var out = "", i, c, d, h, m, s;
+                for (i = 0; i < format.length; i++) {
+                    c = format.charAt(i);
                     switch (c) {
                         case 'm':
-                            var m = date.getMonth() + 1;
+                            m = date.getMonth() + 1;
                             out += m < 10 ? "0" + m : m;
                             break;
                         case 'd':
-                            var d = date.getDate();
+                            d = date.getDate();
                             out += d < 10 ? "0" + d : d;
                             break;
                         case 'Y':
@@ -291,16 +298,16 @@
                             break;
                         case 'H':
                         case 'h':
-                            var h = date.getHours();
-                            if (c == "h") h = h > 12 ? h - 12 : h;
+                            h = date.getHours();
+                            if (c === "h") h = h > 12 ? h - 12 : h;
                             out += h < 10 ? "0" + h : h;
                             break;
                         case 'i':
-                            var m = date.getMinutes();
+                            m = date.getMinutes();
                             out += m < 10 ? "0" + m : m;
                             break;
                         case 's':
-                            var s = date.getSeconds();
+                            s = date.getSeconds();
                             out += s < 10 ? "0" + s : s;
                             break;
                         case 'a':
@@ -344,7 +351,7 @@
                 }
                 else {
                     min = 0;
-                    date.setHours(date.getHours() + 1)
+                    date.setHours(date.getHours() + 1);
                 }
 
                 date.setMinutes(min);
@@ -360,9 +367,9 @@
              * @param {Number} exdays days until expiration
              */
             setCookie: function setCookie(cName, value, exdays) {
-                var exdate = new Date();
+                var exdate = new Date(), c_value;
                 exdate.setDate(exdate.getDate() + exdays);
-                var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+                c_value = escape(value) + ((exdays === null) ? "" : "; expires=" + exdate.toUTCString());
                 document.cookie = cName + "=" + c_value;
             },
 
@@ -377,7 +384,7 @@
                     x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
                     y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
                     x = x.replace(/^\s+|\s+$/g, "");
-                    if (x == cName) {
+                    if (x === cName) {
                         return unescape(y);
                     }
                 }

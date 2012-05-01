@@ -285,10 +285,14 @@ SUGAR.append(SUGAR.themes, {
 
     },
     resizeMenu: function () {
+        //Bug#52433: Prevent calling resizeMenu before basic theme is initialized
+        if(typeof sugar_theme_gm_current == "undefined") return;
+
 	    var maxMenuWidth = $("#dcmenu").width() - 40 //40px: misc. padding and border lines
             - $("#quickCreate").width() - $("#globalLinksModule").width() - $("#dcmenuSugarCube").width() - $("#dcmenuSearchDiv").width();
 		var currentModuleList = $("#themeTabGroupMenu_" + sugar_theme_gm_current),
-            menuItemsWidth = SUGAR.themes.menuItemsWidth || currentModuleList.width();
+            menuItemsWidth = SUGAR.themes.menuItemsWidth || currentModuleList.width(),
+            _ie_adjustment = 10;
         SUGAR.themes.menuItemsWidth = menuItemsWidth;
 
         var menuItems = currentModuleList.children("li");
@@ -305,9 +309,10 @@ SUGAR.append(SUGAR.themes, {
                     menuNode = menuNode.prev();
                 }
                 if($.browser.msie) {
-                    menuNode.attr("width", menuNode.width());
-                    menuItemsWidth -= menuNode.width();
+                    menuNode.attr("width", menuNode.outerWidth());
+                    menuItemsWidth -= menuNode.outerWidth();
                     moreNode.prepend(menuNode);
+                    currentModuleList.width(menuItemsWidth + _ie_adjustment);
                     SUGAR.themes.menuItemsWidth = menuItemsWidth;
                 } else {
                     moreNode.prepend(menuNode);
@@ -338,6 +343,7 @@ SUGAR.append(SUGAR.themes, {
                     menuItemsWidth += parseInt(menuNodeWidth);
                     insertNode.before(menuNode);
                     SUGAR.themes.menuItemsWidth = menuItemsWidth;
+                    currentModuleList.width(menuItemsWidth + _ie_adjustment);
                 } else {
                     insertNode.before(menuNode);
                     menuItemsWidth = currentModuleList.width();

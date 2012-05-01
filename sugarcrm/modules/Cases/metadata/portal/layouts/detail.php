@@ -5,13 +5,13 @@ $viewdefs['Cases']['portal']['layout']['detail'] = array(
     array(
         0 =>
         array(
-            'view' => 'header',
+            'view' => 'detail',
         ),
         1 =>
         array(
-            'view' => 'detail',
+            'view' => 'activity',
         ),
-        2 =>
+        3 =>
         array(
             'view' => 'subpanel',
         ),

@@ -87,7 +87,8 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $schedulerCompleted = SugarSearchEngineFullIndexer::isFTSIndexScheduleCompleted($schedulerID);
         $hide_fts_config = isset( $GLOBALS['sugar_config']['hide_full_text_engine_config'] ) ? $GLOBALS['sugar_config']['hide_full_text_engine_config'] : FALSE;
 
-        $showSchedButton = ($defaultEngine != '' && $hide_fts_config) ? TRUE : FALSE;
+        $showSchedButton = ($defaultEngine != '' && $this->isFTSConnectionValid()) ? TRUE : FALSE;
+
         $sugar_smarty->assign("showSchedButton", $showSchedButton);
         $sugar_smarty->assign("hide_fts_config", $hide_fts_config);
         $sugar_smarty->assign("fts_type", get_select_options_with_id($app_list_strings['fts_type'], $defaultEngine));
@@ -106,5 +107,15 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         echo $sugar_smarty->fetch($tpl);
 
     }
+
+    protected function isFTSConnectionValid()
+    {
+        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+        $searchEngine = SugarSearchEngineFactory::getInstance();
+        $result = $searchEngine->getServerStatus();
+        if($result['valid'])
+            return TRUE;
+        else
+            return FALSE;
+    }
 }
-?>

@@ -25,4 +25,22 @@ describe("Bean", function() {
         bean = dm.createBean(moduleName);
         expect(bean.get("field_0")).toEqual(100);
     });
+
+    it("should be able to create a collection of related beans", function() {
+        dm.declareModels(metadata);
+        var opportunity = dm.createBean("Opportunities");
+        opportunity.id = "opp-1";
+
+        var contacts = opportunity.getRelatedCollection("contacts");
+
+        expect(contacts.module).toEqual("Contacts");
+        expect(contacts.link).toBeDefined();
+        expect(contacts.link.name).toEqual("contacts");
+        expect(contacts.link.bean).toEqual(opportunity);
+
+        // Make sure we get the same instance (cached)
+        expect(opportunity.getRelatedCollection("contacts")).toEqual(contacts);
+    });
+
+
 });

@@ -67,7 +67,24 @@
          * A list of metadata types to fetch by default.
          * @cfg {Array}
          */
-        metadataTypes: []
+        metadataTypes: [],
+        /**
+         * Hash of addtional views of the format below to init and render on app start
+         ** <pre><code>
+         *         additionalComponents: {
+         *            viewName: {
+         *                target: 'CSSDomselector'
+         *            }
+         *        }
+         * </pre></code>
+         * @cfg {Array}
+         */
+        additionalComponents: {
+            header: {
+                target: '#header'
+            }
+        }
+
 
     }, false);
 

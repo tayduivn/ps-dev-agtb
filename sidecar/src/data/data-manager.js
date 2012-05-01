@@ -143,13 +143,6 @@
             var model = this.beanModel.extend({
                 defaults: defaults,
                 /**
-                 * TODO: Documentation required
-                 * @member Data.Bean
-                 * @property {Object}
-                 *
-                 */
-                sugarFields: {},
-                /**
                  * Module name.
                  * @member Data.Bean
                  * @property {String}
@@ -300,9 +293,11 @@
          *
          * <pre><code>
          * // Create contacts collection for an existing opportunity.
-         * var contact = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
+         * var contacts = SUGAR.App.data.createRelatedCollection(opportunity, "contacts");
          * contacts.fetch({ relate: true });
          * </code></pre>
+         *
+         * The newly created collection is cached in the given bean instance.
          *
          * @param {Data.Bean} bean the related beans are linked to the specified bean
          * @param {String} link relationship link name
@@ -312,7 +307,7 @@
             var name = bean.fields[link].relationship;
             var relationship = bean.relationships[name];
             var relatedModule = relationship.lhs_module == bean.module ? relationship.rhs_module : relationship.lhs_module;
-            return this.createBeanCollection(relatedModule, undefined, {
+            var collection = this.createBeanCollection(relatedModule, undefined, {
                 /**
                  * Link information.
                  *
@@ -330,6 +325,9 @@
                     bean: bean
                 }
             });
+
+            bean._setRelatedCollection(link, collection);
+            return collection;
         },
 
         /**
@@ -339,6 +337,8 @@
          * @param options(optional) standard Backbone options as well as Sugar specific options
          */
         sync: function(method, model, options) {
+            var self = this;
+
             app.logger.trace('remote-sync-' + (options.relate ? 'relate-' : '') + method + ": " + model);
 
             options = options || {};
@@ -374,7 +374,9 @@
                         // Reset the flag to indicate that fetched relationship(s) do exist.
                         model.link.isNew = false;
                         // The response for create/update/delete relationship contains updated beans
-                        if (model.link.bean) model.link.bean.set(data.record);
+                        if (model.link.bean) {
+                            model.link.bean.set(data.record);
+                        }
                         data = data.relatedRecord;
                         // Attributes will be set automatically for create/update but not for delete
                         // Also, break the link
@@ -389,7 +391,7 @@
             };
 
             var error = function(xhr, error) {
-                app.error.handleHTTPError(xhr, error);
+                app.error.handleHTTPError(xhr, error, self);
 
                 if (options.error) {
                     options.error(xhr, error);

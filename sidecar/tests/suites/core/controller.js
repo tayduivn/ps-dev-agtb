@@ -12,9 +12,7 @@ describe("Controller", function() {
                 params = {
                     module: "Contacts",
                     layout: "list"
-                },
-                mock = sinon.mock(app.controller.$el),
-                expection = mock.expects("html");
+                };
 
             SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts.*/,
                 [200, {  "Content-Type":"application/json"},
@@ -28,7 +26,6 @@ describe("Controller", function() {
             expect(app.controller.context.get().collection).toBeDefined();
             expect(app.controller.context.get().collection.models.length).toEqual(2);
 
-            mock.verify();
         });
     });
 });

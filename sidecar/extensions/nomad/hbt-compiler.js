@@ -46,11 +46,11 @@ var compileTemplate = function(path, callback) {
             var tplName = null;
             if (parts[pos] == "fields") {
                 field = parts[pos + 1];
-                tplName = "sugarField." + field + ".";
+                tplName = "f." + field + ".";
             }
             else if (parts[pos + 1] == "buttons") {
                 field = parts[pos + 2].replace(".hbt", "") + "Button";
-                tplName = "sugarField." + field + ".";
+                tplName = "f." + field + ".";
             }
 
             var name = parts.reverse()[0].replace(".hbt", "");

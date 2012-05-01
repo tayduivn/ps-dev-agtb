@@ -1,43 +1,64 @@
 (function(app) {
 
     /**
-     * SugarField widget. A sugarfield widget is a low level field widget. Some examples of sugarfields are
+     * SugarField widget. A field widget is a low level field widget. Some examples of fields are
      * text boxes, date pickers, drop down menus.
      *
      * ##Creating a SugarField
-     * SugarCRM allows for customized "sugarfields" which are visual representations of a type of data (e.g. url would
+     * SugarCRM allows for customized "fields" which are visual representations of a type of data (e.g. url would
      * be displayed as a hyperlink).
      *
      * ###Anatomy of a SugarField
-     * Sugarfield files resides in the **`sugarcrm/include/SugarFields/{{SUGARFIELD_NAME}}`** folder.
+     * Field files reside in the **`sugarcrm/clients/base/fields/{field_type}`** folder.
      *
-     * Inside the {{SUGARFIELD_NAME}} directory are different folders of the SugarField which correspond to their respective supported
-     * views. A typical directory structure will look like the following:
+     * Inside the {field_type} directory is a set of files that define templates for different views and field controller.
+     * A typical directory structure will look like the following:
      * <pre>
-     * SugarField
-     * |- portal
-     *   |-default.js
-     *   |-sugarField.js
-     *   |-editView.hbt
-     *   |-detailView.hbt
-     * |- mobile
-     *   |-sugarField.js
-     *   |-editView.hbt
+     * clients
      * |- base
-     *   |-sugarField.js
-     *   |-listFiew.hbt
+     *    |- bool
+     *       |- bool.js
+     *       |- detail.hbt
+     *       |- edit.hbt
+     *       |- list.hbt
+     *    |- int
+     *       ...
+     *    |- text
+     *       ...
+     * |- portal
+     *    |- portal specific overrides
+     * |- mobile
+     *    |- mobile specific overrides
      * </pre>
-     * **`sugarField.js`** contains the controller for your SugarField; this includes event handlers and necessary data
-     * bindings.
+     * **`[sugarFieldType].js`** files are optional.
+     * Sometimes a SugarField needs to do more than just display a simple input element, other times input elements
+     * need additional data such as drop down menu choices. To support advanced functionality, just add your additional
+     * controller logic to **`[sugarFieldType].js`** javascript file where sugarFieldType is the type of the SugarField.
+     * Example for `bool.js` controller:
      * <pre><code>
-     * var controller = {
+     * ({
      *    events: {
-     *        handler: function() {}
+     *         handler: function() {
+     *             // Actions
+     *         }
+     *    },
+     *
+     *    initialize: function() {
+     *       this.base.initialize();
+     *    },
+     *
+     *    unformat:function(value){
+     *        value = this.el.children[0].children[1].checked ? "1" : "0";
+     *        return value;
+     *    },
+     *    format:function(value){
+     *        value = (value == "1") ? true : false;
+     *        return value;
      *    }
-     * }
+     * })
      * </code></pre>
      *
-     * **`viewName.hbt`** contains your templates corresponding to the type of {@link View.View} the SugarField is to be displayed on.
+     * **`.hbt`** files contain your templates corresponding to the type of {@link View.View} the field is to be displayed on.
      * Sugar uses Handlebars.js as its client side template of choice. At this time no other templating engines are
      * supported. Sample:
      * <pre><code>
@@ -47,110 +68,119 @@
      * These files will be used by the metadata manager to generate metadata for your SugarFields and pass them onto the
      * Sugar JavaScript client.
      *
-     * ###Advanced SugarFields
-     * Sometimes a SugarField needs to do more than just display a simple input element, other times input elements
-     * additional data such as drop down menu choices. To support advanced functionality, just add your additional
-     * controller logic to **`sugarField.js`** javascript file where sugarfield is the name of the SugarField.
-     * <pre><code>
-     * ({
-     *     events: {
-     *         handler: function() {
-     *             // Actions
-     *         }
-     *     },
-     *
-     *     initialize: function() {
-     *        this.parent.initialize();
-     *     },
-     *
-     *     format: function() {
-     *         return // Some formatted option;
-     *     }
-     * })
      * </pre></code>
      *
      * ####SugarField Template Values
+     * TODO:
      *
      *
-     * @class View.SugarField
+     * @class View.Field
      */
     app.view.Field = app.view.Component.extend({
         /**
-         * Reference to the application
-         * @property {Object}
+         * Reference to the application instance.
+         * @property {App}
          */
         app: app,
 
         /**
-         * Reference to the parent constructor
+         * Reference to the parent constructor.
          * @property {Object}
+         * TODO: Do we really need this? One can use app.view.Field.prototype.initialize.call instead
          */
-        parent: this,
+        base: this,
 
         /**
-         * Type of sugarField
+         * HTML tag of the field.
          * @property {String}
          */
-        fieldType: "input",
-
-        /**
-         * Id of the SugarField
-         * TODO: This is a shared property on the SugarField
-         * @property {Number}
-         */
-        sfid: -1,
+        fieldTag: "input",
 
         initialize: function(options) {
-            // Here options.def is field viewdef (name, type, label)
+            // Here options.def is field viewdef (name, type, optional label, etc.)
             _.extend(this, options.def);
 
+            /**
+             * ID of the field (autogenerated).
+             * @property {Number}
+             * @member View.Field
+             */
+            this.sfId = options.sfId;
+
+            /**
+             * Reference to view this field attached to.
+             * @property {View.View}
+             * @member View.Field
+             */
             this.view = options.view;
-            this.viewName = this.view.name;
+
+            /**
+             * Widget metadata (templates and controller).
+             * @property {Object}
+             * @member View.Field
+             */
             this.meta = options.meta;
+
+            /**
+             * Label key (used for i18n).
+             * @property {String}
+             * @member View.Field
+             */
+            this.label = this.label || this.name;
 
             // this is experimental to try to see if we can have custom events on sugarfields themselves.
             // the following line doesn't work, need to _.extend it or something.
             // this.events = this.meta.events;
 
-            this.bindModelChange(options.context, options.model || options.context.get("model"));
+            this.bindModelChange(options.context, options.model);
 
             // Set module field definition (vardef)
             if (this.model && this.model.fields) {
+                /**
+                 * Field metadata (vardef).
+                 * @property {Object}
+                 * @member View.Field
+                 */
                 this.fieldDef = this.model.fields[this.name];
             }
+
+            /**
+             * Compiled template.
+             * @property {Function}
+             * @member View.Field
+             */
+            this.template = app.template.empty;
         },
 
         /**
-         * Loads template for current sugarField
+         * Loads template for this field.
+         * @private
          */
-        loadTemplate: function() {
+        _loadTemplate: function() {
             var viewFallbackMap = {
-                'edit': 'detail',
-                'detail': 'none'
+                'edit': 'detail'
             };
 
-            if (!(app.acl.hasAccess(this.viewName, this.model, this.name))) {
-                this.viewName = viewFallbackMap[this.viewName];
-                // falling back, but now we need to check your access to the fallback view
-                this.loadTemplate();
+            var viewName = this.options.viewName || this.view.name;
+            while (viewName) {
+                if (app.acl.hasAccess(viewName, this.model, this.name)) break;
+                viewName = viewFallbackMap[viewName];
             }
 
-            var templateKey = "sugarField." + this.type + "." + this.view.name;
+            if (viewName) {
+                var templateKey = "f." + this.type + "." + viewName;
+                var templateSource = null;
 
-            var templateSource = null;
+                if (this.meta) {
+                    templateSource = this.meta.views[viewName] ?
+                        this.meta.views[viewName] :
+                        this.meta.views["default"];
+                }
 
-            if (this.meta) {
-                templateSource = this.meta.views[this.viewName] ?
-                    this.meta.views[this.viewName] :
-                    this.meta.views["default"];
+                this.template = app.template.get(templateKey) ||
+                                app.template.compile(templateSource, templateKey) ||
+                                app.template.empty;
             }
-
-            if (this.viewName == 'none') {
-                this.templateC = function(context){return ''};
-            } else {
-                this.templateC = app.template.get(templateKey) || app.template.compile(templateSource, templateKey);
-            }
-
         },
 
         /**
@@ -183,8 +213,7 @@
                 // If our callbacks / events have not been registered, go ahead and registered.
                 if (!callback && _.isString(eventHandler)) {
                     try {
-                        callback = eval("(" + eventHandler + ")");
-
+                        callback = eval("[" + eventHandler + "][0]");
                         // Store this callback if it is a function. Prefix it with "callback_"
                         if (_.isFunction(callback)) {
                             this["callback_" + handlerName] = callback;
@@ -207,19 +236,21 @@
          * @return {Object} this Reference to the SugarField
          */
         render: function() {
-            this.loadTemplate();
+            this._loadTemplate();
             // If we don't have any data in the model yet
             if (!(this.model instanceof Backbone.Model)) {
                 return null;
             }
 
+            /**
+             * Model property value.
+             * @property {String}
+             * @member View.Field
+             */
             this.value = this.format(this.model.has(this.name) ? this.model.get(this.name) : "");
-            this.$el.html(this.templateC(this));
+            this.$el.html(this.template(this));
 
-            var model = this.model;
-            var field = this.name;
-
-            this.bindDomChange(model, field);
+            this.bindDomChange(this.model, this.name);
 
             return this;
         },
@@ -231,7 +262,7 @@
          */
         bindDomChange: function(model, fieldName) {
             var self = this;
-            var el = this.$el.find(this.fieldType);
+            var el = this.$el.find(this.fieldTag);
             // Bind input to the model
             el.on("change", function(ev) {
                 model.set(fieldName, self.unformat(el.val()));
@@ -239,8 +270,9 @@
         },
 
         /**
-         * Formats values for display
-         * This function is meant to be overridden by a sugarFieldname.js controller class
+         * Formats values for display.
+         *
+         * This function is meant to be overridden by a sugarFieldType.js controller class.
          * @param {Mixed} value
          * @return {Mixed}
          */
@@ -249,8 +281,9 @@
         },
 
         /**
-         * Unformats values for display
-         * This function is meant to be overridden by a sugarFieldname.js controller class
+         * Unformats values for display.
+         *
+         * This function is meant to be overridden by a sugarFieldType.js controller class
          * @param {Mixed} value
          * @return {Mixed}
          */
@@ -265,7 +298,18 @@
          */
         bindModelChange: function(context, model) {
             this.unBind();
+
+            /**
+             * Reference to context.
+             * @property {Core.Context}
+             * @member View.Field
+             */
             this.context = context;
+            /**
+             * Reference to model.
+             * @property {Backbone.Model}
+             * @member View.Field
+             */
             this.model = model;
 
             if (this.model.on) {
@@ -289,4 +333,4 @@
 
     });
 
-}(SUGAR.App));
+})(SUGAR.App);
