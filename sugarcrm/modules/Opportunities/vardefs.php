@@ -257,6 +257,12 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LB_WORST_CASE_VALUE',
     'type' => 'long',
   ),
+  'timeperiod_id' =>
+  array (
+    'name' => 'timeperiod_id',
+    'vname' => 'LBL_TIMEPERIOD_ID',
+    'type' => 'id',
+  ),
   //END SUGARCRM flav=PRO ONLY
   'accounts' =>
   array (
