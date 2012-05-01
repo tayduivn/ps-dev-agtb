@@ -95,7 +95,7 @@
          * @method
          */
         handleError: function(mesg, url, line) {
-            app.logger.error(mesg + " at " + " on line " + line);
+            app.logger.error(mesg + " at " + url + " on line " + line);
         },
 
         /**
