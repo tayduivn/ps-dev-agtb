@@ -5425,6 +5425,8 @@ article:hover {
   -webkit-transition: all .2s linear;
   -moz-transition: all .2s linear;
   transition: all .2s linear;
+  filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/badge_256.png',sizingMethod='scale')";
 }
 .navbar .navbar-inner {
   height: 44px;
