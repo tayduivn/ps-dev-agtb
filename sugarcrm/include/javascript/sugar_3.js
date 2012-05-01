@@ -2354,9 +2354,9 @@ sugarListView.prototype.updateUid = function(cb  , form){
 sugarListView.prototype.check_entire_list = function(form, field, value, list_count) {
 	// count number of items
 	count = 0;
-	document.MassUpdate.massall.checked = true;
-	document.MassUpdate.massall.disabled = true;
-
+    $(document.MassUpdate.massall).each(function(){
+            $(this).attr('checked', true).attr('disabled', true);
+        });
 	for (i = 0; i < form.elements.length; i++) {
 		if(form.elements[i].name == field && form.elements[i].disabled == false) {
 			if(form.elements[i].checked != value) count++;
@@ -2372,14 +2372,17 @@ sugarListView.prototype.check_entire_list = function(form, field, value, list_co
 sugarListView.prototype.check_all = function(form, field, value, pageTotal) {
 	// count number of items
 	count = 0;
-	document.MassUpdate.massall.checked = value;
+    $(document.MassUpdate.massall).each(function(){$(this).attr('checked', value);});
 	if (document.MassUpdate.select_entire_list &&
-		document.MassUpdate.select_entire_list.value == 1) {
+		document.MassUpdate.select_entire_list.value == 1)
+    {
         sugarListView.prototype.toggleSelected();
-		document.MassUpdate.massall.disabled = true;
-	} else
-		document.MassUpdate.massall.disabled = false;
-
+        $(document.MassUpdate.massall).each(function(){$(this).attr('disabled', true);});
+	}
+    else
+    {
+        $(document.MassUpdate.massall).each(function(){$(this).attr('disabled', false);});
+    }
 	for (i = 0; i < form.elements.length; i++) {
 		if(form.elements[i].name == field && !(form.elements[i].disabled == true && form.elements[i].checked == false)) {
 			form.elements[i].disabled = false;
