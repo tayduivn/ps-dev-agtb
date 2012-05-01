@@ -263,6 +263,13 @@ class SugarBean
      */
     var $in_import = false;
     /**
+     * A way to keep track of the loaded relationships so when we clone the object we can unset them.
+     *
+     * @var array
+     */
+    protected $loaded_relationships = array();
+
+    /**
      * Constructor for the bean, it performs following tasks:
      *
      * 1. Initalized a database connections
@@ -942,6 +949,23 @@ class SugarBean
 
 
     /**
+     * Handle the following when a SugarBean object is cloned
+     *
+     * Currently all this does it unset any relationships that were created prior to cloning the object
+     *
+     * @api
+     */
+    public function __clone()
+    {
+        if(!empty($this->loaded_relationships)) {
+            foreach($this->loaded_relationships as $rel) {
+                unset($this->$rel);
+            }
+        }
+    }
+
+
+    /**
      * Loads the request relationship. This method should be called before performing any operations on the related data.
      *
      * This method searches the vardef array for the requested attribute's definition. If the attribute is of the type
@@ -984,6 +1008,8 @@ class SugarBean
                     unset($this->$rel_name);
                     return false;
                 }
+                // keep track of the loaded relationships
+                $this->loaded_relationships[] = $rel_name;
                 return true;
             }
         }
