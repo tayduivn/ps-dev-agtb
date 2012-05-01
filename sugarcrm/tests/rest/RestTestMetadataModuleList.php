@@ -129,4 +129,18 @@ class RestTestMetadataModuleList extends RestTestBase {
         
     }
 
+    public function testMetadataGetFullModuleListBase() {
+        $restReply = $this->_restCall('metadata?typeFilter=fullModuleList');
+        $fullRestModules = $restReply['reply']['fullModuleList'];
+        $this->assertTrue(isset($restReply['reply']['fullModuleList']['_hash']),'There is no base module list');
+        $tc = new TabController();
+        $enabledModules = $tc->get_user_tabs($this->_user);
+        $enabledBase = array_keys($enabledModules);
+        foreach ( $enabledBase as $module ) {
+            $this->assertTrue(in_array($module,$fullRestModules),'Module '.$module.' missing from the full module list.');
+        }
+
+        $this->assertGreaterThan(count($enabledBase),count($fullRestModules),'There are too many modules in the full list');
+    }
+
 }
