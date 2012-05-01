@@ -838,12 +838,12 @@ color: @gray;
 
 /* Log In
 ----------*/
-#login {
+.login {
 	background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
 }
-#login .modal, #login .modal-header, #login .modal-footer, #login .modal-body {
+.login .modal, .login .modal-header, .login .modal-footer, .login .modal-body {
 border: none;
 padding: 0 !important;
 margin: 0 !important;
@@ -851,7 +851,7 @@ background: none;
 @shadow: none;
 .box-shadow(@shadow);
 }
-#login input, #login .btn {
+.login input, .login .btn {
   width: 220px !important; 
   margin: 0 auto !important;
   padding: 10px !important; 
@@ -860,26 +860,26 @@ background: none;
   border: none;
 }
 
-#login .btn {
+.login .btn {
 @shadow: 0 1px 0 rgba(0,0,0,.3), inset -1px -1px 0 rgba(0,0,0,.2), inset 1px 1px 0 rgba(0,0,0,.2);
 .box-shadow(@shadow);
 text-shadow: 0 1px 0 rgba(255,255,255,.6);
 font-weight: 600;
 }
 
-#login .modal input[type=submit] {  
+.login .modal input[type=submit] {  
   @shadow:  1px 1px 0 rgba(0,0,0,.2);
   .box-shadow(@shadow);
 }
-#login .modal input:focus {
+.login .modal input:focus {
   border: none;
   @shadow: 2px 2px 0 lighten(@red, 20%), 2px 2px 0 lighten(@red, 20%);
   .box-shadow(@shadow);
   outline: 0;
 }
 
-#login {text-align: center;}
-#login .btn-sugar {
+.login {text-align: center;}
+.login .btn-sugar {
   float: none;
   margin-left:-80px !important;
   position: absolute; 
@@ -887,12 +887,12 @@ font-weight: 600;
   width: auto;
   left: 50%;
 }
-#login .modal .btn {float: none !important;}
-#login .modal .pull-left {
+.login .modal .btn {float: none !important;}
+.login .modal .pull-left {
 display: block;
 float: none !important;}
 
-#login .btn.btn-sugar {width: 140px!important;}
+.login .btn.btn-sugar {width: 140px!important;}
 
 .alert {
  z-index: 2000;
