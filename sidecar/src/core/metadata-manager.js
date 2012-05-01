@@ -74,7 +74,7 @@
                         }
                         else {
                             // Ignore view fields that don't have module field definition
-                            app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
+                            //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
                         }
                     });
                 });

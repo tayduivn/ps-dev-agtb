@@ -16,7 +16,7 @@
                         {{/each}}
                     </div>
                     <div class="modal-footer">
-                        {{field2 "loginButton" "Login"}}
+                        {{fieldOfType "loginButton" "Login"}}
                     </div>
                 </div>
             </div>

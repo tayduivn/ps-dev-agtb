@@ -157,30 +157,4 @@ describe("BeanCollection", function() {
         beans.fetch.restore();
     });
 
-    it("should trigger app:collection:fetch on fetch", function() {
-        var moduleName, beans, contacts,
-            triggerFuncSpy = sinon.spy(function(data) {
-                var x = 2;
-                return x;
-            });
-        app.config.maxQueryResult = 1;
-        moduleName = "Contacts";
-        dm.declareModel(moduleName, metadata.modules[moduleName]);
-        beans = dm.createBeanCollection(moduleName);
-
-        contacts = SugarTest.loadFixture("contacts");
-
-        contacts.next_offset = 1;
-        contacts.result_count = 1;
-        contacts.records.pop();
-
-        SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\?maxresult=1/,
-            [200, {  "Content-Type": "application/json"},
-                JSON.stringify(contacts)]);
-        beans.on("app:collection:fetch", triggerFuncSpy, this);
-        beans.fetch();
-        SugarTest.server.respond();
-        expect(triggerFuncSpy).toHaveBeenCalledOnce();
-    });
 });

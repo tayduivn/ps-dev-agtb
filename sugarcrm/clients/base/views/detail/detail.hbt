@@ -1,6 +1,6 @@
 <div class="subnav">
     <div class="btn-toolbar pull-left">
-      <h1>{{getFieldByName context this "name"}}</h1>
+      <h1>{{fieldWithName "name" context this}}</h1>
     </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group">
