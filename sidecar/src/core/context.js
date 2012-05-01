@@ -167,62 +167,55 @@
             },
 
             /**
-             * Populates the data based on the state and stores it internally.
-             * @method
+             * Prepares instances of model and collection.
              */
-            loadData: function() {
-                var fields, bean, collection,
-                    options = {},
-                    self = this,
-                    fetchObject,
-                    state = this.get();
+            prepareData: function() {
+                var model, collection,
+                    state = this.state;
 
                 if (state.id) {
-                    bean = app.data.createBean(state.module, { id: state.id });
-                    collection = app.data.createBeanCollection(state.module, [bean]);
-                    fetchObject = bean;
+                    model = app.data.createBean(state.module, { id: state.id });
+                    collection = app.data.createBeanCollection(state.module, [model]);
                 } else if (state.create) {
-                    bean = app.data.createBean(state.module);
-                    collection = app.data.createBeanCollection(state.module, [bean]);
-                } else if (state.url) {
-                    // TODO: Make this hit a custom url
+                    model = app.data.createBean(state.module);
+                    collection = app.data.createBeanCollection(state.module, [model]);
                 } else {
-                    options.success = function() {
-                        self.set({model: collection.models[0]});
-                        if (state.layout) {
-                            //state
-                            state.layout.render();
-                        }
-                    };
-
+                    model = app.data.createBean(state.module);
                     collection = app.data.createBeanCollection(state.module);
-                    collection.on("app:collection:fetch", state.layout.render, this);
-                    fetchObject = collection;
-
-                    bean = collection.models[0] || {};
                 }
 
-                this.set({collection: collection, model: bean});
+                this.set({collection: collection, model: model});
+            },
 
-                if (state.layout) {
-                    fields = state.layout.getFields();
-                    this.set({fields: fields});
-                    options.fields = fields;
+
+            /**
+             * Loads data (calls fetch on either model or collection).
+             */
+            loadData: function() {
+                if (this.state.create) return;
+
+                var objectToFetch = null;
+
+                if (this.state.id) {
+                    objectToFetch = this.state.model;
+                } else {
+                    objectToFetch = this.state.collection;
                 }
 
-
-                if (fetchObject) {
-                    fetchObject.fetch(options);
+                if (objectToFetch) {
+                    var options = {};
+                    if (this.state.layout) {
+                        options.fields = this.state.layout.getFields();
+                    }
+                    objectToFetch.fetch(options);
                 }
 
-
-                if ((state.id || state.create) && state.layout) {
-                    state.layout.render();
-                }
                 _.each(this.children, function(child) { //TODO optimize for batch
                     child.loadData();
                 });
             }
+
+
         }, Backbone.Events);
 
         context.init((obj || {}), (data || {}));

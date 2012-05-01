@@ -39,47 +39,43 @@
         },
 
         /**
-         * This is the main entry point from which the router tells the controller
-         * what layout to load.
+         * Loads a view (layout).
          *
-         * @method
-         * @param {Object} params Options to set the global context and the current layout
-         * <ul>
-         *  <li>id: Current Id of the global context</li>
-         *  <li>module: Current module</li>
-         *  <li>layout: Name of the current layout</li>
-         * </ul>
+         * This method is called by the router when the route is changed.
+         *
+         * @param {Object} params Options that determine the current context and the view to load.
+
+         * - id: ID of the record to load (optional)
+         * - module: module name
+         * - layout: Name of the layout to .oad
          */
         loadView: function(params) {
             this.layout = null;
 
+            // Reset context and initialize it with new params
             this.context.init(params);
-            params.context = this.context;
-            this.layout = this.getLayout(params);
+            // Prepare model and collection
+            this.context.prepareData();
+            // Create an instance of the layout and bind it to the data instance
+            this.layout = app.view.createLayout({
+                name: params.layout,
+                module: params.module,
+                context: this.context
+            });
+
             //A context needs to have a primary layout to render to the page
             this.context.set({layout:this.layout});
 
-            this.context.loadData(this);
+            // Render the layout with empty data
+            if (this.layout) {
+                this.layout.render();
+            }
 
             // Render the rendered layout to the main element
             this.$('#content').html(this.layout.$el);
-        },
 
-        /**
-         * Returns a layout from the layout manager
-         *
-         * @private
-         * @method
-         * @param {Object} opts
-         *  @option layout Layout to load
-         *  @option module Current module
-         * @return {Object} obj Layout obj
-         */
-        getLayout: function(opts) {
-            return app.view.createLayout({
-                name: opts.layout,
-                module: opts.module
-            });
+            // Fetch the data, the layout will be rendered when fetch completes
+            this.context.loadData();
         },
 
         /**
@@ -89,7 +85,7 @@
          * @method
          */
         syncComplete: function() {
-                app.router.start();
+            app.router.start();
         }
     });
 

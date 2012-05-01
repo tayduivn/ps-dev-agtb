@@ -43,15 +43,16 @@
      *         }
      *    },
      *
-     *    initialize: function() {
-     *       this.base.initialize();
+     *    initialize: function(options) {
+     *       app.view.Field.prototype.initialize(options);
+     *       // Your constructor code here follows...
      *    },
      *
-     *    unformat:function(value){
+     *    unformat: function(value) {
      *        value = this.el.children[0].children[1].checked ? "1" : "0";
      *        return value;
      *    },
-     *    format:function(value){
+     *    format: function(value) {
      *        value = (value == "1") ? true : false;
      *        return value;
      *    }
@@ -77,18 +78,6 @@
      * @class View.Field
      */
     app.view.Field = app.view.Component.extend({
-        /**
-         * Reference to the application instance.
-         * @property {App}
-         */
-        app: app,
-
-        /**
-         * Reference to the parent constructor.
-         * @property {Object}
-         * TODO: Do we really need this? One can use app.view.Field.prototype.initialize.call instead
-         */
-        base: this,
 
         /**
          * HTML tag of the field.
@@ -96,7 +85,13 @@
          */
         fieldTag: "input",
 
+        /**
+         * TODO: add docs (descrive options, see Component class for details)
+         * @param options
+         */
         initialize: function(options) {
+            app.view.Component.prototype.initialize.call(this, options);
+
             // Here options.def is field viewdef (name, type, optional label, etc.)
             _.extend(this, options.def);
 
@@ -108,18 +103,11 @@
             this.sfId = options.sfId;
 
             /**
-             * Reference to view this field attached to.
+             * Reference to the view this field is attached to.
              * @property {View.View}
              * @member View.Field
              */
             this.view = options.view;
-
-            /**
-             * Widget metadata (templates and controller).
-             * @property {Object}
-             * @member View.Field
-             */
-            this.meta = options.meta;
 
             /**
              * Label key (used for i18n).
@@ -131,8 +119,6 @@
             // this is experimental to try to see if we can have custom events on sugarfields themselves.
             // the following line doesn't work, need to _.extend it or something.
             // this.events = this.meta.events;
-
-            this.bindModelChange(options.context, options.model);
 
             // Set module field definition (vardef)
             if (this.model && this.model.fields) {
@@ -161,6 +147,7 @@
                 'edit': 'detail'
             };
 
+            // options.viewName is used to override the template
             var viewName = this.options.viewName || this.view.name;
             while (viewName) {
                 if (app.acl.hasAccess(viewName, this.model, this.name)) break;
@@ -237,17 +224,16 @@
          */
         render: function() {
             this._loadTemplate();
-            // If we don't have any data in the model yet
-            if (!(this.model instanceof Backbone.Model)) {
-                return null;
+
+            if (this.model instanceof Backbone.Model) {
+                /**
+                 * Model property value.
+                 * @property {String}
+                 * @member View.Field
+                 */
+                this.value = this.format(this.model.has(this.name) ? this.model.get(this.name) : "");
             }
 
-            /**
-             * Model property value.
-             * @property {String}
-             * @member View.Field
-             */
-            this.value = this.format(this.model.has(this.name) ? this.model.get(this.name) : "");
             this.$el.html(this.template(this));
 
             this.bindDomChange(this.model, this.name);
@@ -256,17 +242,28 @@
         },
 
         /**
-         * Binds DOM changes to set field value on model
-         * @param {Object} model backbone model
-         * @param {String} fieldName
+         * Binds DOM changes to set field value on model.
+         * @param {Backbone.Model} model model this field is bound to.
+         * @param {String} fieldName field name.
          */
         bindDomChange: function(model, fieldName) {
+            if (!(model instanceof Backbone.Model)) return;
+
             var self = this;
             var el = this.$el.find(this.fieldTag);
             // Bind input to the model
             el.on("change", function(ev) {
                 model.set(fieldName, self.unformat(el.val()));
             });
+        },
+
+        /**
+         * Binds render to model changes.
+         */
+        bindDataChange: function() {
+            if (this.model) {
+                this.model.on("change:" + this.name, this.render, this);
+            }
         },
 
         /**
@@ -292,32 +289,6 @@
         },
 
         /**
-         * Binds render to model changes
-         * @param {Core.Context} context
-         * @param {Data.Bean} model Data to bind the sugarfield to
-         */
-        bindModelChange: function(context, model) {
-            this.unBind();
-
-            /**
-             * Reference to context.
-             * @property {Core.Context}
-             * @member View.Field
-             */
-            this.context = context;
-            /**
-             * Reference to model.
-             * @property {Backbone.Model}
-             * @member View.Field
-             */
-            this.model = model;
-
-            if (this.model.on) {
-                this.model.on("change:" + this.name, this.render, this);
-            }
-        },
-
-        /**
          * Unbinds model event callbacks
          * @method
          */
@@ -328,7 +299,6 @@
             }
 
             delete this.model;
-            delete this.context;
         }
 
     });

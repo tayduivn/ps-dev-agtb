@@ -1,41 +1,29 @@
 (function(app) {
 
     /**
-     * Base Layout class. Use {@link View.ViewManager} to create instances of layouts.
+     * Base class for layouts.
+     *
+     * Use {@link View.ViewManager} to create instances of layouts.
      *
      * @class View.Layout
-     * @alias SUGAR.App.layout.Layout
-     * @extends View.View
+     * @alias SUGAR.App.view.Layout
+     * @extends View.Component
      */
-    app.view.Layout = app.view.View.extend({
+    app.view.Layout = app.view.Component.extend({
+
+        /**
+         * TODO docs (describe constructor options, see Component class for an example).
+         *
+         * @constructor
+         * @param options
+         */
         initialize: function(options) {
-            _.bindAll(this, 'render', 'bindData');
+            app.view.Component.prototype.initialize.call(this, options);
 
-            /**
-             * The context is used to determine what the current focus is
-             * (includes a model, collection, and module)
-             * @cfg {Core.Context}
-             */
-            this.context = options.context || app.controller.context;
+            // TODO: Do we need this?
+            //_.bindAll(this, 'render', 'bindData');
 
-            /**
-             * Module
-             * @cfg {String}
-             */
-            this.module = options.module || this.context.module;
-
-            /**
-             * Metadata
-             * @cfg {Object}
-             */
-            this.meta = options.meta;
-
-            /**
-             * Components array
-             * @cfg {Array}
-             * @private
-             */
-            this.components = [];
+            this._components = []; // list of components
 
             /**
              * Classname of the View
@@ -85,59 +73,62 @@
          * @param {Array} def Metadata definition
          */
         addComponent: function(comp, def) {
-            this.components.push(comp);
+            this._components.push(comp);
             this._placeComponent(comp, def);
         },
 
         /**
-         * Places a view's element on the page. This shoudl be overriden by any custom layout types.
-         * @param {View.View} comp
+         * Places layout component in the DOM.
+         *
+         * Default implementation just appends all the components to itself.
+         * Override this method to support custom placement of components.
+         *
+         * @param {View.View/View.Layout} component View or layout component.
          * @protected
-         * @method
          */
-        //Default layout just appends all the components to itself
-        _placeComponent: function(comp) {
-            this.$el.append(comp.el);
+        _placeComponent: function(component) {
+            this.$el.append(component.el);
         },
 
         /**
-         * Removes the given view / layout from this layout.
-         * If comp is an index, remove the component at that index. Otherwise see if comp is in the array.
-         * @param {View.Layout/View.View/Number} comp Layout / View to remove
-         * @method
+         * Removes a component from this layout.
+
+         * If component is an index, remove the component at that index. Otherwise see if component is in the array.
+         * @param {View.Layout/View.View/Number} component The layout or view to remove.
          */
-        removeComponent: function(comp) {
-            var i = typeof comp == "number" ? comp : this.components.indexOf(comp);
+        removeComponent: function(component) {
+            var i = _.isNumber(component) ? component : this._components.indexOf(component);
 
             if (i > -1) {
-                this.components.splice(i, 1);
+                this._components.splice(i, 1);
             }
         },
 
         /**
-         * Renders all the components
-         * @method
+         * Renders all the components.
          */
         render: function() {
             //default layout will pass render container divs and pass down to all its views.
-            _.each(this.components, function(comp) {
-                comp.render();
+            _.each(this._components, function(component) {
+                component.render();
             }, this);
         },
 
         /**
-         * Used to get a list of all fields used on this layout and its sub layouts/views
+         * Gets a list of all fields used on this layout and its sub layouts/views.
          *
-         * @method
-         * @return {Array} list of fields used by this layout.
+         * @return {Array} The list of fields used by this layout.
          */
         getFields: function() {
+            // TODO: Fix this method:
+            // This method has a bug: it doesn't check for module, it collects fields from its views regadless of module
             var fields = [];
-            _.each(this.components, function(view) {
+            _.each(this._components, function(view) {
                 fields = _.union(fields, view.getFields());
             });
 
             return fields;
         }
     });
+
 })(SUGAR.App);

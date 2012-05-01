@@ -1,37 +1,42 @@
 describe("listView", function() {
-    describe("should set order by", function() {
-        var event, x,
-            collection = {
-                orderBy: {
-                    field: "",
-                    direction: ""
-                },
-                fetch: function() {
-                    return true;
-                }
+    var app;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+    });
+
+    it("should set order by", function() {
+        var event, x;
+        var context = app.context.getContext();
+        var collection = {
+            orderBy: {
+                field: "",
+                direction: ""
             },
-            options = {
-                context: {},
-                id: "1",
-                template: "asdf"
-            },
-            view = new SUGAR.App.view.views.ListView(options);
+            fetch: function() {
+                return true;
+            }
+        };
+        var options = {
+            context: context,
+            id: "1",
+            template: "asdf"
+        };
 
-            view.$el.html('<div id="test" data-fieldname="bob"></div>');
+        context.set({collection: collection});
+        var view = new app.view.views.ListView(options);
 
-            x = view.$el.children('#test');
-            event = {target:x};
-            view.context.get = function(args) {
-                return collection;
-            };
-            view.setOrderBy(event);
+        view.$el.html('<div id="test" data-fieldname="bob"></div>');
 
-            expect(collection.orderBy.direction).toEqual('desc');
-            expect(collection.orderBy.field).toEqual('bob');
-            view.setOrderBy(event);
+        x = view.$el.children('#test');
+        event = {target: x};
+        view.setOrderBy(event);
 
-            expect(collection.orderBy.direction).toEqual('asc');
-            expect(collection.orderBy.field).toEqual('bob');
-        }
-    );
+        expect(collection.orderBy.direction).toEqual('desc');
+        expect(collection.orderBy.field).toEqual('bob');
+        view.setOrderBy(event);
+
+        expect(collection.orderBy.direction).toEqual('asc');
+        expect(collection.orderBy.field).toEqual('bob');
+    });
 });

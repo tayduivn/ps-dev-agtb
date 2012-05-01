@@ -1,5 +1,7 @@
 describe("Application context manager", function() {
-    var app;
+    var app, context;
+
+    // TODO: This test suite MUST BE refactored
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -8,16 +10,19 @@ describe("Application context manager", function() {
     });
 
     it("should return a new context object", function() {
-        var context = SUGAR.App.context.getContext({}, {});
+        var context = app.context.getContext({}, {});
         expect(context).toBeTruthy();
     });
 
     describe("Context Object", function() {
         describe("when requesting state", function() {
-            var context = SUGAR.App.context.getContext({
-                prop1: "Prop1",
-                prop2: "Prop2",
-                prop3: "Prop3"
+
+            beforeEach(function() {
+                context = app.context.getContext({
+                    prop1: "Prop1",
+                    prop2: "Prop2",
+                    prop3: "Prop3"
+                });
             });
 
             it("should return one property if only one is requested", function() {
@@ -38,8 +43,11 @@ describe("Application context manager", function() {
 
         describe("when creating a context", function() {
             var getFieldsSpy = sinon.spy(function() { return [1,2]; }),
-                renderSpy    = sinon.spy(),
-                context      = SUGAR.App.context.getContext();
+                renderSpy    = sinon.spy();
+
+            beforeEach(function() {
+                context = app.context.getContext();
+            });
 
             it("should load the context for layout path", function() {
                 var params = {
@@ -52,11 +60,10 @@ describe("Application context manager", function() {
                 };
 
                 context.init(params);
+                context.prepareData();
                 context.loadData();
 
                 expect(getFieldsSpy).toHaveBeenCalled();
-                expect(renderSpy).toHaveBeenCalled();
-                expect(context.get('fields')).toEqual([1,2]);
             });
 
             it("should load the context for create path", function() {
@@ -80,7 +87,7 @@ describe("Application context manager", function() {
                     }
                 };
                 context.init(params);
-                context.loadData();
+                context.prepareData();
                 expect(context.state.collection).toBeDefined();
                 expect(context.state.model).toBeDefined();
             });

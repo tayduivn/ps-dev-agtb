@@ -34,14 +34,14 @@ describe("Handlebars Helpers", function() {
         });
 
         it("should return a sugarfield span element", function() {
-            var model = new app.Bean(),
-                context = {
+            var model = new app.Bean();
+            var context = {
                     get: function() {
                         return "Cases";
                     }
-                },
-                view = new app.view.View({ name: "detail"}),
-                def = {name: "TestName", label: "TestLabel", type: "text"};
+                };
+            var view = new app.view.View({ name: "detail", context: context});
+            var def = {name: "TestName", label: "TestLabel", type: "text"};
 
             var fieldId = app.view.getFieldId();
             var result = Handlebars.helpers.field.call(def, context, view, model);

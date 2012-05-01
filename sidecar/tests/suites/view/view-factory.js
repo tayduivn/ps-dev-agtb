@@ -1,11 +1,12 @@
 describe("View Manager", function() {
-    var app, views;
+    var app, views, context;
 
     beforeEach(function() {
         SugarTest.seedApp(true);
         app = SugarTest.app;
         SugarTest.seedMetadata(true);
         views = app.view.views;
+        context = app.context.getContext();
     });
 
     afterEach(function() {
@@ -17,7 +18,8 @@ describe("View Manager", function() {
         it('base class', function () {
             var view = app.view.createView({
                 name: "edit",
-                module: "Contacts"
+                module: "Contacts",
+                context: context
             });
 
             expect(view).toBeDefined();
@@ -28,7 +30,8 @@ describe("View Manager", function() {
         it('pre-defined view class', function () {
             var view = app.view.createView({
                 name: "list",
-                module: "Contacts"
+                module: "Contacts",
+                context: context
             });
 
             expect(view).toBeDefined();
@@ -38,7 +41,8 @@ describe("View Manager", function() {
         it("custom view class when the view has a custom controller", function () {
             var result = app.view.createView({
                 name : "login",
-                module: "Home"
+                module: "Home",
+                context: context
             });
 
             expect(result).toBeDefined();
@@ -58,17 +62,19 @@ describe("View Manager", function() {
 
             var view = app.view.createView({
                 name: "edit",
-                meta: testMeta
+                meta: testMeta,
+                context: context
             });
 
             expect(view.meta).toEqual(testMeta);
         });
 
         it('custom class without metadata', function() {
-            app.view.views.ToolbarView = Backbone.View.extend();
+            app.view.views.ToolbarView = app.view.View.extend();
 
             var view = app.view.createView({
-                name: "toolbar"
+                name: "toolbar",
+                context: context
             });
 
             expect(view instanceof app.view.views.ToolbarView).toBeTruthy();

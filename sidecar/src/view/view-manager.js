@@ -10,11 +10,11 @@
  *  // Put your custom logic here
  * });
  *
- * app.view.views.MyCustomLayout = app.view.Layout.extend({
+ * app.view.layouts.MyCustomLayout = app.view.Layout.extend({
  *  // Put your custom logic here
  * });
  *
- * app.view.views.MyCustomField = app.view.Field.extend({
+ * app.view.fields.MyCustomField = app.view.Field.extend({
  *  // Put your custom logic here
  * });
  *
@@ -72,6 +72,15 @@
          */
         fields: {},
 
+        /**
+         * Creates a component and binds data changes to it.
+         *
+         * @param type Component type (`layout`, `view`, `field`).
+         * @param name Component name.
+         * @param params Parameters to pass to the Component's class constructor.
+         * @return {View.Component} New instance of a component.
+         * @private
+         */
         _createComponent: function(type, name, params) {
             var className = app.utils.capitalize(name) + type;
             var customClassName = (params.module || "") + className;
@@ -90,11 +99,14 @@
                 // Fall back to base class (View, Layout, or Field)
                 baseClass;
 
-            return new klass(params);
+            var component = new klass(params);
+            component.bindDataChange();
+
+            return component;
         },
 
         /**
-         * Creates an instance of {@link View.View} class.
+         * Creates an instance of a view.
          *
          * Parameters define creation rules as well as view properties.
          * The `param` hash must contain at least `name` property which is a view name.
@@ -147,6 +159,13 @@
             return this._createComponent("View", params.name, params);
         },
 
+        /**
+         * Creates an instance of a layout.
+         *
+         * TODO: Add docs.
+         * @param params
+         * @return {View.Layout}
+         */
         createLayout: function(params) {
             var clonedParams = _.clone(params);
             clonedParams.module = params.module || params.context.get("module");
@@ -159,7 +178,7 @@
         },
 
         /**
-         * Creates an instance of {@link View.Field} class and registers it with the parent view (`params.view`).
+         * Creates an instance of a field and registers it with the parent view (`params.view`).
          *
          * The parameters define creation rules as well as field properties.
          * The `params` hash must contain `def` property which is the field definition and `view`
