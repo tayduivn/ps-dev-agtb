@@ -37,4 +37,24 @@ describe("Events Hub", function() {
             expect(cb3).not.toHaveBeenCalled();
         });
     });
+
+    describe("should re-broadcast jquery ajax events", function() {
+        it("it should trigger ajaxStart and ajaxStop on any ajax activity", function() {
+            var callback1 = sinon.spy(),
+                callback2 = sinon.spy();
+
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith([200, {}, ""]);
+
+            eventHub.registerAjaxEvents();
+            eventHub.on("ajaxStart", callback1);
+            eventHub.on("ajaxStop", callback2);
+
+            $.ajax({url: "/rest/v10/metadata"});
+            SugarTest.server.respond();
+
+            expect(callback1).toHaveBeenCalled();
+            expect(callback2).toHaveBeenCalled();
+        });
+    });
 });
