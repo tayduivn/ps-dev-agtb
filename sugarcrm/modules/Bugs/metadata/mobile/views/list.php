@@ -84,7 +84,7 @@ $viewdefs['Bugs']['mobile']['view']['list'] = array(
                 array(
                     'name' => 'assigned_user_name',
                     'width' => '9',
-                    'label' => 'LBL_ASSIGNED_USER',
+                    'label' => 'LBL_ASSIGNED_USER_NAME',
                     'default' => true,
                     'enabled' => true,
                 ),
