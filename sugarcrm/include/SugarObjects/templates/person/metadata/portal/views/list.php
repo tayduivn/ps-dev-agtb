@@ -29,8 +29,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $module_name = '<module_name>';
 $viewdefs[$module_name]['portal']['view']['list'] = array(
-    array(
-        'panels' => array(
+    'panels' => array(
+        array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(

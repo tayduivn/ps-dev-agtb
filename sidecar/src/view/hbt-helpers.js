@@ -180,4 +180,24 @@
        return result;
     });
 
+    /**
+     * Creates specific field widget.
+     * @method field
+     * @param {Core.Context} context
+     * @param {View.View} view
+     * @param {Field.name} name
+     * @return {String} HTML placeholder for the widget.
+     */
+    Handlebars.registerHelper('getFieldByName', function(context, view, name) {
+        var field = app.view.createField({
+            def: { name: name, type: "base" },
+            view: view,
+            context: context,
+            model: context.get("model"),
+            viewName: "default" // override view name
+        });
+
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
+    });
+
 })(SUGAR.App);

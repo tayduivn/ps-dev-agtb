@@ -161,7 +161,7 @@
                 'edit': 'detail'
             };
 
-            var viewName = this.view.name;
+            var viewName = this.options.viewName || this.view.name;
             while (viewName) {
                 if (app.acl.hasAccess(viewName, this.model, this.name)) break;
                 viewName = viewFallbackMap[viewName];

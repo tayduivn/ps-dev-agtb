@@ -19,7 +19,12 @@
 
 // Colors
 
-.label-file { 
+.label-danger { 
+  background-color: darken(@red, 10%);
+  color: @white;
+}
+
+.label-file, .label-warn { 
   background-color: @orange; 
   color: @white;
 }
@@ -31,7 +36,7 @@
 }
 .label-note:hover       { background-color: darken(@yellow, 10%); }
 
-.label-lead { 
+.label-success, .label-lead { 
   background-color: @green; 
   color: @white;
 }
@@ -48,3 +53,9 @@
   color: @white;
 }
 .label-document:hover   { background-color: darken(@purple, 10%); }
+
+.label-log { 
+  background-color: @gray; 
+  color: @white;
+}
+.label-log:hover   { background-color: darken(@gray, 10%); }

@@ -1,4 +1,3 @@
-
 .navbar .nav-collapse {height: 0}
 
 /* Body and structure
@@ -61,25 +60,41 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {font-size: 26px !important;}
 
+.fno {float:none !important}
+.fleft {float: left !important}
+.fright {float: right !important}
+.altview {display:none;}
+
 /* activity and twitter */
 
 article {
   position: relative;
 	display: block;
-  padding: 8px 32px 8px 52px;
+  padding: 8px 32px 8px 12px;
   border-top: 1px solid darken(@grayLighter, 5%);
   min-height: 52px;
 }
+
+.accounts article {
+  padding-left: 44px;
+}
+
 article div {
   display: table-cell;
   vertical-align: middle;
   height: 52px;
+  overflow: hidden;
+  
 }
 article [class^="icon-star"] {
 position: absolute;
 top: 24px;
 left: 16px;
-font-size: 24px;
+font-size: 18px;
+}
+
+article > input[type=checkbox] {
+  margin-top:20px;
 }
 
 #detailListing article {
@@ -103,7 +118,7 @@ article [id^="listing-action"] i.grip {
 }
 article [id^="listing-action"] i.on {
   left: 0;
-  #gradient > .horizontal( darken(@grayDarker, 8%), darken(@grayDarker, 2%));
+  #gradient > .horizontal( lighten(@black, 20%), lighten(@black, 25%));
   color: @black;
   text-shadow: -1px 0 0 lighten(@grayDarker, 1%);
   @shadow: 1px 0 4px rgba(0,0,0,.4);
@@ -126,15 +141,19 @@ article [id^="listing-action"] span {
 article [id^="listing-action"] a, #record-action a {
 padding: 4px 6%;
  display: inline-block;
- width: 26px;
+ /*width: 26px;*/
+ width:auto;
  height: 26px;
  color: @white;
  text-shadow: 0 1px 0 @black, 0 1px 4px @black;
  text-decoration: none;
  text-align: center;
+ font-size:10px;
+ text-transform: uppercase;
+ letter-spacing:0px;
 }
 article [id^="listing-action"] a {
-  padding: 26px 0 0 5%;
+  padding: 18px 0 0 5%;
 }
 
 article p {
@@ -212,7 +231,7 @@ date {
 }
 
 .navbar .container-fluid {margin-top: 0;}
-.container-fluid {margin-top: 16px;}
+/*.container-fluid {margin-top: 16px;}*/
 
 /* Icons
 ------------------------- */
@@ -236,12 +255,36 @@ a:hover [class^="icon-"]{
   background-color: rgba(255,0,0,.25);
 }
 
-.icon-phone {
+#record-action .icon-phone {
   background: url('../img/phone.png') no-repeat 50% 50%;
   background-size: 80%;
   height: 26px;
   width: 26px;
   margin-bottom: -22px;
+
+}
+
+.icon-phone {
+  background: url('../img/phone.png') no-repeat 50% 50%;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
+.icon-phone-black {
+  background: url('../img/phone-black.png') no-repeat 50% 0;
+  background-size: 70%;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
+}
+
+
+.icon-account-black {
+  background: url('../img/glyphicons_halflings.png') no-repeat -169px 0;
+  height: 20px;
+  width: 18px;
+  margin-bottom: -20%;
 }
 
 
@@ -250,10 +293,10 @@ a:hover [class^="icon-"]{
 }
 
 .btn [class^="icon-"] {
-  margin-top: 1px;
+  margin-top: 3px;
 }
 
-.icon-star {
+article .icon-star {
   color: @orange;
 }
 .icon-star-empty {
@@ -283,28 +326,20 @@ html {
   height: 100%;
   overflow: hidden;
 }
-.onL .navbar {
+.onL .navbar, .onR .navbar {
   position: absolute;
   left: 86%;
   top: 0px;
   width: 100%;
   height: 100%;
-  @shadow: -1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
 }
 .onR .navbar {
-  position: absolute;
   left: -86%;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  @shadow: -1px 0 4px rgba(0,0,0,.4);
-  .box-shadow(@shadow);
 }
 .onL #listing *, .onL .bizcard *, .onR #listing *, .onR .bizcard * {
   display: none;
 }
-.onL .navbar .nav-collapse  {
+.onL .navbar .nav-collapse {
   float: none;
   position: absolute;
   top: 0;
@@ -314,7 +349,7 @@ html {
   height: 100%;
   background: @grayDarker url(../img/black_linen_v2.png);
 }
-.onR .navbar .nav-collapse {
+ .onR .navbar .nav-collapse  {
   float: none;
   position: absolute;
   top: 0;
@@ -324,7 +359,6 @@ html {
   height: 100%;
   background: @grayDarker url(../img/black_linen_v2.png);
 }
-
 .onL .navbar .nav-collapse #moduleList, .onR .navbar .nav-collapse #createList {
   overflow: scroll;
   -webkit-overflow-scrolling:touch;
@@ -334,8 +368,33 @@ html {
   display: none;
 }
 
+.onL .nav-collapse li, .onR .nav-collapse li {
+  .border-radius(0px);
+  #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
+  border-bottom: 1px solid #000;
+  @shadow: 0 1px 4px rgba(0,0,0,.2),  inset -2px 0 4px rgba(0,0,0,.3);
+  .box-shadow(@shadow);
+}
+
+.onR .nav-collapse li {
+  @shadow: 0 1px 4px rgba(0,0,0,.2),  inset 2px 0 4px rgba(0,0,0,.3);
+  .box-shadow(@shadow);
+}
+
+#useradmin a, #quickTitle a{ color: lighten(@gray, 10%); text-shadow: none;}
+
+.onL .nav-collapse li.divider-horizontal,.onL .nav-collapse li#userAdmin, .onR .nav-collapse li.divider-horizontal, .onR .nav-collapse li#quickTitle  {
+  #gradient > .vertical(lighten(@black, 30%), lighten(@black, 20%));
+}
+
+.onL .nav-collapse li.divider-horizontal, .onR .nav-collapse li.divider-horizontal {
+  height: 5px;
+  display: block;
+}
+
+
 #scroll {
-  margin: 10px 0;
+  margin: 5px 0 10px;
   height: 80%;
   position: absolute;
   left: 0;
@@ -347,8 +406,12 @@ html {
   display: block;
 }
 
+.hasTeaser #scroll {
+  height:68%;
+}
+
 #listing {
-  height: 90%;
+  height: 100%;
   position: absolute;
   left: 0;
   width: 100%;
@@ -358,24 +421,112 @@ html {
 }
 
 
-#detailListing #listing {
-  height: 40% !important;
-}
-
-#listing > article:first-child {
-	margin-top:33px;
-}
-
-#listing > article:last-child {
-	margin-bottom:20px;
-}
-
 #listing article {
 	-webkit-transition: all .25s ease-in-out;
 }
 
 #listing article.deleted {
     opacity:0;
+}
+
+#listing article.nav {
+    margin-bottom: 0;
+    #gradient > .vertical(@white, darken(@grayLighter,3%));
+    border-top: 1px solid darken(@grayLighter, 15%);
+    .box-shadow(inset 0 1px 2px rgba(0,0,0,.05));    
+    padding-top:0;
+    padding-bottom:0;
+    min-height:42px;
+}
+
+#listing article.nav:last-child {
+    border-top: 1px solid darken(@grayLighter, 25%);
+}
+
+#listing article.nav:first-child,
+#listing article.nav:nth-child(2),
+#listing article.nav:nth-child(3) {
+    border-bottom: 1px solid darken(@grayLighter, 25%);
+}
+
+#listing article.nav div {
+    height:42px;
+}
+
+#listing > i {
+  height: 45px;
+  display: inline-block;
+}
+
+#detailListing #listing > i {
+  height: 218px;
+  display: inline-block;
+}
+
+.topelbar {
+  position:relative;
+  height:34px;
+  padding:5px;
+  #gradient > .vertical( darken(@white, 1%), darken(@white, 8%));
+  a.btn {
+    min-height:20px;
+    min-width:50px;
+    margin-top:2px;
+  }
+  i.opt {
+    font-style: normal;
+  }
+  aside {
+    display:inline-block;
+    width:85px;
+    height:16px;
+    position:absolute;
+    right:0px;
+    top:4px;
+    a.btn {
+      min-width:18px;
+      min-height:22px;
+    }
+  }
+}
+
+.accounts .topelbar {
+  padding-right:94px;
+}
+
+@media (max-width: 479px) {
+  .topelbar {
+    i.opt {
+      display:none !important;
+    }
+  }
+}
+
+.tcenter > .btn-group {
+  display:inline-block;
+}
+
+#listing .form-search {
+  margin:0;
+}
+
+#listing .icon-search {
+  position:absolute;
+  margin:8px 0 0 14px;
+  color:darken(@grayLighter, 20%);
+}
+
+.search-query[placeholder] {
+  text-indent: 30px !important;
+}
+
+#listing .search-query {
+  width: 98.75%;
+  height: 26px;
+  
+  .border-radius(18px);
+  padding-left:0;
+  padding-right:0;
 }
 
 .navbar [class^="icon-"] {
@@ -397,10 +548,12 @@ html {
   z-index: 2000;
 }
 
-.navbar #search, .navbar #back .icon-chevron-left {
+.navbar #back .icon-chevron-left {
   position: absolute;
   top: 11px;
   left: 58px;
+  padding: 11px 100% 12px 0;
+  margin-top: -10px;
 }
 
 .navbar #create {
@@ -422,39 +575,6 @@ html {
 */
 }
 
-#detailListing #listing article:first-child {
-  margin-top:184px;
-}
-
-#searchForm {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2000;
-  width: 100%;
-  height: 44px !important;
-  background: @grayDarker url(../img/black_linen_v2.png);
-}
-#searchForm .btn {
-  position: absolute;
-  top:1px;
-  right: 0px;
-  width: inherit;
-  }
-  
-.search-query {
-  border-color: #000;
-  color: @grayDarker;
-  position: absolute;
-  padding: 4px;
-  left: 10px;
-  top: 9px;
-  height: 28px;
-  width: 70% !important;
-  .border-radius(4px);
-  z-index: 1080;
-}
-
 .navbar h1 {
   font-size: 16px !important;
   text-align: center;
@@ -465,6 +585,27 @@ html {
   text-shadow: 0 -1px 0 @black;
   z-index: 0;
   color: @white;
+}
+
+.dialogdark {
+position: fixed;
+top: 146px;
+padding: 20px 0;
+text-align: center;
+left: 12.5%;
+margin:0 auto;
+width: 75%;
+z-index: 1000;
+display: block;
+color: @white;
+text-shadow: 0 -1px 0 @black;
+#gradient > .vertical( darken(@grayDarker, 5%), darken(@grayDarker, 15%));
+@shadow: 0 1px 4px rgba(0,0,0,.6);
+.box-shadow(@shadow);
+.border-radius(4px);
+    p {
+      margin:0 18px;
+    }
 }
 
 .bizcard {
@@ -530,21 +671,6 @@ html {
   .box-shadow(@shadow);  
 }
 
-.onL .nav-collapse li {
-  .border-radius(0px);
-  background: @grayDarker url(../img/black_linen_v2.png);
-  @shadow: inset -2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
-  .box-shadow(@shadow);  
-}
-
-.onR .nav-collapse li {
-  .border-radius(0px);
-  background: @grayDarker url(../img/black_linen_v2.png);
-  @shadow: inset 2px 0 4px rgba(0,0,0,.8), inset 0 -2px 0 @grayDark;
-  .box-shadow(@shadow);  
-}
-
-
 .navbar a {text-decoration: none;}
 
 .nav-collapse .nav > li > a {
@@ -570,24 +696,6 @@ color: @gray;
 .nav-collapse li li a {
  background: none;
  margin: 0;
-} 
-
-.alert {
- z-index: 2000;
- position: absolute;
- width: 100%;
- height: 20px;
- bottom: -1px;
- left: -1px;
- .border-radius(0px);
- padding: 5px 10px;
- .opacity(94);
- color: @white;
- text-shadow: none;
- font-weight: bold;
- margin: 0;
- font-size: 11px;
- background: @black;
 }
 
 .over {
@@ -629,8 +737,8 @@ color: @gray;
   background: url(../img/brand_256.png) 50% 50% no-repeat;
   background-size: 70%;
   text-indent: -7000px;
-  margin: 15px auto 15px;
-  width: 260px;
+  margin: 5px auto 15px;
+  width: 220px;
   height: auto;
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
@@ -647,25 +755,29 @@ color: @gray;
 
 /* edit record
 --------------*/
-.pad {
+.pad, .form-horizontal {
   background: @white;
-  margin: 10px 10px;
-	.border-radius(3px);
+  margin: 0;
+  min-height:300px;
+  height: 100%;
 }
-#createRecord.form-horizontal .control-group > label  {
+#createRecord.form-horizontal {
+  .control-group > label  {
   width: 25% !important;
   margin-right: 2% !important;
   float: left !important;
   text-align: right !important;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
+  }
 }
 #createRecord input, #createRecord textarea, #createRecord select, #createRecord .uneditable-input {
   width: 75% !important;
+  padding: 0;
+  height: 26px;
   border: none;
   background: none;
   box-shadow: none;
-  height: 26px;
   display: block;
 }
 #createRecord.form-horizontal .controls {
@@ -679,26 +791,26 @@ color: @gray;
 	display: block;
   padding: 10px;
   margin: 0;
-  border-top: 1px solid darken(@grayLighter, 5%);
+  border-top: 1px solid darken(@grayLighter, 1%);
 }
 #createRecord .avatar {
   height: 32px;
   width: 32px;
 }
 
-li.divider-horizontal {
-  background: @black;
-  height: 10px;
-  display: block;
-  line-height: 10px;
-  padding: 10px;
+.control-group {
+  .btn.fright {
+    min-width: 20px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
 }
 
 /* Log In
 ----------*/
 #login {
 	background: #E61718 url(../img/leather-red.png);
-  @shadow: inset 0 -4px 60px rgba(0,0,0,.8);
+  @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
 }
 #login .modal, #login .modal-header, #login .modal-footer, #login .modal-body {
@@ -710,7 +822,7 @@ background: none;
 .box-shadow(@shadow);
 }
 #login input, #login .btn {
-  width: 260px !important; 
+  width: 220px !important; 
   margin: 0 auto !important;
   padding: 10px !important; 
   @shadow:  1px 2px 0 rgba(0,0,0,.2);
@@ -719,17 +831,15 @@ background: none;
 }
 
 #login .btn {
-#gradient > .vertical( darken(@red, 15%), darken(@red, 35%));
 @shadow: 0 1px 0 rgba(0,0,0,.3), inset -1px -1px 0 rgba(0,0,0,.2), inset 1px 1px 0 rgba(0,0,0,.2);
 .box-shadow(@shadow);
-color: @white;
-text-shadow: 0 -1px 0 rgba(0,0,0,.6);
+text-shadow: 0 1px 0 rgba(255,255,255,.6);
+font-weight: 600;
 }
 
 #login .modal input[type=submit] {  
   @shadow:  1px 1px 0 rgba(0,0,0,.2);
   .box-shadow(@shadow);
-  width: 260px !important;
 }
 #login .modal input:focus {
   border: none;
@@ -754,14 +864,37 @@ float: none !important;}
 
 #login .btn.btn-sugar {width: 140px!important;}
 
+.alert {
+ z-index: 2000;
+ position: absolute;
+ width: 100%;
+ height: 42px;
+ line-height: 42px;
+ bottom: -1px;
+ left: -1px;
+ .border-radius(0px);
+ padding: 0 10px;
+ .opacity(94);
+ color: @white;
+ text-shadow: none;
+ margin: 0;
+ font-size: 12px;
+ background: @black;
+}
+
 /* Alert overrider */
-.alert-success {background: darken(@green, 20%); color: #fff; text-shadow: none;} 
-.alert-danger, .alert-error {background: @red;  color: #fff;} 
+.alert-warning {background: lighten(@yellow, 40%); color: darken(desaturate(@yellow,10%),28%); border-top:1px solid fade(darken(@yellow,50%),25%);}
+.alert-general {background: lighten(@blue, 46%); color: darken(@blue,20%); border-top:1px solid fade(darken(@blue,10%),25%);}
+.alert-success {background: lighten(@green, 60%); color: darken(@green,20%); border-top:1px solid fade(darken(@green,10%),25%);}
+.alert-error {background: lighten(@red,47%); color: @red; border-top:1px solid fade(darken(@red,10%),25%);}
+.alert[id^="demo-"] {  display:none;}
+.alert:target {  display:inline-block !important;}
+
 
 
 /* TOUR */
 #tour {
-  background: url('../img/tour.png') no-repeat;
+  background: url('../img/welcome.jpg') no-repeat;
   height: 100%;
   position: absolute;
   top: 0;
@@ -790,7 +923,7 @@ float: none !important;}
     float: none;
   }
   .navbar .nav > li > a {
-    margin-bottom: 2px;
+    margin-bottom: 0;
   }
   .navbar .nav > .divider-vertical {
     display: none;
@@ -802,8 +935,8 @@ float: none !important;}
   // Nav and dropdown links in navbar
   .navbar .nav > li > a,
   .navbar .dropdown-menu a {
-    padding: 12px 15px;
-    font-weight: bold;
+    padding: 13px 15px;
+    height: 19px;
     color: @navbarLinkColor;
   }
   .navbar .dropdown-menu li + li a {
@@ -836,8 +969,7 @@ float: none !important;}
     display: none;
   }
   // Forms in navbar
-  .navbar-form,
-  .navbar-search {
+  .navbar-form{
     float: none;
     padding: (@baseLineHeight / 2) 15px;
     margin: (@baseLineHeight / 2) 0;
@@ -860,9 +992,103 @@ float: none !important;}
   .btn-navbar {
     display: block;
   }
-
   // Hide everything in the navbar save .brand and toggle button */
   .nav-collapse {
     overflow: hidden;
     height: 0;
   }
+  .navbar-bottom {
+      background: @grayDarker url(../img/black_linen_v2.png);
+      width: 100%;
+      height: 100%;
+      position: fixed;
+  }
+
+.navbar-bottom {
+  bottom:0px;
+  height:0px;
+  /*overflow:hidden;*/
+  .row-fluid {
+    display: none;
+  }
+  box-shadow: inset 0 0 8px #000000;
+}
+
+.navbar-bottom:not(.exposed) {
+  .thrhld {
+    width:80px;
+    margin:-24px auto 0;
+       -webkit-border-top-right-radius: 6px;
+	   -moz-border-radius-topright: 6px;
+	       border-top-right-radius: 6px;
+    -webkit-border-top-left-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	    border-top-left-radius: 6px;
+  }
+}
+
+.navbar-bottom.teaser {
+  border-top: 6px solid lighten(@black,25%);
+  height:60px;
+  .thrhld {
+    margin:-30px auto 0;
+  }
+  .row-fluid {
+    display: block;
+  }
+}
+.navbar-bottom.exposed {
+  top:50px;
+  height:auto;
+  overflow: scroll;
+  z-index:2000;
+  -webkit-overflow-scrolling:touch;
+  .row-fluid {
+    display: block;
+
+  }
+}
+.navbar-bottom .thrhld {
+  #gradient > .vertical(lighten(@black, 18%), lighten(@black, 28%));
+  width:100%;
+  @shadow: 1px 0 1px rgba(0,0,0,.4);
+  .box-shadow(@shadow);
+  text-align:center;
+  padding:0px 0 6px;
+  /*border-bottom: 1px solid lighten(@black, 3%);*/
+}
+.navbar-bottom .row-fluid {
+  width: 90%;
+  margin-left: 5%;
+}
+.navbar-bottom i.grip {
+  color: @black;
+  text-shadow: 1px 0 0 lighten(@grayDarker, 24%);
+  vertical-align: middle;
+  letter-spacing: -4px;
+  z-index: 1;
+  font-style: normal;
+  .rotate(90deg);
+  display:inline-block;
+}
+.navbar-bottom button strong {
+  font-size:12px;
+}
+.navbar-bottom button {
+  margin-top:20px;
+  padding:0;
+  width: 78px;
+  height: 48px;    
+  color:@white;
+  #gradient > .vertical(lighten(@black, 32%), lighten(@black, 18%));
+  border-color:lighten(@black,15%) !important;
+  border-width: 1px;
+  .border-radius(4px);
+  font-size:10px;
+  text-transform: uppercase;
+  letter-spacing:0px;
+}
+
+.navbar-bottom button:hover {
+  #gradient > .vertical(lighten(@black, 30%), lighten(@black, 16%));
+}

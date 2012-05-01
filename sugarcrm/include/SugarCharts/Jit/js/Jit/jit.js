@@ -12620,7 +12620,7 @@ $jit.BarChart = new Class({
     this.config.showLabels = typeLabels == 'function'? showLabels : $.lambda(showLabels);
     this.config.showAggregates = typeAggregates == 'function'? showAggregates : $.lambda(showAggregates);
     this.config.showNodeLabels = typeNodeLabels == 'function'? showNodeLabels : $.lambda(showNodeLabels);
-    Options.Fx.clearCanvas = false;
+    //Options.Fx.clearCanvas = false;
     this.initializeViz();
   },
   
@@ -13015,7 +13015,9 @@ $jit.BarChart = new Class({
             ctx.restore();
             ctx.fillStyle = ticks.color;
             // Drawing line
+            ctx.globalCompositeOperation = "destination-over";
             ctx.fillRect(Math.round(axis) + i * pixelsPerStep * humanNumber, -size.height / 2 + margin.top + (title.text ? title.size + title.offset : 0) - (shadow.enable ? shadow.size : 0), 1, lineHeight + (shadow.enable ? shadow.size * 2: 0));
+            ctx.globalCompositeOperation = "source-over";
         }
 	} else {
 	
@@ -13083,7 +13085,9 @@ $jit.BarChart = new Class({
             }
             ctx.restore();
 			ctx.fillStyle = ticks.color;
+            ctx.globalCompositeOperation = "destination-over";
 			ctx.fillRect(-size.width / 2 + margin.left + config.labelOffset + label.size, iY, size.width - margin.right - margin.left - config.labelOffset - label.size, 1);
+            ctx.globalCompositeOperation = "source-over";
         }
 	}
 	
@@ -13255,22 +13259,7 @@ $jit.BarChart = new Class({
     
     this.normalizeDims();
     
-    if(renderBackground) {
-   		this.renderBackground();
-    }
-	
-	if(!animate && ticks.enable) {
-		this.renderTicks();
-	}
-	if(!animate && note.text) {
-		this.renderScrollNote();
-	}
-	if(!animate && title.text) {
-		this.renderTitle();
-	}
-	if(!animate && subtitle.text) {
-		this.renderSubtitle();
-	}
+
 
     st.compute();
     st.select(st.root);
@@ -13295,6 +13284,23 @@ $jit.BarChart = new Class({
     } else {
       this.busy = false;
     }
+
+      if(renderBackground) {
+          this.renderBackground();
+      }
+
+      if(!animate && ticks.enable) {
+          this.renderTicks();
+      }
+      if(!animate && note.text) {
+          this.renderScrollNote();
+      }
+      if(!animate && title.text) {
+          this.renderTitle();
+      }
+      if(!animate && subtitle.text) {
+          this.renderSubtitle();
+      }
   },
   
   /*
@@ -13323,8 +13329,13 @@ $jit.BarChart = new Class({
     
     var st = this.st;
     var graph = st.graph;
-    var values = json.values;
-    var animate = this.config.animate;
+    var config = this.config;
+    var values = json.values,
+        renderBackground = config.renderBackground,
+        animate = config.animate,
+        ticks = config.Ticks,
+        title = config.Title,
+        note = config.ScrollNote;
     var that = this;
     var horz = this.config.orientation == 'horizontal';
     $.each(values, function(v) {
@@ -13360,6 +13371,24 @@ $jit.BarChart = new Class({
         });
       }
     }
+
+  if(renderBackground) {
+      this.renderBackground();
+  }
+
+  if(!animate && ticks.enable) {
+      this.renderTicks();
+  }
+  if(!animate && note.text) {
+      this.renderScrollNote();
+  }
+  if(!animate && title.text) {
+      this.renderTitle();
+  }
+  if(!animate && subtitle.text) {
+      this.renderSubtitle();
+  }
+
   },
   
   //adds the little brown bar when hovering the node
@@ -13464,6 +13493,7 @@ $jit.BarChart = new Class({
   normalizeDims: function() {
     //number of elements
     var root = this.st.graph.getNode(this.st.root), l=0;
+
     root.eachAdjacency(function() {
       l++;
     });

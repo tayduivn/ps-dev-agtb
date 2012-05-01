@@ -9,7 +9,7 @@ describe("View Manager", function() {
         beforeEach(function() {
             SugarTest.seedMetadata(true);
             app = SugarTest.app;
-       
+
             //Need a sample Bean
             bean = app.data.createBean("Contacts", {
                 first_name: "Foo",
@@ -96,6 +96,28 @@ describe("View Manager", function() {
 
             // Checking fall back algorithm
             expect(result.label).toEqual('description');
+        });
+
+        it("and use another template than the view name", function() {
+
+            var detailView = new app.view.View({ name: "detail" });
+            var opts = {
+                def: {
+                    type: 'base',
+                    name: "name"
+                },
+                context: context,
+                view: detailView,
+                viewName: "default"
+            };
+
+            var field = app.view.createField(opts);
+            expect(field).toBeDefined();
+            field._loadTemplate();
+
+            var ctx = { value: "a value" };
+
+            expect(field.template(ctx)).toEqual(Handlebars.templates["f.base.default"](ctx));
         });
 
     });
