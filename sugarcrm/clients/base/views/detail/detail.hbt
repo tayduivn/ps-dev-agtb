@@ -1,6 +1,6 @@
 <div class="subnav">
     <div class="btn-toolbar pull-left">
-      <h1>{{context.state.model.attributes.id}}</h1>
+      <h1>{{getFieldByName context this "name"}}</h1>
     </div>
     <div class="btn-toolbar pull-right">
       <div class="btn-group">

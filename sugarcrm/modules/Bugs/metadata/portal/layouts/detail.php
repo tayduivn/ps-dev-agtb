@@ -11,5 +11,9 @@ $viewdefs['Bugs']['portal']['layout']['detail'] = array(
         array(
             'view' => 'detail',
         ),
+        2 =>
+        array(
+            'view' => 'activity',
+        ),
     ),
 );
