@@ -28,35 +28,33 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 $module_name = '<module_name>';
-$viewdefs[$module_name]['portal']['view']['list'] = array(
-    array(
-        'panels' => array(
-            'label' => 'LBL_PANEL_1',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'LBL_NAME',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
-                ),
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'label' => 'LBL_TEAM',
-                    'width' => 9,
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                //END SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'assigned_user_name',
-                    'label' => 'LBL_ASSIGNED_TO_NAME',
-                    'width' => 9,
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
-                ),
+$viewdefs[$module_name]['mobile']['view']['list'] = array(
+    'panels' => array(
+        'label' => 'LBL_PANEL_1',
+        'fields' => array(
+            array(
+                'name' => 'name',
+                'label' => 'LBL_NAME',
+                'default' => true,
+                'enabled' => true,
+                'link' => true,
+            ),
+            //BEGIN SUGARCRM flav=pro ONLY
+            array(
+                'name' => 'team_name',
+                'label' => 'LBL_TEAM',
+                'width' => 9,
+                'default' => true,
+                'enabled' => true,
+            ),
+            //END SUGARCRM flav=pro ONLY
+            array(
+                'name' => 'assigned_user_name',
+                'label' => 'LBL_ASSIGNED_TO_NAME',
+                'width' => 9,
+                'default' => true,
+                'enabled' => true,
+                'link' => true,
             ),
         ),
     ),

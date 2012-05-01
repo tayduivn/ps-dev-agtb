@@ -1,7 +1,6 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
-if (! defined ( 'sugarEntry' ) || ! sugarEntry)
-    die ( 'Not A Valid Entry Point' ) ;
+//FILE SUGARCRM flav=pro || flav=sales ONLY
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -20,15 +19,112 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
+require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
+require_once 'modules/ModuleBuilder/parsers/constants.php';
 
-require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
-require_once 'modules/ModuleBuilder/parsers/constants.php' ;
+class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
+    /**
+     * Checks for the existence of the view variable for portal metadata
+     *
+     * @param array $viewdefs The viewdef array
+     * @param string $view The view to check for
+     * @return bool
+     */
+    public function hasViewVariable($viewdefs, $view) {
+        return $this->getNestedDefs($viewdefs, $view, true);
+    }
 
-class  SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser
-{
+    /**
+     * Gets the viewdefs for portal from the entire viewdef array
+     *
+     * @param array $viewdefs The full viewdef collection below $viewdefs[$module]
+     * @param string $view The view to fetch the defs for
+     * @return array
+     */
+    public function getDefsFromArray($viewdefs, $view) {
+        return $this->getNestedDefs($viewdefs, $view);
+    }
 
+    protected function getNestedDefs($viewdefs, $view, $validateOnly = false) {
+        // Get the view variable, or in Sidecar's case, the path
+        $var = MetaDataFiles::getViewDefVar($view);
+
+        // Sidecar should always be an array of metadata path elements
+        if (is_array($var)) {
+            $levels = count($var); // For example, 3 - portal -> view -> edit
+            $checks = 0;
+
+            for ($i = 0; $i < $levels; $i++) {
+                if (isset($viewdefs[$var[$i]])) {
+                    $checks++;
+                    $viewdefs = $viewdefs[$var[$i]];
+                }
+            }
+
+            $valid = $checks == $levels;
+
+            return $validateOnly ? $valid : $viewdefs;
+        }
+
+        return $validateOnly ? false : array();
+    }
+
+    /**
+     * Gets panel defs from the viewdef array
+     * @param array $viewdef The viewdef array
+     * @return array
+     */
+    protected function getPanelsFromViewDef($viewdef) {
+        $defs = $this->getDefsFromArray($viewdef, $this->_view);
+        if (isset($defs['panels'])) {
+            return $defs['panels'];
+        }
+
+        return array();
+    }
+
+    /**
+     * Checks for necessary elements of the metadata array and fails the request
+     * if not found
+     *
+     * @param array $viewdefs The view defs being requested
+     * @return void
+     */
+    public function validateMetaData($viewdefs) {
+        if (!isset($viewdefs['panels'])) {
+            sugar_die(get_class($this) . ': missing panels section in layout definition (case sensitive)');
+        }
+    }
+
+    /*
+     * Save a draft layout
+     *
+    public function writeWorkingFile() {
+        $this->_populateFromRequest($this->_fielddefs);
+        $viewdefs = $this->_viewdefs ;
+
+        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
+        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
+        $this->implementation->save ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+    }
+
+    /*
+     * Deploy the layout
+     * @param boolean $populate If true (default), then update the layout first with new layout information from the $_REQUEST array
+     *
+    public function handleSave ($populate = true) {
+    	$GLOBALS [ 'log' ]->info ( get_class ( $this ) . "->handleSave()" ) ;
+
+        if ($populate)
+            $this->_populateFromRequest ( $this->_fielddefs ) ;
+
+        $viewdefs = $this->_viewdefs ;
+        $panels = each ( $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ) ;
+        $viewdefs [ 'panels' ] = $panels [ 'value' ] ;
+        $this->implementation->deploy ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
+    }
+    */
     /**
      * helper to pack a row with $cols members of [empty]
      * @param $row
@@ -241,7 +337,4 @@ class  SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser
         }
         return $out;
     }
-
 }
-
-?>

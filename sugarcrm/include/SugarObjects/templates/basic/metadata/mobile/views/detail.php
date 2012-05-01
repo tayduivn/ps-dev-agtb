@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $module_name = '<module_name>';
-$viewdefs[$module_name]['DetailView'] = array(
+$viewdefs[$module_name]['mobile']['view']['detail'] = array(
 	'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE',)),
                         	'maxColumns' => '1',
                         	'widths' => array(

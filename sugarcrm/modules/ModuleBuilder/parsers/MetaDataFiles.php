@@ -12,6 +12,12 @@ class MetaDataFiles
     const PATHHISTORY = 'custom/history/';
 
     /**
+     * Constant for component types... in our case, layouts and views
+     */
+    const COMPONENTVIEW   = 'view';
+    const COMPONENTLAYOUT = 'layout';
+
+    /**
      * Path prefixes for metadata files
      *
      * @var array
@@ -96,6 +102,26 @@ class MetaDataFiles
     );
 
     /**
+     * The list of def types associated with a client
+     *
+     * @var array
+     */
+    public static $clientDefTypes = array(
+        'base'   => array(),
+        'mobile' => array('list', 'detail', 'edit', 'search'),
+        'portal' => array('list','detail', 'edit'),
+    );
+
+    /**
+     * Listing of components, used in pathing
+     * @var array
+     */
+    public static $components = array(
+        self::COMPONENTVIEW   => self::COMPONENTVIEW,
+        self::COMPONENTLAYOUT => self::COMPONENTLAYOUT,
+    );
+
+    /**
      * The path inside the $client directories to the views
      *
      * @var string
@@ -144,6 +170,27 @@ class MetaDataFiles
      */
     public static function getClient($client) {
         return empty(self::$clients[$client]) ? '' : self::$clients[$client];
+    }
+
+    /**
+     * Gets all client def types as an array keyed on client
+     *
+     * @static
+     * @return array
+     */
+    public static function getClientDefTypes() {
+        return self::$clientDefTypes;
+    }
+
+    /**
+     * Gets a single set of client defs for a client
+     *
+     * @static
+     * @param string $client The client to get the def types for
+     * @return array
+     */
+    public static function getClientDefType($client) {
+        return empty(self::$clientDefTypes[$client]) ? array() : self::$clientDefTypes[$client];
     }
 
     /**
@@ -347,6 +394,66 @@ class MetaDataFiles
         }
     }
 
+    /**
+     * Gets a $deftype metadata file for a given module
+     *
+     * @static
+     * @param string $module The name of the module to get metadata for
+     * @param string $deftype The def type to get (list, detail, edit, search)
+     * @param string $path The path to the metadata (base path, custom path, working path, history path)
+     * @param string $client The client making this request
+     * @param string $component Layout or view
+     * @return null|string Null if the request is invalid, path if it is good
+     */
+    public static function getModuleFileName($module, $deftype, $path = MB_BASEMETADATALOCATION, $client = 'base', $component = self::COMPONENTVIEW) {
+        // Simple validation of path and client
+        if (!isset(self::$paths[$path])) {
+            return null;
+        }
+
+        if (!in_array($client, self::$clients)) {
+            return null;
+        }
+
+        if (!in_array($component, self::$components)) {
+            return null;
+        }
+
+        // Now get to building
+        $viewPath = $client == 'mobile' || $client == 'portal' ? $client . '/' . $component . 's/' : '';
+        $filename = self::$paths[$path] . 'modules/' . $module . '/metadata/' . $viewPath . $deftype . '.php';
+        return $filename;
+    }
+
+    /**
+     * Gets a metadata file path for a module from its SugarObject template type
+     *
+     * @static
+     * @param string $module The name of the module to get metadata for
+     * @param string $deftype The def type to get (list, detail, edit, search)
+     * @param string $client The client making this request
+     * @param string $component Layout or view
+     * @return string
+     */
+    public static function getSugarObjectFileName($module, $deftype, $client = 'base', $component = self::COMPONENTVIEW) {
+        require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
+        $sm = new StudioModule($module);
+
+        $path = 'include/SugarObjects/templates/' . $sm->getType() . '/metadata/';
+        $viewPath = $client == 'mobile' || $client == 'portal' ? $client . '/' . $component . 's/' : '';
+        $filename =  $path . $viewPath . $deftype . '.php';
+        return $filename;
+    }
+
+    /**
+     * Gets SugarObjects type metadata for a module and cleans the defs up by
+     * replacing variables with correct values based on the module
+     *
+     * @static
+     * @param SugarBean|string $module Either a been or a string name of a module
+     * @param array $defs The defs associated with this module
+     * @return array Cleaned up metadata
+     */
     public static function getModuleMetaDataDefsWithReplacements($module, $defs) {
         if (!$module instanceof SugarBean) {
             $module = BeanFactory::getBean($module);
@@ -361,6 +468,15 @@ class MetaDataFiles
 		return self::recursiveVariableReplace($defs, $replacements);
     }
 
+    /**
+     * Does deep recursive variable replacement on an array
+     *
+     * @TODO Consider making a MetaDataUtils class and adding this to that class
+     * @static
+     * @param array $source The input array to work replacements on
+     * @param array $replacements An array of replacements as $find => $replace pairs
+     * @return array $source array with $replacements applied to them
+     */
     public static function recursiveVariableReplace($source, $replacements) {
         $ret = array();
 		foreach ($source as $key => $val) {
