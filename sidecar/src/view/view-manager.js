@@ -86,14 +86,16 @@
                 customClassName = (params.module || "") + className,
                 pluralizedType  = type.toLowerCase() + "s",
                 cache           = app.view[pluralizedType],
+                controller      = params.controller,
                 // Fall back to base class (View, Layout, or Field)
                 baseClass       = cache[className] || app.view[ucType],
-                controller      = params.controller ? params.controller : null,
                 klass           = null;
 
             klass =
                 // Next check if custom class per module already exists
                 cache[customClassName] ||
+                // If we don't have a customClassName 
+                _declareClass(cache, baseClass, customClassName, controller) ||
                 // Fall back to regular view class (ListView, FluidLayout, etc.)
                 baseClass;
 
@@ -228,9 +230,10 @@
             var type       = params.def.type;
             params.meta    = params.meta || app.metadata.getField(type);
             params.context = params.context || app.controller.context;
-            params.model = params.model || params.context.get("model");
+            params.controller = (params.meta && params.meta.controller) ? params.meta.controller : null;
+            params.model   = params.model || params.context.get("model");
             params.sfId = ++_sfId;
-
+            
             var field = this._createComponent("Field", type, params);
             // Register new field within its parent view.
             params.view.fields[field.sfId] = field;

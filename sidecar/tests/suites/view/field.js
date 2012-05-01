@@ -22,8 +22,15 @@ describe("Field", function() {
         var delegateSpy = sinon.spy(Backbone.View.prototype, 'delegateEvents'),
             events = {"click": "callback_click"},
             bean = new Backbone.Model(),
-            inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
-            field;
+            view = { name: "list" },
+            context = {},
+            inputEvents = fixtures.metadata.modules.Cases.views.edit.meta.buttons[0].events,
+            field = app.view.createField({
+                def: { name: "status", type: "varchar" },
+                view: view,
+                context: context,
+                model: bean
+            });
 
         field = app.view.createField({
             def: { name: "status", type: "varchar" },
@@ -66,7 +73,9 @@ describe("Field", function() {
     });
 
     it("unbind events", function() {
-        var inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
+        var view = { name: "list" },
+            context = {bob: "bob"},
+            inputEvents = fixtures.metadata.modules.Cases.views.edit.buttons[0].events,
             field = app.view.createField({
                 def: {name: "status", type: "text"},
                 view: view,

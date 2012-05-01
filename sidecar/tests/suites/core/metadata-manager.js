@@ -24,7 +24,7 @@ describe('Metadata Manager', function () {
     });
 
     it('should get definition for a specific view', function () {
-        expect(app.metadata.getView("Contacts", "edit")).toBe(meta.modules.Contacts.views.edit);
+        expect(app.metadata.getView("Contacts", "edit")).toBe(meta.modules.Contacts.views.edit.meta);
     });
 
     it('should get layout definitions', function () {
@@ -32,7 +32,7 @@ describe('Metadata Manager', function () {
     });
 
     it('should get a specific layout', function () {
-        expect(app.metadata.getLayout("Contacts", "detail")).toBe(meta.modules.Contacts.layouts.detail);
+        expect(app.metadata.getLayout("Contacts", "detail")).toBe(meta.modules.Contacts.layouts.detail.meta);
     });
 
     it('should get a varchar sugarfield', function () {
