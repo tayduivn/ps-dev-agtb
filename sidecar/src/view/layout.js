@@ -26,19 +26,20 @@
             this._components = []; // list of components
 
             /**
-             * Classname of the View
+             * CSS class.
              * @cfg {String} className
              */
             this.$el.addClass("layout " + (options.className || this.meta.type));
 
             _.each(this.meta.components, function(def) {
-                var context = def.context ? this.context.getRelatedContext(def.context) : this.context,
-                    module = def.module || context.get("module");
-
-                //If the context wasn't specified in the def, use the parent layouts module
-                // (even if that isn't the module of the current context)
-                if (!def.context)
-                    module = this.module;
+                var context = this.context;
+                var module = this.module;
+                // Switch context if necessary
+                if (def.context) {
+                    module = def.module || this.module;
+                    context = this.context.getRelatedContext(def.context, module);
+                    context.prepareData();
+                }
 
                 if (def.view) {
                     this.addComponent(app.view.createView({
@@ -47,15 +48,15 @@
                         module: module
                     }), def);
                 }
-                //Layouts can either by referenced by name or defined inline
+                // Layouts can either by referenced by name or defined inline
                 else if (def.layout) {
-                    if (typeof def.layout == "string") {
+                    if (_.isString(def.layout)) {
                         this.addComponent(app.view.createLayout({
                             context: context,
                             name: def.layout,
                             module: module
                         }), def);
-                    } else if (typeof def.layout == "object") {
+                    } else if (_.isObject(def.layout)) {
                         //Inline definition of a sublayout
                         this.addComponent(app.view.createLayout({
                             context: context,
@@ -64,17 +65,20 @@
                         }), def);
                     }
                 }
+                else {
+                    app.logger.warn("Invalid layout definition:\n" + def.layout);
+                }
             }, this);
         },
 
         /**
-         * Add a view (or layout) to this layout.
-         * @param {View.Layout/View.View} comp Componant to add
-         * @param {Array} def Metadata definition
+         * Adds a component to this layout.
+         * @param {View.Layout/View.View} component Component (view or layout) to add
+         * @param {Object} def Metadata definition
          */
-        addComponent: function(comp, def) {
-            this._components.push(comp);
-            this._placeComponent(comp, def);
+        addComponent: function(component, def) {
+            this._components.push(component);
+            this._placeComponent(component, def);
         },
 
         /**

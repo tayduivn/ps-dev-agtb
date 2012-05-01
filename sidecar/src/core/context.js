@@ -167,6 +167,17 @@
             },
 
             /**
+             * Gets a related context.
+             * @param {String} name Related context name (usually it's relationship link name).
+             * @param {String} module Module name.
+             * @return {Core.Context} New instance of the related context.
+             */
+            getRelatedContext: function(name, module) {
+                // TODO: Implement
+                return this.getContext();
+            },
+
+            /**
              * Prepares instances of model and collection.
              */
             prepareData: function() {

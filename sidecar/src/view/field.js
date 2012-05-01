@@ -86,7 +86,7 @@
         fieldTag: "input",
 
         /**
-         * TODO: add docs (descrive options, see Component class for details)
+         * TODO: add docs (describe options, see Component class for details)
          * @param options
          */
         initialize: function(options) {
