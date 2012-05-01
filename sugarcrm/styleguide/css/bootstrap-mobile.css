@@ -4086,9 +4086,6 @@ html {
   padding-bottom: 146px;
   display: block;
 }
-.hasTeaser #scroll {
-  height: 68%;
-}
 .listing {
   height: 100%;
   position: absolute;
