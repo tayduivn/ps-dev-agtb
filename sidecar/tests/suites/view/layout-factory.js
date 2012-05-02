@@ -21,7 +21,8 @@ describe("View Manager", function() {
         it("creates layout with a custom controller", function () {
             var result = app.view.createLayout({
                 name : "detailplus",
-                module: "Contacts"
+                module: "Contacts",
+                context: context 
             });
             expect(result).toBeDefined();
             expect(result.customLayoutCallback).toBeDefined();
@@ -30,6 +31,7 @@ describe("View Manager", function() {
         it("creates layout with a custom controller directly", function () {
             var result = app.view.createLayout({
                 name : "tree",
+                context: context,
                 controller: "{customTreeLayoutHook: function(){return \"overridden\";}}",
                 module: "Contacts"
             });
