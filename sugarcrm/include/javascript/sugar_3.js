@@ -2799,6 +2799,20 @@ SUGAR.util = function () {
 			}
 			return url;
 		},
+        // Evaluates a script in a global context
+        // Workarounds based on findings by Jim Driscoll
+        // http://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context
+        globalEval: function( data ) {
+            var rnotwhite = /\S/;
+            if ( data && rnotwhite.test( data ) ) {
+                // We use execScript on Internet Explorer
+                // We use an anonymous function so that context is window
+                // rather than jQuery in Firefox
+                ( window.execScript || function( data ) {
+                    window[ "eval" ].call( window, data );
+                } )( data );
+            }
+        },
 	    evalScript:function(text){
 			if (isSafari) {
 				var waitUntilLoaded = function(){
@@ -2858,16 +2872,67 @@ SUGAR.util = function () {
             while(result && result.index > lastIndex){
             	lastIndex = result.index
 				try{
-					var script = document.createElement('script');
-                  	script.type= 'text/javascript';
+                    // Bug #49205 : Subpanels fail to load when selecting subpanel tab
+                    // Change approach to handle javascripts included to body of ajax response.
+                    // To load & run javascripts and inline javascript in correct order load them as synchronous requests
+                    // JQuery library uses this approach to eval scripts
                   	if(result[1].indexOf("src=") > -1){
 						var srcRegex = /.*src=['"]([a-zA-Z0-9_\-\&\/\.\?=:-]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
-						script.src = srcResult;
+
+                        // Check is ulr cross domain or not
+                        var r1 = /:\/\//igm;
+                        if ( r1.test(srcResult) && srcResult.indexOf(window.location.hostname) == -1 )
+                        {
+                            // if script is cross domain it cannot be loaded via ajax request
+                            // try load script asynchronous by creating script element in the body
+                            // YUI 3.3 doesn't allow load scrips synchronously
+                            // YUI 3.5 do it
+                            YUI().use('get', function (Y)
+                            {
+                                var url = srcResult;
+                                Y.Get.script(srcResult,
+                                {
+                                    autopurge: false,
+                                    onSuccess : function(o) {  },
+                                    onFailure: function(o) { },
+                                    onTimeout: function(o) { }
+                                });
+                            });
+                            // TODO: for YUI 3.5 - load scripts as script object synchronous
+                            /*
+                            YUI().use('get', function (Y) {
+                                var url = srcResult;
+                                Y.Get.js([{url: url, async: false}], function (err) {});
+                            });
+                            */
+                        }
+                        else
+                        {
+                            // Bug #49205 : Subpanels fail to load when selecting subpanel tab
+                            // Create a YUI instance using the io-base module.
+                            YUI().use("io-base", function(Y) {
+                                var cfg, response;
+                                cfg = {
+                                    method: 'GET',
+                                    sync: true,
+                                    on: {
+                                        success: function(transactionid, response, arguments)
+                                        {
+                                            SUGAR.util.globalEval(response.responseText);
+                                        }
+                                    }
+                                };
+                                // Call synchronous request to load javascript content
+                                // restonse will be processed in success function
+                                response = Y.io(srcResult, cfg);
+                            });
+                        }
                   	}else{
-                  		script.text = result[2];
+                        // Bug #49205 : Subpanels fail to load when selecting subpanel tab
+                        // execute script in global context
+                        SUGAR.util.globalEval(result[2]);
                   	}
-                  	document.body.appendChild(script);
 	              }
 	              catch(e) {
                       if(typeof(console) != "undefined" && typeof(console.log) == "function")
