@@ -7,5 +7,12 @@ $viewdefs['Cases']['portal']['layout']['list'] = array(
         array(
             'view' => 'list',
         ),
+        1 =>
+        array(
+            'context'=>array(
+                'module'=>'Bugs',
+            ),
+            'view' => 'list',
+        ),
     ),
 );
