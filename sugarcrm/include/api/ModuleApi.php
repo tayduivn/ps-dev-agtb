@@ -61,7 +61,14 @@ class ModuleApi extends SugarApi {
         );
     }
 
-    protected function updateBean($bean, $api, $args) {
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $bean SugarBean The bean to be updated
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return id Bean id
+     */
+    protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
         $sfh = new SugarFieldHandler();
         $aclField = new ACLField();
 
@@ -102,7 +109,14 @@ class ModuleApi extends SugarApi {
         return $bean->id;
     }
 
-    protected function loadBean($api, $args, $aclToCheck = 'read') {
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the bean is retrieved
+     * @param $args array The arguments array passed in from the API
+     * @param $aclToCheck string What kind of ACL to verify when loading a bean. Supports: view,edit,create,import,export
+     * @return SugarBean The loaded bean
+     */
+    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
 
         $bean = BeanFactory::getBean($args['module'],$args['record']);
         
@@ -116,6 +130,66 @@ class ModuleApi extends SugarApi {
         }
         
         return $bean;
+    }
+
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the formatted data is returned
+     * @param $args array The arguments array passed in from the API, will check this for the 'fields' argument to only return the requested fields
+     * @param $bean SugarBean The fully loaded bean to format
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     */
+    protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
+        $sfh = new SugarFieldHandler();
+        $aclField = new ACLField();
+
+        // Need to figure out the ownership for ACL's
+        $isOwner = false;
+        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $api->security->userId ) {
+            $isOwner = true;
+        }
+        
+        if ( !empty($args['fields']) ) {
+            $fieldList = explode(',',$args['fields']);
+            if ( ! in_array('date_modified',$fieldList ) ) {
+                $fieldList[] = 'date_modified';
+            }
+        } else {
+            $fieldList = '';
+        }
+
+        $data = array();
+        foreach ( $bean->field_defs as $fieldName => $properties ) {
+            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->security->userId,$isOwner) < 1 ) { 
+                // No read access to this field, skip it.
+                continue;
+            }
+            if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
+                // They want to skip this field
+                continue;
+            }
+
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            if ( $type == 'link' ) {
+                // There is a different API to fetch linked records, don't try to encode all of the related data.
+                continue;
+            }
+            $field = $sfh->getSugarField($type);
+            
+            if ( $field != null ) {
+                if ( method_exists($field,'retrieveForApi') ) {
+                    $field->retrieveForApi($data, $bean, $args, $fieldName, $properties);
+                } else {
+                    if ( isset($bean->$fieldName) ) {
+                        $data[$fieldName] = $bean->$fieldName;
+                    } else {
+                        $data[$fieldName] = '';
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 
     public function createRecord($api, $args) {
@@ -147,47 +221,7 @@ class ModuleApi extends SugarApi {
 
         $bean = $this->loadBean($api, $args, 'view');
 
-        $sfh = new SugarFieldHandler();
-        $aclField = new ACLField();
-
-        // Need to figure out the ownership for ACL's
-        $isOwner = false;
-        if ( isset($bean->field_defs['assigned_user_id']) && $bean->assigned_user_id == $api->user->id ) {
-            $isOwner = true;
-        }            
-        
-        $data = array();
-        foreach ( $bean->field_defs as $fieldName => $properties ) {
-            if ( $aclField->hasAccess($fieldName,$bean->module_dir,$api->user->id,$isOwner) < 1 ) { 
-                // No read access to this field, skip it.
-            }
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            $field = $sfh->getSugarField($type);
-            
-            if ( $field != null ) {
-                if ( method_exists($field,'retrieveForApi') ) {
-                    $field->retrieveForApi($data, $bean, $args, $fieldName, $properties);
-                } else {
-                    if ( isset($bean->$fieldName) ) {
-                        $data[$fieldName] = $bean->$fieldName;
-                    } else {
-                        $data[$fieldName] = '';
-                    }
-                }
-            }
-        }
-
-        if ( isset($args['fields']) ) {
-            $fieldList = explode(',',$args['fields']);
-            if ( ! in_array('date_modified',$fieldList ) ) {
-                $fieldList[] = 'date_modified';
-            }
-            $unfilteredData = $data;
-            $data = array();
-            foreach ( $fieldList as $fieldName ) {
-                $data[$fieldName] = $unfilteredData[$fieldName];
-            }
-        }
+        $data = $this->formatBean($api, $args, $bean);
 
         return $data;
 

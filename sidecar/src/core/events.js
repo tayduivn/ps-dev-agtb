@@ -56,6 +56,25 @@
             } else {
                 context.off(event);
             }
+        },
+
+        /**
+         * Subscribe to global ajax events.
+         */
+        registerAjaxEvents: function() {
+            var self = this;
+
+            // First unbind then rebind
+            $(document).off("ajaxStop");
+            $(document).off("ajaxStart");
+
+            $(document).on("ajaxStart", function(args) {
+                self.trigger("ajaxStart", args);
+            });
+
+            $(document).on("ajaxStop", function(args) {
+                self.trigger("ajaxStop", args);
+            });
         }
     }, Backbone.Events));
 })(SUGAR.App);

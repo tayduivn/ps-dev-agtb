@@ -104,8 +104,35 @@ class MetadataApi extends SugarApi {
             $data['modules'][$modName] = $modData;
         }
 
+
+        $data['moduleList'] = $mm->getModuleList($this->platforms[0]);
+        $data['fullModuleList'] = $data['moduleList'];
+        foreach($data['moduleList'] as $module) {
+            $bean = BeanFactory::newBean($module);
+            if (isset($data['modules'][$module]['fields'])) {
+                $fields = $data['modules'][$module]['fields'];
+                foreach($fields as $fieldName => $fieldDef) {
+                    if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
+                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['fullModuleList'])) {
+                            $data['fullModuleList'][$fieldDef['module']] = $fieldDef['module'];
+                        }
+                    } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
+                        $bean->load_relationship($fieldDef['name']);
+                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                        $data['fullModuleList'][$otherSide] = $otherSide;
+                    }
+                }
+            }
+        }
+
+        foreach($data['modules'] as $moduleName => $moduleDef) {
+            if (!array_key_exists($moduleName, $data['fullModuleList'])) {
+                unset($data['modules'][$moduleName]);
+            }
+        }
+
         $data['modStrings'] = array();
-        foreach ($this->modules as $modName) {
+        foreach ($data['modules'] as $modName => $moduleDef) {
             $modData = $mm->getModuleStrings($modName);
             $data['modStrings'][$modName] = $modData;
             $data['modStrings'][$modName]['_hash'] = md5(serialize($data['modStrings'][$modName]));
@@ -120,14 +147,14 @@ class MetadataApi extends SugarApi {
         $data['viewTemplates'] = $mm->getViewTemplates();
         $data['appStrings'] = $mm->getAppStrings();
         $data['appListStrings'] = $mm->getAppListStrings();
-        $data['moduleList'] = $mm->getModuleList($this->platforms[0]);
-
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
         
         $baseChunks = array('viewTemplates','sugarFields','appStrings','appListStrings','moduleList');
         $perModuleChunks = array('modules','modStrings','acl');
+
+
 
         if ( $onlyHash ) {
             // The client only wants hashes

@@ -51,7 +51,7 @@ class RelateApi extends ListApi {
         $linkName = $args['link_name'];
         if ( ! $record->load_relationship($linkName) ) {
             // The relationship did not load, I'm guessing it doesn't exist
-            throw new SugarApiExceptionNotFound('Could not find a relationship named: '.$args['relationship']);
+            throw new SugarApiExceptionNotFound('Could not find a relationship named: '.$args['link_name']);
         }
         // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $record->$linkName->getRelatedModuleName();
