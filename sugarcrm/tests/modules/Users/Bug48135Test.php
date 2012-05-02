@@ -41,6 +41,19 @@ class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        if(!isset($GLOBALS['current_language']))
+        {
+                $GLOBALS['current_language'] = 'en_us';
+        }
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Users');
+
         //create 2 users and make one of them an admin and current user
         $this->user1 = SugarTestUserUtilities::createAnonymousUser();
         $this->user2 = SugarTestUserUtilities::createAnonymousUser();
@@ -64,14 +77,21 @@ class Bug48135Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        unset ($GLOBALS['current_user']);
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['mod_strings']);
+
         $GLOBALS['db']->query('DELETE FROM eapm WHERE name ="testUnit48135EAPM"');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
 
     public function testReassignedEAPM()
-    {   global $current_user,$app_list_strings,$app_strings,$beanFiles;
+    {
+        global $current_user,$app_list_strings,$app_strings,$beanFiles,$mod_strings, $beanFiles;
         //first of all lets make sure the assigned id's match
         $this->eapm->retrieve($this->eapm->id);
         $this->assertSame($this->user1->id, $this->eapm->assigned_user_id);
