@@ -48,6 +48,17 @@
             this.fields = {};
 
             this.$el.addClass("view " + this.name);
+
+            /**
+             * Default template to use for view fields if a field does not have template defined for its parent view.
+             * Defaults to `"default"`.
+             *
+             * For example, if you have a subview and don't want to define subview template for all field types,
+             * you may choose to use existing templates like `detail` if your subview is in fact a detail view.
+             *
+             * @property {String}
+             */
+            this.defaultFieldTemplate = "default";
         },
 
         /**

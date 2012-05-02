@@ -1,60 +1,47 @@
 <div class="card2">
 
-    <div class="block filtered tabbable tabs-left" id="moduleActivity">
-        <h4>Activity (No logic)</h4>
+                <div class="block filtered tabbable tabs-left" id="moduleActivity">
+                    <h4>Activity</h4>
 
-        <form class="form-search hide" action="">
-            <input value="" class="span4" placeholder="Refine activity ...">
-        </form>
-        <ul class="nav nav-tabs results">
-            <li>
-                <a href="#log1" data-toggle="tab"><span class="label label-log">Log</span></a>
+                    <form class="form-search hide" action="">
+                        <input value="" class="span4" placeholder="Refine activity ...">
+                    </form>
+                    {{#each meta.panels}}
+                    <ul class="nav nav-tabs results">
+                        {{#each ../context.state.collection.models}}
+                        <li class="activity" data-id="">
+                            <a data-toggle="tab"><span class="label label-note">Note</span></a>
 
-                <p>
-                    <a href=" profile_skhan.html">Sabra Khan</a> changed priority to medium
-                    <br>
-                    <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
-                </p>
-            </li>
-            <li>
-                <a href="#contact1" data-toggle="tab"><span class="label label-note">Note</span></a>
-
-                <p>
-                    <a href="profile_sabra.html">Sabra Khan</a> added a note that included a screenshot.
-                    <br>
-                    <date class="date">Posted 1 day ago at 3:00 pm EST</date>
-                </p>
-            </li>
-            <li>
-                <a href="#log2" data-toggle="tab"><span class="label label-log">Log</span></a>
-
-                <p>
-                    <a href="profile_skhan.html">Sabra Khan</a> changed the status to pending review.
-                    <br>
-                    <date class="date">Posted 2 days ago at 1:20 pm EST</date>
-                </p>
-                <div class="actions hide">
-                    <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i
-                            class="icon-comment"></i></a>
-                    <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
+                            <p>{{fieldWithName ../../context ../../this this "id"}}
+                                <a>
+                                    {{fieldWithName ../../context ../../this this "name"}}
+                                </a>
+                                <date class="date">
+                                    Posted on {{fieldWithName ../../context ../../this this "date_entered"}}
+                                </date>
+                            </p>
+                        </li>
+                        {{/each}}
+                    </ul>
+                    {{/each}}
+                    <ul class="nav nav-pills actions">
+                        <li class="dropdown pull-right">
+                            <a data-toggle="dropdown" class="dropdown-toggle"><i class="icon-plus"></i><i
+                                    class="icon caret"></i></a>
+                            <ul class="dropdown-menu menu">
+                                <li><a data-toggle="modal" class="addNote">Add Note</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="" rel="tooltip" class="search" id="" data-original-title="Refine list"><i
+                                    class="icon-search"></i></a>
+                        </li>
+                    </ul>
                 </div>
-            </li>
-        </ul>
-        <ul class="nav nav-pills actions">
-            <li class="dropdown pull-right">
-                <a data-toggle="dropdown" class="dropdown-toggle"><i class="icon-plus"></i><i
-                        class="icon caret"></i></a>
-                <ul class="dropdown-menu menu">
-                    <li><a data-toggle="modal" class="addNoteClick">Add Note</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="" rel="tooltip" class="search" id="" data-original-title="Refine list"><i
-                        class="icon-search"></i></a>
-            </li>
-        </ul>
-    </div>
 
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -71,14 +58,14 @@
                     <label for="input01" class="control-label">Subject:</label>
 
                     <div class="controls">
-                        <input type="text" id="input01" class="input-xlarge">
+                        <input type="text" id="input01" name="subject" class="input-xlarge">
                     </div>
                 </div>
                 <div class="control-group">
                     <label for="select01" class="control-label">Note:</label>
 
                     <div class="controls">
-                        <textarea class="input-xlarge"></textarea>
+                        <textarea class="input-xlarge" name="description"></textarea>
                     </div>
                 </div>
                 <div class="control-group">
