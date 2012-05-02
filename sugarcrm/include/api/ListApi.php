@@ -80,7 +80,7 @@ class ListApi extends SugarApi {
         }
         
         $userFields = null;
-        if ( isset($args['fields'])  && $args['fields'] != '') {
+        if ( isset($args['fields'])  && !empty($args['fields'])) {
             $userFields = explode(",", $args["fields"]);
             
             foreach ( $userFields as $field ) {
