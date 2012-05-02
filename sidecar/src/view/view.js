@@ -7,20 +7,17 @@
      * @alias SUGAR.App.view.View
      */
     app.view.View = app.view.Component.extend({
+
+        /**
+         * TODO: add docs (describe options parameter, see Component class for an example).
+         * @constructor
+         * @param options
+         */
         initialize: function(options) {
-            _.bindAll(this);
+            app.view.Component.prototype.initialize.call(this, options);
 
-            /**
-             * Refetence to {@link Core.Context} (required).
-             * @cfg {Core.Context}
-             */
-            this.context = options.context;
-
-            /**
-             * Module name (optional).
-             * @cfg {String}
-             */
-            this.module = options.module;
+            // TODO: Do we need this?
+            //_.bindAll(this);
 
             /**
              * Name of the view (required).
@@ -42,12 +39,6 @@
             this.template = options.template || app.template.get(this.name, this.module);
 
             /**
-             * Metadata (optional).
-             * @cfg {Object}
-             */
-            this.meta = options.meta;
-
-            /**
              * Dictionary of field widgets.
              *
              * - keys: field IDs (sfuuid)
@@ -59,27 +50,11 @@
         },
 
         /**
-         * Bind render to data
-         * @method
-         * @param {Object} data Model or collection to bind to
-         */
-        bindData: function(data) {
-            data.on('reset', this.render);
-        },
-
-        /**
-         * Bind this view to listen to the given context's event.
-         * @param {Core.Context} context
-         */
-        bind: function(context) {
-
-        },
-
-        /**
          * Renders the view onto the page.
          *
          * This method should be overriden by subclasses instead of the formal render function
          * if they need more advanced rendering or do not use a template.
+         * @protected
          */
         _render: function() {
             // Bad templates can cause a JS error that we want to catch here
@@ -98,6 +73,7 @@
          *
          * This method sets field's view element and invokes render on the given field.
          * @param {View.Field} field The field to render
+         * @protected
          */
         _renderField: function(field) {
             field.setElement(this.$("span[sfuuid='" + field.sfId + "']"));
@@ -170,6 +146,7 @@
         getID: function() {
             return (this.id || this.module || "") + "_" + this.name;
         }
+
     });
 
 

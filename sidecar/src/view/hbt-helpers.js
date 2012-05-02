@@ -7,6 +7,10 @@
  */
 (function(app) {
 
+    var _getFieldPlaceholder = function(field) {
+        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
+    };
+
     /**
      * Creates a field widget.
      * @method field
@@ -20,10 +24,10 @@
             def: this,
             view: view,
             context: context,
-            model: bean || context.get("model")
+            model: bean
         });
 
-        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
+        return _getFieldPlaceholder(field);
     });
 
     /**
@@ -31,12 +35,12 @@
      *
      * This helper is used for fields that don't have view definition.
      *
-     * @method field2
+     * @method fieldOfType
      * @param {String} type Field type
      * @param {String} label Label key
      * @return {Object} HTML placeholder for the widget as handlebars safe string.
      */
-    Handlebars.registerHelper('field2', function(type, label) {
+    Handlebars.registerHelper('fieldOfType', function(type, label) {
         var def = {
             type: type,
             name: type,
@@ -46,8 +50,26 @@
         var field = app.view.createField({
             def: def,
             view: this,
-            context: this.context,
-            model: this.context.get("model")
+            context: this.context
+        });
+
+        return _getFieldPlaceholder(field);
+    });
+
+    /**
+     * Creates a field widget for a given field name.
+     * @method fieldWithName
+     * @param {String} name Field name
+     * @param {Core.Context} context Current app context
+     * @param {View.View} view Parent view
+     * @return {String} HTML placeholder for the widget.
+     */
+    Handlebars.registerHelper('fieldWithName', function(name, context, view) {
+        var field = app.view.createField({
+            def: { name: name, type: "base" },
+            view: view,
+            context: context,
+            viewName: "default" // override view name (template for "default" view will be used instead of view.name)
         });
 
         return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
@@ -178,26 +200,6 @@
     Handlebars.registerHelper("getLabel", function(string, module){
        var result = app.lang.get(string, module);
        return result;
-    });
-
-    /**
-     * Creates specific field widget.
-     * @method field
-     * @param {Core.Context} context
-     * @param {View.View} view
-     * @param {Field.name} name
-     * @return {String} HTML placeholder for the widget.
-     */
-    Handlebars.registerHelper('getFieldByName', function(context, view, name) {
-        var field = app.view.createField({
-            def: { name: name, type: "base" },
-            view: view,
-            context: context,
-            model: context.get("model"),
-            viewName: "default" // override view name
-        });
-
-        return new Handlebars.SafeString('<span sfuuid="' + field.sfId + '"></span>');
     });
 
 })(SUGAR.App);

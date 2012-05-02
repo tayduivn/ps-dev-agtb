@@ -108,6 +108,7 @@
         hideActions: function(e) {
             $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
         },
+
         showMoreRecords: function() {
             var self = this;
             app.controller.context.state.collection.paginate({add: true,
@@ -132,7 +133,14 @@
                     self.render();
                 }
             });
+        },
+
+        bindDataChange: function() {
+            if (this.collection) {
+                this.collection.on("reset", this.render, this);
+            }
         }
+
     });
 
 })(SUGAR.App);

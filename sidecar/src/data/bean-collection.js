@@ -45,21 +45,6 @@
              * @property {Array}
              */
             this.fields = options.fields || null;
-            var origSuccess = options.success,
-                self = this;
-
-            options.success = function(args) {
-                self.trigger(
-                    /**
-                     * Fired when the collection fetch operataion succeeds.
-                     * @event
-                     */
-                    "app:collection:fetch"
-                );
-                if (origSuccess) {
-                    origSuccess(args);
-                }
-            };
             return Backbone.Collection.prototype.fetch.call(this, options);
         },
 

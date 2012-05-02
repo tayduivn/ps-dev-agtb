@@ -235,7 +235,7 @@ $.dashedLine = function(ctx,x, y, x2, y2, dashArray){
 
 
 
-$.saveImageFile = function (id,jsonfilename,imageExt) {
+$.saveImageFile = function (id,jsonfilename,imageExt,saveTo) {
 	var parts = jsonfilename.split("/");
 	var filename = parts[parts.length - 1].replace(".js","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
@@ -246,29 +246,23 @@ $.saveImageFile = function (id,jsonfilename,imageExt) {
 		} else {
 			var strDataURI = oCanvas.toDataURL("image/png");
 		}
-		var handleFailure = function(o){
-			//alert('failed to write image' + filename);
-			//remove alert since chrome triggers this function when user navigates away from page before image gets written.
-		}	
-		var handleSuccess = function(o){
-		}			
-		var callback =
-		{
-		  success:handleSuccess,
-		  failure:handleFailure,
-		  argument: { foo:'foo', bar:''}
-		};
-		var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
-		var postData = "imageStr=" + strDataURI + "&filename=" + filename;
-		var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
+
+        if(saveTo == undefined) {
+            var url =  "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+        } else {
+            var url = saveTo;
+        }
+        jQuery.post(url, {imageStr: strDataURI, filename: filename  })
+            .success(function() {  })
+            .error(function() {  });
 	}
 };
 
-$.saveImageTest = function (id,jsonfilename,imageExt) {
+$.saveImageTest = function (id,jsonfilename,imageExt,saveTo) {
 		if(typeof FlashCanvas != "undefined") {
-			setTimeout(function(){$.saveImageFile(id,jsonfilename,imageExt)},10000);
+			setTimeout(function(){$.saveImageFile(id,jsonfilename,imageExt,saveTo)},10000);
 		} else {
-			$.saveImageFile(id,jsonfilename,imageExt);
+			$.saveImageFile(id,jsonfilename,imageExt,saveTo);
 		}
 	};
 /*

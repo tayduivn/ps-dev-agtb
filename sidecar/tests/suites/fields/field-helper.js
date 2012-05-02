@@ -11,9 +11,10 @@ var SugarFieldTest = {};
     test.createField = function(name, type, viewName, fieldDef) {
 
 
-        var app = SUGAR.App,
-            view = new app.view.View({ name: viewName });
-            def = { name: name, type: type }, model;
+        var app = SUGAR.App;
+        var context = app.context.getContext();
+        var view = new app.view.View({ name: viewName, context: context });
+        var def = { name: name, type: type };
 
         var model = new Backbone.Model();
 
@@ -25,7 +26,7 @@ var SugarFieldTest = {};
         return app.view.createField({
             def: def,
             view: view,
-            context: "",
+            context: context,
             model: model
         });
     };

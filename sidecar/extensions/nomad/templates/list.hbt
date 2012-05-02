@@ -51,28 +51,11 @@
               </div>
             </section>
             {{#each meta.panels}}
+            <div class="items">
             {{#each ../context.state.collection.models}}
-            <article>
-                <i class="icon-star-empty"></i>
-                <div>
-                <a href="#{{this.module}}/{{{getFieldValue this "id"}}}">
-                    {{#with ../fields.[0]}}
-                    {{field ../../../context ../../../this ../this}}
-                    {{/with}}
-                </a><br>
-                {{#with ../fields.[1]}}
-                {{field ../../../context ../../../this ../this}}
-                {{/with}}
-                </div>
-                <span id="listing-action-item1">
-                    <i class="grip">|||</i>
-                    <span class="hide actions">
-                      <a href="#" title="Edit"><i class="icon-pencil icon-md"></i><br>Edit</a>
-                      <a href="#" title="Remove"><i class="icon-trash icon-md"></i><br>Remove</a>
-                    </span>
-                </span>
-            </article>
+                {{listItem this ../../this ../fields}}
             {{/each}}
+            </div>
             {{/each}}
         </div>
     </div>

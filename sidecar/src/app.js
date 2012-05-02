@@ -170,10 +170,11 @@ SUGAR.App = (function() {
          * @method
          */
         start: function() {
+            app.events.registerAjaxEvents();
+
             if (!(app.api.isAuthenticated())) {
                 app.router.login();
-            }
-            else {
+            } else {
                 this.sync();
             }
 
@@ -187,12 +188,12 @@ SUGAR.App = (function() {
          */
         loadAdditionalComponents: function(components) {
             var context = app.controller.context;
-            _.each(components, function(options, componentName){
+            _.each(components, function(options, componentName) {
                 if (options.target) {
-                   var view = app.view.createView({name: componentName, context: context});
-                   view.$el=app.controller.$(options.target);
-                   view.render();
-                   app.additionalComponents.push(view);
+                    var view = app.view.createView({name: componentName, context: context});
+                    view.$el = app.controller.$(options.target);
+                    view.render();
+                    app.additionalComponents.push(view);
                 }
             });
         },
@@ -249,26 +250,31 @@ SUGAR.App = (function() {
                 if (metadata.appListStrings) {
                     app.lang.setAppListStrings(metadata.appListStrings);
                 }
+
                 if (metadata.appStrings) {
                     app.lang.setAppStrings(metadata.appStrings);
                 }
+
                 if (metadata.modStrings) {
                     app.lang.setLabels(metadata.modStrings);
                 }
 
                 app.acl.set(metadata.acl);
+
                 callback(null, metadata);
             }], function(err, result) {
                 if (err) {
+                    app.error.handleHTTPError(err);
                     app.logger.error(err);
                     self.trigger("app:sync:error", err);
-                }
-                else {
+                } else {
                     // Result should be metadata
                     self.trigger("app:sync:complete", result);
                 }
-                if ($.isFunction(syncsuccess))
+
+                if (_.isFunction(syncsuccess)) {
                     syncsuccess();
+                }
             });
         },
 
