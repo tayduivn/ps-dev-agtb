@@ -65,6 +65,12 @@ h1 {font-size: 26px !important;}
 .fright {float: right !important}
 .altview {display:none;}
 
+body > #content,
+body > #content .layout.list,
+body > #content .layout.list > .view.list {
+  display:inline;
+}
+
 /* activity and twitter */
 
 article {
@@ -407,10 +413,6 @@ html {
   display: block;
 }
 
-.hasTeaser #scroll {
-  height:68%;
-}
-
 .listing {
   height: 100%;
   position: absolute;
@@ -577,7 +579,8 @@ html {
 */
 }
 
-.navbar h1 {
+/*
+.navbar-inner h1 {
   font-size: 16px !important;
   text-align: center;
   font-weight: 700;
@@ -587,6 +590,27 @@ html {
   text-shadow: 0 -1px 0 @black;
   z-index: 0;
   color: @white;
+}
+*/
+
+h1.nomad,
+h3.nomad {
+  color: @white;
+  z-index: 10000;
+  position: absolute;
+  width: 80%;
+  margin: 0 10%;
+  display: inline-block;
+  text-align: center;
+  font-size:16px !important;
+  font-weight:700;
+  text-shadow:0 -1px 0 black;
+  line-height:45px;
+}
+
+.onR h1.nomad,
+.onL h1.nomad {
+  z-index:1;
 }
 
 .dialogdark {
@@ -810,12 +834,12 @@ color: @gray;
 
 /* Log In
 ----------*/
-#login {
+.login {
 	background: #E61718 url(../img/leather-red.png);
   @shadow: inset 0 0 8px rgba(0,0,0,.6);
   .box-shadow(@shadow);
 }
-#login .modal, #login .modal-header, #login .modal-footer, #login .modal-body {
+.login .modal, .login .modal-header, .login .modal-footer, .login .modal-body {
 border: none;
 padding: 0 !important;
 margin: 0 !important;
@@ -823,7 +847,7 @@ background: none;
 @shadow: none;
 .box-shadow(@shadow);
 }
-#login input, #login .btn {
+.login input, .login .btn {
   width: 220px !important; 
   margin: 0 auto !important;
   padding: 10px !important; 
@@ -832,26 +856,26 @@ background: none;
   border: none;
 }
 
-#login .btn {
+.login .btn {
 @shadow: 0 1px 0 rgba(0,0,0,.3), inset -1px -1px 0 rgba(0,0,0,.2), inset 1px 1px 0 rgba(0,0,0,.2);
 .box-shadow(@shadow);
 text-shadow: 0 1px 0 rgba(255,255,255,.6);
 font-weight: 600;
 }
 
-#login .modal input[type=submit] {  
+.login .modal input[type=submit] {  
   @shadow:  1px 1px 0 rgba(0,0,0,.2);
   .box-shadow(@shadow);
 }
-#login .modal input:focus {
+.login .modal input:focus {
   border: none;
   @shadow: 2px 2px 0 lighten(@red, 20%), 2px 2px 0 lighten(@red, 20%);
   .box-shadow(@shadow);
   outline: 0;
 }
 
-#login {text-align: center;}
-#login .btn-sugar {
+.login {text-align: center;}
+.login .btn-sugar {
   float: none;
   margin-left:-80px !important;
   position: absolute; 
@@ -859,12 +883,12 @@ font-weight: 600;
   width: auto;
   left: 50%;
 }
-#login .modal .btn {float: none !important;}
-#login .modal .pull-left {
+.login .modal .btn {float: none !important;}
+.login .modal .pull-left {
 display: block;
 float: none !important;}
 
-#login .btn.btn-sugar {width: 140px!important;}
+.login .btn.btn-sugar {width: 140px!important;}
 
 .alert {
  z-index: 2000;
@@ -896,7 +920,7 @@ float: none !important;}
 
 /* TOUR */
 #tour {
-  background: url('../img/tour.png') no-repeat;
+  background: url('../img/welcome.jpg') no-repeat;
   height: 100%;
   position: absolute;
   top: 0;
@@ -910,6 +934,7 @@ float: none !important;}
 
   .navbar-fixed-top .navbar-inner {
     padding: 5px;
+    height: 36px;
   }
 
   // Nav collapse clears brand
