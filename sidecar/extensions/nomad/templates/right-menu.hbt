@@ -1,1 +1,8 @@
-Right menu
+<li id="quickTitle"><a name>Quick Create</a></li>
+<li class="divider-horizontal"></li>
+<li><a href="account_create.html">Create Account</a></li>
+<li><a href="not.html">Create Case</a></li>
+<li><a href="not.html">Create Contact</a></li>
+<li><a href="not.html">Create Opportunity</a></li>
+<li><a href="not.html">Create Task</a></li>
+<li><a href="not.html">Create Meeting</a></li>
