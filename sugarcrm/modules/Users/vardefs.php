@@ -64,11 +64,11 @@ $dictionary['User'] = array(
                 'no_duplicate'=>true,
                 'listview' => false,
                 'searchview'=>false,
-                //BEGIN SUGARCRM flav=pro
+                //BEGIN SUGARCRM flav=pro ONLY
                 'related' => false,
                 'formula' => false,
                 'rollup' => false,
-                //END SUGARCRM flav=pro
+                //END SUGARCRM flav=pro ONLY
             ),
         ) ,
         'system_generated_password' => array(
@@ -78,7 +78,18 @@ $dictionary['User'] = array(
             'required' => true,
             'reportable' => false,
             'massupdate' => false,
-            'studio' => array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false),
+            'studio' => array(
+                'listview' => false,
+                'searchview'=>false,
+                'editview'=>false,
+                'quickcreate'=>false,
+                'wirelesseditview' => false,
+                //BEGIN SUGARCRM flav=pro ONLY
+                'related' => false,
+                'formula' => false,
+                'rollup' => false,
+                //END SUGARCRM flav=pro ONLY
+            ),
         ) ,
 
         'pwd_last_changed' => array(
@@ -248,10 +259,17 @@ $dictionary['User'] = array(
         ) ,
         'created_by_name' => array(
             'name' => 'created_by_name',
-	    'vname' => 'LBL_CREATED_BY_NAME', //bug 48978
+	        'vname' => 'LBL_CREATED_BY_NAME', //bug 48978
             'type' => 'varchar',
             'source' => 'non-db',
             'importable' => 'false',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'studio' => array(
+                'related' => false,
+                'formula' => false,
+                'rollup' => false,
+            ),
+            //END SUGARCRM flav=pro ONLY
         ) ,
         'title' => array(
             'name' => 'title',
