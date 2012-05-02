@@ -284,10 +284,8 @@ a:hover {
   clear: both;
 }
 .container-fluid {
-/*
   padding-left: 20px;
   padding-right: 20px;
-*/
   *zoom: 1;
 }
 .container-fluid:before,
@@ -4088,8 +4086,7 @@ html {
   padding-bottom: 146px;
   display: block;
 }
-#listing.listing,
-#listing.accounts {
+.listing {
   height: 100%;
   position: absolute;
   left: 0;
