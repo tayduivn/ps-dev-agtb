@@ -107,4 +107,109 @@ class FormulaHelper
         }
     }
 
+
+
+    /**
+     * @static
+     * @param string $module
+     * @param MBPackage $package
+     * @return array set of links that are valid for related module function is the formula builder
+     */
+    public static function getLinksForModule($module, $package = null){
+        if (!empty($package))
+            return self::getLinksForMBModule($module, $package);
+        else
+            return self::getLinksForDeployedModule($module);
+    }
+
+    protected static function getLinksForDeployedModule($module){
+        $links = array();
+        $focus = BeanFactory::newBean($module);
+        $focus->id = create_guid();
+        $fields = FormulaHelper::cleanFields($focus->field_defs);
+
+        //Next, get a list of all links and the related modules
+        foreach ($fields as $val) {
+            $name = $val[0];
+            $def = $focus->field_defs[$name];
+            if ($val[1] == "relate" && $focus->load_relationship($name)) {
+                $relatedModule = $focus->$name->getRelatedModuleName();
+                $label = empty($def['vname']) ? $name : translate($def['vname'], $module);
+                $links[$name] = array(
+                    "label" => "$relatedModule ($label)",
+                    "module" => $relatedModule
+                );
+            }
+        }
+
+        return $links;
+    }
+
+    /**
+     * For In module builder, the vardef and link fields are not yet solidifed, so we need to run through the
+     * undeployed relationships and get the link fields from there
+     */
+    protected static function getLinksForMBModule($module, $package){
+        $links = array();
+        $mbModule = $package->getModule ($module);
+        $linksFields = $mbModule->getLinkFields();
+        $fields = FormulaHelper::cleanFields($linksFields);
+        foreach ($fields as $val) {
+            $name = $val[0];
+            $def = $linksFields[$name];
+            if ($val[1] == "relate") {
+                $relatedModule = $def['module'];
+                $label = $def['translated_label'];
+                $links[$name] = array(
+                    "label" => "$relatedModule ($label)",
+                    "module" => $relatedModule
+                );
+            }
+        }
+
+        return $links;
+    }
+
+    /**
+     * @static
+     * @param array $link
+     * @param MBPackage $package
+     * @param array $allowedTypes list of types to allow as related fields
+     * @return array
+     */
+    public static function getRelatableFieldsForLink($link, $package = null, $allowedTypes = array())
+    {
+        $rfields = array();
+        $relatedModule = $link["module"];
+        $mbModule = null;
+        if (!empty($package))
+            $mbModule = $package->getModuleByFullName($relatedModule);
+        //First, create a dummy bean to access the relationship info
+        if (empty($mbModule)) {
+            $relatedBean = BeanFactory::getBean($relatedModule);
+            $field_defs = $relatedBean->field_defs;
+        } else {
+            $field_defs = $mbModule->getVardefs(false);
+            $field_defs = $field_defs['fields'];
+        }
+
+        $relatedFields = FormulaHelper::cleanFields($field_defs, false, true);
+        foreach ($relatedFields as $val) {
+            $name = $val[0];
+            //Rollups must be either a number or a possible number (like a string) to roll up
+            if (!empty($allowedTypes) && !in_array($val[1], $allowedTypes))
+                continue;
+
+            $def = $field_defs[$name];
+            if (empty($mbModule))
+                $rfields[$name] = empty($def['vname']) ? $name : translate($def['vname'], $relatedModule);
+            else
+                $rfields[$name] = empty($def['vname']) ? $name : $mbModule->mblanguage->translate($def['vname']);
+            //Strip the ":" from any labels that have one
+            if (substr($rfields[$name], -1) == ":")
+                $rfields[$name] = substr($rfields[$name], 0, strlen($rfields[$name]) - 1);
+        }
+
+        return $rfields;
+    }
 }

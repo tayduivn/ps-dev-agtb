@@ -163,6 +163,7 @@ SUGAR.expressions.validateRelateFunctions = function(t)
             module : "ExpressionEngine",
             action : "validateRelatedField",
             tmodule : ModuleBuilder.module,
+            package : ModuleBuilder.MBpackage,
             link : t.args[0].name,
             related : t.args[1].value
         });
@@ -563,10 +564,12 @@ SUGAR.expressions.GridToolTip = {
     };
 
     SUGAR.expressions.insertRollup = function(){
-        $.markItUp({
-            target : "#formulaInput",
-            closeWith: 'rollup' + $("#rollwiz_type").val() + '($' + $('#rollwiz_rmodule').val() + ', "' + $('#rollwiz_rfield').val() + '")'
-        });
+        if ($('#rollwiz_rfield').val()){
+            $.markItUp({
+                target : "#formulaInput",
+                closeWith: 'rollup' + $("#rollwiz_type").val() + '($' + $('#rollwiz_rmodule').val() + ', "' + $('#rollwiz_rfield').val() + '")'
+            });
+        }
         SUGAR.rollupWindow.hide();
     }
 

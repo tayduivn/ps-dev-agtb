@@ -36,53 +36,28 @@ class ViewSelectRelatedField extends SugarView
                 sugar_die("Required paramter $var not set in ViewRelFields");
             $this->$var = $_REQUEST[$var];
         }
+        $mb = new ModuleBuilder();
+        $this->package = empty($_REQUEST['package']) || $_REQUEST['package'] == 'studio' ? "" : $mb->getPackage($_REQUEST['package']);
 
     }
 
     function display() {
-        $links = array();
+        $rmodules = array();
+        $links = FormulaHelper::getLinksForModule($this->tmodule, $this->package);
         $rfields = array();
-
-        //First, create a dummy bean to access the relationship info
-        $focus = BeanFactory::newBean($this->tmodule);
-        $focus->id = create_guid();
-
-        $fields = FormulaHelper::cleanFields($focus->field_defs);
-        //echo "<pre>" . print_r($fields, true) . "</pre>";
-
-        //Next, get a list of all links and the related modules
-        foreach($fields as $val)
-        {
-            $name = $val[0];
-            $def = $focus->field_defs[$name];
-            if ($val[1] == "relate" && $focus->load_relationship($name))
-            {
-                $relatedModule = $focus->$name->getRelatedModuleName();
-                $label = empty($def['vname']) ? $name : translate($def['vname'], $this->tmodule);
-                $links[$name] = "$relatedModule ($label)";
-            }
+        foreach($links as $lname => $link) {
+            $rmodules[$lname] = $link['label'];
         }
 
         //Preload the related fields from the first relationship
         if (!empty($links))
         {
-            $link = isset($links[$this->selLink]) ? $this->selLink: key($links);
-            $relatedModule = $focus->$link->getRelatedModuleName();
-            $relatedBean = BeanFactory::getBean($relatedModule);
-            $relatedFields = FormulaHelper::cleanFields($relatedBean->field_defs, false, true);
-            foreach($relatedFields as $val)
-            {
-                $name = $val[0];
-                $def = $relatedBean->field_defs[$name];
-                $rfields[$name] = empty($def['vname']) ? $name : translate($def['vname'], $relatedModule);
-                //Strip the ":" from any labels that have one
-                if (substr($rfields[$name], -1) == ":")
-                    $rfields[$name] = substr($rfields[$name], 0, strlen($rfields[$name]) -1);
-
-            }
+            reset($links);
+            $link = isset($links[$this->selLink]) ? $links[$this->selLink]: $links[key($links)];
+            $rfields = FormulaHelper::getRelatableFieldsForLink($link, $this->package);
         }
 
-        $this->ss->assign("rmodules", $links);
+        $this->ss->assign("rmodules", $rmodules);
         $this->ss->assign("rfields", $rfields);
         $this->ss->assign("tmodule", $this->tmodule);
         $this->ss->assign("selLink", $this->selLink);
@@ -94,4 +69,6 @@ class ViewSelectRelatedField extends SugarView
         ));
         $this->ss->display('modules/ExpressionEngine/tpls/selectRelatedField.tpl');
     }
+
+
 }
