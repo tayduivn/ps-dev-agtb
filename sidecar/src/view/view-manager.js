@@ -244,7 +244,7 @@
             // Register new field within its parent view.
             params.view.fields[field.sfId] = field;
             return field;
-        }
+        },
 
         declareCustomComponent: function(controller, name, module, type) {
             var ucType          = app.utils.capitalize(type),
