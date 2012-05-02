@@ -140,6 +140,15 @@ SUGAR.App = (function() {
                 this
             );
 
+            app.events.register(
+                /**
+                 * @event
+                 * This event is fired when an alert must be displayed
+                 */
+                "app:alert",
+                this
+            );
+
             /**
              * Set true if you want to suppress initialization of modules
              * @cfg {Boolean} silent
@@ -296,6 +305,16 @@ SUGAR.App = (function() {
             route = this.router.buildRoute(module, id, action, params);
 
             this.router.navigate(route, {trigger: true});
+        },
+
+        /**
+         * Display an alert.
+         * @method
+         * @param {String} level Either "info", "warn" or "error".
+         * @param {String} message The message
+         */
+        alert: function(level, message) {
+            app.trigger("app:alert", [level, message]);
         },
 
         modules: modules
