@@ -892,7 +892,8 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 }
 
     function track_campaign_prospects($focus){
-		$delete_query="delete from campaign_log where campaign_id='".$GLOBALS['db']->quote($focus->id)."' and activity_type='targeted'";
+		$campaign_id = $GLOBALS['db']->quote($focus->id);
+		$delete_query="delete from campaign_log where campaign_id='".$campaign_id."' and activity_type='targeted'";
 		$focus->db->query($delete_query);
 
 		$query="SELECT prospect_lists.id prospect_list_id, plp.related_id related_id, plp.related_type related_type from prospect_lists ";
@@ -904,16 +905,16 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 		$query.=" AND plp.deleted=0";
 		$query.=" AND prospect_lists.list_type!='test' AND prospect_lists.list_type not like 'exempt%'";
 		$result=$focus->db->query($query);
+		$current_date = $focus->db->now();
 		while (($row=$focus->db->fetchByAssoc($result))!=null ) {
-			$prospect_list_id=$row['prospect_list_id'];
-			$related_id=$row['related_id'];
-			$related_type=$row['related_type'];
+			$prospect_list_id=$GLOBALS['db']->quote($row['prospect_list_id']);
+			$related_id=$GLOBALS['db']->quote($row['related_id']);
+			$related_type=$GLOBALS['db']->quote($row['related_type']);
 			$guid = create_guid();
-			$current_date = $focus->db->now();
 
 			$insert_query= "INSERT INTO campaign_log (id,activity_date, campaign_id, target_tracker_key,list_id, target_id, target_type, activity_type";
 			$insert_query.=')';
-			$insert_query.=" VALUES ('{$guid}', $current_date, '{$focus->id}', '{$guid}', '{$prospect_list_id}', '{$related_id}', '{$related_type}', 'targeted' )";
+			$insert_query.=" VALUES ('{$guid}', $current_date, '{$campaign_id}', '{$guid}', '{$prospect_list_id}', '{$related_id}', '{$related_type}', 'targeted' )";
 
 			$focus->db->query($insert_query);
 		}
