@@ -9,13 +9,6 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
             'label' => 'Show More',
             'class' => 'loading wide'
         ),
-        1 =>
-        array(
-            'name' => 'test_editable',
-            'type' => 'clickToEdit',
-            'label' => 'click to edit',
-            'class' => 'cte',
-        ),
     ),
     'listNav' =>
     array(
