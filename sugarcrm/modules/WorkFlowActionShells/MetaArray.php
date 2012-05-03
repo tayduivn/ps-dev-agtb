@@ -110,7 +110,7 @@ $process_dictionary['ActionsCreateStep1'] = Array('action' => 'CreateStep1',
 						'value' => 'action_module',
 						'value_type' => 'module',
 						'jscript_function' => 'get_single_selector',
-						'jscript_content' => array('self', 'action_module', 'field' ,'trigger_rel_filter')
+						'jscript_content' => array('self', 'action_module', 'module_list' ,'singular')
 						),	
 			//end bottom options
 			),
@@ -145,8 +145,8 @@ $process_dictionary['ActionsCreateStep1'] = Array('action' => 'CreateStep1',
 						'value' => 'rel_module',
 						'value2' => 'action_module',
 						'value_type' => 'relrel_module',
-						'jscript_function' => 'get_single_selector',
-						'jscript_content' => array('self', 'rel_module', 'field' ,'trigger_rel_filter')
+						'jscript_function' => 'get_rel_selector',
+						'jscript_content' => array('self')
 						),							
 			//end bottom options
 			),
