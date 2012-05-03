@@ -59,7 +59,7 @@ $dictionary['User'] = array(
             'len' => '32',
             'reportable' => false,
             'importable' => 'false',
-            'studio' => array('no_duplicate'=>true, 'listview' => false, 'searchview'=>false),
+            'studio' => false,
         ) ,
         'system_generated_password' => array(
             'name' => 'system_generated_password',
