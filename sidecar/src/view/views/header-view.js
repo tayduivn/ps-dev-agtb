@@ -32,10 +32,20 @@
             this.$el.show();
         },
         setModuleInfo: function() {
+            var self = this;
+            this.createListLabels = [];
             this.currentModule = this.context.get('module');
             this.moduleList = _.toArray(app.metadata.getModuleList());
+
+            // TODO - would be nice if this were more dynamic 
+            // Unfortunately, can't use: SUGAR.App.lang.getAppListStrings("moduleListSingular")
+            // because it does not return KBDocuments, and Bugs => Bug Tracker is unhelpful, etc.
+            this.createListLabels.push(SUGAR.App.lang.get('LBL_CREATE_BUG', 'Emails'));
+            this.createListLabels.push(SUGAR.App.lang.get('LBL_CREATE_CASE', 'Emails'));
+            this.createListLabels.push('Create KBDocument'); // TODO: When server provides this use instead
+            this.createListLabels.push(SUGAR.App.lang.get('LBL_CREATE_LEAD', 'Emails'));
         }
 
     });
 
-})(SUGAR.App);
+}(SUGAR.App));
