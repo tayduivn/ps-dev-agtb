@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,7 +27,6 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//BEGIN SUGARCRM flav=pro ONLY
 require_once 'modules/Leads/views/view.editconvert.php';
 
 
@@ -47,6 +46,7 @@ class Bug43393Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_list_strings']);
     }
 
     /**
@@ -70,5 +70,4 @@ class Bug43393Test extends Sugar_PHPUnit_Framework_OutputTestCase
         unset($_REQUEST['action']);
     }
 
-//END SUGARCRM flav=pro ONLY
 }
