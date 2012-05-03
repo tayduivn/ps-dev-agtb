@@ -81,21 +81,21 @@
          * @private
          */
         _createComponent: function(type, name, params) {
-            var ucType          = app.utils.capitalize(type),
-                className       = app.utils.capitalize(name) + ucType,
+            var className       = app.utils.capitalize(name) + type,
                 customClassName = (params.module || "") + className,
                 // createLayout passes layout type (e.g. fluid) as 'name'. However,
                 // if a custom layout controller is created upstream, it's key will 
                 // be something like ContactsDetailLayout
-                layoutAltName   = (params.module || "") + app.utils.capitalize(params.name) + ucType,
+                layoutAltName   = (params.module || "") + app.utils.capitalize(params.name) + type,
                 pluralizedType  = type.toLowerCase() + "s",
                 cache           = app.view[pluralizedType],
                 controller      = params.controller, 
                 // Fall back to base class (View, Layout, or Field)
-                baseClass       = cache[className] || app.view[ucType],
-                klass           = null;
+                baseClass       = cache[className] || app.view[type],
+                component       = null,
+                Klass           = null;
 
-            klass =
+            Klass =
                 // Next check if custom class per module already exists
                 cache[customClassName] ||
                 // If custom layout controller created upstream
@@ -105,7 +105,7 @@
                 // Fall back to regular view class (ListView, FluidLayout, etc.)
                 baseClass;
 
-            var component = new klass(params);
+            component = new Klass(params);
             component.bindDataChange();
 
             return component;
@@ -159,7 +159,6 @@
          * @return {View.View} new instance of view.
          */
         createView: function(params) {
-            var module;
             // context is always defined on the controller
             params.context = params.context || app.controller.context;
             params.module  = params.module || params.context.get("module");
@@ -260,5 +259,5 @@
 
     app.augment("view", _viewManager, false);
 
-}(SUGAR.App));
+})(SUGAR.App);
 

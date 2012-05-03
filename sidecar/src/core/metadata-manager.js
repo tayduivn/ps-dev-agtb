@@ -18,6 +18,13 @@
         app.cache.set(_keyPrefix + key, value);
     }
 
+    /**
+     * Initializes custom templates and controller if supplied upstream.
+     * @param {Object} entry - a module
+     * @param {String} type - 'view'||'layout'
+     * @param {String} module name
+     * @private
+     */
     function initCustomTemplatesAndComponents(entry, type, module) {
         var plural = type+'s',
             templateKey;
@@ -166,7 +173,7 @@
          * @return {Object} View metadata if view name is specified. Otherwise, metadata for all views of the given module.
          */
         getView: function(module, view) {
-            var metadata = this.getModule(module, "views"), customClassName;
+            var metadata = this.getModule(module, "views");
             if (metadata && view) {
                 if(metadata[view] && metadata[view].meta) {
                     metadata = metadata[view].meta;
@@ -189,9 +196,7 @@
             if (metadata && layout) {
                 if(metadata[layout] && metadata[layout].meta) {
                     metadata = metadata[layout].meta;
-                } else {
-                    metadata = metadata[layout];
-                }
+                } 
             }
 
             return metadata;

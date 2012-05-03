@@ -15,46 +15,48 @@
                 },
                 "views": {
                     "loginView": {
-                        "buttons": [
-                            {
-                                name: "login_button",
-                                type: "button",
-                                label: "Login",
-                                value: "login",
-                                primary: true,
-                                events: {
-                                    click: "function(){ var self = this; " +
-                                        " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
-                                        "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
-                                        "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); $(\"body\").attr(\"id\", \"\"); var app = self.app; app.sync(" +
-                                        "function(){console.log(\"sync success firing\");}); }" +
-                                        "});" +
-                                        "}"
+                        "meta": {
+                            "buttons": [
+                                {
+                                    name: "login_button",
+                                    type: "button",
+                                    label: "Login",
+                                    value: "login",
+                                    primary: true,
+                                    events: {
+                                        click: "function(){ var self = this; " +
+                                            " var args={password:this.model.get(\"password\"), username:this.model.get(\"username\")}; " +
+                                            "this.app.api.login(args, null, {error:function(){console.log(\"login failed!\");},  success:" +
+                                            "function(){console.log(\"logged in successfully!\"); $(\".navbar\").show(); $(\"body\").attr(\"id\", \"\"); var app = self.app; app.sync(" +
+                                            "function(){console.log(\"sync success firing\");}); }" +
+                                            "});" +
+                                            "}"
+                                    }
                                 }
-                            }
-                        ],
-                        "panels": [
-                            {
-                                "label": "Login",
-                                "fields": [
-                                    {name: "username", label: "Username"},
-                                    {name: "password", label: "Password"}
-                                ]
-                            }
-                        ]
-
+                            ],
+                            "panels": [
+                                {
+                                    "label": "Login",
+                                    "fields": [
+                                        {name: "username", label: "Username"},
+                                        {name: "password", label: "Password"}
+                                    ]
+                                }
+                            ]
+                        }
                     }
-
                 },
                 //Layouts map an action to a lyout that defines a set of views and how to display them
                 //Different clients will get different layouts for the same actions
                 "layouts": {
                     "login": {
-                        //Default layout is a single view
-                        "type": "simple",
-                        "components": [
-                            {view: "loginView"}
-                        ]
+                        "meta": {
+                            //Default layout is a single view
+                            "type": "simple",
+                            "components": [
+                                {view: "loginView"}
+                            ]
+                        }
                     }
                 }
             }
