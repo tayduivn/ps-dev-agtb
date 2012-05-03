@@ -18,7 +18,7 @@
         app.cache.set(_keyPrefix + key, value);
     }
 
-    function _customTemplatesComponents(entry, type, module) {
+    function initCustomTemplatesAndComponents(entry, type, module) {
         var plural = type+'s',
             templateKey;
 
@@ -91,7 +91,7 @@
                             }
                             else {
                                 // Ignore view fields that don't have module field definition
-                                app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
+                                //app.logger.warn("Field #" + fieldIndex + " '" + name + "' in " + viewName + " view of module " + moduleName + " has no vardef");
                             }
                         });
                     });
@@ -237,8 +237,8 @@
                     modules.push(module);
 
                     // Create custom templates and modules for layouts and views
-                    _customTemplatesComponents(entry, 'view', module);
-                    _customTemplatesComponents(entry, 'layout', module);
+                    initCustomTemplatesAndComponents(entry, 'view', module);
+                    initCustomTemplatesAndComponents(entry, 'layout', module);
 
                    }, this);
                 _set("modules", modules.join(","));
