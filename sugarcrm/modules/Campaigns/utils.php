@@ -906,18 +906,32 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 		$query.=" AND prospect_lists.list_type!='test' AND prospect_lists.list_type not like 'exempt%'";
 		$result=$focus->db->query($query);
 		$current_date = $focus->db->now();
-		while (($row=$focus->db->fetchByAssoc($result))!=null ) {
+		$insert_query= "INSERT INTO campaign_log (id,activity_date, campaign_id, target_tracker_key,list_id, target_id, target_type, activity_type";
+		$insert_query.=') VALUES ';
+
+		$i=0;
+		$data = array();
+		while (($row=$focus->db->fetchByAssoc($result))!=null) {
+			$i++;
 			$prospect_list_id=$GLOBALS['db']->quote($row['prospect_list_id']);
 			$related_id=$GLOBALS['db']->quote($row['related_id']);
 			$related_type=$GLOBALS['db']->quote($row['related_type']);
 			$guid = create_guid();
+			$data[] = "('{$guid}', $current_date, '{$campaign_id}', '{$guid}', '{$prospect_list_id}', '{$related_id}', '{$related_type}', 'targeted' )";
 
-			$insert_query= "INSERT INTO campaign_log (id,activity_date, campaign_id, target_tracker_key,list_id, target_id, target_type, activity_type";
-			$insert_query.=')';
-			$insert_query.=" VALUES ('{$guid}', $current_date, '{$campaign_id}', '{$guid}', '{$prospect_list_id}', '{$related_id}', '{$related_type}', 'targeted' )";
-
-			$focus->db->query($insert_query);
+			// we do inserts in chunks
+			if ($i == 100){
+				$focus->db->query($insert_query.implode(',', $data));
+				$data = array();
+				$i=0;
+			}
 		}
+
+		// now we insert the rest of the data
+		if ($i != 0){
+			$focus->db->query($insert_query.implode(',', $data));
+		}
+
 		global $mod_strings;
 		//return success message
 		return $mod_strings['LBL_DEFAULT_LIST_ENTRIES_WERE_PROCESSED'];
