@@ -1,10 +1,6 @@
 (function(app) {
     app.augment("nomad", {
 
-        init: function() {
-
-        },
-
         deviceReady: function() {
             app.init({el: "#nomad" });
             app.logger.debug('App initialized');
